@@ -56,8 +56,8 @@ Type
     LocationInner : TSourceLocation; // where inner content starts
     LocationEnd : TSourceLocation;
 
-    constructor create(path : String); overload;
-    constructor create(path : String; locStart, locEnd : TSourceLocation); overload;
+    constructor Create(path : String); overload;
+    constructor Create(path : String; locStart, locEnd : TSourceLocation); overload;
     Function Link : TJsonNode; Overload;
     function kind : TJsonNodeKind; virtual; abstract;
     property path : String read FPath write FPath;
@@ -71,7 +71,7 @@ Type
     cursor : integer;
     function GetCurrent: TJsonNode;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     function MoveNext() : boolean;
     Property Current : TJsonNode read GetCurrent;
   end;
@@ -115,6 +115,7 @@ Type
   TJsonNull = class (TJsonNode)
   protected
     function nodeType : String; override;
+  public
     function kind : TJsonNodeKind; override;
     function compare(other : TJsonNode) : boolean; override;
   end;
@@ -126,8 +127,8 @@ Type
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
   public
-    Constructor Create(path : String; value : boolean); overload;
-    Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
+    constructor Create(path : String; value : boolean); overload;
+    constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
     Function Link : TJsonBoolean; Overload;
     function kind : TJsonNodeKind; override;
     property value : boolean read FValue write FValue;
@@ -140,8 +141,8 @@ Type
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
   public
-    Constructor Create(path : String; value : string); overload;
-    Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
+    constructor Create(path : String; value : string); overload;
+    constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
     Function Link : TJsonString; Overload;
     function kind : TJsonNodeKind; override;
     property value : String read FValue write FValue;
@@ -154,8 +155,8 @@ Type
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
   public
-    Constructor Create(path : String; value : string); overload;
-    Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
+    constructor Create(path : String; value : string); overload;
+    constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
     Function Link : TJsonNumber; Overload;
     function kind : TJsonNodeKind; override;
     property value : String read FValue write FValue;
@@ -221,8 +222,8 @@ Type
     FNode: TJsonNode;
     procedure SetNode(const Value: TJsonNode);
   public
-    Constructor Create(name : String; node : TJsonNode);
-    Destructor Destroy; Override;
+    constructor Create(name : String; node : TJsonNode);
+    destructor Destroy; Override;
     property name : String read FName write FName;
     property node : TJsonNode read FNode write SetNode;
   end;
@@ -238,7 +239,7 @@ Type
     function unescape(s : String) : String;
   public
     constructor Create; override;
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     procedure execute(focus : TJsonNode; path : string; terminalExtensions : boolean);
 
     property terminalState : TJsonPointerTerminalState read FTerminalState;
@@ -256,7 +257,7 @@ Type
     Function JSONString(const value : String) : String;
   public
     constructor Create; override;
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link: TJSONWriter; overload;
     function canInject : boolean; virtual;
 
@@ -361,7 +362,7 @@ Type
     Procedure ValueArray(Const name : String); override;
     Procedure FinishArray; override;
     Procedure ValueInArray(Const value : String); overload; override;
-    procedure valueNullInArray; override;
+    procedure ValueNullInArray; override;
   end;
 
   TJSONLexType = (jltOpen, jltClose, jltString, jltNumber, jltColon, jltComma, jltOpenArray, jltCloseArray, jltEof, jltNull, jltBoolean);
@@ -382,8 +383,8 @@ Type
     Function Path : String;
     function GetValue: String;
   Public
-    Constructor Create(oStream : TFslStream); Overload;
-    Destructor Destroy; Override;
+    constructor Create(oStream : TFslStream); Overload;
+    destructor Destroy; Override;
     Procedure Start;
     Property LexType : TJSONLexType read FLexType;
     Property Value : String read GetValue;
@@ -411,9 +412,9 @@ Type
     procedure readObject(obj : TJsonObject; root : boolean);
     procedure readArray(arr : TJsonArray; root : boolean);
   Public
-    Constructor Create(oStream : TStream); Overload;
-    Constructor Create(oStream : TFslStream);  Overload;
-    Destructor Destroy; Override;
+    constructor Create(oStream : TStream); Overload;
+    constructor Create(oStream : TFslStream);  Overload;
+    destructor Destroy; Override;
     Property ItemType : TJsonParserItemType read FItemType;
     Property ItemName : String read FItemName;
     Property ItemValue : String read GetItemValue;

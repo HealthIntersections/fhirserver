@@ -199,10 +199,10 @@ Type
     Property Native: SQLINTEGER Read GetNative;
     Property Message: String Read GetMessage Write SetMessage;
 
-    Constructor Create(AOwner: TODBCObject;
+    constructor Create(AOwner: TODBCObject;
                        ARetCode: SQLRETURN;
                        AErrors: TList);
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Procedure First;
     Procedure Last;
     Function Next: Boolean;
@@ -251,8 +251,8 @@ Type
     Property ConnectionPooling: TConnectionPooling Read FConnectionPooling Write SetConnectionPooling
       Default DefConnectionPooling;
 
-    Constructor Create;
-    Destructor Destroy; Override;
+    constructor Create;
+    destructor Destroy; Override;
   End;
 
   { TODBCContext }
@@ -260,7 +260,7 @@ Type
   Protected
     FEnv : TOdbcEnv;
   Public
-    Constructor Create(Env : TOdbcEnv); Virtual;
+    constructor Create(Env : TOdbcEnv); Virtual;
   End;
 
   { TDriverPtr }
@@ -347,8 +347,8 @@ Type
       Default DefTracing;
     Property InTransaction: Boolean Read GetInTransaction;
 
-    Constructor Create(Env : TOdbcEnv); Override;
-    Destructor Destroy; Override;
+    constructor Create(Env : TOdbcEnv); Override;
+    destructor Destroy; Override;
 //    Function Terminate: Boolean; Override;
 //    Procedure Resolve;
     Procedure Connect;
@@ -963,8 +963,8 @@ Type
     Property IgnoreColNames: String Read GetIgnoreColNames;
   Public
     { Public declarations }
-    Constructor Create(Env : TOdbcEnv; dbc : TOdbcConnection); reintroduce; virtual;
-    Destructor Destroy; Override;
+    constructor Create(Env : TOdbcEnv; dbc : TOdbcConnection); reintroduce; virtual;
+    destructor Destroy; Override;
     Function Terminate: Boolean;
     Procedure Close; Virtual;
     Procedure CloseCursor; Virtual;
@@ -2749,7 +2749,7 @@ end;
 Function OffsetPointer(P: Pointer;
                        Ofs: LongInt): Pointer;
 Begin
-  Result:= Pointer(NativeUInt(P)+Ofs);
+  Result:= Pointer(NativeUInt(P)+NativeUInt(Ofs));
 End;
 
 Function OffsetRow(P: Pointer;

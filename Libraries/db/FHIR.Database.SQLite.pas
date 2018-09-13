@@ -87,7 +87,7 @@ type
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
   Public
-    constructor create(AOwner : TKDBManager; Filename : String; autoCreate : boolean);
+    constructor Create(AOwner : TKDBManager; Filename : String; autoCreate : boolean);
     destructor Destroy; override;
   end;
 
@@ -103,8 +103,8 @@ type
     function GetDriver: String; Override;
     procedure init; override;
   public
-    constructor create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
-    constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
+    constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
+    constructor Create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     destructor Destroy; override;
     procedure SaveSettings(ASettings : TSettingsAdapter); override;
     class function IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean; override;

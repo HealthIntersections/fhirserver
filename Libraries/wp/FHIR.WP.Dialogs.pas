@@ -825,7 +825,7 @@ Type
       Function DialogCaption : String; Overload; Override;
       Procedure Initialise; Override;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Property Frame : TWPSymbolFrame Read GetFrame;
       Property WorkingFont : TWPSFontDetails Read GetWorkingFont Write SetWorkingFont;

@@ -681,7 +681,7 @@ type
     procedure init; virtual;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
-    constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; virtual; abstract;
+    constructor Create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; virtual; abstract;
     destructor Destroy; Override;
 
     function Link : TKDBManager; overload;
@@ -720,7 +720,7 @@ type
     FHook : TKDBManagerEvent;
     FName : String;
   public
-    constructor create(Name : String; Hook : TKDBManagerEvent);
+    constructor Create(Name : String; Hook : TKDBManagerEvent);
   end;
 
   TKDBManagerList = class (TFslObject)
@@ -770,8 +770,6 @@ var
 { TKDBConnection }
 
 constructor TKDBConnection.Create(AOwner: TKDBManager);
-var
-  i : integer;
 begin
   inherited create;
   FNoFree := false;
@@ -1464,7 +1462,6 @@ end;
 procedure TKDBManager.Error(AConn : TKDBConnection; AException: Exception; AErrMsg : string);
 var
   LIndex : integer;
-  s : String;
 begin
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 

@@ -45,7 +45,7 @@ Type
     FStatusText : String;
     FScimType : String;
   public
-    Constructor Create(status : Integer; statusText : String; scimType : String; message : String);
+    constructor Create(status : Integer; statusText : String; scimType : String; message : String);
     property Status : integer read FStatus;
     property StatusText : String read FStatusText;
     property ScimType : String read FScimType;
@@ -76,8 +76,8 @@ Type
     function hasSchema(s : String) : boolean;
     procedure checkSchema(s : String);
   public
-    Constructor Create(FJson : TJsonObject); virtual;
-    Destructor Destroy; override;
+    constructor Create(FJson : TJsonObject); virtual;
+    destructor Destroy; override;
 
     property id : String read GetId write SetId;
     property ExternalId : String read GetExternalId write SetExternalId;
@@ -101,8 +101,8 @@ Type
     function GetPrimary: Boolean;
     procedure SetPrimary(const Value: Boolean);
   public
-    Constructor Create(FJson : TJsonObject);
-    Destructor Destroy; override;
+    constructor Create(FJson : TJsonObject);
+    destructor Destroy; override;
 
     Property Value : String read GetValue write SetValue;
     Property Type_ : String read GetType write SetType;
@@ -138,8 +138,8 @@ Type
     procedure SetRegion(const Value: String);
     procedure SetStreetAddress(const Value: String);
   public
-    Constructor Create(FJson : TJsonObject);
-    Destructor Destroy; override;
+    constructor Create(FJson : TJsonObject);
+    destructor Destroy; override;
 
     Property Type_ : String read GetType write SetType;
     Property Primary : Boolean read GetPrimary write SetPrimary;
@@ -208,9 +208,9 @@ Type
     function GetEntitlement(i: integer): String;
     function GetEntitlementCount: integer;
   public
-    Constructor Create(FJson : TJsonObject); override;
-    Constructor CreateNew;
-    Destructor Destroy; override;
+    constructor Create(FJson : TJsonObject); override;
+    constructor CreateNew;
+    destructor Destroy; override;
     Function Link : TSCIMUser; overload;
 
     procedure check;

@@ -341,10 +341,10 @@ Type
       Property Bitmap : TGPBitmap Read GetBitmap Write SetBitmap;
 
     Public
-      Constructor Create; Override;
-      Constructor Create(Const iWidth : Integer; Const iHeight : Integer); Overload;
+      constructor Create; Override;
+      constructor Create(Const iWidth : Integer; Const iHeight : Integer); Overload;
 
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Function Link : TGdiPlusBitmapImage;
 
@@ -446,8 +446,8 @@ Type
       FHintStringList : TFslStringList;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TGdiPlusHotSpot;
 
@@ -524,8 +524,8 @@ Type
       Property PaintChildControls : Boolean Read FPaintChildControls Write FPaintChildControls;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AlignClient;
       Procedure AlignLeft;
@@ -568,8 +568,8 @@ Type
       FOverrideFlags : Boolean;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TGdiPlusStringFormat;
 
@@ -618,8 +618,8 @@ Type
       Function GetNativeFont : TGPFont;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TGdiPlusFont;
 
@@ -660,7 +660,7 @@ Type
     procedure SetFontSize(const Value: Double);
     procedure SetImage(const Value: TGdiPlusBitmapImage);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Property Image : TGdiPlusBitmapImage read FImage write SetImage;
 

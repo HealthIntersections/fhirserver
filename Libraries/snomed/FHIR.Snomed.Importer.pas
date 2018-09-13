@@ -116,15 +116,15 @@ Type
 //    FClosure : TCardinalArray;
     Stems : TFslIntegerList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   End;
 
   TWordCache = class (TObject)
   public
     Flags : Integer;
     Stem : String;
-    constructor create(aStem : String);
+    constructor Create(aStem : String);
   End;
 
   TSnomedImporter = class (TFslObject)
@@ -202,8 +202,8 @@ Type
     procedure QuickSortPairsByName(var a: TSnomedReferenceSetMemberArray);
     procedure SetVersion(s : String);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     procedure Go;
     Property ConceptFiles : TStringList read FConceptFiles;
     Property RelationshipFiles : TStringList read FRelationshipFiles;

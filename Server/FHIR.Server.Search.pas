@@ -102,8 +102,8 @@ type
     procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
     procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
   public
-    constructor create(serverContext : TFslObject);
-    Destructor Destroy; override;
+    constructor Create(serverContext : TFslObject);
+    destructor Destroy; override;
     procedure Build;
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 
@@ -181,7 +181,6 @@ var
   i, j : integer;
   ix : TFhirIndex;
   ts : TStringList;
-  c : TFHIRCompartmentId;
 begin
   if typekey = 0 then
   begin
@@ -955,7 +954,6 @@ var
   a : String;
   type_ : TFhirSearchParamType;
   group : TFHIRGroupW;
-  each: TObject;
   characteristic : TFhirGroupCharacteristicW;
 begin
   isReverse := false;

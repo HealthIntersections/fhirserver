@@ -78,7 +78,7 @@ Type
   private
     FValue: boolean;
   public
-    Constructor Create(value : boolean);
+    constructor Create(value : boolean);
     property value : boolean read FValue write FValue;
     function ToString : String; override;
   end;
@@ -87,7 +87,7 @@ Type
   private
     FValue: integer;
   public
-    Constructor Create(value : integer);
+    constructor Create(value : integer);
     property value : integer read FValue write FValue;
     function ToString : String; override;
   end;
@@ -96,7 +96,7 @@ Type
   private
     FValue: String;
   public
-    Constructor Create(value : String);
+    constructor Create(value : String);
     property value : String read FValue write FValue;
     function ToString : String; override;
   end;
@@ -112,7 +112,7 @@ Type
     FStart : TSourceLocation;
     FStop : TSourceLocation;
   public
-    Constructor Create(nodeType : TMXmlElementType); overload;
+    constructor Create(nodeType : TMXmlElementType); overload;
     Property Name : String read FName write FName;
     property NodeType : TMXmlElementType read FNodeType write FNodeType;
     property NamespaceURI : String read FNamespaceURI write FNamespaceURI;
@@ -126,8 +126,8 @@ Type
   private
     FValue : String;
   public
-    Constructor Create(); override;
-    Constructor Create(name, value : String); overload;
+    constructor Create(); override;
+    constructor Create(name, value : String); overload;
 
     Function Link : TMXmlAttribute; overload;
     property Value : String read FValue write FValue;
@@ -160,10 +160,10 @@ Type
     function GetAllText: String;
     procedure fixChildren;
   public
-    Constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
-    Constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
-    Constructor CreateNSN(nodeType : TMXmlElementType; name, ns, local : String); overload;
-    Destructor Destroy; override;
+    constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
+    constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
+    constructor CreateNSN(nodeType : TMXmlElementType; name, ns, local : String); overload;
+    destructor Destroy; override;
     Function Link : TMXmlElement; overload;
 
     property Attributes : TFslMap<TMXmlAttribute> read GetAttributes;
@@ -217,7 +217,7 @@ Type
     function GetFilters: TFslList<TMXPathExpressionNode>;
     function buildConstant : TMXmlNode;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Function Link : TMXPathExpressionNode; overload;
     function addParam : TMXPathExpressionNode;
 
@@ -300,10 +300,10 @@ Type
     function evaluateString(nodes : TFslList<TMXmlNode>): String;
     function GetDocElement: TMXmlElement;
   public
-    Constructor Create; override;
-    Constructor Create(nodeType : TMXmlElementType; name : String); overload; override;
-    Constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    constructor Create(nodeType : TMXmlElementType; name : String); overload; override;
+    constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; override;
+    destructor Destroy; override;
 
     property docElement : TMXmlElement read GetDocElement;
     function ToXml(pretty : boolean = false; xmlHeader : boolean = false) : String; overload;

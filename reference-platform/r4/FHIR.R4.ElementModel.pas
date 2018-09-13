@@ -49,8 +49,8 @@ type
 
     function GetName: string;
   public
-    Constructor create(context : TFHIRWorkerContext; definition : TFHIRElementDefinition; structure : TFHIRStructureDefinition);
-    Destructor Destroy; override;
+    constructor Create(context : TFHIRWorkerContext; definition : TFHIRElementDefinition; structure : TFHIRStructureDefinition);
+    destructor Destroy; override;
     function link : TFHIRMMProperty; overload;
 
     property context : TFHIRWorkerContext read FContext;
@@ -141,7 +141,7 @@ type
     constructor Create(name : String); overload;
     constructor Create(name : String; prop : TFHIRMMProperty); overload;
     constructor Create(name : String; prop : TFHIRMMProperty; type_, value : String); overload;
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     function link : TFHIRMMElement; overload;
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
@@ -204,7 +204,7 @@ type
     function getDefinition(line, col : integer; ns, name : String) : TFHIRStructureDefinition; overload;
     function getDefinition(line, col : integer; name : String) : TFHIRStructureDefinition; overload;
   public
-    constructor create(context : TFHIRWorkerContext);
+    constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
 
     procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFslList<TFhirOperationOutcomeIssueW>);
@@ -305,7 +305,7 @@ type
     function GetResourceType : TFhirResourceType; override;
   public
     constructor Create(root : TFHIRMMElement);
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     function isMetaDataBased : boolean; override;
     class function CreateFromBase(context : TFHIRWorkerContext; base : TFHIRObject) : TFHIRCustomResource;
@@ -317,9 +317,8 @@ type
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
     function fhirType : string; override;
-    function getid : string; override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function getId : string; override;
+    function Equals(other : TObject) : boolean; override;
     procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
   end;
 
@@ -2514,14 +2513,9 @@ begin
   raise EFHIRException.create('Not done yet: TFHIRCustomResource.Clone:');
 end;
 
-function TFHIRCustomResource.equalsDeep(other: TFHIRObject): boolean;
+function TFHIRCustomResource.equals(other : TObject): boolean;
 begin
   raise EFHIRException.create('Not done yet: TFHIRCustomResource.equalsDeep');
-end;
-
-function TFHIRCustomResource.equalsShallow(other: TFHIRObject): boolean;
-begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.equalsShallow');
 end;
 
 function TFHIRCustomResource.FhirType: string;

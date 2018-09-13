@@ -74,7 +74,7 @@ type
     procedure buildQuantityEdit;
     procedure readParamValue(s : String);
   public
-    constructor create(form : TFetchResourceFrm; definition : TFHIRSearchParamDefinitionW);
+    constructor Create(form : TFetchResourceFrm; definition : TFHIRSearchParamDefinitionW);
     destructor Destroy; override;
 
     procedure AdjustPosition(top, left, width : integer);

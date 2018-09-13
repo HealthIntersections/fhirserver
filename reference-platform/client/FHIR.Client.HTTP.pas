@@ -297,8 +297,6 @@ begin
 end;
 
 function TFHIRHTTPCommunicator.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
-var
-  h : THTTPHeaders;
 begin
   if Assigned(FClient.OnProgress) then
     FClient.OnProgress(FClient, 'Requesting', 0, false);

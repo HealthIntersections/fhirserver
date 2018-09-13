@@ -185,7 +185,6 @@ end;
 function TFHIRClientJSHelper.FHIRClientSearchJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   ts : TStringList;
-  s : String;
   bnd : TFhirResourceV;
 begin
   ts := TStringList.create;
@@ -217,7 +216,6 @@ end;
 function TFHIRClientJSHelper.FHIRClientSearchAllJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   ts : TStringList;
-  s : String;
   bnd : TFhirResourceV;
 begin
   ts := TStringList.create;

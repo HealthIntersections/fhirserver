@@ -44,7 +44,7 @@ uses
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
   public
-    Constructor Create;
+    constructor Create;
   end;
 
   TTestTransformerServices = class(TTransformerServices)

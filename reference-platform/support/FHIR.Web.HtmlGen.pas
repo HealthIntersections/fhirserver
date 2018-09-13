@@ -51,8 +51,8 @@ Type
     function Footer(base, lang, logId: String; tail: boolean = true): string;
     function HeaderX(base, lang, version: String): String;
   public
-    Constructor Create(factory : TFHIRFactory);
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory);
+    destructor Destroy; Override;
 
     procedure Header(s : String);
     procedure Done;
@@ -307,8 +307,6 @@ begin
 end;
 
 function THtmlPublisher.HeaderX(base, lang, version: String): String;
-var
-   f : boolean;
 begin
   result :=
     '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+

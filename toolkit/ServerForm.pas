@@ -172,7 +172,7 @@ type
     procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure openPatient(pat : TFHIRPatient);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
     property CapabilityStatement : TFhirCapabilityStatement read FCapabilityStatement write SetCapabilityStatement;
 

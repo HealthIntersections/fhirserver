@@ -29,7 +29,6 @@ implementation
 
 procedure TFHIRNDJsonComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 var
-  oStream : TFslVCLStream;
   json : TFHIRComposer;
   b : TFhirBundleW;
   be : TFhirBundleEntryW;

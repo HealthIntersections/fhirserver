@@ -69,8 +69,8 @@ type
 
     procedure load;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TAreaCodeServices; overload;
 
     function TotalCount : integer;  override;

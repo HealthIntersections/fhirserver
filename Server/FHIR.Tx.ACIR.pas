@@ -55,13 +55,13 @@ type
   TACIRFilter = class (TCodeSystemProviderFilterContext)
   private
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
   end;
 
   TACIRPrep = class (TCodeSystemProviderFilterPreparationContext)
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   end;
 
   TACIRServices = class (TCodeSystemProvider)
@@ -71,8 +71,8 @@ type
 
     procedure load;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TACIRServices; overload;
 
     function TotalCount : integer;  override;

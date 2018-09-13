@@ -56,8 +56,8 @@ Type
     function bundleIsTransaction(res : TFHIRResourceV) : boolean; override;
     function processUrlTemplate(url : String; res : TFhirResourceV) : String; override;
   public
-    Constructor Create(ServerContext : TFslObject);
-    Destructor Destroy; Override;
+    constructor Create(ServerContext : TFslObject);
+    destructor Destroy; Override;
   end;
 
 implementation

@@ -51,7 +51,7 @@ type
     protected
       function FieldDetailsHint(oField: TWPDocumentField): String; Virtual;
     Public
-      Constructor Create(oWordProcessor : TWordProcessor); Overload; Virtual;
+      constructor Create(oWordProcessor : TWordProcessor); Overload; Virtual;
       Property WordProcessor : TWordProcessor Read FWordProcessor Write FWordProcessor;
 
       // The implementation of the common data patterns Mask: and List: are here so that
@@ -116,8 +116,8 @@ Type
       Procedure SetModel(Const Value: TWPFieldModel);
       Function MakeText(Const sText : String) : TWPDocumentText;
     Public
-      Constructor Create(oWordProcessor : TWordProcessor); Overload; Override;
-      Destructor Destroy; Override;
+      constructor Create(oWordProcessor : TWordProcessor); Overload; Override;
+      destructor Destroy; Override;
 
       Property Model : TWPFieldModel Read GetModel Write SetModel;
       Property Namespace : String Read FNamespace Write FNamespace;

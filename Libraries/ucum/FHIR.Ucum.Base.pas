@@ -46,8 +46,8 @@ type
   private
     FCommonUnits : TFslStringList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TUcumProperty; Overload;
 
     Property CommonUnits : TFslStringlist read FCommonUnits;
@@ -64,7 +64,6 @@ type
 
   TUcumConcept = class (TFslObject)
   private
-    Fkind : TConceptKind;
     Fcode : String;
     FcodeUC : String;
     FprintSymbol : String;
@@ -73,8 +72,8 @@ type
   protected
     Function GetKind : TConceptKind; virtual;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TUcumConcept; Overload;
 
     Property kind : TConceptKind read Getkind;
@@ -171,8 +170,8 @@ type
   protected
     Function GetKind : TConceptKind; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TUcumDefinedUnit; Overload;
     Property metric : boolean read Fmetric write FMetric; // whether this is a metric unit or not
     Property isSpecial : boolean read FisSpecial write FIsSpecial; // special means?
@@ -202,8 +201,8 @@ type
     FVersion : String;
     FRevisionDate : String;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : TUcumModel; Overload;
 

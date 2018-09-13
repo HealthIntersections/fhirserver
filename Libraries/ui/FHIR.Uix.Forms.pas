@@ -218,8 +218,8 @@ Type
       Procedure SetBusy(Const Value: Boolean); Virtual;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;

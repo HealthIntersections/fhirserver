@@ -43,7 +43,7 @@ type
     procedure SetValue(name: String; const Value: String);
     function save : String;
   public
-    constructor create(value : String);
+    constructor Create(value : String);
     destructor Destroy; override;
     property value[name : String] : String read getValue write SetValue; default;
   end;
@@ -68,7 +68,7 @@ type
     procedure SetWebValue(name: String; const Value: String);
   public
     constructor Create(const FileName: string);
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Function Link : TFHIRServerIniFile; overload;
     property FileName: string read GetFileName;
 

@@ -86,8 +86,8 @@ Type
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
   public
-    Constructor Create(worker : TFHIRWorkerContextV; lang : String); Virtual;
-    Destructor Destroy; Override;
+    constructor Create(worker : TFHIRWorkerContextV; lang : String); Virtual;
+    destructor Destroy; Override;
     property source : TStream read FSource write FSource;
     procedure Parse; Virtual; abstract;
     property resource : TFhirResourceV read Fresource write SetResource;
@@ -141,7 +141,7 @@ Type
     Procedure checkOtherAttributes(value : TMXmlElement; path : String);
     function GetFormat: TFHIRFormat; override;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     procedure Parse; Override;
     function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
 
@@ -226,8 +226,8 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); Virtual;
   public
-    Constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
-    Destructor Destroy; override;
+    constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
+    destructor Destroy; override;
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
 
@@ -788,8 +788,6 @@ begin
 end;
 
 procedure TFHIRJsonComposerBase.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);
-var
-  s : String;
 begin
   if base is TFHIRSelection then
     composeBase(json, name, TFHIRSelection(base).value)

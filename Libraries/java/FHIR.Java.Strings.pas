@@ -48,12 +48,13 @@ pint = ^integer;
 
 function UTF8StrAlloc(Size: Cardinal): PUTF8Char;
 function StrMove(Dest: PUTF8Char; const Source: PUTF8Char; Count: Cardinal): PUTF8Char;
-function StrNew(const Str: PUTF8Char): PUTF8Char;
+function StrNew(const Str: PUTF8Char): PUTF8Char; overload;
+function StrNew(const Str: String): PUTF8Char; overload;
 function StrLCopy(Dest: PUTF8Char; const Source: PUTF8Char; MaxLen: Cardinal): PUTF8Char;
-function ExtractFileExt(const FileName: UTF8String): UTF8String;
+function ExtractFileExt(const FileName: String): String;
 
 
-IMPLEMENTATION 
+IMPLEMENTATION
 
 function UTF8StrAlloc(Size: Cardinal): PUTF8Char;
 begin
@@ -80,6 +81,21 @@ begin
   end;
 end;
 
+function StrNew(const Str: String): PUTF8Char;
+var
+  Size: Cardinal;
+  p : UTF8String;
+begin
+  if Str = '' then
+    Result := nil
+  else
+  begin
+    p := UTF8Encode(Str);
+    Size := length(p) + 1;
+    Result := StrMove(UTF8StrAlloc(Size), @p, Size);
+  end;
+end;
+
 
 function StrLCopy(Dest: PUTF8Char; const Source: PUTF8Char; MaxLen: Cardinal): PUTF8Char;
 var
@@ -94,11 +110,11 @@ begin
 end;
 
 
-function ExtractFileExt(const FileName: UTF8String): UTF8String;
+function ExtractFileExt(const FileName: String): String;
 var
   I: Integer;
 begin
-  I := LastDelimiter(UTF8String('.' + PathDelim + DriveDelim), FileName);
+  I := LastDelimiter('.' + PathDelim + DriveDelim, FileName);
   if (I > 0) and (FileName[I] = '.') then
     Result := Copy(FileName, I, MaxInt) else
     Result := '';

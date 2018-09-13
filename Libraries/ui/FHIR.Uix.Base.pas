@@ -1904,7 +1904,7 @@ Type
     FSelected : TButton;
   Protected
   Public
-    Constructor CreateNew(AOwner: TComponent); Reintroduce;
+    constructor CreateNew(AOwner: TComponent); Reintroduce;
 
     Property Selected : TButton Read FSelected Write FSelected;
   End;

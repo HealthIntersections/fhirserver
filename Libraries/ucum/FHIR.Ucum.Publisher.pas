@@ -63,8 +63,8 @@ Type
     procedure PublishUnit(const sPrefix: String; oBuilder: THL7V2DocumentPublisher; oUnit : TUcumUnit);
     procedure PublishExpression(const sPrefix: String; oBuilder: THL7V2DocumentPublisher; sExpression : String);
   Public
-    Constructor Create(oUcum : TUcumServices);
-    Destructor Destroy; Override;
+    constructor Create(oUcum : TUcumServices);
+    destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
   End;

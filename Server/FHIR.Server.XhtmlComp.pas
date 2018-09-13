@@ -67,8 +67,8 @@ type
     function ResourceMediaType: String; override;
     function GetFormat: TFHIRFormat; override;
   public
-    Constructor Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; lang, BaseURL : String); reintroduce; overload;
-    Destructor Destroy; override;
+    constructor Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; lang, BaseURL : String); reintroduce; overload;
+    destructor Destroy; override;
     property BaseURL : String read FBaseURL write FBaseURL;
     Property Session : TFhirSession read FSession write SetSession;
     Property Version : String read FVersion write FVersion;

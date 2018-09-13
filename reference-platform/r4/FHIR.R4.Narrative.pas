@@ -83,7 +83,7 @@ Type
     FChildren : TFslList<TFHIRElementDefinition>;
     FList : TFslList<TPropertyWrapper>;
     public
-    Constructor create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
+    constructor Create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
     end;
   *)
 
@@ -97,8 +97,8 @@ Type
     FWrapped: TFHIRProperty;
     FList: TFslList<TBaseWrapper>;
   public
-    Constructor create(wrapped: TFHIRProperty);
-    Destructor Destroy; override;
+    constructor Create(wrapped: TFHIRProperty);
+    destructor Destroy; override;
     function getOwner(): TFHIRObject; override;
     function getName(): String; override;
     function hasValues(): boolean; override;
@@ -114,8 +114,8 @@ Type
   private
     FWrapped: TFHIRResource;
   public
-    Constructor create(wrapped: TFHIRResource);
-    Destructor Destroy; override;
+    constructor Create(wrapped: TFHIRResource);
+    destructor Destroy; override;
     function getContained(): TFslList<TResourceWrapper>; override;
     function getId(): String; override;
     function getNarrative(): TFHIRXhtmlNode; override;
@@ -129,8 +129,8 @@ Type
     FList: TFslList<TPropertyWrapper>;
     FOtherList: TFslList<TPropertyWrapper>;
   public
-    Constructor create(wrapped: TFHIRObject);
-    Destructor Destroy; override;
+    constructor Create(wrapped: TFHIRObject);
+    destructor Destroy; override;
     function getBase(): TFHIRObject; override;
     function children(): TFslList<TPropertyWrapper>; override;
     function getChildByName(tail: String): TPropertyWrapper; override;
@@ -210,8 +210,8 @@ Type
     procedure generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean); overload;
     procedure inject(r: TFHIRDomainResource; x: TFHIRXhtmlNode; status: TFhirNarrativeStatusEnum);
   public
-    Constructor Create(cc: TFHIRWorkerContextV); override;
-    Destructor Destroy; override;
+    constructor Create(cc: TFHIRWorkerContextV); override;
+    destructor Destroy; override;
     procedure generate(res : TFHIRResourceV); overload; override;
     procedure generateDR(r: TFHIRDomainResource); overload;
 

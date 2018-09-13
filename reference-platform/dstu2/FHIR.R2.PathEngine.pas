@@ -47,7 +47,7 @@ type
     FResourceType : String;
     FContext : TFHIRTypeDetails;
   public
-    Constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
+    constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
     destructor Destroy; override;
     function Link : TFHIRPathExecutionTypeContext; overload;
     property appInfo : TFslObject read FappInfo;

@@ -22,14 +22,13 @@ type
 
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
-  protected
-    procedure SeeResource(r : TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory); Override;
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory); Override;
+    destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR4; overload;
 
+    procedure SeeResource(r : TFhirResource); override;
     procedure checkResource(r : TFhirResource);
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;

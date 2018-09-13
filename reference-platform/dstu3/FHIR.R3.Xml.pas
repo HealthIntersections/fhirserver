@@ -2528,6 +2528,7 @@ Type
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); override;
+  public
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
 

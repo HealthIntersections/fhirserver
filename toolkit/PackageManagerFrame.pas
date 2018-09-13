@@ -106,7 +106,7 @@ type
     procedure importUrl(sender : TObject; url : String);
     function CheckImp(sender : TObject; msg : String) : boolean;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     procedure load; override;
   end;

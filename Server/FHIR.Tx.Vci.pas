@@ -55,15 +55,15 @@ type
     text : boolean;
     qry : TKDBConnection;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
   end;
 
   TNciMetaPrep = class (TCodeSystemProviderFilterPreparationContext)
   private
     filters : TFslObjectList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   end;
 
   TNciMetaServices = class (TCodeSystemProvider)
@@ -71,8 +71,8 @@ type
     db : TKDBManager;
 
   public
-    Constructor Create(db : TKDBManager);
-    Destructor Destroy; Override;
+    constructor Create(db : TKDBManager);
+    destructor Destroy; Override;
     Function Link : TNciMetaServices; overload;
 
     function TotalCount : integer;  override;

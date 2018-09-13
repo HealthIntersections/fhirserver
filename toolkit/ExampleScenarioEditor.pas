@@ -321,8 +321,8 @@ type
     CURRobjectlist:TFHIRObjectList;
 
   public
-    Constructor Create(owner : TComponent); override;
-    Destructor Destroy; override;
+    constructor Create(owner : TComponent); override;
+    destructor Destroy; override;
 
     procedure load; override;
 

@@ -100,7 +100,7 @@ type
   protected
     Procedure Execute; override;
   public
-    Constructor Create(manager : TCDSHooksManager);
+    constructor Create(manager : TCDSHooksManager);
     destructor Destroy; override;
     function Link : TCDSHooksManagerWorkThread; overload;
 
@@ -680,9 +680,9 @@ begin
 end;
 
 procedure TCDSHooksManagerWorkThread.Execute;
-var
-  body, rep : TFslBuffer;
-  resp : TCDSHookResponse;
+//var
+//  body, rep : TFslBuffer;
+//  resp : TCDSHookResponse;
 //  client : TFhirClient;
 begin
 (*  SetThreadName('CDSHooks manager');

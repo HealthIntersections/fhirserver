@@ -69,7 +69,7 @@ type
   private
     FVer: String;
   public
-    constructor create(ver : String);
+    constructor Create(ver : String);
 
     property ver : String read FVer write FVer;
   end;

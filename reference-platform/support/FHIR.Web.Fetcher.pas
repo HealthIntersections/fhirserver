@@ -60,9 +60,9 @@ Type
     procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Property URL : String read FURL write FURL;
     Property Buffer : TFslBuffer read FBuffer write SetBuffer;

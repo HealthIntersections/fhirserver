@@ -46,9 +46,9 @@ Type
     FConcept: TFhirValueSetComposeIncludeConceptW;
     procedure SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
   public
-    Constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
-    Constructor Create(code : String); overload;
-    Destructor Destroy; override;
+    constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
+    constructor Create(code : String); overload;
+    destructor Destroy; override;
     property concept : TFhirValueSetComposeIncludeConceptW read FConcept write SetConcept;
   end;
 
@@ -57,7 +57,7 @@ Type
     FCursor : integer; // used on the first
     FCanonical: String;
   public
-    Constructor Create(canonical : String);
+    constructor Create(canonical : String);
     property canonical : String read FCanonical write FCanonical;
   end;
 
@@ -79,8 +79,8 @@ Type
     Function GetPropertyIndex(sName : String):Integer;
 
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
 
     Procedure SetCommonUnits(vs : TFHIRValueSetW);
@@ -252,7 +252,7 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function GetByKey(sKey : String) : TUcumServices;
     Function GetDefinitionByName(sName : String) : TUcumServices;
@@ -283,8 +283,8 @@ type
   protected
     function getCode : String; override;
     function getDisplay : String; override;
-    procedure SetCode(Value: String); override;
-    procedure SetDisplay(Value: String); override;
+    procedure setCode(Value: String); override;
+    procedure setDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
   end;
 

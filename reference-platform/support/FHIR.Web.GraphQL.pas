@@ -51,7 +51,7 @@ Type
   private
     FValue : String;
   public
-    Constructor Create(value : String);
+    constructor Create(value : String);
     Function Link : TGraphQLVariableValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
@@ -62,7 +62,7 @@ Type
   private
     FValue : String;
   public
-    Constructor Create(value : String);
+    constructor Create(value : String);
     Function Link : TGraphQLNumberValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
@@ -74,7 +74,7 @@ Type
   private
     FValue : String;
   public
-    Constructor Create(value : String);
+    constructor Create(value : String);
     Function Link : TGraphQLValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
@@ -86,7 +86,7 @@ Type
   private
     FValue : String;
   public
-    Constructor Create(value : String);
+    constructor Create(value : String);
     Function Link : TGraphQLStringValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
@@ -100,9 +100,9 @@ Type
   private
     FFields : TFslList<TGraphQLArgument>;
   public
-    Constructor Create; overload; override;
-    Constructor Create(json : TJsonObject); overload;
-    Destructor Destroy; override;
+    constructor Create; overload; override;
+    constructor Create(json : TJsonObject); overload;
+    destructor Destroy; override;
     Function Link : TGraphQLObjectValue; overload;
     property Fields : TFslList<TGraphQLArgument> read FFields;
     function addField(name : String; listStatus : TGraphQLArgumentListStatus) : TGraphQLArgument;
@@ -117,11 +117,11 @@ Type
     procedure write(str : TStringBuilder; indent : integer);
     procedure valuesFromNode(json : TJsonNode);
   public
-    Constructor Create; overload; override;
-    Constructor Create(name : String; value : TGraphQLValue); overload;
-    Constructor Create(name : String; json : TJsonNode); overload;
+    constructor Create; overload; override;
+    constructor Create(name : String; value : TGraphQLValue); overload;
+    constructor Create(name : String; json : TJsonNode); overload;
 
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Function Link : TGraphQLArgument; overload;
     property Name : String read FName write FName;
     property listStatus : TGraphQLArgumentListStatus read FListStatus write FListStatus;
@@ -137,8 +137,8 @@ Type
     FName: String;
     FArguments: TFslList<TGraphQLArgument>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLDirective; overload;
     property Name : String read FName write FName;
     Property Arguments : TFslList<TGraphQLArgument> read FArguments;
@@ -152,8 +152,8 @@ Type
     FArguments: TFslList<TGraphQLArgument>;
     FDirectives: TFslList<TGraphQLDirective>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLField; overload;
     property Alias : String read FAlias write FAlias;
     Property Name : String read FName write FName;
@@ -170,8 +170,8 @@ Type
     FName: String;
     FDirectives: TFslList<TGraphQLDirective>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLFragmentSpread; overload;
     property Name : String read FName write FName;
     property Directives : TFslList<TGraphQLDirective> read FDirectives;
@@ -187,8 +187,8 @@ Type
     procedure SetFragmentSpread(const Value: TGraphQLFragmentSpread);
     procedure SetInlineFragment(const Value: TGraphQLFragment);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLSelection; overload;
     property field : TGraphQLField read FField write SetField;
     property FragmentSpread : TGraphQLFragmentSpread read FFragmentSpread write SetFragmentSpread;
@@ -202,7 +202,7 @@ Type
     FTypeName: String;
     procedure SetDefaultValue(const Value: TGraphQLValue);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Function Link : TGraphQLVariable; overload;
     property Name : String read FName write FName;
     property TypeName : String read FTypeName write FTypeName;
@@ -218,8 +218,8 @@ Type
     FVariables: TFslList<TGraphQLVariable>;
     FDirectives: TFslList<TGraphQLDirective>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLOperation; overload;
     property operationType : TGraphQLOperationType read FoperationType write FoperationType;
     property Name : String read FName write FName;
@@ -236,8 +236,8 @@ Type
     FSelectionSet: TFslList<TGraphQLSelection>;
     FDirectives: TFslList<TGraphQLDirective>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLFragment; overload;
     property Name : String read FName write FName;
     property TypeCondition : String read FTypeCondition write FTypeCondition;
@@ -251,8 +251,8 @@ Type
     FFragments: TFslList<TGraphQLFragment>;
     FOperations: TFslList<TGraphQLOperation>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TGraphQLDocument; overload;
     property Operations : TFslList<TGraphQLOperation> read FOperations;
     property Fragments : TFslList<TGraphQLFragment> read FFragments;
@@ -267,9 +267,9 @@ Type
     FVariables: TFslList<TGraphQLArgument>;
     procedure SetDocument(const Value: TGraphQLDocument);
   public
-    Constructor Create; overload; override;
-    Constructor Create(document : TGraphQLDocument); overload;
-    Destructor Destroy; override;
+    constructor Create; overload; override;
+    constructor Create(document : TGraphQLDocument); overload;
+    destructor Destroy; override;
     function Link : TGraphQLPackage; overload;
     property Document : TGraphQLDocument read FDocument write SetDocument;
     property OperationName : String read FOperationName write FOperationName;
@@ -319,8 +319,8 @@ type
     function parseFragment: TGraphQLFragment;
     procedure parseDocument(doc : TGraphQLDocument);
   public
-    Constructor Create; overload; override;
-    Destructor Destroy; override;
+    constructor Create; overload; override;
+    destructor Destroy; override;
     Function Link : TGraphQLParser; overload;
     class function parse(source : String) : TGraphQLPackage; overload;
     class function parse(source : TStream) : TGraphQLPackage; overload;

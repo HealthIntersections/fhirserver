@@ -165,8 +165,8 @@ Type
     FStream: TStream;         // used for local references of the stream the class is currently loading from
     FProgressRect: TRect;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure Assign(Source: TPersistent); Override;
     Class Function CanLoad(Const FileName: String): Boolean; Overload; Virtual;
@@ -449,8 +449,8 @@ Type
     Function FindExtension(Const Extension: String): Integer;
     Function FindGraphicClass(GraphicClass: TGraphicClass): Integer;
   Public
-    Constructor Create;
-    Destructor Destroy; Override;
+    constructor Create;
+    destructor Destroy; Override;
 
     Procedure Clear;
     Function GetDescription(Graphic: TGraphicClass): String;
@@ -8337,8 +8337,8 @@ Type
     FStream: TStream;         // used for local references of the stream the class is currently loading from
     FProgressRect: TRect;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure Assign(Source: TPersistent); Override;
     Class Function CanLoad(Const FileName: String): Boolean; Overload; Virtual;
@@ -8624,8 +8624,8 @@ Type
     Function FindExtension(Const Extension: String): Integer;
     Function FindGraphicClass(GraphicClass: TGraphicClass): Integer;
   Public
-    Constructor Create;
-    Destructor Destroy; Override;
+    constructor Create;
+    destructor Destroy; Override;
 
     Procedure Clear;
     Function GetDescription(Graphic: TGraphicClass): String;

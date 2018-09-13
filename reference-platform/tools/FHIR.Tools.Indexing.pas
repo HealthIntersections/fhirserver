@@ -102,8 +102,8 @@ type
     FName: String;
     FComponents : TFslStringDictionary;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     function Link : TFhirComposite; Overload;
     function Clone : TFhirComposite; Overload;
@@ -137,8 +137,8 @@ type
     FRelatedPersonCompartment : TFslMap<TFslStringSet>;
     FDeviceCompartment : TFslMap<TFslStringSet>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TFHIRCompartmentList; overload;
     function existsInCompartment(comp: string; resource : String) : boolean;
     function getIndexNames(comp: string; resource : String) : TFslStringSet;

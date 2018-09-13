@@ -70,8 +70,8 @@ Type
 
     procedure getSummary(b : TStringBuilder);
   public
-    Constructor Create(settings : TFHIRServerSettings);
-    Destructor Destroy; Override;
+    constructor Create(settings : TFHIRServerSettings);
+    destructor Destroy; Override;
     function link: TCommonTerminologies; overload;
 
     procedure add(p : TCodeSystemProvider);
@@ -103,7 +103,7 @@ Type
 
     function HasTranslation(list : TFslList<TFhirConceptMapGroupW>; system, code : String; out maps : TFslList<TFhirConceptMapGroupElementTargetW>) : boolean; overload;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function Link : TLoadedConceptMap; overload;
     Property Source : TFhirValueSetW read FSource write SetSource;
     Property Resource : TFhirConceptMapW read FResource write SetResource;
@@ -171,8 +171,8 @@ Type
     procedure invalidateVS(id : String); virtual;
     procedure getSummary(b : TStringBuilder);
   public
-    Constructor Create(db : TKDBManager; factory : TFHIRFactory; common : TCommonTerminologies); virtual;
-    Destructor Destroy; Override;
+    constructor Create(db : TKDBManager; factory : TFHIRFactory; common : TCommonTerminologies); virtual;
+    destructor Destroy; Override;
     Function Link : TTerminologyServerStore; overload;
 
     Property Factory : TFHIRFactory read FFactory;
@@ -261,8 +261,8 @@ Type
     FStore: TCommonTerminologies;
     FActCode : TCodeSystemProvider;
   public
-    Constructor Create(store : TCommonTerminologies; actCode : TCodeSystemProvider);
-    Destructor Destroy; override;
+    constructor Create(store : TCommonTerminologies; actCode : TCodeSystemProvider);
+    destructor Destroy; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -986,7 +986,6 @@ var
   vs : TFhirValueSetW;
   cs : TFhirCodeSystemW;
   cm : TLoadedConceptMap;
-  i : integer;
 begin
   FLock.Lock('SeeSpecificationResource');
   try
@@ -1052,7 +1051,6 @@ var
   vs : TFhirValueSetW;
   cs : TFhirCodeSystemW;
   cm : TLoadedConceptMap;
-  cse : TFHIRCodeSystemEntry;
 begin
   checkTerminologyResource(resource);
 
@@ -1755,7 +1753,6 @@ procedure TCommonTerminologies.load(ini: TFHIRServerIniFile; databases: TFslMap<
 var
   details : TFHIRServerIniComplex;
   s : string;
-  p : TCodeSystemProvider;
   sn: TSnomedServices;
 //  def : boolean;
   icdX: TICD10Provider;

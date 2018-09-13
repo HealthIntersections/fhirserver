@@ -51,8 +51,8 @@ type
     procedure DbgDatabase(const ACommand, AURL: String; var VResult: String);
     procedure ConnListChange(AConnMan : TKDBManager; ABeingCreated : Boolean);
   public
-    constructor create;
-    destructor destroy; override;
+    constructor Create;
+    destructor Destroy; override;
   end;
 
 { TKDBBackdoor }

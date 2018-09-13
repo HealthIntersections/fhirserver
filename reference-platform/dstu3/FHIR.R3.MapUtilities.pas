@@ -50,7 +50,7 @@ type
     Fmode: TVariableMode;
     Fobj: TFHIRObject;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     function link : TVariable; overload;
     function copy : TVariable;

@@ -35,7 +35,7 @@ uses
 
 type
   TFHIRObject3 = class (TFHIRObject)
-  protected
+  public
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
@@ -45,7 +45,7 @@ type
   TFHIRObjectX = TFHIRObject3;
 
   TFHIRResource3 = class (TFHIRResourceV)
-  protected
+  public
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;

@@ -16,7 +16,7 @@ type
     FParams: String;
     FAddress: String;
   public
-    constructor create(address, params : string);
+    constructor Create(address, params : string);
     property address : String read FAddress write FAddress;
     property params : String read FParams write FParams;
   end;

@@ -165,8 +165,8 @@ Type
       Procedure SetWordProcessor(Const Value: TWordProcessor);
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure Refresh;
 
@@ -484,8 +484,8 @@ Type
     Procedure DoHelpVersionButton(sender : TObject);
     Procedure DoHelpSupportCaseButton(sender : TObject);
   Public
-    Constructor Create(oOwner : TComponent); Override;
-    Destructor Destroy; Override;
+    constructor Create(oOwner : TComponent); Override;
+    destructor Destroy; Override;
 
     Procedure Refresh;
 

@@ -31,8 +31,8 @@ type
 
     procedure load;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TIso4217CurrencySet; overload;
 
     property Codes : TFslList<TIso4217Currency> read FCodes;

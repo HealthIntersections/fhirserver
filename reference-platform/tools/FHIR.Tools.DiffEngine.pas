@@ -53,7 +53,7 @@ type
     FIndex : integer;
     FIndex2 : integer;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     property Path : String read FPath;
     property Op : TDIfferenceOperation read FOp;
@@ -77,7 +77,7 @@ type
     FSourceIndex : integer;
     FTargetIndex : integer;
   public
-    Constructor Create(sourceIndex, targetIndex : integer);
+    constructor Create(sourceIndex, targetIndex : integer);
   end;
 
   TDifferenceMatchList = class (TFslList<TDifferenceMatch>)

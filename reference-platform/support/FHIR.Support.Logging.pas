@@ -63,7 +63,7 @@ Type
     FHeader: String;
     FFullPolicy: TLogFullPolicy;
   Public
-    Constructor Create; Override; //
+    constructor Create; Override; //
 
     Function ClonePolicy : TLoggerPolicy;
 
@@ -105,8 +105,8 @@ Type
     Procedure CycleFile(sName : String);
 
   Public
-    Constructor Create(filename : String);
-    Destructor Destroy; Override;
+    constructor Create(filename : String);
+    destructor Destroy; Override;
 
     Function Description : String;
     Procedure WriteToLog(s: String); overload;

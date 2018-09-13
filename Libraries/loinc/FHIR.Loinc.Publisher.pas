@@ -63,8 +63,8 @@ Type
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
   Public
-    Constructor Create(oLoinc : TLoincServices; FHIRPathEngine, lang : String);
-    Destructor Destroy; Override;
+    constructor Create(oLoinc : TLoincServices; FHIRPathEngine, lang : String);
+    destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
   End;

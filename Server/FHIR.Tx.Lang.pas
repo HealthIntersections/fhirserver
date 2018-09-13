@@ -51,7 +51,7 @@ type
     procedure addExtLang(s : String);
     procedure addPrivateUse(s : String);
   public
-    constructor create(code : String);
+    constructor Create(code : String);
     function Link : TIETFLanguageCodeConcept; overload;
 
   end;
@@ -127,7 +127,7 @@ type
     FComponent : TIETFLanguageComponent;
     FStatus : boolean;
   public
-    constructor create(component : TIETFLanguageComponent; status : boolean);
+    constructor Create(component : TIETFLanguageComponent; status : boolean);
     property component : TIETFLanguageComponent read FComponent write FComponent;
     property status : boolean read FStatus write FStatus;
   end;
@@ -139,8 +139,8 @@ type
   private
     FDefinitions : TIETFLanguageDefinitions;
   public
-    Constructor Create(sourceFile : String);
-    Destructor Destroy; Override;
+    constructor Create(sourceFile : String);
+    destructor Destroy; Override;
     Function Link : TIETFLanguageCodeServices; overload;
 
     function TotalCount : integer;  override;

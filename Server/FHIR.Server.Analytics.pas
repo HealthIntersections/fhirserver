@@ -101,7 +101,6 @@ var
   http: TIdHTTP;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   post, resp : TStringStream;
-  s : String;
 begin
   post := TStringStream.create(cnt, TEncoding.UTF8);
   try

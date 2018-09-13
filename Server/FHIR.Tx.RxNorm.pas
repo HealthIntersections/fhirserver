@@ -57,7 +57,7 @@ type
     text : boolean;
     qry : TKDBConnection;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     function Link : TUMLSFilter; overload;
   end;
 
@@ -65,8 +65,8 @@ type
   private
     filters : TFslList<TUMLSFilter>;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   end;
 
   TUMLSServices = class (TCodeSystemProvider)
@@ -79,8 +79,8 @@ type
 
     procedure load(list : TStringList; sql : String);
   public
-    Constructor Create(nci : boolean; db : TKDBManager);
-    Destructor Destroy; Override;
+    constructor Create(nci : boolean; db : TKDBManager);
+    destructor Destroy; Override;
     Function Link : TUMLSServices; overload;
 
     function TotalCount : integer;  override;
@@ -119,7 +119,7 @@ type
 
   TRxNormServices = class (TUMLSServices)
   public
-    Constructor Create(db : TKDBManager);
+    constructor Create(db : TKDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -127,7 +127,7 @@ type
 
   TNciMetaServices = class (TUMLSServices)
   public
-    Constructor Create(db : TKDBManager);
+    constructor Create(db : TKDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;

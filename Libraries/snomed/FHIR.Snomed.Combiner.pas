@@ -43,7 +43,7 @@ Type
     FDiv : boolean;
   public
     constructor Create(filename : String);
-    destructor destroy; override;
+    destructor Destroy; override;
 
     procedure field(s : String);
     procedure endRecord;
@@ -53,8 +53,8 @@ Type
   private
     id : int64;
   public
-    Constructor create(s : String); overload;
-    Constructor create(i : int64); overload;
+    constructor Create(s : String); overload;
+    constructor Create(i : int64); overload;
   end;
 
   TSnomedCombinedItem = class (TFslObject)
@@ -90,7 +90,7 @@ Type
     FActive : boolean;
     source : TSnomedServices;
   public
-    Constructor Create(source : TSnomedServices);
+    constructor Create(source : TSnomedServices);
     function link : TSnomedCombinedRelationship; overload;
     function copy : TSnomedCombinedRelationship;
   end;
@@ -101,8 +101,8 @@ Type
     FGroup : Integer;
     source : TSnomedServices;
   public
-    Constructor Create(source : TSnomedServices);
-    Destructor Destroy; Override;
+    constructor Create(source : TSnomedServices);
+    destructor Destroy; Override;
     function link : TSnomedCombinedRelationshipGroup; overload;
     function copy : TSnomedCombinedRelationshipGroup;
   end;
@@ -118,8 +118,8 @@ Type
     FGroups : TFslList<TSnomedCombinedRelationshipGroup>;
     FChildren : TFslList<TSnomedCombinedConcept>;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function group(svc : TSnomedServices; grp : integer) : TSnomedCombinedRelationshipGroup;
     function link : TSnomedCombinedConcept; overload;
@@ -133,8 +133,8 @@ Type
     FItem : TSnomedCombinedItem;
     FValues : TStringList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   end;
 
   TSnomedCombinedReferenceSet = class (TFslObject)
@@ -148,8 +148,8 @@ Type
     FMembers : TFslMap<TSnomedCombinedReferenceSetEntry>;
     function getByItem(item : TSnomedCombinedItem; values : TStringList) : TSnomedCombinedReferenceSetEntry;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function abbrev : String;
   end;
 
@@ -236,8 +236,8 @@ Type
     procedure loadStore;
     procedure saveStore;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     procedure Execute;
 

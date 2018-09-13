@@ -61,8 +61,8 @@ Type
     FLiteral: String;
     FDecimal: String;
   public
-    Constructor Create; overload; override;
-    Constructor Create(reference : cardinal); overload;
+    constructor Create; overload; override;
+    constructor Create(reference : cardinal); overload;
 
     Function Link : TSnomedConcept; overload;
     Property code : String read Fcode write Fcode;
@@ -89,8 +89,8 @@ Type
     function GetRefinementGroups: TFslList<TSnomedRefinementGroup>;
     function GetRefinements: TFslList<TSnomedRefinement>;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TSnomedExpression; overload;
     Property status : TSnomedExpressionStatus read FStatus write FStatus;
     Property concepts : TFslList<TSnomedConcept> read Fconcepts;
@@ -118,8 +118,8 @@ Type
     procedure SetName(const Value: TSnomedConcept);
     procedure SetValue(const Value: TSnomedExpression);
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TSnomedRefinement; overload;
     Property name : TSnomedConcept read Fname write SetName;
     Property value : TSnomedExpression read Fvalue write SetValue;
@@ -134,8 +134,8 @@ Type
   private
     Frefinements: TFslList<TSnomedRefinement>;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TSnomedRefinementGroup; overload;
     Property refinements : TFslList<TSnomedRefinement> read Frefinements;
 

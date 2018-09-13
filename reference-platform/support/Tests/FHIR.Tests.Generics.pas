@@ -40,7 +40,7 @@ Type
   private
     FString : String;
   public
-    constructor create(value : String);
+    constructor Create(value : String);
     function Link :  TFslString; overload;
   end;
 

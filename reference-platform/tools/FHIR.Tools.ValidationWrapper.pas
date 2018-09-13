@@ -61,8 +61,8 @@ type
 
     procedure executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
   public
-    Constructor Create(Cache : TFHIRPackageManager);
-    Destructor Destroy; override;
+    constructor Create(Cache : TFHIRPackageManager);
+    destructor Destroy; override;
     function link : TFHIRValidationWrapper;
 
     function validateCmd: string;

@@ -70,8 +70,8 @@ type
     function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual; abstract;
     function ProcessRequestEngines(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest; response : TCDSHookResponse) : boolean;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function hook : string; virtual; abstract; // see the hook catalog (http://cds-hooks.org/#hook-catalog)
     function name : String; virtual; abstract;
     function description : String; virtual; abstract;
@@ -87,8 +87,8 @@ type
     Procedure HandleServiceList(response: TIdHTTPResponseInfo);
     function getBase(secure : boolean; basePath : String; request : TIdHTTPRequestInfo) : string;
   public
-    Constructor Create(ServerContext : TFslObject);
-    Destructor Destroy; override;
+    constructor Create(ServerContext : TFslObject);
+    destructor Destroy; override;
 
     procedure RegisterService(service : TCDSHooksService);
 

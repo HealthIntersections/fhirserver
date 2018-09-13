@@ -46,7 +46,7 @@ Type
     Fpath: String;
     Ftarget: String;
   public
-    Constructor Create(path, target : String);
+    constructor Create(path, target : String);
     function link : TReverseProxyInfo; overload;
     property path : String read Fpath write Fpath;
     property target : String read Ftarget write Ftarget;

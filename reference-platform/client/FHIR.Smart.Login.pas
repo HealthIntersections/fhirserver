@@ -71,8 +71,8 @@ type
     function loginOAuthClient: boolean;
     function loginBackendClient : boolean;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     property server : TRegisteredFHIRServer read Fserver write SetServer;
     property scopes : TArray<String> read FScopes write FScopes;

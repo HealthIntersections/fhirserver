@@ -158,7 +158,7 @@ type
     FValue : TStringList;
   public
     constructor Create;
-    Destructor Destroy; override;
+    destructor Destroy; override;
     property value : TStringList read FValue;
   end;
 
@@ -215,7 +215,7 @@ type
     FValue : TObjectList<TPropObj>;
   public
     constructor Create;
-    Destructor Destroy; override;
+    destructor Destroy; override;
     property value : TObjectList<TPropObj> read FValue;
   end;
 

@@ -57,8 +57,8 @@ Type
   protected
     procedure SeeResource(r : FHIR.R2.Resources.TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
+    destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR2; overload;
 
@@ -87,8 +87,8 @@ Type
   protected
     procedure SeeResource(r : FHIR.R3.Resources.TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
+    destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR3; overload;
 
@@ -117,8 +117,8 @@ Type
   protected
     procedure SeeResource(r : FHIR.R4.Resources.TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
+    destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR4; overload;
 

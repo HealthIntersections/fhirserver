@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, ZLib, Generics.Collections,
+  SysUtils, AnsiStrings, Classes, ZLib, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
@@ -63,8 +63,8 @@ type
     FResource: TFHIRResourceV;
     procedure SetResource(const Value: TFHIRResourceV);
   public
-    Constructor Create(reference : String; resource : TFHIRResourceV);
-    Destructor Destroy; override;
+    constructor Create(reference : String; resource : TFHIRResourceV);
+    destructor Destroy; override;
     property Reference : String read FReference write FReference;
     property Resource : TFHIRResourceV read FResource write SetResource;
   end;
@@ -395,11 +395,11 @@ begin
   setlength(s, ocontent.Size - oContent.Position);
   ocontent.Read(s[1], length(s));
   oContent.Position := i;
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
+  if (AnsiStrings.AnsiPos('<', s) > 0) and ((AnsiStrings.AnsiPos('<', s) < 10)) then
     result := ffXml
-  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
+  else if (AnsiStrings.AnsiPos('{', s) > 0) and ((AnsiStrings.AnsiPos('{', s) < 10)) then
     result := ffJson
-  else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
+  else if (AnsiStrings.AnsiPos('@', s) > 0) and ((AnsiStrings.AnsiPos('@', s) < 10)) then
     result := ffTurtle
   else
     result := ffUnspecified;

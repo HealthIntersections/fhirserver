@@ -119,7 +119,7 @@ type
     FHook : String;
   public
     constructor Create; override;
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link : TRegisteredCDSHook; overload;
 
     property name : String read Fname write Fname;
@@ -158,7 +158,7 @@ type
     FId: integer;
   public
     constructor Create; override;
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link : TRegisteredFHIRServer; overload;
     procedure clear;
     procedure writeToJson(o : TJsonObject);

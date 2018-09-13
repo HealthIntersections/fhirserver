@@ -74,7 +74,7 @@ type
 
   public
     { Public declarations }
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Property WP : TWordProcessor read FWP write FWP;
 

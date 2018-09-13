@@ -112,8 +112,8 @@ Type
     procedure CreatePseudoData;
     procedure runScript(s : String);
   public
-    Constructor create(conn : TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
-    Destructor Destroy; override;
+    constructor Create(conn : TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    destructor Destroy; override;
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property DoAudit : boolean read FDoAudit write FDoAudit;

@@ -138,8 +138,8 @@ Type
       Property DefaultComparison : TFslItemListCompare Read FComparison;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Assign(oSource : TFslObject); Override;
 
@@ -317,8 +317,8 @@ Type
       Procedure SetIntegerList(Const Value: TFslIntegerList);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Last; Override;
@@ -379,8 +379,8 @@ Type
       Procedure SetPointers(Const Value: TFslPointerList);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Last; Override;
@@ -425,8 +425,8 @@ Type
       Procedure SetClassList(Const Value : TFslClassList);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Last; Override;
@@ -495,8 +495,8 @@ Type
       Function ItemNew : TFslHashEntry; Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslHashTable;
       Function Clone : TFslHashTable;
@@ -724,8 +724,8 @@ Type
       Procedure SetHashTable(Const Value: TFslHashTable);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Next; Override;
@@ -812,8 +812,8 @@ Type
       Function ItemClass : TFslObjectClass; Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslStringObjectMatch; Overload;
 
@@ -925,7 +925,7 @@ Type
       Function DefaultValue(Const aKey : TFslStringMatchKey) : TFslStringMatchValue; Virtual; 
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -1038,8 +1038,8 @@ Type
       Procedure SetHashTable(Const Value: TFslObjectClassHashTable);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Last; Override;
@@ -1091,7 +1091,7 @@ Type
       Function CapacityLimit : Integer; Override;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TFslStringList;
       Function Clone : TFslStringList;
@@ -1140,8 +1140,8 @@ Type
       Procedure SetStringList(Const Value: TFslStringList);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Last; Override;
@@ -1218,8 +1218,8 @@ Type
       Function CapacityLimit : Integer; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslStringIntegerMatch; 
       Function Clone : TFslStringIntegerMatch;
@@ -1288,7 +1288,7 @@ Type
       Function ValidateIndex(Const sMethod : String; Const iIndex : Integer) : Boolean;
 
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure Assign(oObject : TFslObject); Override;
       
@@ -1330,8 +1330,8 @@ Type
       Procedure SetOrdinalSet(Const Value: TFslOrdinalSet);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Overload; Override;
       Procedure Next; Overload; Override;
@@ -1412,8 +1412,8 @@ Type
       Function ItemValueClass : TFslObjectClass; Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslObjectMatch; Overload;
 
@@ -1492,7 +1492,7 @@ Type
       Function FindByName(oName : TFslName; Out iIndex: Integer): Boolean; Overload;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TFslNameList;
       Function Clone : TFslNameList;
@@ -1551,8 +1551,8 @@ Type
       FObject : TFslObject;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function RetrieveObject(Const aObjectClass: TFslObjectClass): TFslObject;
       Procedure StoreObject(Const oObject : TFslObject; Const aObjectClass : TFslObjectClass);
@@ -1619,8 +1619,8 @@ Type
       Procedure SetBooleanList(Const Value : TFslBooleanList);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Override;
       Procedure Last; Override;
@@ -1641,8 +1641,8 @@ Type
       Procedure SetAsText(Const Value: String);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure AddRange(Const aFromValue, aToValue : Char);
       Procedure AddValue(Const aValue : Char);
@@ -1714,7 +1714,7 @@ Procedure TFslIntegerList.InternalEmpty(iIndex, iLength : Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FIntegerArray) + (iIndex * SizeOf(TFslIntegerListItem))), (iLength * SizeOf(TFslIntegerListItem)));
+  MemoryZero(Pointer(NativeUInt(FIntegerArray) + NativeUInt((iIndex * SizeOf(TFslIntegerListItem)))), (iLength * SizeOf(TFslIntegerListItem)));
 End;  
 
 
@@ -6569,7 +6569,7 @@ Procedure TFslPointerList.InternalEmpty(iIndex, iLength: Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FPointerArray) + (iIndex * SizeOf(TPointerItem))), (iLength * SizeOf(TPointerItem)));
+  MemoryZero(Pointer(NativeUInt(FPointerArray) + NativeUInt(iIndex * SizeOf(TPointerItem))), (iLength * SizeOf(TPointerItem)));
 End;
 
 

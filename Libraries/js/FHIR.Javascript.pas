@@ -178,7 +178,7 @@ valueOf()	Returns the primitive value of an array
     FFactory : TJsFactoryFunction;
     FProperties : TObjectList<TJavascriptRegisteredProperty>;
   public
-    constructor create;
+    constructor Create;
     destructor Destroy; override;
     property name : String read FName;
     property factoryName : String read FFactoryName;
@@ -209,7 +209,8 @@ valueOf()	Returns the primitive value of an array
     procedure fin;
     procedure registerConsoleLog;
     procedure jsCheck(code : JsErrorCode);
-    function getPropertyId(name : AnsiString) : JsRef;
+    function getPropertyId(name : AnsiString) : JsRef; overload;
+    function getPropertyId(name : String) : JsRef; overload;
     function doLog(js: TJavascript; context: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
   protected
     procedure freeObject(obj : TObject); virtual;
@@ -260,7 +261,7 @@ valueOf()	Returns the primitive value of an array
       script - the contents of the script
       scriptName - an arbitrary name for the sript that is bing executed (when debugging)
     }
-    function execute(script: String; scriptName: AnsiString) : JsValueRef; overload;
+    function execute(script: String; scriptName: String) : JsValueRef; overload;
 
     {
       Execute a named function in the script. Note that global functions in the script are executed before the named function
@@ -271,7 +272,7 @@ valueOf()	Returns the primitive value of an array
       params - params to pass to the function (must match the named parameters on the function).
          Prepare these using wrap() functions or makeArray
     }
-    function execute(script: String; scriptName, funcName: AnsiString; params : Array of TJsValue) : JsValueRef; overload;
+    function execute(script: String; scriptName, funcName: String; params : Array of TJsValue) : JsValueRef; overload;
 
     {
       Convert whatever javascript variable is in val to a string representation
@@ -349,7 +350,7 @@ valueOf()	Returns the primitive value of an array
     {
       given a javascript object, get an property value from it (remember to check for undefined)
     }
-    function getProperty(obj : JsValueRef; name : AnsiString) : JsValueRef;
+    function getProperty(obj : JsValueRef; name : String) : JsValueRef;
 
     {
       iterate through all the properties on an object
@@ -418,7 +419,7 @@ valueOf()	Returns the primitive value of an array
   private
     FList : TStringList;
   public
-    constructor create(list : TStringList);
+    constructor Create(list : TStringList);
 
     // populating the array in the first place
     function count : integer; override;
@@ -433,7 +434,7 @@ valueOf()	Returns the primitive value of an array
     FList : TObjectList<T>;
     FObjectDefinition : TJavascriptClassDefinition;
   public
-    constructor create(list : TObjectList<T>; objectDefinition : TJavascriptClassDefinition);
+    constructor Create(list : TObjectList<T>; objectDefinition : TJavascriptClassDefinition);
 
     // populating the array in the first place
     function count : integer; override;
@@ -867,20 +868,23 @@ begin
   jsCheck(JsSetProperty(global, getPropertyId(name), obj, true));
 end;
 
-function TJavascript.execute(script: String; scriptName : AnsiString): JsValueRef;
+function TJavascript.execute(script: String; scriptName : String): JsValueRef;
 begin
   jsCheck(JsRunScript(PChar(script), FContext, '', result));
 end;
 
-function TJavascript.execute(script : String; scriptName, funcName: AnsiString; params: Array of TJsValue): JsValueRef;
+function TJavascript.execute(script : String; scriptName, funcName: String; params: Array of TJsValue): JsValueRef;
 var
   global, func, scriptJ, scriptNameJ, res : JsValueRef;
   pl : PJsValueRefArray;
   i : integer;
+  sn, fn : AnsiString;
   vType : int; //JsValueType, but see note on JsGetValueType
 begin
+  sn := ansiString(scriptName);
+
   // parse + initialise the script
-  jsCheck(JsCreateString(PAnsiChar(scriptName), Length(scriptName), scriptNameJ));
+  jsCheck(JsCreateString(PAnsiChar(sn), Length(scriptName), scriptNameJ));
   jsCheck(JsCreateExternalArrayBuffer(PChar(script), Length(script) * SizeOf(WideChar), nil, nil, scriptJ));
   jsCheck(JsRun(scriptJ, FContext, scriptNameJ, JsParseScriptAttributeArrayBufferIsUtf16Encoded, res));
 
@@ -995,9 +999,6 @@ end;
 
 function TJavascript.asBoolean(val: JsValueRef): boolean;
 var
-  p : PChar;
-  str : JsValueRef;
-  l : Cardinal;
   v : integer;
 begin
   case getType(val) of
@@ -1042,9 +1043,14 @@ begin
   result := T(data);
 end;
 
-function TJavascript.getProperty(obj: JsValueRef; name: AnsiString): JsValueRef;
+function TJavascript.getProperty(obj: JsValueRef; name: String): JsValueRef;
 begin
   jsCheck(JsGetProperty(obj, getPropertyId(name), result));
+end;
+
+function TJavascript.getPropertyId(name: String): JsRef;
+begin
+  result := getPropertyId(name);
 end;
 
 function TJavascript.hasProperty(obj: JsValueRef; name: AnsiString): boolean;

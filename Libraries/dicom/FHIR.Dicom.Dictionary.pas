@@ -77,7 +77,7 @@ Type
     Function FindByUID(Const sUID: String; Out iIndex: Integer): Boolean; Overload;
 
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
     Function Link : TDicomDictionaryEntityList; Overload;
     Function Clone : TDicomDictionaryEntityList; Overload;
@@ -147,12 +147,12 @@ Type
 
     FProperties: TFslStringMatch;
   Public
-    Constructor Create; Override;
-    Constructor Create(Const sName: String; Const sUID: String = '1.2.840.10008.1.2';
+    constructor Create; Override;
+    constructor Create(Const sName: String; Const sUID: String = '1.2.840.10008.1.2';
       Const isBigEndian: Boolean = False; Const isExplicitVR: Boolean = False;
       Const isEncapsulated: Boolean = False; Const isLossy: Boolean = False; Const isDeflated: Boolean = False); Overload;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomDictionaryTransferSyntax; Overload;
     Function Link : TDicomDictionaryTransferSyntax; Overload;
@@ -264,9 +264,9 @@ Type
 
     FTransferSyntaxList: TDicomDictionaryTransferSyntaxList;
   Public
-    Constructor Create(Const sAbstractSyntaxUID: String; contextType: TDicomPresContextType = dpcProposed); Overload;
+    constructor Create(Const sAbstractSyntaxUID: String; contextType: TDicomPresContextType = dpcProposed); Overload;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomPresentationContext; Overload;
     Function Link : TDicomPresentationContext; Overload;
@@ -343,7 +343,7 @@ Type
     FType: TDicomVRType;
     FRepeatable: Boolean;
   Public
-    Constructor Create(aType : TDicomVRType; sCode : String; iLength: Cardinal; bFixed, bRepeatable: Boolean; sDescription, sDoco: String); Overload; Virtual;
+    constructor Create(aType : TDicomVRType; sCode : String; iLength: Cardinal; bFixed, bRepeatable: Boolean; sDescription, sDoco: String); Overload; Virtual;
 
     Function Clone : TDicomDictionaryVR; Overload;
     Function Link : TDicomDictionaryVR; Overload;
@@ -442,8 +442,8 @@ Type
     FMax: integer;
 
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomDictionaryElement; Overload;
     Function Link : TDicomDictionaryElement; Overload;
@@ -520,7 +520,7 @@ Type
     Function FindByTags(Const sGroup, sElement: String; Out iIndex: Integer): Boolean; Overload;
 
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
     Function Link : TDicomDictionaryElementList; Overload;
     Function Clone : TDicomDictionaryElementList; Overload;
@@ -627,9 +627,9 @@ Type
 
     Procedure SetElement(oValue: TDicomDictionaryElement);
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomDimseParam; Overload;
     Function Link : TDicomDimseParam; Overload;
@@ -712,9 +712,9 @@ Type
     FParams : TDicomDimseParamList;
 
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomDimseMessage; Overload;
     Function Link : TDicomDimseMessage; Overload;
@@ -743,7 +743,7 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
   Public
-    Constructor Create(ServiceType: TDicomDimseType); Overload;
+    constructor Create(ServiceType: TDicomDimseType); Overload;
 
     Function Clone : TDicomDimseService; Overload;
     Function Link : TDicomDimseService; Overload;
@@ -827,9 +827,9 @@ Type
 
     FComment: String; // for any text that's are not yet used
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomInfoEntry; Overload;
     Function Link : TDicomInfoEntry; Overload;
@@ -899,7 +899,7 @@ Type
     Procedure SetRefId(sValue: String);
     Procedure SetRefEntry(sValue: TDicomInfoGroup);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomInfoEntryReference; Overload;
     Function Link : TDicomInfoEntryReference; Overload;
@@ -950,7 +950,7 @@ Type
 
     Procedure SetRefElement(oValue: TDicomDictionaryElement);
   Public
-  	Destructor Destroy; Override;
+  	destructor Destroy; Override;
 
     Function Clone : TDicomInfoEntryAttr; Overload;
     Function Link : TDicomInfoEntryAttr; Overload;
@@ -989,9 +989,9 @@ Type
 
     Procedure SetKey(sValue: String);
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomInfoGroup; Overload;
     Function Link : TDicomInfoGroup; Overload;
@@ -1028,7 +1028,7 @@ Type
   }
   TDicomMacro = Class (TDicomInfoGroup)
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
   End;
 
   {
@@ -1075,7 +1075,7 @@ Type
   TDicomModule = Class (TDicomInfoGroup)
   Private
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomModule; Overload;
     Function Link : TDicomModule; Overload;
@@ -1126,7 +1126,7 @@ Type
 
     Procedure SetRefEntry(sValue: TDicomModule);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomModuleReference; Overload;
     Function Link : TDicomModuleReference; Overload;
@@ -1207,9 +1207,9 @@ Type
 
     FModules: TDicomModuleReferenceList;
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomIOD; Overload;
     Function Link : TDicomIOD; Overload;
@@ -1287,7 +1287,7 @@ Type
     FIOD: TDicomIOD;
     procedure SetIOD(const Value: TDicomIOD);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomDictionarySOP; Overload;
     Function Link : TDicomDictionarySOP; Overload;
@@ -1371,8 +1371,8 @@ Type
     Procedure ResolveMacroEntry(oEntry: TDicomInfoEntry; Const sSelfId: String; oMissingRefs: TFslStringList);
     Function UnlinkCircularRefs(oEntry: TDicomInfoEntry; oPreviousRefs: TFslStringList): Boolean;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Clone : TDicomDictionary; Overload;
     Function Link : TDicomDictionary; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1538,7 +1538,7 @@ Type
     procedure SetSource(const Value: TFslStream);
 
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Procedure Execute;
 

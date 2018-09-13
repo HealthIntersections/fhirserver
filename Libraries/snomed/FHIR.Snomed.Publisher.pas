@@ -71,8 +71,8 @@ Type
     Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
   Public
-    Constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
-    Destructor Destroy; Override;
+    constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
+    destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishTerm(Const sTerm : String; html : THtmlPublisher); Overload; Virtual;

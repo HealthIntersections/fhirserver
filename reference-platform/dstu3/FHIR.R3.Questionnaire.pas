@@ -147,8 +147,8 @@ Type
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
     procedure SetContext(const Value: TFslObject);
   public
-    Constructor Create(lang : String);
-    Destructor Destroy; override;
+    constructor Create(lang : String);
+    destructor Destroy; override;
 
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
     Property OnExpand : TGetValueSetExpansion read FOnExpand write FOnExpand;

@@ -64,8 +64,8 @@ Type
       Procedure Check(Const sMethod : String; iError : Cardinal);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Logon;
       Procedure Logoff;

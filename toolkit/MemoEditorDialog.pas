@@ -67,7 +67,7 @@ type
     procedure SetElement(const Value: TFHIRMarkdown);
     procedure SetResource(const Value: TFHIRResource);
   public
-    Constructor Create(owner : TComponent); override;
+    constructor Create(owner : TComponent); override;
     destructor Destroy; override;
 
     property Resource : TFHIRResource read FResource write SetResource;

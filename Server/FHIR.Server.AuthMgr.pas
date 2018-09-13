@@ -115,8 +115,8 @@ type
     function GetPatientListAsOptions : String;
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
   public
-    Constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
+    destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
     Procedure HandleDiscovery(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -313,7 +313,6 @@ var
   state : String;
   aud : String;
   id : String;
-  jwt : TJWT;
   message : String;
   b : TStringBuilder;
   ok : boolean;
@@ -952,7 +951,7 @@ var
 //  jwtStored,
   errCode, domain : string;
   json : TJsonWriter;
-  jwt, jwtv : TJWT;
+  jwt : TJWT;
   jwk : TJWKList;
 //  expiry : TDateTime;
 //  PatientId : String;

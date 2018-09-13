@@ -82,7 +82,7 @@ type
     procedure SetSettings(const Value: TFHIRToolkitSettings);
     procedure LoadServers;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
   end;
 

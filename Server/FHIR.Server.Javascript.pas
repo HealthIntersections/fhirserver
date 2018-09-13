@@ -52,8 +52,8 @@ Type
     FLang : TEventScriptLanguage;
     FScript : string;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function link : TEventScript; overload;
 
     property id : String read FId write FId;
@@ -192,7 +192,6 @@ procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);
 var
   scripts : TFslList<TEventScript>;
   script : TEventScript;
-  rn : String;
   s, r : TJsValue;
   engine : TFHIRJavascript;
 begin

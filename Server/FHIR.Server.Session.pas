@@ -58,7 +58,7 @@ Type
     FResourceType : String;
     FId: String;
   public
-    Constructor Create(ResourceType, id : String);
+    constructor Create(ResourceType, id : String);
     function Link : TFHIRCompartmentId; overload;
 
     property ResourceType : String read FResourceType write FResourceType;
@@ -130,7 +130,7 @@ Type
     procedure setScopes(scopes: String);
     procedure SetTestScript(const Value: TFhirTestScriptW);
   public
-    Constructor Create(worker : TFHIRWorkerContextWithFactory; secure : boolean);
+    constructor Create(worker : TFHIRWorkerContextWithFactory; secure : boolean);
     destructor Destroy; Override;
     function Link : TFhirSession; overload;
     procedure describe(b : TStringBuilder);
@@ -322,8 +322,8 @@ Type
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     function GetHasCompartments: boolean;
   Public
-    Constructor Create(worker: TFHIRWorkerContextWithFactory; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
-    Destructor Destroy; Override;
+    constructor Create(worker: TFHIRWorkerContextWithFactory; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+    destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
     function clone() : TFHIRRequest;
@@ -535,8 +535,8 @@ Type
     procedure SetOutcome(const Value: TFHIROperationOutcomeW);
     procedure SetStream(const Value: TFslStream);
   public
-    Constructor Create(worker: TFHIRWorkerContextWithFactory);
-    Destructor Destroy; Override;
+    constructor Create(worker: TFHIRWorkerContextWithFactory);
+    destructor Destroy; Override;
 
       Function Link : TFHIRResponse; Overload;
 

@@ -67,10 +67,11 @@ Type
     function TypeForKey(key : integer) : String;
 
     // addToCompartment
-    procedure patientCompartment(key : integer; reference : TFhirReference); overload;
+//    procedure patientCompartment(key : integer; reference : TFhirReference); overload;
     procedure patientCompartmentNot(key : integer; type_, id : String); overload;
     procedure patientCompartment(key : integer; type_, id : String); overload;
 
+  protected
     // very primitives
     procedure index(aType : String; key, parent : integer; value1, value2, name : String); overload;
     procedure index(aType : String; key, parent : integer; value, name : String); overload;
@@ -141,7 +142,6 @@ end;
 function TFhirIndexManager4.EncodeXhtml(r: TFhirDomainResource): TBytes;
 var
   x, body : TFhirXHtmlNode;
-  xc : TFslXmlBuilder;
 begin
     if r.ResourceType <> frtBinary then
     begin
@@ -945,7 +945,6 @@ procedure TFhirIndexManager4.index(aType : String; key, parent : integer; value:
 var
   i : integer;
   s : String;
-  n : TFhirString;
 begin
   if (value = nil) then
     exit;
@@ -998,7 +997,6 @@ end;
 function isLocalTypeReference(url : String; var type_, id : String) : boolean;
 var
   p : TArray<String>;
-  i : TFhirResourceType;
 begin
   p := url.Split(['/']);
   if (length(p) = 2) or ((length(p) = 4) and (p[2] = '_history')) then
@@ -1163,30 +1161,28 @@ begin
 end;
 
 procedure TFhirIndexManager4.index(aType: String; key, parent: integer; value: TFhirBoolean; name: String);
-var
-  ndx : TFhirIndex;
 begin
   if (value <> nil) then
     index(aType, key, parent, value.value, name);
 end;
 
-procedure TFhirIndexManager4.patientCompartment(key : integer; reference: TFhirReference);
-var
-  sid : string;
-begin
-  if reference = nil then
-    exit;
-  if reference.reference = '' then
-    exit;
-  if StringStartsWith(reference.reference, '#') then
-    exit; // what to do in this case?
-  if not StringStartsWith(reference.reference, 'Patient/') then
-    exit; // what to do in this case?
-  sid := copy(reference.reference, 9, $FF);
-  if (pos('/', sid) > 0) then
-    sid := copy(sid, 1, pos('/', sid) - 1);
-  patientCompartment(key, 'Patient', sid);
-end;
+//procedure TFhirIndexManager4.patientCompartment(key : integer; reference: TFhirReference);
+//var
+//  sid : string;
+//begin
+//  if reference = nil then
+//    exit;
+//  if reference.reference = '' then
+//    exit;
+//  if StringStartsWith(reference.reference, '#') then
+//    exit; // what to do in this case?
+//  if not StringStartsWith(reference.reference, 'Patient/') then
+//    exit; // what to do in this case?
+//  sid := copy(reference.reference, 9, $FF);
+//  if (pos('/', sid) > 0) then
+//    sid := copy(sid, 1, pos('/', sid) - 1);
+//  patientCompartment(key, 'Patient', sid);
+//end;
 
 
 procedure TFhirIndexManager4.patientCompartment(key : integer; type_, id : String);
@@ -1252,7 +1248,6 @@ var
   ndx : TFhirIndex;
   v1, v2 : String;
   ref : integer;
-  specified, canonical : TUcumPair;
 begin
   if value = nil then
     exit;

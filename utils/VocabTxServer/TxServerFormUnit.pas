@@ -72,8 +72,8 @@ type
   protected
     procedure Execute; override;
   public
-    Constructor Create;
-    Destructor Destroy; override;
+    constructor Create;
+    destructor Destroy; override;
     procedure start;
     procedure stop;
   end;

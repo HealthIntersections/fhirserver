@@ -138,8 +138,8 @@ Type
     function Compare(const Left, Right: TObservation): Integer;
 
   public
-    Constructor Create(factory : TFHIRFactory; conn : TKDBConnection; resp : TFHIRStatsOpResponseW);
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory; conn : TKDBConnection; resp : TFHIRStatsOpResponseW);
+    destructor Destroy; override;
 
     property subject : String read FSubject write FSubject;
     property subjectKey : integer read FSubjectKey write FSubjectKey;
@@ -171,8 +171,8 @@ Type
     procedure addMostRecentObservations(ck : integer);
     function lookupConcept(c : TFHIRCodingW) : integer;
   public
-    Constructor Create(conn : TKDBConnection);
-    Destructor Destroy; override;
+    constructor Create(conn : TKDBConnection);
+    destructor Destroy; override;
 
     // in
     property subjectKey : integer read FSubjectKey write FSubjectKey;

@@ -58,7 +58,7 @@ type
     FResource : TFHIRResource;
     procedure SetResource(const Value: TFHIRResource);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Property Resource : TFHIRResource read FResource write SetResource;
   end;
 

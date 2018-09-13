@@ -274,7 +274,6 @@ procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionPa
 var
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeW;
-  i, j : integer;
   other : TFHIRValueSetW;
   checker : TValueSetChecker;
   ics : TFHIRValueSetCodeSystemW;
@@ -424,7 +423,6 @@ var
   ctxt : TCodeSystemProviderContext;
   cc : TFhirValueSetComposeIncludeW;
   excluded : boolean;
-  i : integer;
   isabstract : boolean;
   checker : TValueSetChecker;
   s : String;
@@ -604,7 +602,6 @@ function TValueSetChecker.check(code: TFhirCodeableConceptW; abstractOk, implySy
   end;
 var
   list : TStringList;
-  i : integer;
   v : boolean;
   ok : boolean;
   cc, codelist, message : String;
@@ -1066,7 +1063,6 @@ end;
 
 procedure TFHIRValueSetExpander.handleCompose(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; source: TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; var notClosed : boolean);
 var
-  i : integer;
   vs : TFHIRValueSetW;
   s : String;
   c : TFhirValueSetComposeIncludeW;
@@ -1157,7 +1153,6 @@ procedure TFHIRValueSetExpander.processCode(doDelete : boolean; list: TFslList<T
 var
   n : TFhirValueSetExpansionContainsW;
   s : String;
-  f : boolean;
 begin
   if not passesImportFilter(importHash, system, code) then
     exit;
@@ -1229,7 +1224,6 @@ end;
 
 procedure TFHIRValueSetExpander.importValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; importHash : TStringList);
 var
-  i : integer;
   c : TFhirValueSetExpansionContainsW;
   s : String;
 begin

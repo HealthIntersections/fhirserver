@@ -35,7 +35,7 @@ interface
 // FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.NetEncoding,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml,
@@ -44,9 +44,8 @@ uses
 
 type
   TFHIRFactoryR3 = class (TFHIRFactory)
-  private
-    procedure checkNoImplicitRules(res: TFHIRObject; method, param: string);
   public
+    procedure checkNoImplicitRules(res: TFHIRObject; method, param: string);
     function version : TFHIRVersion; override;
     function versionString : String; override;
     function specUrl : String; override;
@@ -636,7 +635,7 @@ end;
 
 function TFHIRFactoryR3.makeBase64Binary(s: string): TFHIRObject;
 begin
-  result := TFhirBase64Binary.Create(decodeBase64(s));
+  result := TFhirBase64Binary.Create(decodeBase64(ansiString(s)));
 end;
 
 function TFHIRFactoryR3.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;

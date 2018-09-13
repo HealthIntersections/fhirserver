@@ -50,8 +50,8 @@ type
 *)
   TCDAHooksIdentifierViewService = class (TCDSHooksService)
   private
-    procedure addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
-    procedure addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm: String);
+//    procedure addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
+//    procedure addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm: String);
   public
     function hook : string; override;
     function name : String; override;
@@ -76,7 +76,7 @@ type
   private
     function check(issues : TStringList; condition : boolean; message : String) : boolean;
   public
-    Constructor Create; override;
+    constructor Create; override;
     function hook : string; override;
     function name : String; override;
     function id : String; override;
@@ -293,95 +293,95 @@ begin
   result := 'View details about an identifier';
 end;
 
-procedure TCDAHooksIdentifierViewService.addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm : String);
-var
-  card : TCDSHookCard;
-  b : TStringBuilder;
-begin
-  card := resp.addCard;
-  b := TStringBuilder.Create;
-  try
-    b.append('* Identifier System Name: '+name+#13#10);
-    if publisher <> '' then
-      b.append('* Publisher: '+publisher+#13#10);
-    if responsible <> '' then
-      b.append('* Responsible: '+responsible+#13#10);
-    if type_ <> '' then
-      b.append('* Type: '+type_+#13#10);
-    if usage <> '' then
-      b.append('* Usage Notes: '+usage+#13#10);
-
-    b.append(#13#10);
-
-    if realm > '' then
-    begin
-      b.Append('Contexts of Use'#13#10#13#10);
-      b.Append('* '+realm+#13#10);
-      b.append(#13#10);
-    end;
-
-    card.detail := b.ToString;
-  finally
-    b.Free;
-  end;
-
-end;
-
-procedure TCDAHooksIdentifierViewService.addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
-var
-  card : TCDSHookCard;
-  b : TStringBuilder;
-//  cp : TFhirNamingSystemContact;
-//  !{$IFNDEF FHIR2}
-//  uc : TFhirUsageContext;
-//  {$ENDIF}
-//  cc : TFhirCodeableConcept;
-begin
-  card := resp.addCard;
-  card.addLink('Further Detail', baseURL+'/open/NamingSystem/'+ns.id);
-  b := TStringBuilder.Create;
-  try
-    b.Append('todo');
-(*    b.append('* Identifier System Name: '+ns.name+#13#10);
-    if ns.publisher <> '' then
-      b.append('* Publisher: '+ns.publisher+#13#10);
-    if ns.responsible <> '' then
-      b.append('* Responsible: '+ns.responsible+#13#10);
-    if ns.type_ <> nil then
-      b.append('* Type: '+gen(ns.type_)+#13#10);
-    if ns.usage <> '' then
-      b.append('* Usage Notes: '+ns.usage+#13#10);
-
-    b.append(#13#10);
-
-    if (ns.useContextList.Count > 0) !{$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
-    begin
-      b.Append('Contexts of Use'#13#10#13#10);
-      !{$IFNDEF FHIR2}
-      for uc in ns.useContextList do
-        b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
-      for cc in ns.jurisdictionList do
-        b.Append('* Jurisdiction: '+gen(cc)+#13#10);
-      {$ELSE}
-      for cc in ns.useContextList do
-        b.Append('* '+gen(cc)+#13#10);
-      {$ENDIF}
-      b.append(#13#10);
-    end;
-
-    if ns.contactList.Count > 0 then
-    begin
-      b.Append('Contacts'#13#10#13#10);
-      for cp in ns.contactList do
-        b.Append('* '+cp.name+#13#10);
-      b.append(#13#10);
-    end;                       *)
-
-    card.detail := b.ToString;
-  finally
-    b.Free;
-  end;
-end;
+//procedure TCDAHooksIdentifierViewService.addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm : String);
+//var
+//  card : TCDSHookCard;
+//  b : TStringBuilder;
+//begin
+//  card := resp.addCard;
+//  b := TStringBuilder.Create;
+//  try
+//    b.append('* Identifier System Name: '+name+#13#10);
+//    if publisher <> '' then
+//      b.append('* Publisher: '+publisher+#13#10);
+//    if responsible <> '' then
+//      b.append('* Responsible: '+responsible+#13#10);
+//    if type_ <> '' then
+//      b.append('* Type: '+type_+#13#10);
+//    if usage <> '' then
+//      b.append('* Usage Notes: '+usage+#13#10);
+//
+//    b.append(#13#10);
+//
+//    if realm > '' then
+//    begin
+//      b.Append('Contexts of Use'#13#10#13#10);
+//      b.Append('* '+realm+#13#10);
+//      b.append(#13#10);
+//    end;
+//
+//    card.detail := b.ToString;
+//  finally
+//    b.Free;
+//  end;
+//
+//end;
+//
+//procedure TCDAHooksIdentifierViewService.addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
+//var
+//  card : TCDSHookCard;
+//  b : TStringBuilder;
+////  cp : TFhirNamingSystemContact;
+////  !{$IFNDEF FHIR2}
+////  uc : TFhirUsageContext;
+////  {$ENDIF}
+////  cc : TFhirCodeableConcept;
+//begin
+//  card := resp.addCard;
+//  card.addLink('Further Detail', baseURL+'/open/NamingSystem/'+ns.id);
+//  b := TStringBuilder.Create;
+//  try
+//    b.Append('todo');
+//(*    b.append('* Identifier System Name: '+ns.name+#13#10);
+//    if ns.publisher <> '' then
+//      b.append('* Publisher: '+ns.publisher+#13#10);
+//    if ns.responsible <> '' then
+//      b.append('* Responsible: '+ns.responsible+#13#10);
+//    if ns.type_ <> nil then
+//      b.append('* Type: '+gen(ns.type_)+#13#10);
+//    if ns.usage <> '' then
+//      b.append('* Usage Notes: '+ns.usage+#13#10);
+//
+//    b.append(#13#10);
+//
+//    if (ns.useContextList.Count > 0) !{$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
+//    begin
+//      b.Append('Contexts of Use'#13#10#13#10);
+//      !{$IFNDEF FHIR2}
+//      for uc in ns.useContextList do
+//        b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
+//      for cc in ns.jurisdictionList do
+//        b.Append('* Jurisdiction: '+gen(cc)+#13#10);
+//      {$ELSE}
+//      for cc in ns.useContextList do
+//        b.Append('* '+gen(cc)+#13#10);
+//      {$ENDIF}
+//      b.append(#13#10);
+//    end;
+//
+//    if ns.contactList.Count > 0 then
+//    begin
+//      b.Append('Contacts'#13#10#13#10);
+//      for cp in ns.contactList do
+//        b.Append('* '+cp.name+#13#10);
+//      b.append(#13#10);
+//    end;                       *)
+//
+//    card.detail := b.ToString;
+//  finally
+//    b.Free;
+//  end;
+//end;
 
 function TCDAHooksIdentifierViewService.HandleRequest(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
 var
@@ -389,8 +389,8 @@ var
 //  id : TFhirIdentifier;
 //  systems : TFslList<TFHIRResource>;
   card : TCDSHookCard;
-  engine : TFHIROperationEngine;
-  needSecure: boolean;
+//  engine : TFHIROperationEngine;
+//  needSecure: boolean;
 //  r : TFhirResource;
 begin
   require((request.context.Count = 1) and (request.context[0].fhirType = 'Parameters'), 'Must have a single parameters resource as the context');

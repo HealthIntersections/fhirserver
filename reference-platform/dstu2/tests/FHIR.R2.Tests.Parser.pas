@@ -41,7 +41,7 @@ uses
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
   public
-    Constructor Create;
+    constructor Create;
   end;
 
   [TextFixture]

@@ -56,7 +56,7 @@ Type
     procedure SetFilter(const Value: TFSFilter);
     procedure SetNext(const Value: TFSFilterParameterPath);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     Property Name : String read FName write FName;
     Property Filter : TFSFilter read FFilter write SetFilter;
@@ -70,7 +70,7 @@ Type
     FValue : String;
     procedure SetParamPath(const Value: TFSFilterParameterPath);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function FilterItemType : TFSFilterItemType; override;
 
     Property ParamPath : TFSFilterParameterPath read FParamPath write SetParamPath;

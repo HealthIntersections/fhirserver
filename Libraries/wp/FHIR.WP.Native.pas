@@ -110,8 +110,8 @@ Type
       Procedure ReadDocument(oDocument : TWPWorkingDocument);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Read(oDocument : TWPWorkingDocument); Overload; Override;
 
@@ -184,8 +184,8 @@ Type
       Function SupportsNestedRows : Boolean; Overload; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property ImagesAsReferences : Boolean Read FImagesAsReferences Write FImagesAsReferences;
   End;
@@ -254,8 +254,8 @@ Type
       Procedure ReadDocument(oDocument : TWPWorkingDocument);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Read(oDocument : TWPWorkingDocument); Overload; Override;
 
@@ -302,7 +302,7 @@ Type
       Procedure WriteTableCell(oTableCell : TWPDocumentTableCell);
 
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure WriteDocument(oDocument : TWPDocument); Virtual;
 
@@ -407,8 +407,8 @@ Type
       Procedure ProduceStyle(oStyle : TWPStyle);
       Procedure ProduceRange(oRange : TWPRange);
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
       Procedure Start(Const sCause : String);
       Procedure Stop;
       Procedure ProduceDocument(oDocument : TWPWorkingDocument);

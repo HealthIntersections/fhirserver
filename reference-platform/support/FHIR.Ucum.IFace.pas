@@ -40,7 +40,7 @@ Type
     FUnitCode: String;
     FValue: TFslDecimal;
   Public
-    Constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
+    constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
     Property Value : TFslDecimal read FValue write FValue;
     Property UnitCode : String read FUnitCode write FUnitCode;

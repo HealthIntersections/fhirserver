@@ -85,14 +85,14 @@ type
 
   TFhirCodingW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetCode: String; virtual; abstract;
-    function GetDisplay: String; virtual; abstract;
-    function GetSystem: String; virtual; abstract;
-    function GetVersion: String; virtual; abstract;
-    procedure SetCode(Value: String); virtual; abstract;
-    procedure SetDisplay(Value: String); virtual; abstract;
-    procedure SetSystem(Value: String); virtual; abstract;
-    procedure SetVersion(Value: String); virtual; abstract;
+    function getCode: String; virtual; abstract;
+    function getDisplay: String; virtual; abstract;
+    function getSystem: String; virtual; abstract;
+    function getVersion: String; virtual; abstract;
+    procedure setCode(Value: String); virtual; abstract;
+    procedure setDisplay(Value: String); virtual; abstract;
+    procedure setSystem(Value: String); virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
   public
     function link : TFhirCodingW; overload;
     property system : String read GetSystem write SetSystem;
@@ -103,14 +103,14 @@ type
 
   TFhirQuantityW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetCode: String; virtual; abstract;
-    function GetSystem: String; virtual; abstract;
-    function GetUnit: String; virtual; abstract;
-    function GetValue: String; virtual; abstract;
-    procedure SetCode(Value: String); virtual; abstract;
-    procedure SetSystem(Value: String); virtual; abstract;
-    procedure SetUnit(Value: String); virtual; abstract;
-    procedure SetValue(Value: String); virtual; abstract;
+    function getCode: String; virtual; abstract;
+    function getSystem: String; virtual; abstract;
+    function getUnit: String; virtual; abstract;
+    function getValue: String; virtual; abstract;
+    procedure setCode(Value: String); virtual; abstract;
+    procedure setSystem(Value: String); virtual; abstract;
+    procedure setUnit(Value: String); virtual; abstract;
+    procedure setValue(Value: String); virtual; abstract;
   public
     function link : TFhirQuantityW; overload;
     property value : String read GetValue write SetValue;
@@ -121,10 +121,10 @@ type
 
   TFhirMetaW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetVersionId: String; virtual; abstract;
-    procedure SetVersionId(Value: String); virtual; abstract;
-    function GetLastUpdated: TDateTimeEx; virtual; abstract;
-    procedure SetLastUpdated(Value: TDateTimeEx); virtual; abstract;
+    function getVersionId: String; virtual; abstract;
+    procedure setVersionId(Value: String); virtual; abstract;
+    function getLastUpdated: TDateTimeEx; virtual; abstract;
+    procedure setLastUpdated(Value: TDateTimeEx); virtual; abstract;
   public
     function link : TFhirMetaW; overload;
     property versionid : String read GetVersionId write SetVersionId;
@@ -210,8 +210,8 @@ type
 
   TFhirOperationOutcomeIssueW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetDiagnostics: String; virtual; abstract;
-    procedure SetDiagnostics(Value: String); virtual; abstract;
+    function getDiagnostics: String; virtual; abstract;
+    procedure setDiagnostics(Value: String); virtual; abstract;
   public
     function link : TFhirOperationOutcomeIssueW; overload;
     function display : String; virtual; abstract;
@@ -251,42 +251,42 @@ type
 
   TFhirBundleEntryW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetLink(rel: String): String; virtual; abstract;
-    procedure SetLink(rel: String; const Value: String); virtual; abstract;
+    function getLink(rel: String): String; virtual; abstract;
+    procedure setLink(rel: String; const Value: String); virtual; abstract;
     function getRequestMethod: String; virtual; abstract;
     function getRequestUrl: String; virtual; abstract;
     function getResource: TFHIRResourceV; virtual; abstract;
-    function GetResponseDate: TDateTimeEx; virtual; abstract;
-    function GetResponseStatus: String; virtual; abstract;
+    function getResponseDate: TDateTimeEx; virtual; abstract;
+    function getResponseStatus: String; virtual; abstract;
     function getSearchMode: TFHIRBundleEntrySearchMode; virtual; abstract;
     function getSearchMpiMatch: String; virtual; abstract;
     function getSearchScore: String; virtual; abstract;
-    procedure SetRequestMethod(Value: String); virtual; abstract;
-    procedure SetRequestUrl(Value: String); virtual; abstract;
-    procedure SetResource(Value: TFHIRResourceV); virtual; abstract;
-    procedure SetResponseDate(Value: TDateTimeEx); virtual; abstract;
-    procedure SetResponseStatus(Value: String); virtual; abstract;
-    procedure SetSearchMode(Value: TFHIRBundleEntrySearchMode); virtual; abstract;
-    procedure SetSearchMpiMatch(Value: String); virtual; abstract;
-    procedure SetSearchScore(Value: String); virtual; abstract;
-    function GetUrl: String; virtual; abstract;
-    procedure SetUrl(Value: String);  virtual; abstract;
-    function GetrequestIfNoneExist: String; virtual; abstract;
-    procedure SetrequestIfNoneExist(Value: String); virtual; abstract;
-    function GetrequestIfMatch: String; virtual; abstract;
-    procedure SetrequestIfMatch(Value: String); virtual; abstract;
-    function GetrequestIfNoneMatch: String; virtual; abstract;
-    procedure SetrequestIfNoneMatch(Value: String); virtual; abstract;
-    function GetResponseETag: string; virtual; abstract;
-    procedure SetResponseETag(Value: string); virtual; abstract;
-    function GetResponseLocation: string; virtual; abstract;
-    procedure SetResponseLocation(Value: string); virtual; abstract;
-    function GetrequestIfModifiedSince: TDateTimeEx; virtual; abstract;
-    procedure SetrequestIfModifiedSince(Value: TDateTimeEx); virtual; abstract;
+    procedure setRequestMethod(Value: String); virtual; abstract;
+    procedure setRequestUrl(Value: String); virtual; abstract;
+    procedure setResource(Value: TFHIRResourceV); virtual; abstract;
+    procedure setResponseDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setResponseStatus(Value: String); virtual; abstract;
+    procedure setSearchMode(Value: TFHIRBundleEntrySearchMode); virtual; abstract;
+    procedure setSearchMpiMatch(Value: String); virtual; abstract;
+    procedure setSearchScore(Value: String); virtual; abstract;
+    function getURL: String; virtual; abstract;
+    procedure setUrl(Value: String);  virtual; abstract;
+    function getrequestIfNoneExist: String; virtual; abstract;
+    procedure setrequestIfNoneExist(Value: String); virtual; abstract;
+    function getrequestIfMatch: String; virtual; abstract;
+    procedure setrequestIfMatch(Value: String); virtual; abstract;
+    function getrequestIfNoneMatch: String; virtual; abstract;
+    procedure setrequestIfNoneMatch(Value: String); virtual; abstract;
+    function getResponseETag: string; virtual; abstract;
+    procedure setResponseETag(Value: string); virtual; abstract;
+    function getResponseLocation: string; virtual; abstract;
+    procedure setResponseLocation(Value: string); virtual; abstract;
+    function getrequestIfModifiedSince: TDateTimeEx; virtual; abstract;
+    procedure setrequestIfModifiedSince(Value: TDateTimeEx); virtual; abstract;
   public
     function Link : TFhirBundleEntryW; overload;
     property links[rel : String] : String read GetLink write SetLink;
-    property url : String read GetUrl write SetUrl;
+    property url : String read getURL write SetUrl;
     property searchMode : TFHIRBundleEntrySearchMode read getSearchMode write SetSearchMode;
     property searchScore : String read getSearchScore write SetSearchScore;
     property searchMpiMatch : String read getSearchMpiMatch write SetSearchMpiMatch;
@@ -305,16 +305,16 @@ type
 
   TFHIRBundleW = class (TFHIRXVersionResourceWrapper)
   protected
-    function GetLink(rel: String): String; virtual; abstract;
-    procedure SetLink(rel: String; const Value: String); virtual; abstract;
-    function GetLastUpdated : TDateTimeEx; virtual; abstract;
-    procedure SetLastUpdated(Value: TDateTimeEx); virtual; abstract;
-    function GetTotal: integer; virtual; abstract;
-    procedure SetTotal(Value: integer); virtual; abstract;
-    function GetType: TBundleType; virtual; abstract;
-    procedure SetType(Value: TBundleType); virtual; abstract;
-    function GetTimestamp: TDateTimeEx; virtual; abstract;
-    procedure SetTimestamp(Value: TDateTimeEx); virtual; abstract;
+    function getLink(rel: String): String; virtual; abstract;
+    procedure setLink(rel: String; const Value: String); virtual; abstract;
+    function getLastUpdated : TDateTimeEx; virtual; abstract;
+    procedure setLastUpdated(Value: TDateTimeEx); virtual; abstract;
+    function getTotal: integer; virtual; abstract;
+    procedure setTotal(Value: integer); virtual; abstract;
+    function getType: TBundleType; virtual; abstract;
+    procedure setType(Value: TBundleType); virtual; abstract;
+    function getTimestamp: TDateTimeEx; virtual; abstract;
+    procedure setTimestamp(Value: TDateTimeEx); virtual; abstract;
   public
     function link : TFHIRBundleW;
     function next : String; overload;
@@ -381,12 +381,12 @@ const
 type
   TFhirCapabilityStatementRestResourceW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetCode: String; virtual; abstract;
-    procedure SetCode(Value: String); virtual; abstract;
-    function GetProfile: String; virtual; abstract;
-    procedure SetProfile(Value: String); virtual; abstract;
-    function GetReadHistory: boolean; virtual; abstract;
-    procedure SetReadHistory(Value: boolean); virtual; abstract;
+    function getCode: String; virtual; abstract;
+    procedure setCode(Value: String); virtual; abstract;
+    function getProfile: String; virtual; abstract;
+    procedure setProfile(Value: String); virtual; abstract;
+    function getReadHistory: boolean; virtual; abstract;
+    procedure setReadHistory(Value: boolean); virtual; abstract;
   public
     function link : TFhirCapabilityStatementRestResourceW; overload;
     property code : String read GetCode write SetCode;
@@ -398,24 +398,24 @@ type
 
   TFHIRCapabilityStatementW = class (TFHIRXVersionResourceWrapper)
   protected
-    function GetUrl: String; virtual; abstract;
-    procedure SetUrl(Value: String); virtual; abstract;
+    function getURL: String; virtual; abstract;
+    procedure setUrl(Value: String); virtual; abstract;
     function getName : String; virtual; abstract;
     procedure setName(value : String); virtual; abstract;
     function getVersion : String; virtual; abstract;
     procedure setVersion(value : String); virtual; abstract;
     function getDescription : String; virtual; abstract;
     procedure setDescription(value : String); virtual; abstract;
-    function GetStatus: TPublicationStatus; virtual; abstract;
-    procedure SetStatus(Value: TPublicationStatus); virtual; abstract;
-    function GetDate: TDateTimeEx; virtual; abstract;
-    procedure SetDate(Value: TDateTimeEx); virtual; abstract;
-    function GetFhirVersion: string; virtual; abstract;
-    procedure SetFhirVersion(Value: string); virtual; abstract;
+    function getStatus: TPublicationStatus; virtual; abstract;
+    procedure setStatus(Value: TPublicationStatus); virtual; abstract;
+    function getDate: TDateTimeEx; virtual; abstract;
+    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    function getFhirVersion: string; virtual; abstract;
+    procedure setFhirVersion(Value: string); virtual; abstract;
   public
     function link : TFHIRCapabilityStatementW; overload;
 
-    property url : String read GetUrl write SetUrl;
+    property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
@@ -445,14 +445,14 @@ type
   TFhirParametersParameterW = class (TFHIRXVersionElementWrapper)
   protected
     FList : TFslList<TFhirParametersParameterW>;
-    function GetValue: TFHIRObject; virtual; abstract;
-    procedure SetValue(Value: TFHIRObject); virtual; abstract;
-    function GetResource: TFHIRResourceV; virtual; abstract;
-    procedure SetResource(Value: TFHIRResourceV); virtual; abstract;
+    function getValue: TFHIRObject; virtual; abstract;
+    procedure setValue(Value: TFHIRObject); virtual; abstract;
+    function getResource: TFHIRResourceV; virtual; abstract;
+    procedure setResource(Value: TFHIRResourceV); virtual; abstract;
     procedure populateList; virtual;
-    function GetParameterParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
-    function GetResourceParameter(name: String): TFHIRResourceV;  virtual; abstract;
-    function GetStringParameter(name: String): String;  virtual; abstract;
+    function getParameterParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
+    function getResourceParameter(name: String): TFHIRResourceV;  virtual; abstract;
+    function getStringParameter(name: String): String;  virtual; abstract;
   public
     destructor Destroy; override;
     function link : TFhirParametersParameterW; overload;
@@ -479,7 +479,7 @@ type
   TFHIRParametersW = class (TFHIRXVersionResourceWrapper)
   protected
     FList : TFslList<TFhirParametersParameterW>;
-    function GetParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
+    function getParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     procedure populateList; virtual;
   public
     destructor Destroy; override;
@@ -557,25 +557,25 @@ type
 
   TFHIRMetadataResourceW = class (TFHIRXVersionResourceWrapper)
   protected
-    function GetURL: String; virtual; abstract;
-    function GetName: String; virtual; abstract;
-    function GetStatus: TPublicationStatus; virtual; abstract;
-    function GetVersion: String; virtual; abstract;
-    function GetDescription: String; virtual; abstract;
-    function GetDate: TDateTimeEx; virtual; abstract;
-    function GetPublisher: String; virtual; abstract;
-    procedure SetPublisher(Value: String); virtual; abstract;
-    procedure SetDate(Value: TDateTimeEx); virtual; abstract;
-    procedure SetUrl(Value: String); virtual; abstract;
-    procedure SetVersion(Value: String); virtual; abstract;
-    procedure SetName(Value: String); virtual; abstract;
-    procedure SetStatus(Value: TPublicationStatus); virtual; abstract;
-    procedure SetDescription(Value: String); virtual; abstract;
+    function getURL: String; virtual; abstract;
+    function getName: String; virtual; abstract;
+    function getStatus: TPublicationStatus; virtual; abstract;
+    function getVersion: String; virtual; abstract;
+    function getDescription: String; virtual; abstract;
+    function getDate: TDateTimeEx; virtual; abstract;
+    function getPublisher: String; virtual; abstract;
+    procedure setPublisher(Value: String); virtual; abstract;
+    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setUrl(Value: String); virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
+    procedure setName(Value: String); virtual; abstract;
+    procedure setStatus(Value: TPublicationStatus); virtual; abstract;
+    procedure setDescription(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
   public
     function link : TFHIRMetadataResourceW; overload;
 
-    property url : String read GetURL write SetUrl;
+    property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
@@ -589,9 +589,9 @@ type
   protected
     FConceptList : TFslList<TFhirCodeSystemConceptW>;
     function getContent: TFhirCodeSystemContentMode; virtual; abstract;
-    procedure SetContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
-    function GetCount: integer; virtual; abstract;
-    procedure SetCount(Value: integer); virtual; abstract;
+    procedure setContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
+    function getCount: integer; virtual; abstract;
+    procedure setCount(Value: integer); virtual; abstract;
   public
     destructor Destroy; override;
     function link : TFhirCodeSystemW; overload;
@@ -624,9 +624,9 @@ type
     function getSystem : String; virtual; abstract;
     function getCode : String; virtual; abstract;
     function getDisplay : String; virtual; abstract;
-    procedure SetCode(Value: String); virtual; abstract;
-    procedure SetDisplay(Value: String); virtual; abstract;
-    procedure SetSystem(Value: String); virtual; abstract;
+    procedure setCode(Value: String); virtual; abstract;
+    procedure setDisplay(Value: String); virtual; abstract;
+    procedure setSystem(Value: String); virtual; abstract;
 
     property system : String read GetSystem write SetSystem;
     property code : String read GetCode write SetCode;
@@ -653,9 +653,9 @@ type
     function getProp : String; virtual; abstract;
     function getOp : TFilterOperator; virtual; abstract;
     function getValue : String; virtual; abstract;
-    procedure SetOp(Value: TFilterOperator); virtual; abstract;
-    procedure SetProp(Value: String); virtual; abstract;
-    procedure SetValue(Value: String); virtual; abstract;
+    procedure setOp(Value: TFilterOperator); virtual; abstract;
+    procedure setProp(Value: String); virtual; abstract;
+    procedure setValue(Value: String); virtual; abstract;
   public
     function link : TFhirValueSetComposeIncludeFilterW; overload;
     property prop : String read GetProp write SetProp;
@@ -674,8 +674,8 @@ type
   protected
     function getCode : String; virtual; abstract;
     function getDisplay : String; virtual; abstract;
-    procedure SetCode(Value: String); virtual; abstract;
-    procedure SetDisplay(Value: String); virtual; abstract;
+    procedure setCode(Value: String); virtual; abstract;
+    procedure setDisplay(Value: String); virtual; abstract;
   public
     function link : TFhirValueSetComposeIncludeConceptW; overload;
     property code : String read getCode write SetCode;
@@ -687,8 +687,8 @@ type
   protected
     function getSystem : String; virtual; abstract;
     function getVersion : String; virtual; abstract;
-    procedure SetSystem(Value: String); virtual; abstract;
-    procedure SetVersion(Value: String); virtual; abstract;
+    procedure setSystem(Value: String); virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
   public
     function link : TFhirValueSetComposeIncludeW; overload;
 
@@ -782,10 +782,10 @@ type
   TFHIRLookupOpRespPropertyW = class (TFHIRXVersionOperationObjectWrapper)
   public
     function link : TFHIRLookupOpRespPropertyW; overload;
-    function GetDescription: string; virtual; abstract;
-    procedure SetDescription(Value: string); virtual; abstract;
-    function GetValue: TFHIRObject; virtual; abstract;
-    procedure SetValue(Value: TFHIRObject); virtual; abstract;
+    function getDescription: string; virtual; abstract;
+    procedure setDescription(Value: string); virtual; abstract;
+    function getValue: TFHIRObject; virtual; abstract;
+    procedure setValue(Value: TFHIRObject); virtual; abstract;
 
     property description : string read GetDescription write SetDescription;
     property value : TFHIRObject read GetValue write SetValue;
@@ -794,8 +794,8 @@ type
   TFHIRLookupOpRespDesignationW = class (TFHIRXVersionOperationObjectWrapper)
   public
     function link : TFHIRLookupOpRespDesignationW; overload;
-    function GetUse: TFHIRObject; virtual; abstract;
-    procedure SetUse(Value: TFHIRObject); virtual; abstract;
+    function getUse: TFHIRObject; virtual; abstract;
+    procedure setUse(Value: TFHIRObject); virtual; abstract;
 
     property use : TFHIRObject read GetUse write SetUse;
   end;
@@ -811,17 +811,17 @@ type
 
   TFHIRLookupOpResponseW = class (TFHIRXVersionOperationWrapper)
   protected
-    function GetName: String; virtual; abstract;
-    procedure SetName(Value: String); virtual; abstract;
-    function GetDisplay: String; virtual; abstract;
-    procedure SetDisplay(Value: String); virtual; abstract;
+    function getName: String; virtual; abstract;
+    procedure setName(Value: String); virtual; abstract;
+    function getDisplay: String; virtual; abstract;
+    procedure setDisplay(Value: String); virtual; abstract;
   public
     function link : TFHIRLookupOpResponseW; overload;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; virtual; abstract;
     function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
-    function GetVersion: String; virtual; abstract;
-    procedure SetVersion(Value: String); virtual; abstract;
+    function getVersion: String; virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
     procedure addExtension(name, value : String); overload; virtual; abstract;
     procedure addExtension(name : String; value : boolean); overload; virtual; abstract;
 
@@ -844,8 +844,8 @@ type
 
   TFHIRSubsumesOpResponseW = class (TFHIRXVersionOperationWrapper)
   protected
-    function GetOutcome: String; virtual; abstract;
-    procedure SetOutcome(Value: String); virtual; abstract;
+    function getOutcome: String; virtual; abstract;
+    procedure setOutcome(Value: String); virtual; abstract;
   public
     property outcome : String read GetOutcome write SetOutcome;
   end;
@@ -888,26 +888,26 @@ type
 
   TFhirConceptMapW = class (TFHIRXVersionResourceWrapper)
   protected
-    function GetDate: TDateTimeEx; virtual; abstract;
-    function GetDescription: String; virtual; abstract;
-    function GetName: String; virtual; abstract;
-    function GetStatus: TPublicationStatus; virtual; abstract;
-    function GetURL: String; virtual; abstract;
-    procedure SetDate(Value: TDateTimeEx); virtual; abstract;
-    procedure SetDescription(Value: String); virtual; abstract;
-    procedure SetName(Value: String); virtual; abstract;
-    procedure SetStatus(Value: TPublicationStatus); virtual; abstract;
-    procedure SetUrl(Value: String); virtual; abstract;
+    function getDate: TDateTimeEx; virtual; abstract;
+    function getDescription: String; virtual; abstract;
+    function getName: String; virtual; abstract;
+    function getStatus: TPublicationStatus; virtual; abstract;
+    function getURL: String; virtual; abstract;
+    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setDescription(Value: String); virtual; abstract;
+    procedure setName(Value: String); virtual; abstract;
+    procedure setStatus(Value: TPublicationStatus); virtual; abstract;
+    procedure setUrl(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
-    function GetPublisher: String; virtual; abstract;
-    procedure SetPublisher(Value: String); virtual; abstract;
+    function getPublisher: String; virtual; abstract;
+    procedure setPublisher(Value: String); virtual; abstract;
   protected
-    function GetVersion: String; virtual; abstract;
-    procedure SetVersion(Value: String); virtual; abstract;
+    function getVersion: String; virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
   public
     function link : TFhirConceptMapW; overload;
 
-    property url : String read GetURL write SetUrl;
+    property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
@@ -974,23 +974,23 @@ type
 
   TFHIRSubscriptionW = class (TFHIRXVersionResourceWrapper)
   protected
-    function GetCriteria: String; virtual; abstract;
-    function GetDirect: boolean; virtual; abstract;
-    function GetEndpoint: String; virtual; abstract;
-    function GetError: String; virtual; abstract;
-    function GetMethod: TSubscriptionMethod; virtual; abstract;
-    function GetPayload: String; virtual; abstract;
-    function GetStatus: TSubscriptionStatus; virtual; abstract;
-    function GetSummary: String; virtual; abstract;
-    function GetHeaders: TArray<String>; virtual; abstract;
-    procedure SetCriteria(Value: String); virtual; abstract;
-    procedure SetDirect(Value: boolean); virtual; abstract;
-    procedure SetEndpoint(Value: String); virtual; abstract;
-    procedure SetError(Value: String); virtual; abstract;
-    procedure Setheaders(Value: TArray<String>); virtual; abstract;
-    procedure SetMethod(Value: TSubscriptionMethod); virtual; abstract;
-    procedure SetPayload(Value: String); virtual; abstract;
-    procedure SetStatus(Value: TSubscriptionStatus); virtual; abstract;
+    function getCriteria: String; virtual; abstract;
+    function getDirect: boolean; virtual; abstract;
+    function getEndpoint: String; virtual; abstract;
+    function getError: String; virtual; abstract;
+    function getMethod: TSubscriptionMethod; virtual; abstract;
+    function getPayload: String; virtual; abstract;
+    function getStatus: TSubscriptionStatus; virtual; abstract;
+    function getSummary: String; virtual; abstract;
+    function getHeaders: TArray<String>; virtual; abstract;
+    procedure setCriteria(Value: String); virtual; abstract;
+    procedure setDirect(Value: boolean); virtual; abstract;
+    procedure setEndpoint(Value: String); virtual; abstract;
+    procedure setError(Value: String); virtual; abstract;
+    procedure setheaders(Value: TArray<String>); virtual; abstract;
+    procedure setMethod(Value: TSubscriptionMethod); virtual; abstract;
+    procedure setPayload(Value: String); virtual; abstract;
+    procedure setStatus(Value: TSubscriptionStatus); virtual; abstract;
   public
     function link : TFHIRSubscriptionW; overload;
     property criteria : String read GetCriteria write SetCriteria;
@@ -1012,8 +1012,8 @@ type
 
   TFhirObservationComponentW = class (TFHIRXVersionElementWrapper)
   protected
-    function GetValue: TFHIRObject;  virtual; abstract;
-    procedure SetValue(Value: TFHIRObject); virtual; abstract;
+    function getValue: TFHIRObject;  virtual; abstract;
+    procedure setValue(Value: TFHIRObject); virtual; abstract;
   public
     function link : TFhirObservationComponentW; overload;
     function codings : TFslList<TFHIRCodingW>; virtual; abstract;
@@ -1024,10 +1024,10 @@ type
 
   TFhirObservationW = class (TFHIRXVersionResourceWrapper)
   protected
-    function GetStatus: TObservationStatus;  virtual; abstract;
-    procedure SetStatus(Value: TObservationStatus);  virtual; abstract;
-    function GetValue: TFHIRObject;  virtual; abstract;
-    procedure SetValue(Value: TFHIRObject); virtual; abstract;
+    function getStatus: TObservationStatus;  virtual; abstract;
+    procedure setStatus(Value: TObservationStatus);  virtual; abstract;
+    function getValue: TFHIRObject;  virtual; abstract;
+    procedure setValue(Value: TFHIRObject); virtual; abstract;
   public
     function link : TFhirObservationW; overload;
     property status : TObservationStatus read GetStatus write SetStatus;

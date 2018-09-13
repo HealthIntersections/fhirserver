@@ -217,13 +217,13 @@ type
     FEnumName : String;
     function GetHasValue: Boolean;
   Public
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFHIRObject>); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
-    Constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
-    Destructor Destroy; Override;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFHIRObject>); Overload;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
+    constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
+    destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
 
@@ -244,8 +244,8 @@ type
     FList : TFHIRPropertyList;
     function GetCurrent : TFHIRProperty;
   public
-    Constructor Create(list : TFHIRPropertyList);
-    Destructor Destroy; override;
+    constructor Create(list : TFHIRPropertyList);
+    destructor Destroy; override;
     function MoveNext : boolean;
     property Current : TFHIRProperty read GetCurrent;
   end;
@@ -268,8 +268,8 @@ type
     FCursor : Integer;
     Function GetCurrent : TFHIRProperty;
   public
-    Constructor Create(oFocus : TFHIRObject; bInheritedProperties, bPrimitiveValues : Boolean); overload;
-    Destructor Destroy; Override;
+    constructor Create(oFocus : TFHIRObject; bInheritedProperties, bPrimitiveValues : Boolean); overload;
+    destructor Destroy; Override;
     Procedure Next;
     Procedure Reset;
     Function More : Boolean;
@@ -305,8 +305,8 @@ type
 
     function GetFhirObjectVersion: TFHIRVersion; virtual;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TFHIRObject;
     function Clone : TFHIRObject; Overload;
     procedure Assign(oSource : TFslObject); override;
@@ -379,8 +379,7 @@ type
     function ToString : String; override;
     function isEmpty : boolean; virtual;
     procedure dropEmpty;
-    function equalsDeep(other : TFHIRObject) : boolean; virtual;
-    function equalsShallow(other : TFHIRObject) : boolean; virtual;
+    function Equals(other : TObject) : boolean; override;
   public
     {
       comments from the XML stream. No support for comments in JSON
@@ -404,8 +403,8 @@ type
     FList : TFHIRObjectList;
     function GetCurrent : TFHIRObject;
   public
-    Constructor Create(list : TFHIRObjectList);
-    Destructor Destroy; override;
+    constructor Create(list : TFHIRObjectList);
+    destructor Destroy; override;
     function MoveNext : boolean;
     property Current : TFHIRObject read GetCurrent;
   end;
@@ -421,9 +420,9 @@ type
   protected
     function ItemClass : TFslObjectClass; override;
   public
-    Constructor Create(item : TFHIRObject); overload;
-    Constructor Create(items : TFHIRObjectList); overload;
-    Destructor Destroy; override;
+    constructor Create(item : TFHIRObject); overload;
+    constructor Create(items : TFHIRObjectList); overload;
+    destructor Destroy; override;
     function Link : TFHIRObjectList; Overload;
     function Clone : TFHIRObjectList; Overload;
     function GetEnumerator : TFHIRObjectListEnumerator;
@@ -470,10 +469,10 @@ type
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
-    constructor create(value : String); Overload;
-    constructor create(value : TDateTimeEx); Overload;
-    constructor create(value : boolean); Overload;
-    constructor create(value : TBytes); Overload;
+    constructor Create(value : String); Overload;
+    constructor Create(value : TDateTimeEx); Overload;
+    constructor Create(value : boolean); Overload;
+    constructor Create(value : TBytes); Overload;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -486,8 +485,7 @@ type
     function isEmpty : boolean; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function Equals(other : TObject) : boolean; override;
   end;
 
   TFHIRSelection = class (TFhirObject)
@@ -496,9 +494,9 @@ type
     FName : String;
     FValue : TFHIRObject;
   public
-    Constructor Create(focus : TFHIRObject); overload;
-    Constructor Create(parent : TFHIRObject; name : String; focus : TFHIRObject); overload;
-    Destructor Destroy; override;
+    constructor Create(focus : TFHIRObject); overload;
+    constructor Create(parent : TFHIRObject; name : String; focus : TFHIRObject); overload;
+    destructor Destroy; override;
     function Link : TFHIRSelection; overload;
     property parent : TFHIRObject read FParent;
     property name : String read FName;
@@ -516,9 +514,9 @@ type
 
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
   public
-    Constructor Create; overload; override;
-    Constructor Create(focus : TFHIRObject); overload;
-    Constructor Create(parent : TFHIRObject; name : String; focus : TFHIRObject); overload;
+    constructor Create; overload; override;
+    constructor Create(focus : TFHIRObject); overload;
+    constructor Create(parent : TFHIRObject; name : String; focus : TFHIRObject); overload;
     function Link : TFHIRSelectionList; overload;
     procedure add(value : TFHIRObject); overload;
     procedure add(parent : TFHIRObject; name : String; value : TFHIRObject); overload;
@@ -722,14 +720,9 @@ begin
     result := result + ': '+primitiveValue;
 end;
 
-function TFHIRObject.equalsDeep(other: TFHIRObject): boolean;
+function TFHIRObject.equals(other : TObject): boolean;
 begin
   result := (other <> nil) and (other.className = className);
-end;
-
-function TFHIRObject.equalsShallow(other: TFHIRObject): boolean;
-begin
-  result := other <> nil;
 end;
 
 function TFHIRObject.extensionCount(url: String): integer;
@@ -891,14 +884,9 @@ begin
   raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
-function TFHIRObjectText.equalsDeep(other: TFHIRObject): boolean;
+function TFHIRObjectText.equals(other : TObject): boolean;
 begin
-  result := inherited equalsDeep(other) and (FValue <> TFHIRObjectText(other).FValue);
-end;
-
-function TFHIRObjectText.equalsShallow(other: TFHIRObject): boolean;
-begin
-  result := equalsDeep(other);
+  result := inherited equals(other) and (FValue <> TFHIRObjectText(other).FValue);
 end;
 
 function TFHIRObjectText.fhirType: String;
@@ -1289,9 +1277,9 @@ begin
   else if (e1 = nil) or (e2 = nil) then
     result := false
   else if (e2.isMetaDataBased) then
-    result := e2.equalsDeep(e1)
+    result := e2.equals(e1)
   else
-    result := e1.equalsDeep(e2);
+    result := e1.equals(e2);
 end;
 
 function TFHIRObject.primitiveValue: string;

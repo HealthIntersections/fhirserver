@@ -143,8 +143,8 @@ Type
       Procedure ExecuteYield(Const iTimeout : Cardinal);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslThread;
 
@@ -178,7 +178,7 @@ Type
   protected
     procedure Execute; override;
   public
-    Constructor Create(engine : TBackgroundTaskEngine); // no link
+    constructor Create(engine : TBackgroundTaskEngine); // no link
   end;
 
   TBackgroundTaskEngine = class abstract (TFslObject)
@@ -517,7 +517,7 @@ type
   protected
     procedure Execute; override;
   public
-    Constructor Create(thread : TFslThread);
+    constructor Create(thread : TFslThread);
   end;
 
 Constructor TFslThread.Create;

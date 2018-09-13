@@ -412,7 +412,7 @@ type
     // the following procedures must be overridden by any descendents
     function  TypeLabel : string; virtual; abstract;
   public
-    constructor create(const caption : string; DrawTime  : TFGraphDrawTime); virtual;
+    constructor Create(const caption : string; DrawTime  : TFGraphDrawTime); virtual;
 
     property Caption : string read FCaption write SetCaption;
     property Visible : boolean read FVisible write SetVisible;
@@ -762,7 +762,7 @@ type
     function GetFonTAlphaColor: TAlphaColor;
     procedure SetFonTAlphaColor(const Value: TAlphaColor);
   public
-    constructor create(canvas : TCanvas);
+    constructor Create(canvas : TCanvas);
     destructor Destroy; override;
 
     procedure start;

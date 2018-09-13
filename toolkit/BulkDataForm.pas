@@ -84,7 +84,7 @@ type
     procedure loadLookups;
     procedure updateStatus;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     property Server : TFHIRClient read FServer write SetServer;
     property Settings : TFHIRToolkitSettings read FSettings write SetSettings;

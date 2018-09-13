@@ -58,7 +58,7 @@ type
     // convenience method to call a method's static main
     // uses delphi's native TStrings to pass the
     // array of string args
-    class procedure CallMain(const classname: UTF8String; strings: TStrings);
+    class procedure CallMain(const classname: String; strings: TStrings);
 
     // waits until all the threads have completed.
     procedure Wait;
@@ -99,7 +99,7 @@ type
   TJavaParams = class
   private
     RefList: TList; // a list of references to be freed by the destructor.
-    Fsig: UTF8String;
+    Fsig: String;
     FArgPointer: Pointer;
     bufLength: Integer;
     procedure addToArgBuffer(p: Pointer; NumBytes: Integer); // add an element to buffer.
@@ -136,7 +136,7 @@ type
     procedure addObjectArray(arr: array of TJavaObject; jcl: TJavaClass);
 
     // the java signature of this parameter list.
-    property Signature: UTF8String read Fsig;
+    property Signature: String read Fsig;
     // a pointer to the buffer that contains the Parameters to be passed.
     property argPointer: Pointer read FArgPointer;
   end;
@@ -146,19 +146,19 @@ type
   TJavaMethod = class
   private
     Fclass: TJavaClass;
-    Fsig: UTF8String;
+    Fsig: String;
     FmethodType: TMethodAttribute;
     FmethodID: JMethodID;
     FRetval: TJavaType;
   public
     // the constructor. The retclass is Nil unless returntype is an object.
     // raises a EJavaMethodNotFound exception if method is not found.
-    constructor Create(cls: TJavaClass; name: UTF8String; methodType: TMethodAttribute; returntype: TJavaType; retclass: TJavaClass; params: TJavaTypeArray;
+    constructor Create(cls: TJavaClass; name: String; methodType: TMethodAttribute; returntype: TJavaType; retclass: TJavaClass; params: TJavaTypeArray;
       paramClasses: TJavaClassArray); overload;
-    constructor Create(cls: TJavaClass; name: UTF8String; methodType: TMethodAttribute; returntype: TJavaType; params: TJavaTypeArray); overload;
+    constructor Create(cls: TJavaClass; name: String; methodType: TMethodAttribute; returntype: TJavaType; params: TJavaTypeArray); overload;
     // a minimal constructor for virtual methods that
     // take no arguments and return nothing.
-    constructor CreateVoid(cls: TJavaClass; name: UTF8String);
+    constructor CreateVoid(cls: TJavaClass; name: String);
     function Call(params: TJavaParams; jobj: TJavaObject): jvalue;
   end;
 
@@ -186,9 +186,9 @@ type
 
     // returns a native delphi string by calling the object's toString()
     // if the object itself is a String, it simply copies it to a Delphi string.
-    function toString: UTF8String;
+    function ToString: String; override;
     // returns true if the argument represents the same java object.
-    function equals(JavaObject: TJavaObject): Boolean;
+    function Equals(JavaObject: TObject): Boolean; override;
     // returns true if this object is an instance of the java class.
     function isInstanceOf(JavaClass: TJavaClass): Boolean;
     property Handle: JObject read getHandle;
@@ -201,19 +201,19 @@ type
 
   TJavaClass = class(TJavaObject)
   private
-    Fsig: UTF8String;
+    Fsig: String;
   public
     // the constructor raises a EJavaClassNotFound exception if class is not found.
-    constructor Create(name: UTF8String);
+    constructor Create(name: String);
     // a constructor that creates a TJavaClass wrapper object when it already has
     // a local object ref to the class's JNI handle.
-    constructor CreateWithHandle(name: UTF8String; jc: jclass);
+    constructor CreateWithHandle(name: String; jc: jclass);
     // returns a handle to a new instance of this class.
     function Instantiate(params: TJavaParams): TJavaObject;
 
     function extends(JavaClass: TJavaClass): Boolean;
 
-    property Signature: UTF8String read Fsig;
+    property Signature: String read Fsig;
   end;
 
   { Exceptions to be raised when stuff goes wrong with the Java runtime. }
@@ -239,7 +239,7 @@ function getStringClass: jclass;
 
 { various utility functions for creating Delphi objects from Java objects }
 
-function JToDString(js: jstring): UTF8String;
+function JToDString(js: jstring): String;
 function JToTStrings(jarr: JobjectArray): TStrings;
 function JstringArrayToDTStrings(jarr: jarray): TStrings;
 function JdoubleArrayToDdoubleArray(jarr: jDoubleArray): TDdoubleArray;
@@ -387,7 +387,7 @@ begin
     penv^.DeleteLocalRef(penv, jobj);
 end;
 
-class procedure TJavaVM.CallMain(const classname: UTF8String; strings: TStrings);
+class procedure TJavaVM.CallMain(const classname: String; strings: TStrings);
 var
   classID: jclass;
   methodID: JMethodID;
@@ -395,7 +395,7 @@ var
   penv: PJNIEnv;
 begin
   penv := JNIPointer;
-  classID := penv^.FindClass(penv, PUTF8Char(dotToSlash(classname)));
+  classID := penv^.FindClass(penv, PUTF8Char(UTF8Encode(dotToSlash(classname))));
   if classID = nil then
     raise EJavaClassNotFound.Create('Could not find class ' + classname);
   methodID := penv^.GetStaticMethodID(penv, classID, PUTF8Char('main'), PUTF8Char('([Ljava/lang/String;)V'));
@@ -434,16 +434,16 @@ begin
   penv^.CallStaticVoidMethodV(penv, classID, methodID, @exitCode);
 end;
 
-constructor TJavaClass.Create(name: UTF8String);
+constructor TJavaClass.Create(name: String);
 begin
   FPenv := JNIPointer;
   Fsig := dotToSlash(name);
-  FLocalHandle := FPenv^.FindClass(FPenv, PUTF8Char(Fsig));
+  FLocalHandle := FPenv^.FindClass(FPenv, PUTF8Char(UTF8Encode(Fsig)));
 //  if FLocalHandle = Nil then
 //    raise EJavaClassNotFound.Create('class ' + name + ' not found.');
 end;
 
-constructor TJavaClass.CreateWithHandle(name: UTF8String; jc: jclass);
+constructor TJavaClass.CreateWithHandle(name: String; jc: jclass);
 begin
   FPenv := JNIPointer;
   Fsig := dotToSlash(name);
@@ -465,7 +465,7 @@ end;
 
 constructor TJavaObject.Create(jcl: TJavaClass; params: TJavaParams);
 var
-  Signature: UTF8String;
+  Signature: String;
   methodID: JMethodID;
   argPointer: Pointer;
 begin
@@ -479,7 +479,7 @@ begin
     argPointer := params.argPointer;
   end;
   Signature := '(' + Signature + ')V';
-  methodID := FPenv^.GetMethodID(FPenv, jcl.Handle, '<init>', PUTF8Char(Signature));
+  methodID := FPenv^.GetMethodID(FPenv, jcl.Handle, '<init>', PUTF8Char(UTF8Encode(Signature)));
   if methodID = Nil then
     raise EJavaObjectInstantiation.Create('No such constructor ' + Signature);
   FLocalHandle := FPenv^.NewObjectV(FPenv, jcl.Handle, methodID, argPointer);
@@ -509,14 +509,14 @@ begin
     result := FPenv;
 end;
 
-function TJavaObject.equals(JavaObject: TJavaObject): Boolean;
+function TJavaObject.Equals(JavaObject: TObject): Boolean;
 var
   penv: PJNIEnv;
 begin
   penv := getPenv;
-  if (not self.Valid) or (not JavaObject.Valid) then
+  if (not self.Valid) or not (JavaObject is TJavaObject)  or (not TJavaObject(JavaObject).Valid) then
     raise EInvalidJNIHandle.Create('Attempt to use JNI local object reference in a different thread.');
-  result := penv^.IsSameObject(penv, Handle, JavaObject.Handle);
+  result := penv^.IsSameObject(penv, Handle, TJavaObject(JavaObject).Handle);
 end;
 
 function TJavaObject.isInstanceOf(JavaClass: TJavaClass): Boolean;
@@ -564,7 +564,7 @@ begin
     result := FLocalHandle;
 end;
 
-function TJavaObject.toString: UTF8String;
+function TJavaObject.toString: String;
 var
   toStringMethod: JMethodID;
   js: jstring;
@@ -791,12 +791,12 @@ begin
   Fsig := '';
 end;
 
-constructor TJavaMethod.Create(cls: TJavaClass; name: UTF8String; methodType: TMethodAttribute; returntype: TJavaType; params: TJavaTypeArray);
+constructor TJavaMethod.Create(cls: TJavaClass; name: String; methodType: TMethodAttribute; returntype: TJavaType; params: TJavaTypeArray);
 begin
   Create(cls, name, methodType, returntype, nil, params, []);
 end;
 
-constructor TJavaMethod.Create(cls: TJavaClass; name: UTF8String; methodType: TMethodAttribute; returntype: TJavaType; retclass: TJavaClass;
+constructor TJavaMethod.Create(cls: TJavaClass; name: String; methodType: TMethodAttribute; returntype: TJavaType; retclass: TJavaClass;
   params: TJavaTypeArray; paramClasses: TJavaClassArray);
 var
   penv: PJNIEnv;
@@ -817,14 +817,14 @@ begin
   Fsig := Fsig + typeToSig(returntype, retclass);
   penv := JNIPointer;
   if FmethodType = static then
-    FmethodID := penv^.GetStaticMethodID(penv, Fclass.Handle, PUTF8Char(name), PUTF8Char(Fsig))
+    FmethodID := penv^.GetStaticMethodID(penv, Fclass.Handle, PUTF8Char(UTF8Encode(name)), PUTF8Char(UTF8Encode(Fsig)))
   else
-    FmethodID := penv^.GetMethodID(penv, Fclass.Handle, PUTF8Char(name), PUTF8Char(Fsig));
+    FmethodID := penv^.GetMethodID(penv, Fclass.Handle, PUTF8Char(UTF8Encode(name)), PUTF8Char(UTF8Encode(Fsig)));
   if FmethodID = Nil then
     raise EJavaMethodNotFound.Create('method ' + name + Fsig + ' not found.');
 end;
 
-constructor TJavaMethod.CreateVoid(cls: TJavaClass; name: UTF8String);
+constructor TJavaMethod.CreateVoid(cls: TJavaClass; name: String);
 begin
   Create(cls, name, nonstatic, Void, []);
 end;
@@ -986,12 +986,13 @@ begin
   result := penv^.NewStringUTF(penv, PUTF8Char(s));
 end;
 
-function JToDString(js: jstring): UTF8String;
+function JToDString(js: jstring): String;
 var
   penv: PJNIEnv;
   len: NativeInt;
   CharBuf: PUTF8Char;
   IsCopy: JBoolean;
+  res : UTF8String;
 begin
   penv := JNIPointer;
   CharBuf := penv^.GetStringUTFChars(penv, js, IsCopy);
@@ -1001,7 +1002,8 @@ begin
 {$IFDEF FPC}
   StrLCopy(PUTF8Char(result), CharBuf, len);
 {$ELSE}
-  FHIR.Java.Strings.StrLCopy(PUTF8Char(result), CharBuf, len);
+  FHIR.Java.Strings.StrLCopy(PUTF8Char(res), CharBuf, len);
+  result := UTF8ToString(res);
 {$ENDIF}
   if IsCopy then
     penv^.ReleaseStringUTFChars(penv, js, CharBuf);
@@ -1054,7 +1056,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetDoubleArrayElements(penv, jarr, 0);
+  d1 := penv^.GetDoubleArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1077,7 +1079,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetFloatArrayElements(penv, jarr, 0);
+  d1 := penv^.GetFloatArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1100,7 +1102,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetCharArrayElements(penv, jarr, 0);
+  d1 := penv^.GetCharArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1123,7 +1125,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetByteArrayElements(penv, jarr, 0);
+  d1 := penv^.GetByteArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1146,7 +1148,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetShortArrayElements(penv, jarr, 0);
+  d1 := penv^.GetShortArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1169,7 +1171,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetBooleanArrayElements(penv, jarr, 0);
+  d1 := penv^.GetBooleanArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1192,7 +1194,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetLongArrayElements(penv, jarr, 0);
+  d1 := penv^.GetLongArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin
@@ -1215,7 +1217,7 @@ var
 begin
   penv := JNIPointer;
   len := penv^.GetArrayLength(penv, jarr);
-  d1 := penv^.GetIntArrayElements(penv, jarr, 0);
+  d1 := penv^.GetIntArrayElements(penv, jarr, nil);
   I := 0;
   if len > 0 then
   begin

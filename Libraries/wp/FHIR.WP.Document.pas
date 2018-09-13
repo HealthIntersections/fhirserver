@@ -77,8 +77,8 @@ Type
       Function CanHaveHotspot : Boolean; Overload; Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
 
@@ -214,8 +214,8 @@ Type
       FExtension: String;
       procedure SetContent(const Value: TFslBuffer);
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
       Function Link : TWPDocumentAttachment; Overload;
       Function Clone : TWPDocumentAttachment; Overload;
 
@@ -266,8 +266,8 @@ Type
       Procedure SetFont(Const Value : TWPSFontDetails);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPDocumentContent;
       Function Clone : TWPDocumentContent;
@@ -426,7 +426,7 @@ Type
       Procedure SetValue(Const Value : String);
 
     Public
-      Constructor Create(Const sValue : String); Overload; Virtual;
+      constructor Create(Const sValue : String); Overload; Virtual;
 
       Function Link : TWPDocumentText; Overload;
       Function Clone : TWPDocumentText; Overload;
@@ -500,8 +500,8 @@ Type
       Function CanHaveHotspot : Boolean; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentImage; Overload;
       Function Clone : TWPDocumentImage; Overload;
@@ -659,8 +659,8 @@ Type
       Function CanHaveHotspot : Boolean; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentField; Overload;
       Function Clone : TWPDocumentField; Overload;
@@ -737,8 +737,8 @@ Type
   }
   TWPDocumentLineBreak = Class(TWPDocumentSimpleContent)
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
       Function Link : TWPDocumentLineBreak; Overload;
       Function Clone : TWPDocumentLineBreak; Overload;
 
@@ -869,8 +869,8 @@ Type
       Function GetChildren : TWPDocumentObjects; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentParagraph; Overload;
       Function Clone : TWPDocumentParagraph; Overload;
@@ -984,8 +984,8 @@ Type
       Function GetChildren : TWPDocumentObjects; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPDocumentContainer;
       Function Clone : TWPDocumentContainer;
@@ -1126,8 +1126,8 @@ Type
     Protected
       Function CanHaveHotspot : Boolean; Override;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPDocumentSection; Overload;
       Function Clone : TWPDocumentSection; Overload;
@@ -1216,8 +1216,8 @@ Type
       Function GetBottomBorder : TWPBorder;
       Procedure SetBottomBorder(Const Value : TWPBorder);
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentTableItem; Overload;
       Function Clone : TWPDocumentTableItem; Overload;
@@ -1295,8 +1295,8 @@ Type
       Function CanHaveHotspot : Boolean; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPDocumentTableCell;
       Function Clone : TWPDocumentTableCell;
@@ -1440,8 +1440,8 @@ Type
       Function CanHaveHotspot : Boolean; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentTableRow; Overload;
       Function Clone : TWPDocumentTableRow; Overload;
@@ -1577,8 +1577,8 @@ Type
     Protected
       Function GetChildren : TWPDocumentObjects; Overload; Override;
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentTable; Overload;
       Function Clone : TWPDocumentTable; Overload;
@@ -1667,8 +1667,8 @@ Type
       Function GetStyles : TWPStyles;
       Procedure SetStyles(Const Value : TWPStyles);
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocument; Overload;
       Function Clone : TWPDocument; Overload;
@@ -1822,8 +1822,8 @@ Type
       Procedure SetItem(Const Value : TWPDocumentIteratorContextItem);
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentIteratorContext; Overload;
       Function Clone : TWPDocumentIteratorContext; Overload;
@@ -1873,8 +1873,8 @@ Type
     Protected
       Function Included(oObject : TWPDocumentObject) : Boolean; Overload; Virtual;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure First; Overload; Virtual;
       Procedure Next; Overload; Virtual;
@@ -1896,8 +1896,8 @@ Type
       Procedure SetObject(Const Value: TWPDocumentObject);
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentValidationProblem; Overload;
       Function Clone : TWPDocumentValidationProblem; Overload;
@@ -1938,8 +1938,8 @@ Type
       Procedure ValidateTableRow(oTableRow : TWPDocumentTableRow);
       Procedure ValidateTable(oTable : TWPDocumentTable);
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Procedure Validate(oDocument : TWPDocument); Overload; Virtual;
 
@@ -1954,7 +1954,7 @@ Type
     Private
       FProblems : TWPDocumentValidationProblems;
     Public
-      Destructor Destroy; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Property Problems : TWPDocumentValidationProblems Read FProblems;
   End;

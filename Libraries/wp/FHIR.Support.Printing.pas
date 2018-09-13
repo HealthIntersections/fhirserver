@@ -917,8 +917,8 @@ Type
       function GetHandle: TFslGraphicHandle;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslPrinterCanvas;
 
@@ -1030,8 +1030,8 @@ Type
       Procedure SetUseColour(Const bValue: Boolean); Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslPrinterSettings;
       Function Clone : TFslPrinterSettings;
@@ -1109,8 +1109,8 @@ Type
       Function CanvasClass : TFslPrinterCanvasClass; Overload; Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslRenderJob;
 
@@ -1220,8 +1220,8 @@ Type
       Property ActivePage : TFslPrinterPreviewPage Read GetActivePage Write SetActivePage;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslPrinterPreviewJob;
 
@@ -1271,8 +1271,8 @@ Type
       Procedure ConsumeDriverInfo2(Var aInfoPointer : PDriverInfo2; Const iInfoLength : Cardinal);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslPrinter;
       Function Clone : TFslPrinter;
@@ -1387,8 +1387,8 @@ Type
       Function GetDefaultDefinition: TFslPrinterDefinition;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Open;
       Procedure Close;

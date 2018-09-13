@@ -228,8 +228,8 @@ type
 //    procedure commitGrid;
 //    procedure commitItems;
   public
-    Constructor Create(owner : TComponent); override;
-    Destructor Destroy; override;
+    constructor Create(owner : TComponent); override;
+    destructor Destroy; override;
 
     property Questionnaire : TFHIRQuestionnaire read GetQuestionnaire;
     procedure load; override;

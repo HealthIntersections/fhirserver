@@ -95,7 +95,7 @@ type
   protected
     procedure Execute; override;
   public
-    Constructor Create(client: TFhirClientV; pack : TFhirThreadedClientPackage);
+    constructor Create(client: TFhirClientV; pack : TFhirThreadedClientPackage);
     destructor Destroy; override;
   end;
 

@@ -190,7 +190,7 @@ Type
       FBuilder : TFslBytesBuilder;
       function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
     Public
-      Constructor Create(refs : TLOINCReferences);
+      constructor Create(refs : TLOINCReferences);
       Procedure GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
 
       Procedure StartBuild;
@@ -238,8 +238,8 @@ Type
       procedure SetCodeLength(const Value: Cardinal);
       function getForLang(langs : TLangArray;  ref : cardinal) : cardinal;
     Public
-      Constructor Create(refs : TLOINCReferences);
-      Destructor Destroy; override;
+      constructor Create(refs : TLOINCReferences);
+      destructor Destroy; override;
 
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
@@ -260,7 +260,7 @@ Type
       Procedure SetClasses(iIndex : Cardinal; iValue : cardinal);
       Procedure SetStems(iIndex : Cardinal; iValue : Cardinal);
 
-      Function Count : Integer;
+      Function Count : Cardinal;
       Property CodeLength : Cardinal read FCodeLength Write SetCodeLength;
   End;
 
@@ -308,7 +308,7 @@ Type
     Function AddEntry(code, description, answers : Cardinal) : Cardinal;
     Procedure DoneBuild;
 
-    Function Count : Integer;
+    Function Count : cardinal;
   End;
 
 
@@ -351,8 +351,8 @@ Type
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
     function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TLOINCServices; Overload;
 
     Procedure Load(Const sFilename : String);
@@ -430,7 +430,7 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function GetByKey(sKey : String) : TLOINCServices;
     Function GetServiceByName(sName : String) : TLOINCServices;
@@ -461,7 +461,7 @@ begin
   if (iIndex > FLength) then
     Raise ETerminologyError.Create('Wrong length index getting LOINC name');
   SetLength(Result, Word(FMaster[iIndex]));
-  if (iIndex + 3 + length(result) > FLength) then
+  if (iIndex + 3 + clength(result) > FLength) then
     raise ETerminologyError.create('Wrong length index getting LOINC name (2)');
   if Length(result) > 0 Then
   begin
@@ -810,7 +810,7 @@ Begin
   iClass := getForLang(langs, iClass);
 end;
 
-function TLOINCCodeList.Count: Integer;
+function TLOINCCodeList.Count: Cardinal;
 begin
   result := FLength div FRecLength;
 end;
@@ -1881,14 +1881,14 @@ end;
 
 function TLoincServices.Code(context: TCodeSystemProviderContext): string;
 var
-  index : integer;
+  index : cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
-  iEntry, iCode, iOther, iConcepts, iDescecendeConcepts, iStem, iParent, iChildren, iDescendents, iDescendantConcepts : Cardinal;
+  iEntry, iCode, iOther, iConcepts, iStem, iParent, iChildren, iDescendents, iDescendantConcepts : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   lang : byte;
 begin
-  index := integer(context)-1;
+  index := cardinal(context)-1;
   if index < CodeList.Count then
     CodeList.GetInformation(index, nil, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
   else if index < CodeList.Count + AnswerLists.Count then
@@ -1905,14 +1905,14 @@ end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext; lang : String): string;
 var
-  index : integer;
+  index : cardinal;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
   iEntry, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   ilang : byte;
 begin
-  index := integer(context)-1;
+  index := cardinal(context)-1;
   if index < CodeList.Count then
     CodeList.GetInformation(index, langsForLang(lang), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
   else if index < CodeList.Count + AnswerLists.Count then
@@ -1929,7 +1929,7 @@ end;
 
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
-  index : integer;
+  index : cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
@@ -1945,7 +1945,7 @@ var
   {$ENDIF}
 begin
   langs := langsForLang(lang);
-  index := integer(ctxt)-1;
+  index := cardinal(ctxt)-1;
   if index < CodeList.Count then
   begin
     CodeList.GetInformation(index, langs, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
@@ -2542,9 +2542,9 @@ begin
   FBuilder.AddCardinal(answers);
 end;
 
-function TLOINCAnswersList.Count: Integer;
+function TLOINCAnswersList.Count: cardinal;
 begin
-  result := Length(FMaster) div 12;
+  result := cLength(FMaster) div 12;
 end;
 
 procedure TLOINCAnswersList.DoneBuild;

@@ -74,8 +74,8 @@ type
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
 
   public
-    Constructor create(server : TTerminologyServer; ServerContext : TFHIRServerContext; lang : String);
-    Destructor Destroy; override;
+    constructor Create(server : TTerminologyServer; ServerContext : TFHIRServerContext; lang : String);
+    destructor Destroy; override;
 
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TFslList<TFHIRCompartmentId>): boolean; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -93,8 +93,8 @@ type
   protected
     function GetTotalResourceCount: integer; override;
   public
-    Constructor create(server : TTerminologyServer);
-    Destructor Destroy; override;
+    constructor Create(server : TTerminologyServer);
+    destructor Destroy; override;
 
     // no OAuth Support
 

@@ -58,8 +58,8 @@ Type
     {$ENDIF}
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function NONE : Integer; Overload;
       Function CUT : Integer; Overload;

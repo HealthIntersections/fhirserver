@@ -72,8 +72,8 @@ Type
       Procedure AddText(oDocument: TWPWorkingDocument; Const sContent : String); Overload;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Read(oDocument : TWPWorkingDocument); Overload; Override;
   End;
@@ -99,8 +99,8 @@ Type
       Procedure WriteText(oText : TWPWorkingDocumentTextPiece); Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Write(oDocument : TWPWorkingDocument); Override;
   End;

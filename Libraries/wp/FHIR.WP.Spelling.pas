@@ -45,8 +45,8 @@ Type
     FAllowedWords : TFslStringList;
     procedure SetAllowedWords(const Value: TFslStringList);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPSpeller; Overload;
 
     // for a word, check it's state (should be quick, called constantly

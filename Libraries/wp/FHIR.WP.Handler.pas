@@ -72,7 +72,7 @@ Type
       Procedure SetHostDocument(Const oDocument : TWPWorkingDocument; oStyles : TWPStyles); Virtual;
 
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure LoadHTML(Const sFilename : String); Overload; Virtual;
       Procedure LoadHTML(oStream : TFslStream; Context : String = ''); Overload; Virtual;

@@ -52,8 +52,8 @@ Type
     FForms: TFslStringMatch;
     FValueSetDependencies: TDictionary<String, TList<string>>;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     procedure putQuestionnaire(rtype: string; id: String; q: TFhirQuestionnaireW; dependencies: TList<String>);
     procedure putForm(rtype: string; id: String; form: String; dependencies: TList<String>);
@@ -107,8 +107,8 @@ Type
     function GetFactory: TFHIRFactory;
     procedure SetGlobals(const Value: TFHIRServerSettings);
   public
-    Constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
-    Destructor Destroy; override;
+    constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
+    destructor Destroy; override;
     Function Link : TFHIRServerContext; overload;
 
     property Globals : TFHIRServerSettings read FGlobals write SetGlobals;

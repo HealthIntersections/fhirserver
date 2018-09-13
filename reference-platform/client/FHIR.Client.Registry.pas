@@ -48,8 +48,8 @@ type
     FShuttingDown: boolean;
     procedure initSettings; virtual;
   public
-    Constructor Create(filename: String; versions : TFHIRVersionSet);
-    Destructor Destroy; override;
+    constructor Create(filename: String; versions : TFHIRVersionSet);
+    destructor Destroy; override;
     procedure Save;
 
     procedure holdChanges;

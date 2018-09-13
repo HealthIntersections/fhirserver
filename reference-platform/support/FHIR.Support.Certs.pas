@@ -122,9 +122,9 @@ Type
     function GetHasX: boolean;
     function GetHasY: boolean;
   public
-    constructor create(obj : TJsonObject); overload;
-    constructor create(pkey : PRSA; loadPrivate : Boolean); overload;
-    constructor create(pkey : PDSA; loadPrivate : Boolean); overload;
+    constructor Create(obj : TJsonObject); overload;
+    constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
+    constructor Create(pkey : PDSA; loadPrivate : Boolean); overload;
     destructor Destroy; override;
     Property obj : TJsonObject read FObj write setObj;
 
@@ -169,8 +169,8 @@ Type
   protected
     function ItemClass : TFslObjectClass; override;
   public
-    constructor create(obj : TJsonObject); overload;
-    constructor create(source : String); overload;
+    constructor Create(obj : TJsonObject); overload;
+    constructor Create(source : String); overload;
     destructor Destroy; override;
     procedure readFromJson(obj : TJsonObject);
     procedure writeToJson(obj : TJsonObject);

@@ -65,7 +65,7 @@ type
     type_ : String;
     key : string;
   public
-    constructor create(t_ : String; key : string);
+    constructor Create(t_ : String; key : string);
   end;
 
   TKeyList = class (TFslList<TKeyPair>)
@@ -146,7 +146,7 @@ type
     Procedure ProcessBlob(request: TFHIRRequest; response : TFHIRResponse; field : String; fmt : TFHIRFormat);
     function ScanId(request : TFHIRRequest; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
     function commitResource(request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry : TFHIRBundleEntryW; i : integer; id : TFHIRTransactionEntry; session : TFhirSession; resp : TFHIRBundleW) : boolean;
-    Function IsTypeAndId(s : String; var id : String):Boolean;
+//    Function IsTypeAndId(s : String; var id : String):Boolean;
 
 
     procedure SaveProvenance(session : TFhirSession; prv : TFHIRResourceV);
@@ -192,8 +192,8 @@ type
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
   public
-    Constructor Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TKDBConnection);
-    Destructor Destroy; Override;
+    constructor Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TKDBConnection);
+    destructor Destroy; Override;
     function Link : TFHIRNativeOperationEngine; overload;
 
     Property Connection : TKDBConnection read FConnection;
@@ -290,7 +290,7 @@ type
     procedure checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TFslBuffer; b : TStringBuilder);
 
-    procedure loadCustomResources(guides : TFslStringSet);
+//    procedure loadCustomResources(guides : TFslStringSet);
     procedure ProcessObservationContent(conn: TKDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
     procedure ProcessObservation(conn: TKDBConnection; key : integer);
     function loadResource(conn: TKDBConnection; key : integer) : TFHIRResourceV;
@@ -301,14 +301,14 @@ type
     procedure ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantityW);
     procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConceptW);
     procedure storeObservationConcepts(conn: TKDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
-    function Authorize(conn :  TKDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : string;
+//    function Authorize(conn :  TKDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : string;
   protected
     FLock: TFslLock;
     function GetTotalResourceCount: integer; override;
     procedure checkDefinitions; virtual; abstract;
   public
     constructor Create(DB: TKDBManager; factory : TFHIRFactory); reintroduce;
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
     function engineFactory(lang : String; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
     procedure Initialise();
@@ -382,7 +382,7 @@ type
   private
     FValue : TDateTimeEx;
   public
-    Constructor Create(value : TDateTimeEx);
+    constructor Create(value : TDateTimeEx);
     property Value : TDateTimeEx read FValue;
   end;
 
@@ -482,7 +482,6 @@ var
   parser : TFhirParser;
   mem : TBytesStream;
   sId, sAud : String;
-  op : TFHIROperationOutcomeW;
   procedure addRequest(entry : TFHIRBundleEntryW);
   begin
     if (makeRequest) then
@@ -1955,7 +1954,6 @@ var
   needSecure : boolean;
   list : TMatchingResourceList;
   src : TBytes;
-  comps : TFslList<TFHIRCompartmentId>;
   meta : TFhirMetaW;
   b : TFHIRBundleW;
 begin
@@ -2393,7 +2391,6 @@ end;
 
 function TFHIRNativeOperationEngine.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc : String) : boolean;
 var
-  i : integer;
   ctxt : TFHIRValidatorContext;
   b : TFHIRBinaryW;
   op : TFhirOperationOutcomeW;
@@ -3076,17 +3073,17 @@ begin
   end;
 end;
 
-Function TFHIRNativeOperationEngine.IsTypeAndId(s : String; var id : String):Boolean;
-var
-  l, r : String;
-begin
-  StringSplit(s, '/', l, r);
-  id := r;
-  if (l <> '') and (l[1] = '/') then
-    delete(l, 1, 1);
-  result := (StringArrayIndexOfSensitive(factory.resourceNames, l) > -1) and IsId(r);
-end;
-
+//Function TFHIRNativeOperationEngine.IsTypeAndId(s : String; var id : String):Boolean;
+//var
+//  l, r : String;
+//begin
+//  StringSplit(s, '/', l, r);
+//  id := r;
+//  if (l <> '') and (l[1] = '/') then
+//    delete(l, 1, 1);
+//  result := (StringArrayIndexOfSensitive(factory.resourceNames, l) > -1) and IsId(r);
+//end;
+//
 function TFHIRNativeOperationEngine.ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
 var
   sp : TSearchProcessor;
@@ -3898,8 +3895,6 @@ end;
 
 
 function TFHIRNativeOperationEngine.processCanonicalSearch(request: TFHIRRequest; bundle: TFHIRBundleBuilder) : boolean;
-var
-  res : TFHIRResourceV;
 begin
   result := false;
   if (request.ResourceName = 'CodeSystem') or (request.ResourceName = 'ValueSet') then
@@ -5118,7 +5113,6 @@ var
   implGuides : TFslStringSet;
   cfg : TFHIRResourceConfig;
   pcm : TFHIRPackageManager;
-  fact : TFHIRFactory;
   res : TFslStringSet;
 begin
   ServerContext.SubscriptionManager := ServerContext.ServerFactory.makeSubscriptionManager(ServerContext);
@@ -5835,23 +5829,23 @@ begin
   tag.TransactionId := conn.transactionId;
 end;
 
-function TFHIRNativeStorageService.Authorize(conn :  TKDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : String;
-begin
-  conn.SQL := 'Insert into Authorizations (AuthorizationKey, PatientKey, PatientId, ConsentKey, SessionKey, Status, Expiry, Uuid, JWT) values (:k, :pk, :pid, :ck, :sk, 1, :e, :u, :j)';
-  conn.Prepare;
-  conn.BindInteger('k', NextAuthorizationKey);
-  conn.BindInteger('pk', patientKey);
-  conn.BindString('pid', patientId);
-  conn.BindInteger('ck', consentKey);
-  conn.BindInteger('sk', sessionKey);
-  conn.BindTimeStamp('e', DateTimeToTS(expiry));
-  result := NewGuidId;
-  conn.BindString('u', result);
-  conn.BindBlobFromString('j', jwt);
-  conn.Execute;
-  conn.Terminate;
-end;
-
+//function TFHIRNativeStorageService.Authorize(conn :  TKDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : String;
+//begin
+//  conn.SQL := 'Insert into Authorizations (AuthorizationKey, PatientKey, PatientId, ConsentKey, SessionKey, Status, Expiry, Uuid, JWT) values (:k, :pk, :pid, :ck, :sk, 1, :e, :u, :j)';
+//  conn.Prepare;
+//  conn.BindInteger('k', NextAuthorizationKey);
+//  conn.BindInteger('pk', patientKey);
+//  conn.BindString('pid', patientId);
+//  conn.BindInteger('ck', consentKey);
+//  conn.BindInteger('sk', sessionKey);
+//  conn.BindTimeStamp('e', DateTimeToTS(expiry));
+//  result := NewGuidId;
+//  conn.BindString('u', result);
+//  conn.BindBlobFromString('j', jwt);
+//  conn.Execute;
+//  conn.Terminate;
+//end;
+//
 procedure TFHIRNativeStorageService.checkDropResource(session: TFhirSession; request: TFHIRRequest; resource: TFHIRResourceV; tags: TFHIRTagList);
 begin
   // nothing at this time
@@ -6141,8 +6135,6 @@ begin
 end;
 
 procedure TFHIRNativeStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
-var
-  sql : string;
 begin
   DB.connection('async', procedure(conn : TKDBConnection)
     begin
@@ -6861,37 +6853,37 @@ begin
 end;
 
 
-procedure TFHIRNativeStorageService.loadCustomResources(guides: TFslStringSet);
-var
-  storage: TFHIRNativeOperationEngine;
-  s : String;
-  names : TStringList;
-begin
-//  names := TStringList.create;
-//  try
-//    storage := engineFactory('en', 'fhir.loadCustom');
-//    try
-//      try
-//        for s in guides do
-//          if not storage.loadCustomResources(nil, s, true, names) then
-//            raise EFHIRException.create('Error Loading Custom resources');
-//        storage.Connection.Release;
-//      except
-//        on e : exception do
-//        begin
-//          storage.Connection.Error(e);
-//          raise;
-//        end;
-//      end;
-//    finally
-//      storage.free;
-//    end;
-//  finally
-//    names.Free;
-//  end;
-//  raise Exception.Create('not currently supported');
-end;
-
+//procedure TFHIRNativeStorageService.loadCustomResources(guides: TFslStringSet);
+////var
+////  storage: TFHIRNativeOperationEngine;
+////  s : String;
+////  names : TStringList;
+//begin
+////  names := TStringList.create;
+////  try
+////    storage := engineFactory('en', 'fhir.loadCustom');
+////    try
+////      try
+////        for s in guides do
+////          if not storage.loadCustomResources(nil, s, true, names) then
+////            raise EFHIRException.create('Error Loading Custom resources');
+////        storage.Connection.Release;
+////      except
+////        on e : exception do
+////        begin
+////          storage.Connection.Error(e);
+////          raise;
+////        end;
+////      end;
+////    finally
+////      storage.free;
+////    end;
+////  finally
+////    names.Free;
+////  end;
+////  raise Exception.Create('not currently supported');
+//end;
+//
 procedure TFHIRNativeStorageService.LoadExistingResources(conn: TKDBConnection);
 var
   parser: TFHIRParser;

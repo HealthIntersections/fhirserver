@@ -1878,6 +1878,7 @@ Type
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource); override;
+  public
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
 

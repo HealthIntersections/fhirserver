@@ -45,8 +45,8 @@ type
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
   public
-    Constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
+    destructor Destroy; override;
   end;
 
   TFhirExpandValueSetOperation = class (TFhirTerminologyOperation)
@@ -131,7 +131,7 @@ type
     function owningResource : String; override;
     function checkName(request: TFHIRRequest; response : TFHIRResponse; var name : String) : boolean;
   public
-    Constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
+    constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
@@ -310,7 +310,7 @@ var
   resourceKey, versionKey : integer;
   cacheId  : String;
   coded : TFhirCodeableConceptW;
-  coding : TFhirCodingW;
+//  coding : TFhirCodingW;
   abstractOk, implySystem : boolean;
   params, pout : TFhirParametersW;
   needSecure : boolean;
@@ -1023,10 +1023,10 @@ end;
 { TFhirTerminologyOperation }
 
 function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
-var
-  needSecure : boolean;
-  p : TFhirParametersParameterW;
-  exp : TFhirExpansionParams;
+//var
+//  needSecure : boolean;
+//  p : TFhirParametersParameterW;
+//  exp : TFhirExpansionParams;
 begin
   result := TFHIRExpansionParams.Create;
   try

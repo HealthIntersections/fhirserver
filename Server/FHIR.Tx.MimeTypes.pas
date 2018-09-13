@@ -52,8 +52,8 @@ type
 
   TMimeTypeCodeServices = class (TCodeSystemProvider)
   public
-    Constructor Create; override;
-    Destructor Destroy; Override;
+    constructor Create; override;
+    destructor Destroy; Override;
     Function Link : TMimeTypeCodeServices; overload;
 
     function TotalCount : integer;  override;

@@ -87,7 +87,7 @@ type
     function component(obs: TFHIRObservation; lCode, text: string): TFhirObservationComponent;
     function makeQty(value: String; human, ucum: String): TFHIRQuantity; overload;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
     property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
   end;

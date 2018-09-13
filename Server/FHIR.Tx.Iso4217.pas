@@ -47,8 +47,8 @@ type
     function GetDisplay: String;
     function GetSymbol: String;
   public
-    Constructor create(o : TIso4217Currency);
-    Destructor Destroy; override;
+    constructor Create(o : TIso4217Currency);
+    destructor Destroy; override;
     function link : TIso4217Concept; overload;
 
     property code : String read GetCode;
@@ -71,8 +71,8 @@ type
   private
     FCurrencies : TIso4217CurrencySet;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TIso4217Services; overload;
 
     function TotalCount : integer;  override;

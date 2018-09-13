@@ -46,7 +46,7 @@ type
   private
     FSourcePath : String; // where to find web content
   public
-    Constructor Create(path : String);
+    constructor Create(path : String);
 //    Property SourcePath : String read FSourcePath;
     function getSource(filename : String) : String; override;
     function exists(filename : String) : boolean; override;
@@ -57,8 +57,8 @@ type
   private
     FZip : TFslMap<TFslBuffer>; // where to find web content
   public
-    Constructor Create(path : String);
-    Destructor Destroy; override;
+    constructor Create(path : String);
+    destructor Destroy; override;
 //    Property SourcePath : String read FSourcePath;
     function getSource(filename : String) : String; override;
     function exists(filename : String) : boolean; override;

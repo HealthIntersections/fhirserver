@@ -141,7 +141,3 @@ end;
 
 end.
 
-  if FSSLPort = '443' then
-    authurl := 'https://'+FHost+FPath
-  else
-    authurl := 'https://'+FHost+':'+FSSLPort+FPath;

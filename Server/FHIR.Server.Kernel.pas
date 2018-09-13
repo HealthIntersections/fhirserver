@@ -67,7 +67,7 @@ Type
   private
     FVersion : TFHIRVersion;
   public
-    constructor create(version : TFHIRVersion);
+    constructor Create(version : TFHIRVersion);
 
     function makeIndexes : TFHIRIndexBuilder; override;
     function makeValidator: TFHIRValidatorV; override;
@@ -126,8 +126,8 @@ Type
     procedure DoStop; Override;
     procedure dump; override;
   public
-    Constructor Create(const ASystemName, ADisplayName, AIniName: String);
-    Destructor Destroy; override;
+    constructor Create(const ASystemName, ADisplayName, AIniName: String);
+    destructor Destroy; override;
 
     procedure Load(name, plist : String);
 //    procedure LoadbyProfile(fn : String; init : boolean);

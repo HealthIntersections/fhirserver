@@ -63,7 +63,7 @@ type
     FValue : String;
     FType : String;
   public
-    Constructor create(value : String);
+    constructor Create(value : String);
   end;
 
   TRDFComplex = class (TRDFTriple)
@@ -71,8 +71,8 @@ type
     FGen : TRDFGenerator;
     FPredicates : TFslList<TRDFPredicate>;
   public
-    Constructor Create(gen : TRDFGenerator);
-    Destructor Destroy; override;
+    constructor Create(gen : TRDFGenerator);
+    destructor Destroy; override;
     function write(b : TStringBuilder; indent : integer) : boolean;
     function predicate(predicate, obj : String) : TRDFComplex; overload;
     function predicate(predicate, obj, xtype : String) : TRDFComplex; overload;
@@ -87,7 +87,7 @@ type
     FObj : TRDFTriple;
     FComment : String;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function Link : TRDFPredicate; overload;
   end;
 
@@ -95,8 +95,8 @@ type
   private
     id : String;
   public
-    Constructor Create(gen : TRDFGenerator);
-    Destructor Destroy; override;
+    constructor Create(gen : TRDFGenerator);
+    destructor Destroy; override;
     function Link : TRDFSubject; overload;
 
     function predicate(predicate : String; obj : TRDFTriple; comment : String) : TRDFPredicate; overload;
@@ -110,8 +110,8 @@ type
     FName : String;
     FSubjects : TFslList<TRDFSubject>;
   public
-    Constructor Create(gen : TRDFGenerator);
-    Destructor Destroy; override;
+    constructor Create(gen : TRDFGenerator);
+    destructor Destroy; override;
     function Link : TRDFSection; overload;
 
     property name : String read FName;
@@ -147,8 +147,8 @@ type
     procedure writeNTriple(b: TStringBuilder; url1, url2, url3: String);
     function fullUrl(s: String): String;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TRDFGenerator; overload;
 
     property format : TRDFFormat read FFormat write FFormat;

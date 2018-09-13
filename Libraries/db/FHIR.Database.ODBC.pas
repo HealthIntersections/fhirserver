@@ -94,7 +94,7 @@ type
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
   Public
-    constructor create(AOwner : TKDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
+    constructor Create(AOwner : TKDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
     destructor Destroy; override;
   end;
 
@@ -117,8 +117,8 @@ type
     function GetDriver: String; Override;
     procedure init; override;
   public
-    constructor create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
-    constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
+    constructor Create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
+    constructor Create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     destructor Destroy; override;
     procedure SaveSettings(ASettings : TSettingsAdapter); override;
     class function IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean; override;

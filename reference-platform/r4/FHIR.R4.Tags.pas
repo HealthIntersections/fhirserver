@@ -76,8 +76,8 @@ type
     function GetCount: Integer;
     function GetTag(index: integer): TFHIRTag;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TFHIRTagList;
     procedure readTags(meta : TFhirMeta);
     procedure writeTags(meta : TFhirMeta);

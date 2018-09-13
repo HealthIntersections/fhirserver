@@ -49,8 +49,8 @@ Type
       Function Condition(Const bTruth : Boolean; Const sMethod : String; Const sMessage : String) : Boolean;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AlignClient;
       Procedure AlignLeft;
@@ -134,8 +134,8 @@ Type
       Procedure Resize; Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure Adjust;
 
@@ -239,8 +239,8 @@ Type
       Procedure Paint; Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -360,8 +360,8 @@ Type
       Procedure Finalise;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -413,7 +413,7 @@ Type
       Procedure Timer; Override;
 
     Public
-      Constructor Create(AOwner: TComponent); Override;
+      constructor Create(AOwner: TComponent); Override;
 
       Procedure Reset;
       Procedure Start;
@@ -490,7 +490,7 @@ Type
       Procedure WndProc(Var aMessage : TMessage); Override;
 
     Public
-      Constructor CreateNew(oOwner : TComponent; iDummy : Integer = 0); Override;
+      constructor CreateNew(oOwner : TComponent; iDummy : Integer = 0); Override;
 
       Procedure ShowBalloon;
       Procedure ReleaseBalloon;
@@ -589,8 +589,8 @@ Type
       Property Index : Integer Read GetIndex Write SetIndex; // Provides access to the underlying Run property
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Class Function GetLanguageName : String; Override;
 
@@ -655,8 +655,8 @@ Type
       Property Text : String Read GetText Write SetText; // Provides access to the underlying fLine private member
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure Next; Override;
       Function GetEol: Boolean; Override;
@@ -1001,8 +1001,8 @@ Type
       Property OnExit;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AlignLeft;
       Procedure AlignRight;
@@ -1223,8 +1223,8 @@ Type
       Property CustomBackgoundHandling : Boolean Read FCustomBackgoundHandling Write FCustomBackgoundHandling;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure HideBalloon;
       Procedure ShowBalloon;
@@ -1293,8 +1293,8 @@ Type
       Function GetSelectedImageList : TCustomImageList;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Function ClassType : TUixMenuItemClass; Reintroduce; Overload; Virtual;
 
@@ -1346,8 +1346,8 @@ Type
       Function MenuItemClass : TUixMenuItemClass; Overload; Virtual;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure FireClose;
       Procedure CloseMenu;
@@ -1410,8 +1410,8 @@ Type
       Procedure MouseDown(aButton : TMouseButton; aShift : TShiftState; iX, iY : Integer); Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure Click; Override;
 
@@ -1465,8 +1465,8 @@ Type
       Function CheckNew: TUixToolButton;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure Refresh;
 
@@ -1544,7 +1544,7 @@ Type
       Procedure Change; Override;
 
     Public
-      Constructor Create(AOwner: TComponent); Override;
+      constructor Create(AOwner: TComponent); Override;
 
       Property Value : TColour Read GetValue Write SetValue;
 
@@ -1605,8 +1605,8 @@ Type
       Procedure SetEnabled(bValue : Boolean); Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -1759,8 +1759,8 @@ Type
       Property CanHideGhostText : Boolean Read GetCanHideGhostText;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -1857,8 +1857,8 @@ Type
       Procedure WMPaint(Var Message: TWMPaint); Message WM_PAINT;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -1906,8 +1906,8 @@ Type
       Function VisibleControlHeight : Integer; Overload; Virtual;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -1980,8 +1980,8 @@ Type
       Property Busy : Boolean Read GetBusy Write SetBusy;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -2020,8 +2020,8 @@ Type
       Procedure DoExit; Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AlignClient; Overload; Virtual;
       Procedure AlignLeft; Overload; Virtual;
@@ -2057,8 +2057,8 @@ Type
       Procedure Finalise; Virtual;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -2135,8 +2135,8 @@ Type
 {$ENDIF}
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
 {$IFNDEF VER130}
       Procedure GetChildren(aProc : TGetChildProc; oRoot : TComponent); Override;
@@ -2179,7 +2179,7 @@ Type
       Procedure Finalise; Overload; Virtual;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
+      constructor Create(oOwner : TComponent); Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -2215,7 +2215,7 @@ Type
       Procedure MouseUp(aMouseButton : TMouseButton; aShiftState : TShiftState; iX, iY : Integer); Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
+      constructor Create(oOwner : TComponent); Override;
 
       Procedure AlignClient;
       Procedure AlignLeft;
@@ -2271,7 +2271,7 @@ Type
       Procedure CreateParams(Var aParamsRecord : TCreateParams); Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
+      constructor Create(oOwner : TComponent); Override;
 
       Procedure AlignLeft;
       Procedure AlignRight;
@@ -2329,7 +2329,7 @@ Type
 
   TUixTreeViewIdentifiers = Class(TFslStringList)
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TUixTreeViewIdentifiers;
       Function Clone : TUixTreeViewIdentifiers;
@@ -2390,8 +2390,8 @@ Type
       Procedure SetEnabled(Const Value : Boolean);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixTreeViewNode; Overload;
 
@@ -2477,7 +2477,7 @@ Type
       FColumn : TVirtualTreeColumn;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -2522,7 +2522,7 @@ Type
       Function CompareByPosition(pA, pB : Pointer) : Integer; Overload;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TUixTreeViewColumns; Overload;
 
@@ -2832,8 +2832,8 @@ Type
       Procedure ExpandNode(oNode : TUixTreeViewNode);
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -11443,7 +11443,7 @@ Type
 
     Public
       Constructor InternalCreate(oRadioGroup : TUixRadioGroup);
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
   End;
 
 

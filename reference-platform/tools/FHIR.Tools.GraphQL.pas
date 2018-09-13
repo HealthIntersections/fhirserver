@@ -90,8 +90,8 @@ type
     procedure processVariables(op : TGraphQLOperation);
     function isResourceName(name, suffix: string): boolean;
   public
-    Constructor Create(factory : TFHIRFactory);
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory);
+    destructor Destroy; override;
     property appInfo : TFslObject read FAppinfo write SetAppInfo;
 
     // the focus resource - if there is one. If there isn't, then the focus is a collection
@@ -120,8 +120,8 @@ type
     function extractLink(name : String) : TFhirObject;
     function extractParam(name : String; int : boolean) : TFhirObject;
   public
-    Constructor Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
+    destructor Destroy; override;
 
     property Bundle : TFHIRBundleW read FBundle write SetBundle;
     function fhirType : String; override;
@@ -142,8 +142,8 @@ type
     FEntry: TFHIRBundleEntryW;
     procedure SetEntry(const Value: TFHIRBundleEntryW);
   public
-    Constructor Create(factory : TFHIRFactory; entry : TFHIRBundleEntryW);
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory; entry : TFHIRBundleEntryW);
+    destructor Destroy; override;
 
     property Entry : TFHIRBundleEntryW read FEntry write SetEntry;
     function fhirType : String; override;

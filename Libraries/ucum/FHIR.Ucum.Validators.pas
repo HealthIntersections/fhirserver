@@ -46,8 +46,8 @@ Type
     procedure checkUnits;
     procedure checkUnitCode(code : String; primary : boolean);
   Public
-    Constructor Create(oModel : TUcumModel; handlers : TUcumRegistry);
-    Destructor Destroy; Override;
+    constructor Create(oModel : TUcumModel; handlers : TUcumRegistry);
+    destructor Destroy; Override;
 
     Procedure validate(oList : TFslStringList);
   End;

@@ -81,14 +81,14 @@ type
 
   TFHIRCoding2 = class (TFHIRCodingW)
   public
-    function GetSystem : String; override;
-    function GetCode : String; override;
-    function GetVersion : String; override;
-    function GetDisplay : String; override;
-    procedure SetCode(Value: String); override;
-    procedure SetDisplay(Value: String); override;
-    procedure SetSystem(Value: String); override;
-    procedure SetVersion(Value: String); override;
+    function getSystem : String; override;
+    function getCode : String; override;
+    function getVersion : String; override;
+    function getDisplay : String; override;
+    procedure setCode(Value: String); override;
+    procedure setDisplay(Value: String); override;
+    procedure setSystem(Value: String); override;
+    procedure setVersion(Value: String); override;
   end;
 
   TFhirCodeableConcept2 = class (TFhirCodeableConceptW)
@@ -118,39 +118,40 @@ type
   TFHIRBundleEntry2 = class (TFHIRBundleEntryW)
   private
     function entry : TFhirBundleEntry;
+  protected
     function getRequestMethod: String; override;
     function getRequestUrl: String; override;
     function getResource: TFHIRResourceV; override;
-    function GetResponseDate: TDateTimeEx; override;
-    function GetResponseETag: string; override;
-    function GetResponseLocation: string; override;
-    function GetResponseStatus: String; override;
+    function getResponseDate: TDateTimeEx; override;
+    function getResponseETag: string; override;
+    function getResponseLocation: string; override;
+    function getResponseStatus: String; override;
     function getSearchMode: TFHIRBundleEntrySearchMode; override;
     function getSearchMpiMatch: String; override;
     function getSearchScore: String; override;
-    procedure SetRequestMethod(Value: String); override;
-    procedure SetRequestUrl(Value: String); override;
-    procedure SetResource(Value: TFHIRResourceV); override;
-    procedure SetResponseDate(Value: TDateTimeEx); override;
-    procedure SetResponseETag(Value: string); override;
-    procedure SetResponseLocation(Value: string); override;
-    procedure SetResponseStatus(Value: String); override;
-    procedure SetSearchMode(Value: TFHIRBundleEntrySearchMode); override;
-    procedure SetSearchMpiMatch(Value: String); override;
-    procedure SetSearchScore(Value: String); override;
-    function GetUrl: String; override;
-    procedure SetUrl(Value: String);  override;
-    function GetrequestIfNoneExist: String; override;
-    procedure SetrequestIfNoneExist(Value: String); override;
-    function GetrequestIfMatch: String; override;
-    procedure SetrequestIfMatch(Value: String); override;
-    function GetrequestIfNoneMatch: String; override;
-    procedure SetrequestIfNoneMatch(Value: String); override;
-    function GetrequestIfModifiedSince: TDateTimeEx; override;
-    procedure SetrequestIfModifiedSince(Value: TDateTimeEx); override;
+    procedure setRequestMethod(Value: String); override;
+    procedure setRequestUrl(Value: String); override;
+    procedure setResource(Value: TFHIRResourceV); override;
+    procedure setResponseDate(Value: TDateTimeEx); override;
+    procedure setResponseETag(Value: string); override;
+    procedure setResponseLocation(Value: string); override;
+    procedure setResponseStatus(Value: String); override;
+    procedure setSearchMode(Value: TFHIRBundleEntrySearchMode); override;
+    procedure setSearchMpiMatch(Value: String); override;
+    procedure setSearchScore(Value: String); override;
+    function getUrl: String; override;
+    procedure setUrl(Value: String);  override;
+    function getrequestIfNoneExist: String; override;
+    procedure setrequestIfNoneExist(Value: String); override;
+    function getrequestIfMatch: String; override;
+    procedure setrequestIfMatch(Value: String); override;
+    function getrequestIfNoneMatch: String; override;
+    procedure setrequestIfNoneMatch(Value: String); override;
+    function getrequestIfModifiedSince: TDateTimeEx; override;
+    procedure setrequestIfModifiedSince(Value: TDateTimeEx); override;
   public
-    function GetLink(rel: String): String; override;
-    procedure SetLink(rel: String; const Value: String); override;
+    function getLink(rel: String): String; override;
+    procedure setLink(rel: String; const Value: String); override;
   end;
 
 
@@ -167,17 +168,17 @@ type
     procedure clearLinks; override;
     function entries : TFslList<TFhirBundleEntryW>; override;
     procedure listLinks(links : TFslStringDictionary); override;
-    function GetLink(rel: String): String; override;
-    procedure SetLink(rel: String; const Value: String); override;
-    function GetTotal: integer; override;
-    procedure SetTotal(Value: integer); override;
+    function getLink(rel: String): String; override;
+    procedure setLink(rel: String; const Value: String); override;
+    function getTotal: integer; override;
+    procedure setTotal(Value: integer); override;
     function title : String; override;
     function gettype : TBundleType; override;
     procedure settype(value: TBundleType); override;
-    function GetLastUpdated : TDateTimeEx; override;
-    procedure SetLastUpdated(Value: TDateTimeEx); override;
-    function GetTimestamp: TDateTimeEx; override;
-    procedure SetTimestamp(Value: TDateTimeEx); override;
+    function getLastUpdated : TDateTimeEx; override;
+    procedure setLastUpdated(Value: TDateTimeEx); override;
+    function getTimestamp: TDateTimeEx; override;
+    procedure setTimestamp(Value: TDateTimeEx); override;
   end;
 
   TFHIROperationOutcomeIssue2 = class (TFHIROperationOutcomeIssueW)
@@ -186,8 +187,8 @@ type
   public
     function display : String; override;
     function severity : TIssueSeverity; override;
-    function GetDiagnostics: String; override;
-    procedure SetDiagnostics(Value: String); override;
+    function getDiagnostics: String; override;
+    procedure setDiagnostics(Value: String); override;
   end;
 
   TFHIRSearchParamDefinition2 = class (TFHIRSearchParamDefinitionW)
@@ -201,13 +202,13 @@ type
 
   TFhirCapabilityStatementRestResource2 = class (TFhirCapabilityStatementRestResourceW)
   public
-    function GetCode: String; override;
-    procedure SetCode(Value: String); override;
-    function GetProfile: String; override;
-    procedure SetProfile(Value: String); override;
+    function getCode: String; override;
+    procedure setCode(Value: String); override;
+    function getProfile: String; override;
+    procedure setProfile(Value: String); override;
     procedure addInteraction(code : String);  override;
-    function GetReadHistory: boolean; override;
-    procedure SetReadHistory(Value: boolean); override;
+    function getReadHistory: boolean; override;
+    procedure setReadHistory(Value: boolean); override;
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); override;
   end;
 
@@ -227,20 +228,20 @@ type
     procedure impl(url, desc : String); override;
     procedure fmt(mt : String); override;
 
-    function GetUrl: String; override;
-    procedure SetUrl(Value: String); override;
+    function getUrl: String; override;
+    procedure setUrl(Value: String); override;
     function getName : String; override;
     procedure setName(value : String); override;
     function getVersion : String; override;
     procedure setVersion(value : String); override;
     function getDescription : String; override;
     procedure setDescription(value : String); override;
-    function GetStatus: TPublicationStatus; override;
-    procedure SetStatus(Value: TPublicationStatus); override;
-    function GetDate: TDateTimeEx; override;
-    procedure SetDate(Value: TDateTimeEx); override;
-    function GetFhirVersion: string; override;
-    procedure SetFhirVersion(Value: string); override;
+    function getStatus: TPublicationStatus; override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    function getDate: TDateTimeEx; override;
+    procedure setDate(Value: TDateTimeEx); override;
+    function getFhirVersion: string; override;
+    procedure setFhirVersion(Value: string); override;
 
     procedure standardServer(ts, ws, pv, cv, iv : String); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
@@ -282,18 +283,18 @@ type
   private
     function parameter : TFhirParametersParameter;
   protected
-    function GetValue: TFHIRObject; override;
-    procedure SetValue(Value: TFHIRObject); override;
+    function getValue: TFHIRObject; override;
+    procedure setValue(Value: TFHIRObject); override;
     procedure populateList; override;
-    function GetParameterParameter(name: String): TFhirParametersParameterW; override;
-    function GetResourceParameter(name: String): TFHIRResourceV; override;
-    function GetStringParameter(name: String): String; override;
+    function getParameterParameter(name: String): TFhirParametersParameterW; override;
+    function getResourceParameter(name: String): TFHIRResourceV; override;
+    function getStringParameter(name: String): String; override;
   public
     function name : String; override;
     function hasValue : boolean; override;
     property value : TFHIRObject read GetValue write SetValue;
-    function GetResource: TFHIRResourceV; override;
-    procedure SetResource(Value: TFHIRResourceV); override;
+    function getResource: TFHIRResourceV; override;
+    procedure setResource(Value: TFHIRResourceV); override;
     function hasResource : boolean; override;
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
@@ -317,17 +318,17 @@ type
     function str(name : String) : String; override;
     function has(name : String) : boolean; override;
     function obj(name : String) : TFHIRObject; override;
-    function GetParameter(name: String): TFhirParametersParameterW;  override;
+    function getParameter(name: String): TFhirParametersParameterW;  override;
   end;
 
   TFhirValueSetExpansionContains2 = class (TFhirValueSetExpansionContainsW)
   public
-    function getsystem : String; override;
-    function getcode : String; override;
-    function getdisplay : String; override;
-    procedure SetCode(Value: String); override;
-    procedure SetDisplay(Value: String); override;
-    procedure SetSystem(Value: String); override;
+    function getSystem : String; override;
+    function getCode : String; override;
+    function getDisplay : String; override;
+    procedure setCode(Value: String); override;
+    procedure setDisplay(Value: String); override;
+    procedure setSystem(Value: String); override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
   end;
 
@@ -347,20 +348,20 @@ type
 
   TFhirValueSetComposeIncludeFilter2 = class (TFhirValueSetComposeIncludeFilterW)
   public
-    function Getprop : String; override;
-    function Getop : TFilterOperator; override;
-    function Getvalue : String; override;
-    procedure SetOp(Value: TFilterOperator); override;
-    procedure SetProp(Value: String); override;
-    procedure SetValue(Value: String); override;
+    function getprop : String; override;
+    function getop : TFilterOperator; override;
+    function getvalue : String; override;
+    procedure setOp(Value: TFilterOperator); override;
+    procedure setProp(Value: String); override;
+    procedure setValue(Value: String); override;
   end;
 
   TFhirValueSetComposeIncludeConcept2 = class (TFhirValueSetComposeIncludeConceptW)
   public
     function getcode : String; override;
     function getdisplay : String; override;
-    procedure SetCode(Value: String); override;
-    procedure SetDisplay(Value: String); override;
+    procedure setCode(Value: String); override;
+    procedure setDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
   end;
 
@@ -373,8 +374,8 @@ type
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; override;
     function hasFilters : boolean; override;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; override;
-    procedure SetSystem(Value: String); override;
-    procedure SetVersion(Value: String); override;
+    procedure setSystem(Value: String); override;
+    procedure setVersion(Value: String); override;
     function addConcept : TFhirValueSetComposeIncludeConceptW; override;
     function addFilter : TFhirValueSetComposeIncludeFilterW; override;
   end;
@@ -436,21 +437,21 @@ type
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
     function buildImplicitValueSet : TFHIRValueSetW; override;
 
-    function GetDate: TDateTimeEx; override;
-    function GetStatus: TPublicationStatus; override;
-    procedure SetDate(Value: TDateTimeEx); override;
-    procedure SetDescription(Value: String); override;
-    procedure SetName(Value: String); override;
-    procedure SetStatus(Value: TPublicationStatus); override;
-    procedure SetUrl(Value: String); override;
-    procedure SetVersion(Value: String); override;
+    function getDate: TDateTimeEx; override;
+    function getStatus: TPublicationStatus; override;
+    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDescription(Value: String); override;
+    procedure setName(Value: String); override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    procedure setUrl(Value: String); override;
+    procedure setVersion(Value: String); override;
     function getContent: TFhirCodeSystemContentMode; override;
-    procedure SetContent(Value: TFhirCodeSystemContentMode); override;
-    function GetCount: integer; override;
-    procedure SetCount(Value: integer); override;
+    procedure setContent(Value: TFhirCodeSystemContentMode); override;
+    function getCount: integer; override;
+    procedure setCount(Value: integer); override;
     function getContext: String; override;
-    function GetPublisher: String; override;
-    procedure SetPublisher(Value: String); override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
     function valueSet : String; override;
     function supplements : String; override;
   end;
@@ -460,7 +461,7 @@ type
     function vs : TFhirValueSet;
   public
     function getname : String; override;
-    function geturl : String; override;
+    function getURL : String; override;
     function checkCompose(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
     function inlineCS : TFHIRValueSetCodeSystemW; override;
@@ -470,21 +471,21 @@ type
     function hasExpansion : boolean; override;
     function expansion : TFhirValueSetExpansionW; override;
     function forceExpansion : TFhirValueSetExpansionW; override;
-    procedure setUrl(value : String); override;
+    procedure setURL(value : String); override;
     procedure setName(value : String); override;
     function getVersion : String; override;
     procedure setVersion(value : String); override;
     function getDescription : String; override;
     procedure setDescription(value : String); override;
-    function GetStatus: TPublicationStatus; override;
-    procedure SetStatus(Value: TPublicationStatus); override;
-    function GetDate: TDateTimeEx; override;
-    procedure SetDate(Value: TDateTimeEx); override;
+    function getStatus: TPublicationStatus; override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    function getDate: TDateTimeEx; override;
+    procedure setDate(Value: TDateTimeEx); override;
     function hasInlineCS : boolean; override;
     function addInclude : TFhirValueSetComposeIncludeW; override;
     function getContext: String; override;
-    function GetPublisher: String; override;
-    procedure SetPublisher(Value: String); override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
     function source : String; override;
   end;
 
@@ -501,8 +502,8 @@ type
 
   TFHIRLookupOpRespDesignation2 = class (TFHIRLookupOpRespDesignationW)
   public
-    function GetUse: TFHIRObject; override;
-    procedure SetUse(Value: TFHIRObject); override;
+    function getUse: TFHIRObject; override;
+    procedure setUse(Value: TFHIRObject); override;
   end;
 
   TFHIRLookupOpResponse2 = class (TFHIRLookupOpResponseW)
@@ -513,14 +514,14 @@ type
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; override;
     function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
-    function GetVersion: String; override;
-    procedure SetVersion(Value: String); override;
+    function getVersion: String; override;
+    procedure setVersion(Value: String); override;
     procedure addExtension(name, value : String); overload; override;
     procedure addExtension(name : String; value : boolean); overload; override;
-    function GetName: String; override;
-    procedure SetName(Value: String); override;
-    function GetDisplay: String; override;
-    procedure SetDisplay(Value: String); override;
+    function getName: String; override;
+    procedure setName(Value: String); override;
+    function getDisplay: String; override;
+    procedure setDisplay(Value: String); override;
   end;
 
   TFhirConceptMapGroupElementTarget2 = class (TFhirConceptMapGroupElementTargetW)
@@ -553,26 +554,26 @@ type
   private
     function cm : TFhirConceptMap;
   protected
-    function GetVersion: String; override;
-    procedure SetVersion(Value: String); override;
+    function getVersion: String; override;
+    procedure setVersion(Value: String); override;
   public
     function geturl : String; override;
-    function GetDate: TDateTimeEx; override;
-    function GetDescription: String; override;
-    function GetName: String; override;
-    function GetStatus: TPublicationStatus; override;
-    procedure SetDate(Value: TDateTimeEx); override;
-    procedure SetDescription(Value: String); override;
-    procedure SetName(Value: String); override;
-    procedure SetStatus(Value: TPublicationStatus); override;
-    procedure SetUrl(Value: String); override;
+    function getDate: TDateTimeEx; override;
+    function getDescription: String; override;
+    function getName: String; override;
+    function getStatus: TPublicationStatus; override;
+    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDescription(Value: String); override;
+    procedure setName(Value: String); override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    procedure setUrl(Value: String); override;
     function source : String; override;
     function target : String; override;
     function groups : TFslList<TFhirConceptMapGroupW>; override;
     function addGroup(source, target : String) : TFhirConceptMapGroupW; override;
     function getContext: String; override;
-    function GetPublisher: String; override;
-    procedure SetPublisher(Value: String); override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
   end;
@@ -585,12 +586,12 @@ type
     function m : TFhirMeta;
     function NoElementOk : boolean; override;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
-    function GetVersionId: String; override;
-    procedure SetVersionId(Value: String); override;
-    function GetLastUpdated: TDateTimeEx; override;
-    procedure SetLastUpdated(Value: TDateTimeEx); override;
+    function getVersionId: String; override;
+    procedure setVersionId(Value: String); override;
+    function getLastUpdated: TDateTimeEx; override;
+    procedure setLastUpdated(Value: TDateTimeEx); override;
     function tags : TFslList<TFHIRCodingW>; override;
     function labels : TFslList<TFHIRCodingW>; override;
     function profiles : TArray<String>; override;
@@ -625,31 +626,31 @@ type
   private
     function sub : TFhirSubscription;
   protected
-    function GetCriteria: String; override;
-    function GetDirect: boolean; override;
-    function GetEndpoint: String; override;
-    function GetError: String; override;
-    function GetMethod: TSubscriptionMethod; override;
-    function GetPayload: String; override;
-    function GetStatus: TSubscriptionStatus; override;
-    function GetSummary: String; override;
-    function GetHeaders: TArray<String>; override;
-    procedure SetCriteria(Value: String); override;
-    procedure SetDirect(Value: boolean); override;
-    procedure SetEndpoint(Value: String); override;
-    procedure SetError(Value: String); override;
-    procedure Setheaders(Value: TArray<String>); override;
-    procedure SetMethod(Value: TSubscriptionMethod); override;
-    procedure SetPayload(Value: String); override;
-    procedure SetStatus(Value: TSubscriptionStatus); override;
+    function getCriteria: String; override;
+    function getDirect: boolean; override;
+    function getEndpoint: String; override;
+    function getError: String; override;
+    function getMethod: TSubscriptionMethod; override;
+    function getPayload: String; override;
+    function getStatus: TSubscriptionStatus; override;
+    function getSummary: String; override;
+    function getHeaders: TArray<String>; override;
+    procedure setCriteria(Value: String); override;
+    procedure setDirect(Value: boolean); override;
+    procedure setEndpoint(Value: String); override;
+    procedure setError(Value: String); override;
+    procedure setheaders(Value: TArray<String>); override;
+    procedure setMethod(Value: TSubscriptionMethod); override;
+    procedure setPayload(Value: String); override;
+    procedure setStatus(Value: TSubscriptionStatus); override;
   end;
 
   TFhirObservationComponent2 = class (TFhirObservationComponentW)
   private
     function comp : TFhirObservationComponent;
   public
-    function GetValue: TFHIRObject; override;
-    procedure SetValue(Value: TFHIRObject); override;
+    function getValue: TFHIRObject; override;
+    procedure setValue(Value: TFHIRObject); override;
     function codings : TFslList<TFHIRCodingW>; override;
     function valueW : TFHIRXVersionElementWrapper; override;
     function dataAbsentReason : TFhirCodeableConceptW; override;
@@ -659,11 +660,11 @@ type
   private
     function obs : TFHIRObservation;
   protected
-    function GetValue: TFHIRObject;  override;
-    procedure SetValue(Value: TFHIRObject); override;
+    function getValue: TFHIRObject;  override;
+    procedure setValue(Value: TFHIRObject); override;
   public
-    function GetStatus: TObservationStatus;  override;
-    procedure SetStatus(Value: TObservationStatus);  override;
+    function getStatus: TObservationStatus;  override;
+    procedure setStatus(Value: TObservationStatus);  override;
     procedure addCode(c : TFHIRCodingW); override;
     procedure setSubj(url : String); override;
     procedure setPeriod(start, finish : TDateTime); override;
@@ -682,14 +683,14 @@ type
   private
     function qty : TFHIRQuantity;
   protected
-    function GetCode: String; override;
-    function GetSystem: String; override;
-    function GetUnit: String; override;
-    function GetValue: String; override;
-    procedure SetCode(Value: String); override;
-    procedure SetSystem(Value: String); override;
-    procedure SetUnit(Value: String); override;
-    procedure SetValue(Value: String); override;
+    function getCode: String; override;
+    function getSystem: String; override;
+    function getUnit: String; override;
+    function getValue: String; override;
+    procedure setCode(Value: String); override;
+    procedure setSystem(Value: String); override;
+    procedure setUnit(Value: String); override;
+    procedure setValue(Value: String); override;
   end;
 
   TFHIRGroupCharacteristic2 = class (TFHIRGroupCharacteristicW)

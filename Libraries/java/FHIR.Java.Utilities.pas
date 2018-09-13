@@ -49,14 +49,14 @@ uses
 // Outputs a message. Sends it to the console or
 // to a GUI message window depending.
     
-  function dotToSlash(const s : UTF8String) : UTF8String;
-  function slashToDot(const s : UTF8String) : UTF8String;
+  function dotToSlash(const s : String) : String;
+  function slashToDot(const s : String) : String;
           
   function ConvertStrings(Strings : TStrings) : Pointer;
     
 //wrappers around the Win32 API calls.
-  function getEnvironmentString(S : UTF8String) : UTF8String;
-  procedure setEnvironmentString(key, value : UTF8String);
+  function getEnvironmentString(S : String) : String;
+  procedure setEnvironmentString(key, value : String);
     
   // redeclared here because in D2, the prototype in Window.pas is incorrect.
   function SearchPath(lpPath, lpFileName, lpExtension: PUTF8Char; 
@@ -66,12 +66,12 @@ uses
     
   //uses the above SearchPath routine to
   // find the file on path. Returns full path or empty string.
-  function FindOnSystemPath(Filename : UTF8String) : UTF8String;
+  function FindOnSystemPath(Filename : String) : String;
     
   // converts the dots or forward slashes to backslashes
-  function toBackSlash(const s : UTF8String) : UTF8String; 
+  function toBackSlash(const s : String) : String;
 
-  procedure ChopExtension(var Filename : UTF8String);
+  procedure ChopExtension(var Filename : String);
 
 implementation
 
@@ -85,34 +85,34 @@ var
 {little routine to convert the dots to slashes for fully
 qualified Class names.}
     
-  function dotToSlash(const s : UTF8String) : UTF8String;
+  function dotToSlash(const s : String) : String;
   var
     I: Integer;
   begin
     Result:= s;
     for I := 1 to length(Result) do
-      if Result[I] = '.' then 
+      if Result[I] = '.' then
         Result[I] := '/';
   end;
-    
-  function slashToDot(const s: UTF8String) : UTF8String;
+
+  function slashToDot(const s: String) : String;
   var
     I : Integer;
   begin
     Result := s;
     for I :=  1 to length(Result) do
-      if Result[I] = '/' then 
+      if Result[I] = '/' then
         Result[I] := '.';
   end;
 
 
-  function toBackSlash(const s : UTF8String) : UTF8String;
+  function toBackSlash(const s : String) : String;
   var
     I: Integer;
   begin
     Result:= S;
     for I := 1 to length(S) do
-      if (Result[I] = '.') or (Result[I] = '/') then 
+      if (Result[I] = '.') or (Result[I] = '/') then
         Result[I] := '\';
   end;
 
@@ -123,7 +123,6 @@ qualified Class names.}
   var   
     PPC : ^PUTF8Char;
     I : Integer;
-   str:UTF8String;
   begin
     Result  := Nil;
     if Strings = Nil then 
@@ -142,34 +141,35 @@ qualified Class names.}
 
    {Trivial wrapper of the SearchPath API call.}
     
-  function FindOnSystemPath(Filename : UTF8String) : UTF8String;
+  function FindOnSystemPath(Filename : String) : String;
   var
+    p : UTF8String;
     PC : PUTF8Char;
   begin
-    if SearchPath(Nil, PUTF8Char(Filename), Nil, MAX_PATH, @Buf, PC)<>0 then
-    Result := UTF8String(Buf);
+    p := FHIR.Java.Strings.StrNew(filename);
+    if SearchPath(Nil, PUTF8Char(p), Nil, MAX_PATH, @Buf, PC)<>0 then
+    Result := String(Buf);
   end;
     
     
-  function getEnvironmentString(S : UTF8String) : UTF8String;
+  function getEnvironmentString(S : String) : String;
   begin
    {$IFDEF FPC}
    result:=getEnvironmentVariable(S)
    {$ELSE}
    if getEnvironmentVariable(Pchar(S), @Buf, 1023) >0 then
-      result := UTF8String(Buf);
+      result := String(Buf);
    {$endif}
    end;
     
-  procedure SetEnvironmentString(key, value : UTF8String);
+  procedure SetEnvironmentString(key, value : String);
   begin
-  
     SetEnvironmentVariable(PChar(key), PChar(value));
   end;
 
-  procedure ChopExtension(var Filename : UTF8String);
+  procedure ChopExtension(var Filename : String);
   var
-    Ext : UTF8String;
+    Ext : String;
   begin
    {$IFDEF FPC}
     Ext := ExtractFileExt(Filename);

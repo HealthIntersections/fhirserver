@@ -61,9 +61,9 @@ type
     procedure init(worker : TFHIRWorkerContextWithFactory);
     procedure processScopes(scopes: TStringList; base : TFHIRSecurityRights; secure : boolean);
   public
-    constructor create(worker : TFHIRWorkerContextWithFactory; user : TSCIMUser; secure : boolean); overload;
-    constructor create(worker : TFHIRWorkerContextWithFactory; base : TSCIMUser; choice : String; secure : boolean); overload;
-    constructor create(worker : TFHIRWorkerContextWithFactory; base : TSCIMUser; choice : TStringList; secure : boolean); overload;
+    constructor Create(worker : TFHIRWorkerContextWithFactory; user : TSCIMUser; secure : boolean); overload;
+    constructor Create(worker : TFHIRWorkerContextWithFactory; base : TSCIMUser; choice : String; secure : boolean); overload;
+    constructor Create(worker : TFHIRWorkerContextWithFactory; base : TSCIMUser; choice : TStringList; secure : boolean); overload;
     destructor Destroy; override;
 
     property canGetUserInfo : boolean read FUserInfo;

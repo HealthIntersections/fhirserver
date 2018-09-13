@@ -161,7 +161,7 @@ Type
     function resolveReference(url : string) : TBytes;
 
   public
-    Constructor Create; override;
+    constructor Create; override;
 
     // certificate files, for signing
     Property PublicKey : AnsiString read FPublicKey write FPublicKey;
@@ -833,7 +833,8 @@ var
   sig, si, ref, trns : TMXmlElement;
   i : integer;
   reference : TDigitalSignatureReference;
-  s, t : String;
+  s : AnsiString;
+  t : String;
   can, dig : TBytes;
 begin
   doc := TMXMLDocument.Create();
@@ -860,7 +861,7 @@ begin
   can := canonicaliseXml([xcmCanonicalise],si);
   dig := sign(can, method);
   s := EncodeBase64(dig);
-  sig.AddElement('SignatureValue').Text := s;
+  sig.AddElement('SignatureValue').Text := string(s);
   if keyinfo then
     AddKeyInfo(sig, method);
   result := canonicaliseXml([xcmCanonicalise], sig);  // don't need to canonicalise the whole lot, but why not?

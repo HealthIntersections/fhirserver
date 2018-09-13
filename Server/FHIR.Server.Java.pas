@@ -60,8 +60,8 @@ type
     function convertToJByteArray(b : TBytes) : TJByteArray;
     function convertFromJByteArray(b : TJByteArray) : TBytes;
   public
-    Constructor Create(jarPath : String); virtual;
-    Destructor Destroy; override;
+    constructor Create(jarPath : String); virtual;
+    destructor Destroy; override;
 
     procedure Detach;
 

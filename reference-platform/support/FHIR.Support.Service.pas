@@ -96,7 +96,7 @@ type
     FHandle : SC_HANDLE;
     FHndErr : Cardinal;
   public
-    Constructor create(AMachine : String = ''); { default = local }
+    constructor Create(AMachine : String = ''); { default = local }
     destructor Destroy; override;
     procedure Install(ASystemName, ADisplayName, AExecutable : String);
     procedure ListServices(AList : TStringList);
@@ -114,7 +114,7 @@ type
     function GetAutoStart: Boolean;
     procedure SetAutoStart(const Value: Boolean);
   public
-    Constructor create(AServiceManager : TServiceManagerHandle; AName : string);
+    constructor Create(AServiceManager : TServiceManagerHandle; AName : string);
     destructor Destroy; override;
     function ServiceIsRunning : boolean;
     procedure Query;
@@ -803,12 +803,12 @@ end;
 procedure TServiceManagerHandle.Install(ASystemName, ADisplayName, AExecutable: String);
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if CreateService(FHandle, pchar(ASystemName), pchar(ADisplayName),
          SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS,
          SERVICE_AUTO_START, SERVICE_ERROR_NORMAL, pchar(AExecutable), NIL, NIL, NIL, NIL, NIL) = 0 then
     begin
-    RaiseLastWin32Error;
+    RaiseLastOSError;
     end;
 end;
 
@@ -819,14 +819,14 @@ var
   i : integer;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   LNeeded := 0;
   LReturned := 0;
   LResume := 0;
   repeat
     if not EnumServicesStatus(FHandle, SERVICE_WIN32, SERVICE_ACTIVE or SERVICE_INACTIVE,
               LSvc[0], sizeof(TEnumServiceStatus) * 1000, LNeeded, LReturned, LResume) then
-      RaiseLastWin32Error;
+      RaiseLastOSError;
     for i := 0 to LReturned - 1 do
       AList.Values[LSvc[i].lpServiceName] := LSvc[i].lpDisplayName;
   until LResume = 0;
@@ -853,18 +853,18 @@ end;
 procedure TServiceHandle.Query;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
 
   if not QueryServiceStatus(FHandle, FStatus) then
     begin
-    RaiseLastWin32Error;
+    RaiseLastOSError;
     end;
 end;
 
 function TServiceHandle.ServiceIsRunning: boolean;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   Query;
   result := FStatus.dwCurrentState <> SERVICE_STOPPED;
 end;
@@ -872,7 +872,7 @@ end;
 procedure TServiceHandle.SendMessageToService(AMsg: Integer);
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   Query;
   win32Check(ControlService(FHandle, AMsg + USER_CONTROL_OFFSET, FStatus));
 end;
@@ -907,7 +907,7 @@ end;
 procedure TServiceHandle.Remove;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if ServiceIsRunning then
     begin
     Stop;
@@ -922,7 +922,7 @@ var
   p: PChar;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   p := nil;
   win32Check(StartService(FHandle, 0, p));
 end;
@@ -930,7 +930,7 @@ end;
 procedure TServiceHandle.Stop;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   Query;
   win32Check(ControlService(FHandle, SERVICE_CONTROL_STOP, FStatus));
 end;
@@ -942,9 +942,9 @@ var
   p : pchar;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIG)* 10, LNeeded) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
   p := LConfig[0].lpDependencies;
   while assigned(p) and (p[0] <> #0) do
     begin
@@ -959,7 +959,7 @@ var
   s : String;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   s := '';
   for i := 0 to AList.count - 1 do
     s := s + AList[i]+#0;
@@ -967,7 +967,7 @@ begin
 
   if not ChangeServiceConfig(FHandle,  SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE,
           nil, nil, nil, pchar(s), nil, nil, nil) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
 end;
 
 
@@ -977,9 +977,9 @@ var
   LConfig : array [0..11] of _QUERY_SERVICE_CONFIGA;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIGA)* 10, LNeeded) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
   result := LConfig[0].dwStartType = SERVICE_AUTO_START;
 end;
 
@@ -988,7 +988,7 @@ var
   v : DWord;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if Value then
     v := SERVICE_AUTO_START
   else
@@ -996,7 +996,7 @@ begin
 
   if not ChangeServiceConfig(FHandle,  SERVICE_NO_CHANGE, v, SERVICE_NO_CHANGE,
           nil, nil, nil, nil, nil, nil, nil) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
 end;
 
 function DescribeServiceStatus(ACode: DWord): String;
@@ -1087,7 +1087,7 @@ procedure TServiceHandle.Update(ATitle, AExecutable: String);
 begin
   if not ChangeServiceConfig(FHandle,  SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE,
           pchar(AExecutable), nil, nil, nil, nil, nil, pchar(ATitle)) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
 end;
 
 function TServiceHandle.AccountName: AnsiString;
@@ -1096,9 +1096,9 @@ var
   LConfig : array [0..11] of _QUERY_SERVICE_CONFIGA;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIGA)* 10, LNeeded) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
   result := LConfig[0].lpServiceStartName;
 end;
 
@@ -1108,20 +1108,20 @@ var
   LConfig : array [0..11] of _QUERY_SERVICE_CONFIGA;
 begin
   if FHandle = 0 then
-    raise EWin32Error.Create(SysErrorMessage(FHndErr));
+    raise EOSError.Create(SysErrorMessage(FHndErr));
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIGA)* 10, LNeeded) then
-    RaiseLastWin32Error;
+    RaiseLastOSError;
   if (aUser = '') and (aPassword = '') Then
   Begin
     if not changeServiceConfig(FHandle, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, lConfig[0].dwErrorControl, nil,
                        nil, nil, nil, 'LocalSystem', nil, nil) Then
-      RaiseLastWin32Error;
+      RaiseLastOSError;
   End
   Else
   Begin
     if not changeServiceConfig(FHandle, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, lConfig[0].dwErrorControl, nil,
                       nil, nil, nil, pchar(AUser), pchar(APassword), nil) Then
-      RaiseLastWin32Error;
+      RaiseLastOSError;
   End;
 end;
 end.

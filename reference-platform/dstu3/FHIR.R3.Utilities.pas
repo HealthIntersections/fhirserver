@@ -210,7 +210,7 @@ type
 
   TFhirPrimitiveTypeHelper = class helper for TFhirPrimitiveType
   public
-    constructor create(value : String); overload;
+    constructor Create(value : String); overload;
   end;
 
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
@@ -372,7 +372,7 @@ type
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
-    Constructor Create(system, code : String); overload;
+    constructor Create(system, code : String); overload;
     function hasCode(System, Code : String) : boolean;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
@@ -419,7 +419,7 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
-    Constructor Create(system, code : String); overload;
+    constructor Create(system, code : String); overload;
 
     function hasCode(System, Code : String) : boolean;
     class function fromEdit(s : String) : TFhirCoding;
@@ -594,7 +594,7 @@ type
 
   TFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
   public
-    constructor create(Severity : TFhirIssueSeverityEnum; Code : TFhirIssueTypeEnum; Diagnostics : string; location : String); overload;
+    constructor Create(Severity : TFhirIssueSeverityEnum; Code : TFhirIssueTypeEnum; Diagnostics : string; location : String); overload;
     function summary : String;
   end;
 
@@ -683,7 +683,7 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
-    Constructor Create(ref : String); overload;
+    constructor Create(ref : String); overload;
     function isRelative : boolean;
     function getType : String;
     function getId : String;
@@ -2944,7 +2944,7 @@ begin
         src := resourceToBytes(self, ffXml, OutputStyleCanonical);
         dig := TDigitalSigner.Create;
         try
-          dig.PrivateKey := cert;
+          dig.PrivateKey := ansiString(cert);
           sig.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
         finally
           dig.free;
@@ -3838,7 +3838,7 @@ begin
   else if (e1 = nil) or (e2 = nil) then
     result := false
   else
-    result := e1.equalsShallow(e2);
+    result := e1.equals(e2);
 end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
@@ -5524,7 +5524,6 @@ end;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 var
   p :  TFHIRParser;
-  pc : TFHIRParserClass;
 begin
   if format = ffUnspecified then
     format := DetectFormat(stream);
@@ -5622,7 +5621,6 @@ var
   pm : TParseMap;
   i, j : integer;
   n, v : String;
-  p : TFhirParametersParameter;
 begin
   result := TFhirParameters.Create;
   try

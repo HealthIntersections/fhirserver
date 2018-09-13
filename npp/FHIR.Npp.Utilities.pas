@@ -52,7 +52,7 @@ type
     FStart: integer;
     FDescription: String;
   public
-    Constructor create(level : TFHIRAnnotationLevel; line : integer; start, stop : integer; message, description : String); overload;
+    constructor Create(level : TFHIRAnnotationLevel; line : integer; start, stop : integer; message, description : String); overload;
 
     property level : TFHIRAnnotationLevel read FLevel write FLevel;
     property start : integer read FStart write FStart;

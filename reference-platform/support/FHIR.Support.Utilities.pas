@@ -35,7 +35,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
-  SysUtils, Classes, EncdDecd, Generics.Collections, UIConsts, Math, TypInfo, Character, RegularExpressions, SysConst,
+  SysUtils, System.Types, System.TimeSpan, System.NetEncoding, Classes, EncdDecd, Generics.Collections, UIConsts, Math, TypInfo, Character, RegularExpressions, SysConst,
   FHIR.Support.Fpc, FHIR.Support.Base;
 
 
@@ -208,6 +208,9 @@ Const
 // NOTE: declared in the initialization.
 Var
   UnicodeWhitespaceArray : TCharArray;
+
+function clength(S : String) : cardinal; overload;
+function clength(b : TBytes) : cardinal; overload;
 
 Procedure StringAppend(Var sTarget : String; Const sSource : String; Const sDelimiter : String = ''); Overload;
 Function StringCopy(Const sValue : String; iIndex, iCount : Integer) : String; Overload;
@@ -392,8 +395,8 @@ type
       FLength : Integer;
       FBufferSize : integer;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function AsString : AnsiString;
       Function ToString : String; override;
@@ -457,8 +460,8 @@ Type
       Procedure Append(Const bytes : TBytes); Overload;
       Procedure Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer); Overload;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function AsString : String;
       Function ToString : String;
@@ -507,8 +510,8 @@ Type
       Function GetLength : Integer;
       function GetAsString: String;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
       Property AsString : String read GetAsString;
 
       Procedure Clear;
@@ -538,7 +541,7 @@ Type
       Procedure WriteToStream(aStream : TStream; encoding : TEncoding = nil); overload;
 
       Property Length : Integer Read GetLength;
-      function toString : String; override;
+      function ToString : String; override;
   End;
   {$ENDIF}
 
@@ -548,8 +551,8 @@ type
     list : TStringList;
     FIgnoreDuplicates: Boolean;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     procedure add(s : String);
     function asString : string;
@@ -1767,10 +1770,10 @@ type
   TFslBytesBuilder = Class (TFslObject)
     Private
       FContent : TBytes;
-      FLength : Integer;
-      FBufferSize : integer;
+      FLength : Cardinal;
+      FBufferSize : Cardinal;
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
       Function AsBytes : TBytes;
 
       Procedure Clear;
@@ -1781,7 +1784,7 @@ type
       Procedure Append(mem : Pointer; len : word); Overload;
 
       Function EndsWith(aBytes : TBytes) : Boolean;
-      Property Length : Integer Read FLength;
+      Property Length : Cardinal Read FLength;
 
       Procedure AddWord(val : word);
       Procedure AddCardinal(val : cardinal);
@@ -1792,12 +1795,12 @@ type
       Procedure AddAnsiString(val : AnsiString);
       Procedure addBase64(val : TBytes);
 
-      procedure Read(index : integer; var buffer; ilength : integer);
+      procedure Read(index : cardinal; var buffer; ilength : cardinal);
 
-      Procedure WriteWord(index : integer; val : word);
-      Procedure WriteCardinal(index : integer; val : cardinal);
-      Procedure WriteUInt64(index : integer; val : UInt64);
-      Procedure WriteString(index : integer; val : String);
+      Procedure WriteWord(index : Cardinal; val : word);
+      Procedure WriteCardinal(index : Cardinal; val : cardinal);
+      Procedure WriteUInt64(index : Cardinal; val : UInt64);
+      Procedure WriteString(index : Cardinal; val : String);
   End;
 
 
@@ -12961,7 +12964,7 @@ begin
       result := result And (aBytes[i] = FContent[FLength - System.Length(aBytes) + i]);
 end;
 
-procedure TFslBytesBuilder.Read(index : integer; var buffer; ilength: integer);
+procedure TFslBytesBuilder.Read(index : cardinal; var buffer; ilength: cardinal);
 begin
   if index < 1 Then
     RaiseError('Read', 'index < 1');
@@ -12970,7 +12973,7 @@ begin
   Move(FContent[index], buffer, ilength);
 end;
 
-procedure TFslBytesBuilder.WriteCardinal(index: integer; val: cardinal);
+procedure TFslBytesBuilder.WriteCardinal(index: cardinal; val: cardinal);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -12979,16 +12982,16 @@ begin
   Move(val, FContent[index], 4);
 end;
 
-procedure TFslBytesBuilder.WriteString(index: integer; val: String);
+procedure TFslBytesBuilder.WriteString(index: cardinal; val: String);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
-  if index + (val.Length*2) > FLength Then
+  if index + clength(val)*2 > FLength Then
     RaiseError('Overwrite', 'index > length');
   Move(val[1], FContent[index], (val.Length*2));
 end;
 
-procedure TFslBytesBuilder.WriteUInt64(index: integer; val: UInt64);
+procedure TFslBytesBuilder.WriteUInt64(index: cardinal; val: UInt64);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -12997,7 +13000,7 @@ begin
   Move(val, FContent[index], 8);
 end;
 
-procedure TFslBytesBuilder.WriteWord(index: integer; val: word);
+procedure TFslBytesBuilder.WriteWord(index: cardinal; val: word);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14182,6 +14185,15 @@ begin
   DeleteCriticalSection(gCriticalSection);
 end;
 
+function clength(S : String) : cardinal;
+begin
+  result := cardinal(length(s));
+end;
+
+function clength(b : TBytes) : cardinal;
+begin
+  result := cardinal(length(b));
+end;
 
 Initialization
   init;

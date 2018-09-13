@@ -74,8 +74,8 @@ type
   private
     FServerContext : TFslObject; // no link
   public
-    Constructor Create(ServerContext : TFslObject);
-    Destructor Destroy; override;
+    constructor Create(ServerContext : TFslObject);
+    destructor Destroy; override;
 
     Property ServerContext : TFslObject read FServerContext;
   end;
@@ -118,8 +118,8 @@ type
     function GetEmailThreadStatus: String;
     procedure SetEmailThreadStatus(const Value: String);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     Function Link : TFHIRServerSettings; overload;
 
     procedure load(ini : TFHIRServerIniFile);

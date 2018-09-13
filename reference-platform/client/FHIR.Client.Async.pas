@@ -100,8 +100,8 @@ type
     procedure doPing;
     procedure doDownload;
   public
-    Constructor create(client : TFhirClientV);
-    Destructor Destroy; override;
+    constructor Create(client : TFhirClientV);
+    destructor Destroy; override;
 
     // setup
     property query : string read FQuery write FQuery;

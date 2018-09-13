@@ -64,7 +64,7 @@ Type
     FStream : TMemoryStream;
   public
     constructor Create(Collection: TCollection); override;
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function OpenLoadStream: TStream; override;
     procedure CloseLoadStream; override;
     function  PrepareTempStream: TStream; override;
@@ -134,8 +134,8 @@ Type
     FId: String;
     procedure SeTFHIRSubscriptionW(const Value: TFHIRSubscriptionW);
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Property Key : integer read FKey write FKey;
     Property Id : String read FId write FId;
     Property ResourceType : Integer read FResourceType write FResourceType;
@@ -234,8 +234,8 @@ Type
     function processUrlTemplate(url : String; resource : TFhirResourceV) : String; virtual; abstract;
     // function getSummaryForChannel(subst : TFHIRSubscriptionW) : String; virtual; abstract;
   public
-    Constructor Create(ServerContext : TFslObject);
-    Destructor Destroy; Override;
+    constructor Create(ServerContext : TFslObject);
+    destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
     procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TFHIRSubscriptionWOperation; resource : TFHIRResourceV; conn : TKDBConnection; reload : boolean; session : TFHIRSession);

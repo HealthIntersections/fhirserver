@@ -72,7 +72,7 @@ type
     FFile : TStream;
     procedure log(s : String);
   public
-    Constructor Create(filename : String);
+    constructor Create(filename : String);
     destructor Destroy; override;
 
     procedure recordLogin; override;
@@ -88,7 +88,7 @@ type
     FClient : TFhirClient;
     procedure log(ae : TFhirAuditEvent);
   public
-    Constructor Create(client : TFHIRClient);
+    constructor Create(client : TFHIRClient);
     destructor Destroy; override;
 
     procedure recordLogin; override;

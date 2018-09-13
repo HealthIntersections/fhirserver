@@ -109,8 +109,8 @@ type
     FElements: TFslMap<TCqlTypeSpecifier>;
 
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlTypeSpecifier; overload;
 
     property Kind : TCqlTypeKind read FKind write FKind;
@@ -178,7 +178,7 @@ type
     procedure SetTypeInfo(const Value: TCqlTypeSpecifier);
     function GetSort: TFslList<TCqlExpressionNode>;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function Link : TCqlExpressionNode; overload;
 
     Property CqlFunctionId : TCqlFunctionDefinitionId read FCqlFunctionId write FCqlFunctionId;
@@ -227,8 +227,8 @@ type
   private
     FContext : TCqlContextType;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlStatement; overload;
 
     property Context : TCqlContextType read FContext write FContext;
@@ -260,8 +260,8 @@ type
     FCodeSystems : TFslList<TCqlScopedIdReference>;
     function GetCodeSystems: TFslList<TCqlScopedIdReference>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlValueSetReference; overload;
 
     property CodeSystems : TFslList<TCqlScopedIdReference> read GetCodeSystems;
@@ -273,8 +273,8 @@ type
     FCode: String;
     FSystem: TCqlScopedIdReference;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlCodeDefinition; overload;
 
     property code : String read FCode write FCode;
@@ -287,8 +287,8 @@ type
     FDisplay: String;
     FCodes : TFslList<TCqlScopedIdReference>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlConceptDefinition; overload;
 
     property display : String read FDisplay write FDisplay;
@@ -301,8 +301,8 @@ type
     FExpression: TCqlExpressionNode;
     procedure SetExpression(const Value: TCqlExpressionNode);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlExpressionDefinition; overload;
 
     property expression : TCqlExpressionNode read FExpression write SetExpression;
@@ -314,8 +314,8 @@ type
     FTypeDetails: TCqlTypeSpecifier;
     procedure SetTypeDetails(const Value: TCqlTypeSpecifier);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlFunctionParameterDefinition; overload;
 
     property name : String read FName write FName;
@@ -330,8 +330,8 @@ type
     procedure SetBody(const Value: TCqlExpressionNode);
     procedure SetTypeInfo(const Value: TCqlTypeSpecifier);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlFunctionDefinition; overload;
 
     property parameters : TFslList<TCqlFunctionParameterDefinition> read FParameters;
@@ -346,8 +346,8 @@ type
     procedure SetDefaultValue(const Value: TCqlExpressionNode);
     procedure SetTypeDetails(const Value: TCqlTypeSpecifier);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlParameterDefinition; overload;
 
     property TypeDetails : TCqlTypeSpecifier read FTypeDetails write SetTypeDetails;
@@ -358,8 +358,8 @@ type
   private
     FAlias : String;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlInclude; overload;
 
     property Alias : String read FAlias write FAlias;
@@ -384,8 +384,8 @@ type
     FDefinitions : TFslList<TCqlExpressionDefinition>;
     FFunctions: TFslList<TCqlFunctionDefinition>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TCqlLibrary; overload;
 
     property Version : String read FVersion write FVersion;

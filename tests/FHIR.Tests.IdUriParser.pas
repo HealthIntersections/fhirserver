@@ -81,7 +81,7 @@ end;
 
 procedure TIdUriParserTests.TestFail;
 begin
-  ok('http://foo@127.0.0.1 @google.com/');
+  fail('http://foo@127.0.0.1 @google.com/');
 end;
 
 procedure TIdUriParserTests.TestOK;

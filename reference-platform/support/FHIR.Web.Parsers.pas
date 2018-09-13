@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-//  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities;
 
@@ -75,7 +75,7 @@ type
 
   TParseMap = class(TMultiValList)
   Public
-    constructor create(const s: String; MimeDecode: Boolean = True);
+    constructor Create(const s: String; MimeDecode: Boolean = True);
     function Link : TParseMap; overload;
     function VarExists(const n: String): Boolean;
     function GetVar(const n: String): String;

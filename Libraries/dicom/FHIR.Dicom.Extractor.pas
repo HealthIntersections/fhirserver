@@ -85,7 +85,7 @@ Type
     Procedure CheckForImages(oRoot : TDicomObject; sTransferSyntax : String);
     Procedure LoadBytes(oRoot : TDicomObject);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Property ErrorsInImage : Boolean read FErrorsInImage write FErrorsInImage;
     Property ScaleContrast : Boolean read FScaleContrast write FScaleContrast;

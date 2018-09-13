@@ -74,8 +74,8 @@ type
     FTypes : TStringList;
     FCollectionStatus : TFHIRCollectionStatus;
   public
-    constructor create(status : TFHIRCollectionStatus; types : array of String);
-    constructor createList(status : TFHIRCollectionStatus; types : TStringList);
+    constructor Create(status : TFHIRCollectionStatus; types : array of String);
+    constructor CreateList(status : TFHIRCollectionStatus; types : TStringList);
     destructor Destroy; override;
     function Link : TFHIRTypeDetails; overload;
     procedure addType(n : String);
@@ -121,8 +121,8 @@ type
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
   public
-    Constructor Create(uniqueId : Integer);
-    Destructor Destroy; override;
+    constructor Create(uniqueId : Integer);
+    destructor Destroy; override;
 
     function ToString : String; override;
     function Link : TFHIRPathExpressionNode; overload;
@@ -172,7 +172,7 @@ type
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
   public
-    Constructor Create(style : TFHIROutputStyle; lang : String); Virtual;
+    constructor Create(style : TFHIROutputStyle; lang : String); Virtual;
 
     procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet); Virtual;
     function Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet): String; Overload;

@@ -184,7 +184,7 @@ Type
     procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
-    constructor create(ServerContext : TFslObject; lang : String);
+    constructor Create(ServerContext : TFslObject; lang : String);
     destructor Destroy; override;
 
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
@@ -220,15 +220,15 @@ Type
     procedure SetContext(const Value: TFHIRWorkerContextWithFactory);
     procedure SetSession(const Value: TFHIRSession);
     procedure checkOutcome(resp: TFHIRResponse);
-    procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function link : TFHIRInternalCommunicator; overload;
 
     property Session : TFHIRSession read FSession write SetSession;
     property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
 
     function address : String; override;
+    procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
 
     function conformanceV(summary : boolean) : TFHIRResourceV; override;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
@@ -254,8 +254,8 @@ Type
     FFactory : TFHIRFactory;
     function GetTotalResourceCount: integer; virtual; abstract;
   public
-    Constructor Create(factory : TFHIRFactory); virtual;
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory); virtual;
+    destructor Destroy; override;
     function Link : TFHIRStorageService; overload;
     property Factory : TFHIRFactory read FFactory;
 

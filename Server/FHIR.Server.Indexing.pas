@@ -298,8 +298,6 @@ end;
 { TFhirIndexSpaces }
 
 constructor TFhirIndexSpaces.Create();
-var
-  i : integer;
 begin
   inherited create;
   FSpaces := TStringList.Create;
@@ -316,8 +314,6 @@ begin
 end;
 
 procedure TFhirIndexSpaces.RecordSpace(space: String; key: integer);
-var
-  i : integer;
 begin
   if space.trim <> space then
     raise EFHIRException.create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');

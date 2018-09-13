@@ -107,8 +107,6 @@ uses
   FHIR.CdsHooks.Utilities in '..\reference-platform\support\FHIR.CdsHooks.Utilities.pas',
   FHIR.Ui.OSX in '..\Libraries\ui\FHIR.Ui.OSX.pas',
   FHIR.Ui.ComboFMX in '..\libraries\ui\FHIR.Ui.ComboFMX.pas',
-  // FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
-  // FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas',
   FHIR.Web.GraphQL in '..\reference-platform\support\FHIR.Web.GraphQL.pas',
   FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas',
   BaseFrame in 'BaseFrame.pas',
@@ -138,7 +136,7 @@ uses
   QuestionnaireItemDialog in 'QuestionnaireItemDialog.pas' {QuestionnaireItemForm},
   ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
   PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
-   ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
+  ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
   TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
   PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm},
   ServerForm in 'ServerForm.pas' {ServerFrameForm: TFrame},
@@ -153,7 +151,9 @@ uses
   RegistryForm in 'RegistryForm.pas' {RegistryFrame: TFrame},
   PatientHomeForm in 'PatientHomeForm.pas' {PatientHomeFrame: TFrame},
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
-  LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame};
+  LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame},
+  FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
+  FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas';
 
 {$R *.res}
 

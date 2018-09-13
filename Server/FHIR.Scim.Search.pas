@@ -106,7 +106,7 @@ Type
     function parseValuePath(path : String) : TSCIMSearchFilter;
 
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     class procedure runTests;
     class procedure test(expression : String);
     class function parse(expression : String) : TSCIMSearchFilter; overload;

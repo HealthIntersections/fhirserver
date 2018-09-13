@@ -54,9 +54,9 @@ Type
     function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
     function addToLiteralPath(path: Array of String): String;
   public
-    Constructor Create; Overload; Override;
-    Constructor Create(element : TFHIRMMElement); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(element : TFHIRMMElement); Overload;
+    destructor Destroy; Override;
   end;
 
   TElementInfo = class(TFslObject)
@@ -73,7 +73,7 @@ Type
     function locStart: TSourceLocation;
     function locEnd: TSourceLocation;
   public
-    Constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
+    constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
   end;
 
   TChildIterator = class(TFslObject)
@@ -203,8 +203,8 @@ Type
     function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
   public
-    Constructor Create(context: TFHIRWorkerContextWithFactory); override;
-    Destructor Destroy; Override;
+    constructor Create(context: TFHIRWorkerContextWithFactory); override;
+    destructor Destroy; Override;
 
     Property Context : TFHIRWorkerContext read GetContext;
     Property ValContext : TFHIRWorkerContext read GetContext;

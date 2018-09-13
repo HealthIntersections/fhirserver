@@ -339,7 +339,7 @@ end;
 
 procedure TFullServerTests.TestPatientDelete;
 var
-  rb, ra : TFhirPatient;
+  rb : TFhirPatient;
   id : String;
 begin
   rb := FClientJson.readResource(frtPatient, 'example') as TFHIRPatient;
@@ -501,8 +501,6 @@ end;
 procedure TFullServerTests.TestValueSetValidate;
 var
   pIn, pOut : TFhirParameters;
-  cs : TFHIRValueSet;
-  def : TFhirCodeSystemConcept;
 begin
   pIn := TFhirParameters.Create;
   try

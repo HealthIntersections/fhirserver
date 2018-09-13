@@ -94,7 +94,7 @@ Type
       FHandled: Boolean;
       Procedure SetHotspot(Const Value: TWPHotspot);
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
       // the screen co-ordinates for the hotspot
       Property Box : TRect Read FBox Write FBox;
       // the hotspot itself
@@ -188,7 +188,7 @@ Type
       Function GetHostDocument : TWPWorkingDocument; Override;
       Procedure SetHostDocument(Const oDocument : TWPWorkingDocument; oStyles : TWPStyles); Override;
     Public
-      Constructor Create(oOwner : TWordProcessor); Overload; Virtual;
+      constructor Create(oOwner : TWordProcessor); Overload; Virtual;
   End;
 
 
@@ -208,8 +208,8 @@ Type
       FOffsetSquareforScroll : Boolean;
       Procedure Square(iLeft, iTop, iRight, iBottom : Integer);
     Public
-      Constructor Create(oWordProcessor : TWordProcessor); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(oWordProcessor : TWordProcessor); Overload; Virtual;
+      destructor Destroy; Override;
 
       Function Link : TWPMouseActor; Overload;
 
@@ -238,7 +238,7 @@ Type
     Function Pan(EventInfo : TGestureEventInfo) : boolean;
     Function TwoFingers(EventInfo : TGestureEventInfo) : boolean;
   public
-    constructor create(owner : TWordProcessor);
+    constructor Create(owner : TWordProcessor);
     destructor Destroy; override;
 
     procedure Load;
@@ -479,8 +479,8 @@ Type
     Procedure CheckNotInMacro;
     Procedure Ring(aColour : TColour);
   Public
-    Constructor Create(oOwner : TComponent); Override;
-    Destructor Destroy; Override;
+    constructor Create(oOwner : TComponent); Override;
+    destructor Destroy; Override;
 
     Procedure Clear; Overload; Virtual;
     Function ClearFormatting : Boolean; Overload; Virtual; // will fail for tables, fields, images
@@ -1606,7 +1606,7 @@ Type
       Function WorkingTop(iX, iY : Integer):Integer;
       Function WorkingBottom(iX, iY : Integer):Integer;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
       Function Cursor(oInfo : TWPMouseInfo; bDoing : Boolean) : TCursor; Overload; Override;
       Procedure Down(aShift: TShiftState; iX, iY: Integer; oInfo : TWPMouseInfo; bDouble : Boolean); Overload; Override;
       Procedure Move(iX, iY: Integer; bOk : Boolean; oInfo : TWPMouseInfo); Overload; Override;
@@ -1814,7 +1814,7 @@ Type
       FButton : TFslObject;
       FDouble : Boolean;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
       Function Cursor(oInfo : TWPMouseInfo; bDoing : Boolean) : TCursor; Overload; Override;
       Procedure Down(aShift: TShiftState; iX, iY: Integer; oInfo : TWPMouseInfo; bDouble : Boolean); Overload; Override;
       Procedure Move(iX, iY: Integer; bOk : Boolean; oInfo : TWPMouseInfo); Overload; Override;
@@ -1876,7 +1876,7 @@ Type
       FSubject : TFslObject;
       FDouble : Boolean;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
       Function Cursor(oInfo : TWPMouseInfo; bDoing : Boolean) : TCursor; Overload; Override;
       Procedure Down(aShift: TShiftState; iX, iY: Integer; oInfo : TWPMouseInfo; bDouble : Boolean); Overload; Override;
       Procedure Move(iX, iY: Integer; bOk : Boolean; oInfo : TWPMouseInfo); Overload; Override;
@@ -1951,7 +1951,7 @@ Type
       FSubject : TFslObject;
       FBox : TRect;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
       Function RequiresDown : Boolean; Overload; Override;
       Function Cursor(oInfo : TWPMouseInfo; bDoing : Boolean) : TCursor; Overload; Override;
       Procedure Down(aShift: TShiftState; iX, iY: Integer; oInfo : TWPMouseInfo; bDouble : Boolean); Overload; Override;

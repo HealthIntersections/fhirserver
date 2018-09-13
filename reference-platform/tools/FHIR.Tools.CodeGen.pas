@@ -52,7 +52,7 @@ type
     function getElementDefinition(sd : TFhirStructureDefinitionW; path : String) : TFhirElementDefinitionW;
     function enumify(code : String) : String;
   public
-    Constructor Create; Override;
+    constructor Create; Override;
     destructor Destroy; override;
     property Resource : TFHIRResourceV read FResource write SetResource;
     property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
@@ -71,8 +71,8 @@ type
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function languageName : String; override;
     function generate : String; override;
   end;
@@ -92,8 +92,8 @@ type
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function languageName : String; override;
     function generate : String; override;

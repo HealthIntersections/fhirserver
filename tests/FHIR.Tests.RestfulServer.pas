@@ -56,7 +56,7 @@ Type
   private
     FVersion : TFHIRVersion;
   public
-    constructor create(version : TFHIRVersion);
+    constructor Create(version : TFHIRVersion);
 
     function makeIndexes : TFHIRIndexBuilder; override;
     function makeValidator: TFHIRValidatorV; override;
@@ -124,8 +124,8 @@ Type
   protected
     function GetTotalResourceCount: integer; override;
   public
-    Constructor Create(factory : TFHIRFactory); override;
-    Destructor Destroy; override;
+    constructor Create(factory : TFHIRFactory); override;
+    destructor Destroy; override;
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;

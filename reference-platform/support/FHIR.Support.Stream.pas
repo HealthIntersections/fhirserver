@@ -35,7 +35,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, ActiveX, FHIR.Support.Fpc, {$ENDIF}
-  SysUtils, Classes, RTLConsts, ZLib,
+  SysUtils, AnsiStrings, Classes, RTLConsts, ZLib,
   IdHeaderList, idGlobal, IdGlobalProtocols,
   FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
 
@@ -52,8 +52,8 @@ type
 
       Function Assignable : Boolean; Override;
 
-      Procedure Read(Var Buffer; iCount : Cardinal); Virtual; // can't mark as overload
-      Procedure Write(Const Buffer; iCount : Cardinal); Virtual; // can't mark as overload
+      Procedure Read(Var Buffer; iCount : Integer); Virtual; // can't mark as overload
+      Procedure Write(Const Buffer; iCount : Integer); Virtual; // can't mark as overload
 
       Function Readable : Int64; Virtual;
       Function Writeable : Int64; Virtual;
@@ -84,11 +84,11 @@ type
       Procedure SetStream(oStream : TFslStream); Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
-      Procedure Read(Var Buffer; iCount : Cardinal); Override;
-      Procedure Write(Const Buffer; iCount : Cardinal); Override;
+      Procedure Read(Var Buffer; iCount : Integer); Override;
+      Procedure Write(Const Buffer; iCount : Integer); Override;
 
       Function Readable : Int64; Override;
       Function Writeable : Int64; Override;
@@ -133,11 +133,11 @@ type
       Procedure SetStream(oStream : TFslAccessStream); Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
-      Procedure Read(Var Buffer; iCount : Cardinal); Override;
-      Procedure Write(Const Buffer; iCount : Cardinal); Override;
+      Procedure Read(Var Buffer; iCount : Integer); Override;
+      Procedure Write(Const Buffer; iCount : Integer); Override;
 
       Function Readable : Int64; Override;
       Function Writeable : Int64; Override;
@@ -150,7 +150,7 @@ type
   TFslStringStream = Class(TFslAccessStream)
     Private
       FData : AnsiString;
-      FIndex : Cardinal;
+      FIndex : Integer;
 
       Procedure SetData(Const Value: AnsiString);
       function GetBytes: TBytes;
@@ -164,8 +164,8 @@ type
       Procedure SetSize(Const iValue : Int64); Override;
 
     Public
-      Procedure Read(Var aBuffer; iCount : Cardinal); Override;
-      Procedure Write(Const aBuffer; iCount : Cardinal); Override;
+      Procedure Read(Var aBuffer; iCount : Integer); Override;
+      Procedure Write(Const aBuffer; iCount : Integer); Override;
 
       Function Readable : Int64; Override;
       Function Writeable : Int64; Override;
@@ -191,12 +191,12 @@ type
 
   Public
     constructor Create(const AFileName: string; Mode: Word); overload;
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     function Link : TFslFile; overload;
 
-    Procedure Read(Var aBuffer; iCount : Cardinal); Override;
-    Procedure Write(Const aBuffer; iCount : Cardinal); Override;
+    Procedure Read(Var aBuffer; iCount : Integer); Override;
+    Procedure Write(Const aBuffer; iCount : Integer); Override;
     Function Readable : Int64; Override;
     Function Writeable : Int64; Override;
 
@@ -233,11 +233,11 @@ type
       procedure SetAsBytes(const Value: TBytes);
     function GetHasFormat: boolean;
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 {$IFNDEF UT}
-      Constructor Create(sText : String); Overload;
+      constructor Create(sText : String); Overload;
 {$ENDIF}
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslBuffer;
       Function Clone : TFslBuffer;
@@ -330,16 +330,16 @@ type
       Procedure UpdateCurrentPointer;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Clone : TFslMemoryStream;
       Function Link : TFslMemoryStream;
 
       Procedure Assign(oObject : TFslObject); Override;
 
-      Procedure Read(Var aBuffer; iSize : Cardinal); Override;
-      Procedure Write(Const aBuffer; iSize : Cardinal); Override;
+      Procedure Read(Var aBuffer; iSize : Integer); Override;
+      Procedure Write(Const aBuffer; iSize : Integer); Override;
 
       Procedure DeleteRange(Const iFromPosition, iToPosition : Integer);
 
@@ -367,8 +367,8 @@ type
       Procedure SetStream(Const Value: TStream);
 
     Public
-      Procedure Read(Var aBuffer; iCount : Cardinal); Override;
-      Procedure Write(Const aBuffer; iCount : Cardinal); Override;
+      Procedure Read(Var aBuffer; iCount : Integer); Override;
+      Procedure Write(Const aBuffer; iCount : Integer); Override;
 
       Function Readable : Int64; Override;
       Function Writeable : Int64; Override;
@@ -387,9 +387,9 @@ type
       Procedure SetSize(NewSize: LongInt); Override;
 
     Public
-      Constructor Create; Overload; Virtual;
-      Constructor Create(Stream : TFslStream); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Virtual;
+      constructor Create(Stream : TFslStream); Overload; Virtual;
+      destructor Destroy; Override;
 
       Function Read(Var aBuffer; iCount: LongInt): LongInt; Override;
       Function Write(Const aBuffer; iCount: LongInt): LongInt; Override;
@@ -454,8 +454,8 @@ Type
       FLookupHashEntry : TFslStreamFilerReferenceHashEntry;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslStreamFilerReferenceManager;
 
@@ -561,8 +561,8 @@ Type
     Procedure RaiseError(Const sMethod, sMessage : String); Override;
     Function GetCurrent : TAfsEntity; Virtual; Abstract;
   Public
-    Constructor Create(oVolume : TAfsVolume); Overload; Virtual;
-    Destructor Destroy; Override;
+    constructor Create(oVolume : TAfsVolume); Overload; Virtual;
+    destructor Destroy; Override;
 
     Property Current : TAfsEntity Read GetCurrent;
     Property Volume : TAfsVolume Read FVolume Write SetVolume;
@@ -589,8 +589,8 @@ Type
     Function Active : Boolean; Overload; Virtual; Abstract;
 
     Function Open(Const libName, sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle; Overload; Virtual; Abstract;
-    Procedure Read(oHandle : TAfsHandle; Var Buffer; iCount : Cardinal); Virtual; Abstract;
-    Procedure Write(oHandle : TAfsHandle; Const Buffer; iCount : Cardinal); Virtual; Abstract;
+    Procedure Read(oHandle : TAfsHandle; Var Buffer; iCount : Integer); Virtual; Abstract;
+    Procedure Write(oHandle : TAfsHandle; Const Buffer; iCount : Integer); Virtual; Abstract;
     Procedure Close(oHandle : TAfsHandle); Overload; Virtual; Abstract;
 
     Function GetSize(oHandle : TAfsHandle) : Int64; Virtual; Abstract;
@@ -622,11 +622,11 @@ Type
     Function GetSize : Int64; Override;
     Procedure SetSize(Const Value : Int64); Override;
   Public
-    Constructor Create(oVolume : TAfsVolume; oHandle : TAfsHandle); Overload;
-    Destructor Destroy; Override;
+    constructor Create(oVolume : TAfsVolume; oHandle : TAfsHandle); Overload;
+    destructor Destroy; Override;
 
-    Procedure Read(Var Buffer; iCount : Cardinal); Override;
-    Procedure Write(Const Buffer; iCount : Cardinal); Override;
+    Procedure Read(Var Buffer; iCount : Integer); Override;
+    Procedure Write(Const Buffer; iCount : Integer); Override;
 
     Function Readable : Int64; Override;
 
@@ -646,9 +646,9 @@ Type
     Procedure SetVolume(Const Value: TAfsVolume);
 
   Public
-    Constructor Create; Overload; Override;
-    Destructor Destroy; Override;
-    Constructor Create(oVolume : TAfsVolume; Const sName : String = ''); Overload;
+    constructor Create; Overload; Override;
+    destructor Destroy; Override;
+    constructor Create(oVolume : TAfsVolume; Const sName : String = ''); Overload;
 
     Procedure Assign(oSource : TFslObject); Override;
 
@@ -676,8 +676,8 @@ Type
   Protected
     Property Items : TAfsEntities Read FItems;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   End; { TAfsContainer }
 
   TAfsRoot = Class(TAfsContainer)
@@ -726,8 +726,8 @@ Type
     Procedure SetVolume(Const Value: TAfsVolume);
 
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure Open; Overload; Virtual;
     Procedure Close; Overload; Virtual;
@@ -755,8 +755,8 @@ Type
     Function Active : Boolean; Overload; Override;
 
     Function Open(Const libName, sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle; Overload; Override;
-    Procedure Read(oHandle : TAfsHandle; Var Buffer; iCount : Cardinal); Override;
-    Procedure Write(oHandle : TAfsHandle; Const Buffer; iCount : Cardinal); Override;
+    Procedure Read(oHandle : TAfsHandle; Var Buffer; iCount : Integer); Override;
+    Procedure Write(oHandle : TAfsHandle; Const Buffer; iCount : Integer); Override;
     Procedure Close(oHandle : TAfsHandle); Overload; Override;
 
     Function GetSize(oHandle : TAfsHandle) : Int64; Override;
@@ -773,8 +773,8 @@ Type
 
   TAfsResourceManager = Class(TAfsStreamManager)
     Public
-      Constructor Create(Const sName : String); Overload; Virtual;
-      Constructor Create; Overload; Override;
+      constructor Create(Const sName : String); Overload; Virtual;
+      constructor Create; Overload; Override;
   End; { TAfsResourceManager }
 
 {$ENDIF}
@@ -894,7 +894,7 @@ Type
       Function AfterWhitespace : String;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TFslTextFormatter;
 
@@ -936,8 +936,8 @@ Type
       Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Override;
 
       Function More : Boolean; Virtual;
 
@@ -983,7 +983,7 @@ Type
       FHasQuote : Boolean;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Procedure ConsumeEntries(oEntries : TFslStringList); Overload;
       Procedure ConsumeEntries; Overload;
@@ -1003,8 +1003,8 @@ Type
       FEmptyLine : Boolean;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Clear; Override;
 
@@ -1165,8 +1165,8 @@ type
       Procedure SetParts(oValue : TFslZipPartList);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function HasStream : Boolean;
       Function HasParts : Boolean;
@@ -1221,8 +1221,8 @@ type
       Procedure WriteDirectory(oPart : TFslZipPart);
       Procedure WriteEnd(iCount : Integer);
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
       Procedure WriteZip;
 
       procedure addFile(name, actual : String);
@@ -1348,7 +1348,7 @@ type
     constructor Create (TargetStream   : TStream); overload;
     constructor Create (TargetFilename : String; Mode : integer = fmCreate); overload;
     destructor Destroy; override;                   // Writes End-Of-File Tag
-    procedure AddFile   (Filename : String;  TarFilename : AnsiString = '');
+    procedure AddFile   (Filename : AnsiString;  TarFilename : AnsiString = '');
     procedure AddStream (Stream   : TStream; TarFilename : AnsiString; FileDateGmt : TDateTime);
     procedure AddString (Contents : Ansistring;  TarFilename : AnsiString; FileDateGmt : TDateTime);  // RawByteString
     procedure AddDir          (Dirname            : AnsiString; DateGmt : TDateTime; MaxDirSize : int64 = 0);
@@ -1380,8 +1380,8 @@ CONST
 
 
 function  PermissionString      (Permissions : TTarPermissions) : String;
-function  ConvertFilename       (Filename    : String)          : String;
-function  FileTimeGMT           (FileName    : String)          : TDateTime;  overload;
+function  ConvertFilename       (Filename    : AnsiString)      : AnsiString;
+function  FileTimeGMT           (FileName    : AnsiString)      : TDateTime;  overload;
 function  FileTimeGMT           (SearchRec   : TSearchRec)      : TDateTime;  overload;
 procedure ClearDirRec           (var DirRec  : TTarDirRec);
 
@@ -1476,12 +1476,12 @@ Begin
 End;
 
 
-Procedure TFslStream.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslStream.Read(Var Buffer; iCount : Integer);
 Begin
 End;
 
 
-Procedure TFslStream.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslStream.Write(Const Buffer; iCount : Integer);
 Begin
 End;
 
@@ -1562,13 +1562,13 @@ Begin
 End;
 
 
-Procedure TFslStreamAdapter.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslStreamAdapter.Read(Var Buffer; iCount : Integer);
 Begin 
   Stream.Read(Buffer, iCount);
 End;
 
 
-Procedure TFslStreamAdapter.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslStreamAdapter.Write(Const Buffer; iCount : Integer);
 Begin
   Stream.Write(Buffer, iCount);
 End;
@@ -1638,13 +1638,13 @@ Begin
 End;  
 
 
-Procedure TFslAccessStreamAdapter.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslAccessStreamAdapter.Read(Var Buffer; iCount : Integer);
 Begin 
   Stream.Read(Buffer, iCount);
 End;  
 
 
-Procedure TFslAccessStreamAdapter.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslAccessStreamAdapter.Write(Const Buffer; iCount : Integer);
 Begin
   Stream.Write(Buffer, iCount);
 End;  
@@ -1696,7 +1696,7 @@ Begin
 End;
 
 
-Procedure TFslStringStream.Read(Var aBuffer; iCount: Cardinal);
+Procedure TFslStringStream.Read(Var aBuffer; iCount : Integer);
 Begin
   If FIndex + iCount > Size Then
     RaiseError('Read', 'Unable to read past end of string.');
@@ -1706,7 +1706,7 @@ Begin
 End;
 
 
-Procedure TFslStringStream.Write(Const aBuffer; iCount: Cardinal);
+Procedure TFslStringStream.Write(Const aBuffer; iCount : Integer);
 Begin
   If FIndex + iCount > Size Then
     Size := FIndex + iCount;
@@ -1754,7 +1754,7 @@ End;
 Procedure TFslStringStream.SetSize(Const iValue: Int64);
 Begin
   SetLength(FData, iValue);
-  If FIndex > Cardinal(Length(FData)) Then
+  If FIndex > Length(FData) Then
     FIndex := Length(FData);
 End;
 
@@ -1767,7 +1767,7 @@ end;
 Procedure TFslStringStream.SetData(Const Value: AnsiString);
 Begin
   FData := Value;
-  If FIndex > Cardinal(Length(FData)) Then
+  If FIndex > Length(FData) Then
     FIndex := Length(FData)
   Else
     FIndex := 0;
@@ -1775,13 +1775,13 @@ End;
 
 
 
-Procedure TFslVCLStream.Read(Var aBuffer; iCount: Cardinal);
+Procedure TFslVCLStream.Read(Var aBuffer; iCount : Integer);
 Begin
   Stream.Read(aBuffer, iCount);
 End;
 
 
-Procedure TFslVCLStream.Write(Const aBuffer; iCount: Cardinal);
+Procedure TFslVCLStream.Write(Const aBuffer; iCount : Integer);
 Begin
   Stream.Write(aBuffer, iCount);
 End;
@@ -2468,11 +2468,11 @@ End;
 
 Procedure TFslMemoryStream.UpdateCurrentPointer;
 Begin 
-  FCurrentPointer := Pointer(NativeUInt(FBuffer.Data) + FPosition);
+  FCurrentPointer := Pointer(NativeUInt(FBuffer.Data) + NativeUInt(FPosition));
 End;  
 
 
-Procedure TFslMemoryStream.Read(Var aBuffer; iSize : Cardinal);
+Procedure TFslMemoryStream.Read(Var aBuffer; iSize : Integer);
 Begin
   If iSize > 0 Then
   Begin 
@@ -2488,7 +2488,7 @@ Begin
 End;  
 
 
-Procedure TFslMemoryStream.Write(Const aBuffer; iSize : Cardinal);
+Procedure TFslMemoryStream.Write(Const aBuffer; iSize : Integer);
 Begin
   If iSize > 0 Then
   Begin
@@ -2731,7 +2731,7 @@ begin
   Inherited RaiseError(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FStream.FileName]));
 end;
 
-procedure TFslFile.Read(var aBuffer; iCount: Cardinal);
+procedure TFslFile.Read(var aBuffer; iCount: Integer);
 begin
   if FStream.Read(aBuffer, iCount) < iCount then
     RaiseError('Read', 'Unable to read past end of file');
@@ -2752,7 +2752,7 @@ begin
   FStream.Size := iValue;
 end;
 
-procedure TFslFile.Write(const aBuffer; iCount: Cardinal);
+procedure TFslFile.Write(const aBuffer; iCount: Integer);
 begin
   If (FStream.Write(aBuffer, iCount) < iCount) Then
     RaiseError('Read', 'Unable to write the entire buffer');
@@ -2865,13 +2865,13 @@ Begin { Constructor TAfsStream.Create }
   FHandle := oHandle;
 End;  { Constructor TAfsStream.Create }
 
-Procedure TAfsStream.Read(Var Buffer; iCount : Cardinal);
+Procedure TAfsStream.Read(Var Buffer; iCount : Integer);
 
 Begin { Procedure TAfsStream.Read }
   FVolume.Read(FHandle, Buffer, iCount);
 End;  { Procedure TAfsStream.Read }
 
-Procedure TAfsStream.Write(Const Buffer; iCount : Cardinal);
+Procedure TAfsStream.Write(Const Buffer; iCount : Integer);
 
 Begin { Procedure TAfsStream.Write }
   FVolume.Write(FHandle, Buffer, iCount);
@@ -3176,7 +3176,7 @@ Type
   Protected
     Procedure RaiseError(Const sMethod, sException : String); Override;
   Public
-    Procedure Write(Const Buffer; iSize : Cardinal); Override;
+    Procedure Write(Const Buffer; iSize : Integer); Override;
 
     Procedure SetName(Const sName : String);
 
@@ -3195,8 +3195,8 @@ Type
   Protected
     Function GetCurrent : TAfsEntity; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure First; Override;
     Procedure Next; Override;
@@ -3365,13 +3365,13 @@ Begin { Function TAfsResourceVolume.Open }
 End;  { Function TAfsResourceVolume.Open }
 
 
-Procedure TAfsResourceVolume.Read(oHandle : TAfsHandle; Var Buffer; iCount : Cardinal);
+Procedure TAfsResourceVolume.Read(oHandle : TAfsHandle; Var Buffer; iCount : Integer);
 Begin { Procedure TAfsResourceVolume.Read }
   TAfsResourceFile(oHandle).Read(Buffer, iCount);
 End;  { Procedure TAfsResourceVolume.Read }
 
 
-Procedure TAfsResourceVolume.Write(oHandle : TAfsHandle; Const Buffer; iCount : Cardinal);
+Procedure TAfsResourceVolume.Write(oHandle : TAfsHandle; Const Buffer; iCount : Integer);
 Begin { Procedure TAfsResourceVolume.Write }
   TAfsResourceFile(oHandle).Write(Buffer, iCount);
 End;  { Procedure TAfsResourceVolume.Write }
@@ -3505,7 +3505,7 @@ Begin { Procedure TAfsResourceFile.Error }
 End;  { Procedure TAfsResourceFile.Error }
 
 
-Procedure TAfsResourceFile.Write(Const Buffer; iSize : Cardinal);
+Procedure TAfsResourceFile.Write(Const Buffer; iSize : Integer);
 Begin { Procedure TAfsResourceFile.Write }
   If Mode = amRead Then
     RaiseError('Write', 'File was opened read-only.');
@@ -5140,7 +5140,7 @@ End;
 
 Type
   TPointerMemoryStream = Class (TCustomMemoryStream)
-    Constructor Create(pData : Pointer; iSize : Integer);
+    constructor Create(pData : Pointer; iSize : Integer);
     Function Write(Const Buffer; Count: LongInt): LongInt; Override;
   End;
 
@@ -5548,7 +5548,7 @@ begin
 end;
 
 
-function ConvertFilename  (Filename : String) : String;
+function ConvertFilename  (Filename : AnsiString) : AnsiString;
 // Converts the filename to Unix conventions
 // could be empty and inlined away for FPC. FPC I/O should be
 // forward/backward slash safe.
@@ -5560,7 +5560,7 @@ begin
   (*$ENDIF *)
 end;
 
-function FileTimeGMT (FileName: String): TDateTime;
+function FileTimeGMT (FileName: AnsiString): TDateTime;
          // Returns the Date and Time of the last modification of the given File
          // The Result is zero if the file could not be found
          // The Result is given in UTC (GMT) time zone
@@ -5675,7 +5675,7 @@ function ExtractNumber (P : PAnsiChar) : integer; overload;
 var
   Strg : AnsiString;
 begin
-  Strg := Trim (StrPas (P));
+  Strg := Trim (AnsiStrings.StrPas (P));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) DO
@@ -5689,7 +5689,7 @@ function ExtractNumber64 (P : PAnsiChar) : int64; overload;
 var
   Strg : AnsiString;
 begin
-  Strg := Trim (StrPas (P));
+  Strg := Trim (AnsiStrings.StrPas (P));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) DO
@@ -5705,8 +5705,8 @@ var
   S0   : array [0..255] of AnsiChar;
   Strg : AnsiString;
 begin
-  StrLCopy (S0, P, MaxLen);
-  Strg := Trim (StrPas (S0));
+  AnsiStrings.StrLCopy (S0, P, MaxLen);
+  Strg := Trim (AnsiStrings.StrPas (S0));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) DO
@@ -5722,8 +5722,8 @@ var
   S0   : array [0..255] of AnsiChar;
   Strg : AnsiString;
 begin
-  StrLCopy (S0, P, MaxLen);
-  Strg := Trim (StrPas (S0));
+  AnsiStrings.StrLCopy (S0, P, MaxLen);
+  Strg := Trim (AnsiStrings.StrPas (S0));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) do
@@ -5799,7 +5799,7 @@ var
   I        : integer;
 begin
   FillChar (Rec, RECORDSIZE, 0);
-  StrLCopy (TH.Name, PAnsiChar (DirRec.Name), NAMSIZ);
+  AnsiStrings.StrLCopy (TH.Name, PAnsiChar (DirRec.Name), NAMSIZ);
   CASE DirRec.FileType of
     ftNormal, ftLink  : Mode := $08000;
     ftSymbolicLink    : Mode := $0A000;
@@ -5839,13 +5839,13 @@ begin
     ftMultiVolume  : TH.LinkFlag := 'M';
     ftVolumeHeader : TH.LinkFlag := 'V';
     end;
-  StrLCopy (TH.LinkName, PAnsiChar (DirRec.LinkName), NAMSIZ);
-  StrLCopy (TH.Magic, PAnsiChar (DirRec.Magic + #32#32#32#32#32#32#32#32), 7);
-  StrLCopy (TH.UName, PAnsiChar (DirRec.UserName), TUNMLEN);
-  StrLCopy (TH.GName, PAnsiChar (DirRec.GroupName), TGNMLEN);
+  AnsiStrings.StrLCopy (TH.LinkName, PAnsiChar (DirRec.LinkName), NAMSIZ);
+  AnsiStrings.StrLCopy (TH.Magic, PAnsiChar (DirRec.Magic + #32#32#32#32#32#32#32#32), 7);
+  AnsiStrings.StrLCopy (TH.UName, PAnsiChar (DirRec.UserName), TUNMLEN);
+  AnsiStrings.StrLCopy (TH.GName, PAnsiChar (DirRec.GroupName), TGNMLEN);
   OctalN (DirRec.MajorDevNo, @TH.DevMajor, 8);
   OctalN (DirRec.MinorDevNo, @TH.DevMinor, 8);
-  StrMove (TH.ChkSum, CHKBLANKS, 8);
+  AnsiStrings.StrMove (TH.ChkSum, CHKBLANKS, 8);
 
   CheckSum := 0;
   FOR I := 0 TO SizeOf (TTarHeader)-1 do
@@ -5910,7 +5910,7 @@ var
 begin
   // --- Scan until next pointer
   if FBytesToGo > 0 then
-    FStream.Seek (Records (FBytesToGo) * RECORDSIZE, soFromCurrent);
+    FStream.Seek(Records (FBytesToGo) * RECORDSIZE, soCurrent);
 
   // --- EOF reached?
   Result := FALSE;
@@ -5966,7 +5966,7 @@ begin
 
   HeaderChkSum := ExtractNumber (@Header.ChkSum);   // Calc Checksum
   CheckSum := 0;
-  StrMove (Header.ChkSum, CHKBLANKS, 8);
+  AnsiStrings.StrMove (Header.ChkSum, CHKBLANKS, 8);
   FOR I := 0 TO SizeOf (TTarHeader)-1 do
     INC (CheckSum, integer (ORD (Rec [I])));
   DirRec.CheckSumOK := WORD (CheckSum) = WORD (HeaderChkSum);
@@ -6047,7 +6047,7 @@ end;
 procedure TTarArchive.SetFilePos (NewPos : int64);                   // Set new Current File Position
 begin
   if NewPos < FStream.Size then
-    FStream.Seek (NewPos, soFromBeginning);
+    FStream.Seek(NewPos, soBeginning);
 end;
 
 
@@ -6104,7 +6104,7 @@ begin
 end;
 
 
-procedure TTarWriter.AddFile   (Filename : String;  TarFilename : AnsiString = '');
+procedure TTarWriter.AddFile   (Filename : AnsiString;  TarFilename : AnsiString = '');
 var
   S    : TFileStream;
   Date : TDateTime;
@@ -6112,8 +6112,9 @@ begin
   Date := FileTimeGMT (Filename);
   if TarFilename = '' then
     TarFilename := ConvertFilename (Filename)
-  else TarFilename := ConvertFilename (TarFilename);
-  S := TFileStream.Create (Filename, fmOpenRead or fmShareDenyWrite);
+  else
+    TarFilename := ConvertFilename (TarFilename);
+  S := TFileStream.Create (String(Filename), fmOpenRead or fmShareDenyWrite);
   TRY
     AddStream (S, TarFilename, Date);
   FINALLY

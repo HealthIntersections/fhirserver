@@ -87,8 +87,8 @@ Type
     FStatus : word;
     FCode : TFhirIssueType;
   Public
-    Constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String); Overload; Virtual;
-    Constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String; const Args: array of const); Overload; Virtual;
+    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String); Overload; Virtual;
+    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String; const Args: array of const); Overload; Virtual;
 
     Property Status : word read FStatus write FStatus;
     Property Code : TFhirIssueType read FCode write FCode;
@@ -96,8 +96,8 @@ Type
 
   EFHIRPath = class (EFHIRException)
   public
-     constructor create(problem : String); overload;
-     constructor create(path : String; offset : integer; problem : String); overload;
+     constructor Create(problem : String); overload;
+     constructor Create(path : String; offset : integer; problem : String); overload;
   end;
 
   EFHIRPathDefinitionCheck = class (EFHIRPath);
@@ -118,7 +118,7 @@ Type
     FMessages : TFslStringDictionary;
   public
     constructor Create; override;
-    Destructor Destroy; override;
+    destructor Destroy; override;
   end;
 
 var

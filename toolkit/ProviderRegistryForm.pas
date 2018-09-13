@@ -97,7 +97,7 @@ type
     function client : TFhirClient;
     procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     procedure load; override;
   end;

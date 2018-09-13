@@ -49,7 +49,7 @@ Type
     FcodeTgt: String;
     FuriTgt: String;
   public
-    Constructor Create(keysrc : integer; urisrc, codesrc : String; keytgt : integer; uritgt, codetgt : String);
+    constructor Create(keysrc : integer; urisrc, codesrc : String; keytgt : integer; uritgt, codetgt : String);
     property KeySrc : integer read FKeySrc write FKeySrc;
     property uriSrc : String read FuriSrc write FuriSrc;
     property codeSrc : String read FcodeSrc write FcodeSrc;
@@ -69,8 +69,8 @@ Type
     procedure processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
     function getGroup(map: TFHIRConceptMapW; source, target: String): TFHIRConceptMapGroupW;
   public
-    Constructor Create(name : String; key, version : integer; store : TTerminologyServerStore);
-    Destructor Destroy; override;
+    constructor Create(name : String; key, version : integer; store : TTerminologyServerStore);
+    destructor Destroy; override;
 
     function Link : TClosureManager; overload;
 
@@ -267,7 +267,6 @@ var
   key : String;
   elements : TFslMap<TFhirConceptMapGroupElementW>;
   element : TFhirConceptMapGroupElementW;
-  target : TFhirConceptMapGroupElementTargetW;
 begin
   elements := TFslMap<TFhirConceptMapGroupElementW>.create;
   try

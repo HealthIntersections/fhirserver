@@ -56,7 +56,7 @@ Type
       Procedure CMMouseLeave(Var aMessage : TMessage); Message CM_MOUSELEAVE;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
+      constructor Create(oOwner : TComponent); Override;
 
       Procedure AlignClient;
       Procedure AlignLeft;

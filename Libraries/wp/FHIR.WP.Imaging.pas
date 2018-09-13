@@ -62,7 +62,7 @@ Type
     Procedure WriteIcon(oIcon : TIcon; oBmp : TBitmap);
     procedure SetDicomDictionary(const Value: TDicomDictionary);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Load : TFslGraphic; Overload; Virtual;
 

@@ -54,8 +54,8 @@ Type
     procedure SetText(const Value: String);
     procedure SetBuffer(const Value: TFslBuffer);
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Property Buffer : TFslBuffer read FBuffer write SetBuffer;
 
     {
@@ -171,9 +171,9 @@ Type
     Procedure Decode(Const sSource : TStream); Overload;
     function GetCDAPatientID(const sOid: String): TIdentity;
   Public
-    Constructor Create(Const sSource : TBytes); Overload;
-    Constructor Create(Const sSource : TStream); Overload;
-    Destructor Destroy; Override;
+    constructor Create(Const sSource : TBytes); Overload;
+    constructor Create(Const sSource : TStream); Overload;
+    destructor Destroy; Override;
     function Link : TCDADocument; Overload;
     Function doXPath(Const Expression : String) : String; Overload;
     Function doXPath(oRoot : Tv3Base; Const Expression : String) : String; Overload;

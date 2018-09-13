@@ -15,9 +15,6 @@
         <Projects Include="utils\VocabTxServer\VocabTxServer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Server\fhirserverOSX4.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -62,23 +59,14 @@
     <Target Name="VocabTxServer:Make">
         <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
     </Target>
-    <Target Name="fhirserverOSX4">
-        <MSBuild Projects="Server\fhirserverOSX4.dproj"/>
-    </Target>
-    <Target Name="fhirserverOSX4:Clean">
-        <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirserverOSX4:Make">
-        <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver;FHIRServerTests;ExampleBridgeServer;VocabTxServer;fhirserverOSX4"/>
+        <CallTarget Targets="fhirserver;FHIRServerTests;ExampleBridgeServer;VocabTxServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean;ExampleBridgeServer:Clean;VocabTxServer:Clean;fhirserverOSX4:Clean"/>
+        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean;ExampleBridgeServer:Clean;VocabTxServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make;ExampleBridgeServer:Make;VocabTxServer:Make;fhirserverOSX4:Make"/>
+        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make;ExampleBridgeServer:Make;VocabTxServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

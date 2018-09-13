@@ -46,8 +46,8 @@ Type
     FFactor: Integer;
     FAnnotation : String;
   public
-    Constructor Create(iFactor : integer); overload;
-    Constructor Create(iFactor : integer; Annotation : String); overload;
+    constructor Create(iFactor : integer); overload;
+    constructor Create(iFactor : integer; Annotation : String); overload;
     Function Link : TUcumFactor; Overload;
     Property Factor : Integer read FFactor write FFactor;
     Property Annotation : String read FAnnotation write FAnnotation;
@@ -64,8 +64,8 @@ Type
     procedure SetUnit_(const Value: TUcumUnit);
     procedure SetExponent(const Value: Integer);
   public
-    Constructor Create(oUnit_ : TUcumUnit; oPrefix : TUcumPrefix; iExponent : Integer); Overload;
-    Destructor Destroy; Override;
+    constructor Create(oUnit_ : TUcumUnit; oPrefix : TUcumPrefix; iExponent : Integer); Overload;
+    destructor Destroy; Override;
     Function Link : TUcumSymbol; Overload;
 
     Procedure invertExponent;
@@ -82,8 +82,8 @@ Type
     procedure SetComponent(const Value: TUcumComponent);
     procedure SetTerm(const Value: TUcumTerm);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TUcumTerm; Overload;
 
     Procedure setTermCheckOp(oTerm : TUcumTerm);
@@ -111,7 +111,7 @@ Type
     function nextChar() : char;
     function peekChar() : char;
   public
-    Constructor Create(sSource : String);
+    constructor Create(sSource : String);
 
     procedure consume;
     Property Token : String read FToken;
@@ -128,7 +128,7 @@ Type
     function parseComp : TUcumComponent;
     function ParseTerm(bFirst : Boolean) : TUcumTerm;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     class function Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
   End;
 
@@ -164,8 +164,8 @@ Type
     FUnit : TUcumTerm;
     Procedure SetUnit(Value : TUcumTerm);
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     procedure multiplyValue(i : TFslDecimal); overload;
     procedure multiplyValue(i : integer); overload;
     procedure divideValue(i : TFslDecimal); overload;
@@ -194,8 +194,8 @@ Type
     Function  convertSymbol(oContext : TUcumCanonical; oComp : TUcumSymbol) : TUcumComponent;
     Procedure applyExponent(oTerm: TUcumTerm; iExponent : Integer);
   public
-    Constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
-    Destructor Destroy; Override;
+    constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
+    destructor Destroy; Override;
     Function convert(oTerm: TUcumTerm) : TUcumCanonical;
   End;
 

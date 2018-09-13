@@ -44,7 +44,7 @@ Type
     FValue: TFslDecimal;
     FCode: String;
   public
-    Constructor Create(Code : String); Overload;
+    constructor Create(Code : String); Overload;
 
     Property Code : String read FCode;
     Property Units : String read FUnits;
@@ -53,17 +53,17 @@ Type
 
   TUcumCelsiusHandler = class (TUcumUnitHandler)
   public
-    Constructor Create; Override;
+    constructor Create; Override;
   End;
 
   TUcumFahrenheitHandler = class (TUcumUnitHandler)
   public
-    Constructor Create; Override;
+    constructor Create; Override;
   End;
 
   TUcumHoldingHandler = class (TUcumUnitHandler)
   public
-    Constructor Create(sCode, sUnits : String; oValue : integer = 1); Overload;
+    constructor Create(sCode, sUnits : String; oValue : integer = 1); Overload;
   End;
 
   TUcumRegistry = class (TFslNameList)

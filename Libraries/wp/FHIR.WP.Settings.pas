@@ -175,8 +175,8 @@ Type
       procedure SetTouchMode(const Value: TWPSettingsTouchMode);
       procedure SetDicomDictionary(const Value: TDicomDictionary);
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPSettings;
       Function Clone : TWPSettings;
@@ -356,8 +356,8 @@ Type
     Protected
       Procedure SetSettings(Const Value : TWPSettings); Virtual;
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Override;
 
       Property Settings : TWPSettings Read GetSettings Write SetSettings;
   End;

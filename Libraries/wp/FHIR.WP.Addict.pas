@@ -83,9 +83,9 @@ Type
       Procedure AdWordCheck(Sender:TObject; Const Word:String; Var CheckType : Ad3SpellBase.TWordCheckType; Var Replacement:String);
       Procedure AdAllowWord(Sender:TObject; Const Word:String);
     Public
-      Constructor Create(bCheckUppercase : Boolean); Overload;
-      Constructor Create(Const sFolder : String; bCheckUppercase : Boolean); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(bCheckUppercase : Boolean); Overload;
+      constructor Create(Const sFolder : String; bCheckUppercase : Boolean); Overload; Virtual;
+      destructor Destroy; Override;
 
       Function Link : TWPAddictDictionary; Overload;
 
@@ -114,8 +114,8 @@ Type
     FDictionary : TWPAddictDictionary;
     Procedure SetDictionary(Value : TWPAddictDictionary);
   Public
-    Constructor Create(oDictionary : TWPAddictDictionary); Overload; Virtual;
-    Destructor Destroy; Override;
+    constructor Create(oDictionary : TWPAddictDictionary); Overload; Virtual;
+    destructor Destroy; Override;
 
     Function CheckSpelling(Const sWord : String) : TWPWorkingDocumentSpellCheckingState; Override;
     Procedure ListSuggestions(Const sWord : String; oList : TFslStringList); Override;

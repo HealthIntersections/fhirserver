@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Support.Stream, FHIR.Web.Fetcher;
@@ -643,7 +644,7 @@ begin
           tar.Reset;
           while tar.FindNext(DirRec) do
           begin
-            fn := DirRec.Name;
+            fn := String(DirRec.Name);
             fn := fn.replace('/', '\');
             bi := TBytesStream.Create;
             try

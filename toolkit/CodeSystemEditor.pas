@@ -218,8 +218,8 @@ type
     procedure commitFilters;
     procedure commitConcepts;
   public
-    Constructor Create(owner : TComponent); override;
-    Destructor Destroy; override;
+    constructor Create(owner : TComponent); override;
+    destructor Destroy; override;
 
     property CodeSystem : TFHIRCodeSystem read GetCodeSystem;
     procedure load; override;

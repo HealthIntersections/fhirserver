@@ -107,8 +107,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRTFContext; Overload;
       Function Clone : TWPRTFContext; Overload;
@@ -220,8 +220,8 @@ Type
     Protected
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRTFListLevelDefinition; Overload;
       Function Clone : TWPRTFListLevelDefinition; Overload;
@@ -261,8 +261,8 @@ Type
     Protected
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRTFListDefinition; Overload;
       Function Clone : TWPRTFListDefinition; Overload;
@@ -305,8 +305,8 @@ Type
     Protected
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRTFListLevelOverrideDefinition; Overload;
       Function Clone : TWPRTFListLevelOverrideDefinition; Overload;
@@ -345,8 +345,8 @@ Type
     Protected
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRTFListOverrideDefinition; Overload;
       Function Clone : TWPRTFListOverrideDefinition; Overload;
@@ -505,8 +505,8 @@ Type
       Function DPIX: Integer;
       Function DPIY: Integer;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property IgnoreBackground : Boolean Read FIgnoreBackground Write FIgnoreBackground;
 
@@ -602,7 +602,7 @@ Type
   //    Procedure WriteDocumentStop(oDocument : TWPWorkingDocument); Override;
       Function Styled : Boolean; Virtual;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
       Property LineLimit : Integer Read FLineLimit Write FLineLimit;
   End;
 

@@ -567,7 +567,6 @@ end;
 function TFHIRSessionManager.RegisterSessionFromPastSession(userEvidence: TFHIRUserIdEvidence; pastSessionKey: integer; expires: TDateTime; ip: String): TFhirSession;
 var
   session: TFhirSession;
-  key : integer;
   UserKey, Provider: integer;
   Id, Name, Email: String;
 begin

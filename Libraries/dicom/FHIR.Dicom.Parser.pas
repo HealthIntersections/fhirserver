@@ -74,7 +74,7 @@ Type
     function GetRole(iIndex: Cardinal): TDicomByteRole;
     function GetBig(iIndex: Cardinal): Boolean;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Link : TDicomParserContext; Overload;
 
@@ -105,8 +105,8 @@ Type
     Function MakeError(iBack : cardinal; sMessage : AnsiString) : Exception;
 //    Function BufferFactory(iSize : Integer): TFslBuffer;
   Public
-    Constructor Create(iMaxLength : Integer);
-    Destructor Destroy; Override;
+    constructor Create(iMaxLength : Integer);
+    destructor Destroy; Override;
 
     Property MaxLength : Cardinal read FMaxLength write FMaxLength;
     Property Context : TDicomParserContext read FContext write SetContext;
@@ -198,11 +198,6 @@ Implementation
 
 uses
   Zlib;
-
-Function clength(const s : String):Cardinal; Overload;
-Begin
-  result := length(s);
-End;
 
 Function clength(const s : TMap):Cardinal; Overload;
 Begin

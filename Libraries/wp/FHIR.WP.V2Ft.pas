@@ -208,8 +208,8 @@ Type
       Procedure SetParagraphNumberFormat(Const sValue : String);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Read(oDocument : TWPWorkingDocument); Override;
   End;
@@ -254,7 +254,7 @@ Type
       Procedure ConfigureTextWriter(oWriter : TWPTextWriterModelWriter); Overload; Override;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Property UseHighlighting : Boolean Read FUseHighlighting Write FUseHighlighting;
       Property AllOneField : Boolean Read FAllOneField Write FAllOneField;

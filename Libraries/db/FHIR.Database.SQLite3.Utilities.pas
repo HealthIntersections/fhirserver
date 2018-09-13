@@ -56,13 +56,13 @@ var
 begin
   if Len < 0 then
   begin
-    Result := UTF8Decode(S);
+    Result := UTF8ToWideString(S);
   end
   else if Len > 0 then
   begin
     SetLength(UTF8Str, Len);
     Move(S^, UTF8Str[1], Len);
-    Result := UTF8Decode(UTF8Str);
+    Result := UTF8ToWideString(UTF8Str);
   end
   else Result := '';
 end;
@@ -86,7 +86,7 @@ begin
 {$IFDEF MACOS}
   FS := FormatSettings;
 {$ELSE}
-  GetLocaleFormatSettings(GetThreadLocale, FS);
+  FS := TFormatSettings.Create(GetThreadLocale);
 {$ENDIF}
   FS.DecimalSeparator := '.';
   Result := FloatToStr(Value, FS);

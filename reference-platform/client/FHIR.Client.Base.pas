@@ -69,7 +69,7 @@ Type
     Fexpires: TDateTime;
     procedure SetidToken(const Value: TJWT);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     function link : TClientAccessToken; overload;
 
@@ -172,7 +172,7 @@ Type
     function getResourceVersionId(res : TFHIRResourceV) : string; virtual;
     function getBundleClass : TFHIRBundleWClass; virtual; abstract;
   public
-    constructor create(worker : TFHIRWorkerContextV; lang : String; communicator : TFHIRClientCommunicator);
+    constructor Create(worker : TFHIRWorkerContextV; lang : String; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 

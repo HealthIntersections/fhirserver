@@ -241,7 +241,7 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Virtual;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3ANY; Overload;
     Function Clone(parent : Tv3Base) : Tv3ANY; Overload;
@@ -279,7 +279,7 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Constructor Create; Override;
+    constructor Create; Override;
 
     function Link : Tv3BL; Overload;
     Function Clone(parent : Tv3Base) : Tv3BL; Overload;
@@ -326,8 +326,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3ED; Overload;
     Function Clone(parent : Tv3Base) : Tv3ED; Overload;
@@ -393,8 +393,8 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3ST; Overload;
     Function Clone(parent : Tv3Base) : Tv3ST; Overload;
@@ -421,7 +421,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3SC; Overload;
     Function Clone(parent : Tv3Base) : Tv3SC; Overload;
@@ -446,7 +446,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3CR; Overload;
     Function Clone(parent : Tv3Base) : Tv3CR; Overload;
@@ -498,8 +498,8 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3CD; Overload;
     Function Clone(parent : Tv3Base) : Tv3CD; Overload;
@@ -563,7 +563,7 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     procedure Assign(oSource : TFslObject); Override;
     Function EqualsV(oOther : Tv3Base) : Boolean; Override;
@@ -686,8 +686,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3AD; Overload;
     Function Clone(parent : Tv3Base) : Tv3AD; Overload;
@@ -749,8 +749,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3EN; Overload;
     Function Clone(parent : Tv3Base) : Tv3EN; Overload;
@@ -820,7 +820,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QTY; Overload;
     Function Clone(parent : Tv3Base) : Tv3QTY; Overload;
@@ -847,7 +847,7 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Constructor Create; Override;
+    constructor Create; Override;
 
     function Link : Tv3INT; Overload;
     Function Clone(parent : Tv3Base) : Tv3INT; Overload;
@@ -875,7 +875,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3CO; Overload;
     Function Clone(parent : Tv3Base) : Tv3CO; Overload;
@@ -899,7 +899,7 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3REAL; Overload;
     Function Clone(parent : Tv3Base) : Tv3REAL; Overload;
@@ -925,7 +925,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3RTO; Overload;
     Function Clone(parent : Tv3Base) : Tv3RTO; Overload;
@@ -954,8 +954,8 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3PQ; Overload;
     Function Clone(parent : Tv3Base) : Tv3PQ; Overload;
@@ -988,7 +988,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3PQR; Overload;
     Function Clone(parent : Tv3Base) : Tv3PQR; Overload;
@@ -1011,7 +1011,7 @@ Type
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3MO; Overload;
     Function Clone(parent : Tv3Base) : Tv3MO; Overload;
@@ -1061,8 +1061,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Virtual;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Virtual;
+    destructor Destroy; Override;
 
     function Link : Tv3QSET; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSET; Overload;
@@ -1091,8 +1091,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QSU; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSU; Overload;
@@ -1113,8 +1113,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QSI; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSI; Overload;
@@ -1137,8 +1137,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QSD; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSD; Overload;
@@ -1162,8 +1162,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QSP; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSP; Overload;
@@ -1185,8 +1185,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QSS; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSS; Overload;
@@ -1206,8 +1206,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3QSC; Overload;
     Function Clone(parent : Tv3Base) : Tv3QSC; Overload;
@@ -1240,8 +1240,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3IVL; Overload;
     Function Clone(parent : Tv3Base) : Tv3IVL; Overload;
@@ -1298,8 +1298,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3PIVL; Overload;
     Function Clone(parent : Tv3Base) : Tv3PIVL; Overload;
@@ -1329,8 +1329,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create(aParamType : Tv3QTYDatatype); Override;
-    Destructor Destroy; Override;
+    constructor Create(aParamType : Tv3QTYDatatype); Override;
+    destructor Destroy; Override;
 
     function Link : Tv3EIVL; Overload;
     Function Clone(parent : Tv3Base) : Tv3EIVL; Overload;
@@ -1353,7 +1353,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3UVP; Overload;
     Function Clone(parent : Tv3Base) : Tv3UVP; Overload;
@@ -1374,8 +1374,8 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3NPPD; Overload;
     Function Clone(parent : Tv3Base) : Tv3NPPD; Overload;
@@ -1686,7 +1686,7 @@ Type
     Function ItemClass : TFslObjectClass; Override;
     procedure SetQSETs(iIndex: Integer; const Value: Tv3QSET);
   public
-    Constructor Create(aParamType : Tv3QTYDatatype; Parent : Tv3Base);
+    constructor Create(aParamType : Tv3QTYDatatype; Parent : Tv3Base);
 
     Function Link : Tv3SetQSET; Overload;
     Function Clone(parent : Tv3Base) :Tv3SetQSET; Overload;

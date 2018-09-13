@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IOUtils,
+  SysUtils, Classes, IOUtils, System.Types,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Support.Collections,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang,
   FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.Constants;
@@ -87,8 +87,8 @@ Type
     function GetName: String;
     Property Types : TFhirElementDefinitionTypeList read GetTypes;
   public
-    Constructor Create(profiles : TProfileManager; profile : TFHirStructureDefinition); overload;
-    Destructor Destroy; override;
+    constructor Create(profiles : TProfileManager; profile : TFHirStructureDefinition); overload;
+    destructor Destroy; override;
 
     procedure setType(t : TFhirElementDefinitionType);
     function statedType : TFhirElementDefinitionType;
@@ -109,8 +109,8 @@ Type
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
   public
-    Constructor Create(factory : TFHIRFactory); Override;
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory); Override;
+    destructor Destroy; Override;
     function link : TBaseWorkerContextR4; overload;
 
     property Profiles : TProfileManager read FProfiles;
@@ -173,8 +173,8 @@ Type
 //    function overWriteWithCurrent(profile,
 //      usage: TFHIRElementDefinition): TFHIRElementDefinition;
   public
-    Constructor create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
-    Destructor Destroy; override;
+    constructor Create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
+    destructor Destroy; override;
 //    {
 //       * Given a base (snapshot) profile structure, and a differential profile, generate a snapshot profile
 //       *

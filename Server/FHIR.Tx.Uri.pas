@@ -42,7 +42,7 @@ type
   private
     url : String;
   public
-    constructor create(url : String);
+    constructor Create(url : String);
   end;
 
   TUriServices = class (TCodeSystemProvider)

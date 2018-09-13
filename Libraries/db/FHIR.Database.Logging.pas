@@ -58,7 +58,7 @@ type
     class function Footer(AFormat : TKDBReportFormat) : String; Overload;
     function Report(AExceptions : Boolean; AFormat : TKDBReportFormat; APrefix : String = '') : String; Overload;
   public
-    constructor create(AUsage : String);
+    constructor Create(AUsage : String);
     destructor Destroy; override;
   end;
 
@@ -69,7 +69,7 @@ type
     FLock : TFslLock;
     function GetLogEntry(AUsage : String) : TKDBLogEntry;
   public
-    Constructor Create; override;
+    constructor Create; override;
     destructor Destroy; override;
     procedure RecordUsage(AUsage : String; AWhenStarted : TDateTime; ARowCount, APrepareCount : integer; AException : Exception; AErrMsg : string);
     function Report(AFormat : TKDBReportFormat) : String; Overload;

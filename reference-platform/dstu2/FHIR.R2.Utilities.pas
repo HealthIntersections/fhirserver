@@ -331,7 +331,7 @@ type
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
-    Constructor Create(system, code : String); overload;
+    constructor Create(system, code : String); overload;
     function hasCode(System, Code : String) : boolean;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
@@ -380,7 +380,7 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
-    Constructor Create(system, code : String); overload;
+    constructor Create(system, code : String); overload;
 
     class function fromEdit(s : String) : TFhirCoding;
     property editString : String read GetEditString write SetEditString;
@@ -530,7 +530,7 @@ type
 
   TFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
   public
-    constructor create(Severity : TFhirIssueSeverityEnum; Code : TFhirIssueTypeEnum; Diagnostics : string; location : String); overload;
+    constructor Create(Severity : TFhirIssueSeverityEnum; Code : TFhirIssueTypeEnum; Diagnostics : string; location : String); overload;
     function summary : String;
   end;
 
@@ -580,8 +580,8 @@ type
     FincludeDesignations: boolean;
     FcodeSystemList : TFslList<TFhirExpansionProfileFixedVersion>;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     function Link : TFhirExpansionProfile; overload;
     function Clone : TFhirExpansionProfile; overload;
     function hash : string;
@@ -621,7 +621,7 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
-    Constructor Create(ref : String); overload;
+    constructor Create(ref : String); overload;
     function isRelative : boolean;
     function getType : String;
     function getId : String;
@@ -3369,7 +3369,7 @@ begin
   else if (e1 = nil) or (e2 = nil) then
     result := false
   else
-    result := e1.equalsShallow(e2);
+    result := e1.equals(e2);
 end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;

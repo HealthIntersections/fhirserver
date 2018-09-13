@@ -83,7 +83,7 @@ Type
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     property typekey : integer read Ftypekey write Ftypekey;
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;

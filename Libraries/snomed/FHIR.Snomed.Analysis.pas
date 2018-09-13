@@ -115,8 +115,8 @@ type
     procedure processScript(buf : TFslNameBuffer; script : string);
     procedure cleanUpColumn(detail : TColumnDetail);
   public
-    Constructor Create(snomed : TSnomedServices); overload;
-    Destructor Destroy; override;
+    constructor Create(snomed : TSnomedServices); overload;
+    destructor Destroy; override;
 
     function generate(params : TParseMap) : TFslNameBuffer;
   end;

@@ -233,8 +233,8 @@ Type
   Protected
     Function ErrorClass : EFslExceptionClass; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Parse(oDoc : TMXmlElement) : TcdaClinicalDocument; Overload;
     Function Parse(oDoc : TMXmlDocument) : TcdaClinicalDocument; Overload;
     Function ParsePiece(oDoc : TMXmlElement; const sClass : String) : Tv3Base; Overload;

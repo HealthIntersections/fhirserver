@@ -103,7 +103,7 @@ Type
   private
     FMsg: String;
   public
-    Constructor Create(Const sContext : String; sMessage, sCaption, lang : String); overload;
+    constructor Create(Const sContext : String; sMessage, sCaption, lang : String); overload;
     Property Msg: String read FMsg;
   end;
 
@@ -178,7 +178,7 @@ Type
     FStart: cardinal;
     procedure SetSession(const Value: TFHIRSession);
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     property Context: TIdContext read FContext write FContext;
     property Session: TFHIRSession read FSession write SetSession;
     property Activity: String read FActivity write FActivity;
@@ -194,7 +194,7 @@ Type
     procedure SetManager(const Value: TCDSHooksManager);
   public
     constructor Create(context : TFHIRServerContext);
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     property manager: TCDSHooksManager read FManager write SetManager;
     property Errors: TStringList read FErrors;
     property cards: TFslList<TCDSHookCard> read FCards;
@@ -284,7 +284,7 @@ Type
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String);
     Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip: boolean);
   public
-    constructor create(code : String; path : String; server : TFHIRWebServer; context : TFHIRServerContext);
+    constructor Create(code : String; path : String; server : TFHIRWebServer; context : TFHIRServerContext);
     destructor Destroy; override;
     property CDSHooksServer: TCDSHooksServer read FCDSHooksServer;
     property path : String read FPath;
@@ -393,8 +393,8 @@ Type
     function endpointList: String;
 
   Public
-    Constructor Create(settings : TFHIRServerSettings; name: String);
-    Destructor Destroy; Override;
+    constructor Create(settings : TFHIRServerSettings; name: String);
+    destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerIniFile);
 
     Procedure Start(active: boolean);
@@ -538,7 +538,6 @@ var
   req: TFHIRRequest;
   resp: TFHIRResponse;
   // op : TFHIRNativeOperationEngine;
-  cursor: integer;
   Context: TOperationContext;
 begin
   // if init then
@@ -695,8 +694,7 @@ var
   Session: TFHIRSession;
   sp : TFHIRWebServerSourceProvider;
   c: integer;
-  check, handled: boolean;
-  version : TFHIRVersion;
+  check: boolean;
 begin
   Session := nil;
   try
@@ -764,7 +762,7 @@ procedure TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TI
 var
   Session: TFHIRSession;
   sp : TFHIRWebServerSourceProvider;
-  check, handled: boolean;
+  check: boolean;
   c: integer;
   JWT: TJWT;
 begin
@@ -1740,7 +1738,6 @@ procedure TFhirWebServerEndpoint.SendError(response: TIdHTTPResponseInfo; logid 
 var
   issue: TFhirOperationOutcomeW;
   oComp: TFHIRComposer;
-  d: String;
   iss : TFhirOperationOutcomeIssueW;
 begin
   response.ResponseNo := status;
@@ -1819,9 +1816,7 @@ Var
   mem: TMemoryStream;
   cursor: integer;
   bundle: TFHIRBundleW;
-  bin : TFHIRBinaryW;
   b : TBytes;
-  inVer : TFHIRVersion;
 Begin
 
   relativeReferenceAdjustment := 0;
@@ -2033,7 +2028,7 @@ Function TFhirWebServerEndpoint.ProcessZip(lang: String; oStream: TStream; name,
 var
   rdr: TFslZipReader;
   p: TFHIRParser;
-  i, k: integer;
+  i: integer;
   s: TFslVCLStream;
   e: TFHIRBundleEntryW;
   bnd: TFHIRBundleW;
@@ -2526,7 +2521,7 @@ var
   names : TStringList;
   outcome : TBytes;
   fmt : TFHIRFormat;
-  key, i : integer;
+  key : integer;
   n, f : string;
   zip : TFslZipWriter;
   m : TFslMemoryStream;
@@ -3502,14 +3497,14 @@ end;
 
 function TFhirWebServerEndPoint.loadFromRsaDer(cert: string): TJWKList;
 var
-  fn : AnsiString;
+  fn : String;
 begin
   fn := FHIR.Support.Utilities.Path([SystemTemp, TDateTimeEx.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
   StringToFile(cert, fn, TEncoding.UTF8);
   try
     result := TJWKList.create;
     try
-      result.Add(TJWTUtils.loadKeyFromRSACert(fn));
+      result.Add(TJWTUtils.loadKeyFromRSACert(ansiString(fn)));
       result.Link;
     finally
       result.Free;
@@ -3611,8 +3606,6 @@ end;
 { TFhirWebServer }
 
 Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);
-var
-  fn : String;
 Begin
   Inherited Create;
   FLock := TFslLock.Create('fhir-rest');
@@ -3671,9 +3664,8 @@ end;
 
 procedure TFhirWebServer.loadConfiguration(ini : TFHIRServerIniFile);
 var
-  s, fn: String;
+  fn: String;
   txu: String;
-  ts: TStringList;
 begin
   FJsPath := ini.admin['js-path'];
   fn := ini.admin['logging-in'];
@@ -4598,7 +4590,7 @@ end;
 
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslStringDictionary = nil);
 var
-  s, n, p, v, t: String;
+  s, n: String;
 begin
   logt('script: ' + claimed);
 
@@ -4638,8 +4630,6 @@ begin
 end;
 
 procedure TFhirWebServer.ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure: boolean);
-var
-  src : String;
 begin
   response.Expires := Now + 1;
   response.ContentStream := SourceProvider.asStream(path);

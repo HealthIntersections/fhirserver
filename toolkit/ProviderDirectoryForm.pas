@@ -145,7 +145,7 @@ type
     procedure prop(n, v : String; ifBlank : boolean = false);
     procedure SetClient(const Value: TFHIRClient);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
 
     procedure load; override;

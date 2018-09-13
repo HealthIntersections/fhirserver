@@ -89,8 +89,8 @@ Type
       Function MakeWriter : TWPWriter;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Class Procedure Convert(oSourceStream : TFslStream; aSourceFormat : TWPFormat; oDestinationStream : TFslStream; aDestinationFormat : TWPFormat; aOptions : TWPFormatConvertorOptions = []);  Overload;
       Class Procedure Convert(oSourceDocument : TWPDocument; oDestinationStream : TFslStream; aDestinationFormat : TWPFormat; aOptions : TWPFormatConvertorOptions = []);  Overload;
@@ -165,8 +165,8 @@ Type
     Procedure DoneReading(oDocument : TWPWorkingDocument);
 
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure Read(oDocument : TWPWorkingDocument); Overload; Virtual;
     Procedure Read(oDocument : TWPDocument); Overload;
@@ -251,8 +251,8 @@ Type
 
       Function SupportsNestedRows : Boolean; Overload; Virtual;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Write(oDocument : TWPDocument); Overload; Virtual;
       Procedure Write(oDocument : TWPWorkingDocument); Overload; Virtual;

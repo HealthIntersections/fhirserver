@@ -92,8 +92,8 @@ type
     function describeSystem(system : String) : String; overload;
     function describeSystem(system : TFHIRContactPointSystemEnum) : String;  overload;
   public
-    Constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
-    Destructor Destroy; Override;
+    constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
+    destructor Destroy; Override;
 
     Procedure generate(r : TFHIRDomainResource; profile : TFHirStructureDefinition);
 

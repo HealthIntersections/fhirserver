@@ -35,7 +35,7 @@ interface
 // FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.NetEncoding,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang,
@@ -628,7 +628,7 @@ end;
 
 function TFHIRFactoryR4.makeBase64Binary(s: string): TFHIRObject;
 begin
-  result := TFhirBase64Binary.Create(decodeBase64(s));
+  result := TFhirBase64Binary.Create(decodeBase64(AnsiString(s)));
 end;
 
 function TFHIRFactoryR4.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;

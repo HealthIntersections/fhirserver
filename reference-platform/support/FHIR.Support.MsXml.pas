@@ -7626,7 +7626,7 @@ Type
     procedure endElement(sourceLocation : TSourceLocation); overload; virtual;
     procedure text(chars : String; sourceLocation : TSourceLocation); virtual;
   public
-    Constructor create;
+    constructor Create;
     destructor Destroy; override;
 
     property ExceptionMessage : String read FExceptionMessage;
@@ -7661,7 +7661,7 @@ Type
     FLocations : TFslList<TSourceLocationObject>;
     FTimeToAbort : Cardinal;
   public
-    constructor create(locations : TFslList<TSourceLocationObject>; timeToAbort : cardinal);
+    constructor Create(locations : TFslList<TSourceLocationObject>; timeToAbort : cardinal);
     destructor Destroy; override;
     property DOm : IXMLDOMDocument2 read FDom;
     procedure startElement(sourceLocation : TSourceLocation; uri, localname : string; attrs : IVBSAXAttributes); override;

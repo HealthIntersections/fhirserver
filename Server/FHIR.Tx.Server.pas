@@ -77,7 +77,7 @@ Type
     procedure invalidateVS(id : String); override;
   public
     constructor Create(db : TKDBManager; factory : TFHIRFactory; common : TCommonTerminologies); override;
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function Link: TTerminologyServer; overload;
     property webBase : String read FWebBase write FWebBase;
 

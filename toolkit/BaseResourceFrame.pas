@@ -49,7 +49,7 @@ type
     FLoading: boolean;
     procedure SetResource(const Value: TFHIRResource);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     property Filename : String read FFilename write FFilename;
     property Format : TFHIRFormat read FFormat write FFormat;

@@ -44,17 +44,16 @@ type
   TFHIRConstant = class (TFHIRObject)
   private
     FValue : String;
-  protected
-    function makeStringValue(v : String) : TFHIRObject; override;
-    function makeCodeValue(v : String) : TFHIRObject; override;
-    function makeIntValue(v : String) : TFHIRObject; override;
   public
-    constructor create(value : String);
+    constructor Create(value : String);
     function fhirType : string; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   end;
 
   TFHIRClassTypeInfo = class (TFHIRObject)
@@ -62,12 +61,9 @@ type
     FInstance : TFHIRObject;
   protected
     procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
-    function makeStringValue(v : String) : TFHIRObject; override;
-    function makeCodeValue(v : String) : TFHIRObject; override;
-    function makeIntValue(v : String) : TFHIRObject; override;
   public
-    constructor create(instance : TFHIRObject);
-    destructor destroy; override;
+    constructor Create(instance : TFHIRObject);
+    destructor Destroy; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function fhirType : string; override;
@@ -75,6 +71,9 @@ type
     procedure setIdValue(id : String); override;
     function getName : String;
     function getNamespace : String;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   end;
 
   TFHIRPathExecutionTypeContext = class (TFslObject)
@@ -83,7 +82,7 @@ type
     FResourceType : String;
     FContext : TFHIRTypeDetails;
   public
-    Constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
+    constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
     destructor Destroy; override;
     function Link : TFHIRPathExecutionTypeContext; overload;
     property appInfo : TFslObject read FappInfo;
@@ -1673,7 +1672,7 @@ end;
 
 function TFHIRPathEngine.funcIs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
-  tn, ns, n : string;
+  ns, n : string;
   texp : TFHIRPathExpressionNode;
 begin
   result := TFHIRSelectionList.Create;
@@ -2644,7 +2643,6 @@ end;
 
 function TFHIRPathEngine.funcLower(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
-  res : TFHIRSelectionList;
   sw : String;
 begin
   result := TFHIRSelectionList.Create;
@@ -3134,7 +3132,7 @@ function TFHIRPathEngine.opDiv(left, right: TFHIRSelectionList): TFHIRSelectionL
 var
   l, r : TFHIRObject;
   d1, d2, d3 : TFslDecimal;
-  p, pl, pr : TUcumPair;
+  pl, pr : TUcumPair;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing div: left operand has no value');
@@ -3198,7 +3196,7 @@ function TFHIRPathEngine.opDivideBy(left, right: TFHIRSelectionList): TFHIRSelec
 var
   l, r : TFHIRObject;
   d1, d2, d3 : TFslDecimal;
-  p, pl, pr : TUcumPair;
+  pl, pr : TUcumPair;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing /: left operand has no value');

@@ -52,21 +52,21 @@ type
   TUniiFilter = class (TCodeSystemProviderFilterContext)
   private
   public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
   end;
 
   TUniiPrep = class (TCodeSystemProviderFilterPreparationContext)
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   end;
 
   TUniiServices = class (TCodeSystemProvider)
   public
     db : TKDBManager;
 
-    Constructor Create(db : TKDBManager);
-    Destructor Destroy; Override;
+    constructor Create(db : TKDBManager);
+    destructor Destroy; Override;
     Function Link : TUniiServices; overload;
 
     function TotalCount : integer;  override;

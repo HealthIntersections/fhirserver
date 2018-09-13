@@ -124,8 +124,8 @@ Type
     Procedure SetAsWords(const s: String);
   Protected
   Public
-    Constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes; aBytes : TBytes = nil); overload;
-    Destructor Destroy; Override;
+    constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes; aBytes : TBytes = nil); overload;
+    destructor Destroy; Override;
 
     Function Clone : TDicomValue; Overload;
     Function Link : TDicomValue; Overload;
@@ -332,8 +332,8 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
   Public
-    Constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
-    Destructor Destroy; Override;
+    constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
+    destructor Destroy; Override;
 
     Function Link : TDicomValueList; Overload;
     Function Clone : TDicomValueList; Overload;
@@ -439,8 +439,8 @@ type
     FValue: AnsiString;
     function GetValue: AnsiString;
   Public
-    Constructor Create(sValue : String); Overload;
-    Constructor Create(iValue : Cardinal); Overload;
+    constructor Create(sValue : String); Overload;
+    constructor Create(iValue : Cardinal); Overload;
     Function Clone : TDicomString; Overload;
     Function Link : TDicomString; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -557,9 +557,9 @@ type
     procedure SetElementDefinition(const Value: TDicomDictionaryElement);
     procedure SetDictionary(const Value: TDicomDictionary);
   Public
-    Constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
-    Constructor CreateComplex(oDictionary : TDicomDictionary);
-    Destructor Destroy; Override;
+    constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
+    constructor CreateComplex(oDictionary : TDicomDictionary);
+    destructor Destroy; Override;
 
     Function Clone : TDicomDataElement; Overload;
     Function Link : TDicomDataElement; Overload;
@@ -641,8 +641,8 @@ type
     Function FindByTags(Const group, element: Word; Out iIndex: Integer): Boolean; Overload;
 
   Public
-    Constructor Create(oDictionary: TDicomDictionary); Overload;
-    Destructor Destroy; Override;
+    constructor Create(oDictionary: TDicomDictionary); Overload;
+    destructor Destroy; Override;
 
     Function Link : TDicomDataElementList; Overload;
     Function Clone : TDicomDataElementList; Overload;
@@ -752,9 +752,9 @@ type
     Function MakeElement(sTag : String) : TDicomDataElement; Overload;
     Procedure ExecuteQuery(contexts : TDicomObjectList; results : TDicomDataElementList; path : String; Cursor : Integer; bDescendents : Boolean);
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(oDictionary: TDicomDictionary); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(oDictionary: TDicomDictionary); Overload;
+    destructor Destroy; Override;
     Function Clone : TDicomObject; Overload;
     Function Link : TDicomObject; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -913,8 +913,8 @@ type
     Function ItemClass : TFslObjectClass; Override;
 
   Public
-    Constructor Create(oDictionary: TDicomDictionary); Overload;
-    Destructor Destroy; Override;
+    constructor Create(oDictionary: TDicomDictionary); Overload;
+    destructor Destroy; Override;
 
     Function Link : TDicomObjectList; Overload;
     Function Clone : TDicomObjectList; Overload;
@@ -995,8 +995,8 @@ type
     FDictionary: TDicomDictionary;
     procedure SetDictionary(const Value: TDicomDictionary);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TDicomPDU; Overload;
     Function Clone : TDicomPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1042,8 +1042,8 @@ type
     FOffsetStart: Cardinal;
     procedure SetAbstractSyntax(const Value: TDicomString);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TDicomPresentationContextInfo; Overload;
     Function Clone : TDicomPresentationContextInfo; Overload;
@@ -1152,7 +1152,7 @@ type
     FResult: TPresentationAcceptResult;
     procedure SetTransferSyntax(const Value: TDicomString);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link : TDicomPresentationAcceptContextInfo; Overload;
     Function Clone : TDicomPresentationAcceptContextInfo; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1345,8 +1345,8 @@ type
     Procedure SetCallingEntity(Const Value: TDicomString);
   
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TDicomAssociateRequestPDU; Overload;
     Function Clone : TDicomAssociateRequestPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1426,8 +1426,8 @@ type
     procedure SetCalledEntity(const Value: TDicomString);
     procedure SetCallingEntity(const Value: TDicomString);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TDicomAssociateAcceptPDU; Overload;
     Function Clone : TDicomAssociateAcceptPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1524,7 +1524,7 @@ type
     FResult: TDicomAssociateRejectResult;
     FSource: TDicomAssociateRejectSource;
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
     Function Link : TDicomAssociateRejectPDU; Overload;
     Function Clone : TDicomAssociateRejectPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1672,8 +1672,8 @@ type
     FContextId: Byte;
     FDataValues : TDicomPresentationDataValueList;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TDicomDataPDU; Overload;
     Function Clone : TDicomDataPDU; Overload;
@@ -1700,7 +1700,7 @@ type
   }
   TDicomReleaseRequestPDU = class (TDicomPDU)
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
     Function Link : TDicomReleaseRequestPDU; Overload;
     Function Clone : TDicomReleaseRequestPDU; Overload;
   End;
@@ -1712,7 +1712,7 @@ type
   }
   TDicomReleaseResponsePDU = class (TDicomPDU)
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
     Function Link : TDicomReleaseResponsePDU; Overload;
     Function Clone : TDicomReleaseResponsePDU; Overload;
   End;
@@ -1734,7 +1734,7 @@ type
     FSource : TDicomAbortSource;// = (abortUser, abortProvider);
     FReason : TDicomAbortReason;// = (abortNotSpecified, abortUnrecognisedPDU, abortUnexpectedPDU, abortUnrecognisedParameter, abortUnexpectedParameter, abortInvalidParameter);
   Public
-    Constructor Create(aSource : TDicomAbortSource; aReason : TDicomAbortReason);
+    constructor Create(aSource : TDicomAbortSource; aReason : TDicomAbortReason);
     Property Source : TDicomAbortSource read FSource;
     Property Reason : TDicomAbortReason read FReason;
   End;
@@ -1752,7 +1752,7 @@ type
     FReason: TDicomAbortReason;
     FSource: TDicomAbortSource;
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
     Function Link : TDicomAbortPDU; Overload;
     Function Clone : TDicomAbortPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1791,7 +1791,7 @@ type
     procedure SetHeader(const Value: TDicomObject);
 
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Link : TDicomFile; Overload;
     Function Clone : TDicomFile; Overload;
@@ -1904,7 +1904,7 @@ type
     procedure SetCommand(const Value: TDicomObject);
     procedure SetData(const Value: TDicomObject);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomMessage; Overload;
     Function Link : TDicomMessage; Overload;
@@ -2081,7 +2081,7 @@ type
     function GetInstanceType: TDicomInstanceType;
     procedure SetMessage(const Value: TDicomMessage);
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomInstance; Overload;
     Function Link : TDicomInstance; Overload;

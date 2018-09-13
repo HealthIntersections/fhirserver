@@ -47,11 +47,8 @@ Type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-    function makeStringValue(v : String) : TFHIRObject; override;
-    function makeCodeValue(v : String) : TFHIRObject; override;
-    function makeIntValue(v : String) : TFHIRObject; override;
   public
-    Constructor Create(Name : String; Value : String); Overload;
+    constructor Create(Name : String; Value : String); Overload;
 
     function Link : TFHIRAttribute; Overload;
     function Clone : TFHIRAttribute; Overload;
@@ -60,14 +57,16 @@ Type
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function fhirType : String; override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
 
     property Name : String read FName write FName;
     property Value : String read FValue write FValue;
     function isEmpty : boolean; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function Equals(other : TObject) : boolean; override;
   end;
 
   TFHIRAttributeListEnumerator = class (TFslObject)
@@ -76,8 +75,8 @@ Type
     FList : TFHIRAttributeList;
     function GetCurrent : TFHIRAttribute;
   public
-    Constructor Create(list : TFHIRAttributeList);
-    Destructor Destroy; override;
+    constructor Create(list : TFHIRAttributeList);
+    destructor Destroy; override;
     function MoveNext : boolean;
     property Current : TFHIRAttribute read GetCurrent;
   end;
@@ -118,17 +117,17 @@ Type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-    function makeStringValue(v : String) : TFHIRObject; override;
-    function makeCodeValue(v : String) : TFHIRObject; override;
-    function makeIntValue(v : String) : TFHIRObject; override;
   public
-    Constructor Create; Override;
-    Constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
-    Constructor Create(name : String) ; Overload;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
+    constructor Create(name : String) ; Overload;
+    destructor Destroy; Override;
     function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
     procedure Assign(oSource : TFslObject); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -151,8 +150,7 @@ Type
     function getId : String; override;
     procedure setIdValue(id : String); override;
 
-    function equalsDeep(other : TFHIRObject) : boolean; override;
-    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function Equals(other : TObject) : boolean; override;
   published
     {
       The type of the node - fhntElement, fhntText, fhntComment, fhntDocument
@@ -227,8 +225,8 @@ Type
     FList : TFHIRXhtmlNodeList;
     function GetCurrent : TFHIRXhtmlNode;
   public
-    Constructor Create(list : TFHIRXhtmlNodeList);
-    Destructor Destroy; override;
+    constructor Create(list : TFHIRXhtmlNodeList);
+    destructor Destroy; override;
     function MoveNext : boolean;
     property Current : TFHIRXhtmlNode read GetCurrent;
   end;
@@ -410,14 +408,9 @@ begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
-function TFHIRAttribute.equalsDeep(other: TFHIRObject): boolean;
+function TFHIRAttribute.equals(other : TObject): boolean;
 begin
-  result := inherited equalsDeep(other) and (FName = TFHIRAttribute(other).FName) and (FValue = TFHIRAttribute(other).FValue);
-end;
-
-function TFHIRAttribute.equalsShallow(other: TFHIRObject): boolean;
-begin
-  result := equalsDeep(other);
+  result := inherited equals(other) and (FName = TFHIRAttribute(other).FName) and (FValue = TFHIRAttribute(other).FValue);
 end;
 
 function TFHIRAttribute.fhirType: String;
@@ -743,12 +736,12 @@ begin
   inherited;
 end;
 
-function TFhirXHtmlNode.equalsDeep(other: TFHIRObject): boolean;
+function TFhirXHtmlNode.equals(other : TObject): boolean;
 var
   o : TFhirXHtmlNode;
   i : integer;
 begin
-  result := inherited equalsDeep(other);
+  result := inherited equals(other);
   if result then
   begin
     o := TFhirXHtmlNode(other);
@@ -774,17 +767,12 @@ begin
       if FChildNodes.Count <> o.FChildNodes.Count then
         exit(false);
       for i := 0 to FChildNodes.Count - 1 do
-        if not FChildNodes[i].equalsDeep(o.FChildNodes[i]) then
+        if not FChildNodes[i].equals(o.FChildNodes[i]) then
           exit(false);
     end;
     if FContent <> o.FContent then
       exit(false);
   end;
-end;
-
-function TFhirXHtmlNode.equalsShallow(other: TFHIRObject): boolean;
-begin
-  result := equalsDeep(other);
 end;
 
 function TFhirXHtmlNode.FhirType: String;
@@ -1240,7 +1228,7 @@ begin
     result := false
   else
   begin
-//    result := false; //div1.equalsDeep(div2);
+//    result := false; //div1.equals(div2);
     raise EFHIRException.create('Not done yet');
   end;
 end;

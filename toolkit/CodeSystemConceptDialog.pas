@@ -82,7 +82,7 @@ type
     procedure loadProperty(Value: TFhirCodeSystemProperty; top : Double);
     procedure SetCodeSystem(const Value: TFhirCodeSystem);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     property Concept : TFHIRCodeSystemConcept read FConcept write SetConcept;
     property CodeSystem : TFhirCodeSystem read FCodeSystem write SetCodeSystem;

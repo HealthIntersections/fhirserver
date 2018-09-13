@@ -142,8 +142,8 @@ Type
       FFragments : TWPTextFragmentList;
       FLines : TWPTextFragmentListList;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
       Function Link : TWPTextModelParagraphPiece; Overload;
 
       Procedure Start(iMaxWidth : Integer); Overload; Virtual;
@@ -165,8 +165,8 @@ Type
       Function GetPieces : TWPTextModelPieces;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPTextModelCell; Overload;
 
@@ -188,8 +188,8 @@ Type
       FCells : TWPTextModelCells;
       Function GetCells : TWPTextModelCells;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPTextModelRow; Overload;
 
@@ -210,8 +210,8 @@ Type
       FRows : TWPTextModelRows;
       Function GetRows : TWPTextModelRows;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPTextModelTable; Overload;
 
@@ -236,7 +236,7 @@ Type
       Procedure ProduceRow(oRow : TWPTextModelRow; oWidths : TFslIntegerList);
       Procedure ProduceTable(oPiece : TWPTextModelTable; iWidth : Integer);
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
       Procedure Produce(oContents : TWPTextModelPieces); Overload; Virtual;
 
       Property Width : Integer Read FWidth Write FWidth;
@@ -271,8 +271,8 @@ Type
       Function GetTable : TWPTextModelTable;
       Function GetColumns : TWPTableColumnMetrics;
     Public
-      Constructor Create(oTable : TWPTextModelTable; oColumns : TWPTableColumnMetrics; iWidth : Integer); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(oTable : TWPTextModelTable; oColumns : TWPTableColumnMetrics; iWidth : Integer); Overload; Virtual;
+      destructor Destroy; Override;
 
       Procedure Calculate; Overload; Virtual;
 
@@ -330,7 +330,7 @@ Type
     Procedure ConfigureTextWriter(oWriter : TWPTextWriterModelWriter); Overload; Virtual;
 
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
     Property Width : Integer Read FWidth Write FWidth;
     Property DoubleParagraphs : Boolean Read FDoubleParagraphs Write FDoubleParagraphs;

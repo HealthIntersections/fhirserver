@@ -58,8 +58,8 @@ Type
       FStackTrace : String;
 
     Public
-      Constructor Create(Const sSender, sMethod, sReason : String); Overload; Virtual;
-      Constructor Create(oSender : TObject; Const sMethod, sReason : String); Overload;
+      constructor Create(Const sSender, sMethod, sReason : String); Overload; Virtual;
+      constructor Create(oSender : TObject; Const sMethod, sReason : String); Overload;
 
       Function Description : String;
 
@@ -131,8 +131,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
     Public
-      Constructor Create; Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Virtual;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
       Procedure BeforeDestruction; Override;
@@ -159,7 +159,7 @@ Type
 
   EFslInvariant = Class(EFslException)
     Public
-      Constructor Create(Const sSender, sMethod, sReason : String); Overload; Override;
+      constructor Create(Const sSender, sMethod, sReason : String); Overload; Override;
   End;
 
 
@@ -504,10 +504,10 @@ Type
     // not sorted - this doesn't get long enough to make it worth sorting
     FItems : TArray<String>;
   public
-    Constructor Create(initial : String); overload;
-    Constructor Create(initial : array of String); overload;
-    Constructor Create(c1, c2 : TFslStringSet); overload;
-    Destructor Destroy; override;
+    constructor Create(initial : String); overload;
+    constructor Create(initial : array of String); overload;
+    constructor Create(c1, c2 : TFslStringSet); overload;
+    destructor Destroy; override;
     function Link : TFslStringSet; overload;
 
     procedure addAll(collection : TFslStringSet);

@@ -1335,7 +1335,7 @@ function TScrypt.GenerateScryptSalt(const Passphrase: UnicodeString; const Salt:
   BlockSizeFactor, ParallelizationFactor: Integer): TBytes;
 var
 	B: TBytes;
-	i: UInt64;
+	i: Integer;
 	blockSize: Integer;
 	blockIndex: Integer;
 	T: TBytes;
@@ -1879,11 +1879,6 @@ end;
 {$OVERFLOWCHECKS ON}
 
 class function TScrypt.StringToUtf8(const Source: UnicodeString): TBytes;
-var
-	strLen: Integer;
-	dw: DWORD;
-const
-	CodePage = CP_UTF8;
 begin
 {
 	For scrypt passwords we will use UTF-8 encoding.

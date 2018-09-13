@@ -65,8 +65,8 @@ Type
       Procedure SetToolbar(Const Value: TUixAdvancedToolbar);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationButtonEventPackage;
 
@@ -114,8 +114,8 @@ Type
       Procedure SetCaption(Const Value: String);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationButtonEntity;
 
@@ -149,8 +149,8 @@ Type
       FControl : TControl;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationControlEntity;
 
@@ -179,8 +179,8 @@ Type
       Procedure SetHasControlEntity(Const Value : Boolean);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationComponentEntity;
 
@@ -218,8 +218,8 @@ Type
       FComponentEntityList : TUixAdvancedToolbarPresentationComponentEntityList;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationSectionEntity;
 
@@ -245,8 +245,8 @@ Type
       FSectionEntityList : TUixAdvancedToolbarPresentationSectionEntityList;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationGroupEntity;
 
@@ -283,7 +283,7 @@ Type
       FShowConfiguration : Boolean;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Property IconSize : Integer Read FIconSize Write FIconSize;
       Property ShowBorders : Boolean Read FShowBorders Write FShowBorders;
@@ -310,8 +310,8 @@ Type
       FDropDownHandler : TUixAdvancedToolbarPresentationConfigurationDropDownHandler;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarPresentationEntity;
 
@@ -353,8 +353,8 @@ Type
       Procedure SetPresentationButtonEntity(Const Value : TUixAdvancedToolbarPresentationButtonEntity);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property IsFirstInSection : Boolean Read FIsFirstInSection Write FIsFirstInSection;
       Property IsLastInSection : Boolean Read FIsLastInSection Write FIsLastInSection;
@@ -389,8 +389,8 @@ Type
       Procedure SetPresentationControlEntity(Const Value : TUixAdvancedToolbarPresentationControlEntity);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property EditControlRectangle : TGPRect Read FEditControlRectangle Write FEditControlRectangle;
       Property BorderWidth : Integer Read FBorderWidth Write FBorderWidth;
@@ -419,8 +419,8 @@ Type
       Procedure SetPresentationComponentEntity(Const Value : TUixAdvancedToolbarPresentationComponentEntity);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarExecutionComponentEntity;
 
@@ -459,8 +459,8 @@ Type
       Procedure SetPresentationSectionEntity(Const Value : TUixAdvancedToolbarPresentationSectionEntity);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property ContainsVisibleComponents : Boolean Read FContainsVisibleComponents Write FContainsVisibleComponents;
       Property ComponentEntityList : TUixAdvancedToolbarExecutionComponentEntityList Read FComponentEntityList;
@@ -503,8 +503,8 @@ Type
       Procedure SetPresentationGroupEntity(Const Value : TUixAdvancedToolbarPresentationGroupEntity);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarExecutionGroupEntity;
 
@@ -553,8 +553,8 @@ Type
       FConfigurationRectangle : TGPRect;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property GroupEntityList : TUixAdvancedToolbarExecutionGroupEntityList Read FGroupEntityList;
       Property ChevronIsVisible : Boolean Read FChevronIsVisible Write FChevronIsVisible;
@@ -585,8 +585,8 @@ Type
       Procedure SetComponentEntity(Const Value : TUixAdvancedToolbarExecutionComponentEntity);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedToolbarHotSpotEntity;
 
@@ -631,8 +631,8 @@ Type
       Procedure AdjustClientRect(Var Rect: TRect); Override;
 
     Public
-      Constructor CreateNew(oOwner : TComponent; iDummy : Integer = 0); Override;
-      Destructor Destroy; Override;
+      constructor CreateNew(oOwner : TComponent; iDummy : Integer = 0); Override;
+      destructor Destroy; Override;
 
       Procedure AnimateShow;
       Procedure AnimateClose;
@@ -658,8 +658,8 @@ Type
       Procedure AdjustClientRect(Var Rect: TRect); Override;
 
     Public
-      Constructor CreateNew(oOwner : TComponent; iDummy : Integer = 0); Override;
-      Destructor Destroy; Override;
+      constructor CreateNew(oOwner : TComponent; iDummy : Integer = 0); Override;
+      destructor Destroy; Override;
 
       Procedure AnimateShow;
       Procedure AnimateClose;
@@ -727,8 +727,8 @@ Type
       Procedure Resize; Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure Execute;
 
@@ -800,8 +800,8 @@ Type
       Property SuppressBackground : Boolean Read FSuppressBackground Write FSuppressBackground;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure MouseWheelHandler(Var aMessage: TMessage); Override;
 
@@ -834,8 +834,8 @@ Type
       Procedure Generate; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property FontName : String Read FFontName Write SetFontName;
       Property GdiFont : TFont Read FGdiFont Write FGdiFont;
@@ -879,8 +879,8 @@ Type
 
       Procedure Change; Override;
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Procedure CreateWnd; Override;
 
@@ -910,8 +910,8 @@ Type
       Procedure DrawComboBoxItem(Const oGraphics : TGdiPlusExtendedGraphics; Const iIndex : Integer; Const aItemRectangle : TGPRect; Const aItemState : TOwnerDrawState); Override;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Property Value : TColour Read GetValue Write SetValue;
   End;
@@ -968,8 +968,8 @@ Type
       Procedure SetMargin(Const Value : Integer);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TUixAdvancedButtonPresentationEntity;
 
@@ -1049,8 +1049,8 @@ Type
       Function HasPopupMenuItems : Boolean;
 
     Public
-      Constructor Create(oOwner : TComponent); Override;
-      Destructor Destroy; Override;
+      constructor Create(oOwner : TComponent); Override;
+      destructor Destroy; Override;
 
       Function RecommendedHeight : Integer;
       Function RecommendedWidth : Integer;

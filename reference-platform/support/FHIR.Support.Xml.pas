@@ -51,8 +51,8 @@ Type
     FDefaultSet: boolean;
     procedure SetDefaultNS(const Value: String);
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     function link : TXmlBuilderNamespaceList; overload;
     function clone : TXmlBuilderNamespaceList; overload;
@@ -128,7 +128,7 @@ Type
       FDefaultNamespace : String;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Clone : TFslXMLParserNamespaces; Overload;
 
@@ -227,7 +227,7 @@ Type
       Procedure SetAttribute(Const sKey, sValue: String);
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Property Attribute[Const sKey : String] : String Read GetAttribute Write SetAttribute; Default;
   End;
@@ -265,8 +265,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslXMLElement;
       Function Clone : TFslXMLElement;
@@ -351,8 +351,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslXMLDocument;
       Function Clone : TFslXMLDocument;
@@ -392,8 +392,8 @@ Type
       Function GetValue: String;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Push(Const Value: String);
       Procedure Pop;
@@ -426,8 +426,8 @@ Type
       FEntryList : TFslXMLNamespaceEntryList;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Property EntryList : TFslXMLNamespaceEntryList Read FEntryList;
   End;
@@ -452,8 +452,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Push(Const oAttributes : TFslStringMatch);
       Procedure Pop;
@@ -485,8 +485,8 @@ Type
 
       Procedure ProducePretty(sValue : String);
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslXMLFormatter;
       Function Clone : TFslXMLFormatter;
@@ -599,8 +599,8 @@ Type
     function ReadTextLength(s : string):String;
     function ReadTextLengthWithEscapes(pfx, s, sfx : string):String;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; override;
+    constructor Create; Override;
+    destructor Destroy; override;
     Procedure Start(oNode : TMXmlElement); overload;
     Procedure Start(); overload; override;
     Procedure StartFragment; override;
@@ -647,8 +647,8 @@ Type
       Function SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslXMLExtractor;
 

@@ -63,7 +63,7 @@ type
   protected
     procedure initSettings; virtual;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function link : TFHIRToolkitSettings; overload;
 
     property timeout: integer read GetTimeout write SetTimeout;

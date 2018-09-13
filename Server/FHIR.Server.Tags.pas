@@ -83,8 +83,8 @@ type
     function GetCount: Integer;
     function GetTag(index: integer): TFHIRTag;
   public
-    Constructor Create(factory : TFHIRFactory);
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory);
+    destructor Destroy; Override;
     function Link : TFHIRTagList;
     procedure readTags(meta : TFhirMetaW);
     procedure writeTags(meta : TFhirMetaW);

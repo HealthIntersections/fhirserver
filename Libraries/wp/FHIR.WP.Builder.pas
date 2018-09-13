@@ -56,8 +56,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPDocumentBuilderScope; Overload;
       Function Clone : TWPDocumentBuilderScope; Overload;
@@ -177,9 +177,9 @@ Type
       Function ProcessField(oField : TWPDocumentField; oList : TWPDocumentContents; iIndex : Integer) : Integer; Overload;
     procedure SetDicomDictionary(const Value: TDicomDictionary);
     Public
-      Constructor Create; Override;
-      Constructor Create(oDocument : TWPDocument); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      constructor Create(oDocument : TWPDocument); Overload; Virtual;
+      destructor Destroy; Override;
 
       Function Link : TWPDocumentBuilder; Overload;
 

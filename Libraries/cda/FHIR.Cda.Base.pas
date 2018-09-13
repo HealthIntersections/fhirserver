@@ -77,18 +77,18 @@ Type
     procedure SetAsEnum(const iValue: Integer);
     procedure SetAsString(const sValue: String);
   Public
-    Constructor CreateClass(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oObject : Tv3Base; sClass : String); Overload;
-    Constructor CreateClass(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oList : Tv3BaseList; aCollectionState : TRMPropertyCollectionType; sClass : String); Overload;
-    Constructor CreateString(oOwner : Tv3Base; bIsStructural : Boolean; Const sName, sValue : String);
-    Constructor CreateStrings(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oList : TFslStringList);
-    Constructor CreateBoolean(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue, bValue : Boolean);
-    Constructor CreateBinary(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oBuffer : TFslBuffer);
-    Constructor CreateInteger(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue : Boolean; iValue : int64);
-    Constructor CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TFslDecimal);
-    Constructor CreateEnum(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; Const iValue : Integer; Const aPossibles : Array of String);
-    Constructor CreateSet(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; var aSet; Const aPossibles : Array of String);
+    constructor CreateClass(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oObject : Tv3Base; sClass : String); Overload;
+    constructor CreateClass(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oList : Tv3BaseList; aCollectionState : TRMPropertyCollectionType; sClass : String); Overload;
+    constructor CreateString(oOwner : Tv3Base; bIsStructural : Boolean; Const sName, sValue : String);
+    constructor CreateStrings(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oList : TFslStringList);
+    constructor CreateBoolean(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue, bValue : Boolean);
+    constructor CreateBinary(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oBuffer : TFslBuffer);
+    constructor CreateInteger(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue : Boolean; iValue : int64);
+    constructor CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TFslDecimal);
+    constructor CreateEnum(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; Const iValue : Integer; Const aPossibles : Array of String);
+    constructor CreateSet(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; var aSet; Const aPossibles : Array of String);
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Property Name : String read FName;
     Property PropertyType : TRMPropertyDefinitionType Read FValueType;
     Property CollectionState : TRMPropertyCollectionType Read FCollectionState;
@@ -126,8 +126,8 @@ Type
     FCursor : Integer;
     Function GetCurrent : Tv3PropertyDefinition;
   public
-    Constructor Create(oFocus : Tv3Base; bInheritedProperties : Boolean);
-    Destructor Destroy; Override;
+    constructor Create(oFocus : Tv3Base; bInheritedProperties : Boolean);
+    destructor Destroy; Override;
     Procedure Next;
     Procedure Reset;
     Function More : Boolean;
@@ -180,8 +180,8 @@ Type
     sourcelocation : TSourceLocation;
     sourcelocationEnd : TSourceLocation;
 
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3Base; Overload;
     function Clone(parent : Tv3Base) : Tv3Base; Overload;
@@ -254,7 +254,7 @@ Type
   protected
     Procedure InternalAfterInclude(iIndex : Integer; oObject : TFslObject); Override;
   public
-    Constructor Create(Parent : Tv3Base);
+    constructor Create(Parent : Tv3Base);
 
     Function Link : Tv3BaseList; Overload;
     Function Clone(parent : Tv3Base) : Tv3BaseList; Overload;
@@ -329,8 +329,8 @@ Type
     Function CDAClassNameV: String; Override;
     Function CDAClassTypeV : TCDAClassType; Override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     function Link : Tv3Extension; Overload;
     function Clone(parent : Tv3Base) : Tv3Extension; Overload;

@@ -45,8 +45,8 @@ type
     FServices : TFHIRWorkerContext;
 
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
-    procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
-    procedure testBuildPatientExampleB;
+//    procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
+//    procedure testBuildPatientExampleB;
   public
 
     [SetupFixture] procedure setup;
@@ -174,56 +174,56 @@ begin
 end;
 
 
-procedure TFHIRValidatorTests.validateResource(path: String; errorCount: integer; fmt: TFHIRFormat);
-var
-  p : TFHIRParser;
-  f : TFilestream;
-//  val : TFHIRValidator;
-  ctxt : TFHIRValidatorContext;
-  ec : integer;
-  msg : TFhirOperationOutcomeIssueW;
-  s : string;
-begin
-  if (fmt = ffXml) then
-    p := TFHIRXmlParser.Create(nil, 'en')
-  else
-    p := TFHIRJsonParser.Create(nil, 'en');
-  try
-    f := TFilestream.create(FHIR.Support.Utilities.path([GBasePath, path]), fmOpenRead + fmShareDenywrite);
-    try
-      p.source := f;
-      p.Parse;
-
-      ctxt := TFHIRValidatorContext.Create;
-      try
-        ctxt.ResourceIdRule := risOptional;
-//        val := TFHIRValidator.Create(FServices.link);
-//        try
-//          val.validate(ctxt, p.resource);
-//        finally
-//          val.Free;
-//        end;
-        ec := 0;
-        s := '';
-        for msg in ctxt.Issues do
-          if msg.severity in [isFatal, isError] then
-          begin
-            inc(ec);
-            s := s + msg.display;
-          end;
-        Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
-      finally
-        ctxt.Free;
-      end;
-
-    finally
-      f.free;
-    end;
-  finally
-    p.Free;
-  end;
-end;
-
+//procedure TFHIRValidatorTests.validateResource(path: String; errorCount: integer; fmt: TFHIRFormat);
+//var
+//  p : TFHIRParser;
+//  f : TFilestream;
+////  val : TFHIRValidator;
+//  ctxt : TFHIRValidatorContext;
+//  ec : integer;
+//  msg : TFhirOperationOutcomeIssueW;
+//  s : string;
+//begin
+//  if (fmt = ffXml) then
+//    p := TFHIRXmlParser.Create(nil, 'en')
+//  else
+//    p := TFHIRJsonParser.Create(nil, 'en');
+//  try
+//    f := TFilestream.create(FHIR.Support.Utilities.path([GBasePath, path]), fmOpenRead + fmShareDenywrite);
+//    try
+//      p.source := f;
+//      p.Parse;
+//
+//      ctxt := TFHIRValidatorContext.Create;
+//      try
+//        ctxt.ResourceIdRule := risOptional;
+////        val := TFHIRValidator.Create(FServices.link);
+////        try
+////          val.validate(ctxt, p.resource);
+////        finally
+////          val.Free;
+////        end;
+//        ec := 0;
+//        s := '';
+//        for msg in ctxt.Issues do
+//          if msg.severity in [isFatal, isError] then
+//          begin
+//            inc(ec);
+//            s := s + msg.display;
+//          end;
+//        Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
+//      finally
+//        ctxt.Free;
+//      end;
+//
+//    finally
+//      f.free;
+//    end;
+//  finally
+//    p.Free;
+//  end;
+//end;
+//
 procedure TFHIRValidatorTests.testXmlListMinimal;
 begin
   validate(path(['build', 'tests', 'validation-examples', 'list-minimal.xml']), 0, ffXml);
@@ -522,11 +522,11 @@ begin
   validate(path(['build', 'tests', 'validation-examples', 'group-choice-empty.json']), 1, ffJson);
 end;
 
-procedure TFHIRValidatorTests.testBuildPatientExampleB;
-begin
-  validate(path(['publish', 'patient-example-b.xml']), 0, ffJson);
-end;
-
+//procedure TFHIRValidatorTests.testBuildPatientExampleB;
+//begin
+//  validate(path(['publish', 'patient-example-b.xml']), 0, ffJson);
+//end;
+//
 initialization
   if FindCmdLineSwitch('dev') then
     TDUnitX.RegisterTestFixture(TFHIRValidatorTests);

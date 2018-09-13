@@ -57,8 +57,8 @@ type
     FItem : TFhirCodeSystemConceptW;
     FRating : double;
   public
-    Constructor Create(item : TFhirCodeSystemConceptW; rating : double);
-    Destructor Destroy; override;
+    constructor Create(item : TFhirCodeSystemConceptW; rating : double);
+    destructor Destroy; override;
   end;
 
   TCodeSystemAdornment = class (TFslObject)
@@ -79,7 +79,7 @@ type
     function GetSupplements: TFslList<TFHIRCodeSystemW>;
     procedure SetCodeSystem(const Value: TFHIRCodeSystemW);
   public
-    Constructor Create(cs : TFhirCodeSystemW);
+    constructor Create(cs : TFhirCodeSystemW);
     destructor Destroy; override;
 
     function Link : TFHIRCodeSystemEntry; overload;
@@ -254,8 +254,8 @@ begin
 end;
 
 procedure TFhirCodeSystemProviderFilterContext.sort;
-var
-  m : TFhirCodeSystemConceptMatch;
+//var
+//  m : TFhirCodeSystemConceptMatch;
 begin
   concepts.sort(self);
 //  for m in concepts do
@@ -398,9 +398,9 @@ begin
   end;end;
 
 function TFhirCodeSystemProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
-var
+//var
 //  ex : TFhirExtension;
-  code : String;
+//  code : String;
 begin
   result := nil;
   if context = nil then

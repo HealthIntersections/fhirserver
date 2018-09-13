@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
+  SysUtils, Classes, Generics.Collections, Soap.EncdDecd, System.NetEncoding,
   FHIR.Javascript,
   FHIR.Support.Base, FHIR.Support.Collections;
 

@@ -403,8 +403,8 @@ operations
     FStatus: TSnomedConceptStatus;
     FChildren: TFslStringList;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Property Concept : String read FConcept;
     Property Description : String read FDescription;
     Property IsPrimitive : boolean read FIsPrimitive;
@@ -453,9 +453,9 @@ operations
     FMatched : String;
     FUnmatched : TFslList<TSnomedRefinementGroup>;
   public
-    Constructor Create(match : String); overload;
-    Constructor Create(match : String; nonmatched : TFslList<TSnomedRefinementGroup>); overload;
-    Destructor Destroy; override;
+    constructor Create(match : String); overload;
+    constructor Create(match : String; nonmatched : TFslList<TSnomedRefinementGroup>); overload;
+    destructor Destroy; override;
 
     property matched : String read FMatched;
     property Unmatched : TFslList<TSnomedRefinementGroup> read FUnmatched;
@@ -527,8 +527,8 @@ operations
     function GetEditionName: String;
     function GetEditionId: String;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TSnomedServices; Overload;
     Procedure Load(Const sFilename : String);
     Procedure Save(Const sFilename : String);
@@ -656,7 +656,7 @@ operations
   Protected
     Function ItemClass : TFslObjectClass; Override;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function GetDefinitionByName(sName : String) : TSnomedServices;
 
@@ -3279,10 +3279,8 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  {$IFNDEF FHIR2}
   d : TFHIRLookupOpRespDesignationW;
   p : TFHIRLookupOpRespPropertyW;
-  {$ENDIF}
   did : UInt64;
   exp : TSnomedExpression;
 begin
@@ -3292,44 +3290,27 @@ begin
     Concept.GetConcept(TSnomedExpressionContext(ctxt).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     Inbounds := Refs.GetReferences(InboundIndex);
 
-    {$IFNDEF FHIR2}
     p := resp.addProp('copyright');
     p.value := factory.makeString('This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
-    {$ELSE}
-    resp.addExtension('copyright', 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), '+'and distributed by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
-    {$ENDIF}
     if hasProp(props, 'inactive', true) then
     begin
-      {$IFNDEF FHIR2}
       resp.addProp('inactive').value := factory.makeBoolean(not IsActive(TSnomedExpressionContext(ctxt).reference));
-      {$ELSE}
-      resp.addExtension('inactive', BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference)));
-      {$ENDIF}
     end;
 
     if hasProp(props, 'moduleId', true) then
     begin
-      {$IFNDEF FHIR2}
       p := resp.addProp('moduleId');
       p.value := factory.makeCode(getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
-      {$ELSE}
-      resp.addExtension('moduleId', inttostr(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
-      {$ENDIF}
     end;
 
     if hasProp(props, 'normalForm', true) then
     begin
       exp := createNormalForm(TSnomedExpressionContext(ctxt).reference);
       try
-        {$IFNDEF FHIR2}
         p := resp.addProp('normalForm');
         p.value := factory.makeString(renderExpression(exp, sroFillMissing));
         p := resp.addProp('normalFormTerse');
         p.value := factory.makeString(renderExpression(exp, sroMinimal));
-        {$ELSE}
-        resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
-        resp.addExtension('normalFormTerse', renderExpression(exp, sroMinimal));
-        {$ENDIF}
 
       finally
         exp.free;
@@ -3343,12 +3324,10 @@ begin
       for i := Low(Descriptions) To High(Descriptions) Do
       Begin
         Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
-        {$IFDEF FHIR3}
         if Active and (kind <> 0) Then
         Begin
           resp.addDesignation('http://snomed.info/sct', GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
         End;
-        {$ENDIF}
       End;
     End;
 
@@ -3362,13 +3341,9 @@ begin
         begin
           Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
-          {$IFNDEF FHIR2}
           p := resp.addProp('parent');
           p.value := factory.makeCode(IntToStr(Identity));
           p.description := GetPN(Descriptions);
-          {$ELSE}
-          resp.addExtension('parent', IntToStr(Identity));
-          {$ENDIF}
         end;
       end;
     end;
@@ -3383,13 +3358,9 @@ begin
         begin
           Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
-          {$IFNDEF FHIR2}
           p := resp.addProp('child');
           p.value := factory.makeCode(IntToStr(Identity));
           p.description := GetPN(Descriptions);
-          {$ELSE}
-          resp.addExtension('child', IntToStr(Identity));
-          {$ENDIF}
         End;
       End;
     End;
@@ -3398,15 +3369,10 @@ begin
   begin
     exp := normaliseExpression(TSnomedExpressionContext(ctxt).Expression);
     try
-      {$IFNDEF FHIR2}
       p := resp.addProp('normalForm');
       p.value := factory.makeString(renderExpression(exp, sroFillMissing));
       p := resp.addProp('normalFormTerse');
       p.value := factory.makeString(renderExpression(exp, sroMinimal));
-      {$ELSE}
-      resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
-      resp.addExtension('normalFormTerse', renderExpression(exp, sroMinimal));
-      {$ENDIF}
     finally
       exp.free;
     end;

@@ -47,7 +47,7 @@ Type
 		FStop : TSourceLocation;
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
   public
-    Constructor Create(start : TSourceLocation); overload;
+    constructor Create(start : TSourceLocation); overload;
     function Link : TTurtleObject; overload;
     function hasValue(value : String) : boolean; virtual; abstract;
     function isSimple : boolean; virtual; abstract;
@@ -63,9 +63,9 @@ Type
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    Constructor Create(start : TSourceLocation); overload;
-    Constructor Create(value : String); overload;
-    Constructor Create(value, type_ : String); overload;
+    constructor Create(start : TSourceLocation); overload;
+    constructor Create(value : String); overload;
+    constructor Create(value, type_ : String); overload;
     function Link : TTurtleLiteral; overload;
     function hasValue(value : String) : boolean; override;
     function singleLiteral : String; override;
@@ -81,8 +81,8 @@ Type
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    Constructor Create(start : TSourceLocation); overload;
-    Constructor Create(uri : String); overload;
+    constructor Create(start : TSourceLocation); overload;
+    constructor Create(uri : String); overload;
     function Link : TTurtleURL; overload;
 		property uri : String read Furi write Seturi;
     function hasValue(value : String) : boolean; override;
@@ -96,9 +96,9 @@ Type
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    Constructor Create(start : TSourceLocation); overload;
-    Constructor Create(start : TSourceLocation; obj : TTurtleObject); overload;
-    Destructor Destroy; override;
+    constructor Create(start : TSourceLocation); overload;
+    constructor Create(start : TSourceLocation; obj : TTurtleObject); overload;
+    destructor Destroy; override;
     function Link : TTurtleList; overload;
     function hasValue(value : String) : boolean; override;
     property List : TFslList<TTurtleObject> read FList;
@@ -113,8 +113,8 @@ Type
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    Constructor Create(start : TSourceLocation); overload;
-    Destructor Destroy; override;
+    constructor Create(start : TSourceLocation); overload;
+    destructor Destroy; override;
     function Link : TTurtleComplex; overload;
     function hasValue(value : String) : boolean; override;
     property predicates : TFslMap<TTurtleObject> read FPredicates;
@@ -142,8 +142,8 @@ Type
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean;
   public
-    Constructor Create(url : TTurtleURL; value : TTurtleComplex);
-    Destructor Destroy; override;
+    constructor Create(url : TTurtleURL; value : TTurtleComplex);
+    destructor Destroy; override;
     property URL : TTurtleURL read FURL;
     property Value : TTurtleComplex read FValue;
   end;
@@ -154,8 +154,8 @@ Type
     FObjects : TFslList<TTurtlePredicate>;
     FBase : String;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     property objects : TFslList<TTurtlePredicate> read FObjects;
     property prefixes : TFslStringDictionary read FPrefixes;
     function getPredicate(uri : String) : TTurtlePredicate;
@@ -189,7 +189,7 @@ type
     procedure readNext(postColon : boolean);
     function unescape(s : String; isUri : boolean) : string;
   public
-    Constructor Create(source : String);
+    constructor Create(source : String);
     function done : boolean;
     function next(type_ : TLexerTokenType; postColon : boolean): String;
     function peek : String; overload;

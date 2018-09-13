@@ -43,8 +43,8 @@ type
     FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
   public
-    Constructor Create(definition : TFHIRStructureDefinition);
-    Destructor Destroy; override;
+    constructor Create(definition : TFHIRStructureDefinition);
+    destructor Destroy; override;
     function Link : TFHIRCustomResourceInformation; overload;
     property Name : String read FName;
     property Definition : TFHIRStructureDefinition read FDefinition;

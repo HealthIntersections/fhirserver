@@ -440,13 +440,13 @@ end;
 { TCDSHookRequest }
 
 function TCDSHookRequest.AsJson: String;
-var
-  ss : TFslStringStream;
-  writer : TJSONWriter;
-  c : TFhirResourceV;
-  comp : TFHIRComposer;
-  s : String;
-  be : TFhirObject{BundleEntry};
+//var
+//  ss : TFslStringStream;
+//  writer : TJSONWriter;
+//  c : TFhirResourceV;
+//  comp : TFHIRComposer;
+//  s : String;
+//  be : TFhirObject{BundleEntry};
 begin
 (*  ss := TFslStringStream.Create;
   try

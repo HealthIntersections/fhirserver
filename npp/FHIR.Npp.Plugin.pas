@@ -117,7 +117,7 @@ type
     FVersion  : TFHIRVersion;
     FFormat : TFHIRFormat;
   public
-    constructor create(version : TFHIRVersion; format : TFHIRFormat; src : TBytes);
+    constructor Create(version : TFHIRVersion; format : TFHIRFormat; src : TBytes);
 
     property Version : TFHIRVersion read FVersion;
     property Format : TFHIRFormat read FFormat;

@@ -121,7 +121,7 @@ type
     function resourceName : String; override;
     function isPrimaryResource(request: TFHIRRequest; rtype, id : String) : boolean; override;
   public
-    constructor create(factory : TFhirFactory; isExport : boolean);
+    constructor Create(factory : TFhirFactory; isExport : boolean);
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;

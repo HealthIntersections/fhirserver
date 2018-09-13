@@ -21,12 +21,13 @@ type
     procedure registerOperations; override;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); override;
     function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList; override;
-    Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
     function readRef(ref : TFHIRObject) : string; override;
     function getOpException(op : TFHIRResourceV) : String; override;
     procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); override;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
+  public
+    Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
   end;
 
   TFhirNativeOperationR4 = class (TFhirNativeOperation)
@@ -133,7 +134,7 @@ type
     function resourceName : String; override;
     function isPrimaryResource(request: TFHIRRequest; rtype, id : String) : boolean; override;
   public
-    constructor create(factory : TFhirFactory; isExport : boolean);
+    constructor Create(factory : TFhirFactory; isExport : boolean);
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
@@ -347,7 +348,7 @@ type
   private
     FServerContext : TFHIRServerContext;
   public
-    constructor create(ServerContext: TFHIRServerContext);
+    constructor Create(ServerContext: TFHIRServerContext);
     destructor Destroy; override;
     function oid2Uri(oid : String) : String; override;
     function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
@@ -1187,7 +1188,6 @@ procedure TFhirValidationOperation.Execute(context : TOperationContext; manager:
 type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
   outcome : TFHIROperationOutcomeW;
-  i : integer;
   profileId : String;
   profile : TFHirStructureDefinition;
   profiles : TValidationProfileSet;
@@ -2455,7 +2455,6 @@ end;
 
 procedure TFhirVersionsOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  profile : TFHirStructureDefinition;
   p : TFhirParameters;
 begin
   try
@@ -2538,7 +2537,6 @@ end;
 procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRStatsOpRequest;
-  resp : TFHIRStatsOpResponseW;
   s : string;
   ose : TObservationStatsEvaluator;
   c : TFhirCoding;

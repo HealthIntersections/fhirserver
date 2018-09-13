@@ -79,8 +79,8 @@ type
   protected
     procedure doProgress(path : String);
   public
-    Constructor Create(context: TFHIRWorkerContextWithFactory); virtual;
-    Destructor Destroy; override;
+    constructor Create(context: TFHIRWorkerContextWithFactory); virtual;
+    destructor Destroy; override;
 
     property Context : TFHIRWorkerContextWithFactory read FContext;
 
@@ -113,7 +113,7 @@ type
     function versionString : String; virtual;
     function specUrl : String; virtual; abstract;
     function description : String; virtual;
-    function ResourceNames : TArray<String>; virtual; abstract;
+    function resourceNames : TArray<String>; virtual; abstract;
     function canonicalResources : TArray<String>; virtual; abstract;
     function isResourceName(name : String) : boolean; virtual;
     function resCategory(name: String) : TTokenCategory; virtual; abstract;

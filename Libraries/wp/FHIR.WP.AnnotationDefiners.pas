@@ -39,7 +39,7 @@ Type
     Private
       FWordProcessor : TWordProcessor;
     Public
-      Constructor Create(oWordProcessor : TWordProcessor); Overload; Virtual;
+      constructor Create(oWordProcessor : TWordProcessor); Overload; Virtual;
       Property WordProcessor : TWordProcessor Read FWordProcessor Write FWordProcessor;
   End;
 
@@ -53,8 +53,8 @@ Type
     procedure SetClient(const Value: TSnomedClient);
 
   Public
-    Constructor Create; Overload; Override;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    destructor Destroy; Override;
 
 
     Function GetNamespace : String; Overload; Override;

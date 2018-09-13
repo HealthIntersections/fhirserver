@@ -81,8 +81,8 @@ Type
     Procedure SetDefinitionProvider(Const Value : TWPAnnotationDefinitionProvider);
     function GetWorkingText: String;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPWorkingAnnotation; Overload;
     Function Clone : TWPWorkingAnnotation; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -145,8 +145,8 @@ Type
     Procedure SetOffsetCount(Const Value: Integer);
     Function GetWidth : Integer;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPMetrics; Overload;
     Function Clone : TWPMetrics; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -200,8 +200,8 @@ Type
 
     Function GetAnnotation(iId : Integer): TWPWorkingAnnotation;
   Public
-    Constructor Create(oPiece : TFslObject); Overload; Virtual;
-    Destructor Destroy; Override;
+    constructor Create(oPiece : TFslObject); Overload; Virtual;
+    destructor Destroy; Override;
     Function Link : TWPMapObject; Overload;
     Procedure Assign(oSource : TFslObject); Override;
 
@@ -283,7 +283,7 @@ Type
     procedure SetAnnotationColour(const Value: TColour);
 
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link : TWPMapItem; Overload;
     Function Clone : TWPMapItem; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -350,8 +350,8 @@ Type
     Procedure ReParent;
     Function GetItems : TWPMapItems;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPMapRow; Overload;
     Function Clone : TWPMapRow; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -421,8 +421,8 @@ Type
     Function GetChildren : TWPMapContainers;
     Function GetRows : TWPMapRows;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPMapContainer; Overload;
     Procedure Assign(oSource : TFslObject); Override;
 
@@ -542,8 +542,8 @@ Type
     Function GetPieceType: TWPWorkingDocumentPieceType; Virtual;
     Function DefaultCharCount : Integer; Virtual;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPWorkingDocumentPiece; Overload;
     Function Clone : TWPWorkingDocumentPiece; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -622,7 +622,7 @@ Type
 
   TWPWorkingDocumentPieceStack = Class (TWPWorkingDocumentPieces)
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Procedure Push(oPiece : TWPWorkingDocumentPiece);
       Function Pop : TWPWorkingDocumentPiece;
@@ -681,7 +681,7 @@ Type
     Function GetVisualText: String; Override;
     Function GetVoiceText : String; Override;
   Public
-    Constructor Create; Override;
+    constructor Create; Override;
 
     Procedure Assign(oSource : TFslObject); Override;
 
@@ -767,8 +767,8 @@ Type
     Function DefaultCharCount : Integer; Override;
     Function GetVisualText: String; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPWorkingDocumentImagePiece; Overload;
     Function Clone : TWPWorkingDocumentImagePiece; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -855,8 +855,8 @@ Type
     Function GetVisualText: String; Override;
     Function GetLogicalText: String; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPWorkingDocumentFieldStartPiece; Overload;
     Function Clone : TWPWorkingDocumentFieldStartPiece; Overload;
@@ -903,7 +903,7 @@ Type
     Function GetVisualText: String; Override;
     Function GetLogicalText: String; Override;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPWorkingDocumentFieldStopPiece; Overload;
     Function Clone : TWPWorkingDocumentFieldStopPiece; Overload;
@@ -930,9 +930,9 @@ Type
       Function XmlName : String; Override;
       Procedure CollectAttributes(oXml : TFslXmlFormatter); Override;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
-      Constructor Create(stopType : TWPWorkingDocumentStopType); Overload;
+      constructor Create; Override;
+      destructor Destroy; Override;
+      constructor Create(stopType : TWPWorkingDocumentStopType); Overload;
       Function Link : TWPWorkingDocumentStopPiece; Overload;
       Function Clone : TWPWorkingDocumentStopPiece; Overload;
       Procedure Assign(oSource : TFslObject); Override;
@@ -959,7 +959,7 @@ Type
     Procedure SetReadOnly(Const Value: TWPSTriState);
     Function GetContainer : TWPMapContainer;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Procedure Assign(oSource : TFslObject); Override;
     Procedure ApplyProperties(oSource : TWPWorkingDocumentPiece); Override;
@@ -998,8 +998,8 @@ Type
     Function GetVisualText: String; Override;
     Function GetVoiceText : String; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TWPWorkingDocumentParaPiece; Overload;
     Function Clone : TWPWorkingDocumentParaPiece; Overload;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1101,8 +1101,8 @@ Type
   Protected
     Function DefaultCharCount : Integer; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPWorkingDocumentSectionStartPiece; Overload;
     Function Clone : TWPWorkingDocumentSectionStartPiece; Overload;
@@ -1178,8 +1178,8 @@ Type
       Function GetWorkingBottomBorder : TWPBorder;
       Function GetWorkingRightBorder : TWPBorder;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
       Function Link : TWPWorkingDocumentTableItemPiece; Overload;
       Function Clone : TWPWorkingDocumentTableItemPiece; Overload;
       Procedure Assign(oSource : TFslObject); Override;
@@ -1247,7 +1247,7 @@ Type
     Protected
       Function DefaultCharCount : Integer; Override;
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TWPWorkingDocumentTableCellStartPiece; Overload;
       Function Clone : TWPWorkingDocumentTableCellStartPiece; Overload;
@@ -1336,8 +1336,8 @@ Type
       Function GetTable : TObject;
       Procedure SetTable(Const Value : TObject);
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPWorkingDocumentTableRowStartPiece; Overload;
       Function Clone : TWPWorkingDocumentTableRowStartPiece; Overload;
@@ -1432,8 +1432,8 @@ Type
     Protected
       Function DefaultCharCount : Integer; Override;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPWorkingDocumentTableStartPiece; Overload;
       Function Clone : TWPWorkingDocumentTableStartPiece; Overload;
@@ -1580,8 +1580,8 @@ Type
     procedure SetSourceObjectModel(const Value: TFslObject);
     procedure SetSourceBytes(const Value: TFslBuffer);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPWorkingDocument; Overload;
     Function Clone : TWPWorkingDocument; Overload;
@@ -1671,9 +1671,9 @@ Type
     Function WorkingMinimum : Integer;
     Function WorkingMaximum : Integer;
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(oDocument : TWPWorkingDocument); Overload; Virtual;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(oDocument : TWPWorkingDocument); Overload; Virtual;
+    destructor Destroy; Override;
 
     Procedure SetBounds(Const iMinimum, iMaximum : Integer); Overload; Virtual;
 
@@ -1793,8 +1793,8 @@ Type
       Function TranslateAttachment(oSource : TWPDocumentAttachment): TWPWorkingAttachment; Overload;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function HasDocument : Boolean; Overload; Virtual;
       Function HasWorkingDocument : Boolean; Overload; Virtual;
@@ -1822,7 +1822,7 @@ Type
 //      FRemoved : Boolean;
       Procedure SetPiece(Const Value: TWPWorkingDocumentPiece);
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Property Piece : TWPWorkingDocumentPiece Read FPiece Write SetPiece;
       Property Offset : Integer Read FOffset Write FOffset;
@@ -1871,8 +1871,8 @@ type
       Procedure Validate(oIterator : TWPPieceIterator; aAllowed : TWPWorkingDocumentPieceTypes; aTerminate : TWPWorkingDocumentPieceType); Overload;
       Procedure Validate(oIterator : TWPPieceIterator; aAllowed : TWPWorkingDocumentPieceTypes); Overload;
     Public
-      Constructor Create(oDocument : TWPWorkingDocument); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(oDocument : TWPWorkingDocument); Overload; Virtual;
+      destructor Destroy; Override;
 
       Class Procedure Validate(oDocument : TWPWorkingDocument); Overload; Virtual;
 

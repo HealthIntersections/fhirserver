@@ -44,8 +44,8 @@ Type
       Function GetCanvas : TFslPrinterCanvas;
       Procedure SetCanvas(Const Value : TFslPrinterCanvas);
     Public
-      Constructor Create(oCanvas : TFslPrinterCanvas); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(oCanvas : TFslPrinterCanvas); Overload; Virtual;
+      destructor Destroy; Override;
 
       Procedure MoveVertical(iTop, iOffset : Integer); Overload; Override;
       Procedure Clip(Const aRect : TRect); Overload; Override;
@@ -134,8 +134,8 @@ Type
 
       Procedure RaiseError(Const sMethod, sMessage : String); Overload; Override;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Prepare;
       Procedure Terminate;
@@ -176,7 +176,7 @@ Type
     Protected
       Procedure Execute; Override;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPPaginator; Overload;
 

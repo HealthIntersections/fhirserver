@@ -57,8 +57,8 @@ Type
     Codes : TObjectList;
     Flang : integer;
   public
-    Constructor Create(lang : byte);
-    Destructor Destroy; Override;
+    constructor Create(lang : byte);
+    destructor Destroy; Override;
   End;
 
   TConceptArray = Array of TConcept;
@@ -74,8 +74,8 @@ Type
     index : Cardinal;
     Stems : TFslIntegerList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   end;
 
   THeirarchyEntry = class (TDescribed)
@@ -88,8 +88,8 @@ Type
     FConcepts : TCodeList;
     FDescendentConcepts : TCodeList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
   End;
 
   THeirarchyEntryList = class (TFslObjectList)
@@ -128,7 +128,7 @@ Type
     Flags : byte;
     entry : THeirarchyEntry;
   public
-    Constructor Create(langCount : integer);
+    constructor Create(langCount : integer);
     Function Compare(pA, pB : Pointer) : Integer;
   End;
 
@@ -172,8 +172,8 @@ Type
     FAnswers : TFslList<TAnswer>;
     FIndex : integer;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Property Code : String read FCode write FCode;
     Property Description : String read FDescription write FDescription;
@@ -193,8 +193,8 @@ Type
     FLongName : String;
     FRelatedNames : TStringList;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function link : TLoincLanguageCodes; overload;
 
     function Display : String;
@@ -218,9 +218,9 @@ Type
     FCountry : String;
     FCodes : TFslMap<TLoincLanguageCodes>;
   public
-    Constructor Create; overload; Override;
-    Constructor Create(lang, country : String); overload;
-    Destructor Destroy; Override;
+    constructor Create; overload; Override;
+    constructor Create(lang, country : String); overload;
+    destructor Destroy; Override;
     Function link : TLoincLanguage; overload;
 
     Property Lang : String read FLang write FLang;

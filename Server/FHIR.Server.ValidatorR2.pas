@@ -25,8 +25,8 @@ Type
   protected
     procedure SeeResource(r : TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory); Override;
-    Destructor Destroy; Override;
+    constructor Create(factory : TFHIRFactory); Override;
+    destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR2; overload;
 

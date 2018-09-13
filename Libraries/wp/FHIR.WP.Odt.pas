@@ -147,8 +147,8 @@ Type
     Procedure LoadManifest; Virtual;
 
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TOdtReaderAdapter; Overload;
 
@@ -172,8 +172,8 @@ Type
 
     Function GetByName(Const sName, sMimeType : String) : TFslBuffer;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TOdtWriterAdapter; Overload;
 
@@ -298,10 +298,10 @@ Type
     Procedure SetCapitalization(Const oCapitalize: TWPSCapsState); Overload; Virtual;
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oParent: TOdtTextFormat); Overload;
-    Constructor Create(Const oFormat: TWPSFontDetails); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oParent: TOdtTextFormat); Overload;
+    constructor Create(Const oFormat: TWPSFontDetails); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtTextFormat;
 
@@ -376,10 +376,10 @@ Type
     Procedure SetMarginBottom(Const aValue: Integer); Overload; Virtual;
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oParent: TOdtParagraphFormat); Overload;
-    Constructor Create(Const oFormat: TWPSParagraphDetails); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oParent: TOdtParagraphFormat); Overload;
+    constructor Create(Const oFormat: TWPSParagraphDetails); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtParagraphFormat;
 
@@ -422,10 +422,10 @@ Type
     Procedure SetNumberFormat(Const oFormat: TWPSParagraphNumberFormat); Virtual;
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oParent: TOdtListLevelFormat); Overload;
-    Constructor Create(Const oFormat: TWPSParagraphDetails); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oParent: TOdtListLevelFormat); Overload;
+    constructor Create(Const oFormat: TWPSParagraphDetails); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtListLevelFormat;
 
@@ -459,10 +459,10 @@ Type
     Function ItemClass : TFslObjectClass; Override;
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oParent: TOdtListFormat); Overload;
-    Constructor Create(Const sName: String; Const oFormat: TWPSParagraphDetails); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oParent: TOdtListFormat); Overload;
+    constructor Create(Const sName: String; Const oFormat: TWPSParagraphDetails); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtListFormat;
 
@@ -504,10 +504,10 @@ Type
     Procedure SetVerticalMargin(Const aValue: Integer); Overload; Virtual;
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oFormat: TOdtTableFormat); Overload;
-    Constructor Create(Const oTable: TWPWorkingDocumentTableStartPiece); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oFormat: TOdtTableFormat); Overload;
+    constructor Create(Const oTable: TWPWorkingDocumentTableStartPiece); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtTableFormat;
 
@@ -539,10 +539,10 @@ Type
     FBackgroundColor: TColour;
   Protected
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oFormat: TOdtTableRowFormat); Overload;
-    Constructor Create(Const oRow: TWPWorkingDocumentTableRowStartPiece); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oFormat: TOdtTableRowFormat); Overload;
+    constructor Create(Const oRow: TWPWorkingDocumentTableRowStartPiece); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtTableRowFormat;
 
@@ -584,10 +584,10 @@ Type
     Property WPBorderRight: TWPBorder Read GetBorderRight Write SetBorderRight;
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oFormat: TOdtTableCellFormat); Overload;
-    Constructor Create(Const oCell: TWPWorkingDocumentTableCellStartPiece); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oFormat: TOdtTableCellFormat); Overload;
+    constructor Create(Const oCell: TWPWorkingDocumentTableCellStartPiece); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtTableCellFormat;
 
@@ -633,9 +633,9 @@ Type
     Procedure SetCellFormat(oFormat: TOdtTableCellFormat);
 
   Public
-    Constructor Create; Overload; Override;
-    Constructor Create(Const oParent: TOdtStyle); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(Const oParent: TOdtStyle); Overload;
+    destructor Destroy; Override;
 
     Function Link: TOdtStyle;
 
@@ -817,8 +817,8 @@ Type
     Procedure ReadOdtStyleCellProperties(oFormat: TOdtTableCellFormat; oReader:TFslXMLExtractor); Overload;
 
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure Read(oDocument : TWPWorkingDocument); Overload; Override;
 
@@ -896,8 +896,8 @@ Type
       Procedure WriteTableCellFormat(oFormatter: TFslXMLFormatter; oCellFormat: TOdtTableCellFormat);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPOdtWriter; Overload;
 

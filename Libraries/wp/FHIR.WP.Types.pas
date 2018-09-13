@@ -522,7 +522,7 @@ Type
       FCapitalization : TWPSCapsState;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TWPSFontDetails; Overload;
       Function Clone : TWPSFontDetails; Overload;
@@ -617,7 +617,7 @@ Type
       FMarginBottom : Integer;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TWPSParagraphDetails; Overload;
       Function Clone : TWPSParagraphDetails; Overload;
@@ -713,8 +713,8 @@ Type
       Procedure SetParagraph(Const Value : TWPSParagraphDetails);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPStyle; Overload;
       Function Clone : TWPStyle; Overload;
@@ -782,7 +782,7 @@ Type
     Private
       FOnChange: TChangeEvent;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure Change(aType : TChangeType; oSource : TWPTrackable); Overload; Virtual;
 
@@ -807,9 +807,9 @@ Type
       Procedure InternalBeforeExclude(iIndex : Integer; oObject : TFslObject); Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Constructor Create(bHooking : Boolean); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Override;
+      constructor Create(bHooking : Boolean); Overload; Virtual;
+      destructor Destroy; Override;
 
       Function Link : TWPTrackableList; Overload;
       Function Clone : TWPTrackableList; Overload;
@@ -863,7 +863,7 @@ Type
 
     Function MapToPredefinedBorderStyle: TPredefinedBorderStyles;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPBorder; Overload;
     Function Clone : TWPBorder; Overload;
@@ -934,11 +934,11 @@ Type
       Procedure SetURL(Const Value: String);
       Procedure SetTitle(Const Value: String);
     Public
-      Constructor Create; Overload; Override;
-      Constructor Create(Const sURL : String); Overload; Virtual;
-      Constructor Create(Const sURL : String; iLinkColour : TColour; iHoverColour : TColour); Overload; Virtual;
-      Constructor Create(Const sURL, sKey : String; iLinkColour : TColour; iHoverColour : TColour); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Override;
+      constructor Create(Const sURL : String); Overload; Virtual;
+      constructor Create(Const sURL : String; iLinkColour : TColour; iHoverColour : TColour); Overload; Virtual;
+      constructor Create(Const sURL, sKey : String; iLinkColour : TColour; iHoverColour : TColour); Overload; Virtual;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
 
@@ -1042,7 +1042,7 @@ Type
 
   TWPDataItemMap = Class (TFslStringMatch)
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TWPDataItemMap; Overload;
       Function Clone : TWPDataItemMap; Overload;
@@ -1055,8 +1055,8 @@ Type
     Procedure SetSelected(Const Value: Boolean);
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPImageMapArea; Overload;
       Function Clone : TWPImageMapArea; Overload;
@@ -1094,8 +1094,8 @@ Type
     Private
       FAreas : TWPImageMapAreaList;
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPImageMap; Overload;
       Function Clone : TWPImageMap; Overload;
@@ -1128,8 +1128,8 @@ Type
       FFont : TWPSFontDetails;
       FCaption : String;
     public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPDocumentImageAdornment; Overload;
       Function Clone : TWPDocumentImageAdornment; Overload;
@@ -1223,7 +1223,7 @@ Type
       Procedure SetSubject(Const Value: TFslObject);
       procedure SetAdornment(const Value: TWPDocumentImageAdornment);
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPMouseInfo; Overload;
 
@@ -1279,8 +1279,8 @@ Type
       Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPStyles; Overload;
       Function Clone : TWPStyles; Overload;
@@ -1402,8 +1402,8 @@ type
 
       Procedure CopyBitmap(oImage : TFslVCLGraphic);
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Open; Overload; Virtual;
       Procedure Close; Overload; Virtual;
@@ -1576,7 +1576,7 @@ Type
     Function ItemClass : TFslObjectClass; Override;
     Function CompareByObject(pa, pB: Pointer) : Integer;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Procedure Notify(oSender : TObject); Overload; Virtual;
     Procedure Unregister(oObject : TObject); Overload; Virtual;
@@ -1723,7 +1723,7 @@ Type
       Procedure SetChildren(Const Value: TWPPropertyList);
       Procedure SetKind(Const Value: TWPPropertyKind);
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPProperty; Overload;
 
@@ -1770,7 +1770,7 @@ Type
       FIsAscend: Boolean;
 
     Public
-      Constructor Create(Const iIndex: Integer; Const bIsAscend: Boolean); Overload;
+      constructor Create(Const iIndex: Integer; Const bIsAscend: Boolean); Overload;
 
       Property SortIndex: Integer Read FSortIndex Write FSortIndex;
       Property IsAscend: Boolean Read FIsAscend Write FIsAscend;
@@ -1815,8 +1815,8 @@ type
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRendererTableColumnMetric; Overload;
 
@@ -1861,7 +1861,7 @@ Type
       FSection : Boolean;
 
     Public
-      Constructor Create(Const sCode : String; Const sName : String; Const sDescription : String; Const bSection : Boolean); Overload; Virtual;
+      constructor Create(Const sCode : String; Const sName : String; Const sDescription : String; Const bSection : Boolean); Overload; Virtual;
 
       Property Code : String Read FCode Write FCode;
       Property Description : String Read FDescription Write FDescription;
@@ -1887,8 +1887,8 @@ Type
       Function GetEntries : TWPFieldEntryList;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPFieldModel; Overload;
       Function Clone : TWPFieldModel; Overload;

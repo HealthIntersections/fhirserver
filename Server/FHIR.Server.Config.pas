@@ -41,7 +41,7 @@ type
     FDetails : TFslStringDictionary;
     function getValue(name: String): String;
   public
-    constructor create(value : String);
+    constructor Create(value : String);
     destructor Destroy; override;
     property value[name : String] : String read getValue; default;
   end;
@@ -64,7 +64,7 @@ type
     procedure readSection(name : String; map : TFslMap<TFHIRServerIniComplex>);
   public
     constructor Create(const FileName: string);
-    Destructor Destroy; override;
+    destructor Destroy; override;
     Function Link : TFHIRServerIniFile; overload;
     property FileName: string read GetFileName;
 

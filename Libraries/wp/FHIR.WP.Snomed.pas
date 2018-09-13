@@ -98,8 +98,8 @@ Type
     Procedure TerminateAllThreads;
     Procedure Execute;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TSnomedClient; Overload;
 

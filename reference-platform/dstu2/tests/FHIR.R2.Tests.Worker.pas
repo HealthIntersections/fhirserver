@@ -53,7 +53,7 @@ Type
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   public
-    Constructor Create(folder, filter : String);
+    constructor Create(folder, filter : String);
   end;
 
   TTestingWorkerContext = class (TBaseWorkerContext)

@@ -38,8 +38,8 @@ Type
   TCqlEngine = class (TFslObject)
   private
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
   end;
 

@@ -96,8 +96,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Execute;
 

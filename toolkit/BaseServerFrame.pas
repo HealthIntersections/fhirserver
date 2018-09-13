@@ -43,7 +43,7 @@ type
     FClient : TFHIRClient;
     procedure SetClient(const Value: TFHIRClient);
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
   end;
 

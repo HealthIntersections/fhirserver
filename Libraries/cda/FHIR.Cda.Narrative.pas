@@ -126,8 +126,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnBase; Overload;
     Function Clone(parent : Tv3Base) : TsnBase; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -151,8 +151,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnText; Overload;
     Function Clone(parent : Tv3Base) : TsnText; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -198,8 +198,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTitle; Overload;
     Function Clone(parent : Tv3Base) : TsnTitle; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -242,9 +242,9 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   public
-    Constructor Create; Overload; Override;
-    Constructor Create(value : String); Overload;
-    Destructor Destroy; Override;
+    constructor Create; Overload; Override;
+    constructor Create(value : String); Overload;
+    destructor Destroy; Override;
     function Link : TsnString; Overload;
     Function Clone(parent : Tv3Base) : TsnString; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -260,8 +260,8 @@ Type
   Protected
     procedure GetText(builder : TFslStringBuilder); override;
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnBr; Overload;
     Function Clone(parent : Tv3Base) : TsnBr; Overload;
     Function RIMClassNameV : String; Override;
@@ -284,8 +284,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCMFootnotes; Overload;
     Function Clone(parent : Tv3Base) : TsnCMFootnotes; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -318,8 +318,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCMInline; Overload;
     Function Clone(parent : Tv3Base) : TsnCMInline; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -356,8 +356,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCMTitle; Overload;
     Function Clone(parent : Tv3Base) : TsnCMTitle; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -404,8 +404,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCMContent; Overload;
     Function Clone(parent : Tv3Base) : TsnCMContent; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -430,8 +430,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCMGeneral; Overload;
     Function Clone(parent : Tv3Base) : TsnCMGeneral; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -454,8 +454,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnRenderMultiMedia; Overload;
     Function Clone(parent : Tv3Base) : TsnRenderMultiMedia; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -479,8 +479,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnLinkHtml; Overload;
     Function Clone(parent : Tv3Base) : TsnLinkHtml; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -512,8 +512,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnFootnote; Overload;
     Function Clone(parent : Tv3Base) : TsnFootnote; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -534,8 +534,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTitleFootnote; Overload;
     Function Clone(parent : Tv3Base) : TsnTitleFootnote; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -555,8 +555,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnFootnoteRef; Overload;
     Function Clone(parent : Tv3Base) : TsnFootnoteRef; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -574,8 +574,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCaption; Overload;
     Function Clone(parent : Tv3Base) : TsnCaption; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -597,8 +597,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnContent; Overload;
     Function Clone(parent : Tv3Base) : TsnContent; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -621,8 +621,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCaptioned; Overload;
     Function Clone(parent : Tv3Base) : TsnCaptioned; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -640,8 +640,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnParagraph; Overload;
     Function Clone(parent : Tv3Base) : TsnParagraph; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -662,8 +662,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnItem; Overload;
     Function Clone(parent : Tv3Base) : TsnItem; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -685,8 +685,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnList; Overload;
     Function Clone(parent : Tv3Base) : TsnList; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -710,8 +710,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTableItem; Overload;
     Function Clone(parent : Tv3Base) : TsnTableItem; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -732,8 +732,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnColItem; Overload;
     Function Clone(parent : Tv3Base) : TsnColItem; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -745,8 +745,8 @@ Type
 
   TsnCol = class (TsnColItem)
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnCol; Overload;
     Function Clone(parent : Tv3Base) : TsnCol; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -761,8 +761,8 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnColGroup; Overload;
     Function Clone(parent : Tv3Base) : TsnColGroup; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -790,8 +790,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTCell; Overload;
     Function Clone(parent : Tv3Base) : TsnTCell; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -821,8 +821,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTRowPart; Overload;
     Function Clone(parent : Tv3Base) : TsnTRowPart; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -841,8 +841,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTRow; Overload;
     Function Clone(parent : Tv3Base) : TsnTRow; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -864,8 +864,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTRowGroup; Overload;
     Function Clone(parent : Tv3Base) : TsnTRowGroup; Overload;
     procedure Assign(oSource : TFslObject); Override;
@@ -896,8 +896,8 @@ Type
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     function Link : TsnTable; Overload;
     Function Clone(parent : Tv3Base) : TsnTable; Overload;
     procedure Assign(oSource : TFslObject); Override;

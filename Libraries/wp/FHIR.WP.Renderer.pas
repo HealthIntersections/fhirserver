@@ -67,8 +67,8 @@ Type
       Procedure SetBackHotspot(Const Value: TWPHotspot);
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPRendererState; Overload;
       Function Clone : TWPRendererState; Overload;
@@ -100,7 +100,7 @@ Type
       Function Get(Const aValue : TColour) : TWPRendererState; Reintroduce; Overload; Virtual;
 
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPRendererStates; Overload;
       Function Clone : TWPRendererStates; Overload;
@@ -175,8 +175,8 @@ Type
       Function MakePenHandle(oPen : TPen; aEndStyle : TFslPenEndStyle; aJoinStyle : TFslPenJoinStyle): HPEN;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure MoveVertical(iTop, iOffset : Integer); Overload; Virtual;
       Procedure Clip(Const ARect : TRect); Overload; Virtual;
@@ -237,8 +237,8 @@ Type
     Function GetContainer : TWPMapContainer;
     procedure SetStateStack(const Value: TWPRendererStates);
   Public
-    Constructor Create(oContainer : TWPMapContainer; oStateStack : TWPRendererStates); Overload; Virtual;
-    Destructor Destroy; Override;
+    constructor Create(oContainer : TWPMapContainer; oStateStack : TWPRendererStates); Overload; Virtual;
+    destructor Destroy; Override;
 
     Procedure AddItem(oItem : TWPMapItem); Overload; Virtual;
 
@@ -427,8 +427,8 @@ Type
     Function Printing : Boolean; Overload; Virtual;
     Function ApplyOutputColourRules(bBackground : Boolean; aColour : TColour) : TColour; Overload; Virtual;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPRenderer; Overload;
     Function Clone : TWPRenderer; Overload;
@@ -501,8 +501,8 @@ Type
       Procedure FontChange(oSender : TObject); Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function PaintControl(aHandle : THandle; iHeight, iWidth, iOffset : Integer) : Integer;
 
@@ -616,8 +616,8 @@ Type
     Procedure BuildMetrics; Override;
     Function WantFastDrawing : Boolean; Override;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Link : TWPScreenRenderer; Overload;
     Function Clone : TWPScreenRenderer; Overload;
@@ -670,7 +670,7 @@ Type
     Private
       FSpanPolicy : TWPSpanPolicy;
     Public
-      Constructor Create(aSpanPolicy : TWPSpanPolicy); Overload; Virtual;
+      constructor Create(aSpanPolicy : TWPSpanPolicy); Overload; Virtual;
 
       Function Link : TWPPageLayoutController; Overload;
 
@@ -708,8 +708,8 @@ Type
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
-      Constructor Create; Overload; Override;
-      Destructor Destroy; Overload; Override;
+      constructor Create; Overload; Override;
+      destructor Destroy; Overload; Override;
 
       Function Link : TWPPage; Overload;
       Function Clone : TWPPage; Overload;
@@ -758,7 +758,7 @@ Type
     Protected
       Function GetWorkingWidth : Integer; Override;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure CutOff;  Overload; Override;
 
@@ -880,8 +880,8 @@ Type
       Function GetColumns : TWPTableColumnMetrics;
       Function GetTable : TWPWorkingDocumentTableStartPiece;
     Public
-      Constructor Create(oTable : TWPWorkingDocumentTableStartPiece; oColumns : TWPTableColumnMetrics; iFPointSize, iWidth : Integer); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(oTable : TWPWorkingDocumentTableStartPiece; oColumns : TWPTableColumnMetrics; iFPointSize, iWidth : Integer); Overload; Virtual;
+      destructor Destroy; Override;
 
       Procedure Calculate; Overload; Virtual;
 

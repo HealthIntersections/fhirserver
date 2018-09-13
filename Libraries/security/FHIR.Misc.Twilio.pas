@@ -47,8 +47,8 @@ Type
 
 //    procedure handleAuthentication(Sender: TObject; Authentication: TIdAuthentication; var Handled: Boolean);
   public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure send;
 

@@ -78,7 +78,7 @@ Type
       Function ToWindowsResourceType(oResourceType : TFslResourceType) : PChar;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
       Procedure BeforeDestruction; Override;
 
       Function Link : TFslResourceStream;
@@ -216,8 +216,8 @@ Type
       Function HandleClass : TGraphicClass; Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslVCLGraphic;
       Function Clone : TFslVCLGraphic;
@@ -432,7 +432,7 @@ Type
 
       Procedure Change; Overload; Virtual;
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
 
@@ -529,8 +529,8 @@ Type
       Function CreateHandle : TFslGraphicHandle; Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslBrush;
       Function Clone : TFslBrush;
@@ -609,7 +609,7 @@ Type
       Function CreateHandle : TFslGraphicHandle; Override;
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Link : TFslFont;
       Function Clone : TFslFont;

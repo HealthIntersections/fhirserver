@@ -145,7 +145,7 @@ type
      FThis : TFHIRObject;
     procedure SetTotal(const Value: TFHIRSelectionList);
   public
-    Constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
+    constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
     destructor Destroy; override;
     function Link : TFHIRPathExecutionContext; overload;
     property appInfo : TFslObject read FappInfo;

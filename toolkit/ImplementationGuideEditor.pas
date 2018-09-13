@@ -208,7 +208,7 @@ type
     // pandocfolder,
     tempfolder: string;
     procedure ConcatenateFiles(const InFileNames: array of string; const OutFileName: string);
-    Destructor Destroy; override;
+    destructor Destroy; override;
     procedure load; override;
     procedure commit; override;
     procedure cancel; override;

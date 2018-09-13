@@ -99,8 +99,8 @@ Type
     Procedure EncodeReleaseRequest(sPath : string; oReleaseRequest : TDicomReleaseRequestPDU);
     Procedure EncodeReleaseResponse(sPath : string; oReleaseResponse : TDicomReleaseResponsePDU);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure Execute(sPath : string; oInstance : TDicomInstance); Overload;
     Procedure Execute(sPath : string; oData : TDicomObject); Overload;

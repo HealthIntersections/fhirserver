@@ -73,16 +73,16 @@ type
     // Given a name of a class and its filename, perform a sanity check
     // to see if the fully qualified classname is consistent with this
     // filename classpath-wise.
-    function sanityCheck(classname, filename: UTF8String): UTF8String;
+    function sanityCheck(classname, filename: String): String;
     // Performs similar sanity check on a .java file.
-    function SanityCheckSource(filename: UTF8String): UTF8String;
-    procedure addDir(dir: UTF8String);
-    procedure addPath(path: UTF8String);
+    function SanityCheckSource(filename: String): String;
+    procedure addDir(dir: String);
+    procedure addPath(path: String);
   public
     // creates an instance based on a string.
     constructor Create;
     destructor Destroy; override;
-    function FullPath: UTF8String;
+    function FullPath: String;
 
     class function getDefault: TClassPath;
     class function getBootPath: TClassPath;
@@ -95,8 +95,8 @@ type
     FJava11: Boolean;
     FHotspot: Boolean;
     FMS: Boolean;
-    FJavaHome: UTF8String;
-    FRuntimeLib: UTF8String;
+    FJavaHome: String;
+    FRuntimeLib: String;
     DLLHandle: THandle;
     vmargs: JDK1_1InitArgs;
     vmargs2: JavaVMInitArgs;
@@ -113,9 +113,9 @@ type
     function FindJava11: Boolean;
     function FindJava12: Boolean;
     function FindMSJava: Boolean;
-    function CheckJavaRegistryKey(key: UTF8String): Boolean;
-    function GetClasspath: UTF8String;
-    procedure setClasspath(S: UTF8String);
+    function CheckJavaRegistryKey(key: String): Boolean;
+    function GetClasspath: String;
+    procedure setClasspath(S: String);
     procedure SetNativeStackSize(Size: Integer);
     procedure SetJavaStackSize(Size: Integer);
     procedure setMinHeapSize(Size: Integer);
@@ -136,20 +136,20 @@ type
     procedure InitJava2;
   public
     // processes a command-line option
-    procedure processCommandLineOption(S: UTF8String);
+    procedure processCommandLineOption(S: String);
     // processes a bunch of command line options passed in a container.
     procedure processCommandLine(Options: TStrings);
-    procedure addProperty(S: UTF8String);
-    function sanityCheck(classname, filename: UTF8String): UTF8String;
-    function SanityCheckSource(filename: UTF8String): UTF8String;
-    procedure addToClasspath(filename: UTF8String);
+    procedure addProperty(S: String);
+    function sanityCheck(classname, filename: String): String;
+    function SanityCheckSource(filename: String): String;
+    procedure addToClasspath(filename: String);
     function GetVM: TJavaVM; // Instantiates the JVM
-    procedure CallMain(const classname: UTF8String; args: TStrings);
+    procedure CallMain(const classname: String; args: TStrings);
     procedure CallExit(val: Integer);
     procedure Wait;
-    property RuntimeLib: UTF8String read FRuntimeLib;
-    property JavaHome: UTF8String read FJavaHome;
-    property Classpath: UTF8String read GetClasspath write setClasspath;
+    property RuntimeLib: String read FRuntimeLib;
+    property JavaHome: String read FJavaHome;
+    property Classpath: String read GetClasspath write setClasspath;
     property IsJava11: Boolean read FJava11;
     property IsMS: Boolean read FMS;
     property Hotspot: Boolean read FHotspot write FHotspot;
@@ -176,14 +176,14 @@ type
     class function getDefault: TJavaRuntime;
     class procedure SetJava11(Java11: Boolean);
     class procedure SetMSJava(MSJava: Boolean);
-    class procedure setAppClassPath(path: UTF8String);
-    class procedure setBasePath(path: UTF8String);
+    class procedure setAppClassPath(path: String);
+    class procedure setBasePath(path: String);
     class procedure setNeedTools(B: Boolean); // a bit of a hack for use by SmartJC.
     class procedure SetClassicVM(B: Boolean);
 
   end;
 
-function getPackageName(filename: UTF8String): UTF8String;
+function getPackageName(filename: String): String;
 
 implementation
 
@@ -193,7 +193,7 @@ var
 {$IFDEF FPC}
   SystemDirBuf: Array [0 .. MAX_PATH] of UTF8char;
 {$ELSE}
-  SystemDirBuf: Array [0 .. MAX_PATH] of UTF8char;
+  SystemDirBuf: Array [0 .. MAX_PATH] of WideChar;
 {$ENDIF}
   NeedsJDK: Boolean; // // True, if we need the sun.* classes for compilation, etc.
   Prefers11: Boolean; // Do we look for java 1.1 first?
@@ -204,8 +204,8 @@ var
   GetCreatedVMs: TGetCreatedVMs;
   instanceCount: Integer;
   searchrec: TSearchRec;
-  AppClassPath: UTF8String; // classpath specified
-  BasePath: UTF8String; // The class considered to be the base path, found from snooping in classfile.
+  AppClassPath: String; // classpath specified
+  BasePath: String; // The class considered to be the base path, found from snooping in classfile.
   GClassPath: TClassPath; // the singleton TClasspath instance.
   GBootPath: TClassPath; // the TClasspath that represents the boot path
   DefaultRuntime: TJavaRuntime; // singleton JavaRuntime instance.
@@ -240,13 +240,13 @@ const
   JDK_13_KEY = '\SOFTWARE\JavaSoft\Java Development Kit\1.3';
   JDK_14_KEY = '\SOFTWARE\JavaSoft\Java Development Kit\1.4';
 
-  JRE11Keys: array [1 .. 3] of UTF8String = (PLUGIN_11_KEY, IBM_JRE_11_KEY, JRE_11_KEY);
-  JDK11Keys: array [1 .. 4] of UTF8String = (IBM_JDK_118_KEY, IBM_JDK_117_KEY, JDK_11_KEY, JB_KEY);
-  JRE12Keys: array [1 .. 10] of UTF8String = (JRE_14_KEY, PLUGIN_14_KEY, JRE_15_KEY, PLUGIN_15_KEY, JRE_16_KEY, JRE_17_KEY, JRE_13_KEY, PLUGIN_13_KEY,
+  JRE11Keys: array [1 .. 3] of String = (PLUGIN_11_KEY, IBM_JRE_11_KEY, JRE_11_KEY);
+  JDK11Keys: array [1 .. 4] of String = (IBM_JDK_118_KEY, IBM_JDK_117_KEY, JDK_11_KEY, JB_KEY);
+  JRE12Keys: array [1 .. 10] of String = (JRE_14_KEY, PLUGIN_14_KEY, JRE_15_KEY, PLUGIN_15_KEY, JRE_16_KEY, JRE_17_KEY, JRE_13_KEY, PLUGIN_13_KEY,
     JRE_12_KEY, PLUGIN_12_KEY);
-  BootClasspath: UTF8String = '';
+  BootClasspath: String = '';
 
-procedure StripComments(var Line: UTF8String; var InComment: Boolean); forward;
+procedure StripComments(var Line: String; var InComment: Boolean); forward;
 
 procedure TJavaRuntime.Initialize;
 begin
@@ -307,7 +307,7 @@ end;
 procedure TJavaRuntime.InitJava11;
 begin
   vmargs.properties := convertStrings(FProperties);
-  vmargs.Classpath := PUTF8char(Classpath);
+  vmargs.Classpath := FHIR.Java.Strings.strNew(Classpath);
   vmargs.Verbose := FVerbose;
   vmargs.DisableAsyncGC := FDisableAsyncGC;
   vmargs.EnableVerboseGC := FVerboseGC;
@@ -335,7 +335,7 @@ end;
 procedure TJavaRuntime.InitJava2;
 var
   i: Integer;
-  S: UTF8String;
+  S: String;
   PVO: PJavaVMOption;
 begin
   // Just handle classpath and properties for now.
@@ -367,9 +367,9 @@ begin
     PVO := FPVMOption;
     S := '-Djava.class.path=' + Classpath;
   {$IFDEF FPC}
-    PVMOption^.optionString := StrNew(PUTF8char(S));
+    !PVMOption^.optionString := StrNew(PUTF8char(S));
   {$ELSE}
-    FPVMOption^.optionString := FHIR.Java.Strings.StrNew(PUTF8char(S));
+    FPVMOption^.optionString := FHIR.Java.Strings.StrNew(S);
   {$ENDIF}
     FPVMOption^.extraInfo := Nil;
     inc(PVO);
@@ -381,7 +381,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char(S));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char(S));
+      PVO^.optionString := FHIR.Java.Strings.StrNew(S);
   {$ENDIF}
       inc(PVO);
     end;
@@ -396,9 +396,9 @@ begin
       if FVerboseGC <> 0 then
         S := S + 'gc';
   {$IFDEF FPC}
-      PVO^.optionString := StrNew(PUTF8char(S));
+      !PVO^.optionString := StrNew(PUTF8char(S));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char(S));
+      PVO^.optionString := FHIR.Java.Strings.StrNew(S);
   {$ENDIF}
       inc(PVO);
     end;
@@ -409,7 +409,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('-Xms' + inttostr(FMinHeapSize)));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('-Xms' + inttostr(FMinHeapSize)));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('-Xms' + inttostr(FMinHeapSize));
   {$ENDIF}
       inc(PVO);
     end;
@@ -419,7 +419,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('-Xmx' + inttostr(FMaxHeapSize)));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('-Xmx' + inttostr(FMaxHeapSize)));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('-Xmx' + inttostr(FMaxHeapSize));
   {$ENDIF}
       inc(PVO);
     end;
@@ -429,7 +429,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('-Xnoclassgc'));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('-Xnoclassgc'));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('-Xnoclassgc');
   {$ENDIF}
       inc(PVO);
     end;
@@ -439,7 +439,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('-Xbootclasspath/p:' + BootClasspath));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('-Xbootclasspath/p:' + BootClasspath));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('-Xbootclasspath/p:' + BootClasspath);
   {$ENDIF}
       inc(PVO);
     end;
@@ -449,7 +449,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('exit'));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('exit'));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('exit');
   {$ENDIF}
       PVO^.extraInfo := @FPrintf;
       inc(PVO);
@@ -460,7 +460,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('exit'));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('exit'));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('exit');
   {$ENDIF}
       PVO^.extraInfo := @FExitProc;
       inc(PVO);
@@ -471,7 +471,7 @@ begin
   {$IFDEF FPC}
       PVO^.optionString := StrNew(PUTF8char('abort'));
   {$ELSE}
-      PVO^.optionString := FHIR.Java.Strings.StrNew(PUTF8char('abort'));
+      PVO^.optionString := FHIR.Java.Strings.StrNew('abort');
   {$ENDIF}
       PVO^.extraInfo := @FAbortProc;
     end;
@@ -487,7 +487,7 @@ end;
 
 // convenience wrappers.
 
-procedure TJavaRuntime.CallMain(const classname: UTF8String; args: TStrings);
+procedure TJavaRuntime.CallMain(const classname: String; args: TStrings);
 begin
   TJavaVM.CallMain(classname, args);
 end;
@@ -508,11 +508,11 @@ begin
   TJavaVM.CallExit(val);
 end;
 
-procedure TJavaRuntime.processCommandLineOption(S: UTF8String);
+procedure TJavaRuntime.processCommandLineOption(S: String);
 var
   // S:String;
   L: String;
-  function extractSize(S: UTF8String): Integer;
+  function extractSize(S: String): Integer;
   begin
     if S[length(S)] = 'k' then
       result := $400
@@ -624,13 +624,13 @@ begin
   NeedsJDK := True;
 end;
 
-procedure TJavaRuntime.addToClasspath(filename: UTF8String);
+procedure TJavaRuntime.addToClasspath(filename: String);
 begin
   FClasspath.addDir(filename);
 end;
 
 
-function TJavaRuntime.GetClasspath: UTF8String;
+function TJavaRuntime.GetClasspath: String;
 var
   cpath: TClassPath;
   Reg: TRegistry;
@@ -655,7 +655,7 @@ begin
   result := cpath.FullPath;
 end;
 
-procedure TJavaRuntime.setClasspath(S: UTF8String);
+procedure TJavaRuntime.setClasspath(S: String);
 begin
   if FClasspath <> nil then
     FClasspath.Free;
@@ -713,7 +713,7 @@ end;
 
 function TJavaRuntime.FindMSJava: Boolean;
 var
-  DLLPath: UTF8String;
+  DLLPath: String;
 begin
   result := false;
 {$IFDEF FPC}
@@ -793,10 +793,10 @@ end;
   Returns true on success and sets the FJavaLib and FJavaHome
   fields }
 
-function TJavaRuntime.CheckJavaRegistryKey(key: UTF8String): Boolean;
+function TJavaRuntime.CheckJavaRegistryKey(key: String): Boolean;
 var
   Reg: TRegistry;
-  S, HotspotLib: UTF8String;
+  S, HotspotLib: String;
 begin
   result := false;
   Reg := TRegistry.Create;
@@ -937,22 +937,22 @@ begin
   FPrintf := printproc;
 end;
 
-function TJavaRuntime.sanityCheck(classname, filename: UTF8String): UTF8String;
+function TJavaRuntime.sanityCheck(classname, filename: String): String;
 begin
   result := FClasspath.sanityCheck(classname, filename);
 end;
 
-function TJavaRuntime.SanityCheckSource(filename: UTF8String): UTF8String;
+function TJavaRuntime.SanityCheckSource(filename: String): String;
 begin
   result := FClasspath.SanityCheckSource(filename);
 end;
 
-procedure TJavaRuntime.addProperty(S: UTF8String);
+procedure TJavaRuntime.addProperty(S: String);
 begin
   FProperties.add(S);
 end;
 
-procedure addAllArchives(C: TClassPath; directory, pattern: UTF8String);
+procedure addAllArchives(C: TClassPath; directory, pattern: String);
 begin
   if FindFirst(directory + pattern, faAnyFile, searchrec) = 0 then
   begin
@@ -965,7 +965,7 @@ end;
 
 class function TClassPath.getDefault: TClassPath;
 var
-  Home, libjars, ThirdPartyDir: UTF8String;
+  Home, libjars, ThirdPartyDir: String;
   Runtime: TJavaRuntime;
   searchrec: TSearchRec;
 begin
@@ -1009,7 +1009,7 @@ end;
 
 class function TClassPath.getBootPath: TClassPath;
 var
-  Home, ThirdPartyDir: UTF8String;
+  Home, ThirdPartyDir: String;
   searchrec: TSearchRec;
 begin
   if GBootpath = Nil then
@@ -1058,7 +1058,7 @@ begin
   inherited;
 end;
 
-procedure TClassPath.addPath(path: UTF8String);
+procedure TClassPath.addPath(path: String);
 var
   Len: Integer;
   Dirs: TStringList;
@@ -1078,9 +1078,9 @@ begin
   Dirs.Free;
 end;
 
-procedure TClassPath.addDir(dir: UTF8String);
+procedure TClassPath.addDir(dir: String);
 var
-  S: UTF8String;
+  S: String;
   i: Integer;
 begin
   S := ExpandFileName(dir);
@@ -1092,7 +1092,7 @@ begin
   add(S);
 end;
 
-function TClassPath.FullPath: UTF8String;
+function TClassPath.FullPath: String;
 var
   i: Integer;
 begin
@@ -1108,12 +1108,12 @@ end;
 
 // Sets the part of the classpath that is specific to the app.
 
-class procedure TJavaRuntime.setAppClassPath(path: UTF8String);
+class procedure TJavaRuntime.setAppClassPath(path: String);
 begin
   AppClassPath := path;
 end;
 
-procedure addAllFilesToPath(directory, pattern: UTF8String; var path: UTF8String);
+procedure addAllFilesToPath(directory, pattern: String; var path: String);
 begin
   if FindFirst(directory + pattern, faAnyFile, searchrec) = 0 then
   begin
@@ -1124,9 +1124,9 @@ begin
   FindClose(searchrec);
 end;
 
-class procedure TJavaRuntime.setBasePath(path: UTF8String);
+class procedure TJavaRuntime.setBasePath(path: String);
 var
-  dir: UTF8String;
+  dir: String;
 begin
   BasePath := ExpandFileName(path);
   dir := ExtractFilePath(ExpandFileName(BasePath));
@@ -1146,9 +1146,9 @@ begin
     GClassPath.addPath(BasePath);
 end;
 
-function TClassPath.sanityCheck(classname, filename: UTF8String): UTF8String;
+function TClassPath.sanityCheck(classname, filename: String): String;
 var
-  fullFile, pathName, package, BasePath, temp: UTF8String;
+  fullFile, pathName, package, BasePath, temp: String;
   i: Integer;
   Oops: Boolean;
 begin
@@ -1184,9 +1184,9 @@ begin
   result := BasePath;
 end;
 
-function TClassPath.SanityCheckSource(filename: UTF8String): UTF8String;
+function TClassPath.SanityCheckSource(filename: String): String;
 var
-  package, classname: UTF8String;
+  package, classname: String;
 begin
   Package := getPackageName(filename);
   classname := Package + ExtractFileName(filename);
@@ -1197,11 +1197,11 @@ end;
 // Get the package name inside a source file.
 // This code is a bit messy. Maybe I'll clean it up later.
 
-function getPackageName(filename: UTF8String): UTF8String;
+function getPackageName(filename: String): String;
 var
   T: TextFile;
   InComment: Boolean;
-  Line: UTF8String;
+  Line: String;
   i: Integer;
 begin
   AssignFile(T, filename);
@@ -1230,9 +1230,9 @@ begin
     result := result + '.';
 end;
 
-procedure StripComments(var Line: UTF8String; var InComment: Boolean);
+procedure StripComments(var Line: String; var InComment: Boolean);
 var
-  S: UTF8String;
+  S: String;
   i: Integer;
 begin
   S := '';

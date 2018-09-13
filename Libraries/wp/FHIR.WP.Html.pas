@@ -131,8 +131,8 @@ Type
       procedure AddParaPiece(oDocument: TWPWorkingDocument);
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
   //  procedure Read(oStyles : TWPStyles);
 
@@ -232,8 +232,8 @@ Type
     Function CanSaveImage : Boolean; Overload; Virtual;
     Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Overload; Virtual;
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Property Title : String Read FTitle Write FTitle;
     Property NoHTMLBody : Boolean Read FNoHTMLBody Write FNoHTMLBody;

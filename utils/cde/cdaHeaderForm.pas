@@ -85,7 +85,7 @@ type
     procedure setcda(const value: TcdaClinicalDocument);
   public
     { Public declarations }
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     property CDADocument : TcdaClinicalDocument read cda write setcda;
   end;

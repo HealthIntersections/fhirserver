@@ -106,7 +106,7 @@ Uses
     Function GetUndoCursors: TFslStringIntegerMatch;
     Function GetUndoText: String;
   Public
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Function Link : TWPOperation;
 
     Procedure Assign(oSource : TFslObject); Override;
@@ -174,7 +174,7 @@ Type
       FStop : Integer;
       Procedure Update(iStart, iStop : Integer);
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Function Valid : Boolean;
       Procedure Clear;
@@ -293,8 +293,8 @@ Type
       Procedure MarkTableStructureForUpdate(Const iIndex: Integer); Overload;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPOperator; Overload;
 
@@ -565,7 +565,7 @@ Type
       Function GetDocument : TWPWorkingDocument;
       Procedure SetDocument(Const Value : TWPWorkingDocument);
     Public
-      Destructor Destroy; Override;
+      destructor Destroy; Override;
 
       Procedure Open(iLimit : Integer); Overload; Virtual;
       Procedure Next; Overload; Virtual;
@@ -603,8 +603,8 @@ Type
 
       Function Search(iLimit : Integer; Out iStart, iEnd : Integer) : Boolean; Overload;
     Public
-      Constructor Create(oDocument : TWPWorkingDocument; oSelection : TWPSelection; oSearchDetails : TWPSearchDetails); Overload; Virtual;
-      Destructor Destroy; Override;
+      constructor Create(oDocument : TWPWorkingDocument; oSelection : TWPSelection; oSearchDetails : TWPSearchDetails); Overload; Virtual;
+      destructor Destroy; Override;
 
       Function Search(Out iStart, iEnd : Integer) : Boolean; Overload; Virtual;
 
@@ -782,8 +782,8 @@ Type
       Function GetWorkingWidth : Integer;  Virtual;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TWPRange; Overload;
       Procedure Consume; Overload; Virtual;
@@ -1063,8 +1063,8 @@ Type
     Private
       FList : TWPRangeList;
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure Clear; Overload; Virtual;
       Procedure Add(oRange : TWPRange); Overload; Virtual;
@@ -1142,7 +1142,7 @@ Type
     function GetActionType: TWPMacroActionType; Override;
     Procedure Save(oText : TFslTextFormatter); Override;
   public
-    Constructor Create(iKey: Word; aShift: TWPShiftStates); Overload;
+    constructor Create(iKey: Word; aShift: TWPShiftStates); Overload;
 
     Property Key: Word read FKey write FKey;
     Property Shift: TWPShiftStates read FShift write FShift;
@@ -1168,8 +1168,8 @@ Type
     procedure SetState(const Value: TWPMacroState);
     procedure SetLastError(const Value: Boolean);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
 
     Function Recording : Boolean;
 
@@ -1199,7 +1199,7 @@ type
     procedure DblClick; Override;
   Public
 
-    Destructor Destroy; Override;
+    destructor Destroy; Override;
     Property List : TWPCompletionItems Read FList Write SetList;
     Property OnInsert : TWPCodeCompletionListBoxInsertCompletionItemEvent read FOnInsert Write FOnInsert;
   End;

@@ -121,7 +121,7 @@ type
     procedure loadTx;
 
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
 
     procedure SettingsChanged; override;
     procedure load; override;

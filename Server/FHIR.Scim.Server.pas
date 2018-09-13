@@ -90,8 +90,8 @@ Type
     procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
-    Constructor Create(db : TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
-    Destructor Destroy; override;
+    constructor Create(db : TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
+    destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
     Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); override;

@@ -136,7 +136,7 @@ Type
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
-    Constructor create(Data : TExampleServerData; lang : String);
+    constructor Create(Data : TExampleServerData; lang : String);
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -152,8 +152,8 @@ Type
   protected
     function GetTotalResourceCount: integer; override;
   public
-    Constructor create(Data : TExampleServerData);
-    Destructor Destroy; override;
+    constructor Create(Data : TExampleServerData);
+    destructor Destroy; override;
 
     // no OAuth Support
 
@@ -208,8 +208,8 @@ Type
 
     FWebServer : TFhirWebServer;
   public
-    Constructor Create;
-    Destructor Destroy; Override;
+    constructor Create;
+    destructor Destroy; Override;
 
     Property Port: word read FPort write FPort;
     Property IPClient : String read FIPClient write FIPCLient;

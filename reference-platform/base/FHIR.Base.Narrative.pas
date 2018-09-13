@@ -40,7 +40,7 @@ type
   private
     FDescription: String;
   public
-    constructor create(context : TFHIRWorkerContextV); virtual;
+    constructor Create(context : TFHIRWorkerContextV); virtual;
     procedure generate(res : TFHIRResourceV); overload; virtual; abstract;
 
     property description : String read FDescription write FDescription;

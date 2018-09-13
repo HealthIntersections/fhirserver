@@ -75,7 +75,7 @@ Type
       Procedure SetMatch(Const sKey, sValue: String);
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Property Matches[Const sKey : String] : String Read GetMatch Write SetMatch; Default;
   End;
@@ -85,8 +85,8 @@ Type
       FValues : TFslCSSValues;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslCSSFragment;
       Function Clone : TFslCSSFragment;
@@ -142,7 +142,7 @@ Type
       Procedure SetAttribute(Const sKey, sValue: String);
 
     Public
-      Constructor Create; Override;
+      constructor Create; Override;
 
       Property Attribute[Const sKey : String] : String Read GetAttribute Write SetAttribute; Default;
   End;
@@ -230,8 +230,8 @@ Type
     Procedure SetClasses(Const oValue: TFslCSSClasses);
     Procedure SetStyle(Const oValue: TFslCSSFragment);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLItem;
     Function Clone : TFslHTMLItem;
     Procedure Assign(oSource : TFslObject); Override;
@@ -352,8 +352,8 @@ Type
     FItems: TFslHTMLItems;
     Procedure SetItems(Const oValue: TFslHTMLItems);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLSection;
     Function Clone : TFslHTMLSection;
     Function ElementType : TFslHTMLElementType; Override;
@@ -695,8 +695,8 @@ Type
     FList: TFslHTMLListItems;
     Procedure SetList(Const oValue: TFslHTMLListItems);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLListElement;
     Function Clone : TFslHTMLListElement;
     Function ElementType : TFslHTMLElementType; Override;
@@ -740,8 +740,8 @@ Type
     FTerm: TFslHTMLItem;
     Procedure SetTerm(Const oValue: TFslHTMLItem);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLDefinitionListItem;
     Function Clone : TFslHTMLDefinitionListItem;
     Function ElementType : TFslHTMLElementType; Override;
@@ -765,8 +765,8 @@ Type
     FListItems: TFslHTMLDefinitionListItems;
     Procedure SetListItems(Const oValue: TFslHTMLDefinitionListItems);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLDefinitionList;
     Function Clone : TFslHTMLDefinitionList;
     Function ElementType : TFslHTMLElementType; Override;
@@ -824,8 +824,8 @@ Type
     FCells: TFslHTMLTableCells;
     Procedure SetCells(Const oValue: TFslHTMLTableCells);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLTableRow;
     Function Clone : TFslHTMLTableRow;
     Function ElementType : TFslHTMLElementType; Override;
@@ -853,8 +853,8 @@ Type
     FSectionType: TFslHTMLTableSectionType;
     Procedure SetRows(Const oValue: TFslHTMLTableRows);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLTableSection;
     Function Clone : TFslHTMLTableSection;
     Function ElementType : TFslHTMLElementType; Override;
@@ -903,8 +903,8 @@ Type
     Procedure SetRows(Const oValue: TFslHTMLTableRows);
     Procedure SetSections(Const oValue: TFslHTMLTableSections);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLTable;
     Function Clone : TFslHTMLTable;
     Function ElementType : TFslHTMLElementType; Override;
@@ -1016,8 +1016,8 @@ Type
     FOptions: TFslHTMLOptionItems;
     Procedure SetOptions(Const oValue: TFslHTMLOptionItems);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLOptGroup;
     Function Clone : TFslHTMLOptGroup;
     Function ElementType : TFslHTMLElementType; Override;
@@ -1050,8 +1050,8 @@ Type
     Procedure SetAllOptions(Const oValue: TFslHTMLOptionItems);
     Procedure SetOptions(Const oValue: TFslHTMLOptionItems);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLSelect;
     Function Clone : TFslHTMLSelect;
     Function ElementType : TFslHTMLElementType; Override;
@@ -1153,8 +1153,8 @@ Type
     Procedure SetMeta(Const oValue: TFslHTMLMetaEntries); // parser - collapse link and profile someday
     Procedure SetStyles(Const oValue: TFslCSSStyles);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHTMLHead;
     Function Clone : TFslHTMLHead;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1177,8 +1177,8 @@ Type
     Procedure SetHead(Const oValue: TFslHTMLHead);
     Procedure SetStyles(Const oValue: TFslCSSStyles);
   Public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
+    constructor Create; Override;
+    destructor Destroy; Override;
     Function Link : TFslHtmlDocument;
     Function Clone : TFslHtmlDocument;
     Procedure Assign(oSource : TFslObject); Override;
@@ -1297,8 +1297,8 @@ Type
       Function PeekToken : TFslHTMLToken; 
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Procedure ConsumeDocument(oDocument : TFslHTMLDocument); Overload; Virtual;
       Procedure ConsumeDocumentHead(oHead : TFslHTMLHead); Overload; Virtual;
@@ -1354,8 +1354,8 @@ Type
       FProduceXHTML : Boolean;
 
     Public
-      Procedure Read(Var Buffer; iCount : Cardinal); Override;
-      Procedure Write(Const Buffer; iCount : Cardinal); Override;
+      Procedure Read(Var Buffer; iCount : Integer); Override;
+      Procedure Write(Const Buffer; iCount : Integer); Override;
 
       Property ProduceXHTML : Boolean Read FProduceXHTML Write FProduceXHTML;
   End;
@@ -1374,8 +1374,8 @@ Type
       Procedure SetStream(oStream : TFslStream); Override;
 
     Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
+      constructor Create; Override;
+      destructor Destroy; Override;
 
       Function Link : TFslHTMLFormatter;
       Function Clone : TFslHTMLFormatter;
@@ -5256,7 +5256,7 @@ End;
 
 
 
-Procedure TFslHTMLAdapter.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslHTMLAdapter.Read(Var Buffer; iCount: Integer);
 Var
   iLoop : Cardinal;
   pBuffer : PChar;
@@ -5312,7 +5312,7 @@ Begin
 End;
 
 
-Procedure TFslHTMLAdapter.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslHTMLAdapter.Write(Const Buffer; iCount: Integer);
 Var
   pBuffer, pStart : PChar;
   iLoop           : Integer;
