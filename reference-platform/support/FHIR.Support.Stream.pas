@@ -1462,6 +1462,38 @@ type
   end;
 
 
+var
+  Eolns : TBytes;
+
+Type
+  TFslByteExtractor = Class(TFslExtractor)
+  Private
+    FCache : AnsiString;
+    FBuilder : TFslBytesBuilder;
+    Function CacheLength : Integer;
+  Public
+    Constructor Create; Overload; Override;
+    Destructor Destroy; Override;
+
+    Procedure Clear; Override;
+
+    Function More : Boolean; Override;
+
+    Function ConsumeByte : TByte; Overload; Virtual;
+    Function ConsumeByteCount(Const iByteCount : Integer) : TBytes;
+    Function ConsumeWhileByte(Const iToken : TByte) : TBytes;
+    Function ConsumeWhileBytes(Const iTokens : TBytes) : TBytes;
+    Function ConsumeUntilByte(Const iToken : TByte) : TBytes;
+    Function ConsumeUntilBytes(Const iTokens : TBytes) : TBytes;
+    Function ConsumeLine : TBytes;
+    Function ConsumeRestStream : TBytes;
+
+    Function NextByte : TByte;
+
+    Function StreamPosition : Int64;
+  End;
+
+
 Implementation
 
 Function TFslStream.Link : TFslStream;
@@ -2196,7 +2228,7 @@ Begin
 
     FData := Value;
     FOwned := False;
-  End;  
+  End;
 End;  
 
 
@@ -6860,5 +6892,142 @@ begin
 end;
 
 
+
+Constructor TFslByteExtractor.Create;
+Begin
+  Inherited;
+  FBuilder := TFslBytesBuilder.Create;
+End;
+
+Destructor TFslByteExtractor.Destroy;
+Begin
+  FBuilder.Free;
+  Inherited;
+End;
+
+
+Function TFslByteExtractor.ConsumeLine : TBytes;
+Begin
+  Result := ConsumeUntilBytes(Eolns);
+
+  ConsumeWhileBytes(Eolns);
+End;
+
+
+Procedure TFslByteExtractor.Clear;
+Begin
+  Inherited;
+
+  FCache := '';
+End;
+
+
+
+Function TFslByteExtractor.NextByte : TByte;
+Begin
+  If Length(FCache) = 0 Then
+  Begin
+    Stream.Read(Result, 1);
+    FCache := AnsiChar(Result);
+  End
+  Else
+  Begin
+    Result := TByte(FCache[1]);
+  End;
+End;
+
+
+Function TFslByteExtractor.ConsumeByte : TByte;
+Begin
+  Result := NextByte;
+
+  Delete(FCache, 1, 1);
+End;
+
+
+Function TFslByteExtractor.ConsumeByteCount(Const iByteCount : Integer) : TBytes;
+Var
+  iLoop : Integer;
+Begin
+  SetLength(Result, iByteCount);
+
+  For iLoop := 1 To iByteCount Do
+    Result[iLoop] := ConsumeByte;
+End;
+
+
+Function TFslByteExtractor.ConsumeUntilBytes(Const iTokens: TBytes): TBytes;
+Begin
+  FBuilder.Clear;
+  While More And Not BytesContains(iTokens, NextByte) Do
+    FBuilder.Append(ConsumeByte);
+  Result := FBuilder.AsBytes;
+End;
+
+
+Function TFslByteExtractor.ConsumeUntilByte(Const iToken : TByte) : TBytes;
+Begin
+  FBuilder.Clear;
+  While More And (NextByte <> iToken) Do
+    FBuilder.Append(ConsumeByte);
+  Result := FBuilder.AsBytes;
+End;
+
+
+Function TFslByteExtractor.ConsumeRestStream : TBytes;
+Begin
+  FBuilder.Clear;
+  While More Do
+    FBuilder.Append(ConsumeByte);
+  Result := FBuilder.AsBytes;
+End;
+
+
+Function TFslByteExtractor.ConsumeWhileByte(Const iToken : TByte) : TBytes;
+Begin
+  FBuilder.Clear;
+  While More And (NextByte = iToken) Do
+    FBuilder.Append(ConsumeByte);
+  Result := FBuilder.AsBytes;
+End;
+
+
+Function TFslByteExtractor.ConsumeWhileBytes(Const iTokens : TBytes) : TBytes;
+Begin
+  FBuilder.Clear;
+  While More And BytesContains(iTokens, NextByte) Do
+    FBuilder.Append(ConsumeByte);
+  Result := FBuilder.AsBytes;
+End;
+
+
+
+Function TFslByteExtractor.CacheLength: Integer;
+Begin
+  Result := Length(FCache);
+End;
+
+
+Function TFslByteExtractor.StreamPosition: Int64;
+Begin
+  Assert(Invariants('StreamPosition', Stream, TFslAccessStream, 'Stream'));
+
+  Result := TFslAccessStream(Stream).Position - CacheLength;
+End;
+
+
+Function TFslByteExtractor.More : Boolean;
+Begin
+  Result := Inherited More Or (Length(FCache) > 0);
+End;
+
+
+Procedure Init;
+Begin
+  Eolns := Bytes([10, 11, 13]);
+End;
+
+Initialization
+  Init;
 End.
 

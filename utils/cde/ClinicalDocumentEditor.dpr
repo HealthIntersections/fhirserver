@@ -53,7 +53,6 @@ uses
   FHIR.WP.Dragon in '..\..\Libraries\wp\FHIR.WP.Dragon.pas',
   FHIR.WP.Engine in '..\..\Libraries\wp\FHIR.WP.Engine.pas',
   FHIR.WP.FieldDefiners in '..\..\Libraries\wp\FHIR.WP.FieldDefiners.pas',
-  FHIR.WP.Format in '..\..\Libraries\wp\FHIR.WP.Format.pas',
   FHIR.WP.Handler in '..\..\Libraries\wp\FHIR.WP.Handler.pas',
   FHIR.WP.Html in '..\..\Libraries\wp\FHIR.WP.Html.pas',
   FHIR.WP.Icons in '..\..\Libraries\wp\FHIR.WP.Icons.pas',
@@ -103,7 +102,13 @@ uses
   IIEditor in 'IIEditor.pas' {IIEditForm},
   OIDCache in 'OIDCache.pas',
   FHIR.Support.Fpc in '..\..\reference-platform\support\FHIR.Support.Fpc.pas',
-  FHIR.Support.Osx in '..\..\reference-platform\support\FHIR.Support.Osx.pas';
+  FHIR.Support.Osx in '..\..\reference-platform\support\FHIR.Support.Osx.pas',
+  FHIR.v2.Base in '..\..\Libraries\v2\FHIR.v2.Base.pas',
+  FHIR.v2.Dictionary in '..\..\Libraries\v2\FHIR.v2.Dictionary.pas',
+  FHIR.V2.Objects in '..\..\Libraries\v2\FHIR.V2.Objects.pas',
+  FHIR.v2.Publish in '..\..\Libraries\v2\FHIR.v2.Publish.pas',
+  FHIR.WP.Format in '..\..\Libraries\wp\FHIR.WP.Format.pas',
+  FHIR.v2.Conformance in '..\..\Libraries\v2\FHIR.v2.Conformance.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

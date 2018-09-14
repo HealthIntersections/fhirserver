@@ -1654,6 +1654,67 @@ Type
 
 
 
+Type
+  TFslTreeList = Class;
+
+  TFslTreeListClass = Class Of TFslTreeList;
+
+  TFslTreeClass = Class Of TFslTree;
+
+  TFslTree = Class(TFslObject)
+    Private
+      FParent : TFslTree;
+      FChildren : TFslTreeList;
+
+      Function GetParent: TFslTree;
+      Procedure SetParent(Const Value: TFslTree);
+
+      Function GetChildren: TFslTreeList;
+      Procedure SetChildren(Const Value: TFslTreeList);
+
+    Protected
+      Function ChildrenClass : TFslTreeListClass; Virtual;
+      Function ChildrenNew : TFslTreeList; Virtual;
+      Function ParentClass : TFslTreeClass; Virtual;
+
+      Procedure Reparent; Virtual;
+
+    Public
+      Constructor Create; Override;
+      Destructor Destroy; Override;
+
+      Function ClassType : TFslTreeClass;
+      Function Clone : TFslTree;
+      Function Link : TFslTree;
+
+      Procedure Assign(oObject : TFslObject); Override;
+
+      Function HasParent : Boolean;
+      Function HasChildren : Boolean;
+
+      Property Parent : TFslTree Read GetParent Write SetParent;
+      Property Children : TFslTreeList Read GetChildren Write SetChildren;
+  End;
+
+  TFslTreeList = Class(TFslObjectList)
+    Private
+      FParent : TFslTree;
+
+      Function GetTree(iIndex: Integer): TFslTree;
+
+    Protected
+      Function ItemClass : TFslObjectClass; Override;
+
+      Procedure InternalAfterInclude(iIndex : Integer; oObject : TFslObject); Override;
+      Procedure InternalBeforeExclude(iIndex : Integer; oObject : TFslObject); Override;
+
+      Property Parent : TFslTree Read FParent Write FParent; // the only circumstance when you use this is when you have a node with other sets of children
+
+    Public
+      Property Trees[iIndex : Integer] : TFslTree Read GetTree; Default;
+  End;
+
+
 Implementation
 
 uses
@@ -1755,7 +1816,7 @@ Begin
   Begin 
     If IsPreventDuplicates Then
       RaiseError('Add', StringFormat('Item already exists in list (%d)', [aValue]));
-  End   
+  End
   Else
   Begin 
     If Not IsSorted Then
@@ -1814,7 +1875,7 @@ End;
 Procedure TFslIntegerList.AddAll(oIntegers: TFslIntegerList);
 Var
   iLoop : Integer;
-Begin 
+Begin
   For iLoop := 0 To oIntegers.Count - 1 Do
     Add(oIntegers[iLoop]);
 End;
@@ -1873,7 +1934,7 @@ Begin
   Assert(ValidateIndex('GetItem', iIndex));
 
   Result := Pointer(FIntegerArray^[iIndex]);
-End;  
+End;
 
 
 Procedure TFslIntegerList.SetItem(iIndex : Integer; pValue : Pointer);
@@ -2168,7 +2229,7 @@ Begin
 End;
 
 Procedure TFslObjectClassHashEntry.Assign(oSource: TFslObject);
-Begin 
+Begin
   Inherited;
 
   FData := TFslObjectClassHashEntry(oSource).Data;
@@ -2227,7 +2288,7 @@ End;
 
 
 Procedure TFslObjectClassHashTableIterator.Next;
-Begin 
+Begin
   Inherited;
 
   FInternal.Next;
@@ -2640,7 +2701,7 @@ End;
 Procedure TFslStringObjectMatch.SortedByKey;
 Begin 
   SortedBy(CompareByKey);
-End;  
+End;
 
 
 Procedure TFslStringObjectMatch.SortedByValue;
@@ -2876,7 +2937,7 @@ End;
 Procedure TFslStringMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
   MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslStringMatchItem));
-End;  
+End;
 
 
 Function TFslStringMatch.IndexByKey(Const aKey: TFslStringMatchKey): Integer;
@@ -3053,7 +3114,7 @@ End;
 Function TFslStringMatch.GetValueByKey(Const aKey : TFslStringMatchKey): TFslStringMatchValue;
 Var
   iIndex : Integer;
-Begin 
+Begin
   iIndex := IndexByKey(aKey);
 
   If ExistsByIndex(iIndex) Then
@@ -3938,7 +3999,7 @@ Begin
   Result := -1;
 
   If Not IsAllowDuplicates And Find(aKey, aValue, Result) Then
-  Begin 
+  Begin
     If IsPreventDuplicates Then
       RaiseError('Add', StringFormat('Key already exists in list (%s=%d)', [aKey, aValue]));
   End   
@@ -4587,7 +4648,7 @@ End;
 
 
 Procedure TFslOrdinalSetIterator.SetOrdinalSet(Const Value: TFslOrdinalSet);
-Begin 
+Begin
   FOrdinalSet.Free;
   FOrdinalSet := Value;
 End;  
@@ -4705,7 +4766,7 @@ End;
 
 
 Procedure TFslObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
-Begin 
+Begin
   MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslObjectMatchItem));
 End;  
 
@@ -8237,6 +8298,170 @@ Begin
   Finally
     oStrings.Free;
   End;
+End;
+
+
+
+Constructor TFslTree.Create;
+Begin
+  Inherited;
+
+  FChildren := ChildrenNew;
+
+  Reparent;
+End;
+
+
+Destructor TFslTree.Destroy;
+Begin
+  FChildren.Free;
+
+  Inherited;
+End;
+
+
+Function TFslTree.Clone: TFslTree;
+Begin
+  Result := TFslTree(Inherited Clone);
+End;
+
+
+Function TFslTree.Link: TFslTree;
+Begin
+  Result := TFslTree(Inherited Link);
+End;
+
+
+Function TFslTree.ClassType : TFslTreeClass;
+Begin
+  Result := TFslTreeClass(Inherited ClassType);
+End;
+
+
+Procedure TFslTree.Assign(oObject: TFslObject);
+Begin
+  Inherited;
+
+  FChildren.Assign(TFslTree(oObject).Children);
+
+  Reparent;
+End;
+
+
+Function TFslTree.ParentClass: TFslTreeClass;
+Begin
+  // Cannot be ClassType as may be owned by a different type.
+
+  Result := TFslTree;
+End;
+
+
+Function TFslTree.ChildrenClass: TFslTreeListClass;
+Begin
+  Result := TFslTreeList;
+End;
+
+
+Function TFslTree.ChildrenNew: TFslTreeList;
+Begin
+  Result := ChildrenClass.Create;
+End;
+
+
+Function TFslTree.HasChildren: Boolean;
+Begin
+  Result := Children.Count > 0;
+End;
+
+
+Function TFslTree.HasParent: Boolean;
+Begin
+  Result := Assigned(FParent);
+End;
+
+
+Procedure TFslTree.Reparent;
+Var
+  iLoop : Integer;
+Begin
+  Assert(Invariants('Reparent', FChildren, ChildrenClass, 'FChildren'));
+
+  FChildren.FParent := Self;
+  For iLoop := 0 To FChildren.Count - 1 Do
+    FChildren[iLoop].Parent := Self;
+End;
+
+
+Function TFslTree.GetChildren: TFslTreeList;
+Begin
+  Assert(Invariants('GetChildren', FChildren, ChildrenClass, 'FChildren'));
+
+  Result := FChildren;
+End;
+
+
+Procedure TFslTree.SetChildren(Const Value: TFslTreeList);
+Begin
+  Assert(Invariants('SetChildren', Value, ChildrenClass, 'Value'));
+
+  FChildren.Free;
+  FChildren := Value;
+
+  Reparent;
+End;
+
+
+Function TFslTree.GetParent: TFslTree;
+Begin
+  Assert(Invariants('GetParent', FParent, ParentClass, 'FParent'));
+
+  Result := FParent;
+End;
+
+
+Procedure TFslTree.SetParent(Const Value: TFslTree);
+Begin
+  Assert(Not Assigned(Value) Or Invariants('SetParent', Value, ParentClass, 'Value'));
+  Assert(CheckCondition(Not Assigned(FParent) Or (Value = FParent), 'SetParent', 'Cannot set parent as already owned by another tree.'));
+
+  FParent := Value;
+End;
+
+
+Function TFslTreeList.GetTree(iIndex: Integer): TFslTree;
+Begin
+  Result := TFslTree(ObjectByIndex[iIndex]);
+End;
+
+
+Procedure TFslTreeList.InternalBeforeExclude(iIndex : Integer; oObject : TFslObject);
+Var
+  oTree : TFslTree;
+Begin
+  Inherited;
+
+  oTree := TFslTree(oObject);
+  oTree.FParent := Nil;
+End;
+
+
+Procedure TFslTreeList.InternalAfterInclude(iIndex : Integer; oObject : TFslObject);
+Var
+  oTree : TFslTree;
+Begin
+  Inherited;
+
+  oTree := TFslTree(oObject);
+
+  Assert(CheckCondition(Not oTree.HasParent, 'InternalAfterInclude', 'Attempt to add a node to a tree when it already belongs to a tree'));
+
+  oTree.FParent := FParent;
+End;
+
+
+Function TFslTreeList.ItemClass: TFslObjectClass;
+Begin
+  Result := TFslTree;
 End;
 
 
