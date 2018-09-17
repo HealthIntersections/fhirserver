@@ -6,13 +6,13 @@
         <Projects Include="Server\fhirserver.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="tests\FHIRServerTests.dproj">
+        <Projects Include="utilities\tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="bridge\ExampleBridgeServer.dproj">
+        <Projects Include="utilities\bridge\ExampleBridgeServer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utils\VocabTxServer\VocabTxServer.dproj">
+        <Projects Include="utilities\VocabTxServer\VocabTxServer.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -33,31 +33,31 @@
         <MSBuild Projects="Server\fhirserver.dproj" Targets="Make"/>
     </Target>
     <Target Name="FHIRServerTests">
-        <MSBuild Projects="tests\FHIRServerTests.dproj"/>
+        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj"/>
     </Target>
     <Target Name="FHIRServerTests:Clean">
-        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Clean"/>
+        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Clean"/>
     </Target>
     <Target Name="FHIRServerTests:Make">
-        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
+        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="ExampleBridgeServer">
-        <MSBuild Projects="bridge\ExampleBridgeServer.dproj"/>
+        <MSBuild Projects="utilities\bridge\ExampleBridgeServer.dproj"/>
     </Target>
     <Target Name="ExampleBridgeServer:Clean">
-        <MSBuild Projects="bridge\ExampleBridgeServer.dproj" Targets="Clean"/>
+        <MSBuild Projects="utilities\bridge\ExampleBridgeServer.dproj" Targets="Clean"/>
     </Target>
     <Target Name="ExampleBridgeServer:Make">
-        <MSBuild Projects="bridge\ExampleBridgeServer.dproj" Targets="Make"/>
+        <MSBuild Projects="utilities\bridge\ExampleBridgeServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="VocabTxServer">
-        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj"/>
+        <MSBuild Projects="utilities\VocabTxServer\VocabTxServer.dproj"/>
     </Target>
     <Target Name="VocabTxServer:Clean">
-        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Clean"/>
+        <MSBuild Projects="utilities\VocabTxServer\VocabTxServer.dproj" Targets="Clean"/>
     </Target>
     <Target Name="VocabTxServer:Make">
-        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
+        <MSBuild Projects="utilities\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
         <CallTarget Targets="fhirserver;FHIRServerTests;ExampleBridgeServer;VocabTxServer"/>

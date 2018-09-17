@@ -1382,7 +1382,7 @@ begin
 //  finally
 //    consent.Free;
 //  end;
-//  raise Exception.Create('Needs further development right now');
+//  raise EFslException.Create('Needs further development right now');
 end;
 
 procedure TAuth2Server.loadScopeVariables(variables : TFslStringDictionary; scope : String; user : TSCIMUser);

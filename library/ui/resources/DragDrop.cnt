@@ -1,0 +1,36 @@
+:Title Drag and Drop Component Suite
+:Base DragDrop.hlp
+:Link DragDrop.hlp
+1 Drag and Drop Component Suite
+2 ReadMe
+3 Introduction=IDH_001
+3 Component Overview=IDH_002
+3 Version History=IDH_003
+3 Installation=IDH_004
+3 Upgrading from versions prior to 3.4=IDH_005
+3 License, Copyright & Disclaimer=IDH_006
+2 Drop Source Components
+3 TDropSource (abstract base component)=IDH_Class_TDropSource
+3 TDropFileSource=IDH_Class_TDropFileSource
+3 TDropTextSource=IDH_Class_TDropTextSource
+3 TDropBMPSource=IDH_Class_TDropBMPSource
+3 TDropURLSource=IDH_Class_TDropURLSource
+3 TDropPIDLSource=IDH_Class_TDropPIDLSource
+2 Drop Target Components
+3 TDropTarget (abstract base component)=IDH_Class_TDropTarget
+3 TDropFileTarget=IDH_Class_TDropFileTarget
+3 TDropTextTarget=IDH_Class_TDropTextTarget
+3 TDropBMPTarget=IDH_Class_TDropBMPTarget
+3 TDropURLTarget=IDH_Class_TDropURLTarget
+3 TDropPIDLTarget=IDH_Class_TDropPIDLTarget
+3 TDropDummy=IDH_Class_TDropDummy
+2 Units
+3 DropSource.pas=IDH_Unit_DropSource
+3 DropTarget.pas=IDH_Unit_DropTarget
+3 DropBMPSource.pas=IDH_Unit_DropBMPSource
+3 DropBMPTarget.pas=IDH_Unit_DropBMPTarget
+3 DropURLSource.pas=IDH_Unit_DropURLSource
+3 DropURLTarget.pas=IDH_Unit_DropURLTarget
+3 DropPIDLSource.pas=IDH_Unit_DropPIDLSource
+3 DropPIDLTarget.pas=IDH_Unit_DropPIDLTarget
+

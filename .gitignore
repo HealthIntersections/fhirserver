@@ -170,3 +170,4 @@ System
 /toolkit/OSX32/Debug
 /toolkit/Win64/Debug/*.cmds
 *.cmds
+/utilities/cde/samples

@@ -154,7 +154,7 @@ end;
 function endpoint : String;
 begin
   if not FindCmdLineSwitch('endpoint', result, true, [clstValueNextParam]) then
-    raise Exception.Create('No endpoint parameter supplied');
+    raise EFslException.Create('No endpoint parameter supplied');
 end;
 
 procedure ExecuteFhirServer;
@@ -279,7 +279,7 @@ begin
             else if cmd = 'exec' then
               svc.ConsoleExecute
             else
-              raise Exception.Create('Unknown command '+cmd);
+              raise EFslException.Create('Unknown command '+cmd);
           end
           else
           begin

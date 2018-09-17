@@ -9,19 +9,19 @@
         <Projects Include="toolkit\FHIRToolkitR4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="vcldemo\FhirVclDemo.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="utils\cde\ClinicalDocumentEditor.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utils\nppformats\formatUtils.dproj">
+        <Projects Include="utilities\nppformats\formatUtils.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="tests\FHIRServerTests.dproj">
+        <Projects Include="utilities\cde\ClinicalDocumentEditor.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\vcldemo\FhirVclDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -50,24 +50,6 @@
     <Target Name="FHIRToolkitR4:Make">
         <MSBuild Projects="toolkit\FHIRToolkitR4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="FhirVclDemo">
-        <MSBuild Projects="vcldemo\FhirVclDemo.dproj"/>
-    </Target>
-    <Target Name="FhirVclDemo:Clean">
-        <MSBuild Projects="vcldemo\FhirVclDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FhirVclDemo:Make">
-        <MSBuild Projects="vcldemo\FhirVclDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="ClinicalDocumentEditor">
-        <MSBuild Projects="utils\cde\ClinicalDocumentEditor.dproj"/>
-    </Target>
-    <Target Name="ClinicalDocumentEditor:Clean">
-        <MSBuild Projects="utils\cde\ClinicalDocumentEditor.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ClinicalDocumentEditor:Make">
-        <MSBuild Projects="utils\cde\ClinicalDocumentEditor.dproj" Targets="Make"/>
-    </Target>
     <Target Name="fhirnpp">
         <MSBuild Projects="npp\fhirnpp.dproj"/>
     </Target>
@@ -78,31 +60,49 @@
         <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
     </Target>
     <Target Name="formatUtils">
-        <MSBuild Projects="utils\nppformats\formatUtils.dproj"/>
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj"/>
     </Target>
     <Target Name="formatUtils:Clean">
-        <MSBuild Projects="utils\nppformats\formatUtils.dproj" Targets="Clean"/>
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Clean"/>
     </Target>
     <Target Name="formatUtils:Make">
-        <MSBuild Projects="utils\nppformats\formatUtils.dproj" Targets="Make"/>
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ClinicalDocumentEditor">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj"/>
+    </Target>
+    <Target Name="ClinicalDocumentEditor:Clean">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClinicalDocumentEditor:Make">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FhirVclDemo">
+        <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj"/>
+    </Target>
+    <Target Name="FhirVclDemo:Clean">
+        <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FhirVclDemo:Make">
+        <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="FHIRServerTests">
-        <MSBuild Projects="tests\FHIRServerTests.dproj"/>
+        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj"/>
     </Target>
     <Target Name="FHIRServerTests:Clean">
-        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Clean"/>
+        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Clean"/>
     </Target>
     <Target Name="FHIRServerTests:Make">
-        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
+        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FhirVclDemo;ClinicalDocumentEditor;fhirnpp;formatUtils;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;fhirnpp;formatUtils;ClinicalDocumentEditor;FhirVclDemo;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FhirVclDemo:Clean;ClinicalDocumentEditor:Clean;fhirnpp:Clean;formatUtils:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;fhirnpp:Clean;formatUtils:Clean;ClinicalDocumentEditor:Clean;FhirVclDemo:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FhirVclDemo:Make;ClinicalDocumentEditor:Make;fhirnpp:Make;formatUtils:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;fhirnpp:Make;formatUtils:Make;ClinicalDocumentEditor:Make;FhirVclDemo:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

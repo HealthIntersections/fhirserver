@@ -82,7 +82,7 @@ begin
   else if res.fhirType = 'Subscription' then
     raise EFHIRUnsupportedVersion.Create(fhirVersionRelease2, 'Creating Event Definition')
   else
-    raise Exception.Create('Wrong resource type '+res.fhirType+' looking for Subscription');
+    raise EFslException.Create('Wrong resource type '+res.fhirType+' looking for Subscription');
 end;
 
 function TSubscriptionManagerR3.makeSubscription(resource: TFHIRResourceV): TFHIRSubscriptionW;

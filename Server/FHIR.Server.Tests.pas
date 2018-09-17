@@ -111,7 +111,7 @@ begin
 //    writeln('... done');
 //
 //    writeln('JSON Patch Tests....');
-//    if all then TJsonPatchEngine.tests('C:\work\fhirserver\tests\json-patch-tests.json');
+//    if all then TJsonPatchEngine.tests('C:\work\fhirserver\utilities\tests\json-patch-tests.json');
 //    writeln('... done');
 //
 //    writeln('Twilio Tests....');
@@ -150,7 +150,7 @@ begin
 //////  !{$IFDEF FHIR2}
 //////  TFHIRParserTests.runTests('C:\work\org.hl7.fhir.dstu2\build\publish\examples');
 //////  {$ELSE}
-//////  TFHIRParserTests.runTests('C:\work\org.hl7.fhir\build\publish\examples');
+//////  TFHIRParserTests.runTests(PUB_HOME+'\examples');
 //////  {$ENDIF}
 //////  TFslXmlBuilderCanonicalizationTests.test;
 //////  !{$IFDEF FHIR2}

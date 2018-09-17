@@ -41,7 +41,8 @@ Type
   TFSCompareOperation = (fscoEQ, fscoNE, fscoCO, fscoSW, fscoEW, fscoGT, fscoLT, fscoGE, fscoLE, fscoPR, fscoPO, fscoSS, fscoSB, fscoIN, fscoRE);
   TFSFilterLogicalOperation = (fsloAnd, fsloOr, fsloNot);
 
-  TFSFilterItemType = (fsitParameter, fsitLogical);
+  TFSFilterItemType = (fsitParameter, fsitLogical, fsitGroup);
+  TFSFilterValueType = (fvtToken, fvtString, fvtNumberOrDate);
 
   TFSFilter = class (TFslObject)
   public
@@ -61,6 +62,18 @@ Type
     Property Name : String read FName write FName;
     Property Filter : TFSFilter read FFilter write SetFilter;
     Property Next : TFSFilterParameterPath read FNext write SetNext;
+    function ToString : String; override;
+  end;
+
+  TFSFilterParameterGroup = class (TFSFilter)
+  private
+    FContained: TFSFilter;
+    procedure SetContained(const Value: TFSFilter);
+  public
+    destructor Destroy; override;
+    property contained : TFSFilter read FContained write SetContained;
+    function FilterItemType : TFSFilterItemType; override;
+    function ToString : String; override;
   end;
 
   TFSFilterParameter = class (TFSFilter)
@@ -68,6 +81,7 @@ Type
     FParamPath : TFSFilterParameterPath;
     FOperation : TFSCompareOperation;
     FValue : String;
+    FValueType : TFSFilterValueType;
     procedure SetParamPath(const Value: TFSFilterParameterPath);
   public
     destructor Destroy; override;
@@ -76,6 +90,7 @@ Type
     Property ParamPath : TFSFilterParameterPath read FParamPath write SetParamPath;
     Property Operation : TFSCompareOperation read FOperation write FOperation;
     Property Value : String read FValue write FValue;
+    function ToString : String; override;
   end;
 
   TFSFilterLogical = class (TFSFilter)
@@ -92,6 +107,7 @@ Type
     property Filter1 : TFSFilter read FFilter1 write SetFilter1;
     property Operation : TFSFilterLogicalOperation read FOperation write FOperation;
     property Filter2 : TFSFilter read FFilter2 write SetFilter2;
+    function ToString : String; override;
   end;
 
 
@@ -117,8 +133,6 @@ Type
     function parseParameter(name: String): TFSFilter;
 
   public
-    class procedure runTests;
-    class procedure test(expression : String);
     class function parse(expression : String) : TFSFilter; overload;
   end;
 
@@ -132,6 +146,7 @@ Type
 
 const
   CODES_CompareOperation : array [TFSCompareOperation] of string = ('eq', 'ne', 'co', 'sw', 'ew', 'gt', 'lt', 'ge', 'le', 'pr', 'po', 'ss', 'sb', 'in', 're');
+  CODES_LogicalOperation : array [TFSFilterLogicalOperation] of string = ('and', 'or', 'not');
   XML_DATE_PATTERN = '[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?';
 
 implementation
@@ -157,6 +172,16 @@ begin
   FNext := Value;
 end;
 
+function TFSFilterParameterPath.ToString: String;
+begin
+  if Filter <> nil then
+    result := Name+'['+Filter.ToString+']'
+  else
+    result := Name;
+  if Next <> nil then
+    result := result+'.'+Next.ToString;
+end;
+
 { TFSFilterParameter }
 
 destructor TFSFilterParameter.Destroy;
@@ -174,6 +199,14 @@ procedure TFSFilterParameter.SetParamPath(const Value: TFSFilterParameterPath);
 begin
   FParamPath.Free;
   FParamPath := Value;
+end;
+
+function TFSFilterParameter.ToString: String;
+begin
+  if FValueType = fvtString then
+    result := ParamPath.ToString+' '+CODES_CompareOperation[Operation]+' "'+Value+'"'
+  else
+    result := ParamPath.ToString+' '+CODES_CompareOperation[Operation]+' '+Value;
 end;
 
 { TFSFilterLogical }
@@ -202,28 +235,12 @@ begin
   FFilter2 := Value;
 end;
 
+function TFSFilterLogical.ToString: String;
+begin
+  result := Filter1.ToString+' '+CODES_LogicalOperation[Operation]+' '+Filter2.ToString;
+end;
+
 { TFSFilterParser }
-
-class procedure TFSFilterParser.runTests;
-begin
-  test('userName eq "bjensen"');
-  test('name eq loinc|1234');
-  test('name in http://loinc.org/vs/LP234');
-  test('date ge 2010-10-10');
-  test('code sb snomed|diabetes');
-  test('code ss snomed|diabetes-NIDDM-stage-1');
-  test('related[type eq comp].target pr false');
-end;
-
-class procedure TFSFilterParser.test(expression: String);
-var
-  filter : TFSFilter;
-begin
-  filter := parse(expression);
-  if filter = nil then
-    raise EFHIRException.create('parsing failed - returned nil');
-  filter.Free;
-end;
 
 class function TFSFilterParser.parse(expression: String): TFSFilter;
 var
@@ -252,18 +269,25 @@ end;
 function TFSFilterParser.parseOpen: TFSFilter;
 var
   s : String;
+  grp : TFSFilterParameterGroup;
 begin
   if peek = fsltOpen then
   begin
     inc(Cursor);
-    result := parseOpen;
+    grp := TFSFilterParameterGroup.Create;
     try
+      grp.contained := parseOpen;
       if peek <> fsltClose then
         raise EFHIRException.create('Expected '')'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
       inc(cursor);
-      result.Link;
+      case peek of
+        fsltName : result := parseLogical(grp);
+        fsltEnded, fsltClose, fsltCloseSq : result := grp.Link as TFSFilter;
+      else
+        raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      end;
     finally
-      result.Free;
+      grp.Free;
     end;
   end
   else
@@ -296,9 +320,21 @@ begin
     filter.FOperation := TFSCompareOperation(i);
 
     case peek of
-      fsltName : filter.FValue := ConsumeToken;
-      fsltNumber : filter.FValue := ConsumeNumberOrDate;
-      fsltString : filter.FValue := ConsumeString;
+      fsltName :
+        begin
+        filter.FValue := ConsumeToken;
+        filter.FValueType := fvtToken;
+        end;
+      fsltNumber :
+        begin
+        filter.FValue := ConsumeNumberOrDate;
+        filter.FValueType := fvtNumberOrDate;
+        end;
+      fsltString :
+        begin
+        filter.FValue := ConsumeString;
+        filter.FValueType := fvtString;
+        end
     else
       raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     end;
@@ -477,7 +513,7 @@ begin
   i := cursor;
   repeat
     inc(i);
-  until (i > length(original)) or (Ord(original[i]) <= 32) or StringIsWhitespace(original[i]) or (original[i] = ']') or (original[i] = ']');
+  until (i > length(original)) or (Ord(original[i]) <= 32) or StringIsWhitespace(original[i]) or (original[i] = ')') or (original[i] = ']');
   result := copy(original, cursor, i - cursor);
   cursor := i;
 end;
@@ -506,5 +542,30 @@ begin
 end;
 
 
+{ TFSFilterParameterGroup }
+
+destructor TFSFilterParameterGroup.Destroy;
+begin
+  FContained.Free;
+  inherited;
+end;
+
+function TFSFilterParameterGroup.FilterItemType: TFSFilterItemType;
+begin
+  result := fsitGroup;
+end;
+
+procedure TFSFilterParameterGroup.SetContained(const Value: TFSFilter);
+begin
+  FContained.Free;
+  FContained := Value;
+end;
+
+function TFSFilterParameterGroup.ToString: String;
+begin
+  result := '('+FContained.ToString+')';
+end;
+
 end.
+
 

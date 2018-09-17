@@ -6881,7 +6881,7 @@ end;
 ////  finally
 ////    names.Free;
 ////  end;
-////  raise Exception.Create('not currently supported');
+////  raise EFslException.Create('not currently supported');
 //end;
 //
 procedure TFHIRNativeStorageService.LoadExistingResources(conn: TKDBConnection);

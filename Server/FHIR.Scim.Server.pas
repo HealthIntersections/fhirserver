@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream,
-  FHIR.Utilities.SCrypt, FHIR.Web.Parsers,
+  FHIR.Support.SCrypt, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Server.Session,
   FHIR.Server.Utilities,

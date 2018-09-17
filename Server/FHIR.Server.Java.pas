@@ -130,7 +130,7 @@ constructor TJavaLibraryWrapper.Create(jarPath: String);
 begin
   inherited Create;
   Jvm := TJavaRuntime.GetDefault;
-  Jvm.addToClasspath(jarPath); // 'C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar';
+  Jvm.addToClasspath(jarPath); // PUB_HOME+'\org.hl7.fhir.validator.jar';
   JThrowableClass := TJavaClass.Create('java.lang.Throwable');
   JStringClass := TJavaClass.Create('java.lang.String');
   !{$IFDEF FHIR4}

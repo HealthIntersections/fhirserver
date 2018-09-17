@@ -1826,7 +1826,7 @@ begin
         add(TIETFLanguageCodeServices.Create(details['source']))
       end
       else
-        raise Exception.Create('Unknown type '+details['type']);
+        raise EFslException.Create('Unknown type '+details['type']);
     end;
   end;
 end;
