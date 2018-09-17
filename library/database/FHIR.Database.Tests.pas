@@ -95,7 +95,7 @@ begin
 {$IFDEF MACOS}
   b := FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0))) + 'libcgsqlite3.dylib');
 {$ELSE}
-  b := FileToBytes('C:\work\fhirserver\Libraries\db\FHIR.Database.Tests.pas');
+  b := FileToBytes('C:\work\fhirserver\Library\database\FHIR.Database.Tests.pas');
 {$ENDIF}
   i64 := MaxInt;
   i64 := i64 + 2;
@@ -245,7 +245,7 @@ procedure TKDBTests.TestMSSQL;
 var
   db: TKDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
+  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', '(local)', 'test', '', '');
   try
     test(db);
   finally
@@ -257,7 +257,7 @@ procedure TKDBTests.TestMySQL;
 var
   db: TKDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'test', 'test');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 8.0 ANSI Driver', 'localhost', 'utest', 'test', 'test');
   try
     test(db);
   finally

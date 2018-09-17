@@ -45,8 +45,8 @@ type
     [TestCase] Procedure TestZipPartCreation;
     Procedure TestZipGeneration;
     [TestCase] Procedure TestReferenceAnalysis;
-    [TestCase] Procedure TestBundleSigningXml;
-    [TestCase] Procedure TestBundleSigningJson;
+    {[TestCase] }Procedure TestBundleSigningXml;
+    {[TestCase] }Procedure TestBundleSigningJson;
   end;
 
 

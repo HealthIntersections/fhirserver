@@ -42,7 +42,7 @@ Uses
   DUnitX.TestFramework;
 
 var
-  FHIR_PUB_HOME_1 : String = 'r:\fhir\publish'; // lots of the tests depend on content found in the FHIR publication
+  FHIR_PUB_HOME_1 : String = 'C:\work\org.hl7.fhir.old\org.hl7.fhir.2018Sep\publish'; // 'r:\fhir\publish'; // lots of the tests depend on content found in the FHIR publication
   FHIR_SRC_HOME_1 : String = 'c:\work\org.hl7.fhir\build'; // or in the source
 
 function FHIR_PUB_FILE(fn : String) : String; overload;

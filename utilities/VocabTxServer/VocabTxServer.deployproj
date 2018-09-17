@@ -1,0 +1,151 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Condition="Exists('$(BDS)\bin\CodeGear.Deployment.targets')" Project="$(BDS)\bin\CodeGear.Deployment.targets"/>
+    <ProjectExtensions>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <PropertyGroup/>
+    <ItemGroup Condition="'$(Platform)'=='Win32'">
+        <DeployFile Include="Win32\Debug\VocabTxServer.exe" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer\</RemoteDir>
+            <RemoteName>VocabTxServer.exe</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="Win64\Debug\VocabTxServer.rsm" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer\</RemoteDir>
+            <RemoteName>VocabTxServer.rsm</RemoteName>
+            <DeployClass>DebugSymbols</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="Win64\Debug\VocabTxServer.exe" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer\</RemoteDir>
+            <RemoteName>VocabTxServer.exe</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='OSX32'">
+        <DeployFile Include="Win64\Debug\ucum-essence.xml" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>ucum-essence.xml</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="..\..\web.zip" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>web.zip</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="..\..\reference-platform\support\translations.xml" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>translations.xml</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\delphi_PROJECTICNS.icns" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\Resources\</RemoteDir>
+            <RemoteName>VocabTxServer.icns</RemoteName>
+            <DeployClass>ProjectOSXResource</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="..\..\sql\lang.txt" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>lang.txt</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Debug\VocabTxServer.rsm" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>VocabTxServer.rsm</RemoteName>
+            <DeployClass>DebugSymbols</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgsqlite3.dylib">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Debug\VocabTxServer.entitlements" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\..\</RemoteDir>
+            <RemoteName>VocabTxServer.entitlements</RemoteName>
+            <DeployClass>ProjectOSXEntitlements</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Debug\VocabTxServer.info.plist" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\</RemoteDir>
+            <RemoteName>Info.plist</RemoteName>
+            <DeployClass>ProjectOSXInfoPList</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="..\..\..\loinc_261.cache" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>loinc_261.cache</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Debug\VocabTxServer" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>VocabTxServer</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,205 @@
+object TxServerForm: TTxServerForm
+  Left = 0
+  Top = 0
+  Caption = 'Vocabulary Tx Server'
+  ClientHeight = 655
+  ClientWidth = 796
+  StyleBook = StyleBook1
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  OnResize = FormResize
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object pnlSettings: TPanel
+    Align = Top
+    Size.Width = 796.000000000000000000
+    Size.Height = 105.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'Panel1Style1'
+    TabOrder = 0
+    object Label1: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Folder:'
+    end
+    object Label2: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 44.000000000000000000
+      Text = 'Port:'
+    end
+    object Label3: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 72.000000000000000000
+      Text = 'Snomed:'
+    end
+    object edtFolder: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 5
+      Position.X = 72.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 685.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtPort: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 4
+      Position.X = 72.000000000000000000
+      Position.Y = 44.000000000000000000
+      Size.Width = 717.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtSnomed: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 3
+      Position.X = 72.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 685.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object btnPoCFolder: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 764.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 24.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 7
+      Text = '...'
+      OnClick = btnPoCFolderClick
+    end
+    object btnSnomed: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 764.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 24.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      Text = '...'
+      OnClick = btnSnomedClick
+    end
+  end
+  object pnlStatus: TPanel
+    Align = Top
+    Position.Y = 105.000000000000000000
+    Size.Width = 796.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object btnStatus: TButton
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'Start'
+      OnClick = btnStatusClick
+    end
+    object lblStatus: TLabel
+      Anchors = [akLeft, akTop, akRight]
+      Position.X = 96.000000000000000000
+      Position.Y = 12.000000000000000000
+      Size.Width = 609.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Status...'
+    end
+    object btnBrowser: TButton
+      Anchors = [akLeft, akRight]
+      Position.X = 708.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Browser'
+      OnClick = btnBrowserClick
+    end
+  end
+  object mLog: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    TextSettings.WordWrap = True
+    Align = Client
+    Size.Width = 796.000000000000000000
+    Size.Height = 510.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Viewport.Width = 792.000000000000000000
+    Viewport.Height = 506.000000000000000000
+  end
+  object MainMenu1: TMainMenu
+    Left = 16
+    Top = 160
+    object mnuFile: TMenuItem
+      Text = '&File'
+      object mnuExit: TMenuItem
+        Locked = True
+        Text = 'E&xit'
+        OnClick = mnuExitClick
+      end
+    end
+    object mnuServer: TMenuItem
+      Text = '&Server'
+      object mnuStatus: TMenuItem
+        Locked = True
+        Text = '&Active'
+      end
+    end
+    object mnuView: TMenuItem
+      Text = '&View'
+      object mnuViewSettings: TMenuItem
+        Locked = True
+        Text = '&Settings'
+        OnClick = mnuViewSettingsClick
+      end
+    end
+    object mnuHelp: TMenuItem
+      Text = '&Help'
+      object mnuAbout: TMenuItem
+        Locked = True
+        Text = '&About'
+      end
+    end
+  end
+  object StyleBook1: TStyleBook
+    Styles = <
+      item
+      end
+      item
+        Platform = 'Windows 10 Desktop'
+        ResourcesBin = {
+          464D585F5354594C4520322E3501060C50616E656C315374796C653103C00000
+          545046300A5452656374616E676C6500095374796C654E616D65060C50616E65
+          6C315374796C653105416C69676E070643656E7465720A46696C6C2E436F6C6F
+          7207097846464630463046300748697454657374080553696465730B000A5369
+          7A652E57696474680500000000000000A008400B53697A652E48656967687405
+          00000000000000D205401453697A652E506C6174666F726D44656661756C7408
+          0C5374726F6B652E436F6C6F72070F636C614461726B736561677265656E0000}
+      end>
+    Left = 56
+    Top = 160
+  end
+  object odSnomed: TOpenDialog
+    DefaultExt = 'cache'
+    Filter = 'Snomed Files (*.cache)|*.cache|All Files|*.*'
+    Options = [ofFileMustExist, ofEnableSizing]
+    Title = 'Choose Snomed Folder'
+    Left = 96
+    Top = 160
+  end
+  object tmrStatus: TTimer
+    Interval = 50
+    OnTimer = tmrStatusTimer
+    Left = 144
+    Top = 160
+  end
+end

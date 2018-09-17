@@ -513,6 +513,9 @@ function TFHIRMMProperty.isPrimitive(name : String): boolean;
 var
   sd : TFHIRStructureDefinition;
 begin
+  if name = '' then // one of the special case elements
+    exit(true);
+
   sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+name));
   try
     result := (sd <> nil) and (sd.Kind = StructureDefinitionKindPRIMITIVETYPE);

@@ -1,0 +1,23 @@
+MAINICON ICON "C:\\work\\fhirserver\\utils\\VocabTxServer\\mainicon.ico"
+1 VERSIONINFO
+FILEVERSION 1,0,0,1
+PRODUCTVERSION 1,0,0,1
+FILEFLAGSMASK 0x3FL
+FILEFLAGS 0x00L
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x00L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+         BLOCK "040904E4"
+         BEGIN
+              VALUE "FileVersion", "1.0.0.1\0"
+              VALUE "ProductVersion", "1.0.0.0\0"
+         END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+         VALUE "Translation", 0x0409, 1252
+    END
+END

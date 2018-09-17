@@ -531,7 +531,6 @@ end;
 function DoPush(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
 var
   p : PJsValueRefArray absolute arguments;
-  o : JsValueRef;
   manager : TJavascriptArrayManager;
   pl : TJsValues;
   i : integer;
@@ -878,7 +877,7 @@ var
   global, func, scriptJ, scriptNameJ, res : JsValueRef;
   pl : PJsValueRefArray;
   i : integer;
-  sn, fn : AnsiString;
+  sn : AnsiString;
   vType : int; //JsValueType, but see note on JsGetValueType
 begin
   sn := ansiString(scriptName);
@@ -1050,7 +1049,7 @@ end;
 
 function TJavascript.getPropertyId(name: String): JsRef;
 begin
-  result := getPropertyId(name);
+  result := getPropertyId(AnsiString(name));
 end;
 
 function TJavascript.hasProperty(obj: JsValueRef; name: AnsiString): boolean;
