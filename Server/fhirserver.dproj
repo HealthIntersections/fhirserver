@@ -379,7 +379,6 @@
         <DCCReference Include="..\library\r2\FHIR.R2.AuthMap.pas"/>
         <DCCReference Include="..\library\r3\FHIR.R3.AuthMap.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.GraphDefinition.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.GraphDefinition.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.GraphDefinition.pas"/>
         <DCCReference Include="FHIR.Server.BundleBuilder.pas"/>
         <DCCReference Include="FHIR.Server.IndexingR4.pas"/>

@@ -300,7 +300,6 @@ uses
   FHIR.R2.AuthMap in '..\library\r2\FHIR.R2.AuthMap.pas',
   FHIR.R3.AuthMap in '..\library\r3\FHIR.R3.AuthMap.pas',
   FHIR.R4.GraphDefinition in '..\library\r4\FHIR.R4.GraphDefinition.pas',
-  FHIR.R3.GraphDefinition in '..\library\r3\FHIR.R3.GraphDefinition.pas',
   FHIR.Base.GraphDefinition in '..\library\base\FHIR.Base.GraphDefinition.pas',
   FHIR.Server.BundleBuilder in 'FHIR.Server.BundleBuilder.pas',
   FHIR.Server.IndexingR4 in 'FHIR.Server.IndexingR4.pas',
