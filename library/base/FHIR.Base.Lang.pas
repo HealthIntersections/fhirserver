@@ -75,10 +75,18 @@ Type
     constructor CreateLang(code, lang : String); overload;
     constructor CreateLang(code, lang : String; const Args: array of const); overload;
   end;
+  EFHIRTodo = Class(EFHIRException)
+  public
+    Constructor Create(place : String);
+  End;
 
   ETooCostly = class (EFHIRException);
   EUnsafeOperation = class (EFHIRException);
   EDefinitionException = class (EFHIRException);
+  EDefinitionExceptionTodo = Class(EDefinitionException)
+  public
+    Constructor Create(place : String);
+  End;
   EFHIRNarrativeException = class (EFHIRException);
 
   ERestfulException = class (EFHIRException)
@@ -99,6 +107,10 @@ Type
      constructor Create(problem : String); overload;
      constructor Create(path : String; offset : integer; problem : String); overload;
   end;
+  EFHIRPathTodo = Class(EDefinitionException)
+  public
+    Constructor Create(place : String);
+  End;
 
   EFHIRPathDefinitionCheck = class (EFHIRPath);
 
@@ -305,6 +317,27 @@ end;
 constructor EFHIRPath.create(problem: String);
 begin
   inherited create(problem);
+end;
+
+{ EFHIRTodo }
+
+constructor EFHIRTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
+
+{ EDefinitionExceptionTodo }
+
+constructor EDefinitionExceptionTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
+
+{ EFHIRPathTodo }
+
+constructor EFHIRPathTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
 end;
 
 initialization

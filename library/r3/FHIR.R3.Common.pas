@@ -783,6 +783,29 @@ type
     function url : String; override;
   end;
 
+  TFhirTerminologyCapabilities3 = class (TFhirTerminologyCapabilitiesW)
+  protected
+    function getDate: TDateTimeEx; override;
+    function getDescription: String; override;
+    function getName: String; override;
+    function getStatus: TPublicationStatus; override;
+    function getURL: String; override;
+    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDescription(Value: String); override;
+    procedure setName(Value: String); override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    procedure setUrl(Value: String); override;
+    function getContext: String; override;
+    procedure setContext(Value: String); override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
+    function getVersion: String; override;
+    procedure setVersion(Value: String); override;
+  public
+    procedure contact(kind : TContactType; value : String); override;
+    procedure system(url : String); override;
+  end;
+
 
 implementation
 
@@ -4110,6 +4133,95 @@ end;
 function TFhirPatient3.nameSummary: String;
 begin
   result := HumanNamesAsText((resource as TFhirPatient).nameList);
+end;
+
+{ TFhirTerminologyCapabilities3 }
+
+procedure TFhirTerminologyCapabilities3.contact(kind: TContactType; value: String);
+begin
+end;
+
+function TFhirTerminologyCapabilities3.getContext: String;
+begin
+end;
+
+function TFhirTerminologyCapabilities3.getDate: TDateTimeEx;
+begin
+end;
+
+function TFhirTerminologyCapabilities3.getDescription: String;
+begin
+end;
+
+
+function TFhirTerminologyCapabilities3.getName: String;
+begin
+end;
+
+
+function TFhirTerminologyCapabilities3.getPublisher: String;
+begin
+end;
+
+
+function TFhirTerminologyCapabilities3.getStatus: TPublicationStatus;
+begin
+  result := psDraft;
+end;
+
+function TFhirTerminologyCapabilities3.getURL: String;
+begin
+end;
+
+
+function TFhirTerminologyCapabilities3.getVersion: String;
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setContext(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setDate(Value: TDateTimeEx);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setDescription(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setName(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setPublisher(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setStatus(Value: TPublicationStatus);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setUrl(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.setVersion(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities3.system(url: String);
+begin
+  (FRes as TFhirParameters).AddParameter('system', TFhirUri.create(url));
 end;
 
 end.

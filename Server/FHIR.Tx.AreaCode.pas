@@ -517,7 +517,7 @@ end;
 
 function TAreaCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TAreaCodeServices.searchFilter');
 end;
 
 function TAreaCodeServices.subsumesTest(codeA, codeB: String): String;
@@ -548,7 +548,7 @@ end;
 
 function TAreaCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TAreaCodeServices.filterLocate');
 end;
 
 function TAreaCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -564,7 +564,7 @@ end;
 
 function TAreaCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TAreaCodeServices.InFilter');
 end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderContext);
@@ -579,7 +579,7 @@ end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TAreaCodeServices.Close');
 end;
 
 

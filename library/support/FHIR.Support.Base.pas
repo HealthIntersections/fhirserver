@@ -74,16 +74,35 @@ Type
   // particular subclasses
   EFslAbstract = Class(EFslException);
   EFslAssertion = Class(EFslException);
-
+  ETodo = Class(EFslException)
+  public
+    Constructor Create(place : String);
+  End;
   ELibraryException = Class(EFslException); // general library functionality
   EIOException = Class(EFslException); // problems reading/writing files
   EWebException = Class(EFslException); // error in web stack (client or server)
   EJsonException = class (EFslException); // error reading or writing Json
+  EJsonTodo = Class(EJsonException)
+  public
+    Constructor Create(place : String);
+  End;
   EXmlException = class (EFslException); // error reading or writing Xml
+  EXmlTodo = Class(EXmlException)
+  public
+    Constructor Create(place : String);
+  End;
   ERdfException = Class(EFslException); // error reading or writing RDF
   EDBException = Class(EFslException); // error accessing / working with database (including sql and dialect errors
+  EDBTodo = Class(EDBException)
+  public
+    Constructor Create(place : String);
+  End;
   ETerminologySetup = class (EFslException); // problem in the terminology configuration or loaded terminologies
   ETerminologyError = class (EFslException); // problem in terminology operation
+  ETerminologyTodo = Class(ETerminologyError)
+  public
+    Constructor Create(place : String);
+  End;
   ETestCase = class (EFslException); // Failing test case
   EJavascriptException = class (EFslException); // exception thrown in javscript library
   EJavascriptScript = class (EJavascriptException); // error thrown by script
@@ -715,53 +734,53 @@ Begin
     If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
       Destroy;
   End;
-End;  
+End;
 
 
 Function TFslObject.ClassType : TFslObjectClass;
-Begin 
+Begin
   Result := TFslObjectClass(Inherited ClassType);
-End;  
+End;
 
 
 Function TFslObject.Unlink : TFslObject;
-Begin 
+Begin
   Result := Self;
 
   If Assigned(Self) Then
-  Begin 
+  Begin
     Assert(Invariants('Unlink', TFslObject));
 
     If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
-    Begin 
+    Begin
       Destroy;
       Result := Nil;
-    End;  
-  End;  
-End;  
+    End;
+  End;
+End;
 
 
 Function TFslObject.Link : TFslObject;
-Begin 
+Begin
   Result := Self;
 
   If Assigned(Self) Then
-  Begin 
+  Begin
     Assert(Invariants('Link', TFslObject));
 
     InterlockedIncrement(FFslObjectReferenceCount);
-  End;  
-End;  
+  End;
+End;
 
 
 Function TFslObject.Duplicate : TFslObject;
-Begin 
+Begin
   Result := ClassType.Create;
-End;  
+End;
 
 
 Function TFslObject.Clone : TFslObject;
-Begin 
+Begin
   If Assigned(Self) Then
   Begin
     Assert(Invariants('Clone', TFslObject));
@@ -775,19 +794,19 @@ Begin
   Begin
     Result := Nil;
   End;
-End;  
+End;
 
 
 Function TFslObject._AddRef : Integer; stdcall;
-Begin 
+Begin
   If Assigned(Self) Then
-  Begin 
+  Begin
     Assert(Invariants('_AddRef', TFslObject));
 
     Result := InterlockedIncrement(FFslObjectReferenceCount);
-  End   
+  End
   Else
-  Begin 
+  Begin
     Result := 0;
   End;
 End;
@@ -808,7 +827,7 @@ Begin
   Begin
     Result := 0;
   End;
-End;  
+End;
 
 
 Function TFslObject.QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID: TGUID; Out Obj): HResult; stdcall;
@@ -825,15 +844,15 @@ End;
 
 
 Function TFslObject.Assignable : Boolean;
-Begin 
+Begin
   Result := True;
-End;  
+End;
 
 
 Function TFslObject.ErrorClass : EFslExceptionClass;
 Begin
   Result := EFslException;
-End;  
+End;
 
 
 Procedure TFslObject.RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String);
@@ -845,11 +864,11 @@ End;
 Procedure TFslObject.RaiseError(Const sMethod, sMessage : String);
 Begin
   RaiseError(ErrorClass, sMethod, sMessage);
-End;  
+End;
 
 
 Function TFslObject.Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean;
-Begin 
+Begin
   Invariants(sLocation, oObject, ClassType, sObject);
 
   If (Self = oObject) Then
@@ -860,16 +879,16 @@ End;
 
 
 Procedure TFslObject.Assign(oObject : TFslObject);
-Begin 
+Begin
   Assert(CheckCondition(Assignable, 'Assign', 'Object is not marked as assignable.'));
   Assert(Assignable('Assign', oObject, 'oObject'));
 
   // Override and inherit to assign the properties of your class.
-End;  
+End;
 
 
 Function TFslObject.Invariants(Const sLocation: String; aReference, aClass: TClass; Const sReference : String): Boolean;
-Begin 
+Begin
   // Ensure class is assigned.
   If Not Assigned(aReference) Then
     Invariant(sLocation, sReference + ' was not assigned and was expected to have been of class type ' + aClass.ClassName);
@@ -879,11 +898,11 @@ Begin
     Invariant(sLocation, sReference + ' was of class type ' + aReference.ClassName + ' and should have been of class type ' + aClass.ClassName);
 
   Result := True;
-End;  
+End;
 
 
 Function TFslObject.Invariants(Const sLocation : String; oObject : TObject; aClass: TClass; Const sObject : String) : Boolean;
-Begin 
+Begin
   If Not Assigned(aClass) Then
     Invariant('Invariants', 'aClass was not assigned.');
 
@@ -923,31 +942,31 @@ End;
 
 
 Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean;
-Begin 
+Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
   If Not bCorrect Then
     RaiseError(aException, sMethod, sMessage);
 
   Result := True;
-End;  
+End;
 
 
 Function TFslObject.Invariant(Const sMethod, sMessage: String): Boolean;
-Begin 
+Begin
   // Call this method as you would the Error method to raise an exception.
   // Use this when you are not sure if self is valid as it is a non-virtual method.
 
   Raise EFslInvariant.Create(Self, sMethod, sMessage); // Can't use Error method here as it is virtual.
 
   Result := True;
-End;  
+End;
 
 
 Function TFslObject.Alterable(Const sMethod: String): Boolean;
 Begin
   Result := True;
-End;  
+End;
 
 Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
 Begin
@@ -2410,7 +2429,7 @@ end;
 procedure TFslStringSet.remove(s: String);
 begin
   if contains(s) then
-    raise ELibraryException.create('Not done yet');
+    raise ETodo.create('TFslStringSet.remove');
 end;
 
 function TFslStringSet.ToString: String;
@@ -2549,6 +2568,41 @@ begin
   FDict[key] := value;
 end;
 
+
+{ ETodo }
+
+constructor ETodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
+
+{ EXmlTodo }
+
+constructor EXmlTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
+
+{ EDBTodo }
+
+constructor EDBTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
+
+{ ETerminologyTodo }
+
+constructor ETerminologyTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
+
+{ EJsonTodo }
+
+constructor EJsonTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place);
+end;
 
 Initialization
 {$IFNDEF FPC}

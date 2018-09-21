@@ -555,22 +555,22 @@ end;
 
 procedure TFHIRNarrativeGenerator.generate(vs: TFHIRValueSet; b: boolean);
 begin
-//  raise EFHIRNarrativeException.create('Not done yet');
+//  raise EFHIRTodo.create();
 end;
 
 procedure TFHIRNarrativeGenerator.generate(cm: TFHIRConceptMap);
 begin
-  raise EFHIRNarrativeException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
 end;
 
 procedure TFHIRNarrativeGenerator.generate(od: TFHIROperationDefinition);
 begin
-  raise EFHIRNarrativeException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
 end;
 
 procedure TFHIRNarrativeGenerator.generate(conf: TFhirCapabilityStatement);
 begin
-  raise EFHIRNarrativeException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
 end;
 
 procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);

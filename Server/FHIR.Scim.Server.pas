@@ -607,7 +607,7 @@ begin
     else if (path.StartsWith('/scim/web')) then
       processWebRequest(context, session, request, response)
     else
-      raise ESCIMException.Create(501, 'NOT IMPLEMENTED', '', 'Not done yet');
+      raise ESCIMException.Create(501, 'NOT IMPLEMENTED', '', 'TSCIMServer.processRequest: Not done yet');
   except
     on e: ESCIMException do
     begin

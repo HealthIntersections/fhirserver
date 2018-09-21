@@ -158,6 +158,7 @@ type
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
 
     function makeParameters : TFHIRParametersW; virtual; abstract;
+    function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; virtual; abstract;
 
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;

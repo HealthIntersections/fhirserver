@@ -1114,7 +1114,7 @@ begin
                 sptNull : if (name = '_id') then
                   ProcessTokenParam(Result, name, modifier, value, key, types);
               else if type_ <> sptNull then
-                raise EFHIRException.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
+                raise EFHIRTodo.create('type = '+CODES_TFhirSearchParamType[type_]);
               end;
             end;
           if ts.count > 1 then

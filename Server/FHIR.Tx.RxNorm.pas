@@ -78,6 +78,9 @@ type
     reltypes : TStringList;
 
     procedure load(list : TStringList; sql : String);
+  protected
+    function getSAB : String; virtual;
+    function getCodeField : String; virtual;
   public
     constructor Create(nci : boolean; db : TKDBManager);
     destructor Destroy; Override;
@@ -118,6 +121,17 @@ type
   end;
 
   TRxNormServices = class (TUMLSServices)
+  public
+    constructor Create(db : TKDBManager);
+    function system(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
+    function name(context : TCodeSystemProviderContext) : String; override;
+  end;
+
+  TNDFRTServices = class (TUMLSServices)
+  protected
+    function getSAB : String; override;
+    function getCodeField : String; override;
   public
     constructor Create(db : TKDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
@@ -279,7 +293,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.Count');
   try
-    qry.SQL := 'Select Count(*) from rxnconso where SAB = ''RXNORM'' and TTY <> ''SY''';
+    qry.SQL := 'Select Count(*) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
@@ -308,7 +322,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
-    qry.SQL := 'Select STR from rxnconso where RXCUI = :code and SAB = ''RXNORM'' and TTY <> ''SY''';
+    qry.SQL := 'Select STR from rxnconso where RXCUI = :code and SAB = '''+getSAB+''' and TTY <> ''SY''';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
@@ -328,6 +342,11 @@ end;
 function TUMLSServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := TUMLSPrep.Create;
+end;
+
+function TUMLSServices.getSAB: String;
+begin
+  result := 'RXNORM';
 end;
 
 procedure TUMLSServices.Displays(code : String; list : TStringList; lang : String);
@@ -373,7 +392,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
-    qry.SQL := 'Select STR, TTY from rxnconso where RXCUI = :code and SAB = ''RXNORM''';
+    qry.SQL := 'Select STR, TTY from rxnconso where '+getCodeField+' = :code and SAB = '''+getSAB+'''';
     qry.prepare;
     qry.bindString('code', code);
     qry.execute;
@@ -447,7 +466,7 @@ begin
   begin
     qry := db.GetConnection(dbprefix+'.extendLookup');
     try
-      qry.SQL := 'Select suppress from rxnconso where RXCUI = :code and SAB = ''RXNORM'' and TTY <> ''SY''';
+      qry.SQL := 'Select suppress from rxnconso where '+getCodeField+' = :code and SAB = '''+getSAB+''' and TTY <> ''SY''';
       qry.prepare;
       qry.BindString('code', TUMLSConcept(ctxt).FCode);
       qry.execute;
@@ -500,6 +519,11 @@ begin
   card.detail := 'Not done yet';
 end;
 
+function TUMLSServices.getCodeField: String;
+begin
+  result := 'RXCUI';
+end;
+
 function TUMLSServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
@@ -541,7 +565,7 @@ begin
   filter.sql := sql1;
   result := true;
   filter.qry := db.GetConnection(dbprefix+'.prepare');
-  filter.qry.SQL := 'Select RXCUI, STR '+sql2+' where SAB = ''RXNORM'' and TTY <> ''SY'' '+filter.sql;
+  filter.qry.SQL := 'Select '+getCodeField+', STR '+sql2+' where SAB = '''+getSAB+''' and TTY <> ''SY'' '+filter.sql;
   filter.qry.Prepare;
   filter.qry.Execute;
 end;
@@ -628,7 +652,7 @@ begin
         TUMLSPrep(prep).filters.Add(res.Link);
     end
     else
-      raise ETerminologyError.create('Unknown filter ');
+      raise ETerminologyError.create('Unknown filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'"');
   finally
     res.Free;
   end;
@@ -641,7 +665,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.locate');
   try
-    qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM''  and TTY <> ''SY'' and RXCUI = :code '+TUMLSFilter(ctxt).sql;
+    qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = '''+getSAB+'''  and TTY <> ''SY'' and RXCUI = :code '+TUMLSFilter(ctxt).sql;
     qry.prepare;
     qry.BindString('code', code);
     qry.execute;
@@ -679,7 +703,7 @@ begin
   begin
     // search on full rxnorm
     filter.qry := db.GetConnection(dbprefix+'.filter');
-    filter.qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = ''RXNORM'' and TTY <> ''SY'' '+filter.sql;
+    filter.qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY'' '+filter.sql;
     filter.qry.prepare;
     filter.qry.Execute;
   end;
@@ -818,6 +842,38 @@ begin
 end;
 
 function TNciMetaServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '??';
+end;
+
+{ TNDFRTServices }
+
+constructor TNDFRTServices.Create(db: TKDBManager);
+begin
+  inherited create(false, db);
+end;
+
+function TNDFRTServices.getCodeField: String;
+begin
+  result := 'SCUI';
+end;
+
+function TNDFRTServices.getSAB: String;
+begin
+  result := 'NDFRT';
+end;
+
+function TNDFRTServices.name(context: TCodeSystemProviderContext): String;
+begin
+  result := 'NDFRT';
+end;
+
+function TNDFRTServices.system(context: TCodeSystemProviderContext): String;
+begin
+  result := 'http://hl7.org/fhir/ndfrt';
+end;
+
+function TNDFRTServices.version(context: TCodeSystemProviderContext): String;
 begin
   result := '??';
 end;

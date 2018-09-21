@@ -4604,22 +4604,22 @@ end;
 
 function TFslStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
-  raise ELibraryException.create('Not done yet');
+  raise ETodo.create('TFslStringReader.Read');
 end;
 
 function TFslStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
-  raise ELibraryException.create('Not done yet');
+  raise ETodo.create('TFslStringReader.ReadBlock');
 end;
 
 function TFslStringReader.ReadLine: string;
 begin
-  raise ELibraryException.create('Not done yet');
+  raise ETodo.create('TFslStringReader.ReadLine');
 end;
 
 function TFslStringReader.ReadToEnd: string;
 begin
-  raise ELibraryException.create('Not done yet');
+  raise ETodo.create('TFslStringReader.ReadToEnd');
 end;
 
 
@@ -6466,7 +6466,7 @@ begin
   // the indysoap team *with an example*, and this will be extended
   if AnsiSameText(LCnt, 'base64') then
     begin
-    raise ELibraryException.create('not done yet');
+    raise ETodo.create('TMimePart.DecodeContent');
 //    Content := Base64Decode(Content);
     end
   else
@@ -6549,12 +6549,12 @@ begin
   WriteHeaders(AStream);
   if FHeaders.Values[MIME_TRANSFERENCODING] = 'base64' then
     begin
-    raise ELibraryException.create('not done yet');
+    raise ETodo.create('TMimePart.WriteToStream#1');
 //    WriteString(AStream, Base64EncodeAnsi(FContent, true)+EOL_WINDOWS);
     end
   else
     begin
-    raise ELibraryException.create('not done yet');
+    raise ETodo.create('TMimePart.WriteToStream#2');
 
     //AStream.CopyFrom(FContent, (FContent.Size - FContent.Position)-2);
 //    if FContent.Size - FContent.Position >= 2 then

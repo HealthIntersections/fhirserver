@@ -168,6 +168,9 @@ Type
     procedure CommitTransaction; virtual; abstract;
     procedure RollbackTransaction; virtual; abstract;
 
+    procedure ExecuteCapabilityStatement(request: TFHIRRequest; response : TFHIRResponse; full : boolean); virtual;
+    procedure ExecuteTerminologyCapabilities(request: TFHIRRequest; response : TFHIRResponse); virtual;
+
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; virtual;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
     function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
@@ -176,7 +179,7 @@ Type
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); virtual;
     Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; virtual;
-    procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteMetadata(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
     procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
@@ -563,7 +566,7 @@ begin
         fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
         fcmdSearch : ExecuteSearch(request, response);
         fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-        fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
+        fcmdMetadata : ExecuteMetadata(request, response);
         fcmdTransaction : ExecuteTransaction(context, request, response);
         fcmdBatch : ExecuteBatch(context, request, response);
         fcmdOperation : ExecuteOperation(context, request, response);
@@ -592,7 +595,21 @@ begin
   raise EFHIRException.create('This server does not implement the "Batch" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
+procedure TFHIROperationEngine.ExecuteMetadata(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  if not request.Parameters.VarExists('mode') then
+    ExecuteCapabilityStatement(request, response, true)
+  else if request.Parameters.GetVar('mode') = 'full' then
+    ExecuteCapabilityStatement(request, response, true)
+  else if request.Parameters.GetVar('mode') = 'normative' then
+    ExecuteCapabilityStatement(request, response, false)
+  else if request.Parameters.GetVar('mode') = 'terminology' then
+    ExecuteTerminologyCapabilities(request, response)
+  else
+    raise Exception.Create('unknown mode '+request.Parameters.GetVar('mode'));
+end;
+
+procedure TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest; response: TFHIRResponse; full : boolean);
 var
   oConf : TFhirCapabilityStatementW;
   res : TFhirCapabilityStatementRestResourceW;
@@ -605,7 +622,6 @@ var
 begin
   ServerContext := TFHIRServerContext(FServerContext);
   try
-
     response.HTTPCode := 200;
     oConf := factory.wrapCapabilityStatement(factory.makeResource('CapabilityStatement'));
     try
@@ -981,6 +997,53 @@ begin
   raise EFHIRException.create('This server does not implement the "Search" function');
 end;
 
+procedure TFHIROperationEngine.ExecuteTerminologyCapabilities(request: TFHIRRequest; response: TFHIRResponse);
+var
+  oConf : TFhirTerminologyCapabilitiesW;
+  ServerContext : TFHIRServerContext;
+  s : String;
+begin
+  ServerContext := TFHIRServerContext(FServerContext);
+  try
+    response.HTTPCode := 200;
+    oConf := factory.makeTerminologyCapablities;
+    try
+      response.Resource := oConf.Resource.link;
+
+      oConf.id := 'FhirServer';
+      oConf.contact(cpsOther, 'http://healthintersections.com.au/');
+      if ServerContext.FormalURLPlain <> '' then
+        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
+      else
+        oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
+
+      oConf.version := factory.versionString+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+      oConf.name := 'FHIR Reference Server Conformance Statement';
+      oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+      oConf.status := psActive;
+      oConf.date := TDateTimeEx.makeUTC;
+
+      for s in ServerContext.TerminologyServer.listSystems do
+        oConf.system(s);
+
+      if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
+        processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
+    finally
+      oConf.free;
+    end;
+
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+
+end;
+
 procedure TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
   raise EFHIRException.create('This server does not implement the "Transaction" function');
@@ -1098,10 +1161,10 @@ var
 begin
   req := TFHIRRequest.Create(context, roOperation, nil);
   try
-    req.CommandType := fcmdConformanceStmt;
+    req.CommandType := fcmdMetadata;
     resp := TFHIRResponse.Create(FContext.link);
     try
-      FEngine.ExecuteConformanceStmt(req, resp);
+      FEngine.ExecuteMetadata(req, resp);
       checkOutcome(resp);
       result := resp.Resource.Link;
     finally
@@ -1146,17 +1209,17 @@ end;
 
 function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.customGet');
 end;
 
 function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.customPost');
 end;
 
 procedure TFHIRInternalCommunicator.deleteResourceV(atype: string; id: String);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.deleteResourceV');
 end;
 
 destructor TFHIRInternalCommunicator.Destroy;
@@ -1170,12 +1233,12 @@ end;
 
 function TFHIRInternalCommunicator.historyTypeV(atype: string; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.historyTypeV');
 end;
 
 function TFHIRInternalCommunicator.historyInstanceV(atype: string; id : String; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.historyInstanceV');
 end;
 
 function TFHIRInternalCommunicator.link: TFHIRInternalCommunicator;
@@ -1185,12 +1248,12 @@ end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
 end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
 end;
 
 function TFHIRInternalCommunicator.readResourceV(atype: string; id: String): TFHIRResourceV;
@@ -1305,12 +1368,12 @@ end;
 
 function TFHIRInternalCommunicator.searchAgainV(link: String): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.searchAgainV');
 end;
 
 function TFHIRInternalCommunicator.searchPostV(atype: string; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFhirResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.searchPostV');
 end;
 
 procedure TFHIRInternalCommunicator.SetContext(const Value: TFHIRWorkerContextWithFactory);
@@ -1333,12 +1396,12 @@ end;
 
 function TFHIRInternalCommunicator.transactionV(bundle: TFhirResourceV): TFhirResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.transactionV');
 end;
 
 function TFHIRInternalCommunicator.updateResourceV(resource: TFhirResourceV): TFhirResourceV;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 { TFhirOperation }

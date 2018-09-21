@@ -3843,7 +3843,7 @@ end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('compareValues');
 end;
 
 { TFHIRStringListHelper }
@@ -5332,7 +5332,7 @@ Const
 Function GetExtForMimeType(mimeType: String): String;
 {$IFDEF MACOS}
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create();
 end;
 {$ELSE}
 Var
@@ -5382,7 +5382,7 @@ End;
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
 {$IFDEF MACOS}
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create();
 end;
 {$ELSE}
 var

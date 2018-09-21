@@ -462,7 +462,7 @@ end;
 
 //procedure TFHIRCompartmentList.registerComp(comp: TFHIRResourceType; resource, list: String);
 //begin
-//  raise EFHIRException.create('not done yet');
+//  raise EFHIRTodo.create();
 //end;
 //
 procedure TFHIRCompartmentList.register(comp: String; resource : String; indexes : array of String);

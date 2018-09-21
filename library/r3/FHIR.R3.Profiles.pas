@@ -445,7 +445,7 @@ begin
         begin
           updateFromDefinition(outcome, diffMatches[0], profileName, trimDifferential, url);
           if (outcome.type_List.Count = 0) then
-            raise EDefinitionException.create('not done yet');
+            raise EDefinitionExceptionTodo.create('TProfileUtilities.processPaths');
           start := 1;
         end;
 
@@ -1875,7 +1875,7 @@ function TProfileManager.getExtensionDefn(source: TFHirStructureDefinition; url:
 //  id, code : String;
 //  i : integer;
 begin
-  raise EDefinitionException.create('not done yet');
+  raise EDefinitionExceptionTodo.create('TProfileManager.getExtensionDefn');
 {  result := false;
   if url.StartsWith('#') then
   begin
@@ -1972,7 +1972,7 @@ begin
     result := true;
   end;
   if (code <> '') then
-    raise EDefinitionException.create('Not Done Yet');
+    raise EDefinitionExceptionTodo.create('TProfileManager.getProfileStructure');
 end;
 
 function TProfileManager.Link: TProfileManager;

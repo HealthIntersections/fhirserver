@@ -75,8 +75,6 @@ const
   MAP_TObservationStatus2 : array [TFhirObservationStatusEnum] of TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
 
 
-
-
 type
   TFHIRExtension4 = class (TFHIRExtensionW)
   public
@@ -798,6 +796,30 @@ type
     function dataType : String; override;
   end;
 
+  TFhirTerminologyCapabilities4 = class (TFhirTerminologyCapabilitiesW)
+  private
+    function tc : TFhirTerminologyCapabilities;
+  protected
+    function getDate: TDateTimeEx; override;
+    function getDescription: String; override;
+    function getName: String; override;
+    function getStatus: TPublicationStatus; override;
+    function getURL: String; override;
+    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDescription(Value: String); override;
+    procedure setName(Value: String); override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    procedure setUrl(Value: String); override;
+    function getContext: String; override;
+    procedure setContext(Value: String); override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
+    function getVersion: String; override;
+    procedure setVersion(Value: String); override;
+  public
+    procedure contact(kind : TContactType; value : String); override;
+    procedure system(url : String); override;
+  end;
 
 implementation
 
@@ -4163,6 +4185,117 @@ end;
 function TFhirPatient4.nameSummary: String;
 begin
   result := HumanNamesAsText((resource as TFhirPatient).nameList);
+end;
+
+{ TFhirTerminologyCapabilities4 }
+
+procedure TFhirTerminologyCapabilities4.contact(kind: TContactType; value: String);
+var
+  c : TFhirContactPoint;
+  ct : TFhirConformanceContact;
+begin
+  ct := tc.contactList.Append;
+  c := ct.telecomList.Append;
+  c.system := MAP_TContactType[kind];
+  c.value := 'http://healthintersections.com.au/';
+end;
+
+function TFhirTerminologyCapabilities4.getContext: String;
+begin
+  result := tc.context;
+end;
+
+function TFhirTerminologyCapabilities4.getDate: TDateTimeEx;
+begin
+  result := tc.date;
+end;
+
+function TFhirTerminologyCapabilities4.getDescription: String;
+begin
+  result := tc.description;
+end;
+
+function TFhirTerminologyCapabilities4.getName: String;
+begin
+  result := tc.name;
+end;
+
+function TFhirTerminologyCapabilities4.getPublisher: String;
+begin
+  result := tc.publisher;
+end;
+
+function TFhirTerminologyCapabilities4.getStatus: TPublicationStatus;
+begin
+  result := MAP_TPublicationStatusR[tc.Status];
+end;
+
+function TFhirTerminologyCapabilities4.getURL: String;
+begin
+  result := tc.url;
+end;
+
+function TFhirTerminologyCapabilities4.getVersion: String;
+begin
+  result := tc.version;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setContext(Value: String);
+begin
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setDate(Value: TDateTimeEx);
+begin
+  tc.date := value;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setDescription(Value: String);
+begin
+  tc.description := value;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setName(Value: String);
+begin
+  tc.name := value;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setPublisher(Value: String);
+begin
+  tc.publisher := value;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setStatus(Value: TPublicationStatus);
+begin
+  tc.Status := MAP_TPublicationStatus[Value];
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setUrl(Value: String);
+begin
+  tc.url := value;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.setVersion(Value: String);
+begin
+  tc.version := value;
+end;
+
+
+procedure TFhirTerminologyCapabilities4.system(url: String);
+begin
+  tc.codeSystemList.Append.uri := url;
+end;
+
+function TFhirTerminologyCapabilities4.tc: TFhirTerminologyCapabilities;
+begin
+  result := (Fres as TFhirTerminologyCapabilities);
 end;
 
 end.

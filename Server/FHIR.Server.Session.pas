@@ -775,7 +775,7 @@ begin
   end
   else if (sType = 'metadata') Then
   begin
-    CommandType := fcmdConformanceStmt;
+    CommandType := fcmdMetadata;
     ForceMethod('GET');
   end
   else if (sType = 'task') Then
@@ -864,7 +864,7 @@ begin
         else if sCommand = 'DELETE' Then
           CommandType := fcmdDelete
         else if sCommand = 'OPTIONS' then // CORS
-          CommandType := fcmdConformanceStmt
+          CommandType := fcmdMetadata
         else
           raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itNotSupported, 'MSG_BAD_FORMAT', lang, [soURL, 'GET, PUT or DELETE']);
       end

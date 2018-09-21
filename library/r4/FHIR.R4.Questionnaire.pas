@@ -663,7 +663,7 @@ begin
     d := defn.getById(q.linkId);
     try
       if d.hasTypeChoice then
-        raise EFHIRException.create('not done yet - shouldn''t get here??');
+        raise ETodo.create('- shouldn''t get here??');
       for a in q.answerList do
       begin
         context.setProperty(d.name, convertType(a.value, d.statedType.code, q.linkId));
@@ -984,7 +984,7 @@ begin
   else if t.code = 'Quantity' then
     result := obj is TFHIRQuantity
   else
-    raise EFHIRException.create('Not Done Yet');
+    raise EFHIRTodo.create('TQuestionnaireBuilder.instanceOf');
 end;
 
 procedure TQuestionnaireBuilder.selectTypes(profile : TFHirStructureDefinition; sub : TFHIRQuestionnaireItem; t : TFhirElementDefinitionType; source, dest : TFhirQuestionnaireResponseItemList);
@@ -1593,7 +1593,7 @@ end;
 
 procedure TQuestionnaireBuilder.addIdRefQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
-//  raise EFHIRException.create('not Done Yet');
+//  raise EFHIRTodo.create();
 end;
 
 procedure TQuestionnaireBuilder.addExtensionQuestions(profile : TFHirStructureDefinition; group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; profileURL : String; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1608,7 +1608,7 @@ begin
     if extension.snapshot.elementList.Count = 1 then
       buildQuestion(group, profile, extension.snapshot.elementList[0], path+'.extension['+profileURL+']', answerGroups)
     else
-      raise EFHIRException.create('Not done yet');
+      raise EFHIRTodo.create('TQuestionnaireBuilder.addExtensionQuestions');
   end;
 end;
 

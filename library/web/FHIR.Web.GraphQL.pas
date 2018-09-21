@@ -963,7 +963,7 @@ begin
       else if (s = 'fragment') then
         doc.Fragments.Add(parseFragment)
       else
-        raise ELibraryException.create('Not done yet'); // doc.Operations.Add(parseOperation(s))?
+        raise ETodo.create('TGraphQLParser.parseDocument'); // doc.Operations.Add(parseOperation(s))?
     end;
   end;
 end;

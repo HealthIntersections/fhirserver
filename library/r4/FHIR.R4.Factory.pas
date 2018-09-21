@@ -111,6 +111,7 @@ type
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
+    function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR4;
 
@@ -354,6 +355,11 @@ end;
 function TFHIRFactoryR4.makeString(s: string): TFHIRObject;
 begin
   result := TFhirString.Create(s);
+end;
+
+function TFHIRFactoryR4.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
+begin
+  result := TFhirTerminologyCapabilities4.create(TFhirTerminologyCapabilities.create);
 end;
 
 function TFHIRFactoryR4.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;

@@ -3374,7 +3374,7 @@ end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('compareValues');
 end;
 
 { TFHIRStringListHelper }
@@ -4759,7 +4759,7 @@ end;
 
 procedure TFHIROperationDefinitionHelper.Settype_(const Value: boolean);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIROperationDefinitionHelper.Settype_');
 end;
 {$ENDIF}
 

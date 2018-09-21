@@ -979,7 +979,7 @@ end;
 
 procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TSubscriptionManager.processByScript');
 end;
 
 procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytesStream);

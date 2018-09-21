@@ -865,7 +865,7 @@ begin
     kdbSQLServer : result := 'int';
     kdbMySQL : result := 'UNSIGNED';
     kdbSQLite : result := 'Integer';
-  else raise EDBException.create('not done yet: DBIntType');
+  else raise EDBTodo.create('DBIntType');
   end;
 end;
 

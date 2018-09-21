@@ -198,7 +198,7 @@ end;
 
 function TMimeTypeCodeServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TMimeTypeCodeServices.getcontext');
 end;
 
 function TMimeTypeCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -219,7 +219,7 @@ end;
 
 function TMimeTypeCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TMimeTypeCodeServices.searchFilter');
 end;
 
 function TMimeTypeCodeServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
@@ -234,17 +234,17 @@ end;
 
 function TMimeTypeCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TMimeTypeCodeServices.FilterMore');
 end;
 
 function TMimeTypeCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TMimeTypeCodeServices.FilterConcept');
 end;
 
 function TMimeTypeCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TMimeTypeCodeServices.InFilter');
 end;
 
 procedure TMimeTypeCodeServices.Close(ctxt: TCodeSystemProviderContext);

@@ -165,7 +165,7 @@ end;
 
 function TFHIRTagList.asHeader: String;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create();
 end;
 
 function TFHIRTagList.GetCount: Integer;

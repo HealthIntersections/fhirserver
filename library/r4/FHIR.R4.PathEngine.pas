@@ -322,7 +322,7 @@ end;
 
 function TFHIRConstant.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRConstant.createPropertyValue');
 end;
 
 function TFHIRConstant.fhirType: string;
@@ -332,7 +332,7 @@ end;
 
 function TFHIRConstant.getId: String;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRConstant.getId:');
 end;
 
 function TFHIRConstant.makeCodeValue(v: String): TFHIRObject;
@@ -352,12 +352,12 @@ end;
 
 procedure TFHIRConstant.setIdValue(id: String);
 begin
-  raise EFHIRException.create('not done yet');
+  raise EFHIRTodo.create('TFHIRConstant.setIdValue');
 end;
 
 procedure TFHIRConstant.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRConstant.setProperty');
 end;
 
 { TFHIRClassTypeInfo }
@@ -370,7 +370,7 @@ end;
 
 function TFHIRClassTypeInfo.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRClassTypeInfo.createPropertyValue');
 end;
 
 destructor TFHIRClassTypeInfo.destroy;
@@ -406,7 +406,7 @@ end;
 
 function TFHIRClassTypeInfo.getId: String;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRClassTypeInfo.getId:');
 end;
 
 function TFHIRClassTypeInfo.makeCodeValue(v: String): TFHIRObject;
@@ -426,12 +426,12 @@ end;
 
 procedure TFHIRClassTypeInfo.setIdValue(id: String);
 begin
-  raise EFHIRException.create('not Done Yet');
+  raise EFHIRTodo.create('TFHIRClassTypeInfo.setIdValue');
 end;
 
 procedure TFHIRClassTypeInfo.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRClassTypeInfo.setProperty');
 end;
 
 function TFHIRClassTypeInfo.getName: String;
@@ -1843,7 +1843,7 @@ end;
 
 function TFHIRPathEngine.funcMemberOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPath.create('Not Done Yet');
+  raise EFHIRPathTodo.create('TFHIRPathEngine.funcMemberOf');
 end;
 
 function TFHIRPathEngine.funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -1908,12 +1908,12 @@ end;
 
 function TFHIRPathEngine.funcReplace(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPath.create('Not Done Yet');
+  raise EFHIRPathTodo.create('TFHIRPathEngine.funcReplace');
 end;
 
 function TFHIRPathEngine.funcReplaceMatches( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPath.create('Not Done Yet');
+  raise EFHIRPathTodo.create('TFHIRPathEngine.funcReplaceMatches(');
 end;
 
 function TFHIRPathEngine.funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -2479,12 +2479,12 @@ end;
 
 function TFHIRPathEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcElementDefinition');
 end;
 
 function TFHIRPathEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcSlice');
 end;
 
 function TFHIRPathEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -2534,7 +2534,7 @@ end;
 
 function TFHIRPathEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcConformsTo');
 end;
 
 function TFHIRPathEngine.funcAggregate(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -2748,12 +2748,12 @@ end;
 
 function TFHIRPathEngine.funcToDateTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcToDateTime');
 end;
 
 function TFHIRPathEngine.funcToTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcToTime');
 end;
 
 function TFHIRPathEngine.funcIsInteger(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -3062,7 +3062,7 @@ begin
     // todo: add memberOf
     popCustom : raise EFHIRPath.create('An internal error has occurred (operation not implemented)');
   else
-    raise EFHIRPath.create('not done yet');
+    raise EFHIRPathTodo.create('TFHIRPathEngine.operateTypes');
   end;
 end;
 

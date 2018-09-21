@@ -245,7 +245,7 @@ procedure TEditRegisteredServerForm.Button1Click(Sender: TObject);
 //  ext : TFHIRExtension;
 //  i : integer;
 begin
-  raise EFHIRException.create('not done yet');
+  raise EFHIRTodo.create();
 //  if FCapabilityStatement = nil then
 //    loadCapabilityStatement;
 //  for i := 0 to clHooks.Items.Count - 1 do
@@ -356,7 +356,7 @@ procedure TEditRegisteredServerForm.loadHooks;
   c : String;
   err : String; *)
 begin
- // raise EFHIRException.create('not done yet');
+ // raise EFHIRTodo.create();
   (*
   clHooks.items.Clear;
 

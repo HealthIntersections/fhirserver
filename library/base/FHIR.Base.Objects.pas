@@ -102,7 +102,7 @@ Type
     fcmdHistoryType,{ get updates for the resource type}
 
     fcmdValidate, { validate the resource}
-    fcmdConformanceStmt, { get the conformance statement for the system}
+    fcmdMetadata, { get the conformance statement for the system}
     fcmdTransaction, { Update or create a set of resources}
     fcmdHistorySystem, { get updates for the resource type}
     fcmdUpload, { Manual upload (Server extension)}
@@ -176,7 +176,7 @@ Type
 Const
   FHIR_NS = 'http://hl7.org/fhir';
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
-    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Task', 'delete task', 'Null');
+    'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'Metadata', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Task', 'delete task', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
   CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'RDF/Turtle', 'Text Representation', 'Newline delimited JSON', 'XHTML');
   EXT_ACTUAL_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.ndjson', '.html');
@@ -197,7 +197,8 @@ Const
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =
     ('', 'http://healthintersections.com.au/fhir/user/explicit', 'http://www.facebook.com', 'http://www.google.com', 'http://www.hl7.org');
   CODES_TFHIRSummaryOption : array [TFHIRSummaryOption] of String = ('Full', 'Summary', 'Text', 'Data', 'Count');
-
+  CODES_TFhirIssueType : array [TFhirIssueType] of String = ('Null', 'Invalid', 'Structure', 'Required', 'Value', 'Invariant', 'Security', 'Login', 'Unknown', 'Expired', 'Forbidden', 'Suppressed', 'Processing', 'NotSupported', 'Duplicate', 'NotFound', 'TooLong', 'CodeInvalid', 'Extension', 'TooCostly', 'BusinessRule', 'Conflict', 'Incomplete', 'Transient', 'LockError', 'NoStore', 'Exception', 'Timeout', 'Throttled', 'Informational');
+  CODES_TIssueSeverity : array [TIssueSeverity] of String = ('Null', 'Fatal', 'Error', 'Warning', 'Information');
 type
 
   TFHIRObject = class;

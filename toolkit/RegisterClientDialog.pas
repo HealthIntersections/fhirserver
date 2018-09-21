@@ -112,7 +112,7 @@ begin
             resp.position := 0;
             json := TJSONParser.Parse(resp);
             try
-              raise EFHIRException.create('Not done yet');
+              raise EFHIRTodo.create();
             finally
               json.free;
             end;
@@ -180,7 +180,7 @@ begin
       arr := json.forceArr['redirect_uris'];
       for s in memRedirects.Lines do
         arr.add(s);
-      raise EFHIRException.create('Not Done yet');
+      raise EFHIRTodo.create();
     end
     else
     begin

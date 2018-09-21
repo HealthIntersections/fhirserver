@@ -847,7 +847,7 @@ function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: T
 begin
   case sp.index.SearchType of
     sptNull: raise EFHIRException.create('param.type = null');
-    sptNumber: raise EFHIRException.create('not done yet');
+    sptNumber: raise EFHIRTodo.create();
 //      if obj.isPrimitive then
 //        result := compareNumber(obj.primitiveValue, sp.value, sp.prefix)
 //      else
@@ -872,10 +872,10 @@ begin
         result := obj.primitiveValue = sp.value
       else if sp.modifier = spmExact then
         raise EFHIRException.create('Modifier is not supported');
-    sptToken: raise EFHIRException.create('not done yet');
-    sptReference: raise EFHIRException.create('not done yet');
-    sptComposite: raise EFHIRException.create('not done yet');
-    sptQuantity: raise EFHIRException.create('not done yet');
+    sptToken: raise EFHIRTodo.create();
+    sptReference: raise EFHIRTodo.create();
+    sptComposite: raise EFHIRTodo.create();
+    sptQuantity: raise EFHIRTodo.create();
     sptUri:
       if not obj.isPrimitive then
         result := false

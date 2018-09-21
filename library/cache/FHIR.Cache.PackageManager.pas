@@ -646,13 +646,18 @@ begin
           begin
             fn := String(DirRec.Name);
             fn := fn.replace('/', '\');
-            bi := TBytesStream.Create;
-            try
-              tar.ReadFile(bi);
-              b := bi.Bytes;
-              result.Add(fn, copy(b, 0, bi.Size));
-            finally
-              bi.free;
+            if not fn.contains('@') then
+            begin
+              bi := TBytesStream.Create;
+              try
+                tar.ReadFile(bi);
+                b := bi.Bytes;
+                if result.ContainsKey(fn) then
+                  raise Exception.Create('Duplicate Entry: '+fn);
+                result.Add(fn, copy(b, 0, bi.Size));
+              finally
+                bi.free;
+              end;
             end;
           end;
         finally

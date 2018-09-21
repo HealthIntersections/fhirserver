@@ -1067,6 +1067,41 @@ type
     procedure setIdValue(id : String); override;
   end;
 
+  TFhirTerminologyCapabilitiesW = class (TFHIRXVersionResourceWrapper)
+  protected
+    function getDate: TDateTimeEx; virtual; abstract;
+    function getDescription: String; virtual; abstract;
+    function getName: String; virtual; abstract;
+    function getStatus: TPublicationStatus; virtual; abstract;
+    function getURL: String; virtual; abstract;
+    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setDescription(Value: String); virtual; abstract;
+    procedure setName(Value: String); virtual; abstract;
+    procedure setStatus(Value: TPublicationStatus); virtual; abstract;
+    procedure setUrl(Value: String); virtual; abstract;
+    function getContext: String; virtual; abstract;
+    procedure setContext(Value: String); virtual; abstract;
+    function getPublisher: String; virtual; abstract;
+    procedure setPublisher(Value: String); virtual; abstract;
+    function getVersion: String; virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
+  public
+    function link : TFhirTerminologyCapabilitiesW; overload;
+
+    property url : String read getURL write SetUrl;
+    property name : String read GetName write SetName;
+    property version : String read GetVersion write SetVersion;
+    property status : TPublicationStatus read GetStatus write SetStatus;
+    property description : String read GetDescription write SetDescription;
+    property date : TDateTimeEx read GetDate write SetDate;
+    property context : String read getContext write SetContext;
+    property publisher : String read GetPublisher write SetPublisher;
+
+    procedure contact(kind : TContactType; value : String); virtual; abstract;
+    procedure system(url : String); virtual; abstract;
+  end;
+
+
 implementation
 
 uses
@@ -1759,6 +1794,13 @@ end;
 
 procedure TFHIRNullObject.setProperty(propName: string; propValue: TFHIRObject);
 begin
+end;
+
+{ TFhirTerminologyCapabilitiesW }
+
+function TFhirTerminologyCapabilitiesW.link: TFhirTerminologyCapabilitiesW;
+begin
+  result := TFhirTerminologyCapabilitiesW(inherited link);
 end;
 
 end.

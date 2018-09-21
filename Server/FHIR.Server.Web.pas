@@ -1082,7 +1082,7 @@ Begin
                   response.FreeContentStream := true;
                   response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
                 end
-                else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceName <> '') then
+                else if (oRequest.CommandType = fcmdMetadata) and (oRequest.ResourceName <> '') then
                 begin
                   cacheResponse(response, oResponse.CacheControl);
                   response.ResponseNo := 200;
@@ -1336,7 +1336,7 @@ begin
 //  finally
 //    profile.Free;
 //  end;
-  raise EFslException.Create('not done yet');
+  raise ETodo.create('TFhirWebServerEndPoint.HandleWebCreate');
 end;
 {$ENDIF}
 function TFhirWebServerEndPoint.HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -1346,7 +1346,7 @@ function TFhirWebServerEndPoint.HandleWebEdit(request: TFHIRRequest; response: T
 //  s: String;
 //  comp: TFHIRComposer;
 begin
-  raise EFslException.Create('not done yet');
+  raise ETodo.create('TFhirWebServerEndPoint.HandleWebEdit');
 //  result := 0;
 //
 //  // get the right questionnaire
@@ -1457,7 +1457,7 @@ function TFhirWebServerEndPoint.HandleWebProfile(request: TFHIRRequest; response
 //  questionnaire: TFHIRQuestionnaire;
 //  s: String;
 begin
-  raise EFslException.Create('not done yet');
+  raise ETodo.create('TFhirWebServerEndPoint.HandleWebProfile');
 //  // get the right questionnaire
 //  StringSplit(request.id.Substring(8), '/', id, ver);
 //  profile := GetResource(request.Session, 'StructureDefinition', request.lang, id, ver, '') as TFhirStructureDefinition;
@@ -1645,7 +1645,7 @@ function TFhirWebServerEndPoint.HandleWebQuestionnaireInstance(request: TFHIRReq
 //  s, j: String;
 //  json: TFHIRJsonComposer;
 begin
-  raise EFslException.Create('Not done yet');
+  raise ETodo.create('TFhirWebServerEndPoint.HandleWebQuestionnaireInstance');
 //  result := 0;
 //
 //  // get the right questionnaire
@@ -4972,7 +4972,7 @@ end;
 
 function TFHIRBundleBuilderNDJson.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRBundleBuilderNDJson.moveToFirst');
 end;
 
 

@@ -309,7 +309,7 @@ end;
 
 function TFhirIndexManager3.transform(base: TFHIRObject; uri: String): TFHIRObject;
 begin
-  raise EFHIRException.create('not done yet');
+  raise EFHIRTodo.create('TFhirIndexManager3.transform');
 end;
 
 function TFhirIndexManager3.TypeForKey(key: integer): String;

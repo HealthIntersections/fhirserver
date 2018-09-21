@@ -474,6 +474,11 @@ type
     function source : string;
   end;
 
+  TFhirTerminologyCapabilitiesHelper = class helper for TFhirTerminologyCapabilities
+  public
+    function context : string;
+  end;
+
   TFhirValueSetExpansionHelper = class helper for TFhirValueSetExpansion
   public
     procedure AddParam(name, value : String); overload;
@@ -1813,10 +1818,10 @@ end;
       li.addText('Import all the codes that are part of '+imp.Value);
     end;
     for (ConceptSetComponent inc : vs.Compose.Include) begin
-      genInclude(ul, inc, 'Include', codeSystems);      
+      genInclude(ul, inc, 'Include', codeSystems);
     end;
     for (ConceptSetComponent exc : vs.Compose.Exclude) begin
-      genInclude(ul, exc, 'Exclude', codeSystems);      
+      genInclude(ul, exc, 'Exclude', codeSystems);
     end;
   end;
 
@@ -1824,21 +1829,21 @@ end;
     TFhirXHtmlNode li;
     li := ul.addTag('li');
     AtomEntry e := codeSystems.(inc.System.toString);
-    
-    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then 
+
+    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then
       li.addText(type+' all codes defined in ');
       addCsRef(inc, li, e);
     end; else begin
       if (inc.Code.size > 0) begin then
         li.addText(type+' these codes as defined in ');
         addCsRef(inc, li, e);
-      
+
         TFhirXHtmlNode t := li.addTag('table');
         addTableHeaderRowStandard(t);
         for (Code c : inc.Code) begin
           TFhirXHtmlNode tr := t.addTag('tr');
           TFhirXHtmlNode td := tr.addTag('td');
-          td.addText(c.Value);         
+          td.addText(c.Value);
           ValueSetDefineConceptComponent cc := getConceptForCode(e, c.Value);
           if (cc <> nil) begin then
             td := tr.addTag('td');
@@ -1870,7 +1875,7 @@ end;
     case isA: return ' is-a ';
     case isNotA: return ' is-not-a ';
     case regex: return ' matches (by regex) ';
-    
+
     end;
     return nil;
   end;
@@ -1888,9 +1893,9 @@ end;
     end;
     return nil;
   end;
-  
-  
-  
+
+
+
   private ValueSetDefineConceptComponent getConceptForCode(ValueSetDefineConceptComponent c, String code) begin
     if (code.equals(c.Code)) then
       return c;
@@ -1907,7 +1912,7 @@ end;
       TFhirXHtmlNode a := li.addTag('a');
       a.setAttribute('href', cs.Links.('self').replace('\\', '/'));
       a.addText(inc.System.toString);
-    end; else 
+    end; else
       li.addText(inc.System.toString);
   end;
 
@@ -3886,7 +3891,7 @@ end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('compareValues');
 end;
 
 { TFHIRStringListHelper }
@@ -5366,7 +5371,7 @@ Const
 Function GetExtForMimeType(mimeType: String): String;
 {$IFDEF MACOS}
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create();
 end;
 {$ELSE}
 Var
@@ -5416,7 +5421,7 @@ End;
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
 {$IFDEF MACOS}
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create();
 end;
 {$ELSE}
 var
@@ -6206,6 +6211,17 @@ begin
     result := expression
   else
     result := reference;
+end;
+
+{ TFhirTerminologyCapabilitiesHelper }
+
+function TFhirTerminologyCapabilitiesHelper.context: string;
+var
+  i: Integer;
+begin
+  result := '';
+  for i := 0 to useContextList.Count - 1 do
+    result := result + gen(useContextList[i]);
 end;
 
 end.

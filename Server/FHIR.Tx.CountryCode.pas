@@ -991,7 +991,7 @@ end;
 
 function TCountryCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TCountryCodeServices.searchFilter');
 end;
 
 function TCountryCodeServices.subsumesTest(codeA, codeB: String): String;
@@ -1024,7 +1024,7 @@ end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TCountryCodeServices.filterLocate');
 end;
 
 function TCountryCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -1040,7 +1040,7 @@ end;
 
 function TCountryCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TCountryCodeServices.InFilter');
 end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderContext);
@@ -1055,7 +1055,7 @@ end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TCountryCodeServices.Close');
 end;
 
 

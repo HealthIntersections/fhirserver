@@ -1109,7 +1109,7 @@ end;
 
 function TFHIRPathEngine.funcMemberOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPath.create('Not Done Yet');
+  raise EFHIRPathTodo.create('TFHIRPathEngine.funcMemberOf');
 end;
 
 function TFHIRPathEngine.funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -1174,12 +1174,12 @@ end;
 
 function TFHIRPathEngine.funcReplace(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPath.create('Not Done Yet');
+  raise EFHIRPathTodo.create('TFHIRPathEngine.funcReplace');
 end;
 
 function TFHIRPathEngine.funcReplaceMatches( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPath.create('Not Done Yet');
+  raise EFHIRPathTodo.create('TFHIRPathEngine.funcReplaceMatches(');
 end;
 
 function TFHIRPathEngine.funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -1705,7 +1705,7 @@ end;
 
 function TFHIRPathEngine.funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcType');
 end;
 
 function TFHIRPathEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -1733,12 +1733,12 @@ end;
 
 function TFHIRPathEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcElementDefinition');
 end;
 
 function TFHIRPathEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcSlice');
 end;
 
 function TFHIRPathEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -1788,7 +1788,7 @@ end;
 
 function TFHIRPathEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRPathEngine.funcConformsTo');
 end;
 
 
@@ -1905,7 +1905,7 @@ begin
     popContains:  result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
     popCustom : raise EFHIRPath.create('An internal error has occurred (operation not implemented)');
   else
-    raise EFHIRPath.create('not done yet');
+    raise EFHIRPathTodo.create('TFHIRPathEngine.operateTypes');
   end;
 end;
 

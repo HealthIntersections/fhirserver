@@ -316,12 +316,12 @@ end;
 
 function TACIRServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.prepare');
 end;
 
 function TACIRServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.searchFilter');
 end;
 
 function TACIRServices.subsumesTest(codeA, codeB: String): String;
@@ -331,27 +331,27 @@ end;
 
 function TACIRServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.filter');
 end;
 
 function TACIRServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.filterLocate');
 end;
 
 function TACIRServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.FilterMore');
 end;
 
 function TACIRServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.FilterConcept');
 end;
 
 function TACIRServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.InFilter');
 end;
 
 procedure TACIRServices.Close(ctxt: TCodeSystemProviderContext);
@@ -364,7 +364,7 @@ end;
 
 procedure TACIRServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologySetup.Create('not done yet');
+  raise ETerminologyTodo.create('TACIRServices.Close');
 end;
 
 { TACIRPrep }

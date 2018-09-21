@@ -509,7 +509,7 @@ end;
 
 function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.createPropertyValue');
 end;
 
 destructor TFHIRMMElement.Destroy;
@@ -682,12 +682,12 @@ end;
 
 procedure TFHIRMMElement.setIdValue(id: String);
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.setIdValue');
 end;
 
 procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.setProperty');
 end;
 
 function TFHIRMMElement.markLocation(start, end_: TSourceLocation): TFHIRMMElement;
@@ -699,7 +699,7 @@ end;
 
 function TFHIRMMElement.getId: String;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.getId:');
 end;
 
 function TFHIRMMElement.getNamedChild(name: String): TFHIRMMElement;
@@ -2127,17 +2127,17 @@ end;
 
 procedure TFHIRCustomResource.Assign(oSource: TFslObject);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.Assign');
+  raise EFHIRTodo.create('TFHIRCustomResource.Assign');
 end;
 
 function TFHIRCustomResource.Clone: TFHIRCustomResource;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.Clone:');
+  raise EFHIRTodo.create('TFHIRCustomResource.Clone:');
 end;
 
 function TFHIRCustomResource.equals(other : TObject): boolean;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.equalsDeep');
+  raise EFHIRTodo.create('TFHIRCustomResource.equalsDeep');
 end;
 
 function TFHIRCustomResource.FhirType: string;
@@ -2152,12 +2152,12 @@ end;
 
 function TFHIRCustomResource.getId: string;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.getId');
+  raise EFHIRTodo.create('TFHIRCustomResource.getId');
 end;
 
 procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.getProperty');
+  raise EFHIRTodo.create('TFHIRCustomResource.getProperty');
 end;
 
 function TFHIRCustomResource.GetResourceType: TFhirResourceType;
@@ -2167,22 +2167,22 @@ end;
 
 function TFHIRCustomResource.isMetaDataBased: boolean;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.isMetaDataBased:');
+  raise EFHIRTodo.create('TFHIRCustomResource.isMetaDataBased:');
 end;
 
 procedure TFHIRCustomResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.ListProperties');
+  raise EFHIRTodo.create('TFHIRCustomResource.ListProperties');
 end;
 
 function TFHIRCustomResource.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.makeProperty');
+  raise EFHIRTodo.create('TFHIRCustomResource.makeProperty');
 end;
 
 procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.setProperty');
+  raise EFHIRTodo.create('TFHIRCustomResource.setProperty');
 end;
 
 end.

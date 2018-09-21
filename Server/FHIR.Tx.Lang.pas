@@ -363,7 +363,7 @@ end;
 
 function TIETFLanguageCodeServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIETFLanguageCodeServices.getcontext');
 end;
 
 function TIETFLanguageCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -384,7 +384,7 @@ end;
 
 function TIETFLanguageCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIETFLanguageCodeServices.searchFilter');
 end;
 
 function TIETFLanguageCodeServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
@@ -434,17 +434,17 @@ end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar');
 end;
 
 function TIETFLanguageCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIETFLanguageCodeServices.FilterConcept');
 end;
 
 function TIETFLanguageCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIETFLanguageCodeServices.InFilter');
 end;
 
 procedure TIETFLanguageCodeServices.Close(ctxt: TCodeSystemProviderContext);

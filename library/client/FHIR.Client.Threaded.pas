@@ -191,7 +191,7 @@ begin
   try
     try
       case FPackage.command of
-        fcmdConformanceStmt: FPackage.result := FClient.conformanceV(FPackage.summary);
+        fcmdMetadata: FPackage.result := FClient.conformanceV(FPackage.summary);
         fcmdTransaction : FPackage.result := FCLient.transactionV(FPackage.resource as TFHIRResourceV);
         fcmdRead : FPackage.result := FClient.readResourceV(FPackage.ResourceType, FPackage.id);
         fcmdVersionRead : FPackage.result := FClient.vreadResourceV(FPackage.ResourceType, FPackage.id, FPackage.vid);
@@ -225,7 +225,7 @@ begin
           else
             FPackage.FBuffer := FClient.customGet(FPackage.paramString, FPackage.FHeaders);
       else
-        raise EFHIRException.create('Not done yet');
+        raise EFHIRTodo.create('TFhirThreadedClientThread.execute');
       end;
     except
       on e : exception do
@@ -265,7 +265,7 @@ var
 begin
   pack := TFhirThreadedClientPackage.create;
   try
-    pack.command := fcmdConformanceStmt;
+    pack.command := fcmdMetadata;
     pack.summary := summary;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
     wait(pack);
@@ -343,7 +343,7 @@ end;
 
 procedure TFhirThreadedCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
 begin
- raise EFHIRException.create('Not Done Yet');
+ raise EFHIRTodo.create('TFhirThreadedCommunicator.deleteResourceV');
 end;
 
 destructor TFhirThreadedCommunicator.Destroy;
@@ -354,12 +354,12 @@ end;
 
 function TFhirThreadedCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFhirThreadedCommunicator.historyTypeV');
 end;
 
 function TFhirThreadedCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFhirThreadedCommunicator.historyInstanceV');
 end;
 
 function TFhirThreadedCommunicator.operationV(atype: TFhirResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
@@ -489,12 +489,12 @@ end;
 
 function TFhirThreadedCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFHIRResourceV;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFhirThreadedCommunicator.searchPostV');
 end;
 
 procedure TFhirThreadedCommunicator.terminate;
 begin
-  raise EFHIRException.create('not done yet');
+  raise EFHIRTodo.create('TFhirThreadedCommunicator.terminate');
 end;
 
 function TFhirThreadedCommunicator.transactionV(bundle: TFHIRResourceV): TFHIRResourceV;

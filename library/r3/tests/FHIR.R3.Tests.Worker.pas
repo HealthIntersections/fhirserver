@@ -89,12 +89,12 @@ end;
 
 function TTestingWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
 begin
-  raise EFHIRPath.create('Not done yet');
+  raise EFHIRPathTodo.create();
 end;
 
 function TTestingWorkerContext.supportsSystem(system, version: string): boolean;
 begin
-  raise EFHIRPath.create('Not done yet');
+  raise EFHIRPathTodo.create();
 end;
 
 
@@ -112,22 +112,22 @@ end;
 
 function TTestingWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPath.create('Not done yet');
+  raise EFHIRPathTodo.create();
 end;
 
 function TTestingWorkerContext.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRPath.create('Not done yet');
+  raise EFHIRPathTodo.create();
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPath.create('Not done yet');
+  raise EFHIRPathTodo.create();
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPath.create('Not done yet');
+  raise EFHIRPathTodo.create();
 end;
 
 { FHIRFolderBasedTestCaseAttribute }

@@ -441,13 +441,13 @@ begin
     if (ed = nil) then
       raise EDefinitionException.create('Unable to resolve '+definition.contentReference+' at '+definition.path+' on '+structure.Url);
   end;
-  if (definition.type_List.count() = 0) then
+  if (ed.type_List.count() = 0) then
     result := ''
-  else if (definition.type_list.count() > 1) then
+  else if (ed.type_list.count() > 1) then
   begin
-    t := definition.type_list[0].Code;
+    t := ed.type_list[0].Code;
     all := true;
-    for tr in definition.type_list do
+    for tr in ed.type_list do
     begin
       if (t <> tr.Code) then
         all := false;
@@ -456,7 +456,7 @@ begin
       result := t
     else
     begin
-      tail := definition.Path.substring(definition.Path.lastIndexOf('.')+1);
+      tail := ed.Path.substring(ed.Path.lastIndexOf('.')+1);
       if (tail.endsWith('[x]') and elementName.startsWith(tail.substring(0, tail.length-3))) then
       begin
         name := elementName.substring(tail.length-3);
@@ -470,7 +470,7 @@ begin
     end;
   end
   else
-    result := definition.type_list[0].Code;
+    result := ed.type_list[0].Code;
 end;
 
 function TFHIRMMProperty.hasType(elementName: String): boolean;
@@ -617,8 +617,12 @@ begin
       // ok, find the right definitions
       t := '';
       if (ed.Type_List.count = 1) then
-        t := ed.type_list[0].Code
-      else if (ed.type_list.count = 0) then
+      begin
+        t := ed.type_list[0].Code;
+        if (t = '') then
+          t := 'string'; // special fields
+     end
+     else if (ed.type_list.count = 0) then
         raise EDefinitionException.create('types == 0, and no children found')
       else
       begin
@@ -778,7 +782,7 @@ end;
 
 function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.createPropertyValue');
 end;
 
 destructor TFHIRMMElement.Destroy;
@@ -915,7 +919,7 @@ begin
   if isPrimitive and (name = 'value') and (value <> '') then
   begin
     tn := getType();
-    raise EDefinitionException.create('not done yet');
+    raise EDefinitionExceptionTodo.create('TFHIRMMElement.getProperty');
   end;
 
   if FChildren <> nil then
@@ -982,7 +986,7 @@ end;
 
 function TFHIRMMElement.getId: String;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRMMElement.getId:');
 end;
 
 function TFHIRMMElement.getNamedChild(name: String): TFHIRMMElement;
@@ -1100,17 +1104,17 @@ begin
         raise EDefinitionException('Cannot set a value of a non-primitive type ('+name+' on '+self.name+')');
       child.Value := value;
     end;
-  raise EDefinitionException.create('not done yet');
+  raise EDefinitionExceptionTodo.create('TFHIRMMElement.SetChildValue');
 end;
 
 procedure TFHIRMMElement.setIdValue(id: String);
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.setIdValue');
 end;
 
 procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRMMElement.setProperty');
 end;
 
 procedure TFHIRMMElement.SetXhtml(const Value: TFhirXHtmlNode);
@@ -2076,7 +2080,7 @@ var
   child : TJsonObject;
 begin
   if (main <> nil) and not ((main is TJsonString) or (main is TJsonBoolean) or (main is TJsonNull) or (main is TJsonNumber)) then
-    logError(main.LocationStart.Line, main.LocationStart.Col, npath, IssueTypeINVALID, 'This prop must be an simple value, not a '+main.className, IssueSeverityERROR)
+    logError(main.LocationStart.Line, main.LocationStart.Col, npath, IssueTypeINVALID, 'The prop "'+name+'" must be an simple value, not a '+main.className, IssueSeverityERROR)
   else if (fork <> nil) and (not (fork is TJsonObject)) then
     logError(fork.LocationStart.Line, fork.LocationStart.Col, npath, IssueTypeINVALID, 'This prop must be an obj, not a '+fork.className, IssueSeverityERROR)
   else
@@ -2508,17 +2512,17 @@ end;
 
 procedure TFHIRCustomResource.Assign(oSource: TFslObject);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.Assign');
+  raise EFHIRTodo.create('TFHIRCustomResource.Assign');
 end;
 
 function TFHIRCustomResource.Clone: TFHIRCustomResource;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.Clone:');
+  raise EFHIRTodo.create('TFHIRCustomResource.Clone:');
 end;
 
 function TFHIRCustomResource.equals(other : TObject): boolean;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.equalsDeep');
+  raise EFHIRTodo.create('TFHIRCustomResource.equalsDeep');
 end;
 
 function TFHIRCustomResource.FhirType: string;
@@ -2533,12 +2537,12 @@ end;
 
 function TFHIRCustomResource.getid: string;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.getId');
+  raise EFHIRTodo.create('TFHIRCustomResource.getId');
 end;
 
 procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.getProperty');
+  raise EFHIRTodo.create('TFHIRCustomResource.getProperty');
 end;
 
 function TFHIRCustomResource.GetResourceType: TFhirResourceType;
@@ -2548,22 +2552,22 @@ end;
 
 function TFHIRCustomResource.isMetaDataBased: boolean;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.isMetaDataBased:');
+  raise EFHIRTodo.create('TFHIRCustomResource.isMetaDataBased:');
 end;
 
 procedure TFHIRCustomResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.ListProperties');
+  raise EFHIRTodo.create('TFHIRCustomResource.ListProperties');
 end;
 
 function TFHIRCustomResource.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.makeProperty');
+  raise EFHIRTodo.create('TFHIRCustomResource.makeProperty');
 end;
 
 procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('Not done yet: TFHIRCustomResource.setProperty');
+  raise EFHIRTodo.create('TFHIRCustomResource.setProperty');
 end;
 
 

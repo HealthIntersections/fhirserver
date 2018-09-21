@@ -107,7 +107,7 @@ end;
 
 procedure TFHIRNDJsonComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRNDJsonComposer.ComposeResourceV');
 end;
 
 destructor TFHIRNDJsonComposer.Destroy;

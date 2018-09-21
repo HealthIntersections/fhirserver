@@ -1037,7 +1037,7 @@ end;
 
 function TFHIRHTTPCommunicator.authoriseByOWinHttp(server, username, password: String): TJsonObject;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRHTTPCommunicator.authoriseByOWinHttp');
 end;
 
 function TFHIRHTTPCommunicator.authoriseByOWinIndy(server, username, password: String): TJsonObject;

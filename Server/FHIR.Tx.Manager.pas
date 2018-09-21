@@ -60,6 +60,7 @@ Type
     FUnii : TUniiServices;
     FACIR : TACIRServices;
     FProviderClasses : TFslMap<TCodeSystemProvider>;
+    FNDFRT: TNDFRTServices;
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
     procedure SetUcum(const Value: TUcumServices);
@@ -69,6 +70,8 @@ Type
     procedure SetACIR(const Value: TACIRServices);
 
     procedure getSummary(b : TStringBuilder);
+
+    procedure SetNDFRT(const Value: TNDFRTServices);
   public
     constructor Create(settings : TFHIRServerSettings);
     destructor Destroy; Override;
@@ -87,6 +90,7 @@ Type
     Property DefSnomed : TSnomedServices read FDefSnomed write SetDefSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
+    Property NDFRT : TNDFRTServices read FNDFRT write SetNDFRT;
     Property NciMeta : TNciMetaServices read FNciMeta write SetNciMeta;
     Property Unii : TUniiServices read FUnii write SetUnii;
     Property ACIR : TACIRServices read FACIR write SetACIR;
@@ -206,6 +210,7 @@ Type
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read getProviderClasses;
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
+    function listSystems : TArray<String>;
 
     procedure declareCodeSystems(list : TFslList<TFhirResourceV>);
     function supportsSystem(s : String; version : String) : boolean;
@@ -836,6 +841,8 @@ begin
     addCodeSystem('Ucum', 'ucum', FCommonTerminologies.FUcum.system(nil), FCommonTerminologies.FUcum.version(nil), FCommonTerminologies.FUcum.TotalCount);
   if FCommonTerminologies.FRxNorm <> nil then
     addCodeSystem('RxNorm', 'rxnorm', FCommonTerminologies.FRxNorm.system(nil), FCommonTerminologies.FRxNorm.version(nil), FCommonTerminologies.FRxNorm.TotalCount);
+  if FCommonTerminologies.NDFRT <> nil then
+    addCodeSystem('NDFRT', 'ndfrt', FCommonTerminologies.NDFRT.system(nil), FCommonTerminologies.NDFRT.version(nil), FCommonTerminologies.NDFRT.TotalCount);
   if FCommonTerminologies.FUnii <> nil then
     addCodeSystem('Unii', 'unii', FCommonTerminologies.FUnii.system(nil), FCommonTerminologies.FUnii.version(nil), FCommonTerminologies.FUnii.TotalCount);
   if FCommonTerminologies.FACIR <> nil then
@@ -1503,6 +1510,34 @@ begin
   result := TTerminologyServerStore(inherited Link);
 end;
 
+function TTerminologyServerStore.listSystems: TArray<String>;
+var
+  ts : TStringList;
+  p : TCodeSystemProvider;
+  s : String;
+  i : integer;
+begin
+  ts := TStringList.Create;
+  try
+    ts.Sorted := true;
+    ts.Duplicates := TDuplicates.dupIgnore;
+    FLock.Lock('CodeSystemCount');
+    try
+      for p in ProviderClasses.Values do
+        ts.Add(p.system(nil));
+      for s in FCodeSystemsByUrl.Keys do
+        ts.Add(s);
+    finally
+      FLock.Unlock;
+    end;
+    SetLength(result, ts.Count);
+    for i := 0 to ts.Count - 1 do
+      result[i] := ts[i];
+  finally
+    ts.Free;
+  end;
+end;
+
 function TTerminologyServerStore.NextConceptKey: integer;
 begin
   FLock.Lock;
@@ -1688,6 +1723,7 @@ end;
 
 destructor TCommonTerminologies.Destroy;
 begin
+  FNDFRT.Free;
   FSettings.Free;
   FIcd10.Free;
   FLoinc.free;
@@ -1726,6 +1762,11 @@ begin
     b.append('<li>RxNorm: not loaded</li>')
   else
     b.append('<li>RxNorm: '+FRxNorm.version(nil)+' ('+inttostr(FRxNorm.UseCount)+' uses)');
+
+  if FNDFRT = nil then
+    b.append('<li>NDFRT: not loaded</li>')
+  else
+    b.append('<li>NDFRT: '+NDFRT.version(nil)+' ('+inttostr(NDFRT.UseCount)+' uses)');
 
   if FNciMeta = nil then
     b.append('<li>NciMeta: not loaded</li>')
@@ -1810,6 +1851,11 @@ begin
         logt('load '+s+' from '+details['database']);
         RxNorm := TRxNormServices.create(databases[details['database']].link)
       end
+      else if details['type'] = 'ndfrt' then
+      begin
+        logt('load '+s+' from '+details['database']);
+        NDFRT := TNDFRTServices.create(databases[details['database']].link)
+      end
       else if details['type'] = 'mcimeta' then
       begin
         logt('load '+s+' from '+details['database']);
@@ -1866,6 +1912,22 @@ begin
   begin
     FProviderClasses.add(FNciMeta.system(nil), FNciMeta.Link);
     FProviderClasses.add(FNciMeta.system(nil)+URI_VERSION_BREAK+FNciMeta.version(nil), FNciMeta.Link);
+  end;
+end;
+
+procedure TCommonTerminologies.SetNDFRT(const Value: TNDFRTServices);
+begin
+  if FNDFRT <> nil then
+  begin
+    FProviderClasses.Remove(FNDFRT.system(nil));
+    FProviderClasses.Remove(FNDFRT.system(nil)+URI_VERSION_BREAK+FNDFRT.version(nil));
+  end;
+  FNDFRT.Free;
+  FNDFRT := Value;
+  if FNDFRT <> nil then
+  begin
+    FProviderClasses.add(FNDFRT.system(nil), FNDFRT.Link);
+    FProviderClasses.add(FNDFRT.system(nil)+URI_VERSION_BREAK+FNDFRT.version(nil), FNDFRT.Link);
   end;
 end;
 

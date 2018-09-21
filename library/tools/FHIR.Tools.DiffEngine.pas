@@ -448,7 +448,7 @@ begin
           end
           else if dm.FSourceIndex < cb then
           begin
-            raise EFHIRException.create('Not done yet (<)');
+            raise ETodo.create('TDifferenceEngine.makeListChanges (<)');
             // actually, this can't happen; a move forwards will become a series of moves backwards?
           end
           else

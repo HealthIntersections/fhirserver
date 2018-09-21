@@ -294,7 +294,7 @@ end;
 
 function TUSStateServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUSStateServices.searchFilter');
 end;
 
 function TUSStateServices.subsumesTest(codeA, codeB: String): String;
@@ -309,7 +309,7 @@ end;
 
 function TUSStateServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUSStateServices.filterLocate');
 end;
 
 function TUSStateServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -325,7 +325,7 @@ end;
 
 function TUSStateServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUSStateServices.InFilter');
 end;
 
 procedure TUSStateServices.Close(ctxt: TCodeSystemProviderContext);
@@ -340,7 +340,7 @@ end;
 
 procedure TUSStateServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUSStateServices.Close');
 end;
 
 

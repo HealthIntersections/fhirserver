@@ -269,7 +269,7 @@ End;
 Procedure TLogger.CutFile(sName : String);
 {$IFDEF MACOS}
 begin
-  raise EIOException.create('Not done yet');
+  raise ETodo.create();
 end;
 {$ELSE}
 Var
@@ -395,7 +395,7 @@ procedure TLogger.WriteToLog(bytes: TBytes);
 begin
   If length(bytes) = 0 Then
     Exit;
-  // todo.... raise EIOException.create('Not done yet');
+  // todo.... raise ETodo.create();
 end;
 {$ELSE}
 Var

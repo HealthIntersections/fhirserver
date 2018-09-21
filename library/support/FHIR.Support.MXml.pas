@@ -1963,7 +1963,7 @@ begin
           end;
         xentRoot : fwork.add(self.link);
         xentIterator : evaluateIterator(expr, atEntry, variables, position, focus, fwork);
-        xentVariable : raise EXmlException.create('not done yet');
+        xentVariable : raise EXmlTodo.create('TMXmlDocument.evaluate');
       else
         raise EXmlException.Create('Unsupported Expression Type');
       end;
@@ -2843,7 +2843,7 @@ var
 begin
   count := 0;
   case axis of
-    axisSelf: raise EXmlException.Create('not done yet');
+    axisSelf: raise EXmlTodo.create('TMXmlDocument.iterate#1');
     axisChild:
       if node is TMXmlElement then
         iterateChildren(TMXmlElement(node).Children, false);
@@ -2863,14 +2863,14 @@ begin
           if event(context, a) then
             list.Add(a.Link);
 
-    axisNamespace: raise EXmlException.Create('not done yet');
-    axisParent: raise EXmlException.Create('not done yet');
-    axisAncestor: raise EXmlException.Create('not done yet');
-    axisAncestorOrSelf: raise EXmlException.Create('not done yet');
-    axisFollowing: raise EXmlException.Create('not done yet');
-    axisFollowingSibling: raise EXmlException.Create('not done yet');
-    axisPreceding: raise EXmlException.Create('not done yet');
-    axisPrecedingSibling: raise EXmlException.Create('not done yet');
+    axisNamespace: raise EXmlTodo.create('TMXmlDocument.iterate#2');
+    axisParent: raise EXmlTodo.create('TMXmlDocument.iterate#3');
+    axisAncestor: raise EXmlTodo.create('TMXmlDocument.iterate#4');
+    axisAncestorOrSelf: raise EXmlTodo.create('TMXmlDocument.iterate#5');
+    axisFollowing: raise EXmlTodo.create('TMXmlDocument.iterate#6');
+    axisFollowingSibling: raise EXmlTodo.create('TMXmlDocument.iterate#7');
+    axisPreceding: raise EXmlTodo.create('TMXmlDocument.iterate#8');
+    axisPrecedingSibling: raise EXmlTodo.create('TMXmlDocument.iterate#9');
   else
     raise EXmlException.Create('unknown xpath axis')
   end;
@@ -2976,7 +2976,7 @@ end;
 //    end;
 //  end
 //  else
-//    raise EXmlException.create('Not done yet');
+//    raise EXmlTodo.create();
 
 function TMXmlDocument.select(xpath: String; focus: TMXmlElement): TFslList<TMXmlNode>;
 var

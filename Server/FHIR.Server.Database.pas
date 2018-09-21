@@ -551,10 +551,10 @@ begin
     begin
       result := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
       try
-        result.Tag := TFslBuffer.create;
+        result.Element.Tag := TFslBuffer.create;
         result.url := AppendForwardSlash(base)+type_+'/'+sId;
-        TFslBuffer(result.Tag).AsBytes := FConnection.ColBlobByName[field];
-        result.Tags['type'] := type_;
+        TFslBuffer(result.Element.Tag).AsBytes := FConnection.ColBlobByName[field];
+        result.Element.Tags['type'] := type_;
         if (purpose <> smUnknown) then
         begin
           result.searchMode := purpose;
@@ -3819,7 +3819,7 @@ begin
     fcmdValidate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdValidate;
     fcmdSearch : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdSearch;
     fcmdCreate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdCreate;
-    fcmdConformanceStmt : result := true;
+    fcmdMetadata : result := true;
     fcmdUpload, fcmdTransaction : result := ServerContext.SupportTransaction;
     fcmdOperation : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdOperation;
   else

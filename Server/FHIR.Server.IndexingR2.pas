@@ -404,7 +404,7 @@ end;
 
 function TFhirIndexManager2.transform(base: TFHIRObject; uri: String): TFHIRObject;
 begin
-  raise EFHIRException.create('not done yet');
+  raise EFHIRTodo.create('TFhirIndexManager2.transform');
 end;
 
 function TFhirIndexManager2.TypeForKey(key: integer): string;

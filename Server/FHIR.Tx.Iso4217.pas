@@ -225,7 +225,7 @@ end;
 
 function TIso4217Services.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIso4217Services.searchFilter');
 end;
 
 function TIso4217Services.subsumesTest(codeA, codeB: String): String;
@@ -256,7 +256,7 @@ end;
 
 function TIso4217Services.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIso4217Services.filterLocate');
 end;
 
 function TIso4217Services.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -272,7 +272,7 @@ end;
 
 function TIso4217Services.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIso4217Services.InFilter');
 end;
 
 procedure TIso4217Services.Close(ctxt: TCodeSystemProviderContext);
@@ -287,7 +287,7 @@ end;
 
 procedure TIso4217Services.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TIso4217Services.Close');
 end;
 
 { TIso4217ConceptFilter }

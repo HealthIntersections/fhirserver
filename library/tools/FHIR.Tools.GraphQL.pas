@@ -721,7 +721,7 @@ var
   prop : TFHIRProperty;
 begin
   if not (source.fhirType = 'Reference') then
-    raise EJsonException.Create('Not done yet');
+    raise EJsonTodo.create('TFHIRGraphQLEngine.processReference');
   if not assigned(FOnFollowReference) then
     raise EJsonException.Create('Resource Referencing services not provided');
 

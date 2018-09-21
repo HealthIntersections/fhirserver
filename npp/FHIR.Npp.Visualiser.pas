@@ -701,7 +701,7 @@ begin
          end;
       1: p.expr := pe.nodeOpNext;
     else if node.index - offset > 0 then
-      raise EFHIRException.create('not done yet');
+      raise EFHIRTodo.create();
     end;
   end;
   if p.expr.tag = 1 then

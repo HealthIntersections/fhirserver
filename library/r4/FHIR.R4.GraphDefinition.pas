@@ -191,7 +191,7 @@ end;
 
 procedure TFHIRGraphDefinitionParser4.readHeader(gd: TFhirGraphDefinition);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRGraphDefinitionParser4.readHeader');
 end;
 
 procedure TFHIRGraphDefinitionParser4.readLinkList(list: TFhirGraphDefinitionLinkList);

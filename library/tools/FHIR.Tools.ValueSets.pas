@@ -101,7 +101,7 @@ Type
   end;
 
   TGetValueSetEvent = function (sender : TObject; url : String) : TFHIRValueSetW of object;
-  TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRExpansionParams) : TCodeSystemProvider of object;
+  TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider of object;
   TGetExpansionEvent = function (sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; limit : integer) : TFHIRValueSetW of object;
 
   TValueSetWorker = class (TFslObject)
@@ -233,7 +233,7 @@ begin
       exit('');
     if vsi.hasFilters then
       exit('');
-    cs := FOnGetCSProvider(self, vsi.system, '', nil);
+    cs := FOnGetCSProvider(self, vsi.system, '', nil, true);
     if (cs = nil) then
       exit('');
     try
@@ -356,7 +356,7 @@ begin
     end;
   end;
   if not FOthers.ExistsByKey(cc.system) then
-    FOthers.Add(cc.system, FOnGetCSProvider(self, cc.system, cc.version, FParams));
+    FOthers.Add(cc.system, FOnGetCSProvider(self, cc.system, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
   for ccf in cc.filters.forEnum do
   begin
@@ -433,7 +433,7 @@ begin
   {special case:}
   if (FValueSet.url = ANY_CODE_VS) then
   begin
-    cs := FOnGetCSProvider(self, system, version, FParams{, true});
+    cs := FOnGetCSProvider(self, system, version, FParams, true);
     try
       if cs = nil then
         result := false
@@ -498,9 +498,15 @@ begin
       begin
         if cc.system = '' then
           result := true
-        else
+        else if cc.system = system then
         begin
           cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+          if (cs = nil) then
+          begin
+            message := 'The code system "'+cc.system+'" is not known';
+            exit(false);
+          end;
+
           if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
           begin
             s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
@@ -509,7 +515,9 @@ begin
           end;
 
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
-        end;
+        end
+        else
+          result := false;
         for s in cc.valueSets do
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
@@ -562,7 +570,7 @@ begin
       begin
         result.AddParamBool('result', true);
         if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
-          result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code);
+          result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code+' - should be one of ['+list.CommaText+']');
         if list.Count > 0 then
           result.AddParamStr('display', list[0]);
       end
@@ -604,11 +612,22 @@ var
   list : TStringList;
   v : boolean;
   ok : boolean;
-  cc, codelist, message : String;
+  cc, codelist, message, mt: String;
   prov : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
+  cause : TFhirIssueType;
+  procedure msg(s : String);
+  begin
+    if (s = '') then
+      exit;
+    if mt = '' then
+      mt := s
+    else if not mt.Contains(s) then
+      mt := mt+'; '+s;
+  end;
 begin
+  cause := itNull;
   if FValueSet = nil then
     raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset');
   result := FFactory.makeParameters;
@@ -619,6 +638,7 @@ begin
       list.CaseSensitive := false;
       ok := false;
       codelist := '';
+      mt := '';
       for c in code.codings.forEnum do
       begin
         list.Clear;
@@ -626,25 +646,25 @@ begin
         codelist := codelist + cc;
         v := check(c.system, c.version, c.code, abstractOk, implySystem, list, message);
         if not v and (message <> '') then
-          result.AddParamStr('message', message);
+          msg(message);
         ok := ok or v;
+        message := '';
 
         if (v) then
         begin
-          message := '';
           if (c.display <> '') and (list.IndexOf(c.display) < 0) then
-            result.AddParamStr('message', 'The display "'+c.display+'" is not a valid display for the code '+cc.substring(1));
+            msg('The display "'+c.display+'" is not a valid display for the code '+cc.substring(1)+' - should be one of ['+list.CommaText+']');
           if list.Count > 0 then
             result.AddParamStr('display', list[0]);
         end
         else
         begin
-          prov := FOnGetCSProvider(nil, c.system, c.version, FParams{, true});
+          prov := FOnGetCSProvider(nil, c.system, c.version, FParams, true);
           try
            if (prov = nil) then
            begin
-             result.AddParamStr('message', 'The system "'+c.system+'" is not known');
-             result.AddParamStr('cause', 'unknown');
+             msg('The code system "'+c.system+'" is not known');
+             cause := itUnknown;
            end
            else
            begin
@@ -652,16 +672,15 @@ begin
              try
                if ctxt = nil then
                begin
-                 result.AddParamStr('message', 'The code "'+c.code+'" is not valid in the system '+c.system);
-                 result.AddParamStr('cause', 'invalid');
-                 if (message <> '') and not hasMessage(result, message) then
-                   result.AddParamStr('message', message);
+                 msg(message);
+                 msg('The code "'+c.code+'" is not valid in the system '+c.system);
+                 cause := itInvalid;
                end
                else
                begin
                  prov.Displays(ctxt, list, '');
                  if (c.display <> '') and (list.IndexOf(c.display) = -1) then
-                   result.AddParamStr('message', 'The display "'+c.display+'" is not a valid display for the code '+cc)
+                   msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.CommaText+']')
                end;
              finally
                prov.Close(ctxt);
@@ -674,13 +693,21 @@ begin
       end;
       result.AddParamBool('result', ok);
       if (not ok) then
+      begin
         if FValueSet.name = '' then
-          result.AddParamStr('message', Summary(code) +' valid')
+          msg(Summary(code) +' valid')
         else
-          result.AddParamStr('message', Summary(code) +' valid in the value set '+FValueSet.name);
+          msg(Summary(code) +' valid in the value set '+FValueSet.name);
+        if cause = itNull then
+          cause := itUnknown;
+      end;
     finally
       list.Free;
     end;
+    if mt <> '' then
+      result.AddParamStr('message', mt);
+    if (cause <> itUnknown) then
+      result.addParamStr('cause', CODES_TFhirIssueType[cause]);
     result.Link;
   finally
     result.free;
@@ -1278,7 +1305,7 @@ begin
     begin
       hash := makeImportHash(imports, 0);
       try
-        cs := FOnGetCSProvider(self, cset.system, cset.version, FParams);
+        cs := FOnGetCSProvider(self, cset.system, cset.version, FParams, false);
         try
           if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
           begin

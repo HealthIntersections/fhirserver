@@ -173,7 +173,7 @@ end;
 
 procedure TKDBSQLiteManager.SaveSettings(ASettings: TSettingsAdapter);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteManager.SaveSettings');
 end;
 
 { TKDBSQLiteConnection }
@@ -244,7 +244,7 @@ end;
 
 procedure TKDBSQLiteConnection.ClearDatabaseV;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.ClearDatabaseV');
 end;
 
 function TKDBSQLiteConnection.ColByNameV(AColName: String): Integer;
@@ -282,7 +282,7 @@ end;
 
 procedure TKDBSQLiteConnection.DropColumnV(ATableName, AColumnName: String);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.DropColumnV');
 end;
 
 procedure TKDBSQLiteConnection.DropTableV(ATableName: String);
@@ -429,7 +429,7 @@ end;
 
 function TKDBSQLiteConnection.GetColTypeV(ACol: Word): TKDBColumnType;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.GetColTypeV');
 end;
 
 function TKDBSQLiteConnection.GetRowsAffectedV: Integer;
@@ -439,7 +439,7 @@ end;
 
 procedure TKDBSQLiteConnection.ListTablesV(AList: TStrings);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.ListTablesV');
 end;
 
 procedure TKDBSQLiteConnection.PrepareV;
@@ -449,12 +449,12 @@ end;
 
 procedure TKDBSQLiteConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.RenameColumnV');
 end;
 
 procedure TKDBSQLiteConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.RenameTableV');
 end;
 
 procedure TKDBSQLiteConnection.RollbackV;
@@ -474,7 +474,7 @@ end;
 
 function TKDBSQLiteConnection.TableSizeV(sName: String): int64;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBTodo.create('TKDBSQLiteConnection.TableSizeV');
 end;
 
 procedure TKDBSQLiteConnection.TerminateV;

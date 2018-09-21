@@ -1613,17 +1613,17 @@ end;
 
 procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRTextComposer.Compose');
 end;
 
 procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRException.create('Not Done Yet');
+  raise EFHIRTodo.create('TFHIRTextComposer.ComposeResource');
 end;
 
 procedure TFHIRTextComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRTodo.create('TFHIRTextComposer.ComposeResourceV');
 end;
 
 function TFHIRTextComposer.Extension: String;

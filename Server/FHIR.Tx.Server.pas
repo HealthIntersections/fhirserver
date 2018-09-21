@@ -71,7 +71,7 @@ Type
     procedure BuildIndexesInternal(prog : boolean; conn1, conn2, conn3 : TKDBConnection);
 
     function workerGetDefinition(sender : TObject; url : String) : TFHIRValueSetW;
-    function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams) : TCodeSystemProvider;
+    function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function workerGetExpansion(sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; limit : integer) : TFHIRValueSetW;
   protected
     procedure invalidateVS(id : String); override;
@@ -539,9 +539,9 @@ begin
   result := expandVS(url, params, filter, dependencies, limit, 0, 0);
 end;
 
-function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams): TCodeSystemProvider;
+function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
 begin
-  result := getProvider(url, version, params);
+  result := getProvider(url, version, params, nullOk);
 end;
 
 function TTerminologyServer.checkCode(op : TFhirOperationOutcomeW; lang, path : string; code : string; system, version : string; display : string) : boolean;
@@ -686,7 +686,7 @@ end;
 //            end
 //            else
 //            begin
-//              raise ETerminologyError.create('not done yet');
+//              raise ETerminologyTodo.create();
 //            end;
 //          end;
 //        end;
@@ -972,7 +972,7 @@ var
 begin
   for c in coded.codings.forEnum do
     exit(translate(lang, source, c, target));
-  raise ETerminologyError.create('Not done yet');
+  raise ETerminologyTodo.create('TTerminologyServer.translate');
 end;
 
 function TTerminologyServer.UseClosure(name: String; out cm: TClosureManager): boolean;

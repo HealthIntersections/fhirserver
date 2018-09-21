@@ -1229,7 +1229,7 @@ begin
   else
   begin
 //    result := false; //div1.equals(div2);
-    raise EFHIRException.create('Not done yet');
+    raise EFHIRTodo.create('compareDeep');
   end;
 end;
 

@@ -187,7 +187,7 @@ end;
 
 function TUniiServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.getPrepContext');
 end;
 
 procedure TUniiServices.Displays(code : String; list : TStringList; lang : String);
@@ -356,7 +356,7 @@ end;
 
 function TUniiServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.getcontext');
 end;
 
 function TUniiServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -372,37 +372,37 @@ end;
 
 function TUniiServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.prepare');
 end;
 
 function TUniiServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.searchFilter');
 end;
 
 function TUniiServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.filter');
 end;
 
 function TUniiServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.filterLocate');
 end;
 
 function TUniiServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.FilterMore');
 end;
 
 function TUniiServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.FilterConcept');
 end;
 
 function TUniiServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyTodo.create('TUniiServices.InFilter');
 end;
 
 procedure TUniiServices.Close(ctxt: TCodeSystemProviderContext);
@@ -417,7 +417,7 @@ end;
 
 procedure TUniiServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  // raise ETerminologyError.create('not done yet');
+  // raise ETerminologyTodo.create();
 end;
 
 { TUniiPrep }
