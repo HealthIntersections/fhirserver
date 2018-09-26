@@ -102,12 +102,12 @@ end;
 
 function TTestingWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRPathTodo.create('TTestingWorkerContext.expand');
 end;
 
 function TTestingWorkerContext.supportsSystem(system, version: string): boolean;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRPathTodo.create('TTestingWorkerContext.supportsSystem');
 end;
 
 
@@ -131,22 +131,22 @@ end;
 
 function TTestingWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
 end;
 
 function TTestingWorkerContext.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
 end;
 
 { FHIRFolderBasedTestCaseAttribute }

@@ -298,7 +298,7 @@
         <DCCReference Include="..\..\library\cql\FHIR.Cql.Model.pas"/>
         <DCCReference Include="..\..\library\cql\FHIR.Cql.Parser.pas"/>
         <DCCReference Include="..\..\library\cql\FHIR.Cql.Tests.pas"/>
-        <DCCReference Include="..\FHIR.Tests.RestFulServer.pas"/>
+        <DCCReference Include="FHIR.Tests.RestFulServer.pas"/>
         <DCCReference Include="..\FHIR.Tests.SmartLogin.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.GraphDefinition.pas"/>
@@ -409,7 +409,7 @@
         <DCCReference Include="..\..\Server\FHIR.Server.IndexingR4.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.SubscriptionsR4.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.OperationsR4.pas"/>
-        <DCCReference Include="..\FHIR.Tests.FullServer.pas"/>
+        <DCCReference Include="FHIR.Tests.FullServer.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.Lang.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Utilities.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Version.pas"/>
@@ -430,6 +430,9 @@
         <DCCReference Include="..\..\library\v2\FHIR.v2.Dictionary.v251.pas"/>
         <DCCReference Include="..\..\library\v2\FHIR.v2.Dictionary.Database.pas"/>
         <DCCReference Include="FHIR.Tests.SearchSyntax.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\CommonMarkNode.pas"/>
+        <DCCReference Include="..\..\library\r4\InstanceValidator.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Adaptor.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -461,9 +464,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\tests\Win64\Debug\FHIRServerTests.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Win64\Debug\FHIRServerTests.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServerTests.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\FHIRServerTests.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServerTests.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -485,12 +494,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\tests\Win64\Debug\FHIRServerTests.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServerTests.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

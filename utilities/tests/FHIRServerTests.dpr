@@ -172,7 +172,7 @@ uses
   FHIR.Cql.Model in '..\..\library\cql\FHIR.Cql.Model.pas',
   FHIR.Cql.Parser in '..\..\library\cql\FHIR.Cql.Parser.pas',
   FHIR.Cql.Tests in '..\..\library\cql\FHIR.Cql.Tests.pas',
-  FHIR.Tests.RestFulServer in '..\FHIR.Tests.RestFulServer.pas',
+  FHIR.Tests.RestFulServer in 'FHIR.Tests.RestFulServer.pas',
   FHIR.Tests.SmartLogin in '..\FHIR.Tests.SmartLogin.pas',
   FHIR.Support.Certs in '..\..\library\support\FHIR.Support.Certs.pas',
   FHIR.Server.GraphDefinition in '..\..\Server\FHIR.Server.GraphDefinition.pas',
@@ -283,7 +283,7 @@ uses
   FHIR.Server.IndexingR4 in '..\..\Server\FHIR.Server.IndexingR4.pas',
   FHIR.Server.SubscriptionsR4 in '..\..\Server\FHIR.Server.SubscriptionsR4.pas',
   FHIR.Server.OperationsR4 in '..\..\Server\FHIR.Server.OperationsR4.pas',
-  FHIR.Tests.FullServer in '..\FHIR.Tests.FullServer.pas',
+  FHIR.Tests.FullServer in 'FHIR.Tests.FullServer.pas',
   FHIR.Support.Lang in '..\..\library\support\FHIR.Support.Lang.pas',
   FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas',
   FHIR.Server.Version in '..\..\Server\FHIR.Server.Version.pas',
@@ -304,6 +304,9 @@ uses
   FHIR.v2.Dictionary.v251 in '..\..\library\v2\FHIR.v2.Dictionary.v251.pas',
   FHIR.v2.Dictionary.Database in '..\..\library\v2\FHIR.v2.Dictionary.Database.pas',
   FHIR.Tests.SearchSyntax in 'FHIR.Tests.SearchSyntax.pas';
+//  CommonMarkNode in '..\..\..\markdown\source\CommonMarkNode.pas',
+//  InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
+//  FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas';
 
 var
   runner : ITestRunner;

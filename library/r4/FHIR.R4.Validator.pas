@@ -50,12 +50,13 @@ Type
     definition: TFHIRElementDefinition;
     type_: TFHIRElementDefinition;
     // extension : TFHIRElementDefinition;
-    function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
-    function addToLiteralPath(path: Array of String): String;
   public
     constructor Create; Overload; Override;
     constructor Create(element : TFHIRMMElement); Overload;
     destructor Destroy; Override;
+    function getLiteralPath : String;
+    function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
+    function addToLiteralPath(path: Array of String): String;
   end;
 
   TElementInfo = class(TFslObject)
@@ -333,6 +334,11 @@ destructor TNodeStack.Destroy;
 begin
   logicalPaths.Free;
   inherited;
+end;
+
+function TNodeStack.getLiteralPath : String;
+begin
+  result := literalPath;
 end;
 
 function tail(path: String): String;

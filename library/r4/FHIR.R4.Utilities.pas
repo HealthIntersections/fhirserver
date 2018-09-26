@@ -301,6 +301,7 @@ type
   public
     function hasType(t : String; out profile : String) : boolean;  overload;
     function hasType(t : String) : boolean; overload;
+    function getType(t : String) : TFhirElementDefinitionType; overload;
   end;
 
   TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
@@ -308,6 +309,8 @@ type
     function GetProfile: String;
   public
     property profile : String read GetProfile;
+    function hasTargetProfile(uri : String) : boolean;
+    function targetProfileAsCSV : String;
   end;
 
   TFhirConceptMapGroupElementTargetDependsOnHelper = class helper for TFhirConceptMapGroupElementTargetDependsOn
@@ -411,6 +414,7 @@ type
   public
     constructor Create(system, code : String); overload;
     function hasCode(System, Code : String) : boolean;
+    function hasCoding : boolean;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
   end;
@@ -3484,6 +3488,11 @@ begin
 end;
 
 
+function TFHIRCodeableConceptHelper.hasCoding: boolean;
+begin
+  result := CodingList.Count > 0;
+end;
+
 { TFhirResourceMetaHelper }
 
 procedure TFhirResourceMetaHelper.addProfile(url: String);
@@ -4557,6 +4566,16 @@ begin
 end;
 
 { TFhirElementDefinitionHelper }
+
+function TFhirElementDefinitionHelper.getType(t: String): TFhirElementDefinitionType;
+var
+  edt : TFhirElementDefinitionType;
+begin
+  result := nil;
+  for edt in type_List do
+    if edt.code = t then
+      exit(edt);
+end;
 
 function TFhirElementDefinitionHelper.hasType(t: String): boolean;
 var
@@ -6070,6 +6089,27 @@ begin
     result := Profilelist[0].value
   else
     result := '';
+end;
+
+function TFhirElementDefinitionTypeHelper.hasTargetProfile(uri: String): boolean;
+var
+  s : TFHIRCanonical;
+begin
+  result := false;
+  for s in targetProfileList do
+    if s.value = uri then
+      exit(true);
+end;
+
+function TFhirElementDefinitionTypeHelper.targetProfileAsCSV: String;
+var
+  s : String;
+  c : TFHIRCanonical;
+begin
+  s := '';
+  for c in targetProfileList do
+    s := s + ','+c.value;
+  result := s.Substring(1);
 end;
 
 { TFhirCanonicalHelper }

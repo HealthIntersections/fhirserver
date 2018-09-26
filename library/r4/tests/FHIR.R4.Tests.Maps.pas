@@ -203,7 +203,7 @@ end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise EFHIRTodo.create();
+  raise EFHIRTodo.create('TTestTransformerServices.translate');
 end;
 
 initialization

@@ -520,5 +520,5 @@ begin
 end;
 
 initialization
-//  TDUnitX.RegisterTestFixture(TFullServerTests);
+  TDUnitX.RegisterTestFixture(TFullServerTests);
 end.

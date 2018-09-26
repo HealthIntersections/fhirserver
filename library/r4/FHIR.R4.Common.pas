@@ -285,6 +285,7 @@ type
     function url : String; override;
     function type_ : String; override;
     function elements : TFslList<TFHIRElementDefinitionW>; override;
+    function getDefinition(id : String; source : TElementDefinitionSourceOption) : TFHIRElementDefinitionW; override;
   end;
 
   TFhirParametersParameter4 = class (TFhirParametersParameterW)
@@ -1622,6 +1623,22 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TFHIRStructureDefinition4.getDefinition(id: String; source: TElementDefinitionSourceOption): TFHIRElementDefinitionW;
+var
+  ed : TFhirElementDefinition;
+begin
+  result := nil;
+  if (source in [edsSNAPSHOT, edsEITHER]) and (sd.snapshot <> nil) then
+    for ed in sd.snapshot.elementList do
+      if ed.id = id then
+        exit(TFHIRElementDefinition4.Create(ed.Link));
+
+  if (source in [edsDIFF, edsEITHER]) and (sd.differential <> nil) then
+    for ed in sd.differential.elementList do
+      if ed.id = id then
+        exit(TFHIRElementDefinition4.Create(ed.Link));
 end;
 
 function TFHIRStructureDefinition4.kind: TStructureDefinitionKind;
@@ -3243,7 +3260,8 @@ end;
 
 procedure TFHIRMeta4.clearProfiles;
 begin
-  m.profileList.Clear;
+  if Element <> nil then
+    m.profileList.Clear;
 end;
 
 procedure TFHIRMeta4.clearTags;
@@ -3329,10 +3347,14 @@ function TFHIRMeta4.profiles: TArray<String>;
 var
   i : integer;
 begin
-  SetLength(result, m.profileList.Count);
   if Element <> nil then
+  begin
+    SetLength(result, m.profileList.Count);
     for i := 0 to m.profileList.Count - 1 do
       result[i] := m.profileList[i].value;
+  end
+  else
+    SetLength(result, 0);
 end;
 
 procedure TFHIRMeta4.removeLabel(system, code: String);

@@ -419,7 +419,7 @@ procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServe
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
-  ServerFactory.setTerminologyServer(FValidatorContext, value);
+  ServerFactory.setTerminologyServer(FValidatorContext, value.link);
 end;
 
 function TFHIRServerContext.getMaps: TFslMap<TFHIRStructureMapW>;

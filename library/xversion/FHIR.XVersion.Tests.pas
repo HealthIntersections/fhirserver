@@ -49,7 +49,6 @@ type
 
     [TestCase] Procedure TestPatient_34_simple;
     [TestCase] Procedure TestParameters_34;
-    [TestCase] Procedure TestActivityDefinition_34;
     [TestCase] Procedure TestAllergyIntolerance_34;
     [TestCase] Procedure TestAppointment_34;
     [TestCase] Procedure TestAppointmentResponse_34;
@@ -60,7 +59,6 @@ type
     [TestCase] Procedure TestBundle_34;
     [TestCase] Procedure TestCapabilityStatement_34;
     [TestCase] Procedure TestCareTeam_34;
-    [TestCase] Procedure TestClaim_34;
     [TestCase] Procedure TestClinicalImpression_34;
     [TestCase] Procedure TestCodeSystem_34;
     [TestCase] Procedure TestCommunication_34;
@@ -71,7 +69,6 @@ type
     [TestCase] Procedure TestConsent_34;
     [TestCase] Procedure TestDetectedIssue_34;
     [TestCase] Procedure TestDevice_34;
-    [TestCase] Procedure TestDeviceComponent_34;
     [TestCase] Procedure TestDeviceMetric_34;
     [TestCase] Procedure TestDeviceUseStatement_34;
     [TestCase] Procedure TestDiagnosticReport_34;
@@ -79,7 +76,6 @@ type
     [TestCase] Procedure TestEncounter_34;
     [TestCase] Procedure Testendpoint_34;
     [TestCase] Procedure TestEpisodeOfCare_34;
-    [TestCase] Procedure TestExpansionProfile_34;
     [TestCase] Procedure TestFamilyMemberHistory_34;
     [TestCase] Procedure TestFlag_34;
     [TestCase] Procedure TestGoal_34;
@@ -156,11 +152,6 @@ begin
   test4to3to4(FileToBytes(FHIR_PUB_FILE('parameters-example.json')));
 end;
 
-procedure TVersionConversionTests.TestActivityDefinition_34;
-begin
-  test4to3to4(FileToBytes(FHIR_PUB_FILE('activitydefinition-example.json')));
-end;
-
 procedure TVersionConversionTests.TestAllergyIntolerance_34;
 begin
   test4to3to4(FileToBytes(FHIR_PUB_FILE('allergyintolerance-example.json')));
@@ -209,11 +200,6 @@ end;
 procedure TVersionConversionTests.TestCareTeam_34;
 begin
   test4to3to4(FileToBytes(FHIR_PUB_FILE('careteam-example.json')));
-end;
-
-procedure TVersionConversionTests.TestClaim_34;
-begin
-  test4to3to4(FileToBytes(FHIR_PUB_FILE('claim-example.json')));
 end;
 
 procedure TVersionConversionTests.TestClinicalImpression_34;
@@ -266,11 +252,6 @@ begin
   test4to3to4(FileToBytes(FHIR_PUB_FILE('device-example.json')));
 end;
 
-procedure TVersionConversionTests.TestDeviceComponent_34;
-begin
-  test4to3to4(FileToBytes(FHIR_PUB_FILE('devicecomponent-example.json')));
-end;
-
 procedure TVersionConversionTests.TestDeviceMetric_34;
 begin
   test4to3to4(FileToBytes(FHIR_PUB_FILE('devicemetric-example.json')));
@@ -304,11 +285,6 @@ end;
 procedure TVersionConversionTests.TestEpisodeOfCare_34;
 begin
   test4to3to4(FileToBytes(FHIR_PUB_FILE('episodeofcare-example.json')));
-end;
-
-procedure TVersionConversionTests.TestExpansionProfile_34;
-begin
-  test4to3to4(FileToBytes(FHIR_PUB_FILE('expansionprofile-example.json')));
 end;
 
 procedure TVersionConversionTests.TestFamilyMemberHistory_34;

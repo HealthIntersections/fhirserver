@@ -80,7 +80,7 @@ Type
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
-    procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteMetadata(request: TFHIRRequest; response : TFHIRResponse); override;
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
@@ -460,7 +460,7 @@ procedure TTestFHIROperationEngine.CommitTransaction;
 begin
 end;
 
-procedure TTestFHIROperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
+procedure TTestFHIROperationEngine.ExecuteMetadata(request: TFHIRRequest; response: TFHIRResponse);
 var
   oConf : TFhirCapabilityStatement;
   c : TFhirContactPoint;
@@ -577,7 +577,7 @@ begin
   FServer := TFhirWebServer.create(FGlobals.Link, 'Test-Server');
   FServer.OnRegisterJs := registerJs;
   FServer.loadConfiguration(FIni);
-  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
+  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\server\web');
 
   FStore := TTestStorageService.create(TFHIRFactoryX.create);
   FContext := TFHIRServerContext.Create(FStore.Link, TTestServerFactory.create(FStore.Factory.version));
@@ -1244,5 +1244,5 @@ end;
 
 
 initialization
-//  TDUnitX.RegisterTestFixture(TRestFulServerTests);
+  TDUnitX.RegisterTestFixture(TRestFulServerTests);
 end.

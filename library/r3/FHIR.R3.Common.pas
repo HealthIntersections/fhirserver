@@ -286,6 +286,7 @@ type
     function url : String; override;
     function type_ : String; override;
     function elements : TFslList<TFHIRElementDefinitionW>; override;
+    function getDefinition(id : String; source : TElementDefinitionSourceOption) : TFHIRElementDefinitionW; override;
   end;
 
   TFhirParametersParameter3 = class (TFhirParametersParameterW)
@@ -1605,6 +1606,22 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TFHIRStructureDefinition3.getDefinition(id: String; source: TElementDefinitionSourceOption): TFHIRElementDefinitionW;
+var
+  ed : TFhirElementDefinition;
+begin
+  result := nil;
+  if (source in [edsSNAPSHOT, edsEITHER]) and (sd.snapshot <> nil) then
+    for ed in sd.snapshot.elementList do
+      if ed.id = id then
+        exit(TFHIRElementDefinition3.Create(ed.Link));
+
+  if (source in [edsDIFF, edsEITHER]) and (sd.differential <> nil) then
+    for ed in sd.differential.elementList do
+      if ed.id = id then
+        exit(TFHIRElementDefinition3.Create(ed.Link));
 end;
 
 function TFHIRStructureDefinition3.kind: TStructureDefinitionKind;

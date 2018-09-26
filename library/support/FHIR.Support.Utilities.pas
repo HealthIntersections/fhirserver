@@ -322,6 +322,8 @@ function charLower(ch : char) : char; overload;
 function charLower(s : String) : char; overload;
 function charUpper(ch : char) : char; overload;
 function charUpper(s : String) : char; overload;
+function capitalise(s : String) : String; overload;
+function uncapitalise(s : String) : String; overload;
 Function StringTitleCase(Const sValue: String): String; Overload;
 Function StringTitleCase(Const sValue: String; Const sExceptions : Array of String): String; Overload;
 Function StringToggleCase(Const sValue: String): String; Overload;
@@ -372,7 +374,6 @@ Function CharArrayIndexOfSensitive(Const aNames : Array Of Char; Const cName: Ch
 Function CharArrayIndexOf(Const aNames : Array Of Char; Const cName : Char): Integer; Overload;
 Function CharArrayValid(Const aNames : Array Of Char; Const iIndex : Integer) : Boolean; Overload;
 
-function capitalise(s : String) : String;
 function jsonEscape(s : String; isString : boolean) : String;
 
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
@@ -383,8 +384,10 @@ Const
   OID_LOINC = '2.16.840.1.113883.6.1';
   OID_SNOMED = '2.16.840.1.113883.6.96';
   OID_REGEX = '[0-2](\.(0|[1-9][0-9]*))*';
+  UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
 
 Function isOid(oid : String) : Boolean;
+Function isUUid(oid : String) : Boolean;
 
 function UriForKnownOid(oid : String) : String;
 
@@ -5670,6 +5673,21 @@ Begin
   End;
 End;
 
+function capitalise(s : String) : String;
+begin
+  if (s = '') then
+    result := s
+  else
+    result := UpperCase(s[1]) + s.Substring(1);
+end;
+
+function uncapitalise(s : String) : String; overload;
+begin
+  if (s = '') then
+    result := s
+  else
+    result := LowerCase(s[1]) + s.Substring(1);
+end;
 
 Function StringSentence(Const sValue : String) : String;
 Begin
@@ -5922,13 +5940,6 @@ Begin
     Delete(Result, Length(sText), 1);
 End;
 
-function capitalise(s : String) : String;
-begin
-  if (s = '') then
-    result := s
-  else
-    result := UpperCase(s[1]) + s.Substring(1);
-end;
 
 function jsonEscape(s : String; isString : boolean) : String;
 var
@@ -5998,6 +6009,16 @@ Begin
     result := regex.IsMatch(oid);
     {$ENDIF}
   end;
+End;
+
+Function isUUid(oid : String) : Boolean;
+var
+  regex : TRegEx;
+Begin
+  {$IFNDEF FPC}
+  regex := TRegEx.Create(UUID_REGEX, [roCompiled]);
+  result := regex.IsMatch(oid);
+  {$ENDIF}
 End;
 
 function UriForKnownOid(oid : String) : String;

@@ -168,8 +168,7 @@ end;
 
 destructor TIso4217Services.Destroy;
 begin
-  FCurrencies.Map.free;
-  FCurrencies.Codes.Free;
+  FCurrencies.free;
   inherited;
 end;
 

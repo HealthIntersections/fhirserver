@@ -747,6 +747,7 @@ type
   end;
 
   TStructureDefinitionKind = (sdkPrimitive, sdkDataType, sdkExtension, sdkResource);
+  TElementDefinitionSourceOption  = (edsSNAPSHOT, edsDIFF, edsEITHER);
 
   TFhirStructureDefinitionW =  class (TFHIRXVersionResourceWrapper)
   public
@@ -755,6 +756,7 @@ type
     function url : String; virtual; abstract;
     function type_ : String; virtual; abstract;
     function elements : TFslList<TFHIRElementDefinitionW>; virtual; abstract;
+    function getDefinition(id : String; source : TElementDefinitionSourceOption) : TFHIRElementDefinitionW; virtual; abstract;
   end;
 
   TFHIRGroupCharacteristicW = class (TFHIRXVersionElementWrapper)

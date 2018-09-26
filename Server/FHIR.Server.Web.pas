@@ -494,10 +494,10 @@ end;
 
 destructor TFhirWebServerEndpoint.Destroy;
 begin
-  FContext.Free;
   FCDSHooksServer.Free;
   FTerminologyWebServer.Free;
   FAuthServer.Free;
+  FContext.Free;
   carry.Free;
   FAdaptors.Free;
   FPatientHooks.Free;

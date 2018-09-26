@@ -8520,7 +8520,7 @@ begin
     exit(convertElementDefinition(src as FHIR.R3.Types.TFhirElementDefinition));
   if (src is FHIR.R3.Types.TFhirDataRequirement) then
     exit(convertDataRequirement(src as FHIR.R3.Types.TFhirDataRequirement));
-  raise EFHIRException.create('Unknown type_ ' + src.fhirType());
+  raise EFHIRException.create('Unknown type ' + src.fhirType());
 end;
 
 class function TVersionConvertor_30_40.convertType(src : FHIR.R4.Types.TFhirType) : FHIR.R3.Types.TFhirType;

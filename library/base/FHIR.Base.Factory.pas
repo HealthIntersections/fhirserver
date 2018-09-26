@@ -38,6 +38,14 @@ uses
   FHIR.Client.Base;
 
 type
+  TFhirReferenceValidationPolicy = (rvpIGNORE, rvpCHECK_VALID);
+
+const
+  TFhirReferenceValidationPolicyCheckExists = [rvpCHECK_VALID];
+  TFhirReferenceValidationPolicyCheckType = [];
+  TFhirReferenceValidationPolicyCheckValid = [];
+
+type
   TFHIRWorkerContextWithFactory = class;
 
   TBestPracticeWarningLevel = (bpwlIgnore, bpwlHint, bpwlWarning, bpwlError);
@@ -235,6 +243,7 @@ type
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; virtual; abstract;
   end;
+
 
 implementation
 

@@ -53,6 +53,7 @@ type
   protected
     function isWrite : boolean; override;
     function owningResource : String; override;
+    function readValueSetUri(manager: TFHIROperationEngine; url : String; op : String) : String;
   public
     function Name : String; override;
     function Types : TArray<String>; override;
@@ -154,6 +155,40 @@ begin
   result := 'ValueSet';
 end;
 
+function TFhirExpandValueSetOperation.readValueSetUri(manager: TFHIROperationEngine; url, op: String): String;
+var
+  sd : TFhirStructureDefinitionW;
+  ed : TFHIRElementDefinitionW;
+  u, p, t : String;
+  needSecure : boolean;
+begin
+  if url.Contains('#') then
+    StringSplit(url, '#', u, p)
+  else
+  begin
+    if not url.Contains('.') then
+      raise Exception.Create('Unable to understand url "'+url+'"');
+    StringSplit(url,'.',  u, t);
+    u := 'http://hl7.org/fhir/StructureDefinition/'+u;
+    p := url;
+  end;
+  sd := FFactory.wrapStructureDefinition(manager.GetResourceByUrl('StructureDefinition', u, '', false, needSecure));
+  try
+    ed := sd.getDefinition(p, edsSNAPSHOT);
+    if ed = nil then
+      raise Exception.Create('Unable to resolve element "'+p+'" in "'+u+'"');
+    try
+      if (ed.valueSet = '')  then
+        raise Exception.Create('No value set for element "'+p+'" in "'+u+'"');
+      result := ed.valueSet;
+    finally
+      ed.Free;
+    end;
+  finally
+    sd.Free;
+  end;
+end;
+
 function TFhirExpandValueSetOperation.Types: TArray<String>;
 begin
   result := ['ValueSet'];
@@ -212,9 +247,8 @@ begin
           else if params.has('context') then
           begin
             id := params.str('context');
-            if params.has('operation') then
-              id := id+'-'+params.str('operation');
-            vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', id, request.baseUrl, needSecure));
+            id := readValueSetUri(manager, id, params.str('operation'));
+            vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', id, '', false, needSecure));
             if vs = nil then
               raise ETerminologyError.create('The context '+id+' was not understood');
             cacheId := vs.url;
