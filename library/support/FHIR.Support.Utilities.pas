@@ -1849,6 +1849,7 @@ function FormatCodeToXML(AStr: String): String;
 function FormatXMLToHTML(AStr : String):String;
 function FormatXMLToHTMLPlain(AStr : String):String;
 function FormatXMLForTextArea(AStr: String): String;
+function FormatJsonToHTML(AStr : String):String;
 
 Function EncodeXML(Const sValue : String; bEoln : Boolean = True) : String; Overload;
 Function DecodeXML(Const sValue : String) : String; Overload;
@@ -13791,6 +13792,101 @@ Begin
     Inc(iLoop);
   End;
 End;
+
+function FormatJsonToHTML(AStr : String):String;
+var
+  inQuoted : Boolean;
+  isNewLine : boolean;
+  isValue : boolean;
+  isList : boolean;
+  b : TFslStringBuilder;
+  i : integer;
+begin
+  inQuoted := false;
+  isList := false;
+  Result := '';
+  if Length(AStr) <= 0 then
+    exit;
+  isValue := false;
+  b := TFslStringBuilder.Create;
+  try
+    isNewLine := True;
+    i := 1;
+    while i <= Length(AStr) do
+      begin
+      if (AStr[i] <> #32) and (isNewLine) then
+        isNewLine := False;
+      case AStr[i] of
+        '"':
+          begin
+          if inQuoted and not isValue then
+            b.Append('</font>');
+          b.Append('&quot;');
+          if inQuoted then
+            inQuoted := false
+          else
+           begin
+           inQuoted := true;
+           if not isValue then
+             b.Append('<font color="Navy">');
+           end;
+          end;
+        '&': b.Append('&amp;');
+        '<': b.Append('&lt;');
+        '>': b.Append('&gt;');
+        '[':
+          begin
+          b.Append('<font color="maroon"><b>'+AStr[i]+'</b></font>');
+          isList := true;
+          end;
+        ':':
+          begin
+          b.Append('<font color="maroon"><b>'+AStr[i]+'</b></font>');
+          isValue := true;
+          end;
+        ',':
+          begin
+          b.Append(AStr[i]);
+          if not isList then
+            isValue := false;
+          end;
+        ']':
+          begin
+          b.Append('<font color="maroon"><b>'+AStr[i]+'</b></font>');
+          isList := false;
+          isValue := false;
+          end;
+        '}': b.Append('<font color="maroon"><b>'+AStr[i]+'</b></font>');
+        '{' :
+          begin
+          b.Append('<font color="maroon"><b>'+AStr[i]+'</b></font>');
+          isList := false; // we might need to stack this state if we start worrying about mixed lists
+          isValue := false;
+          end;
+        #32: if isNewLine then b.Append('&nbsp;') else b.Append(' ');
+        #13:
+          begin
+          if i < Length(AStr) then
+            if AStr[i + 1] = #10 then
+              Inc(i);
+          b.Append('<br>');
+          isNewLine := True;
+          end;
+        else
+          begin
+          if CharINSet(AStr[i], [' '..'~']) then
+            b.Append(AStr[i])
+          else
+            b.Append('&#' + IntToStr(Ord(AStr[i])) + ';');
+          end;
+        end;
+      Inc(i);
+      end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
 
 Const
   setUriUnreserved : Set Of AnsiChar = ['a'..'z', 'A'..'Z', '0'..'9', '-', '.', '_', '~'];

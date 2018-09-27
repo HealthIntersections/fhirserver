@@ -126,6 +126,7 @@ var
   m : TFhirMetaW;
   bw : TFHIRBinaryW;
   x : TFhirXHtmlNode;
+  bXml : Boolean;
 begin
   if (res.fhirType = 'Bundle') then
   begin
@@ -232,11 +233,18 @@ Header(FFactory, Session, FBaseURL, lang, version)+
       if (x <> nil) then
         TFHIRXhtmlParser.Compose(x, s, false, 0, relativeReferenceAdjustment);
       s.append('<hr/>'+#13#10);
-      xml := FFactory.makeComposer(FWorker.link, ffXml, lang, OutputStylePretty);
+      bXml := FFactory.version in [fhirVersionRelease2, fhirVersionRelease3];
+      if bXML then
+        xml := FFactory.makeComposer(FWorker.link, ffXml, lang, OutputStylePretty)
+      else
+        xml := FFactory.makeComposer(FWorker.link, ffJson, lang, OutputStylePretty);
       ss := TBytesStream.create();
       try
         xml.Compose(ss, res);
-        s.append('<pre class="xml">'+#13#10+FormatXMLToHTML(TEncoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
+        if bXML then
+          s.append('<pre class="xml">'+#13#10+FormatXmlToHTML(TEncoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10)
+        else
+          s.append('<pre class="xml">'+#13#10+FormatJsonToHTML(TEncoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
       finally
         ss.free;
         xml.free;
@@ -362,6 +370,7 @@ var
   mw : TFhirMetaW;
   bw : TFHIRBinaryW;
   x : TFhirXHtmlNode;
+  bXml : Boolean;
 begin
   s := TFslStringBuilder.create;
   try
@@ -524,14 +533,21 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
           end
           else
           begin
-            xml := FFactory.makeComposer(FWorker.link, ffXml, lang, OutputStylePretty);
+            bXml := FFactory.version in [fhirVersionRelease2, fhirVersionRelease3];
+            if bXMl then
+              xml := FFactory.makeComposer(FWorker.link, ffXml, lang, OutputStylePretty)
+            else
+              xml := FFactory.makeComposer(FWorker.link, ffJson, lang, OutputStylePretty);
             ss := TBytesStream.create();
             try
               x := FFactory.getXhtml(r);
               if (x <> nil) then
                 TFHIRXhtmlParser.Compose(x, s, false, 2, relativeReferenceAdjustment);
               xml.Compose(ss, r);
-              s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
+              if bXml then
+                s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXmlToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10)
+              else
+                s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatJsonToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
             finally
               ss.free;
               xml.free;

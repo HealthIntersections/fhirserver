@@ -1113,13 +1113,16 @@ end;
 procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; source : TFhirValueSetCodeSystemW; defines : TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
 var
   cm : TFhirCodeSystemConceptW;
+  v : String;
 begin
   if (defines.Count > 0) and (expansion <> nil) and (cs.version <> '') then
   begin
     if FFactory.version = fhirVersionRelease2 then
-      expansion.addParam('version', source.system+FHIR_VERSION_CANONICAL_SPLIT_2+cs.version)
+      v := source.system+FHIR_VERSION_CANONICAL_SPLIT_2+cs.version
     else
-     expansion.addParam('version', source.system+FHIR_VERSION_CANONICAL_SPLIT_3p+cs.version);
+      v := source.system+FHIR_VERSION_CANONICAL_SPLIT_3p+cs.version;
+    if not expansion.hasParam('version', v) then
+      expansion.addParam('version', v);
   end;
   for cm in defines do
   begin
@@ -1457,7 +1460,8 @@ var
 begin
   try
     if (cs.version(nil) <> '') and (expansion <> nil) then
-      expansion.addParam('version', cs.system(nil)+'?version='+cs.version(nil));
+      if not expansion.hasParam('version', cs.system(nil)+'?version='+cs.version(nil)) then
+        expansion.addParam('version', cs.system(nil)+'?version='+cs.version(nil));
 
     if not FParams.excludeNotForUI or not cs.IsAbstract(context) then
       processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context, FParams.displayLanguage), cs.definition(context), expansion, params, importHash);
