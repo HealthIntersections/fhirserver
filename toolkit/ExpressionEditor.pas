@@ -36,6 +36,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
   FMX.Memo, FMX.ComboEdit, FMX.StdCtrls, System.ImageList, FMX.ImgList,
   FMX.Edit, FMX.Controls.Presentation,
+  FHIR.Support.Base,
   FHIR.R4.Types, FHIR.R4.Resources,
   TranslationsEditorDialog;
 

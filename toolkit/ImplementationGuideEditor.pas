@@ -255,7 +255,7 @@ implementation
 
 {$R *.fmx}
 
-uses Import2html;
+uses Import2html, FHIR.Support.Base;
 
 procedure TImplementationGuideEditorFrame.cancel;
 begin

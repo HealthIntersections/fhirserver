@@ -70,6 +70,9 @@ implementation
 
 {$R *.fmx}
 
+uses
+  FHIR.Support.Base;
+
 procedure TContentImport.Button2Click(Sender: TObject);
 begin
 savePageContent(Edit1.text);

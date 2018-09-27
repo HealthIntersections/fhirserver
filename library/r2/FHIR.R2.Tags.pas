@@ -165,7 +165,7 @@ end;
 
 function TFHIRTagList.asHeader: String;
 begin
-  raise EFHIRTodo.create();
+  raise EFHIRTodo.create('TFHIRTagList.asHeader');
 end;
 
 function TFHIRTagList.GetCount: Integer;

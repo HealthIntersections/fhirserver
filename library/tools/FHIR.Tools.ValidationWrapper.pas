@@ -180,7 +180,7 @@ end;
 {$ELSE}
 procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
 begin
-  raise EFHIRTodo.create();
+  raise EFHIRTodo.create('TFHIRValidationWrapper.executeCommand');
 end;
 {$ENDIF}
 

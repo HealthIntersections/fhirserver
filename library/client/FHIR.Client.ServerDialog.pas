@@ -245,7 +245,7 @@ procedure TEditRegisteredServerForm.Button1Click(Sender: TObject);
 //  ext : TFHIRExtension;
 //  i : integer;
 begin
-  raise EFHIRTodo.create();
+  raise EFHIRTodo.create('TEditRegisteredServerForm.Button1Click');
 //  if FCapabilityStatement = nil then
 //    loadCapabilityStatement;
 //  for i := 0 to clHooks.Items.Count - 1 do

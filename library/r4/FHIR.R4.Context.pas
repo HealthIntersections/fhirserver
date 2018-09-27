@@ -63,6 +63,7 @@ type
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
     function expand(vs : TFhirValueSet) : TFHIRValueSet; overload; virtual; abstract;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(system, version, code : String) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;  abstract;

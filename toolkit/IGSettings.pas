@@ -110,7 +110,7 @@ implementation
 
 {$R *.fmx}
 
-uses ImplementationGuideEditor;
+uses ImplementationGuideEditor, FHIR.Support.Base;
 
 procedure TIGSettingsForm.btnCheckDependenciesClick(Sender: TObject);
 {$IFDEF OSX}

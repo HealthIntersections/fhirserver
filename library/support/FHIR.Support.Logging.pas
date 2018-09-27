@@ -269,7 +269,7 @@ End;
 Procedure TLogger.CutFile(sName : String);
 {$IFDEF MACOS}
 begin
-  raise ETodo.create();
+  raise ETodo.create('TLogger.CutFile');
 end;
 {$ELSE}
 Var

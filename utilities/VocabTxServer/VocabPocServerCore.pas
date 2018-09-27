@@ -847,7 +847,7 @@ function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: T
 begin
   case sp.index.SearchType of
     sptNull: raise EFHIRException.create('param.type = null');
-    sptNumber: raise EFHIRTodo.create();
+    sptNumber: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObject');
 //      if obj.isPrimitive then
 //        result := compareNumber(obj.primitiveValue, sp.value, sp.prefix)
 //      else
@@ -872,10 +872,10 @@ begin
         result := obj.primitiveValue = sp.value
       else if sp.modifier = spmExact then
         raise EFHIRException.create('Modifier is not supported');
-    sptToken: raise EFHIRTodo.create();
-    sptReference: raise EFHIRTodo.create();
-    sptComposite: raise EFHIRTodo.create();
-    sptQuantity: raise EFHIRTodo.create();
+    sptToken: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectA');
+    sptReference: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectB');
+    sptComposite: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectC');
+    sptQuantity: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectD');
     sptUri:
       if not obj.isPrimitive then
         result := false

@@ -701,7 +701,7 @@ begin
          end;
       1: p.expr := pe.nodeOpNext;
     else if node.index - offset > 0 then
-      raise EFHIRTodo.create();
+      raise EFHIRTodo.create('TFHIRVisualizer.vtExpressionsInitNode');
     end;
   end;
   if p.expr.tag = 1 then
