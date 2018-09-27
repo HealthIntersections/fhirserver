@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkitR3.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -119,7 +119,7 @@
     <PropertyGroup Condition="'$(Cfg_1_OSX32)'!=''">
         <Icon_MainIcon>AppEndorser_Icon.ico</Icon_MainIcon>
         <Manifest_File>..\utils\AppEndorserUI\(None)</Manifest_File>
-        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR3;FMX;$(DCC_Define)</DCC_Define>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
         <EL_ReadOnlyFileDialog>true</EL_ReadOnlyFileDialog>

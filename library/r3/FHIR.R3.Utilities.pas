@@ -5332,7 +5332,7 @@ Const
 Function GetExtForMimeType(mimeType: String): String;
 {$IFDEF MACOS}
 begin
-  raise EFHIRTodo.create();
+  raise EFHIRTodo.create('GetExtForMimeType');
 end;
 {$ELSE}
 Var
@@ -5382,7 +5382,7 @@ End;
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
 {$IFDEF MACOS}
 begin
-  raise EFHIRTodo.create();
+  raise EFHIRTodo.create('TFHIRAttachmentHelper.asZipPart');
 end;
 {$ELSE}
 var
