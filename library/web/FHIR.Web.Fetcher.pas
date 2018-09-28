@@ -51,6 +51,7 @@ Type
     FProgress: Integer;
     FBytesToTransfer: Int64;
     FOnProgress: TProgressEvent;
+    FAccept: String;
 
     procedure SetBuffer(const Value: TFslBuffer);
     procedure SetPassword(const Value: String);
@@ -65,6 +66,7 @@ Type
     destructor Destroy; Override;
 
     Property URL : String read FURL write FURL;
+    property Accept : String read FAccept write FAccept;
     Property Buffer : TFslBuffer read FBuffer write SetBuffer;
 
     Function CanFetch : Boolean;
@@ -119,7 +121,7 @@ var
   oFtp : TIdFTP;
 begin
   if StringStartsWith(url, 'file:') Then
-      FBuffer.LoadFromFileName(Copy(url, 6, $FFFF))
+    FBuffer.LoadFromFileName(Copy(url, 6, $FFFF))
   else
   Begin
     oUri := TIdURI.Create(url);
@@ -129,6 +131,7 @@ begin
         oHTTP := TIdHTTP.Create(nil);
         Try
           oHTTP.HandleRedirects := true;
+          oHTTP.Request.Accept := FAccept;
           oHTTP.URL.URI := url;
           oHTTP.OnWork := HTTPWork;
           oHTTP.OnWorkBegin := HTTPWorkBegin;

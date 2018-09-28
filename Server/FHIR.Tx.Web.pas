@@ -139,7 +139,7 @@ begin
     for ss in FServer.CommonTerminologies.Snomed do
     begin
       html.StartTableRow;
-      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId);
+      html.AddTableCellURL(ss.EditionName, FServer.webBase+'/snomed/'+ss.editionId);
       html.AddTableCell(ss.VersionUri);
       html.AddTableCell(ss.VersionDate);
       html.EndTableRow;
@@ -160,12 +160,14 @@ begin
   FReturnProcessFileEvent := ReturnProcessFileEvent;
   FServer.webBase := BaseURl;
   FWorker := worker;
+  FVSSorter := TValueSetSorter.Create;
 end;
 
 destructor TTerminologyWebServer.Destroy;
 begin
   FWorker.Free;
   FServer.free;
+  FVSSorter.Free;
   inherited;
 end;
 
@@ -950,7 +952,7 @@ begin
       end;
     end;
   end
-  else if request.Document.StartsWith('/snomed/analysis/')  then
+  else if request.Document.StartsWith(FServer.webBase+'/snomed/analysis/')  then
   begin
     FServer.CommonTerminologies.DefSnomed.RecordUse;
     analysis := TSnomedAnalysis.create(FServer.CommonTerminologies.DefSnomed.Link);
@@ -973,17 +975,17 @@ begin
       analysis.free;
     end;
   end
-  else if request.Document.StartsWith('/snomed/doco') then
+  else if request.Document.StartsWith(FServer.webBase+'/snomed/doco') then
   begin
     response.ContentText := chooseSnomedRelease();
     response.ResponseNo := 200;
   end
-  else if request.Document.StartsWith('/snomed/') then
+  else if request.Document.StartsWith(FServer.webBase+'/snomed/') then
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
     for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId = parts[2] then
+      if t.EditionId = parts[3] then
         ss := t;
     if ss = nil then
     begin
@@ -1004,7 +1006,7 @@ begin
           html.Version := SERVER_VERSION;
           html.BaseURL := '/snomed/'+ss.EditionId+'/';
           html.Lang := request.AcceptLanguage;
-          pub.PublishDict(code, '/snomed/'+ss.EditionId+'/', html);
+          pub.PublishDict(code, FServer.webBase+'/snomed/'+ss.EditionId+'/', html);
           response.ContentText := html.output;
           response.ResponseNo := 200;
         finally

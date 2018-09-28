@@ -758,7 +758,7 @@ begin
   logt('Web source from '+FIni.web['folder']);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
 
-  for s in FIni.endpoints.Keys do
+  for s in FIni.endpoints.sortedKeys do
   begin
     details := FIni.endpoints[s];
     logt('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);

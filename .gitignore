@@ -176,3 +176,4 @@ System
 /utilities/freepascal/lib/x86_64-win64/*.compiled
 /utilities/generator/workspace/.metadata
 /utilities/VocabTxServer/install/osx/VocabTxServer.app/Contents/MacOS/loinc_261.cache
+/dependencies/treeview/Source/*.hpp

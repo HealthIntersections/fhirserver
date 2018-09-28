@@ -447,7 +447,7 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
         end
         else
         begin
-          t := GetFhirMessage(e.fhirType, lang)+' "'+r.id+'"';
+          t := GetFhirMessage(e.resource.fhirType, lang)+' "'+r.id+'"';
           if (r.id = '') then
             sl := ''
           else

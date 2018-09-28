@@ -42,6 +42,7 @@ uses
   FHIR.Support.Certs, FHIR.Support.Threads, FHIR.Support.Base,
   FHIR.Support.Logging,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.Web.Fetcher,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
@@ -156,6 +157,7 @@ type
     Button9: TButton;
     mnuSource: TMenuItem;
     MenuItem9: TMenuItem;
+    btnFromUrl: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -187,6 +189,7 @@ type
     procedure mnuPackageManagerClick(Sender: TObject);
     procedure mnuValidationClick(Sender: TObject);
     procedure mnuTransformationClick(Sender: TObject);
+    procedure btnFromUrlClick(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -228,6 +231,7 @@ type
     procedure checkVersion(reportIfCurrent: boolean);
     procedure processVersionOoutcome(ver : String; reportIfCurrent : boolean);
     procedure loadServers;
+    procedure loadedResource(frameClass: TBaseResourceFrameClass; url: string; res: TFHIRResource);
   public
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
     procedure threadMonitorProc(sender : TFhirClientV; var stop : boolean);
@@ -407,6 +411,57 @@ begin
   finally
     form.Free;
   end;
+end;
+
+procedure TMasterToolsForm.btnFromUrlClick(Sender: TObject);
+var
+  res : TFhirResource;
+  format : TFHIRFormat;
+  fetcher : TInternetFetcher;
+begin
+  InputQuery( 'Open From URL', ['Address'], [''],
+    procedure(const AResult: TModalResult; const AValues: array of string)
+    begin
+      if aResult = mrOK then
+      begin
+        fetcher := TInternetFetcher.create;
+        try
+          fetcher.url := Avalues[0];
+          fetcher.Accept := 'application/fhir+xml, application/fhir+json, application/xml, application/json';
+          fetcher.fetch;
+
+          format := ffUnspecified;
+          res := bytesToResource(fetcher.buffer.asBytes, format);
+          try
+            if res is TFhirCapabilityStatement then
+              loadedResource(TCapabilityStatementEditorFrame, fetcher.url, res)
+            else if res is TFhirValueSet then
+              loadedResource(TValueSetEditorFrame, fetcher.url, res)
+            else if res is TFhirCodeSystem then
+              loadedResource(TCodeSystemEditorFrame, fetcher.url, res)
+            else if res is TFhirQuestionnaire then
+              loadedResource(TQuestionnaireEditorFrame, fetcher.url, res)
+            else if res is TFhirLibrary then
+              loadedResource(TLibraryEditorFrame, fetcher.url, res)
+    {$IFDEF EXAMPLESCENARIO}
+            else if res is TFHIRExampleScenario then
+              loadedResource(TExampleScenarioEditorFrame, fetcher.url, res)
+    {$ENDIF}
+    {$IFDEF IMPLEMENTATIONGUIDE}
+            else if res is TFHIRImplementationGuide then
+              loadedResource(TImplementationGuideEditorFrame, fetcher.url, res)
+    {$ENDIF}
+             else
+              MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+          finally
+            res.free;
+          end;
+
+        finally
+          fetcher.free;
+        end;
+      end;
+    end);
 end;
 
 procedure TMasterToolsForm.btnNewClick(Sender: TObject);
@@ -1174,6 +1229,44 @@ begin
     frame.Tab := FRegistryTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
+  end;
+end;
+
+procedure TMasterToolsForm.loadedResource(frameClass : TBaseResourceFrameClass; url : string; res : TFHIRResource);
+var
+  tab : TTabItem;
+  frame : TBaseResourceFrame;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    tab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := tab;
+    tab.Text := url;
+    tab.Hint := tab.Text;
+    tab.ShowHint := true;
+    frame := frameClass.create(tab);
+    tab.TagObject := frame;
+    frame.TagObject := tab;
+    frame.Parent := tab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.Settings := FSettings.link;
+    frame.Tab := tab;
+    frame.Align := TAlignLayout.Client;
+    frame.resource := res.link;
+    frame.load;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
   end;
 end;
 

@@ -2748,9 +2748,7 @@ begin
 
         if Session <> nil then
           if secure then
-          begin
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10);
-          end
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
           else if FWebServer.FActualSSLPort = 0 then
             b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
           else
@@ -2759,7 +2757,8 @@ begin
 
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
           StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', lang), [s]) +
-          ' This server defines some <a href="local.hts">extensions to the API</a>, and also offers <a href="/tx">Terminology Services</a>' + #13#10);
+          ' This server defines some <a href="'+FPath+'/local.hts">extensions to the API</a>, and also offers <a href="'+FPath+'/tx">Terminology Services</a> or '+
+            '(or you can browse <a href="'+FPath+'/snomed/doco/">SNOMED-CT</a> or <a href="'+FPath+'/loinc/doco/">LOINC</a> directly)' + #13#10);
         if Session.canGetUser and (Session.User <> nil) and not Session.isAnonymous then
         begin
           b.Append('. You can also <a href="registerclient.html">Register a client</a>.'+#13#10);
@@ -3708,7 +3707,7 @@ begin
   FUseOAuth := ini.web['oauth'] <> 'false';
   FOWinSecuritySecure := ini.web['owin'] = 'true';
   FOWinSecurityPlain := ini.web['owin-http'] = 'true';
-  FServeMissingCertificate := ini.web['no-cert'] = 'true';
+  FServeMissingCertificate := ini.web['no-cert'] <> 'false';
   FServeUnknownCertificate := ini.web['unknown-cert'] = 'true';
   FServeMissingJWT := ini.web['no-jwt'] = 'true';
   FServeUnverifiedJWT := ini.web['unverified-jwt'] = 'true';
@@ -3982,11 +3981,11 @@ Begin
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
     FIOHandler.SSLOptions.RootCertFile := FRootCertFile;
-    if not FServeMissingCertificate then
-      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfFailIfNoPeerCert, sslvrfClientOnce]
+    if FServeMissingCertificate then
+      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfClientOnce]
     else
-      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfClientOnce];
-    FIOHandler.SSLOptions.VerifyDepth := 2;
+      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfFailIfNoPeerCert, sslvrfClientOnce];
+//    FIOHandler.SSLOptions.VerifyDepth := 2;
     FIOHandler.OnVerifyPeer := DoVerifyPeer;
     // FIOHandler.SSLOptions.
     FIOHandler.OnGetPassword := SSLPassword;
@@ -4579,7 +4578,7 @@ begin
   try
     b.append('<ul>');
     for ep in FEndPoints do
-      b.Append('<li><a href="/'+ep.FPath+'">'+ep.FPath+'</a>: v'+ep.factory.versionString+'</li>');
+      b.Append('<li><a href="'+ep.FPath+'">'+ep.FPath+'</a>: v'+ep.factory.versionString+'</li>');
 
     b.append('</ul>');
     result := b.toString;
