@@ -91,7 +91,7 @@
         <DCC_UNIT_DEPRECATED>false</DCC_UNIT_DEPRECATED>
         <DCC_TYPEINFO_IMPLICITLY_ADDED>false</DCC_TYPEINFO_IMPLICITLY_ADDED>
         <DCC_MapFile>3</DCC_MapFile>
-        <DCC_UnitSearchPath>C:\work\Components\synedit\Source;C:\work\Components\Addict;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\Components\synedit\Source;C:\work\Components\Addict;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_Define>CDE;$(DCC_Define)</DCC_Define>
         <Debugger_RunParams>;C:\HL7Connect\v2\cde\samples\abaki.cda</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>

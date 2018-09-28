@@ -112,7 +112,7 @@
         <Debugger_RunParams>-cmd exec -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot;</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
-        <DCC_UnitSearchPath>C:\work\Components\indy10\Lib\System;C:\work\Components\indy10\Lib\Core;C:\work\Components\indy10\Lib\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
         <DCC_RangeChecking>true</DCC_RangeChecking>
