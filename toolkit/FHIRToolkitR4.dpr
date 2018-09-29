@@ -76,7 +76,6 @@ uses
   FHIR.Tools.Indexing in '..\library\tools\FHIR.Tools.Indexing.pas',
   AddRestResourceDialog in 'AddRestResourceDialog.pas' {AddRestResourceForm},
   SourceViewer in 'SourceViewer.pas' {SourceViewerForm},
-  FHIR.Tools.DiffEngine in '..\library\tools\FHIR.Tools.DiffEngine.pas',
   BaseResourceFrame in 'BaseResourceFrame.pas',
   BaseServerFrame in 'BaseServerFrame.pas',
   CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
@@ -161,7 +160,9 @@ uses
   FHIR.Support.Lang in '..\library\support\FHIR.Support.Lang.pas',
   QuestionnaireContextDialog in 'QuestionnaireContextDialog.pas' {QuestionnaireContextForm},
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
-  FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas';
+  FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
+  DiffEngineFrame in 'DiffEngineFrame.pas' {DiffEngineEngineFrame: TFrame},
+  FHIR.Tools.DiffEngine in '..\library\tools\FHIR.Tools.DiffEngine.pas';
 
 {$R *.res}
 

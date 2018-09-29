@@ -96,6 +96,7 @@ object BulkDataDialog: TBulkDataDialog
       Size.Width = 337.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
+      OnChangeTracking = edtFolderChangeTracking
     end
     object Button1: TButton
       Position.X = 416.000000000000000000

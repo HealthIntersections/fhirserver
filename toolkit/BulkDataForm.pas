@@ -73,6 +73,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure btnExecuteClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure edtFolderChangeTracking(Sender: TObject);
   private
     FServer: TFHIRClient;
     FSettings: TFHIRToolkitSettings;
@@ -165,6 +166,11 @@ begin
   inherited;
 end;
 
+procedure TBulkDataDialog.edtFolderChangeTracking(Sender: TObject);
+begin
+  updateStatus;
+end;
+
 procedure TBulkDataDialog.FormShow(Sender: TObject);
 begin
   Caption := 'Bulk Data Download from '+Server.address;
@@ -202,7 +208,7 @@ begin
   bnd := FServer.search(resType, true, params);
   try
     for be in bnd.entryList do
-      if (be.search <> nil) and (be.search.mode = SearchEntryModeMatch) then
+      if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
         combo.Items.Add(be.resource.id+': '+be.resource.textSummary);
   finally
     bnd.Free;

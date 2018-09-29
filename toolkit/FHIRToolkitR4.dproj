@@ -149,7 +149,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
-        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Factory=FHIR.R4.Factory;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Factory=FHIR.R4.Factory;FHIR.Version.DiffEngine=FHIR.R4.DiffEngine;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r464</DCC_DcuOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
@@ -236,7 +236,6 @@
         <DCCReference Include="SourceViewer.pas">
             <Form>SourceViewerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\tools\FHIR.Tools.DiffEngine.pas"/>
         <DCCReference Include="BaseResourceFrame.pas"/>
         <DCCReference Include="BaseServerFrame.pas"/>
         <DCCReference Include="CapabilityStatementEditor.pas">
@@ -421,6 +420,12 @@
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.Graph.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.ObsGraph.pas"/>
+        <DCCReference Include="DiffEngineFrame.pas">
+            <Form>DiffEngineEngineFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\library\tools\FHIR.Tools.DiffEngine.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -460,17 +465,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
                         <RemoteName>profiles-resources.xml</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
