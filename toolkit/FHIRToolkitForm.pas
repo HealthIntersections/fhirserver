@@ -52,7 +52,7 @@ uses
   {$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
-  PackageManagerFrame, ValidationFrame, TransformationFrame;
+  PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame;
 
 type
   TToolkitLogger = class (TFHIRClientLogger)
@@ -158,6 +158,8 @@ type
     mnuSource: TMenuItem;
     MenuItem9: TMenuItem;
     btnFromUrl: TButton;
+    Button10: TButton;
+    MenuItem7: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -190,6 +192,7 @@ type
     procedure mnuValidationClick(Sender: TObject);
     procedure mnuTransformationClick(Sender: TObject);
     procedure btnFromUrlClick(Sender: TObject);
+    procedure MenuItem7Click(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -207,6 +210,7 @@ type
     FPackageMgrTab : TTabItem;
     FValidationTab : TTabItem;
     FTransformationTab : TTabItem;
+    FDiffEngineTab : TTabItem;
     ToolkitLogger : TToolkitLogger;
     FServers : TFslList<TRegisteredFHIRServer>;
     FFactory : TFHIRFactory;
@@ -1054,6 +1058,31 @@ begin
   begin
     lbServers.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
     lbServers.ListItems[i].Data := FServers[i];
+  end;
+end;
+
+procedure TMasterToolsForm.MenuItem7Click(Sender: TObject);
+var
+  frame : TFrame;
+begin
+  if FDiffEngineTab <> nil then
+    tbMain.ActiveTab := FDiffEngineTab
+  else
+  begin
+    FDiffEngineTab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := FDiffEngineTab;
+    FDiffEngineTab.Text := 'Diff Engine';
+    frame := TDiffEngineEngineFrame.create(FDiffEngineTab);
+    frame.Form := self;
+    FDiffEngineTab.TagObject := frame;
+    frame.TagObject := FDiffEngineTab;
+    frame.Parent := FDiffEngineTab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.Settings := FSettings.link;
+    frame.Tab := FDiffEngineTab;
+    frame.Align := TAlignLayout.Client;
+    frame.load;
   end;
 end;
 

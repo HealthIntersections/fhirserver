@@ -717,9 +717,11 @@ begin
        ' Format      int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' Status      int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' Message     nchar(255)                               '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+  //
+       ' Request     nchar(255)                               '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+  //
        ' Created     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Finished    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Expires     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' TransactionTime '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Deleted     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Secure      int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        ' Count       int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //

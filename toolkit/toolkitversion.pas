@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 {
-[toolkit-settings]
-} const
-BuildCount=44
+[toolkit-settings]}
+const
+BuildCount=46
 ;
 
 const

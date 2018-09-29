@@ -324,6 +324,7 @@ begin
     if (indy = nil) then
     begin
       indy := TIdHTTP.create(nil);
+      indy.request.userAgent := 'FHIR Client';
       indy.OnWork := HTTPWork;
       indy.OnWorkBegin := HTTPWorkBegin;
       indy.OnWorkEnd := HTTPWorkEnd;
@@ -978,7 +979,10 @@ function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): T
 var
   ret : TStream;
 begin
-  ret := exchange(URLPath([Furl, path]), httpGet, nil, headers);
+  if isAbsoluteUrl(path) then
+    ret := exchange(path, httpGet, nil, headers)
+  else
+    ret := exchange(URLPath([Furl, path]), httpGet, nil, headers);
   try
     result := TFslBuffer.Create;
     try

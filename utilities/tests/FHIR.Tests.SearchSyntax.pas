@@ -23,6 +23,7 @@ type
     [TestCase] procedure testFilter;
     [TestCase] procedure testFilter2;
     [TestCase] procedure testParentheses;
+    [TestCase] procedure testPrecedence;
   end;
 
 implementation
@@ -58,6 +59,11 @@ end;
 procedure TFSFilterParserTests.testParentheses;
 begin
   test('(userName eq "bjensen") or (code sb snomed|diabetes)');
+end;
+
+procedure TFSFilterParserTests.testPrecedence;
+begin
+  test('this eq that and this1 eq that1');
 end;
 
 procedure TFSFilterParserTests.testString;

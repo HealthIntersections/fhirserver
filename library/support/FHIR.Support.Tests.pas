@@ -36,7 +36,7 @@ interface
 Uses
   Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Support.Certs,
   DUnitX.TestFramework;
@@ -68,6 +68,27 @@ Type
     [TestCase] procedure testAddAll;
     [TestCase] procedure testReplace;
     [TestCase] procedure testMap;
+  end;
+
+  TFslTestObject = class (TFslObject)
+  private
+    FValue: String;
+  public
+    property value : String read FValue write FValue;
+  end;
+
+  TFslTestObjectList = class (TFslObjectList)
+  private
+  protected
+    function itemClass : TFslObjectClass; override;
+  public
+  end;
+
+  [TextFixture]
+  TFslCollectionsTests = class (TObject)
+  public
+    [TestCase] procedure testAdd;
+    [TestCase] procedure testAddFail;
   end;
 
 
@@ -4952,8 +4973,44 @@ begin
 end;
 
 
+{ TFslTestObjectList }
+
+function TFslTestObjectList.itemClass: TFslObjectClass;
+begin
+  result := TFslTestObject;
+end;
+
+{ TFslCollectionsTests }
+
+procedure TFslCollectionsTests.testAdd;
+var
+  list : TFslTestObjectList;
+begin
+  list := TFslTestObjectList.create;
+  try
+    list.Add(TFslTestObject.create);
+    Assert.IsTrue(list.Count = 1);
+  finally
+    list.Free;
+  end;
+end;
+
+procedure TFslCollectionsTests.testAddFail;
+var
+  list : TFslTestObjectList;
+begin
+  list := TFslTestObjectList.create;
+  try
+    Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslException);
+    Assert.IsTrue(list.Count = 1);
+  finally
+    list.Free;
+  end;
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
+  TDUnitX.RegisterTestFixture(TFslCollectionsTests);
   TDUnitX.RegisterTestFixture(TOSXTests);
   TDUnitX.RegisterTestFixture(TXmlParserTests);
   TDUnitX.RegisterTestFixture(TXPathParserTests);

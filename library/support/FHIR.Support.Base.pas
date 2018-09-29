@@ -906,9 +906,12 @@ Begin
   If Not Assigned(aClass) Then
     Invariant('Invariants', 'aClass was not assigned.');
 
-  // Ensure object is assigned.
+  // Ensure object is assigned.                            se
   If Not Assigned(oObject) Then
     Invariant(sLocation, sObject + ' was not assigned and was expected to have been of class ' + aClass.ClassName);
+
+  if assigned(oObject) and not (oObject is aClass) then
+    Invariant(sLocation, sObject + ' was expected to have been of class ' + aClass.ClassName+', but is '+oObject.ClassName);
 
   Result := True;
 End;

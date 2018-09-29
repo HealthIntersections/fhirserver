@@ -452,7 +452,7 @@ begin
   i := cursor;
   repeat
     inc(i);
-  until (i > length(original)) or not CharInSet(original[i], ['a'..'z', 'A'..'Z', '-', '_', ':']);
+  until (i > length(original)) or not CharInSet(original[i], ['a'..'z', 'A'..'Z', '0'..'9', '-', '_', ':']);
   result := copy(original, cursor, i - cursor);
   cursor := i;
 end;

@@ -206,6 +206,7 @@ var
 begin
   FStatus := asyncPinging;
   headers.accept := 'application/fhir+json';
+  headers.prefer := '';
   buf := FClient.customGet(FTaskLocation, headers);
   try
     case FClient.LastStatus of
@@ -226,7 +227,7 @@ begin
             for i in json.forceArr['output'] do
             begin
               o := i as TJsonObject;
-              FFiles.Add(TDownloadFile.Create(o.str['type'], o.str['url'].Substring(FClient.address.Length+1)));
+              FFiles.Add(TDownloadFile.Create(o.str['type'], o.str['url']{.Substring(FClient.address.Length+1))}));
             end;
             FStatus := asyncDownload;
           finally
@@ -317,7 +318,7 @@ begin
   try
     if FClient.LastStatus = 202 then
     begin
-      FTaskLocation := FClient.LastHeaders.ContentLocation.subString(FClient.Address.length);
+      FTaskLocation := FClient.LastHeaders.ContentLocation{.subString(FClient.Address.length)};
       FStatus := asyncWaiting;
       FLastStatus := now;
       log('Accepted. Task Location = '+FTaskLocation);
