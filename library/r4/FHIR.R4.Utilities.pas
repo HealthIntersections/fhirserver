@@ -4701,7 +4701,7 @@ begin
   try
     result.url := valueSet;
     result.name := name;
-    result.identifierList.Add(identifierList);
+    result.identifierList.Assign(identifierList);
     result.status := status;
     result.experimental := experimental;
     result.date := date;

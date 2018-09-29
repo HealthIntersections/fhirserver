@@ -233,9 +233,16 @@ begin
             if (url.startsWith('ValueSet/')) then
               vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure))
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
-              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure))
-            else if not FServer.isKnownValueSet(url, vs) then
-              vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters.getvar('version'), false, needSecure));
+              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9+request.baseURL.Length), request.baseUrl, needSecure))
+            else
+            begin
+              vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
+              if vs = nil then
+                if not FServer.isKnownValueSet(url, vs) then
+                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters.getvar('version'), false, needSecure));
+              if vs = nil then
+
+            end;
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
