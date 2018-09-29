@@ -498,7 +498,7 @@ begin
       begin
         if cc.system = '' then
           result := true
-        else if cc.system = system then
+        else if (cc.system = system) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
           cs := TCodeSystemProvider(FOthers.matches[cc.system]);
           if (cs = nil) then
