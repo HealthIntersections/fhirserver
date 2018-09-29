@@ -3492,7 +3492,7 @@ begin
       r := right[0].value;
       if (l.hasType(FHIR_TYPES_STRING) and r.hasType(FHIR_TYPES_STRING)) then
         result.Add(TFhirBoolean.Create(l.primitiveValue <= r.primitiveValue).noExtensions)
-      else if l.hasType(['decimal', 'integer']) and r.hasType(['decimal', 'integer']) then
+      else if l.hasType(['decimal', 'integer', 'unsignedInt', 'positiveInt']) and r.hasType(['decimal', 'integer', 'unsignedInt', 'positiveInt']) then
         result.Add(TFhirBoolean.Create(StrToFloat(l.primitiveValue) <= StrToFloat(r.primitiveValue)).noExtensions)
       else if l.hasType(['date', 'dateTime', 'instant']) and r.hasType(['date', 'dateTime', 'instant']) then
         result.Add(TFhirBoolean.Create(l.primitiveValue <= r.primitiveValue).noExtensions)
