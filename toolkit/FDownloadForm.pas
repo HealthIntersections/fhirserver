@@ -16,244 +16,194 @@ unit FDownloadForm;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.zip,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Net.URLClient, System.Net.HttpClient,
-  System.Net.HttpClientComponent, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo,
-  System.ImageList, FMX.ImgList;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Controls.Presentation,
+  IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, System.Zip,
+  IdSSLOpenSSL;
 
 type
-  TDownloadForm = class(TForm)
-    PanelTop: TPanel;
-    PanelCenter: TPanel;
-    LabelFile: TLabel;
-    EditFileName1: TEdit;
-    BStartDownload: TButton;
-    Memo1: TMemo;
-    ImageList1: TImageList;
-    LabelURL: TLabel;
-    EditURL1: TEdit;
-    LabelGlobalSpeed: TLabel;
-    ProgressBarDownload: TProgressBar;
-    BStopDownload: TButton;
-    Edit1: TEdit;
-    CheckBox1: TCheckBox;
-    Button1: TButton;
-    procedure BStartDownloadClick(Sender: TObject);
-    procedure ButtonCancelClick(Sender: TObject);
-    procedure BStartComponentClick(Sender: TObject);
-    procedure ReceiveDataEvent(const Sender: TObject; AContentLength: Int64; AReadCount: Int64; var Abort: Boolean);
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    function GetZipSize(const Filename: string): integer;
 
+  TDownload = class;
+
+  TDownloadForm = class(TForm)
+    ProgressBar1: TProgressBar;
+    Button1: TButton;
+    Button2: TButton;
+    Label1: TLabel;
+    procedure Button1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
-    FClient: THTTPClient;
-    FGlobalStart: Cardinal;
-    FAsyncResult: IAsyncResult;
-    FDownloadStream: TStream;
-//    ProcessedBytes: cardinal;
-    procedure ZipOnProgress(Sender: TObject; FileName: string; Header: TZipHeader; Position: Int64);
-    procedure DoEndDownload(const AsyncResult: IAsyncResult);
   public
     { Public declarations }
-    url:String;
+    sourceURL:String;
     localFileName:String;
     UnzipLocation:string;
-//    UnzipFile:String;
     Unzip:boolean;
-    DownloadComplete:boolean;
-    procedure SampleDownload;
-    procedure DoUnzip;
+    busy:boolean;
+    FCancel: boolean;
+  end;
+
+  TDownload = class(TThread)
+  private
+    httpclient: TIdHTTP;
+    url: string;
+    filename: string;
+    unzipLocation:string;
+    maxprogressbar: integer;
+    progressbarstatus: integer;
+    procedure ExtractZip(ZipFile: string; ExtractPath: string);
+    procedure idhttp1Work(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure idhttp1WorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+    procedure UpdateProgressBar;
+    procedure SetMaxProgressBar;
+  protected
+    linkedForm:TDownloadForm;
+    procedure Execute; override;
+  public
+    constructor Create(CreateSuspended: boolean; aurl, afilename, aunzipLocation: string; aLinkedForm:TDownloadForm);
+    destructor Destroy; override;
+//    property Cancel: boolean read FCancel write FCancel;
   end;
 
 var
   DownloadForm: TDownloadForm;
-  zf:TZipFile;
-  currsize, processedsofar, totalsize:cardinal;
-  PreviousFilename:string;
+  DownloadThread: TDownload;
 
 implementation
+
 {$R *.fmx}
 
-uses
-  System.IOUtils;
-
-
-
-
-function TDownloadForm.GetZipSize(const filename: string): integer;
-var
-  StreamArquivo: TFileStream;
+constructor TDownload.Create(CreateSuspended: boolean; aurl, afilename, aunzipLocation: string; aLinkedForm:TDownloadForm);
 begin
-  StreamArquivo := TFileStream.Create(filename, fmOpenRead);
-  try
-    result := StreamArquivo.Size;
-  finally
-    StreamArquivo.Free;
-  end;
+  inherited Create(CreateSuspended);
+  linkedForm:=aLinkedForm;
+  unzipLocation:= aunzipLocation;
+  httpclient := TIdHTTP.Create(nil);
+  httpclient.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(httpclient);
+  httpclient.Request.UserAgent := 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1';
+  httpclient.HandleRedirects := true;
+  httpclient.OnWorkBegin := idhttp1WorkBegin;
+  httpclient.OnWork := idhttp1Work;
+  url := aurl;
+  filename := afilename;
 end;
 
-procedure TDownloadForm.BStartDownloadClick(Sender: TObject);
+procedure TDownload.idhttp1Work(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
-  DownloadComplete:=false;
-  SampleDownload;
-end;
+  progressbarstatus := AWorkCount;
 
-procedure TDownloadForm.ButtonCancelClick(Sender: TObject);
-begin
-  (Sender as TButton).Enabled := False;
-  FAsyncResult.Cancel;
-end;
-
-procedure TDownloadForm.BStartComponentClick(Sender: TObject);
-begin
-  BStartDownload.Enabled := False;
-  SampleDownload;
-end;
-
-procedure TDownloadForm.DoEndDownload(const AsyncResult: IAsyncResult);
-var
-  LAsyncResponse: IHTTPResponse;
-begin
-  try
-    LAsyncResponse := THTTPClient.EndAsyncHTTP(AsyncResult);
-    TThread.Synchronize(nil,
-      procedure
-      begin
-        Memo1.Lines.Add('Download Finished!');
-        Memo1.Lines.Add(Format('Status: %d - %s', [LAsyncResponse.StatusCode, LAsyncResponse.StatusText]));
-      end);
-  finally
-    LAsyncResponse := nil;
-    FreeandNil(FDownloadStream);
-    if unzip then try
-      doUnzip;
-      except
-      end;
-
-    BStopDownload.Enabled := False;
-    BStartDownload.Enabled := True;
-    DownloadComplete:=true;
-
+  if linkedForm.FCancel then
+  begin
+    linkedForm.FCancel := False;
+    httpclient.Disconnect;
+    linkedForm.busy:=false;
   end;
 
+  Queue(UpdateProgressBar);
 end;
 
-
-procedure TDownloadForm.DoUnzip;
-var tx:tarray<tzipheader>;
-i:integer;
+procedure TDownload.idhttp1WorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
 begin
-  totalsize:=0;
-  processedsofar:=0;
-  zf.OnProgress:=ZipOnProgress;
-  PreviousFilename:='';
-  if not directoryexists(UnzipLocation) then
-    try
-      ForceDirectories(UnzipLocation);
-    except
+  maxprogressbar := AWorkCountMax;
+  Queue(SetMaxProgressBar);
+end;
+
+procedure TDownload.Execute;
+var
+  Stream: TMemoryStream;
+  unzip:Boolean;
+begin
+unzip:=true;
+  Stream := TMemoryStream.Create;
+  try
+    linkedForm.busy:=true;
+    httpclient.Get(linkedForm.sourceURL, Stream);
+    Stream.SaveToFile(filename);
+    if unzip then begin
+        linkedForm.caption := 'Done Downloading. Extracting...';
+        ExtractZip(linkedForm.localFileName, UnzipLocation);
+    end else begin
+        linkedForm.caption := 'Done Downloading';
     end;
-  try
-    zf.Open(LocalFileName, zmRead);
-    tx:=zf.FileInfos;
-    for i:=0 to length(tx)-1 do
-      totalsize:=totalsize+tx[i].unCompressedSize;
-    zf.close;
-    zf.Open(LocalFileName, zmRead);
-    zf.ExtractAll(UnzipLocation);
-    zf.Close;
-  except
-  end;
-end;
-
-
-procedure TDownloadForm.ZipOnProgress(Sender: TObject; FileName: string; Header: TZipHeader; Position: Int64);
-begin
-
-   if PreviousFilename <> FileName then
-     begin
-       processedsofar:=processedsofar+currsize;
-       PreviousFilename := FileName;
-     end
-     else
-     currsize:=Header.uncompressedSize;
-
-  progressbardownload.Value:= 100 * Position div  Header.uncompressedSize;
-  progressbardownload.Value:= 100 * (Position + processedsofar) div  totalsize;
-  progressbardownload.repaint;
-
-end;
-
-
-procedure TDownloadForm.FormCreate(Sender: TObject);
-begin
-  zf:=TZipFile.create;
-  FClient := THTTPClient.Create;
-  DownloadComplete:=false;
-  FClient.OnReceiveData := ReceiveDataEvent;
-end;
-
-procedure TDownloadForm.FormDestroy(Sender: TObject);
-begin
-  zf.destroy;
-  FDownloadStream.Free;
-  FClient.Free;
-end;
-
-procedure TDownloadForm.ReceiveDataEvent(const Sender: TObject; AContentLength, AReadCount: Int64;
-  var Abort: Boolean);
-var
-  LTime: Cardinal;
-  LSpeed: Integer;
-begin
-  LTime := TThread.GetTickCount - FGlobalStart;
-  LSpeed := (AReadCount * 1000) div LTime;
-  TThread.Queue(nil,
-    procedure
-    begin
-      ProgressBarDownload.Value := AReadCount;
-      LabelGlobalSpeed.Text := Format('Global speed: %d KB/s', [LSpeed div 1024]);
-    end);
-end;
-
-procedure TDownloadForm.SampleDownload;
-var
-  LResponse: IHTTPResponse;
-  LFileName: string;
-  LSize: Int64;
-begin
-  BStartDownload.Enabled := False;
-  LFileName := TPath.Combine(TPath.GetDocumentsPath, LocalFileName);
-  LocalFileName := LFileName;
-
-  try
-//    URL := URL;
-    LResponse := FClient.Head(URL);
-    LSize := LResponse.ContentLength;
-    Memo1.Lines.Add(Format('Head response: %d - %s', [LResponse.StatusCode, LResponse.StatusText]));
-    LResponse := nil;
-
-    ProgressBarDownload.Max := LSize;
-    ProgressBarDownload.Min := 0;
-    ProgressBarDownload.Value := 0;
-    LabelGlobalSpeed.Text := 'Global speed: 0 KB/s';
-
-    Memo1.Lines.Add(Format('Downloading: "%s" (%d Bytes) into "%s"' , [LocalFileName, LSize, LFileName]));
-
-    // Create the file that is going to be dowloaded
-    FDownloadStream := TFileStream.Create(LFileName, fmCreate);
-    FDownloadStream.Position := 0;
-
-    FGlobalStart := TThread.GetTickCount;
-
-    // Start the download process
-    FAsyncResult := FClient.BeginGet(DoEndDownload, URL, FDownloadStream);
-
   finally
-    BStopDownload.Enabled := FAsyncResult <> nil;
-    BStartDownload.Enabled := FAsyncResult = nil;
+    Stream.Free;
+    linkedForm.busy:=false;
   end;
+end;
+
+procedure TDownload.UpdateProgressBar;
+var
+  ZipFile: string;
+begin
+  linkedForm.ProgressBar1.value := progressbarstatus;
+  linkedForm.Button1.text := 'Downloading...';
+  linkedform.Label1.Text:= inttostr(progressbarstatus div 1024) + ' of ' + inttostr(maxprogressbar div 1024) ;
+end;
+
+procedure TDownload.SetMaxProgressBar;
+begin
+  linkedForm.ProgressBar1.Max := maxprogressbar;
+end;
+
+destructor TDownload.Destroy;
+begin
+  FreeAndNil(httpclient);
+  inherited Destroy;
+end;
+
+procedure TDownload.ExtractZip(ZipFile, ExtractPath: string);
+begin
+  if TZipFile.IsValid(ZipFile) then
+    try
+      TZipFile.ExtractZipFile(ZipFile, ExtractPath);
+      DeleteFile(ZipFile);
+      linkedForm.Caption := 'Done.';
+      linkedForm.Button1.Enabled := true;
+      linkedForm.close;
+    except
+    end
+  else
+  begin
+    linkedForm.Button1.Text := 'Error Extracting files';
+
+  end;
+end;
+
+procedure TDownloadForm.Button1Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TDownloadForm.Button2Click(Sender: TObject);
+begin
+fcancel:=true;
+//busy:=false;
+close;
+end;
+
+procedure TDownloadForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+ if busy then canClose:=false;
+ if assigned(DownloadThread) then fcancel:=true;
+end;
+
+procedure TDownloadForm.FormShow(Sender: TObject);
+var
+//  DownloadThread: TDownload;
+  link: string;
+begin
+  ProgressBar1.value := 0;
+  Button1.Enabled := False;
+  Caption := 'Starting Download...';
+  link := sourceUrl;
+  DownloadThread := TDownload.Create(true, link, localFileName, UnzipLocation, self);
+  DownloadThread.FreeOnTerminate := true;
+  DownloadThread.Start;
 end;
 
 end.
+

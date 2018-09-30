@@ -162,12 +162,14 @@ uses
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
   FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
   DiffEngineFrame in 'DiffEngineFrame.pas' {DiffEngineEngineFrame: TFrame},
-  FHIR.Tools.DiffEngine in '..\library\tools\FHIR.Tools.DiffEngine.pas';
+  FHIR.Tools.DiffEngine in '..\library\tools\FHIR.Tools.DiffEngine.pas',
+  Import2html in 'Import2html.pas' {ContentImport};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TContentImport, ContentImport);
   Application.Run;
 end.

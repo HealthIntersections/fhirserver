@@ -2,197 +2,47 @@ object DownloadForm: TDownloadForm
   Left = 0
   Top = 0
   Caption = 'Download'
-  ClientHeight = 480
-  ClientWidth = 640
+  ClientHeight = 109
+  ClientWidth = 592
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
+  OnCloseQuery = FormCloseQuery
+  OnShow = FormShow
   DesignerMasterStyle = 0
-  object PanelTop: TPanel
-    Align = Top
-    Size.Width = 640.000000000000000000
-    Size.Height = 201.000000000000000000
+  object ProgressBar1: TProgressBar
+    Anchors = [akLeft, akTop, akRight]
+    Orientation = Horizontal
+    Position.X = 8.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 577.000000000000000000
+    Size.Height = 20.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button1: TButton
+    Position.X = 8.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 201.000000000000000000
+    Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object LabelFile: TLabel
-      Position.X = 8.000000000000000000
-      Position.Y = 12.000000000000000000
-      Size.Width = 57.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-      Text = 'File:'
-    end
-    object EditFileName1: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      Anchors = [akLeft, akTop, akRight]
-      TabOrder = 4
-      Text = 'publish.zip'
-      Position.X = 72.000000000000000000
-      Position.Y = 8.000000000000000000
-      Size.Width = 561.000000000000000000
-      Size.Height = 30.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object LabelURL: TLabel
-      Position.X = 8.000000000000000000
-      Position.Y = 48.000000000000000000
-      Size.Width = 57.000000000000000000
-      Size.Height = 17.000000000000000000
-      Size.PlatformDefault = False
-      Text = 'URL:'
-    end
-    object EditURL1: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      Anchors = [akLeft, akTop, akRight]
-      TabOrder = 3
-      Text = 'file:///C:/ImpGuide/publish/publish.zip'
-      Position.X = 72.000000000000000000
-      Position.Y = 44.000000000000000000
-      Size.Width = 561.000000000000000000
-      Size.Height = 30.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object LabelGlobalSpeed: TLabel
-      Position.X = 160.000000000000000000
-      Position.Y = 78.000000000000000000
-      Size.Width = 184.000000000000000000
-      Size.Height = 25.000000000000000000
-      Size.PlatformDefault = False
-      Text = 'GlobalSpeed: 0 KB/s'
-    end
-    object BStartDownload: TButton
-      Position.X = 8.000000000000000000
-      Position.Y = 80.000000000000000000
-      Size.Width = 133.000000000000000000
-      Size.Height = 22.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 6
-      Text = 'Start Download'
-      OnClick = BStartDownloadClick
-    end
-    object ProgressBarDownload: TProgressBar
-      Anchors = [akLeft, akTop, akRight]
-      Orientation = Horizontal
-      Position.X = 28.000000000000000000
-      Position.Y = 172.000000000000000000
-      Size.Width = 605.000000000000000000
-      Size.Height = 20.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object BStopDownload: TButton
-      Enabled = False
-      Images = ImageList1
-      ImageIndex = 0
-      Position.X = 4.000000000000000000
-      Position.Y = 172.000000000000000000
-      Size.Width = 20.000000000000000000
-      Size.Height = 20.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 10
-      OnClick = ButtonCancelClick
-    end
-    object Edit1: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      Anchors = [akLeft, akTop, akRight]
-      TabOrder = 2
-      Text = 'c:\temp\unzip'
-      Position.X = 144.000000000000000000
-      Position.Y = 116.000000000000000000
-      Size.Width = 409.000000000000000000
-      Size.Height = 30.000000000000000000
-      Size.PlatformDefault = False
-    end
-    object CheckBox1: TCheckBox
-      Position.X = 8.000000000000000000
-      Position.Y = 120.000000000000000000
-      TabOrder = 11
-      Text = 'CheckBox1'
-    end
-    object Button1: TButton
-      Position.X = 560.000000000000000000
-      Position.Y = 116.000000000000000000
-      Size.Width = 69.000000000000000000
-      Size.Height = 30.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 5
-      Text = 'Unzip'
-    end
+    Text = 'Downloading'
+    OnClick = Button1Click
   end
-  object PanelCenter: TPanel
-    Align = Client
-    Size.Width = 640.000000000000000000
-    Size.Height = 279.000000000000000000
+  object Button2: TButton
+    Position.X = 424.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 161.000000000000000000
+    Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
-    object Memo1: TMemo
-      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-      DataDetectorTypes = []
-      Anchors = [akLeft, akTop, akRight, akBottom]
-      Position.X = 5.000000000000000000
-      Position.Y = 8.000000000000000000
-      Size.Width = 629.000000000000000000
-      Size.Height = 265.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 0
-      Viewport.Width = 625.000000000000000000
-      Viewport.Height = 261.000000000000000000
-    end
+    Text = 'Cancel'
+    OnClick = Button2Click
   end
-  object ImageList1: TImageList
-    Source = <
-      item
-        MultiResBitmap.Width = 17
-        MultiResBitmap.TransparentColor = 536870912
-        MultiResBitmap = <
-          item
-            Width = 17
-            Height = 16
-            PNG = {
-              89504E470D0A1A0A0000000D4948445200000011000000100806000000F03194
-              5F000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              004149444154384F63185E80114A33343434FC8732890240F570BD7000320468
-              0AF11808A05A1998A0344560D4104C30780C414930C8714F0C6004022873F800
-              060600B2E52476D5E8C30D0000000049454E44AE426082}
-            FileName = 'C:\dev\tp\images\MPlayer_CL_MPSTOP.bmp'
-          end>
-        Name = 'MPlayer_CL_MPSTOP'
-      end
-      item
-        MultiResBitmap.Width = 17
-        MultiResBitmap.TransparentColor = 536870912
-        MultiResBitmap = <
-          item
-            Width = 17
-            Height = 16
-            PNG = {
-              89504E470D0A1A0A0000000D4948445200000011000000100806000000F03194
-              5F000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              006349444154384FD591510E80200C43A717B737D7B0B4515160D31F7D0D2123
-              E9FB18F63D00ACE5704C31F376B0E095CCCB76C823592D5152B2964409C94612
-              45B202AB3B518960CD39FD4E0F5926C2676728E995455312298B8B2453BEA55E
-              D8DF30DB00FF4C8DB7FCBFFBBD0000000049454E44AE426082}
-            FileName = 'C:\dev\tp\images\MPlayer_CL_MPPLAY.bmp'
-          end>
-        Name = 'MPlayer_CL_MPPLAY'
-      end>
-    Destination = <
-      item
-        Layers = <
-          item
-            Name = 'MPlayer_CL_MPSTOP'
-            SourceRect.Right = 17.000000000000000000
-          end>
-      end
-      item
-        Layers = <
-          item
-            Name = 'MPlayer_CL_MPPLAY'
-            SourceRect.Right = 17.000000000000000000
-          end>
-      end>
-    Left = 148
-    Top = 228
+  object Label1: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 16.000000000000000000
+    Text = ' '
+    TabOrder = 2
   end
 end

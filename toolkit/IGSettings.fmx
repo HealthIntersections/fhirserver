@@ -10,6 +10,7 @@ object IGSettingsForm: TIGSettingsForm
   OnShow = FormShow
   DesignerMasterStyle = 0
   object btnCheckDependencies: TButton
+    Enabled = False
     Position.X = 240.000000000000000000
     Position.Y = 216.000000000000000000
     Size.Width = 121.000000000000000000
@@ -120,6 +121,7 @@ object IGSettingsForm: TIGSettingsForm
     Size.PlatformDefault = False
   end
   object CheckBox2: TCheckBox
+    Enabled = False
     Position.X = 8.000000000000000000
     Position.Y = 136.000000000000000000
     Size.Width = 145.000000000000000000
@@ -173,11 +175,13 @@ object IGSettingsForm: TIGSettingsForm
     Text = 'c:\temp\t1'
     Position.X = 8.000000000000000000
     Position.Y = 160.000000000000000000
+    Enabled = False
     Size.Width = 305.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
   end
   object Button7: TButton
+    Enabled = False
     Position.X = 320.000000000000000000
     Position.Y = 160.000000000000000000
     Size.Width = 41.000000000000000000
@@ -198,6 +202,7 @@ object IGSettingsForm: TIGSettingsForm
     OnClick = Button8Click
   end
   object Button2: TButton
+    Enabled = False
     Position.X = 376.000000000000000000
     Position.Y = 96.000000000000000000
     Size.Width = 73.000000000000000000
@@ -234,7 +239,7 @@ object IGSettingsForm: TIGSettingsForm
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
     TextSettings.Font.StyleExt = {00070000000000000004000000}
-    Text = 'YES'
+    Text = 'Unknown'
     TabOrder = 8
     TabStop = False
   end
@@ -262,13 +267,23 @@ object IGSettingsForm: TIGSettingsForm
     OnClick = Button10Click
   end
   object Button11: TButton
-    Position.X = 560.000000000000000000
-    Position.Y = 32.000000000000000000
+    Position.X = 24.000000000000000000
+    Position.Y = 328.000000000000000000
     Size.Width = 129.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 26
     Text = 'Check folders'
+    Visible = False
     OnClick = Button11Click
+  end
+  object ProgressBar2: TProgressBar
+    Orientation = Horizontal
+    Position.X = 8.000000000000000000
+    Position.Y = 384.000000000000000000
+    Size.Width = 521.000000000000000000
+    Size.Height = 20.000000000000000000
+    Size.PlatformDefault = False
+    Visible = False
   end
 end
