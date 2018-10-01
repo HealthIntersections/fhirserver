@@ -298,7 +298,6 @@ var
   i: integer;
   objtype: string;
 begin
-
   Item := TTreeViewItem.Create(TreeView);
   objtype := obj.fhirType;
   TreeView.AddObject(Item);
@@ -842,17 +841,18 @@ begin
 
   If (igcontentfolder = '') or not(directoryexists(pwidechar(igcontentfolder)) and directoryexists(pwidechar(pagecontentfolder)) and directoryexists(pwidechar(mediafolder))) then
   begin
-    TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Do you want to create them?', System.UITypes.TMsgDlgType.mtConfirmation,
-      [System.UITypes.TMsgDlgBtn.mbYes, System.UITypes.TMsgDlgBtn.mbNo], System.UITypes.TMsgDlgBtn.mbYes, 0,
+    TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Select the top element (Implementation Guide) and Click "Publish", check for the folders, and Save', System.UITypes.TMsgDlgType.mtConfirmation,
+      [System.UITypes.TMsgDlgBtn.mbOK], System.UITypes.TMsgDlgBtn.mbOK, 0,
       procedure(const AResult: TModalResult)
       begin
         case AResult of
           mrYES:
             begin
-              Button9Click(nil);
+//              CornerButton4Click(nil);
             end;
           mrNo:
             begin
+            exit;
             end;
         end;
       end);
