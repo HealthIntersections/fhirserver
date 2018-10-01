@@ -1,0 +1,62 @@
+object ESRender: TESRender
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 170
+  ClientWidth = 497
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Label1: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 12.000000000000000000
+    Size.Width = 233.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'ExampleScenario renderer'
+    TabOrder = 9
+    TabStop = False
+  end
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 5
+    Position.X = 8.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 305.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button1: TButton
+    Position.X = 320.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 41.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 14
+    Text = '...'
+    OnClick = Button1Click
+  end
+  object Button5: TButton
+    Position.X = 373.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 73.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 23
+    Text = 'Download'
+    OnClick = Button5Click
+  end
+  object Button10: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 181.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 129.000000000000000000
+    Size.Height = 49.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 27
+    Text = 'Render'
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    OnClick = Button10Click
+  end
+end
