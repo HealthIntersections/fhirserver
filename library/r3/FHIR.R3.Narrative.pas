@@ -193,11 +193,11 @@ Type
     function displayLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; name: String; showCodeDetails: boolean): boolean;
     function includeInSummary(child: TFHIRElementDefinition): boolean;
 
-    procedure generate(cm: TFHIRConceptMap); overload;
-    procedure generate(vs: TFHIRValueSet; b: boolean); overload;
+//    procedure generate(cm: TFHIRConceptMap); overload;
+//    procedure generate(vs: TFHIRValueSet; b: boolean); overload;
     procedure generate(op: TFHIROperationOutcome); overload;
-    procedure generate(conf: TFhirCapabilityStatement); overload;
-    procedure generate(od: TFHIROperationDefinition); overload;
+//    procedure generate(conf: TFhirCapabilityStatement); overload;
+//    procedure generate(od: TFHIROperationDefinition); overload;
 
     procedure renderLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; title: boolean; showCodeDetails: boolean;
       displayHints: TFslStringDictionary);
@@ -452,16 +452,16 @@ var
   p: TFHIRStructureDefinition;
   pu: TFHIRUri;
 begin
-  if (r is TFHIRConceptMap) then
-    generate(TFHIRConceptMap(r))
-  else if (r is TFHIRValueSet) then
-    generate(TFHIRValueSet(r), true)
-  else if (r is TFHIROperationOutcome) then
+  if (r is TFHIROperationOutcome) then
     generate(TFHIROperationOutcome(r))
-  else if (r is TFhirCapabilityStatement) then
-    generate(TFhirCapabilityStatement(r))
-  else if (r is TFHIROperationDefinition) then
-    generate(TFHIROperationDefinition(r))
+//  else if (r is TFHIRConceptMap) then
+//    generate(TFHIRConceptMap(r))
+//  else if (r is TFHIRValueSet) then
+//    generate(TFHIRValueSet(r), true)
+//  else if (r is TFhirCapabilityStatement) then
+//    generate(TFhirCapabilityStatement(r))
+//  else if (r is TFHIROperationDefinition) then
+//    generate(TFHIROperationDefinition(r))
   else
   begin
     p := nil;
@@ -553,25 +553,25 @@ begin
   end;
 end;
 
-procedure TFHIRNarrativeGenerator.generate(vs: TFHIRValueSet; b: boolean);
-begin
-//  raise EFHIRTodo.create();
-end;
-
-procedure TFHIRNarrativeGenerator.generate(cm: TFHIRConceptMap);
-begin
-  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
-end;
-
-procedure TFHIRNarrativeGenerator.generate(od: TFHIROperationDefinition);
-begin
-  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
-end;
-
-procedure TFHIRNarrativeGenerator.generate(conf: TFhirCapabilityStatement);
-begin
-  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
-end;
+//procedure TFHIRNarrativeGenerator.generate(vs: TFHIRValueSet; b: boolean);
+//begin
+////  raise EFHIRTodo.create();
+//end;
+//
+//procedure TFHIRNarrativeGenerator.generate(cm: TFHIRConceptMap);
+//begin
+//  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
+//end;
+//
+//procedure TFHIRNarrativeGenerator.generate(od: TFHIROperationDefinition);
+//begin
+//  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
+//end;
+//
+//procedure TFHIRNarrativeGenerator.generate(conf: TFhirCapabilityStatement);
+//begin
+//  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generate');
+//end;
 
 procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);
 begin
