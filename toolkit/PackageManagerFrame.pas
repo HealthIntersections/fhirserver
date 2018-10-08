@@ -286,7 +286,7 @@ begin
       try
         fetch.URL := URLPath([url, 'package.tgz']);
         fetch.Fetch;
-        ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+        ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
       except
         on e : exception do
         begin
@@ -299,7 +299,7 @@ begin
         try
           fetch.URL := url;
           fetch.Fetch;
-          ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+          ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
         except
           on e : exception do
           begin
