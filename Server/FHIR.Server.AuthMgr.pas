@@ -1,5 +1,7 @@
 unit FHIR.Server.AuthMgr;
 
+// dynreg: https://github.com/smart-on-fhir/smart-on-fhir.github.io/wiki/Dynamic-Client-Registration
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -656,7 +658,7 @@ begin
             client.secret := newGuidId;
             resp.str['client_secret'] := client.secret;
           end
-          else if (json.str['token_endpoint_auth_method'] = 'none') then // confidential
+          else if (json.str['token_endpoint_auth_method'] = 'none') then // public
           begin
             checkValue('grant_types', 'authorization_code');
             checkValue('response_types', 'code');

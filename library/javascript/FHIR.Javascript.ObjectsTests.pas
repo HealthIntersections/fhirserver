@@ -68,7 +68,7 @@ implementation
 type
   TTestWorkerContext = class (TBaseWorkerContext)
   public
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
+    function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
@@ -223,7 +223,7 @@ end;
 
 { TTestWorkerContext }
 
-function TTestWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+function TTestWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
   raise ETestExceptionNotDone.Create('TTestWorkerContext.expand');
 end;

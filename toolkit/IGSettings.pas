@@ -38,7 +38,7 @@ uses
   {$ENDIF}
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.zip, System.IOUtils,
   FMX.Dialogs, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Types,
-  FMX.dialogservice, System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent, FDownloadForm;
+  FMX.dialogservice, IdHTTP, IdComponent, System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent, FDownloadForm;
 
 type
   TIGSettingsForm = class(TForm)
@@ -68,6 +68,10 @@ type
     Button9: TButton;
     Button10: TButton;
     Button11: TButton;
+    ProgressBar2: TProgressBar;
+
+
+
     procedure Button1Click(Sender: TObject);
     procedure btnCheckDependenciesClick(Sender: TObject);
     procedure OnZipProgressEvent(Sender: TObject; FileName: string; Header: TZipHeader; Position: Int64);
@@ -83,10 +87,20 @@ type
     procedure SetupIGPublisherFiles;
     procedure Button11Click(Sender: TObject);
 
+
+{//    procedure Download;
+    procedure HttpWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+        procedure HttpWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+            procedure HttpWorkEnd(ASender: TObject; AWorkMode: TWorkMode);
+            }
+
     /// ////////////////////
   private
     { Private declarations }
-    FClient: THTTPClient;
+
+{    TotalBytes: Int64;    LastWorkCount: Int64;
+    LastTicks: LongWord;}
+{    FClient: THTTPClient;}
     FGlobalStart: Cardinal;
     FAsyncResult: IAsyncResult;
     FDownloadStream: TStream;
@@ -99,8 +113,10 @@ type
     resourcesFolder, pagecontentfolder, igcontentfolder, mediafolder, pandocfolder, tempfolder: string;
 
     procedure runAndWait(Path, command, parameters: String);
+    function checkContentFolders(rootFolder: string): boolean;
+    function checkPublishFolders(rootFolder: string): boolean;
     procedure createFolders(rootFolder: string);
-
+{    procedure DownloadFile;}
   end;
 
 var
@@ -110,7 +126,7 @@ implementation
 
 {$R *.fmx}
 
-uses ImplementationGuideEditor, FHIR.Support.Base;
+uses ImplementationGuideEditor;
 
 procedure TIGSettingsForm.btnCheckDependenciesClick(Sender: TObject);
 {$IFDEF OSX}
@@ -122,10 +138,10 @@ var
   str: string;
 
 begin
-exit;
   Memo1.Lines.Clear;
 
   TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+exit;
   execute('cmd.exe /C jekyll -v', str, true);
 
   // try
@@ -146,14 +162,15 @@ begin
   SetupIGPublisherFiles;
 
   tempstr := IGPublisherFolder;
-  if fileexists(tempstr + '\_genonce.bat') then
+  if fileexists(tempstr + '\BUILD.bat') then
   begin
-    runAndWait(tempstr, '_genonce', '');
+    runAndWait(tempstr, 'BUILD', '');
     filestr := IGPublisherFolder + '\output\index.html';
     filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
     runAndWait(tempstr, filestr, '');
     // filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
     // runAndWait(igRootFolder, 'open', filestr);
+    IGSettingsForm.close;
   end
   else
     TDialogService.MessageDialog('IG Publisher not found. '#13#10'Ensure the IG Publisher is in the same folder as the IG file.', System.UITypes.TMsgDlgType.mtInformation,
@@ -162,7 +179,7 @@ end;
 
 procedure TIGSettingsForm.Button11Click(Sender: TObject);
 begin
-
+exit;
   if (directoryexists(pwidechar(igRootFolder + '\content'))) then
   begin
     igcontentfolder := igRootFolder + '\content';
@@ -235,31 +252,32 @@ var
   DownloadForm: TDownloadForm;
 begin
 
-  DownloadForm := TDownloadForm.create(nil);
 
-  // downloadform.UnzipFile:='c:\temp\xxx.zip';
-  DownloadForm.url := 'file:///C:/ImpGuide/publish/publish.zip';
-  DownloadForm.url := 'https://bitbucket.org/costateixeira/ig-builder/downloads/publish.zip';
+  DownloadForm := TDownloadForm.create(self);
+  DownloadForm.SourceURL := 'https://bitbucket.org/costateixeira/ig-builder/downloads/publish_2.zip';
   DownloadForm.localFileName := igRootFolder + '\publish.zip';
   DownloadForm.UnzipLocation := igRootFolder;
   DownloadForm.Unzip := true;
-  DownloadForm.Show;
-  application.ProcessMessages;
-  DownloadForm.sampleDownload;
-  // DownloadForm.DoUnzip;
-  while not DownloadForm.DownloadComplete do
-    application.ProcessMessages;
+  DownloadForm.ShowModal;
+
   Button11Click(nil);
 
+  DownloadForm.Close;
   DownloadForm.Destroy;
+
+  checkPublishFolders(igRootFolder);
 end;
+
+
+
 
 procedure TIGSettingsForm.Button6Click(Sender: TObject);
 begin
 
   igRootFolder := Edit4.Text;
   createFolders(Edit4.Text);
-  exit;
+
+{  exit;
 
   begin
     TDialogService.MessageDialog('IG content folder not found. Do you want to create it? ' + #13#10 + 'Click No if you want to save in the same folder, cancel to skip saving',
@@ -278,6 +296,58 @@ begin
         end;
       end);
   end;
+}
+
+end;
+
+
+
+function TIGSettingsForm.checkContentFolders(rootFolder: string): boolean;
+begin
+  igRootFolder := rootFolder;
+  igcontentfolder := igRootFolder + '\content';
+  tempfolder := igcontentfolder + '\temp';
+  pagecontentfolder := igcontentfolder + '\pagecontent';
+  resourcesFolder := igcontentfolder + '\resources';
+  mediafolder := igcontentfolder + '\images';
+
+  begin
+    if
+    ((directoryexists(pwidechar(igRootFolder)))
+    and (directoryexists(pwidechar(igcontentfolder)))
+    and(directoryexists(pwidechar(pagecontentfolder)))
+    and (directoryexists(pwidechar(resourcesFolder)))
+    and (directoryexists(pwidechar(mediafolder)))
+    )
+    then
+     result:=true else result:=false;
+  end;
+
+  if result then begin button6.text:= 'IG Folders OK'; button6.Enabled:=false end
+  else begin button6.text:= 'Create IG Folders'; button6.Enabled:=true end
+
+
+end;
+
+function TIGSettingsForm.checkPublishFolders(rootFolder: string): boolean;
+begin
+  igRootFolder := rootFolder;
+  IGPublisherFolder := igRootFolder + '\publish';
+  Edit1.Text := IGPublisherFolder;
+  pandocfolder := IGPublisherFolder + '\framework\pandoc';
+
+  begin
+    if
+    ((directoryexists(pwidechar(IGPublisherFolder)))
+    and (directoryexists(pwidechar(pandocfolder)))
+    )
+    then
+     result:=true else result:=false;
+  end;
+
+  if result then begin button5.text:= 'Folders OK'; button10.Enabled:=true end
+  else begin button5.text:= 'Download'; button10.Enabled:=false end
+
 
 end;
 
@@ -306,6 +376,7 @@ begin
     if not(directoryexists(pwidechar(mediafolder))) then
       ForceDirectories(pwidechar(mediafolder));
   end;
+  checkContentFolders(igRootFolder);
 
 end;
 
@@ -329,8 +400,9 @@ begin
     igRootFolder := dir;
     Edit4.Text := dir;
   end;
-
+  if checkContentFolders(edit4.Text) then
   Button11Click(nil);
+
 end;
 
 procedure TIGSettingsForm.Button9Click(Sender: TObject);
@@ -344,8 +416,6 @@ begin
   DownloadForm.UnzipLocation := 'c:\temp\ttx';
   DownloadForm.Unzip := true;
   DownloadForm.Show;
-  application.ProcessMessages;
-  DownloadForm.DoUnzip;
   DownloadForm.Destroy;
 
 end;
@@ -355,14 +425,17 @@ begin
   Edit1.Text := IGPublisherFolder;
   Edit5.Text := BaseTemplateFolder;
   Edit4.Text := igRootFolder;
+  if checkContentfolders(edit4.Text) then button6.Enabled:=true;
+  if checkPublishfolders(edit4.Text) then button10.Enabled:=true;
+
 
   button11click(self);
 end;
 
 procedure TIGSettingsForm.OnZipProgressEvent(Sender: TObject; FileName: string; Header: TZipHeader; Position: Int64);
 begin
-  ProgressBar1.Value := (Position * 100) div Header.UncompressedSize;
-  application.ProcessMessages;
+//  ProgressBar1.Value := (Position * 100) div Header.UncompressedSize;
+//  application.ProcessMessages;
 end;
 
 procedure TIGSettingsForm.runAndWait(Path, command, parameters: String);
@@ -395,7 +468,7 @@ begin
     if ShellExecuteEx(@SEInfo) then
     begin
       repeat
-        application.ProcessMessages;
+//        application.ProcessMessages;
         GetExitCodeProcess(SEInfo.hProcess, ExitCode);
       until (ExitCode <> STILL_ACTIVE) or application.Terminated;
     end;
@@ -487,3 +560,4 @@ begin
 end;
 
 end.
+

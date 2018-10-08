@@ -28,8 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{.$.DEFINE EXAMPLESCENARIO}
-{.$.DEFINE IMPLEMENTATIONGUIDE}
+{$DEFINE EXAMPLESCENARIO}
+{$DEFINE IMPLEMENTATIONGUIDE}
 
 interface
 
@@ -499,7 +499,7 @@ begin
         5 : newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
 {$ENDIF}
 {$IFDEF IMPLEMENTATIONGUIDE}
-        5 : newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
+        6 : newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
 {$ENDIF}
        end;
   finally

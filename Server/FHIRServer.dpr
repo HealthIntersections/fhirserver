@@ -366,7 +366,9 @@ uses
   JclDateTime in '..\dependencies\jcl\JclDateTime.pas',
   JclPeImage in '..\dependencies\jcl\JclPeImage.pas',
   JclTD32 in '..\dependencies\jcl\JclTD32.pas',
-  JclHookExcept in '..\dependencies\jcl\JclHookExcept.pas';
+  JclHookExcept in '..\dependencies\jcl\JclHookExcept.pas',
+  FHIR.Server.v2Server in 'FHIR.Server.v2Server.pas',
+  FHIR.v2.Protocol in '..\library\v2\FHIR.v2.Protocol.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

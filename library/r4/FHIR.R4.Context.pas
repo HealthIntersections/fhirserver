@@ -61,7 +61,7 @@ type
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; overload; virtual; abstract;
+    function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(system, version, code : String) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
@@ -74,7 +74,7 @@ type
 
     // override version independent variants:
     function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
-    function expand(vs : TFhirValueSetW) : TFHIRValueSetW; overload; override;
+    function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
   end;
@@ -96,9 +96,9 @@ begin
   result := TFHIRWorkerContext(inherited link);
 end;
 
-function TFHIRWorkerContext.expand(vs: TFhirValueSetW): TFHIRValueSetW;
+function TFHIRWorkerContext.expand(vs: TFhirValueSetW; options : TExpansionOperationOptionSet = []): TFHIRValueSetW;
 begin
-  result := Factory.wrapValueSet(expand(vs.Resource as TFhirValueSet));
+  result := Factory.wrapValueSet(expand(vs.Resource as TFhirValueSet, options));
 end;
 
 function TFHIRWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSetW): TValidationResult;

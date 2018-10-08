@@ -215,6 +215,9 @@ type
     property hasVersion[v : TFHIRVersion] : boolean read getHasVersion;
   end;
 
+  TExpansionOperationOption = (expOptLimited);
+  TExpansionOperationOptionSet = set of TExpansionOperationOption;
+
   TFHIRWorkerContextWithFactory = class (TFHIRWorkerContextV)
   private
     FFactory : TFHIRFactory;
@@ -234,7 +237,7 @@ type
 
     function getResourceNames : TFslStringSet; virtual; abstract;
     function fetchResource(rType : String; url : String) : TFhirResourceV; overload; virtual; abstract;
-    function expand(vs : TFhirValueSetW) : TFHIRValueSetW; overload; virtual; abstract;
+    function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; virtual; abstract;
     function supportsSystem(system, version : string) : boolean; overload; virtual; abstract;
     function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; virtual; abstract;

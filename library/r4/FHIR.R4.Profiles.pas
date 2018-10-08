@@ -697,7 +697,7 @@ begin
   begin
     vs := context.fetchResource(frtValueSet, ed.binding.valueSet) as TFhirValueSet;
     try
-      vs1 := context.expand(vs);
+      vs1 := context.expand(vs, [expOptLimited]);
       try
         if (vs1 = nil) then
           result := nil

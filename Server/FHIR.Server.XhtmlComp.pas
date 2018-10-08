@@ -452,7 +452,7 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
             sl := ''
           else
           begin
-            sl := AppendForwardSlash(BaseURL)+ e.fhirType+'/'+r.id;
+            sl := AppendForwardSlash(BaseURL)+ e.resource.fhirType+'/'+r.id;
             if (mw.versionId <> '') then
             begin
               t := t +' '+GetFhirMessage('NAME_VERSION', lang)+' "'+mw.versionId+'"';

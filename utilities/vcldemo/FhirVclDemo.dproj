@@ -209,6 +209,7 @@
         <DCCReference Include="..\..\library\r2\FHIR.R2.Operations.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.OpBase.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.Osx.pas"/>
+        <DCCReference Include="..\..\library\support\FHIR.Support.Logging.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

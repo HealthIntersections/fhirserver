@@ -65,7 +65,7 @@ Type
 
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
 
-    function expand(vs : TFhirValueSet) : TFhirValueSet; override;
+    function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; override;
@@ -214,13 +214,17 @@ begin
   end;
 end;
 
-function TFHIRServerWorkerContextR2.expand(vs : TFhirValueSet) : TFhirValueSet;
+function TFHIRServerWorkerContextR2.expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet;
 var
   vsw, res : TFHIRValueSetW;
+  limit : integer;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
-    res := FTerminologyServer.expandVS(vsw, '', FProfile, '', 0, 0, 0);
+    limit := 0;
+    if expOptLimited in options then
+      limit := 100;
+    res := FTerminologyServer.expandVS(vsw, '', FProfile, '', limit, 0, 0);
     try
       result := res.Resource as TFhirValueSet;
     finally
