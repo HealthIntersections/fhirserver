@@ -1133,49 +1133,29 @@ begin
 end;
 
 class procedure TPackageDefinition.AddCustomPackages;
-var
-  p : TPackageDefinition;
+  procedure add(id, version, canonical, desc, fver, uri : String);
+  var
+    p : TPackageDefinition;
+  begin
+    p := TPackageDefinition.Create;
+    try
+      p.Id := id;
+      p.Version := version;
+      p.Canonical := canonical;
+      p.Date := Now;
+      p.Description := desc;
+      p.FHIRVersion := fver;
+      p.Url := uri;
+      list.Add(p.Link);
+    finally
+      p.Free;
+    end;
+  end;
 begin
-  p := TPackageDefinition.Create;
-  try
-    p.Id := 'fhir.tx.support';
-    p.Version := '3.5.0';
-    p.Canonical := 'http://fhir.org/test';
-    p.Date := Now;
-    p.Description := 'tx.fhir.org definitions';
-    p.FHIRVersion := '3.5.0';
-    p.Url := 'http://fhir.org/packages/fhir.tx.support/3.5.0';
-    list.Add(p.Link);
-  finally
-    p.Free;
-  end;
-
-  p := TPackageDefinition.Create;
-  try
-    p.Id := 'fhir.tx.support';
-    p.Version := '3.0.1';
-    p.Canonical := 'http://fhir.org/test';
-    p.Date := Now;
-    p.Description := 'tx.fhir.org definitions';
-    p.FHIRVersion := '3.0.1';
-    p.Url := 'http://fhir.org/packages/fhir.tx.support/3.0.1';
-    list.Add(p.Link);
-  finally
-    p.Free;
-  end;
-  p := TPackageDefinition.Create;
-  try
-    p.Id := 'fhir.tx.support';
-    p.Version := '1.0.2';
-    p.Canonical := 'http://fhir.org/test';
-    p.Date := Now;
-    p.Description := 'tx.fhir.org definitions';
-    p.FHIRVersion := '1.0.2';
-    p.Url := 'http://fhir.org/packages/fhir.tx.support/1.0.2';
-    list.Add(p.Link);
-  finally
-    p.Free;
-  end;
+  add('fhir.tx.support', '3.5.0', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.5.0', 'http://fhir.org/packages/fhir.tx.support/3.5.0');
+  add('fhir.tx.support', '3.0.1', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.0.1', 'http://fhir.org/packages/fhir.tx.support/3.0.1');
+  add('fhir.tx.support', '1.0.2', 'http://fhir.org/test', 'tx.fhir.org definitions', '1.0.2', 'http://fhir.org/packages/fhir.tx.support/1.0.2');
+  add('fhir.argonaut.ehr', '1.0.0', 'http://fhir.org/guides/argonaut', 'Argonaut EHR Query', '1.0.2', 'http://www.fhir.org/guides/argonaut/r2');
 end;
 
 end.
