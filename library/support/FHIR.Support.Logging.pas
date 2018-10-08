@@ -111,6 +111,7 @@ Type
     Function Description : String;
     Procedure WriteToLog(s: String); overload;
     Procedure WriteToLog(bytes: TBytes); overload;
+    procedure clear;
 
     Property Policy : TLoggerPolicy read FPolicy;
   End;
@@ -211,6 +212,11 @@ end;
 
 
 { TLogger }
+
+procedure TLogger.clear;
+begin
+  DeleteFile(FFilename);
+end;
 
 Constructor TLogger.Create(filename : String);
 Begin

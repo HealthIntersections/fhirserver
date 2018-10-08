@@ -251,11 +251,13 @@ begin
   result := false;
   authorize := '';
   token := '';
-  if conf.hasRest then
+  if not conf.hasRest then
     raise EFHIRException.create('Unable to find rest entry in conformance statement');
   if (conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'OAuth2') or
      // work around for some servers
-      conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'OAuth2')) then
+      conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'OAuth2') or
+     // Epic workaround
+      conf.hasSecurity('http://hl7.org/fhir/ValueSet/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/ValueSet/restful-security-service', 'OAuth2')) then
     conf.readSmartExtension(authorize, token, register);
   result := (token <> '') and (authorize <> '');
 end;

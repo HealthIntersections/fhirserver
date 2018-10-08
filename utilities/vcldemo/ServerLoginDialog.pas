@@ -248,6 +248,7 @@ begin
   ini.WriteString('Server','AuthScope',cbAuthScope.Text);
 
   FClient := TFhirClients.makeIndy(nil, cbxServer.Text, true);
+  FClient.Logger := TDemoHttpLogger.Create;
   server := TRegisteredFHIRServer.create;
   try
     server.fhirEndPoint := cbxServer.Text;

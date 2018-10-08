@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Logging,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Smart.Utilities,
   FHIR.Version.Types, FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Utilities;
 
@@ -65,6 +65,17 @@ type
     procedure recordResourceReadFail(logId : String; resourceType : TFhirResourceType; id : string; e : exception = nil); virtual;
     procedure recordResourceSearchSuccess(logId : String; resourceType : TFhirResourceType; params : TStringList; bnd : TFHIRBundle); virtual;
     procedure recordResourceSearchFail(logId : String; resourceType : TFhirResourceType; params : TStringList; e : exception = nil); virtual;
+  end;
+
+  TDemoHttpLogger = class (TFHIRClientLogger)
+  private
+    FLog : TLogger;
+    function toChars(s : TStream) : string;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream); override;
   end;
 
   TFileLoggingService = class (TLoggingService)
@@ -601,6 +612,49 @@ begin
   finally
     se.free;
   end;
+end;
+
+{ TDemoHttpLogger }
+
+constructor TDemoHttpLogger.Create;
+begin
+  inherited;
+  if DirectoryExists('c:\temp') then
+    FLog := TLogger.Create('c:\temp\vcldemo.fhir.log')
+  else
+    FLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+ 'vcldemo.fhir.log');
+  FLog.clear;
+end;
+
+destructor TDemoHttpLogger.Destroy;
+begin
+  FLog.Free;
+  inherited;
+end;
+
+procedure TDemoHttpLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
+begin
+  FLog.WriteToLog('=================================='#13#10);
+  FLog.WriteToLog(verb+' '+url+' HTTP/1.0'#13#10);
+  FLog.WriteToLog(requestHeaders+#13#10);
+  if request <> nil then
+    Flog.WriteToLog(toChars(request)+#13#10);
+  FLog.WriteToLog('----------------------------------'#13#10);
+  FLog.WriteToLog(status+' HTTP/1.0'#13#10);
+  FLog.WriteToLog(responseHeaders+#13#10);
+  if response <> nil then
+    Flog.WriteToLog(toChars(response)+#13#10);
+end;
+
+function TDemoHttpLogger.toChars(s: TStream): string;
+var
+  b : TBytes;
+begin
+  s.Position := 0;
+  setLength(b, s.Size);
+  s.Read(b[0], s.Size);
+  s.Position := 0;
+  result := TEncoding.ANSI.GetString(b);
 end;
 
 end.

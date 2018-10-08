@@ -66,7 +66,8 @@ uses
   FHIR.Smart.LoginVCL in '..\..\library\smart\FHIR.Smart.LoginVCL.pas' {SmartOnFhirLoginForm},
   FHIR.R2.Operations in '..\..\library\r2\FHIR.R2.Operations.pas',
   FHIR.R2.OpBase in '..\..\library\r2\FHIR.R2.OpBase.pas',
-  FHIR.Support.Osx in '..\..\library\support\FHIR.Support.Osx.pas';
+  FHIR.Support.Osx in '..\..\library\support\FHIR.Support.Osx.pas',
+  FHIR.Support.Logging in '..\..\library\support\FHIR.Support.Logging.pas';
 
 {$R *.res}
 
@@ -74,8 +75,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainWindowForm, MainWindowForm);
-  Application.CreateForm(TSmartOnFhirLoginForm, SmartOnFhirLoginForm);
-  Application.CreateForm(TSmartOnFhirLoginForm, SmartOnFhirLoginForm);
   Application.CreateForm(TSmartOnFhirLoginForm, SmartOnFhirLoginForm);
   Application.Run;
 end.
