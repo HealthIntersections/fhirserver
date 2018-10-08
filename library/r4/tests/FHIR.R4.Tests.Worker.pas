@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd,
   FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine,
   FHIR.Cache.PackageManager,
@@ -56,7 +56,7 @@ Type
 
   TTestingWorkerContext = class (TBaseWorkerContext)
   public
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
+    function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; overload; override;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
@@ -100,7 +100,7 @@ begin
   GWorkerContext := nil;
 end;
 
-function TTestingWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+function TTestingWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
   raise EFHIRPathTodo.create('TTestingWorkerContext.expand');
 end;

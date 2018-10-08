@@ -64,7 +64,7 @@ Type
 
     function fetchResource(t : FHIR.R2.Resources.TFhirResourceType; url : String) : FHIR.R2.Resources.TFhirResource; override;
 
-    function expand(vs : FHIR.R2.Resources.TFhirValueSet) : FHIR.R2.Resources.TFHIRValueSet; override;
+    function expand(vs : FHIR.R2.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : FHIR.R2.Resources.TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
     function validateCode(system, version, code : String; vs : FHIR.R2.Resources.TFHIRValueSet) : TValidationResult; override;
@@ -94,7 +94,7 @@ Type
 
     function fetchResource(t : FHIR.R3.Resources.TFhirResourceType; url : String) : FHIR.R3.Resources.TFhirResource; override;
 
-    function expand(vs : FHIR.R3.Resources.TFhirValueSet) : FHIR.R3.Resources.TFHIRValueSet; override;
+    function expand(vs : FHIR.R3.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : FHIR.R3.Resources.TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
     function validateCode(system, version, code : String; vs : FHIR.R3.Resources.TFHIRValueSet) : TValidationResult; override;
@@ -124,7 +124,7 @@ Type
 
     function fetchResource(t : FHIR.R4.Resources.TFhirResourceType; url : String) : FHIR.R4.Resources.TFhirResource; override;
 
-    function expand(vs : FHIR.R4.Resources.TFhirValueSet) : FHIR.R4.Resources.TFHIRValueSet; override;
+    function expand(vs : FHIR.R4.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : FHIR.R4.Resources.TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
     function validateCode(system, version, code : String; vs : FHIR.R4.Resources.TFHIRValueSet) : TValidationResult; override;
@@ -197,7 +197,7 @@ begin
   result := Factory.wrapValueSet(vs.link);
 end;
 
-function TFHIRPluginValidatorContextR2.expand(vs: FHIR.R2.Resources.TFhirValueSet): FHIR.R2.Resources.TFHIRValueSet;
+function TFHIRPluginValidatorContextR2.expand(vs: FHIR.R2.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): FHIR.R2.Resources.TFHIRValueSet;
 var
   pIn : FHIR.R2.Resources.TFhirParameters;
 begin
@@ -484,7 +484,7 @@ begin
   result := Factory.wrapValueSet(vs.link);
 end;
 
-function TFHIRPluginValidatorContextR3.expand(vs: FHIR.R3.Resources.TFhirValueSet): FHIR.R3.Resources.TFHIRValueSet;
+function TFHIRPluginValidatorContextR3.expand(vs: FHIR.R3.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): FHIR.R3.Resources.TFHIRValueSet;
 var
   pIn : FHIR.R3.Resources.TFhirParameters;
 begin
@@ -772,7 +772,7 @@ begin
   result := Factory.wrapValueSet(vs.link);
 end;
 
-function TFHIRPluginValidatorContextR4.expand(vs: FHIR.R4.Resources.TFhirValueSet): FHIR.R4.Resources.TFHIRValueSet;
+function TFHIRPluginValidatorContextR4.expand(vs: FHIR.R4.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): FHIR.R4.Resources.TFHIRValueSet;
 var
   pIn : FHIR.R4.Resources.TFhirParameters;
 begin

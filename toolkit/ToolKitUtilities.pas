@@ -36,7 +36,7 @@ uses
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
   FHIR.Support.Base, FHIR.Support.Threads, 
   FHIR.Cache.PackageManager,
-  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 
 function checkSSL : boolean;
@@ -78,7 +78,7 @@ type
   public
     function Link : TToolkitWorkerContext; overload;
 
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; overload; override;
+    function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; override;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
@@ -602,7 +602,7 @@ end;
 
 { TToolkitWorkerContext }
 
-function TToolkitWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+function TToolkitWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
   raise EFslException.Create('Not implemented in the toolkit');
 end;
