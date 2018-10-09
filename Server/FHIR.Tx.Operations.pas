@@ -1108,6 +1108,8 @@ begin
 //        exp.Free;
 //      end;
 //    end;
+    if (params.str('no-cache') = 'true') then
+      result.uid := NewGuidId;
     if (params.str('_incomplete') <> '') then
       result.limitedExpansion := StrToBoolDef(params.str('_incomplete'), false);
     if (params.str('limitedExpansion') <> '') then

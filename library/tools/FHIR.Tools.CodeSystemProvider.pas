@@ -113,7 +113,7 @@ type
     function doLocate(list : TFslList<TFhirCodeSystemConceptW>; code : String) : TFhirCodeSystemProviderContext; overload;
     function getParent(ctxt : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptW;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText);
-    procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; exception : TFhirCodeSystemConceptW = nil);
     function locCode(list: TFslList<TFhirCodeSystemConceptW>; code: String): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     procedure iterateConceptsByProperty(src : TFslList<TFhirCodeSystemConceptW>; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
@@ -254,12 +254,8 @@ begin
 end;
 
 procedure TFhirCodeSystemProviderFilterContext.sort;
-//var
-//  m : TFhirCodeSystemConceptMatch;
 begin
   concepts.sort(self);
-//  for m in concepts do
-//    writeln(m.FItem.code+' ('+m.FItem.display+'): '+FloatToStr(m.FRating));
 end;
 
 { TCodeSystemAdornment }
@@ -806,7 +802,7 @@ begin
   ctxt.Free;
 end;
 
-procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; exception : TFhirCodeSystemConceptW = nil);
 var
   i : integer;
   el : TFslList<TFHIRObject>;
@@ -818,6 +814,9 @@ begin
   SetLength(s, 1);
   s[0] := 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes';
   FFactory.checkNoModifiers(base, 'CodeSystemProvider.iterateCodes', 'code', s);
+  if (exception <> nil) and (exception.code = base.code) then
+    exit;
+
   list.Add(base.Link, 0);
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list);
@@ -898,8 +897,9 @@ var
   ts : TStringList;
   i: Integer;
   pp : TFhirCodeSystemPropertyW;
+  cc : TFhirCodeSystemConceptW;
 begin
-  if (op = foIsA) and (prop = 'concept') then
+  if (op in [foIsA]) and (prop = 'concept') then
   begin
     code := doLocate(value);
     try
@@ -910,6 +910,27 @@ begin
         result := TFhirCodeSystemProviderFilterContext.create;
         try
           iterateCodes(code.context, result as TFhirCodeSystemProviderFilterContext);
+          result.link;
+        finally
+          result.Free;
+        end;
+      end;
+    finally
+      Close(code)
+    end;
+  end
+  else if (op in [foIsNotA]) and (prop = 'concept') then
+  begin
+    code := doLocate(value);
+    try
+      if code = nil then
+        raise ETerminologyError.Create('Unable to locate code '+value)
+      else
+      begin
+        result := TFhirCodeSystemProviderFilterContext.create;
+        try
+          for cc in FCs.FCodeSystem.conceptList do
+            iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, code.context);
           result.link;
         finally
           result.Free;

@@ -45,7 +45,7 @@ uses
 Type
   TAsyncTaskStatus = (atsCreated, atsWaiting, atsProcessing, atsComplete, atsAborted, atsTerminated, atsError, atsDeleted);
 
-  TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatementW) of object;
+  TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String) of object;
 
   TFHIRStorageService = class;
   TFHIROperationEngine = class;
@@ -643,7 +643,7 @@ begin
       if ServerContext.FormalURLPlainOpen <> '' then
         oConf.impl(ServerContext.FormalURLPlainOpen, 'FHIR Server running at '+ServerContext.FormalURLPlainOpen);
       if assigned(OnPopulateConformance) then
-        OnPopulateConformance(self, oConf);
+        OnPopulateConformance(self, oConf, request.secure, request.baseUrl, ['launch-standalone', 'launch-ehr', 'client-public', 'client-confidential-symmetric', 'sso-openid-connect', 'permission-offline', 'permission-patient', 'permission-user']);
       if factory.version <> fhirVersionRelease2 then
       begin
         oConf.fmt('application/fhir+xml');
@@ -657,8 +657,6 @@ begin
 
       oConf.fhirVersion := factory.versionString;
       oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets', TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView);
-      if assigned(OnPopulateConformance) and request.secure then // only add Smart App Launch things on a secure interface
-        OnPopulateConformance(self, oConf);
 
       html := TFslStringBuilder.Create;
       try

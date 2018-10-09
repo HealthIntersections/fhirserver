@@ -220,7 +220,7 @@ type
     function hasSecurity(system, code : String) : boolean; override;
 
     procedure readSmartExtension(var authorize, token, register: String); override;
-    procedure addSmartExtensions(authorize, token, register: String); override;
+    procedure addSmartExtensions(authorize, token, register: String; caps : Array of String); override;
     function hasFormat(fmt : String) : boolean; override;
 
     procedure contact(kind : TContactType; value : String); override;
@@ -1035,10 +1035,11 @@ begin
   result.code := code;
 end;
 
-procedure TFHIRCapabilityStatement2.addSmartExtensions(authorize, token, register: String);
+procedure TFHIRCapabilityStatement2.addSmartExtensions(authorize, token, register: String; caps : Array of String);
 var
   c: TFHIRCoding;
   ext: TFhirExtension;
+  s : string;
 begin
   if statement.restList.isEmpty then
     statement.restList.append.mode := RestfulCapabilityModeServer;
@@ -1060,6 +1061,9 @@ begin
     ext.addExtension('register', register);
     ext.addExtension('authorize', authorize);
     ext.addExtension('token', token);
+
+    for s in caps do
+      statement.restList[0].security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities', s);
   end;
 end;
 

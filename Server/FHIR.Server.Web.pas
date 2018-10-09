@@ -236,7 +236,7 @@ Type
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String);
     function getReferencesByType(t : String) : String;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
-    procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW);
+    procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509);
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
@@ -747,15 +747,15 @@ begin
   end;
 end;
 
-procedure TFhirWebServerEndPoint.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW);
+procedure TFhirWebServerEndPoint.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
 begin
-  if FAuthServer <> nil then
+  if (FAuthServer <> nil) {and secure} then
     conf.addSmartExtensions(
-      ExcludeTrailingPathDelimiter(FContext.FormalURLSecure) + FAuthServer.AuthPath,
-      ExcludeTrailingPathDelimiter(FContext.FormalURLSecure) + FAuthServer.TokenPath,
-      ExcludeTrailingPathDelimiter(FContext.FormalURLSecure) + FAuthServer.RegisterPath)
+      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.AuthPath]),
+      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.TokenPath]),
+      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.RegisterPath]), caps)
   else
-    conf.addSmartExtensions('', '', ''); // just set cors
+    conf.addSmartExtensions('', '', '', []); // just set cors
 end;
 
 procedure TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String);

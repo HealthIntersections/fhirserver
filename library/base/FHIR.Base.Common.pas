@@ -426,7 +426,7 @@ type
     function hasRest : boolean; virtual; abstract;
     function hasSecurity(system, code : String) : boolean; virtual; abstract;
     procedure readSmartExtension(var authorize, token, register: String); virtual; abstract;
-    procedure addSmartExtensions(authorize, token, register: String); virtual; abstract;
+    procedure addSmartExtensions(authorize, token, register: String; caps : Array of String); virtual; abstract;
     function hasFormat(fmt : String) : boolean; virtual; abstract;
 
     procedure contact(kind : TContactType; value : String); virtual; abstract;
