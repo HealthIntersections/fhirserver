@@ -81,6 +81,7 @@ Type
     FexcludePostCoordinated: boolean;
     FincludeDesignations: boolean;
     FincludeDefinition: boolean;
+    FUid: String;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -96,6 +97,7 @@ Type
     property excludeNested : boolean read FexcludeNested write FexcludeNested;
     property excludeNotForUI : boolean read FexcludeNotForUI write FexcludeNotForUI;
     property excludePostCoordinated : boolean read FexcludePostCoordinated write FexcludePostCoordinated;
+    property uid : String read FUid write FUid;
 
     function hash : String;
   end;
@@ -840,9 +842,24 @@ begin
             begin
               loc := cs.locateIsA(code, fc.value);
               try
-                result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
+                result := result and (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
                 if loc <> nil then
                   cs.displays(loc, displays, FParams.displayLanguage);
+              finally
+                cs.Close(loc);
+              end;
+            end
+            else if ('concept' = fc.prop) and (fc.Op = foIsNotA) then
+            begin
+              loc := cs.locateIsA(code, fc.value);
+              try
+                result := (loc = nil);
+                if (result) then
+                begin
+                  loc := cs.locate(code, msg);
+                  if loc <> nil then
+                    cs.displays(loc, displays, FParams.displayLanguage);
+                end;
               finally
                 cs.Close(loc);
               end;
@@ -854,7 +871,7 @@ begin
               try
                 if (loc = nil) and (message = '') then
                   message := msg;
-                result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
+                result := result and (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
                 if loc <> nil then
                   cs.displays(loc, displays, FParams.displayLanguage);
               finally
@@ -1492,8 +1509,19 @@ begin
 end;
 
 function TFHIRExpansionParams.hash: String;
+var
+  s : String;
+  function b(v : boolean):string;
+  begin
+    if v then
+      result := '1'
+    else
+      result := '0';
+  end;
 begin
-  result := inttostr(HashStringToCode32(FFixedVersions.ToString));
+  s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+displayLanguage+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
+    b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid;
+  result := inttostr(HashStringToCode32(s));
 end;
 
 function TFHIRExpansionParams.link: TFHIRExpansionParams;

@@ -368,7 +368,8 @@ uses
   JclTD32 in '..\dependencies\jcl\JclTD32.pas',
   JclHookExcept in '..\dependencies\jcl\JclHookExcept.pas',
   FHIR.Server.v2Server in 'FHIR.Server.v2Server.pas',
-  FHIR.v2.Protocol in '..\library\v2\FHIR.v2.Protocol.pas';
+  FHIR.v2.Protocol in '..\library\v2\FHIR.v2.Protocol.pas',
+  v2Message in '..\library\v2\v2Message.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

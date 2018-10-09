@@ -82,6 +82,7 @@ Type
   EIOException = Class(EFslException); // problems reading/writing files
   EWebException = Class(EFslException); // error in web stack (client or server)
   EJsonException = class (EFslException); // error reading or writing Json
+  EER7Exception = class (EFslException); // error reading or writing Vertical Bar
   EJsonTodo = Class(EJsonException)
   public
     Constructor Create(place : String);
