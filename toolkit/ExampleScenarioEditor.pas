@@ -581,21 +581,16 @@ begin
   application.ProcessMessages;
   tvStructure.ExpandAll;
   tvStructure.Selected := tvStructure.ItemByGlobalIndex(0);
-//  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
 
+//  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
 
 EXIT;
 
   tvStructure.Selected := tvMetadata;
-  tvStructure.ExpandAll;
 
 
-//  if sel_index <> -1 then tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
-
-//  application.ProcessMessages;
   tvstructure.Selected:=tvstructure.ItemByGlobalIndex(0);
   ReloadTreeview(tvStructure.Selected);
-  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
 
 end;
 
@@ -1308,11 +1303,11 @@ begin
     (obj).type_ := Edit16.text;
     (obj).description := Memo8.text;
 
-    (obj).initiator := ComboBox4.Items[ComboBox4.ItemIndex];
-    (obj).receiver := ComboBox5.Items[ComboBox5.ItemIndex];
+if ComboBox4.ItemIndex<>-1 then (obj).initiator := ComboBox4.Items[ComboBox4.ItemIndex];
+if ComboBox5.ItemIndex<>-1 then (obj).receiver := ComboBox5.Items[ComboBox5.ItemIndex];
 
-    obj.request.Free;
-    if ComboBox6.ItemIndex <> 0 then
+//    obj.request.Free;
+    if ComboBox6.ItemIndex <> -1 then
     begin
     if obj.request = nil then
     obj.request := TFhirExampleScenarioInstanceContainedInstance.Create;
