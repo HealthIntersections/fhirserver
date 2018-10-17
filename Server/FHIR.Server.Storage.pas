@@ -606,7 +606,7 @@ begin
   else if request.Parameters.GetVar('mode') = 'terminology' then
     ExecuteTerminologyCapabilities(request, response)
   else
-    raise Exception.Create('unknown mode '+request.Parameters.GetVar('mode'));
+    raise EFHIRException.Create('unknown mode '+request.Parameters.GetVar('mode'));
 end;
 
 procedure TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest; response: TFHIRResponse; full : boolean);

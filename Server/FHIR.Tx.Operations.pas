@@ -167,7 +167,7 @@ begin
   else
   begin
     if not url.Contains('.') then
-      raise Exception.Create('Unable to understand url "'+url+'"');
+      raise EFSLException.Create('Unable to understand url "'+url+'"');
     StringSplit(url,'.',  u, t);
     u := 'http://hl7.org/fhir/StructureDefinition/'+u;
     p := url;
@@ -176,10 +176,10 @@ begin
   try
     ed := sd.getDefinition(p, edsSNAPSHOT);
     if ed = nil then
-      raise Exception.Create('Unable to resolve element "'+p+'" in "'+u+'"');
+      raise EFSLException.Create('Unable to resolve element "'+p+'" in "'+u+'"');
     try
       if (ed.valueSet = '')  then
-        raise Exception.Create('No value set for element "'+p+'" in "'+u+'"');
+        raise EFSLException.Create('No value set for element "'+p+'" in "'+u+'"');
       result := ed.valueSet;
     finally
       ed.Free;

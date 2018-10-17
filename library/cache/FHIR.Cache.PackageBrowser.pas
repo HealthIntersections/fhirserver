@@ -149,6 +149,7 @@ begin
   FList.clear;
   TPackageDefinition.AddStandardPackages(FList);
   TPackageDefinition.addPackagesFromBuild(FList);
+  TPackageDefinition.AddCustomPackages(FList);
   FLoaded := true;
   applyFilter;
   grid.RootNodeCount := 0;

@@ -303,7 +303,9 @@ uses
   FHIR.v2.Dictionary.v231 in '..\..\library\v2\FHIR.v2.Dictionary.v231.pas',
   FHIR.v2.Dictionary.v251 in '..\..\library\v2\FHIR.v2.Dictionary.v251.pas',
   FHIR.v2.Dictionary.Database in '..\..\library\v2\FHIR.v2.Dictionary.Database.pas',
-  FHIR.Tests.SearchSyntax in 'FHIR.Tests.SearchSyntax.pas';
+  FHIR.Tests.SearchSyntax in 'FHIR.Tests.SearchSyntax.pas',
+  FHIR.v2.Message in '..\..\library\v2\FHIR.v2.Message.pas';
+
 //  CommonMarkNode in '..\..\..\markdown\source\CommonMarkNode.pas',
 //  InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
 //  FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas';

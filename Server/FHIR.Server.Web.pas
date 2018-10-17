@@ -753,9 +753,10 @@ begin
     conf.addSmartExtensions(
       UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.AuthPath]),
       UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.TokenPath]),
-      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.RegisterPath]), caps)
+      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.RegisterPath]),
+      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.ManagePath]), caps)
   else
-    conf.addSmartExtensions('', '', '', []); // just set cors
+    conf.addSmartExtensions('', '', '', '', []); // just set cors
 end;
 
 procedure TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String);
@@ -3973,10 +3974,9 @@ Begin
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
-    FIOHandler.SSLOptions.Method := sslvSSLv23;
+    FIOHandler.SSLOptions.Method := sslvTLSv1_2;
     FIOHandler.SSLOptions.Mode := sslmServer;
-    // SSL v3 / TLS 1 required for older versions of DotNet
-    FIOHandler.SSLOptions.SSLVersions := [sslvSSLv3, {$IFNDEF NCTS}sslvTLSv1, {$ENDIF} sslvTLSv1_2];
+    FIOHandler.SSLOptions.SSLVersions := [sslvTLSv1_2];
     FIOHandler.SSLOptions.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
@@ -4147,6 +4147,7 @@ var
   t: cardinal;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
+  sp : TFHIRWebServerSourceProvider;
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
@@ -4171,6 +4172,7 @@ begin
     else
     begin
       ok := false;
+      sp := FSourceProvider;
       for ep in FEndPoints do
         if request.Document.StartsWith(ep.path) then
         begin
@@ -4181,6 +4183,8 @@ begin
       begin
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        else if sp.exists(sp.AltFile(request.Document, '/')) then
+          ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
         else if request.Document = '/' then
           ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
         else

@@ -263,6 +263,14 @@ begin
     Result := Result + '/';
 end;
 
+function RemoveLeadingURLSlash(s : String) : String;
+begin
+  if s.StartsWith('/') then
+    result := s.Substring(1)
+  else
+    result := s;
+end;
+
 function UrlPath(const parts : array of String) : String;
 var
   i : integer;
@@ -272,10 +280,8 @@ begin
   else
     result := parts[0];
   for i := 1 to high(parts) do
-    result := IncludeTrailingURLSlash(result) + parts[i];
+    result := IncludeTrailingURLSlash(result) + RemoveLeadingURLSlash(parts[i]);
 end;
-
-
 
 function ZCompressBytes(const s: TBytes): TBytes;
 begin
