@@ -1,41 +1,40 @@
 unit ImplementationGuideEditor;
-
+
 {
-Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
-All rights reserved.
+  Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to
-   endorse or promote products derived from this software without specific
-   prior written permission.
+  * Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+  * Neither the name of HL7 nor the names of its contributors may be used to
+  endorse or promote products derived from this software without specific
+  prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 }
-
 
 interface
 
 uses
-  {$IFDEF OSX}
-  {$ELSE}
+{$IFDEF OSX}
+{$ELSE}
   Shellapi, Winapi.Windows, FMX.Platform.Win, JclSysUtils,
-  {$ENDIF}
+{$ENDIF}
   System.SysUtils,
   System.IOUtils,
   System.types,
@@ -217,13 +216,11 @@ type
     procedure CornerButton5Click(Sender: TObject);
     procedure runAndWait(Path, command, parameters: String);
     procedure autopreviewClick(Sender: TObject);
-    procedure MenuItem5Click(Sender: TObject);
     procedure pageUpClick(Sender: TObject);
     procedure pageDownClick(Sender: TObject);
     procedure resourceUpClick(Sender: TObject);
     procedure resourceDownClick(Sender: TObject);
     procedure CornerButton1Click(Sender: TObject);
-    procedure Button9Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure CornerButton2Click(Sender: TObject);
@@ -506,15 +503,15 @@ begin
     // webbrowser1.Enabled:=false;
   end;
 
-  tfhirImplementationGuide(resource).id:=extractfilename(changefileext(filename,''));
-
+  tfhirImplementationGuide(resource).id := extractfilename(changefileext(filename, ''));
 
   application.ProcessMessages;
   tvStructure.ExpandAll;
 
   tvStructure.Selected := tvStructure.ItemByGlobalIndex(0);
 
-  showTab(tFHIRObject(tFHIRObject(tvStructure.Selected.tagObject)));
+  tvStructurechange(tvStructure.ItemByGlobalIndex(0));
+//  showTab(tFHIRObject(tFHIRObject(tvStructure.Selected.tagObject)));
   // application.ProcessMessages;
 
 end;
@@ -539,42 +536,41 @@ begin
 
   // IGFileName:=nameForSaveDialog;
 
-  if filename <> '' then
+  if filename = '' then
+    ShowMessage('File is not saved. Please save the file first.')
+  else
   begin
     igrootfolder := extractfilepath(filename);
     IGFileName := extractfilename(filename);
+
+    IGSettingsForm := TIGSettingsForm.Create(Self);
+
+    if igrootfolder <> '' then
+      if copy(igrootfolder, length(igrootfolder), 1) = '\' then
+        igrootfolder := copy(igrootfolder, 1, length(igrootfolder) - 1);
+
+    IGSettingsForm.igrootfolder := igrootfolder;
+    IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
+    IGSettingsForm.BaseTemplateFolder := BaseTemplateFolder;
+    IGSettingsForm.IGFileName := IGFileName;
+
+    IGSettingsForm.ShowModal;
+
+    // if IGSettingsForm.ModalResult = mrOK then
+    begin
+      igrootfolder := IGSettingsForm.igrootfolder;
+      IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
+      BaseTemplateFolder := IGSettingsForm.BaseTemplateFolder;
+
+      igcontentfolder := IGSettingsForm.igcontentfolder;
+      mediafolder := IGSettingsForm.mediafolder;
+      pagecontentfolder := IGSettingsForm.pagecontentfolder;
+      tempfolder := IGSettingsForm.tempfolder;
+      // pandocfolder := IGSettingsForm.pandocFolder;
+
+    end;
+    IGSettingsForm.Destroy;
   end;
-
-  IGSettingsForm := TIGSettingsForm.Create(Self);
-
-  if igrootfolder <> '' then
-    if copy(igrootfolder, length(igrootfolder), 1) = '\' then
-      igrootfolder := copy(igrootfolder, 1, length(igrootfolder) - 1);
-
-  IGSettingsForm.igrootfolder := igrootfolder;
-  IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
-  IGSettingsForm.BaseTemplateFolder := BaseTemplateFolder;
-  IGSettingsForm.IGFileName := IGFileName; //
-
-  IGSettingsForm.ShowModal;
-
-  if IGSettingsForm.ModalResult = mrOK then
-  begin
-    igrootfolder := IGSettingsForm.igrootfolder;
-    IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
-    BaseTemplateFolder := IGSettingsForm.BaseTemplateFolder;
-
-    igcontentfolder := IGSettingsForm.igcontentfolder;
-    mediafolder := IGSettingsForm.mediafolder;
-    pagecontentfolder := IGSettingsForm.pagecontentfolder;
-    tempfolder := IGSettingsForm.tempfolder;
-    // pandocfolder := IGSettingsForm.pandocFolder;
-
-  end;
-  IGSettingsForm.Destroy;
-
-  // TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
-
 end;
 
 procedure TImplementationGuideEditorFrame.CornerButton2Click(Sender: TObject);
@@ -591,10 +587,11 @@ begin
   begin
     for i := 0 to OpenDialog3.Files.Count - 1 do
     begin
-      resx := tfhirImplementationGuideDefinitionResource(tvStructure.Selected.TagObject);
-      if not assigned(resx) then resx.reference:= tfhirReference.Create;
-      resx.reference.reference := ChangeFileExt((extractfilename(OpenDialog3.Files[i])), '');
-      resx.Name := ChangeFileExt(extractfilename(OpenDialog3.Files[i]), '');
+      resx := tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject);
+      if not Assigned(resx) then
+        resx.reference := tfhirReference.Create;
+      resx.reference.reference := changefileext((extractfilename(OpenDialog3.Files[i])), '');
+      resx.Name := changefileext(extractfilename(OpenDialog3.Files[i]), '');
       if igcontentfolder <> '' then
         try
           TFile.copy(OpenDialog3.Files[i], igcontentfolder + '\resources\' + extractfilename(OpenDialog3.Files[i]));
@@ -602,11 +599,10 @@ begin
 
         end;
 
-//      tfhirImplementationGuide(resource).definition.resourceList.Add(resx);
+      // tfhirImplementationGuide(resource).definition.resourceList.Add(resx);
       // tfhirImplementationGuideDefinition(tvStructure.Selected.parent.tagObject).resourceList.Add(resx);
 
     end;
-
 
     resourceIsDirty := true;
     ReloadTreeview(tvStructure.Selected);
@@ -750,7 +746,7 @@ var
   SL: TStringList;
 begin
 
-  tempstr := igrootfolder + '\pagecontent\' + ChangeFileExt(Edit1.text, '.xml');
+  tempstr := igcontentfolder + '\pagecontent\' + changefileext(Edit1.text, '.xml');
 
   filestr := tempfolder + '\tmp.html';
 
@@ -785,32 +781,52 @@ var
   SL: TStringList;
 begin
 
-  tempstr := igrootfolder + '\pagecontent\' + ChangeFileExt(Edit1.text, '.xml');
-  filestr := igrootfolder + '\tmp.html';
+  if not((igcontentfolder <> '') and directoryExists(igcontentfolder) and directoryExists(igcontentfolder + '\pagecontent')) then
+  begin
+    TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Select the top element (Implementation Guide) and Click "Publish", and check for the folders',
+    // System.UITypes.TMsgDlgType.mtConfirmation, [System.UITypes.TMsgDlgBtn.mbOK], System.UITypes.TMsgDlgBtn.mbOK, 0,
+    TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
+      procedure(const AResult: TModalResult)
+      begin
+        case AResult of
+          mrOk:
+            begin
+            end;
+        end;
+      end);
 
-  SL := TStringList.Create;
-  try
-    SL.LoadFromFile(tempstr);
-    begin
-      SL.Insert(0,
-        '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
-      SL.Append('</div>');
+  end
+  else
+  begin
+    filestr := igcontentfolder + '\tmp.html';
+    tempstr := igcontentfolder + '\pagecontent\' + changefileext(Edit1.text, '.xml');
+    filestr := igcontentfolder + '\tmp.html';
+    tempstr := igcontentfolder + '\pagecontent\' + changefileext(Edit1.text, '.xml');
+
+    SL := TStringList.Create;
+    try
+      SL.LoadFromFile(tempstr);
+      begin
+        SL.Insert(0,
+          '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
+        SL.Append('</div>');
+      end;
+
+      begin
+        SL.Insert(0, '<html><body>');
+        SL.Append('</body></html>');
+        SL.SaveToFile(filestr);
+      end;
+
+    finally
+      SL.Free;
     end;
 
-    begin
-      SL.Insert(0, '<html><body>');
-      SL.Append('</body></html>');
-      SL.SaveToFile(filestr);
-    end;
+    filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
+    runAndWait(igrootfolder, filestr, filestr);
+    // webbrowser1.Navigate( filestr );
 
-  finally
-    SL.Free;
   end;
-
-  filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-  runAndWait(igrootfolder, 'open', filestr);
-  // webbrowser1.Navigate( filestr );
-
 end;
 
 procedure TImplementationGuideEditorFrame.Button7Click(Sender: TObject);
@@ -819,6 +835,7 @@ begin
   raise EFslException.Create('Not done yet for OSX');
 end;
 {$ELSE}
+
 var
   optionsStr, tempstr, filestr, sCmd, ExecuteFile, ParamString, StartInString: string;
   SEInfo: TShellExecuteInfo;
@@ -831,40 +848,33 @@ var
 
 begin
 
-  { igrootfolder:='C:\ImpGuide';
-    igcontentfolder := igrootfolder + '\content';
-    tempfolder := igcontentfolder + '\temp';
-    pagecontentfolder := igcontentfolder + '\pagecontent';
-    mediafolder := igcontentfolder + '\images';
-  }
-  IGPublisherFolder := igrootfolder + '\publish';
+  // IGPublisherFolder := igrootfolder + '\publish';   sssssss
 
-  If (igcontentfolder = '') or not(directoryexists(pwidechar(igcontentfolder)) and directoryexists(pwidechar(pagecontentfolder)) and directoryexists(pwidechar(mediafolder))) then
+  If (igcontentfolder = '') or not(directoryExists(pwidechar(igcontentfolder)) and directoryExists(pwidechar(pagecontentfolder)) and directoryExists(pwidechar(mediafolder))) then
   begin
-    TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Select the top element (Implementation Guide) and Click "Publish", check for the folders, and Save', System.UITypes.TMsgDlgType.mtConfirmation,
-      [System.UITypes.TMsgDlgBtn.mbOK], System.UITypes.TMsgDlgBtn.mbOK, 0,
+    TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Select the top element (Implementation Guide) and Click "Publish", check for the folders, and Save',
+      System.UITypes.TMsgDlgType.mtConfirmation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0,
       procedure(const AResult: TModalResult)
       begin
         case AResult of
           mrYES:
             begin
-//              CornerButton4Click(nil);
             end;
           mrNo:
             begin
-            exit;
+              exit;
             end;
         end;
       end);
   end;
 
-  If ((igcontentfolder <> '') and (IGPublisherFolder <> '') and (directoryexists(pwidechar(igcontentfolder)) and directoryexists(pwidechar(pagecontentfolder)) and
-    directoryexists(pwidechar(mediafolder)))) then
+  If ((igcontentfolder <> '') and (IGPublisherFolder <> '') and (directoryExists(pwidechar(igcontentfolder)) and directoryExists(pwidechar(pagecontentfolder)) and
+    directoryExists(pwidechar(mediafolder)))) then
   begin
 
     contentImport := TcontentImport.Create(Self);
-    contentImport.igContentfolder:=igContentFolder;
-    contentImport.igPublisherfolder:=igPublisherFolder;
+    contentImport.igcontentfolder := igcontentfolder;
+    contentImport.IGPublisherFolder := IGPublisherFolder;
     contentImport.Edit1.text := Edit1.text;
     contentImport.ShowModal;
     contentImport.Free;
@@ -875,77 +885,6 @@ begin
 
   exit;
 
-  {
-    if OpenDialog2.Execute then
-    begin
-
-    tempstr := tempfolder + '\tmp.docx';
-    copyfile(pwidechar(OpenDialog2.filename), pwidechar(tempstr), false);
-
-    optionsStr:= '--extract-media '+tempfolder+' --from=docx --to=html4 '+tempfolder+'\tmp.docx -o '+tempfolder+'\tmp.txt';
-    runAndWait(pandocfolder, 'pandoc', optionsStr);
-
-    if directoryexists(tempfolder+'\media') then begin
-
-    sa:=TDirectory.GetFiles(tempfolder+'\media');
-    for i:= 0 to Length(sa) - 1 do
-    begin
-    destfile:=mediafolder+'\'+extractfilename(sa[i]);
-    movefile(pwidechar(sa[i]), pwidechar(destfile));
-    end;
-    end;
-
-    //    delete media folder
-
-    SL := TStringList.Create;
-    try
-    SL.LoadFromFile(tempfolder + '\tmp.txt');
-    begin
-    SL.Insert(0,
-    '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
-    SL.Append('</div>');
-    SL.SaveToFile(tempfolder + '\tmp.xml');
-    end;
-    begin
-    SL.Insert(0, '<html><body>');
-    SL.Append('</body></html>');
-    SL.SaveToFile(tempfolder + '\tmp.html');
-    end;
-    finally
-    SL.Free;
-    end;
-
-    filestr := tempfolder + '\tmp.html';
-    filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-    // If preview
-    runAndWait(igrootfolder, filestr, filestr);
-    //
-    tempstr := tempfolder + '\tmp.docx';
-    deletefile(pwidechar(tempstr));
-    //    deletefile(pwidechar(tempfolder + '\tmp.html'));
-
-    if Edit1.text <> '' then
-    try
-    filestr := tempfolder + '\tmp.xml';
-    copyfile(pwidechar(filestr), pwidechar(pagecontentfolder + '\'+ Edit1.text + '.xml'), false);
-    except
-    end
-    else
-    TDialogService.MessageDialog('File not saved - page name is empty.' + #13#10 + 'To save, enter a page name and import again.',
-    System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOK], System.UITypes.TMsgDlgBtn.mbOK, 0,
-    procedure(const AResult: TModalResult)
-    begin
-    end);
-    ;
-
-    //    TDirectory.Delete(mediafolder, True);
-    TDirectory.Delete(tempfolder, True);
-
-    SetCurrentDir(binfolder);
-
-    end;
-  }
-
 end;
 {$ENDIF}
 
@@ -954,10 +893,10 @@ var
   i: integer;
   resx: tfhirImplementationGuideDefinitionResource;
   resref: tfhirReference;
-  extResource:TFHIRResource;
-   format : TFHIRFormat;
-   restype:string;
-   resFileName:string;
+  extResource: TFHIRResource;
+  format: TFHIRFormat;
+  restype: string;
+  resFileName: string;
 begin
   // opendialog3.Options:=[TOpenOption.ofHideReadOnly];
   OpenDialog3.Options := [];
@@ -969,35 +908,33 @@ begin
 
     for i := 0 to OpenDialog3.Files.Count - 1 do
     begin
-      resx := tfhirImplementationGuideDefinitionResource(tvStructure.Selected.TagObject);
-      if not assigned(resx) then resx.reference:= tfhirReference.Create;
+      resx := tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject);
+      if not Assigned(resx) then
+        resx.reference := tfhirReference.Create;
 
       format := ffUnspecified;
 
-      resType:='';
+      restype := '';
       try
-        extResource:=fileToResource(OpenDialog3.Files[i], format);
-        resType:=extResource.fhirType;
+        extResource := fileToResource(OpenDialog3.Files[i], format);
+        restype := extResource.fhirType;
 
       finally
-      extresource.Free;
+        extResource.Free;
 
       end;
 
-      resFileName:=ChangeFileExt(extractfilename(OpenDialog3.Files[i]),'');
+      resFileName := changefileext(extractfilename(OpenDialog3.Files[i]), '');
 
-// This bit is because the publisher expects the resource to be called [type]/name   ... from here...
+      // This bit is because the publisher expects the resource to be called [type]/name   ... from here...
 
-if (pos('-',extractfilename(resFileName))>0) and
-   ( uppercase(copy(resFileName,1,pos('-',resFileName)-1))=uppercase(resType) ) then
-      resx.reference.reference := resType+'/'+
-      ChangeFileExt(copy(resFileName,pos('-',resFileName)+1, length(resFileName)-pos('-',resFileName)), '')
-else
-// ...until here
-      resx.reference.reference := resType+'/'+resFileName;
+      if (pos('-', extractfilename(resFileName)) > 0) and (uppercase(copy(resFileName, 1, pos('-', resFileName) - 1)) = uppercase(restype)) then
+        resx.reference.reference := restype + '/' + changefileext(copy(resFileName, pos('-', resFileName) + 1, length(resFileName) - pos('-', resFileName)), '')
+      else
+        // ...until here
+        resx.reference.reference := restype + '/' + resFileName;
 
-
-      resx.Name := ChangeFileExt(extractfilename(OpenDialog3.Files[i]), '');
+      resx.Name := changefileext(extractfilename(OpenDialog3.Files[i]), '');
       if igcontentfolder <> '' then
         try
           TFile.copy(OpenDialog3.Files[i], igcontentfolder + '\resources\' + extractfilename(OpenDialog3.Files[i]));
@@ -1005,7 +942,7 @@ else
 
         end;
 
-//      tfhirImplementationGuide(resource).definition.resourceList.Add(resx);
+      // tfhirImplementationGuide(resource).definition.resourceList.Add(resx);
       // tfhirImplementationGuideDefinition(tvStructure.Selected.parent.tagObject).resourceList.Add(resx);
 
     end;
@@ -1014,26 +951,6 @@ else
 
   end;
 
-end;
-
-procedure TImplementationGuideEditorFrame.Button9Click(Sender: TObject);
-// var
-// dir: string;
-// IGSettingsForm: TIGSettingsForm;
-begin
-  {
-    IGSettingsForm := TIGSettingsForm.Create(Self);
-    IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
-    IGSettingsForm.BaseIGTemplateFolder := BaseIGTemplateFolder;
-
-    IGSettingsForm.ShowModal;
-    if IGSettingsForm.ModalResult = mrOK then
-    begin
-    IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
-    BaseIGTemplateFolder := IGSettingsForm.BaseIGTemplateFolder;
-    end;
-    IGSettingsForm.Destroy;
-  }
 end;
 
 Procedure TImplementationGuideEditorFrame.ReloadTreeview(sel_item: TTreeViewItem);
@@ -1050,8 +967,6 @@ begin
   if sel_item <> nil then
     sel_index := sel_item.GlobalIndex;
 
-  // tvStructure.BeginUpdate;
-
   try
     tvStructure.Clear;
     current_item := addTVItem(tvStructure, nil, 'implementationguide', 'Implementation Guide', resource);
@@ -1063,7 +978,6 @@ begin
   // application.ProcessMessages;
   if sel_index <> -1 then
     tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
-  // application.ProcessMessages;
   /// / showTab(TFHIRObject(TVStructure.Selected.TagObject));
 
 end;
@@ -1071,7 +985,7 @@ end;
 procedure TImplementationGuideEditorFrame.showTab(obj: tFHIRObject);
 var
   selIndex, i, lastSlashPos: integer;
-  extracted_ID:string;
+  extracted_ID: string;
   ImplementationGuide: tfhirImplementationGuide;
 
 begin
@@ -1091,28 +1005,23 @@ begin
 
     edtESURL.text := tfhirImplementationGuide(obj).url;
 
-    LastSlashPos:=-1;
-    LastSlashPos:=LastDelimiter('/',edtESURL.text);
-    if LastSlashPos>=0 then
-    extracted_id:= copy(edtESURL.text, lastSlashPos+1, length(edtESURL.text)-lastSlashPos);
-    if LastSlashPos>=0 then
-    edtESURL.text:= copy(edtESURL.text, 1, lastSlashPos);
-
+    lastSlashPos := -1;
+    lastSlashPos := LastDelimiter('/', edtESURL.text);
+    if lastSlashPos >= 0 then
+      extracted_ID := copy(edtESURL.text, lastSlashPos + 1, length(edtESURL.text) - lastSlashPos);
+    if lastSlashPos >= 0 then
+      edtESURL.text := copy(edtESURL.text, 1, lastSlashPos);
 
     edtESid.text := tfhirImplementationGuide(obj).id;
 
-  if (edtESURL.text <>'') and (copy(edtESURL.text,length(edtESURL.text),1) <>'/') then
-   edtESURL.text:=edtESURL.text + '/';
+    if (edtESURL.text <> '') and (copy(edtESURL.text, length(edtESURL.text), 1) <> '/') then
+      edtESURL.text := edtESURL.text + '/';
 
+    Label7.text := edtESURL.text + edtESid.text;
+    Label7.hint := edtESURL.text + edtESid.text;
 
-
-
-  label7.text:=edtESURL.text+edtESid.text;
-  label7.hint:=edtESURL.text+edtESid.text;
-
-    if extracted_id=edtESid.text then
-    edtESURL.text := copy(edtESURL.text, 1, lastSlashPos);
-
+    if extracted_ID = edtESid.text then
+      edtESURL.text := copy(edtESURL.text, 1, lastSlashPos);
 
     ComboBox2.ItemIndex := integer(tfhirImplementationGuide(obj).status);
     if tfhirImplementationGuide(obj).experimental then
@@ -1124,12 +1033,11 @@ begin
     Edit7.text := tfhirImplementationGuide(obj).publisher;
     Memo3.text := tfhirImplementationGuide(obj).Description;
     Edit3.text := tfhirImplementationGuide(obj).version;
-    combobox8.itemIndex := integer(tfhirImplementationGuide(obj).license);
+    ComboBox8.ItemIndex := integer(tfhirImplementationGuide(obj).license);
 
-// This needs to change - only US supported now;
+    // This needs to change - only US supported now;
 
-    edit10.Text := 'US';
-
+    Edit10.text := 'US';
 
   end;
 
@@ -1237,26 +1145,13 @@ begin
 
 end;
 
-procedure TImplementationGuideEditorFrame.MenuItem5Click(Sender: TObject);
-var
-  filestr, tempstr: string;
-
-begin
-  { tempstr := binfolder + '\IGPub';
-    runAndWait(tempstr, '_genonce', '');
-    filestr := binfolder + '\igPub\output\index.html';
-    runAndWait(tempstr, filestr, '');
-    filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-    runAndWait(igrootfolder, 'open', filestr); }
-end;
-
 procedure TImplementationGuideEditorFrame.mnSaveClick(Sender: TObject);
 begin
   if filename = '' then
   begin
     if SaveAs = -1 then
     begin
-      Showmessage('Not saved');
+      ShowMessage('Not saved');
       exit;
     end;
   end;
@@ -1282,7 +1177,7 @@ end;
 procedure TImplementationGuideEditorFrame.UpdateImplementationGuideClick(Sender: TObject);
 var
   obj: tfhirImplementationGuide;
-  jurisdiction:TFhirCodeableConcept;
+  jurisdiction: TFhirCodeableConcept;
 
 begin
   obj := tfhirImplementationGuide(TTreeViewItem(tvStructure.Selected).tagObject);
@@ -1290,12 +1185,12 @@ begin
     exit;
   obj.Name := edtESName.text;
 
-  if (edtESURL.text <>'') and (copy(edtESURL.text,length(edtESURL.text),1) <>'/') then
-   edtESURL.text:=edtESURL.text + '/';
+  if (edtESURL.text <> '') and (copy(edtESURL.text, length(edtESURL.text), 1) <> '/') then
+    edtESURL.text := edtESURL.text + '/';
 
-  (obj).url := edtESURL.text+edtESid.text;
-  label7.text:=(obj).url;
-  label7.hint:=(obj).url;
+  (obj).url := edtESURL.text + edtESid.text;
+  Label7.text := (obj).url;
+  Label7.hint := (obj).url;
 
   (obj).status := TfHIRPublicationStatusEnum(ComboBox2.ItemIndex);
   obj.experimental := CheckBox1.IsChecked;
@@ -1305,21 +1200,17 @@ begin
   obj.packageID := Edit8.text;
   obj.publisher := Edit7.text;
   obj.Description := Memo3.text;
-  obj.license:=TFHIRspdxLicenseEnum(combobox8.itemIndex);
+  obj.license := TFHIRspdxLicenseEnum(ComboBox8.ItemIndex);
   tvStructure.Selected.text := obj.Name;
 
 
-// this must change - at this moment nly us is upported
+  // this must change - at this moment nly us is upported
 
-
-
-
-  if (obj).jurisdictionList.Count=0 then begin
-    jurisdiction:=TFhirCodeableConcept.Create('urn:iso:std:iso:3166', 'US');
+  if (obj).jurisdictionList.Count = 0 then
+  begin
+    jurisdiction := TFhirCodeableConcept.Create('urn:iso:std:iso:3166', 'US');
     (obj).jurisdictionList.AddItem(jurisdiction);
   end;
-
-
 
 end;
 
@@ -1463,3 +1354,4 @@ end;
 {$ENDIF}
 
 end.
+

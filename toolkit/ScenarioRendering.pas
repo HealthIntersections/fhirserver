@@ -70,7 +70,7 @@ var
   ExitCode: DWORD;
   ExecuteFile, ParamString, StartInString: string;
 begin
-  str := getCurrentDir;
+if directoryexists(edit1.text) then str:=edit1.text else  str := getCurrentDir;
   SetCurrentDir(ESRenderFolder+'\simpleRender');
   resourceToFile(resource, '.\current.xml', ffXml, OutputStylePretty);
   ExecuteFile := 'parse_all.bat';

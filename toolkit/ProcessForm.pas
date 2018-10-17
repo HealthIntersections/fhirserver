@@ -60,7 +60,7 @@ procedure TProcessingForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
   {$IFDEF MSWINDOWS}
-  Application.ProcessMessages;
+//  Application.ProcessMessages;
   {$ENDIF}
   try
     proc;
