@@ -90,6 +90,7 @@ type
     FPassword : String;
     FNonceList : TStringList;
     FOnGetPatients : TGetPatientsEvent;
+    FRelPath: String;
 
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -135,11 +136,13 @@ type
     function MakeLoginToken(path: String; provider: TFHIRAuthProvider): String;
     property AdminEmail : String read FAdminEmail write FAdminEmail;
     property path : String read FPath write FPath;
+    property relPath : String read FRelPath write FRelPath;
 
     function AuthPath : String;
     function BasePath : String;
     function TokenPath : String;
     function RegisterPath : String;
+    function ManagePath : String;
     function KeyPath : String;
     function CavsPath : String;
     Property EndPoint : String read FEndPoint write FEndPoint;
@@ -177,6 +180,7 @@ begin
   FGoogleAppKey := ini.identityProviders['google.com']['app-key'];
   FPassword := ini.admin['password'];
   FPath := path+'/auth';
+  FRelPath := '/auth';
 end;
 
 destructor TAuth2Server.Destroy;
@@ -237,6 +241,11 @@ begin
   end;
 end;
 
+
+function TAuth2Server.ManagePath: String;
+begin
+  result := FRelPath+'/manage';
+end;
 
 function TAuth2Server.nonceIsUnique(nonce: String): boolean;
 var
@@ -304,7 +313,7 @@ end;
 
 function TAuth2Server.TokenPath: String;
 begin
- result := FPath+'/token';
+ result := FRelPath+'/token';
 end;
 
 procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap; response: TIdHTTPResponseInfo);
@@ -331,7 +340,7 @@ begin
     redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
     if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecureClosed+'/internal')) then
       if not isAllowedRedirect(client, redirect_uri) then
-      raise EFHIRException.create('Unacceptable Redirect url "'+redirect_uri+'"');
+        raise EFHIRException.create('Unacceptable Redirect url "'+redirect_uri+'"');
     scope := checkNotEmpty(params.GetVar('scope'), 'scope');
     state := checkNotEmpty(params.GetVar('state'), 'state');
     aud := checkNotEmpty(params.GetVar('aud'), 'aud');
@@ -366,7 +375,7 @@ end;
 
 function TAuth2Server.RegisterPath: String;
 begin
-  result := FPath+'/register';
+  result := FRelPath+'/register';
 end;
 
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
@@ -1265,7 +1274,7 @@ end;
 
 function TAuth2Server.AuthPath: String;
 begin
-  result := FPath+'/auth';
+  result := FRelPath+'/auth';
 end;
 
 function TAuth2Server.BuildLoginList(id : String): String;

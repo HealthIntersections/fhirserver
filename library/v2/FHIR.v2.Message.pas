@@ -1,0 +1,1247 @@
+unit FHIR.v2.Message;
+
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+interface
+
+uses
+  SysUtils, Classes,
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities,
+  FHIR.Base.Objects, FHIR.Base.PathEngine,
+  FHIR.R4.Types, FHIR.R4.PathNode, FHIR.R4.PathEngine;
+
+type
+  TV2ContentKind = (ckString, ckNull, ckBinary, ckEscape);
+
+  // inherut from TFHIRObject so w can use FHIRPath on the objects
+  // the underlying framework insists that this has a version.
+  TV2Object = class (TFHIRObject)
+  private
+    FId : String;
+  protected
+    function GetFhirObjectVersion: TFHIRVersion; override;
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+  public
+    property id : String read Fid write FId;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
+
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+  end;
+
+  TV2Content = class (TV2Object)
+  private
+    FKind: TV2ContentKind;
+    FValue: String;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+  public
+    constructor Create(kind : TV2ContentKind; value : String);
+    function link : TV2Content; overload;
+
+    property kind : TV2ContentKind read FKind write FKind;
+    property value : String read FValue write FValue;
+
+    function isEmpty : boolean; override;
+    function fhirType : String; override;
+  end;
+
+  TV2Cell = class (TV2Object)
+  private
+    FContents: TFSLList<TV2Content>;
+    FComponents: TFSLList<TV2Cell>;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TV2Cell; overload;
+
+    property contents : TFSLList<TV2Content> read FContents;
+    property components : TFSLList<TV2Cell> read FComponents;
+
+    function isEmpty : boolean; override;
+    function text : String;
+    function fhirType : String; override;
+  end;
+
+  TV2Field = class (TV2Object)
+  private
+    FElements: TFSLList<TV2Cell>;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TV2Field; overload;
+
+    function isEmpty : boolean; override;
+
+    property elements : TFSLList<TV2Cell> read FElements;
+    function fhirType : String; override;
+  end;
+
+  TV2Segment = class (TV2Object)
+  private
+    FFields: TFSLList<TV2Field>;
+    FCode: String;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TV2Segment; overload;
+
+    property code : String read FCode write FCode;
+    property fields : TFSLList<TV2Field> read FFields;
+    function element(index : integer) : TV2Cell;
+    function isEmpty : boolean; override;
+    function fhirType : String; override;
+  end;
+
+  TV2Message = class (TV2Object)
+  private
+    FSegments: TFSLList<TV2Segment>;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TV2Message; overload;
+
+    property segments : TFSLList<TV2Segment> read FSegments;
+    function isEmpty : boolean; override;
+    function fhirType : String; override;
+  end;
+
+  TV2ParserOption = (v2doPreventOddBinaryLengths, v2doMessageHeaderOnly, v2doIgnoreXmlErrors);
+  TV2ParserOptions = set of TV2ParserOption;
+
+  TV2Parser = class (TFSLObject)
+  private
+    FSource : TBytes;
+    FOptions : TV2ParserOptions;
+    FEscapeCharacter: Char;
+    FRepetitionDelimiter: Char;
+    FFieldDelimiter: Char;
+    FSubComponentDelimiter: Char;
+    FComponentDelimiter: Char;
+
+    procedure ReadDelimiters;
+    Function isDelimiterEscape(ch : Char) : Boolean;
+    Function getDelimiterEscapeChar(ch : Char) : Char;
+
+    procedure generateIds(cell : TV2Cell); overload;
+    procedure generateIds(fld : TV2Field); overload;
+    procedure generateIds(seg : TV2Segment); overload;
+    procedure generateIds(msg : TV2Message); overload;
+
+    Procedure readBinary(cell : TV2Cell; Const cnt : String; var iCursor : integer);
+    Procedure readEscape(cell : TV2Cell; Const cnt : String; var iCursor : integer);
+    procedure parseContent(cell: TV2Cell; const cnt: String; bNoEscape: Boolean);
+    procedure parseCell(cell : TV2Cell; const cnt : String; bNoEscape : Boolean; cBreak, cSubBreak : char);
+    procedure parseField(ofield: TV2Field; var iCursor: Integer);
+    procedure parseSegmentInner(oSegment: TV2Segment; var iCursor: Integer);
+    procedure parseSegment(oMessage : TV2Message; var iCursor : Integer);
+    Procedure DecodeMessage(msg : TV2Message; options : TV2ParserOptions); Overload; Virtual;
+  public
+    class function parse(msg : TBytes; options : TV2ParserOptions = []) : TV2Message; overload;
+    class function parse(msg : String; options : TV2ParserOptions = []) : TV2Message; overload;
+    class function parse(msg : TStream; options : TV2ParserOptions = []) : TV2Message; overload;
+    class function parse(msg : TFslStream; options : TV2ParserOptions = []) : TV2Message; overload;
+    class function parse(msg : TFslBuffer; options : TV2ParserOptions = []) : TV2Message; overload;
+  end;
+
+  TV2ComposerOption = (v2coEscapeExtendedCharacters, v2coExtraFieldDelimiter);
+  TV2ComposerOptions = set of TV2ComposerOption;
+
+  TV2Composer = class (TFSLObject)
+  private
+    FOptions: TV2ComposerOptions;
+    FEscapeCharacter: AnsiChar;
+    FRepetitionDelimiter: AnsiChar;
+    FFieldDelimiter: AnsiChar;
+    FSubComponentDelimiter: AnsiChar;
+    FComponentDelimiter: AnsiChar;
+
+    procedure init;
+    function escape(b : TStringBuilder; src : String) : AnsiString;
+    procedure composeBinary(b : TStringBuilder; cnt : TV2Content);
+    procedure composeEscape(b : TStringBuilder; cnt : TV2Content);
+    procedure composeCell(b : TStringBuilder; cell : TV2Cell; ch : AnsiChar);
+    procedure composeField(b : TStringBuilder; fld : TV2Field);
+    procedure composeSegment(b : TStringBuilder; seg : TV2Segment);
+    procedure composeMessage(b : TStringBuilder; msg : TV2Message);
+  public
+    class function composeString(msg : TV2Message; options : TV2ComposerOptions = []) : String; overload;
+    class function composeBytes(msg : TV2Message; options : TV2ComposerOptions = []) : TBytes; overload;
+    class procedure compose(msg : TV2Message; dst : TStream; options : TV2ComposerOptions = []); overload;
+    class procedure compose(msg : TV2Message; dst : TFslStream; options : TV2ComposerOptions = []); overload;
+    class procedure compose(msg : TV2Message; dst : TFslBuffer; options : TV2ComposerOptions = []); overload;
+  end;
+
+  TV2FHIRPathExtensions = class (TFHIRPathEngineExtension)
+  public
+    function isValidFunction(name : String) : boolean; override;
+    function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; override;
+    function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNode>; engine : TFHIRPathEngine): TFHIRSelectionList; override;
+  end;
+const
+  CODES_TV2ContentKind : Array [TV2ContentKind] of String = ('string', 'null', 'binary', 'escape');
+
+implementation
+
+{ TV2Object }
+
+function TV2Object.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise EFSLException.Create('Not supported');
+end;
+
+procedure TV2Object.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+  inherited;
+  if (name = 'id') Then
+    if id <> '' then
+      list.add(self.link, 'id', TFhirString.create(id))
+    else
+      list.add(self.link, 'id', nil)
+end;
+
+function TV2Object.GetFhirObjectVersion: TFHIRVersion;
+begin
+  result := fhirVersionRelease4;
+end;
+
+function TV2Object.getId: String;
+begin
+  result := id;
+end;
+
+function TV2Object.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := TFhirCode.Create(v).noExtensions;
+end;
+
+function TV2Object.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFhirInteger.Create(v).noExtensions;
+end;
+
+function TV2Object.makeStringValue(v: String): TFHIRObject;
+begin
+  result := TFhirString.Create(v).noExtensions;
+end;
+
+procedure TV2Object.setIdValue(id: String);
+begin
+  self.id := id;
+end;
+
+procedure TV2Object.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise EFSLException.Create('Not supported');
+end;
+
+{ TV2Content }
+
+constructor TV2Content.Create(kind: TV2ContentKind; value: String);
+begin
+  inherited Create;
+  FKind := kind;
+  FValue := value;
+end;
+
+function TV2Content.fhirType: String;
+begin
+  result := 'Content';
+end;
+
+procedure TV2Content.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+  inherited;
+  if (name = 'kind') Then
+     list.add(self.link, 'kind', TFhirCode.Create(CODES_TV2ContentKind[kind]));
+  if (name = 'value') Then
+    if id <> '' then
+      list.add(self.link, 'value', TFhirString.create(value))
+    else
+      list.add(self.link, 'value', nil)
+end;
+
+function TV2Content.isEmpty: boolean;
+begin
+  result := value <> '';
+end;
+
+function TV2Content.link: TV2Content;
+begin
+  result := TV2Content(inherited link);
+end;
+
+{ TV2Cell }
+
+constructor TV2Cell.Create;
+begin
+  inherited;
+  FContents := TFSLList<TV2Content>.create;
+  FComponents := TFSLList<TV2Cell>.create;
+end;
+
+destructor TV2Cell.Destroy;
+begin
+  FComponents.Free;
+  FContents.free;
+  inherited;
+end;
+
+function TV2Cell.fhirType: String;
+begin
+  result := 'Cell';
+end;
+
+procedure TV2Cell.GetChildrenByName(name: string; list: TFHIRSelectionList);
+var
+  cnt : TV2Content;
+  cmp : TV2Cell;
+begin
+  inherited;
+  if (name = 'content') Then
+    for cnt in contents do
+       list.add(cnt.link);
+  if (name = 'component') Then
+    for cmp in components do
+      list.add(cmp.link);
+end;
+
+function TV2Cell.isEmpty: boolean;
+var
+  comp : TV2Cell;
+begin
+  result := true;
+  if components.Count = 0 then
+    result := contents.Empty
+  else
+    for comp in components do
+      if not comp.isEmpty then
+        exit(false);
+end;
+
+function TV2Cell.link: TV2Cell;
+begin
+  result := TV2Cell(inherited Link);
+end;
+
+function TV2Cell.text: String;
+var
+  cnt : TV2Content;
+begin
+  if components.Count > 0 then
+    result := components[0].text
+  else
+  begin
+    result := '';
+    for cnt in contents do
+      result := result + cnt.value;
+  end;
+end;
+
+{ TV2Field }
+
+constructor TV2Field.Create;
+begin
+  inherited;
+  FElements := TFSLList<TV2Cell>.create;
+end;
+
+destructor TV2Field.Destroy;
+begin
+  FElements.Free;
+  inherited;
+end;
+
+function TV2Field.fhirType: String;
+begin
+  result := 'Field';
+end;
+
+procedure TV2Field.GetChildrenByName(name: string; list: TFHIRSelectionList);
+var
+  elem : TV2Cell;
+begin
+  inherited;
+  if (name = 'element') Then
+    for elem in elements do
+      list.add(elem.link);
+end;
+
+function TV2Field.isEmpty: boolean;
+var
+  elem : TV2Cell;
+begin
+  result := true;
+  for elem in elements do
+    if not elem.isEmpty then
+      exit(false);
+end;
+
+function TV2Field.link: TV2Field;
+begin
+  result := TV2Field(inherited Link);
+end;
+
+{ TV2Segment }
+
+constructor TV2Segment.Create;
+begin
+  inherited;
+  FFields := TFSLList<TV2Field>.create;
+end;
+
+destructor TV2Segment.Destroy;
+begin
+  FFields.Free;
+  inherited;
+end;
+
+function TV2Segment.element(index: integer): TV2Cell;
+begin
+  if index >= FFields.Count then
+    result := nil
+  else if FFields[index].elements.Count > 0 then
+    raise EFslException.Create('Repeats encountered at '+inttostr(index))
+  else
+    result := FFields[index].elements[0];
+end;
+
+function TV2Segment.fhirType: String;
+begin
+  result := 'Segment';
+end;
+
+procedure TV2Segment.GetChildrenByName(name: string; list: TFHIRSelectionList);
+var
+  fld : TV2Field;
+begin
+  inherited;
+  if (name = 'code') Then
+    list.add(self.link, 'code', TFhirCode.create(code));
+  if (name = 'field') Then
+    for fld in fields do
+      list.add(fld.link);
+end;
+
+function TV2Segment.isEmpty: boolean;
+begin
+  result := FFields.Empty;
+end;
+
+function TV2Segment.link: TV2Segment;
+begin
+  result := TV2Segment(inherited link);
+end;
+
+{ TV2Message }
+
+constructor TV2Message.Create;
+begin
+  inherited;
+  FSegments := TFSLList<TV2Segment>.create;
+end;
+
+destructor TV2Message.Destroy;
+begin
+  FSegments.Free;
+  inherited;
+end;
+
+function TV2Message.fhirType: String;
+begin
+  result := 'Message';
+end;
+
+procedure TV2Message.GetChildrenByName(name: string; list: TFHIRSelectionList);
+var
+  seg : TV2Segment;
+begin
+  inherited;
+  if (name = 'segment') Then
+    for seg in segments do
+      list.add(seg.link);
+end;
+
+function TV2Message.isEmpty: boolean;
+begin
+  result := segments.Empty;
+end;
+
+function TV2Message.link: TV2Message;
+begin
+  result := TV2Message(inherited link);
+end;
+
+{ TV2Parser }
+
+Function cleanPacket(packet : TBytes) : TBytes;
+begin
+  // some systems are somewhat careless about how they wrap a packet
+  // some systems prepend a #13 to the message
+  // some fail to append a #13.
+  // some even send HL7 segment delimiters as  #13#10 instead of #13
+  result := BytesReplace(packet, Bytes([13, 10]), Bytes([13]));
+  if length(result) > 0 then
+  begin
+    while result[0] = TByte(13) do
+      result := copy(result, 1, length(result) -1);
+    while result[length(result)-1] = TByte(13) do
+      SetLength(result, length(result) - 1);
+    result := BytesAdd(result, TByte(13));
+  end;
+end;
+
+class function TV2Parser.parse(msg: TBytes; options: TV2ParserOptions): TV2Message;
+var
+  this : TV2Parser;
+begin
+  this := TV2Parser.Create;
+  try
+    result := TV2Message.Create;
+    try
+      this.FSource := cleanPacket(msg);
+      this.FOptions := options;
+      this.decodeMessage(result, options);
+      result.link;
+    finally
+      result.Free;
+    end;
+  finally
+    this.free;
+  end;
+end;
+
+class function TV2Parser.parse(msg: String; options: TV2ParserOptions): TV2Message;
+begin
+  result := parse(TEncoding.UTF8.GetBytes(msg), options);
+end;
+
+class function TV2Parser.parse(msg: TStream; options: TV2ParserOptions): TV2Message;
+begin
+  result := parse(StreamToBytes(msg), options);
+end;
+
+class function TV2Parser.parse(msg: TFslStream; options: TV2ParserOptions): TV2Message;
+var
+  s : TVCLStream;
+begin
+  s := TVCLStream.Create(msg.Link);
+  try
+    result := parse(StreamToBytes(s));
+  finally
+    s.Free;
+  end;
+end;
+
+Function GetDelimiter(sName, sStr : String; iIndex : Integer) : Char;
+Begin
+  If Length(sStr) >= iIndex Then
+    Result := SStr[iIndex]
+  Else
+  Begin
+//    Result := #0;
+    raise EER7Exception(sName+' Delimiter not found in MSH-2: "'+sStr+'"');
+  End;
+End;
+
+
+const
+  DEFAULT_DELIMITER_FIELD = '|';
+  DEFAULT_DELIMITER_COMPONENT = '^';
+  DEFAULT_DELIMITER_SUBCOMPONENT = '&';
+  DEFAULT_DELIMITER_REPETITION = '~';
+  DEFAULT_CHARACTER_ESCAPE = '\';
+
+procedure TV2Parser.ReadDelimiters;
+var
+  sLeft : String;
+  sRight : String;
+begin
+  // basics: this checks that the MSH appears to be valid, records the delimiters,
+  // and checks the version
+  if Not SameBytes(copy(FSource, 0, 3), 'MSH') then
+    raise EER7Exception.create('Packet "' + BytesAsMime(copy(FSource, 0, 12)) + '"does not appear to be valid HL7/ER7: starting MSH not found');
+  if not BytesContains(FSource, Tbyte(13)) then
+    raise EER7Exception.create('Packet does not appear to be valid HL7/ER7: Segment Delimiter not found');
+
+  FFieldDelimiter := Char(FSource[3]);
+  StringSplit(BytesAsString(FSource), FFieldDelimiter, sLeft, sRight);
+  StringSplit(sRight, FFieldDelimiter, sLeft, sRight);
+
+  FComponentDelimiter := GetDelimiter('Component', sLeft, 1);
+  FRepetitionDelimiter := GetDelimiter('Repetition', sLeft, 2);
+  FEscapeCharacter := GetDelimiter('Escape', sLeft, 3);
+  if Length(sLeft) > 3 then
+    FSubComponentDelimiter := GetDelimiter('SubComponent', sLeft, 4)
+  Else
+    FSubComponentDelimiter := DEFAULT_DELIMITER_SUBCOMPONENT;
+
+  if FComponentDelimiter = FFieldDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FComponentDelimiter+'" is used for both Component and Field');
+  if FSubComponentDelimiter = FFieldDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FSubComponentDelimiter+'" is used for both SubComponent and Field');
+  if FSubComponentDelimiter = FComponentDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FSubComponentDelimiter+'" is used for both SubComponent and Component');
+  if FRepetitionDelimiter = FFieldDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and Field');
+  if FRepetitionDelimiter = FComponentDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and Component');
+  if FRepetitionDelimiter = FSubComponentDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and SubComponent');
+  if FEscapeCharacter = FFieldDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Field');
+  if FEscapeCharacter = FComponentDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Component');
+  if FEscapeCharacter = FSubComponentDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and SubComponent');
+  if FEscapeCharacter = FRepetitionDelimiter then
+    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Repetition');
+end;
+
+
+procedure TV2Parser.DecodeMessage(msg : TV2Message; options: TV2ParserOptions);
+var
+  iCursor : Integer;
+begin
+  // 1. initial check of MSH: version and delimiters
+  ReadDelimiters;
+
+  // 2. Decode MSH
+  iCursor := 0;
+  ParseSegment(msg, iCursor);
+
+  // 4. decode remaining segments
+  while (iCursor < length(FSource)) do
+    ParseSegment(msg, iCursor);
+
+  generateIds(msg);
+end;
+
+class function TV2Parser.parse(msg: TFslBuffer; options: TV2ParserOptions): TV2Message;
+begin
+  result := parse(msg.AsBytes);
+end;
+
+procedure TV2Parser.ParseSegment(oMessage: TV2Message; var iCursor: Integer);
+var
+  sSegCode : String;
+  oSegment : TV2Segment;
+begin
+  if (iCursor + 3 > length(FSource)) then //we are either missing a #13 or have an invalid segment code
+    raise EER7Exception.create('Remaining length in message too short for a valid segment.' + #13 +
+                         'Remainder of packet: ' + StringReplace(copy(BytesAsString(FSource), iCursor, length(FSource)), #13, '<CR>'));
+
+  //recognise segment
+  sSegCode := BytesAsString(copy(FSource, iCursor, 3));
+  inc(iCursor, 3);
+
+  if not (CharInSet(sSegCode[1], ['A'..'Z']) and CharInSet(sSegCode[2], ['A'..'Z', '0'..'9']) and CharInSet(sSegCode[3], ['A'..'Z', '0'..'9'])) then
+    raise EER7Exception.create('Segment code too short or contains invalid content: ' + String(sSegCode));
+
+  if not StringArrayExists(['MSH', 'FHS', 'BHS'], String(sSegCode)) and (FSource[iCursor] <> 13) then
+      inc(iCursor); // special case: field is it's own delimiter for first MSH field
+
+  oSegment := TV2Segment.Create;
+  try
+    oSegment.Code := sSegCode;
+    oMessage.Segments.Add(oSegment.Link); // do this to provide a model before setting the code
+    parseSegmentInner(oSegment, iCursor);
+  finally
+    oSegment.Free;
+  end;
+end;
+
+procedure TV2Parser.parseSegmentInner(oSegment: TV2Segment; var iCursor: Integer);
+var
+  oField : TV2Field;
+begin
+  while FSource[iCursor] <> 13 do
+  begin
+    oField := TV2Field.create;
+    try
+      oSegment.Fields.Add(oField.Link);
+      ParseField(oField, iCursor);
+    finally
+      oField.Free;
+    end;
+  end;
+
+  while (iCursor < Length(FSource)) and (FSource[iCursor] = 13) do
+    inc(iCursor);
+end;
+
+
+Function BytesSlice(Const sValue : TBytes; iBegin, iEnd : Integer) : TBytes;
+Begin
+  Result := Copy(sValue, iBegin, iEnd - iBegin + 1);
+End;
+
+function ValidHexString(AStr: String; var VMsg: String): Boolean;
+var
+  i: Integer;
+begin
+  if (Length(AStr) mod 2 = 1) then
+    begin
+    Result := False;
+    VMsg := 'Length is odd (' + IntToStr(Length(AStr)) + ')';
+    end
+  else
+    begin
+    Result := True;
+    for i := 1 to Length(AStr) do
+      begin
+      if not CharInSet(AStr[i], ['0'..'9', 'A'..'F']) then
+        begin
+        VMsg := 'Character ' + AStr[i] + ' at location ' + IntToStr(i) + ' is not valid';
+        Result := False;
+        break;
+        end;
+      end;
+    end;
+end;
+
+function HexDecode(ARaw: String): String;
+var
+  i: Integer;
+  LResult: PChar;
+  s: String;
+begin
+  if not ValidHexString(ARaw, s) then
+    raise EFslException.Create('Error HEX Decoding "' + ARaw + '": ' + s);
+  SetLength(Result, Length(ARaw) div 2);
+  LResult := PChar(Result);
+  for i := 1 to length(ARaw) div 2 do
+    begin
+    s := Copy(ARaw, (i * 2) - 1, 2);
+    LResult[i - 1] := Chr(StrToInt('$' + s));
+    end;
+end;
+
+function HexEncode(ARaw: String): String;
+var
+  i: Integer;
+  j: Integer;
+  LStr: String;
+  LResult: PChar;
+begin
+  SetLength(Result, Length(ARaw) * 2);
+  j := 0;
+  LResult := PChar(Result);
+  for i := 1 to Length(ARaw) do
+    begin
+    LStr := IntToHex(Ord(ARaw[i]), 2);
+    LResult[j] := LStr[1];
+    LResult[j + 1] := LStr[2];
+    Inc(j, 2);
+    end;
+end;
+
+procedure TV2Parser.parseField(ofield: TV2Field; var iCursor : Integer);
+var
+  cell : Tv2Cell;
+  iStart : Integer;
+  bEscape : Boolean;
+//  LContent: String;
+begin
+  while (iCursor < length(FSource)) and not (FSource[iCursor] in [13, ord(FFieldDelimiter)]) do
+  begin
+    iStart := iCursor;
+    bEscape := False;
+    while (iCursor < length(FSource)) and not (FSource[iCursor] in [13, ord(FFieldDelimiter), ord(FRepetitionDelimiter)]) do
+    Begin
+      bEscape := bEscape or (FSource[iCursor] = ord(FEscapeCharacter));
+      inc(iCursor);
+    End;
+    cell := TV2Cell.Create;
+    try
+      parseCell(cell, BytesAsString(BytesSlice(FSource, iStart, iCursor-1)), not bEscape, FComponentDelimiter, FSubComponentDelimiter);
+      ofield.elements.Add(cell.link);
+    finally
+      cell.Free;
+    end;
+    if (iCursor < length(FSource)) and (FSource[iCursor] = ord(FRepetitionDelimiter)) then
+      inc(iCursor);
+  end;
+  if (iCursor < length(FSource)) and (FSource[iCursor] <> 13) then
+    inc(iCursor);
+end;
+
+
+procedure TV2Parser.parseCell(cell : TV2Cell; const cnt : String; bNoEscape : Boolean; cBreak, cSubBreak : char);
+var
+  child : TV2Cell;
+  sLeft : String;
+  sRight : String;
+begin
+  // if children are defined or a seperator is found, then we will break content up into children
+  if (pos(cBreak, cnt) > 0) or ((cSubBreak <> #0) and (pos(cSubBreak, cnt) > 0)) then
+  begin
+    sRight := cnt;
+    while sRight <> '' do
+    begin
+      StringSplit(sRight, cBreak, sLeft, sRight);
+      child := TV2Cell.Create;
+      try
+        cell.components.Add(child.link);
+        parseCell(child, sLeft, bNoEscape, cSubBreak, #0);
+      finally
+        child.Free;
+      end;
+    end;
+  end
+  else
+  begin
+    if pos(#0, cnt) > 0 Then
+      parseContent(cell, StringStrip(cnt, [#0]), bNoEscape)
+    else
+      parseContent(cell, cnt, bNoEscape);
+  end;
+end;
+
+
+Procedure TV2Parser.parseContent(cell : TV2Cell; Const cnt : String; bNoEscape : Boolean);
+var
+  buf : TStringBuilder;
+  iCursor : Integer;
+  Procedure Commit();
+  Begin
+    if buf.Length > 0 Then
+      Begin
+      cell.Contents.Add(TV2Content.create(ckString, buf.ToString));
+      buf.Clear;
+      End;
+  End;
+Begin
+  cell.contents.Clear;
+  if (cnt = FEscapeCharacter) Then
+    cell.Contents.Add(TV2Content.create(ckString, cnt))
+  Else If (cnt = '""') then
+    cell.Contents.add(TV2Content.create(ckNull, '""'))
+  Else If bNoEscape or (pos(FEscapeCharacter, cnt) = 0) Then
+  Begin
+    If cnt <> '' Then
+      cell.Contents.Add(TV2Content.create(ckString, cnt));
+  End
+  Else
+  Begin
+    buf := TStringBuilder.Create;
+    try
+      iCursor := 1;
+      While (iCursor <= Length(cnt)) Do
+        Begin
+        if (iCursor < Length(cnt)) and (cnt[iCursor] = FEscapeCharacter) Then
+          Begin
+          inc(iCursor);
+          if (isDelimiterEscape(cnt[iCursor])) Then
+          Begin
+            buf.append(getDelimiterEscapeChar(cnt[iCursor]));
+            inc(iCursor);
+            if cnt[iCursor] <> FEscapeCharacter Then
+              dec(iCursor); // cause it will be inc next. this is really an error, an improperly terminated escape sequence, but we do not report it
+          End
+          Else If (cnt[iCursor] = 'X') Then
+          Begin
+            Commit;
+            readBinary(cell, cnt, iCursor);
+          End
+          Else
+            Begin
+            Commit;
+            readEscape(cell, cnt, iCursor);
+            End;
+          End
+        Else
+          buf.append(cnt[iCursor]);
+        inc(iCursor);
+        End;
+      Commit;
+    finally
+      buf.Free;
+    end;
+  End;
+End;
+
+Procedure TV2Parser.ReadBinary(cell : TV2Cell; Const cnt : String; var iCursor : integer);
+var
+  sBuffer : String;
+  iStart : Integer;
+Begin
+  inc(iCursor); // skip the X at the start
+  iStart := iCursor;
+  While (iCursor <= Length(cnt)) And Not (cnt[iCursor] = FEscapeCharacter) Do
+    Inc(iCursor);
+  If (iCursor > length(cnt)) Then
+    raise EER7Exception.Create('unterminated binary escape in '+cnt);
+  sBuffer := copy(cnt, iStart, iCursor - iStart);
+  if Length(sBuffer) mod 2 = 1 then
+    If v2doPreventOddBinaryLengths in FOptions Then
+      sBuffer := '0'+sBuffer
+    Else
+      raise EER7Exception.Create('Odd length of binary escape in "'+cnt+'"');
+
+  cell.Contents.add(TV2Content.create(ckBinary, HexDecode(sBuffer)));
+End;
+
+Procedure TV2Parser.ReadEscape(cell : TV2Cell; Const cnt : String; var iCursor : integer);
+var
+  iStart : Integer;
+Begin
+  iStart := iCursor;
+  While (iCursor <= Length(cnt)) And Not (cnt[iCursor] = FEscapeCharacter) Do
+    Inc(iCursor);
+  If (iCursor > length(cnt)) Then
+  Begin
+    // very often turkeys sending us the escape character do not escape.
+    // rather than raising the error, we are going to treat the escape as an escape
+    iCursor := iStart - 1;
+    cell.Contents.add(TV2Content.create(ckString, FEscapeCharacter));
+  End
+  Else
+    cell.Contents.add(TV2Content.create(ckEscape, copy(cnt, iStart, iCursor - iStart)));
+End;
+
+Function TV2Parser.isDelimiterEscape(ch : Char) : Boolean;
+Begin
+  Result := (ch = 'F') or (ch = 'S') or (ch = 'E') or (ch = 'T') or (ch = 'R');
+End;
+
+procedure TV2Parser.generateIds(msg: TV2Message);
+var
+  st : TStringList;
+  seg : TV2Segment;
+  i, t : integer;
+begin
+  st := TStringList.Create;
+  try
+    st.Sorted := true;
+    for seg in msg.segments do
+    begin
+      if st.Find(seg.code, i) then
+        st.Objects[i] := TObject(integer(st.Objects[i])+1)
+      else
+        i := st.AddObject(seg.code, nil);
+      t := integer(st.Objects[i]);
+      if t = 0 then
+        seg.id := seg.code
+      else
+        seg.id := seg.code+':'+inttostr(t);
+      generateIds(seg);
+    end;
+  finally
+    st.Free;
+  end;
+end;
+
+procedure TV2Parser.generateIds(seg: TV2Segment);
+var
+  i : integer;
+begin
+  for i := 0 to seg.fields.Count - 1 do
+  begin
+    seg.fields[i].id := seg.id+'-'+inttostr(i+1);
+    generateIds(seg.fields[i]);
+  end;
+end;
+
+procedure TV2Parser.generateIds(fld: TV2Field);
+var
+  i : integer;
+begin
+  for i := 0 to fld.elements.Count - 1 do
+  begin
+    fld.elements[i].id := fld.id+':'+inttostr(i);
+    generateIds(fld.elements[i]);
+  end;
+end;
+
+procedure TV2Parser.generateIds(cell: TV2Cell);
+var
+  i : integer;
+begin
+  for i := 0 to cell.components.Count - 1 do
+  begin
+    cell.components[i].id := cell.id+'-'+inttostr(i+1);
+    generateIds(cell.components[i]);
+  end;
+  for i := 0 to cell.contents.Count - 1 do
+    cell.contents[i].id := cell.id+'['+inttostr(i)+']';
+end;
+
+Function TV2Parser.getDelimiterEscapeChar(ch : Char) : Char;
+Begin
+  if (ch = 'E') Then
+    Result := FEscapeCharacter
+  else if (ch = 'F') Then
+    Result := FFieldDelimiter
+  else if (ch = 'S') Then
+    Result := FComponentDelimiter
+  else if (ch = 'T') Then
+    Result := FSubComponentDelimiter
+  else if (ch = 'R') Then
+    Result := FRepetitionDelimiter
+  else
+    raise EER7Exception.Create('Illegal escape char '+ch);
+End;
+
+{ TV2Composer }
+
+class procedure TV2Composer.compose(msg: TV2Message; dst: TStream; options: TV2ComposerOptions);
+var
+  b : TBytes;
+begin
+  b := composeBytes(msg, options);
+  dst.Write(b[0], length(b));
+end;
+
+class procedure TV2Composer.compose(msg: TV2Message; dst: TFslStream; options: TV2ComposerOptions);
+var
+  b : TBytes;
+begin
+  b := composeBytes(msg, options);
+  dst.Write(b[0], length(b));
+end;
+
+class procedure TV2Composer.compose(msg: TV2Message; dst: TFslBuffer; options: TV2ComposerOptions);
+begin
+  dst.AsBytes := composeBytes(msg, options);
+end;
+
+class function TV2Composer.composeBytes(msg: TV2Message; options: TV2ComposerOptions): TBytes;
+begin
+  result := TEncoding.UTF8.GetBytes(composeString(msg, options));
+end;
+
+procedure TV2Composer.composeCell(b: TStringBuilder; cell: TV2Cell; ch: AnsiChar);
+var
+  first : boolean;
+  comp : TV2Cell;
+  cnt : TV2Content;
+begin
+  first := true;
+  if not cell.components.Empty then
+  begin
+    for comp in cell.components do
+    begin
+      if first then
+        first := false
+      else
+        b.Append(ch);
+      composeCell(b, comp, FSubComponentDelimiter);
+    end;
+  end
+  else
+  begin
+    for cnt in cell.contents do
+    begin
+      case cnt.kind of
+        ckString: escape(b, cnt.value);
+        ckNull: escape(b, cnt.value);// there's no need to escape, but it solves the AnsiChar warning
+        ckBinary: composeBinary(b, cnt);
+        ckEscape: composeEscape(b, cnt);
+      end;
+    end;
+  end;
+end;
+
+procedure TV2Composer.composeField(b: TStringBuilder; fld: TV2Field);
+var
+  first : boolean;
+  cell : TV2Cell;
+begin
+  first := true;
+  for cell in fld.elements do
+  begin
+    if first then
+      first := false
+    else
+      b.Append(FRepetitionDelimiter);
+    composeCell(b, cell, FComponentDelimiter);
+  end;
+end;
+
+procedure TV2Composer.composeMessage(b: TStringBuilder; msg: TV2Message);
+var
+  seg : TV2Segment;
+begin
+  for seg in msg.segments do
+    composeSegment(b, seg);
+end;
+
+procedure TV2Composer.composeSegment(b: TStringBuilder; seg: TV2Segment);
+var
+  iLoop : integer;
+  iStart : Integer;
+  iEnd : integer;
+begin
+  b.Append(seg.code);
+  iStart := 0;
+  if StringArrayExists(['MSH', 'FHS', 'BHS'], String(seg.Code)) then
+  begin
+    b.Append(FFieldDelimiter);
+    b.Append(FComponentDelimiter);
+    b.Append(FRepetitionDelimiter);
+    b.Append(FEscapeCharacter);
+    b.Append(FSubComponentDelimiter);
+    iStart := 2;
+  end;
+  iEnd := seg.fields.Count - 1;
+  While (iEnd > iStart) and seg.Fields[iEnd].isEmpty Do
+    dec(iEnd);
+  for iLoop := iStart to iEnd do
+  begin
+    b.Append(FFieldDelimiter);
+    composeField(b, seg.fields[iloop]);
+  end;
+  if v2coExtraFieldDelimiter in FOptions then
+    b.Append(FFieldDelimiter);
+  b.Append(#13);
+end;
+
+class function TV2Composer.composeString(msg: TV2Message; options: TV2ComposerOptions): String;
+var
+  this : TV2Composer;
+  b : TStringBuilder;
+begin
+  this := TV2Composer.Create;
+  try
+    this.FOptions := options;
+    this.init;
+    b := TStringBuilder.Create;
+    try
+      this.composeMessage(b, msg);
+      result := b.ToString;
+    finally
+      b.Free;
+    end;
+  finally
+    this.free;
+  end;
+end;
+
+function TV2Composer.escape(b: TStringBuilder; src: String): AnsiString;
+var
+  ch : char;
+begin
+  for ch in src do
+  begin
+    if ansichar(ch) in [FFieldDelimiter, FEscapeCharacter, FComponentDelimiter, FRepetitionDelimiter, FSubComponentDelimiter] then
+    begin
+      b.Append(FEscapeCharacter);
+      if ansichar(ch) = FFieldDelimiter then
+        b.Append('F')
+      else if ansichar(ch) = FComponentDelimiter then
+        b.Append('S')
+      else if ansichar(ch) = FSubComponentDelimiter then
+        b.Append('T')
+      else if ansichar(ch) = FEscapeCharacter then
+        b.Append('E')
+      else // if ansichar(ch) = FRepetitionDelimiter then
+        b.Append('R');
+      b.Append(FEscapeCharacter);
+    end
+    else if CharInSet(ch, [#10, #13, #9]) or (ord(ch) >= 128)  or ((ord(ch) >= 128) and (v2coEscapeExtendedCharacters in FOptions)) then
+    begin
+      b.Append(FEscapeCharacter);
+      b.Append('X');
+      b.Append(IntToHex(Ord(ch), 2));
+      b.Append(FEscapeCharacter);
+    end
+    else
+      b.Append(ch);
+  end;
+end;
+
+procedure TV2Composer.composeEscape(b: TStringBuilder; cnt: TV2Content);
+begin
+  b.Append(FEscapeCharacter);
+  b.Append(cnt.value);
+  b.Append(FEscapeCharacter);
+end;
+
+
+procedure TV2Composer.composeBinary(b: TStringBuilder; cnt: TV2Content);
+begin
+  b.Append(FEscapeCharacter);
+  b.Append('X');
+  b.Append(HexEncode(cnt.value));
+  b.Append(FEscapeCharacter);
+end;
+
+
+procedure TV2Composer.init;
+begin
+  FEscapeCharacter := '\';
+  FRepetitionDelimiter := '~';
+  FFieldDelimiter := '|';
+  FSubComponentDelimiter := '&';
+  FComponentDelimiter := '^';
+end;
+
+{ TV2FHIRPathExtensions }
+
+function TV2FHIRPathExtensions.isValidFunction(name: String): boolean;
+begin
+  result := name = 'text';
+end;
+
+function TV2FHIRPathExtensions.functionApplies(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; name: String): boolean;
+var
+  item : TFHIRSelection;
+begin
+  result := false;
+  for item in focus do
+    if (item.value is TV2Cell) and (name = 'text') then
+      exit(true);
+end;
+
+function TV2FHIRPathExtensions.execute(context: TFHIRPathExecutionContext; focus: TFHIRObject; name: String; params: TFslList<TFHIRPathExpressionNode>; engine: TFHIRPathEngine): TFHIRSelectionList;
+begin
+  result := TFHIRSelectionList.Create;
+  try
+    if (focus is TV2Cell) and (name = 'text') then
+      result.add(TFHIRString.Create(TV2Cell(focus).text));
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+end.

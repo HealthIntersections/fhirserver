@@ -822,8 +822,8 @@ begin
       if (g.source = coding.system) and (em.code = coding.code) then
       begin
         result := true;
-        match := em;
-        group := g;
+        match := em.link;
+        group := g.link;
       end;
 end;
 
@@ -872,8 +872,8 @@ begin
         if (g.source = coding.system) and (em.code = coding.code) then
       begin
         result := true;
-        match := em;
-        group := g;
+        match := em.link;
+        group := g.link;
       end;
   end;
 end;
@@ -921,7 +921,7 @@ begin
         begin
           cm := list[i];
           if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
-          begin
+          try
             found := true;
             if em.targetCount = 0 then
               raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
@@ -942,6 +942,9 @@ begin
               end
             end;
             exit;
+          finally
+            em.free;
+            g.free;
           end;
         end;
       finally
@@ -1318,7 +1321,7 @@ begin
       found := false;
       result := Factory.wrapParams(factory.makeResource('Parameters'));
       if isOkSource(cm, coding, g, em) then
-      begin
+      try
         found := false;
         if em.targetCount = 0 then
           raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
@@ -1329,16 +1332,16 @@ begin
             found := true;
             result.AddParamBool('result', true);
             outcome := Factory.wrapCoding(factory.makeByName('Coding'));
-            p := result.AddParam('match');
             try
-              p.AddParam('match', outcome);
+              p := result.AddParam('match');
               outcome.system := g.target;
               outcome.code := map.code;
+              p.AddParam('match', outcome.Element.Link);
               p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
               if (map.comments <> '') then
                 p.addParamStr('message', map.comments);
             finally
-              p.Free;
+              outcome.free;
             end;
             break;
           end;
@@ -1348,6 +1351,9 @@ begin
           result.AddParamBool('result', false);
           result.AddParamStr('message', 'no match found');
         end;
+      finally
+        em.free;
+        g.free;
       end;
     except
         on e : exception do

@@ -220,7 +220,7 @@ type
     function hasSecurity(system, code : String) : boolean; override;
 
     procedure readSmartExtension(var authorize, token, register: String); override;
-    procedure addSmartExtensions(authorize, token, register: String; caps : Array of String); override;
+    procedure addSmartExtensions(authorize, token, register, manage: String; caps : Array of String); override;
     function hasFormat(fmt : String) : boolean; override;
 
     procedure contact(kind : TContactType; value : String); override;
@@ -1035,7 +1035,7 @@ begin
   result.code := code;
 end;
 
-procedure TFHIRCapabilityStatement2.addSmartExtensions(authorize, token, register: String; caps : Array of String);
+procedure TFHIRCapabilityStatement2.addSmartExtensions(authorize, token, register, manage: String; caps : Array of String);
 var
   c: TFHIRCoding;
   ext: TFhirExtension;
@@ -1061,6 +1061,7 @@ begin
     ext.addExtension('register', register);
     ext.addExtension('authorize', authorize);
     ext.addExtension('token', token);
+    ext.addExtension('manage', manage);
 
     for s in caps do
       statement.restList[0].security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities', s);
@@ -1277,7 +1278,8 @@ procedure TFHIRCapabilityStatement2.standardServer(ts, ws, pv, cv, iv: String);
 var
   ext : TFhirExtension;
 begin
-  statement.restList.add(TFhirCapabilityStatementRest.Create);
+  if statement.restList.isEmpty then
+    statement.restList.append.mode := RestfulCapabilityModeServer;
   statement.restList[0].mode := RestfulCapabilityModeServer;
   statement.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', ws);
   statement.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;

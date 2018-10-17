@@ -35,7 +35,10 @@ uses
   SysUtils, Classes,
   DUnitX.TestFramework,
   IdTCPConnection, FHIR.v2.Protocol,
-  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects;
+  FHIR.Support.Stream,
+  FHIR.Base.Objects,
+  FHIR.R4.PathNode, FHIR.R4.PathEngine,
+  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message;
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused
@@ -49,13 +52,23 @@ type
   end;
 
   [TextFixture]
-  Tv2ParserTests = Class (TObject)
+  THL7v2ParserTests = Class (TObject)
   private
     function parse(msg : String; fmt : THL7V2Format) : THL7v2Message;
   public
     [SetupFixture] procedure Setup;
     [TestCase] Procedure TestDictionaryParse;
   end;
+
+  [TextFixture]
+  Tv2ParserTests = Class (TObject)
+  private
+    procedure test(source : String);
+  public
+    [TestCase] Procedure TestSimple;
+    [TestCase] Procedure TestFHIRPath;
+  end;
+
 
 type
   [TextFixture]
@@ -504,9 +517,9 @@ begin
   end;
 end;
 
-{ Tv2ParserTests }
+{ THL7v2ParserTests }
 
-function Tv2ParserTests.parse(msg: String; fmt: THL7V2Format): THL7v2Message;
+function THL7v2ParserTests.parse(msg: String; fmt: THL7V2Format): THL7v2Message;
 var
   parser : THL7V2Decoder;
 begin
@@ -518,7 +531,7 @@ begin
   end;
 end;
 
-procedure Tv2ParserTests.Setup;
+procedure THL7v2ParserTests.Setup;
 begin
   if GHL7Dict = nil then
     GHL7Dict := THL7V2CompiledDictionary.Create;
@@ -526,7 +539,7 @@ begin
     GHL7V2DecoderFactory := THL7V2DecoderFactory.Create(GHL7Dict.link);
 end;
 
-procedure Tv2ParserTests.TestDictionaryParse;
+procedure THL7v2ParserTests.TestDictionaryParse;
 var
   msg : THL7V2Message;
 begin
@@ -541,8 +554,64 @@ begin
   end;
 end;
 
+{ Tv2ParserTests }
+
+procedure Tv2ParserTests.test(source : String);
+var
+  msg : TV2Message;
+  output : String;
+begin
+  msg := TV2Parser.parse(source);
+  try
+    output := TV2Composer.composeString(msg);
+  finally
+    msg.Free;
+  end;
+  StringToFile(source, 'c:\temp\source.hl7', TEncoding.UTF8);
+  StringToFile(output, 'c:\temp\output.hl7', TEncoding.UTF8);
+  Assert.AreEqual(source, output);
+end;
+
+procedure Tv2ParserTests.TestFHIRPath;
+var
+  msg : TV2Message;
+  path : TFHIRPathEngine;
+  list : TFHIRSelectionList;
+begin
+  msg := TV2Parser.parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
+    'PID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520'#13+
+    'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
+    'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13);
+  try
+    path := TFHIRPathEngine.Create(nil, nil);
+    try
+      path.registerExtension(TV2FHIRPathExtensions.create);
+      list := path.evaluate(nil, msg, 'Message.segment.where(code = ''PID'').field[5].element.first().text()');
+      try
+        Assert.AreEqual(1, list.count);
+      finally
+        list.free;
+      end;
+    finally
+      path.Free;
+    end;
+  finally
+    msg.Free;
+  end;
+
+end;
+
+procedure Tv2ParserTests.TestSimple;
+begin
+  test('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
+    'PID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520'#13+
+    'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
+    'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13);
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(Tv2DictTests);
+  TDUnitX.RegisterTestFixture(THL7v2ParserTests);
   TDUnitX.RegisterTestFixture(Tv2ParserTests);
   TDUnitX.RegisterTestFixture(TLLPTests);
 end.

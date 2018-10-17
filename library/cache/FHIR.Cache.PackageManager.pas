@@ -27,6 +27,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
 interface
 
 uses
@@ -653,7 +654,7 @@ begin
                 tar.ReadFile(bi);
                 b := bi.Bytes;
                 if result.ContainsKey(fn) then
-                  raise Exception.Create('Duplicate Entry: '+fn);
+                  raise EFSLException.Create('Duplicate Entry: '+fn);
                 result.Add(fn, copy(b, 0, bi.Size));
               finally
                 bi.free;

@@ -71,7 +71,7 @@ var
 procedure LoadTests;
 begin
   if tests = nil then
-    tests := TMXmlParser.ParseFile('C:\work\fhir.org\Ucum-java\src\test\resources\UcumFunctionalTests.xml', [xpDropWhitespace]);
+    tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\ucum-tests.xml', [xpDropWhitespace]);
 end;
 
 
@@ -128,7 +128,7 @@ begin
   if (svc = nil) then
   begin
     svc := TUcumServices.Create;
-    svc.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum-essence.xml');
+    svc.Import('C:\work\fhirserver\utilities\tests\ucum-essence.xml');
   end;
 end;
 
