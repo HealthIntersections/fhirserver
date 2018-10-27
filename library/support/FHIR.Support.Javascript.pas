@@ -45,6 +45,15 @@ type
     procedure freeObject(obj : TObject); override;
   end;
 
+  TFslJavascriptTypeCategory = (jtcObject, jtcString, jtcInteger, jtcBoolean);
+
+  TFslListManagerResolver = class abstract (TFSLObject)
+  public
+    function category(source : TObject) : TFslJavascriptTypeCategory; virtual; abstract;
+    function primitive(source : TObject) : String; virtual; abstract;
+    function resolve(source : TObject) : TJavascriptClassDefinition; virtual; abstract;
+  end;
+
   TFslObjectListManager = class (TJavascriptArrayManager)
   private
     FList : TFslObjectList;
@@ -62,8 +71,10 @@ type
   private
     FList : TFslList<T>;
     FClassDefinition : TJavascriptClassDefinition;
+    FClassResolver : TFslListManagerResolver;
   public
-    constructor Create(list : TFslList<T>; def : TJavascriptClassDefinition);
+    constructor Create(list : TFslList<T>; def : TJavascriptClassDefinition); overload;
+    constructor create(list: TFslList<T>; classResolver : TFslListManagerResolver); overload;
     destructor Destroy; override;
 
     function count : integer; override;
@@ -106,9 +117,17 @@ begin
   FClassDefinition := def;
 end;
 
+constructor TFslListManager<T>.create(list: TFslList<T>; classResolver : TFslListManagerResolver);
+begin
+  inherited Create;
+  FList := list;
+  FClassResolver := classResolver;
+end;
+
 destructor TFslListManager<T>.Destroy;
 begin
   FList.Free;
+  FClassResolver.Free;
   inherited;
 end;
 
@@ -119,7 +138,15 @@ end;
 
 function TFslListManager<T>.item(i: integer): JsValueRef;
 begin
-  result := FJavascript.wrap(FList[i].Link, FClassDefinition, true);
+  if FClassDefinition = nil then
+    case FClassResolver.category(FList[i]) of
+      jtcObject : result := FJavascript.wrap(FList[i].Link, FClassResolver.resolve(FList[i]), true);
+      jtcString : result := FJavascript.wrap(FClassResolver.primitive(FList[i]));
+      jtcInteger : result := FJavascript.wrap(StrToInt(FClassResolver.primitive(FList[i])));
+      jtcBoolean : result := FJavascript.wrap(StrToBool(FClassResolver.primitive(FList[i])));
+    end
+  else
+    result := FJavascript.wrap(FList[i].Link, FClassDefinition, true);
 end;
 
 function TFslListManager<T>.push(this : TJsValue; params : TJsValues) : TJsValue;
@@ -135,6 +162,8 @@ begin
     o := FJavascript.getWrapped<T>(p);
     if o = nil then
     begin
+      if FClassDefinition = nil then
+        raise EJavascriptHost.Create('Push with nil object is only possible for lists with known types'); // not sure when this would be triggered
       pl[0] := p;
       o := FClassDefinition.Factory(FJavascript, FClassDefinition, pl, owns) as T;
     end;

@@ -223,6 +223,8 @@ Type
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
   TFslList<T : class> = class (TFslEnumerable<T>)
   private
+    FJsHandle: pointer;
+    FJsInstance: cardinal;
     function GetEmpty: boolean;
   type
     arrayofT = array of T;
@@ -353,6 +355,10 @@ Type
       end;
 
     function GetEnumerator: TFslEnumerator; reintroduce;
+
+    // javascript caching for Chakra performance
+    property jsInstance : cardinal read FJsInstance write FJsInstance;
+    property jsHandle : pointer read FJsHandle write FJsHandle;
   end;
 
   TFslPair<T : TFslObject> = record

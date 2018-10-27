@@ -514,6 +514,8 @@ type
   end;
 
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
+  private
+    FOneBased : boolean;
   public
     constructor Create; overload; override;
     constructor Create(focus : TFHIRObject); overload;
@@ -526,6 +528,8 @@ type
     procedure addAll(parent : TFHIRObject; name : String; value : TFHIRObjectList); overload;
 
     function asValues : TFHIRObjectList;
+
+    property OneBased : boolean read FOneBased write FOneBased;
 
     class function compareDeep(e1, e2 : TFHIRSelectionList; allowNull : boolean) : boolean;
   end;

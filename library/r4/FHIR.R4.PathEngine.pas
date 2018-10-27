@@ -1785,6 +1785,7 @@ function TFHIRPathEngine.funcItem(context : TFHIRPathExecutionContext; focus: TF
 var
   s : String;
   res : TFHIRSelectionList;
+  i : integer;
 begin
   res := execute(context, focus, exp.Parameters[0], true);
   try
@@ -1793,8 +1794,14 @@ begin
     res.Free;
   end;
   result := TFHIRSelectionList.Create;
-  if StringIsInteger16(s) and (focus.Count > StrToInt(s)) then
-    result.Add(focus[StrToInt(s)].Link);
+  if StringIsInteger16(s) then
+  begin
+    i := StrToInt(s);
+    if focus.oneBased then
+      dec(i);
+    if (focus.Count > i) then
+      result.Add(focus[i].Link);
+  end;
 end;
 
 function TFHIRPathEngine.funcLast(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -4142,9 +4149,16 @@ begin
           begin
             outcome := execute(context, item.value, exp, atEntry);
             try
+              if work.oneBased <> outcome.OneBased then
+                if work.count = 0 then
+                  work.oneBased := outcome.OneBased
+                else
+                  raise EFHIRPath.Create('Cannot mix 0-bazed and 1-based selections');
+
               for base in outcome do
                 if (base.value <> nil) then
                   work.Add(base.Link);
+
             finally
               outcome.Free;
             end;
@@ -4330,13 +4344,18 @@ var
   res, work : TFHIRSelectionList;
   params : TFslList<TFHIRObject>;
   i : integer;
+  couldHaveBeen, done : boolean;
 begin
-  for ext in FExtensions do
-  begin
-    if ext.functionApplies(context, focus, exp.name) then
+  result := TFHIRSelectionList.Create;
+  try
+    couldHaveBeen := false;
+    done := false;
+    for ext in FExtensions do
     begin
-      result := TFHIRSelectionList.Create;
-      try
+      couldHaveBeen := couldHaveBeen or ext.isValidFunction(exp.name);
+      if ext.functionApplies(context, focus, exp.name) then
+      begin
+        done := true;
         for item in focus do
         begin
           work := ext.execute(context, item.value, exp.name, exp.Parameters, self);
@@ -4346,15 +4365,15 @@ begin
             work.Free;
           end;
         end;
-        result.Link;
-      finally
-        result.Free;
+        break;
       end;
-      exit;
     end;
+    if not done and (not couldHaveBeen or (focus.Count > 0)) then
+      raise EFHIRPath.create('Unknown Function '+exp.name);
+    result.Link;
+  finally
+    result.Free;
   end;
-
-  raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
 function TFHIRPathEngine.check(appInfo: TFslObject; resourceType, context, path: String; expr: TFHIRPathExpressionNodeV; xPathStartsWithValueRef: boolean): TFHIRTypeDetailsV;

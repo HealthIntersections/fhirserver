@@ -280,6 +280,11 @@ valueOf()	Returns the primitive value of an array
     function asString(val: JsValueRef): String;
 
     {
+      Convert whatever javascript variable is in val to a string representation
+    }
+    function asInteger(val: JsValueRef): integer;
+
+    {
       Convert whatever javascript variable is in val to a boolean
     }
     function asBoolean(val: JsValueRef): boolean;
@@ -1019,6 +1024,11 @@ begin
     JsTypedArray  : result := false;
     JsDataView : result := false;
   end;
+end;
+
+function TJavascript.asInteger(val: JsValueRef): integer;
+begin
+  result := StrToInt(asString(val));
 end;
 
 function TJavascript.getType(v: JsValueRef): JsValueType;
