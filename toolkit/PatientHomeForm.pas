@@ -36,9 +36,10 @@ uses
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox, FMX.TabControl,
   FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
   FHIR.Support.Utilities,
-  FHIR.Support.Base,
-  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
-  BaseFrame, DocumentGenerationForm;
+  FHIR.Support.Base, FHIR.Base.Objects,
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Version.Types,
+  BaseFrame, DocumentGenerationForm, System.Rtti, FMX.Grid.Style, FMX.Grid,
+  FMX.ScrollBox;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -67,8 +68,24 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    Panel10: TPanel;
+    Label6: TLabel;
+    grdName: TGrid;
+    StringColumn1: TStringColumn;
+    StringColumn2: TStringColumn;
+    StringColumn3: TStringColumn;
+    StringColumn4: TStringColumn;
+    StringColumn5: TStringColumn;
+    StringColumn6: TStringColumn;
+    StringColumn7: TStringColumn;
+    StringColumn8: TStringColumn;
+    Panel11: TPanel;
     procedure Button1Click(Sender: TObject);
     procedure lbCompositionsDblClick(Sender: TObject);
+    procedure grdNameGetValue(Sender: TObject; const ACol, ARow: Integer;
+      var Value: TValue);
   private
     FPatient: TFHIRPatient;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -238,6 +255,33 @@ begin
   inherited;
 end;
 
+function txt(list : TFhirStringList) : String;
+var
+  s : TFHIRString;
+begin
+  result := ' ';
+  for s in list do
+    result := result + s.value+' ';
+  result := result.trim;
+end;
+
+procedure TPatientHomeFrame.grdNameGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  name : TFHIRHumanName;
+begin
+  name := patient.nameList[AROw];
+  case aCol of
+    0: Value := txt(name.prefixList);
+    1: Value := name.family;
+    2: Value := txt(name.givenList);
+    3: Value := txt(name.suffixList);
+    4: Value := CODES_TFhirNameUseEnum[name.use];
+    5: Value := gen(name.period);
+    6: Value := name.familyElement.getExtensionString('http://hl7.org/fhir/StructureDefinition/humanname-fathers-family');
+    7: Value := name.familyElement.getExtensionString('http://hl7.org/fhir/StructureDefinition/humanname-mothers-family')
+  end;
+end;
+
 procedure TPatientHomeFrame.lbCompositionsDblClick(Sender: TObject);
 var
   form : TDocumentGeneratorForm;
@@ -290,9 +334,13 @@ var
   start : TDateTime;
 begin
   inherited;
-  buildGraphs;
+  if FCapabilityStatement.supportsResource('Observation', [fcmdRead, fcmdSearch]) then
+    buildGraphs;
 
   lblName.text := gen(patient.nameList[0]);
+
+  grdName.RowCount := 0;
+  grdName.RowCount := patient.nameList.count;
 
   if FResources = nil then
     FResources := TFslMap<TFhirResource>.create;
@@ -306,19 +354,22 @@ begin
       lbCompositions.Clear;
       FResources.clear;
 
-      bundle := FClient.search(frtComposition, true, 'patient=Patient/'+FPatient.id) as TFhirBundle;
-      try
-        start := now;
-        for be in bundle.entryList do
-          if (be.resource <> nil) then
-          begin
-            FResources.Add(be.resource.fhirType+'/'+be.resource.id, be.resource.Link);
-            if be.resource.ResourceType = frtComposition then
-              lbCompositions.Items.AddObject((be.resource as TFHIRComposition).summary, be.resource);
-          end;
-        lblOutcome.Text := 'Fetched '+inttostr(FResources.Count)+' resources in '+describePeriod(now - start);
-      finally
-        bundle.Free;
+      if FCapabilityStatement.supportsResource('Composition', [fcmdRead, fcmdSearch]) then
+      begin
+        bundle := FClient.search(frtComposition, true, 'patient=Patient/'+FPatient.id) as TFhirBundle;
+        try
+          start := now;
+          for be in bundle.entryList do
+            if (be.resource <> nil) then
+            begin
+              FResources.Add(be.resource.fhirType+'/'+be.resource.id, be.resource.Link);
+              if be.resource.ResourceType = frtComposition then
+                lbCompositions.Items.AddObject((be.resource as TFHIRComposition).summary, be.resource);
+            end;
+          lblOutcome.Text := 'Fetched '+inttostr(FResources.Count)+' resources in '+describePeriod(now - start);
+        finally
+          bundle.Free;
+        end;
       end;
   end);
 end;

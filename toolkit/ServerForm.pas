@@ -140,6 +140,7 @@ type
     Button2: TButton;
     Button3: TButton;
     btnBulkData: TButton;
+    btnMatch: TButton;
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnConfSearchClick(Sender: TObject);
@@ -157,6 +158,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure gridPMatchesCellDblClick(const Column: TColumn; const Row: Integer);
     procedure btnBulkDataClick(Sender: TObject);
+    procedure btnMatchClick(Sender: TObject);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -523,6 +525,50 @@ begin
     end);
 end;
 
+procedure TServerFrame.btnMatchClick(Sender: TObject);
+begin
+  work('Match Patients', true,
+    procedure
+    var
+      pat : TFHIRPatient;
+      params : TFhirParameters;
+      be : TFhirBundleEntry;
+      start : TDateTime;
+    begin
+      pat := TFHIRPatient.create;
+      try
+        if edtPName.text <> '' then
+          pat.nameList.add(TFhirHumanName.FromEdit(edtPName.text));
+        if (edtPTelecom.text <> '') then
+          pat.telecomList.add(TFhirContactPoint.fromEdit(edtPTelecom.text));
+        if dedPDob.text <> '' then
+          pat.birthDate := TDateTimeEx.makeLocal(dedPDob.date);
+        if cbxPGender.itemIndex <> -1 then
+          pat.gender := TFhirAdministrativeGenderEnum(cbxPGender.itemIndex);
+        if cbxPActive.itemIndex > 0 then
+          pat.active := cbxPActive.itemIndex = 1;
+        if edtPIdentifier.text <> '' then
+          pat.identifierList.append.value := edtPIdentifier.text;
+        params := TFhirParameters.Create;
+        try
+          params.AddParameter('resource', pat.Link);
+          start := now;
+          FPatBundle := FClient.operation(frtPatient, 'match', params) as TFhirBundle;
+            for be in FPatBundle.entryList do
+              if ((be.search = nil) or (be.search.mode = SearchEntryModeMatch)) and (be.resource <> nil) then
+                FPatMatches.Add(be.resource.Link as TFHIRPatient);
+            gridPMatches.RowCount := FpatMatches.Count;
+            lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
+            btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
+        finally
+          params.Free;
+        end;
+      finally
+        pat.free;
+      end;
+    end);
+end;
+
 procedure TServerFrame.btnSearchPatientsClick(Sender: TObject);
 begin
   work('Search Patients', true,
@@ -590,7 +636,7 @@ begin
         start := now;
         FPatBundle := FClient.search(frtPatient, false, params);
         for be in FPatBundle.entryList do
-          if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+          if ((be.search = nil) or (be.search.mode = SearchEntryModeMatch)) and (be.resource <> nil) then
             FPatMatches.Add(be.resource.Link as TFHIRPatient);
         gridPMatches.RowCount := FpatMatches.Count;
         lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
@@ -725,6 +771,8 @@ begin
   cbPUseLastUpdated.IsChecked := Settings.getValue('Patient-search', 'updated-opt', false);
 
   btnFetchMore.Visible := false;
+  btnMatch.enabled := FCapabilityStatement.supportsOperation('Patient', 'match');
+  btnMatch.visible := btnMatch.enabled;
   FConfMatches := TFslList<TFHIRResource>.create;
   FPatMatches := TFslList<TFHIRPatient>.create;
   cbxSearchTypeChange(nil);

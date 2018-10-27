@@ -34,7 +34,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
+  SysUtils, Classes, Soap.EncdDecd, Generics.Collections, ZLib,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
   FHIR.Web.Fetcher,
@@ -368,12 +368,15 @@ type
 
     property Format[fmt : TFHIRFormat] : boolean read HasFormat write SetHasFormat;
     property instantiates[url : String] : boolean read GetInstantiates write SetInstantiates;
+    function supportsResource(name : String; commands : TFHIRCommandTypeSet) : boolean;
+    function supportsOperation(rName, opName : string) : boolean;
   end;
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
     constructor Create(system, code : String); overload;
     function hasCode(System, Code : String) : boolean;
+    function hasCoding : boolean;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
   end;
@@ -429,6 +432,7 @@ type
   TFhirHumanNameHelper = class helper for TFhirHumanName
   public
     function given : string;
+    class function fromEdit(n : String) : TFhirHumanName;
   end;
 
   TFhirValueSetHelper = class helper for TFhirValueSet
@@ -704,6 +708,7 @@ type
   public
     function isPhoneOrFax : boolean;
     function isEmail : boolean;
+    class function fromEdit(n : String) : TFhirContactPoint;
   end;
 
 function summarise(coding : TFHIRCoding):String; overload;
@@ -732,6 +737,7 @@ function gen(t : TFhirType):String; overload;
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
+function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 
 type
   TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
@@ -2521,6 +2527,51 @@ begin
     instantiatesList.Append.value := url;
 end;
 
+function TFHIRCapabilityStatementHelper.supportsOperation(rName, opName: string): boolean;
+var
+  rest : TFHIRCapabilityStatementRest;
+  op : TFHIRCapabilityStatementRestOperation;
+begin
+  result := false;
+  for rest in self.restList do
+  begin
+    for op in rest.operationList do
+      if op.name = opName then
+        exit(true);
+  end;
+end;
+
+function TFHIRCapabilityStatementHelper.supportsResource(name: String; commands: TFHIRCommandTypeSet): boolean;
+var
+  rest : TFHIRCapabilityStatementRest;
+  res : TFHIRCapabilityStatementRestResource;
+  cmd : TFHIRCapabilityStatementRestResourceInteraction;
+  ok, found : boolean;
+  c : TFHIRCommandType;
+begin
+  result := false;
+  for rest in self.restList do
+  begin
+    for res in rest.resourceList do
+    begin
+      if CODES_TFhirResourceTypesEnum[res.type_] = name then
+      begin
+        ok := true;
+        for c := low(TFHIRCommandType) to high(TFHIRCommandType) do
+          if c in commands then
+          begin
+            found := false;
+            for cmd in res.interactionList do
+              if CODES_TFhirTypeRestfulInteractionEnum[cmd.code] = CODES_TFHIRCommandType[c] then
+                found := true;
+          end;
+        if ok then
+          exit(true);
+      end;
+    end;
+  end;
+end;
+
 { TFhirCapabilityStatementRestResourceHelper }
 
 function TFhirConformanceRestResourceHelper.interaction(type_: TFhirTypeRestfulInteractionEnum): TFhirCapabilityStatementRestResourceInteraction;
@@ -3435,6 +3486,12 @@ begin
         result := true;
         break;
       end;
+end;
+
+
+function TFHIRCodeableConceptHelper.hasCoding: boolean;
+begin
+  result := CodingList.Count > 0;
 end;
 
 { TFhirResourceMetaHelper }
@@ -5007,6 +5064,14 @@ begin
   p.value := TFhirBoolean.Create(value);
 end;
 
+function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
+begin
+  if (props = nil) or (props.Count = 0) then
+    result := def
+  else
+    result := props.Contains(name);
+end;
+
 { TFHIRObservationHelper }
 
 function TFHIRObservationHelper.addComponent(system, code: String): TFhirObservationComponent;
@@ -5710,6 +5775,33 @@ end;
 
 { TFhirHumanNameHelper }
 
+class function TFhirHumanNameHelper.fromEdit(n: String): TFhirHumanName;
+var
+  s : String;
+begin
+  result := TFhirHumanName.create;
+  try
+    // really, what we do should be drive by culture, but for now, we guess.
+    if (n.contains(',')) then
+    begin
+      // anything before the , is family name
+      result.family := n.substring(0, n.indexOf(','));
+      for s in n.substring(n.indexOf(',')+1).split([' ']) do
+        result.givenList.add(TFhirString.create(s));
+    end
+    else
+    begin
+      // anything before the list space is given names
+      result.family := n.substring(n.lastIndexOf(' '));
+      for s in n.substring(0, n.lastIndexOf(',')+1).split([' ']) do
+        result.givenList.add(TFhirString.create(s));
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFhirHumanNameHelper.given: string;
 var
   g : TFHIRString;
@@ -5941,6 +6033,31 @@ begin
 end;
 
 { TFhirContactPointHelper }
+
+class function TFhirContactPointHelper.fromEdit(n: String): TFhirContactPoint;
+var
+  ok : boolean;
+  ch : char;
+begin
+  result := TFhirContactPoint.create;
+  try
+    result.value := n;
+    if n.contains('@') then
+      result.system := ContactPointSystemEmail
+    else
+    begin
+      ok := true;
+      for ch in n do
+        if not CharInSet(ch, [' ', '0'..'9', '+']) then
+          ok := false;
+      if ok then
+        result.system := ContactPointSystemPhone;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
 
 function TFhirContactPointHelper.isEmail: boolean;
 begin

@@ -52,35 +52,112 @@ object PatientHomeFrame: TPatientHomeFrame
     Size.Width = 950.000000000000000000
     Size.Height = 607.000000000000000000
     Size.PlatformDefault = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 2
     TabPosition = PlatformDefault
     Sizes = (
       950s
-      602s
+      581s
       950s
-      602s
+      581s
       950s
-      602s)
+      581s)
     object TabItem1: TTabItem
       CustomIcon = <
         item
         end>
-      IsSelected = False
-      Size.Height = 5.000000000000000000
+      IsSelected = True
+      Size.Width = 82.000000000000000000
+      Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
       Text = 'Home Page'
       ExplicitSize.cx = 82.000000000000000000
       ExplicitSize.cy = 26.000000000000000000
+      object Panel8: TPanel
+        Align = Top
+        Size.Width = 950.000000000000000000
+        Size.Height = 129.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object Panel9: TPanel
+          Align = Top
+          Size.Width = 950.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object Label6: TLabel
+            Align = Left
+            StyledSettings = [Family, Size, FontColor]
+            Size.Width = 120.000000000000000000
+            Size.Height = 25.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            Text = '    Names'
+            TabOrder = 0
+          end
+        end
+        object Panel10: TPanel
+          Align = Client
+          Size.Width = 950.000000000000000000
+          Size.Height = 104.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          object grdName: TGrid
+            Align = Client
+            CanFocus = True
+            ClipChildren = True
+            Size.Width = 950.000000000000000000
+            Size.Height = 104.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            OnGetValue = grdNameGetValue
+            Viewport.Width = 950.000000000000000000
+            Viewport.Height = 104.000000000000000000
+            object StringColumn1: TStringColumn
+              Header = 'Prefix'
+            end
+            object StringColumn2: TStringColumn
+              Header = 'Family Name'
+            end
+            object StringColumn3: TStringColumn
+              Header = 'Given Names'
+            end
+            object StringColumn4: TStringColumn
+              Header = 'Suffix'
+            end
+            object StringColumn5: TStringColumn
+              Header = 'Use'
+            end
+            object StringColumn6: TStringColumn
+              Header = 'Period'
+            end
+            object StringColumn7: TStringColumn
+              Header = 'Father'#39's Family Name'
+            end
+            object StringColumn8: TStringColumn
+              Header = 'Mother'#39's Family Name'
+            end
+          end
+        end
+      end
+      object Panel11: TPanel
+        Align = Top
+        Position.Y = 129.000000000000000000
+        Size.Width = 950.000000000000000000
+        Size.Height = 136.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+      end
     end
     object TabItem2: TTabItem
       CustomIcon = <
         item
         end>
-      IsSelected = True
-      Size.Height = 5.000000000000000000
+      IsSelected = False
+      Size.Width = 75.000000000000000000
+      Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
@@ -173,7 +250,8 @@ object PatientHomeFrame: TPatientHomeFrame
         item
         end>
       IsSelected = False
-      Size.Height = 5.000000000000000000
+      Size.Width = 93.000000000000000000
+      Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
@@ -191,7 +269,7 @@ object PatientHomeFrame: TPatientHomeFrame
         Margins.Right = 2.000000000000000000
         Margins.Bottom = 2.000000000000000000
         Size.Width = 946.000000000000000000
-        Size.Height = 598.000000000000000000
+        Size.Height = 577.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
         object Panel3: TPanel
@@ -214,7 +292,7 @@ object PatientHomeFrame: TPatientHomeFrame
         object lbCompositions: TListBox
           Align = Client
           Size.Width = 942.000000000000000000
-          Size.Height = 561.000000000000000000
+          Size.Height = 540.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
           OnDblClick = lbCompositionsDblClick
@@ -223,7 +301,7 @@ object PatientHomeFrame: TPatientHomeFrame
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
           Viewport.Width = 942.000000000000000000
-          Viewport.Height = 561.000000000000000000
+          Viewport.Height = 540.000000000000000000
         end
       end
     end

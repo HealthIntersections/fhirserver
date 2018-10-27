@@ -346,6 +346,7 @@ type
   public
     property xmlId : String read GetXmlId write SetmlId;
 
+    procedure checkNoImplicitRules(place, role : String);
 
     function textSummary : String;
   end;
@@ -371,7 +372,7 @@ type
     procedure removeExtension(url : String); overload;
     procedure removeExtension(url : String; index : integer); overload;
     procedure setExtensionString(url, value : String);
-    procedure checkNoModifiers(place, role : String);
+    procedure checkNoModifiers(place, role : String; allowed : TArray<String> = nil);
   end;
 
   TFhirCodeListHelper = class helper for TFhirCodeList
@@ -408,6 +409,8 @@ type
 
     property Format[fmt : TFHIRFormat] : boolean read HasFormat write SetHasFormat;
     property instantiates[url : String] : boolean read GetInstantiates write SetInstantiates;
+    function supportsResource(name : String; commands : TFHIRCommandTypeSet) : boolean;
+    function supportsOperation(rName, opName : string) : boolean;
   end;
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
@@ -468,8 +471,10 @@ type
   end;
 
   TFhirHumanNameHelper = class helper for TFhirHumanName
+  private
   public
     function given : string;
+    class function fromEdit(n: String): TFhirHumanName; static;
   end;
 
   TFhirValueSetHelper = class helper for TFhirValueSet
@@ -765,6 +770,7 @@ type
   public
     function isPhoneOrFax : boolean;
     function isEmail : boolean;
+    class function fromEdit(n : String) : TFhirContactPoint;
   end;
 
 function summarise(coding : TFHIRCoding):String; overload;
@@ -2580,6 +2586,51 @@ begin
     instantiatesList.Append.value := url;
 end;
 
+function TFHIRCapabilityStatementHelper.supportsOperation(rName, opName: string): boolean;
+var
+  rest : TFHIRCapabilityStatementRest;
+  op : TFHIRCapabilityStatementRestOperation;
+begin
+  result := false;
+  for rest in self.restList do
+  begin
+    for op in rest.operationList do
+      if op.name = opName then
+        exit(true);
+  end;
+end;
+
+function TFHIRCapabilityStatementHelper.supportsResource(name: String; commands: TFHIRCommandTypeSet): boolean;
+var
+  rest : TFHIRCapabilityStatementRest;
+  res : TFHIRCapabilityStatementRestResource;
+  cmd : TFHIRCapabilityStatementRestResourceInteraction;
+  ok, found : boolean;
+  c : TFHIRCommandType;
+begin
+  result := false;
+  for rest in self.restList do
+  begin
+    for res in rest.resourceList do
+    begin
+      if CODES_TFhirResourceTypesEnum[res.type_] = name then
+      begin
+        ok := true;
+        for c := low(TFHIRCommandType) to high(TFHIRCommandType) do
+          if c in commands then
+          begin
+            found := false;
+            for cmd in res.interactionList do
+              if CODES_TFhirTypeRestfulInteractionEnum[cmd.code] = CODES_TFHIRCommandType[c] then
+                found := true;
+          end;
+        if ok then
+          exit(true);
+      end;
+    end;
+  end;
+end;
+
 { TFhirCapabilityStatementRestResourceHelper }
 
 function TFhirConformanceRestResourceHelper.interaction(type_: TFhirTypeRestfulInteractionEnum): TFhirCapabilityStatementRestResourceInteraction;
@@ -2668,7 +2719,7 @@ begin
   result.url := url;
 end;
 
-procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String);
+procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String; allowed : TArray<String> = nil);
 begin
   if modifierExtensionList.Count > 0 then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
@@ -2724,8 +2775,13 @@ begin
     result := result.Substring(1);
 end;
 
-
 { TFHIRResourceHelper }
+
+procedure TFHIRResourceHelper.checkNoImplicitRules(place, role: String);
+begin
+  if implicitRules <> '' then
+    raise EUnsafeOperation.Create('The resource '+role+' has an unknown implicitRules tag at '+place);
+end;
 
 function TFHIRResourceHelper.GetXmlId: String;
 begin
@@ -5768,6 +5824,33 @@ end;
 
 { TFhirHumanNameHelper }
 
+class function TFhirHumanNameHelper.fromEdit(n: String): TFhirHumanName;
+var
+  s : String;
+begin
+  result := TFhirHumanName.create;
+  try
+    // really, what we do should be drive by culture, but for now, we guess.
+    if (n.contains(',')) then
+    begin
+      // anything before the , is family name
+      result.family := n.substring(0, n.indexOf(','));
+      for s in n.substring(n.indexOf(',')+1).split([' ']) do
+        result.givenList.add(TFhirString.create(s));
+    end
+    else
+    begin
+      // anything before the list space is given names
+      result.family := n.substring(n.lastIndexOf(' '));
+      for s in n.substring(0, n.lastIndexOf(',')+1).split([' ']) do
+        result.givenList.add(TFhirString.create(s));
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFhirHumanNameHelper.given: string;
 var
   g : TFHIRString;
@@ -6031,6 +6114,31 @@ begin
 end;
 
 { TFhirContactPointHelper }
+
+class function TFhirContactPointHelper.fromEdit(n: String): TFhirContactPoint;
+var
+  ok : boolean;
+  ch : char;
+begin
+  result := TFhirContactPoint.create;
+  try
+    result.value := n;
+    if n.contains('@') then
+      result.system := ContactPointSystemEmail
+    else
+    begin
+      ok := true;
+      for ch in n do
+        if not CharInSet(ch, [' ', '0'..'9', '+']) then
+          ok := false;
+      if ok then
+        result.system := ContactPointSystemPhone;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
 
 function TFhirContactPointHelper.isEmail: boolean;
 begin

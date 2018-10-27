@@ -1,10 +1,10 @@
 object ServerFrame: TServerFrame
-  Size.Width = 715.000000000000000000
+  Size.Width = 862.000000000000000000
   Size.Height = 442.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Top
-    Size.Width = 715.000000000000000000
+    Size.Width = 862.000000000000000000
     Size.Height = 36.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -30,7 +30,7 @@ object ServerFrame: TServerFrame
     end
     object btnClose: TButton
       Anchors = [akTop, akRight]
-      Position.X = 1268.000000000000000000
+      Position.X = 1415.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 3
       Text = 'Close'
@@ -64,7 +64,7 @@ object ServerFrame: TServerFrame
   object pnlSearch: TPanel
     Align = Top
     Position.Y = 36.000000000000000000
-    Size.Width = 715.000000000000000000
+    Size.Width = 862.000000000000000000
     Size.Height = 157.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
@@ -81,18 +81,18 @@ object ServerFrame: TServerFrame
       Anchors = [akLeft, akTop, akRight, akBottom]
       Position.X = 8.000000000000000000
       Position.Y = 32.000000000000000000
-      Size.Width = 700.000000000000000000
+      Size.Width = 847.000000000000000000
       Size.Height = 124.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 0
       TabOrder = 2
       TabPosition = None
       Sizes = (
-        700s
+        847s
         124s
-        700s
+        847s
         124s
-        700s
+        847s
         124s)
       object TabItem1: TTabItem
         CustomIcon = <
@@ -109,7 +109,7 @@ object ServerFrame: TServerFrame
         ExplicitSize.cy = 8.000000000000000000
         object edtPName: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          TabOrder = 13
+          TabOrder = 14
           Position.X = 56.000000000000000000
           Position.Y = 8.000000000000000000
           HelpContext = 5
@@ -183,7 +183,7 @@ object ServerFrame: TServerFrame
           Size.Width = 57.000000000000000000
           Size.Height = 57.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 10
+          TabOrder = 11
           Text = 'Search'
           OnClick = btnSearchPatientsClick
         end
@@ -194,7 +194,7 @@ object ServerFrame: TServerFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Active'
-          TabOrder = 11
+          TabOrder = 12
         end
         object Label16: TLabel
           Position.X = 216.000000000000000000
@@ -203,7 +203,7 @@ object ServerFrame: TServerFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Birth Date'
-          TabOrder = 14
+          TabOrder = 15
         end
         object Label20: TLabel
           Position.X = 456.000000000000000000
@@ -212,7 +212,7 @@ object ServerFrame: TServerFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Deceased'
-          TabOrder = 15
+          TabOrder = 16
         end
         object Label21: TLabel
           Position.X = 8.000000000000000000
@@ -221,13 +221,13 @@ object ServerFrame: TServerFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Gender'
-          TabOrder = 16
+          TabOrder = 17
         end
         object Label22: TLabel
           Position.X = 416.000000000000000000
           Position.Y = 63.000000000000000000
           Text = 'Language'
-          TabOrder = 18
+          TabOrder = 19
         end
         object Label24: TLabel
           Position.X = 8.000000000000000000
@@ -236,7 +236,7 @@ object ServerFrame: TServerFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Name'
-          TabOrder = 19
+          TabOrder = 20
         end
         object Label25: TLabel
           Position.X = 152.000000000000000000
@@ -245,17 +245,17 @@ object ServerFrame: TServerFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Phone/Email'
-          TabOrder = 20
+          TabOrder = 21
         end
         object Label26: TLabel
           Position.X = 152.000000000000000000
           Position.Y = 63.000000000000000000
           Text = 'Species'
-          TabOrder = 21
+          TabOrder = 22
         end
         object edtPTelecom: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          TabOrder = 17
+          TabOrder = 18
           Position.X = 240.000000000000000000
           Position.Y = 34.000000000000000000
           HelpContext = 10
@@ -276,7 +276,7 @@ object ServerFrame: TServerFrame
           Size.Width = 65.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 24
+          TabOrder = 25
           OnChange = cbxPDobChange
         end
         object dedPDob: TDateEdit
@@ -287,7 +287,7 @@ object ServerFrame: TServerFrame
           Size.Width = 97.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 25
+          TabOrder = 26
         end
         object cbxPGender: TComboBox
           HelpContext = 9
@@ -302,7 +302,7 @@ object ServerFrame: TServerFrame
           Size.Width = 81.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 26
+          TabOrder = 27
         end
         object cbxPDeceased: TComboBox
           HelpContext = 7
@@ -319,7 +319,7 @@ object ServerFrame: TServerFrame
           Size.Width = 65.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 22
+          TabOrder = 23
           OnChange = cbxPDeceasedChange
         end
         object dedPDeceased: TDateEdit
@@ -330,7 +330,7 @@ object ServerFrame: TServerFrame
           Size.Width = 97.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 23
+          TabOrder = 24
         end
         object cbxPActive: TComboBox
           HelpContext = 12
@@ -343,11 +343,11 @@ object ServerFrame: TServerFrame
           Size.Width = 81.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 27
+          TabOrder = 28
         end
         object edtPIdentifier: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          TabOrder = 12
+          TabOrder = 13
           Position.X = 480.000000000000000000
           Position.Y = 34.000000000000000000
           HelpContext = 11
@@ -366,7 +366,7 @@ object ServerFrame: TServerFrame
           Size.Width = 161.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 28
+          TabOrder = 29
         end
         object cbxPLanguage: TComboBox
           HelpContext = 14
@@ -402,7 +402,7 @@ object ServerFrame: TServerFrame
           Size.Width = 137.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 29
+          TabOrder = 30
         end
         object cbPUseLastUpdated: TCheckBox
           Position.X = 296.000000000000000000
@@ -410,9 +410,19 @@ object ServerFrame: TServerFrame
           Size.Width = 25.000000000000000000
           Size.Height = 19.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 30
+          TabOrder = 31
           OnChange = cbPUseLastUpdatedChange
           OnClick = cbPUseLastUpdatedChange
+        end
+        object btnMatch: TButton
+          Position.X = 688.000000000000000000
+          Position.Y = 48.000000000000000000
+          Size.Width = 57.000000000000000000
+          Size.Height = 57.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 10
+          Text = 'Match'
+          OnClick = btnMatchClick
         end
       end
       object TabItem2: TTabItem
@@ -701,7 +711,7 @@ object ServerFrame: TServerFrame
       ItemIndex = 0
       Position.X = 72.000000000000000000
       Position.Y = 6.000000000000000000
-      Size.Width = 636.000000000000000000
+      Size.Width = 783.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 4
@@ -713,30 +723,30 @@ object ServerFrame: TServerFrame
     Cursor = crVSplit
     MinSize = 20.000000000000000000
     Position.Y = 193.000000000000000000
-    Size.Width = 715.000000000000000000
+    Size.Width = 862.000000000000000000
     Size.Height = 8.000000000000000000
     Size.PlatformDefault = False
   end
   object Panel2: TPanel
     Align = Client
-    Size.Width = 715.000000000000000000
+    Size.Width = 862.000000000000000000
     Size.Height = 215.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 3
     object tabMatches: TTabControl
       Align = Client
-      Size.Width = 715.000000000000000000
+      Size.Width = 862.000000000000000000
       Size.Height = 215.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 0
       TabOrder = 1
       TabPosition = None
       Sizes = (
-        715s
+        862s
         215s
-        715s
+        862s
         215s
-        715s
+        862s
         215s)
       object TabItem4: TTabItem
         CustomIcon = <
@@ -758,7 +768,7 @@ object ServerFrame: TServerFrame
           Margins.Left = 6.000000000000000000
           Margins.Right = 6.000000000000000000
           Margins.Bottom = 6.000000000000000000
-          Size.Width = 703.000000000000000000
+          Size.Width = 850.000000000000000000
           Size.Height = 209.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
@@ -766,7 +776,7 @@ object ServerFrame: TServerFrame
           Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
           OnGetValue = gridPMatchesGetValue
           OnCellDblClick = gridPMatchesCellDblClick
-          Viewport.Width = 699.000000000000000000
+          Viewport.Width = 846.000000000000000000
           Viewport.Height = 184.000000000000000000
           object StringColumn9: TStringColumn
             Header = 'Id'
@@ -824,7 +834,7 @@ object ServerFrame: TServerFrame
           Margins.Left = 6.000000000000000000
           Margins.Right = 6.000000000000000000
           Margins.Bottom = 6.000000000000000000
-          Size.Width = 703.000000000000000000
+          Size.Width = 850.000000000000000000
           Size.Height = 209.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
@@ -832,7 +842,7 @@ object ServerFrame: TServerFrame
           Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
           OnGetValue = gridConfMatchesGetValue
           OnCellDblClick = gridConfMatchesCellDblClick
-          Viewport.Width = 703.000000000000000000
+          Viewport.Width = 850.000000000000000000
           Viewport.Height = 209.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'Type'
@@ -884,7 +894,7 @@ object ServerFrame: TServerFrame
   object Panel3: TPanel
     Align = Bottom
     Position.Y = 416.000000000000000000
-    Size.Width = 715.000000000000000000
+    Size.Width = 862.000000000000000000
     Size.Height = 26.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
@@ -892,7 +902,7 @@ object ServerFrame: TServerFrame
       Anchors = [akLeft, akTop, akRight]
       Position.X = 8.000000000000000000
       Position.Y = 4.000000000000000000
-      Size.Width = 593.000000000000000000
+      Size.Width = 740.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -900,7 +910,7 @@ object ServerFrame: TServerFrame
     object btnFetchMore: TButton
       Anchors = [akTop, akRight]
       HelpType = htKeyword
-      Position.X = 616.000000000000000000
+      Position.X = 763.000000000000000000
       Position.Y = 2.000000000000000000
       Size.Width = 97.000000000000000000
       Size.Height = 22.000000000000000000
