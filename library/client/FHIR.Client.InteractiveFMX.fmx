@@ -1,0 +1,405 @@
+object InteractiveClientForm: TInteractiveClientForm
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 725
+  ClientWidth = 1101
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 648.000000000000000000
+    Size.Width = 1101.000000000000000000
+    Size.Height = 77.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Panel2: TPanel
+      Align = Top
+      Size.Width = 1101.000000000000000000
+      Size.Height = 41.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object Label1: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'Server:'
+        TabOrder = 1
+      end
+      object edtServer: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 2
+        Position.X = 56.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 825.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label10: TLabel
+        Anchors = [akTop, akRight]
+        Position.X = 896.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 104.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Format:'
+        TabOrder = 4
+      end
+      object cbxFormat: TComboBox
+        Anchors = [akTop, akRight]
+        Items.Strings = (
+          'JSON'
+          'XML'#11
+          'Turtle')
+        Position.X = 952.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 137.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+      end
+    end
+    object btnAbort: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 1009.000000000000000000
+      Position.Y = 48.000000000000000000
+      TabOrder = 5
+      Text = 'Abort'
+    end
+    object btnReturn: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 913.000000000000000000
+      Position.Y = 47.000000000000000000
+      Size.Width = 89.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'Return'
+    end
+    object btnServer: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 649.000000000000000000
+      Position.Y = 47.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      Text = 'Hit Server'
+    end
+    object btnServerReturn: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 761.000000000000000000
+      Position.Y = 47.000000000000000000
+      Size.Width = 144.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Hit Server and Return'
+    end
+    object btnLoad: TButton
+      Position.X = 8.000000000000000000
+      Position.Y = 48.000000000000000000
+      TabOrder = 6
+      Text = 'Load'
+    end
+    object btnSave: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 561.000000000000000000
+      Position.Y = 48.000000000000000000
+      TabOrder = 7
+      Text = 'Save'
+    end
+    object ComboBox1: TComboBox
+      Anchors = [akLeft, akTop, akRight]
+      Position.X = 96.000000000000000000
+      Position.Y = 48.000000000000000000
+      Size.Width = 450.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+    end
+  end
+  object Panel3: TPanel
+    Align = Left
+    Size.Width = 505.000000000000000000
+    Size.Height = 648.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    OnResize = Panel3Resize
+    object Panel5: TPanel
+      Align = Top
+      Size.Width = 505.000000000000000000
+      Size.Height = 65.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label2: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Request'
+        TabOrder = 0
+      end
+      object Label3: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Address:'
+        TabOrder = 1
+      end
+      object edtAddressReq: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 2
+        Position.X = 72.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 425.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object Panel6: TPanel
+      Align = Client
+      Size.Width = 505.000000000000000000
+      Size.Height = 399.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object memBodyReq: TMemo
+        Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+        DataDetectorTypes = []
+        Align = Client
+        Size.Width = 505.000000000000000000
+        Size.Height = 366.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Viewport.Width = 501.000000000000000000
+        Viewport.Height = 362.000000000000000000
+      end
+      object Panel7: TPanel
+        Align = Top
+        Size.Width = 505.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        object Label4: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 8.000000000000000000
+          Text = 'Body'
+          TabOrder = 0
+        end
+      end
+    end
+    object Panel11: TPanel
+      Align = Top
+      Position.Y = 65.000000000000000000
+      Size.Width = 505.000000000000000000
+      Size.Height = 184.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object grdHeadersReq: TGrid
+        Align = Client
+        CanFocus = True
+        ClipChildren = True
+        Size.Width = 505.000000000000000000
+        Size.Height = 154.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        RowCount = 4
+        Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, Tabs, HeaderClick, AutoDisplacement]
+        Viewport.Width = 501.000000000000000000
+        Viewport.Height = 150.000000000000000000
+        object StringColumn1: TStringColumn
+          Header = 'Header'
+          Size.Width = 150.000000000000000000
+        end
+        object StringColumn2: TStringColumn
+          Header = 'Value'
+          Size.Width = 300.000000000000000000
+        end
+      end
+      object Panel12: TPanel
+        Align = Top
+        Size.Width = 505.000000000000000000
+        Size.Height = 30.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        object Label8: TLabel
+          Position.X = 4.000000000000000000
+          Position.Y = 4.000000000000000000
+          Text = 'Headers'
+          TabOrder = 1
+        end
+        object Button1: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 444.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 26.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = '+'
+        end
+        object Button2: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 472.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 26.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = '-'
+        end
+      end
+    end
+  end
+  object Panel4: TPanel
+    Align = Client
+    Size.Width = 588.000000000000000000
+    Size.Height = 648.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Panel8: TPanel
+      Align = Top
+      Size.Width = 588.000000000000000000
+      Size.Height = 65.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label5: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Response'
+        TabOrder = 1
+      end
+      object Label6: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Status Line:'
+        TabOrder = 2
+      end
+      object edtStatusResp: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 3
+        Position.X = 88.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 492.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object Panel9: TPanel
+      Align = Client
+      Size.Width = 588.000000000000000000
+      Size.Height = 382.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      OnResize = Panel9Resize
+      object memBodyResp: TMemo
+        Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+        DataDetectorTypes = []
+        Align = Client
+        Size.Width = 588.000000000000000000
+        Size.Height = 349.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        Viewport.Width = 584.000000000000000000
+        Viewport.Height = 345.000000000000000000
+      end
+      object Panel10: TPanel
+        Align = Top
+        Size.Width = 588.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        object Label7: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 8.000000000000000000
+          Text = 'Body'
+          TabOrder = 1
+        end
+      end
+    end
+    object Panel13: TPanel
+      Align = Top
+      Position.Y = 65.000000000000000000
+      Size.Width = 588.000000000000000000
+      Size.Height = 201.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object grdHeadersResp: TGrid
+        Align = Client
+        CanFocus = True
+        ClipChildren = True
+        Size.Width = 588.000000000000000000
+        Size.Height = 171.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        RowCount = 4
+        Viewport.Width = 584.000000000000000000
+        Viewport.Height = 146.000000000000000000
+        object StringColumn3: TStringColumn
+          Header = 'Header'
+          Size.Width = 150.000000000000000000
+        end
+        object StringColumn4: TStringColumn
+          Header = 'Value'
+          Size.Width = 300.000000000000000000
+        end
+      end
+      object Panel14: TPanel
+        Align = Top
+        Size.Width = 588.000000000000000000
+        Size.Height = 30.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        object Label9: TLabel
+          Position.X = 4.000000000000000000
+          Position.Y = 4.000000000000000000
+          Text = 'Headers'
+          TabOrder = 1
+        end
+        object Button3: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 532.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 26.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = '+'
+        end
+        object Button4: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 560.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 26.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = '-'
+        end
+      end
+    end
+  end
+  object Splitter1: TSplitter
+    Align = Left
+    Cursor = crHSplit
+    MinSize = 20.000000000000000000
+    Position.X = 505.000000000000000000
+    Size.Width = 8.000000000000000000
+    Size.Height = 648.000000000000000000
+    Size.PlatformDefault = False
+  end
+end

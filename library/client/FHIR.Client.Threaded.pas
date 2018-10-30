@@ -81,6 +81,7 @@ type
     property name : String read FName write FName;
     property resource : TFhirResourceV read FResource write SetResource;
     property buffer : TFslBuffer read FBuffer write SetBuffer;
+    property headers : THTTPHeaders read FHeaders;
 
     property result : TFhirResourceV read FResult write SetResult;
     property error : String read FError write FError;
@@ -99,15 +100,13 @@ type
     destructor Destroy; override;
   end;
 
-  TFhirThreadedCommunicator = class (TFHIRClientCommunicator)
-  private
+  TFhirFacadeCommunicator = class abstract (TFHIRClientCommunicator)
+  protected
     FInternal : TFhirClientV;
-    FEvent : TThreadManagementEvent;
-    procedure wait(Package : TFhirThreadedClientPackage);
+    procedure process(Package : TFhirThreadedClientPackage); virtual; abstract;
   public
-    constructor Create(internal: TFhirClientV; event: TThreadManagementEvent);
+    constructor Create(internal: TFhirClientV);
     destructor Destroy; override;
-    function link: TFhirThreadedCommunicator;
 
     function address : String; override;
     function conformanceV(summary : boolean) : TFHIRResourceV; override;
@@ -128,6 +127,17 @@ type
     // special case that gives direct access to the communicator...
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
     function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+  end;
+
+  TFhirThreadedCommunicator = class (TFhirFacadeCommunicator)
+  private
+    FEvent : TThreadManagementEvent;
+  protected
+    procedure process(Package : TFhirThreadedClientPackage); override;
+  public
+    constructor Create(internal: TFhirClientV; event: TThreadManagementEvent);
+    function link: TFhirThreadedCommunicator;
+
     procedure terminate; override; // only works for some communicators
   end;
 
@@ -240,26 +250,26 @@ begin
   SetThreadName('');
 end;
 
-{ TFhirThreadedCommunicator }
+{ TFhirFacadeCommunicator }
 
-constructor TFhirThreadedCommunicator.Create(internal: TFhirClientV; event: TThreadManagementEvent);
+constructor TFhirFacadeCommunicator.Create(internal: TFhirClientV);
 begin
   Inherited Create;
   FInternal := internal;
-  FEvent := event;
 end;
 
-function TFhirThreadedCommunicator.link: TFhirThreadedCommunicator;
+destructor TFhirFacadeCommunicator.Destroy;
 begin
-  result := TFhirThreadedCommunicator(inherited Link);
+  FInternal.free;
+  inherited;
 end;
 
-function TFhirThreadedCommunicator.address: String;
+function TFhirFacadeCommunicator.address: String;
 begin
   result := FInternal.address;
 end;
 
-function TFhirThreadedCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
+function TFhirFacadeCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -268,7 +278,7 @@ begin
     pack.command := fcmdMetadata;
     pack.summary := summary;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -278,7 +288,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.createResourceV(resource: TFhirResourceV; var id: String): TFHIRResourceV;
+function TFhirFacadeCommunicator.createResourceV(resource: TFhirResourceV; var id: String): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -287,7 +297,7 @@ begin
     pack.command := fcmdCreate;
     pack.resource := resource.Link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     id := pack.id;
     FHeaders := FInternal.LastHeaders;
@@ -298,7 +308,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFhirFacadeCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -309,7 +319,7 @@ begin
     pack.paramString := path;
     pack.Fheaders := Headers;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     FHeaders := FInternal.LastHeaders;
     result := pack.Fbuffer.link;
     FClient.LastUrl := pack.lastUrl;
@@ -319,7 +329,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
+function TFhirFacadeCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -331,7 +341,7 @@ begin
     pack.Fheaders := Headers;
     pack.buffer := body.Link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     FHeaders := FInternal.LastHeaders;
     result := pack.Fbuffer.link;
     FClient.LastUrl := pack.lastUrl;
@@ -341,28 +351,22 @@ begin
   end;
 end;
 
-procedure TFhirThreadedCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
+procedure TFhirFacadeCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
 begin
  raise EFHIRTodo.create('TFhirThreadedCommunicator.deleteResourceV');
 end;
 
-destructor TFhirThreadedCommunicator.Destroy;
-begin
-  FInternal.free;
-  inherited;
-end;
-
-function TFhirThreadedCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
+function TFhirFacadeCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFhirThreadedCommunicator.historyTypeV');
 end;
 
-function TFhirThreadedCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params : string): TFHIRResourceV;
+function TFhirFacadeCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params : string): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFhirThreadedCommunicator.historyInstanceV');
 end;
 
-function TFhirThreadedCommunicator.operationV(atype: TFhirResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.operationV(atype: TFhirResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -374,7 +378,7 @@ begin
     pack.Name := opName;
     pack.resource := params.Link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -384,7 +388,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.operationV(atype: TFhirResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.operationV(atype: TFhirResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -395,7 +399,7 @@ begin
     pack.Name := opName;
     pack.resource := params.Link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -405,7 +409,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.readResourceV(atype: TFhirResourceTypeV; id: String): TFHIRResourceV;
+function TFhirFacadeCommunicator.readResourceV(atype: TFhirResourceTypeV; id: String): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -415,7 +419,7 @@ begin
     pack.resourceType := aType;
     pack.id := id;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -425,7 +429,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.vreadResourceV(atype: TFhirResourceTypeV; id, vid: String): TFHIRResourceV;
+function TFhirFacadeCommunicator.vreadResourceV(atype: TFhirResourceTypeV; id, vid: String): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -436,7 +440,7 @@ begin
     pack.id := id;
     pack.vid := vid;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -446,7 +450,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.searchV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
+function TFhirFacadeCommunicator.searchV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -457,7 +461,7 @@ begin
     pack.allRecords := allRecords;
     pack.paramString := params;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link as TFHIRResourceV;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -468,7 +472,7 @@ begin
 end;
 
 
-function TFhirThreadedCommunicator.searchAgainV(link: String): TFHIRResourceV;
+function TFhirFacadeCommunicator.searchAgainV(link: String): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -477,7 +481,7 @@ begin
     pack.command := fcmdSearch;
     pack.url := link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link as TFHIRResourceV;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -487,17 +491,12 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFhirThreadedCommunicator.searchPostV');
 end;
 
-procedure TFhirThreadedCommunicator.terminate;
-begin
-  raise EFHIRTodo.create('TFhirThreadedCommunicator.terminate');
-end;
-
-function TFhirThreadedCommunicator.transactionV(bundle: TFHIRResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.transactionV(bundle: TFHIRResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -506,7 +505,7 @@ begin
     pack.command := fcmdTransaction;
     pack.resource := bundle.link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link as TFHIRResourceV;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -516,7 +515,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.updateResourceV(resource: TFhirResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.updateResourceV(resource: TFhirResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -525,7 +524,7 @@ begin
     pack.command := fcmdUpdate;
     pack.resource := resource.link;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
-    wait(pack);
+    process(pack);
     result := pack.result.link;
     FHeaders := FInternal.LastHeaders;
     FClient.LastUrl := pack.lastUrl;
@@ -535,7 +534,25 @@ begin
   end;
 end;
 
-procedure TFhirThreadedCommunicator.wait(Package : TFhirThreadedClientPackage);
+{ TFhirThreadedCommunicator }
+
+constructor TFhirThreadedCommunicator.Create(internal: TFhirClientV; event: TThreadManagementEvent);
+begin
+  Inherited Create(internal);
+  FEvent := event;
+end;
+
+function TFhirThreadedCommunicator.link: TFhirThreadedCommunicator;
+begin
+  result := TFhirThreadedCommunicator(inherited Link);
+end;
+
+procedure TFhirThreadedCommunicator.terminate;
+begin
+  raise EFHIRTodo.create('TFhirThreadedCommunicator.terminate');
+end;
+
+procedure TFhirThreadedCommunicator.process(Package : TFhirThreadedClientPackage);
 var
   stop : boolean;
 begin

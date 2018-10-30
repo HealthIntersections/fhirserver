@@ -204,6 +204,7 @@ valueOf()	Returns the primitive value of an array
 
     FPIdGetter : JsPropertyIdRef;
     FPIdSetter : JsPropertyIdRef;
+    FDebugging: boolean;
 
     procedure init;
     procedure fin;
@@ -220,6 +221,7 @@ valueOf()	Returns the primitive value of an array
     destructor Destroy; override;
 
     property InstanceId : cardinal read FInstanceId;
+    property Debugging : boolean read FDebugging write FDebugging;
 
     // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
     procedure reset;
@@ -874,6 +876,8 @@ end;
 
 function TJavascript.execute(script: String; scriptName : String): JsValueRef;
 begin
+//  if Debugging then
+//    jsCheck(jsStartDebugging);
   jsCheck(JsRunScript(PChar(script), FContext, '', result));
 end;
 

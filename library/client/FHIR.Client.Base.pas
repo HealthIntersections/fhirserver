@@ -57,6 +57,8 @@ Type
     lastOperationId : String; // some servers return an id that links to their own internal log for debugging
     progress : String; // X-Progress fgrom bulk data
     function asString : string;
+
+    procedure addToHeaders(list : TStringList);
   end;
 
   TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
@@ -240,6 +242,20 @@ begin
 end;
 
 { THTTPHeaders }
+
+procedure THTTPHeaders.addToHeaders(list: TStringList);
+begin
+  if (contentType <> '') then
+    list.add('ContentType: '+contentType);
+  if (accept <> '') then
+    list.add('Accept: '+accept);
+  if (prefer <> '') then
+    list.add('Prefer: '+prefer);
+  if (location <> '') then
+    list.add('Location: '+location);
+  if (lastOperationId <> '') then
+    list.add('X-Last-Operation-Id: '+lastOperationId);
+end;
 
 function THTTPHeaders.asString: string;
 begin

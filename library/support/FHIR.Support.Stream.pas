@@ -1048,7 +1048,8 @@ procedure StringToFile(content, filename : String; encoding : TEncoding);
 procedure StringToStream(content: String; stream : TStream; encoding : TEncoding); overload;
 procedure StringToStream(content: String; stream : TFslStream; encoding : TEncoding); overload;
 
-procedure BytesToFile(bytes : TBytes; filename : String);
+procedure BytesToFile(bytes : TBytes; filename : String); overload;
+procedure BytesToFile(bytes : TBytes; start, length : integer; filename : String); overload;
 function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : TBytes;
 
 procedure StreamToFile(stream : TStream; filename : String);
@@ -4348,6 +4349,7 @@ var
   ByteBufLen: Integer;
   ok : boolean;
   tries : integer;
+//  dbg : String;
 begin
   SetLength(LBuffer, FBufferSize + BufferPadding);
 
@@ -4374,18 +4376,28 @@ begin
       if FCheckEncoding and (FEncoding.GetCharCount(LBuffer, StartIndex, ByteBufLen) = 0) then
       begin
         SetLength(LBuffer, Length(LBuffer) + BufferPadding);
-        FStream.Read(LBuffer[ByteBufLen], 1);
-        inc(ByteBufLen);
-        inc(tries);
+        if FStream.Readable = 0 then // we're screwed:
+          tries := maxint
+        else
+        begin
+          inc(tries);
+          FStream.Read(LBuffer[ByteBufLen], 1);
+          inc(ByteBufLen)
+        end;
       end;
 
       LString := FEncoding.GetString(LBuffer, StartIndex, ByteBufLen);
       ok := true;
     except
-      if FCheckEncoding and (tries > FEncoding.GetMaxByteCount(1)) then
-        raise
-      else
-        FCheckEncoding := true;
+      on e : exception do
+      begin
+//        dbg := TEncoding.ANSI.getString(LBuffer, StartIndex, ByteBufLen);
+//        BytesToFile(LBuffer, StartIndex, ByteBufLen, 'c:\temp\encoding.bin');
+        if FCheckEncoding and (tries > FEncoding.GetMaxByteCount(1)) then
+         raise EEncodingError.create(e.message{+ '('+dbg+')'})
+        else
+         FCheckEncoding := true;
+      end;
     end;
   until ok;
 
@@ -4781,6 +4793,20 @@ begin
     f.Free;
   end;
 end;
+
+procedure BytesToFile(bytes : TBytes; start, length : integer; filename : String);
+var
+  f : TFileStream;
+begin
+  f := TFileStream.Create(filename, fmCreate);
+  try
+    if length > 0 then
+      f.Write(bytes[start], length);
+  finally
+    f.Free;
+  end;
+end;
+
 
 procedure StreamToFile(stream : TStream; filename : String);
 var
