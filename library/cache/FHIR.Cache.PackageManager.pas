@@ -1153,7 +1153,7 @@ class procedure TPackageDefinition.AddCustomPackages;
     end;
   end;
 begin
-  add('fhir.tx.support', '3.5.0', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.5.0', 'http://fhir.org/packages/fhir.tx.support/3.5.0');
+  add('fhir.tx.support', '3.6.0', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.6.0', 'http://fhir.org/packages/fhir.tx.support/3.6.0');
   add('fhir.tx.support', '3.0.1', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.0.1', 'http://fhir.org/packages/fhir.tx.support/3.0.1');
   add('fhir.tx.support', '1.0.2', 'http://fhir.org/test', 'tx.fhir.org definitions', '1.0.2', 'http://fhir.org/packages/fhir.tx.support/1.0.2');
   add('fhir.argonaut.ehr', '1.0.0', 'http://fhir.org/guides/argonaut', 'Argonaut EHR Query', '1.0.2', 'http://www.fhir.org/guides/argonaut/r2');

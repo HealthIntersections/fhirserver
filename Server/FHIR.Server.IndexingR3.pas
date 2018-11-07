@@ -65,7 +65,7 @@ Type
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
     procedure recordSpace(space : string; key : integer);
-    function TypeForKey(key : integer) : string;
+    function TypeForKey(key : integer) : String;
 
               // addToCompartment
     procedure patientCompartment(key : integer; reference : TFhirReference); overload;
@@ -121,6 +121,7 @@ Type
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
+    function Link : TFhirIndexManager3; overload;
     function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>; override;
   end;
 
@@ -226,6 +227,11 @@ begin
     raise EFHIRException.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
   value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
   FEntries.add(key, parent, ndx, 0, '', value, 0, '', sptString);
+end;
+
+function TFhirIndexManager3.Link: TFhirIndexManager3;
+begin
+  result := TFhirIndexManager3(inherited Link);
 end;
 
 procedure TFhirIndexManager3.index(aType : String; key, parent : integer; value1, value2, name: String);
@@ -689,7 +695,13 @@ begin
   if not (ndx.SearchType in [sptToken, sptNumber, sptQuantity]) then
     raise EFHIRException.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing range');
 
+  if (value.low = nil) then
+    v1 := TFslDecimal.makeInfinity.Negated.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false)
+  else
   GetBoundaries(value.low.value, QuantityComparatorNull, v1, crap);
+  if (value.high = nil) then
+    v2 := TFslDecimal.makeInfinity.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true)
+  else
   GetBoundaries(value.high.value, QuantityComparatorNull, crap, v2);
 
   if (length(v1) > INDEX_ENTRY_LENGTH) then

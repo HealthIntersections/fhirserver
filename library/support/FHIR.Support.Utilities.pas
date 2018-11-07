@@ -1717,7 +1717,7 @@ Type
     function AsDouble : Double;
 
     {
-     This method exists to populate a database with relatively arucately searchable decimal values wher ethe search is by string semantics
+     This method exists to populate a database with relatively accurately searchable decimal values wher ethe search is by string semantics
     }
     function normaliseDecimal(digits, decimals : integer; defUp : boolean) : String;
 
