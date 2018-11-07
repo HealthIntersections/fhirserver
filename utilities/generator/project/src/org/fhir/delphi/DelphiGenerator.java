@@ -282,20 +282,20 @@ public class DelphiGenerator {
     prsrCodeT.classDefs.add(buildParserTurtle());
     prsrCodeT.classImpls.add(prsrImplT.toString());
 
-      TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir"+rId+".inc"));
-      defCodeType.finish();
-      defCodeRes.finish();
-      defCodeOp.finish();
-      defCodeConstGen.finish();
-      defIndexer.finish();
+      TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir.r"+vId+".inc"));
+      defCodeType.finish(vId);
+      defCodeRes.finish(vId);
+      defCodeOp.finish(vId);
+      defCodeConstGen.finish(vId);
+      defIndexer.finish(vId);
 
-      jsCode.finish();
+      jsCode.finish(vId);
 
-      prsrCodeX.finish();
-      prsrCodeJ.finish();
-      prsrCodeT.finish();
+      prsrCodeX.finish(vId);
+      prsrCodeJ.finish(vId);
+      prsrCodeT.finish(vId);
       
-    String fact = TextFile.fileToString(Utilities.path(Utilities.getDirectoryForFile(destDir), "generator", "template", "FHIR.RX.Factory.pas"));
+    String fact = TextFile.fileToString(Utilities.path("C:\\work\\fhirserver\\utilities\\generator\\template", "FHIR.RX.Factory.pas"));
     fact = fact.replaceAll("\\{\\{v\\}\\}", vId);
     fact = fact.replace("{{fact}}", "  "+factoryByName.toString().substring(7));
     fact = fact.replace("{{gen}}", "FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -934,8 +934,7 @@ public class DelphiGenerator {
     def.append("    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;\r\n");
     def.append("    procedure reorderProperty(propName : string; source, destination : integer); override;\r\n");
     def.append("    function fhirType : string; override;\r\n");
-    def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
-    def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
+    def.append("    function Equals(other : TObject) : boolean; override;\r\n");
     def.append("    function isEmpty : boolean; override;\r\n");
     if (tn.equals("TFhirElement") || tn.equals("TFhirResource")) {
       def.append("    function getId : String; override;\r\n");
@@ -1262,8 +1261,7 @@ public class DelphiGenerator {
       def.append("    function getId : string; override;\r\n");
       def.append("    procedure setIdValue(id : String); override;\r\n");
     } else if (tn.equals("TFhirDomainResource")) {
-//      def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
-//      def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
+//      def.append("    function Equals(other : TObject) : boolean; override;\r\n");
 //      def.append("    function isEmpty : boolean; override;\r\n");
       def.append("    function isDomainResource : boolean; override;\r\n");
       def.append("    function hasExtension(url : string) : boolean; override;\r\n");
@@ -1274,8 +1272,7 @@ public class DelphiGenerator {
     }
     if (tn.equals("TFhirResource")) 
       def.append("    procedure checkNoImplicitRules(place, role : String); override;\r\n");
-    def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
-    def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
+    def.append("    function Equals(other : TObject) : boolean; override;\r\n");
     def.append("    function isEmpty : boolean; override;\r\n");
     if (tn.equals("Enum")) {
       def.append("    function isEnum : boolean; override;\r\n");
@@ -2030,8 +2027,7 @@ public class DelphiGenerator {
     def.append("    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;\r\n");
     def.append("    procedure reorderProperty(propName : string; source, destination : integer); override;\r\n");
     def.append("    function fhirType : string; override;\r\n");
-    def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
-    def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
+    def.append("    function Equals(other : TObject) : boolean; override;\r\n");
     def.append("    function isEmpty : boolean; override;\r\n");
     if (tn.equals("Enum")) {
       def.append("    function isEnum : boolean; override;\r\n");
@@ -2173,11 +2169,11 @@ public class DelphiGenerator {
   }
 
   private void generateEquals(ElementDefn e, String tn, StringBuilder b) throws IOException {
-    b.append("function "+tn+".equalsDeep(other : TFHIRObject) : boolean; \r\n");
+    b.append("function "+tn+".equals(other : TObject) : boolean; \r\n");
     b.append("var\r\n");
     b.append("  o : "+tn+";\r\n");
     b.append("begin\r\n");
-    b.append("  if (not inherited equalsDeep(other)) then\r\n");
+    b.append("  if (not inherited equals(other)) then\r\n");
     b.append("    result := false\r\n");
     b.append("  else if (not (other is "+tn+")) then\r\n");
     b.append("    result := false\r\n");
@@ -2216,59 +2212,14 @@ public class DelphiGenerator {
     b.append("  end;\r\n");
     b.append("end;\r\n\r\n");
 
-    b.append("function "+tn+".equalsShallow(other : TFHIRObject) : boolean; \r\n");
-    b.append("var\r\n");
-    b.append("  o : "+tn+";\r\n");
-    b.append("begin\r\n");
-    b.append("  if (not inherited equalsShallow(other)) then\r\n");
-    b.append("    result := false\r\n");
-    b.append("  else if (not (other is "+tn+")) then\r\n");
-    b.append("    result := false\r\n");
-    b.append("  else\r\n");
-    b.append("  begin\r\n");
-    b.append("    o := "+tn+"(other);\r\n");
-    b.append("    result := ");
-
-    first = true;
-    col = 18;
-    for (ElementDefn c : e.getElements()) {
-      if (!c.isInherited()){
-        if (isJavaPrimitive(c)) {
-          if (first)
-            first = false;
-          else {
-            b.append(" and ");
-            col = col+5;
-          }
-          if (col > 80) {
-            col = 6;
-            b.append("\r\n      ");
-          }
-          String name = getElementName(c.getName());
-          if (name.endsWith("[x]"))
-            name = name.substring(0, name.length()-3);
-          if (c.unbounded())
-            name = name + "List";
-          else
-            name = name + "Element";
-          b.append("compareValues("+name+", o."+name+", true)");
-          col = col+21 + name.length()*2;
-        }
-      }
-    }
-    if (first)
-      b.append("true"); 
-    b.append(";\r\n");
-    b.append("  end;\r\n");
-    b.append("end;\r\n\r\n");
   }
 
   private void generatePrimitiveEquals(DefinedCode t, String tn, StringBuilder b) throws IOException {
-    b.append("function "+tn+".equalsDeep(other : TFHIRObject) : boolean; \r\n");
+    b.append("function "+tn+".equals(other : TObject) : boolean; \r\n");
     b.append("var\r\n");
     b.append("  o : "+tn+";\r\n");
     b.append("begin\r\n");
-    b.append("  if (not inherited equalsDeep(other)) then\r\n");
+    b.append("  if (not inherited equals(other)) then\r\n");
     b.append("    result := false\r\n");
     b.append("  else if (not (other is "+tn+")) then\r\n");
     b.append("    result := false\r\n");
@@ -2282,23 +2233,6 @@ public class DelphiGenerator {
     b.append("  end;\r\n");
     b.append("end;\r\n\r\n");
 
-    b.append("function "+tn+".equalsShallow(other : TFHIRObject) : boolean; \r\n");
-    b.append("var\r\n");
-    b.append("  o : "+tn+";\r\n");
-    b.append("begin\r\n");
-    b.append("  if (not inherited equalsShallow(other)) then\r\n");
-    b.append("    result := false\r\n");
-    b.append("  else if (not (other is "+tn+")) then\r\n");
-    b.append("    result := false\r\n");
-    b.append("  else\r\n");
-    b.append("  begin\r\n");
-    b.append("    o := "+tn+"(other);\r\n");
-    if (Utilities.existsInList(t.getCode(), "date", "dateTime", "instant"))
-      b.append("    result := o.value.equal(value);\r\n");
-    else
-      b.append("    result := o.value = value;\r\n");
-    b.append("  end;\r\n");
-    b.append("end;\r\n\r\n");
   }
 
   protected boolean isJavaPrimitive(ElementDefn e) {
@@ -3459,7 +3393,7 @@ public class DelphiGenerator {
               "    function GetCurrent : "+tn+";\r\n"+
               "  public\r\n"+
               "    constructor Create(list : "+tnl+");\r\n"+
-              "    Destructor Destroy; override;\r\n"+
+              "    destructor Destroy; override;\r\n"+
               "    function MoveNext : boolean;\r\n"+
               "    property Current : "+tn+" read GetCurrent;\r\n"+
           "  end;\r\n\r\n");
@@ -3543,7 +3477,7 @@ public class DelphiGenerator {
               "  FList := list;\r\n"+
               "end;\r\n"+
               "\r\n"+
-              "Destructor "+tnl+"Enumerator.Destroy;\r\n"+
+              "destructor "+tnl+"Enumerator.Destroy;\r\n"+
               "begin\r\n"+
               "  FList.Free;\r\n"+
               "  inherited;\r\n"+
@@ -3865,14 +3799,13 @@ public class DelphiGenerator {
       def.append("    constructor Create(system : String; value : "+pn+"); overload;\r\n");
     else
       def.append("    constructor Create(value : "+pn+"); overload;\r\n");
-    def.append("    Destructor Destroy; override;\r\n");
+    def.append("    destructor Destroy; override;\r\n");
     def.append("    \r\n");
     def.append("    Function Link : TFhir"+tn+rId+"; Overload;\r\n");
     def.append("    Function Clone : TFhir"+tn+rId+"; Overload;\r\n");
     if (!derived) {
       def.append("    procedure Assign(oSource : TFslObject); override;\r\n");
-      def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
-      def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
+      def.append("    function Equals(other : TObject) : boolean; override;\r\n");
       def.append("    function isEmpty : boolean; override;\r\n");
     }
     if (tn.equals("Enum")) {
@@ -3910,7 +3843,7 @@ public class DelphiGenerator {
       impl2.append("end;\r\n\r\n");
     }
 
-    impl2.append("Destructor TFhir"+tn+rId+".Destroy;\r\n");
+    impl2.append("destructor TFhir"+tn+rId+".Destroy;\r\n");
     impl2.append("begin\r\n");
     if (!derived) {
       if (!pn.equals("String") && !pn.equals("Boolean") && !pn.equals("TBytes") && !pn.equals("TDateTimeEx"))
@@ -3944,9 +3877,9 @@ public class DelphiGenerator {
       if (pn.equals("Boolean"))
         impl2.append("    oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, LCBooleanToString(FValue)));\r\n");
       else if (pn.equals("TDateTimeEx"))
-        impl2.append("    if (FValue.notNull) then\r\n      oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue.toString));\r\n");
+        impl2.append("    if (FValue.notNull) then\r\n      oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue.ToString));\r\n");
       else if (!pn.equals("String") && !pn.equals("TBytes"))
-        impl2.append("    if (FValue <> nil) then\r\n      oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue.toString));\r\n");
+        impl2.append("    if (FValue <> nil) then\r\n      oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue.ToString));\r\n");
       else 
         impl2.append("    oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue));\r\n");
       impl2.append("end;\r\n\r\n");
@@ -3976,7 +3909,7 @@ public class DelphiGenerator {
         impl2.append("  if (FValue = nil) then\r\n");
         impl2.append("    result := ''\r\n");
         impl2.append("  else\r\n");
-        impl2.append("    result := FValue.toString;\r\n");
+        impl2.append("    result := FValue.ToString;\r\n");
       } else 
         impl2.append("  result := FValue;\r\n");
       impl2.append("end;\r\n\r\n");
@@ -3995,7 +3928,7 @@ public class DelphiGenerator {
         impl2.append("  !if (FValue = nil) then\r\n");
         impl2.append("    !result := ''\r\n");
         impl2.append("  !else\r\n");
-        impl2.append("    !result := FValue.toString;\r\n");
+        impl2.append("    !result := FValue.ToString;\r\n");
       } else 
         impl2.append("  FValue := value;\r\n");
       impl2.append("end;\r\n\r\n");
@@ -4383,7 +4316,7 @@ public class DelphiGenerator {
     def.append("    Function Link : TFhirType"+rId+"; Overload;\r\n");
     def.append("    Function Clone : TFhirType"+rId+"; Overload;\r\n");
     def.append("    Function isType : boolean; Override;\r\n");
-    def.append("    Function toString : String; Override;\r\n");
+    def.append("    Function ToString : String; Override;\r\n");
     def.append("  End;\r\n");   
     def.append("  TFHIRType"+rId+"Class = class of TFhirType"+rId+";\r\n");
     def.append("  \r\n");
@@ -4413,7 +4346,7 @@ public class DelphiGenerator {
     impl2.append("begin\r\n");
     impl2.append("  result := TFhirType"+rId+"(inherited Link);\r\n");
     impl2.append("end;\r\n\r\n");
-    impl2.append("function TFhirType"+rId+".toString : String"+rId+";\r\n");
+    impl2.append("function TFhirType"+rId+".ToString : String"+rId+";\r\n");
     impl2.append("begin\r\n");
     impl2.append("  result := gen(self);\r\n");
     impl2.append("end;\r\n\r\n");

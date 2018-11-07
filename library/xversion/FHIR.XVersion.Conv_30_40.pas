@@ -102,10 +102,10 @@ Type
     class function convertActivityDefinitionKind(src : FHIR.R4.Types.TFhirResourceTypesEnum) : FHIR.R3.Types.TFhirResourceTypesEnum; overload;
     class function convertActivityParticipantType(src : FHIR.R3.Types.TFhirActionParticipantTypeEnum) : FHIR.R4.Types.TFhirActionParticipantTypeEnum; overload;
     class function convertActivityParticipantType(src : FHIR.R4.Types.TFhirActionParticipantTypeEnum) : FHIR.R3.Types.TFhirActionParticipantTypeEnum; overload;
-    class function convertAllergyIntoleranceClinicalStatus(src : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum) : FHIR.R4.Types.TFhirAllergyClinicalStatusEnum; overload;
-    class function convertAllergyIntoleranceClinicalStatus(src : FHIR.R4.Types.TFhirAllergyClinicalStatusEnum) : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum; overload;
-    class function convertAllergyIntoleranceVerificationStatus(src : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum) : FHIR.R4.Types.TFhirAllergyVerificationStatusEnum; overload;
-    class function convertAllergyIntoleranceVerificationStatus(src : FHIR.R4.Types.TFhirAllergyVerificationStatusEnum) : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum; overload;
+    class function convertAllergyIntoleranceClinicalStatus(src : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum) : FHIR.R4.Types.TFhirCodeableConcept; overload;
+    class function convertAllergyIntoleranceClinicalStatus(src : FHIR.R4.Types.TFhirCodeableConcept) : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum; overload;
+    class function convertAllergyIntoleranceVerificationStatus(src : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum) : FHIR.R4.Types.TFhirCodeableConcept; overload;
+    class function convertAllergyIntoleranceVerificationStatus(src : FHIR.R4.Types.TFhirCodeableConcept) : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum; overload;
     class function convertAllergyIntoleranceType(src : FHIR.R3.Types.TFhirAllergyIntoleranceTypeEnum) : FHIR.R4.Types.TFhirAllergyIntoleranceTypeEnum; overload;
     class function convertAllergyIntoleranceType(src : FHIR.R4.Types.TFhirAllergyIntoleranceTypeEnum) : FHIR.R3.Types.TFhirAllergyIntoleranceTypeEnum; overload;
     class function convertAllergyIntoleranceCategory(src : FHIR.R3.Types.TFhirAllergyIntoleranceCategoryEnum) : FHIR.R4.Types.TFhirAllergyIntoleranceCategoryEnum; overload;
@@ -265,10 +265,10 @@ Type
     class function convertLocationMode(src : FHIR.R4.Types.TFhirLocationModeEnum) : FHIR.R3.Types.TFhirLocationModeEnum; overload;
     class function convertMedicationStatus(src : FHIR.R3.Types.TFhirMedicationStatusEnum) : FHIR.R4.Types.TFhirMedicationStatusEnum; overload;
     class function convertMedicationStatus(src : FHIR.R4.Types.TFhirMedicationStatusEnum) : FHIR.R3.Types.TFhirMedicationStatusEnum; overload;
-    class function convertMedicationAdministrationStatus(src : FHIR.R3.Types.TFhirMedicationAdminStatusEnum) : FHIR.R4.Types.TFhirMedicationAdminStatusEnum; overload;
-    class function convertMedicationAdministrationStatus(src : FHIR.R4.Types.TFhirMedicationAdminStatusEnum) : FHIR.R3.Types.TFhirMedicationAdminStatusEnum; overload;
-    class function convertMedicationDispenseStatus(src : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum) : FHIR.R4.Types.TFhirMedicationDispenseStatusEnum; overload;
-    class function convertMedicationDispenseStatus(src : FHIR.R4.Types.TFhirMedicationDispenseStatusEnum) : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum; overload;
+    class function convertMedicationAdministrationStatus(src : FHIR.R3.Types.TFhirMedicationAdminStatusEnum) : String; overload;
+    class function convertMedicationAdministrationStatus(src : String) : FHIR.R3.Types.TFhirMedicationAdminStatusEnum; overload;
+    class function convertMedicationDispenseStatus(src : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum) : String; overload;
+    class function convertMedicationDispenseStatus(src : String) : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum; overload;
     class function convertMedicationRequestStatus(src : FHIR.R3.Types.TFhirMedicationRequestStatusEnum) : FHIR.R4.Types.TFhirMedicationRequestStatusEnum; overload;
     class function convertMedicationRequestStatus(src : FHIR.R4.Types.TFhirMedicationRequestStatusEnum) : FHIR.R3.Types.TFhirMedicationRequestStatusEnum; overload;
     class function convertMedicationRequestIntent(src : FHIR.R3.Types.TFhirMedicationRequestIntentEnum) : FHIR.R4.Types.TFhirMedicationRequestIntentEnum; overload;
@@ -753,8 +753,8 @@ Type
     class function convertImplementationGuide(src : FHIR.R4.Resources.TFhirImplementationGuide) : FHIR.R3.Resources.TFhirImplementationGuide; overload;
     class function convertImplementationGuideDependencyComponent(src : FHIR.R3.Resources.TFhirImplementationGuideDependency) : FHIR.R4.Resources.TFhirImplementationGuideDependsOn; overload;
     class function convertImplementationGuideDependencyComponent(src : FHIR.R4.Resources.TFhirImplementationGuideDependsOn) : FHIR.R3.Resources.TFhirImplementationGuideDependency; overload;
-    class function convertImplementationGuidePackageComponent(context : FHIR.R4.Resources.TFhirImplementationGuideDefinition; src : FHIR.R3.Resources.TFhirImplementationGuidePackage) : FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage; overload;
-    class function convertImplementationGuidePackageComponent(src : FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage) : FHIR.R3.Resources.TFhirImplementationGuidePackage; overload;
+    class function convertImplementationGuidePackageComponent(context : FHIR.R4.Resources.TFhirImplementationGuideDefinition; src : FHIR.R3.Resources.TFhirImplementationGuidePackage) : FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping; overload;
+    class function convertImplementationGuidePackageComponent(src : FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping) : FHIR.R3.Resources.TFhirImplementationGuidePackage; overload;
     class function convertImplementationGuidePackageResourceComponent(src : FHIR.R3.Resources.TFhirImplementationGuidePackageResource) : FHIR.R4.Resources.TFhirImplementationGuideDefinitionResource; overload;
     class function convertImplementationGuidePackageResourceComponent(src : FHIR.R4.Resources.TFhirImplementationGuideDefinitionResource) : FHIR.R3.Resources.TFhirImplementationGuidePackageResource; overload;
     class function convertImplementationGuideGlobalComponent(src : FHIR.R3.Resources.TFhirImplementationGuideGlobal) : FHIR.R4.Resources.TFhirImplementationGuideGlobal; overload;
@@ -898,16 +898,16 @@ Type
     class function convertSearchParameter(src : FHIR.R4.Resources.TFhirSearchParameter) : FHIR.R3.Resources.TFhirSearchParameter; overload;
     class function convertSearchParameterComponentComponent(src : FHIR.R3.Resources.TFhirSearchParameterComponent) : FHIR.R4.Resources.TFhirSearchParameterComponent; overload;
     class function convertSearchParameterComponentComponent(src : FHIR.R4.Resources.TFhirSearchParameterComponent) : FHIR.R3.Resources.TFhirSearchParameterComponent; overload;
-    class function convertSequence(src : FHIR.R3.Resources.TFhirSequence) : FHIR.R4.Resources.TFhirSequence; overload;
-    class function convertSequence(src : FHIR.R4.Resources.TFhirSequence) : FHIR.R3.Resources.TFhirSequence; overload;
-    class function convertSequenceReferenceSeqComponent(src : FHIR.R3.Resources.TFhirSequenceReferenceSeq) : FHIR.R4.Resources.TFhirSequenceReferenceSeq; overload;
-    class function convertSequenceReferenceSeqComponent(src : FHIR.R4.Resources.TFhirSequenceReferenceSeq) : FHIR.R3.Resources.TFhirSequenceReferenceSeq; overload;
-    class function convertSequenceVariantComponent(src : FHIR.R3.Resources.TFhirSequenceVariant) : FHIR.R4.Resources.TFhirSequenceVariant; overload;
-    class function convertSequenceVariantComponent(src : FHIR.R4.Resources.TFhirSequenceVariant) : FHIR.R3.Resources.TFhirSequenceVariant; overload;
-    class function convertSequenceQualityComponent(src : FHIR.R3.Resources.TFhirSequenceQuality) : FHIR.R4.Resources.TFhirSequenceQuality; overload;
-    class function convertSequenceQualityComponent(src : FHIR.R4.Resources.TFhirSequenceQuality) : FHIR.R3.Resources.TFhirSequenceQuality; overload;
-    class function convertSequenceRepositoryComponent(src : FHIR.R3.Resources.TFhirSequenceRepository) : FHIR.R4.Resources.TFhirSequenceRepository; overload;
-    class function convertSequenceRepositoryComponent(src : FHIR.R4.Resources.TFhirSequenceRepository) : FHIR.R3.Resources.TFhirSequenceRepository; overload;
+    class function convertSequence(src : FHIR.R3.Resources.TFhirSequence) : FHIR.R4.Resources.TFhirMolecularSequence; overload;
+    class function convertSequence(src : FHIR.R4.Resources.TFhirMolecularSequence) : FHIR.R3.Resources.TFhirSequence; overload;
+    class function convertSequenceReferenceSeqComponent(src : FHIR.R3.Resources.TFhirSequenceReferenceSeq) : FHIR.R4.Resources.TFhirMolecularSequenceReferenceSeq; overload;
+    class function convertSequenceReferenceSeqComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceReferenceSeq) : FHIR.R3.Resources.TFhirSequenceReferenceSeq; overload;
+    class function convertSequenceVariantComponent(src : FHIR.R3.Resources.TFhirSequenceVariant) : FHIR.R4.Resources.TFhirMolecularSequenceVariant; overload;
+    class function convertSequenceVariantComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceVariant) : FHIR.R3.Resources.TFhirSequenceVariant; overload;
+    class function convertSequenceQualityComponent(src : FHIR.R3.Resources.TFhirSequenceQuality) : FHIR.R4.Resources.TFhirMolecularSequenceQuality; overload;
+    class function convertSequenceQualityComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceQuality) : FHIR.R3.Resources.TFhirSequenceQuality; overload;
+    class function convertSequenceRepositoryComponent(src : FHIR.R3.Resources.TFhirSequenceRepository) : FHIR.R4.Resources.TFhirMolecularSequenceRepository; overload;
+    class function convertSequenceRepositoryComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceRepository) : FHIR.R3.Resources.TFhirSequenceRepository; overload;
     class function convertSlot(src : FHIR.R3.Resources.TFhirSlot) : FHIR.R4.Resources.TFhirSlot; overload;
     class function convertSlot(src : FHIR.R4.Resources.TFhirSlot) : FHIR.R3.Resources.TFhirSlot; overload;
     class function convertSpecimen(src : FHIR.R3.Resources.TFhirSpecimen) : FHIR.R4.Resources.TFhirSpecimen; overload;
@@ -1780,8 +1780,6 @@ begin
     FHIR.R3.Types.ResourceTypesPractitionerRole: exit(FHIR.R4.Types.ResourceTypesPractitionerRole);
     FHIR.R3.Types.ResourceTypesProcedure: exit(FHIR.R4.Types.ResourceTypesProcedure);
     FHIR.R3.Types.ResourceTypesProcedureRequest: exit(FHIR.R4.Types.ResourceTypesServiceRequest);
-    FHIR.R3.Types.ResourceTypesProcessRequest: exit(FHIR.R4.Types.ResourceTypesProcessRequest);
-    FHIR.R3.Types.ResourceTypesProcessResponse: exit(FHIR.R4.Types.ResourceTypesProcessResponse);
     FHIR.R3.Types.ResourceTypesProvenance: exit(FHIR.R4.Types.ResourceTypesProvenance);
     FHIR.R3.Types.ResourceTypesQuestionnaire: exit(FHIR.R4.Types.ResourceTypesQuestionnaire);
     FHIR.R3.Types.ResourceTypesQuestionnaireResponse: exit(FHIR.R4.Types.ResourceTypesQuestionnaireResponse);
@@ -1794,7 +1792,7 @@ begin
     FHIR.R3.Types.ResourceTypesRiskAssessment: exit(FHIR.R4.Types.ResourceTypesRiskAssessment);
     FHIR.R3.Types.ResourceTypesSchedule: exit(FHIR.R4.Types.ResourceTypesSchedule);
     FHIR.R3.Types.ResourceTypesSearchParameter: exit(FHIR.R4.Types.ResourceTypesSearchParameter);
-    FHIR.R3.Types.ResourceTypesSequence: exit(FHIR.R4.Types.ResourceTypesSequence);
+    FHIR.R3.Types.ResourceTypesSequence: exit(FHIR.R4.Types.ResourceTypesMolecularSequence);
     FHIR.R3.Types.ResourceTypesSlot: exit(FHIR.R4.Types.ResourceTypesSlot);
     FHIR.R3.Types.ResourceTypesSpecimen: exit(FHIR.R4.Types.ResourceTypesSpecimen);
     FHIR.R3.Types.ResourceTypesStructureDefinition: exit(FHIR.R4.Types.ResourceTypesStructureDefinition);
@@ -1902,8 +1900,6 @@ begin
     FHIR.R4.Types.ResourceTypesPractitionerRole: exit(FHIR.R3.Types.ResourceTypesPractitionerRole);
     FHIR.R4.Types.ResourceTypesProcedure: exit(FHIR.R3.Types.ResourceTypesProcedure);
     FHIR.R4.Types.ResourceTypesServiceRequest: exit(FHIR.R3.Types.ResourceTypesProcedureRequest);
-    FHIR.R4.Types.ResourceTypesProcessRequest: exit(FHIR.R3.Types.ResourceTypesProcessRequest);
-    FHIR.R4.Types.ResourceTypesProcessResponse: exit(FHIR.R3.Types.ResourceTypesProcessResponse);
     FHIR.R4.Types.ResourceTypesProvenance: exit(FHIR.R3.Types.ResourceTypesProvenance);
     FHIR.R4.Types.ResourceTypesQuestionnaire: exit(FHIR.R3.Types.ResourceTypesQuestionnaire);
     FHIR.R4.Types.ResourceTypesQuestionnaireResponse: exit(FHIR.R3.Types.ResourceTypesQuestionnaireResponse);
@@ -1915,7 +1911,7 @@ begin
     FHIR.R4.Types.ResourceTypesRiskAssessment: exit(FHIR.R3.Types.ResourceTypesRiskAssessment);
     FHIR.R4.Types.ResourceTypesSchedule: exit(FHIR.R3.Types.ResourceTypesSchedule);
     FHIR.R4.Types.ResourceTypesSearchParameter: exit(FHIR.R3.Types.ResourceTypesSearchParameter);
-    FHIR.R4.Types.ResourceTypesSequence: exit(FHIR.R3.Types.ResourceTypesSequence);
+    FHIR.R4.Types.ResourceTypesMolecularSequence: exit(FHIR.R3.Types.ResourceTypesSequence);
     FHIR.R4.Types.ResourceTypesSlot: exit(FHIR.R3.Types.ResourceTypesSlot);
     FHIR.R4.Types.ResourceTypesSpecimen: exit(FHIR.R3.Types.ResourceTypesSpecimen);
     FHIR.R4.Types.ResourceTypesStructureDefinition: exit(FHIR.R3.Types.ResourceTypesStructureDefinition);
@@ -1953,46 +1949,49 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertAllergyIntoleranceClinicalStatus(src : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum) : FHIR.R4.Types.TFhirAllergyClinicalStatusEnum;
+class function TVersionConvertor_30_40.convertAllergyIntoleranceClinicalStatus(src : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum) : FHIR.R4.Types.TFhirCodeableConcept;
 begin
   case (src) of
-    FHIR.R3.Types.AllergyClinicalStatusActive: exit(FHIR.R4.Types.AllergyClinicalStatusActive);
-    FHIR.R3.Types.AllergyClinicalStatusInactive: exit(FHIR.R4.Types.AllergyClinicalStatusInactive);
-    FHIR.R3.Types.AllergyClinicalStatusResolved: exit(FHIR.R4.Types.AllergyClinicalStatusResolved);
-    else exit(FHIR.R4.Types.AllergyClinicalStatusNull);
+    FHIR.R3.Types.AllergyClinicalStatusActive: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical', 'active'));
+    FHIR.R3.Types.AllergyClinicalStatusInactive: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical', 'inactive'));
+    FHIR.R3.Types.AllergyClinicalStatusResolved: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical', 'resolved'));
+    else exit(nil);
   end;
 end;
 
-class function TVersionConvertor_30_40.convertAllergyIntoleranceClinicalStatus(src : FHIR.R4.Types.TFhirAllergyClinicalStatusEnum) : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum;
+class function TVersionConvertor_30_40.convertAllergyIntoleranceClinicalStatus(src : FHIR.R4.Types.TFhirCodeableConcept) : FHIR.R3.Types.TFhirAllergyClinicalStatusEnum;
+begin
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical', 'active')) then
+    exit(FHIR.R3.Types.AllergyClinicalStatusActive);
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical', 'inactive')) then
+    exit(FHIR.R3.Types.AllergyClinicalStatusInactive);
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical', 'resolve')) then
+    exit(FHIR.R3.Types.AllergyClinicalStatusResolved);
+  exit(FHIR.R3.Types.AllergyClinicalStatusNull);
+end;
+
+class function TVersionConvertor_30_40.convertAllergyIntoleranceVerificationStatus(src : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum) : FHIR.R4.Types.TFhirCodeableConcept;
 begin
   case (src) of
-    FHIR.R4.Types.AllergyClinicalStatusActive: exit(FHIR.R3.Types.AllergyClinicalStatusActive);
-    FHIR.R4.Types.AllergyClinicalStatusInactive: exit(FHIR.R3.Types.AllergyClinicalStatusInactive);
-    FHIR.R4.Types.AllergyClinicalStatusResolved: exit(FHIR.R3.Types.AllergyClinicalStatusResolved);
-    else exit(FHIR.R3.Types.AllergyClinicalStatusNull);
+    FHIR.R3.Types.AllergyVerificationStatusUnconfirmed: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'unconfirmed'));
+    FHIR.R3.Types.AllergyVerificationStatusConfirmed: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'confirmed'));
+    FHIR.R3.Types.AllergyVerificationStatusRefuted: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'refuted'));
+    FHIR.R3.Types.AllergyVerificationStatusEnteredInError: exit(FHIR.R4.Types.TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'entered-in-error'));
+    else exit(nil);
   end;
 end;
 
-class function TVersionConvertor_30_40.convertAllergyIntoleranceVerificationStatus(src : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum) : FHIR.R4.Types.TFhirAllergyVerificationStatusEnum;
+class function TVersionConvertor_30_40.convertAllergyIntoleranceVerificationStatus(src : FHIR.R4.Types.TFhirCodeableConcept) : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum;
 begin
-  case (src) of
-    FHIR.R3.Types.AllergyVerificationStatusUnconfirmed: exit(FHIR.R4.Types.AllergyVerificationStatusUnconfirmed);
-    FHIR.R3.Types.AllergyVerificationStatusConfirmed: exit(FHIR.R4.Types.AllergyVerificationStatusConfirmed);
-    FHIR.R3.Types.AllergyVerificationStatusRefuted: exit(FHIR.R4.Types.AllergyVerificationStatusRefuted);
-    FHIR.R3.Types.AllergyVerificationStatusEnteredInError: exit(FHIR.R4.Types.AllergyVerificationStatusEnteredInError);
-    else exit(FHIR.R4.Types.AllergyVerificationStatusNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertAllergyIntoleranceVerificationStatus(src : FHIR.R4.Types.TFhirAllergyVerificationStatusEnum) : FHIR.R3.Types.TFhirAllergyVerificationStatusEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.AllergyVerificationStatusUnconfirmed: exit(FHIR.R3.Types.AllergyVerificationStatusUnconfirmed);
-    FHIR.R4.Types.AllergyVerificationStatusConfirmed: exit(FHIR.R3.Types.AllergyVerificationStatusConfirmed);
-    FHIR.R4.Types.AllergyVerificationStatusRefuted: exit(FHIR.R3.Types.AllergyVerificationStatusRefuted);
-    FHIR.R4.Types.AllergyVerificationStatusEnteredInError: exit(FHIR.R3.Types.AllergyVerificationStatusEnteredInError);
-    else exit(FHIR.R3.Types.AllergyVerificationStatusNull);
-  end;
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'unconfirmed')) then
+    exit(FHIR.R3.Types.AllergyVerificationStatusUnconfirmed);
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'confirmed')) then
+    exit(FHIR.R3.Types.AllergyVerificationStatusConfirmed);
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'refuted')) then
+    exit(FHIR.R3.Types.AllergyVerificationStatusRefuted);
+  if (src.hasCode('http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', 'entered-in-error')) then
+    exit(FHIR.R3.Types.AllergyVerificationStatusEnteredInError);
+  exit(FHIR.R3.Types.AllergyVerificationStatusNull);
 end;
 
 class function TVersionConvertor_30_40.convertAllergyIntoleranceType(src : FHIR.R3.Types.TFhirAllergyIntoleranceTypeEnum) : FHIR.R4.Types.TFhirAllergyIntoleranceTypeEnum;
@@ -3585,12 +3584,12 @@ begin
     FHIR.R3.Types.GoalStatusProposed: exit(FHIR.R4.Types.GoalStatusProposed);
     FHIR.R3.Types.GoalStatusAccepted: exit(FHIR.R4.Types.GoalStatusAccepted);
     FHIR.R3.Types.GoalStatusPlanned: exit(FHIR.R4.Types.GoalStatusPlanned);
-    FHIR.R3.Types.GoalStatusInProgress: exit(FHIR.R4.Types.GoalStatusInProgress);
-    FHIR.R3.Types.GoalStatusOnTarget: exit(FHIR.R4.Types.GoalStatusOnTarget);
-    FHIR.R3.Types.GoalStatusAheadOfTarget: exit(FHIR.R4.Types.GoalStatusAheadOfTarget);
-    FHIR.R3.Types.GoalStatusBehindTarget: exit(FHIR.R4.Types.GoalStatusBehindTarget);
-    FHIR.R3.Types.GoalStatusSustaining: exit(FHIR.R4.Types.GoalStatusSustaining);
-    FHIR.R3.Types.GoalStatusAchieved: exit(FHIR.R4.Types.GoalStatusAchieved);
+    FHIR.R3.Types.GoalStatusInProgress: exit(FHIR.R4.Types.GoalStatusActive);
+    FHIR.R3.Types.GoalStatusOnTarget: exit(FHIR.R4.Types.GoalStatusActive);
+    FHIR.R3.Types.GoalStatusAheadOfTarget: exit(FHIR.R4.Types.GoalStatusActive);
+    FHIR.R3.Types.GoalStatusBehindTarget: exit(FHIR.R4.Types.GoalStatusActive);
+    FHIR.R3.Types.GoalStatusSustaining: exit(FHIR.R4.Types.GoalStatusActive);
+    FHIR.R3.Types.GoalStatusAchieved: exit(FHIR.R4.Types.GoalStatusCompleted);
     FHIR.R3.Types.GoalStatusOnHold: exit(FHIR.R4.Types.GoalStatusOnHold);
     FHIR.R3.Types.GoalStatusCancelled: exit(FHIR.R4.Types.GoalStatusCancelled);
     FHIR.R3.Types.GoalStatusEnteredInError: exit(FHIR.R4.Types.GoalStatusEnteredInError);
@@ -3605,12 +3604,8 @@ begin
     FHIR.R4.Types.GoalStatusProposed: exit(FHIR.R3.Types.GoalStatusProposed);
     FHIR.R4.Types.GoalStatusAccepted: exit(FHIR.R3.Types.GoalStatusAccepted);
     FHIR.R4.Types.GoalStatusPlanned: exit(FHIR.R3.Types.GoalStatusPlanned);
-    FHIR.R4.Types.GoalStatusInProgress: exit(FHIR.R3.Types.GoalStatusInProgress);
-    FHIR.R4.Types.GoalStatusOnTarget: exit(FHIR.R3.Types.GoalStatusOnTarget);
-    FHIR.R4.Types.GoalStatusAheadOfTarget: exit(FHIR.R3.Types.GoalStatusAheadOfTarget);
-    FHIR.R4.Types.GoalStatusBehindTarget: exit(FHIR.R3.Types.GoalStatusBehindTarget);
-    FHIR.R4.Types.GoalStatusSustaining: exit(FHIR.R3.Types.GoalStatusSustaining);
-    FHIR.R4.Types.GoalStatusAchieved: exit(FHIR.R3.Types.GoalStatusAchieved);
+    FHIR.R4.Types.GoalStatusActive: exit(FHIR.R3.Types.GoalStatusInProgress);
+    FHIR.R4.Types.GoalStatusCompleted: exit(FHIR.R3.Types.GoalStatusAchieved);
     FHIR.R4.Types.GoalStatusOnHold: exit(FHIR.R3.Types.GoalStatusOnHold);
     FHIR.R4.Types.GoalStatusCancelled: exit(FHIR.R3.Types.GoalStatusCancelled);
     FHIR.R4.Types.GoalStatusEnteredInError: exit(FHIR.R3.Types.GoalStatusEnteredInError);
@@ -3888,56 +3883,36 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertMedicationAdministrationStatus(src : FHIR.R3.Types.TFhirMedicationAdminStatusEnum) : FHIR.R4.Types.TFhirMedicationAdminStatusEnum;
+class function TVersionConvertor_30_40.convertMedicationAdministrationStatus(src : FHIR.R3.Types.TFhirMedicationAdminStatusEnum) : String;
 begin
-  case (src) of
-    FHIR.R3.Types.MedicationAdminStatusInProgress: exit(FHIR.R4.Types.MedicationAdminStatusInProgress);
-    FHIR.R3.Types.MedicationAdminStatusOnHold: exit(FHIR.R4.Types.MedicationAdminStatusOnHold);
-    FHIR.R3.Types.MedicationAdminStatusCompleted: exit(FHIR.R4.Types.MedicationAdminStatusCompleted);
-    FHIR.R3.Types.MedicationAdminStatusEnteredInError: exit(FHIR.R4.Types.MedicationAdminStatusEnteredInError);
-    FHIR.R3.Types.MedicationAdminStatusStopped: exit(FHIR.R4.Types.MedicationAdminStatusStopped);
-    FHIR.R3.Types.MedicationAdminStatusUnknown: exit(FHIR.R4.Types.MedicationAdminStatusUnknown);
-    else exit(FHIR.R4.Types.MedicationAdminStatusNull);
-  end;
+  result := FHIR.R3.Types.CODES_TFhirMedicationAdminStatusEnum[src];
 end;
 
-class function TVersionConvertor_30_40.convertMedicationAdministrationStatus(src : FHIR.R4.Types.TFhirMedicationAdminStatusEnum) : FHIR.R3.Types.TFhirMedicationAdminStatusEnum;
+class function TVersionConvertor_30_40.convertMedicationAdministrationStatus(src : String) : FHIR.R3.Types.TFhirMedicationAdminStatusEnum;
+var
+  i : integer;
 begin
-  case (src) of
-    FHIR.R4.Types.MedicationAdminStatusInProgress: exit(FHIR.R3.Types.MedicationAdminStatusInProgress);
-    FHIR.R4.Types.MedicationAdminStatusOnHold: exit(FHIR.R3.Types.MedicationAdminStatusOnHold);
-    FHIR.R4.Types.MedicationAdminStatusCompleted: exit(FHIR.R3.Types.MedicationAdminStatusCompleted);
-    FHIR.R4.Types.MedicationAdminStatusEnteredInError: exit(FHIR.R3.Types.MedicationAdminStatusEnteredInError);
-    FHIR.R4.Types.MedicationAdminStatusStopped: exit(FHIR.R3.Types.MedicationAdminStatusStopped);
-    FHIR.R4.Types.MedicationAdminStatusUnknown: exit(FHIR.R3.Types.MedicationAdminStatusUnknown);
-    else exit(FHIR.R3.Types.MedicationAdminStatusNull);
-  end;
+  i := StringArrayIndexOfSensitive(CODES_TFhirMedicationAdminStatusEnum, src);
+  if i = -1 then
+    result := FHIR.R3.Types.MedicationAdminStatusNull
+  else
+    result := FHIR.R3.Types.TFhirMedicationAdminStatusEnum(i);
 end;
 
-class function TVersionConvertor_30_40.convertMedicationDispenseStatus(src : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum) : FHIR.R4.Types.TFhirMedicationDispenseStatusEnum;
+class function TVersionConvertor_30_40.convertMedicationDispenseStatus(src : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum) : String;
 begin
-  case (src) of
-    FHIR.R3.Types.MedicationDispenseStatusPreparation: exit(FHIR.R4.Types.MedicationDispenseStatusPreparation);
-    FHIR.R3.Types.MedicationDispenseStatusInProgress: exit(FHIR.R4.Types.MedicationDispenseStatusInProgress);
-    FHIR.R3.Types.MedicationDispenseStatusOnHold: exit(FHIR.R4.Types.MedicationDispenseStatusOnHold);
-    FHIR.R3.Types.MedicationDispenseStatusCompleted: exit(FHIR.R4.Types.MedicationDispenseStatusCompleted);
-    FHIR.R3.Types.MedicationDispenseStatusEnteredInError: exit(FHIR.R4.Types.MedicationDispenseStatusEnteredInError);
-    FHIR.R3.Types.MedicationDispenseStatusStopped: exit(FHIR.R4.Types.MedicationDispenseStatusStopped);
-    else exit(FHIR.R4.Types.MedicationDispenseStatusNull);
-  end;
+  result := FHIR.R3.Types.CODES_TFhirMedicationDispenseStatusEnum[src];
 end;
 
-class function TVersionConvertor_30_40.convertMedicationDispenseStatus(src : FHIR.R4.Types.TFhirMedicationDispenseStatusEnum) : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum;
+class function TVersionConvertor_30_40.convertMedicationDispenseStatus(src : string) : FHIR.R3.Types.TFhirMedicationDispenseStatusEnum;
+var
+  i : integer;
 begin
-  case (src) of
-    FHIR.R4.Types.MedicationDispenseStatusPreparation: exit(FHIR.R3.Types.MedicationDispenseStatusPreparation);
-    FHIR.R4.Types.MedicationDispenseStatusInProgress: exit(FHIR.R3.Types.MedicationDispenseStatusInProgress);
-    FHIR.R4.Types.MedicationDispenseStatusOnHold: exit(FHIR.R3.Types.MedicationDispenseStatusOnHold);
-    FHIR.R4.Types.MedicationDispenseStatusCompleted: exit(FHIR.R3.Types.MedicationDispenseStatusCompleted);
-    FHIR.R4.Types.MedicationDispenseStatusEnteredInError: exit(FHIR.R3.Types.MedicationDispenseStatusEnteredInError);
-    FHIR.R4.Types.MedicationDispenseStatusStopped: exit(FHIR.R3.Types.MedicationDispenseStatusStopped);
-    else exit(FHIR.R3.Types.MedicationDispenseStatusNull);
-  end;
+  i := StringArrayIndexOfSensitive(FHIR.R3.Types.CODES_TFhirMedicationDispenseStatusEnum, src);
+  if i = -1 then
+    result := FHIR.R3.Types.MedicationDispenseStatusNull
+  else
+    result := FHIR.R3.Types.TFhirMedicationDispenseStatusEnum(i);
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequestStatus(src : FHIR.R3.Types.TFhirMedicationRequestStatusEnum) : FHIR.R4.Types.TFhirMedicationRequestStatusEnum;
@@ -8184,7 +8159,7 @@ begin
     tgt.timing := convertType(src.eventTiming);
 
   if (src.eventData <> nil) then
-    tgt.data := convertDataRequirement(src.eventData);
+    tgt.dataList.Add(convertDataRequirement(src.eventData));
 
   exit(tgt.link);
   finally
@@ -8209,8 +8184,8 @@ begin
   if (src.timing <> nil) then
     tgt.eventTiming := convertType(src.timing);
 
-  if (src.data <> nil) then
-    tgt.eventData := convertDataRequirement(src.data);
+  if (src.dataList.Count > 0) then
+    tgt.eventData := convertDataRequirement(src.dataList[0]);
 
   exit(tgt.link);
   finally
@@ -9366,11 +9341,11 @@ begin
 
   for t3 in src.reasonList do
   begin
-    tgt.reasonList.add(convertCodeableConcept(t3));
+    tgt.reasonCodeList.add(convertCodeableConcept(t3));
   end;
   for t4 in src.indicationList do
   begin
-    tgt.indicationList.add(convertReference(t4));
+    tgt.reasonReferenceList.add(convertReference(t4));
   end;
   tgt.priority := src.priority;
 
@@ -9453,11 +9428,11 @@ begin
   if (src.appointmentType <> nil) then
     tgt.appointmentType := convertCodeableConcept(src.appointmentType);
 
-  for t4 in src.reasonList do
+  for t4 in src.reasonCodeList do
   begin
     tgt.reasonList.add(convertCodeableConcept(t4));
   end;
-  for t5 in src.indicationList do
+  for t5 in src.reasonReferenceList do
   begin
     tgt.indicationList.add(convertReference(t5));
   end;
@@ -10668,7 +10643,7 @@ begin
     tgt.implementation_ := convertCapabilityStatementImplementationComponent(src.implementation_);
 
   if (src.fhirVersion <> '') then
-    tgt.fhirVersion := src.fhirVersion;
+    tgt.fhirVersion := FHIR.R4.Types.TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(FHIR.R4.Types.CODES_TFhirFHIRVersionEnum, src.fhirVersion));
 
   for t5 in src.formatList do
   begin
@@ -10774,8 +10749,8 @@ begin
   if (src.implementation_ <> nil) then
     tgt.implementation_ := convertCapabilityStatementImplementationComponent(src.implementation_);
 
-  if (src.fhirVersion <> '') then
-    tgt.fhirVersion := src.fhirVersion;
+  if (src.fhirVersion <> FHIRVersionNull) then
+    tgt.fhirVersion := FHIR.R4.Types.CODES_TFhirFHIRVersionEnum[src.fhirVersion];
 
   for t5 in src.formatList do
   begin
@@ -11564,7 +11539,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
@@ -11627,8 +11602,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
@@ -11746,7 +11721,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   if (src.effective <> nil) then
     tgt.effective := convertType(src.effective);
@@ -11832,8 +11807,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   if (src.effective <> nil) then
     tgt.effective := convertType(src.effective);
@@ -12507,7 +12482,7 @@ begin
     tgt.recipientList.add(convertReference(t7));
   end;
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   tgt.sent := src.sent;
   tgt.received := src.received;
@@ -12597,8 +12572,8 @@ begin
   begin
     tgt.recipientList.add(convertReference(t7));
   end;
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   tgt.sent := src.sent;
   tgt.received := src.received;
@@ -13697,7 +13672,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   if (src.onset <> nil) then
     tgt.onset := convertType(src.onset);
@@ -13764,8 +13739,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   if (src.onset <> nil) then
     tgt.onset := convertType(src.onset);
@@ -14078,14 +14053,14 @@ begin
   tgt.status := convertDetectedIssueStatus(src.status);
 
   if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
+    tgt.code := convertCodeableConcept(src.category);
 
   tgt.severity := convertDetectedIssueSeverity(src.severity);
 
   if (src.patient <> nil) then
     tgt.patient := convertReference(src.patient);
 
-  tgt.date := src.date;
+  tgt.identified := convertDateTime(src.dateElement);
 
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
@@ -14126,15 +14101,16 @@ begin
 
   tgt.status := convertDetectedIssueStatus(src.status);
 
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
+  if (src.code <> nil) then
+    tgt.category := convertCodeableConcept(src.code);
 
   tgt.severity := convertDetectedIssueSeverity(src.severity);
 
   if (src.patient <> nil) then
     tgt.patient := convertReference(src.patient);
 
-  tgt.date := src.date;
+  if src.identified is FHIR.R4.Types.TFhirDateTime then
+    tgt.dateElement := convertDateTime(src.identified as FHIR.R4.Types.TFhirDateTime);
 
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
@@ -14582,7 +14558,7 @@ begin
   tgt.status := convertDiagnosticReportStatus(src.status);
 
   if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
+    tgt.categoryList.Add(convertCodeableConcept(src.category));
 
   tgt.code := convertCodeableConcept(src.code);
 
@@ -14590,7 +14566,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   if (src.effective <> nil) then
     tgt.effective := convertType(src.effective);
@@ -14679,7 +14655,7 @@ begin
   try
   copyBackboneElement(src, tgt);
   tgt.Condition := convertReference(src.Condition);
-  tgt.Role := convertCodeableConcept(src.Role);
+  tgt.Use := convertCodeableConcept(src.Role);
   tgt.Rank := src.Rank;
   exit(tgt.link);
   finally
@@ -14698,7 +14674,7 @@ begin
   try
   copyBackboneElement(src, tgt);
   tgt.Condition := convertReference(src.Condition);
-  tgt.Role := convertCodeableConcept(src.Role);
+  tgt.Role := convertCodeableConcept(src.Use);
   tgt.Rank := src.Rank;
   exit(tgt.link);
   finally
@@ -14733,16 +14709,16 @@ begin
   end;
   tgt.status := convertDiagnosticReportStatus(src.status);
 
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
+  if (src.categoryList.Count > 0) then
+    tgt.category := convertCodeableConcept(src.categoryList[0]);
 
   tgt.code := convertCodeableConcept(src.code);
 
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   if (src.effective <> nil) then
     tgt.effective := convertType(src.effective);
@@ -15258,7 +15234,7 @@ begin
     tgt.participantList.add(convertEncounterParticipantComponent(t7));
   end;
   if (src.appointment <> nil) then
-    tgt.appointment := convertReference(src.appointment);
+    tgt.appointmentList.add(convertReference(src.appointment));
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
@@ -15268,7 +15244,7 @@ begin
 
   for t8 in src.reasonList do
   begin
-    tgt.reasonList.add(convertCodeableConcept(t8));
+    tgt.reasonCodeList.add(convertCodeableConcept(t8));
   end;
   for t9 in src.diagnosisList do
   begin
@@ -15356,8 +15332,8 @@ begin
   begin
     tgt.participantList.add(convertEncounterParticipantComponent(t7));
   end;
-  if (src.appointment <> nil) then
-    tgt.appointment := convertReference(src.appointment);
+  if (src.appointmentList.Count > 0) then
+    tgt.appointment := convertReference(src.appointmentList[0]);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
@@ -15365,7 +15341,7 @@ begin
   if (src.length <> nil) then
     tgt.length := convertDuration(src.length);
 
-  for t8 in src.reasonList do
+  for t8 in src.reasonCodeList do
   begin
     tgt.reasonList.add(convertCodeableConcept(t8));
   end;
@@ -16702,7 +16678,7 @@ begin
   begin
     tgt.identifierList.add(convertIdentifier(t1));
   end;
-  tgt.status := convertGoalStatus(src.status);
+  tgt.lifecycleStatus := convertGoalStatus(src.status);
 
   for t2 in src.categoryList do
   begin
@@ -16721,7 +16697,7 @@ begin
     tgt.start := convertType(src.start);
 
   if (src.target <> nil) then
-    tgt.target := convertGoalTargetComponent(src.target);
+    tgt.targetList.Add(convertGoalTargetComponent(src.target));
 
   tgt.statusDate := src.statusDate.link;
 
@@ -16772,7 +16748,7 @@ begin
   begin
     tgt.identifierList.add(convertIdentifier(t1));
   end;
-  tgt.status := convertGoalStatus(src.status);
+  tgt.status := convertGoalStatus(src.Lifecyclestatus);
 
   for t2 in src.categoryList do
   begin
@@ -16790,8 +16766,8 @@ begin
   if (src.start <> nil) then
     tgt.start := convertType(src.start);
 
-  if (src.target <> nil) then
-    tgt.target := convertGoalTargetComponent(src.target);
+  if (src.targetList.Count > 0) then
+    tgt.target := convertGoalTargetComponent(src.targetList[0]);
 
   tgt.statusDate := src.statusDate.link;
 
@@ -17373,6 +17349,7 @@ var
   tb : FHIR.R3.Resources.TFhirHealthcareServiceAvailableTime;
   tc : FHIR.R3.Resources.TFhirHealthcareServiceNotAvailable;
   td : FHIR.R3.Types.TFhirReference;
+  te : FHIR.R4.Resources.TFhirHealthcareServiceEligibility;
 begin
   if (src = nil) then
     exit(nil);
@@ -17427,15 +17404,18 @@ begin
   begin
     tgt.serviceProvisionCodeList.add(convertCodeableConcept(t7));
   end;
-  if (src.eligibility <> nil) then
-    tgt.eligibility := convertCodeableConcept(src.eligibility);
-
-  if (src.eligibilityNote <> '') then
-    tgt.eligibilityNote := src.eligibilityNote;
+  if (src.eligibilityNote <> '') or (src.eligibility <> nil) then
+  begin
+    te := tgt.eligibilityList.Append;
+    if (src.eligibility <> nil) then
+      te.code := convertCodeableConcept(src.eligibility);
+    if (src.eligibilityNote <> '') then
+      te.comment := src.eligibilityNote;
+  end;
 
   for t8 in src.programNameList do
   begin
-    tgt.programNameList.add(convertString(t8));
+    tgt.program_List.add(convertString(t8));
   end;
   for t9 in src.characteristicList do
   begin
@@ -17478,7 +17458,7 @@ var
   t5 : FHIR.R4.Types.TFhirContactPoint;
   t6 : FHIR.R4.Types.TFhirReference;
   t7 : FHIR.R4.Types.TFhirCodeableConcept;
-  t8 : FHIR.R4.Types.TFhirString;
+  t8 : FHIR.R4.Types.TFhirCodeableConcept;
   t9 : FHIR.R4.Types.TFhirCodeableConcept;
   ta : FHIR.R4.Types.TFhirCodeableConcept;
   tb : FHIR.R4.Resources.TFhirHealthcareServiceAvailableTime;
@@ -17538,15 +17518,16 @@ begin
   begin
     tgt.serviceProvisionCodeList.add(convertCodeableConcept(t7));
   end;
-  if (src.eligibility <> nil) then
-    tgt.eligibility := convertCodeableConcept(src.eligibility);
-
-  if (src.eligibilityNote <> '') then
-    tgt.eligibilityNote := src.eligibilityNote;
-
-  for t8 in src.programNameList do
+  if (src.eligibilityList.Count > 0) then
   begin
-    tgt.programNameList.add(convertString(t8));
+    tgt.eligibility := convertCodeableConcept(src.eligibilityList[0].code);
+    if (src.comment <> '') then
+      tgt.eligibilityNote := src.comment;
+  end;
+
+  for t8 in src.program_List do
+  begin
+    tgt.programNameList.add(t8.text);
   end;
   for t9 in src.characteristicList do
   begin
@@ -17928,7 +17909,7 @@ begin
     tgt.copyright := src.copyright;
 
   if (src.fhirVersion <> '') then
-    tgt.fhirVersion := src.fhirVersion;
+    tgt.fhirVersion := [FHIR.R4.Types.TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(FHIR.R4.Types.CODES_TFhirFHIRVersionEnum, src.fhirVersion))];
 
   for t4 in src.dependencyList do
   begin
@@ -17939,7 +17920,7 @@ begin
     if tgt.definition = nil then
       tgt.definition := FHIR.R4.Resources.TFhirImplementationGuideDefinition.create;
 
-    tgt.Definition.packageList.add(convertImplementationGuidePackageComponent(tgt.Definition, t5));
+    tgt.Definition.groupingList.add(convertImplementationGuidePackageComponent(tgt.Definition, t5));
   end;
   for t6 in src.globalList do
   begin
@@ -17961,9 +17942,10 @@ var
   t2 : FHIR.R4.Types.TFhirUsageContext;
   t3 : FHIR.R4.Types.TFhirCodeableConcept;
   t4 : FHIR.R4.Resources.TFhirImplementationGuideDependsOn;
-  t5 : FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage;
+  t5 : FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping;
   t6 : FHIR.R4.Resources.TFhirImplementationGuideDefinitionResource;
   t7 : FHIR.R4.Resources.TFhirImplementationGuideGlobal;
+  a : FHIR.R4.Types.TFhirFHIRVersionEnum;
 begin
   if (src = nil) then
     exit(nil);
@@ -18005,20 +17987,21 @@ begin
   if (src.copyright <> '') then
     tgt.copyright := src.copyright;
 
-  if (src.fhirVersion <> '') then
-    tgt.fhirVersion := src.fhirVersion;
+  for a := low(TFhirFHIRVersionEnum) to high(TFhirFHIRVersionEnum) do
+    if (a in src.fhirVersion) and (a <> FHIRVersionNull) then
+      tgt.fhirVersion := FHIR.R4.Types.CODES_TFhirFHIRVersionEnum[a];
 
   for t4 in src.dependsOnList do
   begin
     tgt.dependencyList.add(convertImplementationGuideDependencyComponent(t4));
   end;
-  for t5 in src.Definition.packageList do
+  for t5 in src.Definition.groupingList do
   begin
     tgt.packageList.add(convertImplementationGuidePackageComponent(t5));
   end;
   for t6 in src.Definition.resourceList do
   begin
-    findPackage(tgt.packageList, t6.Package).resourceList.add(convertImplementationGuidePackageResourceComponent(t6));
+    findPackage(tgt.packageList, t6.groupingId).resourceList.add(convertImplementationGuidePackageResourceComponent(t6));
   end;
   for t7 in src.globalList do
   begin
@@ -18070,17 +18053,17 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertImplementationGuidePackageComponent(context : FHIR.R4.Resources.TFhirImplementationGuideDefinition; src : FHIR.R3.Resources.TFhirImplementationGuidePackage) : FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage;
+class function TVersionConvertor_30_40.convertImplementationGuidePackageComponent(context : FHIR.R4.Resources.TFhirImplementationGuideDefinition; src : FHIR.R3.Resources.TFhirImplementationGuidePackage) : FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping;
 var
-  tgt : FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage;
+  tgt : FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping;
   t : FHIR.R3.Resources.TFhirImplementationGuidePackageResource;
   tn : FHIR.R4.Resources.TFhirImplementationGuideDefinitionResource;
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage.Create();
+  tgt := FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping.Create();
   try
-  tgt.Id := 'p' + inttostr(context.packageList.count() + 1);
+  tgt.Id := 'p' + inttostr(context.groupingList.count() + 1);
   copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -18091,7 +18074,7 @@ begin
   for t in src.resourceList do
   begin
       tn := convertImplementationGuidePackageResourceComponent(t);
-      tn.package := tgt.id;
+      tn.groupingId := tgt.id;
       context.resourceList.add(tn);
   end;
   exit(tgt.link);
@@ -18100,7 +18083,7 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertImplementationGuidePackageComponent(src : FHIR.R4.Resources.TFhirImplementationGuideDefinitionPackage) : FHIR.R3.Resources.TFhirImplementationGuidePackage;
+class function TVersionConvertor_30_40.convertImplementationGuidePackageComponent(src : FHIR.R4.Resources.TFhirImplementationGuideDefinitionGrouping) : FHIR.R3.Resources.TFhirImplementationGuidePackage;
 var
   tgt : FHIR.R3.Resources.TFhirImplementationGuidePackage;
 begin
@@ -18729,7 +18712,7 @@ begin
   tgt.isActive := src.isActive;
 
   if (src.amount <> nil) then
-    tgt.amount := convertRatio(src.amount);
+    tgt.strength := convertRatio(src.amount);
 
   exit(tgt.link);
   finally
@@ -18751,8 +18734,8 @@ begin
 
   tgt.isActive := src.isActive;
 
-  if (src.amount <> nil) then
-    tgt.amount := convertRatio(src.amount);
+  if (src.strength <> nil) then
+    tgt.amount := convertRatio(src.strength);
 
   exit(tgt.link);
   finally
@@ -19451,7 +19434,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   for t3 in src.supportingInformationList do
   begin
@@ -19542,8 +19525,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   for t3 in src.supportingInformationList do
   begin
@@ -19660,7 +19643,7 @@ begin
   tgt := FHIR.R4.Resources.TFhirMedicationRequestSubstitution.Create();
   try
   copyBackboneElement(src, tgt);
-  tgt.allowed := src.allowed;
+  tgt.allowed := convertBoolean(src.allowedElement);
 
   if (src.reason <> nil) then
     tgt.reason := convertCodeableConcept(src.reason);
@@ -19680,7 +19663,9 @@ begin
   tgt := FHIR.R3.Resources.TFhirMedicationRequestSubstitution.Create();
   try
   copyBackboneElement(src, tgt);
-  tgt.allowed := src.allowed;
+  if (src.allowed is TFhirBoolean) then
+
+  tgt.allowedElement := ConvertBoolean(src.allowed as TFHIRBoolean);
 
   if (src.reason <> nil) then
     tgt.reason := convertCodeableConcept(src.reason);
@@ -20616,7 +20601,7 @@ begin
     tgt.interpretationList.Add(convertCodeableConcept(src.interpretation));
 
   if (src.comment <> '') then
-    tgt.comment := src.comment;
+    tgt.noteList.Append.text := src.comment;
 
   if (src.bodySite <> nil) then
     tgt.bodySite := convertCodeableConcept(src.bodySite);
@@ -20708,8 +20693,8 @@ begin
   if (src.interpretationList.Count > 0) then
     tgt.interpretation := convertCodeableConcept(src.interpretationList[0]);
 
-  if (src.comment <> '') then
-    tgt.comment := src.comment;
+  if (src.noteList.Count > 0) then
+    tgt.comment := src.noteList[0].text;
 
   if (src.bodySite <> nil) then
     tgt.bodySite := convertCodeableConcept(src.bodySite);
@@ -21934,12 +21919,12 @@ begin
   if (src.response <> nil) then
     tgt.response := convertReference(src.response);
 
-  tgt.statusDate := src.statusDate.link;
+  tgt.paymentDate := src.statusDate.link;
 
   tgt.created := src.created;
 
   if (src.target <> nil) then
-    tgt.target := convertReference(src.target);
+    tgt.recipient := convertReference(src.target);
 
   if (src.provider <> nil) then
     tgt.provider := convertReference(src.provider);
@@ -21975,12 +21960,12 @@ begin
   if (src.response <> nil) then
     tgt.response := convertReference(src.response);
 
-  tgt.statusDate := src.statusDate.link;
+  tgt.statusDate := src.paymentDate.link;
 
   tgt.created := src.created;
 
-  if (src.target <> nil) then
-    tgt.target := convertReference(src.target);
+  if (src.recipient <> nil) then
+    tgt.target := convertReference(src.recipient);
 
   if (src.provider <> nil) then
     tgt.provider := convertReference(src.provider);
@@ -23124,7 +23109,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   tgt.authored := src.authored.link;
 
@@ -23175,8 +23160,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   tgt.authored := src.authored.link;
 
@@ -23870,9 +23855,20 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequence(src : FHIR.R3.Resources.TFhirSequence) : FHIR.R4.Resources.TFhirSequence;
+function convertSequenceType(src : String) : FHIR.R4.Types.TFhirSequenceTypeEnum;
 var
-  tgt : FHIR.R4.Resources.TFhirSequence;
+  i : integer;
+begin
+  i := StringArrayIndexOfSensitive(FHIR.R4.Types.CODES_TFhirSequenceTypeEnum, src);
+  if i = -1 then
+    result := SequenceTypeNull
+  else
+    result := FHIR.R4.Types.TFhirSequenceTypeEnum(i);
+end;
+
+class function TVersionConvertor_30_40.convertSequence(src : FHIR.R3.Resources.TFhirSequence) : FHIR.R4.Resources.TFhirMolecularSequence;
+var
+  tgt : FHIR.R4.Resources.TFhirMolecularSequence;
   t1 : FHIR.R3.Types.TFhirIdentifier;
   t2 : FHIR.R3.Resources.TFhirSequenceVariant;
   t3 : FHIR.R3.Resources.TFhirSequenceQuality;
@@ -23881,14 +23877,14 @@ var
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirSequence.Create();
+  tgt := FHIR.R4.Resources.TFhirMolecularSequence.Create();
   try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
     tgt.identifierList.add(convertIdentifier(t1));
   end;
-  tgt.type_ := src.type_;
+  tgt.type_ := convertSequenceType(src.type_);
 
   tgt.coordinateSystem := src.coordinateSystem;
 
@@ -23937,13 +23933,13 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequence(src : FHIR.R4.Resources.TFhirSequence) : FHIR.R3.Resources.TFhirSequence;
+class function TVersionConvertor_30_40.convertSequence(src : FHIR.R4.Resources.TFhirMolecularSequence) : FHIR.R3.Resources.TFhirSequence;
 var
   tgt : FHIR.R3.Resources.TFhirSequence;
   t1 : FHIR.R4.Types.TFhirIdentifier;
-  t2 : FHIR.R4.Resources.TFhirSequenceVariant;
-  t3 : FHIR.R4.Resources.TFhirSequenceQuality;
-  t4 : FHIR.R4.Resources.TFhirSequenceRepository;
+  t2 : FHIR.R4.Resources.TFhirMolecularSequenceVariant;
+  t3 : FHIR.R4.Resources.TFhirMolecularSequenceQuality;
+  t4 : FHIR.R4.Resources.TFhirMolecularSequenceRepository;
   t5 : FHIR.R4.Types.TFhirReference;
 begin
   if (src = nil) then
@@ -23955,7 +23951,7 @@ begin
   begin
     tgt.identifierList.add(convertIdentifier(t1));
   end;
-  tgt.type_ := src.type_;
+  tgt.type_ := FHIR.R4.Types.CODES_TFhirSequenceTypeEnum[src.type_];
 
   tgt.coordinateSystem := src.coordinateSystem;
 
@@ -24004,13 +24000,13 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceReferenceSeqComponent(src : FHIR.R3.Resources.TFhirSequenceReferenceSeq) : FHIR.R4.Resources.TFhirSequenceReferenceSeq;
+class function TVersionConvertor_30_40.convertSequenceReferenceSeqComponent(src : FHIR.R3.Resources.TFhirSequenceReferenceSeq) : FHIR.R4.Resources.TFhirMolecularSequenceReferenceSeq;
 var
-  tgt : FHIR.R4.Resources.TFhirSequenceReferenceSeq;
+  tgt : FHIR.R4.Resources.TFhirMolecularSequenceReferenceSeq;
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirSequenceReferenceSeq.Create();
+  tgt := FHIR.R4.Resources.TFhirMolecularSequenceReferenceSeq.Create();
   try
   copyBackboneElement(src, tgt);
   if (src.chromosome <> nil) then
@@ -24038,7 +24034,7 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceReferenceSeqComponent(src : FHIR.R4.Resources.TFhirSequenceReferenceSeq) : FHIR.R3.Resources.TFhirSequenceReferenceSeq;
+class function TVersionConvertor_30_40.convertSequenceReferenceSeqComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceReferenceSeq) : FHIR.R3.Resources.TFhirSequenceReferenceSeq;
 var
   tgt : FHIR.R3.Resources.TFhirSequenceReferenceSeq;
 begin
@@ -24072,13 +24068,13 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceVariantComponent(src : FHIR.R3.Resources.TFhirSequenceVariant) : FHIR.R4.Resources.TFhirSequenceVariant;
+class function TVersionConvertor_30_40.convertSequenceVariantComponent(src : FHIR.R3.Resources.TFhirSequenceVariant) : FHIR.R4.Resources.TFhirMolecularSequenceVariant;
 var
-  tgt : FHIR.R4.Resources.TFhirSequenceVariant;
+  tgt : FHIR.R4.Resources.TFhirMolecularSequenceVariant;
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirSequenceVariant.Create();
+  tgt := FHIR.R4.Resources.TFhirMolecularSequenceVariant.Create();
   try
   copyBackboneElement(src, tgt);
   tgt.start := src.start;
@@ -24103,7 +24099,7 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceVariantComponent(src : FHIR.R4.Resources.TFhirSequenceVariant) : FHIR.R3.Resources.TFhirSequenceVariant;
+class function TVersionConvertor_30_40.convertSequenceVariantComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceVariant) : FHIR.R3.Resources.TFhirSequenceVariant;
 var
   tgt : FHIR.R3.Resources.TFhirSequenceVariant;
 begin
@@ -24134,13 +24130,13 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceQualityComponent(src : FHIR.R3.Resources.TFhirSequenceQuality) : FHIR.R4.Resources.TFhirSequenceQuality;
+class function TVersionConvertor_30_40.convertSequenceQualityComponent(src : FHIR.R3.Resources.TFhirSequenceQuality) : FHIR.R4.Resources.TFhirMolecularSequenceQuality;
 var
-  tgt : FHIR.R4.Resources.TFhirSequenceQuality;
+  tgt : FHIR.R4.Resources.TFhirMolecularSequenceQuality;
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirSequenceQuality.Create();
+  tgt := FHIR.R4.Resources.TFhirMolecularSequenceQuality.Create();
   try
   copyBackboneElement(src, tgt);
   tgt.type_ := convertQualityType(src.type_);
@@ -24173,7 +24169,7 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceQualityComponent(src : FHIR.R4.Resources.TFhirSequenceQuality) : FHIR.R3.Resources.TFhirSequenceQuality;
+class function TVersionConvertor_30_40.convertSequenceQualityComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceQuality) : FHIR.R3.Resources.TFhirSequenceQuality;
 var
   tgt : FHIR.R3.Resources.TFhirSequenceQuality;
 begin
@@ -24211,13 +24207,13 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceRepositoryComponent(src : FHIR.R3.Resources.TFhirSequenceRepository) : FHIR.R4.Resources.TFhirSequenceRepository;
+class function TVersionConvertor_30_40.convertSequenceRepositoryComponent(src : FHIR.R3.Resources.TFhirSequenceRepository) : FHIR.R4.Resources.TFhirMolecularSequenceRepository;
 var
-  tgt : FHIR.R4.Resources.TFhirSequenceRepository;
+  tgt : FHIR.R4.Resources.TFhirMolecularSequenceRepository;
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirSequenceRepository.Create();
+  tgt := FHIR.R4.Resources.TFhirMolecularSequenceRepository.Create();
   try
   copyBackboneElement(src, tgt);
   tgt.type_ := convertRepositoryType(src.type_);
@@ -24243,7 +24239,7 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSequenceRepositoryComponent(src : FHIR.R4.Resources.TFhirSequenceRepository) : FHIR.R3.Resources.TFhirSequenceRepository;
+class function TVersionConvertor_30_40.convertSequenceRepositoryComponent(src : FHIR.R4.Resources.TFhirMolecularSequenceRepository) : FHIR.R3.Resources.TFhirSequenceRepository;
 var
   tgt : FHIR.R3.Resources.TFhirSequenceRepository;
 begin
@@ -24750,7 +24746,7 @@ begin
     tgt.keywordList.add(convertCoding(t5));
   end;
   if (src.fhirVersion <> '') then
-    tgt.fhirVersion := src.fhirVersion;
+    tgt.fhirVersion := FHIR.R4.Types.TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(FHIR.R4.Types.CODES_TFhirFHIRVersionEnum, src.fhirVersion));
 
   for t6 in src.mappingList do
   begin
@@ -24870,8 +24866,8 @@ begin
   begin
     tgt.keywordList.add(convertCoding(t5));
   end;
-  if (src.fhirVersion <> '') then
-    tgt.fhirVersion := src.fhirVersion;
+  if (src.fhirVersion <> FHIRVersionNull) then
+    tgt.fhirVersion := FHIR.R4.Types.CODES_TFhirFHIRVersionEnum[src.fhirVersion];
 
   for t6 in src.mappingList do
   begin
@@ -25749,10 +25745,6 @@ begin
   if (src.channel <> nil) then
     tgt.channel := convertSubscriptionChannelComponent(src.channel);
 
-  for t2 in src.tagList do
-  begin
-    tgt.tagList.add(convertCoding(t2));
-  end;
   exit(tgt.link);
   finally
     tgt.free;
@@ -25790,10 +25782,6 @@ begin
   if (src.channel <> nil) then
     tgt.channel := convertSubscriptionChannelComponent(src.channel);
 
-  for t2 in src.tagList do
-  begin
-    tgt.tagList.add(convertCoding(t2));
-  end;
   exit(tgt.link);
   finally
     tgt.free;
@@ -27339,8 +27327,8 @@ begin
   tgt.precheckBehavior := convertActionPrecheckBehavior(src.precheckBehavior);
   tgt.cardinalityBehavior := convertActionCardinalityBehavior(src.cardinalityBehavior);
 
-  if (src.definition <> '') then
-    tgt.definition := convertCanonicalToReference(src.definitionElement);
+  if (src.definition is TFhirCanonical) then
+    tgt.definition := convertCanonicalToReference(src.definition as TFhirCanonical);
 
   if (src.transform <> '') then
     tgt.transform := convertCanonicalToReference(src.transformElement);
@@ -27853,8 +27841,8 @@ begin
     exit(convertSchedule(src as FHIR.R4.Resources.TFhirSchedule));
   if (src is FHIR.R4.Resources.TFhirSearchParameter) then
     exit(convertSearchParameter(src as FHIR.R4.Resources.TFhirSearchParameter));
-  if (src is FHIR.R4.Resources.TFhirSequence) then
-    exit(convertSequence(src as FHIR.R4.Resources.TFhirSequence));
+  if (src is FHIR.R4.Resources.TFhirMolecularSequence) then
+    exit(convertSequence(src as FHIR.R4.Resources.TFhirMolecularSequence));
   if (src is FHIR.R4.Resources.TFhirSlot) then
     exit(convertSlot(src as FHIR.R4.Resources.TFhirSlot));
   if (src is FHIR.R4.Resources.TFhirSpecimen) then

@@ -1,6 +1,6 @@
 unit FHIR.R{{v}}.Factory;
 
-{$I fhir.inc}
+{$I fhir.r{{v}}.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -35,7 +35,7 @@ interface
 // FHIR v3.{{v}}.0 generated 2018-05-15T06:{{v}}8:00+10:00
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.NetEncoding,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang,
@@ -111,6 +111,7 @@ type
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
+    function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR{{v}};
 
@@ -356,6 +357,11 @@ begin
   result := TFhirString.Create(s);
 end;
 
+function TFHIRFactoryR{{v}}.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
+begin
+  result := TFhirTerminologyCapabilities{{v}}.create(TFhirTerminologyCapabilities.create);
+end;
+
 function TFHIRFactoryR{{v}}.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
 begin
   result := TFHIRValidator{{v}}.Create(worker as TFHIRWorkerContext);
@@ -533,9 +539,8 @@ begin
     result := nil
   else if r.isResource then
   begin
-    if (r as TFHIRResource).meta = nil then
-      (r as TFHIRResource).meta := TFHIRMeta.Create;
-    result := TFHIRMeta{{v}}.create((r as TFHIRResource).meta.link);
+    result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
+    TFHIRMeta4(result).resource := (r as TFHIRResource).link;
   end
   else
     result := TFHIRMeta{{v}}.create((r as TFhirMeta))
@@ -551,9 +556,8 @@ end;
 
 function TFHIRFactoryR{{v}}.wrapMeta(r: TFHIRResourceV): TFhirMetaW;
 begin
-  if (r as TFHIRResource).meta = nil then
-    (r as TFHIRResource).meta := TFHIRMeta.Create;
-  result := TFHIRMeta{{v}}.create((r as TFHIRResource).meta.link);
+  result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
+  TFHIRMeta4(result).resource := (r as TFHIRResource).link;
 end;
 
 function TFHIRFactoryR{{v}}.wrapObservation(r: TFHIRResourceV): TFhirObservationW;
@@ -628,16 +632,16 @@ begin
     result := TFHIRValueSet{{v}}.create(r);
 end;
 
-function TFHIRFactoryR{{v}}.makeBase6{{v}}Binary(s: string): TFHIRObject;
+function TFHIRFactoryR{{v}}.makeBase64Binary(s: string): TFHIRObject;
 begin
-  result := TFhirBase6{{v}}Binary.Create(decodeBase6{{v}}(s));
+  result := TFhirBase64Binary.Create(decodeBase64(AnsiString(s)));
 end;
 
 function TFHIRFactoryR{{v}}.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;
 begin
   result := TFhirBinary.Create;
   try
-    TFhirBinary(result).content := content;
+    TFhirBinary(result).data := content;
     TFhirBinary(result).contentType := contentType;
     result.link;
   finally

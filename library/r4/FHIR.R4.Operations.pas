@@ -33,7 +33,7 @@ unit FHIR.R4.Operations;
 
 interface
 
-// FHIR v3.5.0 generated 2018-08-19T19:30:08+10:00
+// FHIR v3.6.0 generated 2018-11-07T18:13:56+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, 
@@ -46,7 +46,7 @@ Type
   TFHIRApplyOpRequest = class (TFHIROperationRequest)
   private
     FActivityDefinition : TFhirActivityDefinition;
-    FPatient : String;
+    FSubjectList : TList<String>;
     FEncounter : String;
     FPractitioner : String;
     FOrganization : String;
@@ -70,7 +70,7 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property activityDefinition : TFhirActivityDefinition read FActivityDefinition write SetActivityDefinition;
-    property patient : String read FPatient write FPatient;
+    property subjectList : TList<String> read FSubjectList;
     property encounter : String read FEncounter write FEncounter;
     property practitioner : String read FPractitioner write FPractitioner;
     property organization : String read FOrganization write FOrganization;
@@ -1743,12 +1743,17 @@ end;
 constructor TFHIRApplyOpRequest.create;
 begin
   inherited create();
+  FSubjectList := TList<String>.create;
 end;
 
 procedure TFHIRApplyOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
 begin
   FActivityDefinition := (params.res['activityDefinition'] as TFhirActivityDefinition).Link;{ob.5a}
-  FPatient := params.str['patient'];
+  for p in params.parameterList do
+    if p.name = 'subject' then
+      FSubjectList.Add((p.value as TFhirString).value);{ob.1}
   FEncounter := params.str['encounter'];
   FPractitioner := params.str['practitioner'];
   FOrganization := params.str['organization'];
@@ -1766,8 +1771,11 @@ begin
 end;
 
 procedure TFHIRApplyOpRequest.load(params : TParseMap);
+var
+  s : String;
 begin
-  FPatient := params.getVar('patient');
+  for s in params.getVar('subject').Split([';']) do
+    FSubjectList.add(s); 
   FEncounter := params.getVar('encounter');
   FPractitioner := params.getVar('practitioner');
   FOrganization := params.getVar('organization');
@@ -1777,6 +1785,7 @@ end;
 destructor TFHIRApplyOpRequest.Destroy;
 begin
   FActivityDefinition.free;
+  FSubjectList.free;
   FUserType.free;
   FUserLanguage.free;
   FUserTaskContext.free;
@@ -1786,13 +1795,15 @@ begin
 end;
 
 function TFHIRApplyOpRequest.asParams : TFhirParameters;
+var
+  v1 : String;
 begin
   result := TFHIRParameters.create;
   try
     if (FActivityDefinition <> nil) then
       result.addParameter('activityDefinition', FActivityDefinition.Link);{oz.5a}
-    if (FPatient <> '') then
-      result.addParameter('patient', TFHIRString.create(FPatient));{oz.5f}
+    for v1 in FSubjectList do
+      result.AddParameter('subject', TFhirString.create(v1));
     if (FEncounter <> '') then
       result.addParameter('encounter', TFHIRString.create(FEncounter));{oz.5f}
     if (FPractitioner <> '') then
@@ -1818,7 +1829,7 @@ end;
 
 function TFHIRApplyOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['activityDefinition', 'patient', 'encounter', 'practitioner', 'organization', 'userType', 'userLanguage', 'userTaskContext', 'setting', 'settingContext'], name);
+  result := StringArrayExists(['activityDefinition', 'subject', 'encounter', 'practitioner', 'organization', 'userType', 'userLanguage', 'userTaskContext', 'setting', 'settingContext'], name);
 end;
 
 procedure TFHIRApplyOpResponse.SetReturn(value : TFhirResource);
@@ -2100,9 +2111,9 @@ begin
   result := TFHIRParameters.create;
   try
     if (FServer <> '') then
-      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
+      result.addParameter('server', TFHIRCanonical.create(FServer));{oz.5f}
     if (FClient <> '') then
-      result.addParameter('client', TFHIRUri.create(FClient));{oz.5f}
+      result.addParameter('client', TFHIRCanonical.create(FClient));{oz.5f}
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);{oz.5a}
     writeExtensions(result);

@@ -1305,7 +1305,7 @@ end;
 
 function TFHIRCapabilityStatement4.GetFhirVersion: string;
 begin
-  result := statement.fhirVersion;
+  result := CODES_TFhirFHIRVersionEnum[statement.fhirVersion];
 end;
 
 procedure TFHIRCapabilityStatement4.setDescription(value : String);
@@ -1315,7 +1315,7 @@ end;
 
 procedure TFHIRCapabilityStatement4.SetFhirVersion(Value: string);
 begin
-  statement.fhirVersion := value;
+  statement.fhirVersion := TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, value));
 end;
 
 function TFHIRCapabilityStatement4.GetStatus: TPublicationStatus;
@@ -4174,7 +4174,12 @@ end;
 
 function TFHIREventDefinition4.dataType: String;
 begin
-  result := CODES_TFhirAllTypesEnum[ed.trigger.data.type_];
+  if ed.triggerList.Count = 0 then
+    result := ''
+  else if ed.triggerList[0].dataList.Count = 0 then
+    result := ''
+  else
+    result := CODES_TFhirAllTypesEnum[ed.triggerList[0].dataList[0].type_];
 end;
 
 function TFHIREventDefinition4.ed: TFHIREventDefinition;
@@ -4184,12 +4189,22 @@ end;
 
 function TFHIREventDefinition4.expression: String;
 begin
-  result := ed.trigger.condition.expression;
+  if ed.triggerList.Count = 0 then
+    result := ''
+  else if ed.triggerList[0].condition = nil then
+    result := ''
+  else
+    result := ed.triggerList[0].condition.expression;
 end;
 
 function TFHIREventDefinition4.language: String;
 begin
-  result := ed.trigger.condition.language;
+  if ed.triggerList.Count = 0 then
+    result := ''
+  else if ed.triggerList[0].condition = nil then
+    result := ''
+  else
+    result := ed.triggerList[0].condition.language;
 end;
 
 //const

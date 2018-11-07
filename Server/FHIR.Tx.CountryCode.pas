@@ -39,8 +39,6 @@ uses
   FHIR.Tx.Service;
 
 type
-  TCountryCodeServiceMode = (ccAll, cc3Letter, cc2Letter);
-
   TCountryCodeConcept = class (TCodeSystemProviderContext)
   private
     FDisplay: String;
@@ -66,11 +64,10 @@ type
   private
     FCodes : TFslList<TCountryCodeConcept>;
     FMap : TFslMap<TCountryCodeConcept>;
-    FMode : TCountryCodeServiceMode;
 
     procedure load;
   public
-    constructor Create(mode : TCountryCodeServiceMode);
+    constructor Create; Override;
     destructor Destroy; Override;
     Function Link : TCountryCodeServices; overload;
 
@@ -110,10 +107,9 @@ implementation
 
 { TCountryCodeServices }
 
-Constructor TCountryCodeServices.create(mode : TCountryCodeServiceMode);
+Constructor TCountryCodeServices.create;
 begin
   inherited Create;
-  FMode := mode;
   FCodes := TFslList<TCountryCodeConcept>.create;
   FMap := TFslMap<TCountryCodeConcept>.create;
   Load;
@@ -128,11 +124,7 @@ end;
 
 function TCountryCodeServices.system(context : TCodeSystemProviderContext) : String;
 begin
-  case FMode of
-    ccAll: result := 'urn:iso:std:iso:3166';
-    cc3Letter: result := 'urn:iso:std:iso:3166:-2';
-    cc2Letter: result := 'urn:iso:std:iso:3166:-3';
-  end;
+  result := 'urn:iso:std:iso:3166';
 end;
 
 function TCountryCodeServices.getDefinition(code: String): String;
@@ -172,8 +164,6 @@ procedure TCountryCodeServices.load;
     end;
   end;
 begin
-  if (FMode in  then
-
   doLoad('AD', 'Andorra');
   doLoad('AE', 'United Arab Emirates');
   doLoad('AF', 'Afghanistan');

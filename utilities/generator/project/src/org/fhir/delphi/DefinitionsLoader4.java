@@ -104,7 +104,7 @@ public class DefinitionsLoader4 {
   }
    
   private void processCapabilityStatement(Definitions def, CapabilityStatement resource) throws FHIRException {
-    def.setVersion(resource.getFhirVersion());
+    def.setVersion(resource.getFhirVersion().toCode());
     def.setGenDate(new VersionConvertor_10_40(null).convertDateTime(resource.getDateElement()));
   }
 

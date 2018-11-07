@@ -129,7 +129,7 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     return r;
   }
 
-  public void finish() throws Exception {
+  public void finish(String vId) throws Exception {
     if (precomments.size() > 0) {
       for (int i = 0; i < precomments.size(); i++) {
         if (precomments.get(i).charAt(0) == '!')
@@ -142,7 +142,7 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     write("unit "+name+rId+";\r\n");
     write("\r\n");
     if (include) {
-      write("{$I fhir"+rId+".inc}\r\n");
+      write("{$I fhir.r"+vId+".inc}\r\n");
       write("\r\n");
     }
     write("{\r\n"+FULL_LICENSE_CODE+"}\r\n");

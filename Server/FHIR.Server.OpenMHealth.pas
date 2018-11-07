@@ -694,7 +694,7 @@ begin
 
   // user_notes --> Observation.comment
   if (body.has('user_notes')) then
-    obs.comment := body['user_notes'];
+    obs.noteList.Append.text := body['user_notes'];
 end;
 
 procedure TOpenMHealthAdaptor.writeBloodGlucose(obs: TFHIRObservation; body: TJsonObject);
@@ -727,8 +727,8 @@ begin
   if obs.getComponent('http://snomed.info/sct', '309609009', comp) then
     body['temporal_relationship_to_sleep'] := (comp.value as TFhirString).value;
 
-  if obs.comment <> '' then
-    body['user_notes'] := obs.comment;
+  if obs.noteList.Count > 0 then
+    body['user_notes'] := obs.noteList[0].text;
 end;
 
 procedure TOpenMHealthAdaptor.writeBundle(obs: TFHIRBundle; json: TJsonObject);

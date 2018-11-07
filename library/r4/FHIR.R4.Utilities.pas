@@ -53,7 +53,6 @@ const
     {$IFDEF FHIR_CODESYSTEM}frtCodeSystem, {$ENDIF}
     {$IFDEF FHIR_COMPARTMENTDEFINITION}frtCompartmentDefinition, {$ENDIF}
     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap, {$ENDIF}
-    {$IFDEF FHIR_ENTRYDEFINITION}frtEntryDefinition, {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION}frtEventDefinition, {$ENDIF}
     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide, {$ENDIF}
@@ -2511,13 +2510,13 @@ procedure TFHIRCapabilityStatementHelper.checkCompatible;
 var
   res, code : String;
 begin
-  res := fhirVersion;
+  res := CODES_TFhirFHIRVersionEnum[fhirVersion];
   if res.Contains('-') then
     res := res.Substring(0, res.IndexOf('-'));
   res := res.Substring(0, res.LastIndexOf('.'));
   code := FHIR_GENERATED_VERSION.Substring(0, FHIR_GENERATED_VERSION.LastIndexOf('.'));
   if (code <> res) then
-    raise EFHIRException.create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
+    raise EFHIRException.create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+CODES_TFhirFHIRVersionEnum[fhirVersion]);
 end;
 
 function TFHIRCapabilityStatementHelper.hasFormat(fmt: TFHIRFormat): boolean;

@@ -373,6 +373,7 @@ begin
   self.AddFuncItem('&Save resource on Server', _FuncPUT);
   self.AddFuncItem('Save on &a Server', _FuncPOST);
   self.AddFuncItem('Validate &resource on server', _FuncServerValidate);
+  self.AddFuncItem('V&2 IDE', _FuncDebug);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Server &Manager', _FuncServers);
   self.AddFuncItem('Pac&kage Manager', _FuncPackageManager);

@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hl7.fhir.utilities.DirectoryIterator;
 import org.hl7.fhir.utilities.TextFile;
-import org.hl7.fhir.utilities.DirectoryIterator.FileProcessor;
 import org.hl7.fhir.utilities.Utilities;
 
-public class MarkdownConvertor implements FileProcessor {
+public class MarkdownConvertor { // implements FileProcessor {
 
   public static void main(String[] args) throws Exception {
     File[] dirs = new File("C:\\temp\\flexmark\\flexmark-java-master").listFiles();
@@ -31,7 +29,7 @@ public class MarkdownConvertor implements FileProcessor {
     System.out.println("Produce "+pascalify(d.getName()));
     i = new StringBuilder();
     c = new StringBuilder();
-    new DirectoryIterator(Utilities.path(d.getAbsolutePath(), "src", "main"), ".*\\.java", this);
+//    new DirectoryIterator(Utilities.path(d.getAbsolutePath(), "src", "main"), ".*\\.java", this);
     String srcI = i.toString();
     String srcC = c.toString();
     for (String n : names) {
@@ -63,7 +61,7 @@ public class MarkdownConvertor implements FileProcessor {
     return "FlexMark"+b.toString();
   }
 
-  @Override
+  // @Override
   public void process(File f) throws Exception {
 //    System.out.println("  "+f.getAbsolutePath());
     String src = TextFile.fileToString(f.getAbsolutePath());
