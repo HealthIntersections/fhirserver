@@ -701,8 +701,14 @@ begin
   if not (ndx.SearchType in [sptToken, sptNumber, sptQuantity]) then
     raise EFHIRException.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing range');
 
-  GetBoundaries(value.low.value, QuantityComparatorNull, v1, crap);
-  GetBoundaries(value.high.value, QuantityComparatorNull, crap, v2);
+  if (value.low = nil) then
+    v1 := TFslDecimal.makeInfinity.Negated.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false)
+  else
+    GetBoundaries(value.low.value, QuantityComparatorNull, v1, crap);
+  if (value.high = nil) then
+    v2 := TFslDecimal.makeInfinity.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true)
+  else
+    GetBoundaries(value.high.value, QuantityComparatorNull, crap, v2);
 
   if (length(v1) > INDEX_ENTRY_LENGTH) then
       raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
