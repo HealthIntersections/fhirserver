@@ -121,7 +121,7 @@ begin
     end;
     try
       // todo: code and date requirements from DataRequirement
-      if evd.trigger.condition <> nil then
+      if (evd.triggerList.Count = 1) and (evd.triggerList[0].condition <> nil) then
       begin
 
       end
@@ -234,24 +234,24 @@ begin
       if rule(evd <> nil, 'Topic not understood or found') then
       try
         evd.checkNoModifiers('SubscriptionManager.checkAcceptable', 'topic definition');
-        if rule(evd.trigger <> nil, 'Topic has no trigger') then
+        if rule(evd.triggerList.Count = 1, 'Topic has no trigger (or more than one)') then
         begin
-// todo...          rule(evd.trigger.type_ in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved], 'Topic has trigger type = '+CODES_TFhirTriggerTypeEnum[evd.trigger.type_]+', which is not supported');
-          rule(evd.trigger.name = '', 'Topic has named trigger, which is not supported');
-          rule(evd.trigger.timing = nil, 'Topic has event timing on trigger, which is not supported');
-          rule((evd.trigger.data = nil) or (evd.trigger.condition = nil), 'Topic has both data and condition on trigger, which is not supported');
-          if evd.trigger.data <> nil then
+// todo...          rule(evd.triggerList[0].type_ in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved], 'Topic has trigger type = '+CODES_TFhirTriggerTypeEnum[evd.triggerList[0].type_]+', which is not supported');
+          rule(evd.triggerList[0].name = '', 'Topic has named trigger, which is not supported');
+          rule(evd.triggerList[0].timing = nil, 'Topic has event timing on trigger, which is not supported');
+          rule((evd.triggerList[0].dataList.count <> 0) or (evd.triggerList[0].condition = nil), 'Topic has both data and condition on trigger, which is not supported');
+          if evd.triggerList[0].dataList.count > 0 then
           begin
-            rule(evd.trigger.data.type_ <> AllTypesNull, 'DataRequirement type must not be present');
-            rule(evd.trigger.data.profileList.IsEmpty, 'DataRequirement profile must be absent');
-            if evd.trigger.condition <> nil then
+            rule(evd.triggerList[0].dataList[0].type_ <> AllTypesNull, 'DataRequirement type must not be present');
+            rule(evd.triggerList[0].dataList[0].profileList.IsEmpty, 'DataRequirement profile must be absent');
+            if evd.triggerList[0].condition <> nil then
             begin
-              rule(evd.trigger.condition.language = 'text\FHIR.R2.PathEngine', 'Condition language must be FHIR.R2.PathEngine');
-              rule(evd.trigger.condition.expression <> '', 'Condition FHIR.R2.PathEngine must not be blank');
+              rule(evd.triggerList[0].condition.language = 'text\FHIR.R2.PathEngine', 'Condition language must be FHIR.R2.PathEngine');
+              rule(evd.triggerList[0].condition.expression <> '', 'Condition FHIR.R2.PathEngine must not be blank');
               try
-                expr := fpp.parse(evd.trigger.condition.expression);
-                evd.trigger.condition.expressionElement.Tag := expr;
-                fpe.check(nil, CODES_TFhirAllTypesEnum[evd.trigger.data.type_], CODES_TFhirAllTypesEnum[evd.trigger.data.type_], CODES_TFhirAllTypesEnum[evd.trigger.data.type_], expr, false);
+                expr := fpp.parse(evd.triggerList[0].condition.expression);
+                evd.triggerList[0].condition.expressionElement.Tag := expr;
+                fpe.check(nil, CODES_TFhirAllTypesEnum[evd.triggerList[0].dataList[0].type_], CODES_TFhirAllTypesEnum[evd.triggerList[0].dataList[0].type_], CODES_TFhirAllTypesEnum[evd.triggerList[0].dataList[0].type_], expr, false);
               except
                 on e : exception do
                   rule(false, 'Error parsing expression: '+e.Message);
@@ -308,10 +308,6 @@ begin
               if (url = '{{id}}') then
               begin
                 // copy the specified tags on the subscription to the resource.
-                for i := 0 to subscription.tagList.Count - 1 do
-                  if (subscription.tagList[i].code <> '') and (subscription.tagList[i].system <> '') then
-                    if not resource.meta.HasTag(subscription.tagList[i].system, subscription.tagList[i].code) then
-                      resource.meta.tagList.AddCoding(subscription.tagList[i].system, subscription.tagList[i].code, subscription.tagList[i].display);
                 entry.request := TFhirBundleEntryRequest.Create;
                 if created then
                 begin

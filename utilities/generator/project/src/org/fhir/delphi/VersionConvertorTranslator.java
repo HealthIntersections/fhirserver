@@ -141,32 +141,13 @@ public class VersionConvertorTranslator {
 
 
   public static void main(String[] args) throws Exception {
-    new VersionConvertorTranslator().convert("C:\\work\\org.hl7.fhir\\build\\implementations\\java\\org.hl7.fhir.convertors\\src\\org\\hl7\\fhir\\convertors", 
-        "C:\\work\\fhirserver\\reference-platform\\xversion", "VersionConvertor_30_40", 
-        "C:\\work\\org.hl7.fhir\\build\\implementations\\java\\org.hl7.fhir.r4\\src\\org\\hl7\\fhir\\r4\\model", "C:\\work\\org.hl7.fhir\\build\\implementations\\java\\org.hl7.fhir.dstu3\\src\\org\\hl7\\fhir\\dstu3\\model");
+    new VersionConvertorTranslator().convert("C:\\work\\org.hl7.fhir\\build\\implementations\\java\\org.hl7.fhir.validation\\src\\org\\hl7\\fhir\\r4\\validation", 
+        "C:\\work\\fhirserver\\library\\r4", "InstanceValidator");
   }
 
-  Map<String, ClassInfo> models = new HashMap<String, ClassInfo>();
-  List<EnumInfo> enumsJ3 = new ArrayList<EnumInfo>();
-  List<EnumInfo> enumsJ4 = new ArrayList<EnumInfo>();
-  List<EnumInfo> enumsP3 = new ArrayList<EnumInfo>();
-  List<EnumInfo> enumsP4 = new ArrayList<EnumInfo>();
   Map<String, Integer> nameCount = new HashMap<String, Integer>();
   
-  public void convert(String source, String dest, String className, String srcModels, String tgtModels) throws Exception {
-    if (new File(CACHEFILE).exists()) {
-      System.out.println("Load "+CACHEFILE);
-      loadCache();
-    } else {
-      loadModels(srcModels);
-      loadModels(tgtModels);
-      saveCache();
-    }
-    loadEnums("c:\\temp\\delphi.enums.r3.cache", enumsP3);
-    loadEnums("c:\\temp\\delphi.enums.r4.cache", enumsP4);
-    loadEnums("c:\\temp\\java.enums.r3.cache", enumsJ3);
-    loadEnums("c:\\temp\\java.enums.r4.cache", enumsJ4);
-    
+  public void convert(String source, String dest, String className) throws Exception {    
     System.out.println("Parsing "+source);
     CompilationUnit jcode = JavaParser.parse(new File(Utilities.path(source, className+".java")));
     System.out.println("Loaded");
@@ -178,85 +159,10 @@ public class VersionConvertorTranslator {
   }
 
 
-  private void loadEnums(String source, List<EnumInfo> enums) throws IOException {
-    System.out.println("Load enums from "+source);
-    BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(source)));
-    String line;
-    while ((line = bufferedReader.readLine()) != null) {
-      enums.add(EnumInfo.fromCache(line));
-    }
-    new FileReader(new File(CACHEFILE)).close();
-    bufferedReader.close();
-  }
-
-
-  private void loadCache() throws IOException {
-    BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(CACHEFILE)));
-    String line;
-    while ((line = bufferedReader.readLine()) != null) {
-      String[] p = line.split("\\=");
-      models.put(p[0], ClassInfo.fromSummary(p[0], p[1]));
-    }
-    new FileReader(new File(CACHEFILE)).close();
-    bufferedReader.close();
-   
-  }
-
-
-  private void saveCache() throws IOException {
-    StringBuilder b = new StringBuilder();
-    for (Entry<String, ClassInfo> e : models.entrySet()) {
-      b.append(e.getKey()+"="+e.getValue().summary()+"\r\n");
-    }
-    TextFile.stringToFile(b.toString(), new File(CACHEFILE));
-  }
-
-
-  private void loadModels(String source) throws FileNotFoundException {
-    System.out.println("Parsing "+source);
-    for (File f : new File(source).listFiles()) {
-      if (f.getAbsolutePath().endsWith(".java")) {
-        CompilationUnit jcode = JavaParser.parse(f);
-        for (TypeDeclaration<?> c : jcode.getTypes()) {
-          String ns = jcode.getPackageDeclaration().get().getNameAsString()+"."+c.getNameAsString();
-          ClassInfo ci = new ClassInfo();
-          ci.setEnumeration(c.isEnumDeclaration());
-          ci.setResource(c.getAnnotationByName("ResourceDef").isPresent());
-         
-          models.put(ns, ci);
-          processMembers(ns, c, ci);
-        }
-      }
-    }
-
-  }
-
-
-  private void processMembers(String ns, TypeDeclaration<?> c, ClassInfo cp) {
-    for (BodyDeclaration<?> m : c.getMembers()) {
-      if (m instanceof MethodDeclaration) {
-        MethodDeclaration md = (MethodDeclaration) m;
-        cp.methodTypes.put(md.getNameAsString(), md.getTypeAsString());
-        if (md.getNameAsString().startsWith("get") && md.getParameters().size() == 0 && md.getTypeAsString().startsWith("List<"))
-          cp.lists.add(md.getNameAsString());
-        
-      }
-      if (m instanceof TypeDeclaration) {
-        TypeDeclaration<?> t = (TypeDeclaration<?>) m;
-        String n = ns+"."+t.getNameAsString();
-        ClassInfo ci = new ClassInfo();
-        ci.setEnumeration(t.isEnumDeclaration());
-        models.put(n, ci);
-        processMembers(n, t, ci);
-      }
-    }    
-  }
-
-
   private void finish(DelphiCodeGenerator gen) throws Exception {
     gen.classDefs.add("  end;");
     gen.classDefs.add("");   
-    gen.finish();
+    gen.finish("4");
   }
 
 
@@ -266,14 +172,20 @@ public class VersionConvertorTranslator {
     gen.setInclude(false);
     gen.uses.add("SysUtils");
     gen.uses.add("Classes");
-    gen.uses.add("AdvObjects");
-    gen.uses.add("FHIRTypes3");
-    gen.uses.add("FHIRResources3");
-    gen.uses.add("FHIRUtilities3");
-    gen.uses.add("FHIRTypes4");
-    gen.uses.add("FHIRResources4");
-    gen.uses.add("FHIRUtilities4");
-    gen.classDefs.add("  T"+className+" = class (TAdvObject)");
+    gen.usesBreak();
+    gen.uses.add("FHIR.Support.Base");
+    gen.usesBreak();
+    gen.uses.add("FHIR.Base.Objects");
+    gen.uses.add("FHIR.Base.Xhtml");
+    gen.uses.add("FHIR.Base.Factory");
+    gen.usesBreak();
+    gen.uses.add("FHIR.R4.Types");
+    gen.uses.add("FHIR.R4.Resources");
+    gen.uses.add("FHIR.R4.Utilities");
+    gen.uses.add("FHIR.R4.ElementModel");
+    gen.uses.add("FHIR.R4.Validator");
+    gen.uses.add("FHIR.R4.Adaptor");
+    gen.classDefs.add("  T"+className+" = class (TFslObject)");
     return gen;
   }
 
@@ -281,23 +193,17 @@ public class VersionConvertorTranslator {
     gen.classDefs.add("  private");
     for (MethodDeclaration f : clss.getMethods()) {
       if (!f.isPublic()) {
-        if (!onSkippedResourceType(f) && passNameCount(f.getNameAsString()))
+        if (passNameCount(f.getNameAsString()))
           processMethod(gen, className, f);
       }
     }
     gen.classDefs.add("  public");
     for (MethodDeclaration f : clss.getMethods()) {
       if (f.isPublic()) {
-        if (!onSkippedResourceType(f) && passNameCount(f.getNameAsString()))
+        if (passNameCount(f.getNameAsString()))
           processMethod(gen, className, f);
       }
     }
-  }
-
-
-  private boolean onSkippedResourceType(MethodDeclaration f) {
-    String rn = getResourceName(f.getTypeAsString());
-    return Utilities.existsInList(rn, "EligibilityRequest", "EligibilityResponse", "ProcessRequest", "ProcessResponse", "TestReport", "TestScript");
   }
 
 
@@ -403,12 +309,12 @@ public class VersionConvertorTranslator {
     pad(level, impl);    
     String sel = c.getSelector().toString();
     String type = pc.params.containsKey(sel) ? pc.params.get(sel).name : null;
-    EnumInfo e = type != null ? getJavaEnum(type) : null;
-    EnumInfo p = null;
-    if (e != null) {
-      boolean r4 = type.contains(".r4.");
-      p = r4 ? getPascalEnum4(e.url) : getPascalEnum3(e.url);
-    }
+//    EnumInfo e = type != null ? getJavaEnum(type) : null;
+//    EnumInfo p = null;
+//    if (e != null) {
+//      boolean r4 = type.contains(".r4.");
+//      p = r4 ? getPascalEnum4(e.url) : getPascalEnum3(e.url);
+//    }
     impl.append("case (");    
     convertExpression(level+4, impl, vars, c.getSelector(), pc, false, ctxt);
     impl.append(") of\r\n");
@@ -417,17 +323,17 @@ public class VersionConvertorTranslator {
       if (cs.getLabel().isPresent()) {
         boolean done = false;
         String lbl = cs.getLabel().get().toString();
-        if (e != null && e.codes.contains(lbl)) {
-          boolean r4 = type.contains(".r4.");
-          if (p != null) {
-            int ndx = e.codes.indexOf(lbl);
-            if (ndx >= 0 && ndx < p.codes.size()) {
-              impl.append(r4 ? "FHIRTypes4." : "FHIRTypes3.");
-              impl.append(p.codes.get(ndx));
-              done = true;
-            }
-          }
-        } 
+//        if (e != null && e.codes.contains(lbl)) {
+//          boolean r4 = type.contains(".r4.");
+//          if (p != null) {
+//            int ndx = e.codes.indexOf(lbl);
+//            if (ndx >= 0 && ndx < p.codes.size()) {
+//              impl.append(r4 ? "FHIRTypes4." : "FHIRTypes3.");
+//              impl.append(p.codes.get(ndx));
+//              done = true;
+//            }
+//          }
+//        } 
         if (!done)
           convertExpression(level+4, impl, vars, cs.getLabel().get(), pc, false, ctxt);
         impl.append(": ");    
@@ -539,15 +445,15 @@ public class VersionConvertorTranslator {
     boolean r4 = en.contains(".r4.");
     String t = en.substring(0, en.lastIndexOf("."));
     String v = en.substring(en.lastIndexOf(".")+1);
-    EnumInfo j = getJavaEnum(t);
-    if (j != null) {
-      EnumInfo p = r4 ? getPascalEnum4(j.url) :  getPascalEnum3(j.url);
-      if (p != null) {
-        int i = j.codes.indexOf(v);
-        if (i >= 0 && i < p.codes.size())
-          return (r4 ? "FHIRTypes4." : "FHIRTypes3.") + p.codes.get(i);
-      }
-    }
+//    EnumInfo j = getJavaEnum(t);
+//    if (j != null) {
+//      EnumInfo p = r4 ? getPascalEnum4(j.url) :  getPascalEnum3(j.url);
+//      if (p != null) {
+//        int i = j.codes.indexOf(v);
+//        if (i >= 0 && i < p.codes.size())
+//          return (r4 ? "FHIRTypes4." : "FHIRTypes3.") + p.codes.get(i);
+//      }
+//    }
     return en;
   }
 
@@ -747,158 +653,51 @@ public class VersionConvertorTranslator {
     return dec+name+" : "+type;
   }
 
+  private String convertType(String tn, String ctxt, String name, ParametersContext pc) {
+    tn = tn.trim();
+    if (tn.equals("Set<String>"))
+      return "TFslStringSet";
+    if (tn.equals("List<String>"))
+      return "TStringList";
+    if (tn.startsWith("List<"))
+      return "TFslList<"+convertType(tn.substring(5, tn.length()-1), ctxt, name, pc)+">";
+    if (tn.startsWith("Map<String,"))
+      return "TFslMap<"+convertType(tn.substring(11, tn.length()-1), ctxt, name, pc)+">";
+    if (tn.equals("Map<Element,Element>"))
+      return "TFHIRElementMap";
+    if (Utilities.existsInList(tn, "boolean", "String"))
+      return tn;
+    if (Utilities.existsInList(tn, "int"))
+      return "integer";
+    if (Utilities.existsInList(tn, "NodeStack", "StringBuilder", "ElementInfo") || tn.startsWith("Fhir"))
+      return "T"+tn;
+    if (tn.equals("org.hl7.fhir.r4.elementmodel.Element"))               
+      return "TFHIRMMElement";
+    if (tn.equals("org.hl7.fhir.r4.model.Element"))               
+      return "TFHIRObject";
+    if (tn.equals("IResourceValidator"))
+      return "TInstanceValidator";
+    if (tn.equals("IWorkerContext"))
+      return "TFHIRValidatorContext";
+    if (tn.equals("InputStream"))
+      return "TStream";
+    if (tn.equals("ResourceProfiles") || tn.equals("ValidationProfileSet")) 
+      return "TValidationProfileSet";
+    if (tn.equals("TypeRefComponent"))
+      return "TFhirElementDefinitionType";
+    if (tn.equals("ConceptDefinitionComponent"))
+      return "TFhirCodeSystemConcept";
+    if (tn.endsWith("Component"))
+      tn = tn.substring(0, tn.length()-9);
+    return "TFhir"+tn;
+  }
+
+
   private String fixParamName(String name) {
     return name.equals("type") ? "type_" : name;
   }
 
 
-  private String convertType(String type, String ctxt, String name, ParametersContext pc) {
-    if (Utilities.existsInList(type, "String", "int"))
-      return type;
-    
-    String v = "";
-    boolean list = false;
-    if (type.startsWith("List<")) {
-      list = true;
-      type = type.substring(5, type.length()-1);
-    }
-    if (inNS(type, "org.hl7.fhir.dstu3.model")) {
-      v = "3";
-    } else if (inNS(type, "org.hl7.fhir.r4.model")) {
-      v = "4";
-    } else
-      throw new Error("Unknown type namespace: "+type+" @ "+ctxt);
-    String[] nl = type.split("\\.");
-
-    ClassInfo cr = models.get(nl[0]+"."+nl[1]+"."+nl[2]+"."+nl[3]+"."+nl[4]+"."+nl[5]);
-    ClassInfo ci = models.get(type);
-    if (ci == null)
-      return type;
-    pc.addParam(name, ci);
-    if (nl[5].endsWith("Type") && !nl[5].equals("Type"))
-      nl[5] = nl[5].substring(0, nl[5].length()-4);
-    if (nl[5].equals("ListResource"))
-      nl[5] = "List";
-      
-    if (nl[nl.length-1].endsWith("Component"))
-      nl[nl.length-1] = nl[nl.length-1].substring(0, nl[nl.length-1].length()-9);
-        
-    boolean r = nl[5].equals("Resource") || nl[5].equals("DomainResource") || cr.isResource();
-    if (ci.isEnumeration()) {
-      EnumInfo j = getJavaEnum(nl[0]+"."+nl[1]+"."+nl[2]+"."+nl[3]+"."+nl[4]+"."+nl[5]+"."+nl[6]);
-      if (j == null)
-        return lookupEnum("FHIRTypes"+v, "TFhir"+nl[6]+"Enum");
-      EnumInfo p = nl[3].equals("r4") ? getPascalEnum4(j.url) : getPascalEnum3(j.url);
-      if (p == null)
-        return lookupEnum("FHIRTypes"+v, "TFhir"+nl[6]+"Enum");
-      return "FHIRTypes"+v+"."+p.name;
-    } else
-      return lookupType("FHIR"+(r ? "Resources" : "Types")+v, "TFhir"+nl[nl.length-1], nl[5])+(list ? "List" : "");
-  }
-
-
-  private String lookupType(String space, String name, String rn) {
-    if (name.equals("TFhirTypeRef"))               return space+".TFhirElementDefinitionType";
-    if (name.equals("TFhirSimpleQuantity"))        return space+".TFhirQuantity";
-    if (name.equals("TFhirResourceInteraction"))   return space+".TFhirCapabilityStatementRestResourceInteraction";
-    if (name.equals("TFhirSystemInteraction"))     return space+".TFhirCapabilityStatementRestInteraction";
-    if (name.equals("TFhirRelatedClaim"))          return space+".TFhirClaimRelated";
-    if (name.equals("TFhirPayee"))                 return space+".TFhirClaimPayee";
-    if (name.equals("TFhirSpecialCondition"))      return space+".TFhirClaimInformation";
-    if (name.equals("TFhirDiagnosis"))             return space+".TFhirClaimDiagnosis";
-    if (name.equals("TFhirProcedure") && rn.equals("Claim"))        return space+".TFhirClaimProcedure";
-    if (name.equals("TFhirItem") && rn.equals("Claim"))        return space+".TFhirClaimItem";
-    if (name.equals("TFhirDetail") && rn.equals("Claim"))        return space+".TFhirClaimItemDetail";
-    if (name.equals("TFhirInsurance") && rn.equals("Claim"))        return space+".TFhirClaimInsurance";
-    if (name.equals("TFhirAccident") && rn.equals("Claim"))        return space+".TFhirClaimAccident";
-    if (name.equals("TFhirSubDetail") && rn.equals("Claim"))        return space+".TFhirClaimItemDetailSubDetail";
-
-    if (name.equals("TFhirProperty") && rn.equals("CodeSystem"))        return space+".TFhirCodeSystemProperty";
-    if (name.equals("TFhirConceptDefinition") && rn.equals("CodeSystem"))        return space+".TFhirCodeSystemConcept";
-    if (name.equals("TFhirConceptDefinitionDesignation") && rn.equals("CodeSystem"))        return space+".TFhirCodeSystemConceptDesignation";
-    if (name.equals("TFhirConceptProperty") && rn.equals("CodeSystem"))        return space+".TFhirCodeSystemConceptProperty";
-    
-    if (name.equals("TFhirSection") && rn.equals("Composition"))        return space+".TFhirCompositionSection";
-    
-    if (name.equals("TFhirSourceElement") && rn.equals("ConceptMap"))        return space+".TFhirConceptMapGroupElement";
-    if (name.equals("TFhirTargetElement") && rn.equals("ConceptMap"))        return space+".TFhirConceptMapGroupElementTarget";
-    if (name.equals("TFhirOtherElement") && rn.equals("ConceptMap"))        return space+".TFhirConceptMapGroupElementTargetDependsOn";
-    
-    if (name.equals("TFhirStatusHistory") && rn.equals("Encounter"))        return space+".TFhirEncounterStatusHistory";
-    if (name.equals("TFhirClassHistory") && rn.equals("Encounter"))        return space+".TFhirEncounterClassHistory";
-    
-    if (name.equals("TFhirDesignationInclude") && rn.equals("ExpansionProfile"))        return space+".TFhirExpansionProfileDesignationInclude";
-    if (name.equals("TFhirDesignationExclude") && rn.equals("ExpansionProfile"))        return space+".TFhirExpansionProfileDesignationExclude";
-    if (name.equals("TFhirDesignationIncludeDesignation") && rn.equals("ExpansionProfile"))        return space+".TFhirExpansionProfileDesignationIncludeDesignation";
-    if (name.equals("TFhirDesignationExcludeDesignation") && rn.equals("ExpansionProfile"))        return space+".TFhirExpansionProfileDesignationExcludeDesignation";
-    
-    if (name.equals("TFhirMessageDestination") && rn.equals("MessageHeader"))        return space+".TFhirMessageHeaderDestination";
-    if (name.equals("TFhirMessageSource") && rn.equals("MessageHeader"))        return space+".TFhirMessageHeaderSource";
-
-    if (name.equals("TFhirContact") && rn.equals("Patient"))        return space+".TFhirPatientContact";
-    if (name.equals("TFhirAnimal") && rn.equals("Patient"))        return space+".TFhirPatientAnimal";
-
-    if (name.equals("TFhirConceptSet") && rn.equals("ValueSet"))        return space+".TFhirValueSetComposeInclude";
-    if (name.equals("TFhirConceptReference") && rn.equals("ValueSet"))        return space+".TFhirValueSetComposeIncludeConcept";
-    if (name.equals("TFhirConceptSetFilter") && rn.equals("ValueSet"))        return space+".TFhirValueSetComposeIncludeConcept";
-    if (name.equals("TFhirConceptReferenceDesignation") && rn.equals("ValueSet"))        return space+".TFhirValueSetComposeIncludeFilter";
-    return space+"."+name;
-  }
-
-
-  private String lookupEnum(String scope, String name) {
-    if (name.equals("TFhirSequenceTypeEnum"))
-      return "String";
-    if (name.equals("TFhirObservationRelationshipTypeEnum"))
-      return scope+".TFhirObservationRelationshipTypesEnum";
-    return scope+"."+name;
-  }
-
-
-  private EnumInfo getPascalEnum3(String url) {
-    for (EnumInfo e : enumsP3) 
-      if (url.equals(e.url))
-        return e;
-    System.out.println("Unable to find "+url);
-    return null;
-  }
-
-
-
-  private EnumInfo getPascalEnum4(String url) {
-    for (EnumInfo e : enumsP4) 
-      if (url.equals(e.url))
-        return e;
-    System.out.println("Unable to find "+url);
-    return null;
-  }
-
-
-  private EnumInfo getJavaEnum(String name) {
-    for (EnumInfo e : enumsJ3) 
-      if (name.equals(e.name))
-        return e;
-    for (EnumInfo e : enumsJ4) 
-      if (name.equals(e.name))
-        return e;
-    System.out.println("Unabel to find "+name);
-    return null;
-  }
-
-
-  private boolean inNS(String type, String ns) {
-    return type.startsWith(ns+".");
-  }
-
-
-  private String getResourceName(String type) {
-    if (!inNS(type, "org.hl7.fhir.dstu3.model") && !inNS(type, "org.hl7.fhir.r4.model")) 
-      return "!";
-    else {
-      String[] nl = type.split("\\.");
-      return nl[5];
-    }
-  }
 
 }    
 

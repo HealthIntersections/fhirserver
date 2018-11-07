@@ -33,7 +33,7 @@ unit FHIR.R4.IndexInfo;
 
 interface
 
-// FHIR v3.5.0 generated 2018-08-19T19:30:08+10:00
+// FHIR v3.6.0 generated 2018-11-07T18:13:56+11:00
 
 uses
   SysUtils, Classes,
@@ -89,6 +89,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_CARETEAM}
     procedure buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CATALOGENTRY}
+    procedure buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM}
     procedure buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -168,6 +171,9 @@ Type
     {$IFDEF FHIR_DOCUMENTREFERENCE}
     procedure buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_EFFECTEVIDENCESYNTHESIS}
+    procedure buildIndexesForEffectEvidenceSynthesis(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_ENCOUNTER}
     procedure buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -180,14 +186,17 @@ Type
     {$IFDEF FHIR_ENROLLMENTRESPONSE}
     procedure buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
-    {$IFDEF FHIR_ENTRYDEFINITION}
-    procedure buildIndexesForEntryDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
     {$IFDEF FHIR_EPISODEOFCARE}
     procedure buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION}
     procedure buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EVIDENCE}
+    procedure buildIndexesForEvidence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEVARIABLE}
+    procedure buildIndexesForEvidenceVariable(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_EXAMPLESCENARIO}
     procedure buildIndexesForExampleScenario(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -285,14 +294,8 @@ Type
     {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}
     procedure buildIndexesForMedicinalProductAuthorization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
-    {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
-    procedure buildIndexesForMedicinalProductClinicals(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
     procedure buildIndexesForMedicinalProductContraindication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
-    {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
-    procedure buildIndexesForMedicinalProductDeviceSpec(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
     procedure buildIndexesForMedicinalProductIndication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -320,6 +323,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_MESSAGEHEADER}
     procedure buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MOLECULARSEQUENCE}
+    procedure buildIndexesForMolecularSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_NAMINGSYSTEM}
     procedure buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -369,12 +375,6 @@ Type
     {$IFDEF FHIR_PROCEDURE}
     procedure buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
-    {$IFDEF FHIR_PROCESSREQUEST}
-    procedure buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
-    {$IFDEF FHIR_PROCESSRESPONSE}
-    procedure buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
     {$IFDEF FHIR_PROVENANCE}
     procedure buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -390,6 +390,12 @@ Type
     {$IFDEF FHIR_REQUESTGROUP}
     procedure buildIndexesForRequestGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_RESEARCHDEFINITION}
+    procedure buildIndexesForResearchDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_RESEARCHELEMENTDEFINITION}
+    procedure buildIndexesForResearchElementDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_RESEARCHSTUDY}
     procedure buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -399,14 +405,14 @@ Type
     {$IFDEF FHIR_RISKASSESSMENT}
     procedure buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_RISKEVIDENCESYNTHESIS}
+    procedure buildIndexesForRiskEvidenceSynthesis(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_SCHEDULE}
     procedure buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_SEARCHPARAMETER}
     procedure buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
-    {$IFDEF FHIR_SEQUENCE}
-    procedure buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_SERVICEREQUEST}
     procedure buildIndexesForServiceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -432,11 +438,20 @@ Type
     {$IFDEF FHIR_SUBSTANCE}
     procedure buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_SUBSTANCENUCLEICACID}
+    procedure buildIndexesForSubstanceNucleicAcid(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEPOLYMER}
     procedure buildIndexesForSubstancePolymer(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_SUBSTANCEPROTEIN}
+    procedure buildIndexesForSubstanceProtein(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}
     procedure buildIndexesForSubstanceReferenceInformation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SUBSTANCESOURCEMATERIAL}
+    procedure buildIndexesForSubstanceSourceMaterial(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_SUBSTANCESPECIFICATION}
     procedure buildIndexesForSubstanceSpecification(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -458,9 +473,6 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT}
     procedure buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
-    {$IFDEF FHIR_USERSESSION}
-    procedure buildIndexesForUserSession(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_VALUESET}
     procedure buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -588,7 +600,7 @@ begin
   indexes.add('AllergyIntolerance', 'clinical-status', 'active | inactive | resolved', sptTOKEN, [], 'AllergyIntolerance.clinicalStatus', sxpNormal);
   indexes.add('AllergyIntolerance', 'code', 'Code that identifies the allergy or intolerance', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('AllergyIntolerance', 'criticality', 'low | high | unable-to-assess', sptTOKEN, [], 'AllergyIntolerance.criticality', sxpNormal);
-  indexes.add('AllergyIntolerance', 'date', 'Date record was first recorded', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('AllergyIntolerance', 'date', 'Date first version of the resource instance was recorded', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('AllergyIntolerance', 'identifier', 'External ids for this item', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('AllergyIntolerance', 'last-date', 'Date(/time) of last known occurrence of a reaction', sptDATE, [], 'AllergyIntolerance.lastOccurrence', sxpNormal);
   indexes.add('AllergyIntolerance', 'manifestation', 'Clinical symptoms/signs associated with the Event', sptTOKEN, [], 'AllergyIntolerance.reaction.manifestation', sxpNormal);
@@ -618,7 +630,7 @@ begin
   indexes.add('Appointment', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Appointment', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Appointment', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Appointment', 'actor', 'Any one of the individuals participating in the appointment', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'RelatedPerson', 'Location'], 'Appointment.participant.actor', sxpNormal);
+  indexes.add('Appointment', 'actor', 'Any one of the individuals participating in the appointment', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor', sxpNormal);
   indexes.add('Appointment', 'appointment-type', 'The style of appointment or patient that has been booked in the slot (not service type)', sptTOKEN, [], 'Appointment.appointmentType', sxpNormal);
   indexes.add('Appointment', 'based-on', 'The service request this appointment is allocated to assess', sptREFERENCE, ['ServiceRequest'], 'Appointment.basedOn.where(resolve() is ServiceRequest)', sxpNormal);
   indexes.add('Appointment', 'date', 'Appointment date/time.', sptDATE, [], 'Appointment.start', sxpNormal);
@@ -627,8 +639,14 @@ begin
   indexes.add('Appointment', 'part-status', 'The Participation status of the subject, or other participant on the appointment. Can be used to locate participants that have not responded to meeting requests.', sptTOKEN, [], 'Appointment.participant.status', sxpNormal);
   indexes.add('Appointment', 'patient', 'One of the individuals of the appointment is this patient', sptREFERENCE, ['Patient'], 'Appointment.participant.actor.where(resolve() is Patient)', sxpNormal);
   indexes.add('Appointment', 'practitioner', 'One of the individuals of the appointment is this practitioner', sptREFERENCE, ['Practitioner'], 'Appointment.participant.actor.where(resolve() is Practitioner)', sxpNormal);
+  indexes.add('Appointment', 'reason-code', 'Coded reason this appointment is scheduled', sptTOKEN, [], 'Appointment.reasonCode', sxpNormal);
+  indexes.add('Appointment', 'reason-reference', 'Reason the appointment is to take place (resource)', sptREFERENCE, ['Condition', 'Observation', 'Procedure', 'ImmunizationRecommendation'], 'Appointment.reasonReference', sxpNormal);
+  indexes.add('Appointment', 'service-category', 'A broad categorization of the service that is to be performed during this appointment', sptTOKEN, [], 'Appointment.serviceCategory', sxpNormal);
   indexes.add('Appointment', 'service-type', 'The specific service that is to be performed during this appointment', sptTOKEN, [], 'Appointment.serviceType', sxpNormal);
+  indexes.add('Appointment', 'slot', 'The slots that this appointment is filling', sptREFERENCE, ['Slot'], 'Appointment.slot', sxpNormal);
+  indexes.add('Appointment', 'specialty', 'The specialty of a practitioner that would be required to perform the service requested in this appointment', sptTOKEN, [], 'Appointment.specialty', sxpNormal);
   indexes.add('Appointment', 'status', 'The overall status of the appointment', sptTOKEN, [], 'Appointment.status', sxpNormal);
+  indexes.add('Appointment', 'supporting-info', 'Additional information to support the appointment', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Appointment.supportingInformation', sxpNormal);
   compartments.register('Device', 'Appointment', ['actor']);
   compartments.register('Patient', 'Appointment', ['actor']);
   compartments.register('Practitioner', 'Appointment', ['actor']);
@@ -820,7 +838,7 @@ begin
   indexes.add('CapabilityStatement', 'resource', 'Name of a resource mentioned in a capability statement', sptTOKEN, [], 'CapabilityStatement.rest.resource.type', sxpNormal);
   indexes.add('CapabilityStatement', 'resource-profile', 'A profile id invoked in a capability statement', sptREFERENCE, ['StructureDefinition'], 'CapabilityStatement.rest.resource.profile', sxpNormal);
   indexes.add('CapabilityStatement', 'security-service', 'OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates', sptTOKEN, [], 'CapabilityStatement.rest.security.service', sxpNormal);
-  indexes.add('CapabilityStatement', 'software', 'Part of a the name of a software application', sptSTRING, [], 'CapabilityStatement.software.name', sxpNormal);
+  indexes.add('CapabilityStatement', 'software', 'Part of the name of a software application', sptSTRING, [], 'CapabilityStatement.software.name', sxpNormal);
   indexes.add('CapabilityStatement', 'status', 'The current status of the capability statement', sptTOKEN, [], 'CapabilityStatement.status | CodeSystem.status | CompartmentDefinition.status | ConceptMap.status | GraphDefinition.status | ImplementationGuide.status | MessageDefinition.status | NamingSystem.status | OperationDefinition.status | SearchParameter.st'+'atus | StructureDefinition.status | StructureMap.status | TerminologyCapabilities.status | ValueSet.status', sxpNormal);
   indexes.add('CapabilityStatement', 'supported-profile', 'Profiles for use cases supported', sptREFERENCE, ['StructureDefinition'], 'CapabilityStatement.rest.resource.supportedProfile', sxpNormal);
   indexes.add('CapabilityStatement', 'title', 'The human-friendly name of the capability statement', sptSTRING, [], 'CapabilityStatement.title | CodeSystem.title | ConceptMap.title | ImplementationGuide.title | MessageDefinition.title | OperationDefinition.title | StructureDefinition.title | StructureMap.title | TerminologyCapabilities.title | ValueSet.title', sxpNormal);
@@ -848,9 +866,8 @@ begin
   indexes.add('CarePlan', 'care-team', 'Who''s involved in plan?', sptREFERENCE, ['CareTeam'], 'CarePlan.careTeam', sxpNormal);
   indexes.add('CarePlan', 'category', 'Type of plan', sptTOKEN, [], 'CarePlan.category', sxpNormal);
   indexes.add('CarePlan', 'condition', 'Health issues this plan addresses', sptREFERENCE, ['Condition'], 'CarePlan.addresses', sxpNormal);
-  indexes.add('CarePlan', 'context', 'Created in context of', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'CarePlan.context', sxpNormal);
-  indexes.add('CarePlan', 'date', 'Time period plan covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('CarePlan', 'encounter', 'Created in context of', sptREFERENCE, ['Encounter'], 'CarePlan.context.where(resolve() is Encounter)', sxpNormal);
+  indexes.add('CarePlan', 'date', 'Time period plan covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('CarePlan', 'encounter', 'Encounter created as part of', sptREFERENCE, ['Encounter'], 'CarePlan.encounter', sxpNormal);
   indexes.add('CarePlan', 'goal', 'Desired outcome of plan', sptREFERENCE, ['Goal'], 'CarePlan.goal', sxpNormal);
   indexes.add('CarePlan', 'identifier', 'External Ids for this plan', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('CarePlan', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['Questionnaire', 'Measure', 'PlanDefinition', 'OperationDefinition', 'ActivityDefinition'], 'CarePlan.instantiatesCanonical', sxpNormal);
@@ -863,6 +880,7 @@ begin
   indexes.add('CarePlan', 'replaces', 'CarePlan replaced by this CarePlan', sptREFERENCE, ['CarePlan'], 'CarePlan.replaces', sxpNormal);
   indexes.add('CarePlan', 'status', 'draft | active | suspended | completed | entered-in-error | cancelled | unknown', sptTOKEN, [], 'CarePlan.status', sxpNormal);
   indexes.add('CarePlan', 'subject', 'Who the care plan is for', sptREFERENCE, ['Group', 'Patient'], 'CarePlan.subject', sxpNormal);
+  compartments.register('Encounter', 'CarePlan', ['encounter']);
   compartments.register('Patient', 'CarePlan', ['patient', 'performer']);
   compartments.register('Practitioner', 'CarePlan', ['performer']);
   compartments.register('RelatedPerson', 'CarePlan', ['performer']);
@@ -882,18 +900,33 @@ begin
   indexes.add('CareTeam', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('CareTeam', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CareTeam', 'category', 'Type of team', sptTOKEN, [], 'CareTeam.category', sxpNormal);
-  indexes.add('CareTeam', 'context', 'Encounter or episode associated with CareTeam', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'CareTeam.context', sxpNormal);
-  indexes.add('CareTeam', 'date', 'Time period team covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('CareTeam', 'encounter', 'Encounter or episode associated with CareTeam', sptREFERENCE, ['Encounter'], 'CareTeam.context.where(resolve() is Encounter)', sxpNormal);
+  indexes.add('CareTeam', 'date', 'Time period team covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('CareTeam', 'encounter', 'Encounter created as part of', sptREFERENCE, ['Encounter'], 'CareTeam.encounter', sxpNormal);
   indexes.add('CareTeam', 'identifier', 'External Ids for this team', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('CareTeam', 'participant', 'Who is involved', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'CareTeam.participant.member', sxpNormal);
   indexes.add('CareTeam', 'patient', 'Who care team is for', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.sub'+
    'ject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('CareTeam', 'status', 'proposed | active | suspended | inactive | entered-in-error', sptTOKEN, [], 'CareTeam.status', sxpNormal);
   indexes.add('CareTeam', 'subject', 'Who care team is for', sptREFERENCE, ['Group', 'Patient'], 'CareTeam.subject', sxpNormal);
+  compartments.register('Encounter', 'CareTeam', ['encounter']);
   compartments.register('Patient', 'CareTeam', ['patient', 'participant']);
   compartments.register('Practitioner', 'CareTeam', ['participant']);
   compartments.register('RelatedPerson', 'CareTeam', ['participant']);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_CATALOGENTRY}
+procedure TFHIRIndexBuilderR4.buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('CatalogEntry', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CatalogEntry', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('CatalogEntry', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('CatalogEntry', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CatalogEntry', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('CatalogEntry', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('CatalogEntry', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('CatalogEntry', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('CatalogEntry', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF}
 
@@ -978,17 +1011,22 @@ begin
   indexes.add('Claim', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Claim', 'care-team', 'Member of the CareTeam', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'Claim.careTeam.provider', sxpNormal);
   indexes.add('Claim', 'created', 'The creation date for the Claim', sptDATE, [], 'Claim.created', sxpNormal);
+  indexes.add('Claim', 'detail-udi', 'UDI associated with a line item detail product or service', sptREFERENCE, ['Device'], 'Claim.item.detail.udi', sxpNormal);
   indexes.add('Claim', 'encounter', 'Encounters associated with a billed line item', sptREFERENCE, ['Encounter'], 'Claim.item.encounter', sxpNormal);
   indexes.add('Claim', 'enterer', 'The party responsible for the entry of the Claim', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'Claim.enterer', sxpNormal);
-  indexes.add('Claim', 'facility', 'Facility responsible for the goods and services', sptREFERENCE, ['Location'], 'Claim.facility', sxpNormal);
+  indexes.add('Claim', 'facility', 'Facility where the products or services were/are to be provided', sptREFERENCE, ['Location'], 'Claim.facility', sxpNormal);
   indexes.add('Claim', 'identifier', 'The primary identifier of the financial resource', sptTOKEN, [], 'Claim.identifier', sxpNormal);
   indexes.add('Claim', 'insurer', 'The target payor/insurer for the Claim', sptREFERENCE, ['Organization'], 'Claim.insurer', sxpNormal);
-  indexes.add('Claim', 'patient', 'Patient receiving the services', sptREFERENCE, ['Patient'], 'Claim.patient', sxpNormal);
+  indexes.add('Claim', 'item-udi', 'UDI associated with a line item product or service', sptREFERENCE, ['Device'], 'Claim.item.udi', sxpNormal);
+  indexes.add('Claim', 'patient', 'Patient receiving the products or services', sptREFERENCE, ['Patient'], 'Claim.patient', sxpNormal);
   indexes.add('Claim', 'payee', 'The party receiving any payment for the Claim', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Claim.payee.party', sxpNormal);
   indexes.add('Claim', 'priority', 'Processing priority requested', sptTOKEN, [], 'Claim.priority', sxpNormal);
+  indexes.add('Claim', 'procedure-udi', 'UDI associated with a procedure', sptREFERENCE, ['Device'], 'Claim.procedure.udi', sxpNormal);
   indexes.add('Claim', 'provider', 'Provider responsible for the Claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'Claim.provider', sxpNormal);
   indexes.add('Claim', 'status', 'The status of the Claim instance.', sptTOKEN, [], 'Claim.status', sxpNormal);
+  indexes.add('Claim', 'subdetail-udi', 'UDI associated with a line item detail subdetail product or service', sptREFERENCE, ['Device'], 'Claim.item.detail.subDetail.udi', sxpNormal);
   indexes.add('Claim', 'use', 'The kind of financial resource', sptTOKEN, [], 'Claim.use', sxpNormal);
+  compartments.register('Device', 'Claim', ['procedure-udi', 'item-udi', 'detail-udi', 'subdetail-udi']);
   compartments.register('Encounter', 'Claim', ['encounter']);
   compartments.register('Patient', 'Claim', ['patient', 'payee']);
   compartments.register('Practitioner', 'Claim', ['enterer', 'provider', 'payee', 'care-team']);
@@ -1016,10 +1054,11 @@ begin
   indexes.add('ClaimResponse', 'patient', 'The subject of care', sptREFERENCE, ['Patient'], 'ClaimResponse.patient', sxpNormal);
   indexes.add('ClaimResponse', 'payment-date', 'The expected payment date', sptDATE, [], 'ClaimResponse.payment.date', sxpNormal);
   indexes.add('ClaimResponse', 'request', 'The claim reference', sptREFERENCE, ['Claim'], 'ClaimResponse.request', sxpNormal);
-  indexes.add('ClaimResponse', 'request-provider', 'The Provider of the claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ClaimResponse.requestProvider', sxpNormal);
+  indexes.add('ClaimResponse', 'requestor', 'The Provider of the claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ClaimResponse.requestor', sxpNormal);
   indexes.add('ClaimResponse', 'status', 'The status of the ClaimResponse', sptTOKEN, [], 'ClaimResponse.status', sxpNormal);
+  indexes.add('ClaimResponse', 'use', 'The type of claim', sptTOKEN, [], 'ClaimResponse.use', sxpNormal);
   compartments.register('Patient', 'ClaimResponse', ['patient']);
-  compartments.register('Practitioner', 'ClaimResponse', ['request-provider']);
+  compartments.register('Practitioner', 'ClaimResponse', ['requestor']);
 end;
 {$ENDIF}
 
@@ -1036,8 +1075,8 @@ begin
   indexes.add('ClinicalImpression', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('ClinicalImpression', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ClinicalImpression', 'assessor', 'The clinician performing the assessment', sptREFERENCE, ['Practitioner'], 'ClinicalImpression.assessor', sxpNormal);
-  indexes.add('ClinicalImpression', 'context', 'Encounter or Episode created from', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'ClinicalImpression.context', sxpNormal);
-  indexes.add('ClinicalImpression', 'date', 'When the assessment was documented', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('ClinicalImpression', 'date', 'When the assessment was documented', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('ClinicalImpression', 'encounter', 'Encounter created as part of', sptREFERENCE, ['Encounter'], 'ClinicalImpression.encounter', sxpNormal);
   indexes.add('ClinicalImpression', 'finding-code', 'What was found', sptTOKEN, [], 'ClinicalImpression.finding.itemCodeableConcept', sxpNormal);
   indexes.add('ClinicalImpression', 'finding-ref', 'What was found', sptREFERENCE, ['Condition', 'Observation', 'Media'], 'ClinicalImpression.finding.itemReference', sxpNormal);
   indexes.add('ClinicalImpression', 'identifier', 'Business identifier', sptTOKEN, [], 'ClinicalImpression.identifier', sxpNormal);
@@ -1049,7 +1088,7 @@ begin
   indexes.add('ClinicalImpression', 'status', 'draft | completed | entered-in-error', sptTOKEN, [], 'ClinicalImpression.status', sxpNormal);
   indexes.add('ClinicalImpression', 'subject', 'Patient or group assessed', sptREFERENCE, ['Group', 'Patient'], 'ClinicalImpression.subject', sxpNormal);
   indexes.add('ClinicalImpression', 'supporting-info', 'Information supporting the clinical impression', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ClinicalImpression.supportingInfo', sxpNormal);
-  compartments.register('Encounter', 'ClinicalImpression', ['context']);
+  compartments.register('Encounter', 'ClinicalImpression', ['encounter']);
   compartments.register('Patient', 'ClinicalImpression', ['subject']);
   compartments.register('Practitioner', 'ClinicalImpression', ['assessor']);
 end;
@@ -1105,8 +1144,7 @@ begin
   indexes.add('Communication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Communication', 'based-on', 'Request fulfilled by this communication', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Communication.basedOn', sxpNormal);
   indexes.add('Communication', 'category', 'Message category', sptTOKEN, [], 'Communication.category', sxpNormal);
-  indexes.add('Communication', 'context', 'Encounter or episode leading to message', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Communication.context', sxpNormal);
-  indexes.add('Communication', 'encounter', 'Encounter leading to message', sptREFERENCE, ['Encounter'], 'Communication.context.where(resolve() is Encounter)', sxpNormal);
+  indexes.add('Communication', 'encounter', 'Encounter created as part of', sptREFERENCE, ['Encounter'], 'Communication.encounter', sxpNormal);
   indexes.add('Communication', 'identifier', 'Unique identifier', sptTOKEN, [], 'Communication.identifier', sxpNormal);
   indexes.add('Communication', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['Questionnaire', 'Measure', 'PlanDefinition', 'OperationDefinition', 'ActivityDefinition'], 'Communication.instantiatesCanonical', sxpNormal);
   indexes.add('Communication', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'Communication.instantiatesUri', sxpNormal);
@@ -1120,7 +1158,7 @@ begin
   indexes.add('Communication', 'status', 'preparation | in-progress | not-done | suspended | aborted | completed | entered-in-error', sptTOKEN, [], 'Communication.status', sxpNormal);
   indexes.add('Communication', 'subject', 'Focus of message', sptREFERENCE, ['Group', 'Patient'], 'Communication.subject', sxpNormal);
   compartments.register('Device', 'Communication', ['sender', 'recipient']);
-  compartments.register('Encounter', 'Communication', ['context']);
+  compartments.register('Encounter', 'Communication', ['encounter']);
   compartments.register('Patient', 'Communication', ['subject', 'sender', 'recipient']);
   compartments.register('Practitioner', 'Communication', ['sender', 'recipient']);
   compartments.register('RelatedPerson', 'Communication', ['sender', 'recipient']);
@@ -1142,8 +1180,7 @@ begin
   indexes.add('CommunicationRequest', 'authored', 'When request transitioned to being actionable', sptDATE, [], 'CommunicationRequest.authoredOn', sxpNormal);
   indexes.add('CommunicationRequest', 'based-on', 'Fulfills plan or proposal', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'CommunicationRequest.basedOn', sxpNormal);
   indexes.add('CommunicationRequest', 'category', 'Message category', sptTOKEN, [], 'CommunicationRequest.category', sxpNormal);
-  indexes.add('CommunicationRequest', 'context', 'Encounter or episode leading to message', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'CommunicationRequest.context', sxpNormal);
-  indexes.add('CommunicationRequest', 'encounter', 'Encounter leading to message', sptREFERENCE, ['Encounter'], 'CommunicationRequest.context.where(resolve() is Encounter)', sxpNormal);
+  indexes.add('CommunicationRequest', 'encounter', 'Encounter created as part of', sptREFERENCE, ['Encounter'], 'CommunicationRequest.encounter', sxpNormal);
   indexes.add('CommunicationRequest', 'group-identifier', 'Composite request this is part of', sptTOKEN, [], 'CommunicationRequest.groupIdentifier', sxpNormal);
   indexes.add('CommunicationRequest', 'identifier', 'Unique identifier', sptTOKEN, [], 'CommunicationRequest.identifier', sxpNormal);
   indexes.add('CommunicationRequest', 'medium', 'A channel of communication', sptTOKEN, [], 'CommunicationRequest.medium', sxpNormal);
@@ -1157,7 +1194,7 @@ begin
   indexes.add('CommunicationRequest', 'status', 'draft | active | suspended | cancelled | completed | entered-in-error | unknown', sptTOKEN, [], 'CommunicationRequest.status', sxpNormal);
   indexes.add('CommunicationRequest', 'subject', 'Focus of message', sptREFERENCE, ['Group', 'Patient'], 'CommunicationRequest.subject', sxpNormal);
   compartments.register('Device', 'CommunicationRequest', ['sender', 'recipient']);
-  compartments.register('Encounter', 'CommunicationRequest', ['context']);
+  compartments.register('Encounter', 'CommunicationRequest', ['encounter']);
   compartments.register('Patient', 'CommunicationRequest', ['subject', 'sender', 'recipient', 'requester']);
   compartments.register('Practitioner', 'CommunicationRequest', ['sender', 'recipient', 'requester']);
   compartments.register('RelatedPerson', 'CommunicationRequest', ['sender', 'recipient', 'requester']);
@@ -1211,8 +1248,8 @@ begin
   indexes.add('Composition', 'category', 'Categorization of Composition', sptTOKEN, [], 'Composition.category', sxpNormal);
   indexes.add('Composition', 'confidentiality', 'As defined by affinity domain', sptTOKEN, [], 'Composition.confidentiality', sxpNormal);
   indexes.add('Composition', 'context', 'Code(s) that apply to the event being documented', sptTOKEN, [], 'Composition.event.code', sxpNormal);
-  indexes.add('Composition', 'date', 'Composition editing time', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('Composition', 'encounter', 'Context of the Composition', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('Composition', 'date', 'Composition editing time', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Composition', 'encounter', 'Context of the Composition', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Composition', 'entry', 'A reference to data that supports this section', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.section.entry', sxpNormal);
   indexes.add('Composition', 'identifier', 'Version-independent identifier for the Composition', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.ident'+
    'ifier', sxpNormal);
@@ -1258,7 +1295,7 @@ begin
   indexes.add('ConceptMap', 'identifier', 'External identifier for the concept map', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('ConceptMap', 'jurisdiction', 'Intended jurisdiction for the concept map', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'+'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('ConceptMap', 'name', 'Computationally friendly name of the concept map', sptSTRING, [], 'CapabilityStatement.name | CodeSystem.name | CompartmentDefinition.name | ConceptMap.name | GraphDefinition.name | ImplementationGuide.name | MessageDefinition.name | NamingSystem.name | OperationDefinition.name | SearchParameter.name | StructureDefi'+'nition.name | StructureMap.name | TerminologyCapabilities.name | ValueSet.name', sxpNormal);
-  indexes.add('ConceptMap', 'other', 'Canonical URI for an additional ConceptMap to use for mapping if the source concept is unmapped', sptREFERENCE, ['ConceptMap'], 'ConceptMap.group.unmapped.url', sxpNormal);
+  indexes.add('ConceptMap', 'other', 'canonical reference to an additional ConceptMap to use for mapping if the source concept is unmapped', sptREFERENCE, ['ConceptMap'], 'ConceptMap.group.unmapped.url', sxpNormal);
   indexes.add('ConceptMap', 'product', 'Reference to property mapping depends on', sptURI, [], 'ConceptMap.group.element.target.product.property', sxpNormal);
   indexes.add('ConceptMap', 'publisher', 'Name of the publisher of the concept map', sptSTRING, [], 'CapabilityStatement.publisher | CodeSystem.publisher | CompartmentDefinition.publisher | ConceptMap.publisher | GraphDefinition.publisher | ImplementationGuide.publisher | MessageDefinition.publisher | NamingSystem.publisher | OperationDefinition.pub'+'lisher | SearchParameter.publisher | StructureDefinition.publisher | StructureMap.publisher | TerminologyCapabilities.publisher | ValueSet.publisher', sxpNormal);
   indexes.add('ConceptMap', 'source', 'The source value set that contains the concepts that are being mapped', sptREFERENCE, ['ValueSet'], '(ConceptMap.source as canonical)', sxpNormal);
@@ -1296,8 +1333,7 @@ begin
   indexes.add('Condition', 'category', 'The category of the condition', sptTOKEN, [], 'Condition.category', sxpNormal);
   indexes.add('Condition', 'clinical-status', 'The clinical status of the condition', sptTOKEN, [], 'Condition.clinicalStatus', sxpNormal);
   indexes.add('Condition', 'code', 'Code for the condition', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('Condition', 'context', 'Encounter or episode when condition first asserted', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Condition.context', sxpNormal);
-  indexes.add('Condition', 'encounter', 'Encounter when condition first asserted', sptREFERENCE, ['Encounter'], 'Condition.context.where(resolve() is Encounter)', sxpNormal);
+  indexes.add('Condition', 'encounter', 'Encounter created as part of', sptREFERENCE, ['Encounter'], 'Condition.encounter', sxpNormal);
   indexes.add('Condition', 'evidence', 'Manifestation/symptom', sptTOKEN, [], 'Condition.evidence.code', sxpNormal);
   indexes.add('Condition', 'evidence-detail', 'Supporting information found elsewhere', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Condition.evidence.detail', sxpNormal);
   indexes.add('Condition', 'identifier', 'A unique identifier of the condition record', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
@@ -1311,7 +1347,7 @@ begin
   indexes.add('Condition', 'stage', 'Simple summary (disease specific)', sptTOKEN, [], 'Condition.stage.summary', sxpNormal);
   indexes.add('Condition', 'subject', 'Who has the condition?', sptREFERENCE, ['Group', 'Patient'], 'Condition.subject', sxpNormal);
   indexes.add('Condition', 'verification-status', 'unconfirmed | provisional | differential | confirmed | refuted | entered-in-error', sptTOKEN, [], 'Condition.verificationStatus', sxpNormal);
-  compartments.register('Encounter', 'Condition', ['context']);
+  compartments.register('Encounter', 'Condition', ['encounter']);
   compartments.register('Patient', 'Condition', ['patient', 'asserter']);
   compartments.register('Practitioner', 'Condition', ['asserter']);
   compartments.register('RelatedPerson', 'Condition', ['asserter']);
@@ -1335,7 +1371,7 @@ begin
   indexes.add('Consent', 'category', 'Classification of the consent statement - for indexing/retrieval', sptTOKEN, [], 'Consent.category', sxpNormal);
   indexes.add('Consent', 'consentor', 'Who is agreeing to the policy and rules', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Consent.performer', sxpNormal);
   indexes.add('Consent', 'data', 'The actual data reference', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Consent.provision.data.reference', sxpNormal);
-  indexes.add('Consent', 'date', 'When this Consent was created or indexed', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Consent', 'date', 'When this Consent was created or indexed', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Consent', 'identifier', 'Identifier for this record (external references)', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Consent', 'organization', 'Custodian of the consent', sptREFERENCE, ['Organization'], 'Consent.organization', sxpNormal);
   indexes.add('Consent', 'patient', 'Who the consent applies to', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | Lis'+
@@ -1344,7 +1380,6 @@ begin
   indexes.add('Consent', 'purpose', 'Context of activities covered by this rule', sptTOKEN, [], 'Consent.provision.purpose', sxpNormal);
   indexes.add('Consent', 'scope', 'Which of the four areas this resource covers (extensible)', sptTOKEN, [], 'Consent.scope', sxpNormal);
   indexes.add('Consent', 'security-label', 'Security Labels that define affected resources', sptTOKEN, [], 'Consent.provision.securityLabel', sxpNormal);
-  indexes.add('Consent', 'source-identifier', 'Search by token to an identifier', sptTOKEN, [], 'Consent.source', sxpNormal);
   indexes.add('Consent', 'source-reference', 'Search by reference to a Consent, DocumentReference, Contract  or QuestionnaireResponse', sptREFERENCE, ['Consent', 'Contract', 'QuestionnaireResponse', 'DocumentReference'], 'Consent.source.where(resolve() is Consent or resolve() is Contract or resolve() is QuestionnaireResponse or resolve() is DocumentReference)', sxpNormal);
   indexes.add('Consent', 'status', 'draft | proposed | active | rejected | inactive | entered-in-error', sptTOKEN, [], 'Consent.status', sxpNormal);
   compartments.register('Patient', 'Consent', ['patient']);
@@ -1389,6 +1424,8 @@ begin
   indexes.add('Coverage', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Coverage', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Coverage', 'beneficiary', 'Covered party', sptREFERENCE, ['Patient'], 'Coverage.beneficiary', sxpNormal);
+  indexes.add('Coverage', 'class-type', 'Coverage class (eg. plan, group)', sptTOKEN, [], 'Coverage.class.type', sxpNormal);
+  indexes.add('Coverage', 'class-value', 'Value of the class (eg. Plan number, group number)', sptSTRING, [], 'Coverage.class.value', sxpNormal);
   indexes.add('Coverage', 'dependent', 'Dependent number', sptSTRING, [], 'Coverage.dependent', sxpNormal);
   indexes.add('Coverage', 'identifier', 'The primary identifier of the insured and the coverage', sptTOKEN, [], 'Coverage.identifier', sxpNormal);
   indexes.add('Coverage', 'patient', 'Retrieve coverages for a patient', sptREFERENCE, ['Patient'], 'Coverage.beneficiary', sxpNormal);
@@ -1445,9 +1482,10 @@ begin
   indexes.add('CoverageEligibilityResponse', 'outcome', 'The processing outcome', sptTOKEN, [], 'CoverageEligibilityResponse.outcome', sxpNormal);
   indexes.add('CoverageEligibilityResponse', 'patient', 'The reference to the patient', sptREFERENCE, ['Patient'], 'CoverageEligibilityResponse.patient', sxpNormal);
   indexes.add('CoverageEligibilityResponse', 'request', 'The EligibilityRequest reference', sptREFERENCE, ['CoverageEligibilityRequest'], 'CoverageEligibilityResponse.request', sxpNormal);
-  indexes.add('CoverageEligibilityResponse', 'request-provider', 'The EligibilityRequest provider', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'CoverageEligibilityResponse.requestProvider', sxpNormal);
+  indexes.add('CoverageEligibilityResponse', 'requestor', 'The EligibilityRequest provider', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'CoverageEligibilityResponse.requestor', sxpNormal);
   indexes.add('CoverageEligibilityResponse', 'status', 'The EligibilityRequest status', sptTOKEN, [], 'CoverageEligibilityResponse.status', sxpNormal);
-  compartments.register('Practitioner', 'CoverageEligibilityResponse', ['request-provider']);
+  compartments.register('Patient', 'CoverageEligibilityResponse', ['patient']);
+  compartments.register('Practitioner', 'CoverageEligibilityResponse', ['requestor']);
 end;
 {$ENDIF}
 
@@ -1464,8 +1502,8 @@ begin
   indexes.add('DetectedIssue', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DetectedIssue', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DetectedIssue', 'author', 'The provider or device that identified the issue', sptREFERENCE, ['Practitioner', 'Device'], 'DetectedIssue.author', sxpNormal);
-  indexes.add('DetectedIssue', 'category', 'Issue Category, e.g. drug-drug, duplicate therapy, etc.', sptTOKEN, [], 'DetectedIssue.category', sxpNormal);
-  indexes.add('DetectedIssue', 'date', 'When identified', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('DetectedIssue', 'code', 'Issue Category, e.g. drug-drug, duplicate therapy, etc.', sptTOKEN, [], 'DetectedIssue.code', sxpNormal);
+  indexes.add('DetectedIssue', 'identified', 'When identified', sptDATE, [], 'DetectedIssue.identified', sxpNormal);
   indexes.add('DetectedIssue', 'identifier', 'Unique id for the detected issue', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('DetectedIssue', 'implicated', 'Problem resource', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DetectedIssue.implicated', sxpNormal);
   indexes.add('DetectedIssue', 'patient', 'Associated patient', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.'+
@@ -1488,17 +1526,17 @@ begin
   indexes.add('Device', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Device', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Device', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Device', 'device-name', 'A server defined search that may match any of the string fields in the Device.udi.name  or Device.type.coding.display or  Device.type.text', sptSTRING, [], 'Device.type.text | Device.type.coding.display', sxpNormal);
+  indexes.add('Device', 'device-name', 'A server defined search that may match any of the string fields in Device.deviceName or Device.type.', sptSTRING, [], 'Device.deviceName.name | Device.type.coding.display | Device.type.text', sxpNormal);
   indexes.add('Device', 'identifier', 'Instance id from manufacturer, owner, and others', sptTOKEN, [], 'Device.identifier', sxpNormal);
   indexes.add('Device', 'location', 'A location, where the resource is found', sptREFERENCE, ['Location'], 'Device.location', sxpNormal);
   indexes.add('Device', 'manufacturer', 'The manufacturer of the device', sptSTRING, [], 'Device.manufacturer', sxpNormal);
-  indexes.add('Device', 'model', 'The model of the device', sptSTRING, [], '', sxpNormal);
+  indexes.add('Device', 'model', 'The model of the device', sptSTRING, [], 'Device.modelNumber', sxpNormal);
   indexes.add('Device', 'organization', 'The organization responsible for the device', sptREFERENCE, ['Organization'], 'Device.owner', sxpNormal);
   indexes.add('Device', 'patient', 'Patient information, if the resource is affixed to a person', sptREFERENCE, ['Patient'], 'Device.patient', sxpNormal);
   indexes.add('Device', 'status', 'active | inactive | entered-in-error | unknown', sptTOKEN, [], 'Device.status', sxpNormal);
   indexes.add('Device', 'type', 'The type of the device', sptTOKEN, [], 'Device.type', sxpNormal);
-  indexes.add('Device', 'udi-carrier', 'UDI Barcode (RFID or other technology) string either in HRF format or AIDC format converted to base64 string.', sptSTRING, [], '', sxpNormal);
-  indexes.add('Device', 'udi-di', 'The udi Device Identifier (DI)', sptSTRING, [], '', sxpNormal);
+  indexes.add('Device', 'udi-carrier', 'UDI Barcode (RFID or other technology) string in *HRF* format.', sptSTRING, [], 'Device.udiCarrier.carrierHRF', sxpNormal);
+  indexes.add('Device', 'udi-di', 'The udi Device Identifier (DI)', sptSTRING, [], 'Device.udiCarrier.deviceIdentifier', sxpNormal);
   indexes.add('Device', 'url', 'Network address to contact device', sptURI, [], 'Device.url', sxpNormal);
 end;
 {$ENDIF}
@@ -1557,7 +1595,7 @@ begin
   indexes.add('DeviceRequest', 'based-on', 'Plan/proposal/order fulfilled by this request', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DeviceRequest.basedOn', sxpNormal);
   indexes.add('DeviceRequest', 'code', 'Code for what is being requested/ordered', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('DeviceRequest', 'device', 'Reference to resource that is being requested/ordered', sptREFERENCE, ['Device'], '(DeviceRequest.code as Reference)', sxpNormal);
-  indexes.add('DeviceRequest', 'encounter', 'Encounter or Episode during which request was created', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('DeviceRequest', 'encounter', 'Encounter during which request was created', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('DeviceRequest', 'event-date', 'When service should occur', sptDATE, [], '(DeviceRequest.occurrence as dateTime) | (DeviceRequest.occurrence as Period)', sxpNormal);
   indexes.add('DeviceRequest', 'group-identifier', 'Composite request this is part of', sptTOKEN, [], 'DeviceRequest.groupIdentifier', sxpNormal);
   indexes.add('DeviceRequest', 'identifier', 'Business identifier for request/order', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
@@ -1617,9 +1655,8 @@ begin
   indexes.add('DiagnosticReport', 'category', 'Which diagnostic discipline/department created the report', sptTOKEN, [], 'DiagnosticReport.category', sxpNormal);
   indexes.add('DiagnosticReport', 'code', 'The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('DiagnosticReport', 'conclusion', 'A coded conclusion (interpretation/impression) on the report', sptTOKEN, [], 'DiagnosticReport.conclusionCode', sxpNormal);
-  indexes.add('DiagnosticReport', 'context', 'Healthcare event (Episode of Care or Encounter) related to the report', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'DiagnosticReport.context', sxpNormal);
-  indexes.add('DiagnosticReport', 'date', 'The clinically relevant time of the report', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('DiagnosticReport', 'encounter', 'The Encounter when the order was made', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('DiagnosticReport', 'date', 'The clinically relevant time of the report', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('DiagnosticReport', 'encounter', 'The Encounter when the order was made', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('DiagnosticReport', 'identifier', 'An identifier for the report', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('DiagnosticReport', 'issued', 'When the report was issued', sptDATE, [], 'DiagnosticReport.issued', sxpNormal);
   indexes.add('DiagnosticReport', 'media', 'A reference to the image source.', sptREFERENCE, ['Media'], 'DiagnosticReport.media.link', sxpNormal);
@@ -1650,7 +1687,7 @@ begin
   indexes.add('DocumentManifest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('DocumentManifest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DocumentManifest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('DocumentManifest', 'agent', 'Who and/or what had an agent participation', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentManifest.agent.who', sxpNormal);
+  indexes.add('DocumentManifest', 'author', 'Who and/or what authored the DocumentManifest', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentManifest.author', sxpNormal);
   indexes.add('DocumentManifest', 'created', 'When this document manifest created', sptDATE, [], 'DocumentManifest.created', sxpNormal);
   indexes.add('DocumentManifest', 'description', 'Human-readable description (title)', sptSTRING, [], 'DocumentManifest.description', sxpNormal);
   indexes.add('DocumentManifest', 'identifier', 'Unique Identifier for the set of documents', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifi'+
@@ -1665,11 +1702,11 @@ begin
   indexes.add('DocumentManifest', 'status', 'current | superseded | entered-in-error', sptTOKEN, [], 'DocumentManifest.status', sxpNormal);
   indexes.add('DocumentManifest', 'subject', 'The subject of the set of documents', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient'], 'DocumentManifest.subject', sxpNormal);
   indexes.add('DocumentManifest', 'type', 'Kind of document set', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
-  compartments.register('Device', 'DocumentManifest', ['subject', 'agent']);
+  compartments.register('Device', 'DocumentManifest', ['subject', 'author']);
   compartments.register('Encounter', 'DocumentManifest', ['related-ref']);
-  compartments.register('Patient', 'DocumentManifest', ['subject', 'agent', 'recipient']);
-  compartments.register('Practitioner', 'DocumentManifest', ['subject', 'agent', 'recipient']);
-  compartments.register('RelatedPerson', 'DocumentManifest', ['agent']);
+  compartments.register('Patient', 'DocumentManifest', ['subject', 'author', 'recipient']);
+  compartments.register('Practitioner', 'DocumentManifest', ['subject', 'author', 'recipient']);
+  compartments.register('RelatedPerson', 'DocumentManifest', ['author', 'recipient']);
 end;
 {$ENDIF}
 
@@ -1685,14 +1722,14 @@ begin
   indexes.add('DocumentReference', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('DocumentReference', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DocumentReference', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('DocumentReference', 'agent', 'Who and/or what authored the document', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentReference.agent.who', sxpNormal);
   indexes.add('DocumentReference', 'authenticator', 'Who/what authenticated the document', sptREFERENCE, ['Practitioner', 'Organization'], 'DocumentReference.authenticator', sxpNormal);
+  indexes.add('DocumentReference', 'author', 'Who and/or what authored the document', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentReference.author', sxpNormal);
   indexes.add('DocumentReference', 'category', 'Categorization of document', sptTOKEN, [], 'DocumentReference.category', sxpNormal);
   indexes.add('DocumentReference', 'contenttype', 'Mime type of the content, with charset etc.', sptTOKEN, [], 'DocumentReference.content.attachment.contentType', sxpNormal);
   indexes.add('DocumentReference', 'custodian', 'Organization which maintains the document', sptREFERENCE, ['Organization'], 'DocumentReference.custodian', sxpNormal);
   indexes.add('DocumentReference', 'date', 'When this document reference was created', sptDATE, [], 'DocumentReference.date', sxpNormal);
   indexes.add('DocumentReference', 'description', 'Human-readable description', sptSTRING, [], 'DocumentReference.description', sxpNormal);
-  indexes.add('DocumentReference', 'encounter', 'Context of the document  content', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('DocumentReference', 'encounter', 'Context of the document  content', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('DocumentReference', 'event', 'Main clinical acts documented', sptTOKEN, [], 'DocumentReference.context.event', sxpNormal);
   indexes.add('DocumentReference', 'facility', 'Kind of facility where patient was seen', sptTOKEN, [], 'DocumentReference.context.facilityType', sxpNormal);
   indexes.add('DocumentReference', 'format', 'Format/content rules for the document', sptTOKEN, [], 'DocumentReference.content.format', sxpNormal);
@@ -1711,11 +1748,42 @@ begin
   indexes.add('DocumentReference', 'status', 'current | superseded | entered-in-error', sptTOKEN, [], 'DocumentReference.status', sxpNormal);
   indexes.add('DocumentReference', 'subject', 'Who/what is the subject of the document', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient'], 'DocumentReference.subject', sxpNormal);
   indexes.add('DocumentReference', 'type', 'Kind of document (LOINC if possible)', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
-  compartments.register('Device', 'DocumentReference', ['subject', 'agent']);
+  compartments.register('Device', 'DocumentReference', ['subject', 'author']);
   compartments.register('Encounter', 'DocumentReference', ['encounter']);
-  compartments.register('Patient', 'DocumentReference', ['subject']);
-  compartments.register('Practitioner', 'DocumentReference', ['subject', 'agent', 'authenticator']);
-  compartments.register('RelatedPerson', 'DocumentReference', ['agent']);
+  compartments.register('Patient', 'DocumentReference', ['subject', 'author']);
+  compartments.register('Practitioner', 'DocumentReference', ['subject', 'author', 'authenticator']);
+  compartments.register('RelatedPerson', 'DocumentReference', ['author']);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_EFFECTEVIDENCESYNTHESIS}
+procedure TFHIRIndexBuilderR4.buildIndexesForEffectEvidenceSynthesis(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('EffectEvidenceSynthesis', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'context', 'A use context assigned to the effect evidence synthesis', sptTOKEN, [], '(EffectEvidenceSynthesis.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'context-quantity', 'A quantity- or range-valued use context assigned to the effect evidence synthesis', sptQUANTITY, [], '(EffectEvidenceSynthesis.useContext.value as Quantity) | (EffectEvidenceSynthesis.useContext.value as Range)', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'context-type', 'A type of use context assigned to the effect evidence synthesis', sptTOKEN, [], 'EffectEvidenceSynthesis.useContext.code', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the effect evidence synthesis', sptCOMPOSITE, [], 'EffectEvidenceSynthesis.useContext', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'context-type-value', 'A use context type and value assigned to the effect evidence synthesis', sptCOMPOSITE, [], 'EffectEvidenceSynthesis.useContext', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'date', 'The effect evidence synthesis publication date', sptDATE, [], 'EffectEvidenceSynthesis.date', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'description', 'The description of the effect evidence synthesis', sptSTRING, [], 'EffectEvidenceSynthesis.description', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'effective', 'The time during which the effect evidence synthesis is intended to be in use', sptDATE, [], 'EffectEvidenceSynthesis.effectivePeriod', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'identifier', 'External identifier for the effect evidence synthesis', sptTOKEN, [], 'EffectEvidenceSynthesis.identifier', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'jurisdiction', 'Intended jurisdiction for the effect evidence synthesis', sptTOKEN, [], 'EffectEvidenceSynthesis.jurisdiction', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'name', 'Computationally friendly name of the effect evidence synthesis', sptSTRING, [], 'EffectEvidenceSynthesis.name', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'publisher', 'Name of the publisher of the effect evidence synthesis', sptSTRING, [], 'EffectEvidenceSynthesis.publisher', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'status', 'The current status of the effect evidence synthesis', sptTOKEN, [], 'EffectEvidenceSynthesis.status', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'title', 'The human-friendly name of the effect evidence synthesis', sptSTRING, [], 'EffectEvidenceSynthesis.title', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'url', 'The uri that identifies the effect evidence synthesis', sptURI, [], 'EffectEvidenceSynthesis.url', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', 'version', 'The business version of the effect evidence synthesis', sptTOKEN, [], 'EffectEvidenceSynthesis.version', sxpNormal);
 end;
 {$ENDIF}
 
@@ -1735,20 +1803,21 @@ begin
   indexes.add('Encounter', 'appointment', 'The appointment that scheduled this encounter', sptREFERENCE, ['Appointment'], 'Encounter.appointment.where(resolve() is Appointment)', sxpNormal);
   indexes.add('Encounter', 'based-on', 'The ServiceRequest that initiated this encounter', sptREFERENCE, ['ServiceRequest'], 'Encounter.basedOn.where(resolve() is ServiceRequest)', sxpNormal);
   indexes.add('Encounter', 'class', 'Classification of patient encounter', sptTOKEN, [], 'Encounter.class', sxpNormal);
-  indexes.add('Encounter', 'date', 'A date within the period the Encounter lasted', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('Encounter', 'diagnosis', 'Reason the encounter takes place (resource)', sptREFERENCE, ['Condition', 'Procedure'], 'Encounter.diagnosis.condition', sxpNormal);
+  indexes.add('Encounter', 'date', 'A date within the period the Encounter lasted', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Encounter', 'diagnosis', 'The diagnosis or procedure relevant to the encounter', sptREFERENCE, ['Condition', 'Procedure'], 'Encounter.diagnosis.condition', sxpNormal);
   indexes.add('Encounter', 'episode-of-care', 'Episode(s) of care that this encounter should be recorded against', sptREFERENCE, ['EpisodeOfCare'], 'Encounter.episodeOfCare.where(resolve() is EpisodeOfCare)', sxpNormal);
   indexes.add('Encounter', 'identifier', 'Identifier(s) by which this encounter is known', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Encounter', 'length', 'Length of encounter in days', sptQUANTITY, [], 'Encounter.length', sxpNormal);
   indexes.add('Encounter', 'location', 'Location the encounter takes place', sptREFERENCE, ['Location'], 'Encounter.location.location.where(resolve() is Location)', sxpNormal);
   indexes.add('Encounter', 'location-period', 'Time period during which the patient was present at the location', sptDATE, [], 'Encounter.location.period', sxpNormal);
   indexes.add('Encounter', 'part-of', 'Another Encounter this encounter is part of', sptREFERENCE, ['Encounter'], 'Encounter.partOf.where(resolve() is Encounter)', sxpNormal);
-  indexes.add('Encounter', 'participant', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'RelatedPerson'], 'Encounter.participant.individual', sxpNormal);
+  indexes.add('Encounter', 'participant', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'PractitionerRole', 'RelatedPerson'], 'Encounter.participant.individual', sxpNormal);
   indexes.add('Encounter', 'participant-type', 'Role of participant in encounter', sptTOKEN, [], 'Encounter.participant.type', sxpNormal);
   indexes.add('Encounter', 'patient', 'The patient or group present at the encounter', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immun'+
    'ization.patient | List.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Encounter', 'practitioner', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner'], 'Encounter.participant.individual.where(resolve() is Practitioner)', sxpNormal);
-  indexes.add('Encounter', 'reason', 'Reason the encounter takes place (code)', sptTOKEN, [], 'Encounter.reason', sxpNormal);
+  indexes.add('Encounter', 'reason-code', 'Coded reason the encounter takes place', sptTOKEN, [], 'Encounter.reasonCode', sxpNormal);
+  indexes.add('Encounter', 'reason-reference', 'Reason the encounter takes place (reference)', sptREFERENCE, ['Condition', 'Observation', 'Procedure', 'ImmunizationRecommendation'], 'Encounter.reasonReference', sxpNormal);
   indexes.add('Encounter', 'service-provider', 'The organization (facility) responsible for this encounter', sptREFERENCE, ['Organization'], 'Encounter.serviceProvider.where(resolve() is Organization)', sxpNormal);
   indexes.add('Encounter', 'special-arrangement', 'Wheelchair, translator, stretcher, etc.', sptTOKEN, [], 'Encounter.hospitalization.specialArrangement', sxpNormal);
   indexes.add('Encounter', 'status', 'planned | arrived | triaged | in-progress | onleave | finished | cancelled +', sptTOKEN, [], 'Encounter.status', sxpNormal);
@@ -1820,21 +1889,6 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF FHIR_ENTRYDEFINITION}
-procedure TFHIRIndexBuilderR4.buildIndexesForEntryDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('EntryDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('EntryDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('EntryDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EntryDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('EntryDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('EntryDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('EntryDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('EntryDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('EntryDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-end;
-{$ENDIF}
-
 {$IFDEF FHIR_EPISODEOFCARE}
 procedure TFHIRIndexBuilderR4.buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1849,7 +1903,7 @@ begin
   indexes.add('EpisodeOfCare', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('EpisodeOfCare', 'care-manager', 'Care manager/care coordinator for the patient', sptREFERENCE, ['Practitioner'], 'EpisodeOfCare.careManager.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('EpisodeOfCare', 'condition', 'Conditions/problems/diagnoses this episode of care is for', sptREFERENCE, ['Condition'], 'EpisodeOfCare.diagnosis.condition.where(resolve() is Condition)', sxpNormal);
-  indexes.add('EpisodeOfCare', 'date', 'The provided date search value falls within the episode of care''s period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('EpisodeOfCare', 'date', 'The provided date search value falls within the episode of care''s period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('EpisodeOfCare', 'identifier', 'Business Identifier(s) relevant for this EpisodeOfCare', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription'+
    '.identifier', sxpNormal);
   indexes.add('EpisodeOfCare', 'incoming-referral', 'Incoming Referral Request', sptREFERENCE, ['ServiceRequest'], 'EpisodeOfCare.referralRequest.where(resolve() is ServiceRequest)', sxpNormal);
@@ -1900,6 +1954,80 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_EVIDENCE}
+procedure TFHIRIndexBuilderR4.buildIndexesForEvidence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('Evidence', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Evidence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('Evidence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('Evidence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Evidence', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('Evidence', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('Evidence', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('Evidence', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Evidence', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Evidence', 'composed-of', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Evidence.relatedArtifact.where(type=''composed-of'').resource', sxpNormal);
+  indexes.add('Evidence', 'context', 'A use context assigned to the evidence', sptTOKEN, [], '(Evidence.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('Evidence', 'context-quantity', 'A quantity- or range-valued use context assigned to the evidence', sptQUANTITY, [], '(Evidence.useContext.value as Quantity) | (Evidence.useContext.value as Range)', sxpNormal);
+  indexes.add('Evidence', 'context-type', 'A type of use context assigned to the evidence', sptTOKEN, [], 'Evidence.useContext.code', sxpNormal);
+  indexes.add('Evidence', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the evidence', sptCOMPOSITE, [], 'Evidence.useContext', sxpNormal);
+  indexes.add('Evidence', 'context-type-value', 'A use context type and value assigned to the evidence', sptCOMPOSITE, [], 'Evidence.useContext', sxpNormal);
+  indexes.add('Evidence', 'date', 'The evidence publication date', sptDATE, [], 'Evidence.date', sxpNormal);
+  indexes.add('Evidence', 'depends-on', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Evidence.relatedArtifact.where(type=''depends-on'').resource', sxpNormal);
+  indexes.add('Evidence', 'derived-from', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Evidence.relatedArtifact.where(type=''derived-from'').resource', sxpNormal);
+  indexes.add('Evidence', 'description', 'The description of the evidence', sptSTRING, [], 'Evidence.description', sxpNormal);
+  indexes.add('Evidence', 'effective', 'The time during which the evidence is intended to be in use', sptDATE, [], 'Evidence.effectivePeriod', sxpNormal);
+  indexes.add('Evidence', 'identifier', 'External identifier for the evidence', sptTOKEN, [], 'Evidence.identifier', sxpNormal);
+  indexes.add('Evidence', 'jurisdiction', 'Intended jurisdiction for the evidence', sptTOKEN, [], 'Evidence.jurisdiction', sxpNormal);
+  indexes.add('Evidence', 'name', 'Computationally friendly name of the evidence', sptSTRING, [], 'Evidence.name', sxpNormal);
+  indexes.add('Evidence', 'predecessor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Evidence.relatedArtifact.where(type=''predecessor'').resource', sxpNormal);
+  indexes.add('Evidence', 'publisher', 'Name of the publisher of the evidence', sptSTRING, [], 'Evidence.publisher', sxpNormal);
+  indexes.add('Evidence', 'status', 'The current status of the evidence', sptTOKEN, [], 'Evidence.status', sxpNormal);
+  indexes.add('Evidence', 'successor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Evidence.relatedArtifact.where(type=''successor'').resource', sxpNormal);
+  indexes.add('Evidence', 'title', 'The human-friendly name of the evidence', sptSTRING, [], 'Evidence.title', sxpNormal);
+  indexes.add('Evidence', 'topic', 'Topics associated with the Evidence', sptTOKEN, [], 'Evidence.topic', sxpNormal);
+  indexes.add('Evidence', 'url', 'The uri that identifies the evidence', sptURI, [], 'Evidence.url', sxpNormal);
+  indexes.add('Evidence', 'version', 'The business version of the evidence', sptTOKEN, [], 'Evidence.version', sxpNormal);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_EVIDENCEVARIABLE}
+procedure TFHIRIndexBuilderR4.buildIndexesForEvidenceVariable(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('EvidenceVariable', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EvidenceVariable', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('EvidenceVariable', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('EvidenceVariable', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EvidenceVariable', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('EvidenceVariable', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('EvidenceVariable', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('EvidenceVariable', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('EvidenceVariable', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EvidenceVariable', 'composed-of', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EvidenceVariable.relatedArtifact.where(type=''composed-of'').resource', sxpNormal);
+  indexes.add('EvidenceVariable', 'context', 'A use context assigned to the evidence variable', sptTOKEN, [], '(EvidenceVariable.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('EvidenceVariable', 'context-quantity', 'A quantity- or range-valued use context assigned to the evidence variable', sptQUANTITY, [], '(EvidenceVariable.useContext.value as Quantity) | (EvidenceVariable.useContext.value as Range)', sxpNormal);
+  indexes.add('EvidenceVariable', 'context-type', 'A type of use context assigned to the evidence variable', sptTOKEN, [], 'EvidenceVariable.useContext.code', sxpNormal);
+  indexes.add('EvidenceVariable', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the evidence variable', sptCOMPOSITE, [], 'EvidenceVariable.useContext', sxpNormal);
+  indexes.add('EvidenceVariable', 'context-type-value', 'A use context type and value assigned to the evidence variable', sptCOMPOSITE, [], 'EvidenceVariable.useContext', sxpNormal);
+  indexes.add('EvidenceVariable', 'date', 'The evidence variable publication date', sptDATE, [], 'EvidenceVariable.date', sxpNormal);
+  indexes.add('EvidenceVariable', 'depends-on', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EvidenceVariable.relatedArtifact.where(type=''depends-on'').resource', sxpNormal);
+  indexes.add('EvidenceVariable', 'derived-from', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EvidenceVariable.relatedArtifact.where(type=''derived-from'').resource', sxpNormal);
+  indexes.add('EvidenceVariable', 'description', 'The description of the evidence variable', sptSTRING, [], 'EvidenceVariable.description', sxpNormal);
+  indexes.add('EvidenceVariable', 'effective', 'The time during which the evidence variable is intended to be in use', sptDATE, [], 'EvidenceVariable.effectivePeriod', sxpNormal);
+  indexes.add('EvidenceVariable', 'identifier', 'External identifier for the evidence variable', sptTOKEN, [], 'EvidenceVariable.identifier', sxpNormal);
+  indexes.add('EvidenceVariable', 'jurisdiction', 'Intended jurisdiction for the evidence variable', sptTOKEN, [], 'EvidenceVariable.jurisdiction', sxpNormal);
+  indexes.add('EvidenceVariable', 'name', 'Computationally friendly name of the evidence variable', sptSTRING, [], 'EvidenceVariable.name', sxpNormal);
+  indexes.add('EvidenceVariable', 'predecessor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EvidenceVariable.relatedArtifact.where(type=''predecessor'').resource', sxpNormal);
+  indexes.add('EvidenceVariable', 'publisher', 'Name of the publisher of the evidence variable', sptSTRING, [], 'EvidenceVariable.publisher', sxpNormal);
+  indexes.add('EvidenceVariable', 'status', 'The current status of the evidence variable', sptTOKEN, [], 'EvidenceVariable.status', sxpNormal);
+  indexes.add('EvidenceVariable', 'successor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EvidenceVariable.relatedArtifact.where(type=''successor'').resource', sxpNormal);
+  indexes.add('EvidenceVariable', 'title', 'The human-friendly name of the evidence variable', sptSTRING, [], 'EvidenceVariable.title', sxpNormal);
+  indexes.add('EvidenceVariable', 'topic', 'Topics associated with the EvidenceVariable', sptTOKEN, [], 'EvidenceVariable.topic', sxpNormal);
+  indexes.add('EvidenceVariable', 'url', 'The uri that identifies the evidence variable', sptURI, [], 'EvidenceVariable.url', sxpNormal);
+  indexes.add('EvidenceVariable', 'version', 'The business version of the evidence variable', sptTOKEN, [], 'EvidenceVariable.version', sxpNormal);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_EXAMPLESCENARIO}
 procedure TFHIRIndexBuilderR4.buildIndexesForExampleScenario(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1944,15 +2072,20 @@ begin
   indexes.add('ExplanationOfBenefit', 'claim', 'The reference to the claim', sptREFERENCE, ['Claim'], 'ExplanationOfBenefit.claim', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'coverage', 'The plan under which the claim was adjudicated', sptREFERENCE, ['Coverage'], 'ExplanationOfBenefit.insurance.coverage', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'created', 'The creation date for the EOB', sptDATE, [], 'ExplanationOfBenefit.created', sxpNormal);
+  indexes.add('ExplanationOfBenefit', 'detail-udi', 'UDI associated with a line item detail product or service', sptREFERENCE, ['Device'], 'ExplanationOfBenefit.item.detail.udi', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'disposition', 'The contents of the disposition message', sptSTRING, [], 'ExplanationOfBenefit.disposition', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'encounter', 'Encounters associated with a billed line item', sptREFERENCE, ['Encounter'], 'ExplanationOfBenefit.item.encounter', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'enterer', 'The party responsible for the entry of the Claim', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'ExplanationOfBenefit.enterer', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'facility', 'Facility responsible for the goods and services', sptREFERENCE, ['Location'], 'ExplanationOfBenefit.facility', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'identifier', 'The business identifier of the Explanation of Benefit', sptTOKEN, [], 'ExplanationOfBenefit.identifier', sxpNormal);
+  indexes.add('ExplanationOfBenefit', 'item-udi', 'UDI associated with a line item product or service', sptREFERENCE, ['Device'], 'ExplanationOfBenefit.item.udi', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'patient', 'The reference to the patient', sptREFERENCE, ['Patient'], 'ExplanationOfBenefit.patient', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'payee', 'The party receiving any payment for the Claim', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'ExplanationOfBenefit.payee.party', sxpNormal);
+  indexes.add('ExplanationOfBenefit', 'procedure-udi', 'UDI associated with a procedure', sptREFERENCE, ['Device'], 'ExplanationOfBenefit.procedure.udi', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'provider', 'The reference to the provider', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ExplanationOfBenefit.provider', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'status', 'Status of the instance', sptTOKEN, [], 'ExplanationOfBenefit.status', sxpNormal);
+  indexes.add('ExplanationOfBenefit', 'subdetail-udi', 'UDI associated with a line item detail subdetail product or service', sptREFERENCE, ['Device'], 'ExplanationOfBenefit.item.detail.subDetail.udi', sxpNormal);
+  compartments.register('Device', 'ExplanationOfBenefit', ['procedure-udi', 'item-udi', 'detail-udi', 'subdetail-udi']);
   compartments.register('Encounter', 'ExplanationOfBenefit', ['encounter']);
   compartments.register('Patient', 'ExplanationOfBenefit', ['patient', 'payee']);
   compartments.register('Practitioner', 'ExplanationOfBenefit', ['enterer', 'provider', 'payee', 'care-team']);
@@ -1973,8 +2106,8 @@ begin
   indexes.add('FamilyMemberHistory', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('FamilyMemberHistory', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('FamilyMemberHistory', 'code', 'A search by a condition code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('FamilyMemberHistory', 'date', 'When history was recorded or last updated', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('FamilyMemberHistory', 'gender', 'A search by a gender code of a family member', sptTOKEN, [], 'FamilyMemberHistory.gender', sxpNormal);
+  indexes.add('FamilyMemberHistory', 'date', 'When history was recorded or last updated', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('FamilyMemberHistory', 'gender', 'A search by a gender code of a family member', sptTOKEN, [], '', sxpNormal);
   indexes.add('FamilyMemberHistory', 'identifier', 'A search by a record identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('FamilyMemberHistory', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['Questionnaire', 'Measure', 'PlanDefinition', 'OperationDefinition', 'ActivityDefinition'], 'FamilyMemberHistory.instantiatesCanonical', sxpNormal);
   indexes.add('FamilyMemberHistory', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'FamilyMemberHistory.instantiatesUri', sxpNormal);
@@ -1999,8 +2132,8 @@ begin
   indexes.add('Flag', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Flag', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Flag', 'author', 'Flag creator', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient'], 'Flag.author', sxpNormal);
-  indexes.add('Flag', 'date', 'Time period when flag is active', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('Flag', 'encounter', 'Alert relevant during encounter', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('Flag', 'date', 'Time period when flag is active', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Flag', 'encounter', 'Alert relevant during encounter', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Flag', 'identifier', 'Business identifier', sptTOKEN, [], 'Flag.identifier', sxpNormal);
   indexes.add('Flag', 'patient', 'The identity of a subject to list flags for', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization'+
    '.patient | List.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
@@ -2023,12 +2156,13 @@ begin
   indexes.add('Goal', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Goal', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Goal', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Goal', 'achievement-status', 'in-progress | improving | worsening | no-change | achieved | sustaining | not-achieved | no-progress | not-attainable', sptTOKEN, [], 'Goal.achievementStatus', sxpNormal);
   indexes.add('Goal', 'category', 'E.g. Treatment, dietary, behavioral, etc.', sptTOKEN, [], 'Goal.category', sxpNormal);
   indexes.add('Goal', 'identifier', 'External Ids for this goal', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
+  indexes.add('Goal', 'lifecycle-status', 'proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected', sptTOKEN, [], 'Goal.lifecycleStatus', sxpNormal);
   indexes.add('Goal', 'patient', 'Who this goal is intended for', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | Lis'+
    't.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Goal', 'start-date', 'When goal pursuit begins', sptDATE, [], '(Goal.start as date)', sxpNormal);
-  indexes.add('Goal', 'status', 'proposed | accepted | planned | in-progress | on-target | ahead-of-target | behind-target | sustaining | achieved | on-hold | cancelled | entered-in-error | rejected', sptTOKEN, [], 'Goal.status', sxpNormal);
   indexes.add('Goal', 'subject', 'Who this goal is intended for', sptREFERENCE, ['Group', 'Organization', 'Patient'], 'Goal.subject', sxpNormal);
   indexes.add('Goal', 'target-date', 'Reach goal on or before', sptDATE, [], '(Goal.target.due as date)', sxpNormal);
   compartments.register('Patient', 'Goal', ['patient']);
@@ -2083,7 +2217,8 @@ begin
   indexes.add('Group', 'code', 'The kind of resources contained', sptTOKEN, [], 'Group.code', sxpNormal);
   indexes.add('Group', 'exclude', 'Group includes or excludes', sptTOKEN, [], 'Group.characteristic.exclude', sxpNormal);
   indexes.add('Group', 'identifier', 'Unique id', sptTOKEN, [], 'Group.identifier', sxpNormal);
-  indexes.add('Group', 'member', 'Reference to the group member', sptREFERENCE, ['Practitioner', 'Device', 'Medication', 'Patient', 'Substance', 'PractitionerRole'], 'Group.member.entity', sxpNormal);
+  indexes.add('Group', 'managing-entity', 'Entity that is the custodian of the Group''s definition', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole', 'RelatedPerson'], 'Group.managingEntity', sxpNormal);
+  indexes.add('Group', 'member', 'Reference to the group member', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Medication', 'Patient', 'Substance', 'PractitionerRole'], 'Group.member.entity', sxpNormal);
   indexes.add('Group', 'type', 'The type of resources the group contains', sptTOKEN, [], 'Group.type', sxpNormal);
   indexes.add('Group', 'value', 'Value held by characteristic', sptTOKEN, [], 'Group.characteristic.value', sxpNormal);
   compartments.register('Device', 'Group', ['member']);
@@ -2124,15 +2259,17 @@ begin
   indexes.add('HealthcareService', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('HealthcareService', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('HealthcareService', 'active', 'The Healthcare Service is currently marked as active', sptTOKEN, [], 'HealthcareService.active', sxpNormal);
-  indexes.add('HealthcareService', 'category', 'Service Category of the Healthcare Service', sptTOKEN, [], 'HealthcareService.category', sxpNormal);
   indexes.add('HealthcareService', 'characteristic', 'One of the HealthcareService''s characteristics', sptTOKEN, [], 'HealthcareService.characteristic', sxpNormal);
-  indexes.add('HealthcareService', 'endpoint', 'Technical endpoints providing access to services operated for the location', sptREFERENCE, ['Endpoint'], 'HealthcareService.endpoint', sxpNormal);
+  indexes.add('HealthcareService', 'coverage-area', 'Location(s) service is intended for/available to', sptREFERENCE, ['Location'], 'HealthcareService.coverageArea', sxpNormal);
+  indexes.add('HealthcareService', 'endpoint', 'Technical endpoints providing access to electronic services operated for the healthcare service', sptREFERENCE, ['Endpoint'], 'HealthcareService.endpoint', sxpNormal);
   indexes.add('HealthcareService', 'identifier', 'External identifiers for this item', sptTOKEN, [], 'HealthcareService.identifier', sxpNormal);
   indexes.add('HealthcareService', 'location', 'The location of the Healthcare Service', sptREFERENCE, ['Location'], 'HealthcareService.location', sxpNormal);
   indexes.add('HealthcareService', 'name', 'A portion of the Healthcare service name', sptSTRING, [], 'HealthcareService.name', sxpNormal);
   indexes.add('HealthcareService', 'organization', 'The organization that provides this Healthcare Service', sptREFERENCE, ['Organization'], 'HealthcareService.providedBy', sxpNormal);
-  indexes.add('HealthcareService', 'programname', 'One of the Program Names serviced by this HealthcareService', sptSTRING, [], 'HealthcareService.programName', sxpNormal);
-  indexes.add('HealthcareService', 'type', 'The type of service provided by this healthcare service', sptTOKEN, [], 'HealthcareService.type', sxpNormal);
+  indexes.add('HealthcareService', 'program', 'One of the Programs supported by this HealthcareService', sptTOKEN, [], 'HealthcareService.program', sxpNormal);
+  indexes.add('HealthcareService', 'service-category', 'Service Category of the Healthcare Service', sptTOKEN, [], 'HealthcareService.category', sxpNormal);
+  indexes.add('HealthcareService', 'service-type', 'The type of service provided by this healthcare service', sptTOKEN, [], 'HealthcareService.type', sxpNormal);
+  indexes.add('HealthcareService', 'specialty', 'The specialty of the service provided by this healthcare service', sptTOKEN, [], 'HealthcareService.specialty', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2148,23 +2285,22 @@ begin
   indexes.add('ImagingStudy', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('ImagingStudy', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('ImagingStudy', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('ImagingStudy', 'accession', 'The accession identifier for the study', sptTOKEN, [], 'ImagingStudy.identifier', sxpNormal);
   indexes.add('ImagingStudy', 'basedon', 'The order for the image', sptREFERENCE, ['Appointment', 'AppointmentResponse', 'CarePlan', 'Task', 'ServiceRequest'], 'ImagingStudy.basedOn', sxpNormal);
   indexes.add('ImagingStudy', 'bodysite', 'The body site studied', sptTOKEN, [], 'ImagingStudy.series.bodySite', sxpNormal);
-  indexes.add('ImagingStudy', 'context', 'The context of the study', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'ImagingStudy.context', sxpNormal);
   indexes.add('ImagingStudy', 'dicom-class', 'The type of the instance', sptTOKEN, [], 'ImagingStudy.series.instance.sopClass', sxpNormal);
+  indexes.add('ImagingStudy', 'encounter', 'The context of the study', sptREFERENCE, ['Encounter'], 'ImagingStudy.encounter', sxpNormal);
   indexes.add('ImagingStudy', 'endpoint', 'The endpoint for the study or series', sptREFERENCE, ['Endpoint'], 'ImagingStudy.endpoint | ImagingStudy.series.endpoint', sxpNormal);
-  indexes.add('ImagingStudy', 'identifier', 'Other identifiers for the Study', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
-  indexes.add('ImagingStudy', 'inst-id', 'The instance unique identifier', sptTOKEN, [], 'ImagingStudy.series.instance.identifier', sxpNormal);
+  indexes.add('ImagingStudy', 'identifier', 'Identifiers for the Study, such as DICOM Study Instance UID and Accession number', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identi'+
+   'fier | VisionPrescription.identifier', sxpNormal);
+  indexes.add('ImagingStudy', 'instance', 'SOP Instance UID for an instance', sptTOKEN, [], 'ImagingStudy.series.instance.uid', sxpNormal);
   indexes.add('ImagingStudy', 'modality', 'The modality of the series', sptTOKEN, [], 'ImagingStudy.series.modality', sxpNormal);
   indexes.add('ImagingStudy', 'patient', 'Who the study is about', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | Li'+
    'st.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('ImagingStudy', 'performer', 'The person who performed the study', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'ImagingStudy.series.performer.actor', sxpNormal);
   indexes.add('ImagingStudy', 'reason', 'The reason for the study', sptTOKEN, [], 'ImagingStudy.reasonCode', sxpNormal);
-  indexes.add('ImagingStudy', 'series', 'The identifier of the series of images', sptTOKEN, [], 'ImagingStudy.series.identifier', sxpNormal);
+  indexes.add('ImagingStudy', 'series', 'DICOM Series Instance UID for a series', sptTOKEN, [], 'ImagingStudy.series.uid', sxpNormal);
   indexes.add('ImagingStudy', 'started', 'When the study was started', sptDATE, [], 'ImagingStudy.started', sxpNormal);
   indexes.add('ImagingStudy', 'status', 'The status of the study', sptTOKEN, [], 'ImagingStudy.status', sxpNormal);
-  indexes.add('ImagingStudy', 'study', 'The study identifier for the image', sptTOKEN, [], 'ImagingStudy.identifier', sxpNormal);
   indexes.add('ImagingStudy', 'subject', 'Who the study is about', sptREFERENCE, ['Group', 'Device', 'Patient'], 'ImagingStudy.subject', sxpNormal);
   compartments.register('Patient', 'ImagingStudy', ['patient']);
 end;
@@ -2182,7 +2318,7 @@ begin
   indexes.add('Immunization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Immunization', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Immunization', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Immunization', 'date', 'Vaccination  (non)-Administration Date', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Immunization', 'date', 'Vaccination  (non)-Administration Date', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Immunization', 'identifier', 'Business identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Immunization', 'location', 'The service delivery location or facility in which the vaccine was / was to be administered', sptREFERENCE, ['Location'], 'Immunization.location', sxpNormal);
   indexes.add('Immunization', 'lot-number', 'Vaccine Lot Number', sptSTRING, [], 'Immunization.lotNumber', sxpNormal);
@@ -2190,6 +2326,8 @@ begin
   indexes.add('Immunization', 'patient', 'The patient for the vaccination record', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizat'+
    'ion.patient | List.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Immunization', 'performer', 'The practitioner or organization who played a role in the vaccination', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'Immunization.performer.actor', sxpNormal);
+  indexes.add('Immunization', 'reaction', 'Additional information on reaction', sptREFERENCE, ['Observation'], 'Immunization.reaction.detail', sxpNormal);
+  indexes.add('Immunization', 'reaction-date', 'When reaction started', sptDATE, [], 'Immunization.reaction.date', sxpNormal);
   indexes.add('Immunization', 'reason-code', 'Reason why the vaccine was administered', sptTOKEN, [], 'Immunization.reasonCode', sxpNormal);
   indexes.add('Immunization', 'reason-reference', 'Why immunization occurred', sptREFERENCE, ['Condition', 'Observation', 'DiagnosticReport'], 'Immunization.reasonReference', sxpNormal);
   indexes.add('Immunization', 'series', 'The series being followed by the provider', sptSTRING, [], 'Immunization.protocolApplied.series', sxpNormal);
@@ -2238,8 +2376,6 @@ begin
   indexes.add('ImmunizationRecommendation', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ImmunizationRecommendation', 'date', 'Date recommendation(s) created', sptDATE, [], 'ImmunizationRecommendation.date', sxpNormal);
-  indexes.add('ImmunizationRecommendation', 'dose-number', 'Recommended dose number within series', sptTOKEN, [], 'ImmunizationRecommendation.recommendation.doseNumber', sxpNormal);
-  indexes.add('ImmunizationRecommendation', 'dose-sequence', 'Recommended number of doses for immunity', sptTOKEN, [], 'ImmunizationRecommendation.recommendation.seriesDoses', sxpNormal);
   indexes.add('ImmunizationRecommendation', 'identifier', 'Business identifier', sptTOKEN, [], 'ImmunizationRecommendation.identifier', sxpNormal);
   indexes.add('ImmunizationRecommendation', 'information', 'Patient observations supporting recommendation', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ImmunizationRecommendation.recommendation.supportingPatientInformation', sxpNormal);
   indexes.add('ImmunizationRecommendation', 'patient', 'Who this profile is for', sptREFERENCE, ['Patient'], 'ImmunizationRecommendation.patient', sxpNormal);
@@ -2376,6 +2512,7 @@ begin
   indexes.add('Library', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Library', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Library', 'composed-of', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''composed-of'').resource', sxpNormal);
+  indexes.add('Library', 'content-type', 'The type of content in the library (e.g. text/cql)', sptTOKEN, [], 'Library.content.contentType', sxpNormal);
   indexes.add('Library', 'context', 'A use context assigned to the library', sptTOKEN, [], '(Library.useContext.value as CodeableConcept)', sxpNormal);
   indexes.add('Library', 'context-quantity', 'A quantity- or range-valued use context assigned to the library', sptQUANTITY, [], '(Library.useContext.value as Quantity) | (Library.useContext.value as Range)', sxpNormal);
   indexes.add('Library', 'context-type', 'A type of use context assigned to the library', sptTOKEN, [], 'Library.useContext.code', sxpNormal);
@@ -2433,9 +2570,9 @@ begin
   indexes.add('List', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('List', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('List', 'code', 'What the purpose of this list is', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('List', 'date', 'When the list was prepared', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('List', 'date', 'When the list was prepared', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('List', 'empty-reason', 'Why list is empty', sptTOKEN, [], 'List.emptyReason', sxpNormal);
-  indexes.add('List', 'encounter', 'Context in which list created', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('List', 'encounter', 'Context in which list created', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('List', 'identifier', 'Business identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('List', 'item', 'Actual entry', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'List.entry.item', sxpNormal);
   indexes.add('List', 'notes', 'The annotation  - text content (as markdown)', sptSTRING, [], 'List.note.text', sxpNormal);
@@ -2556,9 +2693,9 @@ begin
   indexes.add('Media', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Media', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Media', 'based-on', 'Procedure that caused this media to be created', sptREFERENCE, ['CarePlan', 'ServiceRequest'], 'Media.basedOn', sxpNormal);
-  indexes.add('Media', 'context', 'Encounter / Episode associated with media', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Media.context', sxpNormal);
   indexes.add('Media', 'created', 'When Media was collected', sptDATE, [], 'Media.created', sxpNormal);
   indexes.add('Media', 'device', 'Observing Device', sptREFERENCE, ['Device', 'DeviceMetric'], 'Media.device', sxpNormal);
+  indexes.add('Media', 'encounter', 'Encounter associated with media', sptREFERENCE, ['Encounter'], 'Media.encounter', sxpNormal);
   indexes.add('Media', 'identifier', 'Identifier(s) for the image', sptTOKEN, [], 'Media.identifier', sxpNormal);
   indexes.add('Media', 'modality', 'The type of acquisition equipment/process', sptTOKEN, [], 'Media.modality', sxpNormal);
   indexes.add('Media', 'operator', 'The person who generated the image', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Media.operator', sxpNormal);
@@ -2569,6 +2706,7 @@ begin
   indexes.add('Media', 'type', 'Classification of media as image, video, or audio', sptTOKEN, [], 'Media.type', sxpNormal);
   indexes.add('Media', 'view', 'Imaging view, e.g. Lateral or Antero-posterior', sptTOKEN, [], 'Media.view', sxpNormal);
   compartments.register('Device', 'Media', ['subject']);
+  compartments.register('Encounter', 'Media', ['encounter']);
   compartments.register('Patient', 'Media', ['subject']);
   compartments.register('Practitioner', 'Media', ['subject', 'operator']);
 end;
@@ -2586,15 +2724,15 @@ begin
   indexes.add('Medication', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Medication', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Medication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Medication', 'code', 'Codes that identify this medication', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('Medication', 'expiration-date', 'When batch will expire', sptDATE, [], 'Medication.batch.expirationDate', sxpNormal);
-  indexes.add('Medication', 'form', 'powder | tablets | capsule +', sptTOKEN, [], 'Medication.form', sxpNormal);
-  indexes.add('Medication', 'ingredient', 'The actual ingredient or content', sptREFERENCE, ['Medication', 'Substance'], '(Medication.ingredient.item as Reference)', sxpNormal);
-  indexes.add('Medication', 'ingredient-code', 'The actual ingredient or content', sptTOKEN, [], '(Medication.ingredient.item as CodeableConcept)', sxpNormal);
-  indexes.add('Medication', 'lot-number', 'Identifier assigned to batch', sptTOKEN, [], 'Medication.batch.lotNumber', sxpNormal);
-  indexes.add('Medication', 'manufacturer', 'Manufacturer of the item', sptREFERENCE, ['Organization'], 'Medication.manufacturer', sxpNormal);
-  indexes.add('Medication', 'serial-number', 'Identifier assigned to a drug at the time of manufacture', sptTOKEN, [], 'Medication.batch.serialNumber', sxpNormal);
-  indexes.add('Medication', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'Medication.status', sxpNormal);
+  indexes.add('Medication', 'code', 'Returns medications for a specific code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('Medication', 'expiration-date', 'Returns medications in a batch with this expiration date', sptDATE, [], 'Medication.batch.expirationDate', sxpNormal);
+  indexes.add('Medication', 'form', 'Returns medications for a specific dose form', sptTOKEN, [], 'Medication.form', sxpNormal);
+  indexes.add('Medication', 'identifier', 'Returns medications with this external identifier', sptTOKEN, [], 'Medication.identifier', sxpNormal);
+  indexes.add('Medication', 'ingredient', 'Returns medications for this ingredient reference', sptREFERENCE, ['Medication', 'Substance'], '(Medication.ingredient.item as Reference)', sxpNormal);
+  indexes.add('Medication', 'ingredient-code', 'Returns medications for this ingredient code', sptTOKEN, [], '(Medication.ingredient.item as CodeableConcept)', sxpNormal);
+  indexes.add('Medication', 'lot-number', 'Returns medications in a batch with this lot number', sptTOKEN, [], 'Medication.batch.lotNumber', sxpNormal);
+  indexes.add('Medication', 'manufacturer', 'Returns medications made or sold for this manufacturer', sptREFERENCE, ['Organization'], 'Medication.manufacturer', sxpNormal);
+  indexes.add('Medication', 'status', 'Returns medications for this status', sptTOKEN, [], 'Medication.status', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2708,8 +2846,8 @@ begin
   indexes.add('MedicationRequest', 'authoredon', 'Return prescriptions written on this date', sptDATE, [], 'MedicationRequest.authoredOn', sxpNormal);
   indexes.add('MedicationRequest', 'category', 'Returns prescriptions with different categories', sptTOKEN, [], 'MedicationRequest.category', sxpNormal);
   indexes.add('MedicationRequest', 'code', 'Return prescriptions of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('MedicationRequest', 'context', 'Return prescriptions with this encounter or episode of care identifier', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'MedicationRequest.context', sxpNormal);
   indexes.add('MedicationRequest', 'date', 'Returns medication request to be administered on a specific date', sptDATE, [], 'MedicationRequest.dosageInstruction.timing.event', sxpNormal);
+  indexes.add('MedicationRequest', 'encounter', 'Return prescriptions with this encounter identifier', sptREFERENCE, ['Encounter'], 'MedicationRequest.encounter', sxpNormal);
   indexes.add('MedicationRequest', 'identifier', 'Return prescriptions with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription'+
    '.identifier', sxpNormal);
   indexes.add('MedicationRequest', 'intended-dispenser', 'Returns prescriptions intended to be dispensed by this Organization', sptREFERENCE, ['Organization'], 'MedicationRequest.dispenseRequest.performer', sxpNormal);
@@ -2722,7 +2860,7 @@ begin
   indexes.add('MedicationRequest', 'requester', 'Returns prescriptions prescribed by this prescriber', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationRequest.requester', sxpNormal);
   indexes.add('MedicationRequest', 'status', 'Status of the prescription', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationStatement.status', sxpNormal);
   indexes.add('MedicationRequest', 'subject', 'The identity of a patient to list orders  for', sptREFERENCE, ['Group', 'Patient'], 'MedicationRequest.subject', sxpNormal);
-  compartments.register('Encounter', 'MedicationRequest', ['context']);
+  compartments.register('Encounter', 'MedicationRequest', ['encounter']);
   compartments.register('Patient', 'MedicationRequest', ['subject']);
   compartments.register('Practitioner', 'MedicationRequest', ['requester']);
 end;
@@ -2770,6 +2908,9 @@ begin
   indexes.add('MedicinalProduct', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProduct', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicinalProduct', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProduct', 'identifier', 'Business identifier for this product. Could be an MPID', sptTOKEN, [], 'MedicinalProduct.identifier', sxpNormal);
+  indexes.add('MedicinalProduct', 'name', 'The full product name', sptSTRING, [], 'MedicinalProduct.name.productName', sxpNormal);
+  indexes.add('MedicinalProduct', 'name-language', 'Language code for this name', sptSTRING, [], 'MedicinalProduct.name.countryLanguage.language', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2785,22 +2926,11 @@ begin
   indexes.add('MedicinalProductAuthorization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProductAuthorization', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicinalProductAuthorization', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('MedicinalProductAuthorization', 'subject', 'The item that is being authorized', sptREFERENCE, ['MedicinalProductPackaged', 'MedicinalProduct'], 'MedicinalProductAuthorization.subject', sxpNormal);
-end;
-{$ENDIF}
-
-{$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
-procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductClinicals(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('MedicinalProductClinicals', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('MedicinalProductClinicals', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductAuthorization', 'country', 'The country in which the marketing authorization has been granted', sptTOKEN, [], 'MedicinalProductAuthorization.country', sxpNormal);
+  indexes.add('MedicinalProductAuthorization', 'holder', 'Marketing Authorization Holder', sptREFERENCE, ['Organization'], 'MedicinalProductAuthorization.holder', sxpNormal);
+  indexes.add('MedicinalProductAuthorization', 'identifier', 'Business identifier for the marketing authorization, as assigned by a regulator', sptTOKEN, [], 'MedicinalProductAuthorization.identifier', sxpNormal);
+  indexes.add('MedicinalProductAuthorization', 'status', 'The status of the marketing authorization', sptTOKEN, [], 'MedicinalProductAuthorization.status', sxpNormal);
+  indexes.add('MedicinalProductAuthorization', 'subject', 'The medicinal product that is being authorized', sptREFERENCE, ['MedicinalProductPackaged', 'MedicinalProduct'], 'MedicinalProductAuthorization.subject', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2817,21 +2947,6 @@ begin
   indexes.add('MedicinalProductContraindication', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicinalProductContraindication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MedicinalProductContraindication', 'subject', 'The medication for which this is an contraindication', sptREFERENCE, ['Medication', 'MedicinalProduct'], 'MedicinalProductContraindication.subject', sxpNormal);
-end;
-{$ENDIF}
-
-{$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
-procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductDeviceSpec(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('MedicinalProductDeviceSpec', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('MedicinalProductDeviceSpec', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2878,7 +2993,7 @@ begin
   indexes.add('MedicinalProductInteraction', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProductInteraction', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicinalProductInteraction', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('MedicinalProductInteraction', 'subject', 'The medication for which this is an interaction', sptREFERENCE, ['Medication', 'MedicinalProduct'], 'MedicinalProductInteraction.subject', sxpNormal);
+  indexes.add('MedicinalProductInteraction', 'subject', 'The medication for which this is an interaction', sptREFERENCE, ['Medication', 'Substance', 'MedicinalProduct'], 'MedicinalProductInteraction.subject', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2909,6 +3024,8 @@ begin
   indexes.add('MedicinalProductPackaged', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProductPackaged', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicinalProductPackaged', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductPackaged', 'identifier', 'Unique identifier', sptTOKEN, [], 'MedicinalProductPackaged.identifier', sxpNormal);
+  indexes.add('MedicinalProductPackaged', 'subject', 'The product with this is a pack for', sptREFERENCE, ['MedicinalProduct'], 'MedicinalProductPackaged.subject', sxpNormal);
 end;
 {$ENDIF}
 
@@ -2924,6 +3041,9 @@ begin
   indexes.add('MedicinalProductPharmaceutical', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProductPharmaceutical', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicinalProductPharmaceutical', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductPharmaceutical', 'identifier', 'An identifier for the pharmaceutical medicinal product', sptTOKEN, [], 'MedicinalProductPharmaceutical.identifier', sxpNormal);
+  indexes.add('MedicinalProductPharmaceutical', 'route', 'Coded expression for the route', sptTOKEN, [], 'MedicinalProductPharmaceutical.routeOfAdministration.code', sxpNormal);
+  indexes.add('MedicinalProductPharmaceutical', 'target-species', 'Coded expression for the species', sptTOKEN, [], 'MedicinalProductPharmaceutical.routeOfAdministration.targetSpecies.code', sxpNormal);
 end;
 {$ENDIF}
 
@@ -3009,6 +3129,31 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_MOLECULARSEQUENCE}
+procedure TFHIRIndexBuilderR4.buildIndexesForMolecularSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('MolecularSequence', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MolecularSequence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('MolecularSequence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('MolecularSequence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MolecularSequence', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('MolecularSequence', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('MolecularSequence', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('MolecularSequence', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('MolecularSequence', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MolecularSequence', 'chromosome', 'Chromosome number of the reference sequence', sptTOKEN, [], 'MolecularSequence.referenceSeq.chromosome', sxpNormal);
+  indexes.add('MolecularSequence', 'chromosome-coordinate', 'Search parameter for region of the chromosome sequence string. This will refer to part of a locus or part of a gene where search region will be represented in 1-based system. Since the coordinateSystem can either be 0-based or 1-based, this search qu'+'ery will include the result of both coordinateSystem that contains the equivalent segment of the gene or whole genome sequence. For example, a search for sequence can be represented as `chromosome-coordinate=1$lt345$gt123`, this means it will search '+'for the MolecularSequence resource on chromosome 1 and with position >123 and <345, where in 1-based system resource, all strings within region 1:124-344 will be revealed, while in 0-based system resource, all strings within region 1:123-344 will be '+'revealed. You may want to check detail about 0-based v.s. 1-based above.', sptCOMPOSITE, [], 'MolecularSequence', sxpNormal);
+  indexes.add('MolecularSequence', 'end', 'End position (0-based exclusive, which menas the acid at this position will not be included, 1-based inclusive, which means the acid at this position will be included) of the reference sequence.', sptNUMBER, [], 'MolecularSequence.referenceSeq.windowEnd', sxpNormal);
+  indexes.add('MolecularSequence', 'identifier', 'The unique identity for a particular sequence', sptTOKEN, [], 'MolecularSequence.identifier', sxpNormal);
+  indexes.add('MolecularSequence', 'patient', 'The subject that the observation is about', sptREFERENCE, ['Patient'], 'MolecularSequence.patient', sxpNormal);
+  indexes.add('MolecularSequence', 'referenceseqid', 'Reference Sequence of the sequence', sptTOKEN, [], 'MolecularSequence.referenceSeq.referenceSeqId', sxpNormal);
+  indexes.add('MolecularSequence', 'referenceseqid-coordinate', 'Search parameter for region of the reference sequence. This will refer to part of a locus or part of a gene where search region will be represented in 1-based system. Since the coordinateSystem can either be 0-based or 1-based, this search query will'+' include the result of both coordinateSystem that contains the equivalent segment of the gene or whole genome sequence. For example, a search for sequence can be represented as `referenceSeqId-coordinate=NC_000001.11$lt345$gt123`, this means it will '+'search for the MolecularSequence resource on NC_000001.11 and with position >123 and <345, where in 1-based system resource, all strings within region NC_000001.11:124-344 will be revealed, while in 0-based system resource, all strings within region '+'NC_000001.11:123-344 will be revealed. You may want to check detail about 0-based v.s. 1-based above.', sptCOMPOSITE, [], 'MolecularSequence', sxpNormal);
+  indexes.add('MolecularSequence', 'start', 'Start position (0-based inclusive, 1-based inclusive, that means the nucleic acid or amino acid at this position will be included) of the reference sequence.', sptNUMBER, [], 'MolecularSequence.referenceSeq.windowStart', sxpNormal);
+  indexes.add('MolecularSequence', 'type', 'Amino Acid Sequence/ DNA Sequence / RNA Sequence', sptTOKEN, [], 'MolecularSequence.type', sxpNormal);
+  compartments.register('Patient', 'MolecularSequence', ['patient']);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_NAMINGSYSTEM}
 procedure TFHIRIndexBuilderR4.buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -3057,8 +3202,8 @@ begin
   indexes.add('NutritionOrder', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('NutritionOrder', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('NutritionOrder', 'additive', 'Type of module component to add to the feeding', sptTOKEN, [], 'NutritionOrder.enteralFormula.additiveType', sxpNormal);
-  indexes.add('NutritionOrder', 'context', 'Return nutrition orders with this encounter identifier', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'NutritionOrder.context', sxpNormal);
   indexes.add('NutritionOrder', 'datetime', 'Return nutrition orders requested on this date', sptDATE, [], 'NutritionOrder.dateTime', sxpNormal);
+  indexes.add('NutritionOrder', 'encounter', 'Return nutrition orders with this encounter identifier', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('NutritionOrder', 'formula', 'Type of enteral or infant formula', sptTOKEN, [], 'NutritionOrder.enteralFormula.baseFormulaType', sxpNormal);
   indexes.add('NutritionOrder', 'identifier', 'Return nutrition orders with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription'+
    '.identifier', sxpNormal);
@@ -3070,7 +3215,7 @@ begin
   indexes.add('NutritionOrder', 'provider', 'The identity of the provider who placed the nutrition order', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'NutritionOrder.orderer', sxpNormal);
   indexes.add('NutritionOrder', 'status', 'Status of the nutrition order.', sptTOKEN, [], 'NutritionOrder.status', sxpNormal);
   indexes.add('NutritionOrder', 'supplement', 'Type of supplement product requested', sptTOKEN, [], 'NutritionOrder.supplement.type', sxpNormal);
-  compartments.register('Encounter', 'NutritionOrder', ['context']);
+  compartments.register('Encounter', 'NutritionOrder', ['encounter']);
   compartments.register('Patient', 'NutritionOrder', ['patient']);
   compartments.register('Practitioner', 'NutritionOrder', ['provider']);
 end;
@@ -3100,23 +3245,23 @@ begin
   indexes.add('Observation', 'combo-code-value-quantity', 'Code and quantity value parameter pair, including in components', sptCOMPOSITE, [], 'Observation | Observation.component', sxpNormal);
   indexes.add('Observation', 'combo-data-absent-reason', 'The reason why the expected value in the element Observation.value[x] or Observation.component.value[x] is missing.', sptTOKEN, [], 'Observation.dataAbsentReason | Observation.component.dataAbsentReason', sxpNormal);
   indexes.add('Observation', 'combo-value-concept', 'The value or component value of the observation, if the value is a CodeableConcept', sptTOKEN, [], '(Observation.value as CodeableConcept) | (Observation.component.value as CodeableConcept)', sxpNormal);
-  indexes.add('Observation', 'combo-value-quantity', 'The value or component value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.value as Quantity) | (Observation.component.value as Quantity)', sxpNormal);
+  indexes.add('Observation', 'combo-value-quantity', 'The value or component value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], 'Observation.value as Quantity | Observation.value as SampledData | Observation.component.value as Quantity | Observation.component.value as SampledData', sxpNormal);
   indexes.add('Observation', 'component-code', 'The component code of the observation type', sptTOKEN, [], 'Observation.component.code', sxpNormal);
   indexes.add('Observation', 'component-code-value-concept', 'Component code and component coded value parameter pair', sptCOMPOSITE, [], 'Observation.component', sxpNormal);
   indexes.add('Observation', 'component-code-value-quantity', 'Component code and component quantity value parameter pair', sptCOMPOSITE, [], 'Observation.component', sxpNormal);
   indexes.add('Observation', 'component-data-absent-reason', 'The reason why the expected value in the element Observation.component.value[x] is missing.', sptTOKEN, [], 'Observation.component.dataAbsentReason', sxpNormal);
   indexes.add('Observation', 'component-value-concept', 'The value of the component observation, if the value is a CodeableConcept', sptTOKEN, [], '(Observation.component.value as CodeableConcept)', sxpNormal);
-  indexes.add('Observation', 'component-value-quantity', 'The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.component.value as Quantity)', sxpNormal);
+  indexes.add('Observation', 'component-value-quantity', 'The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], 'Observation.component.value as Quantity | Observation.component.value as SampledData', sxpNormal);
   indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', sptTOKEN, [], 'Observation.dataAbsentReason', sxpNormal);
-  indexes.add('Observation', 'date', 'Obtained date/time. If the obtained element is a period, a date that falls in the period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('Observation', 'derived-from', 'Related measurements the observation is made from', sptREFERENCE, ['Media', 'Observation', 'ImagingStudy', 'Sequence', 'QuestionnaireResponse', 'DocumentReference'], 'Observation.derivedFrom', sxpNormal);
+  indexes.add('Observation', 'date', 'Obtained date/time. If the obtained element is a period, a date that falls in the period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Observation', 'derived-from', 'Related measurements the observation is made from', sptREFERENCE, ['Media', 'Observation', 'ImagingStudy', 'MolecularSequence', 'QuestionnaireResponse', 'DocumentReference'], 'Observation.derivedFrom', sxpNormal);
   indexes.add('Observation', 'device', 'The Device that generated the observation data.', sptREFERENCE, ['Device', 'DeviceMetric'], 'Observation.device', sxpNormal);
   indexes.add('Observation', 'dna-variant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName', sptTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName'').value', sxpNormal);
-  indexes.add('Observation', 'encounter', 'Encounter related to the observation', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('Observation', 'encounter', 'Encounter related to the observation', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Observation', 'focus', 'The focus of an observation when the focus is not the patient of record.', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Observation.focus', sxpNormal);
   indexes.add('Observation', 'gene-dnavariant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId', sptTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId'').value', sxpNormal);
   indexes.add('Observation', 'gene-identifier', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsGene', sptTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsGene'').value', sxpNormal);
-  indexes.add('Observation', 'has-member', 'Related resource that belongs to the Observation group', sptREFERENCE, ['Observation', 'Sequence', 'QuestionnaireResponse'], 'Observation.hasMember', sxpNormal);
+  indexes.add('Observation', 'has-member', 'Related resource that belongs to the Observation group', sptREFERENCE, ['Observation', 'MolecularSequence', 'QuestionnaireResponse'], 'Observation.hasMember', sxpNormal);
   indexes.add('Observation', 'identifier', 'The unique id for a particular observation', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Observation', 'method', 'The method used for the observation', sptTOKEN, [], 'Observation.method', sxpNormal);
   indexes.add('Observation', 'part-of', 'Part of referenced event', sptREFERENCE, ['Immunization', 'MedicationDispense', 'MedicationAdministration', 'Procedure', 'ImagingStudy', 'MedicationStatement'], 'Observation.partOf', sxpNormal);
@@ -3128,8 +3273,8 @@ begin
   indexes.add('Observation', 'subject', 'The subject that the observation is about', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'Observation.subject', sxpNormal);
   indexes.add('Observation', 'value-concept', 'The value of the observation, if the value is a CodeableConcept', sptTOKEN, [], '(Observation.value as CodeableConcept)', sxpNormal);
   indexes.add('Observation', 'value-date', 'The value of the observation, if the value is a date or period of time', sptDATE, [], '(Observation.value as dateTime) | (Observation.value as Period)', sxpNormal);
-  indexes.add('Observation', 'value-quantity', 'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.value as Quantity)', sxpNormal);
-  indexes.add('Observation', 'value-string', 'The value of the observation, if the value is a string, and also searches in CodeableConcept.text', sptSTRING, [], '(Observation.value as string)', sxpNormal);
+  indexes.add('Observation', 'value-quantity', 'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], 'Observation.value as Quantity | Observation.value as SampledData', sxpNormal);
+  indexes.add('Observation', 'value-string', 'The value of the observation, if the value is a string, and also searches in CodeableConcept.text', sptSTRING, [], 'Observation.value as string | (Observation.value as CodeableConcept).text', sxpNormal);
   compartments.register('Device', 'Observation', ['subject', 'device']);
   compartments.register('Encounter', 'Observation', ['encounter']);
   compartments.register('Patient', 'Observation', ['subject', 'performer']);
@@ -3323,7 +3468,6 @@ begin
   indexes.add('PaymentNotice', 'request', 'The Claim', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.request', sxpNormal);
   indexes.add('PaymentNotice', 'response', 'The ClaimResponse', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.response', sxpNormal);
   indexes.add('PaymentNotice', 'status', 'The status of the payment notice', sptTOKEN, [], 'PaymentNotice.status', sxpNormal);
-  indexes.add('PaymentNotice', 'statusdate', 'The date of the payment action', sptDATE, [], 'PaymentNotice.statusDate', sxpNormal);
   compartments.register('Practitioner', 'PaymentNotice', ['provider']);
 end;
 {$ENDIF}
@@ -3343,12 +3487,12 @@ begin
   indexes.add('PaymentReconciliation', 'created', 'The creation date', sptDATE, [], 'PaymentReconciliation.created', sxpNormal);
   indexes.add('PaymentReconciliation', 'disposition', 'The contents of the disposition message', sptSTRING, [], 'PaymentReconciliation.disposition', sxpNormal);
   indexes.add('PaymentReconciliation', 'identifier', 'The business identifier of the ExplanationOfBenefit', sptTOKEN, [], 'PaymentReconciliation.identifier', sxpNormal);
-  indexes.add('PaymentReconciliation', 'organization', 'The organization which generated this resource', sptREFERENCE, ['Organization'], 'PaymentReconciliation.organization', sxpNormal);
   indexes.add('PaymentReconciliation', 'outcome', 'The processing outcome', sptTOKEN, [], 'PaymentReconciliation.outcome', sxpNormal);
-  indexes.add('PaymentReconciliation', 'request', 'The reference to the claim', sptREFERENCE, ['ProcessRequest'], 'PaymentReconciliation.request', sxpNormal);
-  indexes.add('PaymentReconciliation', 'request-provider', 'The reference to the provider who submitted the claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'PaymentReconciliation.requestProvider', sxpNormal);
+  indexes.add('PaymentReconciliation', 'payment-issuer', 'The organization which generated this resource', sptREFERENCE, ['Organization'], 'PaymentReconciliation.paymentIssuer', sxpNormal);
+  indexes.add('PaymentReconciliation', 'request', 'The reference to the claim', sptREFERENCE, ['Task'], 'PaymentReconciliation.request', sxpNormal);
+  indexes.add('PaymentReconciliation', 'requestor', 'The reference to the provider who submitted the claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'PaymentReconciliation.requestor', sxpNormal);
   indexes.add('PaymentReconciliation', 'status', 'The status of the payment reconciliation', sptTOKEN, [], 'PaymentReconciliation.status', sxpNormal);
-  compartments.register('Practitioner', 'PaymentReconciliation', ['request-provider']);
+  compartments.register('Practitioner', 'PaymentReconciliation', ['requestor']);
 end;
 {$ENDIF}
 
@@ -3505,9 +3649,8 @@ begin
   indexes.add('Procedure', 'based-on', 'A request for this procedure', sptREFERENCE, ['CarePlan', 'ServiceRequest'], 'Procedure.basedOn', sxpNormal);
   indexes.add('Procedure', 'category', 'Classification of the procedure', sptTOKEN, [], 'Procedure.category', sxpNormal);
   indexes.add('Procedure', 'code', 'A code to identify a  procedure', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('Procedure', 'context', 'Encounter or episode associated with the procedure', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Procedure.context', sxpNormal);
-  indexes.add('Procedure', 'date', 'When the procedure was performed', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('Procedure', 'encounter', 'Search by encounter', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('Procedure', 'date', 'When the procedure was performed', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Procedure', 'encounter', 'Encounter created as part of', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Procedure', 'identifier', 'A unique identifier for a procedure', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Procedure', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['Questionnaire', 'Measure', 'PlanDefinition', 'OperationDefinition', 'ActivityDefinition'], 'Procedure.instantiatesCanonical', sxpNormal);
   indexes.add('Procedure', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'Procedure.instantiatesUri', sxpNormal);
@@ -3524,47 +3667,6 @@ begin
   compartments.register('Patient', 'Procedure', ['patient', 'performer']);
   compartments.register('Practitioner', 'Procedure', ['performer']);
   compartments.register('RelatedPerson', 'Procedure', ['performer']);
-end;
-{$ENDIF}
-
-{$IFDEF FHIR_PROCESSREQUEST}
-procedure TFHIRIndexBuilderR4.buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('ProcessRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('ProcessRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('ProcessRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ProcessRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('ProcessRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('ProcessRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('ProcessRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('ProcessRequest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('ProcessRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('ProcessRequest', 'action', 'The action requested by this resource', sptTOKEN, [], 'ProcessRequest.action', sxpNormal);
-  indexes.add('ProcessRequest', 'identifier', 'The business identifier of the ProcessRequest', sptTOKEN, [], 'ProcessRequest.identifier', sxpNormal);
-  indexes.add('ProcessRequest', 'provider', 'The provider who regenerated this request', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ProcessRequest.provider', sxpNormal);
-  indexes.add('ProcessRequest', 'status', 'The status of the process request', sptTOKEN, [], 'ProcessRequest.status', sxpNormal);
-  compartments.register('Practitioner', 'ProcessRequest', ['provider']);
-end;
-{$ENDIF}
-
-{$IFDEF FHIR_PROCESSRESPONSE}
-procedure TFHIRIndexBuilderR4.buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('ProcessResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('ProcessResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('ProcessResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ProcessResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('ProcessResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('ProcessResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('ProcessResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('ProcessResponse', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('ProcessResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('ProcessResponse', 'identifier', 'The business identifier of the Explanation of Benefit', sptTOKEN, [], 'ProcessResponse.identifier', sxpNormal);
-  indexes.add('ProcessResponse', 'organization', 'The organization who generated this resource', sptREFERENCE, ['Organization'], 'ProcessResponse.organization', sxpNormal);
-  indexes.add('ProcessResponse', 'request', 'The reference to the claim', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ProcessResponse.request', sxpNormal);
-  indexes.add('ProcessResponse', 'request-provider', 'The Provider who is responsible the request transaction', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ProcessResponse.requestProvider', sxpNormal);
-  indexes.add('ProcessResponse', 'status', 'The status of the process response', sptTOKEN, [], 'ProcessResponse.status', sxpNormal);
-  compartments.register('Practitioner', 'ProcessResponse', ['request-provider']);
 end;
 {$ENDIF}
 
@@ -3646,7 +3748,7 @@ begin
   indexes.add('QuestionnaireResponse', 'author', 'The author of the questionnaire response', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'QuestionnaireResponse.author', sxpNormal);
   indexes.add('QuestionnaireResponse', 'authored', 'When the questionnaire response was last changed', sptDATE, [], 'QuestionnaireResponse.authored', sxpNormal);
   indexes.add('QuestionnaireResponse', 'based-on', 'Plan/proposal/order fulfilled by this questionnaire response', sptREFERENCE, ['CarePlan', 'ServiceRequest'], 'QuestionnaireResponse.basedOn', sxpNormal);
-  indexes.add('QuestionnaireResponse', 'context', 'Encounter or episode associated with the questionnaire response', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'QuestionnaireResponse.context', sxpNormal);
+  indexes.add('QuestionnaireResponse', 'encounter', 'Encounter associated with the questionnaire response', sptREFERENCE, ['Encounter'], 'QuestionnaireResponse.encounter', sxpNormal);
   indexes.add('QuestionnaireResponse', 'identifier', 'The unique identifier for the questionnaire response', sptTOKEN, [], 'QuestionnaireResponse.identifier', sxpNormal);
   indexes.add('QuestionnaireResponse', 'part-of', 'Procedure or observation this questionnaire response was performed as a part of', sptREFERENCE, ['Observation', 'Procedure'], 'QuestionnaireResponse.partOf', sxpNormal);
   indexes.add('QuestionnaireResponse', 'patient', 'The patient that is the subject of the questionnaire response', sptREFERENCE, ['Patient'], 'QuestionnaireResponse.subject.where(resolve() is Patient)', sxpNormal);
@@ -3655,7 +3757,7 @@ begin
   indexes.add('QuestionnaireResponse', 'status', 'The status of the questionnaire response', sptTOKEN, [], 'QuestionnaireResponse.status', sxpNormal);
   indexes.add('QuestionnaireResponse', 'subject', 'The subject of the questionnaire response', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'QuestionnaireResponse.subject', sxpNormal);
   compartments.register('Device', 'QuestionnaireResponse', ['author']);
-  compartments.register('Encounter', 'QuestionnaireResponse', ['context']);
+  compartments.register('Encounter', 'QuestionnaireResponse', ['encounter']);
   compartments.register('Patient', 'QuestionnaireResponse', ['subject', 'author']);
   compartments.register('Practitioner', 'QuestionnaireResponse', ['author', 'source']);
   compartments.register('RelatedPerson', 'QuestionnaireResponse', ['author', 'source']);
@@ -3731,6 +3833,80 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_RESEARCHDEFINITION}
+procedure TFHIRIndexBuilderR4.buildIndexesForResearchDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ResearchDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('ResearchDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('ResearchDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ResearchDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('ResearchDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('ResearchDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('ResearchDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('ResearchDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchDefinition', 'composed-of', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchDefinition.relatedArtifact.where(type=''composed-of'').resource', sxpNormal);
+  indexes.add('ResearchDefinition', 'context', 'A use context assigned to the research definition', sptTOKEN, [], '(ResearchDefinition.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('ResearchDefinition', 'context-quantity', 'A quantity- or range-valued use context assigned to the research definition', sptQUANTITY, [], '(ResearchDefinition.useContext.value as Quantity) | (ResearchDefinition.useContext.value as Range)', sxpNormal);
+  indexes.add('ResearchDefinition', 'context-type', 'A type of use context assigned to the research definition', sptTOKEN, [], 'ResearchDefinition.useContext.code', sxpNormal);
+  indexes.add('ResearchDefinition', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the research definition', sptCOMPOSITE, [], 'ResearchDefinition.useContext', sxpNormal);
+  indexes.add('ResearchDefinition', 'context-type-value', 'A use context type and value assigned to the research definition', sptCOMPOSITE, [], 'ResearchDefinition.useContext', sxpNormal);
+  indexes.add('ResearchDefinition', 'date', 'The research definition publication date', sptDATE, [], 'ResearchDefinition.date', sxpNormal);
+  indexes.add('ResearchDefinition', 'depends-on', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchDefinition.relatedArtifact.where(type=''depends-on'').resource | ResearchDefinition.library', sxpNormal);
+  indexes.add('ResearchDefinition', 'derived-from', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchDefinition.relatedArtifact.where(type=''derived-from'').resource', sxpNormal);
+  indexes.add('ResearchDefinition', 'description', 'The description of the research definition', sptSTRING, [], 'ResearchDefinition.description', sxpNormal);
+  indexes.add('ResearchDefinition', 'effective', 'The time during which the research definition is intended to be in use', sptDATE, [], 'ResearchDefinition.effectivePeriod', sxpNormal);
+  indexes.add('ResearchDefinition', 'identifier', 'External identifier for the research definition', sptTOKEN, [], 'ResearchDefinition.identifier', sxpNormal);
+  indexes.add('ResearchDefinition', 'jurisdiction', 'Intended jurisdiction for the research definition', sptTOKEN, [], 'ResearchDefinition.jurisdiction', sxpNormal);
+  indexes.add('ResearchDefinition', 'name', 'Computationally friendly name of the research definition', sptSTRING, [], 'ResearchDefinition.name', sxpNormal);
+  indexes.add('ResearchDefinition', 'predecessor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchDefinition.relatedArtifact.where(type=''predecessor'').resource', sxpNormal);
+  indexes.add('ResearchDefinition', 'publisher', 'Name of the publisher of the research definition', sptSTRING, [], 'ResearchDefinition.publisher', sxpNormal);
+  indexes.add('ResearchDefinition', 'status', 'The current status of the research definition', sptTOKEN, [], 'ResearchDefinition.status', sxpNormal);
+  indexes.add('ResearchDefinition', 'successor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchDefinition.relatedArtifact.where(type=''successor'').resource', sxpNormal);
+  indexes.add('ResearchDefinition', 'title', 'The human-friendly name of the research definition', sptSTRING, [], 'ResearchDefinition.title', sxpNormal);
+  indexes.add('ResearchDefinition', 'topic', 'Topics associated with the ResearchDefinition', sptTOKEN, [], 'ResearchDefinition.topic', sxpNormal);
+  indexes.add('ResearchDefinition', 'url', 'The uri that identifies the research definition', sptURI, [], 'ResearchDefinition.url', sxpNormal);
+  indexes.add('ResearchDefinition', 'version', 'The business version of the research definition', sptTOKEN, [], 'ResearchDefinition.version', sxpNormal);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_RESEARCHELEMENTDEFINITION}
+procedure TFHIRIndexBuilderR4.buildIndexesForResearchElementDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ResearchElementDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'composed-of', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchElementDefinition.relatedArtifact.where(type=''composed-of'').resource', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'context', 'A use context assigned to the research element definition', sptTOKEN, [], '(ResearchElementDefinition.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'context-quantity', 'A quantity- or range-valued use context assigned to the research element definition', sptQUANTITY, [], '(ResearchElementDefinition.useContext.value as Quantity) | (ResearchElementDefinition.useContext.value as Range)', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'context-type', 'A type of use context assigned to the research element definition', sptTOKEN, [], 'ResearchElementDefinition.useContext.code', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the research element definition', sptCOMPOSITE, [], 'ResearchElementDefinition.useContext', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'context-type-value', 'A use context type and value assigned to the research element definition', sptCOMPOSITE, [], 'ResearchElementDefinition.useContext', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'date', 'The research element definition publication date', sptDATE, [], 'ResearchElementDefinition.date', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'depends-on', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchElementDefinition.relatedArtifact.where(type=''depends-on'').resource | ResearchElementDefinition.library', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'derived-from', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchElementDefinition.relatedArtifact.where(type=''derived-from'').resource', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'description', 'The description of the research element definition', sptSTRING, [], 'ResearchElementDefinition.description', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'effective', 'The time during which the research element definition is intended to be in use', sptDATE, [], 'ResearchElementDefinition.effectivePeriod', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'identifier', 'External identifier for the research element definition', sptTOKEN, [], 'ResearchElementDefinition.identifier', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'jurisdiction', 'Intended jurisdiction for the research element definition', sptTOKEN, [], 'ResearchElementDefinition.jurisdiction', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'name', 'Computationally friendly name of the research element definition', sptSTRING, [], 'ResearchElementDefinition.name', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'predecessor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchElementDefinition.relatedArtifact.where(type=''predecessor'').resource', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'publisher', 'Name of the publisher of the research element definition', sptSTRING, [], 'ResearchElementDefinition.publisher', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'status', 'The current status of the research element definition', sptTOKEN, [], 'ResearchElementDefinition.status', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'successor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ResearchElementDefinition.relatedArtifact.where(type=''successor'').resource', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'title', 'The human-friendly name of the research element definition', sptSTRING, [], 'ResearchElementDefinition.title', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'topic', 'Topics associated with the ResearchElementDefinition', sptTOKEN, [], 'ResearchElementDefinition.topic', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'url', 'The uri that identifies the research element definition', sptURI, [], 'ResearchElementDefinition.url', sxpNormal);
+  indexes.add('ResearchElementDefinition', 'version', 'The business version of the research element definition', sptTOKEN, [], 'ResearchElementDefinition.version', sxpNormal);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_RESEARCHSTUDY}
 procedure TFHIRIndexBuilderR4.buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -3795,8 +3971,8 @@ begin
   indexes.add('RiskAssessment', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('RiskAssessment', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('RiskAssessment', 'condition', 'Condition assessed', sptREFERENCE, ['Condition'], 'RiskAssessment.condition', sxpNormal);
-  indexes.add('RiskAssessment', 'date', 'When was assessment made?', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('RiskAssessment', 'encounter', 'Where was assessment performed?', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('RiskAssessment', 'date', 'When was assessment made?', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('RiskAssessment', 'encounter', 'Where was assessment performed?', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('RiskAssessment', 'identifier', 'Unique identifier for the assessment', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('RiskAssessment', 'method', 'Evaluation mechanism', sptTOKEN, [], 'RiskAssessment.method', sxpNormal);
   indexes.add('RiskAssessment', 'patient', 'Who/what does assessment apply to?', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizatio'+
@@ -3808,6 +3984,37 @@ begin
   compartments.register('Device', 'RiskAssessment', ['performer']);
   compartments.register('Patient', 'RiskAssessment', ['subject']);
   compartments.register('Practitioner', 'RiskAssessment', ['performer']);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_RISKEVIDENCESYNTHESIS}
+procedure TFHIRIndexBuilderR4.buildIndexesForRiskEvidenceSynthesis(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('RiskEvidenceSynthesis', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'context', 'A use context assigned to the risk evidence synthesis', sptTOKEN, [], '(RiskEvidenceSynthesis.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'context-quantity', 'A quantity- or range-valued use context assigned to the risk evidence synthesis', sptQUANTITY, [], '(RiskEvidenceSynthesis.useContext.value as Quantity) | (RiskEvidenceSynthesis.useContext.value as Range)', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'context-type', 'A type of use context assigned to the risk evidence synthesis', sptTOKEN, [], 'RiskEvidenceSynthesis.useContext.code', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the risk evidence synthesis', sptCOMPOSITE, [], 'RiskEvidenceSynthesis.useContext', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'context-type-value', 'A use context type and value assigned to the risk evidence synthesis', sptCOMPOSITE, [], 'RiskEvidenceSynthesis.useContext', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'date', 'The risk evidence synthesis publication date', sptDATE, [], 'RiskEvidenceSynthesis.date', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'description', 'The description of the risk evidence synthesis', sptSTRING, [], 'RiskEvidenceSynthesis.description', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'effective', 'The time during which the risk evidence synthesis is intended to be in use', sptDATE, [], 'RiskEvidenceSynthesis.effectivePeriod', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'identifier', 'External identifier for the risk evidence synthesis', sptTOKEN, [], 'RiskEvidenceSynthesis.identifier', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'jurisdiction', 'Intended jurisdiction for the risk evidence synthesis', sptTOKEN, [], 'RiskEvidenceSynthesis.jurisdiction', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'name', 'Computationally friendly name of the risk evidence synthesis', sptSTRING, [], 'RiskEvidenceSynthesis.name', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'publisher', 'Name of the publisher of the risk evidence synthesis', sptSTRING, [], 'RiskEvidenceSynthesis.publisher', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'status', 'The current status of the risk evidence synthesis', sptTOKEN, [], 'RiskEvidenceSynthesis.status', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'title', 'The human-friendly name of the risk evidence synthesis', sptSTRING, [], 'RiskEvidenceSynthesis.title', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'url', 'The uri that identifies the risk evidence synthesis', sptURI, [], 'RiskEvidenceSynthesis.url', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', 'version', 'The business version of the risk evidence synthesis', sptTOKEN, [], 'RiskEvidenceSynthesis.version', sxpNormal);
 end;
 {$ENDIF}
 
@@ -3827,7 +4034,9 @@ begin
   indexes.add('Schedule', 'actor', 'The individual(HealthcareService, Practitioner, Location, ...) to find a Schedule for', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Schedule.actor', sxpNormal);
   indexes.add('Schedule', 'date', 'Search for Schedule resources that have a period that contains this date specified', sptDATE, [], 'Schedule.planningHorizon', sxpNormal);
   indexes.add('Schedule', 'identifier', 'A Schedule Identifier', sptTOKEN, [], 'Schedule.identifier', sxpNormal);
-  indexes.add('Schedule', 'type', 'The type of appointments that can be booked into associated slot(s)', sptTOKEN, [], 'Schedule.serviceType', sxpNormal);
+  indexes.add('Schedule', 'service-category', 'High-level category', sptTOKEN, [], 'Schedule.serviceCategory', sxpNormal);
+  indexes.add('Schedule', 'service-type', 'The type of appointments that can be booked into associated slot(s)', sptTOKEN, [], 'Schedule.serviceType', sxpNormal);
+  indexes.add('Schedule', 'specialty', 'Type of specialty needed', sptTOKEN, [], 'Schedule.specialty', sxpNormal);
   compartments.register('Device', 'Schedule', ['actor']);
   compartments.register('Patient', 'Schedule', ['actor']);
   compartments.register('Practitioner', 'Schedule', ['actor']);
@@ -3870,28 +4079,6 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF FHIR_SEQUENCE}
-procedure TFHIRIndexBuilderR4.buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('Sequence', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Sequence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('Sequence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Sequence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('Sequence', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('Sequence', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('Sequence', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('Sequence', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Sequence', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Sequence', 'chromosome', 'Chromosome number of the reference sequence', sptTOKEN, [], 'Sequence.referenceSeq.chromosome', sxpNormal);
-  indexes.add('Sequence', 'coordinate', 'Search parameter for region of the reference DNA sequence string. This will refer to part of a locus or part of a gene where search region will be represented in 1-based system. Since the coordinateSystem can either be 0-based or 1-based, this search'+' query will include the result of both coordinateSystem that contains the equivalent segment of the gene or whole genome sequence. For example, a search for sequence can be represented as `coordinate=1$lt345$gt123`, this means it will search for the '+'Sequence resource on chromosome 1 and with position >123 and <345, where in 1-based system resource, all strings within region 1:124-344 will be revealed, while in 0-based system resource, all strings within region 1:123-344 will be revealed. You may'+' want to check detail about 0-based v.s. 1-based above.', sptCOMPOSITE, [], 'Sequence.variant', sxpNormal);
-  indexes.add('Sequence', 'end', 'End position (0-based exclusive, which menas the acid at this position will not be included, 1-based inclusive, which means the acid at this position will be included) of the reference sequence.', sptNUMBER, [], 'Sequence.referenceSeq.windowEnd', sxpNormal);
-  indexes.add('Sequence', 'identifier', 'The unique identity for a particular sequence', sptTOKEN, [], 'Sequence.identifier', sxpNormal);
-  indexes.add('Sequence', 'patient', 'The subject that the observation is about', sptREFERENCE, ['Patient'], 'Sequence.patient', sxpNormal);
-  indexes.add('Sequence', 'start', 'Start position (0-based inclusive, 1-based inclusive, that means the nucleic acid or amino acid at this position will be included) of the reference sequence.', sptNUMBER, [], 'Sequence.referenceSeq.windowStart', sxpNormal);
-  indexes.add('Sequence', 'type', 'Amino Acid Sequence/ DNA Sequence / RNA Sequence', sptTOKEN, [], 'Sequence.type', sxpNormal);
-end;
-{$ENDIF}
-
 {$IFDEF FHIR_SERVICEREQUEST}
 procedure TFHIRIndexBuilderR4.buildIndexesForServiceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -3909,8 +4096,7 @@ begin
   indexes.add('ServiceRequest', 'body-site', 'Where procedure is going to be done', sptTOKEN, [], 'ServiceRequest.bodySite', sxpNormal);
   indexes.add('ServiceRequest', 'category', 'Classification of service', sptTOKEN, [], 'ServiceRequest.category', sxpNormal);
   indexes.add('ServiceRequest', 'code', 'What is being requested/ordered', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('ServiceRequest', 'context', 'Encounter or Episode during which request was created', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'ServiceRequest.context', sxpNormal);
-  indexes.add('ServiceRequest', 'encounter', 'An encounter in which this request is made', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('ServiceRequest', 'encounter', 'An encounter in which this request is made', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('ServiceRequest', 'identifier', 'Identifiers assigned to this order', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('ServiceRequest', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['PlanDefinition', 'ActivityDefinition'], 'ServiceRequest.instantiatesCanonical', sxpNormal);
   indexes.add('ServiceRequest', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'ServiceRequest.instantiatesUri', sxpNormal);
@@ -3928,7 +4114,7 @@ begin
   indexes.add('ServiceRequest', 'status', 'draft | active | suspended | completed | entered-in-error | cancelled', sptTOKEN, [], 'ServiceRequest.status', sxpNormal);
   indexes.add('ServiceRequest', 'subject', 'Search by subject', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'ServiceRequest.subject', sxpNormal);
   compartments.register('Device', 'ServiceRequest', ['performer', 'requester']);
-  compartments.register('Encounter', 'ServiceRequest', ['context']);
+  compartments.register('Encounter', 'ServiceRequest', ['encounter']);
   compartments.register('Patient', 'ServiceRequest', ['subject', 'performer']);
   compartments.register('Practitioner', 'ServiceRequest', ['performer', 'requester']);
   compartments.register('RelatedPerson', 'ServiceRequest', ['performer']);
@@ -3947,9 +4133,12 @@ begin
   indexes.add('Slot', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Slot', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Slot', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Slot', 'appointment-type', 'The style of appointment or patient that may be booked in the slot (not service type)', sptTOKEN, [], 'Slot.appointmentType', sxpNormal);
   indexes.add('Slot', 'identifier', 'A Slot Identifier', sptTOKEN, [], 'Slot.identifier', sxpNormal);
   indexes.add('Slot', 'schedule', 'The Schedule Resource that we are seeking a slot within', sptREFERENCE, ['Schedule'], 'Slot.schedule', sxpNormal);
-  indexes.add('Slot', 'slot-type', 'The type of appointments that can be booked into the slot', sptTOKEN, [], 'Slot.serviceType', sxpNormal);
+  indexes.add('Slot', 'service-category', 'A broad categorization of the service that is to be performed during this appointment', sptTOKEN, [], 'Slot.serviceCategory', sxpNormal);
+  indexes.add('Slot', 'service-type', 'The type of appointments that can be booked into the slot', sptTOKEN, [], 'Slot.serviceType', sxpNormal);
+  indexes.add('Slot', 'specialty', 'The specialty of a practitioner that would be required to perform the service requested in this appointment', sptTOKEN, [], 'Slot.specialty', sxpNormal);
   indexes.add('Slot', 'start', 'Appointment date/time.', sptDATE, [], 'Slot.start', sxpNormal);
   indexes.add('Slot', 'status', 'The free/busy status of the appointment', sptTOKEN, [], 'Slot.status', sxpNormal);
 end;
@@ -3997,7 +4186,7 @@ begin
   indexes.add('SpecimenDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SpecimenDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SpecimenDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('SpecimenDefinition', 'container', 'The type of specimen conditioned in container expected by the lab', sptTOKEN, [], 'SpecimenDefinition.specimenToLab.containerType', sxpNormal);
+  indexes.add('SpecimenDefinition', 'container', 'The type of specimen conditioned in container expected by the lab', sptTOKEN, [], 'SpecimenDefinition.typeTested.container.type', sxpNormal);
   indexes.add('SpecimenDefinition', 'identifier', 'The unique identifier associated with the specimen', sptTOKEN, [], 'SpecimenDefinition.identifier', sxpNormal);
   indexes.add('SpecimenDefinition', 'type', 'The type of collected specimen', sptTOKEN, [], 'SpecimenDefinition.typeCollected', sxpNormal);
 end;
@@ -4088,10 +4277,10 @@ begin
   indexes.add('Subscription', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Subscription', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Subscription', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Subscription', 'add-tag', 'A tag to be added to the resource matching the criteria', sptTOKEN, [], 'Subscription.tag', sxpNormal);
+  indexes.add('Subscription', 'add-tag', 'A tag to be added to the resource matching the criteria', sptTOKEN, [], '', sxpNormal);
   indexes.add('Subscription', 'contact', 'Contact details for the subscription', sptTOKEN, [], 'Subscription.contact', sxpNormal);
   indexes.add('Subscription', 'criteria', 'The search rules used to determine when to send a notification', sptSTRING, [], 'Subscription.criteria', sxpNormal);
-  indexes.add('Subscription', 'payload', 'The mime-type of the notification payload', sptSTRING, [], 'Subscription.channel.payload', sxpNormal);
+  indexes.add('Subscription', 'payload', 'The mime-type of the notification payload', sptTOKEN, [], 'Subscription.channel.payload', sxpNormal);
   indexes.add('Subscription', 'status', 'The current state of the subscription', sptTOKEN, [], 'Subscription.status', sxpNormal);
   indexes.add('Subscription', 'type', 'The type of channel for the sent notifications', sptTOKEN, [], 'Subscription.channel.type', sxpNormal);
   indexes.add('Subscription', 'url', 'The uri that will receive the notifications', sptURI, [], 'Subscription.channel.endpoint', sxpNormal);
@@ -4121,6 +4310,21 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_SUBSTANCENUCLEICACID}
+procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceNucleicAcid(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('SubstanceNucleicAcid', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_SUBSTANCEPOLYMER}
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstancePolymer(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -4133,6 +4337,21 @@ begin
   indexes.add('SubstancePolymer', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstancePolymer', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SubstancePolymer', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_SUBSTANCEPROTEIN}
+procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceProtein(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('SubstanceProtein', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceProtein', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('SubstanceProtein', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('SubstanceProtein', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceProtein', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('SubstanceProtein', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('SubstanceProtein', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('SubstanceProtein', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceProtein', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF}
 
@@ -4151,6 +4370,21 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_SUBSTANCESOURCEMATERIAL}
+procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceSourceMaterial(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('SubstanceSourceMaterial', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_SUBSTANCESPECIFICATION}
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceSpecification(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -4163,6 +4397,7 @@ begin
   indexes.add('SubstanceSpecification', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceSpecification', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SubstanceSpecification', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceSpecification', 'code', 'Codes associated with the substance', sptTOKEN, [], 'SubstanceSpecification.code', sxpNormal);
 end;
 {$ENDIF}
 
@@ -4202,13 +4437,14 @@ begin
   indexes.add('SupplyRequest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SupplyRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('SupplyRequest', 'category', 'The kind of supply (central, non-stock, etc.)', sptTOKEN, [], 'SupplyRequest.category', sxpNormal);
-  indexes.add('SupplyRequest', 'date', 'When the request was made', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DetectedIssue.date | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date'+' | Flag.period | Immunization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
-  indexes.add('SupplyRequest', 'identifier', 'Unique identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
+  indexes.add('SupplyRequest', 'date', 'When the request was made', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immu'+'nization.occurrence | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('SupplyRequest', 'identifier', 'Business Identifier for SupplyRequest', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('SupplyRequest', 'requester', 'Individual making the request', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'SupplyRequest.requester', sxpNormal);
   indexes.add('SupplyRequest', 'status', 'draft | active | suspended +', sptTOKEN, [], 'SupplyRequest.status', sxpNormal);
+  indexes.add('SupplyRequest', 'subject', 'The destination of the supply', sptREFERENCE, ['Organization', 'Patient', 'Location'], 'SupplyRequest.deliverTo', sxpNormal);
   indexes.add('SupplyRequest', 'supplier', 'Who is intended to fulfill the request', sptREFERENCE, ['Organization', 'HealthcareService'], 'SupplyRequest.supplier', sxpNormal);
   compartments.register('Device', 'SupplyRequest', ['requester']);
-  compartments.register('Patient', 'SupplyRequest', ['requester']);
+  compartments.register('Patient', 'SupplyRequest', ['subject']);
   compartments.register('Practitioner', 'SupplyRequest', ['requester']);
   compartments.register('RelatedPerson', 'SupplyRequest', ['requester']);
 end;
@@ -4230,7 +4466,7 @@ begin
   indexes.add('Task', 'based-on', 'Search by requests this task is based on', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Task.basedOn', sxpNormal);
   indexes.add('Task', 'business-status', 'Search by business status', sptTOKEN, [], 'Task.businessStatus', sxpNormal);
   indexes.add('Task', 'code', 'Search by task code', sptTOKEN, [], 'Task.code', sxpNormal);
-  indexes.add('Task', 'context', 'Search by encounter or episode', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Task.context', sxpNormal);
+  indexes.add('Task', 'encounter', 'Search by encounter', sptREFERENCE, ['Encounter'], 'Task.encounter', sxpNormal);
   indexes.add('Task', 'focus', 'Search by task focus', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Task.focus', sxpNormal);
   indexes.add('Task', 'group-identifier', 'Search by group identifier', sptTOKEN, [], 'Task.groupIdentifier', sxpNormal);
   indexes.add('Task', 'identifier', 'Search for a task instance by its business identifier', sptTOKEN, [], 'Task.identifier', sxpNormal);
@@ -4330,32 +4566,6 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF FHIR_USERSESSION}
-procedure TFHIRIndexBuilderR4.buildIndexesForUserSession(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('UserSession', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('UserSession', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('UserSession', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('UserSession', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('UserSession', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('UserSession', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('UserSession', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('UserSession', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('UserSession', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('UserSession', 'focus', 'The focus of the user session', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'UserSession.focus', sxpNormal);
-  indexes.add('UserSession', 'identifier', 'External identifiers for the user session', sptTOKEN, [], 'UserSession.identifier', sxpNormal);
-  indexes.add('UserSession', 'patient', 'The identity of a patient to search for user sessions', sptREFERENCE, ['Patient'], 'UserSession.focus.where(resolve() is Patient)', sxpNormal);
-  indexes.add('UserSession', 'status', 'The status of the user session', sptTOKEN, [], 'UserSession.status.code', sxpNormal);
-  indexes.add('UserSession', 'user', 'The user of the session', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'RelatedPerson'], 'UserSession.user', sxpNormal);
-  indexes.add('UserSession', 'workstation', 'The workstation of the session', sptTOKEN, [], 'UserSession.workstation', sxpNormal);
-  compartments.register('Device', 'UserSession', ['user']);
-  compartments.register('Encounter', 'UserSession', ['focus']);
-  compartments.register('Patient', 'UserSession', ['user', 'focus']);
-  compartments.register('Practitioner', 'UserSession', ['user', 'focus']);
-  compartments.register('RelatedPerson', 'UserSession', ['user']);
-end;
-{$ENDIF}
-
 {$IFDEF FHIR_VALUESET}
 procedure TFHIRIndexBuilderR4.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -4419,12 +4629,12 @@ begin
   indexes.add('VisionPrescription', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('VisionPrescription', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('VisionPrescription', 'datewritten', 'Return prescriptions written on this date', sptDATE, [], 'VisionPrescription.dateWritten', sxpNormal);
-  indexes.add('VisionPrescription', 'encounter', 'Return prescriptions with this encounter identifier', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.context | DiagnosticReport.context.where(resolve() is Encounter) | DocumentReference.context.encounter | Flag.encounter | List.encounter | Observation.encounter | Procedure.context.where(resolve() is Encounter) |'+' RiskAssessment.context.where(resolve() is Encounter) | ServiceRequest.context.where(resolve() is Encounter) | VisionPrescription.encounter', sxpNormal);
+  indexes.add('VisionPrescription', 'encounter', 'Return prescriptions with this encounter identifier', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.context.whe'+'re(resolve() is Encounter) | ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('VisionPrescription', 'identifier', 'Return prescriptions with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'+'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunizati'+'on.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAs'+'sessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescriptio'+
    'n.identifier', sxpNormal);
   indexes.add('VisionPrescription', 'patient', 'The identity of a patient to list dispenses for', sptREFERENCE, ['Group', 'Patient'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'+'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resolve() is '+'Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient.where(resolve() is Patient) | FamilyMemberHistory.patient.where(resolve() is Patient) | Flag.subject.where(resolv'+'e() is Patient) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patie'+
    'nt) | Immunization.patient | List.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient)'+' | Procedure.subject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
-  indexes.add('VisionPrescription', 'prescriber', 'Who authorizes the vision product', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'VisionPrescription.prescriber', sxpNormal);
+  indexes.add('VisionPrescription', 'prescriber', 'Who authorized the vision prescription', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'VisionPrescription.prescriber', sxpNormal);
   indexes.add('VisionPrescription', 'status', 'The status of the vision prescription', sptTOKEN, [], 'VisionPrescription.status', sxpNormal);
   compartments.register('Encounter', 'VisionPrescription', ['encounter']);
   compartments.register('Patient', 'VisionPrescription', ['patient']);
@@ -4478,6 +4688,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_CARETEAM}
   buildIndexesForCareTeam(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CATALOGENTRY}
+  buildIndexesForCatalogEntry(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_CHARGEITEM}
   buildIndexesForChargeItem(Indexes, compartments);
@@ -4557,6 +4770,9 @@ begin
   {$IFDEF FHIR_DOCUMENTREFERENCE}
   buildIndexesForDocumentReference(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_EFFECTEVIDENCESYNTHESIS}
+  buildIndexesForEffectEvidenceSynthesis(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_ENCOUNTER}
   buildIndexesForEncounter(Indexes, compartments);
   {$ENDIF}
@@ -4569,14 +4785,17 @@ begin
   {$IFDEF FHIR_ENROLLMENTRESPONSE}
   buildIndexesForEnrollmentResponse(Indexes, compartments);
   {$ENDIF}
-  {$IFDEF FHIR_ENTRYDEFINITION}
-  buildIndexesForEntryDefinition(Indexes, compartments);
-  {$ENDIF}
   {$IFDEF FHIR_EPISODEOFCARE}
   buildIndexesForEpisodeOfCare(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_EVENTDEFINITION}
   buildIndexesForEventDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EVIDENCE}
+  buildIndexesForEvidence(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EVIDENCEVARIABLE}
+  buildIndexesForEvidenceVariable(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_EXAMPLESCENARIO}
   buildIndexesForExampleScenario(Indexes, compartments);
@@ -4674,14 +4893,8 @@ begin
   {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}
   buildIndexesForMedicinalProductAuthorization(Indexes, compartments);
   {$ENDIF}
-  {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
-  buildIndexesForMedicinalProductClinicals(Indexes, compartments);
-  {$ENDIF}
   {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
   buildIndexesForMedicinalProductContraindication(Indexes, compartments);
-  {$ENDIF}
-  {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
-  buildIndexesForMedicinalProductDeviceSpec(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
   buildIndexesForMedicinalProductIndication(Indexes, compartments);
@@ -4709,6 +4922,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_MESSAGEHEADER}
   buildIndexesForMessageHeader(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MOLECULARSEQUENCE}
+  buildIndexesForMolecularSequence(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_NAMINGSYSTEM}
   buildIndexesForNamingSystem(Indexes, compartments);
@@ -4758,12 +4974,6 @@ begin
   {$IFDEF FHIR_PROCEDURE}
   buildIndexesForProcedure(Indexes, compartments);
   {$ENDIF}
-  {$IFDEF FHIR_PROCESSREQUEST}
-  buildIndexesForProcessRequest(Indexes, compartments);
-  {$ENDIF}
-  {$IFDEF FHIR_PROCESSRESPONSE}
-  buildIndexesForProcessResponse(Indexes, compartments);
-  {$ENDIF}
   {$IFDEF FHIR_PROVENANCE}
   buildIndexesForProvenance(Indexes, compartments);
   {$ENDIF}
@@ -4779,6 +4989,12 @@ begin
   {$IFDEF FHIR_REQUESTGROUP}
   buildIndexesForRequestGroup(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_RESEARCHDEFINITION}
+  buildIndexesForResearchDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_RESEARCHELEMENTDEFINITION}
+  buildIndexesForResearchElementDefinition(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_RESEARCHSTUDY}
   buildIndexesForResearchStudy(Indexes, compartments);
   {$ENDIF}
@@ -4788,14 +5004,14 @@ begin
   {$IFDEF FHIR_RISKASSESSMENT}
   buildIndexesForRiskAssessment(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_RISKEVIDENCESYNTHESIS}
+  buildIndexesForRiskEvidenceSynthesis(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_SCHEDULE}
   buildIndexesForSchedule(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_SEARCHPARAMETER}
   buildIndexesForSearchParameter(Indexes, compartments);
-  {$ENDIF}
-  {$IFDEF FHIR_SEQUENCE}
-  buildIndexesForSequence(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_SERVICEREQUEST}
   buildIndexesForServiceRequest(Indexes, compartments);
@@ -4821,11 +5037,20 @@ begin
   {$IFDEF FHIR_SUBSTANCE}
   buildIndexesForSubstance(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_SUBSTANCENUCLEICACID}
+  buildIndexesForSubstanceNucleicAcid(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_SUBSTANCEPOLYMER}
   buildIndexesForSubstancePolymer(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_SUBSTANCEPROTEIN}
+  buildIndexesForSubstanceProtein(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}
   buildIndexesForSubstanceReferenceInformation(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SUBSTANCESOURCEMATERIAL}
+  buildIndexesForSubstanceSourceMaterial(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_SUBSTANCESPECIFICATION}
   buildIndexesForSubstanceSpecification(Indexes, compartments);
@@ -4847,9 +5072,6 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_TESTSCRIPT}
   buildIndexesForTestScript(Indexes, compartments);
-  {$ENDIF}
-  {$IFDEF FHIR_USERSESSION}
-  buildIndexesForUserSession(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_VALUESET}
   buildIndexesForValueSet(Indexes, compartments);

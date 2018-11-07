@@ -204,6 +204,7 @@ valueOf()	Returns the primitive value of an array
 
     FPIdGetter : JsPropertyIdRef;
     FPIdSetter : JsPropertyIdRef;
+    FDebugging: boolean;
 
     procedure init;
     procedure fin;
@@ -220,6 +221,7 @@ valueOf()	Returns the primitive value of an array
     destructor Destroy; override;
 
     property InstanceId : cardinal read FInstanceId;
+    property Debugging : boolean read FDebugging write FDebugging;
 
     // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
     procedure reset;
@@ -278,6 +280,11 @@ valueOf()	Returns the primitive value of an array
       Convert whatever javascript variable is in val to a string representation
     }
     function asString(val: JsValueRef): String;
+
+    {
+      Convert whatever javascript variable is in val to a string representation
+    }
+    function asInteger(val: JsValueRef): integer;
 
     {
       Convert whatever javascript variable is in val to a boolean
@@ -869,6 +876,8 @@ end;
 
 function TJavascript.execute(script: String; scriptName : String): JsValueRef;
 begin
+//  if Debugging then
+//    jsCheck(jsStartDebugging);
   jsCheck(JsRunScript(PChar(script), FContext, '', result));
 end;
 
@@ -1019,6 +1028,11 @@ begin
     JsTypedArray  : result := false;
     JsDataView : result := false;
   end;
+end;
+
+function TJavascript.asInteger(val: JsValueRef): integer;
+begin
+  result := StrToInt(asString(val));
 end;
 
 function TJavascript.getType(v: JsValueRef): JsValueType;

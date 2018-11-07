@@ -369,7 +369,8 @@ uses
   JclHookExcept in '..\dependencies\jcl\JclHookExcept.pas',
   FHIR.Server.v2Server in 'FHIR.Server.v2Server.pas',
   FHIR.v2.Protocol in '..\library\v2\FHIR.v2.Protocol.pas',
-  FHIR.v2.Message in '..\library\v2\FHIR.v2.Message.pas';
+  FHIR.v2.Message in '..\library\v2\FHIR.v2.Message.pas',
+  FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

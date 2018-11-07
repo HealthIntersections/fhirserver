@@ -79,11 +79,22 @@ type
     procedure setFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
   end;
 
+  TFHIRListManagerResolver = class (TFslListManagerResolver)
+  private
+    FJs: TJavascript;
+  public
+    constructor Create(js :TJavascript);
+    function resolve(source : TObject) : TJavascriptClassDefinition; override;
+    function category(source : TObject) : TFslJavascriptTypeCategory; override;
+    function primitive(source : TObject) : String; override;
+  end;
+
+
 implementation
 
 uses
-  FHIR.Client.Javascript,
-  FHIR.Server.EventJs;
+  FHIR.Client.Javascript{,
+  FHIR.Server.EventJs};
 
 { TFHIRJavascript }
 
@@ -94,7 +105,7 @@ begin
   FWorker := worker;
   reg(self);
   TFHIRClientJSHelper.registerFHIRClient(self, worker);
-  TFHIRServerJsHelper.registerFHIRServerEvent(self);
+//  TFHIRServerJsHelper.registerFHIRServerEvent(self);
 end;
 
 destructor TFHIRJavascript.Destroy;
@@ -558,6 +569,42 @@ begin
   finally
     p.Free;
   end;
+end;
+
+{ TFHIRListManagerResolver }
+
+function TFHIRListManagerResolver.category(source: TObject): TFslJavascriptTypeCategory;
+begin
+  if not (source is TFHIRObject) then
+    result := jtcObject
+  else if not TFHIRObject(source).isPrimitive then
+    result := jtcObject
+  else if TFHIRObject(source).fhirType = 'boolean' then
+    result := jtcBoolean
+  else if StringArrayExistsSensitive(['integer', 'positiveInt', 'unsignedInt'], TFHIRObject(source).fhirType) then
+    result := jtcInteger
+  else
+    result := jtcString;
+end;
+
+constructor TFHIRListManagerResolver.Create(js: TJavascript);
+begin
+  inherited create;
+  FJs := js;
+end;
+
+function TFHIRListManagerResolver.primitive(source: TObject): String;
+begin
+  result := TFHIRObject(source).primitiveValue;
+end;
+
+function TFHIRListManagerResolver.resolve(source: TObject): TJavascriptClassDefinition;
+begin
+  if not (source is TFHIRObject) then
+    raise EJavascriptApplication.Create('Javascript: Incorrect class "'+source.className+'" - must be a TFHIRObject');
+  result := FJs.getDefinedClass(TFHIRObject(source).fhirType);
+  if result = nil then
+    raise EJavascriptException.Create('Javascript: Undefived class "'+TFHIRObject(source).fhirType+'"');
 end;
 
 end.

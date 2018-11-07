@@ -738,10 +738,10 @@ begin
     result := TFhirCoding.create()
   else if name = 'SampledData' then
     result := TFhirSampledData.create()
+  else if name = 'Population' then
+    result := TFhirPopulation.create()
   else if name = 'Ratio' then
     result := TFhirRatio.create()
-  else if name = 'SubstanceMoiety' then
-    result := TFhirSubstanceMoiety.create()
   else if name = 'Reference' then
     result := TFhirReference.create()
   else if name = 'TriggerDefinition' then
@@ -946,6 +946,12 @@ begin
   else if name = 'CareTeam' then
     result := TFhirCareTeam.create()
 {$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
+  else if name = 'CatalogEntry.relatedEntry' then
+    result := TFhirCatalogEntryRelatedEntry.create()
+  else if name = 'CatalogEntry' then
+    result := TFhirCatalogEntry.create()
+{$ENDIF FHIR_CATALOGENTRY}
 {$IFDEF FHIR_CHARGEITEM}
   else if name = 'ChargeItem.performer' then
     result := TFhirChargeItemPerformer.create()
@@ -969,8 +975,8 @@ begin
     result := TFhirClaimPayee.create()
   else if name = 'Claim.careTeam' then
     result := TFhirClaimCareTeam.create()
-  else if name = 'Claim.information' then
-    result := TFhirClaimInformation.create()
+  else if name = 'Claim.supportingInfo' then
+    result := TFhirClaimSupportingInfo.create()
   else if name = 'Claim.diagnosis' then
     result := TFhirClaimDiagnosis.create()
   else if name = 'Claim.procedure' then
@@ -1003,8 +1009,6 @@ begin
     result := TFhirClaimResponseAddItemDetail.create()
   else if name = 'ClaimResponse.addItem.detail.subDetail' then
     result := TFhirClaimResponseAddItemDetailSubDetail.create()
-  else if name = 'ClaimResponse.error' then
-    result := TFhirClaimResponseError.create()
   else if name = 'ClaimResponse.total' then
     result := TFhirClaimResponseTotal.create()
   else if name = 'ClaimResponse.payment' then
@@ -1013,6 +1017,8 @@ begin
     result := TFhirClaimResponseProcessNote.create()
   else if name = 'ClaimResponse.insurance' then
     result := TFhirClaimResponseInsurance.create()
+  else if name = 'ClaimResponse.error' then
+    result := TFhirClaimResponseError.create()
   else if name = 'ClaimResponse' then
     result := TFhirClaimResponse.create()
 {$ENDIF FHIR_CLAIMRESPONSE}
@@ -1141,14 +1147,16 @@ begin
 {$IFDEF FHIR_COVERAGE}
   else if name = 'Coverage.class' then
     result := TFhirCoverageClass.create()
-  else if name = 'Coverage.copay' then
-    result := TFhirCoverageCopay.create()
+  else if name = 'Coverage.costToBeneficiary' then
+    result := TFhirCoverageCostToBeneficiary.create()
+  else if name = 'Coverage.costToBeneficiary.exception' then
+    result := TFhirCoverageCostToBeneficiaryException.create()
   else if name = 'Coverage' then
     result := TFhirCoverage.create()
 {$ENDIF FHIR_COVERAGE}
 {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
-  else if name = 'CoverageEligibilityRequest.supportingInformation' then
-    result := TFhirCoverageEligibilityRequestSupportingInformation.create()
+  else if name = 'CoverageEligibilityRequest.supportingInfo' then
+    result := TFhirCoverageEligibilityRequestSupportingInfo.create()
   else if name = 'CoverageEligibilityRequest.insurance' then
     result := TFhirCoverageEligibilityRequestInsurance.create()
   else if name = 'CoverageEligibilityRequest.item' then
@@ -1171,6 +1179,8 @@ begin
     result := TFhirCoverageEligibilityResponse.create()
 {$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
+  else if name = 'DetectedIssue.evidence' then
+    result := TFhirDetectedIssueEvidence.create()
   else if name = 'DetectedIssue.mitigation' then
     result := TFhirDetectedIssueMitigation.create()
   else if name = 'DetectedIssue' then
@@ -1229,16 +1239,12 @@ begin
     result := TFhirDiagnosticReport.create()
 {$ENDIF FHIR_DIAGNOSTICREPORT}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-  else if name = 'DocumentManifest.agent' then
-    result := TFhirDocumentManifestAgent.create()
   else if name = 'DocumentManifest.related' then
     result := TFhirDocumentManifestRelated.create()
   else if name = 'DocumentManifest' then
     result := TFhirDocumentManifest.create()
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
-  else if name = 'DocumentReference.agent' then
-    result := TFhirDocumentReferenceAgent.create()
   else if name = 'DocumentReference.relatesTo' then
     result := TFhirDocumentReferenceRelatesTo.create()
   else if name = 'DocumentReference.content' then
@@ -1248,6 +1254,22 @@ begin
   else if name = 'DocumentReference' then
     result := TFhirDocumentReference.create()
 {$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_EFFECTEVIDENCESYNTHESIS}
+  else if name = 'EffectEvidenceSynthesis.sampleSize' then
+    result := TFhirEffectEvidenceSynthesisSampleSize.create()
+  else if name = 'EffectEvidenceSynthesis.resultsByExposure' then
+    result := TFhirEffectEvidenceSynthesisResultsByExposure.create()
+  else if name = 'EffectEvidenceSynthesis.effectEstimate' then
+    result := TFhirEffectEvidenceSynthesisEffectEstimate.create()
+  else if name = 'EffectEvidenceSynthesis.effectEstimate.precisionEstimate' then
+    result := TFhirEffectEvidenceSynthesisEffectEstimatePrecisionEstimate.create()
+  else if name = 'EffectEvidenceSynthesis.certainty' then
+    result := TFhirEffectEvidenceSynthesisCertainty.create()
+  else if name = 'EffectEvidenceSynthesis.certainty.certaintySubcomponent' then
+    result := TFhirEffectEvidenceSynthesisCertaintyCertaintySubcomponent.create()
+  else if name = 'EffectEvidenceSynthesis' then
+    result := TFhirEffectEvidenceSynthesis.create()
+{$ENDIF FHIR_EFFECTEVIDENCESYNTHESIS}
 {$IFDEF FHIR_ENCOUNTER}
   else if name = 'Encounter.statusHistory' then
     result := TFhirEncounterStatusHistory.create()
@@ -1276,12 +1298,6 @@ begin
   else if name = 'EnrollmentResponse' then
     result := TFhirEnrollmentResponse.create()
 {$ENDIF FHIR_ENROLLMENTRESPONSE}
-{$IFDEF FHIR_ENTRYDEFINITION}
-  else if name = 'EntryDefinition.relatedEntry' then
-    result := TFhirEntryDefinitionRelatedEntry.create()
-  else if name = 'EntryDefinition' then
-    result := TFhirEntryDefinition.create()
-{$ENDIF FHIR_ENTRYDEFINITION}
 {$IFDEF FHIR_EPISODEOFCARE}
   else if name = 'EpisodeOfCare.statusHistory' then
     result := TFhirEpisodeOfCareStatusHistory.create()
@@ -1294,6 +1310,16 @@ begin
   else if name = 'EventDefinition' then
     result := TFhirEventDefinition.create()
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EVIDENCE}
+  else if name = 'Evidence' then
+    result := TFhirEvidence.create()
+{$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEVARIABLE}
+  else if name = 'EvidenceVariable.characteristic' then
+    result := TFhirEvidenceVariableCharacteristic.create()
+  else if name = 'EvidenceVariable' then
+    result := TFhirEvidenceVariable.create()
+{$ENDIF FHIR_EVIDENCEVARIABLE}
 {$IFDEF FHIR_EXAMPLESCENARIO}
   else if name = 'ExampleScenario.actor' then
     result := TFhirExampleScenarioActor.create()
@@ -1311,8 +1337,6 @@ begin
     result := TFhirExampleScenarioProcessStepOperation.create()
   else if name = 'ExampleScenario.process.step.alternative' then
     result := TFhirExampleScenarioProcessStepAlternative.create()
-  else if name = 'ExampleScenario.process.step.alternative.option' then
-    result := TFhirExampleScenarioProcessStepAlternativeOption.create()
   else if name = 'ExampleScenario' then
     result := TFhirExampleScenario.create()
 {$ENDIF FHIR_EXAMPLESCENARIO}
@@ -1321,10 +1345,10 @@ begin
     result := TFhirExplanationOfBenefitRelated.create()
   else if name = 'ExplanationOfBenefit.payee' then
     result := TFhirExplanationOfBenefitPayee.create()
-  else if name = 'ExplanationOfBenefit.information' then
-    result := TFhirExplanationOfBenefitInformation.create()
   else if name = 'ExplanationOfBenefit.careTeam' then
     result := TFhirExplanationOfBenefitCareTeam.create()
+  else if name = 'ExplanationOfBenefit.supportingInfo' then
+    result := TFhirExplanationOfBenefitSupportingInfo.create()
   else if name = 'ExplanationOfBenefit.diagnosis' then
     result := TFhirExplanationOfBenefitDiagnosis.create()
   else if name = 'ExplanationOfBenefit.procedure' then
@@ -1399,6 +1423,8 @@ begin
     result := TFhirGuidanceResponse.create()
 {$ENDIF FHIR_GUIDANCERESPONSE}
 {$IFDEF FHIR_HEALTHCARESERVICE}
+  else if name = 'HealthcareService.eligibility' then
+    result := TFhirHealthcareServiceEligibility.create()
   else if name = 'HealthcareService.availableTime' then
     result := TFhirHealthcareServiceAvailableTime.create()
   else if name = 'HealthcareService.notAvailable' then
@@ -1421,6 +1447,8 @@ begin
     result := TFhirImmunizationPerformer.create()
   else if name = 'Immunization.education' then
     result := TFhirImmunizationEducation.create()
+  else if name = 'Immunization.reaction' then
+    result := TFhirImmunizationReaction.create()
   else if name = 'Immunization.protocolApplied' then
     result := TFhirImmunizationProtocolApplied.create()
   else if name = 'Immunization' then
@@ -1445,8 +1473,8 @@ begin
     result := TFhirImplementationGuideGlobal.create()
   else if name = 'ImplementationGuide.definition' then
     result := TFhirImplementationGuideDefinition.create()
-  else if name = 'ImplementationGuide.definition.package' then
-    result := TFhirImplementationGuideDefinitionPackage.create()
+  else if name = 'ImplementationGuide.definition.grouping' then
+    result := TFhirImplementationGuideDefinitionGrouping.create()
   else if name = 'ImplementationGuide.definition.resource' then
     result := TFhirImplementationGuideDefinitionResource.create()
   else if name = 'ImplementationGuide.definition.page' then
@@ -1531,6 +1559,8 @@ begin
     result := TFhirMeasureGroupPopulation.create()
   else if name = 'Measure.group.stratifier' then
     result := TFhirMeasureGroupStratifier.create()
+  else if name = 'Measure.group.stratifier.component' then
+    result := TFhirMeasureGroupStratifierComponent.create()
   else if name = 'Measure.supplementalData' then
     result := TFhirMeasureSupplementalData.create()
   else if name = 'Measure' then
@@ -1545,6 +1575,8 @@ begin
     result := TFhirMeasureReportGroupStratifier.create()
   else if name = 'MeasureReport.group.stratifier.stratum' then
     result := TFhirMeasureReportGroupStratifierStratum.create()
+  else if name = 'MeasureReport.group.stratifier.stratum.component' then
+    result := TFhirMeasureReportGroupStratifierStratumComponent.create()
   else if name = 'MeasureReport.group.stratifier.stratum.population' then
     result := TFhirMeasureReportGroupStratifierStratumPopulation.create()
   else if name = 'MeasureReport' then
@@ -1650,41 +1682,15 @@ begin
   else if name = 'MedicinalProductAuthorization' then
     result := TFhirMedicinalProductAuthorization.create()
 {$ENDIF FHIR_MEDICINALPRODUCTAUTHORIZATION}
-{$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
-  else if name = 'MedicinalProductClinicals.undesirableEffects' then
-    result := TFhirMedicinalProductClinicalsUndesirableEffects.create()
-  else if name = 'MedicinalProductClinicals.undesirableEffects.population' then
-    result := TFhirMedicinalProductClinicalsUndesirableEffectsPopulation.create()
-  else if name = 'MedicinalProductClinicals.therapeuticIndication' then
-    result := TFhirMedicinalProductClinicalsTherapeuticIndication.create()
-  else if name = 'MedicinalProductClinicals.therapeuticIndication.otherTherapy' then
-    result := TFhirMedicinalProductClinicalsTherapeuticIndicationOtherTherapy.create()
-  else if name = 'MedicinalProductClinicals.contraindication' then
-    result := TFhirMedicinalProductClinicalsContraindication.create()
-  else if name = 'MedicinalProductClinicals.interactions' then
-    result := TFhirMedicinalProductClinicalsInteractions.create()
-  else if name = 'MedicinalProductClinicals' then
-    result := TFhirMedicinalProductClinicals.create()
-{$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
 {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
   else if name = 'MedicinalProductContraindication.otherTherapy' then
     result := TFhirMedicinalProductContraindicationOtherTherapy.create()
-  else if name = 'MedicinalProductContraindication.population' then
-    result := TFhirMedicinalProductContraindicationPopulation.create()
   else if name = 'MedicinalProductContraindication' then
     result := TFhirMedicinalProductContraindication.create()
 {$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
-{$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
-  else if name = 'MedicinalProductDeviceSpec.material' then
-    result := TFhirMedicinalProductDeviceSpecMaterial.create()
-  else if name = 'MedicinalProductDeviceSpec' then
-    result := TFhirMedicinalProductDeviceSpec.create()
-{$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
 {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
   else if name = 'MedicinalProductIndication.otherTherapy' then
     result := TFhirMedicinalProductIndicationOtherTherapy.create()
-  else if name = 'MedicinalProductIndication.population' then
-    result := TFhirMedicinalProductIndicationPopulation.create()
   else if name = 'MedicinalProductIndication' then
     result := TFhirMedicinalProductIndication.create()
 {$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
@@ -1701,6 +1707,8 @@ begin
     result := TFhirMedicinalProductIngredient.create()
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
 {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  else if name = 'MedicinalProductInteraction.interactant' then
+    result := TFhirMedicinalProductInteractionInteractant.create()
   else if name = 'MedicinalProductInteraction' then
     result := TFhirMedicinalProductInteraction.create()
 {$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
@@ -1729,8 +1737,6 @@ begin
     result := TFhirMedicinalProductPharmaceutical.create()
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
 {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
-  else if name = 'MedicinalProductUndesirableEffect.population' then
-    result := TFhirMedicinalProductUndesirableEffectPopulation.create()
   else if name = 'MedicinalProductUndesirableEffect' then
     result := TFhirMedicinalProductUndesirableEffect.create()
 {$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
@@ -1752,6 +1758,26 @@ begin
   else if name = 'MessageHeader' then
     result := TFhirMessageHeader.create()
 {$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_MOLECULARSEQUENCE}
+  else if name = 'MolecularSequence.referenceSeq' then
+    result := TFhirMolecularSequenceReferenceSeq.create()
+  else if name = 'MolecularSequence.variant' then
+    result := TFhirMolecularSequenceVariant.create()
+  else if name = 'MolecularSequence.quality' then
+    result := TFhirMolecularSequenceQuality.create()
+  else if name = 'MolecularSequence.quality.roc' then
+    result := TFhirMolecularSequenceQualityRoc.create()
+  else if name = 'MolecularSequence.repository' then
+    result := TFhirMolecularSequenceRepository.create()
+  else if name = 'MolecularSequence.structureVariant' then
+    result := TFhirMolecularSequenceStructureVariant.create()
+  else if name = 'MolecularSequence.structureVariant.outer' then
+    result := TFhirMolecularSequenceStructureVariantOuter.create()
+  else if name = 'MolecularSequence.structureVariant.inner' then
+    result := TFhirMolecularSequenceStructureVariantInner.create()
+  else if name = 'MolecularSequence' then
+    result := TFhirMolecularSequence.create()
+{$ENDIF FHIR_MOLECULARSEQUENCE}
 {$IFDEF FHIR_NAMINGSYSTEM}
   else if name = 'NamingSystem.uniqueId' then
     result := TFhirNamingSystemUniqueId.create()
@@ -1886,18 +1912,6 @@ begin
   else if name = 'Procedure' then
     result := TFhirProcedure.create()
 {$ENDIF FHIR_PROCEDURE}
-{$IFDEF FHIR_PROCESSREQUEST}
-  else if name = 'ProcessRequest.item' then
-    result := TFhirProcessRequestItem.create()
-  else if name = 'ProcessRequest' then
-    result := TFhirProcessRequest.create()
-{$ENDIF FHIR_PROCESSREQUEST}
-{$IFDEF FHIR_PROCESSRESPONSE}
-  else if name = 'ProcessResponse.processNote' then
-    result := TFhirProcessResponseProcessNote.create()
-  else if name = 'ProcessResponse' then
-    result := TFhirProcessResponse.create()
-{$ENDIF FHIR_PROCESSRESPONSE}
 {$IFDEF FHIR_PROVENANCE}
   else if name = 'Provenance.agent' then
     result := TFhirProvenanceAgent.create()
@@ -1927,6 +1941,8 @@ begin
     result := TFhirQuestionnaireResponse.create()
 {$ENDIF FHIR_QUESTIONNAIRERESPONSE}
 {$IFDEF FHIR_RELATEDPERSON}
+  else if name = 'RelatedPerson.communication' then
+    result := TFhirRelatedPersonCommunication.create()
   else if name = 'RelatedPerson' then
     result := TFhirRelatedPerson.create()
 {$ENDIF FHIR_RELATEDPERSON}
@@ -1940,6 +1956,16 @@ begin
   else if name = 'RequestGroup' then
     result := TFhirRequestGroup.create()
 {$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHDEFINITION}
+  else if name = 'ResearchDefinition' then
+    result := TFhirResearchDefinition.create()
+{$ENDIF FHIR_RESEARCHDEFINITION}
+{$IFDEF FHIR_RESEARCHELEMENTDEFINITION}
+  else if name = 'ResearchElementDefinition.characteristic' then
+    result := TFhirResearchElementDefinitionCharacteristic.create()
+  else if name = 'ResearchElementDefinition' then
+    result := TFhirResearchElementDefinition.create()
+{$ENDIF FHIR_RESEARCHELEMENTDEFINITION}
 {$IFDEF FHIR_RESEARCHSTUDY}
   else if name = 'ResearchStudy.arm' then
     result := TFhirResearchStudyArm.create()
@@ -1958,6 +1984,20 @@ begin
   else if name = 'RiskAssessment' then
     result := TFhirRiskAssessment.create()
 {$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_RISKEVIDENCESYNTHESIS}
+  else if name = 'RiskEvidenceSynthesis.sampleSize' then
+    result := TFhirRiskEvidenceSynthesisSampleSize.create()
+  else if name = 'RiskEvidenceSynthesis.riskEstimate' then
+    result := TFhirRiskEvidenceSynthesisRiskEstimate.create()
+  else if name = 'RiskEvidenceSynthesis.riskEstimate.precisionEstimate' then
+    result := TFhirRiskEvidenceSynthesisRiskEstimatePrecisionEstimate.create()
+  else if name = 'RiskEvidenceSynthesis.certainty' then
+    result := TFhirRiskEvidenceSynthesisCertainty.create()
+  else if name = 'RiskEvidenceSynthesis.certainty.certaintySubcomponent' then
+    result := TFhirRiskEvidenceSynthesisCertaintyCertaintySubcomponent.create()
+  else if name = 'RiskEvidenceSynthesis' then
+    result := TFhirRiskEvidenceSynthesis.create()
+{$ENDIF FHIR_RISKEVIDENCESYNTHESIS}
 {$IFDEF FHIR_SCHEDULE}
   else if name = 'Schedule' then
     result := TFhirSchedule.create()
@@ -1968,26 +2008,6 @@ begin
   else if name = 'SearchParameter' then
     result := TFhirSearchParameter.create()
 {$ENDIF FHIR_SEARCHPARAMETER}
-{$IFDEF FHIR_SEQUENCE}
-  else if name = 'Sequence.referenceSeq' then
-    result := TFhirSequenceReferenceSeq.create()
-  else if name = 'Sequence.variant' then
-    result := TFhirSequenceVariant.create()
-  else if name = 'Sequence.quality' then
-    result := TFhirSequenceQuality.create()
-  else if name = 'Sequence.quality.roc' then
-    result := TFhirSequenceQualityRoc.create()
-  else if name = 'Sequence.repository' then
-    result := TFhirSequenceRepository.create()
-  else if name = 'Sequence.structureVariant' then
-    result := TFhirSequenceStructureVariant.create()
-  else if name = 'Sequence.structureVariant.outer' then
-    result := TFhirSequenceStructureVariantOuter.create()
-  else if name = 'Sequence.structureVariant.inner' then
-    result := TFhirSequenceStructureVariantInner.create()
-  else if name = 'Sequence' then
-    result := TFhirSequence.create()
-{$ENDIF FHIR_SEQUENCE}
 {$IFDEF FHIR_SERVICEREQUEST}
   else if name = 'ServiceRequest' then
     result := TFhirServiceRequest.create()
@@ -2007,12 +2027,14 @@ begin
     result := TFhirSpecimen.create()
 {$ENDIF FHIR_SPECIMEN}
 {$IFDEF FHIR_SPECIMENDEFINITION}
-  else if name = 'SpecimenDefinition.specimenToLab' then
-    result := TFhirSpecimenDefinitionSpecimenToLab.create()
-  else if name = 'SpecimenDefinition.specimenToLab.containerAdditive' then
-    result := TFhirSpecimenDefinitionSpecimenToLabContainerAdditive.create()
-  else if name = 'SpecimenDefinition.specimenToLab.handling' then
-    result := TFhirSpecimenDefinitionSpecimenToLabHandling.create()
+  else if name = 'SpecimenDefinition.typeTested' then
+    result := TFhirSpecimenDefinitionTypeTested.create()
+  else if name = 'SpecimenDefinition.typeTested.container' then
+    result := TFhirSpecimenDefinitionTypeTestedContainer.create()
+  else if name = 'SpecimenDefinition.typeTested.container.additive' then
+    result := TFhirSpecimenDefinitionTypeTestedContainerAdditive.create()
+  else if name = 'SpecimenDefinition.typeTested.handling' then
+    result := TFhirSpecimenDefinitionTypeTestedHandling.create()
   else if name = 'SpecimenDefinition' then
     result := TFhirSpecimenDefinition.create()
 {$ENDIF FHIR_SPECIMENDEFINITION}
@@ -2062,6 +2084,16 @@ begin
   else if name = 'Substance' then
     result := TFhirSubstance.create()
 {$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUBSTANCENUCLEICACID}
+  else if name = 'SubstanceNucleicAcid.subunit' then
+    result := TFhirSubstanceNucleicAcidSubunit.create()
+  else if name = 'SubstanceNucleicAcid.subunit.linkage' then
+    result := TFhirSubstanceNucleicAcidSubunitLinkage.create()
+  else if name = 'SubstanceNucleicAcid.subunit.sugar' then
+    result := TFhirSubstanceNucleicAcidSubunitSugar.create()
+  else if name = 'SubstanceNucleicAcid' then
+    result := TFhirSubstanceNucleicAcid.create()
+{$ENDIF FHIR_SUBSTANCENUCLEICACID}
 {$IFDEF FHIR_SUBSTANCEPOLYMER}
   else if name = 'SubstancePolymer.monomerSet' then
     result := TFhirSubstancePolymerMonomerSet.create()
@@ -2078,6 +2110,12 @@ begin
   else if name = 'SubstancePolymer' then
     result := TFhirSubstancePolymer.create()
 {$ENDIF FHIR_SUBSTANCEPOLYMER}
+{$IFDEF FHIR_SUBSTANCEPROTEIN}
+  else if name = 'SubstanceProtein.subunit' then
+    result := TFhirSubstanceProteinSubunit.create()
+  else if name = 'SubstanceProtein' then
+    result := TFhirSubstanceProtein.create()
+{$ENDIF FHIR_SUBSTANCEPROTEIN}
 {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}
   else if name = 'SubstanceReferenceInformation.gene' then
     result := TFhirSubstanceReferenceInformationGene.create()
@@ -2085,13 +2123,27 @@ begin
     result := TFhirSubstanceReferenceInformationGeneElement.create()
   else if name = 'SubstanceReferenceInformation.classification' then
     result := TFhirSubstanceReferenceInformationClassification.create()
-  else if name = 'SubstanceReferenceInformation.relationship' then
-    result := TFhirSubstanceReferenceInformationRelationship.create()
   else if name = 'SubstanceReferenceInformation.target' then
     result := TFhirSubstanceReferenceInformationTarget.create()
   else if name = 'SubstanceReferenceInformation' then
     result := TFhirSubstanceReferenceInformation.create()
 {$ENDIF FHIR_SUBSTANCEREFERENCEINFORMATION}
+{$IFDEF FHIR_SUBSTANCESOURCEMATERIAL}
+  else if name = 'SubstanceSourceMaterial.fractionDescription' then
+    result := TFhirSubstanceSourceMaterialFractionDescription.create()
+  else if name = 'SubstanceSourceMaterial.organism' then
+    result := TFhirSubstanceSourceMaterialOrganism.create()
+  else if name = 'SubstanceSourceMaterial.organism.author' then
+    result := TFhirSubstanceSourceMaterialOrganismAuthor.create()
+  else if name = 'SubstanceSourceMaterial.organism.hybrid' then
+    result := TFhirSubstanceSourceMaterialOrganismHybrid.create()
+  else if name = 'SubstanceSourceMaterial.organism.organismGeneral' then
+    result := TFhirSubstanceSourceMaterialOrganismOrganismGeneral.create()
+  else if name = 'SubstanceSourceMaterial.partDescription' then
+    result := TFhirSubstanceSourceMaterialPartDescription.create()
+  else if name = 'SubstanceSourceMaterial' then
+    result := TFhirSubstanceSourceMaterial.create()
+{$ENDIF FHIR_SUBSTANCESOURCEMATERIAL}
 {$IFDEF FHIR_SUBSTANCESPECIFICATION}
   else if name = 'SubstanceSpecification.moiety' then
     result := TFhirSubstanceSpecificationMoiety.create()
@@ -2103,14 +2155,16 @@ begin
     result := TFhirSubstanceSpecificationStructureIsotope.create()
   else if name = 'SubstanceSpecification.structure.isotope.molecularWeight' then
     result := TFhirSubstanceSpecificationStructureIsotopeMolecularWeight.create()
-  else if name = 'SubstanceSpecification.structure.structuralRepresentation' then
-    result := TFhirSubstanceSpecificationStructureStructuralRepresentation.create()
-  else if name = 'SubstanceSpecification.substanceCode' then
-    result := TFhirSubstanceSpecificationSubstanceCode.create()
-  else if name = 'SubstanceSpecification.substanceName' then
-    result := TFhirSubstanceSpecificationSubstanceName.create()
-  else if name = 'SubstanceSpecification.substanceName.officialName' then
-    result := TFhirSubstanceSpecificationSubstanceNameOfficialName.create()
+  else if name = 'SubstanceSpecification.structure.representation' then
+    result := TFhirSubstanceSpecificationStructureRepresentation.create()
+  else if name = 'SubstanceSpecification.code' then
+    result := TFhirSubstanceSpecificationCode.create()
+  else if name = 'SubstanceSpecification.name' then
+    result := TFhirSubstanceSpecificationName.create()
+  else if name = 'SubstanceSpecification.name.official' then
+    result := TFhirSubstanceSpecificationNameOfficial.create()
+  else if name = 'SubstanceSpecification.relationship' then
+    result := TFhirSubstanceSpecificationRelationship.create()
   else if name = 'SubstanceSpecification' then
     result := TFhirSubstanceSpecification.create()
 {$ENDIF FHIR_SUBSTANCESPECIFICATION}
@@ -2197,16 +2251,6 @@ begin
     result := TFhirTestScriptFixture.create()
   else if name = 'TestScript.variable' then
     result := TFhirTestScriptVariable.create()
-  else if name = 'TestScript.rule' then
-    result := TFhirTestScriptRule.create()
-  else if name = 'TestScript.rule.param' then
-    result := TFhirTestScriptRuleParam.create()
-  else if name = 'TestScript.ruleset' then
-    result := TFhirTestScriptRuleset.create()
-  else if name = 'TestScript.ruleset.rule' then
-    result := TFhirTestScriptRulesetRule.create()
-  else if name = 'TestScript.ruleset.rule.param' then
-    result := TFhirTestScriptRulesetRuleParam.create()
   else if name = 'TestScript.setup' then
     result := TFhirTestScriptSetup.create()
   else if name = 'TestScript.setup.action' then
@@ -2217,16 +2261,6 @@ begin
     result := TFhirTestScriptSetupActionOperationRequestHeader.create()
   else if name = 'TestScript.setup.action.assert' then
     result := TFhirTestScriptSetupActionAssert.create()
-  else if name = 'TestScript.setup.action.assert.rule' then
-    result := TFhirTestScriptSetupActionAssertRule.create()
-  else if name = 'TestScript.setup.action.assert.rule.param' then
-    result := TFhirTestScriptSetupActionAssertRuleParam.create()
-  else if name = 'TestScript.setup.action.assert.ruleset' then
-    result := TFhirTestScriptSetupActionAssertRuleset.create()
-  else if name = 'TestScript.setup.action.assert.ruleset.rule' then
-    result := TFhirTestScriptSetupActionAssertRulesetRule.create()
-  else if name = 'TestScript.setup.action.assert.ruleset.rule.param' then
-    result := TFhirTestScriptSetupActionAssertRulesetRuleParam.create()
   else if name = 'TestScript.test' then
     result := TFhirTestScriptTest.create()
   else if name = 'TestScript.test.action' then
@@ -2238,14 +2272,6 @@ begin
   else if name = 'TestScript' then
     result := TFhirTestScript.create()
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_USERSESSION}
-  else if name = 'UserSession.status' then
-    result := TFhirUserSessionStatus.create()
-  else if name = 'UserSession.context' then
-    result := TFhirUserSessionContext.create()
-  else if name = 'UserSession' then
-    result := TFhirUserSession.create()
-{$ENDIF FHIR_USERSESSION}
 {$IFDEF FHIR_VALUESET}
   else if name = 'ValueSet.compose' then
     result := TFhirValueSetCompose.create()
@@ -2277,10 +2303,10 @@ begin
     result := TFhirVerificationResult.create()
 {$ENDIF FHIR_VERIFICATIONRESULT}
 {$IFDEF FHIR_VISIONPRESCRIPTION}
-  else if name = 'VisionPrescription.dispense' then
-    result := TFhirVisionPrescriptionDispense.create()
-  else if name = 'VisionPrescription.dispense.prism' then
-    result := TFhirVisionPrescriptionDispensePrism.create()
+  else if name = 'VisionPrescription.lensSpecification' then
+    result := TFhirVisionPrescriptionLensSpecification.create()
+  else if name = 'VisionPrescription.lensSpecification.prism' then
+    result := TFhirVisionPrescriptionLensSpecificationPrism.create()
   else if name = 'VisionPrescription' then
     result := TFhirVisionPrescription.create()
 {$ENDIF FHIR_VISIONPRESCRIPTION}

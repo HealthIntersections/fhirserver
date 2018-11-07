@@ -37,8 +37,10 @@ uses
   IdTCPConnection, FHIR.v2.Protocol,
   FHIR.Support.Stream,
   FHIR.Base.Objects,
-  FHIR.R4.PathNode, FHIR.R4.PathEngine,
-  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message;
+  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
+  FHIR.R4.PathNode, FHIR.R4.PathEngine, FHIR.R4.Javascript,
+  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Javascript;
+
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused
@@ -67,6 +69,8 @@ type
   public
     [TestCase] Procedure TestSimple;
     [TestCase] Procedure TestFHIRPath;
+    [TestCase] Procedure TestIndexOffsets;
+    [TestCase] Procedure TestJavascript;
   end;
 
 
@@ -598,7 +602,77 @@ begin
   finally
     msg.Free;
   end;
+end;
 
+procedure Tv2ParserTests.TestIndexOffsets;
+var
+  msg : TV2Message;
+  path : TFHIRPathEngine;
+  list : TFHIRSelectionList;
+  s : String;
+begin
+  msg := TV2Parser.parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
+    'PID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520'#13+
+    'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
+    'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13);
+  try
+    Assert.AreEqual(msg.segment[1].field[3].element[1].text, 'GHH LAB');
+    Assert.AreEqual(msg.segment[1].element(3).text, 'GHH LAB');
+    path := TFHIRPathEngine.Create(nil, nil);
+    try
+      path.registerExtension(TV2FHIRPathExtensions.create);
+      list := path.evaluate(nil, msg, 'Message.segment[1].field[3].element[1].text()');
+      try
+        s := path.convertToString(list);
+        Assert.AreEqual('GHH LAB', s);
+      finally
+        list.free;
+      end;
+      list := path.evaluate(nil, msg, 'Message.segment[1].element(3).text()');
+      try
+        s := path.convertToString(list);
+        Assert.AreEqual('GHH LAB', s);
+      finally
+        list.free;
+      end;
+    finally
+      path.Free;
+    end;
+  finally
+    msg.Free;
+  end;
+end;
+
+const
+  JS_TEST_SCRIPT =
+    'function test() {'+#13#10+
+    '  var msg = v2.parse("MSH|^~\\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4\rPID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD '+
+       'DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520\rOBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| '+
+       '555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD\rOBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F\r");'+#13#10+
+    '  v2.checkEquals(msg.segment(1).field(3).element(1).text, "GHH LAB");'+#13#10+
+    '  v2.checkEquals(msg.segment(1).element(3).text, "GHH LAB");'+#13#10+
+    '  v2.checkEquals(v2.query(msg, "segment[1].element(3).text()"), "GHH LAB");'+#13#10+
+    '}'+#13#10;
+
+procedure Tv2ParserTests.TestJavascript;
+var
+  js : TFHIRJavascript;
+  fpe : TFHIRPathEngine;
+begin
+  fpe := TFHIRPathEngine.Create(nil, nil);
+  try
+    fpe.registerExtension(TV2FHIRPathExtensions.create);
+    js := TFHIRJavascript.Create('ChakraCore.dll', nil, registerFHIRTypes);
+    try
+      TV2JavascriptHelper.registerv2Objects(js, fpe);
+      js.execute(JS_TEST_SCRIPT, '', 'test', []);
+      Assert.Pass();
+    finally
+      js.free;
+    end;
+  finally
+    fpe.free;
+  end;
 end;
 
 procedure Tv2ParserTests.TestSimple;

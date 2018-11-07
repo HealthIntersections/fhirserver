@@ -107,7 +107,7 @@ implementation
 
 { TCountryCodeServices }
 
-Constructor TCountryCodeServices.create();
+Constructor TCountryCodeServices.create;
 begin
   inherited Create;
   FCodes := TFslList<TCountryCodeConcept>.create;

@@ -94,6 +94,7 @@ type
     edtPath: TEdit;
     Panel1: TPanel;
     mnuValidate: TMenuItem;
+    tbV2: TToolButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

@@ -21,6 +21,9 @@
         <Projects Include="utilities\vcldemo\FhirVclDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="utilities\v2JS\v2JS.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="utilities\tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
@@ -86,6 +89,15 @@
     <Target Name="FhirVclDemo:Make">
         <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="v2JS">
+        <MSBuild Projects="utilities\v2JS\v2JS.dproj"/>
+    </Target>
+    <Target Name="v2JS:Clean">
+        <MSBuild Projects="utilities\v2JS\v2JS.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="v2JS:Make">
+        <MSBuild Projects="utilities\v2JS\v2JS.dproj" Targets="Make"/>
+    </Target>
     <Target Name="FHIRServerTests">
         <MSBuild Projects="utilities\tests\FHIRServerTests.dproj"/>
     </Target>
@@ -96,13 +108,13 @@
         <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;fhirnpp;formatUtils;ClinicalDocumentEditor;FhirVclDemo;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;fhirnpp;formatUtils;ClinicalDocumentEditor;FhirVclDemo;v2JS;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;fhirnpp:Clean;formatUtils:Clean;ClinicalDocumentEditor:Clean;FhirVclDemo:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;fhirnpp:Clean;formatUtils:Clean;ClinicalDocumentEditor:Clean;FhirVclDemo:Clean;v2JS:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;fhirnpp:Make;formatUtils:Make;ClinicalDocumentEditor:Make;FhirVclDemo:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;fhirnpp:Make;formatUtils:Make;ClinicalDocumentEditor:Make;FhirVclDemo:Make;v2JS:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -28,8 +28,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FHIR4}
 {$DEFINE EXAMPLESCENARIO}
 {$DEFINE IMPLEMENTATIONGUIDE}
+{$ENDIF}
 
 interface
 
@@ -299,7 +301,7 @@ var
   ok : boolean;
 begin
   server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
-  http := TFhirClients.makeHTTP(FContext.link, server.fhirEndpoint, server.format, FSettings.Timeout* 1000, FSettings.proxy);
+  http := TFhirClients.makeHTTP(FContext.link, server.fhirEndpoint, server.format, FSettings.Timeout * 1000, FSettings.proxy);
   try
     (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
     (http.Communicator as TFHIRHTTPCommunicator).password := server.password;

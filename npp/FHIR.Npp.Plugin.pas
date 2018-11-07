@@ -191,6 +191,7 @@ type
     FCurrentServer : TRegisteredFHIRServer;
     FWantUpdate : boolean;
     FRedoMatches : boolean;
+    FLastParseError: String;
 
     FValidatorTask : integer;
     FLoader2Task : integer;
@@ -228,6 +229,8 @@ type
     procedure processValidatorResults(id : integer; response : TBackgroundTaskPackage);
     procedure processLoadingResults(id : integer; response : TBackgroundTaskPackage);
     procedure processUpgradeResults(id : integer; response : TBackgroundTaskPackage);
+
+    function parseError : String;
   public
     constructor Create;
     destructor Destroy; override;
@@ -370,6 +373,7 @@ begin
   self.AddFuncItem('&Save resource on Server', _FuncPUT);
   self.AddFuncItem('Save on &a Server', _FuncPOST);
   self.AddFuncItem('Validate &resource on server', _FuncServerValidate);
+  self.AddFuncItem('V&2 IDE', _FuncDebug);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Server &Manager', _FuncServers);
   self.AddFuncItem('Pac&kage Manager', _FuncPackageManager);
@@ -615,8 +619,8 @@ begin
       end;
     end;
   end
-  else if not ValidationError(self, 'This does not appear to be valid FHIR content') then
-    errors.Add(TFHIRAnnotation.create(alError, 0, 0, 4, 'This does not appear to be valid FHIR content', ''));
+  else if not ValidationError(self, parseError) then
+    errors.Add(TFHIRAnnotation.create(alError, 0, 0, 4, parseError, ''));
 
   setUpSquiggles;
   for error in errors do
@@ -686,15 +690,20 @@ function TFHIRPlugin.determineFormat(src: TBytes): TFHIRFormat;
 var
   s : String;
 begin
+  FLastParseError := '';
   result := ffUnspecified; // null
   try
     s := TEncoding.UTF8.GetString(src);
   except
-    result := ffUnspecified;
+    on e : Exception do
+    begin
+      result := ffUnspecified;
+      FLastParseError := e.message;
+    end;
   end;
   s := s.Trim;
   if (s <> '') then
-    begin
+  begin
     if s[1] = '<' then
     begin
       while s.StartsWith('<!') or s.StartsWith('<?') do
@@ -763,7 +772,7 @@ begin
     res.Free;
   end
   else
-    ShowMessage('This does not appear to be valid FHIR content');
+    ShowMessage(parseError);
 end;
 
 procedure TFHIRPlugin.newResource(r: TFHIRResourceV; version: TFHIRVersion; fmt: TFHIRFormat; url: String);
@@ -828,7 +837,7 @@ begin
     res.Free;
   end
   else
-    ShowMessage('This does not appear to be valid FHIR content');
+    ShowMessage(parseError);
 end;
 
 procedure TFHIRPlugin.FuncSettings(servers : boolean);
@@ -999,7 +1008,7 @@ begin
     res.Free;
   end
   else
-    ShowMessage('This does not appear to be valid FHIR content');
+    ShowMessage(parseError);
 end;
 
 procedure TFHIRPlugin.FuncJumpToPath;
@@ -1085,7 +1094,7 @@ begin
     res.Free;
   end
   else
-    ShowMessage('This does not appear to be valid FHIR content');
+    ShowMessage(parseError);
 end;
 
 procedure TFHIRPlugin.FuncNewResource;
@@ -1159,7 +1168,7 @@ begin
     res.Free;
   end
   else
-    ShowMessage('This does not appear to be valid FHIR content');
+    ShowMessage(parseError);
 end;
 
 procedure TFHIRPlugin.funcDifference;
@@ -1351,7 +1360,7 @@ begin
     r.Free;
   end
   else
-    ShowMessage('This does not appear to be valid FHIR content');
+    ShowMessage(parseError);
     *)
 end;
 
@@ -1370,6 +1379,7 @@ begin
   if (length(src) = 0) then
     exit(false);
 
+  FLastParseError := '';
   prsr := FContext.Version[FCurrentFileInfo.workingVersion].makeParser(fmt);
   try
     prsr.timeLimit := timeLimit;
@@ -1380,6 +1390,7 @@ begin
       // actually, we don't care why this excepted.
       on e : Exception do
       begin
+        FLastParseError := e.message;
         exit(false);
       end;
     end;
@@ -1536,6 +1547,7 @@ begin
   if FContext.VersionLoading[v] <> vlsLoaded then
     exit(vsInvalid);
 
+  FLastParseError := '';
   try
     p := FContext.Version[v].makeParser(fmt);
     try
@@ -1552,7 +1564,11 @@ begin
       p.Free;
     end;
   except
-    result := vsInvalid;
+    on e : Exception do
+    begin
+      result := vsInvalid;
+      FLastParseError := e.message;
+    end;
   end;
 end;
 
@@ -1972,8 +1988,8 @@ begin
       res.Free;
     end;
   except
-//      on e: exception do
-//        showmessage(e.message);
+      on e: exception do
+        FLastParseError := e.message;
   end;
 end;
 
@@ -2034,6 +2050,14 @@ begin
   finally
     prsr.Free;
   end;
+end;
+
+function TFHIRPlugin.parseError: String;
+begin
+  if FLastParseError <> '' then
+    result := 'This content does not appear to be valid FHIR content ('+FLastParseError+')'
+  else
+    result := 'This content does not appear to be valid FHIR content'
 end;
 
 { TUpgradeCheckEngine }

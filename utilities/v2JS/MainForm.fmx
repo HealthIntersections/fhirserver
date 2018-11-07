@@ -1,0 +1,95 @@
+object EditorForm: TEditorForm
+  Left = 0
+  Top = 0
+  Caption = 'V2 Javascript Editor'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 456.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 24.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+  end
+  object Panel2: TPanel
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Button1: TButton
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Generate'
+      OnClick = Button1Click
+    end
+  end
+  object editor: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    StyledSettings = [Size, Style, FontColor]
+    TextSettings.Font.Family = 'Courier New'
+    OnChange = editorChange
+    OnChangeTracking = editorChange
+    Align = Client
+    Size.Width = 640.000000000000000000
+    Size.Height = 279.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 275.000000000000000000
+  end
+  object MainMenu1: TMainMenu
+    Left = 24
+    Top = 56
+    object mnuFile: TMenuItem
+      Text = '&File'
+      object mnuNew: TMenuItem
+        Locked = True
+        Text = '&New'
+      end
+      object mnuOpen: TMenuItem
+        Locked = True
+        Text = '&Open'
+      end
+      object mnuSave: TMenuItem
+        Locked = True
+        Text = '&Save'
+      end
+      object mnuExit: TMenuItem
+        Locked = True
+        Text = '&Exit'
+      end
+    end
+  end
+  object log: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Align = Bottom
+    Position.Y = 328.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 128.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 124.000000000000000000
+  end
+  object Splitter1: TSplitter
+    Align = Bottom
+    Cursor = crVSplit
+    MinSize = 20.000000000000000000
+    Position.Y = 320.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 8.000000000000000000
+    Size.PlatformDefault = False
+  end
+end

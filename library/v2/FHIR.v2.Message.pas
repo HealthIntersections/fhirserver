@@ -78,8 +78,12 @@ type
 
   TV2Cell = class (TV2Object)
   private
-    FContents: TFSLList<TV2Content>;
-    FComponents: TFSLList<TV2Cell>;
+    FContentList: TFSLList<TV2Content>;
+    FComponentList: TFSLList<TV2Cell>;
+    function GetText: String;
+    procedure SetText(const Value: String);
+    function GetComponent(index: integer): TV2Cell;
+    function GetContent(index: integer): TV2Content;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
   public
@@ -87,17 +91,20 @@ type
     destructor Destroy; override;
     function link : TV2Cell; overload;
 
-    property contents : TFSLList<TV2Content> read FContents;
-    property components : TFSLList<TV2Cell> read FComponents;
+    property contentList : TFSLList<TV2Content> read FContentList;
+    property content[index : integer] : TV2Content read GetContent; // 1 based
+    property componentList : TFSLList<TV2Cell> read FComponentList;
+    property component[index : integer] : TV2Cell read GetComponent; // 1 based
 
     function isEmpty : boolean; override;
-    function text : String;
+    property text : String read GetText write SetText;
     function fhirType : String; override;
   end;
 
   TV2Field = class (TV2Object)
   private
-    FElements: TFSLList<TV2Cell>;
+    FElementList: TFSLList<TV2Cell>;
+    function GetElement(index: integer): TV2Cell;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
   public
@@ -107,23 +114,27 @@ type
 
     function isEmpty : boolean; override;
 
-    property elements : TFSLList<TV2Cell> read FElements;
+    property elementList : TFSLList<TV2Cell> read FElementList;
+    property element[index : integer] : TV2Cell read GetElement; // 1 based
     function fhirType : String; override;
   end;
 
   TV2Segment = class (TV2Object)
   private
-    FFields: TFSLList<TV2Field>;
+    FFieldList: TFSLList<TV2Field>;
     FCode: String;
+    function GetField(index: integer): TV2Field;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
   public
-    constructor Create; override;
+    constructor Create; overload; override;
+    constructor Create(code : String); overload;
     destructor Destroy; override;
     function link : TV2Segment; overload;
 
     property code : String read FCode write FCode;
-    property fields : TFSLList<TV2Field> read FFields;
+    property fieldList : TFSLList<TV2Field> read FFieldList;
+    property field[index : integer] : TV2Field read GetField; // 1 based
     function element(index : integer) : TV2Cell;
     function isEmpty : boolean; override;
     function fhirType : String; override;
@@ -131,7 +142,8 @@ type
 
   TV2Message = class (TV2Object)
   private
-    FSegments: TFSLList<TV2Segment>;
+    FSegmentList: TFSLList<TV2Segment>;
+    function GetSegment(index: integer): TV2Segment;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
   public
@@ -139,7 +151,8 @@ type
     destructor Destroy; override;
     function link : TV2Message; overload;
 
-    property segments : TFSLList<TV2Segment> read FSegments;
+    property segmentList : TFSLList<TV2Segment> read FSegmentList;
+    property segment[index : integer] : TV2Segment read GetSegment; // 1 based
     function isEmpty : boolean; override;
     function fhirType : String; override;
   end;
@@ -216,6 +229,7 @@ type
     function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; override;
     function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNode>; engine : TFHIRPathEngine): TFHIRSelectionList; override;
   end;
+
 const
   CODES_TV2ContentKind : Array [TV2ContentKind] of String = ('string', 'null', 'binary', 'escape');
 
@@ -314,14 +328,14 @@ end;
 constructor TV2Cell.Create;
 begin
   inherited;
-  FContents := TFSLList<TV2Content>.create;
-  FComponents := TFSLList<TV2Cell>.create;
+  FContentList := TFSLList<TV2Content>.create;
+  FComponentList := TFSLList<TV2Cell>.create;
 end;
 
 destructor TV2Cell.Destroy;
 begin
-  FComponents.Free;
-  FContents.free;
+  FComponentList.Free;
+  FContentList.free;
   inherited;
 end;
 
@@ -337,11 +351,41 @@ var
 begin
   inherited;
   if (name = 'content') Then
-    for cnt in contents do
+  begin
+    list.OneBased :=  true;
+    for cnt in contentList do
        list.add(cnt.link);
+  end;
   if (name = 'component') Then
-    for cmp in components do
+  begin
+    list.OneBased :=  true;
+    for cmp in componentList do
       list.add(cmp.link);
+  end;
+end;
+
+function TV2Cell.GetComponent(index: integer): TV2Cell;
+begin
+  result := FComponentList[index-1];
+end;
+
+function TV2Cell.GetContent(index: integer): TV2Content;
+begin
+  result := FContentList[index-1];
+end;
+
+function TV2Cell.GetText: String;
+var
+  cnt : TV2Content;
+begin
+  if componentList.Count > 0 then
+    result := componentList[0].text
+  else
+  begin
+    result := '';
+    for cnt in contentList do
+      result := result + cnt.value;
+  end;
 end;
 
 function TV2Cell.isEmpty: boolean;
@@ -349,10 +393,10 @@ var
   comp : TV2Cell;
 begin
   result := true;
-  if components.Count = 0 then
-    result := contents.Empty
+  if componentList.Count = 0 then
+    result := contentList.Empty
   else
-    for comp in components do
+    for comp in componentList do
       if not comp.isEmpty then
         exit(false);
 end;
@@ -362,31 +406,29 @@ begin
   result := TV2Cell(inherited Link);
 end;
 
-function TV2Cell.text: String;
-var
-  cnt : TV2Content;
+procedure TV2Cell.SetText(const Value: String);
 begin
-  if components.Count > 0 then
-    result := components[0].text
+  if componentList.Count > 0 then
+    componentList[0].text := value
   else
   begin
-    result := '';
-    for cnt in contents do
-      result := result + cnt.value;
+    contentList.Clear;
+    contentList.Add(TV2Content.Create(ckString, value));
   end;
 end;
+
 
 { TV2Field }
 
 constructor TV2Field.Create;
 begin
   inherited;
-  FElements := TFSLList<TV2Cell>.create;
+  FElementList := TFSLList<TV2Cell>.create;
 end;
 
 destructor TV2Field.Destroy;
 begin
-  FElements.Free;
+  FElementList.Free;
   inherited;
 end;
 
@@ -401,8 +443,16 @@ var
 begin
   inherited;
   if (name = 'element') Then
-    for elem in elements do
+  begin
+    list.OneBased :=  true;
+    for elem in elementList do
       list.add(elem.link);
+  end;
+end;
+
+function TV2Field.GetElement(index: integer): TV2Cell;
+begin
+  result := FElementList[index-1];
 end;
 
 function TV2Field.isEmpty: boolean;
@@ -410,7 +460,7 @@ var
   elem : TV2Cell;
 begin
   result := true;
-  for elem in elements do
+  for elem in elementList do
     if not elem.isEmpty then
       exit(false);
 end;
@@ -425,23 +475,30 @@ end;
 constructor TV2Segment.Create;
 begin
   inherited;
-  FFields := TFSLList<TV2Field>.create;
+  FFieldList := TFSLList<TV2Field>.create;
+end;
+
+constructor TV2Segment.Create(code: String);
+begin
+  Create;
+  FCode := code;
 end;
 
 destructor TV2Segment.Destroy;
 begin
-  FFields.Free;
+  FFieldList.Free;
   inherited;
 end;
 
 function TV2Segment.element(index: integer): TV2Cell;
 begin
-  if index >= FFields.Count then
-    result := nil
-  else if FFields[index].elements.Count > 0 then
+  while FFieldList.Count < index do
+    FFieldList.Add(TV2Field.Create);
+
+  if FFieldList[index-1].elementList.Count > 1 then
     raise EFslException.Create('Repeats encountered at '+inttostr(index))
   else
-    result := FFields[index].elements[0];
+    result := FFieldList[index-1].elementList[0];
 end;
 
 function TV2Segment.fhirType: String;
@@ -457,13 +514,21 @@ begin
   if (name = 'code') Then
     list.add(self.link, 'code', TFhirCode.create(code));
   if (name = 'field') Then
-    for fld in fields do
+  begin
+    list.OneBased :=  true;
+    for fld in fieldList do
       list.add(fld.link);
+  end;
+end;
+
+function TV2Segment.GetField(index: integer): TV2Field;
+begin
+  result := FFieldList[index - 1];
 end;
 
 function TV2Segment.isEmpty: boolean;
 begin
-  result := FFields.Empty;
+  result := FFieldList.Empty;
 end;
 
 function TV2Segment.link: TV2Segment;
@@ -476,12 +541,12 @@ end;
 constructor TV2Message.Create;
 begin
   inherited;
-  FSegments := TFSLList<TV2Segment>.create;
+  FSegmentList := TFSLList<TV2Segment>.create;
 end;
 
 destructor TV2Message.Destroy;
 begin
-  FSegments.Free;
+  FSegmentList.Free;
   inherited;
 end;
 
@@ -496,13 +561,21 @@ var
 begin
   inherited;
   if (name = 'segment') Then
-    for seg in segments do
+  begin
+    list.OneBased := true;
+    for seg in segmentList do
       list.add(seg.link);
+  end;
+end;
+
+function TV2Message.GetSegment(index: integer): TV2Segment;
+begin
+  result := FSegmentList[index-1];
 end;
 
 function TV2Message.isEmpty: boolean;
 begin
-  result := segments.Empty;
+  result := segmentList.Empty;
 end;
 
 function TV2Message.link: TV2Message;
@@ -648,7 +721,7 @@ begin
   iCursor := 0;
   ParseSegment(msg, iCursor);
 
-  // 4. decode remaining segments
+  // 4. decode remaining segmentList
   while (iCursor < length(FSource)) do
     ParseSegment(msg, iCursor);
 
@@ -682,7 +755,7 @@ begin
   oSegment := TV2Segment.Create;
   try
     oSegment.Code := sSegCode;
-    oMessage.Segments.Add(oSegment.Link); // do this to provide a model before setting the code
+    oMessage.SegmentList.Add(oSegment.Link); // do this to provide a model before setting the code
     parseSegmentInner(oSegment, iCursor);
   finally
     oSegment.Free;
@@ -697,7 +770,7 @@ begin
   begin
     oField := TV2Field.create;
     try
-      oSegment.Fields.Add(oField.Link);
+      oSegment.FieldList.Add(oField.Link);
       ParseField(oField, iCursor);
     finally
       oField.Free;
@@ -793,7 +866,7 @@ begin
     cell := TV2Cell.Create;
     try
       parseCell(cell, BytesAsString(BytesSlice(FSource, iStart, iCursor-1)), not bEscape, FComponentDelimiter, FSubComponentDelimiter);
-      ofield.elements.Add(cell.link);
+      ofield.elementList.Add(cell.link);
     finally
       cell.Free;
     end;
@@ -820,7 +893,7 @@ begin
       StringSplit(sRight, cBreak, sLeft, sRight);
       child := TV2Cell.Create;
       try
-        cell.components.Add(child.link);
+        cell.componentList.Add(child.link);
         parseCell(child, sLeft, bNoEscape, cSubBreak, #0);
       finally
         child.Free;
@@ -845,20 +918,20 @@ var
   Begin
     if buf.Length > 0 Then
       Begin
-      cell.Contents.Add(TV2Content.create(ckString, buf.ToString));
+      cell.ContentList.Add(TV2Content.create(ckString, buf.ToString));
       buf.Clear;
       End;
   End;
 Begin
-  cell.contents.Clear;
+  cell.contentList.Clear;
   if (cnt = FEscapeCharacter) Then
-    cell.Contents.Add(TV2Content.create(ckString, cnt))
+    cell.ContentList.Add(TV2Content.create(ckString, cnt))
   Else If (cnt = '""') then
-    cell.Contents.add(TV2Content.create(ckNull, '""'))
+    cell.ContentList.add(TV2Content.create(ckNull, '""'))
   Else If bNoEscape or (pos(FEscapeCharacter, cnt) = 0) Then
   Begin
     If cnt <> '' Then
-      cell.Contents.Add(TV2Content.create(ckString, cnt));
+      cell.ContentList.Add(TV2Content.create(ckString, cnt));
   End
   Else
   Begin
@@ -917,7 +990,7 @@ Begin
     Else
       raise EER7Exception.Create('Odd length of binary escape in "'+cnt+'"');
 
-  cell.Contents.add(TV2Content.create(ckBinary, HexDecode(sBuffer)));
+  cell.ContentList.add(TV2Content.create(ckBinary, HexDecode(sBuffer)));
 End;
 
 Procedure TV2Parser.ReadEscape(cell : TV2Cell; Const cnt : String; var iCursor : integer);
@@ -932,10 +1005,10 @@ Begin
     // very often turkeys sending us the escape character do not escape.
     // rather than raising the error, we are going to treat the escape as an escape
     iCursor := iStart - 1;
-    cell.Contents.add(TV2Content.create(ckString, FEscapeCharacter));
+    cell.ContentList.add(TV2Content.create(ckString, FEscapeCharacter));
   End
   Else
-    cell.Contents.add(TV2Content.create(ckEscape, copy(cnt, iStart, iCursor - iStart)));
+    cell.ContentList.add(TV2Content.create(ckEscape, copy(cnt, iStart, iCursor - iStart)));
 End;
 
 Function TV2Parser.isDelimiterEscape(ch : Char) : Boolean;
@@ -952,7 +1025,7 @@ begin
   st := TStringList.Create;
   try
     st.Sorted := true;
-    for seg in msg.segments do
+    for seg in msg.segmentList do
     begin
       if st.Find(seg.code, i) then
         st.Objects[i] := TObject(integer(st.Objects[i])+1)
@@ -974,10 +1047,10 @@ procedure TV2Parser.generateIds(seg: TV2Segment);
 var
   i : integer;
 begin
-  for i := 0 to seg.fields.Count - 1 do
+  for i := 0 to seg.fieldList.Count - 1 do
   begin
-    seg.fields[i].id := seg.id+'-'+inttostr(i+1);
-    generateIds(seg.fields[i]);
+    seg.fieldList[i].id := seg.id+'-'+inttostr(i+1);
+    generateIds(seg.fieldList[i]);
   end;
 end;
 
@@ -985,10 +1058,10 @@ procedure TV2Parser.generateIds(fld: TV2Field);
 var
   i : integer;
 begin
-  for i := 0 to fld.elements.Count - 1 do
+  for i := 0 to fld.elementList.Count - 1 do
   begin
-    fld.elements[i].id := fld.id+':'+inttostr(i);
-    generateIds(fld.elements[i]);
+    fld.elementList[i].id := fld.id+':'+inttostr(i);
+    generateIds(fld.elementList[i]);
   end;
 end;
 
@@ -996,13 +1069,13 @@ procedure TV2Parser.generateIds(cell: TV2Cell);
 var
   i : integer;
 begin
-  for i := 0 to cell.components.Count - 1 do
+  for i := 0 to cell.componentList.Count - 1 do
   begin
-    cell.components[i].id := cell.id+'-'+inttostr(i+1);
-    generateIds(cell.components[i]);
+    cell.componentList[i].id := cell.id+'-'+inttostr(i+1);
+    generateIds(cell.componentList[i]);
   end;
-  for i := 0 to cell.contents.Count - 1 do
-    cell.contents[i].id := cell.id+'['+inttostr(i)+']';
+  for i := 0 to cell.contentList.Count - 1 do
+    cell.contentList[i].id := cell.id+'['+inttostr(i)+']';
 end;
 
 Function TV2Parser.getDelimiterEscapeChar(ch : Char) : Char;
@@ -1056,9 +1129,9 @@ var
   cnt : TV2Content;
 begin
   first := true;
-  if not cell.components.Empty then
+  if not cell.componentList.Empty then
   begin
-    for comp in cell.components do
+    for comp in cell.componentList do
     begin
       if first then
         first := false
@@ -1069,7 +1142,7 @@ begin
   end
   else
   begin
-    for cnt in cell.contents do
+    for cnt in cell.contentList do
     begin
       case cnt.kind of
         ckString: escape(b, cnt.value);
@@ -1087,7 +1160,7 @@ var
   cell : TV2Cell;
 begin
   first := true;
-  for cell in fld.elements do
+  for cell in fld.elementList do
   begin
     if first then
       first := false
@@ -1101,7 +1174,7 @@ procedure TV2Composer.composeMessage(b: TStringBuilder; msg: TV2Message);
 var
   seg : TV2Segment;
 begin
-  for seg in msg.segments do
+  for seg in msg.segmentList do
     composeSegment(b, seg);
 end;
 
@@ -1122,13 +1195,13 @@ begin
     b.Append(FSubComponentDelimiter);
     iStart := 2;
   end;
-  iEnd := seg.fields.Count - 1;
-  While (iEnd > iStart) and seg.Fields[iEnd].isEmpty Do
+  iEnd := seg.fieldList.Count - 1;
+  While (iEnd > iStart) and seg.FieldList[iEnd].isEmpty Do
     dec(iEnd);
   for iLoop := iStart to iEnd do
   begin
     b.Append(FFieldDelimiter);
-    composeField(b, seg.fields[iloop]);
+    composeField(b, seg.fieldList[iloop]);
   end;
   if v2coExtraFieldDelimiter in FOptions then
     b.Append(FFieldDelimiter);
@@ -1219,7 +1292,7 @@ end;
 
 function TV2FHIRPathExtensions.isValidFunction(name: String): boolean;
 begin
-  result := name = 'text';
+  result := (name = 'text') or (name = 'element');
 end;
 
 function TV2FHIRPathExtensions.functionApplies(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; name: String): boolean;
@@ -1228,16 +1301,39 @@ var
 begin
   result := false;
   for item in focus do
+  begin
     if (item.value is TV2Cell) and (name = 'text') then
       exit(true);
+    if (item.value is TV2Segment) and (name = 'element') then
+      exit(true);
+  end;
 end;
 
 function TV2FHIRPathExtensions.execute(context: TFHIRPathExecutionContext; focus: TFHIRObject; name: String; params: TFslList<TFHIRPathExpressionNode>; engine: TFHIRPathEngine): TFHIRSelectionList;
+var
+  s : String;
+  i : integer;
+  sel : TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   try
     if (focus is TV2Cell) and (name = 'text') then
       result.add(TFHIRString.Create(TV2Cell(focus).text));
+    if (focus is TV2Segment) and (name = 'element') then
+    begin
+      sel := engine.evaluate(context.appInfo, context.resource, params[0]);
+      try
+        s := engine.convertToString(sel);
+        if StringIsInteger16(s) then
+        begin
+          i := StrToInt(s);
+          result.add(TV2Segment(focus).element(i).link);
+        end;
+      finally
+        sel.free;
+      end;
+    end;
+
     result.Link;
   finally
     result.Free;
