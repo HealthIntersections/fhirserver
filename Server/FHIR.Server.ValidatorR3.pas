@@ -283,7 +283,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, nil, false, true);
+        p := FTerminologyServer.validate(vsw, c, FProfile, false, true);
         try
           result.Message := p.str('message');
           if p.bool('result') then
