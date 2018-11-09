@@ -578,13 +578,13 @@ begin
     pfToBoolean: checkParamCount(lexer, location, exp, 0);
     pfToDateTime: checkParamCount(lexer, location, exp, 0);
     pfToTime: checkParamCount(lexer, location, exp, 0);
-    pfIsInteger: checkParamCount(lexer, location, exp, 0);
-    pfIsDecimal: checkParamCount(lexer, location, exp, 0);
-    pfIsString: checkParamCount(lexer, location, exp, 0);
-    pfIsQuantity: checkParamCount(lexer, location, exp, 0);
-    pfIsBoolean: checkParamCount(lexer, location, exp, 0);
-    pfIsDateTime: checkParamCount(lexer, location, exp, 0);
-    pfIsTime: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToInteger: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToDecimal: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToString: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToQuantity: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToBoolean: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToDateTime: checkParamCount(lexer, location, exp, 0);
+    pfConvertsToTime: checkParamCount(lexer, location, exp, 0);
     pfCustom: ; // nothing
   end;
 end;
@@ -4324,13 +4324,13 @@ begin
     pfToQuantity : result := funcToQuantity(context, focus, exp);
     pfToDateTime : result := funcToDateTime(context, focus, exp);
     pfToTime : result := funcToTime(context, focus, exp);
-    pfIsInteger : result := funcIsInteger(context, focus, exp);
-    pfIsDecimal : result := funcIsDecimal(context, focus, exp);
-    pfIsString : result := funcIsString(context, focus, exp);
-    pfIsBoolean : result := funcIsBoolean(context, focus, exp);
-    pfIsQuantity : result := funcIsQuantity(context, focus, exp);
-    pfIsDateTime : result := funcIsDateTime(context, focus, exp);
-    pfIsTime : result := funcIsTime(context, focus, exp);
+    pfConvertsToInteger : result := funcIsInteger(context, focus, exp);
+    pfConvertsToDecimal : result := funcIsDecimal(context, focus, exp);
+    pfConvertsToString : result := funcIsString(context, focus, exp);
+    pfConvertsToBoolean : result := funcIsBoolean(context, focus, exp);
+    pfConvertsToQuantity : result := funcIsQuantity(context, focus, exp);
+    pfConvertsToDateTime : result := funcIsDateTime(context, focus, exp);
+    pfConvertsToTime : result := funcIsTime(context, focus, exp);
     pfCustom : result := funcCustom(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
@@ -4753,13 +4753,13 @@ begin
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
         result := TFHIRTypeDetails.create(csSINGLETON, [FP_Time]);
         end;
-      pfIsString, pfIsQuantity :
+      pfConvertsToString, pfConvertsToQuantity :
         begin
         if (not focus.hasType(self.context, primitiveTypes) and not focus.hasType(self.context, 'Quantity')) then
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
         result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean]);
         end;
-      pfIsInteger, pfIsDecimal, pfIsDateTime, pfIsTime, pfIsBoolean :
+      pfConvertsToInteger, pfConvertsToDecimal, pfConvertsToDateTime, pfConvertsToTime, pfConvertsToBoolean :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
