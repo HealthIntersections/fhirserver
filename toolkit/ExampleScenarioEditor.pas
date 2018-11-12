@@ -432,7 +432,7 @@ begin
   if obj is tfhirexamplescenarioProcessStep then
   begin
     current_item := Item;
-    if tfhirexamplescenarioProcessStep(obj).processList.Count <> 0 then
+    if tfhirexamplescenarioProcessStep(obj).hasProcessList then
       for i := 0 to tfhirexamplescenarioProcessStep(obj).processList.Count - 1 do
       begin
         addTVItem(TreeView, current_item, 'process', tfhirexamplescenarioProcessStep(obj).processList[i].title, tfhirexamplescenarioProcessStep(obj).processList[i]);
@@ -447,18 +447,19 @@ begin
       addTVItem(TreeView, current_item, 'operation', tfhirexamplescenarioProcessStep(obj).operation.name, tfhirexamplescenarioProcessStep(obj).operation);
     end;
 
-    if tfhirexamplescenarioProcessStep(obj).alternative <> nil then
+    if tfhirexamplescenarioProcessStep(obj).hasAlternativeList then
+      for i := 0 to tfhirexamplescenarioProcessStep(obj).AlternativeList.Count - 1 do
     begin
-      addTVItem(TreeView, current_item, 'alternative', tfhirexamplescenarioProcessStep(obj).alternative.name, tfhirexamplescenarioProcessStep(obj).alternative);
+      addTVItem(TreeView, current_item, 'alternative', tfhirexamplescenarioProcessStep(obj).alternativeList[i].title, tfhirexamplescenarioProcessStep(obj).alternativeList[i]);
     end;
   end;
 
   if obj is tfhirexamplescenarioProcessStepAlternative then
   begin
     current_item := Item;
-    for i := 0 to tfhirexamplescenarioProcessStepAlternative(obj).optionList.Count - 1 do
+    for i := 0 to tfhirexamplescenarioProcessStepAlternative(obj).stepList.Count - 1 do
     begin
-      addTVItem(TreeView, current_item, 'option', 'Option', tfhirexamplescenarioProcessStepAlternative(obj).optionList[i]);
+      addTVItem(TreeView, current_item, 'option', 'Option', tfhirexamplescenarioProcessStepAlternative(obj).stepList[i]);
     end;
   end;
 
@@ -492,8 +493,8 @@ var
   alternative: tfhirexamplescenarioProcessStepAlternative;
 begin
   alternative := tfhirexamplescenarioProcessStepAlternative.Create;
-  alternative.name := 'Alternative';
-  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).alternative:= alternative;
+  alternative.title := 'Alternative';
+  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).alternativeList.AddItem(alternative);
   ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 end;
@@ -707,13 +708,13 @@ end;
 
 procedure TExampleScenarioEditorFrame.btnOptionClick(Sender: TObject);
 var
-  Option: tfhirexamplescenarioProcessStepAlternativeOption;
+  Option: tfhirexamplescenarioProcessStep;
 begin
-  Option := tfhirexamplescenarioProcessStepAlternativeOption.Create;
+  Option := tfhirexamplescenarioProcessStep.Create;
 //Set properties for object
-  Option.description := 'Option ' + inttostr(tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).optionList.Count + 1);
+//  Option.description := 'Option ' + inttostr(tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).optionList.Count + 1);
 
-  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).OptionList.AddItem(Option);
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).StepList.AddItem(Option);
   ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
@@ -723,9 +724,9 @@ procedure TExampleScenarioEditorFrame.btnOptionDownClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.IndexOf(tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject));
-  if idx < tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Count - 1 then begin
-  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Exchange(idx, idx + 1);
+  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).StepList.IndexOf(tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject));
+  if idx < tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.Count - 1 then begin
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.Exchange(idx, idx + 1);
   tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
   ResourceIsDirty := true;
   end;
@@ -740,9 +741,9 @@ begin
 {
   tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).alternative:= alternative;
 }
-  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.IndexOf(tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject));
+  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.IndexOf(tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject));
   if idx > 0 then begin
-  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Exchange(idx, idx - 1);
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.Exchange(idx, idx - 1);
   tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
   ResourceIsDirty := true;
   end;
@@ -1023,14 +1024,14 @@ begin
   begin
     TabControl2.tabindex := 6;
     UpdateAlternative.enabled := true;
-    Edit12.text := tfhirexamplescenarioProcessStepAlternative(obj).name;
+    Edit12.text := tfhirexamplescenarioProcessStepAlternative(obj).title;
   end;
-  if obj is tfhirexamplescenarioProcessStepAlternativeOption then
+  if obj is tfhirexamplescenarioProcessStep then
   begin
     TabControl2.tabindex := 7;
     UpdateOption.enabled := true;
 //    Edit13.text := tfhirexamplescenarioProcessStepAlternativeOption(obj).name;
-    Memo5.text := tfhirexamplescenarioProcessStepAlternativeOption(obj).description;
+ //   Memo5.text := tfhirexamplescenarioProcessStep(obj).title;
   end;
   if obj is tfhirexamplescenarioProcessStepOperation then
   begin
@@ -1135,8 +1136,8 @@ begin
     tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).dropEmpty;
     if tvStructure.Selected.ParentItem.TagObject is tfhirexamplescenarioProcess then
       tfhirexamplescenarioProcess(tvStructure.Selected.ParentItem.TagObject).stepList.DeleteByReference(TFSLObject(TVStructure.Selected.TagObject));
-    if tvStructure.Selected.ParentItem.TagObject is tfhirexamplescenarioProcessStepAlternativeOption then
-      tfhirexamplescenarioProcessStepAlternativeOption(tvStructure.Selected.ParentItem.TagObject).stepList.DeleteByReference(TFSLObject(TVStructure.Selected.TagObject));
+    if tvStructure.Selected.ParentItem.TagObject is tfhirexamplescenarioProcessStepAlternative then
+      tfhirexamplescenarioProcessStepAlternative(tvStructure.Selected.ParentItem.TagObject).stepList.DeleteByReference(TFSLObject(TVStructure.Selected.TagObject));
   end;
 
 
@@ -1146,9 +1147,9 @@ begin
     TFHIRExampleScenarioProcessStep(tvStructure.Selected.ParentItem.TagObject).deleteProperty('alternative', nil);
   end;
 
-  if obj is tfhirexamplescenarioProcessStepAlternativeOption then
+  if obj is tfhirexamplescenarioProcessStep then
   begin
-    tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject).dropEmpty;
+    tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).dropEmpty;
 
   end;
 
@@ -1271,19 +1272,19 @@ begin
   obj := tfhirexamplescenarioProcessStepAlternative(TTreeViewItem(tvStructure.Selected).TagObject);
   if obj = nil then
     exit;
-  obj.name := Edit12.text;
+  obj.title := Edit12.text;
 end;
 
 //6.6
 procedure TExampleScenarioEditorFrame.UpdateOptionClick(Sender: TObject);
 var
-  obj: tfhirexamplescenarioProcessStepAlternativeOption;
+  obj: tfhirexamplescenarioProcessStep;
 
 begin
-  obj := tfhirexamplescenarioProcessStepAlternativeOption(TTreeViewItem(tvStructure.Selected).TagObject);
+  obj := tfhirexamplescenarioProcessStep(TTreeViewItem(tvStructure.Selected).TagObject);
   if obj = nil then
     exit;
-  (obj).description := Memo5.text;
+ // (obj).description := Memo5.text;
 //  (obj).name := edit13.text;
 
 end;

@@ -354,8 +354,8 @@ begin
   begin
     current_item := Item;
 
-    for i := 0 to tfhirImplementationGuideDefinition(obj).packageList.Count - 1 do
-      addTVItem(TreeView, current_item, 'package', tfhirImplementationGuideDefinition(obj).packageList[i].Name, tfhirImplementationGuideDefinition(obj).packageList[i]);
+    for i := 0 to tfhirImplementationGuideDefinition(obj).groupingList.Count - 1 do
+      addTVItem(TreeView, current_item, 'package', tfhirImplementationGuideDefinition(obj).groupingList[i].Name, tfhirImplementationGuideDefinition(obj).groupingList[i]);
 
     for i := 0 to tfhirImplementationGuideDefinition(obj).resourceList.Count - 1 do
       addTVItem(TreeView, current_item, 'resource', tfhirImplementationGuideDefinition(obj).resourceList[i].Name, tfhirImplementationGuideDefinition(obj).resourceList[i]);
@@ -417,11 +417,11 @@ var
   idx: integer;
 begin
 
-  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.IndexOf(tfhirImplementationGuideDefinitionPackage(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.IndexOf(tfhirImplementationGuideDefinitiongrouping(tvStructure.Selected.tagObject));
 
-  if idx < tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.Count - 1 then
+  if idx < tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.Count - 1 then
   begin
-    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.Exchange(idx, idx + 1);
+    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.Exchange(idx, idx + 1);
     tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
     resourceIsDirty := true;
   end;
@@ -433,10 +433,10 @@ procedure TImplementationGuideEditorFrame.packageUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.IndexOf(tfhirImplementationGuideDefinitionPackage(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.IndexOf(tfhirImplementationGuideDefinitiongrouping(tvStructure.Selected.tagObject));
   if idx > 0 then
   begin
-    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.Exchange(idx, idx - 1);
+    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.Exchange(idx, idx - 1);
     tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
     resourceIsDirty := true;
   end;
@@ -613,13 +613,13 @@ end;
 
 procedure TImplementationGuideEditorFrame.CornerButton4Click(Sender: TObject);
 var
-  package: tfhirImplementationGuideDefinitionPackage;
+  package: tfhirImplementationGuideDefinitiongrouping;
 begin
-  package := tfhirImplementationGuideDefinitionPackage.Create;
+  package := tfhirImplementationGuideDefinitiongrouping.Create;
   Package.Name := 'Package';
 
   if tvStructure.Selected.tagObject is tfhirImplementationGuideDefinition then
-    tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).packageList.Add(Package);
+    tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).groupingList.Add(Package);
 
   resourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
@@ -1052,12 +1052,12 @@ begin
 
   end;
 
-  if obj is tfhirImplementationGuideDefinitionPackage then
+  if obj is tfhirImplementationGuideDefinitiongrouping then
   begin
     selIndex := 3;
     UpdatePage.enabled := true;
-    Edit12.text := tfhirImplementationGuideDefinitionPackage(obj).Name;
-    Memo2.text := tfhirImplementationGuideDefinitionPackage(obj).Description;
+    Edit12.text := tfhirImplementationGuideDefinitiongrouping(obj).Name;
+    Memo2.text := tfhirImplementationGuideDefinitiongrouping(obj).Description;
 
   end;
 
@@ -1068,10 +1068,10 @@ begin
     // Edit1.text := TFHIRImplementationGuideDefinitionPage(obj).name ;
 
     ComboBox1.Items.Clear;
-    for i := 0 to tfhirImplementationGuide(resource).definition.packageList.Count - 1 do
-      ComboBox1.Items.Add(tfhirImplementationGuide(resource).definition.packageList[i].Name);
+    for i := 0 to tfhirImplementationGuide(resource).definition.groupingList.Count - 1 do
+      ComboBox1.Items.Add(tfhirImplementationGuide(resource).definition.groupingList[i].Name);
 
-    ComboBox1.ItemIndex := ComboBox1.Items.IndexOf(tfhirImplementationGuideDefinitionResource(obj).package);
+    ComboBox1.ItemIndex := ComboBox1.Items.IndexOf(tfhirImplementationGuideDefinitionResource(obj).groupingId);
 
     Edit6.text := tfhirImplementationGuideDefinitionResource(obj).reference.reference;
     Edit9.text := tfhirImplementationGuideDefinitionResource(obj).Name;
@@ -1217,9 +1217,9 @@ end;
 // 6.2
 procedure TImplementationGuideEditorFrame.UpdatePackageClick(Sender: TObject);
 var
-  obj: tfhirImplementationGuideDefinitionPackage;
+  obj: tfhirImplementationGuideDefinitionGrouping;
 begin
-  obj := tfhirImplementationGuideDefinitionPackage(tvStructure.Selected.tagObject);
+  obj := tfhirImplementationGuideDefinitionGrouping(tvStructure.Selected.tagObject);
   if obj = nil then
     exit;
   obj.Name := Edit12.text;
@@ -1257,7 +1257,7 @@ begin
   obj.Name := Edit9.text;
   obj.Description := Memo4.text;
   if ComboBox1.ItemIndex <> -1 then
-    obj.package := ComboBox1.Items[ComboBox1.ItemIndex];
+    obj.Groupingid := ComboBox1.Items[ComboBox1.ItemIndex];
   tvStructure.Selected.text := obj.Name;
 
 end;
