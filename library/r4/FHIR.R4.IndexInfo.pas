@@ -504,11 +504,11 @@ begin
   indexes.add('Account', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Account', 'identifier', 'Account number', sptTOKEN, [], 'Account.identifier', sxpNormal);
   indexes.add('Account', 'name', 'Human-readable label', sptSTRING, [], 'Account.name', sxpNormal);
-  indexes.add('Account', 'owner', 'Who is responsible?', sptREFERENCE, ['Organization'], 'Account.owner.where(resolve() is Organization)', sxpNormal);
-  indexes.add('Account', 'patient', 'What is account tied to?', sptREFERENCE, ['Patient'], 'Account.subject.where(resolve() is Patient)', sxpNormal);
+  indexes.add('Account', 'owner', 'Entity managing the Account', sptREFERENCE, ['Organization'], 'Account.owner.where(resolve() is Organization)', sxpNormal);
+  indexes.add('Account', 'patient', 'The entity that caused the expenses', sptREFERENCE, ['Patient'], 'Account.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('Account', 'period', 'Transaction window', sptDATE, [], 'Account.servicePeriod', sxpNormal);
   indexes.add('Account', 'status', 'active | inactive | entered-in-error | on-hold | unknown', sptTOKEN, [], 'Account.status', sxpNormal);
-  indexes.add('Account', 'subject', 'What is account tied to?', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'HealthcareService', 'Location'], 'Account.subject', sxpNormal);
+  indexes.add('Account', 'subject', 'The entity that caused the expenses', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'HealthcareService', 'Location'], 'Account.subject', sxpNormal);
   indexes.add('Account', 'type', 'E.g. patient, expense, depreciation', sptTOKEN, [], 'Account.type', sxpNormal);
   compartments.register('Device', 'Account', ['subject']);
   compartments.register('Patient', 'Account', ['subject']);
@@ -2220,7 +2220,7 @@ begin
   indexes.add('Group', 'managing-entity', 'Entity that is the custodian of the Group''s definition', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole', 'RelatedPerson'], 'Group.managingEntity', sxpNormal);
   indexes.add('Group', 'member', 'Reference to the group member', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Medication', 'Patient', 'Substance', 'PractitionerRole'], 'Group.member.entity', sxpNormal);
   indexes.add('Group', 'type', 'The type of resources the group contains', sptTOKEN, [], 'Group.type', sxpNormal);
-  indexes.add('Group', 'value', 'Value held by characteristic', sptTOKEN, [], 'Group.characteristic.value', sxpNormal);
+  indexes.add('Group', 'value', 'Value held by characteristic', sptTOKEN, [], 'Group.characteristic.value as CodeableConcept | Group.characteristic.value as boolean', sxpNormal);
   compartments.register('Device', 'Group', ['member']);
   compartments.register('Patient', 'Group', ['member']);
   compartments.register('Practitioner', 'Group', ['member']);
@@ -2241,7 +2241,7 @@ begin
   indexes.add('GuidanceResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('GuidanceResponse', 'identifier', 'The identifier of the guidance response', sptTOKEN, [], 'GuidanceResponse.identifier', sxpNormal);
   indexes.add('GuidanceResponse', 'patient', 'The identity of a patient to search for guidance response results', sptREFERENCE, ['Patient'], 'GuidanceResponse.subject.where(resolve() is Patient)', sxpNormal);
-  indexes.add('GuidanceResponse', 'request', 'The identifier of the request associated with the response', sptTOKEN, [], '', sxpNormal);
+  indexes.add('GuidanceResponse', 'request', 'The identifier of the request associated with the response', sptTOKEN, [], 'GuidanceResponse.requestIdentifier', sxpNormal);
   indexes.add('GuidanceResponse', 'subject', 'The subject that the guidance response is about', sptREFERENCE, ['Group', 'Patient'], 'GuidanceResponse.subject', sxpNormal);
 end;
 {$ENDIF}
@@ -2910,7 +2910,7 @@ begin
   indexes.add('MedicinalProduct', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MedicinalProduct', 'identifier', 'Business identifier for this product. Could be an MPID', sptTOKEN, [], 'MedicinalProduct.identifier', sxpNormal);
   indexes.add('MedicinalProduct', 'name', 'The full product name', sptSTRING, [], 'MedicinalProduct.name.productName', sxpNormal);
-  indexes.add('MedicinalProduct', 'name-language', 'Language code for this name', sptSTRING, [], 'MedicinalProduct.name.countryLanguage.language', sxpNormal);
+  indexes.add('MedicinalProduct', 'name-language', 'Language code for this name', sptTOKEN, [], 'MedicinalProduct.name.countryLanguage.language', sxpNormal);
 end;
 {$ENDIF}
 

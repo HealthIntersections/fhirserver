@@ -1967,7 +1967,7 @@ begin
   try
     for item in focus do
     begin
-      s := convertToString(item.value);
+      s := '';
       if (item.value.fhirType = 'Reference') then
       begin
         p := item.value.getPropertyValue('reference');
@@ -1977,33 +1977,38 @@ begin
         finally
           p.free;
         end;
-      end;
-      res := nil;
-      if (s.startsWith('#')) then
-      begin
-        id := s.substring(1);
-        p := context.resource.getPropertyValue('contained');
-        try
-          for c in p.Values do
-          begin
-            if (id = c.getId) then
-            begin
-              res := c;
-              break;
-            end;
-          end
-        finally
-          p.Free;
-        end;
       end
       else
-begin
-        if not assigned(FOnResolveReference) then
-          raise EFHIRPath.create('resolve() - resolution services are '+exp.name+' not implemented yet');
-        res := FOnResolveReference(self, context.appInfo, s);
+        s := convertToString(item.value);
+      res := nil;
+      if (s <> '') then
+      begin
+        if (s.startsWith('#') and (context.resource <> nil)) then
+        begin
+          id := s.substring(1);
+          p := context.resource.getPropertyValue('contained');
+          try
+            for c in p.Values do
+            begin
+              if (id = c.getId) then
+              begin
+                res := c;
+                break;
+              end;
+            end
+          finally
+            p.Free;
+          end;
+        end
+        else
+        begin
+          if not assigned(FOnResolveReference) then
+            raise EFHIRPath.create('resolve() - resolution services for '+exp.name+' not implemented yet');
+          res := FOnResolveReference(self, context.appInfo, s);
+        end;
+        if (res <> nil) then
+          result.add(res);
       end;
-      if (res <> nil) then
-        result.add(res);
     end;
     result.Link;
   finally

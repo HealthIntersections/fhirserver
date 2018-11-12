@@ -306,6 +306,7 @@ Type
     FGraphQL: TGraphQLPackage;
     FElements: TStringList;
     FVersion: TFHIRVersion;
+    FTransactionResource: TFhirResourceV;
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -321,6 +322,8 @@ Type
     procedure SetPatchXml(const Value: TMXmlElement);
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     function GetHasCompartments: boolean;
+
+    procedure SetTransactionResource(const Value: TFhirResourceV);
   Public
     constructor Create(worker: TFHIRWorkerContextWithFactory; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     destructor Destroy; Override;
@@ -422,6 +425,7 @@ Type
       part of the FHIR specification
     }
     Property Resource : TFhirResourceV read FResource write SetResource;
+    Property transactionResource : TFhirResourceV read FTransactionResource write SetTransactionResource;
 
     Property patchJson : TJsonArray read FPatchJson write SetPatchJson;
     Property patchXml : TMXmlElement read FPatchXml write SetPatchXml;
@@ -1075,6 +1079,7 @@ begin
 //  FSession.Free;  //possibly pass it to the end?
   FSource.Free;
   FResource.Free;
+  FTransactionResource.Free;
   FProvenance.Free;
   FForm.Free;
   FParams.Free;
@@ -1281,6 +1286,12 @@ procedure TFHIRRequest.SetSource(const Value: TFslBuffer);
 begin
   FSource.Free;
   FSource := Value;
+end;
+
+procedure TFHIRRequest.SetTransactionResource(const Value: TFhirResourceV);
+begin
+  FTransactionResource.Free;
+  FTransactionResource := Value;
 end;
 
 function TFHIRRequest.XMLSummary: String;

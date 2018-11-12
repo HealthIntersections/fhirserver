@@ -122,7 +122,7 @@ Type
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
     function Link : TFhirIndexManager3; overload;
-    function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>; override;
+    function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>; override;
   end;
 
 implementation
@@ -471,7 +471,7 @@ begin
   end;
 end;
 
-function TFhirIndexManager3.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>;
+function TFhirIndexManager3.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>;
 var
   i : integer;
   entry : TFhirIndexEntry;

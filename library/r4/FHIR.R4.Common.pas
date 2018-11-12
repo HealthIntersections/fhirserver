@@ -3698,7 +3698,7 @@ begin
   if comp.dataAbsentReason = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.Create(comp.dataAbsentReason);
+    result := TFhirCodeableConcept4.Create(comp.dataAbsentReason.link);
 end;
 
 function TFhirObservationComponent4.GetValue: TFHIRObject;
@@ -3793,7 +3793,7 @@ begin
   if obs.dataAbsentReason = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.Create(obs.dataAbsentReason);
+    result := TFhirCodeableConcept4.Create(obs.dataAbsentReason.link);
 end;
 
 procedure TFhirObservation4.getDates(var dt, dtMin, dtMax: TDateTime);

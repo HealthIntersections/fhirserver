@@ -162,6 +162,8 @@ type
     property Compartments : TFHIRCompartmentList read FCompartments;
   end;
 
+  TFhirIndexManager = class;
+  TFHIRResolveReferenceVEvent = function(indexer : TFhirIndexManager; appInfo : TFslObject; sUrl : String) : TFHIRResourceV of Object;
   TFhirIndexManager = class (TFslObject)
   private
     procedure SetConnection(const Value: TKDBConnection);
@@ -182,6 +184,7 @@ type
     FInfo : TFHIRIndexInformation;
     FEntries : TFhirIndexEntryList;
     FUcum : TUcumServices;
+    FOnResolveReference: TFHIRResolveReferenceVEvent;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
   public
     constructor Create; override;
@@ -197,7 +200,8 @@ type
     property ResConfig : TFslMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
     property Ucum : TUcumServices read FUcum write SetUcum;
 
-    function execute(key : integer; id: String; resource : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>; virtual; abstract;
+    function execute(key : integer; id: String; resource : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>; virtual; abstract;
+    property OnResolveReference : TFHIRResolveReferenceVEvent read FOnResolveReference write FOnResolveReference;
   end;
 
 function findPrefix(var value : String; subst : String) : boolean;
