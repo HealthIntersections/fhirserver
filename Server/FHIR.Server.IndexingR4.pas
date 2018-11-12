@@ -61,6 +61,7 @@ Type
     FforTesting : boolean;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
+    function doResolve(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
     procedure recordSpace(space : string; key : integer);
@@ -110,8 +111,8 @@ Type
     procedure index(aType : String; key, parent : integer; value : TFhirHumanName; name, phoneticName : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirAddress; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirContactPoint; name : String); overload;
-    procedure index(context : TFhirResource; aType : String; key, parent : integer; value : TFhirReference; name : String; specificType : String = ''); overload;
-    procedure index(context : TFhirResource; aType : String; key, parent : integer; value : TFhirReferenceList; name : String; specificType : String = ''); overload;
+    procedure index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value : TFhirReference; name : String; specificType : String = ''); overload;
+    procedure index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value : TFhirReferenceList; name : String; specificType : String = ''); overload;
 
     // structure holder
     function index(aType : String; key, parent : integer; name : String) : Integer; overload;
@@ -120,11 +121,11 @@ Type
     procedure processUnCompartmentTags(key : integer; id: String; tags : TFHIRTagList);
 
     procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
-    procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
+    procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource; appInfo : TFslObject);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
     function Link : TFhirIndexManager4; overload;
-    function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>; override;
+    function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>; override;
   end;
 
 implementation
@@ -138,6 +139,14 @@ begin
 end;
 
 { TFhirIndexManager4 }
+
+function TFhirIndexManager4.doResolve(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
+begin
+  // ok, we'll ask the host engine...
+  if not assigned(FOnResolveReference) then
+    raise Exception.Create('No resolve reference service provided');
+  result := FOnResolveReference(self, appInfo, url);
+end;
 
 function TFhirIndexManager4.EncodeXhtml(r: TFhirDomainResource): TBytes;
 var
@@ -329,7 +338,7 @@ begin
       result := t.name;
 end;
 
-procedure TFhirIndexManager4.evaluateByFHIRPath(key : integer; context, resource: TFhirResource);
+procedure TFhirIndexManager4.evaluateByFHIRPath(key : integer; context, resource: TFhirResource; appInfo : TFslObject);
 var
   path : TFHIRPathEngine;
   i : integer;
@@ -343,13 +352,14 @@ var
 begin
   path := TFHIRPathEngine.Create((FContext as TFHIRWorkerContext).link, TUcumServiceImplementation.Create(FUcum.link));
   try
+    path.OnResolveReference := doResolve;
     for i := 0 to FInfo.Indexes.Count - 1 do
     begin
       ndx := FInfo.Indexes[i];
 
       if (ndx.Path <> '') and (ndx.ResourceType = resource.fhirType) then
       begin
-        matches := path.evaluate(nil, resource, ndx.Path);
+        matches := path.evaluate(appInfo, resource, ndx.Path);
         try
           for match in matches do
           begin
@@ -408,7 +418,7 @@ begin
                   else if work is TFhirContactPoint  then
                     index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
                   else if work is TFhirReference then
-                    index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
+                    index(appInfo, context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                   else if work is TFhirMoney then
                     index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
                   else if work is TFhirStructureDefinitionContext then
@@ -477,7 +487,7 @@ begin
   end;
 end;
 
-function TFhirIndexManager4.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>;
+function TFhirIndexManager4.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>;
 var
   i : integer;
   entry : TFhirIndexEntry;
@@ -513,7 +523,7 @@ begin
   FCompartments.Clear;
 
   processCompartmentTags(key, id, tags);
-  evaluateByFHIRPath(key, resource, resource);
+  evaluateByFHIRPath(key, resource, resource, appInfo);
   processUnCompartmentTags(key, id, tags);
 
   if resource is TFhirDomainResource then
@@ -1028,7 +1038,7 @@ begin
   delete(result, 1, 1);
 end;
 
-procedure TFhirIndexManager4.index(context : TFhirResource; aType : String; key, parent : integer; value: TFhirReference; name: String; specificType : String = '');
+procedure TFhirIndexManager4.index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value: TFhirReference; name: String; specificType : String = '');
 var
   ndx : TFhirIndex;
   ref, i : integer;
@@ -1096,7 +1106,7 @@ begin
       FConnection.BindIntegerFromBoolean('ft', FforTesting);
       FConnection.Execute;
       FConnection.Terminate;
-      evaluateByFHIRPath(target, context, contained);
+      evaluateByFHIRPath(target, context, contained, appInfo);
       ok := true;
     end;
   end
@@ -1313,13 +1323,13 @@ begin
   FEntries.add(key, parent, ndx, 0, v1, v2, 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManager4.index(context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');
+procedure TFhirIndexManager4.index(appInfo : TFslObject; context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');
 var
   i : integer;
 begin
   if (value <> nil) then
     for i := 0 to value.Count - 1 do
-      index(context, atype, key, parent, value[i], name, specificType);
+      index(appInfo, context, atype, key, parent, value[i], name, specificType);
 end;
 
 procedure TFhirIndexManager4.checkTags(resource: TFhirResource; tags: TFHIRTagList);

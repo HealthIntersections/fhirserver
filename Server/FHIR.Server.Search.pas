@@ -311,7 +311,7 @@ procedure TSearchProcessor.ProcessReferenceParam(var Result: string; name,modifi
 var
   parts: TArray<String>;
   targets : TArray<String>;
-  i : integer;
+  i, index : integer;
 begin
   i := 0;
   // _id is a special case
@@ -328,7 +328,14 @@ begin
     begin
       targets := Findexes.GetTargetsByName(types, name);
       if (length(targets) <> 1) then
-        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
+      begin
+        // special case for bug in R4...
+        index := StringArrayIndexOfInsensitive(targets, name);
+        if i = -1 then
+          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
+        else
+          result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
+      end
       else
         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
     end

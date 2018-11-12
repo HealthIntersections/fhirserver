@@ -2033,7 +2033,7 @@ begin
               if not deleted and (resourceVersionKey = versionKey) then
               begin
                 native(manager).CreateIndexer;
-                native(manager).Indexer.execute(resourceKey, request.Id, p, tags).free;
+                native(manager).Indexer.execute(resourceKey, request.Id, p, tags, request).free;
               end;
             finally
               p.Free;
@@ -2203,7 +2203,7 @@ begin
               if not deleted and (resourceVersionKey = versionKey) then
               begin
                 native(manager).CreateIndexer;
-                native(manager).Indexer.execute(resourceKey, request.Id, parser.resource as TFHIRResourceV, tags);
+                native(manager).Indexer.execute(resourceKey, request.Id, parser.resource as TFHIRResourceV, tags, request);
               end;
             finally
               p.Free;

@@ -215,7 +215,7 @@ Type
     procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
-    function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>; override;
+    function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>; override;
   end;
 
 implementation
@@ -417,7 +417,7 @@ begin
       result := t.name;
 end;
 
-function TFhirIndexManager2.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>;
+function TFhirIndexManager2.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>;
 var
   i : integer;
   entry : TFhirIndexEntry;

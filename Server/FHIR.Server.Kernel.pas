@@ -120,6 +120,8 @@ Type
 //    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
     function fetchFromUrl(fn : String; var bytes : TBytes) : boolean;
     procedure registerJs(sender: TObject; js: TJsHost);
+    function getLoadResourceList(factory: TFHIRFactory;
+      mode: TFHIRInstallerSecurityMode): TArray<String>;
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -129,7 +131,7 @@ Type
     constructor Create(const ASystemName, ADisplayName, AIniName: String);
     destructor Destroy; override;
 
-    procedure Load(name, plist : String);
+    procedure Load(name, plist : String; mode : TFHIRInstallerSecurityMode);
 //    procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
     function InstallDatabase(name : String; securityMode : TFHIRInstallerSecurityMode) : String;
@@ -248,7 +250,7 @@ begin
   //              svc.LoadByProfile(fn, true)
   //            else
               if FindCmdLineSwitch('packages', fn2, true, [clstValueNextParam]) then
-                svc.Load(endpoint, fn2);
+                svc.Load(endpoint, fn2, mode);
             end
             else if cmd = 'load' then
             begin
@@ -599,7 +601,27 @@ begin
     raise EIOException.create('Unable to find file '+s);
 end;
 
-procedure TFHIRService.Load(name, plist: String);
+function TFHIRService.getLoadResourceList(factory : TFHIRFactory; mode : TFHIRInstallerSecurityMode) : TArray<String>;
+begin
+  case mode of
+    ismUnstated, ismOpenAccess: result := factory.resourceNames;
+    ismClosedAccess: result := factory.resourceNames;
+    ismReadOnly: result := factory.resourceNames;
+    ismTerminologyServer: result := factory.canonicalResources;
+  end;
+end;
+
+function asString(list : TArray<String>) : String;
+var
+  s : String;
+begin
+  result := '';
+  for s in list do
+    result := result+','+s;
+  result := result.Substring(1);
+end;
+
+procedure TFHIRService.Load(name, plist: String; mode : TFHIRInstallerSecurityMode);
 var
   f : TFileStream;
   st : TStringList;
@@ -616,6 +638,7 @@ var
   v : TFHIRVersion;
   dbn : String;
   db : TKDBManager;
+  loadList : TArray<String>;
 begin
   FNotServing := true;
   cb(1, 'Load: Connect to databases');
@@ -655,10 +678,11 @@ begin
         StringSplit(p, '#', pi, pv);
         if not pcm.packageExists(pi, pv) then
           raise EFHIRException.create('Package '+p+' not found');
-        logt('Load Package '+pi+'#'+pv);
         ploader := TPackageLoader.create(factoryFactory(v));
         try
-          pcm.loadPackage(pi, pv, ploader.FFactory.canonicalResources, ploader.load);
+          loadList := getLoadResourceList(ploader.FFactory, mode);
+          logt('Load Package '+pi+'#'+pv+' - resources of type '+asString(loadList));
+          pcm.loadPackage(pi, pv, loadList, ploader.load);
           FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
         finally
           ploader.Free;

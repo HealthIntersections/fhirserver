@@ -160,6 +160,7 @@ type
     function GetServerContext: TFHIRServerContext;
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
+    function resolveReferenceForIndexing(sender : TFhirIndexManager; appInfo : TFslObject; url : String) : TFHIRResourceV;
 
   protected
     function factory : TFHIRFactory;
@@ -785,7 +786,7 @@ begin
               FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
             CreateIndexer;
-            comps := FIndexer.execute(resourceKey, sId, request.resource, tags);
+            comps := FIndexer.execute(resourceKey, sId, request.resource, tags, request);
             try
               CheckCompartments(comps, request.SessionCompartments);
             finally
@@ -2105,7 +2106,7 @@ begin
           FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
           CommitTags(tags, key);
           CreateIndexer;
-          FIndexer.execute(resourceKey, request.id, request.resource, tags).free;
+          FIndexer.execute(resourceKey, request.id, request.resource, tags, request).free;
           FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if ((request.ResourceName = 'AuditEvent') and request.Resource.hasTag('verkey')) then
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
@@ -2349,7 +2350,7 @@ begin
           FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
           CommitTags(tags, key);
           CreateIndexer;
-          FIndexer.execute(resourceKey, request.id, request.resource, tags).free;
+          FIndexer.execute(resourceKey, request.id, request.resource, tags, request).free;
           FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.Lang, src);
 
           if (response.Resource <> nil) and (response.Resource.fhirType = 'Bundle') then
@@ -2977,6 +2978,7 @@ begin
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Globals.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
+    FIndexer.OnResolveReference := resolveReferenceForIndexing;
   end;
 end;
 
@@ -3572,6 +3574,7 @@ begin
       else
       begin
         request.Source := nil; // ignore that now
+        request.transactionResource := request.resource.link;
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
         ids := TFHIRTransactionEntryList.create;
         try
@@ -4763,7 +4766,7 @@ begin
             FConnection.terminate;
             Connection.StartTransact;
             try
-              FIndexer.execute(Integer(list.objects[i]), list[i], r, tags).free;
+              FIndexer.execute(Integer(list.objects[i]), list[i], r, tags, nil).free;
               Connection.Commit;
             except
               on e:exception do
@@ -4812,6 +4815,82 @@ begin
       raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 404, itConflict, 'No matches found for '+url, lang);
   finally
     list.Free;
+  end;
+end;
+
+function TFHIRNativeOperationEngine.resolveReferenceForIndexing(sender : TFhirIndexManager; appInfo : TFslObject; url: String): TFHIRResourceV;
+var
+  p : TArray<String>;
+  ok : boolean;
+  s : String;
+  b : TBytes;
+  resourceKey, versionKey : integer;
+  parser : TFHIRParser;
+  request : TFHIRRequest;
+  bundle : TFHIRBundleW;
+  be : TFhirBundleEntryW;
+begin
+  request := appInfo as TFHIRRequest;
+  if request.CommandType = fcmdTransaction then
+  begin
+    bundle := factory.wrapBundle(request.TransactionResource.link);
+    for be in bundle.entries.forEnum do
+    begin
+      if be.resource <> nil then
+      begin
+        if be.url = url then
+          exit(be.resource.link);
+        if (be.resource.fhirType+'/'+be.resource.id = url) then
+          exit(be.resource.link);
+        if (url.startsWith(be.resource.fhirType+'/'+be.resource.id+'/_history')) then
+          exit(be.resource.link);
+      end;
+    end;
+  end;
+
+  if (isAbsoluteUrl(url)) then
+  begin
+     ok := false;
+     for s in ServerContext.Globals.Bases do
+       if url.StartsWith(s) then
+       begin
+         ok := true;
+         p := url.Substring(s.Length+1).Split(['/']);
+         break;
+       end;
+    if not ok then
+      exit(nil);
+  end
+  else
+    p := url.Split(['/']);
+
+  if (length(p) = 2) and (IsId(p[1])) and (factory.isResourceName(p[0])) then
+    // that's ok
+  else if (length(p) = 4) and (IsId(p[1])) and (factory.isResourceName(p[0])) and (p[2] = '_history') then
+    // that's ok
+  else
+    exit(nil);
+
+  result := nil;
+  if FindResource(p[0], p[1], [], resourceKey, versionKey, nil, nil, nil) then
+  begin
+    FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' and ResourceVersionKey = '+inttostr(versionKey);
+    FConnection.Prepare;
+    try
+      FConnection.Execute;
+      if FConnection.FetchNext then
+      begin
+        b := FConnection.ColBlobByName['JsonContent'];
+        parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+        try
+          result := parser.parseResource(s);
+        finally
+          parser.free;
+        end;
+      end
+    finally
+      FConnection.Terminate;
+    end;
   end;
 end;
 
@@ -6351,6 +6430,7 @@ var
   concepts, compConcepts : TArray<Integer>;
   dt, dtMin, dtMax : TDateTime;
   i : integer;
+  value : TFHIRXVersionElementWrapper;
 begin
   cl := obs.codings;
   try
@@ -6369,10 +6449,14 @@ begin
   dtMax := MAXSQLDATE;
   obs.getDates(dt, dtMin, dtMax);
 
-  if (obs.value <> nil) then
-    ProcessObservationValue(conn, rk, subj, false, categories, concepts, compConcepts, dt, dtMin, dtMax, obs.valueW)
-  else
-    ProcessObservationValue(conn, rk, subj, false, categories, concepts, compConcepts, dt, dtMin, dtMax, obs.dataAbsentReason);
+  value := obs.valueW;
+  if value = nil then
+    value := obs.dataAbsentReason;
+  try
+    ProcessObservationValue(conn, rk, subj, false, categories, concepts, compConcepts, dt, dtMin, dtMax, value);
+  finally
+    value.free;
+  end;
   for cmp in obs.components.forEnum do
   begin
     cl := cmp.codings;
@@ -6389,10 +6473,14 @@ begin
       cl.free;
     end;
 
-    if (cmp.value <> nil) then
-      ProcessObservationValue(conn, rk, subj, true, categories, concepts, compConcepts, dt, dtMin, dtMax, cmp.valueW)
-    else
-      ProcessObservationValue(conn, rk, subj, true, categories, concepts, compConcepts, dt, dtMin, dtMax, cmp.dataAbsentReason);
+    value := cmp.valueW;
+    if value = nil then
+      value := cmp.dataAbsentReason;
+    try
+      ProcessObservationValue(conn, rk, subj, true, categories, concepts, compConcepts, dt, dtMin, dtMax, value);
+    finally
+      value.free;
+    end;
   end;
 end;
 
@@ -6489,68 +6577,14 @@ var
   c : TFHIRCodingW;
   ok, ck : Integer;
 begin
-  try
-    for c in value.codings.forEnum do
+  for c in value.codings.forEnum do
+  begin
+    ck := resolveConcept(conn, c);
+    if (ck <> 0) then
     begin
-      ck := resolveConcept(conn, c);
-      if (ck <> 0) then
-      begin
-        ok := nextObservationKey;
-        conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, ValueConcept, IsComponent) VALUES' +
-                     '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :val, :ic)';
-        conn.Prepare;
-        conn.BindInteger('key', ok);
-        conn.BindInteger('rkey', key);
-        conn.BindInteger('subj', subj);
-        if dt = 0 then
-          conn.BindNull('dt')
-        else
-          conn.BindTimeStamp('dt', DateTimeToTS(dt));
-        conn.BindTimeStamp('dtMin', DateTimeToTS(dtMin));
-        conn.BindTimeStamp('dtMax', DateTimeToTS(dtMax));
-        conn.BindIntegerFromBoolean('ic', isComp);
-        conn.BindInteger('val', ck);
-        conn.Execute;
-        conn.Terminate;
-        storeObservationConcepts(conn, ok, isComp, categories, concepts, compConcepts);
-      end;
-    end;
-  finally
-    value.Free;
-  end;
-end;
-
-procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantityW);
-var
-  val, cval : TFslDecimal;
-  upS, upC : TUcumPair;
-  vU, cU, ok : Integer;
-begin
-  try
-    if (value.value <> '') and (value.code <> '') and (value.system <> '') then
-    begin
-      val := TFslDecimal.ValueOf(value.value);
-      vu := resolveConcept(conn, value.system, value.code);
-      if (value.system = 'http://unitsofmeasure.org') then
-      begin
-        upS := TUcumPair.Create(val, value.code);
-        try
-          upC := ServerContext.TerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(upS);
-          try
-            cval := upC.Value;
-            cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
-          finally
-            upC.Free;
-          end;
-        finally
-          upS.Free;
-        end;
-      end
-      else
-        Cu := 0;
       ok := nextObservationKey;
-      conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit, IsComponent) VALUES' +
-                   '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :v, :vu, :c, :cu, :ic)';
+      conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, ValueConcept, IsComponent) VALUES' +
+                   '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :val, :ic)';
       conn.Prepare;
       conn.BindInteger('key', ok);
       conn.BindInteger('rkey', key);
@@ -6561,26 +6595,72 @@ begin
         conn.BindTimeStamp('dt', DateTimeToTS(dt));
       conn.BindTimeStamp('dtMin', DateTimeToTS(dtMin));
       conn.BindTimeStamp('dtMax', DateTimeToTS(dtMax));
-      conn.BindDouble('v', val.asDouble);
-      conn.BindInteger('vu', vu);
-      if (cu = 0) then
-      begin
-        conn.BindNull('c');
-        conn.BindNull('cu');
-      end
-      else
-      begin
-        conn.BindDouble('c', cval.asDouble);
-        conn.BindInteger('cu', cu);
-      end;
       conn.BindIntegerFromBoolean('ic', isComp);
+      conn.BindInteger('val', ck);
       conn.Execute;
       conn.Terminate;
       storeObservationConcepts(conn, ok, isComp, categories, concepts, compConcepts);
-
     end;
-  finally
-    value.Free;
+  end;
+end;
+
+procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantityW);
+var
+  val, cval : TFslDecimal;
+  upS, upC : TUcumPair;
+  vU, cU, ok : Integer;
+begin
+  if (value.value <> '') and (value.code <> '') and (value.system <> '') then
+  begin
+    val := TFslDecimal.ValueOf(value.value);
+    vu := resolveConcept(conn, value.system, value.code);
+    if (value.system = 'http://unitsofmeasure.org') then
+    begin
+      upS := TUcumPair.Create(val, value.code);
+      try
+        upC := ServerContext.TerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(upS);
+        try
+          cval := upC.Value;
+          cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
+        finally
+          upC.Free;
+        end;
+      finally
+        upS.Free;
+      end;
+    end
+    else
+      Cu := 0;
+    ok := nextObservationKey;
+    conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit, IsComponent) VALUES' +
+                 '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :v, :vu, :c, :cu, :ic)';
+    conn.Prepare;
+    conn.BindInteger('key', ok);
+    conn.BindInteger('rkey', key);
+    conn.BindInteger('subj', subj);
+    if dt = 0 then
+      conn.BindNull('dt')
+    else
+      conn.BindTimeStamp('dt', DateTimeToTS(dt));
+    conn.BindTimeStamp('dtMin', DateTimeToTS(dtMin));
+    conn.BindTimeStamp('dtMax', DateTimeToTS(dtMax));
+    conn.BindDouble('v', val.asDouble);
+    conn.BindInteger('vu', vu);
+    if (cu = 0) then
+    begin
+      conn.BindNull('c');
+      conn.BindNull('cu');
+    end
+    else
+    begin
+      conn.BindDouble('c', cval.asDouble);
+      conn.BindInteger('cu', cu);
+    end;
+    conn.BindIntegerFromBoolean('ic', isComp);
+    conn.Execute;
+    conn.Terminate;
+    storeObservationConcepts(conn, ok, isComp, categories, concepts, compConcepts);
+
   end;
 end;
 
