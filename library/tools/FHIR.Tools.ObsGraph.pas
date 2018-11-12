@@ -359,12 +359,14 @@ begin
     result.resource := obs.Link;
     result.time := (t - now) * HoursPerDay;
     if obs.value = nil then
+// JCT: How to change from obs.comment to obs.noteList??
     begin
       if obs.comment <> '' then
         result.message := obs.comment
       else
         result.message := 'No Value Provided'
     end
+// JCT
     else if obs.value is TFhirDecimal then
       result.value := TFslDecimal.ValueOf((obs.value as TFhirDecimal).value).AsDouble
     else if (obs.value is TFhirQuantity) and ((obs.value as TFhirQuantity).valueElement <> nil) then

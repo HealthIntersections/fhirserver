@@ -31,8 +31,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 657.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 653.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -63,7 +63,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
       Size.Width = 713.000000000000000000
       Size.Height = 682.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -77,7 +77,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -127,20 +127,9 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             OnChange = inputChanged
             OnChangeTracking = inputChanged
           end
-          object edtFHIRVersion: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 13
-            Position.X = 312.000000000000000000
-            Position.Y = 362.000000000000000000
-            Size.Width = 385.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
           object edtName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 14
+            TabOrder = 13
             Position.X = 96.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 433.000000000000000000
@@ -151,7 +140,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object edtPublisher: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 15
+            TabOrder = 14
             Position.X = 96.000000000000000000
             Position.Y = 189.000000000000000000
             Size.Width = 569.000000000000000000
@@ -162,7 +151,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object edtPurpose: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 16
+            TabOrder = 15
             Position.X = 96.000000000000000000
             Position.Y = 258.000000000000000000
             Size.Width = 569.000000000000000000
@@ -173,7 +162,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object edtTitle: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 17
+            TabOrder = 16
             Position.X = 96.000000000000000000
             Position.Y = 85.000000000000000000
             Size.Width = 569.000000000000000000
@@ -184,7 +173,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object edtURL: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 18
+            TabOrder = 17
             Position.X = 96.000000000000000000
             Position.Y = 16.000000000000000000
             Size.Width = 600.000000000000000000
@@ -195,7 +184,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object edtVersion: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 19
+            TabOrder = 18
             Position.X = 592.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 105.000000000000000000
@@ -208,19 +197,19 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Position.X = 16.000000000000000000
             Position.Y = 258.000000000000000000
             Text = 'Purpose'
-            TabOrder = 20
+            TabOrder = 19
           end
           object Label11: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 293.000000000000000000
             Text = 'Copyright:'
-            TabOrder = 21
+            TabOrder = 20
           end
           object Label12: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 328.000000000000000000
             Text = 'Kind:'
-            TabOrder = 22
+            TabOrder = 21
           end
           object Label13: TLabel
             Position.X = 224.000000000000000000
@@ -229,7 +218,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Jurisdiction:'
-            TabOrder = 23
+            TabOrder = 22
           end
           object Label14: TLabel
             Position.X = 224.000000000000000000
@@ -238,7 +227,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'FHIR Version:'
-            TabOrder = 24
+            TabOrder = 23
           end
           object Label15: TLabel
             Position.X = 16.000000000000000000
@@ -247,19 +236,19 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Implementation Guides:'
-            TabOrder = 25
+            TabOrder = 24
           end
           object Label2: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 16.000000000000000000
             Text = 'URL:'
-            TabOrder = 27
+            TabOrder = 26
           end
           object Label3: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 50.000000000000000000
             Text = 'Name:'
-            TabOrder = 26
+            TabOrder = 25
           end
           object Label4: TLabel
             Position.X = 540.000000000000000000
@@ -268,37 +257,37 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Version:'
-            TabOrder = 28
+            TabOrder = 27
           end
           object Label5: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 85.000000000000000000
             Text = 'Title'
-            TabOrder = 29
+            TabOrder = 28
           end
           object Label6: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 120.000000000000000000
             Text = 'Status'
-            TabOrder = 30
+            TabOrder = 29
           end
           object Label7: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 154.000000000000000000
             Text = 'Date:'
-            TabOrder = 31
+            TabOrder = 30
           end
           object Label8: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 189.000000000000000000
             Text = 'Publisher'
-            TabOrder = 32
+            TabOrder = 31
           end
           object Label9: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 224.000000000000000000
             Text = 'Description:'
-            TabOrder = 33
+            TabOrder = 32
           end
           object mImplementationGuides: TMemo
             Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -310,9 +299,9 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 681.000000000000000000
             Size.Height = 105.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 34
-            Viewport.Width = 681.000000000000000000
-            Viewport.Height = 105.000000000000000000
+            TabOrder = 33
+            Viewport.Width = 677.000000000000000000
+            Viewport.Height = 101.000000000000000000
           end
           object btnAddClient: TButton
             Position.X = 16.000000000000000000
@@ -453,7 +442,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 48
+            TabOrder = 47
             OnClick = btnPublisherClick
           end
           object btnDescription: TButton
@@ -464,7 +453,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 44
+            TabOrder = 43
             OnClick = btnDescriptionClick
           end
           object btnPurpose: TButton
@@ -475,7 +464,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 46
+            TabOrder = 45
             OnClick = btnPurposeClick
           end
           object btnCopyright: TButton
@@ -486,7 +475,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 45
+            TabOrder = 44
             OnClick = btnCopyrightClick
           end
           object btnTitle: TButton
@@ -497,8 +486,40 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 47
+            TabOrder = 46
             OnClick = btnTitleClick
+          end
+          object cbxFHIRVersion: TComboBox
+            Items.Strings = (
+              ''
+              '0.01'
+              '0.05'
+              '0.06'
+              '0.11'
+              '0.0.80'
+              '0.0.81'
+              '0.0.82'
+              '0.4.0'
+              '0.5.0'
+              '1.0.0'
+              '1.0.1'
+              '1.0.2'
+              '1.1.0'
+              '1.4.0'
+              '1.6.0'
+              '1.8.0'
+              '3.0.0'
+              '3.0.1'
+              '3.3.0'
+              '3.5.0'
+              '3.6.0')
+            Position.X = 304.000000000000000000
+            Position.Y = 362.000000000000000000
+            Size.Width = 241.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 48
+            OnChange = inputChanged
           end
         end
       end
@@ -805,7 +826,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -1259,6 +1280,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
               'None'
               'Versions Tracked'
               'Versioned Update Required')
+            ItemIndex = 0
             Position.X = 272.000000000000000000
             Position.Y = 416.000000000000000000
             Size.Width = 345.000000000000000000
@@ -1438,32 +1460,32 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031549444154384F5D536B485361187EBE73B6A9E7307771E6759B334B1B15A5
-              615941D1ED47505191E50FF30682141151D49F822CA8A01F2181108566418144
-              57E84206191184E130735DCC364B9B3ABC6C9DB99DED9CD3F94E25E9032FE7E3
-              7D9FE77D0FEF85600E4E34345816C7C67770B25C6C50E479D42712321251D8AE
-              F749F2830B57DAA734E25FCC4A70B2AE7A5BD512F7A5BC485A3EFB6E08C19F21
-              CD6FCB4A45A224177E3E3870BDA7EFF0996BAD0FB5800AF6EF17A7EAAAF7D415
-              95B5BB3A8269CC902ACC35836C2C8261690EF451114C6F00D62F318BAB7449B9
-              C99EE67DD9EDE9A33A2D01AD4CC5CEAE31367C723B929E7B116BDA8F4701822F
-              9C09F36B574177A70BE1B33B91D1EE61F29716EE323A6CDD9DDD9ECFECF1FA3D
-              A69AC2E5F7F35F8C59A72F5742FFCA0B36CF0ADDEA4270EF07902D47615BEE00
-              A64220C110C4039B616BEA64EC6BEC65BCABA08DDCACDA5BB977E19636B1A31F
-              5C8611422004DE9804F0AA4D4ED31F04CC29801083108E81CF4C4564248CA44D
-              05B8DDFFAC46C7116985AEEB07844B1510523918EA5B10BE5801C6A003FFF0AD
-              A617B695421613483E7803C2B97224421170A7EF8133CAC58C41513294681CA6
-              2207F86C1B12920C635E2678BB033E8B5533FAA63E1AA31CCA45240E3D940C46
-              2BF11FC8ECC9CE0243E6C414480C5D1292ACC7D4C74108C341B02C41D81F80F0
-              7D107913E39AD137F5310CD138940B4E8F3821C1992692CE6F601D66C4FD13D0
-              5BD4A6A5260363C29F4AE93C108A223E310DBDD30269701258E7D29AC82E58E9
-              F6E7E75AF7A57D8D99A36AF3C0B1D0651AD5CDDA0D1F184CBA73613EB615181D
-              47A2D88978ED7AE81F7930E0567C4F27A34718BADB6D3D1F0E0D6EB04B29476F
-              415CE6049E7821AA63A3F0B31CC45F31288FFBB418E5F8373A25AA39DFDC3C31
-              D315BACAB5EEB5B79C1D7E16ACDA5B971558900E59C782F91050338D03EA147C
-              1B1C528BF77545E3B5D676AA9BB905BADB26A7CD632FCB5969CACCB2309FC610
-              7CE3C374CF3038359E2875E0DB2269A0CDEBA96DBCDA72F78F6ACE3552FC3BE7
-              1429516220641E1D950865342233DDBD29B837FB9C81DF8D014681487AD35C00
-              00000049454E44AE426082}
+              031A49444154384F5D535B48146114FEFE99DD5567D875777573CBBD5A96D985
+              B2C8B4878C2E0F414545960FE50D822822A2A897822E50410F51411089658181
+              4557E84217AA87202C2F955ADABAAB65AB6D5E769B75777667A6F9A792F483C3
+              FC9CF37DE70CE74230010777ECB0CC8E0FAEE364B9C0A0C893A84F24A43FAAB0
+              8DEF53E4BBA72E368C68C4BF1897E05075C59AF239F9673CD18C1CF6ED3784BE
+              87357FE66413920B1C08F021DF95D6B63DC76A2EDFD3022AD8BF5F1CAEAED854
+              39BDB021E7D9CF0CE69B2A74984196E7C130371BFA9808E64310D6CEB8C5BD70
+              56A9D995D9FEA2A9B98DEAB404B432157BDFFD642387D622E5493BE267B7E17E
+              90A0934BC7D4AAC5D0DD6C44E4F87AD86FB4309ED9B91B4C6E5BD3CBA6E6CFEC
+              81ED9BD22B67CCBF33F579C83A7A7E2BF4AFDAC17AACD015CF00F7DE8729720C
+              99F35DC04818241486B873256CE75E31CE25CE22DE3BAD8E5C2BDFBC75F3F455
+              75E2D32E70594608C13078630AC0AB363C4A7F1030A701421C42240EDE6E42B4
+              3F829415D370BDEB71A58E23D2425DE3570867CA20983818B6D72272BA0C8C41
+              07FEDE1B4D2FAC5904594C2275D75508274A910C47C11DB90DCE2817300645C9
+              526209A4E7B9C04FC944529261F4D8C13B5DF05BAC9AD137F5D118E5502EA209
+              E8A164315A89FF40C64F761C183221A64062E89290543D463A7A20F485C0B204
+              914010426F0F3C43839AD137F5310CD138940B4E8F0421A1B1269297DD605D66
+              240243D05BD4A69952811FC29F4A361E08C790181A85DE6D81D4330C2CF56A4D
+              64730BF303390EEB968C2F71734C6D1E38163ABB51DDAC8DF083C170BE03E6FD
+              AB818141240BDC485495407FBF19BE7CC5FF6838B697A1BB5DD7FA71B7BF245B
+              4ADB570F719E1B78D80E511D1B4580E520FE8A4379D0A6C528A77B9953A29A93
+              172E0C8D7585AE72455E71BDF7792F0B56EDADD70AE4DA20EB58301F836AA641
+              409D82AFC4215DF9F4BAEC68CDE506AA1BBB05BADB668FADD959945D986E9F6C
+              613EFD40E8B51FA3AD7DE0D47872910BDD3325DFD58E96AAA3976A6FFD514DB8
+              468A7FE79C262517180899444725421988CA4CD38734DC1E7FCEC06F8131467B
+              4B680FF20000000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

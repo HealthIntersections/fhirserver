@@ -83,7 +83,6 @@ type
     edtCopyright: TEdit;
     cbxKind: TComboBox;
     cbxJurisdiction: TComboBox;
-    edtFHIRVersion: TEdit;
     mImplementationGuides: TMemo;
     edtVersion: TEdit;
     tvMetadata: TTreeViewItem;
@@ -185,6 +184,7 @@ type
     btnBatch: TButton;
     btnSystemSearch: TButton;
     btnSystemHistory: TButton;
+    cbxFHIRVersion: TComboBox;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
@@ -961,7 +961,7 @@ begin
   CapabilityStatement.url := edtURL.Text;
   CapabilityStatement.name := edtName.Text;
   CapabilityStatement.title := edtTitle.Text;
-  CapabilityStatement.fhirVersion := edtFHIRVersion.Text;
+  CapabilityStatement.fhirVersion := TFhirFHIRVersionEnum(cbxFHIRVersion.itemIndex);
   CapabilityStatement.version := edtVersion.Text;
   CapabilityStatement.publisher := edtPublisher.text;
   CapabilityStatement.description := edtDescription.Text;
@@ -1236,7 +1236,7 @@ begin
   edtURL.Text := CapabilityStatement.url;
   edtName.Text := CapabilityStatement.name;
   edtTitle.Text := CapabilityStatement.title;
-  edtFHIRVersion.Text := CapabilityStatement.fhirVersion;
+  cbxFHIRVersion.itemIndex := Ord(CapabilityStatement.fhirVersion);
   edtVersion.Text := CapabilityStatement.version;
   edtPublisher.text := CapabilityStatement.publisher;
   edtDescription.Text := CapabilityStatement.description;
