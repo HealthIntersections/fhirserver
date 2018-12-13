@@ -692,7 +692,7 @@ var
   s, t, i : String;
   f : TFileStream;
 begin
-  if (id = 'hl7.fhir.core') and (ver = '3.5.0') and packageExists(id, 'current') then
+  if (id = 'hl7.fhir.core') and (ver = '4.0.0') and packageExists(id, 'current') then
     ver := 'current';
 
   if not packageExists(id, ver) then
@@ -1079,11 +1079,11 @@ begin
   p := TPackageDefinition.Create;
   try
     p.Id := 'hl7.fhir.core';
-    p.Version := '3.6.0';
+    p.Version := '4.0.0';
     p.Canonical := 'http://hl7.org/fhir';
     p.Date := Now;
     p.Description := 'FHIR Current Build';
-    p.FHIRVersion := '3.6.0';
+    p.FHIRVersion := '4.0.0';
     p.Url := 'http://build.fhir.org/';
     list.Add(p.Link);
   finally
@@ -1153,7 +1153,7 @@ class procedure TPackageDefinition.AddCustomPackages;
     end;
   end;
 begin
-  add('fhir.tx.support', '3.6.0', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.6.0', 'http://fhir.org/packages/fhir.tx.support/3.6.0');
+  add('fhir.tx.support', '4.0.0', 'http://fhir.org/test', 'tx.fhir.org definitions', '4.0.0', 'http://fhir.org/packages/fhir.tx.support/4.0.0');
   add('fhir.tx.support', '3.0.1', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.0.1', 'http://fhir.org/packages/fhir.tx.support/3.0.1');
   add('fhir.tx.support', '1.0.2', 'http://fhir.org/test', 'tx.fhir.org definitions', '1.0.2', 'http://fhir.org/packages/fhir.tx.support/1.0.2');
   add('fhir.argonaut.ehr', '1.0.0', 'http://fhir.org/guides/argonaut', 'Argonaut EHR Query', '1.0.2', 'http://www.fhir.org/guides/argonaut/r2');

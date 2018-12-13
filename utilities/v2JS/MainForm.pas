@@ -8,22 +8,46 @@ uses
   FMX.Memo, FMX.Menus, FMX.Controls.Presentation, FMX.StdCtrls,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Javascript,
-  FHIR.v2.Protocol, FHIR.v2.Message, FHIR.v2.Javascript;
+  FHIR.v2.Protocol, FHIR.v2.Message, FHIR.v2.Javascript, FMX.TabControl,
+  FMX.TreeView, FMX.Layouts;
 
 type
   TEditorForm = class(TForm)
-    Panel1: TPanel;
-    Panel2: TPanel;
     MainMenu1: TMainMenu;
     mnuFile: TMenuItem;
     mnuNew: TMenuItem;
     mnuOpen: TMenuItem;
     mnuSave: TMenuItem;
     mnuExit: TMenuItem;
-    editor: TMemo;
-    Button1: TButton;
-    log: TMemo;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Label1: TLabel;
+    TreeView1: TTreeView;
+    TreeViewItem2: TTreeViewItem;
+    TreeViewItem3: TTreeViewItem;
+    TabControl1: TTabControl;
+    Panel4: TPanel;
+    Panel5: TPanel;
     Splitter1: TSplitter;
+    Panel6: TPanel;
+    Splitter2: TSplitter;
+    Label2: TLabel;
+    Memo1: TMemo;
+    TabItem1: TTabItem;
+    Button1: TButton;
+    Button2: TButton;
+    TreeViewItem1: TTreeViewItem;
+    TreeViewItem4: TTreeViewItem;
+    TreeViewItem5: TTreeViewItem;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -55,7 +79,7 @@ begin
   DoSave;
   JSLog(Fjs, 'Starting');
   dt := now;
-  Fjs.execute(editor.Text, '', 'test', []);
+//  Fjs.execute(editor.Text, '', 'test', []);
   JSLog(Fjs, 'Stopped ('+DescribePeriod(now - dt)+')');
 end;
 
@@ -64,7 +88,7 @@ var
   s : String;
 begin
   FIni.writeString('Editor', 'filename', FileName);
-  s := EncodeBase64(TEncoding.UTF8.GetBytes(editor.text));
+//  s := EncodeBase64(TEncoding.UTF8.GetBytes(editor.text));
   s := s.Replace(#13#10, '');
   FIni.writeString('Editor', 'source', s);
 end;
@@ -91,16 +115,16 @@ end;
 procedure TEditorForm.FormShow(Sender: TObject);
 begin
   FileName := FIni.readString('Editor', 'filename', '');
-  editor.text := TEncoding.UTF8.GetString(DecodeBase64(FIni.readString('Editor', 'source', '')));
+//  editor.text := TEncoding.UTF8.GetString(DecodeBase64(FIni.readString('Editor', 'source', '')));
 end;
 
 procedure TEditorForm.JSLog(sender: TJavascript; message: String);
 var
   i : integer;
 begin
-  i := log.Text.Length;
-  log.Text := log.Text+message+#13#10;
-  log.SelStart := i;
+//  i := log.Text.Length;
+//  log.Text := log.Text+message+#13#10;
+//  log.SelStart := i;
 end;
 
 procedure TEditorForm.SetFileName(const Value: String);

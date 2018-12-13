@@ -57,13 +57,14 @@ uses
   FHIR.v2.Javascript in '..\..\library\v2\FHIR.v2.Javascript.pas',
   FHIR.Client.InteractiveFMX in '..\..\library\client\FHIR.Client.InteractiveFMX.pas' {InteractiveClientForm},
   FHIR.Client.Debugger in '..\..\library\client\FHIR.Client.Debugger.pas',
-  FHIR.Client.Threaded in '..\..\library\client\FHIR.Client.Threaded.pas';
+  FHIR.Client.Threaded in '..\..\library\client\FHIR.Client.Threaded.pas',
+  FHIR.v2.Engine in '..\..\library\v2\FHIR.v2.Engine.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TInteractiveClientForm, InteractiveClientForm);
   Application.CreateForm(TEditorForm, EditorForm);
+  Application.CreateForm(TInteractiveClientForm, InteractiveClientForm);
   Application.Run;
 end.

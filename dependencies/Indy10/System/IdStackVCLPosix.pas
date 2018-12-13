@@ -498,7 +498,7 @@ function getifaddrs(var ifap: pifaddrs): Integer; cdecl; external libc name _PU 
 procedure freeifaddrs(ifap: pifaddrs); cdecl; external libc name _PU + 'freeifaddrs'; {do not localize}
 {$ELSE}
   {$IFDEF ANDROID}
-  // TODO: implement getifaddrs() manually using code from https://github.com/kmackay/android-ifaddrs
+  // TODO: implement getifaddrs() manually using code from https://github.com/morristech/android-ifaddrs
   {.$DEFINE HAS_getifaddrs}
   {$ENDIF}
 {$ENDIF}
@@ -561,7 +561,7 @@ begin
 
   {$ELSE}
 
-  // TODO: on Android, either implement getifaddrs() (https://github.com/kmackay/android-ifaddrs)
+  // TODO: on Android, either implement getifaddrs() (https://github.com/morristech/android-ifaddrs)
   // or use the Java API to enumerate the local network interfaces and their IP addresses, eg:
   {
   var
@@ -1065,18 +1065,22 @@ begin
   {$IFDEF USE_MARSHALLED_PTRS}
   LStrPtr := TPtrWrapper.Create(@LStr[0]);
   {$ENDIF}
-  gethostname(
+  if gethostname(
     {$IFDEF USE_MARSHALLED_PTRS}
     LStrPtr.ToPointer
     {$ELSE}
     LStr
-    {$ENDIF}, sMaxHostSize);
-  LStr[sMaxHostSize] := TIdAnsiChar(0);
-  {$IFDEF USE_MARSHALLED_PTRS}
-  Result := TMarshal.ReadStringAsAnsi(LStrPtr);
-  {$ELSE}
-  Result := String(LStr);
-  {$ENDIF}
+    {$ENDIF}, sMaxHostSize) = 0 then
+  begin
+    {$IFDEF USE_MARSHALLED_PTRS}
+    Result := TMarshal.ReadStringAsAnsiUpTo(0, LStrPtr, sMaxHostSize);
+    {$ELSE}
+    LStr[sMaxHostSize] := TIdAnsiChar(0);
+    Result := String(LStr);
+    {$ENDIF}
+  end else begin
+    Result := '';
+  end;
 end;
 
 function TIdStackVCLPosix.ReceiveMsg(ASocket: TIdStackSocketHandle;
@@ -1278,7 +1282,7 @@ begin
   Result := True;
 
   // TODO: enable this:
-  //Result := CheckForSocketError(AResult, [EAGAIN, EWOULDBLOCK]) <> 0;
+  //Result := (AResult in [EAGAIN, EWOULDBLOCK, EINPROGRESS]);
 end;
 
 procedure TIdStackVCLPosix.WriteChecksum(s: TIdStackSocketHandle;

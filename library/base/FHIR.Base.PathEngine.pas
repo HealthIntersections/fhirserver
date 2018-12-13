@@ -91,8 +91,10 @@ type
     function opCodes : TArray<String>; virtual; abstract;
   public
     constructor Create(path : String); overload;
+    constructor Create(path : String; offset : integer); overload;
     destructor Destroy; override;
     procedure next; virtual;
+    property Cursor : integer read FCursor;
     property current : String read FCurrent write FCurrent;
     property CurrentStart : integer read FCurrentStart;
     function done : boolean;
@@ -188,11 +190,23 @@ type
 
   TFHIRPathDebugEvent = procedure (source : TFHIRPathEngineV; package : TFHIRPathDebugPackage) of object;
 
+  TFHIRPathEngineExtension = class abstract (TFslObject)
+  public
+    function isValidFunction(name : String) : boolean; virtual; abstract;
+    function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; virtual; abstract;
+    function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNodeV>; engine : TFHIRPathEngineV): TFHIRSelectionList; virtual; abstract;
+  end;
+
   TFHIRPathEngineV = class (TFslObject)
   private
     FOndebug : TFHIRPathDebugEvent;
     function findPath(path : String; loc : TSourceLocation; context : TArray<TFHIRObject>; base : TFHIRObject; var focus : TArray<TFHIRObject>) : String;
+  protected
+    FExtensions : TFslList<TFHIRPathEngineExtension>;
   public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure registerExtension(extension : TFHIRPathEngineExtension);
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
     function parseV(source : String) : TFHIRPathExpressionNodeV; virtual; abstract;
     function evaluate(appInfo : TFslObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload; virtual; abstract;
@@ -220,6 +234,18 @@ var
   pathObjects : TArray<TFHIRObject>;
 begin
   result := findPath(pathBase, loc, nil, base, pathObjects);
+end;
+
+constructor TFHIRPathEngineV.Create;
+begin
+  inherited;
+  FExtensions := TFslList<TFHIRPathEngineExtension>.create;
+end;
+
+destructor TFHIRPathEngineV.Destroy;
+begin
+  FExtensions.Free;
+  inherited;
 end;
 
 function TFHIRPathEngineV.extractPath(pathBase: String; loc: TSourceLocation; base: TFHIRObject; var pathObjects: TArray<TFHIRObject>): String;
@@ -278,6 +304,11 @@ begin
     result := path;
     focus := list;
   end;
+end;
+
+procedure TFHIRPathEngineV.registerExtension(extension: TFHIRPathEngineExtension);
+begin
+  FExtensions.Add(extension);
 end;
 
 { TFHIRPathExpressionNodeV }
@@ -464,6 +495,16 @@ end;
 function TFHIRPathLexer.collapseEmptyLists: boolean;
 begin
   result := true;
+end;
+
+constructor TFHIRPathLexer.Create(path: String; offset: integer);
+begin
+  inherited Create;
+  FPath := path;
+  FCursor := offset;
+  FCurrentLocation.line := 1;
+  FCurrentLocation.col := 1;
+  next;
 end;
 
 constructor TFHIRPathLexer.Create(path: String);

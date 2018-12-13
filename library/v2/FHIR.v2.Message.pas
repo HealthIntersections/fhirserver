@@ -34,7 +34,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.PathEngine,
-  FHIR.R4.Types, FHIR.R4.PathNode, FHIR.R4.PathEngine;
+  FHIR.R4.Types;
 
 type
   TV2ContentKind = (ckString, ckNull, ckBinary, ckEscape);
@@ -227,7 +227,7 @@ type
   public
     function isValidFunction(name : String) : boolean; override;
     function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; override;
-    function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNode>; engine : TFHIRPathEngine): TFHIRSelectionList; override;
+    function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNodeV>; engine : TFHIRPathEngineV): TFHIRSelectionList; override;
   end;
 
 const
@@ -1309,7 +1309,7 @@ begin
   end;
 end;
 
-function TV2FHIRPathExtensions.execute(context: TFHIRPathExecutionContext; focus: TFHIRObject; name: String; params: TFslList<TFHIRPathExpressionNode>; engine: TFHIRPathEngine): TFHIRSelectionList;
+function TV2FHIRPathExtensions.execute(context: TFHIRPathExecutionContext; focus: TFHIRObject; name: String; params: TFslList<TFHIRPathExpressionNodeV>; engine: TFHIRPathEngineV): TFHIRSelectionList;
 var
   s : String;
   i : integer;

@@ -361,8 +361,13 @@ begin
     if obs.value = nil then
 // JCT: How to change from obs.comment to obs.noteList??
     begin
+      {$IFDEF FHIR3}
       if obs.comment <> '' then
         result.message := obs.comment
+      {$ELSE}
+      if (obs.noteList.Count > 0) then
+        result.message := obs.noteList[0].text
+      {$ENDIF}
       else
         result.message := 'No Value Provided'
     end

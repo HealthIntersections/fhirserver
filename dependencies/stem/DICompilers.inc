@@ -311,7 +311,17 @@
       {$DEFINE DELPHI_24}
     {$ENDIF BCB}
     {$DEFINE COMPILER_24}
-  {$ENDIF VER310}
+  {$ENDIF VER320}
+
+  {$IFDEF VER330} // RAD Studio 10.2 Tokyo
+    {$IFDEF BCB}
+      {$DEFINE BCB_24}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_24}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_24}
+  {$ENDIF VER330}
 
   // CLR - DotNet
 

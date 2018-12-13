@@ -141,7 +141,7 @@ type
     property BoundPort: TIdPort read FBoundPort write FBoundPort default DEF_PORT_ANY;
     property BoundPortMin: TIdPort read FBoundPortMin write FBoundPortMin default DEF_PORT_ANY;
     property BoundPortMax: TIdPort read FBoundPortMax write FBoundPortMax default DEF_PORT_ANY;
-    property IPVersion;
+    property IPVersion default ID_DEFAULT_IP_VERSION;
     property Host;
     property Port;
     property ReceiveTimeout;
@@ -188,13 +188,28 @@ begin
     end;
   end;
 
-  if not GStack.IsIP(Host) then begin
-    if Assigned(OnStatus) then begin
-      DoStatus(hsResolving, [Host]);
+  if FIPVersion = Id_IPv4 then
+  begin
+    if not GStack.IsIP(Host) then begin
+      if Assigned(OnStatus) then begin
+        DoStatus(hsResolving, [Host]);
+      end;
+      LIP := GStack.ResolveHost(Host, FIPVersion);
+    end else begin
+      LIP := Host;
     end;
-    LIP := GStack.ResolveHost(Host, FIPVersion);
-  end else begin
-    LIP := Host;
+  end
+  else
+  begin  //IPv6
+    LIP := MakeCanonicalIPv6Address(Host);
+    if LIP = '' then begin  //if MakeCanonicalIPv6Address failed, we have a hostname
+      if Assigned(OnStatus) then begin
+        DoStatus(hsResolving, [Host]);
+      end;
+      LIP := GStack.ResolveHost(Host, FIPVersion);
+    end else begin
+      LIP := Host;
+    end;
   end;
   Binding.SetPeer(LIP, Port, FIPVersion);
   Binding.Connect;

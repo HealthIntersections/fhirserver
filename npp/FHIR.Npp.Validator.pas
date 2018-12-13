@@ -730,8 +730,8 @@ begin
       FServer.Free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R4.Client.TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
-    if FCapabilityStatement.fhirVersion <> FHIR_VERSIONS[factory.version] then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+CODES_TFHIRVersion[factory.version]+')');
+    if FCapabilityStatement.fhirVersion <> FHIR_ENUM_VERSIONS[factory.version] then
+      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
   end;
 end;
 

@@ -1729,6 +1729,11 @@ begin
     if not Assigned(lookup) then begin
       Exit;
     end;
+    // RLebeau: the PAnsiChar(Pointer(...)) cast below looks weird, but it is
+    // intentional. X509_LOOKUP_load_file() takes a PAnsiChar as input, but
+    // we are using Unicode strings here.  So casting the UnicodeString to a
+    // raw Pointer and then passing that to X509_LOOKUP_load_file() as PAnsiChar.
+    // Indy_Unicode_X509_LOOKUP_file will process it as a PWideChar...
     if (X509_LOOKUP_load_file(lookup, PAnsiChar(Pointer(AFileName)),
         X509_FILETYPE_PEM) <> 1) then begin
       Exit;
@@ -1885,6 +1890,18 @@ begin
     {$ENDIF});
 end;
 
+{$IFDEF USE_MARSHALLED_PTRS}
+function AsUtf8OrNil(var M: TMarshaller; const S: String): Pointer;
+  {$IFDEF USE_INLINE} inline; {$ENDIF}
+begin
+  if S <> '' then begin
+    Result := M.AsUtf8(S).ToPointer;
+  end else begin
+    Result := nil;
+  end;
+end;
+{$ENDIF}
+
 function IndyX509_STORE_load_locations(ctx: PX509_STORE;
   const AFileName, APathName: String): TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
@@ -1899,10 +1916,14 @@ begin
   // to fail. Need to cast the string to an intermediate Pointer so the
   // PAnsiChar cast is applied to the raw data and thus can be nil...
   //
+  // RLebeau 8/18/2017: TMarshaller also produces a non-nil TPtrWrapper for
+  // an empty string, so need to handle nil specially with marshalled
+  // strings as well...
+  //
   Result := X509_STORE_load_locations(ctx,
     {$IFDEF USE_MARSHALLED_PTRS}
-    M.AsUtf8(AFileName).ToPointer,
-    M.AsUtf8(APathName).ToPointer
+    AsUtf8OrNil(M, AFileName),
+    AsUtf8OrNil(M, APathName)
     {$ELSE}
     PAnsiChar(Pointer(UTF8String(AFileName))),
     PAnsiChar(Pointer(UTF8String(APathName)))
@@ -1920,8 +1941,8 @@ begin
 
   //Result := SSL_CTX_load_verify_locations(ctx,
   //  {$IFDEF USE_MARSHALLED_PTRS}
-  //  M.AsUtf8(ACAFile).ToPointer,
-  //  M.AsUtf8(ACAPath).ToPointer
+  //  AsUtf8OrNl(ACAFile),
+  //  AsUtf8OrNil(ACAPath)
   //  {$ELSE}
   //  PAnsiChar(Pointer(UTF8String(ACAFile))),
   //  PAnsiChar(Pointer(UTF8String(ACAPath)))
@@ -2138,33 +2159,32 @@ end;
 
 {$IFNDEF OPENSSL_NO_BIO}
 procedure DumpCert(AOut: TStrings; AX509: PX509);
-{$IFDEF USE_INLINE} inline; {$ENDIF}
 var
   LMem: PBIO;
   LLen : TIdC_INT;
-  LBufPtr : Pointer;
+  LBufPtr : PIdAnsiChar;
 begin
   if Assigned(X509_print) then begin
     LMem := BIO_new(BIO_s_mem);
-    try
-      X509_print(LMem, AX509);
-      LLen := BIO_get_mem_data( LMem, LBufPtr);
-      if (LLen > 0) and Assigned(LBufPtr) then begin
-        AOut.Text := IndyTextEncoding_UTF8.GetString(
-         {$IFNDEF VCL_6_OR_ABOVE}
-          // RLebeau: for some reason, Delphi 5 causes a "There is no overloaded
-          // version of 'GetString' that can be called with these arguments" compiler
-          // error if the PByte type-cast is used, even though GetString() actually
-          // expects a PByte as input.  Must be a compiler bug, as it compiles fine
-          // in Delphi 6...
-          LBufPtr
-          {$ELSE}
-          PByte(LBufPtr)
-          {$ENDIF}
-          , LLen);
-      end;
-    finally
-      if Assigned(LMem) then begin
+    if LMem <> nil then begin
+      try
+        X509_print(LMem, AX509);
+        LLen := BIO_get_mem_data(LMem, LBufPtr);
+        if (LLen > 0) and (LBufPtr <> nil) then begin
+          AOut.Text := IndyTextEncoding_UTF8.GetString(
+            {$IFNDEF VCL_6_OR_ABOVE}
+            // RLebeau: for some reason, Delphi 5 causes a "There is no overloaded
+            // version of 'GetString' that can be called with these arguments" compiler
+            // error if the PByte type-cast is used, even though GetString() actually
+            // expects a PByte as input.  Must be a compiler bug, as it compiles fine
+            // in Delphi 6.  So, converting to TIdBytes until I find a better solution...
+            RawToBytes(LBufPtr^, LLen)
+            {$ELSE}
+            PByte(LBufPtr), LLen
+            {$ENDIF}
+          );
+        end;
+      finally
         BIO_free(LMem);
       end;
     end;
@@ -2749,10 +2769,18 @@ procedure TIdSSLIOHandlerSocketOpenSSL.ConnectClient;
 var
   LPassThrough: Boolean;
 begin
+  // RLebeau: initialize OpenSSL before connecting the socket...
+  try
+    Init;
+  except
+    on EIdOSSLCouldNotLoadSSLLibrary do begin
+      if not PassThrough then raise;
+    end;
+  end;
   // RLebeau 1/11/07: In case a proxy is being used, pass through
   // any data from the base class unencrypted when setting up that
   // connection.  We should do this anyway since SSL hasn't been
-  // initialized yet!
+  // negotiated yet!
   LPassThrough := fPassThrough;
   fPassThrough := True;
   try
@@ -2768,13 +2796,6 @@ end;
 
 procedure TIdSSLIOHandlerSocketOpenSSL.StartSSL;
 begin
-  try
-    Init;
-  except
-    on EIdOSSLCouldNotLoadSSLLibrary do begin
-      if not PassThrough then raise;
-    end;
-  end;
   if not PassThrough then begin
     OpenEncodedConnection;
   end;
@@ -2846,6 +2867,14 @@ procedure TIdSSLIOHandlerSocketOpenSSL.AfterAccept;
 begin
   try
     inherited AfterAccept;
+    // RLebeau: initialize OpenSSL after accepting a client socket...
+    try
+      Init;
+    except
+      on EIdOSSLCouldNotLoadSSLLibrary do begin
+        if not PassThrough then raise;
+      end;
+    end;
     StartSSL;
   except
     Close;
@@ -2926,6 +2955,8 @@ var
   {$ENDIF}
   LMode: TIdSSLMode;
   LHost: string;
+
+  // TODO: move the following to TIdSSLIOHandlerSocketBase...
 
   function GetURIHost: string;
   var
@@ -3232,6 +3263,7 @@ an invalid MAC when doing SSL.}
     SSL_CTX_set_default_passwd_cb(fContext, @PasswordCallback);
     SSL_CTX_set_default_passwd_cb_userdata(fContext, Self);
 //  end;
+
   SSL_CTX_set_default_verify_paths(fContext);
   // load key and certificate files
   if (RootCertFile <> '') or (VerifyDirs <> '') then begin    {Do not Localize}
@@ -3273,6 +3305,11 @@ an invalid MAC when doing SSL.}
       {$ENDIF}
     );
   end else begin
+    // RLebeau: don't override OpenSSL's default.  As OpenSSL evolves, the
+    // SSL_DEFAULT_CIPHER_LIST constant defined in the C/C++ SDK may change,
+    // while Indy's define of it might take some time to catch up.  We don't
+    // want users using an older default with newer DLLs...
+    (*
     error := SSL_CTX_set_cipher_list(fContext,
       {$IFDEF USE_MARSHALLED_PTRS}
       M.AsAnsi(SSL_DEFAULT_CIPHER_LIST).ToPointer
@@ -3280,6 +3317,8 @@ an invalid MAC when doing SSL.}
       SSL_DEFAULT_CIPHER_LIST
       {$ENDIF}
     );
+    *)
+    error := 1;
   end;
   if error <= 0 then begin
     // TODO: should this be using EIdOSSLSettingCipherError.RaiseException() instead?
@@ -3295,6 +3334,8 @@ an invalid MAC when doing SSL.}
   if RootCertFile <> '' then begin    {Do not Localize}
     SSL_CTX_set_client_CA_list(fContext, IndySSL_load_client_CA_file(RootCertFile));
   end
+
+  // TODO: provide an event so users can apply their own settings as needed...
 end;
 
 procedure TIdSSLContext.SetVerifyMode(Mode: TIdSSLVerifyModeSet; CheckRoutine: Boolean);
@@ -3417,6 +3458,9 @@ begin
 
       Todo:  Figure out a better fallback.
       }
+      // TODO: get rid of this fallack!  If the user didn't choose TLS 1.0, then
+      // don't falback to it, just fail instead, like with all of the other SSL/TLS
+      // versions...
     sslvTLSv1:
       Result := SelectTLS1Method(fMode);
     sslvTLSv1_1:
@@ -3542,10 +3586,12 @@ begin
   if fSSL <> nil then begin
     // TODO: should this be moved to TIdSSLContext instead?  Is this here
     // just to make sure the SSL shutdown does not log any messages?
+    {
     if (fSSLContext <> nil) and (fSSLContext.StatusInfoOn) and
        (fSSLContext.fContext <> nil) then begin
       SSL_CTX_set_info_callback(fSSLContext.fContext, nil);
     end;
+    }
     //SSL_set_shutdown(fSSL, SSL_SENT_SHUTDOWN);
     SSL_shutdown(fSSL);
     SSL_free(fSSL);
@@ -3742,7 +3788,7 @@ var
   ret, err: Integer;
 begin
   repeat
-    ret := SSL_read(fSSL, @ABuffer[0], Length(ABuffer));
+    ret := SSL_read(fSSL, PByte(ABuffer), Length(ABuffer));
     if ret > 0 then begin
       Result := ret;
       Exit;

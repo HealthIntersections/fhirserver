@@ -1016,14 +1016,15 @@ type
     property UsingNATFastTrack : Boolean read FUsingNATFastTrack;
     property UsingSFTP : Boolean read FUsingSFTP;
     property CurrentTransferMode : TIdFTPTransferMode read FCurrentTransferMode write TransferMode;
+    property DefStringEncoding : IIdTextEncoding read FDefStringEncoding write SetDefStringEncoding;
 
   published
     {$IFDEF DOTNET}
       {$IFDEF DOTNET_2_OR_ABOVE}
-    property IPVersion;
+    property IPVersion default ID_DEFAULT_IP_VERSION;
       {$ENDIF}
     {$ELSE}
-    property IPVersion;
+    property IPVersion default ID_DEFAULT_IP_VERSION;
     {$ENDIF}
     property AutoIssueFEAT : Boolean read FAutoIssueFEAT write FAutoIssueFEAT default DEF_Id_FTP_AutoIssueFEAT;
     property AutoLogin: Boolean read FAutoLogin write FAutoLogin default DEF_Id_FTP_AutoLogin;
@@ -1039,7 +1040,6 @@ type
     property DataPort: TIdPort read FDataPort write FDataPort default 0;
     property DataPortMin: TIdPort read FDataPortMin write FDataPortMin default 0;
     property DataPortMax: TIdPort read FDataPortMax write FDataPortMax default 0;
-    property DefStringEncoding : IIdTextEncoding read FDefStringEncoding write SetDefStringEncoding;
     property ExternalIP : String read FExternalIP write FExternalIP;
     property Password;
     property TransferType: TIdFTPTransferType read FTransferType write SetTransferType default Id_TIdFTP_TransferType;
@@ -1162,6 +1162,8 @@ end;
 procedure TIdFTP.InitComponent;
 begin
   inherited InitComponent;
+  //
+  FIPVersion := ID_DEFAULT_IP_VERSION;
   //
   FAutoLogin := DEF_Id_FTP_AutoLogin;
   FRegularProtPort := IdPORT_FTP;

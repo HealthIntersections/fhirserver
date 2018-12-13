@@ -42,7 +42,7 @@ Uses
   DUnitX.TestFramework;
 
 var
-  FHIR_PUB_HOME_1 : String = 'C:\work\org.hl7.fhir.old\org.hl7.fhir.2018Sep\publish'; // 'r:\fhir\publish'; // lots of the tests depend on content found in the FHIR publication
+  FHIR_PUB_HOME_1 : String = 'r:\fhir\publish';  // lots of the tests depend on content found in the FHIR publication
   FHIR_SRC_HOME_1 : String = 'c:\work\org.hl7.fhir\build'; // or in the source
 
 function FHIR_PUB_FILE(fn : String) : String; overload;
@@ -222,6 +222,7 @@ Type
   Published
     [TestCase] procedure TestResource;
     [TestCase] procedure TestCustomDoc2;
+    [TestCase] procedure TestCustomDoc2Loose;
     [TestCase] procedure TestCustomDecimal;
   End;
 
@@ -4563,6 +4564,32 @@ begin
     json := TJSONParser.Parse(f);
     try
       assert.IsNotNull(json);
+      assert.IsTrue(json.properties.Count = 3);
+      assert.IsTrue(json.str['type'] = 'FHIR Custom Resource Directory');
+      assert.IsTrue(json.arr['prefixes'].Count = 1);
+      assert.IsTrue(json.arr['names'].Count = 1);
+    finally
+      json.Free;
+    end;
+  finally
+    f.Free;
+  end;
+end;
+
+procedure TJsonTests.TestCustomDoc2Loose;
+var
+  json : TJsonObject;
+  f : TFileStream;
+begin
+  f := TFileStream.Create('C:\work\fhirserver\utilities\tests\test-loose.json', fmopenRead + fmShareDenyWrite);
+  try
+    json := TJSONParser.Parse(f, 0, true);
+    try
+      assert.IsNotNull(json);
+      assert.IsTrue(json.properties.Count = 3);
+      assert.IsTrue(json.str['type'] = 'FHIR Custom Resource Directory');
+      assert.IsTrue(json.arr['prefixes'].Count = 1);
+      assert.IsTrue(json.arr['names'].Count = 1);
     finally
       json.Free;
     end;

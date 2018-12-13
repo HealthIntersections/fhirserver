@@ -559,7 +559,7 @@ type
     property AllowRecursiveQueries : boolean read FAllowRecursiveQueries write FAllowRecursiveQueries;
     property Host : string read FHost write FHost;
     property Port : TIdPort read FPort write SetPort default IdPORT_DOMAIN;
-    property IPVersion: TIdIPVersion read FIPVersion write SetIPVersion;
+    property IPVersion: TIdIPVersion read FIPVersion write SetIPVersion default ID_DEFAULT_IP_VERSION;
   end;
 
 function DNSStrToDomain(const DNSStr: TIdBytes; var VPos: Integer): string;
@@ -592,6 +592,7 @@ begin
   if (VPos+1) >= Length(Buffer) then begin
     raise EIdNotEnoughData.Create('');
   end;
+  // TODO can/should we use BytesToUInt16() instead of TwoByteToUInt16()?
   Result := TwoByteToUInt16(Buffer[VPos], Buffer[VPos + 1]);
   Inc(VPos, 2);
   if AConvert then begin
@@ -614,6 +615,7 @@ begin
   if (VPos+3) >= Length(Buffer) then begin
     raise EIdNotEnoughData.Create('');
   end;
+  // TODO can/should we use BytesToUInt32() instead of OrdFourByteToUInt32()?
   Result := GStack.NetworkToHost(OrdFourByteToUInt32(Buffer[VPos], Buffer[VPos + 1], Buffer[VPos + 2], Buffer[VPos + 3]));
   Inc(VPos, 4);
 end;
@@ -714,7 +716,7 @@ end;
 procedure TRDATARecord.Parse(CompleteMessage: TIdBytes; APos: Integer);
 begin
   inherited Parse(CompleteMessage, APos);
-  FIPAddress := MakeUInt32IntoIPv4Address(ParseUInt16(RData, APos));
+  FIPAddress := MakeUInt32IntoIPv4Address(ParseUInt32(CompleteMessage, APos));
 end;
 
 { TMXRecord }
@@ -1406,7 +1408,7 @@ begin
     UInt16ToTwoBytes(w, TempBytes, 0);
     AppendBytes(AQuestion, TempBytes); // record type (OPT)
 
-    w := 1280; // TODO: make this configurable
+    w := 1280{8192}; // TODO: make this configurable
     w := GStack.HostToNetwork(w);
     UInt16ToTwoBytes(w, TempBytes, 0);
     AppendBytes(AQuestion, TempBytes); // record class (OPT UDP size)
@@ -1524,6 +1526,7 @@ end;
 procedure TIdDNSResolver.InitComponent;
 begin
   inherited InitComponent;
+  FIPVersion := ID_DEFAULT_IP_VERSION;
   Port := IdPORT_DOMAIN;
   FQueryResult := TQueryResult.Create;
   FDNSHeader := TDNSHeader.Create;
@@ -1721,7 +1724,7 @@ begin
 
       UDP_Tunnel.SendBuffer(InternalQuery);
 
-      SetLength(LResult, 8192);
+      SetLength(LResult, 8192); // TODO: make this configurable
       BytesReceived := UDP_Tunnel.ReceiveBuffer(LResult, WaitingTime);
     finally
       FreeAndNil(UDP_Tunnel);
