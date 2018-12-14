@@ -961,7 +961,7 @@ begin
   CapabilityStatement.url := edtURL.Text;
   CapabilityStatement.name := edtName.Text;
   CapabilityStatement.title := edtTitle.Text;
-  CapabilityStatement.fhirVersion := TFhirFHIRVersionEnum(cbxFHIRVersion.itemIndex);
+  CapabilityStatement.fhirVersion := {$IFDEF FHIR3}cbxFHIRVersion.items[cbxFHIRVersion.itemIndex] {$ELSE} TFhirFHIRVersionEnum(cbxFHIRVersion.itemIndex) {$ENDIF};
   CapabilityStatement.version := edtVersion.Text;
   CapabilityStatement.publisher := edtPublisher.text;
   CapabilityStatement.description := edtDescription.Text;
@@ -1236,7 +1236,11 @@ begin
   edtURL.Text := CapabilityStatement.url;
   edtName.Text := CapabilityStatement.name;
   edtTitle.Text := CapabilityStatement.title;
+  {$IFDEF FHIR3}
+  cbxFHIRVersion.itemIndex := cbxFHIRVersion.items.indexOf(CapabilityStatement.fhirVersion);
+  {$ELSE}
   cbxFHIRVersion.itemIndex := Ord(CapabilityStatement.fhirVersion);
+  {$ENDIF}
   edtVersion.Text := CapabilityStatement.version;
   edtPublisher.text := CapabilityStatement.publisher;
   edtDescription.Text := CapabilityStatement.description;

@@ -33,7 +33,7 @@ unit FHIR.R4.Turtle;
 
 interface
 
-// FHIR v3.6.0 generated 2018-11-07T18:13:56+11:00
+// FHIR v4.0.0 generated 2018-12-13T15:48:02+11:00
 
 uses
   SysUtils, Classes, 
@@ -906,10 +906,6 @@ Type
     function ParseInvoice(obj : TTurtleComplex) : TFhirInvoice; overload;
     procedure ParseInvoiceProperties(obj : TTurtleComplex; result : TFhirInvoice); overload;
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-    function ParseItemInstance(obj : TTurtleComplex) : TFhirItemInstance; overload;
-    procedure ParseItemInstanceProperties(obj : TTurtleComplex; result : TFhirItemInstance); overload;
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
     function ParseLibrary(obj : TTurtleComplex) : TFhirLibrary; overload;
     procedure ParseLibraryProperties(obj : TTurtleComplex; result : TFhirLibrary); overload;
@@ -2217,9 +2213,6 @@ Type
     procedure ComposeInvoiceLineItemPriceComponent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirInvoiceLineItemPriceComponent; useType : boolean; index : integer);
     procedure ComposeInvoice(parent :  TTurtleComplex; parentType, name : String; elem : TFhirInvoice; useType : boolean; index : integer);
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-    procedure ComposeItemInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirItemInstance; useType : boolean; index : integer);
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
     procedure ComposeLibrary(parent :  TTurtleComplex; parentType, name : String; elem : TFhirLibrary; useType : boolean; index : integer);
 {$ENDIF FHIR_LIBRARY}
@@ -12508,21 +12501,21 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Claim', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'Claim', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-    ComposeCodeableConcept(this, 'Claim', 'type', elem.type_Element, false, -1);{x.2f}
+  ComposeEnum(this, 'Claim', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
+  ComposeCodeableConcept(this, 'Claim', 'type', elem.type_Element, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('subType') then
     ComposeCodeableConcept(this, 'Claim', 'subType', elem.subTypeElement, false, -1);{x.2f}
-    ComposeEnum(this, 'Claim', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
-    ComposeReference{TFhirPatient}(this, 'Claim', 'patient', elem.patientElement, false, -1);{x.2f}
+  ComposeEnum(this, 'Claim', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
+  ComposeReference{TFhirPatient}(this, 'Claim', 'patient', elem.patientElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('billablePeriod') then
     ComposePeriod(this, 'Claim', 'billablePeriod', elem.billablePeriodElement, false, -1);{x.2f}
-    ComposeDateTime(this, 'Claim', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeDateTime(this, 'Claim', 'created', elem.createdElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
     ComposeReference{TFhirPractitioner}(this, 'Claim', 'enterer', elem.entererElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('insurer') then
     ComposeReference{TFhirOrganization}(this, 'Claim', 'insurer', elem.insurerElement, false, -1);{x.2f}
-    ComposeReference{TFhirPractitioner}(this, 'Claim', 'provider', elem.providerElement, false, -1);{x.2f}
-    ComposeCodeableConcept(this, 'Claim', 'priority', elem.priorityElement, false, -1);{x.2f}
+  ComposeReference{TFhirPractitioner}(this, 'Claim', 'provider', elem.providerElement, false, -1);{x.2f}
+  ComposeCodeableConcept(this, 'Claim', 'priority', elem.priorityElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('fundsReserve') then
     ComposeCodeableConcept(this, 'Claim', 'fundsReserve', elem.fundsReserveElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('related') then
@@ -12550,7 +12543,7 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('procedure_') then
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeClaimProcedure(this, 'Claim', 'procedure', elem.procedure_List[i], false, i);{x.d3}
-    for i := 0 to elem.insuranceList.Count - 1 do
+  for i := 0 to elem.insuranceList.Count - 1 do
       ComposeClaimInsurance(this, 'Claim', 'insurance', elem.insuranceList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) and doCompose('accident') then
     ComposeClaimAccident(this, 'Claim', 'accident', elem.accidentElement, false, -1);{x.2f}
@@ -12610,7 +12603,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteNumberList.Count - 1 do
       ComposePositiveInt(this, 'ClaimResponse.item', 'noteNumber', elem.noteNumberList[i], false, i);{x.d3}
-    for i := 0 to elem.adjudicationList.Count - 1 do
+  for i := 0 to elem.adjudicationList.Count - 1 do
       ComposeClaimResponseItemAdjudication(this, 'ClaimResponse.item', 'adjudication', elem.adjudicationList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.detailList.Count - 1 do
@@ -12710,7 +12703,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteNumberList.Count - 1 do
       ComposePositiveInt(this, 'ClaimResponse.item.detail', 'noteNumber', elem.noteNumberList[i], false, i);{x.d3}
-    for i := 0 to elem.adjudicationList.Count - 1 do
+  for i := 0 to elem.adjudicationList.Count - 1 do
       ComposeClaimResponseItemAdjudication(this, 'ClaimResponse.item.detail', 'adjudication', elem.adjudicationList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.subDetailList.Count - 1 do
@@ -12884,7 +12877,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteNumberList.Count - 1 do
       ComposePositiveInt(this, 'ClaimResponse.addItem', 'noteNumber', elem.noteNumberList[i], false, i);{x.d3}
-    for i := 0 to elem.adjudicationList.Count - 1 do
+  for i := 0 to elem.adjudicationList.Count - 1 do
       ComposeClaimResponseItemAdjudication(this, 'ClaimResponse.addItem', 'adjudication', elem.adjudicationList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.detailList.Count - 1 do
@@ -12955,7 +12948,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteNumberList.Count - 1 do
       ComposePositiveInt(this, 'ClaimResponse.addItem.detail', 'noteNumber', elem.noteNumberList[i], false, i);{x.d3}
-    for i := 0 to elem.adjudicationList.Count - 1 do
+  for i := 0 to elem.adjudicationList.Count - 1 do
       ComposeClaimResponseItemAdjudication(this, 'ClaimResponse.addItem.detail', 'adjudication', elem.adjudicationList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.subDetailList.Count - 1 do
@@ -13024,7 +13017,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteNumberList.Count - 1 do
       ComposePositiveInt(this, 'ClaimResponse.addItem.detail.subDetail', 'noteNumber', elem.noteNumberList[i], false, i);{x.d3}
-    for i := 0 to elem.adjudicationList.Count - 1 do
+  for i := 0 to elem.adjudicationList.Count - 1 do
       ComposeClaimResponseItemAdjudication(this, 'ClaimResponse.addItem.detail.subDetail', 'adjudication', elem.adjudicationList[i], false, i);{x.d3}
 end;
 
@@ -13106,14 +13099,14 @@ begin
       this.addPredicate('a', 'fhir:ClaimResponsePayment'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
-    ComposeCodeableConcept(this, 'ClaimResponse.payment', 'type', elem.type_Element, false, -1);{x.2f}
+  ComposeCodeableConcept(this, 'ClaimResponse.payment', 'type', elem.type_Element, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ClaimResponse.payment', 'adjustment', elem.adjustmentElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ClaimResponse.payment', 'adjustmentReason', elem.adjustmentReasonElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'ClaimResponse.payment', 'date', elem.dateElement, false, -1);{x.2ea}
-    ComposeMoney(this, 'ClaimResponse.payment', 'amount', elem.amountElement, false, -1);{x.2f}
+  ComposeMoney(this, 'ClaimResponse.payment', 'amount', elem.amountElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(this, 'ClaimResponse.payment', 'identifier', elem.identifierElement, false, -1);{x.2f}
 end;
@@ -13159,7 +13152,7 @@ begin
     ComposePositiveInt(this, 'ClaimResponse.processNote', 'number', elem.numberElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) then
     ComposeEnum(this, 'ClaimResponse.processNote', 'type', elem.Type_Element, CODES_TFhirNoteTypeEnum, SYSTEMS_TFhirNoteTypeEnum, false, -1);{x.d4}
-    ComposeString(this, 'ClaimResponse.processNote', 'text', elem.textElement, false, -1);{x.2ea}
+  ComposeString(this, 'ClaimResponse.processNote', 'text', elem.textElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ClaimResponse.processNote', 'language', elem.languageElement, false, -1);{x.2f}
 end;
@@ -13332,19 +13325,19 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ClaimResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'ClaimResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-    ComposeCodeableConcept(this, 'ClaimResponse', 'type', elem.type_Element, false, -1);{x.2f}
+  ComposeEnum(this, 'ClaimResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
+  ComposeCodeableConcept(this, 'ClaimResponse', 'type', elem.type_Element, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('subType') then
     ComposeCodeableConcept(this, 'ClaimResponse', 'subType', elem.subTypeElement, false, -1);{x.2f}
-    ComposeEnum(this, 'ClaimResponse', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
-    ComposeReference{TFhirPatient}(this, 'ClaimResponse', 'patient', elem.patientElement, false, -1);{x.2f}
-    ComposeDateTime(this, 'ClaimResponse', 'created', elem.createdElement, false, -1);{x.2ea}
-    ComposeReference{TFhirOrganization}(this, 'ClaimResponse', 'insurer', elem.insurerElement, false, -1);{x.2f}
+  ComposeEnum(this, 'ClaimResponse', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
+  ComposeReference{TFhirPatient}(this, 'ClaimResponse', 'patient', elem.patientElement, false, -1);{x.2f}
+  ComposeDateTime(this, 'ClaimResponse', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeReference{TFhirOrganization}(this, 'ClaimResponse', 'insurer', elem.insurerElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('requestor') then
     ComposeReference{TFhirPractitioner}(this, 'ClaimResponse', 'requestor', elem.requestorElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('request') then
     ComposeReference{TFhirClaim}(this, 'ClaimResponse', 'request', elem.requestElement, false, -1);{x.2f}
-    ComposeEnum(this, 'ClaimResponse', 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'ClaimResponse', 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
     ComposeString(this, 'ClaimResponse', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
@@ -15669,7 +15662,7 @@ begin
     ParseDomainResourceProperties(obj, result);
     for item in obj.complexes('http://hl7.org/fhir/Consent.identifier') do
       result.identifierList.Add(parseIdentifier(item));
-    result.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Consent.status'), CODES_TFhirEventStatusEnum, SYSTEMS_TFhirEventStatusEnum);
+    result.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Consent.status'), CODES_TFhirConsentStateCodesEnum, SYSTEMS_TFhirConsentStateCodesEnum);
     result.scope := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Consent.scope'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/Consent.category') do
       result.categoryList.Add(parseCodeableConcept(item));
@@ -15710,7 +15703,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Consent', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  ComposeEnum(this, 'Consent', 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, SYSTEMS_TFhirEventStatusEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'Consent', 'status', elem.StatusElement, CODES_TFhirConsentStateCodesEnum, SYSTEMS_TFhirConsentStateCodesEnum, false, -1);{x.d4}
   ComposeCodeableConcept(this, 'Consent', 'scope', elem.scopeElement, false, -1);{x.2f}
   for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Consent', 'category', elem.categoryList[i], false, i);{x.d3}
@@ -17423,24 +17416,24 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'CoverageEligibilityRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'CoverageEligibilityRequest', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'CoverageEligibilityRequest', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soData]) and doCompose('priority') then
     ComposeCodeableConcept(this, 'CoverageEligibilityRequest', 'priority', elem.priorityElement, false, -1);{x.2f}
   for i := 0 to elem.purposeList.Count - 1 do
       ComposeEnum(this, 'CoverageEligibilityRequest', 'purpose', elem.purposeList[i], CODES_TFhirEligibilityrequestPurposeEnum, SYSTEMS_TFhirEligibilityrequestPurposeEnum, false, i); {x.d1}
   for i := 0 to elem.purposeList.Count - 1 do
       ComposeEnum(this, 'CoverageEligibilityRequest', 'purpose', elem.purposeList[i], CODES_TFhirEligibilityrequestPurposeEnum, SYSTEMS_TFhirEligibilityrequestPurposeEnum, false, i);{x.d2}
-    ComposeReference{TFhirPatient}(this, 'CoverageEligibilityRequest', 'patient', elem.patientElement, false, -1);{x.2f}
+  ComposeReference{TFhirPatient}(this, 'CoverageEligibilityRequest', 'patient', elem.patientElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
     ComposePeriod(this, 'CoverageEligibilityRequest', 'servicedPeriod', TFhirPeriod(elem.serviced), false, -1){x.d9}
   else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
     ComposeDate(this, 'CoverageEligibilityRequest', 'servicedDate', TFhirDate(elem.serviced), false, -1);{x.d9}
-    ComposeDateTime(this, 'CoverageEligibilityRequest', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeDateTime(this, 'CoverageEligibilityRequest', 'created', elem.createdElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
     ComposeReference{TFhirPractitioner}(this, 'CoverageEligibilityRequest', 'enterer', elem.entererElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('provider') then
     ComposeReference{TFhirPractitioner}(this, 'CoverageEligibilityRequest', 'provider', elem.providerElement, false, -1);{x.2f}
-    ComposeReference{TFhirOrganization}(this, 'CoverageEligibilityRequest', 'insurer', elem.insurerElement, false, -1);{x.2f}
+  ComposeReference{TFhirOrganization}(this, 'CoverageEligibilityRequest', 'insurer', elem.insurerElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('facility') then
     ComposeReference{TFhirLocation}(this, 'CoverageEligibilityRequest', 'facility', elem.facilityElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('supportingInfo') then
@@ -17497,7 +17490,7 @@ begin
       this.addPredicate('a', 'fhir:CoverageEligibilityResponseInsurance'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
-    ComposeReference{TFhirCoverage}(this, 'CoverageEligibilityResponse.insurance', 'coverage', elem.coverageElement, false, -1);{x.2f}
+  ComposeReference{TFhirCoverage}(this, 'CoverageEligibilityResponse.insurance', 'coverage', elem.coverageElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'CoverageEligibilityResponse.insurance', 'inforce', elem.inforceElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) then
@@ -17754,24 +17747,24 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'CoverageEligibilityResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'CoverageEligibilityResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'CoverageEligibilityResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
   for i := 0 to elem.purposeList.Count - 1 do
       ComposeEnum(this, 'CoverageEligibilityResponse', 'purpose', elem.purposeList[i], CODES_TFhirEligibilityresponsePurposeEnum, SYSTEMS_TFhirEligibilityresponsePurposeEnum, false, i); {x.d1}
   for i := 0 to elem.purposeList.Count - 1 do
       ComposeEnum(this, 'CoverageEligibilityResponse', 'purpose', elem.purposeList[i], CODES_TFhirEligibilityresponsePurposeEnum, SYSTEMS_TFhirEligibilityresponsePurposeEnum, false, i);{x.d2}
-    ComposeReference{TFhirPatient}(this, 'CoverageEligibilityResponse', 'patient', elem.patientElement, false, -1);{x.2f}
+  ComposeReference{TFhirPatient}(this, 'CoverageEligibilityResponse', 'patient', elem.patientElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
     ComposePeriod(this, 'CoverageEligibilityResponse', 'servicedPeriod', TFhirPeriod(elem.serviced), false, -1){x.d9}
   else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
     ComposeDate(this, 'CoverageEligibilityResponse', 'servicedDate', TFhirDate(elem.serviced), false, -1);{x.d9}
-    ComposeDateTime(this, 'CoverageEligibilityResponse', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeDateTime(this, 'CoverageEligibilityResponse', 'created', elem.createdElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('requestor') then
     ComposeReference{TFhirPractitioner}(this, 'CoverageEligibilityResponse', 'requestor', elem.requestorElement, false, -1);{x.2f}
-    ComposeReference{TFhirCoverageEligibilityRequest}(this, 'CoverageEligibilityResponse', 'request', elem.requestElement, false, -1);{x.2f}
-    ComposeEnum(this, 'CoverageEligibilityResponse', 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, false, -1);{x.d4}
+  ComposeReference{TFhirCoverageEligibilityRequest}(this, 'CoverageEligibilityResponse', 'request', elem.requestElement, false, -1);{x.2f}
+  ComposeEnum(this, 'CoverageEligibilityResponse', 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
     ComposeString(this, 'CoverageEligibilityResponse', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-    ComposeReference{TFhirOrganization}(this, 'CoverageEligibilityResponse', 'insurer', elem.insurerElement, false, -1);{x.2f}
+  ComposeReference{TFhirOrganization}(this, 'CoverageEligibilityResponse', 'insurer', elem.insurerElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeCoverageEligibilityResponseInsurance(this, 'CoverageEligibilityResponse', 'insurance', elem.insuranceList[i], false, i);{x.d3}
@@ -22254,6 +22247,8 @@ var
 begin
     ParseBackboneElementProperties(obj, result);
     result.sequenceElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/ExplanationOfBenefit.procedure.sequence'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/ExplanationOfBenefit.procedure.type') do
+      result.type_List.Add(parseCodeableConcept(item));
     result.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/ExplanationOfBenefit.procedure.date'));{q1}
     if obj.has('http://hl7.org/fhir/ExplanationOfBenefit.procedure.procedureCodeableConcept', item) then
       result.procedure_ := parseCodeableConcept(item);
@@ -22280,6 +22275,9 @@ begin
   end;
   composeBackboneElement(this, '', name, elem, false, index);
   ComposePositiveInt(this, 'ExplanationOfBenefit.procedure', 'sequence', elem.sequenceElement, false, -1);{x.2ea}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(this, 'ExplanationOfBenefit.procedure', 'type', elem.type_List[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'ExplanationOfBenefit.procedure', 'date', elem.dateElement, false, -1);{x.2ea}
   if (elem.procedure_ is TFhirCodeableConcept) {6} then
@@ -23375,19 +23373,19 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ExplanationOfBenefit', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'ExplanationOfBenefit', 'status', elem.StatusElement, CODES_TFhirExplanationofbenefitStatusEnum, SYSTEMS_TFhirExplanationofbenefitStatusEnum, false, -1);{x.d4}
-    ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'type', elem.type_Element, false, -1);{x.2f}
+  ComposeEnum(this, 'ExplanationOfBenefit', 'status', elem.StatusElement, CODES_TFhirExplanationofbenefitStatusEnum, SYSTEMS_TFhirExplanationofbenefitStatusEnum, false, -1);{x.d4}
+  ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'type', elem.type_Element, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('subType') then
     ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'subType', elem.subTypeElement, false, -1);{x.2f}
-    ComposeEnum(this, 'ExplanationOfBenefit', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
-    ComposeReference{TFhirPatient}(this, 'ExplanationOfBenefit', 'patient', elem.patientElement, false, -1);{x.2f}
+  ComposeEnum(this, 'ExplanationOfBenefit', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
+  ComposeReference{TFhirPatient}(this, 'ExplanationOfBenefit', 'patient', elem.patientElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('billablePeriod') then
     ComposePeriod(this, 'ExplanationOfBenefit', 'billablePeriod', elem.billablePeriodElement, false, -1);{x.2f}
-    ComposeDateTime(this, 'ExplanationOfBenefit', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeDateTime(this, 'ExplanationOfBenefit', 'created', elem.createdElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
     ComposeReference{TFhirPractitioner}(this, 'ExplanationOfBenefit', 'enterer', elem.entererElement, false, -1);{x.2f}
-    ComposeReference{TFhirOrganization}(this, 'ExplanationOfBenefit', 'insurer', elem.insurerElement, false, -1);{x.2f}
-    ComposeReference{TFhirPractitioner}(this, 'ExplanationOfBenefit', 'provider', elem.providerElement, false, -1);{x.2f}
+  ComposeReference{TFhirOrganization}(this, 'ExplanationOfBenefit', 'insurer', elem.insurerElement, false, -1);{x.2f}
+  ComposeReference{TFhirPractitioner}(this, 'ExplanationOfBenefit', 'provider', elem.providerElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('priority') then
     ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'priority', elem.priorityElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('fundsReserveRequested') then
@@ -23411,7 +23409,7 @@ begin
     ComposeReference{TFhirClaim}(this, 'ExplanationOfBenefit', 'claim', elem.claimElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('claimResponse') then
     ComposeReference{TFhirClaimResponse}(this, 'ExplanationOfBenefit', 'claimResponse', elem.claimResponseElement, false, -1);{x.2f}
-    ComposeEnum(this, 'ExplanationOfBenefit', 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'ExplanationOfBenefit', 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
     ComposeString(this, 'ExplanationOfBenefit', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
@@ -23434,7 +23432,7 @@ begin
       ComposeExplanationOfBenefitProcedure(this, 'ExplanationOfBenefit', 'procedure', elem.procedure_List[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) and doCompose('precedence') then
     ComposePositiveInt(this, 'ExplanationOfBenefit', 'precedence', elem.precedenceElement, false, -1);{x.2ea}
-    for i := 0 to elem.insuranceList.Count - 1 do
+  for i := 0 to elem.insuranceList.Count - 1 do
       ComposeExplanationOfBenefitInsurance(this, 'ExplanationOfBenefit', 'insurance', elem.insuranceList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) and doCompose('accident') then
     ComposeExplanationOfBenefitAccident(this, 'ExplanationOfBenefit', 'accident', elem.accidentElement, false, -1);{x.2f}
@@ -27070,72 +27068,6 @@ begin
 end;
 
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-function TFHIRTurtleParser.ParseItemInstance(obj : TTurtleComplex) : TFhirItemInstance;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirItemInstance.create;
-  try
-    ParseItemInstanceProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseItemInstanceProperties(obj : TTurtleComplex; result : TFhirItemInstance);
-begin
-    ParseDomainResourceProperties(obj, result);
-    result.countElement := ParseInteger(obj.complex('http://hl7.org/fhir/ItemInstance.count'));{q1}
-    result.location := ParseReference{TFhirLocation}(obj.complex('http://hl7.org/fhir/ItemInstance.location'));{q3b}
-    result.subject := ParseReference{TFhirPatient}(obj.complex('http://hl7.org/fhir/ItemInstance.subject'));{q3b}
-    result.manufactureDateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/ItemInstance.manufactureDate'));{q1}
-    result.expiryDateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/ItemInstance.expiryDate'));{q1}
-    result.currentSWVersionElement := ParseString(obj.complex('http://hl7.org/fhir/ItemInstance.currentSWVersion'));{q1}
-    result.lotNumberElement := ParseString(obj.complex('http://hl7.org/fhir/ItemInstance.lotNumber'));{q1}
-    result.serialNumberElement := ParseString(obj.complex('http://hl7.org/fhir/ItemInstance.serialNumber'));{q1}
-    result.carrierAIDCElement := ParseString(obj.complex('http://hl7.org/fhir/ItemInstance.carrierAIDC'));{q1}
-    result.carrierHRFElement := ParseString(obj.complex('http://hl7.org/fhir/ItemInstance.carrierHRF'));{q1}
-end;
-
-procedure TFHIRTurtleComposer.ComposeItemInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirItemInstance; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:ItemInstance'); {z}
-  end;
-  composeDomainResource(this, '', name, elem, false, index);
-  ComposeInteger(this, 'ItemInstance', 'count', elem.countElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('location') then
-    ComposeReference{TFhirLocation}(this, 'ItemInstance', 'location', elem.locationElement, false, -1);{x.2f}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
-    ComposeReference{TFhirPatient}(this, 'ItemInstance', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('manufactureDate') then
-    ComposeDateTime(this, 'ItemInstance', 'manufactureDate', elem.manufactureDateElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('expiryDate') then
-    ComposeDateTime(this, 'ItemInstance', 'expiryDate', elem.expiryDateElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('currentSWVersion') then
-    ComposeString(this, 'ItemInstance', 'currentSWVersion', elem.currentSWVersionElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lotNumber') then
-    ComposeString(this, 'ItemInstance', 'lotNumber', elem.lotNumberElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('serialNumber') then
-    ComposeString(this, 'ItemInstance', 'serialNumber', elem.serialNumberElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('carrierAIDC') then
-    ComposeString(this, 'ItemInstance', 'carrierAIDC', elem.carrierAIDCElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('carrierHRF') then
-    ComposeString(this, 'ItemInstance', 'carrierHRF', elem.carrierHRFElement, false, -1);{x.2ea}
-end;
-
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
 function TFHIRTurtleParser.ParseLibrary(obj : TTurtleComplex) : TFhirLibrary;
 begin
@@ -34384,10 +34316,10 @@ begin
     result.quantitativeDetails := ParseObservationDefinitionQuantitativeDetails(obj.complex('http://hl7.org/fhir/ObservationDefinition.quantitativeDetails'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/ObservationDefinition.qualifiedInterval') do
       result.qualifiedIntervalList.Add(parseObservationDefinitionQualifiedInterval(item));
-    result.validCodedValueSetElement := ParseUri(obj.complex('http://hl7.org/fhir/ObservationDefinition.validCodedValueSet'));{q1}
-    result.normalCodedValueSetElement := ParseUri(obj.complex('http://hl7.org/fhir/ObservationDefinition.normalCodedValueSet'));{q1}
-    result.abnormalCodedValueSetElement := ParseUri(obj.complex('http://hl7.org/fhir/ObservationDefinition.abnormalCodedValueSet'));{q1}
-    result.criticalCodedValueSetElement := ParseUri(obj.complex('http://hl7.org/fhir/ObservationDefinition.criticalCodedValueSet'));{q1}
+    result.validCodedValueSet := ParseReference{TFhirValueSet}(obj.complex('http://hl7.org/fhir/ObservationDefinition.validCodedValueSet'));{q3b}
+    result.normalCodedValueSet := ParseReference{TFhirValueSet}(obj.complex('http://hl7.org/fhir/ObservationDefinition.normalCodedValueSet'));{q3b}
+    result.abnormalCodedValueSet := ParseReference{TFhirValueSet}(obj.complex('http://hl7.org/fhir/ObservationDefinition.abnormalCodedValueSet'));{q3b}
+    result.criticalCodedValueSet := ParseReference{TFhirValueSet}(obj.complex('http://hl7.org/fhir/ObservationDefinition.criticalCodedValueSet'));{q3b}
 end;
 
 procedure TFHIRTurtleComposer.ComposeObservationDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirObservationDefinition; useType : boolean; index : integer);
@@ -34431,13 +34363,13 @@ begin
     for i := 0 to elem.qualifiedIntervalList.Count - 1 do
       ComposeObservationDefinitionQualifiedInterval(this, 'ObservationDefinition', 'qualifiedInterval', elem.qualifiedIntervalList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soData]) and doCompose('validCodedValueSet') then
-    ComposeUri(this, 'ObservationDefinition', 'validCodedValueSet', elem.validCodedValueSetElement, false, -1);{x.2ea}
+    ComposeReference{TFhirValueSet}(this, 'ObservationDefinition', 'validCodedValueSet', elem.validCodedValueSetElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('normalCodedValueSet') then
-    ComposeUri(this, 'ObservationDefinition', 'normalCodedValueSet', elem.normalCodedValueSetElement, false, -1);{x.2ea}
+    ComposeReference{TFhirValueSet}(this, 'ObservationDefinition', 'normalCodedValueSet', elem.normalCodedValueSetElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('abnormalCodedValueSet') then
-    ComposeUri(this, 'ObservationDefinition', 'abnormalCodedValueSet', elem.abnormalCodedValueSetElement, false, -1);{x.2ea}
+    ComposeReference{TFhirValueSet}(this, 'ObservationDefinition', 'abnormalCodedValueSet', elem.abnormalCodedValueSetElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('criticalCodedValueSet') then
-    ComposeUri(this, 'ObservationDefinition', 'criticalCodedValueSet', elem.criticalCodedValueSetElement, false, -1);{x.2ea}
+    ComposeReference{TFhirValueSet}(this, 'ObservationDefinition', 'criticalCodedValueSet', elem.criticalCodedValueSetElement, false, -1);{x.2f}
 end;
 
 {$ENDIF FHIR_OBSERVATIONDEFINITION}
@@ -35406,12 +35338,12 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PaymentNotice', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'PaymentNotice', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'PaymentNotice', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soData]) and doCompose('request') then
     ComposeReference{TFhirReference}(this, 'PaymentNotice', 'request', elem.requestElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('response') then
     ComposeReference{TFhirReference}(this, 'PaymentNotice', 'response', elem.responseElement, false, -1);{x.2f}
-    ComposeDateTime(this, 'PaymentNotice', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeDateTime(this, 'PaymentNotice', 'created', elem.createdElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('provider') then
     ComposeReference{TFhirPractitioner}(this, 'PaymentNotice', 'provider', elem.providerElement, false, -1);{x.2f}
   ComposeReference{TFhirPaymentReconciliation}(this, 'PaymentNotice', 'payment', elem.paymentElement, false, -1);{x.2f}
@@ -35589,10 +35521,10 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PaymentReconciliation', 'identifier', elem.identifierList[i], false, i);{x.d3}
-    ComposeEnum(this, 'PaymentReconciliation', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
+  ComposeEnum(this, 'PaymentReconciliation', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('period') then
     ComposePeriod(this, 'PaymentReconciliation', 'period', elem.periodElement, false, -1);{x.2f}
-    ComposeDateTime(this, 'PaymentReconciliation', 'created', elem.createdElement, false, -1);{x.2ea}
+  ComposeDateTime(this, 'PaymentReconciliation', 'created', elem.createdElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('paymentIssuer') then
     ComposeReference{TFhirOrganization}(this, 'PaymentReconciliation', 'paymentIssuer', elem.paymentIssuerElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('request') then
@@ -38080,9 +38012,7 @@ procedure TFHIRTurtleParser.ParseRequestGroupActionConditionProperties(obj : TTu
 begin
     ParseBackboneElementProperties(obj, result);
     result.kindElement := ParseEnum(obj.complex('http://hl7.org/fhir/RequestGroup.action.condition.kind'), CODES_TFhirActionConditionKindEnum, SYSTEMS_TFhirActionConditionKindEnum);
-    result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/RequestGroup.action.condition.description'));{q1}
-    result.languageElement := ParseString(obj.complex('http://hl7.org/fhir/RequestGroup.action.condition.language'));{q1}
-    result.expressionElement := ParseString(obj.complex('http://hl7.org/fhir/RequestGroup.action.condition.expression'));{q1}
+    result.expression := ParseExpression(obj.complex('http://hl7.org/fhir/RequestGroup.action.condition.expression'));{q3b}
 end;
 
 procedure TFHIRTurtleComposer.ComposeRequestGroupActionCondition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRequestGroupActionCondition; useType : boolean; index : integer);
@@ -38102,11 +38032,7 @@ begin
   composeBackboneElement(this, '', name, elem, false, index);
   ComposeEnum(this, 'RequestGroup.action.condition', 'kind', elem.KindElement, CODES_TFhirActionConditionKindEnum, SYSTEMS_TFhirActionConditionKindEnum, false, -1);{x.d4}
   if (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'RequestGroup.action.condition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'RequestGroup.action.condition', 'language', elem.languageElement, false, -1);{x.2ea}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'RequestGroup.action.condition', 'expression', elem.expressionElement, false, -1);{x.2ea}
+    ComposeExpression(this, 'RequestGroup.action.condition', 'expression', elem.expressionElement, false, -1);{x.2f}
 end;
 
 function TFHIRTurtleParser.ParseRequestGroupActionRelatedAction(obj : TTurtleComplex) : TFhirRequestGroupActionRelatedAction;
@@ -38192,7 +38118,7 @@ begin
     result.priorityElement := ParseEnum(obj.complex('http://hl7.org/fhir/RequestGroup.priority'), CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum);
     result.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/RequestGroup.code'));{q3b}
     result.subject := ParseReference{TFhirPatient}(obj.complex('http://hl7.org/fhir/RequestGroup.subject'));{q3b}
-    result.context := ParseReference{TFhirEncounter}(obj.complex('http://hl7.org/fhir/RequestGroup.context'));{q3b}
+    result.encounter := ParseReference{TFhirEncounter}(obj.complex('http://hl7.org/fhir/RequestGroup.encounter'));{q3b}
     result.authoredOnElement := ParseDateTime(obj.complex('http://hl7.org/fhir/RequestGroup.authoredOn'));{q1}
     result.author := ParseReference{TFhirDevice}(obj.complex('http://hl7.org/fhir/RequestGroup.author'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/RequestGroup.reasonCode') do
@@ -38246,8 +38172,8 @@ begin
     ComposeCodeableConcept(this, 'RequestGroup', 'code', elem.codeElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('subject') then
     ComposeReference{TFhirPatient}(this, 'RequestGroup', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if (SummaryOption in [soFull, soData]) and doCompose('context') then
-    ComposeReference{TFhirEncounter}(this, 'RequestGroup', 'context', elem.contextElement, false, -1);{x.2f}
+  if (SummaryOption in [soFull, soData]) and doCompose('encounter') then
+    ComposeReference{TFhirEncounter}(this, 'RequestGroup', 'encounter', elem.encounterElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soData]) and doCompose('authoredOn') then
     ComposeDateTime(this, 'RequestGroup', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) and doCompose('author') then
@@ -39098,7 +39024,7 @@ begin
     result.method := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/RiskAssessment.method'));{q3b}
     result.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/RiskAssessment.code'));{q3b}
     result.subject := ParseReference{TFhirPatient}(obj.complex('http://hl7.org/fhir/RiskAssessment.subject'));{q3b}
-    result.context := ParseReference{TFhirEncounter}(obj.complex('http://hl7.org/fhir/RiskAssessment.context'));{q3b}
+    result.encounter := ParseReference{TFhirEncounter}(obj.complex('http://hl7.org/fhir/RiskAssessment.encounter'));{q3b}
     if obj.has('http://hl7.org/fhir/RiskAssessment.occurrencePeriod', item) then
       result.occurrence := parsePeriod(item);
     if obj.has('http://hl7.org/fhir/RiskAssessment.occurrenceDateTime', item) then
@@ -39147,8 +39073,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('code') then
     ComposeCodeableConcept(this, 'RiskAssessment', 'code', elem.codeElement, false, -1);{x.2f}
   ComposeReference{TFhirPatient}(this, 'RiskAssessment', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('context') then
-    ComposeReference{TFhirEncounter}(this, 'RiskAssessment', 'context', elem.contextElement, false, -1);{x.2f}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('encounter') then
+    ComposeReference{TFhirEncounter}(this, 'RiskAssessment', 'encounter', elem.encounterElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'RiskAssessment', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
@@ -40439,7 +40365,8 @@ begin
       this.addPredicate('a', 'fhir:SpecimenDefinitionTypeTested'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
-  ComposeBoolean(this, 'SpecimenDefinition.typeTested', 'isDerived', elem.isDerivedElement, false, -1);{x.2ea}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'SpecimenDefinition.typeTested', 'isDerived', elem.isDerivedElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'SpecimenDefinition.typeTested', 'type', elem.type_Element, false, -1);{x.2f}
   ComposeEnum(this, 'SpecimenDefinition.typeTested', 'preference', elem.PreferenceElement, CODES_TFhirSpecimenContainedPreferenceEnum, SYSTEMS_TFhirSpecimenContainedPreferenceEnum, false, -1);{x.d4}
@@ -40480,7 +40407,10 @@ begin
     result.cap := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.cap'));{q3b}
     result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.description'));{q1}
     result.capacity := ParseQuantity(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.capacity'));{q3b}
-    result.minimumVolume := ParseQuantity(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.minimumVolume'));{q3b}
+    if obj.has('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.minimumVolumeQuantity', item) then
+      result.minimumVolume := parseQuantity(item);
+    if obj.has('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.minimumVolumeString', item) then
+      result.minimumVolume := parseString(item);
     for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.additive') do
       result.additiveList.Add(parseSpecimenDefinitionTypeTestedContainerAdditive(item));
     result.preparationElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeTested.container.preparation'));{q1}
@@ -40512,8 +40442,10 @@ begin
     ComposeString(this, 'SpecimenDefinition.typeTested.container', 'description', elem.descriptionElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(this, 'SpecimenDefinition.typeTested.container', 'capacity', elem.capacityElement, false, -1);{x.2f}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(this, 'SpecimenDefinition.typeTested.container', 'minimumVolume', elem.minimumVolumeElement, false, -1);{x.2f}
+  if (SummaryOption in [soFull, soData]) and (elem.minimumVolume is TFhirQuantity) {6} then
+    ComposeQuantity(this, 'SpecimenDefinition.typeTested.container', 'minimumVolumeQuantity', TFhirQuantity(elem.minimumVolume), false, -1){x.d9}
+  else if (SummaryOption in [soFull, soData]) and (elem.minimumVolume is TFhirString) {6} then
+    ComposeString(this, 'SpecimenDefinition.typeTested.container', 'minimumVolumeString', TFhirString(elem.minimumVolume), false, -1);{x.d9}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.additiveList.Count - 1 do
       ComposeSpecimenDefinitionTypeTestedContainerAdditive(this, 'SpecimenDefinition.typeTested.container', 'additive', elem.additiveList[i], false, i);{x.d3}
@@ -40633,7 +40565,8 @@ begin
     ParseDomainResourceProperties(obj, result);
     result.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/SpecimenDefinition.identifier'));{q3b}
     result.typeCollected := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeCollected'));{q3b}
-    result.patientPreparationElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.patientPreparation'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.patientPreparation') do
+      result.patientPreparationList.Add(parseCodeableConcept(item));
     result.timeAspectElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.timeAspect'));{q1}
     for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.collection') do
       result.collectionList.Add(parseCodeableConcept(item));
@@ -40661,8 +40594,9 @@ begin
     ComposeIdentifier(this, 'SpecimenDefinition', 'identifier', elem.identifierElement, false, -1);{x.2f}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('typeCollected') then
     ComposeCodeableConcept(this, 'SpecimenDefinition', 'typeCollected', elem.typeCollectedElement, false, -1);{x.2f}
-  if (SummaryOption in [soFull, soData]) and doCompose('patientPreparation') then
-    ComposeString(this, 'SpecimenDefinition', 'patientPreparation', elem.patientPreparationElement, false, -1);{x.2ea}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('patientPreparation') then
+    for i := 0 to elem.patientPreparationList.Count - 1 do
+      ComposeCodeableConcept(this, 'SpecimenDefinition', 'patientPreparation', elem.patientPreparationList[i], false, i);{x.d3}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('timeAspect') then
     ComposeString(this, 'SpecimenDefinition', 'timeAspect', elem.timeAspectElement, false, -1);{x.2ea}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('collection') then
@@ -48290,10 +48224,6 @@ begin
   else if SameText(type_, 'Invoice') then
     result := parseInvoice(obj)
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-  else if SameText(type_, 'ItemInstance') then
-    result := parseItemInstance(obj)
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
   else if SameText(type_, 'Library') then
     result := parseLibrary(obj)
@@ -49040,11 +48970,6 @@ begin
      frtInvoice: ComposeInvoice(this, '', 'Invoice', TFhirInvoice(resource), true, -1); 
   {$ENDIF}
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-  {$IFDEF FHIR_ITEMINSTANCE}
-     frtItemInstance: ComposeItemInstance(this, '', 'ItemInstance', TFhirItemInstance(resource), true, -1); 
-  {$ENDIF}
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
   {$IFDEF FHIR_LIBRARY}
      frtLibrary: ComposeLibrary(this, '', 'Library', TFhirLibrary(resource), true, -1); 
@@ -49851,12 +49776,6 @@ begin
     result := ParseInvoice(obj) 
   {$ENDIF}
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-  {$IFDEF FHIR_ITEMINSTANCE}
-   else if s = 'ItemInstance' Then
-    result := ParseItemInstance(obj) 
-  {$ENDIF}
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
   {$IFDEF FHIR_LIBRARY}
    else if s = 'Library' Then

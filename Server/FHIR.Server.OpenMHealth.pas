@@ -694,7 +694,11 @@ begin
 
   // user_notes --> Observation.comment
   if (body.has('user_notes')) then
+    {$IFDEF FHIR3}
+    obs.comment := body['user_notes'];
+    {$ELSE}
     obs.noteList.Append.text := body['user_notes'];
+    {$ENDIF}
 end;
 
 procedure TOpenMHealthAdaptor.writeBloodGlucose(obs: TFHIRObservation; body: TJsonObject);
@@ -727,8 +731,12 @@ begin
   if obs.getComponent('http://snomed.info/sct', '309609009', comp) then
     body['temporal_relationship_to_sleep'] := (comp.value as TFhirString).value;
 
+  {$IFDEF FHIR3}
+    body['user_notes'] := obs.comment;
+  {$ELSE}
   if obs.noteList.Count > 0 then
     body['user_notes'] := obs.noteList[0].text;
+  {$ENDIF}
 end;
 
 procedure TOpenMHealthAdaptor.writeBundle(obs: TFHIRBundle; json: TJsonObject);

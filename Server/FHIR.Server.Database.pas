@@ -3721,10 +3721,10 @@ begin
             src.requestMethod := 'PUT';
             src.requestUrl := src.resource.fhirType+'/'+src.resource.id;
           end;
-          dest.requestMethod := src.requestMethod;
-          dest.requestUrl := src.requestUrl;
-          dest.requestIfNoneExist := src.requestIfNoneExist;
-          dest.requestIfMatch := src.requestIfMatch;
+//          dest.requestMethod := src.requestMethod;
+//          dest.requestUrl := src.requestUrl;
+//          dest.requestIfNoneExist := src.requestIfNoneExist;
+//          dest.requestIfMatch := src.requestIfMatch;
           request.reset;
           url := request.preAnalyse(src.requestUrl);
           request.analyse(src.requestMethod, url, dummy, nil);
@@ -3757,6 +3757,7 @@ begin
           dest.responseEtag := 'W/'+response.versionId;
           dest.responseDate := TDateTimeEx.makeUTC(response.lastModifiedDate);
           dest.resource := response.resource.link;
+
         except
           on e : ERestfulException do
           begin

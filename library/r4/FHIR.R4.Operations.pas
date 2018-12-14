@@ -33,7 +33,7 @@ unit FHIR.R4.Operations;
 
 interface
 
-// FHIR v3.6.0 generated 2018-11-07T18:13:56+11:00
+// FHIR v4.0.0 generated 2018-12-13T15:13:20+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, 
@@ -1991,9 +1991,9 @@ begin
   result := TFHIRParameters.create;
   try
     if (FLeft <> '') then
-      result.addParameter('left', TFHIRUri.create(FLeft));{oz.5f}
+      result.addParameter('left', TFHIRCanonical.create(FLeft));{oz.5f}
     if (FRight <> '') then
-      result.addParameter('right', TFHIRUri.create(FRight));{oz.5f}
+      result.addParameter('right', TFHIRCanonical.create(FRight));{oz.5f}
     if (FMode <> '') then
       result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
     writeExtensions(result);

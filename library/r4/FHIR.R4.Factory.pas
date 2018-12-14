@@ -32,7 +32,7 @@
 
 interface
 
-// FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
+// FHIR v4.0.0 generated 2018-05-15T06:48:00+10:00
 
 uses
   SysUtils, Classes, System.NetEncoding,
@@ -1524,10 +1524,6 @@ begin
   else if name = 'Invoice' then
     result := TFhirInvoice.create()
 {$ENDIF FHIR_INVOICE}
-{$IFDEF FHIR_ITEMINSTANCE}
-  else if name = 'ItemInstance' then
-    result := TFhirItemInstance.create()
-{$ENDIF FHIR_ITEMINSTANCE}
 {$IFDEF FHIR_LIBRARY}
   else if name = 'Library' then
     result := TFhirLibrary.create()

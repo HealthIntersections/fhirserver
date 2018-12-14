@@ -417,7 +417,7 @@ var
   idx: integer;
 begin
 
-  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.IndexOf(tfhirImplementationGuideDefinitiongrouping(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.IndexOf(tfhirImplementationGuideDefinitionGrouping(tvStructure.Selected.tagObject));
 
   if idx < tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.Count - 1 then
   begin
@@ -433,7 +433,7 @@ procedure TImplementationGuideEditorFrame.packageUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.IndexOf(tfhirImplementationGuideDefinitiongrouping(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.IndexOf(tfhirImplementationGuideDefinitionGrouping(tvStructure.Selected.tagObject));
   if idx > 0 then
   begin
     tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).groupingList.Exchange(idx, idx - 1);
@@ -613,9 +613,9 @@ end;
 
 procedure TImplementationGuideEditorFrame.CornerButton4Click(Sender: TObject);
 var
-  package: tfhirImplementationGuideDefinitiongrouping;
+  package: tfhirImplementationGuideDefinitionGrouping;
 begin
-  package := tfhirImplementationGuideDefinitiongrouping.Create;
+  package := tfhirImplementationGuideDefinitionGrouping.Create;
   Package.Name := 'Package';
 
   if tvStructure.Selected.tagObject is tfhirImplementationGuideDefinition then
@@ -1052,12 +1052,12 @@ begin
 
   end;
 
-  if obj is tfhirImplementationGuideDefinitiongrouping then
+  if obj is tfhirImplementationGuideDefinitionGrouping then
   begin
     selIndex := 3;
     UpdatePage.enabled := true;
-    Edit12.text := tfhirImplementationGuideDefinitiongrouping(obj).Name;
-    Memo2.text := tfhirImplementationGuideDefinitiongrouping(obj).Description;
+    Edit12.text := tfhirImplementationGuideDefinitionGrouping(obj).Name;
+    Memo2.text := tfhirImplementationGuideDefinitionGrouping(obj).Description;
 
   end;
 
@@ -1257,7 +1257,7 @@ begin
   obj.Name := Edit9.text;
   obj.Description := Memo4.text;
   if ComboBox1.ItemIndex <> -1 then
-    obj.Groupingid := ComboBox1.Items[ComboBox1.ItemIndex];
+    obj.groupingId := ComboBox1.Items[ComboBox1.ItemIndex];
   tvStructure.Selected.text := obj.Name;
 
 end;

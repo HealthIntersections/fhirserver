@@ -369,6 +369,7 @@ Type
 
   TJSONLexer = class (TFslTextExtractor)
   Private
+    FLoose : boolean;
     FPeek : String;
     FValue: TStringBuilder;
     FLexType: TJSONLexType;
@@ -377,13 +378,14 @@ Type
     FLastLocationAWS : TSourceLocation;
     FLocation : TSourceLocation;
     Function getNextChar : Char;
+    Function peekNextChar : Char;
     Procedure Push(ch : Char);
     procedure ParseWord(sWord : String; ch : Char; aType : TJSONLexType);
     Procedure JsonError(sMsg : String);
     Function Path : String;
     function GetValue: String;
   Public
-    constructor Create(oStream : TFslStream); Overload;
+    constructor Create(oStream : TFslStream; loose : boolean = false); Overload;
     destructor Destroy; Override;
     Procedure Start;
     Property LexType : TJSONLexType read FLexType;
@@ -412,8 +414,8 @@ Type
     procedure readObject(obj : TJsonObject; root : boolean);
     procedure readArray(arr : TJsonArray; root : boolean);
   Public
-    constructor Create(oStream : TStream); Overload;
-    constructor Create(oStream : TFslStream);  Overload;
+    constructor Create(oStream : TStream; loose : boolean); Overload;
+    constructor Create(oStream : TFslStream; loose : boolean);  Overload;
     destructor Destroy; Override;
     Property ItemType : TJsonParserItemType read FItemType;
     Property ItemName : String read FItemName;
@@ -424,15 +426,16 @@ Type
     Procedure JsonError(sMsg : String);
     Procedure CheckState(aState : TJsonParserItemType);
     function readNode : TJsonNode;
-    class Function Parse(stream : TFslStream; timeToAbort : cardinal = 0): TJsonObject; overload;
-    class Function Parse(stream : TStream; timeToAbort : cardinal = 0): TJsonObject; overload;
-    class Function Parse(b : TBytes; timeToAbort : cardinal = 0): TJsonObject; overload;
-    class Function Parse(s : String; timeToAbort : cardinal = 0): TJsonObject; overload;
-    class Function ParseNode(stream : TFslStream; timeToAbort : cardinal = 0): TJsonNode; overload;
-    class Function ParseNode(stream : TStream; timeToAbort : cardinal = 0): TJsonNode; overload;
-    class Function ParseNode(b : TBytes; timeToAbort : cardinal = 0): TJsonNode; overload;
-    class Function ParseNode(s : String; timeToAbort : cardinal = 0): TJsonNode; overload;
-    class Function ParseFile(fn : String) : TJsonObject; overload;
+    // loose: allow comments and comma deviations
+    class Function Parse(stream : TFslStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject; overload;
+    class Function Parse(stream : TStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject; overload;
+    class Function Parse(b : TBytes; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject; overload;
+    class Function Parse(s : String; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject; overload;
+    class Function ParseNode(stream : TFslStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode; overload;
+    class Function ParseNode(stream : TStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode; overload;
+    class Function ParseNode(b : TBytes; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode; overload;
+    class Function ParseNode(s : String; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode; overload;
+    class Function ParseFile(fn : String; loose : boolean = false) : TJsonObject; overload;
   End;
 
   TJsonPatchEngine = class (TFslObject)
@@ -1161,7 +1164,13 @@ begin
   FLastLocationBWS := FLocation;
   repeat
     ch := getNextChar;
-  Until Not More Or not CharInSet(ch, [' ', #13, #10, #9]);
+    if (FLoose and (ch = '/') and (peekNextChar = '/')) then
+    begin
+      repeat
+        ch := getNextChar()
+      until CharInSet(ch, [#13, #10]);
+    end;
+  Until Not More Or not (CharInSet(ch, [' ', #13, #10, #9]) or (FLoose and (ch = ',')));
   FLastLocationAWS := FLocation;
 
   FValue.Clear;
@@ -1272,9 +1281,10 @@ begin
   insert(ch, FPeek, 1);
 end;
 
-constructor TJSONLexer.Create(oStream: TFslStream);
+constructor TJSONLexer.Create(oStream: TFslStream; loose : boolean);
 begin
   Inherited Create(oStream);
+  FLoose := loose;
   FLocation.line := 1;
   FLocation.col := 1;
   FStates := TStringList.Create;
@@ -1308,9 +1318,27 @@ begin
   end;
 end;
 
+function TJSONLexer.peekNextChar: Char;
+begin
+  if FPeek <> '' Then
+    result := FPeek[1]
+  Else
+  begin
+    result := ConsumeCharacter;
+    if result = #10 then
+    begin
+      inc(FLocation.line);
+      FLocation.col := 1;
+    end
+    else
+      inc(FLocation.col);
+    push(result);
+  end;
+end;
+
 { TJSONParser }
 
-constructor TJSONParser.Create(oStream: TStream);
+constructor TJSONParser.Create(oStream: TStream; loose : boolean);
 var
   oVCLStream : TFslVclStream;
 begin
@@ -1318,7 +1346,7 @@ begin
   oVCLStream := TFslVCLStream.Create;
   Try
     oVCLStream.Stream := oStream;
-    FLex := TJSONLexer.Create(oVCLStream.Link);
+    FLex := TJSONLexer.Create(oVCLStream.Link, loose);
   Finally
     oVCLStream.Free;
   End;
@@ -1331,10 +1359,10 @@ begin
     JsonError('Unexpected state. Expected '+Codes_TJsonParserItemType[aState]+', but found '+Codes_TJsonParserItemType[FItemType]);
 end;
 
-constructor TJSONParser.Create(oStream: TFslStream);
+constructor TJSONParser.Create(oStream: TFslStream; loose : boolean);
 begin
   inherited Create;
-  FLex := TJSONLexer.Create(oStream.Link);
+  FLex := TJSONLexer.Create(oStream.Link, loose);
   FLex.Start;
 end;
 
@@ -1382,6 +1410,10 @@ begin
         FLex.Next;
         ParseProperty;
       End
+      Else if FLex.Floose and (FLex.LexType = jltString) then
+      begin
+        ParseProperty;
+      end
       Else if FLex.LexType = jltClose Then
       Begin
         FItemType := jpitEnd;
@@ -1416,11 +1448,11 @@ begin
   End;
 end;
 
-class function TJSONParser.Parse(stream: TFslStream; timeToAbort : cardinal = 0): TJsonObject;
+class function TJSONParser.Parse(stream: TFslStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject;
 var
   p : TJSONParser;
 begin
-  p := TJSONParser.Create(stream);
+  p := TJSONParser.Create(stream, loose);
   try
     p.FtimeToAbort := timeToAbort;
     result := TJsonObject.Create('$');
@@ -1444,11 +1476,11 @@ begin
   end;
 end;
 
-class function TJSONParser.Parse(stream: TStream; timeToAbort : cardinal = 0): TJsonObject;
+class function TJSONParser.Parse(stream: TStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject;
 var
   p : TJSONParser;
 begin
-  p := TJSONParser.Create(stream);
+  p := TJSONParser.Create(stream, loose);
   try
     p.FtimeToAbort := timeToAbort;
     result := TJsonObject.Create('$');
@@ -1472,28 +1504,28 @@ begin
   end;
 end;
 
-class function TJSONParser.Parse(s: String; timeToAbort : cardinal = 0): TJsonObject;
+class function TJSONParser.Parse(s: String; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject;
 begin
   result := Parse(TEncoding.UTF8.GetBytes(s), timeToAbort);
 end;
 
-class function TJSONParser.ParseFile(fn: String): TJsonObject;
+class function TJSONParser.ParseFile(fn: String; loose : boolean = false): TJsonObject;
 var
   f : TFileStream;
 begin
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
-    result := parse(f);
+    result := parse(f, 0, loose);
   finally
     f.Free;
   end;
 end;
 
-class function TJSONParser.ParseNode(stream: TFslStream; timeToAbort : cardinal = 0): TJsonNode;
+class function TJSONParser.ParseNode(stream: TFslStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode;
 var
   p : TJSONParser;
 begin
-  p := TJSONParser.Create(stream);
+  p := TJSONParser.Create(stream, loose);
   try
     p.FtimeToAbort := timeToAbort;
     result := p.readNode;
@@ -1502,11 +1534,11 @@ begin
   end;
 end;
 
-class function TJSONParser.ParseNode(stream: TStream; timeToAbort : cardinal = 0): TJsonNode;
+class function TJSONParser.ParseNode(stream: TStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode;
 var
   p : TJSONParser;
 begin
-  p := TJSONParser.Create(stream);
+  p := TJSONParser.Create(stream, loose);
   try
     p.FtimeToAbort := timeToAbort;
     result := p.readNode;
@@ -1515,18 +1547,18 @@ begin
   end;
 end;
 
-class function TJSONParser.ParseNode(s: String; timeToAbort : cardinal = 0): TJsonNode;
+class function TJSONParser.ParseNode(s: String; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode;
 begin
-  result := ParseNode(TEncoding.UTF8.GetBytes(s), timeToAbort);
+  result := ParseNode(TEncoding.UTF8.GetBytes(s), timeToAbort, loose);
 end;
 
-class function TJSONParser.ParseNode(b: TBytes; timeToAbort : cardinal = 0): TJsonNode;
+class function TJSONParser.ParseNode(b: TBytes; timeToAbort : cardinal = 0; loose : boolean = false): TJsonNode;
 var
   s : TBytesStream;
 begin
   s := TBytesStream.Create(b);
   try
-    result := ParseNode(s, timeToAbort);
+    result := ParseNode(s, timeToAbort, loose);
   finally
     s.Free;
   end;
@@ -1751,13 +1783,13 @@ begin
 end;
 
 
-class function TJSONParser.Parse(b: TBytes; timeToAbort : cardinal = 0): TJsonObject;
+class function TJSONParser.Parse(b: TBytes; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject;
 var
   s : TBytesStream;
 begin
   s := TBytesStream.Create(b);
   try
-    result := Parse(s, timeToAbort);
+    result := Parse(s, timeToAbort, loose);
   finally
     s.Free;
   end;

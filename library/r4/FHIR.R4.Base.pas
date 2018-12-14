@@ -31,7 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Base.Objects;
+  FHIR.Support.Base,
+  FHIR.Base.Objects, FHIR.Base.Lang;
 
 type
   TFHIRObject4 = class (TFHIRObject)
@@ -53,6 +54,24 @@ type
   end;
 
   TFHIRResourceX = TFHIRResource4;
+
+  // a set of named properties
+  TFHIRTuple4 = class (TFHIRObject4)
+  private
+    FProperties : TFslMap<TFHIRSelectionList>;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function fhirType : String; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+    procedure GetChildrenByName(name: string; list: TFHIRSelectionList); override;
+
+    procedure addProperty(name : String; values : TFHIRSelectionList);
+  end;
+  TFHIRTuple = TFHIRTuple4;
 
 implementation
 
@@ -104,4 +123,56 @@ begin
   result := TFhirString.Create(v);
 end;
 
+{ TFHIRTuple4 }
+
+constructor TFHIRTuple4.Create;
+begin
+  inherited;
+  FProperties := TFslMap<TFHIRSelectionList>.create;
+end;
+
+destructor TFHIRTuple4.Destroy;
+begin
+  FProperties.free;
+  inherited;
+end;
+
+procedure TFHIRTuple4.addProperty(name: String; values: TFHIRSelectionList);
+begin
+  FProperties.Add(name, values);
+end;
+
+function TFHIRTuple4.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
+function TFHIRTuple4.fhirType: String;
+begin
+  result := 'Tuple';
+end;
+
+procedure TFHIRTuple4.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+  if FProperties.ContainsKey(name) then
+    list.addAll(FProperties[name]);
+end;
+
+function TFHIRTuple4.getId: String;
+begin
+  result := '';
+end;
+
+procedure TFHIRTuple4.setIdValue(id: String);
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
+
+procedure TFHIRTuple4.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
 end.
+

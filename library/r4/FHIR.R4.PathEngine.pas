@@ -92,13 +92,6 @@ type
 
   TFHIRPathEngine = class;
 
-  TFHIRPathEngineExtension = class abstract (TFslObject)
-  public
-    function isValidFunction(name : String) : boolean; virtual; abstract;
-    function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; virtual; abstract;
-    function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNode>; engine : TFHIRPathEngine): TFHIRSelectionList; virtual; abstract;
-  end;
-
   TFHIRPathParser = class (TFslObject)
   private
     FExtensions : TFslList<TFHIRPathEngineExtension>;
@@ -115,6 +108,7 @@ type
     destructor Destroy; override;
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRPathExpressionNode; overload;
+    function parse(path : String; var i : integer) : TFHIRPathExpressionNode; overload;
     function parse(lexer : TFHIRPathLexer) : TFHIRPathExpressionNode; overload;
   end;
 
@@ -126,6 +120,7 @@ type
   end;
 
   TFHIRResolveReferenceEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject of object;
+  TFHIRResolveConstantEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; name : String; beforeContext : boolean) : TFHIRObject of object;
 
   TFHIRPathEngine = class (TFHIRPathEngineV)
   private
@@ -133,8 +128,8 @@ type
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
     FOnResolveReference: TFHIRResolveReferenceEvent;
+    FOnResolveConstant: TFHIRResolveConstantEvent;
     FUcum : TUcumServiceInterface;
-    FExtensions : TFslList<TFHIRPathEngineExtension>;
 
     procedure log(name, value : String);
 
@@ -284,12 +279,13 @@ type
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
-    procedure registerExtension(extension : TFHIRPathEngineExtension);
 
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
+    property OnResolveConstant : TFHIRResolveConstantEvent read FOnResolveConstant write FOnResolveConstant;
 
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRPathExpressionNode; overload;
+    function parse(path : String; var i : integer) : TFHIRPathExpressionNode; overload;
     function parseV(path : String) : TFHIRPathExpressionNodeV; overload; override;
 
     // check that paths referred to in the expression are valid
@@ -594,6 +590,29 @@ destructor TFHIRPathParser.Destroy;
 begin
   FExtensions.Free;
   inherited;
+end;
+
+function TFHIRPathParser.parse(path: String; var i: integer): TFHIRPathExpressionNode;
+var
+  lexer : TFHIRPathLexer;
+  msg : String;
+begin
+  lexer := TFHIRPathLexer4.Create(path, i);
+  try
+    if lexer.done then
+      raise lexer.error('Path cannot be empty');
+    result := parseExpression(lexer, true);
+    try
+      if not result.check(msg, 0) then
+        raise EFHIRPath.create('Error parsing "'+path+'": '+msg);
+      result.Link;
+    finally
+      result.free;
+    end;
+    i := lexer.CurrentStart;
+  finally
+    lexer.Free;
+  end;
 end;
 
 function TFHIRPathParser.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRPathExpressionNode;
@@ -981,7 +1000,6 @@ begin
   inherited Create;
   worker := context;
   self.FUcum := ucum;
-  FExtensions := TFslList<TFHIRPathEngineExtension>.create;
   FLog := TStringBuilder.Create;
   allTypes := TStringList.Create;
   primitiveTypes := TStringList.Create;
@@ -1060,7 +1078,6 @@ begin
   worker.Free;
   primitiveTypes.Free;
   allTypes.Free;
-  FExtensions.Free;
   inherited;
 end;
 
@@ -1272,16 +1289,41 @@ begin
 end;
 
 function TFHIRPathEngine.execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNode; atEntry : boolean): TFHIRSelectionList;
+var
+  temp : TFHIRObject;
+  ok : boolean;
 begin
   result := TFHIRSelectionList.Create;
   try
-    if atEntry and (CharInSet(exp.name[1], ['A'..'Z'])) then // special case for start up
+    ok := false;
+    if (atEntry and (context.appInfo <> nil) and assigned(FOnResolveConstant)) then
     begin
-      if (item.FhirType = exp.name) or StringArrayExistsSensitive(['Resource', 'DomainResource'], exp.name) then
-        result.Add(item.Link);
-    end
-    else
-      ListChildrenByName(item, exp.name, result);
+      // we'll see if the name matches a constant known by the context.
+      temp := FOnResolveConstant(self, context.appInfo, exp.name, true);
+      if (temp <> nil) then
+      begin
+        result.add(temp);
+        ok := true;
+      end;
+    end;
+    if not ok then
+    begin
+      if atEntry and (CharInSet(exp.name[1], ['A'..'Z'])) then // special case for start up
+      begin
+        if (item.FhirType = exp.name) or StringArrayExistsSensitive(['Resource', 'DomainResource'], exp.name) then
+          result.Add(item.Link);
+      end
+      else
+        ListChildrenByName(item, exp.name, result);
+      if (atEntry and (context.appInfo <> nil) and assigned(FOnResolveConstant) and result.Empty) then
+      begin
+        // well, we didn't get a match on the name - we'll see if the name matches a constant known by the context.
+        // (if the name does match, and the user wants to get the constant value, they'll have to try harder...
+        temp := FOnResolveConstant(self, context.appInfo, exp.name, false);
+        if (temp <> nil) then
+          result.add(temp);
+      end;
+    end;
     result.link;
   finally
     result.free;
@@ -2879,6 +2921,19 @@ begin
   end;
 end;
 
+function TFHIRPathEngine.parse(path: String; var i: integer): TFHIRPathExpressionNode;
+var
+  parser : TFHIRPathParser;
+begin
+  parser := TFHIRPathParser.Create;
+  try
+    parser.FExtensions := FExtensions.Link;
+    result := parser.parse(path, i);
+  finally
+    parser.Free;
+  end;
+end;
+
 function TFHIRPathEngine.parseQuantityString(s : String) : TFHIRQuantity;
 var
   v : String;
@@ -4363,7 +4418,7 @@ begin
         done := true;
         for item in focus do
         begin
-          work := ext.execute(context, item.value, exp.name, exp.Parameters, self);
+          work := ext.execute(context, item.value, exp.name, TFslList<TFHIRPathExpressionNodeV>(exp.Parameters), self);
           try
             result.addAll(work);
           finally
@@ -4828,11 +4883,6 @@ begin
     result := processDateConstant(nil, constant.Substring(1))
   else
     result := TFhirString.Create(constant).noExtensions;
-end;
-
-procedure TFHIRPathEngine.registerExtension(extension: TFHIRPathEngineExtension);
-begin
-  FExtensions.Add(extension);
 end;
 
 function TFHIRPathEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;

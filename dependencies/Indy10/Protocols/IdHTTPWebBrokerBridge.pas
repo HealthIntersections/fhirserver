@@ -70,7 +70,7 @@ type
   EWBBInvalidIdxSetStringVar = class(EWBBException);
   EWBBInvalidStringVar = class(EWBBException);
 
-  {$IFNDEF VCL_10_1_BERLIN_OR_ABOVE}
+  {$IFNDEF VCL_10_1_OR_ABOVE}
     {$DEFINE WBB_ANSI}
   {$ENDIF}
 
@@ -89,7 +89,7 @@ type
     function GetRemoteIP: string; override;
     function GetRawPathInfo: {$IFDEF WBB_ANSI}AnsiString{$ELSE}string{$ENDIF}; override;
     {$ENDIF}
-    {$IFDEF VCL_10_1_BERLIN_OR_ABOVE}
+    {$IFDEF VCL_10_1_OR_ABOVE}
     function GetRawContent: TBytes; override;
     {$ENDIF}
   public
@@ -305,7 +305,7 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF VCL_10_1_BERLIN_OR_ABOVE}
+{$IFDEF VCL_10_1_OR_ABOVE}
 function TIdHTTPAppRequest.GetRawContent: TBytes;
 var
   LPos: TIdStreamSize;
@@ -753,7 +753,7 @@ begin
   // Reset to -1 so Indy will auto set it
   FResponseInfo.ContentLength := -1;
   MoveCookiesAndCustomHeaders;
-  {$IFDEF VCL_10_1_BERLIN_OR_ABOVE}
+  {$IFDEF VCL_10_1_OR_ABOVE}
   // TODO: This code may not be in the correct location.
   if (FResponseInfo.ContentType = '') and
     ((FResponseInfo.ContentText <> '') or (Assigned(FResponseInfo.ContentStream))) and
@@ -806,7 +806,11 @@ begin
       LValue := string(AValue);
     end;
   end;
+
   FResponseInfo.ContentText := LValue;
+  // TODO: use Length(AValue) instead, as the ContentText *should* get re-encoded
+  // back to the same value as AValue when transmitted.  Or, just set ContentLength
+  // to -1 and let Indy calculate it later...
   FResponseInfo.ContentLength := Length(LValue);
 
   {$ELSE}

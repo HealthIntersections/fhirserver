@@ -112,6 +112,8 @@ var
   i : integer;
   cmp : TFHIRComposer;
 begin
+  if package = nil then
+    exit;
   p := package.paramString;
   for s in package.params do
     p := p+'&'+s;
@@ -184,6 +186,8 @@ end;
 
 procedure TInteractiveClientForm.LoadResponse;
 begin
+  if package = nil then
+    exit;
 
 end;
 
