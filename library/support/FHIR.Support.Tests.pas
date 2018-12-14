@@ -4276,6 +4276,21 @@ begin
   dt2 := TDateTimeEx.fromHL7('20130405123456').DateTime;
   Assert.IsTrue(dt1 = dt2);
 
+  // comparison
+  d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal);
+  d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(15, 0, 0, 0), dttzLocal);
+  Assert.IsTrue(d2.after(d1, false));
+  Assert.IsFalse(d1.after(d1, false));
+  Assert.IsTrue(d1.after(d1, true));
+  Assert.IsFalse(d2.before(d1, false));
+  Assert.IsFalse(d1.before(d1, false));
+  Assert.IsTrue(d1.before(d1, true));
+  Assert.IsFalse(d1.after(d2, false));
+  Assert.IsTrue(d1.before(d2, false));
+  Assert.IsTrue(d1.compare(d2) = -1);
+  Assert.IsTrue(d2.compare(d1) = 1);
+  Assert.IsTrue(d1.compare(d1) = 0);
+
   // Timezone Wrangling
   d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
@@ -4285,14 +4300,18 @@ begin
   Assert.IsTrue(d1.sameTime(d2));
   d1 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
   d2 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
-  dt1 := d1.DateTime - TimezoneBias;
+  dt1 := d1.DateTime - TimezoneBias(EncodeDate(2011, 7, 2));
   dt2 := d2.DateTime;
   Assert.IsTrue(sameInstant(dt1, dt2));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
   Assert.IsTrue(not d1.equal(d2));
   Assert.IsTrue(d1.sameTime(d2));
+  Assert.IsTrue(TDateTimeEx.fromHL7('20130405120000+1000').sameTime(TDateTimeEx.fromHL7('20130405100000+0800')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T01:30:00.0-04:00')));
 
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405120000-1000').sameTime(TDateTimeEx.fromHL7('20130405100000-0800')));
 
   // Min/Max
   Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
@@ -5028,8 +5047,8 @@ var
 begin
   list := TFslTestObjectList.create;
   try
-    Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslException);
-    Assert.IsTrue(list.Count = 1);
+    Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslInvariant);
+    Assert.IsTrue(list.Count = 0);
   finally
     list.Free;
   end;
