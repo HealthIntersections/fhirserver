@@ -109,7 +109,6 @@ const
     tcOther, // frtImplementationGuide
     tcFinancial, // frtInsurancePlan
     tcFinancial, // frtInvoice
-    tcMedicationDefinition, // frtItemInstance
     tcOther, // frtLibrary
     tcData, // frtLinkage
     tcDocuments, // frtList

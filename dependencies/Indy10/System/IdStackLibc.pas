@@ -435,11 +435,14 @@ end;
 
 function TIdStackLibc.ReadHostName: string;
 var
-  LStr: AnsiString;
+  LStr: array[0..250] of AnsiChar;
 begin
-  SetLength(LStr, 250);
-  Libc.gethostname(PAnsiChar(LStr), 250);
-  Result := String(LStr);
+  if Libc.gethostname(LStr, 250) = 0 then begin
+    LStr[250] := #0;
+    Result := String(LStr);
+  end else begin
+    Result := '';
+  end;
 end;
 
 procedure TIdStackLibc.Listen(ASocket: TIdStackSocketHandle; ABackLog: Integer);
@@ -1101,7 +1104,7 @@ begin
   Result := True;
 
   // TODO: enable this:
-  //Result := CheckForSocketError(AResult, [EAGAIN, EWOULDBLOCK]) <> 0;
+  //Result := (AResult in [EAGAIN, EWOULDBLOCK, EINPROGRESS]);
 end;
 
 function TIdStackLibc.SupportsIPv4: Boolean;

@@ -11,46 +11,9 @@ object EditorForm: TEditorForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   DesignerMasterStyle = 0
-  object Panel1: TPanel
-    Align = Bottom
-    Position.Y = 456.000000000000000000
-    Size.Width = 640.000000000000000000
-    Size.Height = 24.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 0
-  end
-  object Panel2: TPanel
-    Align = Top
-    Size.Width = 640.000000000000000000
-    Size.Height = 41.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 1
-    object Button1: TButton
-      Position.X = 8.000000000000000000
-      Position.Y = 8.000000000000000000
-      TabOrder = 1
-      Text = 'Generate'
-      OnClick = Button1Click
-    end
-  end
-  object editor: TMemo
-    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-    DataDetectorTypes = []
-    StyledSettings = [Size, Style, FontColor]
-    TextSettings.Font.Family = 'Courier New'
-    OnChange = editorChange
-    OnChangeTracking = editorChange
-    Align = Client
-    Size.Width = 640.000000000000000000
-    Size.Height = 279.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 3
-    Viewport.Width = 636.000000000000000000
-    Viewport.Height = 275.000000000000000000
-  end
   object MainMenu1: TMainMenu
-    Left = 24
-    Top = 56
+    Left = 16
+    Top = 392
     object mnuFile: TMenuItem
       Text = '&File'
       object mnuNew: TMenuItem
@@ -65,31 +28,219 @@ object EditorForm: TEditorForm
         Locked = True
         Text = '&Save'
       end
+      object MenuItem2: TMenuItem
+        Locked = True
+        Text = 'Duplicate'
+      end
+      object MenuItem3: TMenuItem
+        Locked = True
+        Text = 'Rename'
+      end
+      object MenuItem4: TMenuItem
+        Locked = True
+        Text = 'Remove'
+      end
       object mnuExit: TMenuItem
         Locked = True
         Text = '&Exit'
       end
     end
+    object MenuItem1: TMenuItem
+      Text = '&Edit'
+      object MenuItem5: TMenuItem
+        Locked = True
+        Text = '&Undo'
+      end
+      object MenuItem6: TMenuItem
+        Locked = True
+        Text = '&Copy'
+      end
+      object MenuItem7: TMenuItem
+        Locked = True
+        Text = 'Cu&t'
+      end
+      object MenuItem8: TMenuItem
+        Locked = True
+        Text = '&Paste'
+      end
+      object MenuItem9: TMenuItem
+        Locked = True
+        Text = '&Search'
+      end
+    end
   end
-  object log: TMemo
-    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-    DataDetectorTypes = []
-    Align = Bottom
-    Position.Y = 328.000000000000000000
-    Size.Width = 640.000000000000000000
-    Size.Height = 128.000000000000000000
+  object Panel1: TPanel
+    Align = Left
+    Size.Width = 201.000000000000000000
+    Size.Height = 480.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 5
-    Viewport.Width = 636.000000000000000000
-    Viewport.Height = 124.000000000000000000
+    TabOrder = 3
+    object Panel2: TPanel
+      Align = Top
+      Size.Width = 201.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label1: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Project'
+        TabOrder = 0
+      end
+    end
+    object TreeView1: TTreeView
+      Align = Client
+      Margins.Left = 6.000000000000000000
+      Margins.Top = 6.000000000000000000
+      Margins.Right = 6.000000000000000000
+      Margins.Bottom = 6.000000000000000000
+      Size.Width = 189.000000000000000000
+      Size.Height = 435.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Viewport.Width = 185.000000000000000000
+      Viewport.Height = 431.000000000000000000
+      object TreeViewItem2: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 0
+        Text = 'Messages'
+      end
+      object TreeViewItem3: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 1
+        Text = 'Resources'
+      end
+      object TreeViewItem1: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 2
+        Text = 'Scripts'
+      end
+      object TreeViewItem4: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 3
+        Text = 'Maps'
+      end
+      object TreeViewItem5: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 4
+        Text = 'Templates'
+      end
+    end
   end
-  object Splitter1: TSplitter
-    Align = Bottom
-    Cursor = crVSplit
+  object Panel4: TPanel
+    Align = Client
+    Size.Width = 429.000000000000000000
+    Size.Height = 480.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    object TabControl1: TTabControl
+      Align = Client
+      Size.Width = 429.000000000000000000
+      Size.Height = 350.000000000000000000
+      Size.PlatformDefault = False
+      TabIndex = 0
+      TabOrder = 0
+      TabPosition = PlatformDefault
+      Sizes = (
+        429s
+        324s)
+      object TabItem1: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 69.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem1'
+        ExplicitSize.cx = 69.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+      end
+    end
+    object Panel5: TPanel
+      Align = Bottom
+      Position.Y = 360.000000000000000000
+      Size.Width = 429.000000000000000000
+      Size.Height = 120.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object Panel6: TPanel
+        Align = Top
+        Size.Width = 429.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object Label2: TLabel
+          Size.Width = 57.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          Text = '  Console'
+          TabOrder = 0
+        end
+        object Button1: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 368.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 56.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = 'Save'
+        end
+        object Button2: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 309.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 56.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Clear'
+        end
+      end
+      object Memo1: TMemo
+        Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+        DataDetectorTypes = []
+        Align = Client
+        Size.Width = 429.000000000000000000
+        Size.Height = 95.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Viewport.Width = 425.000000000000000000
+        Viewport.Height = 91.000000000000000000
+      end
+    end
+    object Splitter1: TSplitter
+      Align = Bottom
+      Cursor = crVSplit
+      MinSize = 20.000000000000000000
+      Position.Y = 350.000000000000000000
+      Size.Width = 429.000000000000000000
+      Size.Height = 10.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object Splitter2: TSplitter
+    Align = Left
+    Cursor = crHSplit
     MinSize = 20.000000000000000000
-    Position.Y = 320.000000000000000000
-    Size.Width = 640.000000000000000000
-    Size.Height = 8.000000000000000000
+    Position.X = 201.000000000000000000
+    Size.Width = 10.000000000000000000
+    Size.Height = 480.000000000000000000
     Size.PlatformDefault = False
   end
 end

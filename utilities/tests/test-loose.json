@@ -1,0 +1,11 @@
+{
+  "type" : "FHIR Custom Resource Directory"
+  // a comment
+  "prefixes" : [
+  "test",
+  ]
+  "names" : [ // a comment 2
+    "ClinicalDocument"
+  ],
+  // a comment
+}

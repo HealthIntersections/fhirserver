@@ -627,9 +627,10 @@ public class ElementDefn {
     bs.setDefinition(b.getDescription());
     bs.setStrength(BindingStrength.REQUIRED);
     if (b.hasValueSetReference()) {
-      ValueSet vs = vsmap.get(b.getValueSetReference().getReference());
+      String url = b.getValueSetReference().getReference();
+      ValueSet vs = vsmap.get(url);
       if (vs == null)
-        throw new Error("Value Set "+b.getValueSetReference().getReference()+" not found, referenced from "+path);
+        throw new Error("Value Set "+url+" not found, referenced from "+path);
       bs.setUri(vs.getUrl());
       bs.loadFromExpansion(vs);
       bs.setName(vs.getName().replace(" ", ""));
@@ -646,9 +647,10 @@ public class ElementDefn {
     bs.setDefinition(b.getDescription());
     bs.setStrength(BindingStrength.REQUIRED);
     if (b.hasValueSetReference()) {
-      org.hl7.fhir.dstu3.model.ValueSet vs = vsmap.get(b.getValueSetReference().getReference());
+      String url = b.getValueSetReference().getReference();
+      org.hl7.fhir.dstu3.model.ValueSet vs = vsmap.get(url);
       if (vs == null)
-        throw new Error("Unable to find value set "+b.getValueSetReference().getReference());
+        throw new Error("Unable to find value set "+url);
       bs.loadFromExpansion(vs);
       bs.setUri(vs.getUrl());
       bs.setName(vs.getName().replace(" ", ""));
@@ -664,7 +666,10 @@ public class ElementDefn {
     bs.setBindingMethod(BindingMethod.CodeList);
     bs.setDefinition(b.getDescription());
     bs.setStrength(BindingStrength.REQUIRED);
-    org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(b.getValueSet());
+    String url = b.getValueSet();
+    if (url.contains("|"))
+      url = url.substring(0,  url.indexOf("|"));
+    org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(url);
     if (vs != null) {
       bs.loadFromExpansion(vs);
       bs.setUri(vs.getUrl());

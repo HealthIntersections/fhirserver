@@ -442,7 +442,7 @@ type
     property Method: TIdHTTPMethod read FMethod write FMethod;
     property Source: TStream read FSourceStream write FSourceStream;
     property UseProxy: TIdHTTPConnectionType read FUseProxy;
-    property IPVersion: TIdIPversion read FIPVersion write FIPVersion;
+    property IPVersion: TIdIPVersion read FIPVersion write FIPVersion;
     property Destination: string read FDestination write FDestination;
   end;
 
@@ -603,7 +603,7 @@ type
     property AuthProxyRetries: Integer read FAuthProxyRetries;
     // maximum number of Authentication retries permitted
     property MaxAuthRetries: Integer read FMaxAuthRetries write FMaxAuthRetries default Id_TIdHTTP_MaxAuthRetries;
-    property AllowCookies: Boolean read FAllowCookies write SetAllowCookies;
+    property AllowCookies: Boolean read FAllowCookies write SetAllowCookies default True;
     {Do we handle redirect requests or simply raise an exception and let the
      developer deal with it}
     property HandleRedirects: Boolean read FHandleRedirects write FHandleRedirects default Id_TIdHTTP_HandleRedirects;
@@ -1167,14 +1167,16 @@ var
   // under ARC, convert a weak reference to a strong reference before working with it
   LCookieManager: TIdCookieManager;
 begin
-  LCookieManager := FCookieManager;
-  if Assigned(LCookieManager) and AllowCookies then
-  begin
-    // Send secure cookies only if we have Secured connection
-    LCookieManager.GenerateClientCookies(
-      AURL,
-      TextIsSame(AURL.Protocol, 'HTTPS'), {do not localize}
-      ARequest.RawHeaders);
+  if AllowCookies then begin
+    LCookieManager := FCookieManager;
+    if Assigned(LCookieManager) then
+    begin
+      // Send secure cookies only if we have Secured connection
+      LCookieManager.GenerateClientCookies(
+        AURL,
+        TextIsSame(AURL.Protocol, 'HTTPS'), {do not localize}
+        ARequest.RawHeaders);
+    end;
   end;
 end;
 
@@ -1661,19 +1663,21 @@ begin
     end;
   end;
 
-  LCreateTmpContent := (LParseMeth <> 0) and not (AResponse.ContentStream is TCustomMemoryStream);
-
+  // under ARC, AResponse.ContentStream uses weak referencing, so need to
+  // use local strong references to keep the streams alive...
   LOrigStream := AResponse.ContentStream;
+  LCreateTmpContent := (LParseMeth <> 0) and not (LOrigStream is TCustomMemoryStream);
   if LCreateTmpContent then begin
-    // under ARC, AResponse.ContentStream uses weak referencing, so need to
-    // use a local strong reference to keep the temp stream alive...
     LTmpStream := TMemoryStream.Create;
-    AResponse.ContentStream := LTmpStream;
   end else begin
     LTmpStream := nil;
   end;
 
   try
+    if LCreateTmpContent then begin
+      AResponse.ContentStream := LTmpStream;
+    end;
+
     // we need to determine what type of decompression may need to be used
     // before we read from the IOHandler.  If there is compression, then we
     // use a local stream to download the compressed data and decompress it.
@@ -1752,7 +1756,7 @@ begin
     if LCreateTmpContent then
     begin
       try
-        LOrigStream.CopyFrom(AResponse.ContentStream, 0);
+        LOrigStream.CopyFrom(LTmpStream, 0);
       finally
         {$IFNDEF USE_OBJECT_ARC}
         LTmpStream.Free;
@@ -1929,6 +1933,20 @@ var
   LOldProxy: TIdHTTPConnectionType;
   LNewDest: string;
 begin
+  // RLebeau 5/29/2018: before doing anything else, clear the InputBuffer.  If a
+  // previous HTTPS request through an SSL/TLS proxy fails due to a user-defined
+  // OnVerifyPeer handler returning False, the proxy tunnel is still established,
+  // but the underlying socket may be closed, and unread data left behind in the
+  // InputBuffer that will cause Connected() below to return True when it should
+  // be False instead.  This leads to a situation where TIdHTTP can skip sending
+  // a CONNECT request when it creates a new socket connection to the proxy, but
+  // send an unencrypted HTTP request to the proxy, which may then get forwarded
+  // to the HTTPS server over a previously cached SSL/TLS tunnel...
+  
+  if Assigned(IOHandler) then begin
+    IOHandler.InputBuffer.Clear;
+  end;
+
   LNewDest := URL.Host + ':' + URL.Port;
 
   LOldProxy := ARequest.FUseProxy;
@@ -2054,8 +2072,32 @@ begin
               TIdSSLIOHandlerSocketBase(IOHandler).PassThrough := False;
             end;
             Break;
-          end else begin
-            LLocalHTTP.ProcessResponse([]);
+          end;
+
+          case LLocalHTTP.ProcessResponse([]) of
+            wnAuthRequest:
+              begin
+                LLocalHTTP.Request.URL := ARequest.Destination;
+              end;
+            wnReadAndGo:
+              begin
+                ReadResult(LLocalHTTP.Request, LLocalHTTP.Response);
+                FAuthRetries := 0;
+                FAuthProxyRetries := 0;
+              end;
+            wnGoToURL:
+              begin
+                FAuthRetries := 0;
+                FAuthProxyRetries := 0;
+              end;
+            wnJustExit: 
+              begin
+                Break;
+              end;
+            wnDontKnow:
+              begin
+                raise EIdException.Create(RSHTTPNotAcceptable);
+              end;
           end;
         until False;
       except
@@ -2096,15 +2138,16 @@ var
   // under ARC, convert a weak reference to a strong reference before working with it
   LCookieManager: TIdCookieManager;
 begin
-  LCookieManager := FCookieManager;
+  if AllowCookies then
+  begin
+    LCookieManager := FCookieManager;
 
-  if (not Assigned(LCookieManager)) and AllowCookies then begin
-    LCookieManager := TIdCookieManager.Create(Self);
-    SetCookieManager(LCookieManager);
-    FImplicitCookieManager := True;
-  end;
+    if not Assigned(LCookieManager) then begin
+      LCookieManager := TIdCookieManager.Create(Self);
+      SetCookieManager(LCookieManager);
+      FImplicitCookieManager := True;
+    end;
 
-  if Assigned(LCookieManager) and AllowCookies then begin
     LCookies := TStringList.Create;
     try
       AResponse.RawHeaders.Extract('Set-Cookie', LCookies);  {do not localize}
@@ -2144,8 +2187,8 @@ var
 begin
   LCookieManager := FCookieManager;
 
-  if LCookieManager <> ACookieManager then begin
-
+  if LCookieManager <> ACookieManager then
+  begin
     // under ARC, all weak references to a freed object get nil'ed automatically
 
     if Assigned(LCookieManager) then begin
@@ -2225,12 +2268,6 @@ begin
   // RLebeau 11/18/2014: what about SSPI? It does not require an explicit
   // username/password as it can use the identity of the user token associated
   // with the calling thread!
-  //
-  Result := Assigned(FOnAuthorization) or (Trim(ARequest.Password) <> '');
-
-  if not Result then begin
-    Exit;
-  end;
 
   LAuth := ARequest.Authentication;
   LAuth.Username := ARequest.Username;
@@ -2246,21 +2283,23 @@ begin
     case LAuth.Next of
       wnAskTheProgram:
         begin // Ask the user porgram to supply us with authorization information
-          if Assigned(FOnAuthorization) then
+          if not Assigned(FOnAuthorization) then
           begin
-            LAuth.UserName := ARequest.Username;
-            LAuth.Password := ARequest.Password;
-
-            OnAuthorization(Self, LAuth, Result);
-
-            if Result then begin
-              ARequest.BasicAuthentication := True;
-              ARequest.Username := LAuth.UserName;
-              ARequest.Password := LAuth.Password;
-            end else begin
-              Break;
-            end;
+            Result := False;
+            Break;
           end;
+
+          LAuth.UserName := ARequest.Username;
+          LAuth.Password := ARequest.Password;
+
+          OnAuthorization(Self, LAuth, Result);
+          if not Result then begin
+            Break;
+          end;
+
+          ARequest.BasicAuthentication := True;
+          ARequest.Username := LAuth.UserName;
+          ARequest.Password := LAuth.Password;
         end;
       wnDoRequest:
         begin
@@ -2330,12 +2369,6 @@ begin
   // RLebeau 11/18/2014: what about SSPI? It does not require an explicit
   // username/password as it can use the identity of the user token associated
   // with the calling thread!
-  //
-  Result := Assigned(OnProxyAuthorization) or (Trim(ProxyParams.ProxyPassword) <> '');
-
-  if not Result then begin
-    Exit;
-  end;
 
   LAuth := ProxyParams.Authentication;
   LAuth.Username := ProxyParams.ProxyUsername;
@@ -2350,22 +2383,23 @@ begin
     case LAuth.Next of
       wnAskTheProgram: // Ask the user porgram to supply us with authorization information
         begin
-          if Assigned(OnProxyAuthorization) then
-          begin
-            LAuth.Username := ProxyParams.ProxyUsername;
-            LAuth.Password := ProxyParams.ProxyPassword;
-
-            OnProxyAuthorization(Self, LAuth, Result);
-
-            if Result then begin
-              // TODO: do we need to set this, like DoOnAuthorization does?
-              //ProxyParams.BasicAuthentication := True;
-              ProxyParams.ProxyUsername := LAuth.Username;
-              ProxyParams.ProxyPassword := LAuth.Password;
-            end else begin
-              Break;
-            end;
+          if not Assigned(OnProxyAuthorization) then begin
+            Result := False;
+            Break;
           end;
+
+          LAuth.Username := ProxyParams.ProxyUsername;
+          LAuth.Password := ProxyParams.ProxyPassword;
+
+          OnProxyAuthorization(Self, LAuth, Result);
+          if not Result then begin
+            Break;
+          end;
+
+          // TODO: do we need to set this, like DoOnAuthorization does?
+          //ProxyParams.BasicAuthentication := True;
+          ProxyParams.ProxyUsername := LAuth.Username;
+          ProxyParams.ProxyPassword := LAuth.Password;
         end;
       wnDoRequest:
         begin
@@ -2408,8 +2442,9 @@ end;
 
 procedure TIdCustomHTTP.DoOnDisconnected;
 var
-  // under ARC, convert a weak reference to a strong reference before working with it
+  // under ARC, convert weak references to strong references before working with them
   LAuthManager: TIdAuthenticationManager;
+  LAuth: TIdAuthentication;
 begin
   // TODO: in order to handle the case where authentications are used when
   // keep-alives are in effect, move this logic somewhere more appropriate,
@@ -2417,22 +2452,22 @@ begin
 
   inherited DoOnDisconnected;
 
-  if Assigned(Request.Authentication) and
-    (Request.Authentication.CurrentStep = Request.Authentication.Steps) then
+  LAuth := Request.Authentication;
+  if Assigned(LAuth) and (LAuth.CurrentStep = LAuth.Steps) then
   begin
     LAuthManager := AuthenticationManager;
     if Assigned(LAuthManager) then begin
-      LAuthManager.AddAuthentication(Request.Authentication, URL);
+      LAuthManager.AddAuthentication(LAuth, URL);
     end;
     {$IFNDEF USE_OBJECT_ARC}
-    Request.Authentication.Free;
+    LAuth.Free;
     {$ENDIF}
     Request.Authentication := nil;
   end;
 
-  if Assigned(ProxyParams.Authentication) and
-    (ProxyParams.Authentication.CurrentStep = ProxyParams.Authentication.Steps) then begin
-    ProxyParams.Authentication.Reset;
+  LAuth := ProxyParams.Authentication;
+  if Assigned(LAuth) and (LAuth.CurrentStep = LAuth.Steps) then begin
+    LAuth.Reset;
   end;
 end;
 
@@ -2639,6 +2674,7 @@ begin
   inherited Create(AHTTP);
   FHTTP := AHTTP;
   FUseProxy := ctNormal;
+  FIPVersion := ID_DEFAULT_IP_VERSION;
 end;
 
 { TIdHTTPProtocol }
@@ -2691,7 +2727,7 @@ begin
         FHTTP.IOHandler.WriteLn(Request.RawHeaders.Strings[i]);
       end;
     end;
-    FHTTP.IOHandler.WriteLn('');     {do not localize}
+    FHTTP.IOHandler.WriteLn;
     if LBufferingStarted then begin
       FHTTP.IOHandler.WriteBufferClose;
     end;
@@ -2956,6 +2992,12 @@ begin
 
     if LResponseDigit <> 2 then begin
       case LResponseCode of
+        101:
+          begin
+            Response.KeepAlive := True;
+            Result := wnJustExit;
+            Exit;
+          end;
         401:
           begin // HTTP Server authorization required
             if (FHTTP.AuthRetries >= FHTTP.MaxAuthRetries) or
@@ -3049,6 +3091,7 @@ end;
 
 function TIdCustomHTTP.InternalReadLn: String;
 begin
+  // TODO: add ReadLnTimeoutAction property to TIdIOHandler...
   Result := IOHandler.ReadLn;
   if IOHandler.ReadLnTimedout then begin
     raise EIdReadTimeout.Create(RSReadTimeout);
@@ -3114,11 +3157,17 @@ begin
       //
       // This is also necessary as servers are allowed to send any number of
       // 1xx informational responses before sending the final response.
+      //
+      // Except in the case of 101 SWITCHING PROTOCOLS, which is a final response.
+      // The protocol on the line is then switched to the requested protocol, per
+      // the response's 'Upgrade' header, following the 101 response, so we need to
+      // stop and exit immediately if 101 is received, and let the caller handle
+      // the new protocol as needed.
       repeat
         Response.ResponseText := InternalReadLn;
         FHTTPProto.RetrieveHeaders(MaxHeaderLines);
         ProcessCookies(Request, Response);
-      until (Response.ResponseCode div 100) <> 1;
+      until ((Response.ResponseCode div 100) <> 1) or (Response.ResponseCode = 101);
 
       case FHTTPProto.ProcessResponse(AIgnoreReplies) of
         wnAuthRequest:
@@ -3144,7 +3193,7 @@ begin
             FAuthRetries := 0;
             FAuthProxyRetries := 0;
           end;
-        wnJustExit: 
+        wnJustExit:
           begin
             Break;
           end;

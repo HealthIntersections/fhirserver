@@ -23333,7 +23333,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   if (src.occurrence <> nil) then
     tgt.occurrence := convertType(src.occurrence);
@@ -23403,8 +23403,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   if (src.occurrence <> nil) then
     tgt.occurrence := convertType(src.occurrence);

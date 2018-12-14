@@ -3,7 +3,7 @@ unit FHIR.Client.Debugger;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.UITypes,
   FHIR.Support.Base,
   FHIR.Base.Objects,
   FHIR.Client.Base, FHIR.Client.Threaded;
@@ -40,9 +40,8 @@ begin
   try
     InteractiveClientForm.package := Package.Link;
     InteractiveClientForm.client := FClient.Link;
-    case InteractiveClientForm.showModal of
-    !
-    end;
+    if InteractiveClientForm.showModal = mrAbort then
+      raise EAbort.Create('Operation aborted by debugger');
   finally
     InteractiveClientForm.Free;
   end;

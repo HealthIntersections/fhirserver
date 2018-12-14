@@ -131,6 +131,8 @@ const
   cMultipartAlternative = 'multipart/alternative'; {do not localize}
   cMultipartMixed = 'multipart/mixed'; {do not localize}
   cMultipartRelatedHtml = 'multipart/related; type="text/html"'; {do not localize}
+  cQuotedPrintable = 'quoted-printable'; {do not localize}
+  cUTF8 = 'utf-8'; {do not localize}
 
 { TIdMessageBuilderAttachment }
 
@@ -420,7 +422,17 @@ begin
       LTextPart := TIdText.Create(AMsg.MessageParts, FPlainText);
       LTextPart.ContentType := cTextPlain;
       LTextPart.CharSet := FPlainTextCharSet;
+      {$IFDEF STRING_IS_UNICODE}
+      if LTextPart.CharSet = '' then begin
+        LTextPart.CharSet := cUTF8;
+      end;
+      {$ELSE}
+      // TODO: which default charset to use, if any?
+      {$ENDIF}
       LTextPart.ContentTransfer := FPlainTextContentTransfer;
+      if LTextPart.ContentTransfer = '' then begin
+        LTextPart.ContentTransfer := cQuotedPrintable;
+      end;
     end;
   end;
 end;
@@ -433,7 +445,17 @@ begin
     //
     AMsg.ContentType := cTextPlain;
     AMsg.CharSet := FPlainTextCharSet;
+    {$IFDEF STRING_IS_UNICODE}
+    if AMsg.CharSet = '' then begin
+      AMsg.CharSet := cUTF8;
+    end;
+    {$ELSE}
+    // which default charset to use, if any?
+    {$ENDIF}
     AMsg.ContentTransferEncoding := FPlainTextContentTransfer;
+    if AMsg.ContentTransferEncoding = '' then begin
+      AMsg.ContentTransferEncoding := cQuotedPrintable;
+    end;
   end else
   begin
     inherited FillHeaders(AMsg);
@@ -527,16 +549,23 @@ begin
   if LUsePlain or LUseHtml then
   begin
     LTextPart := TIdText.Create(AMsg.MessageParts, FPlainText);
-    begin
-      if LUseHtml and (not LUsePlain) then
-      begin
-        LTextPart.Body.Text := FHtmlViewerNeededMsg;
-      end;
-      LTextPart.ContentType := cTextPlain;
-      LTextPart.CharSet := FPlainTextCharSet;
-      LTextPart.ContentTransfer := FPlainTextContentTransfer;
-      LTextPart.ParentPart := LAlternativeIndex;
+    if LUseHtml and (not LUsePlain) then begin
+      LTextPart.Body.Text := FHtmlViewerNeededMsg;
     end;
+    LTextPart.ContentType := cTextPlain;
+    LTextPart.CharSet := FPlainTextCharSet;
+    {$IFDEF STRING_IS_UNICODE}
+    if LTextPart.CharSet = '' then begin
+      LTextPart.CharSet := cUTF8;
+    end;
+    {$ELSE}
+    // TODO: which default charset to use, if any?
+    {$ENDIF}
+    LTextPart.ContentTransfer := FPlainTextContentTransfer;
+    if LTextPart.ContentTransfer = '' then begin
+      LTextPart.ContentTransfer := cQuotedPrintable;
+    end;
+    LTextPart.ParentPart := LAlternativeIndex;
   end;
 
   // Is HTML present?
@@ -563,7 +592,17 @@ begin
     LTextPart := TIdText.Create(AMsg.MessageParts, FHtml);
     LTextPart.ContentType := cTextHtml;
     LTextPart.CharSet := FHtmlCharSet;
+    {$IFDEF STRING_IS_UNICODE}
+    if LTextPart.CharSet = '' then begin
+      LTextPart.CharSet := cUTF8;
+    end;
+    {$ELSE}
+    // TODO: which default charset to use, if any?
+    {$ENDIF}
     LTextPart.ContentTransfer := FHtmlContentTransfer;
+    if LTextPart.ContentTransfer = '' then begin
+      LTextPart.ContentTransfer := cQuotedPrintable;
+    end;
     if LRelatedIndex <> -1 then begin
       LTextPart.ParentPart := LRelatedIndex; // plain text and related attachments
     end else begin
@@ -588,7 +627,17 @@ begin
       //
       AMsg.ContentType := cTextPlain;
       AMsg.CharSet := FPlainTextCharSet;
+      {$IFDEF STRING_IS_UNICODE}
+      if AMsg.CharSet = '' then begin
+        AMsg.CharSet := cUTF8;
+      end;
+      {$ELSE}
+      // TODO: which default charset to use, if any?
+      {$ENDIF}
       AMsg.ContentTransferEncoding := FPlainTextContentTransfer;
+      if AMsg.ContentTransferEncoding = '' then begin
+        AMsg.ContentTransferEncoding := cQuotedPrintable;
+      end;
     end
     else if FHtml.Count > 0 then
     begin
@@ -598,7 +647,17 @@ begin
         //
         AMsg.ContentType := cTextHtml;
         AMsg.CharSet := FHtmlCharSet;
+        {$IFDEF STRING_IS_UNICODE}
+        if AMsg.CharSet = '' then begin
+          AMsg.CharSet := cUTF8;
+        end;
+        {$ELSE}
+        // TODO: which default charset to use, if any?
+        {$ENDIF}
         AMsg.ContentTransferEncoding := FHtmlContentTransfer;
+        if AMsg.ContentTransferEncoding = '' then begin
+          AMsg.ContentTransferEncoding := cQuotedPrintable;
+        end;
       end else
       begin
         // plain text and HTML and no related attachments
@@ -704,13 +763,22 @@ begin
   if LUsePlain or LUseRtf then
   begin
     LTextPart := TIdText.Create(AMsg.MessageParts, FPlainText);
-    if LUseRtf and (not LUsePlain) then
-    begin
+    if LUseRtf and (not LUsePlain) then begin
       LTextPart.Body.Text := FRtfViewerNeededMsg;
     end;
     LTextPart.ContentType := cTextPlain;
     LTextPart.CharSet := FPlainTextCharSet;
+    {$IFDEF STRING_IS_UNICODE}
+    if LTextPart.CharSet = '' then begin
+      LTextPart.CharSet := cUTF8;
+    end;
+    {$ELSE}
+    // TODO: which default charset to use, if any?
+    {$ENDIF}
     LTextPart.ContentTransfer := FPlainTextContentTransfer;
+    if LTextPart.ContentTransfer = '' then begin
+      LTextPart.ContentTransfer := cQuotedPrintable;
+    end;
     LTextPart.ParentPart := LAlternativeIndex;
   end;
 
@@ -736,7 +804,17 @@ begin
       //
       AMsg.ContentType := cTextPlain;
       AMsg.CharSet := FPlainTextCharSet;
+      {$IFDEF STRING_IS_UNICODE}
+      if AMsg.CharSet = '' then begin
+        AMsg.CharSet := cUTF8;
+      end;
+      {$ELSE}
+      // TODO: which default charset to use, if any?
+      {$ENDIF}
       AMsg.ContentTransferEncoding := FPlainTextContentTransfer;
+      if AMsg.ContentTransferEncoding = '' then begin
+        AMsg.ContentTransferEncoding := cQuotedPrintable;
+      end;
     end
     else if (FRtf.Count > 0) and (FPlainText.Count = 0) then
     begin

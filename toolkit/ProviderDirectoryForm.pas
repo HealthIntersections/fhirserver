@@ -463,7 +463,9 @@ var
   s : TFHIRString;
   c : TFhirEnum;
   at : TFhirHealthcareServiceAvailableTime;
+  {$IFNDEF FHIR3}
   el: TFhirHealthcareServiceEligibility;   //JCT: Added
+  {$ENDIF}
   na : TFhirHealthcareServiceNotAvailable;
   ref : TFHIRReference;
 begin
@@ -491,6 +493,7 @@ begin
     prop('contact', gen(cp));
   for cc in hs.serviceProvisionCodeList do
     prop('service provision', gen(cc));
+  {$IFNDEF FHIR3}
 // JCT:Edited
   for el in hs.eligibilityList do
   begin
@@ -501,6 +504,7 @@ begin
   for cc in hs.program_List do
     prop('program', s.value);
 // JCT
+ {$ENDIF}
   for cc in hs.characteristicList do
     prop('characteristic', gen(cc));
   for cc in hs.referralMethodList do
