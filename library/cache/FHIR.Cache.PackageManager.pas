@@ -534,22 +534,27 @@ begin
                   ini.Free;
                 end;
 
-                dep := npm.obj['dependencies'];
-                for n in dep.properties.Keys do
+                if npm.str['name'] = 'hl7.fhir.core' then
+                  v.fhirVersion := npm.str['version']
+                else
                 begin
-                  if n = 'hl7.fhir.core' then
-                    v.fhirVersion := dep.str[n]
-                  else
+                  dep := npm.obj['dependencies'];
+                  for n in dep.properties.Keys do
                   begin
-                    d := TFHIRPackageDependencyInfo.Create;
-                    try
-                      d.id := n;
-                      d.version := dep.str[n];
-                      v.dependencies.add(d.Link);
-                    finally
-                      d.Free;
-                    end;
-                  end
+                    if n = 'hl7.fhir.core' then
+                      v.fhirVersion := dep.str[n]
+                    else
+                    begin
+                      d := TFHIRPackageDependencyInfo.Create;
+                      try
+                        d.id := n;
+                        d.version := dep.str[n];
+                        v.dependencies.add(d.Link);
+                      finally
+                        d.Free;
+                      end;
+                    end
+                  end;
                 end;
                 pck.versions.Add(v.link);
               finally
@@ -1085,20 +1090,6 @@ begin
     p.Description := 'FHIR Current Build';
     p.FHIRVersion := '4.0.0';
     p.Url := 'http://build.fhir.org/';
-    list.Add(p.Link);
-  finally
-    p.Free;
-  end;
-
-  p := TPackageDefinition.Create;
-  try
-    p.Id := 'hl7.fhir.core';
-    p.Version := '3.5.0';
-    p.Canonical := 'http://hl7.org/fhir';
-    p.Date := EncodeDate(2018, 8, 21);
-    p.Description := 'FHIR Sept 2018 Ballot';
-    p.FHIRVersion := '3.5.0';
-    p.Url := 'http://hl7.org/fhir/2018Sep';
     list.Add(p.Link);
   finally
     p.Free;

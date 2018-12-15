@@ -257,7 +257,7 @@ procedure TKDBTests.TestMySQL;
 var
   db: TKDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 8.0 ANSI Driver', 'localhost', 'utest', 'test', 'test');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'utest', 'test', 'test');
   try
     test(db);
   finally

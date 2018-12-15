@@ -396,12 +396,14 @@ Type
     class function convertPositiveInt(src : FHIR.R3.Types.TFhirPositiveInt) : FHIR.R4.Types.TFhirPositiveInt; overload;
     class function convertPositiveInt(src : FHIR.R4.Types.TFhirPositiveInt) : FHIR.R3.Types.TFhirPositiveInt; overload;
     class function convertString(src : FHIR.R3.Types.TFhirString) : FHIR.R4.Types.TFhirString; overload;
+    class function convertString2CodeableConcept(src : FHIR.R3.Types.TFhirString) : FHIR.R4.Types.TFhirCodeableConcept; overload;
     class function convertString(src : FHIR.R4.Types.TFhirString) : FHIR.R3.Types.TFhirString; overload;
     class function convertTime(src : FHIR.R3.Types.TFhirTime) : FHIR.R4.Types.TFhirTime; overload;
     class function convertTime(src : FHIR.R4.Types.TFhirTime) : FHIR.R3.Types.TFhirTime; overload;
     class function convertUnsignedInt(src : FHIR.R3.Types.TFhirUnsignedInt) : FHIR.R4.Types.TFhirUnsignedInt; overload;
     class function convertUnsignedInt(src : FHIR.R4.Types.TFhirUnsignedInt) : FHIR.R3.Types.TFhirUnsignedInt; overload;
     class function convertUri(src : FHIR.R3.Types.TFhirUri) : FHIR.R4.Types.TFhirUri; overload;
+    class function convertUriToCanonical(src : FHIR.R3.Types.TFhirUri) : FHIR.R4.Types.TFhirCanonical; overload;
     class function convertUriToUrl(src : FHIR.R3.Types.TFhirUri) : FHIR.R4.Types.TFhirUrl; overload;
     class function convertUri(src : FHIR.R4.Types.TFhirUri) : FHIR.R3.Types.TFhirUri; overload;
     class function convertUuid(src : FHIR.R3.Types.TFhirUuid) : FHIR.R4.Types.TFhirUuid; overload;
@@ -5498,6 +5500,20 @@ begin
   end;
 end;
 
+class function TVersionConvertor_30_40.convertString2CodeableConcept(src: FHIR.R3.Types.TFhirString): FHIR.R4.Types.TFhirCodeableConcept;
+var
+  tgt : FHIR.R4.Types.TFhirCodeableConcept;
+begin
+  tgt := FHIR.R4.Types.TFhirCodeableConcept.Create();
+  try
+    copyElement(src, tgt);
+    tgt.text := src.value;
+    exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
 class function TVersionConvertor_30_40.convertTime(src : FHIR.R3.Types.TFhirTime) : FHIR.R4.Types.TFhirTime;
 var
   tgt : FHIR.R4.Types.TFhirTime;
@@ -5558,6 +5574,19 @@ begin
   try
   copyElement(src, tgt);
   exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertUriToCanonical(src: FHIR.R3.Types.TFhirUri): FHIR.R4.Types.TFhirCanonical;
+var
+  tgt : FHIR.R4.Types.TFhirCanonical;
+begin
+  tgt := FHIR.R4.Types.TFhirCanonical.Create(src.value);
+  try
+    copyElement(src, tgt);
+    exit(tgt.link);
   finally
     tgt.free;
   end;
@@ -7336,10 +7365,10 @@ begin
   end;
 
   if (src.profile <> '') then
-    tgt.profileList.add(FHIR.R4.Types.TFHIRUri.create(src.profile));
+    tgt.profileList.add(FHIR.R4.Types.TFHIRCanonical.create(src.profile));
 
   if (src.targetProfile <> '') then
-    tgt.targetProfileList.add(FHIR.R4.Types.TFHIRUri.create(src.targetProfile));
+    tgt.targetProfileList.add(FHIR.R4.Types.TFHIRCanonical.create(src.targetProfile));
 
   a := tgt.aggregation;
   for t := low(FHIR.R3.Types.TFhirResourceAggregationModeEnum) to high(FHIR.R3.Types.TFhirResourceAggregationModeEnum) do
@@ -7727,7 +7756,7 @@ begin
 
   for t1 in src.profileList do
   begin
-    tgt.profileList.add(convertUri(t1));
+    tgt.profileList.add(convertUriToCanonical(t1));
   end;
   for t2 in src.securityList do
   begin
@@ -10634,7 +10663,7 @@ begin
 
   for t4 in src.instantiatesList do
   begin
-    tgt.instantiatesList.add(convertUri(t4));
+    tgt.instantiatesList.add(convertUriToCanonical(t4));
   end;
   if (src.software <> nil) then
     tgt.software := convertCapabilityStatementSoftwareComponent(src.software);
@@ -10655,7 +10684,7 @@ begin
   end;
   for t6 in src.implementationGuideList do
   begin
-    tgt.implementationGuideList.add(convertUri(t6));
+    tgt.implementationGuideList.add(convertUriToCanonical(t6));
   end;
   for t7 in src.restList do
   begin
@@ -10920,7 +10949,7 @@ begin
   end;
   for t5 in src.compartmentList do
   begin
-    tgt.compartmentList.add(convertUri(t5));
+    tgt.compartmentList.add(convertUriToCanonical(t5));
   end;
   exit(tgt.link);
   finally
@@ -17415,7 +17444,7 @@ begin
 
   for t8 in src.programNameList do
   begin
-    tgt.program_List.add(convertString(t8));
+    tgt.program_List.add(convertString2CodeableConcept(t8));
   end;
   for t9 in src.characteristicList do
   begin

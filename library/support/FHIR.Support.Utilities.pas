@@ -1131,7 +1131,7 @@ type
     function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function equal(other : TDateTimeEx; precision : TDateTimeExPrecision) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
-    function after(other : TDateTimeEx; inclusive : boolean):boolean;
+    function after(other : TDateTimeEx; inclusive : boolean):boolean; // returns true if this is after other
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
     function between(imin, imax : TDateTimeEx; inclusive : boolean):boolean;
     function compare(other : TDateTimeEx) : integer;
@@ -8736,9 +8736,9 @@ begin
       dttzSpecified :
         begin
         if TimezoneHours < 0 then
-          bias := - (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
+          bias := (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
         else
-          bias := (TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
+          bias := -(TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
         result := TDateTimeEx.makeUTC(self.DateTime+bias);
         end;
     else

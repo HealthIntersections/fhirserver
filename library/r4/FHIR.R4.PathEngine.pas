@@ -3424,7 +3424,7 @@ begin
       else if l.hasType(['decimal', 'integer']) and r.hasType(['decimal', 'integer']) then
         result.Add(TFhirBoolean.Create(StrToFloat(l.primitiveValue) > StrToFloat(r.primitiveValue)).noExtensions)
       else if l.hasType(['date', 'dateTime', 'instant']) and r.hasType(['date', 'dateTime', 'instant']) then
-        result.Add(TFhirBoolean.Create(l.primitiveValue > r.primitiveValue).noExtensions)
+        result.Add(TFhirBoolean.Create(l.dateValue.after(r.dateValue, false)).noExtensions)
       else if l.hasType('time') and r.hasType('time') then
         result.Add(TFhirBoolean.Create(l.primitiveValue > r.primitiveValue).noExtensions)
     end
@@ -3486,7 +3486,7 @@ begin
       else if l.hasType(['decimal', 'integer']) and r.hasType(['decimal', 'integer']) then
         result.Add(TFhirBoolean.Create(StrToFloat(l.primitiveValue) >= StrToFloat(r.primitiveValue)).noExtensions)
       else if l.hasType(['date', 'dateTime', 'instant']) and r.hasType(['date', 'dateTime', 'instant']) then
-        result.Add(TFhirBoolean.Create(l.primitiveValue >= r.primitiveValue).noExtensions)
+        result.Add(TFhirBoolean.Create(l.dateValue.after(r.dateValue, true)).noExtensions)
       else if l.hasType('time') and r.hasType('time') then
         result.Add(TFhirBoolean.Create(l.primitiveValue >= r.primitiveValue).noExtensions);
     end
@@ -3595,7 +3595,7 @@ begin
       else if l.hasType(['decimal', 'integer', 'unsignedInt', 'positiveInt']) and r.hasType(['decimal', 'integer', 'unsignedInt', 'positiveInt']) then
         result.Add(TFhirBoolean.Create(StrToFloat(l.primitiveValue) <= StrToFloat(r.primitiveValue)).noExtensions)
       else if l.hasType(['date', 'dateTime', 'instant']) and r.hasType(['date', 'dateTime', 'instant']) then
-        result.Add(TFhirBoolean.Create(l.primitiveValue <= r.primitiveValue).noExtensions)
+        result.Add(TFhirBoolean.Create(l.dateValue.before(r.dateValue, true)).noExtensions)
       else if l.hasType('time') and r.hasType('time') then
         result.Add(TFhirBoolean.Create(l.primitiveValue <= r.primitiveValue).noExtensions)
     end
@@ -3657,7 +3657,7 @@ begin
       else if l.hasType(['decimal', 'integer']) and r.hasType(['decimal', 'integer']) then
         result.Add(TFhirBoolean.Create(StrToFloat(l.primitiveValue) < StrToFloat(r.primitiveValue)).noExtensions)
       else if l.hasType(['date', 'dateTime', 'instant']) and r.hasType(['date', 'dateTime', 'instant']) then
-        result.Add(TFhirBoolean.Create(l.primitiveValue < r.primitiveValue).noExtensions)
+        result.Add(TFhirBoolean.Create(l.dateValue.before(r.dateValue, false)).noExtensions)
       else if l.hasType('time') and r.hasType('time') then
         result.Add(TFhirBoolean.Create(l.primitiveValue < r.primitiveValue).noExtensions)
     end

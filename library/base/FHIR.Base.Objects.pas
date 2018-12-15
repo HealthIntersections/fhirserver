@@ -371,6 +371,7 @@ type
     function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
+    function dateValue : TDateTimeEx; virtual;
     function isMetaDataBased : boolean; virtual;
 //    Function PerformQuery(path : String) : TFHIRObjectList;
     function hasType(t : String) : boolean; overload;
@@ -701,6 +702,11 @@ begin
   if FTags = nil then
     FTags := TFslStringDictionary.create;
   FTags.AddOrSetValue(name, value);
+end;
+
+function TFHIRObject.dateValue: TDateTimeEx;
+begin
+  result := TDateTimeEx.makeNull;
 end;
 
 procedure TFHIRObject.deleteProperty(propName: string; propValue: TFHIRObject);
