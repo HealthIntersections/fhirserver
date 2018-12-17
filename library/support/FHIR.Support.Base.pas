@@ -122,57 +122,59 @@ Type
   TFslReferenceCount = Integer;
 
   TFslObject = Class(TObject)
-    Private
-      // Reference counted using Interlocked* Windows API functions.
-      FFslObjectReferenceCount : TFslReferenceCount;
+  Private
+    // Reference counted using Interlocked* Windows API functions.
+    FFslObjectReferenceCount : TFslReferenceCount;
+    FTagObject : TObject;
 
-    Protected
-      // Declared here for ease of implementing interfaces.
-      Function _AddRef : Integer; Stdcall;
-      Function _Release : Integer; Stdcall;
-      Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
-      // May be called from Nil or invalid references (so can't be virtual).
-      Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; oObject : TFslObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
+  Protected
+    // Declared here for ease of implementing interfaces.
+    Function _AddRef : Integer; Stdcall;
+    Function _Release : Integer; Stdcall;
+    Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
+    // May be called from Nil or invalid references (so can't be virtual).
+    Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
+    Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
+    Function Invariants(Const sLocation : String; oObject : TFslObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
+    Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
 
-      Function CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
-      Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
+    Function CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
+    Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
 
-      // Override to introduce additional or alternate behaviour.
-      Function Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean; Overload; Virtual;
-      Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
-      Procedure RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
-      Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
+    // Override to introduce additional or alternate behaviour.
+    Function Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean; Overload; Virtual;
+    Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
+    Procedure RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
+    Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
 
-      Class Procedure ClassError(Const sMethod, sMessage : String); Overload;
+    Class Procedure ClassError(Const sMethod, sMessage : String); Overload;
 
-      Function ErrorClass : EFslExceptionClass; Overload; Virtual;
+    Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
-    Public
-      constructor Create; Overload; Virtual;
-      destructor Destroy; Override;
+  Public
+    constructor Create; Overload; Virtual;
+    destructor Destroy; Override;
 
-      Procedure AfterConstruction; Override;
-      Procedure BeforeDestruction; Override;
+    Procedure AfterConstruction; Override;
+    Procedure BeforeDestruction; Override;
 
-      // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
-      Procedure Free; Overload;
-      Function Link : TFslObject; Overload;
-      Function Unlink : TFslObject; Overload;
-      Function Clone : TFslObject; Overload;
-      Function ClassType : TFslObjectClass; Overload;
+    // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
+    Procedure Free; Overload;
+    Function Link : TFslObject; Overload;
+    Function Unlink : TFslObject; Overload;
+    Function Clone : TFslObject; Overload;
+    Function ClassType : TFslObjectClass; Overload;
 
-      // Assignment.
-      Function Assignable : Boolean; Overload; Virtual;
-      Function Duplicate : TFslObject; Overload; Virtual;
-      Procedure Assign(oObject : TFslObject); Overload; Virtual;
+    // Assignment.
+    Function Assignable : Boolean; Overload; Virtual;
+    Function Duplicate : TFslObject; Overload; Virtual;
+    Procedure Assign(oObject : TFslObject); Overload; Virtual;
 
-      // Determine if self is a valid reference of the specified class.
-      Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
+    // Determine if self is a valid reference of the specified class.
+    Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
 
-      Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
+    Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
+    property TagObject : TObject read FTagObject write FTagObject; // no ownership....
   End;
 
   PFslObject = ^TFslObject;

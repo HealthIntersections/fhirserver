@@ -805,7 +805,8 @@ Function FolderExists(Const sFolder : String) : Boolean;
 Function FileSize(Const sFileName : String) : Int64; Overload;
 function Path(parts : array of String) : String;
 function URLPath(parts : array of String) : String;
-
+function makeRelativePath(path, base : String): String;
+function makeAbsolutePath(fn, base : String): String;
 
 Function CreateGUID : TGUID;
 Function GUIDToString(Const aGUID : TGUID) : String;
@@ -2906,6 +2907,22 @@ Begin
   aFileHandle := FileHandleInvalid;
 End;
 {$ENDIF}
+
+function makeRelativePath(path, base : String): String;
+begin
+  if path.StartsWith(base) then
+    result := path.Substring(base.Length)
+  else
+    result := path;
+end;
+
+function makeAbsolutePath(fn, base : String): String;
+begin
+  if fn.Contains(':') then
+    result := fn
+  else
+    result := path([base, fn]);
+end;
 
 function Path(parts : array of String) : String;
 var
