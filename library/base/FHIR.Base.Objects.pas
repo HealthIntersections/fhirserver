@@ -282,7 +282,6 @@ type
   private
     FTags : TFslStringDictionary;
     FTag : TFslObject;
-    FTagObject : TObject;
     FLocationStart : TSourceLocation;
     FLocationEnd : TSourceLocation;
     FCommentsStart: TFslStringList;
@@ -348,7 +347,6 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
-    property TagObject : TObject read FTagObject write FTagObject; // no ownership....
     property TagInt : integer read FTagInt write FTagInt;
 
     // javascript caching

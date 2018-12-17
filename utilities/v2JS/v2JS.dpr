@@ -3,7 +3,7 @@ program v2JS;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  MainForm in 'MainForm.pas' {EditorForm},
+  FHIR.V2JS.IDE in 'FHIR.V2JS.IDE.pas' {EditorForm},
   FHIR.Support.Base in '..\..\library\support\FHIR.Support.Base.pas',
   FHIR.Support.Utilities in '..\..\library\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Fpc in '..\..\library\support\FHIR.Support.Fpc.pas',
@@ -58,7 +58,10 @@ uses
   FHIR.Client.InteractiveFMX in '..\..\library\client\FHIR.Client.InteractiveFMX.pas' {InteractiveClientForm},
   FHIR.Client.Debugger in '..\..\library\client\FHIR.Client.Debugger.pas',
   FHIR.Client.Threaded in '..\..\library\client\FHIR.Client.Threaded.pas',
-  FHIR.v2.Engine in '..\..\library\v2\FHIR.v2.Engine.pas';
+  FHIR.v2.Engine in '..\..\library\v2\FHIR.v2.Engine.pas',
+  FHIR.V2JS.Workspace in 'FHIR.V2JS.Workspace.pas',
+  FHIR.V2JS.Utilities in 'FHIR.V2JS.Utilities.pas',
+  FHIR.Ui.TabsFMX in '..\..\library\ui\FHIR.Ui.TabsFMX.pas';
 
 {$R *.res}
 
