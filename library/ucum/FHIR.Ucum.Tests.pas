@@ -60,6 +60,16 @@ type
     procedure TestCase(id : String);
   end;
 
+  [TextFixture]
+  TUcumSpecialTests = class (TObject)
+  private
+  public
+    [Setup] procedure Setup;
+
+    [TestCase]
+    procedure TestIssue10;
+  end;
+
 
 
 implementation
@@ -235,8 +245,36 @@ begin
   end;
 end;
 
+{ TUcumSpecialTests }
+
+procedure TUcumSpecialTests.Setup;
+begin
+  if (svc = nil) then
+  begin
+    svc := TUcumServices.Create;
+    svc.Import('C:\work\fhirserver\utilities\tests\ucum-essence.xml');
+  end;
+end;
+
+procedure TUcumSpecialTests.TestIssue10;
+var
+  i : integer;
+  f, e : double;
+  d, o : TFslDecimal;
+begin
+  for i := 905000 to 1000000 do
+  begin
+    f := i * 0.0001;
+    d := TFslDecimal.Create(f);
+    o := svc.convert(d, 'kg', '[lb_av]');
+    e := f * 2.2046226218487758072297380134503;
+    Assert.IsTrue(Abs(o.AsDouble - e) < 0.001, 'Expected '+FloatToStr(e)+', but got '+o.AsDecimal);
+  end;
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TUcumTests);
+  TDUnitX.RegisterTestFixture(TUcumSpecialTests);
 finalization
   tests.Free;
   svc.Free;

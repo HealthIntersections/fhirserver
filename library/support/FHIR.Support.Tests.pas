@@ -68,12 +68,14 @@ Type
     [TestCase] procedure testAddAll;
     [TestCase] procedure testReplace;
     [TestCase] procedure testMap;
+    [TestCase] procedure testSort;
   end;
 
   TFslTestObject = class (TFslObject)
   private
     FValue: String;
   public
+    constructor create(value : String); overload;
     property value : String read FValue write FValue;
   end;
 
@@ -674,6 +676,45 @@ begin
     Assert.IsTrue(l.Count = 1);
   finally
     l.Free;
+  end;
+end;
+
+procedure TFslGenericsTests.testSort;
+var
+  list : TFslList<TFslTestObject>;
+begin
+  list := TFslList<TFslTestObject>.Create;
+  try
+    list.Add(TFslTestObject.Create('a'));
+    list.Sort(function (const L, R: TFslTestObject): Integer begin
+        result := CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 1);
+    Assert.IsTrue(list[0].value = 'a');
+    list.Insert(0, TFslTestObject.Create('b'));
+    Assert.IsTrue(list.Count = 2);
+    Assert.IsTrue(list[0].value = 'b');
+    Assert.IsTrue(list[1].value = 'a');
+    list.Sort(function (const l, r : TFslTestObject) : Integer begin
+        result := CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 2);
+    Assert.IsTrue(list[0].value = 'a');
+    Assert.IsTrue(list[1].value = 'b');
+    list.Insert(1, TFslTestObject.Create('c'));
+    Assert.IsTrue(list.Count = 3);
+    Assert.IsTrue(list[0].value = 'a');
+    Assert.IsTrue(list[1].value = 'c');
+    Assert.IsTrue(list[2].value = 'b');
+    list.Sort(function (const l, r : TFslTestObject) : Integer begin
+        result := 0 - CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 3);
+    Assert.IsTrue(list[0].value = 'c');
+    Assert.IsTrue(list[1].value = 'b');
+    Assert.IsTrue(list[2].value = 'a');
+  finally
+    list.Free;
   end;
 end;
 
@@ -5052,6 +5093,14 @@ begin
   finally
     list.Free;
   end;
+end;
+
+{ TFslTestObject }
+
+constructor TFslTestObject.create(value: String);
+begin
+  Create;
+  self.value := value;
 end;
 
 initialization

@@ -32,6 +32,7 @@
   
 -->
   <history>
+     <entry date="11-Oct 2018" author="gdg">Add test for correct interpretation of Pa</entry>
      <entry date="18-June 2014" author="gdg">Fixes for various issues, including trac #159 </entry>
      <entry date="31-May 2010" author="gdg">updated with fixes to a couple of original conversion tests (Thanks to Christof Gessner). Extended the conversion tests considerably - should be easier to track down conversion issues</entry>
      <entry date="10-Feb 2009" author="gdg">First created. Ucum validation Tests, display name generation tests, conversion tests, and multiplication tests</entry>
@@ -590,6 +591,12 @@
     <case id="k=1=265" unit="ng/kg" valid="true"/>
     <case id="k=1=266" unit="t" valid="true"/>
     <case id="k=1=267" unit="Wb" valid="true"/>
+    
+    <!--  source - see FHIR gForge #19308  -->
+    <case id="k=1=268" unit="/{LPF}" valid="true"/>
+    <case id="k=1=269" unit="/[LPF]" valid="true"/>
+    <case id="k=1=270" unit="[drp]/{HPF}" valid="true"/>
+    <case id="k=1=271" unit="[M'U]" valid="false"/>
   </validation>	
   
   <displayNameGeneration>
@@ -607,7 +614,7 @@
 	<case id="2-106" unit="rad2" display="(radian ^ 2)"/>
 	<case id="2-107" unit="m3.kg-1.s-2" display="(meter ^ 3) * (kilogram ^ -1) * (second ^ -2)"/>
 	<case id="2-108" unit="4.[pi].10*-7.N/A2" display="4 * (the number pi) * (the number ten for arbitrary powers ^ -7) * (Newton) / (Amp&#232;re ^ 2)"/>
-  <case id="2-109" unit="Pa" display="Pascal"/>
+  <case id="2-109" unit="Pa" display="(pascal)"/>
  </displayNameGeneration>		
 
   
