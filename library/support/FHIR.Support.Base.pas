@@ -126,6 +126,11 @@ Type
     // Reference counted using Interlocked* Windows API functions.
     FFslObjectReferenceCount : TFslReferenceCount;
     FTagObject : TObject;
+    {$IFOPT D+}
+    // This is a work around for the delphi debugger not showing the actual class
+    // of an object that is polymorphic. It's sole purpose is to be visible in the debugger
+    FNamedClass : String;
+    {$ENDIF}
 
   Protected
     // Declared here for ease of implementing interfaces.
@@ -175,6 +180,9 @@ Type
 
     Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
+    {$IFOPT D+}
+    property NamedClass : String read FNamedClass;
+    {$ENDIF}
   End;
 
   PFslObject = ^TFslObject;
@@ -709,6 +717,9 @@ End;
 Constructor TFslObject.Create;
 Begin
   Inherited;
+  {$IFOPT D+}
+  FNamedClass := ClassName;
+  {$ENDIF}
 End;
 
 

@@ -3821,7 +3821,7 @@ begin
     fcmdHistoryType : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdHistoryType;
     fcmdHistorySystem : result := ServerContext.SupportSystemHistory;
     fcmdValidate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdValidate;
-    fcmdSearch : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdSearch;
+    fcmdSearch : result := ((resource = '') or ServerContext.ResConfig[resource].Supported) and ServerContext.ResConfig[resource].cmdSearch;
     fcmdCreate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdCreate;
     fcmdMetadata : result := true;
     fcmdUpload, fcmdTransaction : result := ServerContext.SupportTransaction;

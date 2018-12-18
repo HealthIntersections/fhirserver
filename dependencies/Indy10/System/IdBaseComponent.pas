@@ -104,6 +104,9 @@ type
   {$ENDIF}
   TIdInitializerComponent = class(TComponent)
   private
+    {$IFOPT D+}
+    FNamedClass : String;
+    {$ENDIF}
   protected
     {$IFDEF DOTNET}
     // This event handler will take care about dynamically loaded assemblies after first initialization.
@@ -130,6 +133,10 @@ type
     //constructor Create(AOwner: TComponent); overload; override;
     {$ENDIF}
     constructor Create(AOwner: TComponent); overload; override;
+
+    {$IFOPT D+}
+    property NamedClass : String read FNamedClass;
+    {$ENDIF}
   end;
 
   // TIdBaseComponent is the base class for all Indy components. Utility components, and other non
@@ -226,6 +233,9 @@ var
   LM : String;
 {$ENDIF}
 begin
+  {$IFOPT D+}
+  FNamedClass := ClassName;
+  {$ENDIF}
   {$IFDEF DOTNET}
   try
   // With .NET initialization sections are not called unless the unit is referenced. D.NET makes
