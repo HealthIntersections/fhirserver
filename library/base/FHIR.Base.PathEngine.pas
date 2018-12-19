@@ -74,6 +74,7 @@ type
     FCurrentStartLocation : TSourceLocation;
     FId : integer;
     FPath : String;
+    FSourceName : String;
     flast13 : boolean;
 
     FMarkedCursor : integer;
@@ -136,6 +137,8 @@ type
     property CurrentStartLocation : TSourceLocation read FCurrentStartLocation;
     property path : String read FPath;
     function processConstant : TFHIRObject; overload; virtual; abstract;
+
+    property SourceName : String read FSourceName write FSourceName;
   end;
 
   TFHIRPathExecutionContext = class (TFslObject)
@@ -578,7 +581,7 @@ begin
     ch := FPath[FCursor];
     if charInSet(ch, ['!', '>', '<', ':', '=', '-']) then
     begin
-      if (FCursor < FPath.Length) and charInSet(FPath[FCursor+1], ['=', '~', '-']) then
+      if (FCursor < FPath.Length) and (charInSet(FPath[FCursor+1], ['=', '~', '-']) or ((ch = '-') and (FPath[FCursor+1] = '>'))) then
         Grab(2)
       else
         Grab(1);

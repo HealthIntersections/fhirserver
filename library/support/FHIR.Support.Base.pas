@@ -127,8 +127,8 @@ Type
     FFslObjectReferenceCount : TFslReferenceCount;
     FTagObject : TObject;
     {$IFOPT D+}
-    // This is a work around for the delphi debugger not showing the actual class
-    // of an object that is polymorphic. It's sole purpose is to be visible in the debugger
+    // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
+    // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
     FNamedClass : String;
     {$ENDIF}
 

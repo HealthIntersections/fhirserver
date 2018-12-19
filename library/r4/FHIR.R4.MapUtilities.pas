@@ -42,6 +42,7 @@ type
 
 const
   CODES_TVariableMode : array [TVariableMode] of string = ('input', 'output');
+  AUTO_VAR_NAME = 'vvv';
 
 type
   TVariable = class (TFslObject)
@@ -104,12 +105,13 @@ type
     function readPrefix(prefixes : TFslStringDictionary; lexer : TFHIRPathLexer) : String;
     function readEquivalence(lexer : TFHIRPathLexer) : TFhirConceptMapEquivalenceEnum;
     function readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
+    function isSimpleSyntax(rule : TFhirStructureMapGroupRule) : boolean;
     procedure parseConceptMap(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseUses(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
-    procedure parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer);
-    procedure parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer);
+    procedure parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer; newFmt : boolean);
+    procedure parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer; newFmt : boolean);
     procedure parseSource(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
     procedure parseTarget(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
     procedure parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -135,7 +137,7 @@ type
 
     function render(map : TFHIRStructureMap) : String; overload;
     function render(map : TFHIRConceptMap) : String; overload;
-	  function parse(text : String) : TFHIRStructureMap;
+	  function parse(text, sourceName : String) : TFHIRStructureMap;
     procedure transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
   end;
 
@@ -460,7 +462,7 @@ end;
 
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
 const
-  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', ':', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
+  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', '-', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
 var
   prefixes : TFslStringDictionary;
   g : TFhirConceptMapGroup;
@@ -604,12 +606,13 @@ begin
   end;
 end;
 
-function TFHIRStructureMapUtilities.parse(text : String) : TFHIRStructureMap;
+function TFHIRStructureMapUtilities.parse(text, sourceName : String) : TFHIRStructureMap;
 var
   lexer : TFHIRPathLexer;
 begin
   lexer := TFHIRPathLexer4.Create(text);
   try
+    lexer.SourceName := sourceName;
 		if (lexer.done()) then
 			raise EFHIRException.create('Map Input cannot be empty');
 		lexer.skipComments();
@@ -630,8 +633,6 @@ begin
         parseUses(result, lexer);
       while (lexer.hasToken('imports')) do
         parseImports(result, lexer);
-
-      parseGroup(result, lexer);
 
       while (not lexer.done()) do
         parseGroup(result, lexer);
@@ -654,6 +655,7 @@ var
   map : TFhirConceptMap;
   id, n, v : String;
   prefixes : TFslStringDictionary;
+  g : TFhirConceptMapGroup;
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
   vs, vc, vt : String;
@@ -664,8 +666,8 @@ begin
   map := TFhirConceptMap.create;
   result.ContainedList.add(map);
   id := lexer.readConstant('map id');
-  if (not id.startsWith('#')) then
-    raise lexer.error('Concept Map identifier must start with #');
+  if (id.startsWith('#')) then
+    raise lexer.error('Concept Map identifier ('+id+') must start with #');
   map.Id := id.substring(1);
   lexer.token('{');
   lexer.skipComments();
@@ -683,13 +685,28 @@ begin
       v := lexer.readConstant('prefix url');
       prefixes.add(n, v);
     end;
+		while (lexer.hasToken('unmapped')) do
+    begin
+		  lexer.token('unmapped');
+      lexer.token('for');
+      n := readPrefix(prefixes, lexer);
+      g := getGroup(map, n, '');
+      if g.unmapped = nil then
+        g.unmapped := TFhirConceptMapGroupUnmapped.Create;
+		  lexer.token('=');
+      v := lexer.take();
+      if (v = 'provided') then
+        g.unmapped.Mode := ConceptmapUnmappedModeProvided
+      else
+        raise lexer.error('Only unmapped mode PROVIDED is supported at this time');
+		end;
     while (not lexer.hasToken('}')) do
     begin
       vs := readPrefix(prefixes, lexer);
       lexer.token(':');
       vc := lexer.take();
       eq := readEquivalence(lexer);
-      if (tgt.Equivalence <> ConceptMapEquivalenceUNMATCHED) then
+      if (eq <> ConceptMapEquivalenceUNMATCHED) then
         vt := readPrefix(prefixes, lexer)
       else
         vt := '';
@@ -728,7 +745,9 @@ var
   token : string;
 begin
   token := lexer.take();
-  if (token = '=') then
+  if (token = '-') then
+    result := ConceptMapEquivalenceRELATEDTO
+  else if (token = '=') then
     result := ConceptMapEquivalenceEQUAL
   else if (token = '==') then
     result := ConceptMapEquivalenceEQUIVALENT
@@ -765,6 +784,11 @@ begin
   lexer.token('uses');
   st := result.StructureList.Append;
   st.Url := lexer.readConstant('url');
+  if lexer.hasToken('alias') then
+  begin
+    lexer.token('alias');
+    st.alias := lexer.take;
+  end;
   lexer.token('as');
   st.Mode := TFhirMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirMapModelModeEnum));
   lexer.skiptoken(';');
@@ -776,7 +800,7 @@ end;
 procedure TFHIRStructureMapUtilities.parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
 begin
   lexer.token('imports');
-  result.ImportList.add(TFHIRUri.Create(lexer.readConstant('url')));
+  result.ImportList.add(TFHIRCanonical.Create(lexer.readConstant('url')));
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     lexer.next();
@@ -786,57 +810,137 @@ end;
 procedure TFHIRStructureMapUtilities.parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
 var
   group : TFHIRStructureMapGroup;
+  newFmt : boolean;
 begin
   lexer.token('group');
   group := result.GroupList.Append;
+  newFmt := false;
+  if (lexer.hasToken('for')) then
+  begin
+    lexer.token('for');
+    if (lexer.current = 'type') then
+    begin
+      lexer.token('type');
+      lexer.token('+');
+      lexer.token('types');
+      group.TypeMode := MapGroupTypeModeTYPEANDTYPES;
+    end
+    else
+    begin
+      lexer.token('types');
+      group.TypeMode := MapGroupTypeModeTYPES;
+     end;
+  end
+  else
+    group.TypeMode := MapGroupTypeModeNone;
+
   group.Name := lexer.take();
+
+  if (lexer.hasToken('(')) then
+  begin
+    newFmt := true;
+    lexer.take();
+    while (not lexer.hasToken(')')) do
+    begin
+      parseInput(group, lexer, true);
+      if (lexer.hasToken(',')) then
+        lexer.token(',');
+    end;
+    lexer.take();
+  end;
   if (lexer.hasToken('extends')) then
   begin
     lexer.next();
-    group.Extends := lexer.take();
+    group.extends := lexer.take();
+  end;
+  if (newFmt) then
+  begin
+    group.TypeMode := MapGroupTypeModeNone;
+    if (lexer.hasToken('<')) then
+    begin
+      lexer.token('<');
+      lexer.token('<');
+      if (lexer.hasToken('types')) then
+      begin
+        lexer.token('types');
+        group.TypeMode := MapGroupTypeModeTYPES;
+      end
+      else
+      begin
+        lexer.token('type');
+        lexer.token('+');
+        group.TypeMode := MapGroupTypeModeTYPEANDTYPES;
+      end;
+      lexer.token('>');
+      lexer.token('>');
+    end;
+    lexer.token('{');
   end;
   lexer.skipComments();
-  while lexer.hasToken('input') do
-    parseInput(group, lexer);
-  while (not lexer.hasToken('endgroup')) do
+  if (newFmt) then
   begin
-    if (lexer.done()) then
-      raise EFHIRException.create('premature termination expecting "endgroup"');
-    parseRule(group.ruleList, lexer);
+    while (not lexer.hasToken('}')) do
+    begin
+      if (lexer.done()) then
+        raise lexer.error('premature termination expecting "endgroup"');
+      parseRule(group.ruleList, lexer, true);
+    end;
+  end
+  else
+  begin
+    while (lexer.hasToken('input')) do
+      parseInput(group, lexer, false);
+    while (not lexer.hasToken('endgroup')) do
+    begin
+      if (lexer.done()) then
+        raise lexer.error('premature termination expecting "endgroup"');
+      parseRule(group.ruleList, lexer, false);
+    end;
   end;
-  lexer.token('endgroup');
+  lexer.next();
+  if (newFmt and lexer.hasToken(';')) then
+    lexer.next();
   lexer.skipComments();
 end;
 
-procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer);
+procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer; newFmt : boolean);
 var
   input : TFHIRStructureMapGroupInput;
 begin
-  lexer.token('input');
   input := group.inputList.Append;
+  if (newFmt) then
+    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum))
+  else
+    lexer.token('input');
   input.Name := lexer.take();
   if (lexer.hasToken(':')) then
   begin
     lexer.token(':');
     input.Type_ := lexer.take();
   end;
-  lexer.token('as');
-  input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum));
-  if (lexer.hasComment()) then
-    input.Documentation := lexer.take().substring(2).trim();
-  lexer.skipToken(';');
-  lexer.skipComments();
+  if (not newFmt) then
+  begin
+    lexer.token('as');
+    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum));
+    if (lexer.hasComment()) then
+      input.Documentation := lexer.take().substring(2).trim();
+    lexer.skipToken(';');
+    lexer.skipComments();
+  end;
 end;
 
-procedure TFHIRStructureMapUtilities.parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer);
+procedure TFHIRStructureMapUtilities.parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer; newFmt : boolean);
 var
   rule : TFhirStructureMapGroupRule;
   done : boolean;
 begin
   rule := list.Append;
-  rule.Name := lexer.takeDottedToken();
-  lexer.token(':');
-  lexer.token('for');
+  if not newFMt then
+  begin
+    rule.Name := lexer.takeDottedToken();
+    lexer.token(':');
+    lexer.token('for');
+  end;
   done := false;
   while (not done) do
   begin
@@ -845,9 +949,12 @@ begin
     if (not done) then
       lexer.next();
   end;
-  if (lexer.hasToken('make')) then
+  if (newFmt and lexer.hasToken('->')) or (not newFmt and lexer.hasToken('make')) then
   begin
-    lexer.token('make');
+    if newFmt then
+      lexer.token('->')
+    else
+      lexer.token('make');
     done := false;
     while (not done) do
     begin
@@ -870,7 +977,7 @@ begin
       begin
         if (lexer.done()) then
           raise EFHIRException.create('premature termination expecting "}" in nested group');
-        parseRule(rule.ruleList, lexer);
+        parseRule(rule.ruleList, lexer, newFmt);
       end;
       lexer.token('}');
     end
@@ -888,6 +995,28 @@ begin
   end
   else if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
+  if (isSimpleSyntax(rule)) then
+  begin
+    rule.sourceList[0].variable := AUTO_VAR_NAME;
+    rule.targetList[0].variable := AUTO_VAR_NAME;
+    rule.targetList[0].transform := MapTransformCreate; // with no parameter - e.g. imply what is to be created
+    // no dependencies - imply what is to be done based on types
+  end;
+  if (newFmt) then
+  begin
+    if (lexer.isConstant(true)) then
+      rule.Name := lexer.take()
+    else
+    begin
+      if (rule.sourceList.count <> 1) or (rule.sourceList[0].element = '') then
+        raise lexer.error('Complex rules must have an explicit name');
+      if (rule.sourceList[0].type_ <> '') then
+        rule.Name := rule.sourceList[0].Element+'-'+rule.sourceList[0].type_
+      else
+        rule.Name := rule.sourceList[0].Element;
+    end;
+    lexer.token(';');
+  end;
   lexer.skipComments();
 end;
 
@@ -917,23 +1046,44 @@ var
 begin
   source := rule.sourceList.Append;
   source.Context := lexer.take();
-  if (lexer.hasToken('.')) then
+
+  if (source.Context = 'search') and lexer.hasToken('(') then
+  begin
+    source.Context := '@search';
+    lexer.take();
+    node := fpp.parse(lexer);
+    source.element := node.toString();
+    source.elementElement.Tag := node;
+    lexer.token(')');
+  end
+  else if (lexer.hasToken('.')) then
   begin
     lexer.token('.');
-    source.Element := lexer.take();
+    source.element := lexer.take();
   end;
-  if StringArrayExistsInsensitive(['first', 'last', 'only_one'], lexer.current) then
-    if (lexer.current = 'only_one') then
+  if (lexer.hasToken(':')) then
+  begin
+    // type and cardinality
+    lexer.token(':');
+    source.type_ := lexer.takeDottedToken();
+    if (not lexer.hasToken(['as', 'first', 'last', 'not_first', 'not_last', 'only_one', 'default'])) then
     begin
-//      source.ListMode := MapListModeShare;
-      lexer.take();
-    end
-    else
-      ; // source.ListMode := TFhirMapListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapListModeEnum));
+      source.Min := lexer.take();
+      lexer.token('..');
+      source.Max := lexer.take();
+    end;
+  end;
+	if (lexer.hasToken('default')) then
+  begin
+    lexer.token('default');
+    source.DefaultValue := TFhirString.create(lexer.readConstant('default value'));
+  end;
+  if (StringArrayExistsSensitive(['first', 'last', 'not_first', 'not_last', 'only_one'], lexer.current)) then
+    source.ListMode := TFhirMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapSourceListModeEnum));
   if (lexer.hasToken('as')) then
   begin
     lexer.take();
-    source.Variable := lexer.take();
+    source.variable := lexer.take();
   end;
   if (lexer.hasToken('where')) then
   begin
@@ -948,6 +1098,13 @@ begin
     node := fpp.parse(lexer);
     source.check := node.toString();
     source.checkElement.Tag := node;
+  end;
+  if (lexer.hasToken('log')) then
+  begin
+    lexer.take();
+    node := fpp.parse(lexer);
+    source.logMessage := node.toString();
+    source.logMessageElement.Tag := node;
   end;
 end;
 
@@ -1427,6 +1584,13 @@ begin
     result := ''
   else
     result := b.primitiveValue();
+end;
+
+function TFHIRStructureMapUtilities.isSimpleSyntax(rule: TFhirStructureMapGroupRule): boolean;
+begin
+  result := (rule.sourceList.count = 1) and (rule.sourceList[0].context <> '') and (rule.sourceList[0].element <> '') and (rule.sourceList[0].variable = '') and
+        (rule.targetList.count = 1) and (rule.targetList[0].Context <> '') and (rule.targetList[0].Element <> '') and (rule.targetList[0].Variable = '') and (rule.targetList[0].parameterList.count = 0)
+        and (rule.dependentList.count = 0) and (rule.ruleList.count = 0);
 end;
 
 procedure TFHIRStructureMapUtilities.log(s: String);

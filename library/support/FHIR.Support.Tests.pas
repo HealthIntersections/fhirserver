@@ -654,6 +654,7 @@ Type
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
+function CheckTextIsSame(src1, src2 : String; var msg : string) : boolean;
 
 var
   showdiff : boolean = true;
@@ -4118,6 +4119,37 @@ begin
   end;
 end;
 
+function compareText(s1, s2 : string; var msg : string) : boolean;
+var
+  i : integer;
+begin
+  msg := '';
+  for i := 1 to IntegerMin(s1.length, s2.length) do
+  begin
+    if (s1[i] <> s2[i]) then
+      msg := 'Strings differ at character '+intToStr(i)+': "'+s1[i] +'" vs "'+s2[i]+'"';
+  end;
+  if (s1.length <> s2.length) then
+    msg := 'Strings differ in length: '+inttostr(s1.length)+' vs '+inttostr(s2.length)+' but match to the end of the shortest';
+  result := msg <> '';
+end;
+
+function CheckTextIsSame(src1, src2 : String; var msg : string) : boolean;
+var
+  f1, f2, cmd : String;
+begin
+  result := false;
+  result := compareText(src1, src2, msg);
+  if not result then
+  begin
+    f1 := MakeTempFilename +'-source.xml';
+    f2 := MakeTempFilename +'-dest.xml';
+    StringToFile(src1, f1, TEncoding.UTF8);
+     StringToFile(src2, f2, TEncoding.UTF8);
+    cmd := f1+' '+f2;
+    ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+  end;
+end;
 
 var
   globalInt : cardinal;

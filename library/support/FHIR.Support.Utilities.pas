@@ -2910,6 +2910,8 @@ End;
 
 function makeRelativePath(path, base : String): String;
 begin
+  if not base.EndsWith('\') then
+    base := base+'\';
   if path.StartsWith(base) then
     result := path.Substring(base.Length)
   else

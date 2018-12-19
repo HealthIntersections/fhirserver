@@ -1,4 +1,4 @@
-unit ScintCDA;
+unit FHIR.Scint.CDA;
 
 {
 Copyright (c) 2014+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
