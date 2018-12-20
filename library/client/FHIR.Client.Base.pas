@@ -495,15 +495,18 @@ end;
 function TFhirClientV.encodeParams(params : TStringList) : String;
 var
   i : integer;
-  s : String;
+  s, v : String;
 begin
   result := '';
   if params <> nil then
+  begin
     for i := 0 to params.Count - 1 do
     begin
       s := params.Names[i];
-      result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
+      v := params.ValueFromIndex[i];
+      result := result + s+'='+EncodeMIME(v)+'&';
     end;
+  end;
 end;
 
 { TClientAccessToken }

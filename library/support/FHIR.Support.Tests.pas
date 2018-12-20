@@ -68,12 +68,14 @@ Type
     [TestCase] procedure testAddAll;
     [TestCase] procedure testReplace;
     [TestCase] procedure testMap;
+    [TestCase] procedure testSort;
   end;
 
   TFslTestObject = class (TFslObject)
   private
     FValue: String;
   public
+    constructor create(value : String); overload;
     property value : String read FValue write FValue;
   end;
 
@@ -652,6 +654,7 @@ Type
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
+function CheckTextIsSame(src1, src2 : String; var msg : string) : boolean;
 
 var
   showdiff : boolean = true;
@@ -674,6 +677,45 @@ begin
     Assert.IsTrue(l.Count = 1);
   finally
     l.Free;
+  end;
+end;
+
+procedure TFslGenericsTests.testSort;
+var
+  list : TFslList<TFslTestObject>;
+begin
+  list := TFslList<TFslTestObject>.Create;
+  try
+    list.Add(TFslTestObject.Create('a'));
+    list.Sort(function (const L, R: TFslTestObject): Integer begin
+        result := CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 1);
+    Assert.IsTrue(list[0].value = 'a');
+    list.Insert(0, TFslTestObject.Create('b'));
+    Assert.IsTrue(list.Count = 2);
+    Assert.IsTrue(list[0].value = 'b');
+    Assert.IsTrue(list[1].value = 'a');
+    list.Sort(function (const l, r : TFslTestObject) : Integer begin
+        result := CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 2);
+    Assert.IsTrue(list[0].value = 'a');
+    Assert.IsTrue(list[1].value = 'b');
+    list.Insert(1, TFslTestObject.Create('c'));
+    Assert.IsTrue(list.Count = 3);
+    Assert.IsTrue(list[0].value = 'a');
+    Assert.IsTrue(list[1].value = 'c');
+    Assert.IsTrue(list[2].value = 'b');
+    list.Sort(function (const l, r : TFslTestObject) : Integer begin
+        result := 0 - CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 3);
+    Assert.IsTrue(list[0].value = 'c');
+    Assert.IsTrue(list[1].value = 'b');
+    Assert.IsTrue(list[2].value = 'a');
+  finally
+    list.Free;
   end;
 end;
 
@@ -4077,6 +4119,37 @@ begin
   end;
 end;
 
+function compareText(s1, s2 : string; var msg : string) : boolean;
+var
+  i : integer;
+begin
+  msg := '';
+  for i := 1 to IntegerMin(s1.length, s2.length) do
+  begin
+    if (s1[i] <> s2[i]) then
+      msg := 'Strings differ at character '+intToStr(i)+': "'+s1[i] +'" vs "'+s2[i]+'"';
+  end;
+  if (s1.length <> s2.length) then
+    msg := 'Strings differ in length: '+inttostr(s1.length)+' vs '+inttostr(s2.length)+' but match to the end of the shortest';
+  result := msg <> '';
+end;
+
+function CheckTextIsSame(src1, src2 : String; var msg : string) : boolean;
+var
+  f1, f2, cmd : String;
+begin
+  result := false;
+  result := compareText(src1, src2, msg);
+  if not result then
+  begin
+    f1 := MakeTempFilename +'-source.xml';
+    f2 := MakeTempFilename +'-dest.xml';
+    StringToFile(src1, f1, TEncoding.UTF8);
+     StringToFile(src2, f2, TEncoding.UTF8);
+    cmd := f1+' '+f2;
+    ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+  end;
+end;
 
 var
   globalInt : cardinal;
@@ -4276,6 +4349,21 @@ begin
   dt2 := TDateTimeEx.fromHL7('20130405123456').DateTime;
   Assert.IsTrue(dt1 = dt2);
 
+  // comparison
+  d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal);
+  d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(15, 0, 0, 0), dttzLocal);
+  Assert.IsTrue(d2.after(d1, false));
+  Assert.IsFalse(d1.after(d1, false));
+  Assert.IsTrue(d1.after(d1, true));
+  Assert.IsFalse(d2.before(d1, false));
+  Assert.IsFalse(d1.before(d1, false));
+  Assert.IsTrue(d1.before(d1, true));
+  Assert.IsFalse(d1.after(d2, false));
+  Assert.IsTrue(d1.before(d2, false));
+  Assert.IsTrue(d1.compare(d2) = -1);
+  Assert.IsTrue(d2.compare(d1) = 1);
+  Assert.IsTrue(d1.compare(d1) = 0);
+
   // Timezone Wrangling
   d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
@@ -4285,14 +4373,18 @@ begin
   Assert.IsTrue(d1.sameTime(d2));
   d1 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
   d2 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
-  dt1 := d1.DateTime - TimezoneBias;
+  dt1 := d1.DateTime - TimezoneBias(EncodeDate(2011, 7, 2));
   dt2 := d2.DateTime;
   Assert.IsTrue(sameInstant(dt1, dt2));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
   Assert.IsTrue(not d1.equal(d2));
   Assert.IsTrue(d1.sameTime(d2));
+  Assert.IsTrue(TDateTimeEx.fromHL7('20130405120000+1000').sameTime(TDateTimeEx.fromHL7('20130405100000+0800')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T01:30:00.0-04:00')));
 
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405120000-1000').sameTime(TDateTimeEx.fromHL7('20130405100000-0800')));
 
   // Min/Max
   Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
@@ -5028,11 +5120,19 @@ var
 begin
   list := TFslTestObjectList.create;
   try
-    Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslException);
-    Assert.IsTrue(list.Count = 1);
+    Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslInvariant);
+    Assert.IsTrue(list.Count = 0);
   finally
     list.Free;
   end;
+end;
+
+{ TFslTestObject }
+
+constructor TFslTestObject.create(value: String);
+begin
+  Create;
+  self.value := value;
 end;
 
 initialization

@@ -708,7 +708,7 @@ begin
     end;
     if mt <> '' then
       result.AddParamStr('message', mt);
-    if (cause <> itUnknown) then
+    if not (cause in [itNull, itUnknown]) then
       result.addParamStr('cause', CODES_TFhirIssueType[cause]);
     result.Link;
   finally

@@ -9,19 +9,19 @@
         <Projects Include="toolkit\FHIRToolkitR4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="npp\fhirnpp.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="utilities\nppformats\formatUtils.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="utilities\cde\ClinicalDocumentEditor.dproj">
+        <Projects Include="transformer\FHIRTransformer.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="utilities\vcldemo\FhirVclDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utilities\v2JS\v2JS.dproj">
+        <Projects Include="utilities\cde\ClinicalDocumentEditor.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\nppformats\formatUtils.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="utilities\tests\FHIRServerTests.dproj">
@@ -53,32 +53,14 @@
     <Target Name="FHIRToolkitR4:Make">
         <MSBuild Projects="toolkit\FHIRToolkitR4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="fhirnpp">
-        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    <Target Name="FHIRTransformer">
+        <MSBuild Projects="transformer\FHIRTransformer.dproj"/>
     </Target>
-    <Target Name="fhirnpp:Clean">
-        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    <Target Name="FHIRTransformer:Clean">
+        <MSBuild Projects="transformer\FHIRTransformer.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="fhirnpp:Make">
-        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="formatUtils">
-        <MSBuild Projects="utilities\nppformats\formatUtils.dproj"/>
-    </Target>
-    <Target Name="formatUtils:Clean">
-        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="formatUtils:Make">
-        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="ClinicalDocumentEditor">
-        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj"/>
-    </Target>
-    <Target Name="ClinicalDocumentEditor:Clean">
-        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ClinicalDocumentEditor:Make">
-        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Make"/>
+    <Target Name="FHIRTransformer:Make">
+        <MSBuild Projects="transformer\FHIRTransformer.dproj" Targets="Make"/>
     </Target>
     <Target Name="FhirVclDemo">
         <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj"/>
@@ -89,14 +71,32 @@
     <Target Name="FhirVclDemo:Make">
         <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="v2JS">
-        <MSBuild Projects="utilities\v2JS\v2JS.dproj"/>
+    <Target Name="ClinicalDocumentEditor">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj"/>
     </Target>
-    <Target Name="v2JS:Clean">
-        <MSBuild Projects="utilities\v2JS\v2JS.dproj" Targets="Clean"/>
+    <Target Name="ClinicalDocumentEditor:Clean">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="v2JS:Make">
-        <MSBuild Projects="utilities\v2JS\v2JS.dproj" Targets="Make"/>
+    <Target Name="ClinicalDocumentEditor:Make">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="formatUtils">
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj"/>
+    </Target>
+    <Target Name="formatUtils:Clean">
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="formatUtils:Make">
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhirnpp">
+        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    </Target>
+    <Target Name="fhirnpp:Clean">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirnpp:Make">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
     </Target>
     <Target Name="FHIRServerTests">
         <MSBuild Projects="utilities\tests\FHIRServerTests.dproj"/>
@@ -108,13 +108,13 @@
         <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;fhirnpp;formatUtils;ClinicalDocumentEditor;FhirVclDemo;v2JS;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FHIRTransformer;FhirVclDemo;ClinicalDocumentEditor;formatUtils;fhirnpp;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;fhirnpp:Clean;formatUtils:Clean;ClinicalDocumentEditor:Clean;FhirVclDemo:Clean;v2JS:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FHIRTransformer:Clean;FhirVclDemo:Clean;ClinicalDocumentEditor:Clean;formatUtils:Clean;fhirnpp:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;fhirnpp:Make;formatUtils:Make;ClinicalDocumentEditor:Make;FhirVclDemo:Make;v2JS:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FHIRTransformer:Make;FhirVclDemo:Make;ClinicalDocumentEditor:Make;formatUtils:Make;fhirnpp:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

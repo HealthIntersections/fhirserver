@@ -122,57 +122,67 @@ Type
   TFslReferenceCount = Integer;
 
   TFslObject = Class(TObject)
-    Private
-      // Reference counted using Interlocked* Windows API functions.
-      FFslObjectReferenceCount : TFslReferenceCount;
+  Private
+    // Reference counted using Interlocked* Windows API functions.
+    FFslObjectReferenceCount : TFslReferenceCount;
+    FTagObject : TObject;
+    {$IFOPT D+}
+    // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
+    // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
+    FNamedClass : String;
+    {$ENDIF}
 
-    Protected
-      // Declared here for ease of implementing interfaces.
-      Function _AddRef : Integer; Stdcall;
-      Function _Release : Integer; Stdcall;
-      Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
-      // May be called from Nil or invalid references (so can't be virtual).
-      Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; oObject : TFslObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
+  Protected
+    // Declared here for ease of implementing interfaces.
+    Function _AddRef : Integer; Stdcall;
+    Function _Release : Integer; Stdcall;
+    Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
+    // May be called from Nil or invalid references (so can't be virtual).
+    Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
+    Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
+    Function Invariants(Const sLocation : String; oObject : TFslObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
+    Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
 
-      Function CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
-      Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
+    Function CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
+    Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
 
-      // Override to introduce additional or alternate behaviour.
-      Function Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean; Overload; Virtual;
-      Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
-      Procedure RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
-      Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
+    // Override to introduce additional or alternate behaviour.
+    Function Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean; Overload; Virtual;
+    Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
+    Procedure RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
+    Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
 
-      Class Procedure ClassError(Const sMethod, sMessage : String); Overload;
+    Class Procedure ClassError(Const sMethod, sMessage : String); Overload;
 
-      Function ErrorClass : EFslExceptionClass; Overload; Virtual;
+    Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
-    Public
-      constructor Create; Overload; Virtual;
-      destructor Destroy; Override;
+  Public
+    constructor Create; Overload; Virtual;
+    destructor Destroy; Override;
 
-      Procedure AfterConstruction; Override;
-      Procedure BeforeDestruction; Override;
+    Procedure AfterConstruction; Override;
+    Procedure BeforeDestruction; Override;
 
-      // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
-      Procedure Free; Overload;
-      Function Link : TFslObject; Overload;
-      Function Unlink : TFslObject; Overload;
-      Function Clone : TFslObject; Overload;
-      Function ClassType : TFslObjectClass; Overload;
+    // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
+    Procedure Free; Overload;
+    Function Link : TFslObject; Overload;
+    Function Unlink : TFslObject; Overload;
+    Function Clone : TFslObject; Overload;
+    Function ClassType : TFslObjectClass; Overload;
 
-      // Assignment.
-      Function Assignable : Boolean; Overload; Virtual;
-      Function Duplicate : TFslObject; Overload; Virtual;
-      Procedure Assign(oObject : TFslObject); Overload; Virtual;
+    // Assignment.
+    Function Assignable : Boolean; Overload; Virtual;
+    Function Duplicate : TFslObject; Overload; Virtual;
+    Procedure Assign(oObject : TFslObject); Overload; Virtual;
 
-      // Determine if self is a valid reference of the specified class.
-      Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
+    // Determine if self is a valid reference of the specified class.
+    Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
 
-      Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
+    Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
+    property TagObject : TObject read FTagObject write FTagObject; // no ownership....
+    {$IFOPT D+}
+    property NamedClass : String read FNamedClass;
+    {$ENDIF}
   End;
 
   PFslObject = ^TFslObject;
@@ -222,6 +232,13 @@ Type
 
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
   TFslList<T : class> = class (TFslEnumerable<T>)
+  public
+  type
+    {$IFNDEF FPC}
+    TDirection = System.Types.TDirection;
+    TEmptyFunc = reference to function (const L, R: T): Boolean;
+    TListCompareFunc = reference to function (const L, R: T): Integer;
+    {$ENDIF}
   private
     FJsHandle: pointer;
     FJsInstance: cardinal;
@@ -247,19 +264,12 @@ Type
     procedure Grow(ACount: Integer);
     procedure GrowCheck(ACount: Integer); inline;
     procedure DoDelete(Index: Integer; Notification: TCollectionNotification);
-    procedure MySort(var Values: array of T; const Comparer: IComparer<T>; Index, Count: Integer);
-    procedure QuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
-    procedure DoQuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
+    procedure QuickSort(L, R: Integer; compare: TListCompareFunc); overload;
+    procedure QuickSort(L, R: Integer; comparer: IComparer<T>); overload;
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
     procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
   public
-  type
-    {$IFNDEF FPC}
-    TDirection = System.Types.TDirection;
-    TEmptyFunc = reference to function (const L, R: T): Boolean;
-    TListCompareFunc = reference to function (const L, R: T): Integer;
-    {$ENDIF}
 
     constructor Create; Overload; Override;
     constructor Create(capacity : integer); Overload;
@@ -322,6 +332,7 @@ Type
 
     procedure Sort; overload;
     procedure Sort(const AComparer: IComparer<T>); overload;
+    procedure Sort(compare: TListCompareFunc); overload;
     function BinarySearch(const Item: T; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean; overload;
     function matches(other : TFslList<T>; ordered : boolean; criteria : IComparer<T>) : boolean;
@@ -706,6 +717,9 @@ End;
 Constructor TFslObject.Create;
 Begin
   Inherited;
+  {$IFOPT D+}
+  FNamedClass := ClassName;
+  {$ENDIF}
 End;
 
 
@@ -1066,6 +1080,106 @@ begin
   finally
     TFslObject(oldItem).free;
   end;
+end;
+
+procedure TFslList<T>.QuickSort(L, R: Integer; comparer: IComparer<T>);
+Var
+  I, J, K : Integer;
+  v : T;
+Begin
+  // QuickSort routine (Recursive)
+  // * Items is the default indexed property that returns a pointer, subclasses
+  //   specify these return values as their default type.
+  // * The Compare routine used must be aware of what this pointer actually means.
+
+  Repeat
+    I := L;
+    J := R;
+    K := (L + R) Shr 1;
+
+    Repeat
+      // Keep pK pointed at the middle element as it might be moved.
+      While (comparer.compare(Items[I], Items[K]) < 0) Do
+        Inc(I);
+
+      While (comparer.compare(Items[J], Items[K]) > 0) Do
+        Dec(J);
+
+      If I <= J Then
+      Begin
+        v := FItems[i];
+        Fitems[i] := Fitems[j];
+        FItems[j] := v;
+
+        // Keep K as the index of the original middle element as it might get exchanged.
+        If I = K Then
+          K := J
+        Else If J = K Then
+          K := I;
+
+        Inc(I);
+        Dec(J);
+      End;
+    Until I > J;
+
+    If L < J Then
+      QuickSort(L, J, comparer);
+
+    L := I;
+  Until I >= R;
+End;
+
+Procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareFunc);
+Var
+  I, J, K : Integer;
+  v : T;
+Begin
+  // QuickSort routine (Recursive)
+  // * Items is the default indexed property that returns a pointer, subclasses
+  //   specify these return values as their default type.
+  // * The Compare routine used must be aware of what this pointer actually means.
+
+  Repeat
+    I := L;
+    J := R;
+    K := (L + R) Shr 1;
+
+    Repeat
+      // Keep pK pointed at the middle element as it might be moved.
+      While (compare(Items[I], Items[K]) < 0) Do
+        Inc(I);
+
+      While (compare(Items[J], Items[K]) > 0) Do
+        Dec(J);
+
+      If I <= J Then
+      Begin
+        v := FItems[i];
+        Fitems[i] := Fitems[j];
+        FItems[j] := v;
+
+        // Keep K as the index of the original middle element as it might get exchanged.
+        If I = K Then
+          K := J
+        Else If J = K Then
+          K := I;
+
+        Inc(I);
+        Dec(J);
+      End;
+    Until I > J;
+
+    If L < J Then
+      QuickSort(L, J, compare);
+
+    L := I;
+  Until I >= R;
+End;
+
+procedure TFslList<T>.Sort(compare: TListCompareFunc);
+begin
+  If (FCount > 1) Then
+    QuickSort(0, FCount - 1, compare);              // call the quicksort routine
 end;
 
 procedure TFslList<T>.Grow(ACount: Integer);
@@ -1558,61 +1672,6 @@ begin
   FItems[NewIndex] := temp;
 end;
 
-procedure TFslList<T>.DoQuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
-Var
-  I, J, K : Integer;
-  temp : T;
-Begin
-  Repeat
-    I := L;
-    J := R;
-    K := (L + R) Shr 1;
-
-    Repeat
-      While Comparer.Compare(Values[I], Values[K]) > 0 Do
-        Inc(I);
-
-      While Comparer.Compare(Values[J], Values[K]) < 0 Do
-        Dec(J);
-
-      If I <= J Then
-      Begin
-        temp := Values[i];
-        Values[i] := Values[j];
-        Values[j] := temp;
-
-        // Keep K as the index of the original middle element as it might get exchanged.
-        If I = K Then
-          K := J
-        Else If J = K Then
-          K := I;
-
-        Inc(I);
-        Dec(J);
-      End;
-    Until I > J;
-
-    If L < J Then
-      DoQuickSort(Values, Comparer, L, J);
-
-    L := I;
-  Until I >= R;
-End;
-
-procedure TFslList<T>.QuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
-Begin
-  If R-L > 1 Then
-    DoQuickSort(Values, Comparer, l, R);
-end;
-
-
-procedure TFslList<T>.MySort(var Values: array of T; const Comparer: IComparer<T>; Index, Count: Integer);
-begin
-  if Count <= 1 then
-    Exit;
-  QuickSort(Values, Comparer, Index, Index + Count - 1);
-end;
-
 procedure TFslList<T>.Reverse;
 var
   tmp: T;
@@ -1632,12 +1691,13 @@ end;
 
 procedure TFslList<T>.Sort;
 begin
-  MySort(FItems, FComparer, 0, Count);
+  Sort(FComparer);
 end;
 
 procedure TFslList<T>.Sort(const AComparer: IComparer<T>);
 begin
-  MySort(FItems, AComparer, 0, Count);
+  If (FCount > 1) Then
+    QuickSort(0, FCount - 1, AComparer); // call the quicksort routine
 end;
 
 // no ownership on the array - it cannot be kept alive after the list is freed

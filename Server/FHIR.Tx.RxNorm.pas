@@ -509,8 +509,22 @@ begin
 end;
 
 function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+var
+  qry : TKDBConnection;
+  res : TUMLSConcept;
 begin
-  raise ETerminologyError.create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
+  qry := db.GetConnection(dbprefix+'.display');
+  try
+    result := qry.CountSQL('Select count(cui1) from RXNCUI');
+    qry.Release;
+  except
+    on e : Exception do
+    begin
+      qry.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);

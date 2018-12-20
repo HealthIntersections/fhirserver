@@ -33,7 +33,7 @@ unit FHIR.R4.Types;
 
 interface
 
-// FHIR v4.0.0 generated 2018-12-13T15:48:02+11:00
+// FHIR v4.0.0 generated 2018-12-15T16:22:09+11:00
 
 uses
   Classes, SysUtils, EncdDecd, 
@@ -3398,13 +3398,14 @@ Type
   Public
     constructor Create(value : TDateTimeEx); overload;
     destructor Destroy; override;
-    
+
     Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
     procedure Assign(oSource : TFslObject); override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
+    function dateValue : TDateTimeEx; override;
   Published
     // The actual value of the date
     property value : TDateTimeEx read FValue write SetValue;
@@ -3494,17 +3495,18 @@ Type
   Public
     constructor Create(value : TDateTimeEx); overload;
     destructor Destroy; override;
-    
+
     Function Link : TFhirDateTime; Overload;
     Function Clone : TFhirDateTime; Overload;
     procedure Assign(oSource : TFslObject); override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
+    function dateValue : TDateTimeEx; override;
   Published
     // The actual value of the dateTime
     property value : TDateTimeEx read FValue write SetValue;
-  End;    
+  End;
 
 
   TFhirDateTimeListEnumerator = class (TFslObject)
@@ -3878,13 +3880,14 @@ Type
   Public
     constructor Create(value : TDateTimeEx); overload;
     destructor Destroy; override;
-    
+
     Function Link : TFhirInstant; Overload;
     Function Clone : TFhirInstant; Overload;
     procedure Assign(oSource : TFslObject); override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
+    function dateValue : TDateTimeEx; override;
   Published
     // The actual value of the instant
     property value : TDateTimeEx read FValue write SetValue;
@@ -14173,6 +14176,11 @@ begin
   FValue := value.fixPrecision(dtpDay);
 end;
 
+function TFhirDate.dateValue: TDateTimeEx;
+begin
+  result := FValue;
+end;
+
 destructor TFhirDate.Destroy;
 begin
   inherited;
@@ -14393,6 +14401,11 @@ Constructor TFhirDateTime.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
+end;
+
+function TFhirDateTime.dateValue: TDateTimeEx;
+begin
+  result := FValue;
 end;
 
 destructor TFhirDateTime.Destroy;
@@ -15260,6 +15273,11 @@ Constructor TFhirInstant.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
+end;
+
+function TFhirInstant.dateValue: TDateTimeEx;
+begin
+  result := FValue;
 end;
 
 destructor TFhirInstant.Destroy;

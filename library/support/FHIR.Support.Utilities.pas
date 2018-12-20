@@ -805,7 +805,8 @@ Function FolderExists(Const sFolder : String) : Boolean;
 Function FileSize(Const sFileName : String) : Int64; Overload;
 function Path(parts : array of String) : String;
 function URLPath(parts : array of String) : String;
-
+function makeRelativePath(path, base : String): String;
+function makeAbsolutePath(fn, base : String): String;
 
 Function CreateGUID : TGUID;
 Function GUIDToString(Const aGUID : TGUID) : String;
@@ -1131,7 +1132,7 @@ type
     function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function equal(other : TDateTimeEx; precision : TDateTimeExPrecision) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
-    function after(other : TDateTimeEx; inclusive : boolean):boolean;
+    function after(other : TDateTimeEx; inclusive : boolean):boolean; // returns true if this is after other
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
     function between(imin, imax : TDateTimeEx; inclusive : boolean):boolean;
     function compare(other : TDateTimeEx) : integer;
@@ -2906,6 +2907,24 @@ Begin
   aFileHandle := FileHandleInvalid;
 End;
 {$ENDIF}
+
+function makeRelativePath(path, base : String): String;
+begin
+  if not base.EndsWith('\') then
+    base := base+'\';
+  if path.StartsWith(base) then
+    result := path.Substring(base.Length)
+  else
+    result := path;
+end;
+
+function makeAbsolutePath(fn, base : String): String;
+begin
+  if fn.Contains(':') then
+    result := fn
+  else
+    result := path([base, fn]);
+end;
 
 function Path(parts : array of String) : String;
 var
@@ -8736,9 +8755,9 @@ begin
       dttzSpecified :
         begin
         if TimezoneHours < 0 then
-          bias := - (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
+          bias := (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
         else
-          bias := (TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
+          bias := -(TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
         result := TDateTimeEx.makeUTC(self.DateTime+bias);
         end;
     else

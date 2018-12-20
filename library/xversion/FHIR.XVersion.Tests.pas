@@ -449,7 +449,7 @@ end;
 
 procedure TVersionConversionTests.TestSequence_34;
 begin
-  test4to3to4(FileToBytes(FHIR_PUB_FILE('sequence-example.json')));
+  test4to3to4(FileToBytes(FHIR_PUB_FILE('molecularsequence-example.json')));
 end;
 
 procedure TVersionConversionTests.TestSlot_34;
@@ -464,7 +464,7 @@ end;
 
 procedure TVersionConversionTests.TestStructureDefinition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_PUB_FILE('structuredefinition-example.json')));
+  test4to3to4(FileToBytes(FHIR_PUB_FILE('structuredefinition-example-composition.json')));
 end;
 
 procedure TVersionConversionTests.TestStructureMap_34;

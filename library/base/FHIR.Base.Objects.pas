@@ -282,7 +282,6 @@ type
   private
     FTags : TFslStringDictionary;
     FTag : TFslObject;
-    FTagObject : TObject;
     FLocationStart : TSourceLocation;
     FLocationEnd : TSourceLocation;
     FCommentsStart: TFslStringList;
@@ -348,7 +347,6 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
-    property TagObject : TObject read FTagObject write FTagObject; // no ownership....
     property TagInt : integer read FTagInt write FTagInt;
 
     // javascript caching
@@ -371,6 +369,7 @@ type
     function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
+    function dateValue : TDateTimeEx; virtual;
     function isMetaDataBased : boolean; virtual;
 //    Function PerformQuery(path : String) : TFHIRObjectList;
     function hasType(t : String) : boolean; overload;
@@ -701,6 +700,11 @@ begin
   if FTags = nil then
     FTags := TFslStringDictionary.create;
   FTags.AddOrSetValue(name, value);
+end;
+
+function TFHIRObject.dateValue: TDateTimeEx;
+begin
+  result := TDateTimeEx.makeNull;
 end;
 
 procedure TFHIRObject.deleteProperty(propName: string; propValue: TFHIRObject);

@@ -33,7 +33,7 @@ unit FHIR.R4.Constants;
 
 interface
 
-// FHIR v4.0.0 generated 2018-12-13T15:13:20+11:00
+// FHIR v4.0.0 generated 2018-12-15T16:22:09+11:00
 
 uses
   SysUtils, Classes,
@@ -1475,12 +1475,12 @@ Type
     spFamilyMemberHistory__text, 
     spFamilyMemberHistory_Code, 
     spFamilyMemberHistory_Date, 
-    spFamilyMemberHistory_Gender, 
     spFamilyMemberHistory_Identifier, 
     spFamilyMemberHistory_Instantiatescanonical, 
     spFamilyMemberHistory_Instantiatesuri, 
     spFamilyMemberHistory_Patient, 
     spFamilyMemberHistory_Relationship, 
+    spFamilyMemberHistory_Sex, 
     spFamilyMemberHistory_Status); 
 {$ENDIF}
 
@@ -3436,7 +3436,6 @@ Type
     spSubscription__source, 
     spSubscription__tag, 
     spSubscription__text, 
-    spSubscription_Addtag, 
     spSubscription_Contact, 
     spSubscription_Criteria, 
     spSubscription_Payload, 
@@ -4672,7 +4671,7 @@ Const
   CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'detail-udi', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'item-udi', 'patient', 'payee', 'procedure-udi', 'provider', 'status', 'subdetail-udi');
 {$ENDIF}
 {$IFDEF FHIR_FAMILYMEMBERHISTORY}
-  CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'gender', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'patient', 'relationship', 'status');
+  CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'patient', 'relationship', 'sex', 'status');
 {$ENDIF}
 {$IFDEF FHIR_FLAG}
   CODES_TSearchParamsFlag : Array[TSearchParamsFlag] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'date', 'encounter', 'identifier', 'patient', 'subject');
@@ -4897,7 +4896,7 @@ Const
   CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_SUBSCRIPTION}
-  CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'add-tag', 'contact', 'criteria', 'payload', 'status', 'type', 'url');
+  CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'contact', 'criteria', 'payload', 'status', 'type', 'url');
 {$ENDIF}
 {$IFDEF FHIR_SUBSTANCE}
   CODES_TSearchParamsSubstance : Array[TSearchParamsSubstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'code', 'container-identifier', 'expiry', 'identifier', 'quantity', 'status', 'substance-reference');
@@ -4953,7 +4952,7 @@ Const
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2018-12-13T15:13:20+11:00';
+  FHIR_GENERATED_DATE = '2018-12-15T16:22:09+11:00';
 
 
 
