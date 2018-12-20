@@ -69,7 +69,11 @@ uses
   FHIR.Web.Fetcher in '..\library\web\FHIR.Web.Fetcher.pas',
   FHIR.Transformer.Utilities in 'FHIR.Transformer.Utilities.pas',
   FHIR.Ui.ListSelector in '..\library\ui\FHIR.Ui.ListSelector.pas' {ListSelectorForm},
-  FHIR.Scint.Formats in '..\library\ui\FHIR.Scint.Formats.pas';
+  FHIR.Scint.Formats in '..\library\ui\FHIR.Scint.Formats.pas',
+  FHIR.Cache.PackageManagerDialog in '..\library\cache\FHIR.Cache.PackageManagerDialog.pas' {PackageCacheForm},
+  FHIR.Cache.PackageManager in '..\library\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Cache.PackageBrowser in '..\library\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm},
+  FHIR.Transformer.Engine in 'FHIR.Transformer.Engine.pas';
 
 {$R *.res}
 
@@ -78,5 +82,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TTransformerForm, TransformerForm);
   Application.CreateForm(TListSelectorForm, ListSelectorForm);
+  Application.CreateForm(TPackageCacheForm, PackageCacheForm);
+  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

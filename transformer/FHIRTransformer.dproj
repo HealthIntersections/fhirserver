@@ -178,6 +178,16 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Scint.Formats.pas"/>
+        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManagerDialog.pas">
+            <Form>PackageCacheForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\library\cache\FHIR.Cache.PackageBrowser.pas">
+            <Form>PackageFinderForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FHIR.Transformer.Engine.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -204,10 +214,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -217,10 +227,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

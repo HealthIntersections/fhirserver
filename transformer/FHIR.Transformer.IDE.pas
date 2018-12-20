@@ -6,10 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
-  Vcl.ExtCtrls, ScintEdit,
+  Vcl.ExtCtrls, Vcl.ToolWin,
+  ScintEdit,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Ui.ListSelector, FHIR.Scint.CDA,
-  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, Vcl.ToolWin;
+  FHIR.Cache.PackageManagerDialog,
+  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine;
 
 const
   TEMPLATE_V2 = 'MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'+#13#10+
@@ -49,11 +51,6 @@ type
     Splitter1: TSplitter;
     Panel3: TPanel;
     Panel4: TPanel;
-    Panel5: TPanel;
-    mConsole: TMemo;
-    btnConsoleClear: TButton;
-    btnConsoleSave: TButton;
-    btnConsoleCopy: TButton;
     pgTabs: TPageControl;
     Splitter2: TSplitter;
     TabSheet1: TTabSheet;
@@ -134,6 +131,22 @@ type
     GotoLine1: TMenuItem;
     FindNext2: TMenuItem;
     mnuClose: TMenuItem;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    cbxEventType: TComboBox;
+    cbxSource: TComboBox;
+    Execute1: TMenuItem;
+    Go1: TMenuItem;
+    btnExecute: TBitBtn;
+    mnuPackageManager: TMenuItem;
+    PageControl1: TPageControl;
+    TabSheet2: TTabSheet;
+    Panel5: TPanel;
+    btnConsoleClear: TButton;
+    btnConsoleSave: TButton;
+    btnConsoleCopy: TButton;
+    mConsole: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -183,6 +196,10 @@ type
     procedure FindDialogFind(Sender: TObject);
     procedure ReplaceDialogReplace(Sender: TObject);
     procedure GotoLine1Click(Sender: TObject);
+    procedure cbxEventTypeChange(Sender: TObject);
+    procedure cbxSourceChange(Sender: TObject);
+    procedure mnuPackageManagerClick(Sender: TObject);
+    procedure btnExecuteClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -190,8 +207,9 @@ type
     FLastFindOptions: TFindOptions;
     FLastFindText: String;
     FLastReplaceText: String;
+    FLoading : boolean;
 
-    procedure DoSave;
+    function DoSave(command : String) : boolean;
     function nodeCaption(i : integer) : String;
     procedure LoadWorkspace(proj: TWorkspace);
     procedure makeNewFile(title, ext, template : String; fmt : TTransformerFormat; category : TFslList<TWorkspaceFile>);
@@ -210,6 +228,10 @@ type
     procedure ZoomIn;
     procedure ZoomOut;
     procedure ZoomReset;
+
+    function engineGetSource(sender : TConversionEngine; filename : String) : TStream;
+    procedure engineStatus(sender : TConversionEngine; message : String);
+    procedure engineLog(sender : TConversionEngine; message : String);
   public
     { Public declarations }
   end;
@@ -243,6 +265,58 @@ procedure TTransformerForm.btnConsoleSaveClick(Sender: TObject);
 begin
   if sdText.execute then
     mConsole.lines.SaveToFile(sdText.FileName);
+end;
+
+procedure TTransformerForm.btnExecuteClick(Sender: TObject);
+var
+  engine : TCDAConversionEngine;
+begin
+  engine := TCDAConversionEngine.create;
+  try
+    engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
+    engine.OnWantSource := engineGetSource;
+    engine.OnStatus := engineStatus;
+    engine.OnLog := engineLog;
+//      engine.OnDebug := EngineDebug;
+    engine.execute;
+  finally
+    engine.free;
+  end;
+end;
+
+procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
+  procedure loadSource(list : TFslList<TWorkspaceFile>);
+  var
+    f : TWorkspaceFile;
+  begin
+    cbxSource.Items.Clear;
+    for f in list do
+      cbxSource.Items.AddObject(f.title, f);
+    cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
+    if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
+      cbxSource.ItemIndex := 0;
+    btnExecute.enabled := cbxSource.ItemIndex > -1;
+  end;
+begin
+   case cbxEventType.ItemIndex of
+    0: LoadSource(FWorkspace.messages);
+    1: LoadSource(FWorkspace.documents);
+  end;
+  if not Floading then
+  begin
+    FWorkspace.EventType := cbxEventType.ItemIndex;
+    FWorkspace.Source := cbxSource.Text;
+    FWorkspace.Save;
+  end;
+end;
+
+procedure TTransformerForm.cbxSourceChange(Sender: TObject);
+begin
+  if not Floading then
+  begin
+    FWorkspace.Source := cbxSource.Text;
+    FWorkspace.Save;
+  end;
 end;
 
 procedure TTransformerForm.ChangeWorkspace1Click(Sender: TObject);
@@ -313,14 +387,69 @@ begin
   closeWorkspaceFile(f, true);
 end;
 
-procedure TTransformerForm.DoSave;
+function TTransformerForm.DoSave(command : String) : boolean;
+var
+  dirty : boolean;
+  form : TListSelectorForm;
+  i : integer;
+  f : TWorkspaceFile;
 begin
+  dirty := false;
+  result := false;
+
+  form := TListSelectorForm.Create(self);
+  try
+    form.Caption := 'Unsaved Content found. Which files do you want to save?';
+    form.okWithNoneSelected := true;
+    form.button1.Caption := command;
+    for i := 1 to pgTabs.PageCount - 1 do
+    begin
+      f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
+      FWorkspace.OpenFile(f);
+      if (f.isDirty) then
+      begin
+        dirty := true;
+        form.ListBox1.Items.AddObject(f.title, f)
+      end;
+    end;
+    if dirty then
+    begin
+      if form.ShowModal = mrOk then
+      begin
+        for i := 0 to form.ListBox1.Items.Count - 1 do
+        begin
+          if form.ListBox1.Checked[i] then
+            saveWorkspaceFile(TWorkspaceFile(form.ListBox1.items.objects[i]));
+        end;
+        result := true;
+      end;
+    end
+    else
+      result := true;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TTransformerForm.edtWorkspaceChange(Sender: TObject);
 begin
   FWorkspace.name := edtWorkspace.Text;
   FWorkspace.save;
+end;
+
+function TTransformerForm.engineGetSource(sender: TConversionEngine; filename: String): TStream;
+begin
+  raise Exception.Create('Not Done yet');
+end;
+
+procedure TTransformerForm.engineLog(sender: TConversionEngine; message: String);
+begin
+  raise Exception.Create('Not Done yet');
+end;
+
+procedure TTransformerForm.engineStatus(sender: TConversionEngine; message: String);
+begin
+  raise Exception.Create('Not Done yet');
 end;
 
 procedure TTransformerForm.Exit1Click(Sender: TObject);
@@ -479,7 +608,6 @@ end;
 
 procedure TTransformerForm.FormDestroy(Sender: TObject);
 begin
-  DoSave;
   FIni.Free;
 end;
 
@@ -526,17 +654,24 @@ var
 begin
   FWorkspace.Free;
   FWorkspace := proj;
-  FIni.WriteString('Project', 'folder', FWorkspace.folder);
-  edtWorkspace.Text := proj.name;
-  edtWorkspace.Hint := proj.folder;
-  vtWorkspace.RootNodeCount := 0;
-  vtWorkspace.RootNodeCount := 6;
-  files := FWorkspace.listOpenFiles;
+  FLoading := true;
   try
-    for f in files do
-      openWorkspaceFile(f);
+    FIni.WriteString('Project', 'folder', FWorkspace.folder);
+    edtWorkspace.Text := proj.name;
+    edtWorkspace.Hint := proj.folder;
+    vtWorkspace.RootNodeCount := 0;
+    vtWorkspace.RootNodeCount := 6;
+    cbxEventType.ItemIndex := FWorkspace.EventType;
+    cbxEventTypeChange(nil);
+    files := FWorkspace.listOpenFiles;
+    try
+      for f in files do
+        openWorkspaceFile(f);
+    finally
+      files.Free;
+    end;
   finally
-    files.Free;
+    FLoading := false;
   end;
 end;
 
@@ -719,6 +854,16 @@ begin
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 6;
     openWorkspaceFile(f);
+  end;
+end;
+
+procedure TTransformerForm.mnuPackageManagerClick(Sender: TObject);
+begin
+  PackageCacheForm := TPackageCacheForm.Create(self);
+  try
+    PackageCacheForm.ShowModal;
+  finally
+    PackageCacheForm.Free;
   end;
 end;
 

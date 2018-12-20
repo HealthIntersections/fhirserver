@@ -47,6 +47,8 @@ Type
     FResources: TFslList<TWorkspaceFile>;
     FScripts: TFslList<TWorkspaceFile>;
     FTemplates: TFslList<TWorkspaceFile>;
+    FEventType: integer;
+    FSource: String;
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
@@ -59,6 +61,9 @@ Type
 
     property name : String read FName write FName;
     property folder : String read FFolder write FFolder;
+
+    property EventType : integer read FEventType write FEventType;
+    property Source : String read FSource write FSource;
 
     property messages : TFslList<TWorkspaceFile> read FMessages;
     property documents : TFslList<TWorkspaceFile> read FDocuments;
@@ -314,6 +319,8 @@ begin
       iniVC.WriteString('Workspace', 'Name', FName);
       iniVC.WriteDateTime('Workspace', 'Created', now);
     end;
+    FEventType := iniT.ReadInteger('Status', 'EventType', -1);
+    FSource := iniT.ReadString('Status', 'Source', '');
     st.clear;
     iniVC.ReadSection('Files', st);
     for s in st do
@@ -333,6 +340,11 @@ begin
       else if fmt = 'liquid' then
         FTemplates.Add(TWorkspaceFile.Create(s, fmtTemplate, row));
     end;
+    if FEventType = -1 then
+      if FMessages.Count > 0 then
+        FEventType := 0
+      else if FDocuments.Count > 0 then
+        FEventType := 1;
   finally
     st.free;
     iniVC.Free;
@@ -346,11 +358,19 @@ var
   iniVC, iniT : TIniFile;
   f : TWorkspaceFile;
 begin
+  if FEventType = -1 then
+    if FMessages.Count > 0 then
+      FEventType := 0
+    else if FDocuments.Count > 0 then
+      FEventType := 1;
+
   iniVC := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.control']));
   iniT := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.status']));
   try
     iniVC.WriteString('Workspace', 'Name', FName);
     iniVC.WriteDateTime('Workspace', 'Updated', now);
+    iniT.WriteInteger('Status', 'EventType', FEventType);
+    iniT.WriteString('Status', 'Source', FSource);
 
     iniVC.EraseSection('Files');
     for f in FMessages do
