@@ -34,7 +34,7 @@ uses
   SysUtils, Classes, IOUtils,
   DUnitX.TestFramework,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Support.Base,
+  FHIR.Support.Base, FHIR.Support.Comparisons,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
