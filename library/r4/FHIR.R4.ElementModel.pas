@@ -1301,7 +1301,7 @@ begin
       if (t <> 'xhtml') then
       begin
         sd.Free;
-        sd := FContext.getStructure('http://hl7.org/fhir/StructureDefinition/'+t);
+        sd := FContext.getStructure(sdNs(t));
         if (sd = nil) then
           raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+prop.Definition.Path);
         children.Free;
