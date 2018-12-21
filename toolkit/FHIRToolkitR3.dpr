@@ -153,12 +153,13 @@ uses
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
   LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame},
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
-  FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas';
+  FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
+  ScintFormats in '..\dependencies\ui\ScintFormats.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.Run;
+  AApplication.CreateForm(TMasterToolsForm, MasterToolsForm);
+  pplication.Run;
 end.

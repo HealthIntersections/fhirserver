@@ -593,7 +593,7 @@ Type
     FExternal : Boolean;
     FStack : TFslList<TMXmlElement>;
     FDoc : TMXmlDocument;
-    FAttributes : TFslMap<TMXmlAttribute>;
+    FAttributes : TFslList<TMXmlAttribute>;
     FSourceLocation : TSourceLocation;
     Function Pad(offset : integer = 0) : String;
     function ReadTextLength(s : string):String;
@@ -740,6 +740,9 @@ begin
     xml.ProduceHeader;
   end;
   depth := 0;
+
+  if CurrentNamespaces.DefaultNS <> '' then
+    xml.AddNamespace('', CurrentNamespaces.DefaultNS);
 
   for i := 0 to CurrentNamespaces.Count - 1 do
     xml.AddNamespace(CurrentNamespaces.ValueByIndex[i], CurrentNamespaces.KeyByIndex[i]);
@@ -1380,7 +1383,7 @@ var
   a : TMXmlAttribute;
   i : integer;
 begin
-  for a in iELement.Attributes.Values do
+  for a in iELement.Attributes do
     if a.Value = iElement.NamespaceURI then
     begin
       if (a.Name = 'xmlns') then
@@ -1420,7 +1423,7 @@ begin
   n := iElement.name;
   if n = '' then
     n := getNSAbbrev(iElement)+iElement.LocalName;
-  for a in iElement.Attributes.Values do
+  for a in iElement.Attributes do
     if a.NamespaceURI <> '' then
       AddAttributeNS(a.NamespaceURI, a.Name, a.Value)
     else
@@ -1613,7 +1616,7 @@ begin
     if attrName <> '' then
     begin
       elem := matches[0] as TMXmlElement;
-      elem.Attributes.Remove(attrName)
+      elem.RemoveAttribute(attrName)
     end
     else
       matches[0].parent.Children.remove(matches[0] as TMXmlElement);
@@ -1833,7 +1836,7 @@ Begin
 
   FLastText := false;
 
-  ProducePretty('<' + sName + UseAttributes + ' />');
+  ProducePretty('<' + sName + UseAttributes + '/>');
 End;  
 
 
@@ -3229,9 +3232,23 @@ end;
 
 
 procedure TMXmlBuilder.AddAttribute(const sName, sValue: String);
+var
+  a : TMXmlAttribute;
+  b : boolean;
 begin
-  FAttributes.AddOrSetValue(sName, TMXmlAttribute.Create(sName, sValue));
-  ReadTextLengthWithEscapes(sName+'="', sValue, '"');
+  b := false;
+  for a in FAttributes do
+    if a.Name = sName then
+    begin
+      b := true;
+      inc(FSourceLocation.col, sValue.Length - a.Value.Length);
+      a.Value := sValue;
+    end;
+  if not b then
+  begin
+    FAttributes.Add(TMXmlAttribute.Create(sName, sValue));
+    ReadTextLengthWithEscapes(sName+'="', sValue, '"');
+  end;
 end;
 
 function TMXmlBuilder.Text(const sValue: String) : TSourceLocation;
@@ -3336,7 +3353,7 @@ begin
   CurrentNamespaces.DefaultNS := 'urn:hl7-org:v3';
   CharEncoding := 'UTF-8';
   FStack := TFslList<TMXmlElement>.Create;
-  FAttributes := TFslMap<TMXmlAttribute>.Create;
+  FAttributes := TFslList<TMXmlAttribute>.Create;
 end;
 
 destructor TMXmlBuilder.Destroy;
@@ -3355,17 +3372,29 @@ end;
 
 procedure TMXmlBuilder.AddAttributeNS(const sNamespace, sName, sValue: String);
 var
-  attr : TMXmlAttribute;
+  a : TMXmlAttribute;
+  b : boolean;
 begin
-  attr := TMXmlAttribute.Create(sName, sValue);
-  try
-    attr.NamespaceURI := sNamespace;
-    attr.LocalName := sName;
-    FAttributes.AddOrSetValue(sName, attr.link);
-  finally
-    attr.free;
+  b := false;
+  for a in FAttributes do
+    if a.LocalName = sName then
+    begin
+      b := true;
+      inc(FSourceLocation.col, sValue.Length - a.Value.Length);
+      a.Value := sValue;
+    end;
+  if not b then
+  begin
+    a := TMXmlAttribute.Create(sName, sValue);
+    try
+      a.NamespaceURI := sNamespace;
+      a.LocalName := sName;
+      FAttributes.Add(a.link);
+    finally
+      a.free;
+    end;
+    ReadTextLengthWithEscapes(sName+'="', sValue, '"');
   end;
-  ReadTextLengthWithEscapes(sName+'="', sValue, '"');
 end;
 
 procedure TMXmlBuilder.Start;

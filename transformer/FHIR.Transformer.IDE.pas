@@ -7,11 +7,12 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
-  ScintEdit,
+  ScintEdit, ScintFormats,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons,
-  FHIR.Ui.ListSelector, FHIR.Scint.CDA,
+  FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Cache.PackageManagerDialog,
-  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint,
+  FHIR.Base.Objects,
+  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine;
 
 const
@@ -153,7 +154,9 @@ type
     lblScript: TLabel;
     ools1: TMenuItem;
     Rewrite1: TMenuItem;
-    Compare1: TMenuItem;
+    mnuCompare: TMenuItem;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -209,7 +212,7 @@ type
     procedure btnExecuteClick(Sender: TObject);
     procedure cbxScriptChange(Sender: TObject);
     procedure Rewrite1Click(Sender: TObject);
-    procedure Compare1Click(Sender: TObject);
+    procedure mnuCompareClick(Sender: TObject);
     procedure mnuSaveClick(Sender: TObject);
   private
     FIni : TIniFile;
@@ -245,6 +248,7 @@ type
     procedure engineStatus(sender : TConversionEngine; message : String);
     procedure engineLog(sender : TConversionEngine; message : String);
     function rewriteV2(src, title: String): String;
+    function rewriteCDA(src, title: String): String;
   public
     { Public declarations }
   end;
@@ -293,6 +297,7 @@ begin
     engine.OnStatus := engineStatus;
     engine.OnLog := engineLog;
 //      engine.OnDebug := EngineDebug;
+    engine.load;
     engine.execute;
   finally
     engine.free;
@@ -1211,6 +1216,16 @@ begin
   result := nil;
 end;
 
+function isXml(s : String) : boolean;
+begin
+  if not s.Contains('<') then
+    result := false
+  else if not s.Contains('{') then
+    result := true
+  else
+    result := s.IndexOf('<') < s.IndexOf('{');
+end;
+
 procedure TTransformerForm.openWorkspaceFile(f : TWorkspaceFile);
 var
   tab : TTabSheet;
@@ -1235,10 +1250,6 @@ begin
     editor.LineNumbers := true;
     editor.PopupMenu := pmEditor;
     case f.format of
-      fmtCDA  : editor.Styler := TCDAStyler.Create(self);
-      fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
-    end;
-    case f.format of
       fmtV2: tab.ImageIndex := 9;
       fmtCDA: tab.ImageIndex := 10;
       fmtResource: tab.ImageIndex := 11;
@@ -1252,6 +1263,18 @@ begin
     editor.Align := alClient;
     s := makeAbsolutePath(f.filename, FWorkspace.folder);
     editor.Lines.LoadFromFile(s);
+    case f.format of
+      fmtV2 :  editor.Styler := TV2Styler.Create(self);
+      fmtCDA  : editor.Styler := TCDAStyler.Create(self);
+      fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
+      fmtResource:
+        if isXml(editor.rawText) then
+          editor.Styler := TXmlStyler.Create(self)
+        else
+          editor.Styler := TJsonStyler.Create(self);
+      fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
+    end;
+
     editor.CaretLine := f.row;
     f.isDirty := false;
   end;
@@ -1347,6 +1370,42 @@ begin
   end;
 end;
 
+function TTransformerForm.rewriteCDA(src, title : String) : String;
+var
+  stream, outStream : TStringStream;
+  elem : TFHIRMMElement;
+  engine : TCDAConversionEngine;
+begin
+  engine := TCDAConversionEngine.create;
+  try
+    engine.cache := FCache.Link;
+    engine.workspace := FWorkspace.link;
+    engine.OnWantSource := engineGetSource;
+    engine.OnStatus := engineStatus;
+    engine.OnLog := engineLog;
+    engine.load;
+    stream := TStringStream.Create(src, TEncoding.UTF8);
+    try
+      elem := TFHIRMMManager.parse(engine.Context, stream, ffXml);
+      try
+        outStream := TStringStream.Create;
+        try
+          TFHIRMMManager.compose(engine.Context, elem, outStream, ffXml, OutputStylePretty);
+          result := outStream.DataString;
+        finally
+          outStream.Free;
+        end;
+      finally
+        elem.free;
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    engine.free;
+  end;
+end;
+
 function TTransformerForm.rewriteV2(src, title : String) : String;
 var
   utils : TFHIRStructureMapUtilities;
@@ -1365,12 +1424,13 @@ begin
    end;
 end;
 
-procedure TTransformerForm.Compare1Click(Sender: TObject);
+procedure TTransformerForm.mnuCompareClick(Sender: TObject);
 var
   f : TWorkspaceFile;
   editor : TScintEdit;
   fmt : integer;
   src, output, msg : String;
+  fnin, fnout: String;
 begin
   f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
@@ -1378,15 +1438,31 @@ begin
   fmt := 1;
   case f.format of
     fmtV2: raise Exception.Create('Not Supported Yet');
-    fmtCDA: raise Exception.create('Not Supported Yet');
+    fmtCDA:
+      begin
+      fmt := 2;
+      output := rewriteCDA(src, f.title);
+      end;
     fmtResource: raise Exception.create('Not Supported Yet');
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: output := rewriteV2(src, f.title);
     fmtTemplate: raise Exception.create('Not Supported Yet');
   end;
   showdiff := true;
-  if CheckTextIsSame(src, output, msg) then
-    ShowMessage('ok');
+  if fmt = 1 then
+  begin
+    if CheckTextIsSame(src, output, msg) then
+      ShowMessage('ok');
+  end
+  else if fmt = 2 then
+  begin
+    fnin := path(['c:\temp', 'source.xml']);
+    fnout := path(['c:\temp', 'output.xml']);
+    StringToFile(src, fnin, TEncoding.UTF8);
+    StringToFile(output, fnout, TEncoding.UTF8);
+    if CheckXMLIsSame(fnin, fnout, msg) then
+      ShowMessage('ok');
+  end
 end;
 
 procedure TTransformerForm.Rewrite1Click(Sender: TObject);
@@ -1398,7 +1474,7 @@ begin
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
   case f.format of
     fmtV2: raise Exception.Create('Not Supported Yet');
-    fmtCDA: raise Exception.create('Not Supported Yet');
+    fmtCDA: editor.RawText := rewriteCDA(editor.RawText, f.title);
     fmtResource: raise Exception.create('Not Supported Yet');
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: editor.RawText := rewriteV2(editor.RawText, f.title);

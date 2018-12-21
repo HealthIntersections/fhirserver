@@ -41,15 +41,30 @@ object TransformerForm: TTransformerForm
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
-      object ToolButton1: TToolButton
+      object ToolButton4: TToolButton
         Left = 0
+        Top = 0
+        Caption = 'ToolButton4'
+        ImageIndex = 28
+        OnClick = mnuCompareClick
+      end
+      object ToolButton3: TToolButton
+        Left = 23
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton3'
+        ImageIndex = 28
+        Style = tbsSeparator
+      end
+      object ToolButton1: TToolButton
+        Left = 31
         Top = 0
         Caption = 'Home'
         ImageIndex = 8
         OnClick = ToolButton1Click
       end
       object ToolButton2: TToolButton
-        Left = 23
+        Left = 54
         Top = 0
         Caption = 'Execute'
         ImageIndex = 27
@@ -377,7 +392,7 @@ object TransformerForm: TTransformerForm
     Left = 25
     Top = 90
     Bitmap = {
-      494C01011D008800A40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01011D008800AC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000008000000001002000000000000080
       000000000000000000000000000000000000000000003E3E3E0017171700FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -1598,6 +1613,11 @@ object TransformerForm: TTransformerForm
         ShortCut = 16455
         OnClick = GotoLine1Click
       end
+      object mnuCompare: TMenuItem
+        Caption = 'Round Trip &Diff'
+        ImageIndex = 28
+        OnClick = mnuCompareClick
+      end
     end
     object Settings1: TMenuItem
       Caption = '&View'
@@ -1624,10 +1644,6 @@ object TransformerForm: TTransformerForm
         Caption = '&Rewrite'
         ImageIndex = 28
         OnClick = Rewrite1Click
-      end
-      object Compare1: TMenuItem
-        Caption = '&Compare'
-        OnClick = Compare1Click
       end
     end
   end

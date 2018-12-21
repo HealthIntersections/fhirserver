@@ -192,7 +192,8 @@ Type
 function uncapitalize(s : String) : string;
 function capitalize(s : String) : string;
 
-function sdNs(type_ : String) : String;
+function sdNs(type_ : String) : String; overload;
+function sdNs(type_, overrideVersionNs : String) : String; overload;
 
 implementation
 
@@ -203,6 +204,17 @@ begin
   else
     result := 'http://hl7.org/fhir/StructureDefinition/'+type_;
 end;
+
+function sdNs(type_, overrideVersionNs : String) : String; overload;
+begin
+  if isAbsoluteUrl(type_) then
+    result := type_
+  else if (overrideVersionNs <> '') then
+    result := URLPath([overrideVersionNs, type_])
+  else
+    result := 'http://hl7.org/fhir/StructureDefinition/'+type_;
+end;
+
 
 { TProfileUtilities }
 

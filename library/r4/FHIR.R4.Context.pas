@@ -54,7 +54,9 @@ type
 
 
   TFHIRWorkerContext = class abstract (TFHIRWorkerContextWithFactory)
-  protected
+  private
+
+    FOverrideVersionNs: String;  protected
     function GetVersion: TFHIRVersion; override;
   public
     function link : TFHIRWorkerContext; overload;
@@ -77,6 +79,8 @@ type
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
+
+    property OverrideVersionNs : String read FOverrideVersionNs write FOverrideVersionNs;
   end;
 
   TResourceMemoryCache = class (TFslObject)

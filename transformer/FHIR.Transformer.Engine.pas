@@ -37,6 +37,7 @@ type
     procedure SetCache(const Value: TResourceMemoryCache);
   protected
     FMapUtils : TFHIRStructureMapUtilities;
+    FContext : TFHIRTransformerContext;
     procedure log(msg : String);
     function fetchSource(f : TWorkspaceFile) : TStream;
     function parseMap(f : TWorkspaceFile) : TFhirStructureMap;
@@ -52,6 +53,9 @@ type
     property OnStatus : TConversionEngineStatusEvent read FOnStatus write FOnStatus;
     property OnLog : TConversionEngineLogEvent read FOnLog write FOnLog;
 
+    property Context : TFHIRTransformerContext read FContext;
+
+    procedure load; virtual; abstract;
     procedure execute; virtual; abstract;
   end;
 
@@ -60,6 +64,7 @@ type
   public
     function link : TCDAConversionEngine; overload;
 
+    procedure load; override;
     procedure execute; override;
   end;
 
@@ -69,10 +74,12 @@ implementation
 
 destructor TConversionEngine.Destroy;
 begin
+  FMapUtils.Free;
   FCache.Free;
   FWorkspace.Free;
   FMap.Free;
   FSource.Free;
+  FContext.Free;
   inherited;
 end;
 
@@ -135,69 +142,65 @@ end;
 
 procedure TCDAConversionEngine.execute;
 var
-  context : TFHIRTransformerContext;
-  cache : TFHIRPackageManager;
   f : TWorkspaceFile;
   stream : TStream;
   map : TFHIRStructureMap;
   elem : TFHIRMMElement;
-  r : TFhirResource;
 begin
-  log('Preparing');
-  context := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
+  log('Parse the Workspace Maps');
+  for f in FWorkspace.maps do
+  begin
+    map := parseMap(f);
+    FMapUtils.Lib.Add(map.url, map.Link);
+  end;
+  log('Load the CDA Source');
+  stream := fetchSource(FSource);
   try
-    if FCache.List.Empty then
-    begin
-      cache := TFHIRPackageManager.Create(true);
-      try
-        log('Loading the FHIR Package');
-        cache.loadPackage('hl7.fhir.core', '4.0.0', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition'], FCache.load);
-        log('Loading the CDA Package');
-        cache.loadPackage('hl7.fhir.cda', '0.0.1', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition'], FCache.load);
-      finally
-        cache.Free;
-      end;
-    end;
-    for r in FCache.List do
-      context.SeeResource(r);
-    log('Parse the Workspace Maps');
-    FMapUtils := TFHIRStructureMapUtilities.Create(context.Link, TFslMap<TFHIRStructureMap>.create, TLocalTransformerServices.create());
+    elem := TFHIRMMManager.parse(FContext, stream, ffXml);
     try
-      for f in FWorkspace.maps do
-      begin
-        map := parseMap(f);
-        FMapUtils.Lib.Add(map.url, map.Link);
-      end;
-      log('Load the CDA Source');
-      stream := fetchSource(FSource);
+      log('Parse the Map');
+      map := parseMap(self.map);
       try
-        elem := TFHIRMMManager.parse(context, stream, ffXml);
-        try
-          log('Parse the Map');
-          map := parseMap(self.map);
-          try
-            log('Execute the Conversion [url]');
-            // actually do it...
-          finally
-            map.Free;
-          end;
-        finally
-          elem.Free;
-        end;
+        log('Execute the Conversion [url]');
+        // actually do it...
       finally
-        stream.free;
+        map.Free;
       end;
     finally
-      FMapUtils.Free;
+      elem.Free;
     end;
   finally
-    context.Free;
+    stream.free;
   end;
 end;
 
 function TCDAConversionEngine.link: TCDAConversionEngine;
 begin
   result := TCDAConversionEngine(inherited Link);
+end;
+
+procedure TCDAConversionEngine.load;
+var
+  cache : TFHIRPackageManager;
+  r : TFhirResource;
+begin
+  log('Loading');
+  FContext := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
+  if FCache.List.Empty then
+  begin
+    cache := TFHIRPackageManager.Create(true);
+    try
+      log('Loading the FHIR Package');
+      cache.loadPackage('hl7.fhir.core', '4.0.0', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition'], FCache.load);
+      log('Loading the CDA Package');
+      cache.loadPackage('hl7.fhir.cda', '0.0.1', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition'], FCache.load);
+    finally
+      cache.Free;
+    end;
+  end;
+  for r in FCache.List do
+    FContext.SeeResource(r);
+  FMapUtils := TFHIRStructureMapUtilities.Create(FContext.Link, TFslMap<TFHIRStructureMap>.create, TLocalTransformerServices.create());
 end;
 
 end.

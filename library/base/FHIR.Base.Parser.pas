@@ -1315,18 +1315,18 @@ end;
 
 procedure TFHIRXmlParserBase.checkOtherAttributes(value: TMXmlElement; path : String);
 var
-  name : String;
+  a : TMXmlAttribute;
 begin
   if not AllowUnknownContent then
   begin
-    for name in value.attributes.Keys do
+    for a in value.attributes do
     begin
-      if (name <> 'id') and // always ok
-         (name <> 'value') and // value is ok (todo: only on primitives)
-         ((name <> 'url')) and // url is ok on extensions which appear with various names
-         (name <> 'xmlns') and // namespaces are ok
-         (not name.StartsWith('xmlns:')) then // namespaces are ok
-        XmlError(path+'/@'+name, StringFormat(GetFhirMessage('MSG_UNKNOWN_CONTENT', lang), [name, path]));
+      if (a.name <> 'id') and // always ok
+         (a.name <> 'value') and // value is ok (todo: only on primitives)
+         ((a.name <> 'url')) and // url is ok on extensions which appear with various names
+         (a.name <> 'xmlns') and // namespaces are ok
+         (not a.name.StartsWith('xmlns:')) then // namespaces are ok
+        XmlError(path+'/@'+a.name, StringFormat(GetFhirMessage('MSG_UNKNOWN_CONTENT', lang), [a.name, path]));
     end;
   end;
 end;

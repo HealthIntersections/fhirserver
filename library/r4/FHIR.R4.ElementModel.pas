@@ -33,6 +33,7 @@ interface
 uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
+  FHIR.Cda.Narrative,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
   FHIR.R4.Base, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Common;
 
@@ -117,6 +118,7 @@ type
 	  FComments : TStringList;// not relevant for production, but useful in documentation
 	  FName : String;
 	  FType : String;
+    FExplicitType : String;
 	  FValue : String;
   	FIndex : integer;
   	FChildren : TFslList<TFHIRMMElement>;
@@ -150,6 +152,7 @@ type
 
     property name : String read FName;
     property type_ : String read GetType write FType;
+    property explicitType : String read FExplicitType write FExplicitType;
     property value : String read FValue write FValue;
     property children : TFslList<TFHIRMMElement> read GetChildren;
     property comments : TStringList read GetComments;
@@ -420,7 +423,7 @@ end;
 function TFHIRMMProperty.getType(elementName: String): string;
 var
   t, name, tail, s : String;
-  all  : boolean;
+  all : boolean;
   tr : TFhirElementDefinitionType;
   ed, d : TFhirElementDefinition;
 begin
@@ -466,7 +469,7 @@ begin
           result := name;
       end
       else
-        raise EDefinitionException.create('logic error, gettype when types > 1, name mismatch');
+        raise EDefinitionException.create('logic error, gettype when types > 1, name mismatch for '+elementName+' on at '+ed.Path);
     end;
   end
   else
@@ -579,7 +582,7 @@ begin
   if definition.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
     result := definition.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace')
   else if structure.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
-    result := definition.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace')
+    result := structure.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace')
   else
     result := FHIR_NS;
 end;
@@ -1236,6 +1239,26 @@ begin
   result := nil;
 end;
 
+function isElementWithOnlyExtension(ed : TFhirElementDefinition; children : TFhirElementDefinitionList) : boolean;
+var
+  ele : TFhirElementDefinition;
+begin
+  result := false;
+  if (ed.hasType_List) then
+  begin
+    result := true;
+    for ele in children do
+    begin
+      if not ele.path.contains('extension') then
+      begin
+        result := false;
+        break;
+      end;
+    end;
+  end;
+end;
+
+
 
 function TFHIRMMParserBase.getChildProperties(prop: TFHIRMMProperty; elementName, statedType: String): TFslList<TFHIRMMProperty>;
 var
@@ -1244,8 +1267,9 @@ var
   children : TFhirElementDefinitionList;
   child : TFhirElementDefinition;
   tr : TFhirElementDefinitionType;
-  t : String;
+  t, url : String;
   all, ok : boolean;
+  sdt : TFHIRStructureDefinition;
 begin
   if (prop.isResource) and (statedType <> '') then
   begin
@@ -1257,10 +1281,11 @@ begin
     ed := prop.Definition;
     sd := prop.Structure.Link;
   end;
+  url := '';
 
   children := FContext.getChildMap(sd, ed);
   try
-    if (children.isEmpty()) then
+    if (children.isEmpty() or isElementWithOnlyExtension(ed, children)) then
     begin
       // ok, find the right definitions
       t := '';
@@ -1285,8 +1310,25 @@ begin
 				      t := ed.GetExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-defaultype');
 				    ok := false;
 		        for tr in ed.type_List do
+            begin
 		          if (tr.code = t) then
 		            ok := true;
+              if (isAbsoluteUrl(tr.code)) then
+              begin
+                sdt := FContext.fetchResource(frtStructureDefinition, tr.code) as TFHIRStructureDefinition;
+                try
+                  if (sdt <> nil) and (sdt.type_ = t) then
+                  begin
+                    ok := true;
+                    url := tr.code;
+                  end;
+                finally
+                  sdt.free;
+                end;
+              end;
+              if (ok) then
+                break;
+            end;
             if (not ok) then
 		           raise EDefinitionException.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+prop.Definition.Path);
 				  end
@@ -1300,12 +1342,33 @@ begin
       end;
       if (t <> 'xhtml') then
       begin
-        sd.Free;
-        sd := FContext.getStructure(sdNs(t));
-        if (sd = nil) then
-          raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+prop.Definition.Path);
-        children.Free;
-        children := FContext.getChildMap(sd, sd.snapshot.elementList[0]);
+        for tr in ed.type_List do
+        begin
+          if (tr.code = t) then
+          begin
+            if (tr.hasProfileList) then
+            begin
+              assert(tr.profileList.Count = 1);
+              url := tr.profileList[0].value;
+            end
+            else
+              url := sdNs(t, FContext.OverrideVersionNs);
+            break;
+          end;
+        end;
+        if (url = '') then
+          raise EFHIRException.create('Unable to find type ' + t + ' for element ' + elementName + ' with path ' + ed.path);
+        sdt := FContext.getStructure(url);
+        try
+          if (sdt = nil) then
+            raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+prop.Definition.Path);
+          children.Free;
+          children := FContext.getChildMap(sdt, sdt.snapshot.elementList[0]);
+          sd.Free;
+          sd := sdt.Link;
+        finally
+          sdt.Free;
+        end;
       end;
     end;
     result := TFslList<TFHIRMMProperty>.create;
@@ -1494,12 +1557,12 @@ end;
 
 function TFHIRMMXmlParser.empty(element : TMXmlElement) : boolean ;
 var
-  n : String;
+  a : TMXmlAttribute;
   node : TMXmlElement;
 begin
-  for n in element.attributes.keys do
+  for a in element.attributes do
   begin
-    if (n <> 'xmlns') and not n.startsWith('xmlns:') then
+    if (a.name <> 'xmlns') and not a.name.startsWith('xmlns:') then
       exit(false);
   end;
   if ('' <> trim(element.text)) then
@@ -1578,12 +1641,11 @@ begin
       end;
     end;
 
-    for s in node.Attributes.Keys do
+    for attr in node.Attributes do
     begin
-      attr := node.Attributes[s];
-      if not ((s = 'xmlns') or StringStartsWith(s, 'xmlns:')) then
+      if not ((attr.name = 'xmlns') or StringStartsWith(attr.name, 'xmlns:')) then
       begin
-        prop := getAttrProp(properties, s);
+        prop := getAttrProp(properties, attr.name);
         if (prop <> nil) then
         begin
           av := attr.Value;
@@ -1595,7 +1657,7 @@ begin
             context.getChildren().add(TFHIRMMElement.create(prop.Name, prop.Link, prop.getType(), av).markLocation(start(node), end_(node)));
         end
         else
-          logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+s+'"', IssueSeverityERROR);
+          logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+attr.name+'"', IssueSeverityERROR);
       end;
     end;
 
@@ -1610,7 +1672,10 @@ begin
         begin
           if (not prop.isChoice()) and ('xhtml' = prop.getType()) then
           begin
-            xhtml := TFHIRXhtmlParser.parse('en', xppReject, [xopValidatorMode], e, path, FHIR_NS);
+            if PropertyRepresentationCdaText in prop.definition.representation then 
+              xhtml := TCDANarrativeParser.parse(e)
+            else
+              xhtml := TFHIRXhtmlParser.parse('en', xppReject, [xopValidatorMode], e, path, FHIR_NS);
             n := TFHIRMMElement.create('div', prop.link, 'xhtml', TFHIRXhtmlParser.compose(xhtml));
             context.getChildren().add(n);
             n.Xhtml := xhtml;
@@ -1639,6 +1704,7 @@ begin
                   if (xsiType.contains(':')) then
                     xsiType := xsiType.substring(xsiType.indexOf(':')+1);
                   n.Type_ := xsiType;
+                  n.explicitType := xsiType;
                 end;
               end
               else
@@ -1772,6 +1838,23 @@ begin
   result := PropertyRepresentationXMLTEXT in prop.Definition.Representation;
 end;
 
+function isTypeAttr(prop : TFHIRMMProperty) : boolean;
+begin
+  result := PropertyRepresentationTypeAttr in prop.definition.representation;
+end;
+
+function hasTypeAttr(e : TFHIRMMElement) : boolean;
+var
+  c : TFHIRMMElement;
+begin
+  if (isTypeAttr(e.prop)) then
+    exit(true);
+  for c in e.children do
+   if (hasTypeAttr(c)) then
+     exit(true);
+  result := false;
+end;
+
 procedure TFHIRMMXmlParser.compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String);
 var
   xml : TXmlBuilder;
@@ -1782,6 +1865,8 @@ begin
     xml.NoHeader := true;
     xml.CurrentNamespaces.DefaultNS := e.Prop.getNamespace();
     xml.Start;
+    if hasTypeAttr(e) then
+      xml.AddAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
     composeElement(xml, e, e.getType());
     xml.Finish;
     xml.Build(stream);
@@ -1790,9 +1875,17 @@ begin
   end;
 end;
 
+function convertForDateFormatToExternal(fmt, v : String) : String;
+begin
+  if fmt = 'v3' then
+    result := TDateTimeEx.fromXML(v).toHL7
+  else
+    raise EFHIRException.create('Unknown Date format "'+fmt+'"');
+end;
+
 procedure TFHIRMMXmlParser.composeElement(xml : TXmlBuilder; element : TFHIRMMElement; elementName : String);
 var
-  s : String;
+  s, v : String;
   child : TFHIRMMElement;
 begin
   for s in element.Comments do
@@ -1803,11 +1896,20 @@ begin
     xml.text(element.Value);
     xml.close(elementName);
   end
+  else if (not element.hasChildren and not element.hasValue) then
+  begin
+    if (element.explicitType <> '') then
+       xml.Addattribute('xsi:type', element.explicitType);
+    xml.Tag(elementName);
+  end
   else if element.isPrimitive() or (element.hasType() and isPrimitiveType(element.getType())) then
   begin
     if (element.getType() = 'xhtml') then
     begin
-      xml.inject(TEncoding.UTF8.getBytes(element.Value));
+      if PropertyRepresentationCdaText in element.prop.definition.representation then
+        TCDANarrativeParser.render(xml, element.Xhtml)
+      else
+        xml.inject(TEncoding.UTF8.getBytes(element.Value));
     end
     else if (isText(element.Prop)) then
     begin
@@ -1815,6 +1917,8 @@ begin
     end
     else
     begin
+      if isTypeAttr(element.prop) and (element.GetType <> '') then
+        xml.AddAttribute('xsi:type', element.getType());
       if element.value <> '' then
         xml.AddAttribute('value', element.Value);
       if element.hasChildren then
@@ -1830,10 +1934,18 @@ begin
   end
   else
   begin
+    if isTypeAttr(element.prop) and (element.GetType <> '') then
+      xml.AddAttribute('xsi:type', element.getType());
     for child in element.Children do
     begin
       if (isAttr(child.Prop)) then
-        xml.AddAttribute(child.Name, child.Value);
+      begin
+        v := child.Value;
+        if (child.prop.definition.hasExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/elementdefinition-dateformat')) then
+          v := convertForDateFormatToExternal(child.prop.definition.getExtensionString('http://www.healthintersections.com.au/fhir/StructureDefinition/elementdefinition-dateformat'), v);
+
+        xml.AddAttribute(child.Name, v);
+      end;
     end;
     xml.open(elementName);
     if element.special <> fsecNil then

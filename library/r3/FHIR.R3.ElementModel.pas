@@ -1486,12 +1486,12 @@ end;
 
 function TFHIRMMXmlParser.empty(element : TMXmlElement) : boolean ;
 var
-  n : String;
+  a : TMXmlAttribute;
   node : TMXmlElement;
 begin
-  for n in element.attributes.keys do
+  for a in element.attributes do
   begin
-    if (n <> 'xmlns') and not n.startsWith('xmlns:') then
+    if (a.name <> 'xmlns') and not a.name.startsWith('xmlns:') then
       exit(false);
   end;
   if ('' <> trim(element.text)) then
@@ -1570,12 +1570,11 @@ begin
       end;
     end;
 
-    for s in node.Attributes.Keys do
+    for attr in node.Attributes do
     begin
-      attr := node.Attributes[s];
-      if not ((s = 'xmlns') or StringStartsWith(s, 'xmlns:')) then
+      if not ((attr.name = 'xmlns') or StringStartsWith(attr.name, 'xmlns:')) then
       begin
-        prop := getAttrProp(properties, s);
+        prop := getAttrProp(properties, attr.name);
         if (prop <> nil) then
         begin
           av := attr.Value;
@@ -1587,7 +1586,7 @@ begin
             context.getChildren().add(TFHIRMMElement.create(prop.Name, prop.Link, prop.getType(), av).markLocation(start(node), end_(node)));
         end
         else
-          logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+s+'"', IssueSeverityERROR);
+          logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+attr.name+'"', IssueSeverityERROR);
       end;
     end;
 

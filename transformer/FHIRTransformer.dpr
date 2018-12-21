@@ -22,6 +22,7 @@ uses
   FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
   FHIR.Cda.Objects in '..\library\cda\FHIR.Cda.Objects.pas',
   FHIR.Cda.Parser in '..\library\cda\FHIR.Cda.Parser.pas',
+  FHIR.Cda.Scint in '..\library\cda\FHIR.Cda.Scint.pas',
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Cda.Writer in '..\library\cda\FHIR.Cda.Writer.pas',
   FHIR.Client.Base in '..\library\client\FHIR.Client.Base.pas',
@@ -55,7 +56,6 @@ uses
   FHIR.R4.Utilities in '..\library\r4\FHIR.R4.Utilities.pas',
   FHIR.R4.Validator in '..\library\r4\FHIR.R4.Validator.pas',
   FHIR.R4.Xml in '..\library\r4\FHIR.R4.Xml.pas',
-  FHIR.Scint.CDA in '..\library\ui\FHIR.Scint.CDA.pas',
   FHIR.Scint.Formats in '..\library\ui\FHIR.Scint.Formats.pas',
   FHIR.Smart.Utilities in '..\library\smart\FHIR.Smart.Utilities.pas',
   FHIR.Support.Base in '..\library\support\FHIR.Support.Base.pas',
@@ -110,7 +110,9 @@ uses
   VirtualTrees.StyleHooks in '..\dependencies\treeview\Source\VirtualTrees.StyleHooks.pas',
   VirtualTrees.Utils in '..\dependencies\treeview\Source\VirtualTrees.Utils.pas',
   VirtualTrees.WorkerThread in '..\dependencies\treeview\Source\VirtualTrees.WorkerThread.pas',
-  FHIR.R4.Scint in '..\library\r4\FHIR.R4.Scint.pas';
+  FHIR.R4.Scint in '..\library\r4\FHIR.R4.Scint.pas',
+  ScintFormats in '..\dependencies\ui\ScintFormats.pas',
+  FHIR.v2.Scint in '..\library\v2\FHIR.v2.Scint.pas';
 
 {$R *.res}
 
