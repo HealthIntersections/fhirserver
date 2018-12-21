@@ -340,6 +340,7 @@ Type
     procedure ReadElement(parent : TMXmlElement);
     procedure ReadText(parent : TMXmlElement; text : String);
     procedure ReadComment(parent : TMXmlElement);
+    procedure ReadInstruction(parent : TMXmlElement);
     function parse : TMXmlDocument; overload;
     function resolveNamespace(element : TMXmlElement; abbrev : String) : String;
     procedure resolveNamespaces(element : TMXmlElement; defNs : String);
@@ -761,7 +762,7 @@ end;
 
 procedure TMXmlElement.SetText(const Value: string);
 begin
-  if NodeType in [ntText, ntComment] then
+  if NodeType in [ntText, ntComment, ntProcessingInstruction] then
     FText := Value
   else
     raise EXmlException.create('Unable to set text at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
@@ -1308,6 +1309,11 @@ begin
         ReadComment(result);
         s := ReadToken(true);
       end;
+      while (s = '<?') do
+      begin
+        ReadInstruction(result);
+        s := ReadToken(true);
+      end;
       ReadElement(result);
       result.fixChildren;
       result.Link;
@@ -1348,8 +1354,10 @@ begin
         s := ReadToken(False);
         If s = '<' Then
           readElement(e)
-        else  if s = '<!' then
-          readComment(e);
+        else if s = '<!' then
+          readComment(e)
+        else if s = '<?' then
+          readInstruction(e);
       end;
       s := ReadToken(false);
       rule(s = e.Name, 'Element name mismatch (start: "'+e.Name+'"/ end: "'+s+'")');
@@ -1364,6 +1372,41 @@ begin
   end;
 end;
 
+
+procedure TMXmlParser.ReadInstruction(parent: TMXmlElement);
+Var
+  s : String;
+  done : boolean;
+  c : TStringBuilder;
+  res : TMXmlElement;
+begin
+  res := TMXmlElement.Create(ntProcessingInstruction);
+  try
+    res.Start := FStartLocation;
+    c := TStringBuilder.create;
+    try
+      done := false;
+      repeat
+        s := ReadToNextChar('?');
+        c.Append(s);
+        s := ReadToken(false);
+        if (peek = '>') then
+        begin
+          done := true;
+          read;
+        end;
+      until done;
+      res.Stop := FLocation;
+      res.Text := c.ToString.Trim;
+    finally
+      c.free;
+    end;
+    if not (xpDropComments in options) then
+      parent.Children.add(res.Link);
+  finally
+    res.Free;
+  end;
+end;
 
 function TMXmlParser.ReadAttribute;
 Var
