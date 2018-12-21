@@ -836,6 +836,7 @@ begin
         else
         begin
           result := true;
+          i := 0;
           for fc in cfl do
           begin
             if ('concept' = fc.prop) and (fc.Op = foIsA) then
@@ -880,6 +881,7 @@ begin
             end;
             if not result then
               break;
+            inc(i);
           end;
         end;
       finally
