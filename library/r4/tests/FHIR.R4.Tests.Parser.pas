@@ -38,7 +38,7 @@ uses
   FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Version.Parser, FHIR.Base.Parser,
   FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker,
-  FHIR.Support.Tests;
+  FHIR.Support.Tests, FHIR.Support.Comparisons;
 
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

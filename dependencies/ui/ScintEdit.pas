@@ -358,13 +358,17 @@ type
       StartIndex, EndIndex: Integer);
     procedure CommitStyle(const Style: TScintStyleNumber);
     function ConsumeAllRemaining: Boolean;
-    function ConsumeChar(const C: AnsiChar): Boolean;
+    function ConsumeChar(const C: AnsiChar): Boolean; overload;
+    function ConsumeChar : Boolean; overload;
     function ConsumeChars(const Chars: TScintRawCharSet): Boolean;
     function ConsumeCharsNot(const Chars: TScintRawCharSet): Boolean;
     function ConsumeString(const Chars: TScintRawCharSet): TScintRawString;
     procedure ConsumeUntil(Const s : TScintRawString; include : boolean);
     function CurCharIn(const Chars: TScintRawCharSet): Boolean;
     function CurCharIs(const C: AnsiChar): Boolean;
+    function NextCharNotInSet(const Chars: TScintRawCharSet): AnsiChar;
+    function hasToken(const token : String) : boolean;
+    function hasGrammar(const token : String) : boolean;
     procedure GetStyleAttributes(const Style: Integer;
       var Attributes: TScintStyleAttributes); virtual; abstract;
     function LineTextSpans(const S: TScintRawString): Boolean; virtual;
@@ -2008,6 +2012,13 @@ begin
     Inc(FCurIndex);
 end;
 
+function TScintCustomStyler.ConsumeChar: Boolean;
+begin
+  Result := (FCurIndex <= FTextLen);
+  if Result then
+    Inc(FCurIndex);
+end;
+
 function TScintCustomStyler.ConsumeChars(const Chars: TScintRawCharSet): Boolean;
 begin
   Result := False;
@@ -2069,6 +2080,16 @@ begin
   Result := (FCurIndex > FTextLen);
 end;
 
+function TScintCustomStyler.hasGrammar(const token: String): boolean;
+begin
+  Result := (Copy(FText, FCurIndex, length(token)) = token);
+end;
+
+function TScintCustomStyler.hasToken(const token: String): boolean;
+begin
+  Result := (Copy(FText, FCurIndex, length(token)) = token) and ((FTextLen <= FCurIndex+length(token)) or (not CharInSet(FText[FCurIndex+length(token)], ['a'..'z', 'A'..'Z', '0'..'9', '_'])));
+end;
+
 function TScintCustomStyler.LineTextSpans(const S: TScintRawString): Boolean;
 begin
   Result := False;
@@ -2077,6 +2098,19 @@ end;
 function TScintCustomStyler.NextCharIs(const C: AnsiChar): Boolean;
 begin
   Result := (FCurIndex < FTextLen) and (FText[FCurIndex+1] = C);
+end;
+
+function TScintCustomStyler.NextCharNotInSet(const Chars: TScintRawCharSet): AnsiChar;
+var
+  i : integer;
+begin
+  Result := #0;
+  i := FCurIndex;
+  while i <= FTextLen do begin
+    if not(FText[i] in Chars) then
+      exit(FText[i]);
+    Inc(i);
+  end;
 end;
 
 function TScintCustomStyler.PreviousCharIn(const Chars: TScintRawCharSet): Boolean;

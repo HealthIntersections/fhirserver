@@ -192,7 +192,17 @@ Type
 function uncapitalize(s : String) : string;
 function capitalize(s : String) : string;
 
+function sdNs(type_ : String) : String;
+
 implementation
+
+function sdNs(type_ : String) : String;
+begin
+  if isAbsoluteUrl(type_) then
+    result := type_
+  else
+    result := 'http://hl7.org/fhir/StructureDefinition/'+type_;
+end;
 
 { TProfileUtilities }
 
@@ -2127,5 +2137,6 @@ begin
   else
     raise EDefinitionException.create('Shouldn''t get here');
 end;
+
 
 end.

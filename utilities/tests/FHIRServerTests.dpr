@@ -308,7 +308,8 @@ uses
   FHIR.v2.Javascript in '..\..\library\v2\FHIR.v2.Javascript.pas',
   FHIR.R4.Liquid in '..\..\library\r4\FHIR.R4.Liquid.pas',
   FHIR.R4.Tests.Liquid in '..\..\library\r4\tests\FHIR.R4.Tests.Liquid.pas',
-  FHIR.v2.Engine in '..\..\library\v2\FHIR.v2.Engine.pas';
+  FHIR.v2.Engine in '..\..\library\v2\FHIR.v2.Engine.pas',
+  FHIR.Support.Comparisons in '..\..\library\support\FHIR.Support.Comparisons.pas';
 
 //  CommonMarkNode in '..\..\..\markdown\source\CommonMarkNode.pas',
 //  InstanceValidator in '..\..\library\r4\InstanceValidator.pas',

@@ -8,9 +8,10 @@ uses
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
   ScintEdit,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons,
   FHIR.Ui.ListSelector, FHIR.Scint.CDA,
   FHIR.Cache.PackageManagerDialog,
+  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine;
 
 const
@@ -147,6 +148,12 @@ type
     btnConsoleSave: TButton;
     btnConsoleCopy: TButton;
     mConsole: TMemo;
+    ToolButton2: TToolButton;
+    cbxScript: TComboBox;
+    lblScript: TLabel;
+    ools1: TMenuItem;
+    Rewrite1: TMenuItem;
+    Compare1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -200,6 +207,10 @@ type
     procedure cbxSourceChange(Sender: TObject);
     procedure mnuPackageManagerClick(Sender: TObject);
     procedure btnExecuteClick(Sender: TObject);
+    procedure cbxScriptChange(Sender: TObject);
+    procedure Rewrite1Click(Sender: TObject);
+    procedure Compare1Click(Sender: TObject);
+    procedure mnuSaveClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -208,6 +219,7 @@ type
     FLastFindText: String;
     FLastReplaceText: String;
     FLoading : boolean;
+    FCache : TResourceMemoryCache;
 
     function DoSave(command : String) : boolean;
     function nodeCaption(i : integer) : String;
@@ -229,9 +241,10 @@ type
     procedure ZoomOut;
     procedure ZoomReset;
 
-    function engineGetSource(sender : TConversionEngine; filename : String) : TStream;
+    function engineGetSource(sender : TConversionEngine; f : TWorkspaceFile) : TStream;
     procedure engineStatus(sender : TConversionEngine; message : String);
     procedure engineLog(sender : TConversionEngine; message : String);
+    function rewriteV2(src, title: String): String;
   public
     { Public declarations }
   end;
@@ -274,6 +287,8 @@ begin
   engine := TCDAConversionEngine.create;
   try
     engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
+    engine.cache := FCache.Link;
+    engine.workspace := FWorkspace.link;
     engine.OnWantSource := engineGetSource;
     engine.OnStatus := engineStatus;
     engine.OnLog := engineLog;
@@ -285,29 +300,48 @@ begin
 end;
 
 procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
-  procedure loadSource(list : TFslList<TWorkspaceFile>);
+  procedure loadSource(srcList, scrList : TFslList<TWorkspaceFile>; caption : String);
   var
     f : TWorkspaceFile;
   begin
+    lblScript.Caption := caption;
+    cbxScript.Items.Clear;
+    for f in scrlist do
+      cbxScript.Items.AddObject(f.title, f);
+    cbxScript.ItemIndex := cbxScript.Items.IndexOf(FWorkspace.Script);
+    if (cbxScript.ItemIndex = -1) and (cbxScript.Items.Count > 0) then
+      cbxScript.ItemIndex := 0;
+
     cbxSource.Items.Clear;
-    for f in list do
+    for f in srclist do
       cbxSource.Items.AddObject(f.title, f);
     cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
     if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
       cbxSource.ItemIndex := 0;
-    btnExecute.enabled := cbxSource.ItemIndex > -1;
+    btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
   end;
 begin
    case cbxEventType.ItemIndex of
-    0: LoadSource(FWorkspace.messages);
-    1: LoadSource(FWorkspace.documents);
+    0: LoadSource(FWorkspace.messages, FWorkspace.scripts, 'Scripts');
+    1: LoadSource(FWorkspace.documents, FWorkspace.maps, 'Maps');
   end;
   if not Floading then
   begin
     FWorkspace.EventType := cbxEventType.ItemIndex;
     FWorkspace.Source := cbxSource.Text;
+    FWorkspace.Script := cbxScript.Text;
     FWorkspace.Save;
   end;
+end;
+
+procedure TTransformerForm.cbxScriptChange(Sender: TObject);
+begin
+  if not Floading then
+  begin
+    FWorkspace.Script := cbxScript.Text;
+    FWorkspace.Save;
+  end;
+  btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
 end;
 
 procedure TTransformerForm.cbxSourceChange(Sender: TObject);
@@ -317,6 +351,7 @@ begin
     FWorkspace.Source := cbxSource.Text;
     FWorkspace.Save;
   end;
+  btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
 end;
 
 procedure TTransformerForm.ChangeWorkspace1Click(Sender: TObject);
@@ -341,7 +376,7 @@ begin
   try
     form.Caption := 'Unsaved Content found. Which files do you want to save?';
     form.okWithNoneSelected := true;
-    form.button1.Caption := 'Close';
+    form.Verb := 'Close';
     for i := 1 to pgTabs.PageCount - 1 do
     begin
       f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
@@ -376,6 +411,7 @@ begin
   finally
     form.Free;
   end;
+  FWorkspace.save;
 end;
 
 procedure TTransformerForm.pmCloseThisClick(Sender: TObject);
@@ -385,6 +421,7 @@ begin
   FWorkspace.save;
   f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
   closeWorkspaceFile(f, true);
+  FWorkspace.save;
 end;
 
 function TTransformerForm.DoSave(command : String) : boolean;
@@ -401,7 +438,7 @@ begin
   try
     form.Caption := 'Unsaved Content found. Which files do you want to save?';
     form.okWithNoneSelected := true;
-    form.button1.Caption := command;
+    form.Verb := command;
     for i := 1 to pgTabs.PageCount - 1 do
     begin
       f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
@@ -437,14 +474,21 @@ begin
   FWorkspace.save;
 end;
 
-function TTransformerForm.engineGetSource(sender: TConversionEngine; filename: String): TStream;
+function TTransformerForm.engineGetSource(sender: TConversionEngine; f: TWorkspaceFile): TStream;
+var
+  tab : TTabSheet;
 begin
-  raise Exception.Create('Not Done yet');
+  tab := findWorkspaceFile(f);
+  if tab = nil then
+    result := nil
+  else
+    result := TStringStream.Create((tab.Controls[0] as TScintEdit).RawText);
 end;
 
 procedure TTransformerForm.engineLog(sender: TConversionEngine; message: String);
 begin
-  raise Exception.Create('Not Done yet');
+  mConsole.Lines.add(message);
+  mConsole.perform(EM_LINESCROLL, 0, mConsole.Lines.Count);
 end;
 
 procedure TTransformerForm.engineStatus(sender: TConversionEngine; message: String);
@@ -565,7 +609,7 @@ begin
   try
     form.Caption := 'Unsaved Content found. Which files do you want to save?';
     form.okWithNoneSelected := true;
-    form.button1.Caption := 'Close';
+    form.Verb  := 'Close';
     for i := 1 to pgTabs.PageCount - 1 do
     begin
       f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
@@ -593,9 +637,10 @@ var
   s : String;
   i : integer;
 begin
+  FCache := TResourceMemoryCache.create;
   FIni := TIniFile.create(Path([SystemTemp, 'FHIRTransformer.ini']));
-  s := FIni.ReadString('Project', 'folder', '');
-  if FileExists(s) then
+  s := FIni.ReadString('Workspace', 'folder', '');
+  if FolderExists(s) then
     LoadWorkspace(TWorkspace.Create(s))
   else
   begin
@@ -609,6 +654,8 @@ end;
 procedure TTransformerForm.FormDestroy(Sender: TObject);
 begin
   FIni.Free;
+  FCache.Free;
+  FWorkspace.Free;
 end;
 
 procedure TTransformerForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -651,12 +698,19 @@ procedure TTransformerForm.LoadWorkspace(proj: TWorkspace);
 var
   f : TWorkspaceFile;
   files : TFslList<TWorkspaceFile>;
+  close : boolean;
 begin
+  if FWorkspace <> nil then
+  begin
+    FormCloseQuery(nil, close);
+    if not close then
+      exit;
+  end;
   FWorkspace.Free;
   FWorkspace := proj;
   FLoading := true;
   try
-    FIni.WriteString('Project', 'folder', FWorkspace.folder);
+    FIni.WriteString('Workspace', 'folder', FWorkspace.folder);
     edtWorkspace.Text := proj.name;
     edtWorkspace.Hint := proj.folder;
     vtWorkspace.RootNodeCount := 0;
@@ -926,6 +980,15 @@ begin
   ReplaceDialog.Execute;
 end;
 
+procedure TTransformerForm.mnuSaveClick(Sender: TObject);
+var
+  f : TWorkspaceFile;
+begin
+  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
+  saveWorkspaceFile(f);
+  FWorkspace.save;
+end;
+
 procedure TTransformerForm.mnuSearchClick(Sender: TObject);
 begin
   ReplaceDialog.CloseDialog;
@@ -1173,6 +1236,7 @@ begin
     editor.PopupMenu := pmEditor;
     case f.format of
       fmtCDA  : editor.Styler := TCDAStyler.Create(self);
+      fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
     end;
     case f.format of
       fmtV2: tab.ImageIndex := 9;
@@ -1280,6 +1344,65 @@ begin
     if editor.SelTextEquals(FLastFindText, frMatchCase in FLastFindOptions) then
       editor.SelText := FLastReplaceText;
     FindNext(editor);
+  end;
+end;
+
+function TTransformerForm.rewriteV2(src, title : String) : String;
+var
+  utils : TFHIRStructureMapUtilities;
+  map : TFHIRStructureMap;
+begin
+   utils := TFHIRStructureMapUtilities.Create(nil, nil, nil);
+   try
+     map := utils.parse(src, title);
+     try
+       result := utils.render(map);
+     finally
+       map.Free;
+     end;
+   finally
+     utils.Free;
+   end;
+end;
+
+procedure TTransformerForm.Compare1Click(Sender: TObject);
+var
+  f : TWorkspaceFile;
+  editor : TScintEdit;
+  fmt : integer;
+  src, output, msg : String;
+begin
+  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  src := editor.RawText;
+  fmt := 1;
+  case f.format of
+    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtCDA: raise Exception.create('Not Supported Yet');
+    fmtResource: raise Exception.create('Not Supported Yet');
+    fmtJS: raise Exception.create('Not Supported Yet');
+    fmtMap: output := rewriteV2(src, f.title);
+    fmtTemplate: raise Exception.create('Not Supported Yet');
+  end;
+  showdiff := true;
+  if CheckTextIsSame(src, output, msg) then
+    ShowMessage('ok');
+end;
+
+procedure TTransformerForm.Rewrite1Click(Sender: TObject);
+var
+  f : TWorkspaceFile;
+  editor : TScintEdit;
+begin
+  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  case f.format of
+    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtCDA: raise Exception.create('Not Supported Yet');
+    fmtResource: raise Exception.create('Not Supported Yet');
+    fmtJS: raise Exception.create('Not Supported Yet');
+    fmtMap: editor.RawText := rewriteV2(editor.RawText, f.title);
+    fmtTemplate: raise Exception.create('Not Supported Yet');
   end;
 end;
 

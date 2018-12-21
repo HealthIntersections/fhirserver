@@ -49,6 +49,7 @@ Type
     FTemplates: TFslList<TWorkspaceFile>;
     FEventType: integer;
     FSource: String;
+    FScript: String;
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
@@ -64,6 +65,7 @@ Type
 
     property EventType : integer read FEventType write FEventType;
     property Source : String read FSource write FSource;
+    property Script : String read FScript write FScript;
 
     property messages : TFslList<TWorkspaceFile> read FMessages;
     property documents : TFslList<TWorkspaceFile> read FDocuments;
@@ -114,7 +116,10 @@ begin
         x.Free;
       end;
     except
-      // nothing
+      on e : Exception do
+      begin
+        // nothing
+      end;
     end;
   end;
   if s.StartsWith('//') or s.StartsWith('function') then
@@ -321,6 +326,7 @@ begin
     end;
     FEventType := iniT.ReadInteger('Status', 'EventType', -1);
     FSource := iniT.ReadString('Status', 'Source', '');
+    FScript := iniT.ReadString('Status', 'Script', '');
     st.clear;
     iniVC.ReadSection('Files', st);
     for s in st do
@@ -371,6 +377,7 @@ begin
     iniVC.WriteDateTime('Workspace', 'Updated', now);
     iniT.WriteInteger('Status', 'EventType', FEventType);
     iniT.WriteString('Status', 'Source', FSource);
+    iniT.WriteString('Status', 'Script', FScript);
 
     iniVC.EraseSection('Files');
     for f in FMessages do
