@@ -110,6 +110,7 @@ type
     procedure SetCaretVirtualSpace(const Value: Integer);
     procedure SetFillSelectionToEdge(const Value: Boolean);
     procedure SetIndentationGuides(const Value: TScintIndentationGuides);
+    procedure SetLineEndings(Const Value : TScintLineEndings);
     procedure SetLineNumbers(const Value: Boolean);
     procedure SetRawSelText(const Value: TScintRawString);
     procedure SetRawText(const Value: TScintRawString);
@@ -238,7 +239,7 @@ type
     property CaretVirtualSpace: Integer read GetCaretVirtualSpace write SetCaretVirtualSpace;
     property EffectiveCodePage: Integer read FEffectiveCodePage;
     property InsertMode: Boolean read GetInsertMode;
-    property LineEndings: TScintLineEndings read GetLineEndings;
+    property LineEndings: TScintLineEndings read GetLineEndings write SetLineEndings;
     property LineEndingString: TScintRawString read GetLineEndingString;
     property LineHeight: Integer read GetLineHeight;
     property Lines: TScintEditStrings read FLines;
@@ -1255,6 +1256,15 @@ begin
   if FFillSelectionToEdge <> Value then begin
     FFillSelectionToEdge := Value;
     ApplyOptions;
+  end;
+end;
+
+procedure TScintEdit.SetLineEndings(const Value: TScintLineEndings);
+begin
+  case Value of
+    sleCRLF: Call(SCI_SETEOLMODE, SC_EOL_CRLF, 0);
+    sleCR: Call(SCI_SETEOLMODE, SC_EOL_CR, 0);
+    sleLF: Call(SCI_SETEOLMODE, SC_EOL_LF, 0);
   end;
 end;
 

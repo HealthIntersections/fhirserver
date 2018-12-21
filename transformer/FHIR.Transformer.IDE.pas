@@ -8,7 +8,7 @@ uses
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
   ScintEdit, ScintFormats,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml,
   FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects,
@@ -58,7 +58,7 @@ type
     TabSheet1: TTabSheet;
     Panel6: TPanel;
     edtWorkspace: TEdit;
-    BitBtn1: TBitBtn;
+    btnAddContent: TBitBtn;
     Panel7: TPanel;
     vtWorkspace: TVirtualStringTree;
     ImageList1: TImageList;
@@ -92,7 +92,7 @@ type
     N4: TMenuItem;
     mnuSearch: TMenuItem;
     pmAddAsset: TPopupMenu;
-    AddExistingFile1: TMenuItem;
+    pmAddExisting: TMenuItem;
     NweV2Message1: TMenuItem;
     NewCDADocument1: TMenuItem;
     NewResourceJSON1: TMenuItem;
@@ -113,14 +113,14 @@ type
     fontDlg: TFontDialog;
     sdText: TSaveDialog;
     ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
+    tbHome: TToolButton;
     pmTabs: TPopupMenu;
     pmCloseThis: TMenuItem;
     pmCloseOthers: TMenuItem;
     pmEditor: TPopupMenu;
-    Cut2: TMenuItem;
-    Copy2: TMenuItem;
-    Paste1: TMenuItem;
+    pmnuCut: TMenuItem;
+    pmnuCopy: TMenuItem;
+    pmnuPaste: TMenuItem;
     N5: TMenuItem;
     Search2: TMenuItem;
     Replace1: TMenuItem;
@@ -130,7 +130,7 @@ type
     FindDialog: TFindDialog;
     mnuFindNext: TMenuItem;
     N7: TMenuItem;
-    GotoLine1: TMenuItem;
+    mnuGoto: TMenuItem;
     FindNext2: TMenuItem;
     mnuClose: TMenuItem;
     Label1: TLabel;
@@ -149,17 +149,37 @@ type
     btnConsoleSave: TButton;
     btnConsoleCopy: TButton;
     mConsole: TMemo;
-    ToolButton2: TToolButton;
+    tbExecute: TToolButton;
     cbxScript: TComboBox;
     lblScript: TLabel;
     ools1: TMenuItem;
-    Rewrite1: TMenuItem;
     mnuCompare: TMenuItem;
     ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
+    tbCompare: TToolButton;
+    ToolButton5: TToolButton;
+    tbOpen: TToolButton;
+    tbNew: TToolButton;
+    tbSave: TToolButton;
+    tbPrint: TToolButton;
+    tbUndo: TToolButton;
+    tbCut: TToolButton;
+    tbCopy: TToolButton;
+    tbPaste: TToolButton;
+    tbFind: TToolButton;
+    Timer1: TTimer;
+    ToolButton1: TToolButton;
+    tbPackageManager: TToolButton;
+    N8: TMenuItem;
+    mnuPretty: TMenuItem;
+    mnuDense: TMenuItem;
+    mnuEOL: TMenuItem;
+    mnuRemoveEmptyLines: TMenuItem;
+    mnuUnixEOL: TMenuItem;
+    mnuWindowsEOL: TMenuItem;
+    ToolButton2: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
+    procedure btnAddContentClick(Sender: TObject);
     procedure mnuNewMessageClick(Sender: TObject);
     procedure mnuNewDocumentClick(Sender: TObject);
     procedure mnuNewResourceJsonClick(Sender: TObject);
@@ -190,7 +210,7 @@ type
     procedure Exit1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure ToolButton1Click(Sender: TObject);
+    procedure tbHomeClick(Sender: TObject);
     procedure pmCloseThisClick(Sender: TObject);
     procedure pmCloseOthersClick(Sender: TObject);
     procedure pmTabsPopup(Sender: TObject);
@@ -205,7 +225,7 @@ type
     procedure mnuFindNextClick(Sender: TObject);
     procedure FindDialogFind(Sender: TObject);
     procedure ReplaceDialogReplace(Sender: TObject);
-    procedure GotoLine1Click(Sender: TObject);
+    procedure mnuGotoClick(Sender: TObject);
     procedure cbxEventTypeChange(Sender: TObject);
     procedure cbxSourceChange(Sender: TObject);
     procedure mnuPackageManagerClick(Sender: TObject);
@@ -214,6 +234,14 @@ type
     procedure Rewrite1Click(Sender: TObject);
     procedure mnuCompareClick(Sender: TObject);
     procedure mnuSaveClick(Sender: TObject);
+    procedure tbNewClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure pgTabsChange(Sender: TObject);
+    procedure mnuPrettyClick(Sender: TObject);
+    procedure mnuDenseClick(Sender: TObject);
+    procedure mnuWindowsEOLClick(Sender: TObject);
+    procedure mnuUnixEOLClick(Sender: TObject);
+    procedure mnuRemoveEmptyLinesClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -260,10 +288,38 @@ implementation
 
 {$R *.dfm}
 
-procedure TTransformerForm.BitBtn1Click(Sender: TObject);
+
+function makeXmlDense(src : String) : String;
+var
+  xml : TMXmlDocument;
+begin
+  xml := TMXmlParser.parse(src, [xpDropWhitespace]);
+  try
+    result := xml.ToXml(false, true);
+  finally
+    xml.free;
+  end;
+end;
+
+function makeXmlPretty(src : String) : String;
+var
+  xml : TMXmlDocument;
+begin
+  xml := TMXmlParser.parse(src, [xpDropWhitespace]);
+  try
+    result := xml.ToXml(true, true);
+  finally
+    xml.free;
+  end;
+end;
+
+{ TTransformerForm }
+
+procedure TTransformerForm.btnAddContentClick(Sender: TObject);
 var
   pnt: TPoint;
 begin
+  pmAddExisting.Visible := true;
   if GetCursorPos(pnt) then
     pmAddAsset.Popup(pnt.X, pnt.Y);
 end;
@@ -364,6 +420,61 @@ begin
   fd.DefaultFolder := FWorkspace.folder;
   if fd.Execute then
     LoadWorkspace(TWorkspace.Create(fd.FileName));
+end;
+
+procedure TTransformerForm.pgTabsChange(Sender: TObject);
+var
+  f : TWorkspaceFile;
+  editor : TScintEdit;
+begin
+  if pgTabs.ActivePageIndex = 0 then
+  begin
+    mnuUndo.Enabled := false;
+    tbUndo.Enabled := false;
+    mnuRedo.Enabled := false;
+    mnuCut.Enabled := false;
+    tbCut.Enabled := false;
+    pmnuCut.Enabled := false;
+    mnuCopy.Enabled := false;
+    tbCopy.Enabled := false;
+    pmnuCopy.Enabled := false;
+    mnuSave.Enabled := false;
+    tbSave.Enabled := false;
+    mnuCompare.Enabled := false;
+    tbCompare.Enabled := false;
+    mnuSearch.Enabled := false;
+    mnuFindNext.Enabled := false;
+    mnuReplace.Enabled := false;
+    mnuGoto.Enabled := false;
+    mnuPretty.Enabled := false;
+    mnuDense.Enabled := false;
+    mnuEOL.Enabled := false;
+    mnuRemoveEmptyLines.Enabled := false;
+    Caption := 'FHIR Transformer IDE';
+  end
+  else
+  begin
+    f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
+    editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+    Caption := pgTabs.ActivePage.Caption+'- FHIR Transformer';
+    mnuSearch.Enabled := true;
+    mnuFindNext.Enabled := true;
+    mnuReplace.Enabled := true;
+    mnuGoto.Enabled := true;
+    mnuCompare.Enabled := f.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
+    tbCompare.Enabled := mnuCompare.Enabled;
+    mnuPretty.Enabled := f.format in [fmtCDA, fmtResource];
+    mnuDense.Enabled := f.format in [fmtCDA, fmtResource];
+    mnuEOL.Enabled := true;
+    mnuWindowsEOL.Checked := false;
+    mnuUnixEOL.Checked := false;
+    case editor.LineEndings of
+      sleCRLF: mnuWindowsEOL.Checked := true;
+      sleLF: mnuUnixEOL.Checked := true;
+    end;
+    mnuRemoveEmptyLines.Enabled := true;
+    memoExit(pgTabs.ActivePage.Controls[0]);
+  end;
 end;
 
 procedure TTransformerForm.pmCloseOthersClick(Sender: TObject);
@@ -673,7 +784,7 @@ begin
     ZoomReset;
 end;
 
-procedure TTransformerForm.GotoLine1Click(Sender: TObject);
+procedure TTransformerForm.mnuGotoClick(Sender: TObject);
 var
   S: String;
   L: Integer;
@@ -729,6 +840,7 @@ begin
     finally
       files.Free;
     end;
+    pgTabsChange(self);
   finally
     FLoading := false;
   end;
@@ -765,6 +877,8 @@ var
 begin
   f := FWorkspace.FileByKey[(Sender as TScintEdit).Tag];
   f.isDirty := true;
+  tbSave.Enabled := f.isDirty;
+  mnuSave.Enabled := tbSave.Enabled;
 end;
 
 procedure TTransformerForm.memoExit(Sender: TObject);
@@ -775,6 +889,21 @@ begin
   m := (Sender as TScintEdit);
   f := FWorkspace.FileByKey[(Sender as TScintEdit).Tag];
   f.Row := m.CaretLine;
+  // undo/redo
+  mnuUndo.Enabled := m.CanUndo;
+  tbUndo.Enabled := m.CanUndo;
+  mnuRedo.Enabled := m.CanUndo;
+  // clipbrd
+  mnuCut.Enabled := m.SelText <> '';
+  tbCut.Enabled := mnuCut.Enabled;
+  pmnuCut.Enabled := mnuCut.Enabled;
+  mnuCopy.Enabled := mnuCut.Enabled;
+  tbCopy.Enabled := mnuCut.Enabled;
+  pmnuCopy.Enabled := mnuCut.Enabled;
+
+  // misc
+  tbSave.Enabled := f.isDirty;
+  mnuSave.Enabled := tbSave.Enabled;
 end;
 
 procedure TTransformerForm.mnuCopyClick(Sender: TObject);
@@ -791,6 +920,23 @@ var
 begin
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
   editor.CutToClipboard;
+end;
+
+procedure TTransformerForm.mnuDenseClick(Sender: TObject);
+var
+  f : TWorkspaceFile;
+  editor : TScintEdit;
+begin
+  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  case f.format of
+    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtCDA: editor.RawText := makeXmlDense(editor.RawText);
+    fmtResource: raise Exception.create('Not Supported Yet');
+    fmtJS: raise Exception.create('Not Supported Yet');
+    fmtMap: raise Exception.create('Not Supported');
+    fmtTemplate: raise Exception.create('Not Supported Yet');
+  end;
 end;
 
 procedure TTransformerForm.mnuDropClick(Sender: TObject);
@@ -934,12 +1080,45 @@ begin
   editor.PasteFromClipboard;
 end;
 
+procedure TTransformerForm.mnuPrettyClick(Sender: TObject);
+var
+  f : TWorkspaceFile;
+  editor : TScintEdit;
+begin
+  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  case f.format of
+    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtCDA: editor.RawText := makeXmlPretty(editor.RawText);
+    fmtResource: raise Exception.create('Not Supported Yet');
+    fmtJS: raise Exception.create('Not Supported Yet');
+    fmtMap: raise Exception.create('Not Supported');
+    fmtTemplate: raise Exception.create('Not Supported Yet');
+  end;
+end;
+
 procedure TTransformerForm.mnuRedoClick(Sender: TObject);
 var
   editor : TScintEdit;
 begin
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
   editor.Redo;
+end;
+
+procedure TTransformerForm.mnuRemoveEmptyLinesClick(Sender: TObject);
+var
+  editor : TScintEdit;
+  i : integer;
+begin
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  editor.BeginUndoAction;
+  try
+    for i := editor.Lines.Count - 1 downto 0 do
+      if editor.Lines[i] = '' then
+        editor.Lines.Delete(i);
+  finally
+    editor.EndUndoAction;
+  end;
 end;
 
 procedure TTransformerForm.mnuRenameClick(Sender: TObject);
@@ -1008,6 +1187,34 @@ var
 begin
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
   editor.Undo;
+end;
+
+procedure TTransformerForm.mnuUnixEOLClick(Sender: TObject);
+var
+  editor : TScintEdit;
+begin
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  editor.LineEndings := sleLF;
+  mnuWindowsEOL.Checked := false;
+  mnuUnixEOL.Checked := false;
+  case editor.LineEndings of
+    sleCRLF: mnuWindowsEOL.Checked := true;
+    sleLF: mnuUnixEOL.Checked := true;
+  end;
+end;
+
+procedure TTransformerForm.mnuWindowsEOLClick(Sender: TObject);
+var
+  editor : TScintEdit;
+begin
+  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+  editor.LineEndings := sleCRLF;
+  mnuWindowsEOL.Checked := false;
+  mnuUnixEOL.Checked := false;
+  case editor.LineEndings of
+    sleCRLF: mnuWindowsEOL.Checked := true;
+    sleLF: mnuUnixEOL.Checked := true;
+  end;
 end;
 
 function TTransformerForm.nodeCaption(i: integer): String;
@@ -1275,15 +1482,17 @@ begin
       fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
     end;
 
+    editor.ClearUndo;
     editor.CaretLine := f.row;
     f.isDirty := false;
+    pgTabsChange(pgTabs);
   end;
 end;
 
 procedure TTransformerForm.saveWorkspaceFile(f : TWorkspaceFile);
 var
   tab : TTabSheet;
-  s : String;
+  s, v : String;
   m : TScintEdit;
 begin
   tab := findWorkspaceFile(f);
@@ -1296,9 +1505,34 @@ begin
   end;
 end;
 
-procedure TTransformerForm.ToolButton1Click(Sender: TObject);
+procedure TTransformerForm.tbHomeClick(Sender: TObject);
 begin
   pgTabs.TabIndex := 0;
+end;
+
+procedure TTransformerForm.tbNewClick(Sender: TObject);
+var
+  pnt: TPoint;
+begin
+  pmAddExisting.Visible := false;
+  if GetCursorPos(pnt) then
+    pmAddAsset.Popup(pnt.X, pnt.Y);
+end;
+
+procedure TTransformerForm.Timer1Timer(Sender: TObject);
+begin
+  if pgTabs.ActivePageIndex = 0 then
+  begin
+    mnuPaste.Enabled := false;
+    tbPaste.Enabled := false;
+    pmnuPaste.Enabled := false;
+  end
+  else
+  begin
+    mnuPaste.Enabled := Clipboard.HasFormat(CF_TEXT);
+    tbPaste.Enabled := mnuPaste.Enabled;
+    pmnuPaste.Enabled := mnuPaste.Enabled;
+  end;
 end;
 
 procedure TTransformerForm.closeWorkspaceFile(f : TWorkspaceFile; checkSave : boolean);
