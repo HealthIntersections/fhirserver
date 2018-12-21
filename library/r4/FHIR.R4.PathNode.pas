@@ -457,6 +457,20 @@ begin
     result := jsonEscape(Fconstant.primitiveValue, true);
 end;
 
+function isToken(s : String) : boolean;
+var
+  i : integer;
+begin
+  if s = '' then
+    exit(false);
+  if not CharInSet(s[1], ['a'..'z', 'A'..'Z', '_']) then
+    exit(false);
+  for i := 2 to length(s) do
+    if not CharInSet(s[1], ['a'..'z', 'A'..'Z', '0'..'9', '_']) then
+      exit(false);
+  result := true;
+end;
+
 function TFHIRPathExpressionNode.toString: String;
 var
   b : TStringBuilder;
@@ -468,7 +482,10 @@ begin
 		case kind of
 		enkName:
       begin
-        b.append(name);
+        if isToken(name) then
+          b.append(name)
+        else
+          b.append('"'+name+'"');
       end;
 		enkFunction:
       begin
