@@ -20,7 +20,6 @@ object ListSelectorForm: TListSelectorForm
     Height = 40
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 258
     DesignSize = (
       635
       40)
@@ -33,7 +32,7 @@ object ListSelectorForm: TListSelectorForm
       TabOrder = 0
       OnClick = CheckBox1Click
     end
-    object Button1: TButton
+    object btnok: TButton
       Left = 471
       Top = 8
       Width = 75
@@ -44,7 +43,7 @@ object ListSelectorForm: TListSelectorForm
       ModalResult = 1
       TabOrder = 1
     end
-    object Button2: TButton
+    object btnCancel: TButton
       Left = 552
       Top = 8
       Width = 75
@@ -54,6 +53,17 @@ object ListSelectorForm: TListSelectorForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 2
+    end
+    object btnOkAll: TButton
+      Left = 390
+      Top = 8
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'OK for All'
+      ModalResult = 1
+      TabOrder = 3
+      OnClick = btnOkAllClick
     end
   end
   object Panel2: TPanel
@@ -66,10 +76,6 @@ object ListSelectorForm: TListSelectorForm
     BorderWidth = 6
     Caption = 'Panel2'
     TabOrder = 1
-    ExplicitLeft = 240
-    ExplicitTop = 144
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object ListBox1: TCheckListBox
       Left = 6
       Top = 6
@@ -80,7 +86,6 @@ object ListSelectorForm: TListSelectorForm
       BevelInner = bvLowered
       ItemHeight = 13
       TabOrder = 0
-      ExplicitLeft = 4
     end
   end
 end

@@ -32,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
-  FHIR.Support.Base, 
+  SysUtils, Classes,
+  FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources;
 
@@ -79,10 +79,23 @@ type
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
   end;
 
+  TResourceMemoryCache = class (TFslObject)
+  private
+    Flist : TFslList<TFHIRResource>;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function Link : TResourceMemoryCache; overload;
+
+    property List : TFslList<TFHIRResource> read FList;
+    procedure load(rType, id : String; stream : TStream);
+  end;
+
+
 implementation
 
 uses
-  FHIR.R4.Utilities;
+  FHIR.R4.Utilities, FHIR.R4.ParserBase, FHIR.R4.Json;
 
 { TFHIRWorkerContext }
 
@@ -154,5 +167,39 @@ begin
   result := TFHIRCustomResourceInformation(inherited Link);
 end;
 
+
+{ TResourceMemoryCache }
+
+constructor TResourceMemoryCache.Create;
+begin
+  inherited;
+  Flist := TFslList<TFhirResource>.create
+end;
+
+destructor TResourceMemoryCache.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TResourceMemoryCache.Link: TResourceMemoryCache;
+begin
+  result := TResourceMemoryCache(inherited link);
+end;
+
+procedure TResourceMemoryCache.load(rType, id: String; stream: TStream);
+var
+  p : TFHIRJsonParser;
+begin
+  p := TFHIRJsonParser.Create(nil, 'en');
+  try
+    p.source := stream;
+    p.Parse;
+    FList.add(p.resource.link as TFhirResource);
+  finally
+    p.Free;
+  end;
+
+end;
 
 end.

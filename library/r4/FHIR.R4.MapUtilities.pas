@@ -43,6 +43,7 @@ type
 const
   CODES_TVariableMode : array [TVariableMode] of string = ('input', 'output');
   AUTO_VAR_NAME = 'vvv';
+  RENDER_MULTIPLE_TARGETS_ONELINE = true;
 
 type
   TVariable = class (TFslObject)
@@ -63,15 +64,15 @@ type
 
   TVariables = class (TFslObject)
   private
-		list : TFslList<TVariable>;
+    list : TFslList<TVariable>;
   public
     constructor Create; override;
     destructor Destroy; override;
 
     function Link : TVariables; overload;
-		procedure add(mode : TVariableMode; name : String; obj : TFHIRObject);
-		function copy : TVariables;
-		function get(mode : TVariableMode; name : String) : TFHIRObject;
+    procedure add(mode : TVariableMode; name : String; obj : TFHIRObject);
+    function copy : TVariables;
+    function get(mode : TVariableMode; name : String) : TFHIRObject;
   end;
 
   TTransformerServices = class abstract (TFslObject)
@@ -84,19 +85,19 @@ type
 
   TFHIRStructureMapUtilities = class (TFslObject)
   private
-	  FWorker : TFHIRWorkerContext;
-   	fpp : TFHIRPathParser;
-   	fpe : TFHIRPathEngine;
-  	FLib : TFslMap<TFHIRStructureMap>;
-  	FServices : TTransformerServices;
+    FWorker : TFHIRWorkerContext;
+     fpp : TFHIRPathParser;
+     fpe : TFHIRPathEngine;
+    FLib : TFslMap<TFHIRStructureMap>;
+    FServices : TTransformerServices;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderImports(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderGroup(b : TStringBuilder; g : TFHIRStructureMapGroup);
     procedure renderDoco(b : TStringBuilder; doco : String);
     procedure RenderRule(b : TStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
-    procedure RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
-    procedure renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget);
+    procedure RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
+    procedure renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
     procedure renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
     procedure renderConceptMap(b : TStringBuilder; map : TFHIRConceptMap);
 
@@ -129,15 +130,16 @@ type
     function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
+    function checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
   public
     constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices);
     destructor Destroy; override;
 
-  	property Lib : TFslMap<TFHIRStructureMap> read FLib;
+    property Lib : TFslMap<TFHIRStructureMap> read FLib;
 
     function render(map : TFHIRStructureMap) : String; overload;
     function render(map : TFHIRConceptMap) : String; overload;
-	  function parse(text, sourceName : String) : TFHIRStructureMap;
+    function parse(text, sourceName : String) : TFHIRStructureMap;
     procedure transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
   end;
 
@@ -150,7 +152,7 @@ constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext;
   lib: TFslMap<TFHIRStructureMap>; services: TTransformerServices);
 begin
   inherited Create;
-	FWorker := context;
+  FWorker := context;
   FLib := lib;
   FServices := services;
   fpe := TFHIRPathEngine.Create(context.link, nil);
@@ -162,8 +164,8 @@ begin
   FWorker.Free;
   fpe.Free;
   fpp.Free;
-	FLib.Free;
-	FServices.Free;
+  FLib.Free;
+  FServices.Free;
   inherited;
 end;
 
@@ -174,21 +176,21 @@ var
 begin
   b := TStringBuilder.create();
   try
-		b.append('map "');
-		b.append(map.Url);
-		b.append('" = "');
-		b.append(jsonEscape(map.Name, true));
-		b.append('"'#13#10#13#10);
+    b.append('map "');
+    b.append(map.Url);
+    b.append('" = "');
+    b.append(jsonEscape(map.Name, true));
+    b.append('"'#13#10#13#10);
 
     renderContained(b, map);
-		renderUses(b, map);
-		renderImports(b, map);
-		for g in map.groupList do
-			renderGroup(b, g);
-		result := b.toString();
+    renderUses(b, map);
+    renderImports(b, map);
+    for g in map.groupList do
+      renderGroup(b, g);
+    result := b.toString();
   finally
     b.free;
-	end;
+  end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderUses(b : TStringBuilder; map : TFHIRStructureMap);
@@ -199,7 +201,14 @@ begin
   begin
     b.append('uses "');
     b.append(s.url);
-    b.append('" as ');
+    b.append('" ');
+    if (s.alias <> '') then
+    begin
+      b.append('alias ');
+      b.append(s.alias);
+      b.append(' ');
+    end;
+    b.append('as ');
     b.append(CODES_TFhirMapModelModeEnum[s.Mode]);
     b.append(#13#10);
     renderDoco(b, s.Documentation);
@@ -226,36 +235,71 @@ procedure TFHIRStructureMapUtilities.renderGroup(b : TStringBuilder; g : TFHIRSt
 var
   gi : TFHIRStructureMapGroupInput;
   r : TFHIRStructureMapGroupRule;
+  first : boolean;
 begin
-		b.append('group ');
-		b.append(g.Name);
-		if (g.extends <> '') then
+  b.append('group ');
+  b.append(g.Name);
+  b.append('(');
+  first := true;
+  for gi in g.inputList do
+  begin
+    if (first) then
+      first := false
+    else
+      b.append(', ');
+    b.append(CODES_TFhirMapInputModeEnum[gi.Mode]);
+    b.append(' ');
+    b.append(gi.name);
+    if (gi.type_ <> '') then
     begin
-			b.append(' extends ');
-			b.append(g.Extends);
-		end;
-		if (g.Documentation <> '') then
-			renderDoco(b, g.Documentation);
-		b.append(#13#10);
-		for gi in g.inputList do
+      b.append(' : ');
+      b.append(gi.type_);
+    end;
+  end;
+  b.append(')');
+  if (g.extends <> '') then
+  begin
+    b.append(' extends ');
+    b.append(g.Extends);
+  end;
+  case g.typeMode of
+    MapGroupTypeModeTypes: b.append(' <<types>>');
+    MapGroupTypeModeTypeAndTypes: b.append(' <<type+>>');
+  end;
+  b.append(' {');
+  if (g.Documentation <> '') then
+    renderDoco(b, g.Documentation);
+  b.append(#13#10);
+  for r in g.ruleList do
+    renderRule(b, r, 2);
+  b.append('}'#13#10#13#10);
+  end;
+
+function TFHIRStructureMapUtilities.checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
+begin
+  result := (rule.sourceList.count = 1) and (rule.sourceList[0].element <> '') and (rule.sourceList[0].variable <> '') and
+        (rule.targetList.count = 1) and (rule.targetList[0].Variable <> '') and (rule.targetList[0].transform in [MapTransformNull, MapTransformCreate]) and (rule.targetList[0].parameterList.count = 0) and
+        (rule.dependentList.count = 0) and (rule.ruleList.count = 0);
+end;
+
+function matchesname(n : string; source : TFhirStructureMapGroupRuleSourceList) : boolean;
+var
+  s : String;
+begin
+  result := false;
+  if (source.count = 1) and (source[0].element <> '') then
+  begin
+    s := source[0].element;
+    if (n = s) or (n = '"'+s+'"') then
+      result := true
+    else if (source[0].type_ <> '') then
     begin
-			b.append('  input ');
-			b.append(gi.Name);
-			if (gi.type_ <> '') then
-      begin
-				b.append(' : ');
-				b.append(gi.Type_);
-			end;
-			b.append(' as ');
-			b.append(CODES_TFhirMapInputModeEnum[gi.Mode]);
-			b.append(';'#13#10);
-		end;
-		if (g.inputList.Count > 0) then
-			b.append(#13#10);
-		for r in g.ruleList do
-			renderRule(b, r, 2);
-		b.append(#13#10'endgroup'#13#10);
-	end;
+      s := source[0].element+'-'+source[0].type_;
+      if (n = s) or (n = '"'+s+'"') then
+        result := true
+    end;
+  end;
+end;
 
 procedure TFHIRStructureMapUtilities.RenderRule(b : TStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
 var
@@ -263,11 +307,13 @@ var
   rs : TFHIRStructureMapGroupRuleSource;
   rt : TFHIRStructureMapGroupRuleTarget;
   rd : TFHIRStructureMapGroupRuleDependent;
+  ir : TFHIRStructureMapGroupRule;
   rdp : TFHIRString;
+  canBeAbbreviated : boolean;
+  i : integer;
 begin
   b.append(StringPadLeft('', ' ', indent));
-  b.append(r.Name);
-  b.append(': for ');
+	canBeAbbreviated := checkisSimple(r);
   first := true;
   for rs in r.sourceList do
   begin
@@ -275,47 +321,57 @@ begin
       first := false
     else
       b.append(', ');
-    renderSource(b, rs);
+    renderSource(b, rs, canBeAbbreviated);
   end;
-  if (r.targetList.count > 1) then
+	if (r.targetList.count > 1) then
   begin
-    b.append(' make ');
+    b.append(' -> ');
     first := true;
     for rt in r.targetList do
     begin
       if (first) then
         first := false
       else
-        b.append(', ');
-      b.append(#13#10);
-      b.append(StringPadLeft('', ' ', indent+4));
-      renderTarget(b, rt);
+      begin
+        b.append(',');
+        if (RENDER_MULTIPLE_TARGETS_ONELINE) then
+          b.append(' ')
+        else
+        begin
+          b.append('\r\n');
+          b.append(StringPadLeft('', ' ', indent+4));
+        end;
+      end;
+      renderTarget(b, rt, false);
     end;
   end
-  else if (r.targetList.count > 0) then
+  else if (r.targetList.Count > 0) then
   begin
-    b.append(' make ');
-    renderTarget(b, r.TargetList[0]);
+    b.append(' -> ');
+    renderTarget(b, r.targetList[0], canBeAbbreviated);
   end;
-  if (r.ruleList.Count > 0) then
+  if (r.ruleList.count > 0) then
   begin
     b.append(' then {');
-    renderDoco(b, r.Documentation);
+    b.append(#13#10);
+    for ir in r.ruleList do
+      renderRule(b, ir, indent+2);
     b.append(StringPadLeft('', ' ', indent));
-    b.append('}'#13#10);
+	  b.append('}');
   end
   else
   begin
-    if (r.dependentList.Count > 0) then
+    if r.dependentList.Count > 0 then
     begin
-      first := true;
+      b.append(' then ');
+	    first := true;
       for rd in r.dependentList do
       begin
-        if (first) then
+       if (first) then
           first := false
         else
           b.append(', ');
-        b.append(rd.Name);
+        b.append(rd.name);
         b.append('(');
         ifirst := true;
         for rdp in rd.variableList do
@@ -326,30 +382,62 @@ begin
             b.append(', ');
           b.append(rdp.value);
         end;
+        b.append(')');
       end;
     end;
-    renderDoco(b, r.Documentation);
-    b.append(#13#10);
   end;
+  if (r.name <> '') then
+  begin
+    if not matchesName(r.name, r.sourceList) then
+    begin
+      b.append(' "');
+	    b.append(r.name);
+      b.append('"');
+    end;
+  end;
+  b.append(';');
+  renderDoco(b, r.documentation);
+  b.append(#13#10);
 end;
 
-procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
+procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
 begin
   b.append(rs.Context);
-  if (rs.Element <> '') then
+  if (rs.context = '@search') then
+  begin
+    b.append('(');
+    b.append(rs.element);
+    b.append(')');
+  end
+  else if (rs.element <> '') then
   begin
     b.append('.');
-    b.append(rs.Element);
+    b.append(rs.element);
   end;
-//  if (rs.ListMode <> MapListModeNull) then
-//  begin
-//    b.append(' ');
-//    if (rs.ListMode = MapListModeShare) then
-//      b.append('only_one')
-//    else
-//      b.append(CODES_TFhirMapListModeEnum[rs.ListMode]);
-//  end;
-  if (rs.Variable <> '') then
+  if (rs.type_ <> '') then
+  begin
+      b.append(' : ');
+      b.append(rs.type_);
+      if (rs.min <> '') then
+      begin
+        b.append(' ');
+        b.append(rs.Min);
+        b.append('..');
+        b.append(rs.Max);
+      end;
+  end;
+  if (rs.ListMode <> MapSourceListModeNull) then
+  begin
+    b.append(' ');
+    b.append(CODES_TFhirMapSourceListModeEnum[rs.ListMode]);
+  end;
+	if (rs.defaultValue <> nil) then
+  begin
+    b.append(' default ');
+		assert(rs.defaultValue is TFhirString);
+	  b.append('''+jsonEscape((rs.defaultValue as TFhirString).value, true)+''');
+  end;
+  if not canbeAbbreviated and (rs.Variable <> '') then
   begin
     b.append(' as ');
     b.append(rs.Variable);
@@ -364,23 +452,34 @@ begin
     b.append(' check ');
     b.append(rs.Check);
   end;
+  if (rs.logMessage <> '') then
+  begin
+    b.append(' log ');
+    b.append(rs.logMessage);
+  end;
 end;
 
-procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget);
+procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
 var
   first : boolean;
   rtp : TFHIRStructureMapGroupRuleTargetParameter;
-//  lm : TFhirMapListModeEnum;
+  lm : TFhirMapTargetListModeEnum;
 begin
-  b.append(rt.Context);
-  if (rt.Element <> '')  then
+  if (rt.context <> '') then
   begin
-    b.append('.');
-    b.append(rt.Element);
+    if (rt.contextType = MapContextTypeType) then
+      b.append('@');
+    b.append(rt.Context);
+    if (rt.Element <> '')  then
+    begin
+      b.append('.');
+      b.append(rt.Element);
+    end;
   end;
-  if (rt.Transform <> MapTransformNull) then
+  if not canbeAbbreviated and (rt.Transform <> MapTransformNull) then
   begin
-    b.append(' = ');
+    if (rt.context <> '') then
+      b.append(' = ');
     if (rt.Transform = MapTransformCopy) and (rt.parameterList.count = 1) then
     begin
       renderTransformParam(b, rt.ParameterList[0]);
@@ -409,22 +508,22 @@ begin
       b.append(')');
     end;
   end;
-  if (rt.Variable <> '') then
+  if not canbeAbbreviated and (rt.Variable <> '') then
   begin
     b.append(' as ');
     b.append(rt.Variable);
   end;
-//  for lm := low(TFhirMapListModeEnum) to high(TFhirMapListModeEnum) do
-//    if lm in rt.listMode then
-//    begin
-//      b.append(' ');
-//      b.append(CODES_TFhirMapListModeEnum[lm]);
-//      if (lm = MapListModeShare) then
-//      begin
-//        b.append(' ');
-//        b.append(rt.ListRuleId);
-//      end;
-//    end;
+  for lm := low(TFhirMapTargetListModeEnum) to high(TFhirMapTargetListModeEnum) do
+    if lm in rt.listMode then
+    begin
+      b.append(' ');
+      b.append(CODES_TFhirMapTargetListModeEnum[lm]);
+      if (lm = MapTargetListModeShare) then
+      begin
+        b.append(' ');
+        b.append(rt.listRuleId);
+      end;
+    end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
@@ -441,9 +540,9 @@ begin
     b.append((rtp.Value as TFHIRInteger).StringValue)
   else
   begin
-    b.append('"');
+    b.append('''');
     b.append(jsonEscape((rtp.Value as TFHIRString).StringValue, true));
-    b.append('"');
+    b.append('''');
   end;
 end;
 
@@ -454,10 +553,10 @@ begin
   b := TStringBuilder.create();
   try
     renderConceptMap(b, map);
-		result := b.toString();
+    result := b.toString();
   finally
     b.free;
-	end;
+  end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
@@ -493,7 +592,7 @@ var
     b.append(prefixes[system]);
     b.append(':');
     if code.Contains(' ') then
-      b.append('"'+jsonEscape(code, true)+'"')
+      b.append('''+jsonEscape(code, true)+''')
     else
       b.append(jsonEscape(code, false));
   end;
@@ -613,11 +712,11 @@ begin
   lexer := TFHIRPathLexer4.Create(text);
   try
     lexer.SourceName := sourceName;
-		if (lexer.done()) then
-			raise EFHIRException.create('Map Input cannot be empty');
-		lexer.skipComments();
-		lexer.token('map');
-		result := TFHIRStructureMap.Create;
+    if (lexer.done()) then
+      raise EFHIRException.create('Map Input cannot be empty');
+    lexer.skipComments();
+    lexer.token('map');
+    result := TFHIRStructureMap.Create;
     try
       result.Url := lexer.readConstant('url');
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
@@ -671,10 +770,10 @@ begin
   map.Id := id.substring(1);
   lexer.token('{');
   lexer.skipComments();
-  //	  lexer.token('source');
-  //	  map.Source := new UriType(lexer.readConstant('source')));
-  //	  lexer.token('target');
-  //	  map.Source := new UriType(lexer.readConstant('target')));
+  //    lexer.token('source');
+  //    map.Source := new UriType(lexer.readConstant('source')));
+  //    lexer.token('target');
+  //    map.Source := new UriType(lexer.readConstant('target')));
   prefixes := TFslStringDictionary.create;
   try
     while (lexer.hasToken('prefix')) do
@@ -685,21 +784,21 @@ begin
       v := lexer.readConstant('prefix url');
       prefixes.add(n, v);
     end;
-		while (lexer.hasToken('unmapped')) do
+    while (lexer.hasToken('unmapped')) do
     begin
-		  lexer.token('unmapped');
+      lexer.token('unmapped');
       lexer.token('for');
       n := readPrefix(prefixes, lexer);
       g := getGroup(map, n, '');
       if g.unmapped = nil then
         g.unmapped := TFhirConceptMapGroupUnmapped.Create;
-		  lexer.token('=');
+      lexer.token('=');
       v := lexer.take();
       if (v = 'provided') then
         g.unmapped.Mode := ConceptmapUnmappedModeProvided
       else
         raise lexer.error('Only unmapped mode PROVIDED is supported at this time');
-		end;
+    end;
     while (not lexer.hasToken('}')) do
     begin
       vs := readPrefix(prefixes, lexer);
@@ -1005,7 +1104,14 @@ begin
   if (newFmt) then
   begin
     if (lexer.isConstant(true)) then
-      rule.Name := lexer.take()
+    begin
+      rule.Name := lexer.take();
+      if rule.name.startsWith('"') and rule.name.endsWith('"') then
+      begin
+        rule.name := rule.name.subString(1);
+        rule.name := rule.name.subString(0, rule.name.length - 1);
+      end;
+    end
     else
     begin
       if (rule.sourceList.count <> 1) or (rule.sourceList[0].element = '') then
@@ -1017,6 +1123,8 @@ begin
     end;
     lexer.token(';');
   end;
+  if (lexer.hasComment()) then
+    rule.Documentation := lexer.take().substring(2).trim();
   lexer.skipComments();
 end;
 
@@ -1073,7 +1181,7 @@ begin
       source.Max := lexer.take();
     end;
   end;
-	if (lexer.hasToken('default')) then
+  if (lexer.hasToken('default')) then
   begin
     lexer.token('default');
     source.DefaultValue := TFhirString.create(lexer.readConstant('default value'));
@@ -1112,62 +1220,80 @@ procedure TFHIRStructureMapUtilities.parseTarget(rule : TFHIRStructureMapGroupRu
 var
   target : TFHIRStructureMapGroupRuleTarget;
   isConstant : boolean;
-  name, id : String;
+  name, id, start : String;
   node : TFHIRPathExpressionNode;
   p : TFhirStructureMapGroupRuleTargetParameter;
 begin
   target := rule.targetList.Append;
-  target.Context := lexer.take();
-  target.contextType := MapContextTypeVariable;
+  start := lexer.take();
   if (lexer.hasToken('.')) then
   begin
+    target.Context := start;
+    target.ContextType := MapContextTypeVariable;
+    start := '';
     lexer.token('.');
     target.Element := lexer.take();
   end;
+  isConstant := false;
   if (lexer.hasToken('=')) then
   begin
+    if (start <> '') then
+       target.Context := start;
     lexer.token('=');
     isConstant := lexer.isConstant(true);
     name := lexer.take();
-    if (lexer.hasToken('(')) then
+  end
+  else
+   name := start;
+
+  if (name = '(') then
+  begin
+    // inline fluentpath expression
+    target.transform := MapTransformEVALUATE;
+    p := target.parameterList.Append;
+    node := fpp.parse(lexer);
+    p.Tag := node;
+    p.Value := TFHIRString.create(node.toString());
+    lexer.token(')');
+  end
+  else if (lexer.hasToken('(')) then
+  begin
+    target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum));
+    lexer.token('(');
+    if (target.Transform = MapTransformEVALUATE) then
     begin
-      target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum));
-      lexer.token('(');
-      if (target.Transform = MapTransformEVALUATE) then
-      begin
-        parseParameter(target, lexer);
-        lexer.token(',');
-        p := target.parameterList.Append;
-        node := fpp.parse(lexer);
-        p.tag := node;
-        p.Value := TFHIRString.create(node.toString());
-      end
-      else
-      begin
-        while (not lexer.hasToken(')')) do
-        begin
-          parseParameter(target, lexer);
-          if (not lexer.hasToken(')')) then
-            lexer.token(',');
-        end;
-      end;
-      lexer.token(')');
+      parseParameter(target, lexer);
+      lexer.token(',');
+      p := target.parameterList.Append;
+      node := fpp.parse(lexer);
+      p.tag := node;
+      p.Value := TFHIRString.create(node.toString());
     end
     else
     begin
-      target.Transform := MapTransformCopy;
-      if (not isConstant) then
+      while (not lexer.hasToken(')')) do
       begin
-        id := name;
-        while (lexer.hasToken('.')) do
-        begin
-          id := id + lexer.take() + lexer.take();
-        end;
-        target.parameterList.Append.Value := TFHIRId.create(id);
-      end
-      else
-        target.parameterList.Append.Value := readConstant(name, lexer);
+        parseParameter(target, lexer);
+        if (not lexer.hasToken(')')) then
+          lexer.token(',');
+      end;
     end;
+    lexer.token(')');
+  end
+  else if (name <> '') then
+  begin
+    target.Transform := MapTransformCopy;
+    if (not isConstant) then
+    begin
+      id := name;
+      while (lexer.hasToken('.')) do
+      begin
+        id := id + lexer.take() + lexer.take();
+      end;
+      target.parameterList.Append.Value := TFHIRId.create(id);
+    end
+    else
+      target.parameterList.Append.Value := readConstant(name, lexer);
   end;
   if (lexer.hasToken('as')) then
   begin
@@ -1178,12 +1304,12 @@ begin
   begin
     if (lexer.current = 'share') then
     begin
-//      target.listMode := target.listMode + [MapListModeSHARE];
+      target.listMode := target.listMode + [MapTargetListModeShare];
       lexer.next();
       target.ListRuleId := lexer.take();
     end
     else if (lexer.current = 'first') then
-//      target.listMode := target.listMode + [MapListModeFirst]
+      target.listMode := target.listMode + [MapTargetListModeFirst]
     else
       target.listMode := target.listMode; // + [MapListModeLAST];
     lexer.next();
@@ -1365,8 +1491,8 @@ begin
   try
     item.ListChildrenByName(name, list);
     for v in list do
-			if (v <> nil) then
-				result.add(v.value.Link);
+      if (v <> nil) then
+        result.add(v.value.Link);
   finally
     list.Free;
   end;
@@ -1842,7 +1968,7 @@ begin
   result := nil;
   for v in list do
     if (v.mode = mode) and (v.name = name) then
-			exit(v.obj);
+      exit(v.obj);
 end;
 
 function TVariables.link: TVariables;
