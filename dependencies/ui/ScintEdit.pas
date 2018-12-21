@@ -360,6 +360,7 @@ type
     function ConsumeAllRemaining: Boolean;
     function ConsumeChar(const C: AnsiChar): Boolean; overload;
     function ConsumeChar : Boolean; overload;
+    function ConsumeChar(count : integer) : Boolean; overload;
     function ConsumeChars(const Chars: TScintRawCharSet): Boolean;
     function ConsumeCharsNot(const Chars: TScintRawCharSet): Boolean;
     function ConsumeString(const Chars: TScintRawCharSet): TScintRawString;
@@ -2017,6 +2018,13 @@ begin
   Result := (FCurIndex <= FTextLen);
   if Result then
     Inc(FCurIndex);
+end;
+
+function TScintCustomStyler.ConsumeChar(count: integer): Boolean;
+begin
+  Result := (FCurIndex + count <= FTextLen);
+  if Result then
+    Inc(FCurIndex, count);
 end;
 
 function TScintCustomStyler.ConsumeChars(const Chars: TScintRawCharSet): Boolean;
