@@ -102,7 +102,7 @@ type
     procedure renderConceptMap(b : TStringBuilder; map : TFHIRConceptMap);
 
     function getGroup(map : TFHIRConceptMap; source, target : String) : TFHIRConceptMapGroup;
-    function fromEnum(s : String; codes : Array of String) : integer;
+    function fromEnum(s : String; codes : Array of String; lexer : TFHIRPathLexer) : integer;
     function readPrefix(prefixes : TFslStringDictionary; lexer : TFHIRPathLexer) : String;
     function readEquivalence(lexer : TFHIRPathLexer) : TFhirConceptMapEquivalenceEnum;
     function readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
@@ -868,11 +868,11 @@ begin
     raise EFHIRException.create('Unknown equivalence token "'+token+'"');
 end;
 
-function TFHIRStructureMapUtilities.fromEnum(s : String; codes : Array of String) : integer;
+function TFHIRStructureMapUtilities.fromEnum(s : String; codes : Array of String; lexer : TFHIRPathLexer) : integer;
 begin
   result := StringArrayIndexOfSensitive(codes, s);
   if result = -1 then
-    raise EFHIRException.create('the code "'+s+'" is not known');
+    raise lexer.error('The code "'+s+'" is not known');
 end;
 
 
@@ -889,7 +889,7 @@ begin
     st.alias := lexer.take;
   end;
   lexer.token('as');
-  st.Mode := TFhirMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirMapModelModeEnum));
+  st.Mode := TFhirMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirMapModelModeEnum, lexer));
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     st.Documentation := lexer.take().substring(2).trim();
@@ -1008,7 +1008,7 @@ var
 begin
   input := group.inputList.Append;
   if (newFmt) then
-    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum))
+    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum, lexer))
   else
     lexer.token('input');
   input.Name := lexer.take();
@@ -1020,7 +1020,7 @@ begin
   if (not newFmt) then
   begin
     lexer.token('as');
-    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum));
+    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum, lexer));
     if (lexer.hasComment()) then
       input.Documentation := lexer.take().substring(2).trim();
     lexer.skipToken(';');
@@ -1187,7 +1187,7 @@ begin
     source.DefaultValue := TFhirString.create(lexer.readConstant('default value'));
   end;
   if (StringArrayExistsSensitive(['first', 'last', 'not_first', 'not_last', 'only_one'], lexer.current)) then
-    source.ListMode := TFhirMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapSourceListModeEnum));
+    source.ListMode := TFhirMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapSourceListModeEnum, lexer));
   if (lexer.hasToken('as')) then
   begin
     lexer.take();
@@ -1258,7 +1258,7 @@ begin
   end
   else if (lexer.hasToken('(')) then
   begin
-    target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum));
+    target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum, lexer));
     lexer.token('(');
     if (target.Transform = MapTransformEVALUATE) then
     begin

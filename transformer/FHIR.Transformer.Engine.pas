@@ -184,7 +184,6 @@ var
   cache : TFHIRPackageManager;
   r : TFhirResource;
 begin
-  log('Loading');
   FContext := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
   if FCache.List.Empty then
   begin

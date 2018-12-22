@@ -1576,7 +1576,7 @@ end;
 procedure TMXmlParser.rule(test: boolean; message: String);
 begin
   if not test then
-    raise EXmlException.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
+    raise EParserException.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col), FLocation.line, FLocation.col);
 end;
 
 function describeTokens(tokens : Array of String) : String;
@@ -1618,7 +1618,7 @@ begin
     if StringArrayExistsSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))) then
       node.axis := TMXPathExpressionAxis(StringArrayIndexOfSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))))
     else
-      raise EXmlException.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')));
+      raise EParserException.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')), FLocation.Line, FLocation.Col);
     s := s.Substring(s.IndexOf('::')+2);
   end
   else
@@ -1661,7 +1661,7 @@ begin
   begin
     // starting at the root...
     if not readNext then
-      raise EXmlException.Create('Syntax error..');
+      raise EParserException.Create('Syntax error..', FLocation.Line, FLocation.Col);
     readNext := false;
     node.NodeType := xentRoot; // no value in this case
   end

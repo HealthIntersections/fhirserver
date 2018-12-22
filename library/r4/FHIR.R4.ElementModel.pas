@@ -204,8 +204,8 @@ type
    	FPolicy : TFHIRValidationPolicy;
     FErrors : TFslList<TFhirOperationOutcomeIssueW>;
 	  function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TFslList<TFHIRMMProperty>;
-    function getDefinition(line, col : integer; ns, name : String) : TFHIRStructureDefinition; overload;
-    function getDefinition(line, col : integer; name : String) : TFHIRStructureDefinition; overload;
+    function getDefinition(line, col : integer; ns, name : String; noException : boolean = false) : TFHIRStructureDefinition; overload;
+    function getDefinition(line, col : integer; name : String; noException : boolean = false) : TFHIRStructureDefinition; overload;
   public
     constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
@@ -213,9 +213,9 @@ type
     procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFslList<TFhirOperationOutcomeIssueW>);
     procedure logError(line, col : integer; path : String; type_ : TFhirIssueTypeEnum; message : String; level : TFhirIssueSeverityEnum);
 
-    function parse(stream : TStream) : TFHIRMMElement; overload; virtual; abstract;
-    function parse(stream : TFslStream) : TFHIRMMElement; overload; virtual;
-    function parse(buffer : TFslBuffer) : TFHIRMMElement; overload; virtual;
+    function parse(stream : TStream; noException : boolean = false) : TFHIRMMElement; overload; virtual; abstract;
+    function parse(stream : TFslStream; noException : boolean = false) : TFHIRMMElement; overload; virtual;
+    function parse(buffer : TFslBuffer; noException : boolean = false) : TFHIRMMElement; overload; virtual;
     procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String);  overload; virtual; abstract;
   end;
 
@@ -255,9 +255,9 @@ type
   public
     destructor Destroy; override;
 
-    function parse(stream : TStream) : TFHIRMMElement; overload; override;
-    function parse(document : TMXmlDocument) : TFHIRMMElement; overload;
-    function parse(element : TMXmlElement) : TFHIRMMElement; overload;
+    function parse(stream : TStream; noException : boolean = false) : TFHIRMMElement; overload; override;
+    function parse(document : TMXmlDocument; noException : boolean = false) : TFHIRMMElement; overload;
+    function parse(element : TMXmlElement; noException : boolean = false) : TFHIRMMElement; overload;
     function parse(element : TMXmlElement; sd : TFHIRStructureDefinition) : TFHIRMMElement; overload;
     procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String); override;
   end;
@@ -283,8 +283,8 @@ type
     procedure composeElement(path : String; element : TFHIRMMElement); overload;
 
   public
-    function parse(stream : TStream) : TFHIRMMElement; overload; override;
-    function parse(obj : TJsonObject) : TFHIRMMElement; overload;
+    function parse(stream : TStream; noException : boolean = false) : TFHIRMMElement; overload; override;
+    function parse(obj : TJsonObject; noException : boolean = false) : TFHIRMMElement; overload;
     procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String); overload; override;
     procedure compose(e : TFHIRMMElement; stream : TFslStream; style : TFHIROutputStyle; base : String); overload;
   end;
@@ -1157,65 +1157,74 @@ begin
   begin
     err := TFhirOperationOutcomeIssue.create;
     try
-    err.locationList.add(path);
-    err.code := type_;
-    err.severity := level;
-    err.details :=  TFhirCodeableConcept.Create;
-    err.details.text := message+Stringformat(' at line %d col %d', [line, col]);
+      err.locationList.add(path);
+      err.code := type_;
+      err.severity := level;
+      err.details :=  TFhirCodeableConcept.Create;
+      err.details.text := message+Stringformat(' at line %d col %d', [line, col]);
       Ferrors.add(TFhirOperationOutcomeIssue4.Create(err.Link));
     finally
       err.Free;
     end;
   end
 	else if (level = IssueSeverityFatal) or ((level = IssueSeverityERROR) and (Fpolicy = fvpQUICK)) then
-	 raise EFHIRException.create(message+Stringformat(' at line %d col %d', [line, col]));
+	 raise EParserException.create(message+Stringformat(' at line %d col %d', [line, col]), line, col);
 end;
 
-function TFHIRMMParserBase.parse(stream: TFslStream): TFHIRMMElement;
+function TFHIRMMParserBase.parse(stream: TFslStream; noException : boolean = false): TFHIRMMElement;
 var
   vcl : TVCLStream;
 begin
   vcl := TVCLStream.create;
   try
     vcl.Stream := stream.link;
-    result := parse(vcl);
+    result := parse(vcl, noException);
   finally
     vcl.Free;
   end;
 end;
 
-function TFHIRMMParserBase.parse(buffer: TFslBuffer): TFHIRMMElement;
+function TFHIRMMParserBase.parse(buffer: TFslBuffer; noException : boolean = false): TFHIRMMElement;
 var
   mem : TFslMemoryStream;
 begin
   mem := TFslMemoryStream.Create;
   try
     mem.Buffer := buffer.Link;
-    result := parse(mem);
+    result := parse(mem, noException);
   finally
     mem.Free;
   end;
 end;
 
-function TFHIRMMParserBase.getDefinition(line, col: integer; ns, name: String): TFHIRStructureDefinition;
+function TFHIRMMParserBase.getDefinition(line, col: integer; ns, name: String; noException : boolean = false): TFHIRStructureDefinition;
 begin
   result := nil;
   if (ns = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no namespace)', IssueSeverityFATAL);
-    exit(nil);
+    if noException then
+      exit(nil)
+    else
+      raise EParserException.Create('This cannot be parsed as a FHIR object (no namespace)', line, col);
   end;
   if (name = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
-    exit(nil);
+    if noException then
+      exit(nil)
+    else
+      raise EParserException.Create('This cannot be parsed as a FHIR object (no name)', line, col);
   end;
   result := FContext.getStructure(ns, name).Link;
   if result = nil then
-    logError(line, col, name, IssueTypeSTRUCTURE, 'This does not appear to be a FHIR resource (unknown namespace/name "'+ns+'::'+name+'")', IssueSeverityFATAL);
+    if noException then
+      logError(line, col, name, IssueTypeSTRUCTURE, 'This does not appear to be a FHIR resource (unknown namespace/name "'+ns+'::'+name+'")', IssueSeverityFATAL)
+    else
+      raise EParserException.Create('This does not appear to be a FHIR resource (unknown namespace/name "'+ns+'::'+name+'")', line, col);
 end;
 
-function TFHIRMMParserBase.getDefinition(line, col: integer; name: String): TFHIRStructureDefinition;
+function TFHIRMMParserBase.getDefinition(line, col: integer; name: String; noException : boolean = false): TFHIRStructureDefinition;
 var
   list : TFslList<TFHIRStructureDefinition>;
   sd : TFHIRStructureDefinition;
@@ -1224,7 +1233,10 @@ begin
   if (name = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
-    exit(nil);
+    if noException then
+      exit(nil)
+    else
+      raise EParserException.Create('This cannot be parsed as a FHIR object (no name)', line, col);
   end;
   list := TFslList<TFHIRStructureDefinition>.create;
   try
@@ -1236,7 +1248,10 @@ begin
     list.Free;
   end;
   logError(line, col, name, IssueTypeSTRUCTURE, 'This does not appear to be a FHIR resource (unknown name "'+name+'")', IssueSeverityFATAL);
-  result := nil;
+  if noException then
+    exit(nil)
+  else
+    raise EParserException.Create('This does not appear to be a FHIR resource (unknown name "'+name+'")', line, col);
 end;
 
 function isElementWithOnlyExtension(ed : TFhirElementDefinition; children : TFhirElementDefinitionList) : boolean;
@@ -1449,7 +1464,7 @@ begin
   inherited;
 end;
 
-function TFHIRMMXmlParser.parse(stream: TStream): TFHIRMMElement;
+function TFHIRMMXmlParser.parse(stream: TStream; noException : boolean = false): TFHIRMMElement;
 var
   doc : TMXmlDocument;
 begin
@@ -1458,10 +1473,21 @@ begin
     try
       doc := TMXmlParser.Parse(stream, [xpResolveNamespaces]);
     except
+      on e : EParserException do
+      begin
+        logError(e.Line, e.Col, '(syntax)', IssueTypeINVALID, e.Message, IssueSeverityFATAL);
+        if noException then
+          exit(nil)
+        else
+          raise;
+      end;
       on e : Exception do
       begin
         logError(0, 0, '(syntax)', IssueTypeINVALID, e.Message, IssueSeverityFATAL);
-        exit(nil);
+        if noException then
+          exit(nil)
+        else
+          raise;
       end;
     end;
     result := parse(doc.document);
@@ -1498,16 +1524,16 @@ begin
   result := node.Start.col;
 end;
 
-function TFHIRMMXmlParser.parse(document : TMXmlDocument) : TFHIRMMElement;
+function TFHIRMMXmlParser.parse(document : TMXmlDocument; noException : boolean = false) : TFHIRMMElement;
 var
   element : TMXmlElement;
 begin
   checkRootNode(document);
   element := document.Document;
-  result := parse(element);
+  result := parse(element, noException);
 end;
 
-function TFHIRMMXmlParser.parse(element : TMXmlElement) : TFHIRMMElement;
+function TFHIRMMXmlParser.parse(element : TMXmlElement; noException : boolean = false) : TFHIRMMElement;
 var
   ns, name, path : String;
   sd : TFhirStructureDefinition;
@@ -1516,7 +1542,7 @@ begin
   name := element.localName;
   path := '/'+pathPrefix(ns)+name;
 
-  sd := getDefinition(line(element), col(element), ns, name);
+  sd := getDefinition(line(element), col(element), ns, name, noException);
   try
     if (sd = nil) then
       exit(nil);
@@ -1967,7 +1993,7 @@ end;
 
 { TFHIRMMJsonParser }
 
-function TFHIRMMJsonParser.parse(stream: TStream): TFHIRMMElement;
+function TFHIRMMJsonParser.parse(stream: TStream; noException : boolean = false): TFHIRMMElement;
 var
   obj : TJsonObject;
 begin
@@ -1988,7 +2014,7 @@ begin
 end;
 
 
-function TFHIRMMJsonParser.parse(obj: TJsonObject): TFHIRMMElement;
+function TFHIRMMJsonParser.parse(obj: TJsonObject; noException : boolean = false): TFHIRMMElement;
 var
   name, path : String;
   sd : TFHIRStructureDefinition;

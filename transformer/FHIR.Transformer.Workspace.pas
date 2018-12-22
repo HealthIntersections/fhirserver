@@ -20,8 +20,8 @@ Type
     FFilename: String;
     FRow: integer;
     FIsDirty: boolean;
-    FKey: integer;
     FFormat: TTransformerFormat;
+    FErrorLine : Integer;
     function GetTitle: string;
   public
     constructor Create(filename : String; format : TTransformerFormat); overload;
@@ -30,11 +30,7 @@ Type
     property format : TTransformerFormat read FFormat;
     property filename : String read FFilename write FFilename;
     property title : string read GetTitle; // derived from filename
-
-    property key : integer read FKey write FKey; // this is not persisted; just used locally
-
     property row : integer read FRow write FRow;  // persisted in UI settings, not the worksapce (version control)
-    property isDirty : boolean read FIsDirty write FIsDirty; // status
   end;
 
   TWorkspace = class (TFSLObject)
@@ -53,7 +49,6 @@ Type
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
-    function GetFileByKey(key: integer): TWorkspaceFile;
   public
     constructor Create(folder : String);
 
@@ -76,7 +71,6 @@ Type
 
     function includesFile(fn : String) : boolean;
     function findFileByName(fn : String) : TWorkspaceFile;
-    property FileByKey[key : integer] : TWorkspaceFile read GetFileByKey;
 
     procedure reload;
     procedure save;
@@ -86,9 +80,6 @@ Type
   end;
 
 implementation
-
-var
-  GLastKey : integer = 0;
 
 function detectFormat(fn : String) : TTransformerFormat;
 var
@@ -202,31 +193,6 @@ begin
   if (o <> nil) then
     exit(o);
   result := nil;
-end;
-
-function TWorkspace.GetFileByKey(key: integer): TWorkspaceFile;
-var
-  item : TWorkspaceFile;
-begin
-  result := nil;
-  for item in messages do
-    if item.key = key then
-      exit(item);
-  for item in documents do
-    if item.key = key then
-      exit(item);
-  for item in resources do
-    if item.key = key then
-      exit(item);
-  for item in scripts do
-    if item.key = key then
-      exit(item);
-  for item in maps do
-    if item.key = key then
-      exit(item);
-  for item in templates do
-    if item.key = key then
-      exit(item);
 end;
 
 
@@ -426,8 +392,6 @@ end;
 constructor TWorkspaceFile.Create(filename: String; format : TTransformerFormat);
 begin
   Create;
-  Inc(GLastKey);
-  FKey := GLastKey;
   FFilename := filename;
   FFormat := format;
   FRow := 0;
@@ -438,8 +402,6 @@ var
   l, r : String;
 begin
   Create;
-  Inc(GLastKey);
-  FKey := GLastKey;
   FFilename := filename;
   FFormat := format;
   FRow := row;

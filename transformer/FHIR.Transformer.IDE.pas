@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
-  ScintEdit, ScintFormats,
+  ScintEdit, ScintInt, ScintFormats,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml,
   FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Cache.PackageManagerDialog,
@@ -41,11 +41,50 @@ const
 
   TEMPLATE_CDA = 'todo';
 
+  spCaretPos = 0;
+  spStatus = 2;
+
+  { Memo marker numbers }
+  mmIconHasEntry = 0;        { grey dot }
+  mmIconEntryProcessed = 1;  { green dot }
+  mmIconBreakpoint = 2;      { stop sign }
+  mmIconBreakpointGood = 3;  { stop sign + check }
+  mmIconBreakpointBad = 4;   { stop sign + X }
+  mmLineError = 10;          { red line highlight }
+  mmLineBreakpoint = 11;     { red line highlight }
+  mmLineBreakpointBad = 12;  { ugly olive line highlight }
+  mmLineStep = 13;           { blue line highlight }
+  inSquiggly = 0;
+  inPendingSquiggly = 1;
+
 type
   TTreeDataPointer = record
     obj : TFslObject;
   end;
   PTreeDataPointer = ^TTreeDataPointer;
+
+  TEditorInformation = class (TFslObject)
+  private
+    FErrorLine: Integer;
+    FIsDirty: boolean;
+    FInfo: TWorkspaceFile;
+    FMemo: TScintEdit;
+    FTab: TTabSheet;
+    procedure SetInfo(const Value: TWorkspaceFile);
+
+  public
+    destructor destroy; override;
+    property id : TWorkspaceFile read FInfo write SetInfo;
+    property tab : TTabSheet read FTab write FTab;
+    property memo : TScintEdit read FMemo write FMemo;
+    property isDirty : boolean read FIsDirty write FIsDirty;
+    property ErrorLine : Integer read FErrorLine write FErrorLine;
+  end;
+
+  TIDEScintEdit = class(TScintEdit)
+  protected
+    procedure CreateWnd; override;
+  end;
 
   TTransformerForm = class(TForm)
     Panel1: TPanel;
@@ -79,7 +118,7 @@ type
     Print1: TMenuItem;
     N1: TMenuItem;
     mnuDrop: TMenuItem;
-    ChangeWorkspace1: TMenuItem;
+    mnuWorkspace: TMenuItem;
     N2: TMenuItem;
     Exit1: TMenuItem;
     Edit1: TMenuItem;
@@ -177,6 +216,12 @@ type
     mnuUnixEOL: TMenuItem;
     mnuWindowsEOL: TMenuItem;
     ToolButton2: TToolButton;
+    mnuCompile: TMenuItem;
+    tbCompile: TToolButton;
+    pnlStatus: TStatusBar;
+    mnuSaveAll: TMenuItem;
+    tbSaveAll: TToolButton;
+    mnuChooseWorkspace: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -194,7 +239,6 @@ type
     procedure vtWorkspaceAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vtWorkspaceRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vtWorkspaceGetImageIndexEx(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer; var ImageList: TCustomImageList);
-    procedure ChangeWorkspace1Click(Sender: TObject);
     procedure edtWorkspaceChange(Sender: TObject);
     procedure pmWorkspacePopup(Sender: TObject);
     procedure File1Click(Sender: TObject);
@@ -242,6 +286,9 @@ type
     procedure mnuWindowsEOLClick(Sender: TObject);
     procedure mnuUnixEOLClick(Sender: TObject);
     procedure mnuRemoveEmptyLinesClick(Sender: TObject);
+    procedure mnuCompileClick(Sender: TObject);
+    procedure mnuSaveAllClick(Sender: TObject);
+    procedure mnuChooseWorkspaceClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -251,32 +298,52 @@ type
     FLastReplaceText: String;
     FLoading : boolean;
     FCache : TResourceMemoryCache;
+    FEditor : TEditorInformation;
 
     function DoSave(command : String) : boolean;
     function nodeCaption(i : integer) : String;
     procedure LoadWorkspace(proj: TWorkspace);
     procedure makeNewFile(title, ext, template : String; fmt : TTransformerFormat; category : TFslList<TWorkspaceFile>);
 
-    function findWorkspaceFile(f : TWorkspaceFile) : TTabSheet;
+    function findWorkspaceFile(f : TWorkspaceFile) : TEditorInformation;
     procedure openWorkspaceFile(f : TWorkspaceFile);
-    procedure saveWorkspaceFile(f : TWorkspaceFile);
-    procedure closeWorkspaceFile(f : TWorkspaceFile; checkSave : boolean);
-    procedure renameWorkspaceFile(f : TWorkspaceFile);
+    procedure saveWorkspaceFile(editor : TEditorInformation);
+    procedure closeWorkspaceFile(editor : TEditorInformation; checkSave : boolean);
+    procedure renameWorkspaceFile(editor : TEditorInformation);
+    function editorForTab(tab : TTabSheet) : TEditorInformation;
+    function editorForFile(f : TWorkspaceFile) : TEditorInformation;
+    function anyFilesDirty : boolean;
 
     procedure FindNext(editor : TScintEdit);
     procedure InitializeFindText(Dlg: TFindDialog; editor : TScintEdit);
 
+    procedure mnuPastWorkspaceClick(Sender: TObject);
     procedure memoChange(Sender: TObject; const Info: TScintEditChangeInfo);
     procedure memoExit(Sender: TObject);
     procedure ZoomIn;
     procedure ZoomOut;
     procedure ZoomReset;
 
+    procedure status(color : TColor; msg : String);
     function engineGetSource(sender : TConversionEngine; f : TWorkspaceFile) : TStream;
     procedure engineStatus(sender : TConversionEngine; message : String);
     procedure engineLog(sender : TConversionEngine; message : String);
     function rewriteV2(src, title: String): String;
     function rewriteCDA(src, title: String): String;
+
+    procedure checkV2(src, title : String);
+    procedure checkCDA(src, title : String);
+    procedure checkResource(src, title : String);
+    procedure checkJS(src, title : String);
+    procedure checkMap(src, title : String);
+    procedure checkTemplate(src, title : String);
+
+    procedure SetErrorLine(ALine: Integer);
+    procedure HideError();
+    procedure UpdateLineMarkers(const Line: Integer);
+    procedure MemoLinesDeleted(FirstLine, Count, FirstAffectedLine: Integer);
+    procedure MemoLinesInserted(FirstLine, Count: integer);
+    procedure UpdateAllLineMarkers();
   public
     { Public declarations }
   end;
@@ -314,6 +381,16 @@ begin
 end;
 
 { TTransformerForm }
+
+function TTransformerForm.anyFilesDirty: boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := 1 to pgTabs.PageCount - 1 do
+    if editorForTab(pgTabs.Pages[i]).IsDirty then
+      exit(true);
+end;
 
 procedure TTransformerForm.btnAddContentClick(Sender: TObject);
 var
@@ -415,20 +492,11 @@ begin
   btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
 end;
 
-procedure TTransformerForm.ChangeWorkspace1Click(Sender: TObject);
-begin
-  fd.DefaultFolder := FWorkspace.folder;
-  if fd.Execute then
-    LoadWorkspace(TWorkspace.Create(fd.FileName));
-end;
-
 procedure TTransformerForm.pgTabsChange(Sender: TObject);
-var
-  f : TWorkspaceFile;
-  editor : TScintEdit;
 begin
   if pgTabs.ActivePageIndex = 0 then
   begin
+    FEditor := nil;
     mnuUndo.Enabled := false;
     tbUndo.Enabled := false;
     mnuRedo.Enabled := false;
@@ -450,31 +518,36 @@ begin
     mnuDense.Enabled := false;
     mnuEOL.Enabled := false;
     mnuRemoveEmptyLines.Enabled := false;
+    mnuCompile.Enabled := false;
+    tbCompile.Enabled := false;
     Caption := 'FHIR Transformer IDE';
   end
   else
   begin
-    f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-    editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
+    FEditor := editorForTab(pgTabs.ActivePage); // (pgTabs.ActivePage.Controls[0] as TScintEdit).context as TEditorInformation;
     Caption := pgTabs.ActivePage.Caption+'- FHIR Transformer';
     mnuSearch.Enabled := true;
     mnuFindNext.Enabled := true;
     mnuReplace.Enabled := true;
     mnuGoto.Enabled := true;
-    mnuCompare.Enabled := f.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
+    mnuCompare.Enabled := FEditor.id.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
     tbCompare.Enabled := mnuCompare.Enabled;
-    mnuPretty.Enabled := f.format in [fmtCDA, fmtResource];
-    mnuDense.Enabled := f.format in [fmtCDA, fmtResource];
+    mnuPretty.Enabled := FEditor.id.format in [fmtCDA, fmtResource];
+    mnuDense.Enabled := FEditor.id.format in [fmtCDA, fmtResource];
     mnuEOL.Enabled := true;
     mnuWindowsEOL.Checked := false;
     mnuUnixEOL.Checked := false;
-    case editor.LineEndings of
+    mnuCompile.Enabled := true;
+    tbCompile.Enabled := true;
+    case FEditor.memo.LineEndings of
       sleCRLF: mnuWindowsEOL.Checked := true;
       sleLF: mnuUnixEOL.Checked := true;
     end;
     mnuRemoveEmptyLines.Enabled := true;
-    memoExit(pgTabs.ActivePage.Controls[0]);
+    memoExit(nil);
   end;
+  tbSaveAll.Enabled := anyFilesDirty;
+  mnuSaveAll.Enabled := tbSaveAll.Enabled;
 end;
 
 procedure TTransformerForm.pmCloseOthersClick(Sender: TObject);
@@ -482,11 +555,10 @@ var
   dirty : boolean;
   form : TListSelectorForm;
   i : integer;
-  af, f : TWorkspaceFile;
+  f : TEditorInformation;
 begin
   dirty := false;
   FWorkspace.save;
-  af := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
 
   form := TListSelectorForm.Create(self);
   try
@@ -495,14 +567,13 @@ begin
     form.Verb := 'Close';
     for i := 1 to pgTabs.PageCount - 1 do
     begin
-      f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
-      if (f <> af) then
+      f := editorForTab(pgTabs.Pages[i]);
+      if (f <> FEditor) then
       begin
-        FWorkspace.OpenFile(f);
         if (f.isDirty) then
         begin
           dirty := true;
-          form.ListBox1.Items.AddObject(f.title, f)
+          form.ListBox1.Items.AddObject(f.id.title, f)
         end;
       end;
     end;
@@ -513,15 +584,15 @@ begin
         for i := 0 to form.ListBox1.Items.Count - 1 do
         begin
           if form.ListBox1.Checked[i] then
-            saveWorkspaceFile(TWorkspaceFile(form.ListBox1.items.objects[i]));
+            saveWorkspaceFile(TEditorInformation(form.ListBox1.items.objects[i]));
         end;
       end;
     end;
 
     for i := pgTabs.PageCount - 1 downto 1 do
     begin
-      f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
-      if (f <> af) then
+      f := editorForTab(pgTabs.Pages[i]);
+      if (f <> FEditor) then
         closeWorkspaceFile(f, false);
     end;
   finally
@@ -532,11 +603,10 @@ end;
 
 procedure TTransformerForm.pmCloseThisClick(Sender: TObject);
 var
-  f : TWorkspaceFile;
+  e : TEditorInformation;
 begin
   FWorkspace.save;
-  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-  closeWorkspaceFile(f, true);
+  closeWorkspaceFile(FEditor, true);
   FWorkspace.save;
 end;
 
@@ -545,7 +615,7 @@ var
   dirty : boolean;
   form : TListSelectorForm;
   i : integer;
-  f : TWorkspaceFile;
+  e : TEditorInformation;
 begin
   dirty := false;
   result := false;
@@ -557,12 +627,12 @@ begin
     form.Verb := command;
     for i := 1 to pgTabs.PageCount - 1 do
     begin
-      f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
-      FWorkspace.OpenFile(f);
-      if (f.isDirty) then
+      e := editorForTab(pgTabs.Pages[i]);
+      FWorkspace.OpenFile(e.id);
+      if (e.isDirty) then
       begin
         dirty := true;
-        form.ListBox1.Items.AddObject(f.title, f)
+        form.ListBox1.Items.AddObject(e.id.title, e)
       end;
     end;
     if dirty then
@@ -572,7 +642,7 @@ begin
         for i := 0 to form.ListBox1.Items.Count - 1 do
         begin
           if form.ListBox1.Checked[i] then
-            saveWorkspaceFile(TWorkspaceFile(form.ListBox1.items.objects[i]));
+            saveWorkspaceFile(TEditorInformation(form.ListBox1.items.objects[i]));
         end;
         result := true;
       end;
@@ -584,6 +654,26 @@ begin
   end;
 end;
 
+function TTransformerForm.editorForFile(f: TWorkspaceFile): TEditorInformation;
+var
+  i : integer;
+  e : TEditorInformation;
+begin
+  for i := 1 to pgTabs.PageCount do
+  begin
+    e := editorForTab(pgTabs.Pages[i]);
+    if e.id = f then
+      exit(e);
+  end;
+  result := nil;
+
+end;
+
+function TTransformerForm.editorForTab(tab: TTabSheet): TEditorInformation;
+begin
+ result := (tab.Controls[0] as TScintEdit).context as TEditorInformation;
+end;
+
 procedure TTransformerForm.edtWorkspaceChange(Sender: TObject);
 begin
   FWorkspace.name := edtWorkspace.Text;
@@ -592,13 +682,13 @@ end;
 
 function TTransformerForm.engineGetSource(sender: TConversionEngine; f: TWorkspaceFile): TStream;
 var
-  tab : TTabSheet;
+  editor : TEditorInformation;
 begin
-  tab := findWorkspaceFile(f);
-  if tab = nil then
+  editor := findWorkspaceFile(f);
+  if editor = nil then
     result := nil
   else
-    result := TStringStream.Create((tab.Controls[0] as TScintEdit).RawText);
+    result := TStringStream.Create(editor.memo.RawText);
 end;
 
 procedure TTransformerForm.engineLog(sender: TConversionEngine; message: String);
@@ -621,7 +711,7 @@ procedure TTransformerForm.File1Click(Sender: TObject);
 var
   node : PVirtualNode;
   p : PTreeDataPointer;
-  f : TWorkspaceFile;
+  e : TEditorInformation;
 begin
   if FSelected = nil then
   begin
@@ -647,10 +737,9 @@ begin
       mnuDrop.Enabled := false;
     end;
   end;
-  if pgTabs.TabIndex > 0 then
+  if assigned(FEditor) then
   begin
-    f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-    mnuSave.Enabled := f.isDirty;
+    mnuSave.Enabled := FEditor.isDirty;
     mnuClose.Enabled := true;
   end
   else
@@ -716,7 +805,7 @@ var
   dirty : boolean;
   form : TListSelectorForm;
   i : integer;
-  f : TWorkspaceFile;
+  e : TEditorInformation;
 begin
   dirty := false;
   FWorkspace.save;
@@ -728,12 +817,12 @@ begin
     form.Verb  := 'Close';
     for i := 1 to pgTabs.PageCount - 1 do
     begin
-      f := FWorkspace.FileByKey[pgTabs.Pages[i].Tag];
-      FWorkspace.OpenFile(f);
-      if (f.isDirty) then
+      e := editorForTab(pgTabs.Pages[i]);
+      FWorkspace.OpenFile(e.id);
+      if (e.isDirty) then
       begin
         dirty := true;
-        form.ListBox1.Items.AddObject(f.title, f)
+        form.ListBox1.Items.AddObject(e.id.title, e)
       end;
     end;
     if not dirty then
@@ -742,7 +831,7 @@ begin
       CanClose := form.ShowModal = mrOk;
       for i := 0 to form.ListBox1.Items.Count - 1 do
         if form.ListBox1.Checked[i] then
-          saveWorkspaceFile(TWorkspaceFile(form.ListBox1.items.objects[i]));
+          saveWorkspaceFile(TEditorInformation(form.ListBox1.items.objects[i]));
   finally
     form.Free;
   end;
@@ -768,7 +857,13 @@ begin
 end;
 
 procedure TTransformerForm.FormDestroy(Sender: TObject);
+var
+  i : integer;
 begin
+  for i := 1 to pgTabs.PageCount - 1 do
+    editorForTab(pgTabs.Pages[i]).Free;
+  for i := mnuWorkspace.Count - 1 downto 1 do
+    mnuWorkspace.Items[I].Free;
   FIni.Free;
   FCache.Free;
   FWorkspace.Free;
@@ -815,6 +910,11 @@ var
   f : TWorkspaceFile;
   files : TFslList<TWorkspaceFile>;
   close : boolean;
+  key : integer;
+  st : TStringList;
+  s : String;
+  mnu : TMenuItem;
+  i : integer;
 begin
   if FWorkspace <> nil then
   begin
@@ -824,6 +924,10 @@ begin
   end;
   FWorkspace.Free;
   FWorkspace := proj;
+  FIni.DeleteKey('Workspaces', proj.folder);
+  key := FIni.ReadInteger('Workspace', 'last', 0) + 1;
+  FIni.WriteInteger('Workspace', 'last', key);
+  FIni.WriteInteger('Workspaces', proj.folder, key);
   FLoading := true;
   try
     FIni.WriteString('Workspace', 'folder', FWorkspace.folder);
@@ -843,6 +947,23 @@ begin
     pgTabsChange(self);
   finally
     FLoading := false;
+  end;
+  for i := mnuWorkspace.Count - 1 downto 1 do
+    mnuWorkspace.Items[I].Free;
+  st := TStringList.Create;
+  try
+    FIni.ReadSection('Workspaces', st);
+    for i := st.Count -1 downto 0 do // assuming order is maintained in the INi file...
+      if st[i] <> FWorkspace.folder then
+      begin
+        mnu := TMenuItem.Create(mnuWorkspace);
+        mnu.Caption := st[i];
+        mnu.Tag := FIni.ReadInteger('Workspaces', st[i], 0);
+        mnu.OnClick := mnuPastWorkspaceClick;
+        mnuWorkspace.add(mnu);
+      end;
+  finally
+    st.Free;
   end;
 end;
 
@@ -872,29 +993,47 @@ begin
 end;
 
 procedure TTransformerForm.memoChange(Sender: TObject; const Info: TScintEditChangeInfo);
-var
-  f : TWorkspaceFile;
+ procedure LinesInsertedOrDeleted;
+  var
+    FirstAffectedLine, Line, LinePos: Integer;
+  begin
+    Line := FEditor.Memo.GetLineFromPosition(Info.StartPos);
+    LinePos := FEditor.Memo.GetPositionFromLine(Line);
+    FirstAffectedLine := Line;
+    { If the deletion/insertion does not start on the first character of Line,
+      then we consider the first deleted/inserted line to be the following
+      line (Line+1). This way, if you press Del at the end of line 1, the dot
+      on line 2 is removed, while line 1's dot stays intact. }
+    if Info.StartPos > LinePos then
+      Inc(Line);
+    if Info.LinesDelta > 0 then
+      MemoLinesInserted(Line, Info.LinesDelta)
+    else
+      MemoLinesDeleted(Line, -Info.LinesDelta, FirstAffectedLine);
+  end;
 begin
-  f := FWorkspace.FileByKey[(Sender as TScintEdit).Tag];
-  f.isDirty := true;
-  tbSave.Enabled := f.isDirty;
+  FEditor.isDirty := true;
+  tbSave.Enabled := FEditor.isDirty;
   mnuSave.Enabled := tbSave.Enabled;
+  tbSaveAll.Enabled := anyFilesDirty;
+  mnuSaveAll.Enabled := tbSaveAll.Enabled;
+  if Info.LinesDelta <> 0 then
+    LinesInsertedOrDeleted;
 end;
 
 procedure TTransformerForm.memoExit(Sender: TObject);
-var
-  m : TScintEdit;
-  f : TWorkspaceFile;
 begin
-  m := (Sender as TScintEdit);
-  f := FWorkspace.FileByKey[(Sender as TScintEdit).Tag];
-  f.Row := m.CaretLine;
+  FEditor.id.Row := FEditor.memo.CaretLine;
+  if (FEditor.ErrorLine < 0) then
+    HideError;
+  pnlStatus.Panels[spCaretPos].Text := Format('%4d:%4d', [FEditor.memo.CaretLine + 1, FEditor.memo.CaretColumnExpanded + 1]);
+
   // undo/redo
-  mnuUndo.Enabled := m.CanUndo;
-  tbUndo.Enabled := m.CanUndo;
-  mnuRedo.Enabled := m.CanUndo;
+  mnuUndo.Enabled := FEditor.memo.CanUndo;
+  tbUndo.Enabled := FEditor.memo.CanUndo;
+  mnuRedo.Enabled := FEditor.memo.CanUndo;
   // clipbrd
-  mnuCut.Enabled := m.SelText <> '';
+  mnuCut.Enabled := FEditor.memo.SelText <> '';
   tbCut.Enabled := mnuCut.Enabled;
   pmnuCut.Enabled := mnuCut.Enabled;
   mnuCopy.Enabled := mnuCut.Enabled;
@@ -902,8 +1041,10 @@ begin
   pmnuCopy.Enabled := mnuCut.Enabled;
 
   // misc
-  tbSave.Enabled := f.isDirty;
+  tbSave.Enabled := FEditor.isDirty;
   mnuSave.Enabled := tbSave.Enabled;
+  tbSaveAll.Enabled := anyFilesDirty;
+  mnuSaveAll.Enabled := tbSaveAll.Enabled;
 end;
 
 procedure TTransformerForm.mnuCopyClick(Sender: TObject);
@@ -923,15 +1064,10 @@ begin
 end;
 
 procedure TTransformerForm.mnuDenseClick(Sender: TObject);
-var
-  f : TWorkspaceFile;
-  editor : TScintEdit;
 begin
-  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
-  case f.format of
+  case FEditor.id.format of
     fmtV2: raise Exception.Create('Not Supported Yet');
-    fmtCDA: editor.RawText := makeXmlDense(editor.RawText);
+    fmtCDA: FEditor.memo.RawText := makeXmlDense(FEditor.memo.RawText);
     fmtResource: raise Exception.create('Not Supported Yet');
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: raise Exception.create('Not Supported');
@@ -955,10 +1091,10 @@ begin
     case MessageDlg('Drop '+f.filename+'. Do you want to delete the actual file?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo, TMsgDlgBtn.mbCancel], 0) of
       mrCancel : abort;
       mrYes : DeleteFile(makeAbsolutePath(f.filename, FWorkspace.folder));
-      mrNo : saveWorkspaceFile(f);
+      mrNo : saveWorkspaceFile(editorForFile(f));
     end;
     list.Remove(f);
-    closeWorkspaceFile(f, false);
+    closeWorkspaceFile(editorForFile(f), false);
     FWorkspace.save;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 6;
@@ -1080,16 +1216,32 @@ begin
   editor.PasteFromClipboard;
 end;
 
-procedure TTransformerForm.mnuPrettyClick(Sender: TObject);
+procedure TTransformerForm.mnuPastWorkspaceClick(Sender: TObject);
 var
-  f : TWorkspaceFile;
-  editor : TScintEdit;
+  st : TStringList;
+  s, f : String;
 begin
-  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
-  case f.format of
+  f := '';
+  st := TStringList.create;
+  try
+    FIni.ReadSection('Workspaces', st);
+    for s in st do
+      if FIni.ReadInteger('Workspaces', s, 0) = (Sender as TMenuItem).Tag then
+        f := s;
+  finally
+    st.free;
+  end;
+  if (folderExists(f)) then
+    LoadWorkspace(TWorkspace.Create(f))
+  else
+    MessageDlg('Unable to find '+f, mtError, [mbok], 0);
+end;
+
+procedure TTransformerForm.mnuPrettyClick(Sender: TObject);
+begin
+  case FEditor.id.format of
     fmtV2: raise Exception.Create('Not Supported Yet');
-    fmtCDA: editor.RawText := makeXmlPretty(editor.RawText);
+    fmtCDA: FEditor.memo.RawText := makeXmlPretty(FEditor.memo.RawText);
     fmtResource: raise Exception.create('Not Supported Yet');
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: raise Exception.create('Not Supported');
@@ -1149,7 +1301,7 @@ begin
       FWorkspace.save;
       vtWorkspace.RootNodeCount := 0;
       vtWorkspace.RootNodeCount := 6;
-      renameWorkspaceFile(f);
+      renameWorkspaceFile(editorForFile(f));
     end;
   end;
 end;
@@ -1164,13 +1316,27 @@ begin
   ReplaceDialog.Execute;
 end;
 
-procedure TTransformerForm.mnuSaveClick(Sender: TObject);
+procedure TTransformerForm.mnuSaveAllClick(Sender: TObject);
 var
-  f : TWorkspaceFile;
+  i : integer;
+  e : TEditorInformation;
 begin
-  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-  saveWorkspaceFile(f);
+  for i := 1 to pgTabs.PageCount do
+  begin
+    e := editorForTab(pgTabs.Pages[i]);
+    if (e.isDirty) then
+      saveWorkspaceFile(e);
+  end;
+end;
+
+procedure TTransformerForm.mnuSaveClick(Sender: TObject);
+begin
+  saveWorkspaceFile(FEditor);
   FWorkspace.save;
+  tbSave.Enabled := FEditor.isDirty;
+  mnuSave.Enabled := tbSave.Enabled;
+  tbSaveAll.Enabled := anyFilesDirty;
+  mnuSaveAll.Enabled := tbSaveAll.Enabled;
 end;
 
 procedure TTransformerForm.mnuSearchClick(Sender: TObject);
@@ -1411,14 +1577,16 @@ begin
     TScintEdit(pgTabs.Pages[i].Controls[0]).font.Assign(mConsole.Font);
 end;
 
-function TTransformerForm.findWorkspaceFile(f : TWorkspaceFile) : TTabSheet;
+function TTransformerForm.findWorkspaceFile(f : TWorkspaceFile) : TEditorInformation;
 var
   i : integer;
+  e : TEditorInformation;
 begin
-  for i := 0 to pgTabs.PageCount - 1 do
+  for i := 1 to pgTabs.PageCount - 1 do
   begin
-    if pgTabs.Pages[i].Tag = f.key then
-      exit(pgTabs.Pages[i]);
+    e := editorForTab(pgTabs.Pages[i]);
+    if e.id = f then
+      exit(e);
   end;
   result := nil;
 end;
@@ -1438,24 +1606,16 @@ var
   tab : TTabSheet;
   editor : TScintEdit;
   s : String;
+  info : TEditorInformation;
 begin
-  tab := findWorkspaceFile(f);
-  if tab <> nil then
-    pgTabs.ActivePage := tab
+  info := findWorkspaceFile(f);
+  if info <> nil then
+    pgTabs.ActivePage := info.tab
   else
   begin
     tab := TTabSheet.Create(pgTabs);
     tab.Caption := f.title;
     tab.PageControl := pgTabs;
-    pgTabs.ActivePage := tab;
-    editor := TScintEdit.create(tab);
-    editor.Parent := tab;
-    editor.Font.Assign(mConsole.Font);
-    editor.OnChange := memoChange;
-    editor.OnUpdateUI := memoExit;
-    editor.OnKeyDown := FormKeyDown;
-    editor.LineNumbers := true;
-    editor.PopupMenu := pmEditor;
     case f.format of
       fmtV2: tab.ImageIndex := 9;
       fmtCDA: tab.ImageIndex := 10;
@@ -1464,12 +1624,15 @@ begin
       fmtMap: tab.ImageIndex := 13;
       fmtTemplate: tab.ImageIndex := 14;
     end;
-
-    tab.Tag := f.key;
-    editor.Tag := f.key;
+    editor := TIDEScintEdit.create(tab);
+    editor.Parent := tab;
+    editor.Font.Assign(mConsole.Font);
+    editor.OnChange := memoChange;
+    editor.OnUpdateUI := memoExit;
+    editor.OnKeyDown := FormKeyDown;
+    editor.LineNumbers := true;
+    editor.PopupMenu := pmEditor;
     editor.Align := alClient;
-    s := makeAbsolutePath(f.filename, FWorkspace.folder);
-    editor.Lines.LoadFromFile(s);
     case f.format of
       fmtV2 :  editor.Styler := TV2Styler.Create(self);
       fmtCDA  : editor.Styler := TCDAStyler.Create(self);
@@ -1482,27 +1645,41 @@ begin
       fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
     end;
 
+    info := TEditorInformation.create;
+    editor.context := info;
+    info.memo := editor;
+    info.id := f.link;
+    info.tab := tab;
+    FEditor := info;
+
+    s := makeAbsolutePath(f.filename, FWorkspace.folder);
+    editor.Lines.LoadFromFile(s);
     editor.ClearUndo;
     editor.CaretLine := f.row;
-    f.isDirty := false;
+    info.isDirty := false;
+    info.ErrorLine := -1;
+    pgTabs.ActivePage := tab;
     pgTabsChange(pgTabs);
   end;
 end;
 
-procedure TTransformerForm.saveWorkspaceFile(f : TWorkspaceFile);
+procedure TTransformerForm.saveWorkspaceFile(editor : TEditorInformation);
 var
-  tab : TTabSheet;
   s, v : String;
-  m : TScintEdit;
 begin
-  tab := findWorkspaceFile(f);
-  if tab <> nil then
-  begin
-    s := makeAbsolutePath(f.filename, FWorkspace.folder);
-    m := tab.Controls[0] as TScintEdit;
-    m.Lines.SaveToFile(s);
-    f.isDirty := false;
-  end;
+  if editor = nil then
+    exit;
+  s := makeAbsolutePath(editor.id.filename, FWorkspace.folder);
+  editor.memo.Lines.SaveToFile(s);
+  editor.isDirty := false;
+end;
+
+procedure TTransformerForm.status(color: TColor; msg: String);
+begin
+  pnlStatus.Color := color;
+  pnlStatus.Panels[spStatus].text := '   '+msg;
+  pnlStatus.Update;
+  Application.ProcessMessages;
 end;
 
 procedure TTransformerForm.tbHomeClick(Sender: TObject);
@@ -1535,34 +1712,32 @@ begin
   end;
 end;
 
-procedure TTransformerForm.closeWorkspaceFile(f : TWorkspaceFile; checkSave : boolean);
+procedure TTransformerForm.closeWorkspaceFile(editor : TEditorInformation; checkSave : boolean);
 var
   tab : TTabSheet;
 begin
-  tab := findWorkspaceFile(f);
-  if tab <> nil then
+  if (editor = nil) then
+    exit;
+
+  if editor.isDirty and checkSave then
   begin
-    if f.isDirty and checkSave then
-    begin
-      case MessageDlg('Do you want to save '+f.filename+'?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo, TMsgDlgBtn.mbCancel], 0) of
-        mrCancel : abort;
-        mrYes : saveWorkspaceFile(f);
-        mrNo : saveWorkspaceFile(f);
-      end;
+    case MessageDlg('Do you want to save '+editor.id.filename+'?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo, TMsgDlgBtn.mbCancel], 0) of
+      mrCancel : abort;
+      mrYes : saveWorkspaceFile(editor);
+      mrNo : saveWorkspaceFile(editor);
     end;
-    if pgTabs.ActivePage = tab then
-      pgTabs.TabIndex := pgTabs.TabIndex - 1;
-    tab.Free;
   end;
+  if pgTabs.ActivePage = tab then
+    pgTabs.TabIndex := pgTabs.TabIndex - 1;
+  tab.Free;
+  editor.Free;
 end;
 
-procedure TTransformerForm.renameWorkspaceFile(f : TWorkspaceFile);
-var
-  tab : TTabSheet;
+procedure TTransformerForm.renameWorkspaceFile(editor : TEditorInformation);
 begin
-  tab := findWorkspaceFile(f);
-  if tab <> nil then
-    tab.Caption := f.title;
+  if editor = nil then
+    exit;
+  editor.tab.Caption := editor.id.title;
 end;
 
 procedure TTransformerForm.ReplaceDialogReplace(Sender: TObject);
@@ -1658,28 +1833,31 @@ begin
    end;
 end;
 
+procedure TTransformerForm.mnuChooseWorkspaceClick(Sender: TObject);
+begin
+  fd.DefaultFolder := FWorkspace.folder;
+  if fd.Execute then
+    LoadWorkspace(TWorkspace.Create(fd.FileName));
+end;
+
 procedure TTransformerForm.mnuCompareClick(Sender: TObject);
 var
-  f : TWorkspaceFile;
-  editor : TScintEdit;
   fmt : integer;
   src, output, msg : String;
   fnin, fnout: String;
 begin
-  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
-  src := editor.RawText;
+  src := FEditor.memo.RawText;
   fmt := 1;
-  case f.format of
+  case FEditor.id.format of
     fmtV2: raise Exception.Create('Not Supported Yet');
     fmtCDA:
       begin
       fmt := 2;
-      output := rewriteCDA(src, f.title);
+      output := rewriteCDA(src, FEditor.id.title);
       end;
     fmtResource: raise Exception.create('Not Supported Yet');
     fmtJS: raise Exception.create('Not Supported Yet');
-    fmtMap: output := rewriteV2(src, f.title);
+    fmtMap: output := rewriteV2(src, FEditor.id.title);
     fmtTemplate: raise Exception.create('Not Supported Yet');
   end;
   showdiff := true;
@@ -1699,21 +1877,303 @@ begin
   end
 end;
 
-procedure TTransformerForm.Rewrite1Click(Sender: TObject);
-var
-  f : TWorkspaceFile;
-  editor : TScintEdit;
+procedure TTransformerForm.mnuCompileClick(Sender: TObject);
 begin
-  f := FWorkspace.FileByKey[pgTabs.ActivePage.Tag];
-  editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
-  case f.format of
+  SetErrorLine(-1);
+  status(clNavy, 'Checking '+FEditor.id.title);
+  try
+    case FEditor.id.format of
+      fmtV2: checkV2(FEditor.memo.RawText, FEditor.id.title);
+      fmtCDA: checkCDA(FEditor.memo.RawText, FEditor.id.title);
+      fmtResource: checkResource(FEditor.memo.RawText, FEditor.id.title);
+      fmtJS: checkJS(FEditor.memo.RawText, FEditor.id.title);
+      fmtMap: checkMap(FEditor.memo.RawText, FEditor.id.title);
+      fmtTemplate: checkTemplate(FEditor.memo.RawText, FEditor.id.title);
+    end;
+    status(clGreen, 'All Ok')
+  except
+    on e : EParserException do
+    begin
+      SetErrorLine(e.Line-1);
+      status(clMaroon, 'Error Compiling: '+e.message);
+    end;
+    on e : Exception do
+    begin
+      status(clMaroon, 'Error Compiling: '+e.message)
+    end;
+  end;
+end;
+
+procedure TTransformerForm.Rewrite1Click(Sender: TObject);
+begin
+  case FEditor.id.format of
     fmtV2: raise Exception.Create('Not Supported Yet');
-    fmtCDA: editor.RawText := rewriteCDA(editor.RawText, f.title);
+    fmtCDA: FEditor.memo.RawText := rewriteCDA(FEditor.memo.RawText, FEditor.id.title);
     fmtResource: raise Exception.create('Not Supported Yet');
     fmtJS: raise Exception.create('Not Supported Yet');
-    fmtMap: editor.RawText := rewriteV2(editor.RawText, f.title);
+    fmtMap: FEditor.memo.RawText := rewriteV2(FEditor.memo.RawText, FEditor.id.title);
     fmtTemplate: raise Exception.create('Not Supported Yet');
   end;
+end;
+
+procedure TTransformerForm.checkV2(src, title : String);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TTransformerForm.checkCDA(src, title : String);
+begin
+  rewriteCDA(src, title); // just ignore output
+end;
+
+procedure TTransformerForm.checkResource(src, title : String);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TTransformerForm.checkJS(src, title : String);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TTransformerForm.checkMap(src, title : String);
+var
+  utils : TFHIRStructureMapUtilities;
+begin
+  utils := TFHIRStructureMapUtilities.Create(nil, nil, nil);
+  try
+    utils.parse(src, title).free;
+  finally
+    utils.Free;
+  end;
+end;
+
+procedure TTransformerForm.checkTemplate(src, title : String);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TTransformerForm.SetErrorLine(ALine: Integer);
+var
+  OldLine: Integer;
+begin
+  if FEditor.ErrorLine <> ALine then
+  begin
+    OldLine := FEditor.ErrorLine;
+    FEditor.ErrorLine := ALine;
+    if OldLine >= 0 then
+      UpdateLineMarkers(OldLine);
+    if FEditor.ErrorLine >= 0 then
+    begin
+      FEditor.memo.CaretLine := FEditor.ErrorLine;
+      FEditor.memo.ScrollCaretIntoView;
+      UpdateLineMarkers(FEditor.ErrorLine);
+    end;
+  end;
+end;
+
+procedure TTransformerForm.HideError;
+begin
+  SetErrorLine(-1);
+end;
+
+procedure TTransformerForm.MemoLinesInserted(FirstLine, Count: integer);
+var
+  I, Line: Integer;
+begin
+  if FEditor.ErrorLine >= FirstLine then
+    FEditor.ErrorLine := FEditor.ErrorLine + Count;
+end;
+
+procedure TTransformerForm.MemoLinesDeleted(FirstLine, Count, FirstAffectedLine: Integer);
+var
+  I, Line: Integer;
+begin
+  if FEditor.ErrorLine >= FirstLine then
+  begin
+    if FEditor.ErrorLine < FirstLine + Count then
+      FEditor.ErrorLine := -1
+    else
+      FEditor.ErrorLine := FEditor.ErrorLine - Count;
+  end;
+
+  { When lines are deleted, Scintilla insists on moving all of the deleted
+    lines' markers to the line on which the deletion started
+    (FirstAffectedLine). This is bad for us as e.g. it can result in the line
+    having two conflicting markers (or two of the same marker). There's no
+    way to stop it from doing that, or to easily tell which markers came from
+    which lines, so we simply delete and re-create all markers on the line. }
+  UpdateLineMarkers(FirstAffectedLine);
+end;
+
+procedure TTransformerForm.UpdateLineMarkers(const Line: Integer);
+var
+  NewMarker: Integer;
+begin
+  if Line >= FEditor.Memo.Lines.Count then
+    Exit;
+
+  { Delete all markers on the line. To flush out any possible duplicates,
+    even the markers we'll be adding next are deleted. }
+  if FEditor.Memo.GetMarkers(Line) <> [] then
+    FEditor.Memo.DeleteAllMarkersOnLine(Line);
+
+//  if FStepLine = Line then
+//    Memo.AddMarker(Line, mmLineStep)
+//  else
+  if FEditor.ErrorLine = Line then
+    FEditor.Memo.AddMarker(Line, mmLineError)
+//  else if NewMarker in [mmIconBreakpoint, mmIconBreakpointGood] then
+//    Memo.AddMarker(Line, mmLineBreakpoint)
+//  else if NewMarker = mmIconBreakpointBad then
+//    Memo.AddMarker(Line, mmLineBreakpointBad);
+end;
+
+procedure TTransformerForm.UpdateAllLineMarkers;
+var
+  Line: Integer;
+begin
+  for Line := 0 to FEditor.Memo.Lines.Count-1 do
+    UpdateLineMarkers(Line);
+end;
+
+{ TEditorInformation }
+
+destructor TEditorInformation.destroy;
+begin
+  FInfo.free;
+  inherited;
+end;
+
+procedure TEditorInformation.SetInfo(const Value: TWorkspaceFile);
+begin
+  FInfo.free;
+  FInfo := Value;
+end;
+
+{ TIDEScintEdit }
+
+procedure TIDEScintEdit.CreateWnd;
+const
+  PixmapHasEntry: array[0..8] of PAnsiChar = (
+    '5 5 2 1',
+    'o c #808080',
+    '. c #c0c0c0',
+    'ooooo',
+    'o...o',
+    'o...o',
+    'o...o',
+    'ooooo',
+    nil);
+  PixmapEntryProcessed: array[0..8] of PAnsiChar = (
+    '5 5 2 1',
+    'o c #008000',
+    '. c #00ff00',
+    'ooooo',
+    'o...o',
+    'o...o',
+    'o...o',
+    'ooooo',
+    nil);
+  PixmapBreakpoint: array[0..14] of PAnsiChar = (
+    '9 10 3 1',
+    '= c none',
+    'o c #000000',
+    '. c #ff0000',
+    '=========',
+    '==ooooo==',
+    '=o.....o=',
+    'o.......o',
+    'o.......o',
+    'o.......o',
+    'o.......o',
+    'o.......o',
+    '=o.....o=',
+    '==ooooo==',
+    nil);
+  PixmapBreakpointGood: array[0..15] of PAnsiChar = (
+    '9 10 4 1',
+    '= c none',
+    'o c #000000',
+    '. c #ff0000',
+    '* c #00ff00',
+    '======oo=',
+    '==oooo**o',
+    '=o....*o=',
+    'o....**.o',
+    'o....*..o',
+    'o...**..o',
+    'o**.*...o',
+    'o.***...o',
+    '=o.*...o=',
+    '==ooooo==',
+    nil);
+  PixmapBreakpointBad: array[0..15] of PAnsiChar = (
+    '9 10 4 1',
+    '= c none',
+    'o c #000000',
+    '. c #ff0000',
+    '* c #ffff00',
+    '=========',
+    '==ooooo==',
+    '=o.....o=',
+    'o.*...*.o',
+    'o.**.**.o',
+    'o..***..o',
+    'o.**.**.o',
+    'o.*...*.o',
+    '=o.....o=',
+    '==ooooo==',
+    nil);
+const
+  SC_MARK_BACKFORE = 3030;  { new marker type added in my Scintilla build }
+begin
+  inherited;
+
+  Call(SCI_SETCARETWIDTH, 2, 0);
+  Call(SCI_AUTOCSETAUTOHIDE, 0, 0);
+  Call(SCI_AUTOCSETCANCELATSTART, 0, 0);
+  Call(SCI_AUTOCSETDROPRESTOFWORD, 1, 0);
+  Call(SCI_AUTOCSETIGNORECASE, 1, 0);
+  Call(SCI_AUTOCSETMAXHEIGHT, 7, 0);
+
+  Call(SCI_ASSIGNCMDKEY, Ord('Z') or ((SCMOD_SHIFT or SCMOD_CTRL) shl 16), SCI_REDO);
+
+  Call(SCI_SETSCROLLWIDTH, 1024 * CallStr(SCI_TEXTWIDTH, 0, 'X'), 0);
+
+  Call(SCI_INDICSETSTYLE, inSquiggly, INDIC_SQUIGGLE);
+  Call(SCI_INDICSETFORE, inSquiggly, clRed);
+  Call(SCI_INDICSETSTYLE, inPendingSquiggly, INDIC_HIDDEN);
+
+  Call(SCI_SETMARGINTYPEN, 1, SC_MARGIN_SYMBOL);
+  Call(SCI_SETMARGINWIDTHN, 1, 21);
+  Call(SCI_SETMARGINSENSITIVEN, 1, 1);
+  Call(SCI_SETMARGINCURSORN, 1, SC_CURSORARROW);
+  Call(SCI_SETMARGINTYPEN, 2, SC_MARGIN_BACK);
+  Call(SCI_SETMARGINMASKN, 2, 0);
+  Call(SCI_SETMARGINWIDTHN, 2, 1);
+  Call(SCI_SETMARGINTYPEN, 3, SC_MARGIN_SYMBOL);
+  Call(SCI_SETMARGINMASKN, 3, 0);
+  Call(SCI_SETMARGINWIDTHN, 3, 1);
+  Call(SCI_SETMARGINLEFT, 0, 2);
+
+  Call(SCI_MARKERDEFINEPIXMAP, mmIconHasEntry, LPARAM(@PixmapHasEntry));
+  Call(SCI_MARKERDEFINEPIXMAP, mmIconEntryProcessed, LPARAM(@PixmapEntryProcessed));
+  Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpoint, LPARAM(@PixmapBreakpoint));
+  Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpointGood, LPARAM(@PixmapBreakpointGood));
+  Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpointBad, LPARAM(@PixmapBreakpointBad));
+  Call(SCI_MARKERDEFINE, mmLineError, SC_MARK_BACKFORE);
+  Call(SCI_MARKERSETFORE, mmLineError, clWhite);
+  Call(SCI_MARKERSETBACK, mmLineError, clRed);
+  Call(SCI_MARKERDEFINE, mmLineBreakpoint, SC_MARK_BACKFORE);
+  Call(SCI_MARKERSETFORE, mmLineBreakpoint, clWhite);
+  Call(SCI_MARKERSETBACK, mmLineBreakpoint, clRed);
+  Call(SCI_MARKERDEFINE, mmLineBreakpointBad, SC_MARK_BACKFORE);
+  Call(SCI_MARKERSETFORE, mmLineBreakpointBad, clLime);
+  Call(SCI_MARKERSETBACK, mmLineBreakpointBad, clOlive);
+  Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKFORE);
+  Call(SCI_MARKERSETFORE, mmLineStep, clWhite);
+  Call(SCI_MARKERSETBACK, mmLineStep, clBlue);
 end;
 
 end.

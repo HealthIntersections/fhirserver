@@ -79,6 +79,8 @@ type
     FUseTabCharacter: Boolean;
     FVirtualSpaceOptions: TScintVirtualSpaceOptions;
     FWordWrap: Boolean;
+    FTag: TObject;
+    FContext: TObject;
     procedure ApplyOptions;
     function GetAutoCompleteActive: Boolean;
     function GetCaretColumn: Integer;
@@ -294,6 +296,8 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnUpdateUI: TNotifyEvent read FOnUpdateUI write FOnUpdateUI;
+
+    property context : TObject read FContext write FContext;
   end;
 
   TScintEditStrings = class(TStrings)

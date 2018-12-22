@@ -752,7 +752,7 @@ end;
 
 function TFHIRPathLexer.error(msg: String; location: TSourceLocation): Exception;
 begin
-  result := Exception.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+getLine(location.line)+'"');
+  result := EParserException.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+getLine(location.line)+'"', location.line, location.col);
 end;
 
 function TFHIRPathLexer.getLine(line: integer): String;
