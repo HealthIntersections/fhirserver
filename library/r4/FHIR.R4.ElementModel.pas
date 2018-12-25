@@ -148,7 +148,8 @@ type
     function link : TFHIRMMElement; overload;
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -317,8 +318,9 @@ type
     procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRCustomResource; overload;
     function Clone : TFHIRCustomResource; overload;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
     function fhirType : string; override;
     function getId : string; override;
     function Equals(other : TObject) : boolean; override;
@@ -816,6 +818,11 @@ begin
     result := Ftype;
 end;
 
+function TFHIRMMElement.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRTodo.create('TFHIRMMElement.getTypesForProperty');
+end;
+
 function TFHIRMMElement.hasChildren: boolean;
 begin
   result := (FChildren <> nil) and (FChildren.count > 0);
@@ -1115,7 +1122,7 @@ begin
   raise EFHIRTodo.create('TFHIRMMElement.setIdValue');
 end;
 
-procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRMMElement.setProperty');
 end;
@@ -2688,6 +2695,11 @@ begin
   result := frtCustom;
 end;
 
+function TFHIRCustomResource.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRTodo.create('TFHIRCustomResource.getTypesForProperty');
+end;
+
 function TFHIRCustomResource.isMetaDataBased: boolean;
 begin
   raise EFHIRTodo.create('TFHIRCustomResource.isMetaDataBased:');
@@ -2703,7 +2715,7 @@ begin
   raise EFHIRTodo.create('TFHIRCustomResource.makeProperty');
 end;
 
-procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRCustomResource.setProperty');
 end;

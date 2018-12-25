@@ -67,7 +67,8 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -157,7 +158,8 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -1062,8 +1064,9 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
     function getPropertyValue(propName : string): TFHIRProperty; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -1145,6 +1148,11 @@ begin
   result := FRes.getId;
 end;
 
+function TFHIRXVersionResourceWrapper.getTypesForProperty(propName : string): String;
+begin
+  result := FRes.getTypesForProperty(propName);
+end;
+
 function TFHIRXVersionResourceWrapper.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := FRes.FhirObjectVersion;
@@ -1170,9 +1178,9 @@ begin
   FRes.SetIdValue(id);
 end;
 
-procedure TFHIRXVersionResourceWrapper.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRXVersionResourceWrapper.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;
 begin
-  FRes.setProperty(propName, propValue);
+  result := FRes.setProperty(propName, propValue);
 end;
 
 
@@ -1302,6 +1310,11 @@ begin
   result := FElement.getId;
 end;
 
+function TFHIRXVersionElementWrapper.getTypesForProperty(propName : string): String;
+begin
+  result := FElement.getTypesForProperty(propName);
+end;
+
 function TFHIRXVersionElementWrapper.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := FElement.FhirObjectVersion;
@@ -1337,9 +1350,9 @@ begin
   FElement.SetIdValue(id);
 end;
 
-procedure TFHIRXVersionElementWrapper.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRXVersionElementWrapper.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  FElement.setProperty(propName, propValue);
+  result := FElement.setProperty(propName, propValue);
 end;
 
 { TFHIRParametersW }
@@ -1773,6 +1786,11 @@ begin
   result := nil;
 end;
 
+function TFHIRNullObject.getTypesForProperty(propName : string): String;
+begin
+  result := '';
+end;
+
 function TFHIRNullObject.makeCodeValue(v: String): TFHIRObject;
 begin
   result := nil;
@@ -1794,8 +1812,9 @@ procedure TFHIRNullObject.setIdValue(id: String);
 begin
 end;
 
-procedure TFHIRNullObject.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRNullObject.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
+  result := nil;
 end;
 
 { TFhirTerminologyCapabilitiesW }

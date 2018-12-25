@@ -36,7 +36,10 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Utilities, FHIR.Support.Utilities, FHIR.Support.Utilities, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.R2.ParserBase, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types, FHIR.Support.Collections, FHIR.Support.Turtle;
+  SysUtils, Classes, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Turtle, 
+  FHIR.Base.Parser, FHIR.Base.Objects, 
+  FHIR.R2.ParserBase, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types;
 
 Type
 
@@ -2150,39 +2153,39 @@ begin
     ParseBackboneElementProperties(obj, result);
     result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/Parameters.parameter.name'));{q1}
 //t.6    if jsn.has('valueCode') or jsn.has('_valueCode') then
-        result.value := ParseCode(jsn['valueCode'], jsn.vObj['_valueCode']);
+        result.value := parseCode(jsn.node['valueCode'], jsn.vObj['_valueCode']);
 //t.6    if jsn.has('valueOid') or jsn.has('_valueOid') then
-        result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
+        result.value := parseOid(jsn.node['valueOid'], jsn.vObj['_valueOid']);
 //t.6    if jsn.has('valueUuid') or jsn.has('_valueUuid') then
-        result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
+        result.value := parseUuid(jsn.node['valueUuid'], jsn.vObj['_valueUuid']);
 //t.6    if jsn.has('valueMarkdown') or jsn.has('_valueMarkdown') then
-        result.value := ParseMarkdown(jsn['valueMarkdown'], jsn.vObj['_valueMarkdown']);
+        result.value := parseMarkdown(jsn.node['valueMarkdown'], jsn.vObj['_valueMarkdown']);
 //t.6    if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
-        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
+        result.value := parseUnsignedInt(jsn.node['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
 //t.6    if jsn.has('valueId') or jsn.has('_valueId') then
-        result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
+        result.value := parseId(jsn.node['valueId'], jsn.vObj['_valueId']);
 //t.6    if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
-        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
+        result.value := parsePositiveInt(jsn.node['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
 //t.6    if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-        result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+        result.value := parseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
 //t.6    if jsn.has('valueDate') or jsn.has('_valueDate') then
-        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
+        result.value := parseDate(jsn.node['valueDate'], jsn.vObj['_valueDate']);
 //t.6    if jsn.has('valueString') or jsn.has('_valueString') then
-        result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
+        result.value := parseString(jsn.node['valueString'], jsn.vObj['_valueString']);
 //t.6    if jsn.has('valueInteger') or jsn.has('_valueInteger') then
-        result.value := ParseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
+        result.value := parseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
 //t.6    if jsn.has('valueUri') or jsn.has('_valueUri') then
-        result.value := ParseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
+        result.value := parseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
 //t.6    if jsn.has('valueInstant') or jsn.has('_valueInstant') then
-        result.value := ParseInstant(jsn['valueInstant'], jsn.vObj['_valueInstant']);
+        result.value := parseInstant(jsn.node['valueInstant'], jsn.vObj['_valueInstant']);
 //t.6    if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-        result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+        result.value := parseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
 //t.6    if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
-        result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
+        result.value := parseBase64Binary(jsn.node['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
 //t.6    if jsn.has('valueTime') or jsn.has('_valueTime') then
-        result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+        result.value := parseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
 //t.6    if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-        result.value := ParseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
+        result.value := parseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if obj.has('valueIdentifier') {a7} then
         result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
     if obj.has('valueCoding') {a7} then
@@ -2414,39 +2417,39 @@ begin
     ParseTypeProperties(obj, result);
     result.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/Extension.url'));{q1}
 //t.6    if jsn.has('valueCode') or jsn.has('_valueCode') then
-        result.value := ParseCode(jsn['valueCode'], jsn.vObj['_valueCode']);
+        result.value := parseCode(jsn.node['valueCode'], jsn.vObj['_valueCode']);
 //t.6    if jsn.has('valueOid') or jsn.has('_valueOid') then
-        result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
+        result.value := parseOid(jsn.node['valueOid'], jsn.vObj['_valueOid']);
 //t.6    if jsn.has('valueUuid') or jsn.has('_valueUuid') then
-        result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
+        result.value := parseUuid(jsn.node['valueUuid'], jsn.vObj['_valueUuid']);
 //t.6    if jsn.has('valueMarkdown') or jsn.has('_valueMarkdown') then
-        result.value := ParseMarkdown(jsn['valueMarkdown'], jsn.vObj['_valueMarkdown']);
+        result.value := parseMarkdown(jsn.node['valueMarkdown'], jsn.vObj['_valueMarkdown']);
 //t.6    if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
-        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
+        result.value := parseUnsignedInt(jsn.node['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
 //t.6    if jsn.has('valueId') or jsn.has('_valueId') then
-        result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
+        result.value := parseId(jsn.node['valueId'], jsn.vObj['_valueId']);
 //t.6    if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
-        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
+        result.value := parsePositiveInt(jsn.node['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
 //t.6    if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-        result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+        result.value := parseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
 //t.6    if jsn.has('valueDate') or jsn.has('_valueDate') then
-        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
+        result.value := parseDate(jsn.node['valueDate'], jsn.vObj['_valueDate']);
 //t.6    if jsn.has('valueString') or jsn.has('_valueString') then
-        result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
+        result.value := parseString(jsn.node['valueString'], jsn.vObj['_valueString']);
 //t.6    if jsn.has('valueInteger') or jsn.has('_valueInteger') then
-        result.value := ParseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
+        result.value := parseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
 //t.6    if jsn.has('valueUri') or jsn.has('_valueUri') then
-        result.value := ParseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
+        result.value := parseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
 //t.6    if jsn.has('valueInstant') or jsn.has('_valueInstant') then
-        result.value := ParseInstant(jsn['valueInstant'], jsn.vObj['_valueInstant']);
+        result.value := parseInstant(jsn.node['valueInstant'], jsn.vObj['_valueInstant']);
 //t.6    if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-        result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+        result.value := parseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
 //t.6    if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
-        result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
+        result.value := parseBase64Binary(jsn.node['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
 //t.6    if jsn.has('valueTime') or jsn.has('_valueTime') then
-        result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+        result.value := parseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
 //t.6    if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-        result.value := ParseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
+        result.value := parseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if obj.has('valueIdentifier') {a7} then
         result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
     if obj.has('valueCoding') {a7} then
@@ -3762,39 +3765,39 @@ begin
       result.type_List.Add(parseElementDefinitionType(item));
     result.nameReferenceElement := ParseString(obj.complex('http://hl7.org/fhir/ElementDefinition.nameReference'));{q1}
 //t.6    if jsn.has('defaultValueCode') or jsn.has('_defaultValueCode') then
-        result.defaultValue := ParseCode(jsn['defaultValueCode'], jsn.vObj['_defaultValueCode']);
+        result.defaultValue := parseCode(jsn.node['defaultValueCode'], jsn.vObj['_defaultValueCode']);
 //t.6    if jsn.has('defaultValueOid') or jsn.has('_defaultValueOid') then
-        result.defaultValue := ParseOid(jsn['defaultValueOid'], jsn.vObj['_defaultValueOid']);
+        result.defaultValue := parseOid(jsn.node['defaultValueOid'], jsn.vObj['_defaultValueOid']);
 //t.6    if jsn.has('defaultValueUuid') or jsn.has('_defaultValueUuid') then
-        result.defaultValue := ParseUuid(jsn['defaultValueUuid'], jsn.vObj['_defaultValueUuid']);
+        result.defaultValue := parseUuid(jsn.node['defaultValueUuid'], jsn.vObj['_defaultValueUuid']);
 //t.6    if jsn.has('defaultValueMarkdown') or jsn.has('_defaultValueMarkdown') then
-        result.defaultValue := ParseMarkdown(jsn['defaultValueMarkdown'], jsn.vObj['_defaultValueMarkdown']);
+        result.defaultValue := parseMarkdown(jsn.node['defaultValueMarkdown'], jsn.vObj['_defaultValueMarkdown']);
 //t.6    if jsn.has('defaultValueUnsignedInt') or jsn.has('_defaultValueUnsignedInt') then
-        result.defaultValue := ParseUnsignedInt(jsn['defaultValueUnsignedInt'], jsn.vObj['_defaultValueUnsignedInt']);
+        result.defaultValue := parseUnsignedInt(jsn.node['defaultValueUnsignedInt'], jsn.vObj['_defaultValueUnsignedInt']);
 //t.6    if jsn.has('defaultValueId') or jsn.has('_defaultValueId') then
-        result.defaultValue := ParseId(jsn['defaultValueId'], jsn.vObj['_defaultValueId']);
+        result.defaultValue := parseId(jsn.node['defaultValueId'], jsn.vObj['_defaultValueId']);
 //t.6    if jsn.has('defaultValuePositiveInt') or jsn.has('_defaultValuePositiveInt') then
-        result.defaultValue := ParsePositiveInt(jsn['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
+        result.defaultValue := parsePositiveInt(jsn.node['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
 //t.6    if jsn.has('defaultValueDateTime') or jsn.has('_defaultValueDateTime') then
-        result.defaultValue := ParseDateTime(jsn['defaultValueDateTime'], jsn.vObj['_defaultValueDateTime']);
+        result.defaultValue := parseDateTime(jsn.node['defaultValueDateTime'], jsn.vObj['_defaultValueDateTime']);
 //t.6    if jsn.has('defaultValueDate') or jsn.has('_defaultValueDate') then
-        result.defaultValue := ParseDate(jsn['defaultValueDate'], jsn.vObj['_defaultValueDate']);
+        result.defaultValue := parseDate(jsn.node['defaultValueDate'], jsn.vObj['_defaultValueDate']);
 //t.6    if jsn.has('defaultValueString') or jsn.has('_defaultValueString') then
-        result.defaultValue := ParseString(jsn['defaultValueString'], jsn.vObj['_defaultValueString']);
+        result.defaultValue := parseString(jsn.node['defaultValueString'], jsn.vObj['_defaultValueString']);
 //t.6    if jsn.has('defaultValueInteger') or jsn.has('_defaultValueInteger') then
-        result.defaultValue := ParseInteger(jsn['defaultValueInteger'], jsn.vObj['_defaultValueInteger']);
+        result.defaultValue := parseInteger(jsn.node['defaultValueInteger'], jsn.vObj['_defaultValueInteger']);
 //t.6    if jsn.has('defaultValueUri') or jsn.has('_defaultValueUri') then
-        result.defaultValue := ParseUri(jsn['defaultValueUri'], jsn.vObj['_defaultValueUri']);
+        result.defaultValue := parseUri(jsn.node['defaultValueUri'], jsn.vObj['_defaultValueUri']);
 //t.6    if jsn.has('defaultValueInstant') or jsn.has('_defaultValueInstant') then
-        result.defaultValue := ParseInstant(jsn['defaultValueInstant'], jsn.vObj['_defaultValueInstant']);
+        result.defaultValue := parseInstant(jsn.node['defaultValueInstant'], jsn.vObj['_defaultValueInstant']);
 //t.6    if jsn.has('defaultValueBoolean') or jsn.has('_defaultValueBoolean') then
-        result.defaultValue := ParseBoolean(jsn['defaultValueBoolean'], jsn.vObj['_defaultValueBoolean']);
+        result.defaultValue := parseBoolean(jsn.node['defaultValueBoolean'], jsn.vObj['_defaultValueBoolean']);
 //t.6    if jsn.has('defaultValueBase64Binary') or jsn.has('_defaultValueBase64Binary') then
-        result.defaultValue := ParseBase64Binary(jsn['defaultValueBase64Binary'], jsn.vObj['_defaultValueBase64Binary']);
+        result.defaultValue := parseBase64Binary(jsn.node['defaultValueBase64Binary'], jsn.vObj['_defaultValueBase64Binary']);
 //t.6    if jsn.has('defaultValueTime') or jsn.has('_defaultValueTime') then
-        result.defaultValue := ParseTime(jsn['defaultValueTime'], jsn.vObj['_defaultValueTime']);
+        result.defaultValue := parseTime(jsn.node['defaultValueTime'], jsn.vObj['_defaultValueTime']);
 //t.6    if jsn.has('defaultValueDecimal') or jsn.has('_defaultValueDecimal') then
-        result.defaultValue := ParseDecimal(jsn['defaultValueDecimal'], jsn.vObj['_defaultValueDecimal']);
+        result.defaultValue := parseDecimal(jsn.node['defaultValueDecimal'], jsn.vObj['_defaultValueDecimal']);
     if obj.has('defaultValueIdentifier') {a7} then
         result.defaultValue := ParseIdentifier(jsn.vObj['defaultValueIdentifier']);
     if obj.has('defaultValueCoding') {a7} then
@@ -3833,39 +3836,39 @@ begin
         result.defaultValue := ParseTiming(jsn.vObj['defaultValueTiming']);
     result.meaningWhenMissingElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/ElementDefinition.meaningWhenMissing'));{q1}
 //t.6    if jsn.has('fixedCode') or jsn.has('_fixedCode') then
-        result.fixed := ParseCode(jsn['fixedCode'], jsn.vObj['_fixedCode']);
+        result.fixed := parseCode(jsn.node['fixedCode'], jsn.vObj['_fixedCode']);
 //t.6    if jsn.has('fixedOid') or jsn.has('_fixedOid') then
-        result.fixed := ParseOid(jsn['fixedOid'], jsn.vObj['_fixedOid']);
+        result.fixed := parseOid(jsn.node['fixedOid'], jsn.vObj['_fixedOid']);
 //t.6    if jsn.has('fixedUuid') or jsn.has('_fixedUuid') then
-        result.fixed := ParseUuid(jsn['fixedUuid'], jsn.vObj['_fixedUuid']);
+        result.fixed := parseUuid(jsn.node['fixedUuid'], jsn.vObj['_fixedUuid']);
 //t.6    if jsn.has('fixedMarkdown') or jsn.has('_fixedMarkdown') then
-        result.fixed := ParseMarkdown(jsn['fixedMarkdown'], jsn.vObj['_fixedMarkdown']);
+        result.fixed := parseMarkdown(jsn.node['fixedMarkdown'], jsn.vObj['_fixedMarkdown']);
 //t.6    if jsn.has('fixedUnsignedInt') or jsn.has('_fixedUnsignedInt') then
-        result.fixed := ParseUnsignedInt(jsn['fixedUnsignedInt'], jsn.vObj['_fixedUnsignedInt']);
+        result.fixed := parseUnsignedInt(jsn.node['fixedUnsignedInt'], jsn.vObj['_fixedUnsignedInt']);
 //t.6    if jsn.has('fixedId') or jsn.has('_fixedId') then
-        result.fixed := ParseId(jsn['fixedId'], jsn.vObj['_fixedId']);
+        result.fixed := parseId(jsn.node['fixedId'], jsn.vObj['_fixedId']);
 //t.6    if jsn.has('fixedPositiveInt') or jsn.has('_fixedPositiveInt') then
-        result.fixed := ParsePositiveInt(jsn['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
+        result.fixed := parsePositiveInt(jsn.node['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
 //t.6    if jsn.has('fixedDateTime') or jsn.has('_fixedDateTime') then
-        result.fixed := ParseDateTime(jsn['fixedDateTime'], jsn.vObj['_fixedDateTime']);
+        result.fixed := parseDateTime(jsn.node['fixedDateTime'], jsn.vObj['_fixedDateTime']);
 //t.6    if jsn.has('fixedDate') or jsn.has('_fixedDate') then
-        result.fixed := ParseDate(jsn['fixedDate'], jsn.vObj['_fixedDate']);
+        result.fixed := parseDate(jsn.node['fixedDate'], jsn.vObj['_fixedDate']);
 //t.6    if jsn.has('fixedString') or jsn.has('_fixedString') then
-        result.fixed := ParseString(jsn['fixedString'], jsn.vObj['_fixedString']);
+        result.fixed := parseString(jsn.node['fixedString'], jsn.vObj['_fixedString']);
 //t.6    if jsn.has('fixedInteger') or jsn.has('_fixedInteger') then
-        result.fixed := ParseInteger(jsn['fixedInteger'], jsn.vObj['_fixedInteger']);
+        result.fixed := parseInteger(jsn.node['fixedInteger'], jsn.vObj['_fixedInteger']);
 //t.6    if jsn.has('fixedUri') or jsn.has('_fixedUri') then
-        result.fixed := ParseUri(jsn['fixedUri'], jsn.vObj['_fixedUri']);
+        result.fixed := parseUri(jsn.node['fixedUri'], jsn.vObj['_fixedUri']);
 //t.6    if jsn.has('fixedInstant') or jsn.has('_fixedInstant') then
-        result.fixed := ParseInstant(jsn['fixedInstant'], jsn.vObj['_fixedInstant']);
+        result.fixed := parseInstant(jsn.node['fixedInstant'], jsn.vObj['_fixedInstant']);
 //t.6    if jsn.has('fixedBoolean') or jsn.has('_fixedBoolean') then
-        result.fixed := ParseBoolean(jsn['fixedBoolean'], jsn.vObj['_fixedBoolean']);
+        result.fixed := parseBoolean(jsn.node['fixedBoolean'], jsn.vObj['_fixedBoolean']);
 //t.6    if jsn.has('fixedBase64Binary') or jsn.has('_fixedBase64Binary') then
-        result.fixed := ParseBase64Binary(jsn['fixedBase64Binary'], jsn.vObj['_fixedBase64Binary']);
+        result.fixed := parseBase64Binary(jsn.node['fixedBase64Binary'], jsn.vObj['_fixedBase64Binary']);
 //t.6    if jsn.has('fixedTime') or jsn.has('_fixedTime') then
-        result.fixed := ParseTime(jsn['fixedTime'], jsn.vObj['_fixedTime']);
+        result.fixed := parseTime(jsn.node['fixedTime'], jsn.vObj['_fixedTime']);
 //t.6    if jsn.has('fixedDecimal') or jsn.has('_fixedDecimal') then
-        result.fixed := ParseDecimal(jsn['fixedDecimal'], jsn.vObj['_fixedDecimal']);
+        result.fixed := parseDecimal(jsn.node['fixedDecimal'], jsn.vObj['_fixedDecimal']);
     if obj.has('fixedIdentifier') {a7} then
         result.fixed := ParseIdentifier(jsn.vObj['fixedIdentifier']);
     if obj.has('fixedCoding') {a7} then
@@ -3903,39 +3906,39 @@ begin
 //t.5    if jsn.has('fixedTiming') {a9} then
         result.fixed := ParseTiming(jsn.vObj['fixedTiming']);
 //t.6    if jsn.has('patternCode') or jsn.has('_patternCode') then
-        result.pattern := ParseCode(jsn['patternCode'], jsn.vObj['_patternCode']);
+        result.pattern := parseCode(jsn.node['patternCode'], jsn.vObj['_patternCode']);
 //t.6    if jsn.has('patternOid') or jsn.has('_patternOid') then
-        result.pattern := ParseOid(jsn['patternOid'], jsn.vObj['_patternOid']);
+        result.pattern := parseOid(jsn.node['patternOid'], jsn.vObj['_patternOid']);
 //t.6    if jsn.has('patternUuid') or jsn.has('_patternUuid') then
-        result.pattern := ParseUuid(jsn['patternUuid'], jsn.vObj['_patternUuid']);
+        result.pattern := parseUuid(jsn.node['patternUuid'], jsn.vObj['_patternUuid']);
 //t.6    if jsn.has('patternMarkdown') or jsn.has('_patternMarkdown') then
-        result.pattern := ParseMarkdown(jsn['patternMarkdown'], jsn.vObj['_patternMarkdown']);
+        result.pattern := parseMarkdown(jsn.node['patternMarkdown'], jsn.vObj['_patternMarkdown']);
 //t.6    if jsn.has('patternUnsignedInt') or jsn.has('_patternUnsignedInt') then
-        result.pattern := ParseUnsignedInt(jsn['patternUnsignedInt'], jsn.vObj['_patternUnsignedInt']);
+        result.pattern := parseUnsignedInt(jsn.node['patternUnsignedInt'], jsn.vObj['_patternUnsignedInt']);
 //t.6    if jsn.has('patternId') or jsn.has('_patternId') then
-        result.pattern := ParseId(jsn['patternId'], jsn.vObj['_patternId']);
+        result.pattern := parseId(jsn.node['patternId'], jsn.vObj['_patternId']);
 //t.6    if jsn.has('patternPositiveInt') or jsn.has('_patternPositiveInt') then
-        result.pattern := ParsePositiveInt(jsn['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
+        result.pattern := parsePositiveInt(jsn.node['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
 //t.6    if jsn.has('patternDateTime') or jsn.has('_patternDateTime') then
-        result.pattern := ParseDateTime(jsn['patternDateTime'], jsn.vObj['_patternDateTime']);
+        result.pattern := parseDateTime(jsn.node['patternDateTime'], jsn.vObj['_patternDateTime']);
 //t.6    if jsn.has('patternDate') or jsn.has('_patternDate') then
-        result.pattern := ParseDate(jsn['patternDate'], jsn.vObj['_patternDate']);
+        result.pattern := parseDate(jsn.node['patternDate'], jsn.vObj['_patternDate']);
 //t.6    if jsn.has('patternString') or jsn.has('_patternString') then
-        result.pattern := ParseString(jsn['patternString'], jsn.vObj['_patternString']);
+        result.pattern := parseString(jsn.node['patternString'], jsn.vObj['_patternString']);
 //t.6    if jsn.has('patternInteger') or jsn.has('_patternInteger') then
-        result.pattern := ParseInteger(jsn['patternInteger'], jsn.vObj['_patternInteger']);
+        result.pattern := parseInteger(jsn.node['patternInteger'], jsn.vObj['_patternInteger']);
 //t.6    if jsn.has('patternUri') or jsn.has('_patternUri') then
-        result.pattern := ParseUri(jsn['patternUri'], jsn.vObj['_patternUri']);
+        result.pattern := parseUri(jsn.node['patternUri'], jsn.vObj['_patternUri']);
 //t.6    if jsn.has('patternInstant') or jsn.has('_patternInstant') then
-        result.pattern := ParseInstant(jsn['patternInstant'], jsn.vObj['_patternInstant']);
+        result.pattern := parseInstant(jsn.node['patternInstant'], jsn.vObj['_patternInstant']);
 //t.6    if jsn.has('patternBoolean') or jsn.has('_patternBoolean') then
-        result.pattern := ParseBoolean(jsn['patternBoolean'], jsn.vObj['_patternBoolean']);
+        result.pattern := parseBoolean(jsn.node['patternBoolean'], jsn.vObj['_patternBoolean']);
 //t.6    if jsn.has('patternBase64Binary') or jsn.has('_patternBase64Binary') then
-        result.pattern := ParseBase64Binary(jsn['patternBase64Binary'], jsn.vObj['_patternBase64Binary']);
+        result.pattern := parseBase64Binary(jsn.node['patternBase64Binary'], jsn.vObj['_patternBase64Binary']);
 //t.6    if jsn.has('patternTime') or jsn.has('_patternTime') then
-        result.pattern := ParseTime(jsn['patternTime'], jsn.vObj['_patternTime']);
+        result.pattern := parseTime(jsn.node['patternTime'], jsn.vObj['_patternTime']);
 //t.6    if jsn.has('patternDecimal') or jsn.has('_patternDecimal') then
-        result.pattern := ParseDecimal(jsn['patternDecimal'], jsn.vObj['_patternDecimal']);
+        result.pattern := parseDecimal(jsn.node['patternDecimal'], jsn.vObj['_patternDecimal']);
     if obj.has('patternIdentifier') {a7} then
         result.pattern := ParseIdentifier(jsn.vObj['patternIdentifier']);
     if obj.has('patternCoding') {a7} then
@@ -3973,39 +3976,39 @@ begin
 //t.5    if jsn.has('patternTiming') {a9} then
         result.pattern := ParseTiming(jsn.vObj['patternTiming']);
 //t.6    if jsn.has('exampleCode') or jsn.has('_exampleCode') then
-        result.example := ParseCode(jsn['exampleCode'], jsn.vObj['_exampleCode']);
+        result.example := parseCode(jsn.node['exampleCode'], jsn.vObj['_exampleCode']);
 //t.6    if jsn.has('exampleOid') or jsn.has('_exampleOid') then
-        result.example := ParseOid(jsn['exampleOid'], jsn.vObj['_exampleOid']);
+        result.example := parseOid(jsn.node['exampleOid'], jsn.vObj['_exampleOid']);
 //t.6    if jsn.has('exampleUuid') or jsn.has('_exampleUuid') then
-        result.example := ParseUuid(jsn['exampleUuid'], jsn.vObj['_exampleUuid']);
+        result.example := parseUuid(jsn.node['exampleUuid'], jsn.vObj['_exampleUuid']);
 //t.6    if jsn.has('exampleMarkdown') or jsn.has('_exampleMarkdown') then
-        result.example := ParseMarkdown(jsn['exampleMarkdown'], jsn.vObj['_exampleMarkdown']);
+        result.example := parseMarkdown(jsn.node['exampleMarkdown'], jsn.vObj['_exampleMarkdown']);
 //t.6    if jsn.has('exampleUnsignedInt') or jsn.has('_exampleUnsignedInt') then
-        result.example := ParseUnsignedInt(jsn['exampleUnsignedInt'], jsn.vObj['_exampleUnsignedInt']);
+        result.example := parseUnsignedInt(jsn.node['exampleUnsignedInt'], jsn.vObj['_exampleUnsignedInt']);
 //t.6    if jsn.has('exampleId') or jsn.has('_exampleId') then
-        result.example := ParseId(jsn['exampleId'], jsn.vObj['_exampleId']);
+        result.example := parseId(jsn.node['exampleId'], jsn.vObj['_exampleId']);
 //t.6    if jsn.has('examplePositiveInt') or jsn.has('_examplePositiveInt') then
-        result.example := ParsePositiveInt(jsn['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
+        result.example := parsePositiveInt(jsn.node['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
 //t.6    if jsn.has('exampleDateTime') or jsn.has('_exampleDateTime') then
-        result.example := ParseDateTime(jsn['exampleDateTime'], jsn.vObj['_exampleDateTime']);
+        result.example := parseDateTime(jsn.node['exampleDateTime'], jsn.vObj['_exampleDateTime']);
 //t.6    if jsn.has('exampleDate') or jsn.has('_exampleDate') then
-        result.example := ParseDate(jsn['exampleDate'], jsn.vObj['_exampleDate']);
+        result.example := parseDate(jsn.node['exampleDate'], jsn.vObj['_exampleDate']);
 //t.6    if jsn.has('exampleString') or jsn.has('_exampleString') then
-        result.example := ParseString(jsn['exampleString'], jsn.vObj['_exampleString']);
+        result.example := parseString(jsn.node['exampleString'], jsn.vObj['_exampleString']);
 //t.6    if jsn.has('exampleInteger') or jsn.has('_exampleInteger') then
-        result.example := ParseInteger(jsn['exampleInteger'], jsn.vObj['_exampleInteger']);
+        result.example := parseInteger(jsn.node['exampleInteger'], jsn.vObj['_exampleInteger']);
 //t.6    if jsn.has('exampleUri') or jsn.has('_exampleUri') then
-        result.example := ParseUri(jsn['exampleUri'], jsn.vObj['_exampleUri']);
+        result.example := parseUri(jsn.node['exampleUri'], jsn.vObj['_exampleUri']);
 //t.6    if jsn.has('exampleInstant') or jsn.has('_exampleInstant') then
-        result.example := ParseInstant(jsn['exampleInstant'], jsn.vObj['_exampleInstant']);
+        result.example := parseInstant(jsn.node['exampleInstant'], jsn.vObj['_exampleInstant']);
 //t.6    if jsn.has('exampleBoolean') or jsn.has('_exampleBoolean') then
-        result.example := ParseBoolean(jsn['exampleBoolean'], jsn.vObj['_exampleBoolean']);
+        result.example := parseBoolean(jsn.node['exampleBoolean'], jsn.vObj['_exampleBoolean']);
 //t.6    if jsn.has('exampleBase64Binary') or jsn.has('_exampleBase64Binary') then
-        result.example := ParseBase64Binary(jsn['exampleBase64Binary'], jsn.vObj['_exampleBase64Binary']);
+        result.example := parseBase64Binary(jsn.node['exampleBase64Binary'], jsn.vObj['_exampleBase64Binary']);
 //t.6    if jsn.has('exampleTime') or jsn.has('_exampleTime') then
-        result.example := ParseTime(jsn['exampleTime'], jsn.vObj['_exampleTime']);
+        result.example := parseTime(jsn.node['exampleTime'], jsn.vObj['_exampleTime']);
 //t.6    if jsn.has('exampleDecimal') or jsn.has('_exampleDecimal') then
-        result.example := ParseDecimal(jsn['exampleDecimal'], jsn.vObj['_exampleDecimal']);
+        result.example := parseDecimal(jsn.node['exampleDecimal'], jsn.vObj['_exampleDecimal']);
     if obj.has('exampleIdentifier') {a7} then
         result.example := ParseIdentifier(jsn.vObj['exampleIdentifier']);
     if obj.has('exampleCoding') {a7} then
@@ -4043,39 +4046,39 @@ begin
 //t.5    if jsn.has('exampleTiming') {a9} then
         result.example := ParseTiming(jsn.vObj['exampleTiming']);
 //t.6    if jsn.has('minValueCode') or jsn.has('_minValueCode') then
-        result.minValue := ParseCode(jsn['minValueCode'], jsn.vObj['_minValueCode']);
+        result.minValue := parseCode(jsn.node['minValueCode'], jsn.vObj['_minValueCode']);
 //t.6    if jsn.has('minValueOid') or jsn.has('_minValueOid') then
-        result.minValue := ParseOid(jsn['minValueOid'], jsn.vObj['_minValueOid']);
+        result.minValue := parseOid(jsn.node['minValueOid'], jsn.vObj['_minValueOid']);
 //t.6    if jsn.has('minValueUuid') or jsn.has('_minValueUuid') then
-        result.minValue := ParseUuid(jsn['minValueUuid'], jsn.vObj['_minValueUuid']);
+        result.minValue := parseUuid(jsn.node['minValueUuid'], jsn.vObj['_minValueUuid']);
 //t.6    if jsn.has('minValueMarkdown') or jsn.has('_minValueMarkdown') then
-        result.minValue := ParseMarkdown(jsn['minValueMarkdown'], jsn.vObj['_minValueMarkdown']);
+        result.minValue := parseMarkdown(jsn.node['minValueMarkdown'], jsn.vObj['_minValueMarkdown']);
 //t.6    if jsn.has('minValueUnsignedInt') or jsn.has('_minValueUnsignedInt') then
-        result.minValue := ParseUnsignedInt(jsn['minValueUnsignedInt'], jsn.vObj['_minValueUnsignedInt']);
+        result.minValue := parseUnsignedInt(jsn.node['minValueUnsignedInt'], jsn.vObj['_minValueUnsignedInt']);
 //t.6    if jsn.has('minValueId') or jsn.has('_minValueId') then
-        result.minValue := ParseId(jsn['minValueId'], jsn.vObj['_minValueId']);
+        result.minValue := parseId(jsn.node['minValueId'], jsn.vObj['_minValueId']);
 //t.6    if jsn.has('minValuePositiveInt') or jsn.has('_minValuePositiveInt') then
-        result.minValue := ParsePositiveInt(jsn['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
+        result.minValue := parsePositiveInt(jsn.node['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
 //t.6    if jsn.has('minValueDateTime') or jsn.has('_minValueDateTime') then
-        result.minValue := ParseDateTime(jsn['minValueDateTime'], jsn.vObj['_minValueDateTime']);
+        result.minValue := parseDateTime(jsn.node['minValueDateTime'], jsn.vObj['_minValueDateTime']);
 //t.6    if jsn.has('minValueDate') or jsn.has('_minValueDate') then
-        result.minValue := ParseDate(jsn['minValueDate'], jsn.vObj['_minValueDate']);
+        result.minValue := parseDate(jsn.node['minValueDate'], jsn.vObj['_minValueDate']);
 //t.6    if jsn.has('minValueString') or jsn.has('_minValueString') then
-        result.minValue := ParseString(jsn['minValueString'], jsn.vObj['_minValueString']);
+        result.minValue := parseString(jsn.node['minValueString'], jsn.vObj['_minValueString']);
 //t.6    if jsn.has('minValueInteger') or jsn.has('_minValueInteger') then
-        result.minValue := ParseInteger(jsn['minValueInteger'], jsn.vObj['_minValueInteger']);
+        result.minValue := parseInteger(jsn.node['minValueInteger'], jsn.vObj['_minValueInteger']);
 //t.6    if jsn.has('minValueUri') or jsn.has('_minValueUri') then
-        result.minValue := ParseUri(jsn['minValueUri'], jsn.vObj['_minValueUri']);
+        result.minValue := parseUri(jsn.node['minValueUri'], jsn.vObj['_minValueUri']);
 //t.6    if jsn.has('minValueInstant') or jsn.has('_minValueInstant') then
-        result.minValue := ParseInstant(jsn['minValueInstant'], jsn.vObj['_minValueInstant']);
+        result.minValue := parseInstant(jsn.node['minValueInstant'], jsn.vObj['_minValueInstant']);
 //t.6    if jsn.has('minValueBoolean') or jsn.has('_minValueBoolean') then
-        result.minValue := ParseBoolean(jsn['minValueBoolean'], jsn.vObj['_minValueBoolean']);
+        result.minValue := parseBoolean(jsn.node['minValueBoolean'], jsn.vObj['_minValueBoolean']);
 //t.6    if jsn.has('minValueBase64Binary') or jsn.has('_minValueBase64Binary') then
-        result.minValue := ParseBase64Binary(jsn['minValueBase64Binary'], jsn.vObj['_minValueBase64Binary']);
+        result.minValue := parseBase64Binary(jsn.node['minValueBase64Binary'], jsn.vObj['_minValueBase64Binary']);
 //t.6    if jsn.has('minValueTime') or jsn.has('_minValueTime') then
-        result.minValue := ParseTime(jsn['minValueTime'], jsn.vObj['_minValueTime']);
+        result.minValue := parseTime(jsn.node['minValueTime'], jsn.vObj['_minValueTime']);
 //t.6    if jsn.has('minValueDecimal') or jsn.has('_minValueDecimal') then
-        result.minValue := ParseDecimal(jsn['minValueDecimal'], jsn.vObj['_minValueDecimal']);
+        result.minValue := parseDecimal(jsn.node['minValueDecimal'], jsn.vObj['_minValueDecimal']);
     if obj.has('minValueIdentifier') {a7} then
         result.minValue := ParseIdentifier(jsn.vObj['minValueIdentifier']);
     if obj.has('minValueCoding') {a7} then
@@ -4113,39 +4116,39 @@ begin
 //t.5    if jsn.has('minValueTiming') {a9} then
         result.minValue := ParseTiming(jsn.vObj['minValueTiming']);
 //t.6    if jsn.has('maxValueCode') or jsn.has('_maxValueCode') then
-        result.maxValue := ParseCode(jsn['maxValueCode'], jsn.vObj['_maxValueCode']);
+        result.maxValue := parseCode(jsn.node['maxValueCode'], jsn.vObj['_maxValueCode']);
 //t.6    if jsn.has('maxValueOid') or jsn.has('_maxValueOid') then
-        result.maxValue := ParseOid(jsn['maxValueOid'], jsn.vObj['_maxValueOid']);
+        result.maxValue := parseOid(jsn.node['maxValueOid'], jsn.vObj['_maxValueOid']);
 //t.6    if jsn.has('maxValueUuid') or jsn.has('_maxValueUuid') then
-        result.maxValue := ParseUuid(jsn['maxValueUuid'], jsn.vObj['_maxValueUuid']);
+        result.maxValue := parseUuid(jsn.node['maxValueUuid'], jsn.vObj['_maxValueUuid']);
 //t.6    if jsn.has('maxValueMarkdown') or jsn.has('_maxValueMarkdown') then
-        result.maxValue := ParseMarkdown(jsn['maxValueMarkdown'], jsn.vObj['_maxValueMarkdown']);
+        result.maxValue := parseMarkdown(jsn.node['maxValueMarkdown'], jsn.vObj['_maxValueMarkdown']);
 //t.6    if jsn.has('maxValueUnsignedInt') or jsn.has('_maxValueUnsignedInt') then
-        result.maxValue := ParseUnsignedInt(jsn['maxValueUnsignedInt'], jsn.vObj['_maxValueUnsignedInt']);
+        result.maxValue := parseUnsignedInt(jsn.node['maxValueUnsignedInt'], jsn.vObj['_maxValueUnsignedInt']);
 //t.6    if jsn.has('maxValueId') or jsn.has('_maxValueId') then
-        result.maxValue := ParseId(jsn['maxValueId'], jsn.vObj['_maxValueId']);
+        result.maxValue := parseId(jsn.node['maxValueId'], jsn.vObj['_maxValueId']);
 //t.6    if jsn.has('maxValuePositiveInt') or jsn.has('_maxValuePositiveInt') then
-        result.maxValue := ParsePositiveInt(jsn['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
+        result.maxValue := parsePositiveInt(jsn.node['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
 //t.6    if jsn.has('maxValueDateTime') or jsn.has('_maxValueDateTime') then
-        result.maxValue := ParseDateTime(jsn['maxValueDateTime'], jsn.vObj['_maxValueDateTime']);
+        result.maxValue := parseDateTime(jsn.node['maxValueDateTime'], jsn.vObj['_maxValueDateTime']);
 //t.6    if jsn.has('maxValueDate') or jsn.has('_maxValueDate') then
-        result.maxValue := ParseDate(jsn['maxValueDate'], jsn.vObj['_maxValueDate']);
+        result.maxValue := parseDate(jsn.node['maxValueDate'], jsn.vObj['_maxValueDate']);
 //t.6    if jsn.has('maxValueString') or jsn.has('_maxValueString') then
-        result.maxValue := ParseString(jsn['maxValueString'], jsn.vObj['_maxValueString']);
+        result.maxValue := parseString(jsn.node['maxValueString'], jsn.vObj['_maxValueString']);
 //t.6    if jsn.has('maxValueInteger') or jsn.has('_maxValueInteger') then
-        result.maxValue := ParseInteger(jsn['maxValueInteger'], jsn.vObj['_maxValueInteger']);
+        result.maxValue := parseInteger(jsn.node['maxValueInteger'], jsn.vObj['_maxValueInteger']);
 //t.6    if jsn.has('maxValueUri') or jsn.has('_maxValueUri') then
-        result.maxValue := ParseUri(jsn['maxValueUri'], jsn.vObj['_maxValueUri']);
+        result.maxValue := parseUri(jsn.node['maxValueUri'], jsn.vObj['_maxValueUri']);
 //t.6    if jsn.has('maxValueInstant') or jsn.has('_maxValueInstant') then
-        result.maxValue := ParseInstant(jsn['maxValueInstant'], jsn.vObj['_maxValueInstant']);
+        result.maxValue := parseInstant(jsn.node['maxValueInstant'], jsn.vObj['_maxValueInstant']);
 //t.6    if jsn.has('maxValueBoolean') or jsn.has('_maxValueBoolean') then
-        result.maxValue := ParseBoolean(jsn['maxValueBoolean'], jsn.vObj['_maxValueBoolean']);
+        result.maxValue := parseBoolean(jsn.node['maxValueBoolean'], jsn.vObj['_maxValueBoolean']);
 //t.6    if jsn.has('maxValueBase64Binary') or jsn.has('_maxValueBase64Binary') then
-        result.maxValue := ParseBase64Binary(jsn['maxValueBase64Binary'], jsn.vObj['_maxValueBase64Binary']);
+        result.maxValue := parseBase64Binary(jsn.node['maxValueBase64Binary'], jsn.vObj['_maxValueBase64Binary']);
 //t.6    if jsn.has('maxValueTime') or jsn.has('_maxValueTime') then
-        result.maxValue := ParseTime(jsn['maxValueTime'], jsn.vObj['_maxValueTime']);
+        result.maxValue := parseTime(jsn.node['maxValueTime'], jsn.vObj['_maxValueTime']);
 //t.6    if jsn.has('maxValueDecimal') or jsn.has('_maxValueDecimal') then
-        result.maxValue := ParseDecimal(jsn['maxValueDecimal'], jsn.vObj['_maxValueDecimal']);
+        result.maxValue := parseDecimal(jsn.node['maxValueDecimal'], jsn.vObj['_maxValueDecimal']);
     if obj.has('maxValueIdentifier') {a7} then
         result.maxValue := ParseIdentifier(jsn.vObj['maxValueIdentifier']);
     if obj.has('maxValueCoding') {a7} then
@@ -24297,7 +24300,7 @@ var
   this : TTurtleComplex;
 begin
   if (resource = nil) Then
-    raise ERdfException.create('error - resource is nil');
+    Raise ERdfException.Create('error - resource is nil');
   this := parent;
   Case resource.ResourceType of
 {$IFDEF FHIR_PARAMETERS}

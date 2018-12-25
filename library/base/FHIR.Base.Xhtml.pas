@@ -53,7 +53,8 @@ Type
     procedure Assign(oSource : TFslObject); override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
@@ -128,7 +129,8 @@ Type
     function makeIntValue(v : String) : TFHIRObject; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
 
     property Attributes : TFHIRAttributeList read GetAttributes;
     function allChildrenAreText : boolean;
@@ -478,6 +480,11 @@ begin
   result := '';
 end;
 
+function TFHIRAttribute.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
 function TFHIRAttribute.isEmpty: boolean;
 begin
   result := inherited isEmpty and (FName = '') and (FValue = '');
@@ -515,7 +522,7 @@ procedure TFHIRAttribute.setIdValue(id: String);
 begin
 end;
 
-procedure TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
@@ -884,6 +891,11 @@ begin
   result := '';
 end;
 
+function TFhirXHtmlNode.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
 function TFhirXHtmlNode.hasAttribute(name: String): boolean;
 var
   attr : TFHIRAttribute;
@@ -983,7 +995,7 @@ begin
   end;
 end;
 
-procedure TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject);
+function TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;

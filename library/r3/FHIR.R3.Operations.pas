@@ -33,11 +33,11 @@ unit FHIR.R3.Operations;
 
 interface
 
-// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
+// FHIR v3.0.1 generated 2018-06-12T19:15:59+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Parsers,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Parsers, 
   FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.OpBase;
 
 Type

@@ -33,7 +33,7 @@ unit FHIR.R3.Javascript;
 
 interface
 
-// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
+// FHIR v3.0.1 generated 2018-06-12T19:15:59+10:00
 
 uses
   FHIR.Javascript, FHIR.Javascript.Base;
@@ -125,7 +125,7 @@ procedure defineParametersParameterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ParametersParameter', nil, 'ParametersParameter3', js.FHIRFactoryJs);
+  def := js.defineClass('ParametersParameter', nil, 'ParametersParameter', js.FHIRFactoryJs);
   defineParametersParameterPropsJs(js, def);
 end;
 
@@ -140,7 +140,7 @@ procedure defineParametersJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Parameters', nil, 'Parameters3', js.FHIRFactoryJs);
+  def := js.defineClass('Parameters', nil, 'Parameters', js.FHIRFactoryJs);
   defineParametersPropsJs(js, def);
 end;
 
@@ -199,7 +199,7 @@ procedure defineExtensionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Extension', nil, 'Extension3', js.FHIRFactoryJs);
+  def := js.defineClass('Extension', nil, 'Extension', js.FHIRFactoryJs);
   defineExtensionPropsJs(js, def);
 end;
 
@@ -215,7 +215,7 @@ procedure defineNarrativeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Narrative', nil, 'Narrative3', js.FHIRFactoryJs);
+  def := js.defineClass('Narrative', nil, 'Narrative', js.FHIRFactoryJs);
   defineNarrativePropsJs(js, def);
 end;
 
@@ -232,7 +232,7 @@ procedure defineContributorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Contributor', nil, 'Contributor3', js.FHIRFactoryJs);
+  def := js.defineClass('Contributor', nil, 'Contributor', js.FHIRFactoryJs);
   defineContributorPropsJs(js, def);
 end;
 
@@ -254,7 +254,7 @@ procedure defineAttachmentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Attachment', nil, 'Attachment3', js.FHIRFactoryJs);
+  def := js.defineClass('Attachment', nil, 'Attachment', js.FHIRFactoryJs);
   defineAttachmentPropsJs(js, def);
 end;
 
@@ -273,7 +273,7 @@ procedure defineDataRequirementCodeFilterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DataRequirementCodeFilter', nil, 'DataRequirementCodeFilter3', js.FHIRFactoryJs);
+  def := js.defineClass('DataRequirementCodeFilter', nil, 'DataRequirementCodeFilter', js.FHIRFactoryJs);
   defineDataRequirementCodeFilterPropsJs(js, def);
 end;
 
@@ -291,7 +291,7 @@ procedure defineDataRequirementDateFilterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DataRequirementDateFilter', nil, 'DataRequirementDateFilter3', js.FHIRFactoryJs);
+  def := js.defineClass('DataRequirementDateFilter', nil, 'DataRequirementDateFilter', js.FHIRFactoryJs);
   defineDataRequirementDateFilterPropsJs(js, def);
 end;
 
@@ -308,7 +308,7 @@ procedure defineDataRequirementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DataRequirement', nil, 'DataRequirement3', js.FHIRFactoryJs);
+  def := js.defineClass('DataRequirement', nil, 'DataRequirement', js.FHIRFactoryJs);
   defineDataRequirementPropsJs(js, def);
 end;
 
@@ -340,7 +340,7 @@ procedure defineDosageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Dosage', nil, 'Dosage3', js.FHIRFactoryJs);
+  def := js.defineClass('Dosage', nil, 'Dosage', js.FHIRFactoryJs);
   defineDosagePropsJs(js, def);
 end;
 
@@ -360,7 +360,7 @@ procedure defineIdentifierJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Identifier', nil, 'Identifier3', js.FHIRFactoryJs);
+  def := js.defineClass('Identifier', nil, 'Identifier', js.FHIRFactoryJs);
   defineIdentifierPropsJs(js, def);
 end;
 
@@ -379,7 +379,7 @@ procedure defineCodingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Coding', nil, 'Coding3', js.FHIRFactoryJs);
+  def := js.defineClass('Coding', nil, 'Coding', js.FHIRFactoryJs);
   defineCodingPropsJs(js, def);
 end;
 
@@ -400,7 +400,7 @@ procedure defineSampledDataJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SampledData', nil, 'SampledData3', js.FHIRFactoryJs);
+  def := js.defineClass('SampledData', nil, 'SampledData', js.FHIRFactoryJs);
   defineSampledDataPropsJs(js, def);
 end;
 
@@ -416,7 +416,7 @@ procedure defineRatioJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Ratio', nil, 'Ratio3', js.FHIRFactoryJs);
+  def := js.defineClass('Ratio', nil, 'Ratio', js.FHIRFactoryJs);
   defineRatioPropsJs(js, def);
 end;
 
@@ -433,7 +433,7 @@ procedure defineReferenceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Reference', nil, 'Reference3', js.FHIRFactoryJs);
+  def := js.defineClass('Reference', nil, 'Reference', js.FHIRFactoryJs);
   defineReferencePropsJs(js, def);
 end;
 
@@ -454,7 +454,7 @@ procedure defineTriggerDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TriggerDefinition', nil, 'TriggerDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('TriggerDefinition', nil, 'TriggerDefinition', js.FHIRFactoryJs);
   defineTriggerDefinitionPropsJs(js, def);
 end;
 
@@ -470,7 +470,7 @@ procedure definePeriodJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Period', nil, 'Period3', js.FHIRFactoryJs);
+  def := js.defineClass('Period', nil, 'Period', js.FHIRFactoryJs);
   definePeriodPropsJs(js, def);
 end;
 
@@ -489,7 +489,7 @@ procedure defineQuantityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Quantity', nil, 'Quantity3', js.FHIRFactoryJs);
+  def := js.defineClass('Quantity', nil, 'Quantity', js.FHIRFactoryJs);
   defineQuantityPropsJs(js, def);
 end;
 
@@ -505,7 +505,7 @@ procedure defineRangeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Range', nil, 'Range3', js.FHIRFactoryJs);
+  def := js.defineClass('Range', nil, 'Range', js.FHIRFactoryJs);
   defineRangePropsJs(js, def);
 end;
 
@@ -525,7 +525,7 @@ procedure defineRelatedArtifactJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RelatedArtifact', nil, 'RelatedArtifact3', js.FHIRFactoryJs);
+  def := js.defineClass('RelatedArtifact', nil, 'RelatedArtifact', js.FHIRFactoryJs);
   defineRelatedArtifactPropsJs(js, def);
 end;
 
@@ -543,7 +543,7 @@ procedure defineAnnotationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Annotation', nil, 'Annotation3', js.FHIRFactoryJs);
+  def := js.defineClass('Annotation', nil, 'Annotation', js.FHIRFactoryJs);
   defineAnnotationPropsJs(js, def);
 end;
 
@@ -559,7 +559,7 @@ procedure defineContactDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContactDetail', nil, 'ContactDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ContactDetail', nil, 'ContactDetail', js.FHIRFactoryJs);
   defineContactDetailPropsJs(js, def);
 end;
 
@@ -577,7 +577,7 @@ procedure defineUsageContextJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('UsageContext', nil, 'UsageContext3', js.FHIRFactoryJs);
+  def := js.defineClass('UsageContext', nil, 'UsageContext', js.FHIRFactoryJs);
   defineUsageContextPropsJs(js, def);
 end;
 
@@ -599,7 +599,7 @@ procedure defineSignatureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Signature', nil, 'Signature3', js.FHIRFactoryJs);
+  def := js.defineClass('Signature', nil, 'Signature', js.FHIRFactoryJs);
   defineSignaturePropsJs(js, def);
 end;
 
@@ -615,7 +615,7 @@ procedure defineCodeableConceptJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeableConcept', nil, 'CodeableConcept3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeableConcept', nil, 'CodeableConcept', js.FHIRFactoryJs);
   defineCodeableConceptPropsJs(js, def);
 end;
 
@@ -636,7 +636,7 @@ procedure defineParameterDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ParameterDefinition', nil, 'ParameterDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('ParameterDefinition', nil, 'ParameterDefinition', js.FHIRFactoryJs);
   defineParameterDefinitionPropsJs(js, def);
 end;
 
@@ -655,7 +655,7 @@ procedure defineContactPointJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContactPoint', nil, 'ContactPoint3', js.FHIRFactoryJs);
+  def := js.defineClass('ContactPoint', nil, 'ContactPoint', js.FHIRFactoryJs);
   defineContactPointPropsJs(js, def);
 end;
 
@@ -673,7 +673,7 @@ procedure defineHumanNameJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('HumanName', nil, 'HumanName3', js.FHIRFactoryJs);
+  def := js.defineClass('HumanName', nil, 'HumanName', js.FHIRFactoryJs);
   defineHumanNamePropsJs(js, def);
 end;
 
@@ -691,7 +691,7 @@ procedure defineMetaJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Meta', nil, 'Meta3', js.FHIRFactoryJs);
+  def := js.defineClass('Meta', nil, 'Meta', js.FHIRFactoryJs);
   defineMetaPropsJs(js, def);
 end;
 
@@ -714,7 +714,7 @@ procedure defineAddressJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Address', nil, 'Address3', js.FHIRFactoryJs);
+  def := js.defineClass('Address', nil, 'Address', js.FHIRFactoryJs);
   defineAddressPropsJs(js, def);
 end;
 
@@ -732,7 +732,7 @@ procedure defineElementDefinitionSlicingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionSlicing', nil, 'ElementDefinitionSlicing3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionSlicing', nil, 'ElementDefinitionSlicing', js.FHIRFactoryJs);
   defineElementDefinitionSlicingPropsJs(js, def);
 end;
 
@@ -748,7 +748,7 @@ procedure defineElementDefinitionSlicingDiscriminatorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionSlicingDiscriminator', nil, 'ElementDefinitionSlicingDiscriminator3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionSlicingDiscriminator', nil, 'ElementDefinitionSlicingDiscriminator', js.FHIRFactoryJs);
   defineElementDefinitionSlicingDiscriminatorPropsJs(js, def);
 end;
 
@@ -765,7 +765,7 @@ procedure defineElementDefinitionBaseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionBase', nil, 'ElementDefinitionBase3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionBase', nil, 'ElementDefinitionBase', js.FHIRFactoryJs);
   defineElementDefinitionBasePropsJs(js, def);
 end;
 
@@ -783,7 +783,7 @@ procedure defineElementDefinitionTypeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionType', nil, 'ElementDefinitionType3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionType', nil, 'ElementDefinitionType', js.FHIRFactoryJs);
   defineElementDefinitionTypePropsJs(js, def);
 end;
 
@@ -836,7 +836,7 @@ procedure defineElementDefinitionExampleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionExample', nil, 'ElementDefinitionExample3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionExample', nil, 'ElementDefinitionExample', js.FHIRFactoryJs);
   defineElementDefinitionExamplePropsJs(js, def);
 end;
 
@@ -857,7 +857,7 @@ procedure defineElementDefinitionConstraintJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionConstraint', nil, 'ElementDefinitionConstraint3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionConstraint', nil, 'ElementDefinitionConstraint', js.FHIRFactoryJs);
   defineElementDefinitionConstraintPropsJs(js, def);
 end;
 
@@ -875,7 +875,7 @@ procedure defineElementDefinitionBindingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionBinding', nil, 'ElementDefinitionBinding3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionBinding', nil, 'ElementDefinitionBinding', js.FHIRFactoryJs);
   defineElementDefinitionBindingPropsJs(js, def);
 end;
 
@@ -893,7 +893,7 @@ procedure defineElementDefinitionMappingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinitionMapping', nil, 'ElementDefinitionMapping3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinitionMapping', nil, 'ElementDefinitionMapping', js.FHIRFactoryJs);
   defineElementDefinitionMappingPropsJs(js, def);
 end;
 
@@ -1063,7 +1063,7 @@ procedure defineElementDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ElementDefinition', nil, 'ElementDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('ElementDefinition', nil, 'ElementDefinition', js.FHIRFactoryJs);
   defineElementDefinitionPropsJs(js, def);
 end;
 
@@ -1091,7 +1091,7 @@ procedure defineTimingRepeatJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TimingRepeat', nil, 'TimingRepeat3', js.FHIRFactoryJs);
+  def := js.defineClass('TimingRepeat', nil, 'TimingRepeat', js.FHIRFactoryJs);
   defineTimingRepeatPropsJs(js, def);
 end;
 
@@ -1107,7 +1107,7 @@ procedure defineTimingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Timing', nil, 'Timing3', js.FHIRFactoryJs);
+  def := js.defineClass('Timing', nil, 'Timing', js.FHIRFactoryJs);
   defineTimingPropsJs(js, def);
 end;
 
@@ -1121,7 +1121,7 @@ procedure defineCountJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Count', nil, 'Count3', js.FHIRFactoryJs);
+  def := js.defineClass('Count', nil, 'Count', js.FHIRFactoryJs);
   defineCountPropsJs(js, def);
 end;
 
@@ -1135,7 +1135,7 @@ procedure defineMoneyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Money', nil, 'Money3', js.FHIRFactoryJs);
+  def := js.defineClass('Money', nil, 'Money', js.FHIRFactoryJs);
   defineMoneyPropsJs(js, def);
 end;
 
@@ -1149,7 +1149,7 @@ procedure defineAgeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Age', nil, 'Age3', js.FHIRFactoryJs);
+  def := js.defineClass('Age', nil, 'Age', js.FHIRFactoryJs);
   defineAgePropsJs(js, def);
 end;
 
@@ -1163,7 +1163,7 @@ procedure defineDistanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Distance', nil, 'Distance3', js.FHIRFactoryJs);
+  def := js.defineClass('Distance', nil, 'Distance', js.FHIRFactoryJs);
   defineDistancePropsJs(js, def);
 end;
 
@@ -1177,7 +1177,7 @@ procedure defineDurationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Duration', nil, 'Duration3', js.FHIRFactoryJs);
+  def := js.defineClass('Duration', nil, 'Duration', js.FHIRFactoryJs);
   defineDurationPropsJs(js, def);
 end;
 
@@ -1193,7 +1193,7 @@ procedure defineAccountCoverageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AccountCoverage', nil, 'AccountCoverage3', js.FHIRFactoryJs);
+  def := js.defineClass('AccountCoverage', nil, 'AccountCoverage', js.FHIRFactoryJs);
   defineAccountCoveragePropsJs(js, def);
 end;
 
@@ -1210,7 +1210,7 @@ procedure defineAccountGuarantorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AccountGuarantor', nil, 'AccountGuarantor3', js.FHIRFactoryJs);
+  def := js.defineClass('AccountGuarantor', nil, 'AccountGuarantor', js.FHIRFactoryJs);
   defineAccountGuarantorPropsJs(js, def);
 end;
 
@@ -1236,7 +1236,7 @@ procedure defineAccountJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Account', nil, 'Account3', js.FHIRFactoryJs);
+  def := js.defineClass('Account', nil, 'Account', js.FHIRFactoryJs);
   defineAccountPropsJs(js, def);
 end;
 
@@ -1252,7 +1252,7 @@ procedure defineActivityDefinitionParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ActivityDefinitionParticipant', nil, 'ActivityDefinitionParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('ActivityDefinitionParticipant', nil, 'ActivityDefinitionParticipant', js.FHIRFactoryJs);
   defineActivityDefinitionParticipantPropsJs(js, def);
 end;
 
@@ -1270,7 +1270,7 @@ procedure defineActivityDefinitionDynamicValueJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ActivityDefinitionDynamicValue', nil, 'ActivityDefinitionDynamicValue3', js.FHIRFactoryJs);
+  def := js.defineClass('ActivityDefinitionDynamicValue', nil, 'ActivityDefinitionDynamicValue', js.FHIRFactoryJs);
   defineActivityDefinitionDynamicValuePropsJs(js, def);
 end;
 
@@ -1322,7 +1322,7 @@ procedure defineActivityDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ActivityDefinition', nil, 'ActivityDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('ActivityDefinition', nil, 'ActivityDefinition', js.FHIRFactoryJs);
   defineActivityDefinitionPropsJs(js, def);
 end;
 
@@ -1343,7 +1343,7 @@ procedure defineAdverseEventSuspectEntityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AdverseEventSuspectEntity', nil, 'AdverseEventSuspectEntity3', js.FHIRFactoryJs);
+  def := js.defineClass('AdverseEventSuspectEntity', nil, 'AdverseEventSuspectEntity', js.FHIRFactoryJs);
   defineAdverseEventSuspectEntityPropsJs(js, def);
 end;
 
@@ -1373,7 +1373,7 @@ procedure defineAdverseEventJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AdverseEvent', nil, 'AdverseEvent3', js.FHIRFactoryJs);
+  def := js.defineClass('AdverseEvent', nil, 'AdverseEvent', js.FHIRFactoryJs);
   defineAdverseEventPropsJs(js, def);
 end;
 
@@ -1394,7 +1394,7 @@ procedure defineAllergyIntoleranceReactionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AllergyIntoleranceReaction', nil, 'AllergyIntoleranceReaction3', js.FHIRFactoryJs);
+  def := js.defineClass('AllergyIntoleranceReaction', nil, 'AllergyIntoleranceReaction', js.FHIRFactoryJs);
   defineAllergyIntoleranceReactionPropsJs(js, def);
 end;
 
@@ -1426,7 +1426,7 @@ procedure defineAllergyIntoleranceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AllergyIntolerance', nil, 'AllergyIntolerance3', js.FHIRFactoryJs);
+  def := js.defineClass('AllergyIntolerance', nil, 'AllergyIntolerance', js.FHIRFactoryJs);
   defineAllergyIntolerancePropsJs(js, def);
 end;
 
@@ -1444,7 +1444,7 @@ procedure defineAppointmentParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AppointmentParticipant', nil, 'AppointmentParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('AppointmentParticipant', nil, 'AppointmentParticipant', js.FHIRFactoryJs);
   defineAppointmentParticipantPropsJs(js, def);
 end;
 
@@ -1478,7 +1478,7 @@ procedure defineAppointmentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Appointment', nil, 'Appointment3', js.FHIRFactoryJs);
+  def := js.defineClass('Appointment', nil, 'Appointment', js.FHIRFactoryJs);
   defineAppointmentPropsJs(js, def);
 end;
 
@@ -1500,7 +1500,7 @@ procedure defineAppointmentResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AppointmentResponse', nil, 'AppointmentResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('AppointmentResponse', nil, 'AppointmentResponse', js.FHIRFactoryJs);
   defineAppointmentResponsePropsJs(js, def);
 end;
 
@@ -1524,7 +1524,7 @@ procedure defineAuditEventAgentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AuditEventAgent', nil, 'AuditEventAgent3', js.FHIRFactoryJs);
+  def := js.defineClass('AuditEventAgent', nil, 'AuditEventAgent', js.FHIRFactoryJs);
   defineAuditEventAgentPropsJs(js, def);
 end;
 
@@ -1540,7 +1540,7 @@ procedure defineAuditEventAgentNetworkJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AuditEventAgentNetwork', nil, 'AuditEventAgentNetwork3', js.FHIRFactoryJs);
+  def := js.defineClass('AuditEventAgentNetwork', nil, 'AuditEventAgentNetwork', js.FHIRFactoryJs);
   defineAuditEventAgentNetworkPropsJs(js, def);
 end;
 
@@ -1557,7 +1557,7 @@ procedure defineAuditEventSourceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AuditEventSource', nil, 'AuditEventSource3', js.FHIRFactoryJs);
+  def := js.defineClass('AuditEventSource', nil, 'AuditEventSource', js.FHIRFactoryJs);
   defineAuditEventSourcePropsJs(js, def);
 end;
 
@@ -1581,7 +1581,7 @@ procedure defineAuditEventEntityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AuditEventEntity', nil, 'AuditEventEntity3', js.FHIRFactoryJs);
+  def := js.defineClass('AuditEventEntity', nil, 'AuditEventEntity', js.FHIRFactoryJs);
   defineAuditEventEntityPropsJs(js, def);
 end;
 
@@ -1597,7 +1597,7 @@ procedure defineAuditEventEntityDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AuditEventEntityDetail', nil, 'AuditEventEntityDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('AuditEventEntityDetail', nil, 'AuditEventEntityDetail', js.FHIRFactoryJs);
   defineAuditEventEntityDetailPropsJs(js, def);
 end;
 
@@ -1621,7 +1621,7 @@ procedure defineAuditEventJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('AuditEvent', nil, 'AuditEvent3', js.FHIRFactoryJs);
+  def := js.defineClass('AuditEvent', nil, 'AuditEvent', js.FHIRFactoryJs);
   defineAuditEventPropsJs(js, def);
 end;
 
@@ -1640,7 +1640,7 @@ procedure defineBasicJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Basic', nil, 'Basic3', js.FHIRFactoryJs);
+  def := js.defineClass('Basic', nil, 'Basic', js.FHIRFactoryJs);
   defineBasicPropsJs(js, def);
 end;
 
@@ -1657,7 +1657,7 @@ procedure defineBinaryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Binary', nil, 'Binary3', js.FHIRFactoryJs);
+  def := js.defineClass('Binary', nil, 'Binary', js.FHIRFactoryJs);
   defineBinaryPropsJs(js, def);
 end;
 
@@ -1678,7 +1678,7 @@ procedure defineBodySiteJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('BodySite', nil, 'BodySite3', js.FHIRFactoryJs);
+  def := js.defineClass('BodySite', nil, 'BodySite', js.FHIRFactoryJs);
   defineBodySitePropsJs(js, def);
 end;
 
@@ -1694,7 +1694,7 @@ procedure defineBundleLinkJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('BundleLink', nil, 'BundleLink3', js.FHIRFactoryJs);
+  def := js.defineClass('BundleLink', nil, 'BundleLink', js.FHIRFactoryJs);
   defineBundleLinkPropsJs(js, def);
 end;
 
@@ -1714,7 +1714,7 @@ procedure defineBundleEntryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('BundleEntry', nil, 'BundleEntry3', js.FHIRFactoryJs);
+  def := js.defineClass('BundleEntry', nil, 'BundleEntry', js.FHIRFactoryJs);
   defineBundleEntryPropsJs(js, def);
 end;
 
@@ -1730,7 +1730,7 @@ procedure defineBundleEntrySearchJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('BundleEntrySearch', nil, 'BundleEntrySearch3', js.FHIRFactoryJs);
+  def := js.defineClass('BundleEntrySearch', nil, 'BundleEntrySearch', js.FHIRFactoryJs);
   defineBundleEntrySearchPropsJs(js, def);
 end;
 
@@ -1750,7 +1750,7 @@ procedure defineBundleEntryRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('BundleEntryRequest', nil, 'BundleEntryRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('BundleEntryRequest', nil, 'BundleEntryRequest', js.FHIRFactoryJs);
   defineBundleEntryRequestPropsJs(js, def);
 end;
 
@@ -1769,7 +1769,7 @@ procedure defineBundleEntryResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('BundleEntryResponse', nil, 'BundleEntryResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('BundleEntryResponse', nil, 'BundleEntryResponse', js.FHIRFactoryJs);
   defineBundleEntryResponsePropsJs(js, def);
 end;
 
@@ -1789,7 +1789,7 @@ procedure defineBundleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Bundle', nil, 'Bundle3', js.FHIRFactoryJs);
+  def := js.defineClass('Bundle', nil, 'Bundle', js.FHIRFactoryJs);
   defineBundlePropsJs(js, def);
 end;
 
@@ -1806,7 +1806,7 @@ procedure defineCapabilityStatementSoftwareJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementSoftware', nil, 'CapabilityStatementSoftware3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementSoftware', nil, 'CapabilityStatementSoftware', js.FHIRFactoryJs);
   defineCapabilityStatementSoftwarePropsJs(js, def);
 end;
 
@@ -1822,7 +1822,7 @@ procedure defineCapabilityStatementImplementationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementImplementation', nil, 'CapabilityStatementImplementation3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementImplementation', nil, 'CapabilityStatementImplementation', js.FHIRFactoryJs);
   defineCapabilityStatementImplementationPropsJs(js, def);
 end;
 
@@ -1843,7 +1843,7 @@ procedure defineCapabilityStatementRestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRest', nil, 'CapabilityStatementRest3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRest', nil, 'CapabilityStatementRest', js.FHIRFactoryJs);
   defineCapabilityStatementRestPropsJs(js, def);
 end;
 
@@ -1861,7 +1861,7 @@ procedure defineCapabilityStatementRestSecurityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestSecurity', nil, 'CapabilityStatementRestSecurity3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestSecurity', nil, 'CapabilityStatementRestSecurity', js.FHIRFactoryJs);
   defineCapabilityStatementRestSecurityPropsJs(js, def);
 end;
 
@@ -1877,7 +1877,7 @@ procedure defineCapabilityStatementRestSecurityCertificateJs(js : TFHIRJavascrip
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestSecurityCertificate', nil, 'CapabilityStatementRestSecurityCertificate3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestSecurityCertificate', nil, 'CapabilityStatementRestSecurityCertificate', js.FHIRFactoryJs);
   defineCapabilityStatementRestSecurityCertificatePropsJs(js, def);
 end;
 
@@ -1903,7 +1903,7 @@ procedure defineCapabilityStatementRestResourceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestResource', nil, 'CapabilityStatementRestResource3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestResource', nil, 'CapabilityStatementRestResource', js.FHIRFactoryJs);
   defineCapabilityStatementRestResourcePropsJs(js, def);
 end;
 
@@ -1919,7 +1919,7 @@ procedure defineCapabilityStatementRestResourceInteractionJs(js : TFHIRJavascrip
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestResourceInteraction', nil, 'CapabilityStatementRestResourceInteraction3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestResourceInteraction', nil, 'CapabilityStatementRestResourceInteraction', js.FHIRFactoryJs);
   defineCapabilityStatementRestResourceInteractionPropsJs(js, def);
 end;
 
@@ -1937,7 +1937,7 @@ procedure defineCapabilityStatementRestResourceSearchParamJs(js : TFHIRJavascrip
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestResourceSearchParam', nil, 'CapabilityStatementRestResourceSearchParam3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestResourceSearchParam', nil, 'CapabilityStatementRestResourceSearchParam', js.FHIRFactoryJs);
   defineCapabilityStatementRestResourceSearchParamPropsJs(js, def);
 end;
 
@@ -1953,7 +1953,7 @@ procedure defineCapabilityStatementRestInteractionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestInteraction', nil, 'CapabilityStatementRestInteraction3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestInteraction', nil, 'CapabilityStatementRestInteraction', js.FHIRFactoryJs);
   defineCapabilityStatementRestInteractionPropsJs(js, def);
 end;
 
@@ -1969,7 +1969,7 @@ procedure defineCapabilityStatementRestOperationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementRestOperation', nil, 'CapabilityStatementRestOperation3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementRestOperation', nil, 'CapabilityStatementRestOperation', js.FHIRFactoryJs);
   defineCapabilityStatementRestOperationPropsJs(js, def);
 end;
 
@@ -1988,7 +1988,7 @@ procedure defineCapabilityStatementMessagingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementMessaging', nil, 'CapabilityStatementMessaging3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementMessaging', nil, 'CapabilityStatementMessaging', js.FHIRFactoryJs);
   defineCapabilityStatementMessagingPropsJs(js, def);
 end;
 
@@ -2004,7 +2004,7 @@ procedure defineCapabilityStatementMessagingEndpointJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementMessagingEndpoint', nil, 'CapabilityStatementMessagingEndpoint3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementMessagingEndpoint', nil, 'CapabilityStatementMessagingEndpoint', js.FHIRFactoryJs);
   defineCapabilityStatementMessagingEndpointPropsJs(js, def);
 end;
 
@@ -2020,7 +2020,7 @@ procedure defineCapabilityStatementMessagingSupportedMessageJs(js : TFHIRJavascr
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementMessagingSupportedMessage', nil, 'CapabilityStatementMessagingSupportedMessage3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementMessagingSupportedMessage', nil, 'CapabilityStatementMessagingSupportedMessage', js.FHIRFactoryJs);
   defineCapabilityStatementMessagingSupportedMessagePropsJs(js, def);
 end;
 
@@ -2041,7 +2041,7 @@ procedure defineCapabilityStatementMessagingEventJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementMessagingEvent', nil, 'CapabilityStatementMessagingEvent3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementMessagingEvent', nil, 'CapabilityStatementMessagingEvent', js.FHIRFactoryJs);
   defineCapabilityStatementMessagingEventPropsJs(js, def);
 end;
 
@@ -2058,7 +2058,7 @@ procedure defineCapabilityStatementDocumentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatementDocument', nil, 'CapabilityStatementDocument3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatementDocument', nil, 'CapabilityStatementDocument', js.FHIRFactoryJs);
   defineCapabilityStatementDocumentPropsJs(js, def);
 end;
 
@@ -2095,7 +2095,7 @@ procedure defineCapabilityStatementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CapabilityStatement', nil, 'CapabilityStatement3', js.FHIRFactoryJs);
+  def := js.defineClass('CapabilityStatement', nil, 'CapabilityStatement', js.FHIRFactoryJs);
   defineCapabilityStatementPropsJs(js, def);
 end;
 
@@ -2114,7 +2114,7 @@ procedure defineCarePlanActivityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CarePlanActivity', nil, 'CarePlanActivity3', js.FHIRFactoryJs);
+  def := js.defineClass('CarePlanActivity', nil, 'CarePlanActivity', js.FHIRFactoryJs);
   defineCarePlanActivityPropsJs(js, def);
 end;
 
@@ -2147,7 +2147,7 @@ procedure defineCarePlanActivityDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CarePlanActivityDetail', nil, 'CarePlanActivityDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('CarePlanActivityDetail', nil, 'CarePlanActivityDetail', js.FHIRFactoryJs);
   defineCarePlanActivityDetailPropsJs(js, def);
 end;
 
@@ -2181,7 +2181,7 @@ procedure defineCarePlanJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CarePlan', nil, 'CarePlan3', js.FHIRFactoryJs);
+  def := js.defineClass('CarePlan', nil, 'CarePlan', js.FHIRFactoryJs);
   defineCarePlanPropsJs(js, def);
 end;
 
@@ -2199,7 +2199,7 @@ procedure defineCareTeamParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CareTeamParticipant', nil, 'CareTeamParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('CareTeamParticipant', nil, 'CareTeamParticipant', js.FHIRFactoryJs);
   defineCareTeamParticipantPropsJs(js, def);
 end;
 
@@ -2225,7 +2225,7 @@ procedure defineCareTeamJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CareTeam', nil, 'CareTeam3', js.FHIRFactoryJs);
+  def := js.defineClass('CareTeam', nil, 'CareTeam', js.FHIRFactoryJs);
   defineCareTeamPropsJs(js, def);
 end;
 
@@ -2241,7 +2241,7 @@ procedure defineChargeItemParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ChargeItemParticipant', nil, 'ChargeItemParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('ChargeItemParticipant', nil, 'ChargeItemParticipant', js.FHIRFactoryJs);
   defineChargeItemParticipantPropsJs(js, def);
 end;
 
@@ -2279,7 +2279,7 @@ procedure defineChargeItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ChargeItem', nil, 'ChargeItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ChargeItem', nil, 'ChargeItem', js.FHIRFactoryJs);
   defineChargeItemPropsJs(js, def);
 end;
 
@@ -2296,7 +2296,7 @@ procedure defineClaimRelatedJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimRelated', nil, 'ClaimRelated3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimRelated', nil, 'ClaimRelated', js.FHIRFactoryJs);
   defineClaimRelatedPropsJs(js, def);
 end;
 
@@ -2313,7 +2313,7 @@ procedure defineClaimPayeeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimPayee', nil, 'ClaimPayee3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimPayee', nil, 'ClaimPayee', js.FHIRFactoryJs);
   defineClaimPayeePropsJs(js, def);
 end;
 
@@ -2332,7 +2332,7 @@ procedure defineClaimCareTeamJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimCareTeam', nil, 'ClaimCareTeam3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimCareTeam', nil, 'ClaimCareTeam', js.FHIRFactoryJs);
   defineClaimCareTeamPropsJs(js, def);
 end;
 
@@ -2356,7 +2356,7 @@ procedure defineClaimInformationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimInformation', nil, 'ClaimInformation3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimInformation', nil, 'ClaimInformation', js.FHIRFactoryJs);
   defineClaimInformationPropsJs(js, def);
 end;
 
@@ -2375,7 +2375,7 @@ procedure defineClaimDiagnosisJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimDiagnosis', nil, 'ClaimDiagnosis3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimDiagnosis', nil, 'ClaimDiagnosis', js.FHIRFactoryJs);
   defineClaimDiagnosisPropsJs(js, def);
 end;
 
@@ -2393,7 +2393,7 @@ procedure defineClaimProcedureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimProcedure', nil, 'ClaimProcedure3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimProcedure', nil, 'ClaimProcedure', js.FHIRFactoryJs);
   defineClaimProcedurePropsJs(js, def);
 end;
 
@@ -2412,7 +2412,7 @@ procedure defineClaimInsuranceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimInsurance', nil, 'ClaimInsurance3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimInsurance', nil, 'ClaimInsurance', js.FHIRFactoryJs);
   defineClaimInsurancePropsJs(js, def);
 end;
 
@@ -2430,7 +2430,7 @@ procedure defineClaimAccidentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimAccident', nil, 'ClaimAccident3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimAccident', nil, 'ClaimAccident', js.FHIRFactoryJs);
   defineClaimAccidentPropsJs(js, def);
 end;
 
@@ -2464,7 +2464,7 @@ procedure defineClaimItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimItem', nil, 'ClaimItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimItem', nil, 'ClaimItem', js.FHIRFactoryJs);
   defineClaimItemPropsJs(js, def);
 end;
 
@@ -2490,7 +2490,7 @@ procedure defineClaimItemDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimItemDetail', nil, 'ClaimItemDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimItemDetail', nil, 'ClaimItemDetail', js.FHIRFactoryJs);
   defineClaimItemDetailPropsJs(js, def);
 end;
 
@@ -2515,7 +2515,7 @@ procedure defineClaimItemDetailSubDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimItemDetailSubDetail', nil, 'ClaimItemDetailSubDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimItemDetailSubDetail', nil, 'ClaimItemDetailSubDetail', js.FHIRFactoryJs);
   defineClaimItemDetailSubDetailPropsJs(js, def);
 end;
 
@@ -2559,7 +2559,7 @@ procedure defineClaimJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Claim', nil, 'Claim3', js.FHIRFactoryJs);
+  def := js.defineClass('Claim', nil, 'Claim', js.FHIRFactoryJs);
   defineClaimPropsJs(js, def);
 end;
 
@@ -2576,7 +2576,7 @@ procedure defineClaimResponseItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseItem', nil, 'ClaimResponseItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseItem', nil, 'ClaimResponseItem', js.FHIRFactoryJs);
   defineClaimResponseItemPropsJs(js, def);
 end;
 
@@ -2594,7 +2594,7 @@ procedure defineClaimResponseItemAdjudicationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseItemAdjudication', nil, 'ClaimResponseItemAdjudication3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseItemAdjudication', nil, 'ClaimResponseItemAdjudication', js.FHIRFactoryJs);
   defineClaimResponseItemAdjudicationPropsJs(js, def);
 end;
 
@@ -2611,7 +2611,7 @@ procedure defineClaimResponseItemDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseItemDetail', nil, 'ClaimResponseItemDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseItemDetail', nil, 'ClaimResponseItemDetail', js.FHIRFactoryJs);
   defineClaimResponseItemDetailPropsJs(js, def);
 end;
 
@@ -2627,7 +2627,7 @@ procedure defineClaimResponseItemDetailSubDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseItemDetailSubDetail', nil, 'ClaimResponseItemDetailSubDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseItemDetailSubDetail', nil, 'ClaimResponseItemDetailSubDetail', js.FHIRFactoryJs);
   defineClaimResponseItemDetailSubDetailPropsJs(js, def);
 end;
 
@@ -2648,7 +2648,7 @@ procedure defineClaimResponseAddItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseAddItem', nil, 'ClaimResponseAddItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseAddItem', nil, 'ClaimResponseAddItem', js.FHIRFactoryJs);
   defineClaimResponseAddItemPropsJs(js, def);
 end;
 
@@ -2668,7 +2668,7 @@ procedure defineClaimResponseAddItemDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseAddItemDetail', nil, 'ClaimResponseAddItemDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseAddItemDetail', nil, 'ClaimResponseAddItemDetail', js.FHIRFactoryJs);
   defineClaimResponseAddItemDetailPropsJs(js, def);
 end;
 
@@ -2686,7 +2686,7 @@ procedure defineClaimResponseErrorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseError', nil, 'ClaimResponseError3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseError', nil, 'ClaimResponseError', js.FHIRFactoryJs);
   defineClaimResponseErrorPropsJs(js, def);
 end;
 
@@ -2706,7 +2706,7 @@ procedure defineClaimResponsePaymentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponsePayment', nil, 'ClaimResponsePayment3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponsePayment', nil, 'ClaimResponsePayment', js.FHIRFactoryJs);
   defineClaimResponsePaymentPropsJs(js, def);
 end;
 
@@ -2724,7 +2724,7 @@ procedure defineClaimResponseProcessNoteJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseProcessNote', nil, 'ClaimResponseProcessNote3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseProcessNote', nil, 'ClaimResponseProcessNote', js.FHIRFactoryJs);
   defineClaimResponseProcessNotePropsJs(js, def);
 end;
 
@@ -2743,7 +2743,7 @@ procedure defineClaimResponseInsuranceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponseInsurance', nil, 'ClaimResponseInsurance3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponseInsurance', nil, 'ClaimResponseInsurance', js.FHIRFactoryJs);
   defineClaimResponseInsurancePropsJs(js, def);
 end;
 
@@ -2780,7 +2780,7 @@ procedure defineClaimResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClaimResponse', nil, 'ClaimResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('ClaimResponse', nil, 'ClaimResponse', js.FHIRFactoryJs);
   defineClaimResponsePropsJs(js, def);
 end;
 
@@ -2796,7 +2796,7 @@ procedure defineClinicalImpressionInvestigationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClinicalImpressionInvestigation', nil, 'ClinicalImpressionInvestigation3', js.FHIRFactoryJs);
+  def := js.defineClass('ClinicalImpressionInvestigation', nil, 'ClinicalImpressionInvestigation', js.FHIRFactoryJs);
   defineClinicalImpressionInvestigationPropsJs(js, def);
 end;
 
@@ -2813,7 +2813,7 @@ procedure defineClinicalImpressionFindingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClinicalImpressionFinding', nil, 'ClinicalImpressionFinding3', js.FHIRFactoryJs);
+  def := js.defineClass('ClinicalImpressionFinding', nil, 'ClinicalImpressionFinding', js.FHIRFactoryJs);
   defineClinicalImpressionFindingPropsJs(js, def);
 end;
 
@@ -2846,7 +2846,7 @@ procedure defineClinicalImpressionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ClinicalImpression', nil, 'ClinicalImpression3', js.FHIRFactoryJs);
+  def := js.defineClass('ClinicalImpression', nil, 'ClinicalImpression', js.FHIRFactoryJs);
   defineClinicalImpressionPropsJs(js, def);
 end;
 
@@ -2863,7 +2863,7 @@ procedure defineCodeSystemFilterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeSystemFilter', nil, 'CodeSystemFilter3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeSystemFilter', nil, 'CodeSystemFilter', js.FHIRFactoryJs);
   defineCodeSystemFilterPropsJs(js, def);
 end;
 
@@ -2881,7 +2881,7 @@ procedure defineCodeSystemPropertyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeSystemProperty', nil, 'CodeSystemProperty3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeSystemProperty', nil, 'CodeSystemProperty', js.FHIRFactoryJs);
   defineCodeSystemPropertyPropsJs(js, def);
 end;
 
@@ -2901,7 +2901,7 @@ procedure defineCodeSystemConceptJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeSystemConcept', nil, 'CodeSystemConcept3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeSystemConcept', nil, 'CodeSystemConcept', js.FHIRFactoryJs);
   defineCodeSystemConceptPropsJs(js, def);
 end;
 
@@ -2918,7 +2918,7 @@ procedure defineCodeSystemConceptDesignationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeSystemConceptDesignation', nil, 'CodeSystemConceptDesignation3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeSystemConceptDesignation', nil, 'CodeSystemConceptDesignation', js.FHIRFactoryJs);
   defineCodeSystemConceptDesignationPropsJs(js, def);
 end;
 
@@ -2939,7 +2939,7 @@ procedure defineCodeSystemConceptPropertyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeSystemConceptProperty', nil, 'CodeSystemConceptProperty3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeSystemConceptProperty', nil, 'CodeSystemConceptProperty', js.FHIRFactoryJs);
   defineCodeSystemConceptPropertyPropsJs(js, def);
 end;
 
@@ -2978,7 +2978,7 @@ procedure defineCodeSystemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CodeSystem', nil, 'CodeSystem3', js.FHIRFactoryJs);
+  def := js.defineClass('CodeSystem', nil, 'CodeSystem', js.FHIRFactoryJs);
   defineCodeSystemPropsJs(js, def);
 end;
 
@@ -2995,7 +2995,7 @@ procedure defineCommunicationPayloadJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CommunicationPayload', nil, 'CommunicationPayload3', js.FHIRFactoryJs);
+  def := js.defineClass('CommunicationPayload', nil, 'CommunicationPayload', js.FHIRFactoryJs);
   defineCommunicationPayloadPropsJs(js, def);
 end;
 
@@ -3029,7 +3029,7 @@ procedure defineCommunicationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Communication', nil, 'Communication3', js.FHIRFactoryJs);
+  def := js.defineClass('Communication', nil, 'Communication', js.FHIRFactoryJs);
   defineCommunicationPropsJs(js, def);
 end;
 
@@ -3046,7 +3046,7 @@ procedure defineCommunicationRequestPayloadJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CommunicationRequestPayload', nil, 'CommunicationRequestPayload3', js.FHIRFactoryJs);
+  def := js.defineClass('CommunicationRequestPayload', nil, 'CommunicationRequestPayload', js.FHIRFactoryJs);
   defineCommunicationRequestPayloadPropsJs(js, def);
 end;
 
@@ -3062,7 +3062,7 @@ procedure defineCommunicationRequestRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CommunicationRequestRequester', nil, 'CommunicationRequestRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('CommunicationRequestRequester', nil, 'CommunicationRequestRequester', js.FHIRFactoryJs);
   defineCommunicationRequestRequesterPropsJs(js, def);
 end;
 
@@ -3097,7 +3097,7 @@ procedure defineCommunicationRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CommunicationRequest', nil, 'CommunicationRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('CommunicationRequest', nil, 'CommunicationRequest', js.FHIRFactoryJs);
   defineCommunicationRequestPropsJs(js, def);
 end;
 
@@ -3113,7 +3113,7 @@ procedure defineCompartmentDefinitionResourceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CompartmentDefinitionResource', nil, 'CompartmentDefinitionResource3', js.FHIRFactoryJs);
+  def := js.defineClass('CompartmentDefinitionResource', nil, 'CompartmentDefinitionResource', js.FHIRFactoryJs);
   defineCompartmentDefinitionResourcePropsJs(js, def);
 end;
 
@@ -3142,7 +3142,7 @@ procedure defineCompartmentDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CompartmentDefinition', nil, 'CompartmentDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('CompartmentDefinition', nil, 'CompartmentDefinition', js.FHIRFactoryJs);
   defineCompartmentDefinitionPropsJs(js, def);
 end;
 
@@ -3158,7 +3158,7 @@ procedure defineCompositionAttesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CompositionAttester', nil, 'CompositionAttester3', js.FHIRFactoryJs);
+  def := js.defineClass('CompositionAttester', nil, 'CompositionAttester', js.FHIRFactoryJs);
   defineCompositionAttesterPropsJs(js, def);
 end;
 
@@ -3175,7 +3175,7 @@ procedure defineCompositionRelatesToJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CompositionRelatesTo', nil, 'CompositionRelatesTo3', js.FHIRFactoryJs);
+  def := js.defineClass('CompositionRelatesTo', nil, 'CompositionRelatesTo', js.FHIRFactoryJs);
   defineCompositionRelatesToPropsJs(js, def);
 end;
 
@@ -3192,7 +3192,7 @@ procedure defineCompositionEventJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CompositionEvent', nil, 'CompositionEvent3', js.FHIRFactoryJs);
+  def := js.defineClass('CompositionEvent', nil, 'CompositionEvent', js.FHIRFactoryJs);
   defineCompositionEventPropsJs(js, def);
 end;
 
@@ -3214,7 +3214,7 @@ procedure defineCompositionSectionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CompositionSection', nil, 'CompositionSection3', js.FHIRFactoryJs);
+  def := js.defineClass('CompositionSection', nil, 'CompositionSection', js.FHIRFactoryJs);
   defineCompositionSectionPropsJs(js, def);
 end;
 
@@ -3243,7 +3243,7 @@ procedure defineCompositionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Composition', nil, 'Composition3', js.FHIRFactoryJs);
+  def := js.defineClass('Composition', nil, 'Composition', js.FHIRFactoryJs);
   defineCompositionPropsJs(js, def);
 end;
 
@@ -3263,7 +3263,7 @@ procedure defineConceptMapGroupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConceptMapGroup', nil, 'ConceptMapGroup3', js.FHIRFactoryJs);
+  def := js.defineClass('ConceptMapGroup', nil, 'ConceptMapGroup', js.FHIRFactoryJs);
   defineConceptMapGroupPropsJs(js, def);
 end;
 
@@ -3280,7 +3280,7 @@ procedure defineConceptMapGroupElementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConceptMapGroupElement', nil, 'ConceptMapGroupElement3', js.FHIRFactoryJs);
+  def := js.defineClass('ConceptMapGroupElement', nil, 'ConceptMapGroupElement', js.FHIRFactoryJs);
   defineConceptMapGroupElementPropsJs(js, def);
 end;
 
@@ -3300,7 +3300,7 @@ procedure defineConceptMapGroupElementTargetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConceptMapGroupElementTarget', nil, 'ConceptMapGroupElementTarget3', js.FHIRFactoryJs);
+  def := js.defineClass('ConceptMapGroupElementTarget', nil, 'ConceptMapGroupElementTarget', js.FHIRFactoryJs);
   defineConceptMapGroupElementTargetPropsJs(js, def);
 end;
 
@@ -3318,7 +3318,7 @@ procedure defineConceptMapGroupElementTargetDependsOnJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConceptMapGroupElementTargetDependsOn', nil, 'ConceptMapGroupElementTargetDependsOn3', js.FHIRFactoryJs);
+  def := js.defineClass('ConceptMapGroupElementTargetDependsOn', nil, 'ConceptMapGroupElementTargetDependsOn', js.FHIRFactoryJs);
   defineConceptMapGroupElementTargetDependsOnPropsJs(js, def);
 end;
 
@@ -3336,7 +3336,7 @@ procedure defineConceptMapGroupUnmappedJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConceptMapGroupUnmapped', nil, 'ConceptMapGroupUnmapped3', js.FHIRFactoryJs);
+  def := js.defineClass('ConceptMapGroupUnmapped', nil, 'ConceptMapGroupUnmapped', js.FHIRFactoryJs);
   defineConceptMapGroupUnmappedPropsJs(js, def);
 end;
 
@@ -3370,7 +3370,7 @@ procedure defineConceptMapJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConceptMap', nil, 'ConceptMap3', js.FHIRFactoryJs);
+  def := js.defineClass('ConceptMap', nil, 'ConceptMap', js.FHIRFactoryJs);
   defineConceptMapPropsJs(js, def);
 end;
 
@@ -3386,7 +3386,7 @@ procedure defineConditionStageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConditionStage', nil, 'ConditionStage3', js.FHIRFactoryJs);
+  def := js.defineClass('ConditionStage', nil, 'ConditionStage', js.FHIRFactoryJs);
   defineConditionStagePropsJs(js, def);
 end;
 
@@ -3402,7 +3402,7 @@ procedure defineConditionEvidenceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConditionEvidence', nil, 'ConditionEvidence3', js.FHIRFactoryJs);
+  def := js.defineClass('ConditionEvidence', nil, 'ConditionEvidence', js.FHIRFactoryJs);
   defineConditionEvidencePropsJs(js, def);
 end;
 
@@ -3441,7 +3441,7 @@ procedure defineConditionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Condition', nil, 'Condition3', js.FHIRFactoryJs);
+  def := js.defineClass('Condition', nil, 'Condition', js.FHIRFactoryJs);
   defineConditionPropsJs(js, def);
 end;
 
@@ -3457,7 +3457,7 @@ procedure defineConsentActorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConsentActor', nil, 'ConsentActor3', js.FHIRFactoryJs);
+  def := js.defineClass('ConsentActor', nil, 'ConsentActor', js.FHIRFactoryJs);
   defineConsentActorPropsJs(js, def);
 end;
 
@@ -3473,7 +3473,7 @@ procedure defineConsentPolicyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConsentPolicy', nil, 'ConsentPolicy3', js.FHIRFactoryJs);
+  def := js.defineClass('ConsentPolicy', nil, 'ConsentPolicy', js.FHIRFactoryJs);
   defineConsentPolicyPropsJs(js, def);
 end;
 
@@ -3489,7 +3489,7 @@ procedure defineConsentDataJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConsentData', nil, 'ConsentData3', js.FHIRFactoryJs);
+  def := js.defineClass('ConsentData', nil, 'ConsentData', js.FHIRFactoryJs);
   defineConsentDataPropsJs(js, def);
 end;
 
@@ -3513,7 +3513,7 @@ procedure defineConsentExceptJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConsentExcept', nil, 'ConsentExcept3', js.FHIRFactoryJs);
+  def := js.defineClass('ConsentExcept', nil, 'ConsentExcept', js.FHIRFactoryJs);
   defineConsentExceptPropsJs(js, def);
 end;
 
@@ -3529,7 +3529,7 @@ procedure defineConsentExceptActorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConsentExceptActor', nil, 'ConsentExceptActor3', js.FHIRFactoryJs);
+  def := js.defineClass('ConsentExceptActor', nil, 'ConsentExceptActor', js.FHIRFactoryJs);
   defineConsentExceptActorPropsJs(js, def);
 end;
 
@@ -3545,7 +3545,7 @@ procedure defineConsentExceptDataJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ConsentExceptData', nil, 'ConsentExceptData3', js.FHIRFactoryJs);
+  def := js.defineClass('ConsentExceptData', nil, 'ConsentExceptData', js.FHIRFactoryJs);
   defineConsentExceptDataPropsJs(js, def);
 end;
 
@@ -3579,7 +3579,7 @@ procedure defineConsentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Consent', nil, 'Consent3', js.FHIRFactoryJs);
+  def := js.defineClass('Consent', nil, 'Consent', js.FHIRFactoryJs);
   defineConsentPropsJs(js, def);
 end;
 
@@ -3595,7 +3595,7 @@ procedure defineContractAgentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractAgent', nil, 'ContractAgent3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractAgent', nil, 'ContractAgent', js.FHIRFactoryJs);
   defineContractAgentPropsJs(js, def);
 end;
 
@@ -3612,7 +3612,7 @@ procedure defineContractSignerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractSigner', nil, 'ContractSigner3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractSigner', nil, 'ContractSigner', js.FHIRFactoryJs);
   defineContractSignerPropsJs(js, def);
 end;
 
@@ -3635,7 +3635,7 @@ procedure defineContractValuedItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractValuedItem', nil, 'ContractValuedItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractValuedItem', nil, 'ContractValuedItem', js.FHIRFactoryJs);
   defineContractValuedItemPropsJs(js, def);
 end;
 
@@ -3662,7 +3662,7 @@ procedure defineContractTermJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractTerm', nil, 'ContractTerm3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractTerm', nil, 'ContractTerm', js.FHIRFactoryJs);
   defineContractTermPropsJs(js, def);
 end;
 
@@ -3678,7 +3678,7 @@ procedure defineContractTermAgentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractTermAgent', nil, 'ContractTermAgent3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractTermAgent', nil, 'ContractTermAgent', js.FHIRFactoryJs);
   defineContractTermAgentPropsJs(js, def);
 end;
 
@@ -3701,7 +3701,7 @@ procedure defineContractTermValuedItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractTermValuedItem', nil, 'ContractTermValuedItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractTermValuedItem', nil, 'ContractTermValuedItem', js.FHIRFactoryJs);
   defineContractTermValuedItemPropsJs(js, def);
 end;
 
@@ -3717,7 +3717,7 @@ procedure defineContractFriendlyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractFriendly', nil, 'ContractFriendly3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractFriendly', nil, 'ContractFriendly', js.FHIRFactoryJs);
   defineContractFriendlyPropsJs(js, def);
 end;
 
@@ -3733,7 +3733,7 @@ procedure defineContractLegalJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractLegal', nil, 'ContractLegal3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractLegal', nil, 'ContractLegal', js.FHIRFactoryJs);
   defineContractLegalPropsJs(js, def);
 end;
 
@@ -3749,7 +3749,7 @@ procedure defineContractRuleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractRule', nil, 'ContractRule3', js.FHIRFactoryJs);
+  def := js.defineClass('ContractRule', nil, 'ContractRule', js.FHIRFactoryJs);
   defineContractRulePropsJs(js, def);
 end;
 
@@ -3787,7 +3787,7 @@ procedure defineContractJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Contract', nil, 'Contract3', js.FHIRFactoryJs);
+  def := js.defineClass('Contract', nil, 'Contract', js.FHIRFactoryJs);
   defineContractPropsJs(js, def);
 end;
 
@@ -3813,7 +3813,7 @@ procedure defineCoverageGroupingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('CoverageGrouping', nil, 'CoverageGrouping3', js.FHIRFactoryJs);
+  def := js.defineClass('CoverageGrouping', nil, 'CoverageGrouping', js.FHIRFactoryJs);
   defineCoverageGroupingPropsJs(js, def);
 end;
 
@@ -3843,7 +3843,7 @@ procedure defineCoverageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Coverage', nil, 'Coverage3', js.FHIRFactoryJs);
+  def := js.defineClass('Coverage', nil, 'Coverage', js.FHIRFactoryJs);
   defineCoveragePropsJs(js, def);
 end;
 
@@ -3861,7 +3861,7 @@ procedure defineDataElementMappingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DataElementMapping', nil, 'DataElementMapping3', js.FHIRFactoryJs);
+  def := js.defineClass('DataElementMapping', nil, 'DataElementMapping', js.FHIRFactoryJs);
   defineDataElementMappingPropsJs(js, def);
 end;
 
@@ -3891,7 +3891,7 @@ procedure defineDataElementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DataElement', nil, 'DataElement3', js.FHIRFactoryJs);
+  def := js.defineClass('DataElement', nil, 'DataElement', js.FHIRFactoryJs);
   defineDataElementPropsJs(js, def);
 end;
 
@@ -3908,7 +3908,7 @@ procedure defineDetectedIssueMitigationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DetectedIssueMitigation', nil, 'DetectedIssueMitigation3', js.FHIRFactoryJs);
+  def := js.defineClass('DetectedIssueMitigation', nil, 'DetectedIssueMitigation', js.FHIRFactoryJs);
   defineDetectedIssueMitigationPropsJs(js, def);
 end;
 
@@ -3933,7 +3933,7 @@ procedure defineDetectedIssueJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DetectedIssue', nil, 'DetectedIssue3', js.FHIRFactoryJs);
+  def := js.defineClass('DetectedIssue', nil, 'DetectedIssue', js.FHIRFactoryJs);
   defineDetectedIssuePropsJs(js, def);
 end;
 
@@ -3954,7 +3954,7 @@ procedure defineDeviceUdiJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceUdi', nil, 'DeviceUdi3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceUdi', nil, 'DeviceUdi', js.FHIRFactoryJs);
   defineDeviceUdiPropsJs(js, def);
 end;
 
@@ -3985,7 +3985,7 @@ procedure defineDeviceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Device', nil, 'Device3', js.FHIRFactoryJs);
+  def := js.defineClass('Device', nil, 'Device', js.FHIRFactoryJs);
   defineDevicePropsJs(js, def);
 end;
 
@@ -4002,7 +4002,7 @@ procedure defineDeviceComponentProductionSpecificationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceComponentProductionSpecification', nil, 'DeviceComponentProductionSpecification3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceComponentProductionSpecification', nil, 'DeviceComponentProductionSpecification', js.FHIRFactoryJs);
   defineDeviceComponentProductionSpecificationPropsJs(js, def);
 end;
 
@@ -4026,7 +4026,7 @@ procedure defineDeviceComponentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceComponent', nil, 'DeviceComponent3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceComponent', nil, 'DeviceComponent', js.FHIRFactoryJs);
   defineDeviceComponentPropsJs(js, def);
 end;
 
@@ -4043,7 +4043,7 @@ procedure defineDeviceMetricCalibrationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceMetricCalibration', nil, 'DeviceMetricCalibration3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceMetricCalibration', nil, 'DeviceMetricCalibration', js.FHIRFactoryJs);
   defineDeviceMetricCalibrationPropsJs(js, def);
 end;
 
@@ -4067,7 +4067,7 @@ procedure defineDeviceMetricJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceMetric', nil, 'DeviceMetric3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceMetric', nil, 'DeviceMetric', js.FHIRFactoryJs);
   defineDeviceMetricPropsJs(js, def);
 end;
 
@@ -4083,7 +4083,7 @@ procedure defineDeviceRequestRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceRequestRequester', nil, 'DeviceRequestRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceRequestRequester', nil, 'DeviceRequestRequester', js.FHIRFactoryJs);
   defineDeviceRequestRequesterPropsJs(js, def);
 end;
 
@@ -4121,7 +4121,7 @@ procedure defineDeviceRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceRequest', nil, 'DeviceRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceRequest', nil, 'DeviceRequest', js.FHIRFactoryJs);
   defineDeviceRequestPropsJs(js, def);
 end;
 
@@ -4148,7 +4148,7 @@ procedure defineDeviceUseStatementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceUseStatement', nil, 'DeviceUseStatement3', js.FHIRFactoryJs);
+  def := js.defineClass('DeviceUseStatement', nil, 'DeviceUseStatement', js.FHIRFactoryJs);
   defineDeviceUseStatementPropsJs(js, def);
 end;
 
@@ -4164,7 +4164,7 @@ procedure defineDiagnosticReportPerformerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DiagnosticReportPerformer', nil, 'DiagnosticReportPerformer3', js.FHIRFactoryJs);
+  def := js.defineClass('DiagnosticReportPerformer', nil, 'DiagnosticReportPerformer', js.FHIRFactoryJs);
   defineDiagnosticReportPerformerPropsJs(js, def);
 end;
 
@@ -4180,7 +4180,7 @@ procedure defineDiagnosticReportImageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DiagnosticReportImage', nil, 'DiagnosticReportImage3', js.FHIRFactoryJs);
+  def := js.defineClass('DiagnosticReportImage', nil, 'DiagnosticReportImage', js.FHIRFactoryJs);
   defineDiagnosticReportImagePropsJs(js, def);
 end;
 
@@ -4212,7 +4212,7 @@ procedure defineDiagnosticReportJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DiagnosticReport', nil, 'DiagnosticReport3', js.FHIRFactoryJs);
+  def := js.defineClass('DiagnosticReport', nil, 'DiagnosticReport', js.FHIRFactoryJs);
   defineDiagnosticReportPropsJs(js, def);
 end;
 
@@ -4228,7 +4228,7 @@ procedure defineDocumentManifestContentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentManifestContent', nil, 'DocumentManifestContent3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentManifestContent', nil, 'DocumentManifestContent', js.FHIRFactoryJs);
   defineDocumentManifestContentPropsJs(js, def);
 end;
 
@@ -4244,7 +4244,7 @@ procedure defineDocumentManifestRelatedJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentManifestRelated', nil, 'DocumentManifestRelated3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentManifestRelated', nil, 'DocumentManifestRelated', js.FHIRFactoryJs);
   defineDocumentManifestRelatedPropsJs(js, def);
 end;
 
@@ -4270,7 +4270,7 @@ procedure defineDocumentManifestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentManifest', nil, 'DocumentManifest3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentManifest', nil, 'DocumentManifest', js.FHIRFactoryJs);
   defineDocumentManifestPropsJs(js, def);
 end;
 
@@ -4286,7 +4286,7 @@ procedure defineDocumentReferenceRelatesToJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentReferenceRelatesTo', nil, 'DocumentReferenceRelatesTo3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentReferenceRelatesTo', nil, 'DocumentReferenceRelatesTo', js.FHIRFactoryJs);
   defineDocumentReferenceRelatesToPropsJs(js, def);
 end;
 
@@ -4302,7 +4302,7 @@ procedure defineDocumentReferenceContentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentReferenceContent', nil, 'DocumentReferenceContent3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentReferenceContent', nil, 'DocumentReferenceContent', js.FHIRFactoryJs);
   defineDocumentReferenceContentPropsJs(js, def);
 end;
 
@@ -4323,7 +4323,7 @@ procedure defineDocumentReferenceContextJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentReferenceContext', nil, 'DocumentReferenceContext3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentReferenceContext', nil, 'DocumentReferenceContext', js.FHIRFactoryJs);
   defineDocumentReferenceContextPropsJs(js, def);
 end;
 
@@ -4339,7 +4339,7 @@ procedure defineDocumentReferenceContextRelatedJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentReferenceContextRelated', nil, 'DocumentReferenceContextRelated3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentReferenceContextRelated', nil, 'DocumentReferenceContextRelated', js.FHIRFactoryJs);
   defineDocumentReferenceContextRelatedPropsJs(js, def);
 end;
 
@@ -4370,7 +4370,7 @@ procedure defineDocumentReferenceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DocumentReference', nil, 'DocumentReference3', js.FHIRFactoryJs);
+  def := js.defineClass('DocumentReference', nil, 'DocumentReference', js.FHIRFactoryJs);
   defineDocumentReferencePropsJs(js, def);
 end;
 
@@ -4400,7 +4400,7 @@ procedure defineEligibilityRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EligibilityRequest', nil, 'EligibilityRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('EligibilityRequest', nil, 'EligibilityRequest', js.FHIRFactoryJs);
   defineEligibilityRequestPropsJs(js, def);
 end;
 
@@ -4417,7 +4417,7 @@ procedure defineEligibilityResponseInsuranceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EligibilityResponseInsurance', nil, 'EligibilityResponseInsurance3', js.FHIRFactoryJs);
+  def := js.defineClass('EligibilityResponseInsurance', nil, 'EligibilityResponseInsurance', js.FHIRFactoryJs);
   defineEligibilityResponseInsurancePropsJs(js, def);
 end;
 
@@ -4440,7 +4440,7 @@ procedure defineEligibilityResponseInsuranceBenefitBalanceJs(js : TFHIRJavascrip
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EligibilityResponseInsuranceBenefitBalance', nil, 'EligibilityResponseInsuranceBenefitBalance3', js.FHIRFactoryJs);
+  def := js.defineClass('EligibilityResponseInsuranceBenefitBalance', nil, 'EligibilityResponseInsuranceBenefitBalance', js.FHIRFactoryJs);
   defineEligibilityResponseInsuranceBenefitBalancePropsJs(js, def);
 end;
 
@@ -4460,7 +4460,7 @@ procedure defineEligibilityResponseInsuranceBenefitBalanceFinancialJs(js : TFHIR
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EligibilityResponseInsuranceBenefitBalanceFinancial', nil, 'EligibilityResponseInsuranceBenefitBalanceFinancial3', js.FHIRFactoryJs);
+  def := js.defineClass('EligibilityResponseInsuranceBenefitBalanceFinancial', nil, 'EligibilityResponseInsuranceBenefitBalanceFinancial', js.FHIRFactoryJs);
   defineEligibilityResponseInsuranceBenefitBalanceFinancialPropsJs(js, def);
 end;
 
@@ -4475,7 +4475,7 @@ procedure defineEligibilityResponseErrorJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EligibilityResponseError', nil, 'EligibilityResponseError3', js.FHIRFactoryJs);
+  def := js.defineClass('EligibilityResponseError', nil, 'EligibilityResponseError', js.FHIRFactoryJs);
   defineEligibilityResponseErrorPropsJs(js, def);
 end;
 
@@ -4502,7 +4502,7 @@ procedure defineEligibilityResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EligibilityResponse', nil, 'EligibilityResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('EligibilityResponse', nil, 'EligibilityResponse', js.FHIRFactoryJs);
   defineEligibilityResponsePropsJs(js, def);
 end;
 
@@ -4518,7 +4518,7 @@ procedure defineEncounterStatusHistoryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EncounterStatusHistory', nil, 'EncounterStatusHistory3', js.FHIRFactoryJs);
+  def := js.defineClass('EncounterStatusHistory', nil, 'EncounterStatusHistory', js.FHIRFactoryJs);
   defineEncounterStatusHistoryPropsJs(js, def);
 end;
 
@@ -4534,7 +4534,7 @@ procedure defineEncounterClassHistoryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EncounterClassHistory', nil, 'EncounterClassHistory3', js.FHIRFactoryJs);
+  def := js.defineClass('EncounterClassHistory', nil, 'EncounterClassHistory', js.FHIRFactoryJs);
   defineEncounterClassHistoryPropsJs(js, def);
 end;
 
@@ -4551,7 +4551,7 @@ procedure defineEncounterParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EncounterParticipant', nil, 'EncounterParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('EncounterParticipant', nil, 'EncounterParticipant', js.FHIRFactoryJs);
   defineEncounterParticipantPropsJs(js, def);
 end;
 
@@ -4568,7 +4568,7 @@ procedure defineEncounterDiagnosisJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EncounterDiagnosis', nil, 'EncounterDiagnosis3', js.FHIRFactoryJs);
+  def := js.defineClass('EncounterDiagnosis', nil, 'EncounterDiagnosis', js.FHIRFactoryJs);
   defineEncounterDiagnosisPropsJs(js, def);
 end;
 
@@ -4591,7 +4591,7 @@ procedure defineEncounterHospitalizationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EncounterHospitalization', nil, 'EncounterHospitalization3', js.FHIRFactoryJs);
+  def := js.defineClass('EncounterHospitalization', nil, 'EncounterHospitalization', js.FHIRFactoryJs);
   defineEncounterHospitalizationPropsJs(js, def);
 end;
 
@@ -4608,7 +4608,7 @@ procedure defineEncounterLocationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EncounterLocation', nil, 'EncounterLocation3', js.FHIRFactoryJs);
+  def := js.defineClass('EncounterLocation', nil, 'EncounterLocation', js.FHIRFactoryJs);
   defineEncounterLocationPropsJs(js, def);
 end;
 
@@ -4643,7 +4643,7 @@ procedure defineEncounterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Encounter', nil, 'Encounter3', js.FHIRFactoryJs);
+  def := js.defineClass('Encounter', nil, 'Encounter', js.FHIRFactoryJs);
   defineEncounterPropsJs(js, def);
 end;
 
@@ -4666,7 +4666,7 @@ procedure defineEndpointJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Endpoint', nil, 'Endpoint3', js.FHIRFactoryJs);
+  def := js.defineClass('Endpoint', nil, 'Endpoint', js.FHIRFactoryJs);
   defineEndpointPropsJs(js, def);
 end;
 
@@ -4688,7 +4688,7 @@ procedure defineEnrollmentRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EnrollmentRequest', nil, 'EnrollmentRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('EnrollmentRequest', nil, 'EnrollmentRequest', js.FHIRFactoryJs);
   defineEnrollmentRequestPropsJs(js, def);
 end;
 
@@ -4711,7 +4711,7 @@ procedure defineEnrollmentResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EnrollmentResponse', nil, 'EnrollmentResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('EnrollmentResponse', nil, 'EnrollmentResponse', js.FHIRFactoryJs);
   defineEnrollmentResponsePropsJs(js, def);
 end;
 
@@ -4727,7 +4727,7 @@ procedure defineEpisodeOfCareStatusHistoryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EpisodeOfCareStatusHistory', nil, 'EpisodeOfCareStatusHistory3', js.FHIRFactoryJs);
+  def := js.defineClass('EpisodeOfCareStatusHistory', nil, 'EpisodeOfCareStatusHistory', js.FHIRFactoryJs);
   defineEpisodeOfCareStatusHistoryPropsJs(js, def);
 end;
 
@@ -4744,7 +4744,7 @@ procedure defineEpisodeOfCareDiagnosisJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EpisodeOfCareDiagnosis', nil, 'EpisodeOfCareDiagnosis3', js.FHIRFactoryJs);
+  def := js.defineClass('EpisodeOfCareDiagnosis', nil, 'EpisodeOfCareDiagnosis', js.FHIRFactoryJs);
   defineEpisodeOfCareDiagnosisPropsJs(js, def);
 end;
 
@@ -4770,7 +4770,7 @@ procedure defineEpisodeOfCareJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('EpisodeOfCare', nil, 'EpisodeOfCare3', js.FHIRFactoryJs);
+  def := js.defineClass('EpisodeOfCare', nil, 'EpisodeOfCare', js.FHIRFactoryJs);
   defineEpisodeOfCarePropsJs(js, def);
 end;
 
@@ -4787,7 +4787,7 @@ procedure defineExpansionProfileFixedVersionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileFixedVersion', nil, 'ExpansionProfileFixedVersion3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileFixedVersion', nil, 'ExpansionProfileFixedVersion', js.FHIRFactoryJs);
   defineExpansionProfileFixedVersionPropsJs(js, def);
 end;
 
@@ -4803,7 +4803,7 @@ procedure defineExpansionProfileExcludedSystemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileExcludedSystem', nil, 'ExpansionProfileExcludedSystem3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileExcludedSystem', nil, 'ExpansionProfileExcludedSystem', js.FHIRFactoryJs);
   defineExpansionProfileExcludedSystemPropsJs(js, def);
 end;
 
@@ -4819,7 +4819,7 @@ procedure defineExpansionProfileDesignationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileDesignation', nil, 'ExpansionProfileDesignation3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileDesignation', nil, 'ExpansionProfileDesignation', js.FHIRFactoryJs);
   defineExpansionProfileDesignationPropsJs(js, def);
 end;
 
@@ -4834,7 +4834,7 @@ procedure defineExpansionProfileDesignationIncludeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileDesignationInclude', nil, 'ExpansionProfileDesignationInclude3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileDesignationInclude', nil, 'ExpansionProfileDesignationInclude', js.FHIRFactoryJs);
   defineExpansionProfileDesignationIncludePropsJs(js, def);
 end;
 
@@ -4850,7 +4850,7 @@ procedure defineExpansionProfileDesignationIncludeDesignationJs(js : TFHIRJavasc
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileDesignationIncludeDesignation', nil, 'ExpansionProfileDesignationIncludeDesignation3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileDesignationIncludeDesignation', nil, 'ExpansionProfileDesignationIncludeDesignation', js.FHIRFactoryJs);
   defineExpansionProfileDesignationIncludeDesignationPropsJs(js, def);
 end;
 
@@ -4865,7 +4865,7 @@ procedure defineExpansionProfileDesignationExcludeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileDesignationExclude', nil, 'ExpansionProfileDesignationExclude3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileDesignationExclude', nil, 'ExpansionProfileDesignationExclude', js.FHIRFactoryJs);
   defineExpansionProfileDesignationExcludePropsJs(js, def);
 end;
 
@@ -4881,7 +4881,7 @@ procedure defineExpansionProfileDesignationExcludeDesignationJs(js : TFHIRJavasc
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfileDesignationExcludeDesignation', nil, 'ExpansionProfileDesignationExcludeDesignation3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfileDesignationExcludeDesignation', nil, 'ExpansionProfileDesignationExcludeDesignation', js.FHIRFactoryJs);
   defineExpansionProfileDesignationExcludeDesignationPropsJs(js, def);
 end;
 
@@ -4918,7 +4918,7 @@ procedure defineExpansionProfileJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExpansionProfile', nil, 'ExpansionProfile3', js.FHIRFactoryJs);
+  def := js.defineClass('ExpansionProfile', nil, 'ExpansionProfile', js.FHIRFactoryJs);
   defineExpansionProfilePropsJs(js, def);
 end;
 
@@ -4935,7 +4935,7 @@ procedure defineExplanationOfBenefitRelatedJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitRelated', nil, 'ExplanationOfBenefitRelated3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitRelated', nil, 'ExplanationOfBenefitRelated', js.FHIRFactoryJs);
   defineExplanationOfBenefitRelatedPropsJs(js, def);
 end;
 
@@ -4952,7 +4952,7 @@ procedure defineExplanationOfBenefitPayeeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitPayee', nil, 'ExplanationOfBenefitPayee3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitPayee', nil, 'ExplanationOfBenefitPayee', js.FHIRFactoryJs);
   defineExplanationOfBenefitPayeePropsJs(js, def);
 end;
 
@@ -4976,7 +4976,7 @@ procedure defineExplanationOfBenefitInformationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitInformation', nil, 'ExplanationOfBenefitInformation3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitInformation', nil, 'ExplanationOfBenefitInformation', js.FHIRFactoryJs);
   defineExplanationOfBenefitInformationPropsJs(js, def);
 end;
 
@@ -4995,7 +4995,7 @@ procedure defineExplanationOfBenefitCareTeamJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitCareTeam', nil, 'ExplanationOfBenefitCareTeam3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitCareTeam', nil, 'ExplanationOfBenefitCareTeam', js.FHIRFactoryJs);
   defineExplanationOfBenefitCareTeamPropsJs(js, def);
 end;
 
@@ -5014,7 +5014,7 @@ procedure defineExplanationOfBenefitDiagnosisJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitDiagnosis', nil, 'ExplanationOfBenefitDiagnosis3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitDiagnosis', nil, 'ExplanationOfBenefitDiagnosis', js.FHIRFactoryJs);
   defineExplanationOfBenefitDiagnosisPropsJs(js, def);
 end;
 
@@ -5032,7 +5032,7 @@ procedure defineExplanationOfBenefitProcedureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitProcedure', nil, 'ExplanationOfBenefitProcedure3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitProcedure', nil, 'ExplanationOfBenefitProcedure', js.FHIRFactoryJs);
   defineExplanationOfBenefitProcedurePropsJs(js, def);
 end;
 
@@ -5047,7 +5047,7 @@ procedure defineExplanationOfBenefitInsuranceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitInsurance', nil, 'ExplanationOfBenefitInsurance3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitInsurance', nil, 'ExplanationOfBenefitInsurance', js.FHIRFactoryJs);
   defineExplanationOfBenefitInsurancePropsJs(js, def);
 end;
 
@@ -5065,7 +5065,7 @@ procedure defineExplanationOfBenefitAccidentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitAccident', nil, 'ExplanationOfBenefitAccident3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitAccident', nil, 'ExplanationOfBenefitAccident', js.FHIRFactoryJs);
   defineExplanationOfBenefitAccidentPropsJs(js, def);
 end;
 
@@ -5100,7 +5100,7 @@ procedure defineExplanationOfBenefitItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitItem', nil, 'ExplanationOfBenefitItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitItem', nil, 'ExplanationOfBenefitItem', js.FHIRFactoryJs);
   defineExplanationOfBenefitItemPropsJs(js, def);
 end;
 
@@ -5118,7 +5118,7 @@ procedure defineExplanationOfBenefitItemAdjudicationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitItemAdjudication', nil, 'ExplanationOfBenefitItemAdjudication3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitItemAdjudication', nil, 'ExplanationOfBenefitItemAdjudication', js.FHIRFactoryJs);
   defineExplanationOfBenefitItemAdjudicationPropsJs(js, def);
 end;
 
@@ -5146,7 +5146,7 @@ procedure defineExplanationOfBenefitItemDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitItemDetail', nil, 'ExplanationOfBenefitItemDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitItemDetail', nil, 'ExplanationOfBenefitItemDetail', js.FHIRFactoryJs);
   defineExplanationOfBenefitItemDetailPropsJs(js, def);
 end;
 
@@ -5173,7 +5173,7 @@ procedure defineExplanationOfBenefitItemDetailSubDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitItemDetailSubDetail', nil, 'ExplanationOfBenefitItemDetailSubDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitItemDetailSubDetail', nil, 'ExplanationOfBenefitItemDetailSubDetail', js.FHIRFactoryJs);
   defineExplanationOfBenefitItemDetailSubDetailPropsJs(js, def);
 end;
 
@@ -5194,7 +5194,7 @@ procedure defineExplanationOfBenefitAddItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitAddItem', nil, 'ExplanationOfBenefitAddItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitAddItem', nil, 'ExplanationOfBenefitAddItem', js.FHIRFactoryJs);
   defineExplanationOfBenefitAddItemPropsJs(js, def);
 end;
 
@@ -5214,7 +5214,7 @@ procedure defineExplanationOfBenefitAddItemDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitAddItemDetail', nil, 'ExplanationOfBenefitAddItemDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitAddItemDetail', nil, 'ExplanationOfBenefitAddItemDetail', js.FHIRFactoryJs);
   defineExplanationOfBenefitAddItemDetailPropsJs(js, def);
 end;
 
@@ -5234,7 +5234,7 @@ procedure defineExplanationOfBenefitPaymentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitPayment', nil, 'ExplanationOfBenefitPayment3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitPayment', nil, 'ExplanationOfBenefitPayment', js.FHIRFactoryJs);
   defineExplanationOfBenefitPaymentPropsJs(js, def);
 end;
 
@@ -5252,7 +5252,7 @@ procedure defineExplanationOfBenefitProcessNoteJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitProcessNote', nil, 'ExplanationOfBenefitProcessNote3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitProcessNote', nil, 'ExplanationOfBenefitProcessNote', js.FHIRFactoryJs);
   defineExplanationOfBenefitProcessNotePropsJs(js, def);
 end;
 
@@ -5275,7 +5275,7 @@ procedure defineExplanationOfBenefitBenefitBalanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitBenefitBalance', nil, 'ExplanationOfBenefitBenefitBalance3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitBenefitBalance', nil, 'ExplanationOfBenefitBenefitBalance', js.FHIRFactoryJs);
   defineExplanationOfBenefitBenefitBalancePropsJs(js, def);
 end;
 
@@ -5295,7 +5295,7 @@ procedure defineExplanationOfBenefitBenefitBalanceFinancialJs(js : TFHIRJavascri
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefitBenefitBalanceFinancial', nil, 'ExplanationOfBenefitBenefitBalanceFinancial3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefitBenefitBalanceFinancial', nil, 'ExplanationOfBenefitBenefitBalanceFinancial', js.FHIRFactoryJs);
   defineExplanationOfBenefitBenefitBalanceFinancialPropsJs(js, def);
 end;
 
@@ -5348,7 +5348,7 @@ procedure defineExplanationOfBenefitJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ExplanationOfBenefit', nil, 'ExplanationOfBenefit3', js.FHIRFactoryJs);
+  def := js.defineClass('ExplanationOfBenefit', nil, 'ExplanationOfBenefit', js.FHIRFactoryJs);
   defineExplanationOfBenefitPropsJs(js, def);
 end;
 
@@ -5369,7 +5369,7 @@ procedure defineFamilyMemberHistoryConditionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('FamilyMemberHistoryCondition', nil, 'FamilyMemberHistoryCondition3', js.FHIRFactoryJs);
+  def := js.defineClass('FamilyMemberHistoryCondition', nil, 'FamilyMemberHistoryCondition', js.FHIRFactoryJs);
   defineFamilyMemberHistoryConditionPropsJs(js, def);
 end;
 
@@ -5409,7 +5409,7 @@ procedure defineFamilyMemberHistoryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('FamilyMemberHistory', nil, 'FamilyMemberHistory3', js.FHIRFactoryJs);
+  def := js.defineClass('FamilyMemberHistory', nil, 'FamilyMemberHistory', js.FHIRFactoryJs);
   defineFamilyMemberHistoryPropsJs(js, def);
 end;
 
@@ -5431,7 +5431,7 @@ procedure defineFlagJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Flag', nil, 'Flag3', js.FHIRFactoryJs);
+  def := js.defineClass('Flag', nil, 'Flag', js.FHIRFactoryJs);
   defineFlagPropsJs(js, def);
 end;
 
@@ -5451,7 +5451,7 @@ procedure defineGoalTargetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GoalTarget', nil, 'GoalTarget3', js.FHIRFactoryJs);
+  def := js.defineClass('GoalTarget', nil, 'GoalTarget', js.FHIRFactoryJs);
   defineGoalTargetPropsJs(js, def);
 end;
 
@@ -5481,7 +5481,7 @@ procedure defineGoalJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Goal', nil, 'Goal3', js.FHIRFactoryJs);
+  def := js.defineClass('Goal', nil, 'Goal', js.FHIRFactoryJs);
   defineGoalPropsJs(js, def);
 end;
 
@@ -5501,7 +5501,7 @@ procedure defineGraphDefinitionLinkJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GraphDefinitionLink', nil, 'GraphDefinitionLink3', js.FHIRFactoryJs);
+  def := js.defineClass('GraphDefinitionLink', nil, 'GraphDefinitionLink', js.FHIRFactoryJs);
   defineGraphDefinitionLinkPropsJs(js, def);
 end;
 
@@ -5519,7 +5519,7 @@ procedure defineGraphDefinitionLinkTargetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GraphDefinitionLinkTarget', nil, 'GraphDefinitionLinkTarget3', js.FHIRFactoryJs);
+  def := js.defineClass('GraphDefinitionLinkTarget', nil, 'GraphDefinitionLinkTarget', js.FHIRFactoryJs);
   defineGraphDefinitionLinkTargetPropsJs(js, def);
 end;
 
@@ -5537,7 +5537,7 @@ procedure defineGraphDefinitionLinkTargetCompartmentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GraphDefinitionLinkTargetCompartment', nil, 'GraphDefinitionLinkTargetCompartment3', js.FHIRFactoryJs);
+  def := js.defineClass('GraphDefinitionLinkTargetCompartment', nil, 'GraphDefinitionLinkTargetCompartment', js.FHIRFactoryJs);
   defineGraphDefinitionLinkTargetCompartmentPropsJs(js, def);
 end;
 
@@ -5566,7 +5566,7 @@ procedure defineGraphDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GraphDefinition', nil, 'GraphDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('GraphDefinition', nil, 'GraphDefinition', js.FHIRFactoryJs);
   defineGraphDefinitionPropsJs(js, def);
 end;
 
@@ -5587,7 +5587,7 @@ procedure defineGroupCharacteristicJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GroupCharacteristic', nil, 'GroupCharacteristic3', js.FHIRFactoryJs);
+  def := js.defineClass('GroupCharacteristic', nil, 'GroupCharacteristic', js.FHIRFactoryJs);
   defineGroupCharacteristicPropsJs(js, def);
 end;
 
@@ -5604,7 +5604,7 @@ procedure defineGroupMemberJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GroupMember', nil, 'GroupMember3', js.FHIRFactoryJs);
+  def := js.defineClass('GroupMember', nil, 'GroupMember', js.FHIRFactoryJs);
   defineGroupMemberPropsJs(js, def);
 end;
 
@@ -5627,7 +5627,7 @@ procedure defineGroupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Group', nil, 'Group3', js.FHIRFactoryJs);
+  def := js.defineClass('Group', nil, 'Group', js.FHIRFactoryJs);
   defineGroupPropsJs(js, def);
 end;
 
@@ -5656,7 +5656,7 @@ procedure defineGuidanceResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('GuidanceResponse', nil, 'GuidanceResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('GuidanceResponse', nil, 'GuidanceResponse', js.FHIRFactoryJs);
   defineGuidanceResponsePropsJs(js, def);
 end;
 
@@ -5673,7 +5673,7 @@ procedure defineHealthcareServiceAvailableTimeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('HealthcareServiceAvailableTime', nil, 'HealthcareServiceAvailableTime3', js.FHIRFactoryJs);
+  def := js.defineClass('HealthcareServiceAvailableTime', nil, 'HealthcareServiceAvailableTime', js.FHIRFactoryJs);
   defineHealthcareServiceAvailableTimePropsJs(js, def);
 end;
 
@@ -5689,7 +5689,7 @@ procedure defineHealthcareServiceNotAvailableJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('HealthcareServiceNotAvailable', nil, 'HealthcareServiceNotAvailable3', js.FHIRFactoryJs);
+  def := js.defineClass('HealthcareServiceNotAvailable', nil, 'HealthcareServiceNotAvailable', js.FHIRFactoryJs);
   defineHealthcareServiceNotAvailablePropsJs(js, def);
 end;
 
@@ -5726,7 +5726,7 @@ procedure defineHealthcareServiceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('HealthcareService', nil, 'HealthcareService3', js.FHIRFactoryJs);
+  def := js.defineClass('HealthcareService', nil, 'HealthcareService', js.FHIRFactoryJs);
   defineHealthcareServicePropsJs(js, def);
 end;
 
@@ -5744,7 +5744,7 @@ procedure defineImagingManifestStudyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingManifestStudy', nil, 'ImagingManifestStudy3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingManifestStudy', nil, 'ImagingManifestStudy', js.FHIRFactoryJs);
   defineImagingManifestStudyPropsJs(js, def);
 end;
 
@@ -5761,7 +5761,7 @@ procedure defineImagingManifestStudySeriesJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingManifestStudySeries', nil, 'ImagingManifestStudySeries3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingManifestStudySeries', nil, 'ImagingManifestStudySeries', js.FHIRFactoryJs);
   defineImagingManifestStudySeriesPropsJs(js, def);
 end;
 
@@ -5777,7 +5777,7 @@ procedure defineImagingManifestStudySeriesInstanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingManifestStudySeriesInstance', nil, 'ImagingManifestStudySeriesInstance3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingManifestStudySeriesInstance', nil, 'ImagingManifestStudySeriesInstance', js.FHIRFactoryJs);
   defineImagingManifestStudySeriesInstancePropsJs(js, def);
 end;
 
@@ -5797,7 +5797,7 @@ procedure defineImagingManifestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingManifest', nil, 'ImagingManifest3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingManifest', nil, 'ImagingManifest', js.FHIRFactoryJs);
   defineImagingManifestPropsJs(js, def);
 end;
 
@@ -5823,7 +5823,7 @@ procedure defineImagingStudySeriesJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingStudySeries', nil, 'ImagingStudySeries3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingStudySeries', nil, 'ImagingStudySeries', js.FHIRFactoryJs);
   defineImagingStudySeriesPropsJs(js, def);
 end;
 
@@ -5841,7 +5841,7 @@ procedure defineImagingStudySeriesInstanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingStudySeriesInstance', nil, 'ImagingStudySeriesInstance3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingStudySeriesInstance', nil, 'ImagingStudySeriesInstance', js.FHIRFactoryJs);
   defineImagingStudySeriesInstancePropsJs(js, def);
 end;
 
@@ -5874,7 +5874,7 @@ procedure defineImagingStudyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImagingStudy', nil, 'ImagingStudy3', js.FHIRFactoryJs);
+  def := js.defineClass('ImagingStudy', nil, 'ImagingStudy', js.FHIRFactoryJs);
   defineImagingStudyPropsJs(js, def);
 end;
 
@@ -5890,7 +5890,7 @@ procedure defineImmunizationPractitionerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationPractitioner', nil, 'ImmunizationPractitioner3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationPractitioner', nil, 'ImmunizationPractitioner', js.FHIRFactoryJs);
   defineImmunizationPractitionerPropsJs(js, def);
 end;
 
@@ -5906,7 +5906,7 @@ procedure defineImmunizationExplanationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationExplanation', nil, 'ImmunizationExplanation3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationExplanation', nil, 'ImmunizationExplanation', js.FHIRFactoryJs);
   defineImmunizationExplanationPropsJs(js, def);
 end;
 
@@ -5923,7 +5923,7 @@ procedure defineImmunizationReactionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationReaction', nil, 'ImmunizationReaction3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationReaction', nil, 'ImmunizationReaction', js.FHIRFactoryJs);
   defineImmunizationReactionPropsJs(js, def);
 end;
 
@@ -5945,7 +5945,7 @@ procedure defineImmunizationVaccinationProtocolJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationVaccinationProtocol', nil, 'ImmunizationVaccinationProtocol3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationVaccinationProtocol', nil, 'ImmunizationVaccinationProtocol', js.FHIRFactoryJs);
   defineImmunizationVaccinationProtocolPropsJs(js, def);
 end;
 
@@ -5980,7 +5980,7 @@ procedure defineImmunizationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Immunization', nil, 'Immunization3', js.FHIRFactoryJs);
+  def := js.defineClass('Immunization', nil, 'Immunization', js.FHIRFactoryJs);
   defineImmunizationPropsJs(js, def);
 end;
 
@@ -6003,7 +6003,7 @@ procedure defineImmunizationRecommendationRecommendationJs(js : TFHIRJavascript)
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationRecommendationRecommendation', nil, 'ImmunizationRecommendationRecommendation3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationRecommendationRecommendation', nil, 'ImmunizationRecommendationRecommendation', js.FHIRFactoryJs);
   defineImmunizationRecommendationRecommendationPropsJs(js, def);
 end;
 
@@ -6019,7 +6019,7 @@ procedure defineImmunizationRecommendationRecommendationDateCriterionJs(js : TFH
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationRecommendationRecommendationDateCriterion', nil, 'ImmunizationRecommendationRecommendationDateCriterion3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationRecommendationRecommendationDateCriterion', nil, 'ImmunizationRecommendationRecommendationDateCriterion', js.FHIRFactoryJs);
   defineImmunizationRecommendationRecommendationDateCriterionPropsJs(js, def);
 end;
 
@@ -6037,7 +6037,7 @@ procedure defineImmunizationRecommendationRecommendationProtocolJs(js : TFHIRJav
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationRecommendationRecommendationProtocol', nil, 'ImmunizationRecommendationRecommendationProtocol3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationRecommendationRecommendationProtocol', nil, 'ImmunizationRecommendationRecommendationProtocol', js.FHIRFactoryJs);
   defineImmunizationRecommendationRecommendationProtocolPropsJs(js, def);
 end;
 
@@ -6054,7 +6054,7 @@ procedure defineImmunizationRecommendationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImmunizationRecommendation', nil, 'ImmunizationRecommendation3', js.FHIRFactoryJs);
+  def := js.defineClass('ImmunizationRecommendation', nil, 'ImmunizationRecommendation', js.FHIRFactoryJs);
   defineImmunizationRecommendationPropsJs(js, def);
 end;
 
@@ -6070,7 +6070,7 @@ procedure defineImplementationGuideDependencyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImplementationGuideDependency', nil, 'ImplementationGuideDependency3', js.FHIRFactoryJs);
+  def := js.defineClass('ImplementationGuideDependency', nil, 'ImplementationGuideDependency', js.FHIRFactoryJs);
   defineImplementationGuideDependencyPropsJs(js, def);
 end;
 
@@ -6087,7 +6087,7 @@ procedure defineImplementationGuidePackageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImplementationGuidePackage', nil, 'ImplementationGuidePackage3', js.FHIRFactoryJs);
+  def := js.defineClass('ImplementationGuidePackage', nil, 'ImplementationGuidePackage', js.FHIRFactoryJs);
   defineImplementationGuidePackagePropsJs(js, def);
 end;
 
@@ -6108,7 +6108,7 @@ procedure defineImplementationGuidePackageResourceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImplementationGuidePackageResource', nil, 'ImplementationGuidePackageResource3', js.FHIRFactoryJs);
+  def := js.defineClass('ImplementationGuidePackageResource', nil, 'ImplementationGuidePackageResource', js.FHIRFactoryJs);
   defineImplementationGuidePackageResourcePropsJs(js, def);
 end;
 
@@ -6124,7 +6124,7 @@ procedure defineImplementationGuideGlobalJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImplementationGuideGlobal', nil, 'ImplementationGuideGlobal3', js.FHIRFactoryJs);
+  def := js.defineClass('ImplementationGuideGlobal', nil, 'ImplementationGuideGlobal', js.FHIRFactoryJs);
   defineImplementationGuideGlobalPropsJs(js, def);
 end;
 
@@ -6143,7 +6143,7 @@ procedure defineImplementationGuidePageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImplementationGuidePage', nil, 'ImplementationGuidePage3', js.FHIRFactoryJs);
+  def := js.defineClass('ImplementationGuidePage', nil, 'ImplementationGuidePage', js.FHIRFactoryJs);
   defineImplementationGuidePagePropsJs(js, def);
 end;
 
@@ -6174,7 +6174,7 @@ procedure defineImplementationGuideJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ImplementationGuide', nil, 'ImplementationGuide3', js.FHIRFactoryJs);
+  def := js.defineClass('ImplementationGuide', nil, 'ImplementationGuide', js.FHIRFactoryJs);
   defineImplementationGuidePropsJs(js, def);
 end;
 
@@ -6214,7 +6214,7 @@ procedure defineLibraryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Library', nil, 'Library3', js.FHIRFactoryJs);
+  def := js.defineClass('Library', nil, 'Library', js.FHIRFactoryJs);
   defineLibraryPropsJs(js, def);
 end;
 
@@ -6230,7 +6230,7 @@ procedure defineLinkageItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('LinkageItem', nil, 'LinkageItem3', js.FHIRFactoryJs);
+  def := js.defineClass('LinkageItem', nil, 'LinkageItem', js.FHIRFactoryJs);
   defineLinkageItemPropsJs(js, def);
 end;
 
@@ -6247,7 +6247,7 @@ procedure defineLinkageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Linkage', nil, 'Linkage3', js.FHIRFactoryJs);
+  def := js.defineClass('Linkage', nil, 'Linkage', js.FHIRFactoryJs);
   defineLinkagePropsJs(js, def);
 end;
 
@@ -6265,7 +6265,7 @@ procedure defineListEntryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ListEntry', nil, 'ListEntry3', js.FHIRFactoryJs);
+  def := js.defineClass('ListEntry', nil, 'ListEntry', js.FHIRFactoryJs);
   defineListEntryPropsJs(js, def);
 end;
 
@@ -6292,7 +6292,7 @@ procedure defineListJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('List', nil, 'List3', js.FHIRFactoryJs);
+  def := js.defineClass('List', nil, 'List', js.FHIRFactoryJs);
   defineListPropsJs(js, def);
 end;
 
@@ -6309,7 +6309,7 @@ procedure defineLocationPositionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('LocationPosition', nil, 'LocationPosition3', js.FHIRFactoryJs);
+  def := js.defineClass('LocationPosition', nil, 'LocationPosition', js.FHIRFactoryJs);
   defineLocationPositionPropsJs(js, def);
 end;
 
@@ -6337,7 +6337,7 @@ procedure defineLocationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Location', nil, 'Location3', js.FHIRFactoryJs);
+  def := js.defineClass('Location', nil, 'Location', js.FHIRFactoryJs);
   defineLocationPropsJs(js, def);
 end;
 
@@ -6356,7 +6356,7 @@ procedure defineMeasureGroupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureGroup', nil, 'MeasureGroup3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureGroup', nil, 'MeasureGroup', js.FHIRFactoryJs);
   defineMeasureGroupPropsJs(js, def);
 end;
 
@@ -6375,7 +6375,7 @@ procedure defineMeasureGroupPopulationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureGroupPopulation', nil, 'MeasureGroupPopulation3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureGroupPopulation', nil, 'MeasureGroupPopulation', js.FHIRFactoryJs);
   defineMeasureGroupPopulationPropsJs(js, def);
 end;
 
@@ -6392,7 +6392,7 @@ procedure defineMeasureGroupStratifierJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureGroupStratifier', nil, 'MeasureGroupStratifier3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureGroupStratifier', nil, 'MeasureGroupStratifier', js.FHIRFactoryJs);
   defineMeasureGroupStratifierPropsJs(js, def);
 end;
 
@@ -6410,7 +6410,7 @@ procedure defineMeasureSupplementalDataJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureSupplementalData', nil, 'MeasureSupplementalData3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureSupplementalData', nil, 'MeasureSupplementalData', js.FHIRFactoryJs);
   defineMeasureSupplementalDataPropsJs(js, def);
 end;
 
@@ -6460,7 +6460,7 @@ procedure defineMeasureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Measure', nil, 'Measure3', js.FHIRFactoryJs);
+  def := js.defineClass('Measure', nil, 'Measure', js.FHIRFactoryJs);
   defineMeasurePropsJs(js, def);
 end;
 
@@ -6478,7 +6478,7 @@ procedure defineMeasureReportGroupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureReportGroup', nil, 'MeasureReportGroup3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureReportGroup', nil, 'MeasureReportGroup', js.FHIRFactoryJs);
   defineMeasureReportGroupPropsJs(js, def);
 end;
 
@@ -6496,7 +6496,7 @@ procedure defineMeasureReportGroupPopulationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureReportGroupPopulation', nil, 'MeasureReportGroupPopulation3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureReportGroupPopulation', nil, 'MeasureReportGroupPopulation', js.FHIRFactoryJs);
   defineMeasureReportGroupPopulationPropsJs(js, def);
 end;
 
@@ -6512,7 +6512,7 @@ procedure defineMeasureReportGroupStratifierJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureReportGroupStratifier', nil, 'MeasureReportGroupStratifier3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureReportGroupStratifier', nil, 'MeasureReportGroupStratifier', js.FHIRFactoryJs);
   defineMeasureReportGroupStratifierPropsJs(js, def);
 end;
 
@@ -6529,7 +6529,7 @@ procedure defineMeasureReportGroupStratifierStratumJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureReportGroupStratifierStratum', nil, 'MeasureReportGroupStratifierStratum3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureReportGroupStratifierStratum', nil, 'MeasureReportGroupStratifierStratum', js.FHIRFactoryJs);
   defineMeasureReportGroupStratifierStratumPropsJs(js, def);
 end;
 
@@ -6547,7 +6547,7 @@ procedure defineMeasureReportGroupStratifierStratumPopulationJs(js : TFHIRJavasc
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureReportGroupStratifierStratumPopulation', nil, 'MeasureReportGroupStratifierStratumPopulation3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureReportGroupStratifierStratumPopulation', nil, 'MeasureReportGroupStratifierStratumPopulation', js.FHIRFactoryJs);
   defineMeasureReportGroupStratifierStratumPopulationPropsJs(js, def);
 end;
 
@@ -6571,7 +6571,7 @@ procedure defineMeasureReportJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MeasureReport', nil, 'MeasureReport3', js.FHIRFactoryJs);
+  def := js.defineClass('MeasureReport', nil, 'MeasureReport', js.FHIRFactoryJs);
   defineMeasureReportPropsJs(js, def);
 end;
 
@@ -6604,7 +6604,7 @@ procedure defineMediaJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Media', nil, 'Media3', js.FHIRFactoryJs);
+  def := js.defineClass('Media', nil, 'Media', js.FHIRFactoryJs);
   defineMediaPropsJs(js, def);
 end;
 
@@ -6622,7 +6622,7 @@ procedure defineMedicationIngredientJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationIngredient', nil, 'MedicationIngredient3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationIngredient', nil, 'MedicationIngredient', js.FHIRFactoryJs);
   defineMedicationIngredientPropsJs(js, def);
 end;
 
@@ -6639,7 +6639,7 @@ procedure defineMedicationPackageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationPackage', nil, 'MedicationPackage3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationPackage', nil, 'MedicationPackage', js.FHIRFactoryJs);
   defineMedicationPackagePropsJs(js, def);
 end;
 
@@ -6656,7 +6656,7 @@ procedure defineMedicationPackageContentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationPackageContent', nil, 'MedicationPackageContent3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationPackageContent', nil, 'MedicationPackageContent', js.FHIRFactoryJs);
   defineMedicationPackageContentPropsJs(js, def);
 end;
 
@@ -6672,7 +6672,7 @@ procedure defineMedicationPackageBatchJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationPackageBatch', nil, 'MedicationPackageBatch3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationPackageBatch', nil, 'MedicationPackageBatch', js.FHIRFactoryJs);
   defineMedicationPackageBatchPropsJs(js, def);
 end;
 
@@ -6695,7 +6695,7 @@ procedure defineMedicationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Medication', nil, 'Medication3', js.FHIRFactoryJs);
+  def := js.defineClass('Medication', nil, 'Medication', js.FHIRFactoryJs);
   defineMedicationPropsJs(js, def);
 end;
 
@@ -6711,7 +6711,7 @@ procedure defineMedicationAdministrationPerformerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationAdministrationPerformer', nil, 'MedicationAdministrationPerformer3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationAdministrationPerformer', nil, 'MedicationAdministrationPerformer', js.FHIRFactoryJs);
   defineMedicationAdministrationPerformerPropsJs(js, def);
 end;
 
@@ -6732,7 +6732,7 @@ procedure defineMedicationAdministrationDosageJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationAdministrationDosage', nil, 'MedicationAdministrationDosage3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationAdministrationDosage', nil, 'MedicationAdministrationDosage', js.FHIRFactoryJs);
   defineMedicationAdministrationDosagePropsJs(js, def);
 end;
 
@@ -6768,7 +6768,7 @@ procedure defineMedicationAdministrationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationAdministration', nil, 'MedicationAdministration3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationAdministration', nil, 'MedicationAdministration', js.FHIRFactoryJs);
   defineMedicationAdministrationPropsJs(js, def);
 end;
 
@@ -6784,7 +6784,7 @@ procedure defineMedicationDispensePerformerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationDispensePerformer', nil, 'MedicationDispensePerformer3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationDispensePerformer', nil, 'MedicationDispensePerformer', js.FHIRFactoryJs);
   defineMedicationDispensePerformerPropsJs(js, def);
 end;
 
@@ -6802,7 +6802,7 @@ procedure defineMedicationDispenseSubstitutionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationDispenseSubstitution', nil, 'MedicationDispenseSubstitution3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationDispenseSubstitution', nil, 'MedicationDispenseSubstitution', js.FHIRFactoryJs);
   defineMedicationDispenseSubstitutionPropsJs(js, def);
 end;
 
@@ -6842,7 +6842,7 @@ procedure defineMedicationDispenseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationDispense', nil, 'MedicationDispense3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationDispense', nil, 'MedicationDispense', js.FHIRFactoryJs);
   defineMedicationDispensePropsJs(js, def);
 end;
 
@@ -6858,7 +6858,7 @@ procedure defineMedicationRequestRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationRequestRequester', nil, 'MedicationRequestRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationRequestRequester', nil, 'MedicationRequestRequester', js.FHIRFactoryJs);
   defineMedicationRequestRequesterPropsJs(js, def);
 end;
 
@@ -6877,7 +6877,7 @@ procedure defineMedicationRequestDispenseRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationRequestDispenseRequest', nil, 'MedicationRequestDispenseRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationRequestDispenseRequest', nil, 'MedicationRequestDispenseRequest', js.FHIRFactoryJs);
   defineMedicationRequestDispenseRequestPropsJs(js, def);
 end;
 
@@ -6893,7 +6893,7 @@ procedure defineMedicationRequestSubstitutionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationRequestSubstitution', nil, 'MedicationRequestSubstitution3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationRequestSubstitution', nil, 'MedicationRequestSubstitution', js.FHIRFactoryJs);
   defineMedicationRequestSubstitutionPropsJs(js, def);
 end;
 
@@ -6932,7 +6932,7 @@ procedure defineMedicationRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationRequest', nil, 'MedicationRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationRequest', nil, 'MedicationRequest', js.FHIRFactoryJs);
   defineMedicationRequestPropsJs(js, def);
 end;
 
@@ -6966,7 +6966,7 @@ procedure defineMedicationStatementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicationStatement', nil, 'MedicationStatement3', js.FHIRFactoryJs);
+  def := js.defineClass('MedicationStatement', nil, 'MedicationStatement', js.FHIRFactoryJs);
   defineMedicationStatementPropsJs(js, def);
 end;
 
@@ -6984,7 +6984,7 @@ procedure defineMessageDefinitionFocusJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageDefinitionFocus', nil, 'MessageDefinitionFocus3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageDefinitionFocus', nil, 'MessageDefinitionFocus', js.FHIRFactoryJs);
   defineMessageDefinitionFocusPropsJs(js, def);
 end;
 
@@ -7000,7 +7000,7 @@ procedure defineMessageDefinitionAllowedResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageDefinitionAllowedResponse', nil, 'MessageDefinitionAllowedResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageDefinitionAllowedResponse', nil, 'MessageDefinitionAllowedResponse', js.FHIRFactoryJs);
   defineMessageDefinitionAllowedResponsePropsJs(js, def);
 end;
 
@@ -7037,7 +7037,7 @@ procedure defineMessageDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageDefinition', nil, 'MessageDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageDefinition', nil, 'MessageDefinition', js.FHIRFactoryJs);
   defineMessageDefinitionPropsJs(js, def);
 end;
 
@@ -7054,7 +7054,7 @@ procedure defineMessageHeaderDestinationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageHeaderDestination', nil, 'MessageHeaderDestination3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageHeaderDestination', nil, 'MessageHeaderDestination', js.FHIRFactoryJs);
   defineMessageHeaderDestinationPropsJs(js, def);
 end;
 
@@ -7073,7 +7073,7 @@ procedure defineMessageHeaderSourceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageHeaderSource', nil, 'MessageHeaderSource3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageHeaderSource', nil, 'MessageHeaderSource', js.FHIRFactoryJs);
   defineMessageHeaderSourcePropsJs(js, def);
 end;
 
@@ -7090,7 +7090,7 @@ procedure defineMessageHeaderResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageHeaderResponse', nil, 'MessageHeaderResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageHeaderResponse', nil, 'MessageHeaderResponse', js.FHIRFactoryJs);
   defineMessageHeaderResponsePropsJs(js, def);
 end;
 
@@ -7116,7 +7116,7 @@ procedure defineMessageHeaderJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MessageHeader', nil, 'MessageHeader3', js.FHIRFactoryJs);
+  def := js.defineClass('MessageHeader', nil, 'MessageHeader', js.FHIRFactoryJs);
   defineMessageHeaderPropsJs(js, def);
 end;
 
@@ -7135,7 +7135,7 @@ procedure defineNamingSystemUniqueIdJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NamingSystemUniqueId', nil, 'NamingSystemUniqueId3', js.FHIRFactoryJs);
+  def := js.defineClass('NamingSystemUniqueId', nil, 'NamingSystemUniqueId', js.FHIRFactoryJs);
   defineNamingSystemUniqueIdPropsJs(js, def);
 end;
 
@@ -7163,7 +7163,7 @@ procedure defineNamingSystemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NamingSystem', nil, 'NamingSystem3', js.FHIRFactoryJs);
+  def := js.defineClass('NamingSystem', nil, 'NamingSystem', js.FHIRFactoryJs);
   defineNamingSystemPropsJs(js, def);
 end;
 
@@ -7183,7 +7183,7 @@ procedure defineNutritionOrderOralDietJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrderOralDiet', nil, 'NutritionOrderOralDiet3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrderOralDiet', nil, 'NutritionOrderOralDiet', js.FHIRFactoryJs);
   defineNutritionOrderOralDietPropsJs(js, def);
 end;
 
@@ -7199,7 +7199,7 @@ procedure defineNutritionOrderOralDietNutrientJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrderOralDietNutrient', nil, 'NutritionOrderOralDietNutrient3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrderOralDietNutrient', nil, 'NutritionOrderOralDietNutrient', js.FHIRFactoryJs);
   defineNutritionOrderOralDietNutrientPropsJs(js, def);
 end;
 
@@ -7215,7 +7215,7 @@ procedure defineNutritionOrderOralDietTextureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrderOralDietTexture', nil, 'NutritionOrderOralDietTexture3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrderOralDietTexture', nil, 'NutritionOrderOralDietTexture', js.FHIRFactoryJs);
   defineNutritionOrderOralDietTexturePropsJs(js, def);
 end;
 
@@ -7234,7 +7234,7 @@ procedure defineNutritionOrderSupplementJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrderSupplement', nil, 'NutritionOrderSupplement3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrderSupplement', nil, 'NutritionOrderSupplement', js.FHIRFactoryJs);
   defineNutritionOrderSupplementPropsJs(js, def);
 end;
 
@@ -7257,7 +7257,7 @@ procedure defineNutritionOrderEnteralFormulaJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrderEnteralFormula', nil, 'NutritionOrderEnteralFormula3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrderEnteralFormula', nil, 'NutritionOrderEnteralFormula', js.FHIRFactoryJs);
   defineNutritionOrderEnteralFormulaPropsJs(js, def);
 end;
 
@@ -7275,7 +7275,7 @@ procedure defineNutritionOrderEnteralFormulaAdministrationJs(js : TFHIRJavascrip
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrderEnteralFormulaAdministration', nil, 'NutritionOrderEnteralFormulaAdministration3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrderEnteralFormulaAdministration', nil, 'NutritionOrderEnteralFormulaAdministration', js.FHIRFactoryJs);
   defineNutritionOrderEnteralFormulaAdministrationPropsJs(js, def);
 end;
 
@@ -7301,7 +7301,7 @@ procedure defineNutritionOrderJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('NutritionOrder', nil, 'NutritionOrder3', js.FHIRFactoryJs);
+  def := js.defineClass('NutritionOrder', nil, 'NutritionOrder', js.FHIRFactoryJs);
   defineNutritionOrderPropsJs(js, def);
 end;
 
@@ -7321,7 +7321,7 @@ procedure defineObservationReferenceRangeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ObservationReferenceRange', nil, 'ObservationReferenceRange3', js.FHIRFactoryJs);
+  def := js.defineClass('ObservationReferenceRange', nil, 'ObservationReferenceRange', js.FHIRFactoryJs);
   defineObservationReferenceRangePropsJs(js, def);
 end;
 
@@ -7337,7 +7337,7 @@ procedure defineObservationRelatedJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ObservationRelated', nil, 'ObservationRelated3', js.FHIRFactoryJs);
+  def := js.defineClass('ObservationRelated', nil, 'ObservationRelated', js.FHIRFactoryJs);
   defineObservationRelatedPropsJs(js, def);
 end;
 
@@ -7365,7 +7365,7 @@ procedure defineObservationComponentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ObservationComponent', nil, 'ObservationComponent3', js.FHIRFactoryJs);
+  def := js.defineClass('ObservationComponent', nil, 'ObservationComponent', js.FHIRFactoryJs);
   defineObservationComponentPropsJs(js, def);
 end;
 
@@ -7411,7 +7411,7 @@ procedure defineObservationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Observation', nil, 'Observation3', js.FHIRFactoryJs);
+  def := js.defineClass('Observation', nil, 'Observation', js.FHIRFactoryJs);
   defineObservationPropsJs(js, def);
 end;
 
@@ -7435,7 +7435,7 @@ procedure defineOperationDefinitionParameterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OperationDefinitionParameter', nil, 'OperationDefinitionParameter3', js.FHIRFactoryJs);
+  def := js.defineClass('OperationDefinitionParameter', nil, 'OperationDefinitionParameter', js.FHIRFactoryJs);
   defineOperationDefinitionParameterPropsJs(js, def);
 end;
 
@@ -7452,7 +7452,7 @@ procedure defineOperationDefinitionParameterBindingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OperationDefinitionParameterBinding', nil, 'OperationDefinitionParameterBinding3', js.FHIRFactoryJs);
+  def := js.defineClass('OperationDefinitionParameterBinding', nil, 'OperationDefinitionParameterBinding', js.FHIRFactoryJs);
   defineOperationDefinitionParameterBindingPropsJs(js, def);
 end;
 
@@ -7467,7 +7467,7 @@ procedure defineOperationDefinitionOverloadJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OperationDefinitionOverload', nil, 'OperationDefinitionOverload3', js.FHIRFactoryJs);
+  def := js.defineClass('OperationDefinitionOverload', nil, 'OperationDefinitionOverload', js.FHIRFactoryJs);
   defineOperationDefinitionOverloadPropsJs(js, def);
 end;
 
@@ -7503,7 +7503,7 @@ procedure defineOperationDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OperationDefinition', nil, 'OperationDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('OperationDefinition', nil, 'OperationDefinition', js.FHIRFactoryJs);
   defineOperationDefinitionPropsJs(js, def);
 end;
 
@@ -7521,7 +7521,7 @@ procedure defineOperationOutcomeIssueJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OperationOutcomeIssue', nil, 'OperationOutcomeIssue3', js.FHIRFactoryJs);
+  def := js.defineClass('OperationOutcomeIssue', nil, 'OperationOutcomeIssue', js.FHIRFactoryJs);
   defineOperationOutcomeIssuePropsJs(js, def);
 end;
 
@@ -7536,7 +7536,7 @@ procedure defineOperationOutcomeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OperationOutcome', nil, 'OperationOutcome3', js.FHIRFactoryJs);
+  def := js.defineClass('OperationOutcome', nil, 'OperationOutcome', js.FHIRFactoryJs);
   defineOperationOutcomePropsJs(js, def);
 end;
 
@@ -7554,7 +7554,7 @@ procedure defineOrganizationContactJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OrganizationContact', nil, 'OrganizationContact3', js.FHIRFactoryJs);
+  def := js.defineClass('OrganizationContact', nil, 'OrganizationContact', js.FHIRFactoryJs);
   defineOrganizationContactPropsJs(js, def);
 end;
 
@@ -7577,7 +7577,7 @@ procedure defineOrganizationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Organization', nil, 'Organization3', js.FHIRFactoryJs);
+  def := js.defineClass('Organization', nil, 'Organization', js.FHIRFactoryJs);
   defineOrganizationPropsJs(js, def);
 end;
 
@@ -7598,7 +7598,7 @@ procedure definePatientContactJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PatientContact', nil, 'PatientContact3', js.FHIRFactoryJs);
+  def := js.defineClass('PatientContact', nil, 'PatientContact', js.FHIRFactoryJs);
   definePatientContactPropsJs(js, def);
 end;
 
@@ -7615,7 +7615,7 @@ procedure definePatientAnimalJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PatientAnimal', nil, 'PatientAnimal3', js.FHIRFactoryJs);
+  def := js.defineClass('PatientAnimal', nil, 'PatientAnimal', js.FHIRFactoryJs);
   definePatientAnimalPropsJs(js, def);
 end;
 
@@ -7631,7 +7631,7 @@ procedure definePatientCommunicationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PatientCommunication', nil, 'PatientCommunication3', js.FHIRFactoryJs);
+  def := js.defineClass('PatientCommunication', nil, 'PatientCommunication', js.FHIRFactoryJs);
   definePatientCommunicationPropsJs(js, def);
 end;
 
@@ -7647,7 +7647,7 @@ procedure definePatientLinkJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PatientLink', nil, 'PatientLink3', js.FHIRFactoryJs);
+  def := js.defineClass('PatientLink', nil, 'PatientLink', js.FHIRFactoryJs);
   definePatientLinkPropsJs(js, def);
 end;
 
@@ -7680,7 +7680,7 @@ procedure definePatientJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Patient', nil, 'Patient3', js.FHIRFactoryJs);
+  def := js.defineClass('Patient', nil, 'Patient', js.FHIRFactoryJs);
   definePatientPropsJs(js, def);
 end;
 
@@ -7704,7 +7704,7 @@ procedure definePaymentNoticeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PaymentNotice', nil, 'PaymentNotice3', js.FHIRFactoryJs);
+  def := js.defineClass('PaymentNotice', nil, 'PaymentNotice', js.FHIRFactoryJs);
   definePaymentNoticePropsJs(js, def);
 end;
 
@@ -7725,7 +7725,7 @@ procedure definePaymentReconciliationDetailJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PaymentReconciliationDetail', nil, 'PaymentReconciliationDetail3', js.FHIRFactoryJs);
+  def := js.defineClass('PaymentReconciliationDetail', nil, 'PaymentReconciliationDetail', js.FHIRFactoryJs);
   definePaymentReconciliationDetailPropsJs(js, def);
 end;
 
@@ -7741,7 +7741,7 @@ procedure definePaymentReconciliationProcessNoteJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PaymentReconciliationProcessNote', nil, 'PaymentReconciliationProcessNote3', js.FHIRFactoryJs);
+  def := js.defineClass('PaymentReconciliationProcessNote', nil, 'PaymentReconciliationProcessNote', js.FHIRFactoryJs);
   definePaymentReconciliationProcessNotePropsJs(js, def);
 end;
 
@@ -7769,7 +7769,7 @@ procedure definePaymentReconciliationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PaymentReconciliation', nil, 'PaymentReconciliation3', js.FHIRFactoryJs);
+  def := js.defineClass('PaymentReconciliation', nil, 'PaymentReconciliation', js.FHIRFactoryJs);
   definePaymentReconciliationPropsJs(js, def);
 end;
 
@@ -7785,7 +7785,7 @@ procedure definePersonLinkJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PersonLink', nil, 'PersonLink3', js.FHIRFactoryJs);
+  def := js.defineClass('PersonLink', nil, 'PersonLink', js.FHIRFactoryJs);
   definePersonLinkPropsJs(js, def);
 end;
 
@@ -7809,7 +7809,7 @@ procedure definePersonJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Person', nil, 'Person3', js.FHIRFactoryJs);
+  def := js.defineClass('Person', nil, 'Person', js.FHIRFactoryJs);
   definePersonPropsJs(js, def);
 end;
 
@@ -7830,7 +7830,7 @@ procedure definePlanDefinitionGoalJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionGoal', nil, 'PlanDefinitionGoal3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionGoal', nil, 'PlanDefinitionGoal', js.FHIRFactoryJs);
   definePlanDefinitionGoalPropsJs(js, def);
 end;
 
@@ -7849,7 +7849,7 @@ procedure definePlanDefinitionGoalTargetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionGoalTarget', nil, 'PlanDefinitionGoalTarget3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionGoalTarget', nil, 'PlanDefinitionGoalTarget', js.FHIRFactoryJs);
   definePlanDefinitionGoalTargetPropsJs(js, def);
 end;
 
@@ -7891,7 +7891,7 @@ procedure definePlanDefinitionActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionAction', nil, 'PlanDefinitionAction3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionAction', nil, 'PlanDefinitionAction', js.FHIRFactoryJs);
   definePlanDefinitionActionPropsJs(js, def);
 end;
 
@@ -7909,7 +7909,7 @@ procedure definePlanDefinitionActionConditionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionActionCondition', nil, 'PlanDefinitionActionCondition3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionActionCondition', nil, 'PlanDefinitionActionCondition', js.FHIRFactoryJs);
   definePlanDefinitionActionConditionPropsJs(js, def);
 end;
 
@@ -7927,7 +7927,7 @@ procedure definePlanDefinitionActionRelatedActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionActionRelatedAction', nil, 'PlanDefinitionActionRelatedAction3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionActionRelatedAction', nil, 'PlanDefinitionActionRelatedAction', js.FHIRFactoryJs);
   definePlanDefinitionActionRelatedActionPropsJs(js, def);
 end;
 
@@ -7943,7 +7943,7 @@ procedure definePlanDefinitionActionParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionActionParticipant', nil, 'PlanDefinitionActionParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionActionParticipant', nil, 'PlanDefinitionActionParticipant', js.FHIRFactoryJs);
   definePlanDefinitionActionParticipantPropsJs(js, def);
 end;
 
@@ -7961,7 +7961,7 @@ procedure definePlanDefinitionActionDynamicValueJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinitionActionDynamicValue', nil, 'PlanDefinitionActionDynamicValue3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinitionActionDynamicValue', nil, 'PlanDefinitionActionDynamicValue', js.FHIRFactoryJs);
   definePlanDefinitionActionDynamicValuePropsJs(js, def);
 end;
 
@@ -8001,7 +8001,7 @@ procedure definePlanDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PlanDefinition', nil, 'PlanDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('PlanDefinition', nil, 'PlanDefinition', js.FHIRFactoryJs);
   definePlanDefinitionPropsJs(js, def);
 end;
 
@@ -8019,7 +8019,7 @@ procedure definePractitionerQualificationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PractitionerQualification', nil, 'PractitionerQualification3', js.FHIRFactoryJs);
+  def := js.defineClass('PractitionerQualification', nil, 'PractitionerQualification', js.FHIRFactoryJs);
   definePractitionerQualificationPropsJs(js, def);
 end;
 
@@ -8043,7 +8043,7 @@ procedure definePractitionerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Practitioner', nil, 'Practitioner3', js.FHIRFactoryJs);
+  def := js.defineClass('Practitioner', nil, 'Practitioner', js.FHIRFactoryJs);
   definePractitionerPropsJs(js, def);
 end;
 
@@ -8060,7 +8060,7 @@ procedure definePractitionerRoleAvailableTimeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PractitionerRoleAvailableTime', nil, 'PractitionerRoleAvailableTime3', js.FHIRFactoryJs);
+  def := js.defineClass('PractitionerRoleAvailableTime', nil, 'PractitionerRoleAvailableTime', js.FHIRFactoryJs);
   definePractitionerRoleAvailableTimePropsJs(js, def);
 end;
 
@@ -8076,7 +8076,7 @@ procedure definePractitionerRoleNotAvailableJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PractitionerRoleNotAvailable', nil, 'PractitionerRoleNotAvailable3', js.FHIRFactoryJs);
+  def := js.defineClass('PractitionerRoleNotAvailable', nil, 'PractitionerRoleNotAvailable', js.FHIRFactoryJs);
   definePractitionerRoleNotAvailablePropsJs(js, def);
 end;
 
@@ -8104,7 +8104,7 @@ procedure definePractitionerRoleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('PractitionerRole', nil, 'PractitionerRole3', js.FHIRFactoryJs);
+  def := js.defineClass('PractitionerRole', nil, 'PractitionerRole', js.FHIRFactoryJs);
   definePractitionerRolePropsJs(js, def);
 end;
 
@@ -8121,7 +8121,7 @@ procedure defineProcedurePerformerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcedurePerformer', nil, 'ProcedurePerformer3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcedurePerformer', nil, 'ProcedurePerformer', js.FHIRFactoryJs);
   defineProcedurePerformerPropsJs(js, def);
 end;
 
@@ -8137,7 +8137,7 @@ procedure defineProcedureFocalDeviceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcedureFocalDevice', nil, 'ProcedureFocalDevice3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcedureFocalDevice', nil, 'ProcedureFocalDevice', js.FHIRFactoryJs);
   defineProcedureFocalDevicePropsJs(js, def);
 end;
 
@@ -8178,7 +8178,7 @@ procedure defineProcedureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Procedure', nil, 'Procedure3', js.FHIRFactoryJs);
+  def := js.defineClass('Procedure', nil, 'Procedure', js.FHIRFactoryJs);
   defineProcedurePropsJs(js, def);
 end;
 
@@ -8194,7 +8194,7 @@ procedure defineProcedureRequestRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcedureRequestRequester', nil, 'ProcedureRequestRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcedureRequestRequester', nil, 'ProcedureRequestRequester', js.FHIRFactoryJs);
   defineProcedureRequestRequesterPropsJs(js, def);
 end;
 
@@ -8237,7 +8237,7 @@ procedure defineProcedureRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcedureRequest', nil, 'ProcedureRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcedureRequest', nil, 'ProcedureRequest', js.FHIRFactoryJs);
   defineProcedureRequestPropsJs(js, def);
 end;
 
@@ -8252,7 +8252,7 @@ procedure defineProcessRequestItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcessRequestItem', nil, 'ProcessRequestItem3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcessRequestItem', nil, 'ProcessRequestItem', js.FHIRFactoryJs);
   defineProcessRequestItemPropsJs(js, def);
 end;
 
@@ -8279,7 +8279,7 @@ procedure defineProcessRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcessRequest', nil, 'ProcessRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcessRequest', nil, 'ProcessRequest', js.FHIRFactoryJs);
   defineProcessRequestPropsJs(js, def);
 end;
 
@@ -8295,7 +8295,7 @@ procedure defineProcessResponseProcessNoteJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcessResponseProcessNote', nil, 'ProcessResponseProcessNote3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcessResponseProcessNote', nil, 'ProcessResponseProcessNote', js.FHIRFactoryJs);
   defineProcessResponseProcessNotePropsJs(js, def);
 end;
 
@@ -8322,7 +8322,7 @@ procedure defineProcessResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProcessResponse', nil, 'ProcessResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('ProcessResponse', nil, 'ProcessResponse', js.FHIRFactoryJs);
   defineProcessResponsePropsJs(js, def);
 end;
 
@@ -8342,7 +8342,7 @@ procedure defineProvenanceAgentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProvenanceAgent', nil, 'ProvenanceAgent3', js.FHIRFactoryJs);
+  def := js.defineClass('ProvenanceAgent', nil, 'ProvenanceAgent', js.FHIRFactoryJs);
   defineProvenanceAgentPropsJs(js, def);
 end;
 
@@ -8361,7 +8361,7 @@ procedure defineProvenanceEntityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ProvenanceEntity', nil, 'ProvenanceEntity3', js.FHIRFactoryJs);
+  def := js.defineClass('ProvenanceEntity', nil, 'ProvenanceEntity', js.FHIRFactoryJs);
   defineProvenanceEntityPropsJs(js, def);
 end;
 
@@ -8384,7 +8384,7 @@ procedure defineProvenanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Provenance', nil, 'Provenance3', js.FHIRFactoryJs);
+  def := js.defineClass('Provenance', nil, 'Provenance', js.FHIRFactoryJs);
   defineProvenancePropsJs(js, def);
 end;
 
@@ -8424,7 +8424,7 @@ procedure defineQuestionnaireItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('QuestionnaireItem', nil, 'QuestionnaireItem3', js.FHIRFactoryJs);
+  def := js.defineClass('QuestionnaireItem', nil, 'QuestionnaireItem', js.FHIRFactoryJs);
   defineQuestionnaireItemPropsJs(js, def);
 end;
 
@@ -8452,7 +8452,7 @@ procedure defineQuestionnaireItemEnableWhenJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('QuestionnaireItemEnableWhen', nil, 'QuestionnaireItemEnableWhen3', js.FHIRFactoryJs);
+  def := js.defineClass('QuestionnaireItemEnableWhen', nil, 'QuestionnaireItemEnableWhen', js.FHIRFactoryJs);
   defineQuestionnaireItemEnableWhenPropsJs(js, def);
 end;
 
@@ -8471,7 +8471,7 @@ procedure defineQuestionnaireItemOptionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('QuestionnaireItemOption', nil, 'QuestionnaireItemOption3', js.FHIRFactoryJs);
+  def := js.defineClass('QuestionnaireItemOption', nil, 'QuestionnaireItemOption', js.FHIRFactoryJs);
   defineQuestionnaireItemOptionPropsJs(js, def);
 end;
 
@@ -8505,7 +8505,7 @@ procedure defineQuestionnaireJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Questionnaire', nil, 'Questionnaire3', js.FHIRFactoryJs);
+  def := js.defineClass('Questionnaire', nil, 'Questionnaire', js.FHIRFactoryJs);
   defineQuestionnairePropsJs(js, def);
 end;
 
@@ -8525,7 +8525,7 @@ procedure defineQuestionnaireResponseItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('QuestionnaireResponseItem', nil, 'QuestionnaireResponseItem3', js.FHIRFactoryJs);
+  def := js.defineClass('QuestionnaireResponseItem', nil, 'QuestionnaireResponseItem', js.FHIRFactoryJs);
   defineQuestionnaireResponseItemPropsJs(js, def);
 end;
 
@@ -8552,7 +8552,7 @@ procedure defineQuestionnaireResponseItemAnswerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('QuestionnaireResponseItemAnswer', nil, 'QuestionnaireResponseItemAnswer3', js.FHIRFactoryJs);
+  def := js.defineClass('QuestionnaireResponseItemAnswer', nil, 'QuestionnaireResponseItemAnswer', js.FHIRFactoryJs);
   defineQuestionnaireResponseItemAnswerPropsJs(js, def);
 end;
 
@@ -8577,7 +8577,7 @@ procedure defineQuestionnaireResponseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('QuestionnaireResponse', nil, 'QuestionnaireResponse3', js.FHIRFactoryJs);
+  def := js.defineClass('QuestionnaireResponse', nil, 'QuestionnaireResponse', js.FHIRFactoryJs);
   defineQuestionnaireResponsePropsJs(js, def);
 end;
 
@@ -8593,7 +8593,7 @@ procedure defineReferralRequestRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ReferralRequestRequester', nil, 'ReferralRequestRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('ReferralRequestRequester', nil, 'ReferralRequestRequester', js.FHIRFactoryJs);
   defineReferralRequestRequesterPropsJs(js, def);
 end;
 
@@ -8631,7 +8631,7 @@ procedure defineReferralRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ReferralRequest', nil, 'ReferralRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('ReferralRequest', nil, 'ReferralRequest', js.FHIRFactoryJs);
   defineReferralRequestPropsJs(js, def);
 end;
 
@@ -8656,7 +8656,7 @@ procedure defineRelatedPersonJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RelatedPerson', nil, 'RelatedPerson3', js.FHIRFactoryJs);
+  def := js.defineClass('RelatedPerson', nil, 'RelatedPerson', js.FHIRFactoryJs);
   defineRelatedPersonPropsJs(js, def);
 end;
 
@@ -8692,7 +8692,7 @@ procedure defineRequestGroupActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RequestGroupAction', nil, 'RequestGroupAction3', js.FHIRFactoryJs);
+  def := js.defineClass('RequestGroupAction', nil, 'RequestGroupAction', js.FHIRFactoryJs);
   defineRequestGroupActionPropsJs(js, def);
 end;
 
@@ -8710,7 +8710,7 @@ procedure defineRequestGroupActionConditionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RequestGroupActionCondition', nil, 'RequestGroupActionCondition3', js.FHIRFactoryJs);
+  def := js.defineClass('RequestGroupActionCondition', nil, 'RequestGroupActionCondition', js.FHIRFactoryJs);
   defineRequestGroupActionConditionPropsJs(js, def);
 end;
 
@@ -8728,7 +8728,7 @@ procedure defineRequestGroupActionRelatedActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RequestGroupActionRelatedAction', nil, 'RequestGroupActionRelatedAction3', js.FHIRFactoryJs);
+  def := js.defineClass('RequestGroupActionRelatedAction', nil, 'RequestGroupActionRelatedAction', js.FHIRFactoryJs);
   defineRequestGroupActionRelatedActionPropsJs(js, def);
 end;
 
@@ -8758,7 +8758,7 @@ procedure defineRequestGroupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RequestGroup', nil, 'RequestGroup3', js.FHIRFactoryJs);
+  def := js.defineClass('RequestGroup', nil, 'RequestGroup', js.FHIRFactoryJs);
   defineRequestGroupPropsJs(js, def);
 end;
 
@@ -8775,7 +8775,7 @@ procedure defineResearchStudyArmJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ResearchStudyArm', nil, 'ResearchStudyArm3', js.FHIRFactoryJs);
+  def := js.defineClass('ResearchStudyArm', nil, 'ResearchStudyArm', js.FHIRFactoryJs);
   defineResearchStudyArmPropsJs(js, def);
 end;
 
@@ -8809,7 +8809,7 @@ procedure defineResearchStudyJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ResearchStudy', nil, 'ResearchStudy3', js.FHIRFactoryJs);
+  def := js.defineClass('ResearchStudy', nil, 'ResearchStudy', js.FHIRFactoryJs);
   defineResearchStudyPropsJs(js, def);
 end;
 
@@ -8831,7 +8831,7 @@ procedure defineResearchSubjectJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ResearchSubject', nil, 'ResearchSubject3', js.FHIRFactoryJs);
+  def := js.defineClass('ResearchSubject', nil, 'ResearchSubject', js.FHIRFactoryJs);
   defineResearchSubjectPropsJs(js, def);
 end;
 
@@ -8853,7 +8853,7 @@ procedure defineRiskAssessmentPredictionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RiskAssessmentPrediction', nil, 'RiskAssessmentPrediction3', js.FHIRFactoryJs);
+  def := js.defineClass('RiskAssessmentPrediction', nil, 'RiskAssessmentPrediction', js.FHIRFactoryJs);
   defineRiskAssessmentPredictionPropsJs(js, def);
 end;
 
@@ -8885,7 +8885,7 @@ procedure defineRiskAssessmentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('RiskAssessment', nil, 'RiskAssessment3', js.FHIRFactoryJs);
+  def := js.defineClass('RiskAssessment', nil, 'RiskAssessment', js.FHIRFactoryJs);
   defineRiskAssessmentPropsJs(js, def);
 end;
 
@@ -8907,7 +8907,7 @@ procedure defineScheduleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Schedule', nil, 'Schedule3', js.FHIRFactoryJs);
+  def := js.defineClass('Schedule', nil, 'Schedule', js.FHIRFactoryJs);
   defineSchedulePropsJs(js, def);
 end;
 
@@ -8923,7 +8923,7 @@ procedure defineSearchParameterComponentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SearchParameterComponent', nil, 'SearchParameterComponent3', js.FHIRFactoryJs);
+  def := js.defineClass('SearchParameterComponent', nil, 'SearchParameterComponent', js.FHIRFactoryJs);
   defineSearchParameterComponentPropsJs(js, def);
 end;
 
@@ -8956,7 +8956,7 @@ procedure defineSearchParameterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SearchParameter', nil, 'SearchParameter3', js.FHIRFactoryJs);
+  def := js.defineClass('SearchParameter', nil, 'SearchParameter', js.FHIRFactoryJs);
   defineSearchParameterPropsJs(js, def);
 end;
 
@@ -8978,7 +8978,7 @@ procedure defineSequenceReferenceSeqJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SequenceReferenceSeq', nil, 'SequenceReferenceSeq3', js.FHIRFactoryJs);
+  def := js.defineClass('SequenceReferenceSeq', nil, 'SequenceReferenceSeq', js.FHIRFactoryJs);
   defineSequenceReferenceSeqPropsJs(js, def);
 end;
 
@@ -8998,7 +8998,7 @@ procedure defineSequenceVariantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SequenceVariant', nil, 'SequenceVariant3', js.FHIRFactoryJs);
+  def := js.defineClass('SequenceVariant', nil, 'SequenceVariant', js.FHIRFactoryJs);
   defineSequenceVariantPropsJs(js, def);
 end;
 
@@ -9026,7 +9026,7 @@ procedure defineSequenceQualityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SequenceQuality', nil, 'SequenceQuality3', js.FHIRFactoryJs);
+  def := js.defineClass('SequenceQuality', nil, 'SequenceQuality', js.FHIRFactoryJs);
   defineSequenceQualityPropsJs(js, def);
 end;
 
@@ -9046,7 +9046,7 @@ procedure defineSequenceRepositoryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SequenceRepository', nil, 'SequenceRepository3', js.FHIRFactoryJs);
+  def := js.defineClass('SequenceRepository', nil, 'SequenceRepository', js.FHIRFactoryJs);
   defineSequenceRepositoryPropsJs(js, def);
 end;
 
@@ -9075,7 +9075,7 @@ procedure defineSequenceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Sequence', nil, 'Sequence3', js.FHIRFactoryJs);
+  def := js.defineClass('Sequence', nil, 'Sequence', js.FHIRFactoryJs);
   defineSequencePropsJs(js, def);
 end;
 
@@ -9114,7 +9114,7 @@ procedure defineServiceDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ServiceDefinition', nil, 'ServiceDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('ServiceDefinition', nil, 'ServiceDefinition', js.FHIRFactoryJs);
   defineServiceDefinitionPropsJs(js, def);
 end;
 
@@ -9139,7 +9139,7 @@ procedure defineSlotJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Slot', nil, 'Slot3', js.FHIRFactoryJs);
+  def := js.defineClass('Slot', nil, 'Slot', js.FHIRFactoryJs);
   defineSlotPropsJs(js, def);
 end;
 
@@ -9159,7 +9159,7 @@ procedure defineSpecimenCollectionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SpecimenCollection', nil, 'SpecimenCollection3', js.FHIRFactoryJs);
+  def := js.defineClass('SpecimenCollection', nil, 'SpecimenCollection', js.FHIRFactoryJs);
   defineSpecimenCollectionPropsJs(js, def);
 end;
 
@@ -9178,7 +9178,7 @@ procedure defineSpecimenProcessingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SpecimenProcessing', nil, 'SpecimenProcessing3', js.FHIRFactoryJs);
+  def := js.defineClass('SpecimenProcessing', nil, 'SpecimenProcessing', js.FHIRFactoryJs);
   defineSpecimenProcessingPropsJs(js, def);
 end;
 
@@ -9199,7 +9199,7 @@ procedure defineSpecimenContainerJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SpecimenContainer', nil, 'SpecimenContainer3', js.FHIRFactoryJs);
+  def := js.defineClass('SpecimenContainer', nil, 'SpecimenContainer', js.FHIRFactoryJs);
   defineSpecimenContainerPropsJs(js, def);
 end;
 
@@ -9225,7 +9225,7 @@ procedure defineSpecimenJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Specimen', nil, 'Specimen3', js.FHIRFactoryJs);
+  def := js.defineClass('Specimen', nil, 'Specimen', js.FHIRFactoryJs);
   defineSpecimenPropsJs(js, def);
 end;
 
@@ -9243,7 +9243,7 @@ procedure defineStructureDefinitionMappingJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureDefinitionMapping', nil, 'StructureDefinitionMapping3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureDefinitionMapping', nil, 'StructureDefinitionMapping', js.FHIRFactoryJs);
   defineStructureDefinitionMappingPropsJs(js, def);
 end;
 
@@ -9258,7 +9258,7 @@ procedure defineStructureDefinitionSnapshotJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureDefinitionSnapshot', nil, 'StructureDefinitionSnapshot3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureDefinitionSnapshot', nil, 'StructureDefinitionSnapshot', js.FHIRFactoryJs);
   defineStructureDefinitionSnapshotPropsJs(js, def);
 end;
 
@@ -9273,7 +9273,7 @@ procedure defineStructureDefinitionDifferentialJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureDefinitionDifferential', nil, 'StructureDefinitionDifferential3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureDefinitionDifferential', nil, 'StructureDefinitionDifferential', js.FHIRFactoryJs);
   defineStructureDefinitionDifferentialPropsJs(js, def);
 end;
 
@@ -9313,7 +9313,7 @@ procedure defineStructureDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureDefinition', nil, 'StructureDefinition3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureDefinition', nil, 'StructureDefinition', js.FHIRFactoryJs);
   defineStructureDefinitionPropsJs(js, def);
 end;
 
@@ -9331,7 +9331,7 @@ procedure defineStructureMapStructureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapStructure', nil, 'StructureMapStructure3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapStructure', nil, 'StructureMapStructure', js.FHIRFactoryJs);
   defineStructureMapStructurePropsJs(js, def);
 end;
 
@@ -9351,7 +9351,7 @@ procedure defineStructureMapGroupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroup', nil, 'StructureMapGroup3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroup', nil, 'StructureMapGroup', js.FHIRFactoryJs);
   defineStructureMapGroupPropsJs(js, def);
 end;
 
@@ -9369,7 +9369,7 @@ procedure defineStructureMapGroupInputJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroupInput', nil, 'StructureMapGroupInput3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroupInput', nil, 'StructureMapGroupInput', js.FHIRFactoryJs);
   defineStructureMapGroupInputPropsJs(js, def);
 end;
 
@@ -9389,7 +9389,7 @@ procedure defineStructureMapGroupRuleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroupRule', nil, 'StructureMapGroupRule3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroupRule', nil, 'StructureMapGroupRule', js.FHIRFactoryJs);
   defineStructureMapGroupRulePropsJs(js, def);
 end;
 
@@ -9450,7 +9450,7 @@ procedure defineStructureMapGroupRuleSourceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroupRuleSource', nil, 'StructureMapGroupRuleSource3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroupRuleSource', nil, 'StructureMapGroupRuleSource', js.FHIRFactoryJs);
   defineStructureMapGroupRuleSourcePropsJs(js, def);
 end;
 
@@ -9471,7 +9471,7 @@ procedure defineStructureMapGroupRuleTargetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroupRuleTarget', nil, 'StructureMapGroupRuleTarget3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroupRuleTarget', nil, 'StructureMapGroupRuleTarget', js.FHIRFactoryJs);
   defineStructureMapGroupRuleTargetPropsJs(js, def);
 end;
 
@@ -9490,7 +9490,7 @@ procedure defineStructureMapGroupRuleTargetParameterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroupRuleTargetParameter', nil, 'StructureMapGroupRuleTargetParameter3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroupRuleTargetParameter', nil, 'StructureMapGroupRuleTargetParameter', js.FHIRFactoryJs);
   defineStructureMapGroupRuleTargetParameterPropsJs(js, def);
 end;
 
@@ -9505,7 +9505,7 @@ procedure defineStructureMapGroupRuleDependentJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMapGroupRuleDependent', nil, 'StructureMapGroupRuleDependent3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMapGroupRuleDependent', nil, 'StructureMapGroupRuleDependent', js.FHIRFactoryJs);
   defineStructureMapGroupRuleDependentPropsJs(js, def);
 end;
 
@@ -9536,7 +9536,7 @@ procedure defineStructureMapJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('StructureMap', nil, 'StructureMap3', js.FHIRFactoryJs);
+  def := js.defineClass('StructureMap', nil, 'StructureMap', js.FHIRFactoryJs);
   defineStructureMapPropsJs(js, def);
 end;
 
@@ -9553,7 +9553,7 @@ procedure defineSubscriptionChannelJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SubscriptionChannel', nil, 'SubscriptionChannel3', js.FHIRFactoryJs);
+  def := js.defineClass('SubscriptionChannel', nil, 'SubscriptionChannel', js.FHIRFactoryJs);
   defineSubscriptionChannelPropsJs(js, def);
 end;
 
@@ -9575,7 +9575,7 @@ procedure defineSubscriptionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Subscription', nil, 'Subscription3', js.FHIRFactoryJs);
+  def := js.defineClass('Subscription', nil, 'Subscription', js.FHIRFactoryJs);
   defineSubscriptionPropsJs(js, def);
 end;
 
@@ -9592,7 +9592,7 @@ procedure defineSubstanceInstanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SubstanceInstance', nil, 'SubstanceInstance3', js.FHIRFactoryJs);
+  def := js.defineClass('SubstanceInstance', nil, 'SubstanceInstance', js.FHIRFactoryJs);
   defineSubstanceInstancePropsJs(js, def);
 end;
 
@@ -9609,7 +9609,7 @@ procedure defineSubstanceIngredientJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SubstanceIngredient', nil, 'SubstanceIngredient3', js.FHIRFactoryJs);
+  def := js.defineClass('SubstanceIngredient', nil, 'SubstanceIngredient', js.FHIRFactoryJs);
   defineSubstanceIngredientPropsJs(js, def);
 end;
 
@@ -9630,7 +9630,7 @@ procedure defineSubstanceJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Substance', nil, 'Substance3', js.FHIRFactoryJs);
+  def := js.defineClass('Substance', nil, 'Substance', js.FHIRFactoryJs);
   defineSubstancePropsJs(js, def);
 end;
 
@@ -9647,7 +9647,7 @@ procedure defineSupplyDeliverySuppliedItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SupplyDeliverySuppliedItem', nil, 'SupplyDeliverySuppliedItem3', js.FHIRFactoryJs);
+  def := js.defineClass('SupplyDeliverySuppliedItem', nil, 'SupplyDeliverySuppliedItem', js.FHIRFactoryJs);
   defineSupplyDeliverySuppliedItemPropsJs(js, def);
 end;
 
@@ -9674,7 +9674,7 @@ procedure defineSupplyDeliveryJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SupplyDelivery', nil, 'SupplyDelivery3', js.FHIRFactoryJs);
+  def := js.defineClass('SupplyDelivery', nil, 'SupplyDelivery', js.FHIRFactoryJs);
   defineSupplyDeliveryPropsJs(js, def);
 end;
 
@@ -9691,7 +9691,7 @@ procedure defineSupplyRequestOrderedItemJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SupplyRequestOrderedItem', nil, 'SupplyRequestOrderedItem3', js.FHIRFactoryJs);
+  def := js.defineClass('SupplyRequestOrderedItem', nil, 'SupplyRequestOrderedItem', js.FHIRFactoryJs);
   defineSupplyRequestOrderedItemPropsJs(js, def);
 end;
 
@@ -9707,7 +9707,7 @@ procedure defineSupplyRequestRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SupplyRequestRequester', nil, 'SupplyRequestRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('SupplyRequestRequester', nil, 'SupplyRequestRequester', js.FHIRFactoryJs);
   defineSupplyRequestRequesterPropsJs(js, def);
 end;
 
@@ -9736,7 +9736,7 @@ procedure defineSupplyRequestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('SupplyRequest', nil, 'SupplyRequest3', js.FHIRFactoryJs);
+  def := js.defineClass('SupplyRequest', nil, 'SupplyRequest', js.FHIRFactoryJs);
   defineSupplyRequestPropsJs(js, def);
 end;
 
@@ -9752,7 +9752,7 @@ procedure defineTaskRequesterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TaskRequester', nil, 'TaskRequester3', js.FHIRFactoryJs);
+  def := js.defineClass('TaskRequester', nil, 'TaskRequester', js.FHIRFactoryJs);
   defineTaskRequesterPropsJs(js, def);
 end;
 
@@ -9769,7 +9769,7 @@ procedure defineTaskRestrictionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TaskRestriction', nil, 'TaskRestriction3', js.FHIRFactoryJs);
+  def := js.defineClass('TaskRestriction', nil, 'TaskRestriction', js.FHIRFactoryJs);
   defineTaskRestrictionPropsJs(js, def);
 end;
 
@@ -9822,7 +9822,7 @@ procedure defineTaskInputJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TaskInput', nil, 'TaskInput3', js.FHIRFactoryJs);
+  def := js.defineClass('TaskInput', nil, 'TaskInput', js.FHIRFactoryJs);
   defineTaskInputPropsJs(js, def);
 end;
 
@@ -9875,7 +9875,7 @@ procedure defineTaskOutputJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TaskOutput', nil, 'TaskOutput3', js.FHIRFactoryJs);
+  def := js.defineClass('TaskOutput', nil, 'TaskOutput', js.FHIRFactoryJs);
   defineTaskOutputPropsJs(js, def);
 end;
 
@@ -9917,7 +9917,7 @@ procedure defineTaskJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('Task', nil, 'Task3', js.FHIRFactoryJs);
+  def := js.defineClass('Task', nil, 'Task', js.FHIRFactoryJs);
   defineTaskPropsJs(js, def);
 end;
 
@@ -9934,7 +9934,7 @@ procedure defineTestReportParticipantJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportParticipant', nil, 'TestReportParticipant3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportParticipant', nil, 'TestReportParticipant', js.FHIRFactoryJs);
   defineTestReportParticipantPropsJs(js, def);
 end;
 
@@ -9949,7 +9949,7 @@ procedure defineTestReportSetupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportSetup', nil, 'TestReportSetup3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportSetup', nil, 'TestReportSetup', js.FHIRFactoryJs);
   defineTestReportSetupPropsJs(js, def);
 end;
 
@@ -9965,7 +9965,7 @@ procedure defineTestReportSetupActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportSetupAction', nil, 'TestReportSetupAction3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportSetupAction', nil, 'TestReportSetupAction', js.FHIRFactoryJs);
   defineTestReportSetupActionPropsJs(js, def);
 end;
 
@@ -9982,7 +9982,7 @@ procedure defineTestReportSetupActionOperationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportSetupActionOperation', nil, 'TestReportSetupActionOperation3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportSetupActionOperation', nil, 'TestReportSetupActionOperation', js.FHIRFactoryJs);
   defineTestReportSetupActionOperationPropsJs(js, def);
 end;
 
@@ -9999,7 +9999,7 @@ procedure defineTestReportSetupActionAssertJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportSetupActionAssert', nil, 'TestReportSetupActionAssert3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportSetupActionAssert', nil, 'TestReportSetupActionAssert', js.FHIRFactoryJs);
   defineTestReportSetupActionAssertPropsJs(js, def);
 end;
 
@@ -10016,7 +10016,7 @@ procedure defineTestReportTestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportTest', nil, 'TestReportTest3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportTest', nil, 'TestReportTest', js.FHIRFactoryJs);
   defineTestReportTestPropsJs(js, def);
 end;
 
@@ -10032,7 +10032,7 @@ procedure defineTestReportTestActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportTestAction', nil, 'TestReportTestAction3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportTestAction', nil, 'TestReportTestAction', js.FHIRFactoryJs);
   defineTestReportTestActionPropsJs(js, def);
 end;
 
@@ -10047,7 +10047,7 @@ procedure defineTestReportTeardownJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportTeardown', nil, 'TestReportTeardown3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportTeardown', nil, 'TestReportTeardown', js.FHIRFactoryJs);
   defineTestReportTeardownPropsJs(js, def);
 end;
 
@@ -10062,7 +10062,7 @@ procedure defineTestReportTeardownActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReportTeardownAction', nil, 'TestReportTeardownAction3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReportTeardownAction', nil, 'TestReportTeardownAction', js.FHIRFactoryJs);
   defineTestReportTeardownActionPropsJs(js, def);
 end;
 
@@ -10088,7 +10088,7 @@ procedure defineTestReportJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestReport', nil, 'TestReport3', js.FHIRFactoryJs);
+  def := js.defineClass('TestReport', nil, 'TestReport', js.FHIRFactoryJs);
   defineTestReportPropsJs(js, def);
 end;
 
@@ -10104,7 +10104,7 @@ procedure defineTestScriptOriginJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptOrigin', nil, 'TestScriptOrigin3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptOrigin', nil, 'TestScriptOrigin', js.FHIRFactoryJs);
   defineTestScriptOriginPropsJs(js, def);
 end;
 
@@ -10120,7 +10120,7 @@ procedure defineTestScriptDestinationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptDestination', nil, 'TestScriptDestination3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptDestination', nil, 'TestScriptDestination', js.FHIRFactoryJs);
   defineTestScriptDestinationPropsJs(js, def);
 end;
 
@@ -10136,7 +10136,7 @@ procedure defineTestScriptMetadataJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptMetadata', nil, 'TestScriptMetadata3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptMetadata', nil, 'TestScriptMetadata', js.FHIRFactoryJs);
   defineTestScriptMetadataPropsJs(js, def);
 end;
 
@@ -10152,7 +10152,7 @@ procedure defineTestScriptMetadataLinkJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptMetadataLink', nil, 'TestScriptMetadataLink3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptMetadataLink', nil, 'TestScriptMetadataLink', js.FHIRFactoryJs);
   defineTestScriptMetadataLinkPropsJs(js, def);
 end;
 
@@ -10171,7 +10171,7 @@ procedure defineTestScriptMetadataCapabilityJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptMetadataCapability', nil, 'TestScriptMetadataCapability3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptMetadataCapability', nil, 'TestScriptMetadataCapability', js.FHIRFactoryJs);
   defineTestScriptMetadataCapabilityPropsJs(js, def);
 end;
 
@@ -10188,7 +10188,7 @@ procedure defineTestScriptFixtureJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptFixture', nil, 'TestScriptFixture3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptFixture', nil, 'TestScriptFixture', js.FHIRFactoryJs);
   defineTestScriptFixturePropsJs(js, def);
 end;
 
@@ -10210,7 +10210,7 @@ procedure defineTestScriptVariableJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptVariable', nil, 'TestScriptVariable3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptVariable', nil, 'TestScriptVariable', js.FHIRFactoryJs);
   defineTestScriptVariablePropsJs(js, def);
 end;
 
@@ -10226,7 +10226,7 @@ procedure defineTestScriptRuleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptRule', nil, 'TestScriptRule3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptRule', nil, 'TestScriptRule', js.FHIRFactoryJs);
   defineTestScriptRulePropsJs(js, def);
 end;
 
@@ -10242,7 +10242,7 @@ procedure defineTestScriptRuleParamJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptRuleParam', nil, 'TestScriptRuleParam3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptRuleParam', nil, 'TestScriptRuleParam', js.FHIRFactoryJs);
   defineTestScriptRuleParamPropsJs(js, def);
 end;
 
@@ -10258,7 +10258,7 @@ procedure defineTestScriptRulesetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptRuleset', nil, 'TestScriptRuleset3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptRuleset', nil, 'TestScriptRuleset', js.FHIRFactoryJs);
   defineTestScriptRulesetPropsJs(js, def);
 end;
 
@@ -10274,7 +10274,7 @@ procedure defineTestScriptRulesetRuleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptRulesetRule', nil, 'TestScriptRulesetRule3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptRulesetRule', nil, 'TestScriptRulesetRule', js.FHIRFactoryJs);
   defineTestScriptRulesetRulePropsJs(js, def);
 end;
 
@@ -10290,7 +10290,7 @@ procedure defineTestScriptRulesetRuleParamJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptRulesetRuleParam', nil, 'TestScriptRulesetRuleParam3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptRulesetRuleParam', nil, 'TestScriptRulesetRuleParam', js.FHIRFactoryJs);
   defineTestScriptRulesetRuleParamPropsJs(js, def);
 end;
 
@@ -10305,7 +10305,7 @@ procedure defineTestScriptSetupJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetup', nil, 'TestScriptSetup3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetup', nil, 'TestScriptSetup', js.FHIRFactoryJs);
   defineTestScriptSetupPropsJs(js, def);
 end;
 
@@ -10321,7 +10321,7 @@ procedure defineTestScriptSetupActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupAction', nil, 'TestScriptSetupAction3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupAction', nil, 'TestScriptSetupAction', js.FHIRFactoryJs);
   defineTestScriptSetupActionPropsJs(js, def);
 end;
 
@@ -10351,7 +10351,7 @@ procedure defineTestScriptSetupActionOperationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionOperation', nil, 'TestScriptSetupActionOperation3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionOperation', nil, 'TestScriptSetupActionOperation', js.FHIRFactoryJs);
   defineTestScriptSetupActionOperationPropsJs(js, def);
 end;
 
@@ -10367,7 +10367,7 @@ procedure defineTestScriptSetupActionOperationRequestHeaderJs(js : TFHIRJavascri
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionOperationRequestHeader', nil, 'TestScriptSetupActionOperationRequestHeader3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionOperationRequestHeader', nil, 'TestScriptSetupActionOperationRequestHeader', js.FHIRFactoryJs);
   defineTestScriptSetupActionOperationRequestHeaderPropsJs(js, def);
 end;
 
@@ -10405,7 +10405,7 @@ procedure defineTestScriptSetupActionAssertJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionAssert', nil, 'TestScriptSetupActionAssert3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionAssert', nil, 'TestScriptSetupActionAssert', js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertPropsJs(js, def);
 end;
 
@@ -10421,7 +10421,7 @@ procedure defineTestScriptSetupActionAssertRuleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionAssertRule', nil, 'TestScriptSetupActionAssertRule3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionAssertRule', nil, 'TestScriptSetupActionAssertRule', js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulePropsJs(js, def);
 end;
 
@@ -10437,7 +10437,7 @@ procedure defineTestScriptSetupActionAssertRuleParamJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionAssertRuleParam', nil, 'TestScriptSetupActionAssertRuleParam3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionAssertRuleParam', nil, 'TestScriptSetupActionAssertRuleParam', js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRuleParamPropsJs(js, def);
 end;
 
@@ -10453,7 +10453,7 @@ procedure defineTestScriptSetupActionAssertRulesetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionAssertRuleset', nil, 'TestScriptSetupActionAssertRuleset3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionAssertRuleset', nil, 'TestScriptSetupActionAssertRuleset', js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulesetPropsJs(js, def);
 end;
 
@@ -10469,7 +10469,7 @@ procedure defineTestScriptSetupActionAssertRulesetRuleJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionAssertRulesetRule', nil, 'TestScriptSetupActionAssertRulesetRule3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionAssertRulesetRule', nil, 'TestScriptSetupActionAssertRulesetRule', js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulesetRulePropsJs(js, def);
 end;
 
@@ -10485,7 +10485,7 @@ procedure defineTestScriptSetupActionAssertRulesetRuleParamJs(js : TFHIRJavascri
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptSetupActionAssertRulesetRuleParam', nil, 'TestScriptSetupActionAssertRulesetRuleParam3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptSetupActionAssertRulesetRuleParam', nil, 'TestScriptSetupActionAssertRulesetRuleParam', js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulesetRuleParamPropsJs(js, def);
 end;
 
@@ -10502,7 +10502,7 @@ procedure defineTestScriptTestJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptTest', nil, 'TestScriptTest3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptTest', nil, 'TestScriptTest', js.FHIRFactoryJs);
   defineTestScriptTestPropsJs(js, def);
 end;
 
@@ -10518,7 +10518,7 @@ procedure defineTestScriptTestActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptTestAction', nil, 'TestScriptTestAction3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptTestAction', nil, 'TestScriptTestAction', js.FHIRFactoryJs);
   defineTestScriptTestActionPropsJs(js, def);
 end;
 
@@ -10533,7 +10533,7 @@ procedure defineTestScriptTeardownJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptTeardown', nil, 'TestScriptTeardown3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptTeardown', nil, 'TestScriptTeardown', js.FHIRFactoryJs);
   defineTestScriptTeardownPropsJs(js, def);
 end;
 
@@ -10548,7 +10548,7 @@ procedure defineTestScriptTeardownActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScriptTeardownAction', nil, 'TestScriptTeardownAction3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScriptTeardownAction', nil, 'TestScriptTeardownAction', js.FHIRFactoryJs);
   defineTestScriptTeardownActionPropsJs(js, def);
 end;
 
@@ -10588,7 +10588,7 @@ procedure defineTestScriptJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('TestScript', nil, 'TestScript3', js.FHIRFactoryJs);
+  def := js.defineClass('TestScript', nil, 'TestScript', js.FHIRFactoryJs);
   defineTestScriptPropsJs(js, def);
 end;
 
@@ -10606,7 +10606,7 @@ procedure defineValueSetComposeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetCompose', nil, 'ValueSetCompose3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetCompose', nil, 'ValueSetCompose', js.FHIRFactoryJs);
   defineValueSetComposePropsJs(js, def);
 end;
 
@@ -10624,7 +10624,7 @@ procedure defineValueSetComposeIncludeJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetComposeInclude', nil, 'ValueSetComposeInclude3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetComposeInclude', nil, 'ValueSetComposeInclude', js.FHIRFactoryJs);
   defineValueSetComposeIncludePropsJs(js, def);
 end;
 
@@ -10641,7 +10641,7 @@ procedure defineValueSetComposeIncludeConceptJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetComposeIncludeConcept', nil, 'ValueSetComposeIncludeConcept3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetComposeIncludeConcept', nil, 'ValueSetComposeIncludeConcept', js.FHIRFactoryJs);
   defineValueSetComposeIncludeConceptPropsJs(js, def);
 end;
 
@@ -10658,7 +10658,7 @@ procedure defineValueSetComposeIncludeConceptDesignationJs(js : TFHIRJavascript)
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetComposeIncludeConceptDesignation', nil, 'ValueSetComposeIncludeConceptDesignation3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetComposeIncludeConceptDesignation', nil, 'ValueSetComposeIncludeConceptDesignation', js.FHIRFactoryJs);
   defineValueSetComposeIncludeConceptDesignationPropsJs(js, def);
 end;
 
@@ -10675,7 +10675,7 @@ procedure defineValueSetComposeIncludeFilterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetComposeIncludeFilter', nil, 'ValueSetComposeIncludeFilter3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetComposeIncludeFilter', nil, 'ValueSetComposeIncludeFilter', js.FHIRFactoryJs);
   defineValueSetComposeIncludeFilterPropsJs(js, def);
 end;
 
@@ -10695,7 +10695,7 @@ procedure defineValueSetExpansionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetExpansion', nil, 'ValueSetExpansion3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetExpansion', nil, 'ValueSetExpansion', js.FHIRFactoryJs);
   defineValueSetExpansionPropsJs(js, def);
 end;
 
@@ -10716,7 +10716,7 @@ procedure defineValueSetExpansionParameterJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetExpansionParameter', nil, 'ValueSetExpansionParameter3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetExpansionParameter', nil, 'ValueSetExpansionParameter', js.FHIRFactoryJs);
   defineValueSetExpansionParameterPropsJs(js, def);
 end;
 
@@ -10738,7 +10738,7 @@ procedure defineValueSetExpansionContainsJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSetExpansionContains', nil, 'ValueSetExpansionContains3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSetExpansionContains', nil, 'ValueSetExpansionContains', js.FHIRFactoryJs);
   defineValueSetExpansionContainsPropsJs(js, def);
 end;
 
@@ -10771,7 +10771,7 @@ procedure defineValueSetJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ValueSet', nil, 'ValueSet3', js.FHIRFactoryJs);
+  def := js.defineClass('ValueSet', nil, 'ValueSet', js.FHIRFactoryJs);
   defineValueSetPropsJs(js, def);
 end;
 
@@ -10800,7 +10800,7 @@ procedure defineVisionPrescriptionDispenseJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('VisionPrescriptionDispense', nil, 'VisionPrescriptionDispense3', js.FHIRFactoryJs);
+  def := js.defineClass('VisionPrescriptionDispense', nil, 'VisionPrescriptionDispense', js.FHIRFactoryJs);
   defineVisionPrescriptionDispensePropsJs(js, def);
 end;
 
@@ -10823,7 +10823,7 @@ procedure defineVisionPrescriptionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('VisionPrescription', nil, 'VisionPrescription3', js.FHIRFactoryJs);
+  def := js.defineClass('VisionPrescription', nil, 'VisionPrescription', js.FHIRFactoryJs);
   defineVisionPrescriptionPropsJs(js, def);
 end;
 
@@ -10860,7 +10860,7 @@ begin
   defineParameterDefinitionJs(js); 
   defineContactPointJs(js); 
   defineHumanNameJs(js); 
-  defineMetaJs(js);
+  defineMetaJs(js); 
   defineAddressJs(js); 
   defineElementDefinitionSlicingJs(js); 
   defineElementDefinitionSlicingDiscriminatorJs(js); 
@@ -10904,7 +10904,7 @@ begin
   defineBundleEntryJs(js); 
   defineBundleEntrySearchJs(js); 
   defineBundleEntryRequestJs(js); 
-  defineBundleEntryResponseJs(js);
+  defineBundleEntryResponseJs(js); 
   defineBundleJs(js); 
   defineCapabilityStatementSoftwareJs(js); 
   defineCapabilityStatementImplementationJs(js); 

@@ -44,6 +44,7 @@ uses
 type
   TFHIRFactoryR4 = class (TFHIRFactory)
   public
+    function link : TFHIRFactoryR4; overload;
     function version : TFHIRVersion; override;
     function versionString : String; override;
     function specUrl : String; override;
@@ -204,6 +205,11 @@ begin
     result := nil
   else
     result := r.text.div_;
+end;
+
+function TFHIRFactoryR4.link: TFHIRFactoryR4;
+begin
+  result := TFHIRFactoryR4(inherited link);
 end;
 
 function TFHIRFactoryR4.makeClient(worker: TFHIRWorkerContextV; url: String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;

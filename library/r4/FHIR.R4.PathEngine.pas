@@ -48,7 +48,8 @@ type
     constructor Create(value : String);
     function fhirType : string; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
     function makeStringValue(v : String) : TFHIRObject; override;
@@ -65,7 +66,8 @@ type
     constructor Create(instance : TFHIRObject);
     destructor Destroy; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : string; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -344,6 +346,11 @@ begin
   raise EFHIRTodo.create('TFHIRConstant.getId:');
 end;
 
+function TFHIRConstant.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRTodo.create('TFHIRConstant.getTypesForProperty');
+end;
+
 function TFHIRConstant.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
@@ -364,7 +371,7 @@ begin
   raise EFHIRTodo.create('TFHIRConstant.setIdValue');
 end;
 
-procedure TFHIRConstant.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRConstant.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRConstant.setProperty');
 end;
@@ -413,6 +420,11 @@ begin
     result := 'FHIR';
 end;
 
+function TFHIRClassTypeInfo.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRTodo.create('TFHIRClassTypeInfo.getTypesForProperty');
+end;
+
 function TFHIRClassTypeInfo.getId: String;
 begin
   raise EFHIRTodo.create('TFHIRClassTypeInfo.getId:');
@@ -438,7 +450,7 @@ begin
   raise EFHIRTodo.create('TFHIRClassTypeInfo.setIdValue');
 end;
 
-procedure TFHIRClassTypeInfo.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRClassTypeInfo.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRClassTypeInfo.setProperty');
 end;

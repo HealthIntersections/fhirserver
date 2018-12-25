@@ -12,6 +12,7 @@ type
   // 4 bits
   TMapStylerZone = (
     szBase,
+    szSpacer,
     szMap1,
     szMap2,
     szUses1,
@@ -127,16 +128,6 @@ begin
         end;
     end;
   end;
-
-//  case zone of
-//    szBase, stNoUse : Attributes.BackColor := clWhite;
-//    szMap1 : Attributes.BackColor := clAqua;
-//    szMap2 : Attributes.BackColor := clAqua;
-//    szUses : Attributes.BackColor := clYellow;
-//    szImports : Attributes.BackColor := clCream;
-//    szGroup : Attributes.BackColor := clLime;
-//    szRule : Attributes.BackColor := clSilver;
-//  end;
 end;
 
 function TFHIRMapStyler.LineTextSpans(const S: TScintRawString): Boolean;

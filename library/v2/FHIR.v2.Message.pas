@@ -54,7 +54,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
   end;
@@ -282,7 +282,7 @@ begin
   self.id := id;
 end;
 
-procedure TV2Object.setProperty(propName: string; propValue: TFHIRObject);
+function TV2Object.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFSLException.Create('Not supported');
 end;

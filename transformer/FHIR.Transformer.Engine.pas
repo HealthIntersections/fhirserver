@@ -6,8 +6,8 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Cache.PackageManager,
-  FHIR.Base.Objects,
-  FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Resources, FHIR.R4.ElementModel,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Profiles,
   FHIR.Transformer.Workspace, FHIR.Transformer.Context;
 
 type
@@ -19,7 +19,21 @@ type
 
   TLocalTransformerServices = class (TTransformerServices)
   private
+    FOutcomes: TFslList<TFhirResource>;
+    FOnLog: TConversionEngineLogEvent;
+    FContext : TFHIRTransformerContext;
+    FFactory : TFHIRFactoryR4;
   public
+    constructor Create(log : TConversionEngineLogEvent; context : TFHIRTransformerContext; factory : TFHIRFactoryR4);
+    destructor Destroy; override;
+    function link : TLocalTransformerServices; overload;
+    property outcomes : TFslList<TFhirResource> read FOutcomes;
+
+    function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
+    procedure log(s : String); override;
+    function performSearch(appInfo : TFslObject; url : String) : TFslList<TFHIRObject>; override;
+    function createType(appInfo : TFslObject; tn : String) : TFHIRObject; override;
+    procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); override;
   end;
 
   TConversionEngine = class abstract (TFslObject)
@@ -35,9 +49,11 @@ type
     procedure SetWorkspace(const Value: TWorkspace);
     procedure SetMap(const Value: TWorkspaceFile);
     procedure SetCache(const Value: TResourceMemoryCache);
+    procedure relog(sender : TConversionEngine; message : String);
   protected
     FMapUtils : TFHIRStructureMapUtilities;
     FContext : TFHIRTransformerContext;
+    FFactory : TFHIRFactoryR4;
     procedure log(msg : String);
     function fetchSource(f : TWorkspaceFile) : TStream;
     function parseMap(f : TWorkspaceFile) : TFhirStructureMap;
@@ -80,6 +96,7 @@ begin
   FMap.Free;
   FSource.Free;
   FContext.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -114,6 +131,12 @@ begin
   end;
 end;
 
+procedure TConversionEngine.relog(sender: TConversionEngine; message: String);
+begin
+  if assigned(FOnLog) then
+    FOnLog(self, message);
+end;
+
 procedure TConversionEngine.SetCache(const Value: TResourceMemoryCache);
 begin
   FCache.Free;
@@ -146,6 +169,7 @@ var
   stream : TStream;
   map : TFHIRStructureMap;
   elem : TFHIRMMElement;
+  services : TLocalTransformerServices;
 begin
   log('Parse the Workspace Maps');
   for f in FWorkspace.maps do
@@ -162,7 +186,14 @@ begin
       map := parseMap(self.map);
       try
         log('Execute the Conversion [url]');
-        // actually do it...
+        services := TLocalTransformerServices.Create(relog, FContext, FFactory.link);
+        try
+          FMapUtils.Services := Services.Link;
+          FMapUtils.transform(nil, elem, map, nil);
+          assert(services.outcomes.Count = 1);
+        finally
+          services.Free;
+        end;
       finally
         map.Free;
       end;
@@ -184,22 +215,85 @@ var
   cache : TFHIRPackageManager;
   r : TFhirResource;
 begin
+  FFactory := TFHIRFactoryR4.Create;
   FContext := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
   if FCache.List.Empty then
   begin
     cache := TFHIRPackageManager.Create(true);
     try
       log('Loading the FHIR Package');
-      cache.loadPackage('hl7.fhir.core', '4.0.0', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition'], FCache.load);
+      cache.loadPackage('hl7.fhir.core', '4.0.0', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'], FCache.load);
       log('Loading the CDA Package');
-      cache.loadPackage('hl7.fhir.cda', '0.0.1', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition'], FCache.load);
+      cache.loadPackage('hl7.fhir.cda', '0.0.1', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'], FCache.load);
     finally
       cache.Free;
     end;
   end;
   for r in FCache.List do
     FContext.SeeResource(r);
-  FMapUtils := TFHIRStructureMapUtilities.Create(FContext.Link, TFslMap<TFHIRStructureMap>.create, TLocalTransformerServices.create());
+  FMapUtils := TFHIRStructureMapUtilities.Create(FContext.Link, TFslMap<TFHIRStructureMap>.create, nil, FFactory.link);
+end;
+
+{ TLocalTransformerServices }
+
+constructor TLocalTransformerServices.Create;
+begin
+  inherited Create;
+  FOutcomes := TFslList<TFhirResource>.create;
+  FFactory := factory;
+  FOnLog := log;
+  FContext := context;
+end;
+
+procedure TLocalTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
+begin
+  if (atRootofTransform) then
+    FOutcomes.add(TFHIRResource(res).Link);
+end;
+
+function TLocalTransformerServices.createType(appInfo: TFslObject; tn: String): TFHIRObject;
+var
+  sd : TFHIRStructureDefinition;
+begin
+  sd := FContext.fetchResource(frtStructureDefinition, sdNs(tn)) as TFHIRStructureDefinition;
+  if (sd <> nil) and (sd.kind = StructureDefinitionKindLogical) then
+  begin
+    // result := Manager.build(context, sd);
+    raise Exception.Create('Not Done yet');
+  end
+  else
+  begin
+    if (tn.startsWith('http://hl7.org/fhir/StructureDefinition/')) then
+      tn := tn.substring('http://hl7.org/fhir/StructureDefinition/'.length);
+    result := FFactory.makeByName(tn);
+  end;
+end;
+
+destructor TLocalTransformerServices.Destroy;
+begin
+  FOutcomes.Free;
+  inherited;
+end;
+
+function TLocalTransformerServices.link: TLocalTransformerServices;
+begin
+  result := TLocalTransformerServices(inherited link);
+end;
+
+procedure TLocalTransformerServices.log(s: String);
+begin
+  if assigned(FOnLog) then
+    FOnLog(nil, s);
+end;
+
+function TLocalTransformerServices.performSearch(appInfo: TFslObject; url: String): TFslList<TFHIRObject>;
+begin
+  raise EFHIRException.Create('Not implemented: performSearch');
+end;
+
+function TLocalTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 end.

@@ -228,7 +228,7 @@ Type
       Narrative is equal if their content model is the same
       Data type equality is evaluated according to the rules in ISO 21090.
     }
-    Function Equals(oOther : Tv3Base) : Boolean;
+    Function Equals(oOther : TObject) : Boolean; override;
 
     {
       Reset all the properties to their default values
@@ -604,14 +604,16 @@ begin
   FExtensions := nil;
 end;
 
-function Tv3Base.Equals(oOther: Tv3Base): Boolean;
+function Tv3Base.Equals(oOther: TObject): Boolean;
 begin
   if self = nil Then
     result := oOther = nil
   Else if oOther = nil then
     result := false
+  Else if not (oOther is Tv3Base) then
+    result := false
   Else
-    result := equalsV(oOther);
+    result := equalsV(oOther as Tv3Base);
 end;
 
 function Tv3Base.EqualsV(oOther: Tv3Base): Boolean;

@@ -897,7 +897,8 @@ type
   end;
 
 function Scintilla_DirectFunction(ptr: Pointer; iMessage: Cardinal;
-  wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall; external 'fhirscint.dll'; // use the file isscint.dll from the innosetup distribution
+//  wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall; external 'fhirscint.dll'; // use the file isscint.dll from the innosetup distribution
+  wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall; external 'cde-scintilla.dll'; // file as distributed by SCI
 
 implementation
 

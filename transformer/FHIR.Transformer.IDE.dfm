@@ -3,7 +3,7 @@ object TransformerForm: TTransformerForm
   Top = 0
   Caption = 'FHIR Transformer IDE'
   ClientHeight = 595
-  ClientWidth = 1236
+  ClientWidth = 1243
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,6 +16,9 @@ object TransformerForm: TTransformerForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
+  DesignSize = (
+    1243
+    595)
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
@@ -29,18 +32,20 @@ object TransformerForm: TTransformerForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1236
+    Width = 1243
     Height = 27
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 1236
     object ToolBar1: TToolBar
       Left = 1
       Top = 1
-      Width = 1234
+      Width = 1241
       Height = 29
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
+      ExplicitWidth = 1234
       object tbNew: TToolButton
         Left = 0
         Top = 0
@@ -165,7 +170,7 @@ object TransformerForm: TTransformerForm
       object tbCompile: TToolButton
         Left = 346
         Top = 0
-        Caption = 'Compile'
+        Caption = 'Check Syntax'
         ImageIndex = 34
         OnClick = mnuCompileClick
       end
@@ -179,7 +184,7 @@ object TransformerForm: TTransformerForm
       end
     end
   end
-  object Panel2: TPanel
+  object pnlWorkspace: TPanel
     Left = 0
     Top = 27
     Width = 185
@@ -191,7 +196,6 @@ object TransformerForm: TTransformerForm
     Align = alLeft
     BevelOuter = bvLowered
     TabOrder = 1
-    ExplicitHeight = 568
     object Panel6: TPanel
       Left = 1
       Top = 1
@@ -252,11 +256,11 @@ object TransformerForm: TTransformerForm
       Width = 183
       Height = 515
       Align = alClient
+      Anchors = [akLeft, akTop, akBottom]
       BevelOuter = bvNone
       BorderWidth = 4
-      Caption = 'Panel7'
+      Caption = 'pnlWorkspace'
       TabOrder = 1
-      ExplicitHeight = 534
       object vtWorkspace: TVirtualStringTree
         Left = 4
         Top = 4
@@ -282,7 +286,6 @@ object TransformerForm: TTransformerForm
         OnInitChildren = vtWorkspaceInitChildren
         OnInitNode = vtWorkspaceInitNode
         OnRemoveFromSelection = vtWorkspaceRemoveFromSelection
-        ExplicitHeight = 526
         Columns = <>
       end
     end
@@ -290,49 +293,52 @@ object TransformerForm: TTransformerForm
   object Panel3: TPanel
     Left = 193
     Top = 27
-    Width = 1043
+    Width = 1050
     Height = 549
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitHeight = 568
+    ExplicitWidth = 1043
     object Splitter2: TSplitter
       Left = 0
       Top = 371
-      Width = 1043
+      Width = 1050
       Height = 8
       Cursor = crVSplit
       Align = alBottom
       ExplicitTop = 381
       ExplicitWidth = 825
     end
-    object Panel4: TPanel
+    object pnlDebug: TPanel
       Left = 0
       Top = 379
-      Width = 1043
+      Width = 1050
       Height = 170
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitTop = 398
+      ExplicitWidth = 1043
       object PageControl1: TPageControl
         Left = 0
         Top = 0
-        Width = 1043
+        Width = 1050
         Height = 170
         ActivePage = TabSheet2
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 1043
         object TabSheet2: TTabSheet
           Caption = 'Console'
+          ExplicitWidth = 1035
           object Panel5: TPanel
-            Left = 944
+            Left = 951
             Top = 0
             Width = 91
             Height = 142
             Align = alRight
             Alignment = taLeftJustify
             TabOrder = 0
+            ExplicitLeft = 944
             object btnConsoleClear: TButton
               Left = 5
               Top = 61
@@ -364,7 +370,7 @@ object TransformerForm: TTransformerForm
           object mConsole: TMemo
             Left = 0
             Top = 0
-            Width = 944
+            Width = 951
             Height = 142
             Align = alClient
             Font.Charset = ANSI_CHARSET
@@ -374,6 +380,7 @@ object TransformerForm: TTransformerForm
             Font.Style = []
             ParentFont = False
             TabOrder = 1
+            ExplicitWidth = 944
           end
         end
       end
@@ -381,7 +388,7 @@ object TransformerForm: TTransformerForm
     object pgTabs: TPageControl
       Left = 0
       Top = 0
-      Width = 1043
+      Width = 1050
       Height = 371
       ActivePage = TabSheet1
       Align = alClient
@@ -389,13 +396,15 @@ object TransformerForm: TTransformerForm
       PopupMenu = pmTabs
       TabOrder = 1
       OnChange = pgTabsChange
-      ExplicitHeight = 390
+      ExplicitWidth = 1043
       object TabSheet1: TTabSheet
         Caption = 'Home'
         ImageIndex = 8
-        ExplicitHeight = 361
+        ExplicitLeft = 6
+        ExplicitTop = 44
+        ExplicitWidth = 1035
         DesignSize = (
-          1035
+          1042
           342)
         object Label1: TLabel
           Left = 16
@@ -434,7 +443,7 @@ object TransformerForm: TTransformerForm
         object cbxEventType: TComboBox
           Left = 101
           Top = 37
-          Width = 910
+          Width = 917
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -443,16 +452,18 @@ object TransformerForm: TTransformerForm
           Items.Strings = (
             'Process V2 Message'
             'Convert CDA Document Using Map')
+          ExplicitWidth = 910
         end
         object cbxSource: TComboBox
           Left = 101
           Top = 91
-          Width = 910
+          Width = 891
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           OnChange = cbxSourceChange
+          ExplicitWidth = 884
         end
         object btnExecute: TBitBtn
           Left = 32
@@ -493,12 +504,93 @@ object TransformerForm: TTransformerForm
         object cbxScript: TComboBox
           Left = 101
           Top = 64
-          Width = 910
+          Width = 891
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
           OnChange = cbxScriptChange
+          ExplicitWidth = 884
+        end
+        object btnOpenScript: TBitBtn
+          Left = 996
+          Top = 63
+          Width = 23
+          Height = 23
+          Hint = 'Open'
+          Anchors = [akTop, akRight]
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnClick = btnOpenScriptClick
+          ExplicitLeft = 989
+        end
+        object btnOpenSource: TBitBtn
+          Left = 996
+          Top = 91
+          Width = 23
+          Height = 23
+          Hint = 'Open'
+          Anchors = [akTop, akRight]
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnClick = btnOpenSourceClick
+          ExplicitLeft = 989
         end
       end
     end
@@ -506,7 +598,7 @@ object TransformerForm: TTransformerForm
   object pnlStatus: TStatusBar
     Left = 0
     Top = 576
-    Width = 1236
+    Width = 1243
     Height = 19
     AutoHint = True
     Panels = <
@@ -523,15 +615,88 @@ object TransformerForm: TTransformerForm
         Width = 300
       end>
     SizeGrip = False
-    ExplicitLeft = 1
-    ExplicitTop = 6
-    ExplicitWidth = 1234
+    ExplicitWidth = 1236
+  end
+  object btnMaximise: TBitBtn
+    Left = 1216
+    Top = 24
+    Width = 22
+    Height = 22
+    Anchors = [akTop, akRight]
+    Glyph.Data = {
+      66030000424D6603000000000000360000002800000010000000110000000100
+      18000000000030030000C40E0000C40E00000000000000000000EEDFD0ECDDCE
+      EBDCCEEBDCCEEBDCCEEBDCCEEBDCCEEBDCCEEBDCCEEBDCCEEBDCCEEBDCCEEBDC
+      CEEBDCCEECDDCEEDDECFE6D8CAB2AAA1A29B95A29C95A29C95A29C95A29C95A2
+      9C95A29C95A29C95A29C95A29C95A29C95A29B95AEA69EDCCFC1E1D3C6898582
+      8080809494949595959595959595959595959595959595959595959595959494
+      9484848483807ECFC3B7E1D3C68C8985B0B0B0EDEDEDEFEFEFEFEFEFEFEFEFEF
+      EFEFEFEFEFEFEFEFEFEFEFEFEFEFEDEDEDBBBBBB8A8784CFC3B7E1D3C68D8A86
+      B9B9B9FCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFD
+      FDC5C5C58B8885CFC3B7E1D3C68D8A86B9B9B9FCFCFCFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDC5C5C58B8885CFC3B7E1D3C68D8A86
+      B9B9B9FCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFD
+      FDC5C5C58B8885CFC3B7E1D3C68D8A86B9B9B9FCFCFCFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDC5C5C58B8885CFC3B7E1D4C68D8A86
+      B9B9B9FCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFD
+      FDC5C5C58B8885CFC3B7E1D4C68D8A86B9B9B9FCFCFCFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDC5C5C58B8885CFC4B7E1D4C68C8986
+      B1B1B1EEEEEEF0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0EEEE
+      EEBCBCBC8A8784CFC4B8E1D4C78986828484849B9B9B9C9C9C9C9C9C9C9C9C9C
+      9C9C9C9C9C9C9C9C9C9C9C9C9C9C9B9B9B88888884817ECFC4B8E1D4C7898683
+      8C8C8CA9A9A9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9A9
+      A991919185827FCFC4B8E1D4C78C8986B1B1B1EEEEEEF0F0F0F0F0F0F0F0F0F0
+      F0F0F0F0F0F0F0F0F0F0F0F0F0F0EEEEEEBBBBBB8A8784CFC4B8E2D5C78D8A86
+      8685849898979998989998989998989998989998989998989998989998989898
+      97898887888582D1C5B9E8DACBB9B0A7A9A29BA9A29BA9A29BA9A29BA9A29BA9
+      A29BA9A29BA9A29BA9A29BA9A29BA9A29BA9A29BB5ACA4DFD1C4EFE0D1ECDCCE
+      EADBCDEADBCDEADBCDEADBCDEADBCDEADBCDEADBCDEADBCDEADBCDEADBCDEADB
+      CDEADBCDEBDCCDEFDFD0}
+    TabOrder = 4
+    OnClick = btnMaximiseClick
+  end
+  object btnNormalSize: TBitBtn
+    Left = 1216
+    Top = 24
+    Width = 22
+    Height = 22
+    Anchors = [akTop, akRight]
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000C40E0000C40E00000000000000000000EFDFD0EFDFD0
+      EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDF
+      D0EFDFD0EFDFD0EFDFD0EFDFD0EEDECFEADBCCE9DACCE9DACCE9DACCE9DACCE9
+      DACCE9DACCEADACCECDDCEEFDFD0EFDFD0EFDFD0EFDFD0EFDFD0EFDFD0E3D4C6
+      BCB2A9B1A9A1B1A8A0B1A8A0B1A8A0B1A8A0B1A8A0B3AAA2D2C5BAEEDECFEFDF
+      D0EFDFD0EFDFD0EFDFD0EFDFD0D5C8BD85827F83828299989799989799989799
+      98979494937E7C7BB3ABA2EDDDCEEFDFD0EFDFD0EFDFD0EFDFD0EFDFD0D4C7BC
+      807E7BACACACF4F4F4F4F4F4F4F4F4F4F4F4E6E6E68D8D8CB1A8A0EDDDCEEFDF
+      D0EFDFD0EFDFD0EFDFD0EFDFD0D4C7BC807E7BB1B1B1FDFDFDFDFDFDFDFDFDFD
+      FDFDEEEEEE8F8F8EB0A8A0EBDCCDEEDECFEEDFD0EFDFD0EFDFD0EFDFD0D4C8BC
+      807E7B9A9A9ACFCFCFCFCFCFCFCFCFCFCFCFC5C5C58483839A948FC3B8AEC7BC
+      B1E1D3C6EEDFD0EFDFD0EFE0D0D4C8BC807E7B6F6F6F74747474747474747474
+      74747373736D6D6D7B7B7A868483807D7BC7BCB1EDDFCFEFE0D0EFE0D1D5C9BC
+      82807C6C6B6B6B6B6A6A6A6A6B6B6B6C6C6C6C6C6C717171AAAAAAC5C5C58685
+      84C4B9AFEDDED0EFE0D1EFE0D1E0D3C6B4ABA3A8A0999B95907B7B79989898AD
+      ADADAEAEAEB2B2B2DADADADEDEDE8C8A89C4B9AFEDDED0EFE0D1EFE0D1EEDFD0
+      EADCCDEADBCDD1C5B98B8986B4B4B4D6D6D6D7D7D7D7D7D7DBDBDBC5C5C58685
+      84C4B9AFEDDED0EFE0D1EFE0D1EFE0D1EFE0D1EFE0D1D6C9BD807E7C73737378
+      7878787878787878787878757575757473C4B9AFEDDED0EFE0D1EFE0D1EFE0D1
+      EFE0D1EFE0D1D6CABD7F7D7B6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A7473
+      72C4BAB0EDDED0EFE0D1EFE0D1EFE0D1EFE0D1EFE0D1DED1C4A39C96948F8B94
+      8F8B948F8B948F8B948F8B948F8B9B9590D2C6BAEEDFD0EFE0D1F0E0D1F0E0D1
+      F0E0D1F0E0D1ECDDCEE2D4C6E0D1C4E0D1C4E0D1C4E0D1C4E0D1C4E0D1C4E1D2
+      C5EBDBCDF0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0
+      E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1F0E0D1}
+    TabOrder = 5
+    Visible = False
+    OnClick = btnNormalSizeClick
   end
   object ImageList1: TImageList
     Left = 25
     Top = 90
     Bitmap = {
-      494C010124008800E80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010124008800F00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2045,7 +2210,7 @@ object TransformerForm: TTransformerForm
         ShortCut = 116
       end
       object mnuCompile: TMenuItem
-        Caption = '&Compile'
+        Caption = '&Check Syntax'
         ShortCut = 120
         OnClick = mnuCompileClick
       end

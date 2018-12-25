@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, System.Types, Classes, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Support.Collections,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.OIDs,
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.Constants, FHIR.R3.Factory;
 
 Const
@@ -101,11 +101,14 @@ Type
 
 
   TBaseWorkerContextR3 = class abstract (TFHIRWorkerContext)
+  private
+
   protected
     FLock : TFslLock;
     FProfiles : TProfileManager;
     FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
+    FNamingSystems : TFslMap<TFhirNamingSystem>;
 
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
@@ -137,6 +140,7 @@ Type
     function allResourceNames : TArray<String>; override;
     function nonSecureResourceNames : TArray<String>; override;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; override;
+    function oid2Uri(oid: String): String; override;
   end;
   TBaseWorkerContext = TBaseWorkerContextR3;
 
@@ -1511,6 +1515,7 @@ end;
 constructor TBaseWorkerContextR3.Create(factory : TFHIRFactory);
 begin
   inherited;
+  FNamingSystems := TFslMap<TFhirNamingSystem>.create;
   FLock := TFslLock.Create('worker-context');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
@@ -1518,6 +1523,7 @@ end;
 
 destructor TBaseWorkerContextR3.Destroy;
 begin
+  FNamingSystems.Free;
   FCustomResources.Free;
   FProfiles.free;
   FLock.Free;
@@ -1534,10 +1540,33 @@ function TBaseWorkerContextR3.fetchResource(t: TFhirResourceType; url: String): 
 begin
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
+  else if (t in [frtNull, frtNamingSystem]) and FNamingSystems.ContainsKey(url) then
+    result := FNamingSystems[url].Link
   else
     result := nil;
   end;
 end;
+
+function TBaseWorkerContextR3.oid2Uri(oid: String): String;
+var
+  uri : String;
+  ns : TFhirNamingSystem;
+begin
+  uri := getUriForOid(oid);
+  if (uri <> '') then
+    exit(uri);
+  for ns in FNamingSystems.Values do
+  begin
+    if ns.hasOid(oid) then
+    begin
+      uri := ns.getUri;
+      if uri <> '' then
+        exit(uri);
+    end;
+  end;
+  result := '';
+end;
+
 
 function TBaseWorkerContextR3.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
@@ -1829,7 +1858,9 @@ begin
       end;
     end;
     FProfiles.SeeProfile(0, p);
-  end;
+  end
+  else if (r.ResourceType = frtNamingSystem) then
+    FNamingSystems.AddOrSetValue(TFhirNamingSystem(r).url, TFhirNamingSystem(r).Link)
 end;
 
 procedure TBaseWorkerContextR3.setNonSecureTypes(names: array of String);

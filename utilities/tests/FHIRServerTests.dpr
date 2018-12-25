@@ -309,7 +309,11 @@ uses
   FHIR.R4.Liquid in '..\..\library\r4\FHIR.R4.Liquid.pas',
   FHIR.R4.Tests.Liquid in '..\..\library\r4\tests\FHIR.R4.Tests.Liquid.pas',
   FHIR.v2.Engine in '..\..\library\v2\FHIR.v2.Engine.pas',
-  FHIR.Support.Comparisons in '..\..\library\support\FHIR.Support.Comparisons.pas';
+  FHIR.Support.Comparisons in '..\..\library\support\FHIR.Support.Comparisons.pas',
+  FHIR.Cda.Narrative in '..\..\library\cda\FHIR.Cda.Narrative.pas',
+  FHIR.Cda.Base in '..\..\library\cda\FHIR.Cda.Base.pas',
+  FHIR.Cda.Types in '..\..\library\cda\FHIR.Cda.Types.pas',
+  FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas';
 
 //  CommonMarkNode in '..\..\..\markdown\source\CommonMarkNode.pas',
 //  InstanceValidator in '..\..\library\r4\InstanceValidator.pas',

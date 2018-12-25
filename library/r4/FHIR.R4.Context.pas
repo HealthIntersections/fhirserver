@@ -55,7 +55,6 @@ type
 
   TFHIRWorkerContext = class abstract (TFHIRWorkerContextWithFactory)
   private
-
     FOverrideVersionNs: String;  protected
     function GetVersion: TFHIRVersion; override;
   public

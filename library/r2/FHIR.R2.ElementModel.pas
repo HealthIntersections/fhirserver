@@ -101,7 +101,7 @@ type
     function link : TFHIRMMElement; overload;
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement);
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -261,7 +261,7 @@ type
     procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRCustomResource; overload;
     function Clone : TFHIRCustomResource; overload;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function getId : string; override;
@@ -685,7 +685,7 @@ begin
   raise EFHIRTodo.create('TFHIRMMElement.setIdValue');
 end;
 
-procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRMMElement.setProperty');
 end;
@@ -1117,12 +1117,12 @@ end;
 function TFHIRMMXmlParser.empty(element : TMXmlElement) : boolean ;
 var
   i : integer;
-  n : String;
+  a : TMXmlAttribute;
   node : TMXmlElement;
 begin
-  for n in element.attributes.keys do
+  for a in element.attributes do
   begin
-    if (n <> 'xmlns') and not n.startsWith('xmlns:') then
+    if (a.Name <> 'xmlns') and not a.name.startsWith('xmlns:') then
       exit(false);
   end;
   if ('' <> trim(element.text)) then
@@ -1202,9 +1202,8 @@ begin
         end;
     end;
 
-    for s in node.Attributes.Keys do
+    for attr in node.Attributes do
       begin
-      attr := node.Attributes[s];
       if not ((s = 'xmlns') or StringStartsWith(s, 'xmlns:')) then
       begin
         prop := getAttrProp(properties, s);
@@ -2180,7 +2179,7 @@ begin
   raise EFHIRTodo.create('TFHIRCustomResource.makeProperty');
 end;
 
-procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRCustomResource.setProperty');
 end;

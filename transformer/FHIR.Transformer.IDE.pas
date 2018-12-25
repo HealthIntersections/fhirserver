@@ -11,8 +11,8 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml,
   FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Cache.PackageManagerDialog,
-  FHIR.Base.Objects,
-  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel,
+  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine;
 
 const
@@ -88,10 +88,10 @@ type
 
   TTransformerForm = class(TForm)
     Panel1: TPanel;
-    Panel2: TPanel;
+    pnlWorkspace: TPanel;
     Splitter1: TSplitter;
     Panel3: TPanel;
-    Panel4: TPanel;
+    pnlDebug: TPanel;
     pgTabs: TPageControl;
     Splitter2: TSplitter;
     TabSheet1: TTabSheet;
@@ -222,6 +222,10 @@ type
     mnuSaveAll: TMenuItem;
     tbSaveAll: TToolButton;
     mnuChooseWorkspace: TMenuItem;
+    btnOpenScript: TBitBtn;
+    btnOpenSource: TBitBtn;
+    btnMaximise: TBitBtn;
+    btnNormalSize: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -289,6 +293,10 @@ type
     procedure mnuCompileClick(Sender: TObject);
     procedure mnuSaveAllClick(Sender: TObject);
     procedure mnuChooseWorkspaceClick(Sender: TObject);
+    procedure btnOpenScriptClick(Sender: TObject);
+    procedure btnOpenSourceClick(Sender: TObject);
+    procedure btnMaximiseClick(Sender: TObject);
+    procedure btnNormalSizeClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -299,7 +307,8 @@ type
     FLoading : boolean;
     FCache : TResourceMemoryCache;
     FEditor : TEditorInformation;
-
+    FWorkspaceWidth : integer;
+    FDebugHeight : integer;
     function DoSave(command : String) : boolean;
     function nodeCaption(i : integer) : String;
     procedure LoadWorkspace(proj: TWorkspace);
@@ -424,6 +433,7 @@ begin
   engine := TCDAConversionEngine.create;
   try
     engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
+    engine.map := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
     engine.cache := FCache.Link;
     engine.workspace := FWorkspace.link;
     engine.OnWantSource := engineGetSource;
@@ -435,6 +445,36 @@ begin
   finally
     engine.free;
   end;
+end;
+
+procedure TTransformerForm.btnMaximiseClick(Sender: TObject);
+begin
+  FWorkspaceWidth := pnlWorkspace.Width;
+  FDebugHeight := pnlDebug.Height;
+  pnlWorkspace.Width := 0;
+  pnlDebug.Height := 0;
+  btnMaximise.Visible := false;
+  btnNormalSize.Visible := true;
+end;
+
+procedure TTransformerForm.btnNormalSizeClick(Sender: TObject);
+begin
+  pnlWorkspace.Width := FWorkspaceWidth;
+  pnlDebug.Height := FDebugHeight;
+  btnMaximise.Visible := true;
+  btnNormalSize.Visible := false;
+end;
+
+procedure TTransformerForm.btnOpenScriptClick(Sender: TObject);
+begin
+  if cbxScript.ItemIndex > -1 then
+    openWorkspaceFile(cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
+end;
+
+procedure TTransformerForm.btnOpenSourceClick(Sender: TObject);
+begin
+  if cbxSource.ItemIndex > -1 then
+    openWorkspaceFile(cbxSource.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
 end;
 
 procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
@@ -1023,6 +1063,9 @@ end;
 
 procedure TTransformerForm.memoExit(Sender: TObject);
 begin
+  if FEditor = nil then
+    exit;
+
   FEditor.id.Row := FEditor.memo.CaretLine;
   if (FEditor.ErrorLine < 0) then
     HideError;
@@ -1321,7 +1364,7 @@ var
   i : integer;
   e : TEditorInformation;
 begin
-  for i := 1 to pgTabs.PageCount do
+  for i := 1 to pgTabs.PageCount - 1 do
   begin
     e := editorForTab(pgTabs.Pages[i]);
     if (e.isDirty) then
@@ -1636,12 +1679,12 @@ begin
     case f.format of
       fmtV2 :  editor.Styler := TV2Styler.Create(self);
       fmtCDA  : editor.Styler := TCDAStyler.Create(self);
-      fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
       fmtResource:
         if isXml(editor.rawText) then
           editor.Styler := TXmlStyler.Create(self)
         else
           editor.Styler := TJsonStyler.Create(self);
+      fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
       fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
     end;
 
@@ -1713,8 +1756,6 @@ begin
 end;
 
 procedure TTransformerForm.closeWorkspaceFile(editor : TEditorInformation; checkSave : boolean);
-var
-  tab : TTabSheet;
 begin
   if (editor = nil) then
     exit;
@@ -1727,9 +1768,9 @@ begin
       mrNo : saveWorkspaceFile(editor);
     end;
   end;
-  if pgTabs.ActivePage = tab then
+  if pgTabs.ActivePage = editor.tab then
     pgTabs.TabIndex := pgTabs.TabIndex - 1;
-  tab.Free;
+  editor.tab.Free;
   editor.Free;
 end;
 
@@ -1820,7 +1861,7 @@ var
   utils : TFHIRStructureMapUtilities;
   map : TFHIRStructureMap;
 begin
-   utils := TFHIRStructureMapUtilities.Create(nil, nil, nil);
+   utils := TFHIRStructureMapUtilities.Create(nil, nil, nil, nil);
    try
      map := utils.parse(src, title);
      try
@@ -1890,16 +1931,19 @@ begin
       fmtMap: checkMap(FEditor.memo.RawText, FEditor.id.title);
       fmtTemplate: checkTemplate(FEditor.memo.RawText, FEditor.id.title);
     end;
-    status(clGreen, 'All Ok')
+    status(clGreen, FEditor.id.title+' is syntactically valid at '+FormatDateTime('c', now));
+    MessageBeep(SOUND_SYSTEM_INFORMATION);
   except
     on e : EParserException do
     begin
       SetErrorLine(e.Line-1);
       status(clMaroon, 'Error Compiling: '+e.message);
+      MessageBeep(SOUND_SYSTEM_ERROR)
     end;
     on e : Exception do
     begin
-      status(clMaroon, 'Error Compiling: '+e.message)
+      status(clMaroon, 'Error Compiling: '+e.message);
+      MessageBeep(SOUND_SYSTEM_ERROR);
     end;
   end;
 end;
@@ -1927,8 +1971,18 @@ begin
 end;
 
 procedure TTransformerForm.checkResource(src, title : String);
+var
+  p : TFHIRParser;
 begin
-  raise Exception.Create('Not Done Yet');
+  if isXml(src) then
+    p := TFHIRXmlParser.Create(nil, 'en')
+  else
+    p := TFHIRJsonParser.Create(nil, 'en');
+  try
+    p.parseResource(src).Free;
+  finally
+    p.free;
+  end;
 end;
 
 procedure TTransformerForm.checkJS(src, title : String);
@@ -1940,7 +1994,7 @@ procedure TTransformerForm.checkMap(src, title : String);
 var
   utils : TFHIRStructureMapUtilities;
 begin
-  utils := TFHIRStructureMapUtilities.Create(nil, nil, nil);
+  utils := TFHIRStructureMapUtilities.Create(nil, nil, nil, nil);
   try
     utils.parse(src, title).free;
   finally
@@ -2125,8 +2179,8 @@ const
     '=o.....o=',
     '==ooooo==',
     nil);
-const
-  SC_MARK_BACKFORE = 3030;  { new marker type added in my Scintilla build }
+//const
+//  SC_MARK_BACKFORE = 3030;  { new marker type added in my Scintilla build }
 begin
   inherited;
 
@@ -2141,9 +2195,9 @@ begin
 
   Call(SCI_SETSCROLLWIDTH, 1024 * CallStr(SCI_TEXTWIDTH, 0, 'X'), 0);
 
-  Call(SCI_INDICSETSTYLE, inSquiggly, INDIC_SQUIGGLE);
-  Call(SCI_INDICSETFORE, inSquiggly, clRed);
-  Call(SCI_INDICSETSTYLE, inPendingSquiggly, INDIC_HIDDEN);
+//  Call(SCI_INDICSETSTYLE, inSquiggly, INDIC_SQUIGGLE);
+//  Call(SCI_INDICSETFORE, inSquiggly, clRed);
+//  Call(SCI_INDICSETSTYLE, inPendingSquiggly, INDIC_HIDDEN);
 
   Call(SCI_SETMARGINTYPEN, 1, SC_MARGIN_SYMBOL);
   Call(SCI_SETMARGINWIDTHN, 1, 21);
@@ -2162,16 +2216,16 @@ begin
   Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpoint, LPARAM(@PixmapBreakpoint));
   Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpointGood, LPARAM(@PixmapBreakpointGood));
   Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpointBad, LPARAM(@PixmapBreakpointBad));
-  Call(SCI_MARKERDEFINE, mmLineError, SC_MARK_BACKFORE);
+  Call(SCI_MARKERDEFINE, mmLineError, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineError, clWhite);
   Call(SCI_MARKERSETBACK, mmLineError, clRed);
-  Call(SCI_MARKERDEFINE, mmLineBreakpoint, SC_MARK_BACKFORE);
+  Call(SCI_MARKERDEFINE, mmLineBreakpoint, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineBreakpoint, clWhite);
   Call(SCI_MARKERSETBACK, mmLineBreakpoint, clRed);
-  Call(SCI_MARKERDEFINE, mmLineBreakpointBad, SC_MARK_BACKFORE);
+  Call(SCI_MARKERDEFINE, mmLineBreakpointBad, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineBreakpointBad, clLime);
   Call(SCI_MARKERSETBACK, mmLineBreakpointBad, clOlive);
-  Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKFORE);
+  Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineStep, clWhite);
   Call(SCI_MARKERSETBACK, mmLineStep, clBlue);
 end;

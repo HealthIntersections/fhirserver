@@ -63,7 +63,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -168,8 +168,7 @@ begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
-
-procedure TFHIRTuple4.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRTuple4.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
