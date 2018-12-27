@@ -25,7 +25,7 @@ object ListSelectorForm: TListSelectorForm
       40)
     object CheckBox1: TCheckBox
       Left = 8
-      Top = 8
+      Top = 10
       Width = 97
       Height = 17
       Caption = 'Select All'
@@ -64,6 +64,14 @@ object ListSelectorForm: TListSelectorForm
       ModalResult = 1
       TabOrder = 3
       OnClick = btnOkAllClick
+    end
+    object cbDontAsk: TCheckBox
+      Left = 128
+      Top = 10
+      Width = 233
+      Height = 17
+      Caption = 'Command Automatically without asking'
+      TabOrder = 4
     end
   end
   object Panel2: TPanel

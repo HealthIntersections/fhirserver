@@ -15,6 +15,7 @@ type
     Panel2: TPanel;
     ListBox1: TCheckListBox;
     btnOkAll: TButton;
+    cbDontAsk: TCheckBox;
     procedure CheckBox1Click(Sender: TObject);
     procedure ListBox1ClickCheck(Sender: TObject);
     procedure btnOkAllClick(Sender: TObject);
@@ -65,6 +66,7 @@ begin
   FVerb := Value;
   btnOk.Caption := FVerb;
   btnOkAll.Caption := 'All + '+FVerb;
+  cbDontAsk.Caption := FVerb+' automatically without asking';
 end;
 
 end.

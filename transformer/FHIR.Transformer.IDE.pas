@@ -1,5 +1,18 @@
 unit FHIR.Transformer.IDE;
 
+{
+standard function keys
+f2: stop
+F3: find
+F4: close
+F5: run
+f6: run no debug
+F7: step in
+F8: step over
+F9: step ot
+f10: validate
+}
+
 interface
 
 uses
@@ -11,9 +24,9 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml,
   FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Cache.PackageManagerDialog,
-  FHIR.Base.Objects, FHIR.Base.Parser,
-  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML,
-  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine;
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
+  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine,
+  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.WorkingDialog;
 
 const
   TEMPLATE_V2 = 'MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'+#13#10+
@@ -60,12 +73,30 @@ const
 type
   TTreeDataPointer = record
     obj : TFslObject;
+    obj2 : TFslObject;
   end;
   PTreeDataPointer = ^TTreeDataPointer;
+
+  TPathSelection = class (TFslObject)
+  private
+    FcolStart: integer;
+    FlineStart: integer;
+    FcolEnd: integer;
+    Fcaption: String;
+    FlineEnd: integer;
+  public
+    constructor create(caption : String; lineStart, colStart, lineEnd, colEnd : integer);
+    property caption : String read Fcaption write Fcaption;
+    property lineStart : integer read FlineStart write FlineStart;
+    property colStart : integer read FcolStart write FcolStart;
+    property lineEnd : integer read FlineEnd write FlineEnd;
+    property colEnd : integer read FcolEnd write FcolEnd;
+  end;
 
   TEditorInformation = class (TFslObject)
   private
     FErrorLine: Integer;
+    FStepLine: Integer;
     FIsDirty: boolean;
     FInfo: TWorkspaceFile;
     FMemo: TScintEdit;
@@ -79,6 +110,7 @@ type
     property memo : TScintEdit read FMemo write FMemo;
     property isDirty : boolean read FIsDirty write FIsDirty;
     property ErrorLine : Integer read FErrorLine write FErrorLine;
+    property StepLine : Integer read FStepLine write FStepLine;
   end;
 
   TIDEScintEdit = class(TScintEdit)
@@ -181,8 +213,8 @@ type
     Go1: TMenuItem;
     btnExecute: TBitBtn;
     mnuPackageManager: TMenuItem;
-    PageControl1: TPageControl;
-    TabSheet2: TTabSheet;
+    pgDebug: TPageControl;
+    tbConsole: TTabSheet;
     Panel5: TPanel;
     btnConsoleClear: TButton;
     btnConsoleSave: TButton;
@@ -226,6 +258,45 @@ type
     btnOpenSource: TBitBtn;
     btnMaximise: TBitBtn;
     btnNormalSize: TBitBtn;
+    tbBreakpoints: TTabSheet;
+    tbVariables: TTabSheet;
+    TabSheet3: TTabSheet;
+    Panel2: TPanel;
+    Panel4: TPanel;
+    Label4: TLabel;
+    edtFHIRPath: TEdit;
+    btnPathGo: TBitBtn;
+    btnPathDebug: TBitBtn;
+    Label5: TLabel;
+    ListBox1: TListBox;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    Panel10: TPanel;
+    ListBox3: TListBox;
+    Panel12: TPanel;
+    Panel13: TPanel;
+    Splitter3: TSplitter;
+    vtVars: TVirtualStringTree;
+    Panel11: TPanel;
+    Panel14: TPanel;
+    vtVarDetails: TVirtualStringTree;
+    lbFHIRPathOutcomes: TListBox;
+    mnuOptions: TMenuItem;
+    N9: TMenuItem;
+    mnuStepInto: TMenuItem;
+    mnuStepOver: TMenuItem;
+    mnuStepOut: TMenuItem;
+    mnuEndDebugging: TMenuItem;
+    mnuRunNoDebug: TMenuItem;
+    N10: TMenuItem;
+    tbStepInto: TToolButton;
+    tbStepOver: TToolButton;
+    tbStepOut: TToolButton;
+    tbStop: TToolButton;
+    BitBtn1: TBitBtn;
+    vtCallStack: TVirtualStringTree;
+    Splitter4: TSplitter;
+    Panel15: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -297,6 +368,31 @@ type
     procedure btnOpenSourceClick(Sender: TObject);
     procedure btnMaximiseClick(Sender: TObject);
     procedure btnNormalSizeClick(Sender: TObject);
+    procedure btnPathGoClick(Sender: TObject);
+    procedure mnuOptionsClick(Sender: TObject);
+    procedure lbFHIRPathOutcomesClick(Sender: TObject);
+    procedure btnPathDebugClick(Sender: TObject);
+    procedure mnuRunNoDebugClick(Sender: TObject);
+    procedure tbStepIntoClick(Sender: TObject);
+    procedure tbStepOverClick(Sender: TObject);
+    procedure tbStepOutClick(Sender: TObject);
+    procedure tbStopClick(Sender: TObject);
+    procedure vtCallStackGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vtCallStackInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vtCallStackClick(Sender: TObject);
+    procedure vtCallStackAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtCallStackRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtCallStackDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+    procedure vtVarsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vtVarsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vtVarsDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+    procedure vtVarsAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtVarsRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtVarsClick(Sender: TObject);
+    procedure vtVarDetailsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vtVarDetailsInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+    procedure vtVarDetailsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -309,6 +405,18 @@ type
     FEditor : TEditorInformation;
     FWorkspaceWidth : integer;
     FDebugHeight : integer;
+    FPathSelection : TFslList<TPathSelection>;
+    FStepOutcome : integer;
+    FDebugInfo : TFHIRStructureMapDebugContext;
+    FStepEditor : TEditorInformation;
+    FProgress : TWorkingForm;
+    FStack : TFslList<TFHIRStructureMapDebugContext>;
+    FCallStackSelected : PVirtualNode;
+    FVarsSelected : PVirtualNode;
+    FWantClose : boolean;
+    FVariables : TVariables;
+    FVariable : TVariable;
+
     function DoSave(command : String) : boolean;
     function nodeCaption(i : integer) : String;
     procedure LoadWorkspace(proj: TWorkspace);
@@ -337,6 +445,9 @@ type
     function engineGetSource(sender : TConversionEngine; f : TWorkspaceFile) : TStream;
     procedure engineStatus(sender : TConversionEngine; message : String);
     procedure engineLog(sender : TConversionEngine; message : String);
+    procedure cacheLog(sender : TObject; pct : integer; done : boolean; desc : String);
+    procedure setDebugStatus(enabled : boolean);
+
     function rewriteV2(src, title: String): String;
     function rewriteCDA(src, title: String): String;
 
@@ -348,11 +459,29 @@ type
     procedure checkTemplate(src, title : String);
 
     procedure SetErrorLine(ALine: Integer);
+    procedure SetStepLine(editor : TEditorInformation; ALine: Integer);
     procedure HideError();
-    procedure UpdateLineMarkers(const Line: Integer);
+    procedure UpdateLineMarkers(editor : TEditorInformation; const Line: Integer);
     procedure MemoLinesDeleted(FirstLine, Count, FirstAffectedLine: Integer);
     procedure MemoLinesInserted(FirstLine, Count: integer);
     procedure UpdateAllLineMarkers();
+
+    function parseCDA(context : TFHIRWorkerContext) : TFHIRObject;
+    function parseResource(context : TFHIRWorkerContext) : TFHIRObject;
+    procedure runFHIRPath(debug: boolean);
+    function GetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting) : Integer;
+    procedure SetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting; value : Integer);
+    function GetFPDebuggerSettingStr(name : TFHIRPathDebuggerFormSetting) : String;
+    procedure SetFPDebuggerSettingStr(name : TFHIRPathDebuggerFormSetting; value : String);
+
+    procedure executeTransform(debug: boolean);
+    procedure ShowCallStack;
+    procedure ClearCallStack;
+    procedure ShowVars(vars : TVariables);
+    procedure ClearVars;
+    procedure ShowVariable(variable : TVariable);
+    procedure ClearVariable;
+    procedure DebugTransform(sender : TObject; info : TFHIRStructureMapDebugContext);
   public
     { Public declarations }
   end;
@@ -364,6 +493,17 @@ implementation
 
 {$R *.dfm}
 
+uses FHIR.Transformer.SettingsDialog;
+
+function isXml(s : String) : boolean;
+begin
+  if not s.Contains('<') then
+    result := false
+  else if not s.Contains('{') then
+    result := true
+  else
+    result := s.IndexOf('<') < s.IndexOf('{');
+end;
 
 function makeXmlDense(src : String) : String;
 var
@@ -427,23 +567,34 @@ begin
 end;
 
 procedure TTransformerForm.btnExecuteClick(Sender: TObject);
+begin
+  executeTransform(true);
+end;
+
+procedure TTransformerForm.executeTransform(debug : boolean);
 var
   engine : TCDAConversionEngine;
 begin
-  engine := TCDAConversionEngine.create;
   try
-    engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
-    engine.map := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
-    engine.cache := FCache.Link;
-    engine.workspace := FWorkspace.link;
-    engine.OnWantSource := engineGetSource;
-    engine.OnStatus := engineStatus;
-    engine.OnLog := engineLog;
-//      engine.OnDebug := EngineDebug;
-    engine.load;
-    engine.execute;
+    engine := TCDAConversionEngine.create;
+    try
+      engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
+      engine.map := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
+      engine.cache := FCache.Link;
+      engine.workspace := FWorkspace.link;
+      engine.OnWantSource := engineGetSource;
+      engine.OnStatus := engineStatus;
+      engine.OnLog := engineLog;
+      if debug then
+        engine.OnTransformDebug := DebugTransform;
+      engine.load;
+      engine.execute;
+    finally
+      engine.free;
+    end;
   finally
-    engine.free;
+    if FWantClose then
+      Close;
   end;
 end;
 
@@ -475,6 +626,127 @@ procedure TTransformerForm.btnOpenSourceClick(Sender: TObject);
 begin
   if cbxSource.ItemIndex > -1 then
     openWorkspaceFile(cbxSource.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
+end;
+
+function tail(s : String) : String;
+begin
+  if s.Contains('/') then
+    result := s.Substring(s.LastIndexOf('/')+1)
+  else
+    result := s;
+end;
+
+procedure TTransformerForm.btnPathDebugClick(Sender: TObject);
+begin
+  DoSave('Debug FHIRPath');
+  runFHIRPath(true);
+end;
+
+procedure TTransformerForm.btnPathGoClick(Sender: TObject);
+begin
+  DoSave('Execute FHIRPath');
+  runFHIRPath(false);
+end;
+
+procedure TTransformerForm.runFHIRPath(debug : boolean);
+var
+  context : TFHIRTransformerContext;
+  engine : TFHIRPathEngine;
+  b : TFHIRObject;
+  ol : TFHIRSelectionList;
+  o : TFHIRSelection;
+  s : String;
+  ps : TPathSelection;
+  types : TFHIRTypeDetailsV;
+begin
+  context := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
+  try
+    context.loadFromCache(FCache);
+    engine := TFHIRPathEngine.Create(context.Link, nil); // todo: do we need UCUM?
+    try
+      case FEditor.id.format of
+        fmtV2: raise EFslException.Create('Not done yet');
+        fmtCDA: b := parseCDA(context);
+        fmtResource: b := parseResource(context);
+        fmtJS: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
+        fmtMap: raise EFslException.Create('Not done yet');
+        fmtTemplate: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
+      end;
+      try
+        lbFHIRPathOutcomes.Items.Clear;
+        FPathSelection.Clear;
+        try
+          if debug then
+            RunPathDebugger(self, context, GetFPDebuggerSetting, setFPDebuggerSetting, getFPDebuggerSettingStr, setFPDebuggerSettingStr,
+            context.Factory, nil, b, edtFHIRPath.text, ffXml, types, ol)
+          else
+            ol := engine.evaluate(nil, b, edtFHIRPath.text);
+          try
+            if assigned(ol) then
+            begin
+              for o in ol do
+              begin
+
+                s := tail(o.value.fhirType);
+                if o.name <> '' then
+                  s := s + ' ('+o.name +')';
+                if o.value = nil then
+                begin
+                  s := s+' = null';
+                  ps := TPathSelection.create(s, -1,-1,-1,-1);
+                end
+                else
+                begin
+                  if o.value.isPrimitive then
+                    s := s +' = '+o.value.primitiveValue;
+                  ps := TPathSelection.create(s, o.value.LocationStart.line-1, o.value.LocationStart.col-1, o.value.LocationEnd.line-1, o.value.LocationEnd.col-1);
+                end;
+                FPathSelection.Add(ps);
+                lbFHIRPathOutcomes.Items.AddObject(s, ps);
+              end;
+            end;
+          finally
+            ol.free;
+          end;
+        except
+          on e : Exception do
+          begin
+            MessageDlg(e.Message, mtError, [mbok], 0);
+            exit;
+          end;
+        end;
+      finally
+        b.free;
+      end;
+    finally
+      engine.Free;
+    end;
+  finally
+    context.free;
+  end;
+end;
+
+procedure TTransformerForm.mnuRunNoDebugClick(Sender: TObject);
+begin
+  executeTransform(false);
+end;
+
+procedure TTransformerForm.cacheLog(sender : TObject; pct : integer; done : boolean; desc : String);
+begin
+  if FProgress = nil then
+  begin
+    FProgress := TWorkingForm.Create(nil);
+    FProgress.Show;
+  end;
+  FProgress.lblStatus.caption := desc;
+  FProgress.lblStatus.Update;
+  FProgress.pbPercent.Position := pct;
+  FProgress.pbPercent.Update;
+  if done then
+  begin
+    FProgress.Free;
+    FProgress := nil;
+  end;
 end;
 
 procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
@@ -530,6 +802,33 @@ begin
     FWorkspace.Save;
   end;
   btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+end;
+
+function TTransformerForm.parseCDA(context: TFHIRWorkerContext): TFHIRObject;
+var
+  ss : TStringStream;
+begin
+  ss := TStringStream.Create(FEditor.memo.RawText, TEncoding.UTF8);
+  try
+    result := TFHIRMMManager.parse(context, ss, ffXml);
+  finally
+    ss.Free;
+  end;
+end;
+
+function TTransformerForm.parseResource(context: TFHIRWorkerContext): TFHIRObject;
+var
+  p : TFHIRParser;
+begin
+  if isXml(FEditor.memo.RawText) then
+    p := TFHIRXmlParser.Create(context.link, 'en')
+  else
+    p := TFHIRJsonParser.Create(context.link, 'en');
+  try
+    result := p.parseResource(FEditor.memo.RawText);
+  finally
+    p.Free;
+  end;
 end;
 
 procedure TTransformerForm.pgTabsChange(Sender: TObject);
@@ -599,6 +898,11 @@ var
 begin
   dirty := false;
   FWorkspace.save;
+  if FIni.ReadBool('Workspace', 'AutoSave', false) then
+  begin
+    mnuSaveAllClick(nil);
+    exit;
+  end;
 
   form := TListSelectorForm.Create(self);
   try
@@ -635,6 +939,8 @@ begin
       if (f <> FEditor) then
         closeWorkspaceFile(f, false);
     end;
+    if form.cbDontAsk.Checked then
+      FIni.WriteBool('Workspace', 'AutoSave', true);
   finally
     form.Free;
   end;
@@ -650,6 +956,34 @@ begin
   FWorkspace.save;
 end;
 
+procedure TTransformerForm.DebugTransform(sender: TObject; info: TFHIRStructureMapDebugContext);
+begin
+  // set up viewing the info
+  FDebugInfo := info.Link;
+  try
+    ShowCallStack;
+    ShowVars(FDebugInfo.variables);
+    setDebugStatus(true);
+    try
+      FStepOutcome := 0;
+      while FStepOutcome = 0 do
+        Application.ProcessMessages;
+    finally
+      setDebugStatus(false);
+      ClearCallStack;
+      ClearVars;
+      vtVars.RootNodeCount := 0;
+      vtVarDetails.RootNodeCount := 0;
+      SetStepLine(nil, -1);
+    end;
+  finally
+    FDebugInfo.Free;
+    FDebugInfo := nil;
+  end;
+  if FStepOutcome >= 10 then
+    abort;
+end;
+
 function TTransformerForm.DoSave(command : String) : boolean;
 var
   dirty : boolean;
@@ -659,6 +993,12 @@ var
 begin
   dirty := false;
   result := false;
+  FIni.WriteString('debug', 'FHIRPath', edtFHIRPath.Text);
+  if FIni.ReadBool('Workspace', 'AutoSave', false) then
+  begin
+    mnuSaveAllClick(nil);
+    exit;
+  end;
 
   form := TListSelectorForm.Create(self);
   try
@@ -689,9 +1029,12 @@ begin
     end
     else
       result := true;
+    if form.cbDontAsk.Checked then
+      FIni.WriteBool('Workspace', 'AutoSave', true);
   finally
     form.Free;
   end;
+  FWorkspace.save;
 end;
 
 function TTransformerForm.editorForFile(f: TWorkspaceFile): TEditorInformation;
@@ -847,9 +1190,29 @@ var
   i : integer;
   e : TEditorInformation;
 begin
+  if FDebugInfo <> nil then
+  begin
+    if MessageDlg('Stop debugging and Close?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+    begin
+      CanClose := false;
+      exit;
+    end;
+  end;
+
   dirty := false;
   FWorkspace.save;
   FWorkspace.ClearOpenFiles;
+  if FIni.ReadBool('Workspace', 'AutoSave', false) then
+  begin
+    mnuSaveAllClick(nil);
+    if FDebugInfo <> nil then
+    begin
+      FStepOutcome := 11;
+      FWantClose := true;
+    end;
+    exit;
+  end;
+
   form := TListSelectorForm.Create(self);
   try
     form.Caption := 'Unsaved Content found. Which files do you want to save?';
@@ -872,8 +1235,15 @@ begin
       for i := 0 to form.ListBox1.Items.Count - 1 do
         if form.ListBox1.Checked[i] then
           saveWorkspaceFile(TEditorInformation(form.ListBox1.items.objects[i]));
+    if form.cbDontAsk.Checked then
+      FIni.WriteBool('Workspace', 'AutoSave', true);
   finally
     form.Free;
+  end;
+  if (FDebugInfo <> nil) and CanClose then
+  begin
+    FStepOutcome := 11;
+    FWantClose := true;
   end;
 end;
 
@@ -882,7 +1252,14 @@ var
   s : String;
   i : integer;
 begin
+  FPathSelection := TFslList<TPathSelection>.create;
+  FStack := TFslList<TFHIRStructureMapDebugContext>.create;
+
   FCache := TResourceMemoryCache.create;
+  FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#0.0.1'];
+  FCache.ResourceTypes := [{'CodeSystem', 'ValueSet', }'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'];
+  FCache.OnLog := cacheLog;
+
   FIni := TIniFile.create(Path([SystemTemp, 'FHIRTransformer.ini']));
   s := FIni.ReadString('Workspace', 'folder', '');
   if FolderExists(s) then
@@ -894,6 +1271,7 @@ begin
        ForceFolder(s);
      LoadWorkspace(TWorkspace.Create(s));
   end;
+  edtFHIRPath.Text := FIni.ReadString('debug', 'FHIRPath', '');
 end;
 
 procedure TTransformerForm.FormDestroy(Sender: TObject);
@@ -907,6 +1285,8 @@ begin
   FIni.Free;
   FCache.Free;
   FWorkspace.Free;
+  FPathSelection.Free;
+  FStack.Free;
 end;
 
 procedure TTransformerForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -917,6 +1297,16 @@ begin
     ZoomIn;
   if (key = 48) and (Shift = [ssCtrl]) then
     ZoomReset;
+end;
+
+function TTransformerForm.GetFPDebuggerSetting(name: TFHIRPathDebuggerFormSetting): Integer;
+begin
+  result := FIni.ReadInteger('Debugger', CODES_TFHIRPathDebuggerFormSetting[name], DEF_INTS_TFHIRPathDebuggerFormSetting[name]);
+end;
+
+function TTransformerForm.GetFPDebuggerSettingStr(name: TFHIRPathDebuggerFormSetting): String;
+begin
+  result := FIni.ReadString('Debugger', CODES_TFHIRPathDebuggerFormSetting[name], DEF_STR_TFHIRPathDebuggerFormSetting[name]);
 end;
 
 procedure TTransformerForm.mnuGotoClick(Sender: TObject);
@@ -943,6 +1333,21 @@ begin
     Dlg.FindText := S
   else
     Dlg.FindText := FLastFindText;
+end;
+
+procedure TTransformerForm.lbFHIRPathOutcomesClick(Sender: TObject);
+var
+  ps : TPathSelection;
+  sel : TScintRange;
+begin
+  ps := TPathSelection(lbFHIRPathOutcomes.Items.Objects[lbFHIRPathOutcomes.ItemIndex]);
+  if (ps.FLineStart <> -1) then
+  begin
+    sel.StartPos := FEditor.memo.GetPositionFromLineColumn(ps.lineStart, ps.colStart);
+    sel.EndPos := FEditor.memo.GetPositionFromLineColumn(ps.lineEnd, ps.colEnd);
+    FEditor.memo.Selection := sel;
+    FEditor.memo.ScrollCaretIntoView;
+  end;
 end;
 
 procedure TTransformerForm.LoadWorkspace(proj: TWorkspace);
@@ -1241,6 +1646,18 @@ begin
   end;
 end;
 
+procedure TTransformerForm.mnuOptionsClick(Sender: TObject);
+begin
+  TransformerOptionsForm := TTransformerOptionsForm.create(self);
+  try
+    TransformerOptionsForm.ini := FIni;
+    TransformerOptionsForm.ShowModal;
+  finally
+    TransformerOptionsForm.free;
+  end;
+
+end;
+
 procedure TTransformerForm.mnuPackageManagerClick(Sender: TObject);
 begin
   PackageCacheForm := TPackageCacheForm.Create(self);
@@ -1502,6 +1919,229 @@ begin
   raise Exception.Create('Not done yet');
 end;
 
+procedure TTransformerForm.vtCallStackAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FCallStackSelected := Node;
+end;
+
+procedure TTransformerForm.vtCallStackClick(Sender: TObject);
+var
+  p : PTreeDataPointer;
+  dbg : TFHIRStructureMapDebugContext;
+  f :  TWorkspaceFile;
+  sel : TScintRange;
+begin
+  p := vtCallStack.GetNodeData(FCallStackSelected);
+  dbg := p.obj as TFHIRStructureMapDebugContext;
+  if (dbg = nil) then
+    exit;
+  if (dbg.focus.LocationStart.line <> -1) then
+  begin
+    f := FWorkspace.findFileByParsedObject(dbg.map);
+    if f <> nil then
+    begin
+      openWorkspaceFile(f);
+      sel.StartPos := FEditor.memo.GetPositionFromLineColumn(dbg.focus.LocationStart.line-1, dbg.focus.LocationStart.col-1);
+      sel.EndPos := FEditor.memo.GetPositionFromLineColumn(dbg.focus.LocationEnd.line-1, dbg.focus.LocationEnd.col-1);
+      FEditor.memo.Selection := sel;
+      FEditor.memo.ScrollCaretIntoView;
+    end;
+  end;
+  ShowVars(dbg.variables);
+end;
+
+procedure TTransformerForm.vtCallStackDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  p : PTreeDataPointer;
+  dbg : TFHIRStructureMapDebugContext;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  dbg := p.obj as TFHIRStructureMapDebugContext;
+  if dbg.target <> nil then
+    TargetCanvas.Font.Color := clMaroon
+  else if dbg.rule <> nil then
+    TargetCanvas.Font.Color := clBlack
+  else if dbg.group <> nil then
+    TargetCanvas.Font.Color := clNavy
+  else
+    TargetCanvas.Font.Color := clGreen;
+end;
+
+procedure TTransformerForm.vtCallStackGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  p : PTreeDataPointer;
+  dbg : TFHIRStructureMapDebugContext;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  dbg := p.obj as TFHIRStructureMapDebugContext;
+  CellText := dbg.Name;
+end;
+
+procedure TTransformerForm.vtCallStackInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  p.obj := FStack[Node.Index];
+end;
+
+procedure TTransformerForm.vtCallStackRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FCallStackSelected := Nil;
+end;
+
+procedure TTransformerForm.vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+var
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  if (p.obj is TFHIRPRoperty) then
+    p.obj.free;
+end;
+
+procedure TTransformerForm.vtVarDetailsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  p : PTreeDataPointer;
+  b : TFHIRObject;
+  n : String;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  b := p.obj2 as TFHIRObject;
+  if (p.obj is TVariable) then
+    n := (p.obj as TVariable).name
+  else
+    n := (p.obj as TFHIRProperty).name;
+  case Column of
+    0: CellText := n;
+    1: CellText := tail(b.fhirType);
+    2: CellText := b.primitiveValue;
+  end;
+end;
+
+procedure TTransformerForm.vtVarDetailsInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
+var
+  p : PTreeDataPointer;
+  pl : TFHIRPropertyList;
+  pr : TFHIRProperty;
+  b, v : TFHIRObject;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  b := p.obj2 as TFHIRObject;
+  pl := b.createPropertyList(false);
+  try
+    ChildCount := 0;
+    for pr in pl do
+    begin
+      for v in pr.Values do
+        inc(ChildCOunt);
+    end;
+  finally
+    pl.free;
+  end;
+end;
+
+procedure TTransformerForm.vtVarDetailsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  p, pp : PTreeDataPointer;
+  b, v, t : TFHIRObject;
+  pl : TFHIRPropertyList;
+  i : Integer;
+  pr : TFHIRProperty;
+  c : Boolean;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  if ParentNode = nil then
+  begin
+    p.obj := FVariable;
+    p.obj2 := FVariable.obj;
+    c := not FVariable.obj.isPrimitive or FVariable.obj.hasExtensions;
+    if c then
+      InitialStates := [ivsHasChildren, ivsExpanded]
+    else
+      InitialStates := [];
+  end
+  else
+  begin
+    pp := vtWorkspace.GetNodeData(ParentNode);
+    b := pp.obj2 as TFHIRObject;
+    pl := b.createPropertyList(false);
+    try
+      i := 0;
+      for pr in pl do
+      begin
+        for v in pr.Values do
+        begin
+          if i = Node.Index then
+          begin
+            p.obj := pr.link;
+            p.obj2 := v;
+            c := not v.isPrimitive or v.hasExtensions;
+            if c then
+              InitialStates := [ivsHasChildren]
+            else
+              InitialStates := [];
+            exit;
+          end;
+          inc(i);
+        end;
+      end;
+    finally
+      pl.free;
+    end;
+  end;
+end;
+
+procedure TTransformerForm.vtVarsAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FVarsSelected := Node;
+end;
+
+procedure TTransformerForm.vtVarsClick(Sender: TObject);
+var
+  p : PTreeDataPointer;
+  v : TVariable;
+begin
+  p := vtVars.GetNodeData(FVarsSelected);
+  v := p.obj as TVariable;
+  ShowVariable(v);
+end;
+
+procedure TTransformerForm.vtVarsDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  p : PTreeDataPointer;
+  v : TVariable;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  v := p.obj as TVariable;
+  if v.mode = vmINPUT then
+    TargetCanvas.Font.Color := clNavy
+  else
+    TargetCanvas.Font.Color := clMaroon;
+end;
+
+procedure TTransformerForm.vtVarsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  p : PTreeDataPointer;
+  v : TVariable;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  v := p.obj as TVariable;
+  CellText := v.summary(true);
+end;
+
+procedure TTransformerForm.vtVarsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  p.obj := FVariables[Node.Index];
+end;
+
+procedure TTransformerForm.vtVarsRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FVarsSelected := nil;
+end;
+
 procedure TTransformerForm.vtWorkspaceAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   FSelected := Node;
@@ -1634,16 +2274,6 @@ begin
   result := nil;
 end;
 
-function isXml(s : String) : boolean;
-begin
-  if not s.Contains('<') then
-    result := false
-  else if not s.Contains('{') then
-    result := true
-  else
-    result := s.IndexOf('<') < s.IndexOf('{');
-end;
-
 procedure TTransformerForm.openWorkspaceFile(f : TWorkspaceFile);
 var
   tab : TTabSheet;
@@ -1717,6 +2347,18 @@ begin
   editor.isDirty := false;
 end;
 
+procedure TTransformerForm.setDebugStatus(enabled: boolean);
+begin
+  tbStepInto.Enabled := enabled;
+  tbStepOver.Enabled := enabled;
+  tbStepOut.Enabled := enabled;
+  tbStop.Enabled := enabled;
+  mnuStepInto.Enabled := enabled;
+  mnuStepOver.Enabled := enabled;
+  mnuStepOut.Enabled := enabled;
+  mnuEndDebugging.Enabled := enabled;
+end;
+
 procedure TTransformerForm.status(color: TColor; msg: String);
 begin
   pnlStatus.Color := color;
@@ -1737,6 +2379,26 @@ begin
   pmAddExisting.Visible := false;
   if GetCursorPos(pnt) then
     pmAddAsset.Popup(pnt.X, pnt.Y);
+end;
+
+procedure TTransformerForm.tbStepIntoClick(Sender: TObject);
+begin
+  FStepOutcome := 1;
+end;
+
+procedure TTransformerForm.tbStepOutClick(Sender: TObject);
+begin
+  FStepOutcome := 3;
+end;
+
+procedure TTransformerForm.tbStepOverClick(Sender: TObject);
+begin
+  FStepOutcome := 2;
+end;
+
+procedure TTransformerForm.tbStopClick(Sender: TObject);
+begin
+  FStepOutcome := 4;
 end;
 
 procedure TTransformerForm.Timer1Timer(Sender: TObject);
@@ -1965,6 +2627,25 @@ begin
   raise Exception.Create('Not Done Yet');
 end;
 
+procedure TTransformerForm.ClearCallStack;
+begin
+  FStack.Clear;
+  vtCallStack.RootNodeCount := 0;
+  FCallStackSelected := nil;
+end;
+
+procedure TTransformerForm.ClearVariable;
+begin
+  vtVarDetails.RootNodeCount := 0;
+  FVariable := nil;
+end;
+
+procedure TTransformerForm.ClearVars;
+begin
+  vtVars.RootNodeCount := 0;
+  FVariables := nil;
+end;
+
 procedure TTransformerForm.checkCDA(src, title : String);
 begin
   rewriteCDA(src, title); // just ignore output
@@ -2016,14 +2697,89 @@ begin
     OldLine := FEditor.ErrorLine;
     FEditor.ErrorLine := ALine;
     if OldLine >= 0 then
-      UpdateLineMarkers(OldLine);
+      UpdateLineMarkers(FEditor, OldLine);
     if FEditor.ErrorLine >= 0 then
     begin
       FEditor.memo.CaretLine := FEditor.ErrorLine;
       FEditor.memo.ScrollCaretIntoView;
-      UpdateLineMarkers(FEditor.ErrorLine);
+      UpdateLineMarkers(FEditor, FEditor.ErrorLine);
     end;
   end;
+end;
+
+procedure TTransformerForm.SetFPDebuggerSetting(name: TFHIRPathDebuggerFormSetting; value: Integer);
+begin
+  FIni.WriteInteger('Debugger', CODES_TFHIRPathDebuggerFormSetting[name], value);
+end;
+
+procedure TTransformerForm.SetFPDebuggerSettingStr(name: TFHIRPathDebuggerFormSetting; value: String);
+begin
+  FIni.WriteString('Debugger', CODES_TFHIRPathDebuggerFormSetting[name], value);
+end;
+
+procedure TTransformerForm.SetStepLine(editor: TEditorInformation; ALine: Integer);
+var
+  OldLine: Integer;
+begin
+  if (editor <> FStepEditor) or (editor.StepLine <> ALine) then
+  begin
+    if FStepEditor <> nil then
+    begin
+      OldLine := FStepEditor.StepLine;
+      FStepEditor.StepLine := -1;
+      if OldLine >= 0 then
+        UpdateLineMarkers(FStepEditor, OldLine);
+    end;
+    FStepEditor := editor;
+    if FStepEditor <> nil then
+    begin
+      FStepEditor.StepLine := ALine;
+      if FStepEditor.StepLine >= 0 then
+      begin
+        FStepEditor.memo.CaretLine := FStepEditor.StepLine;
+        FStepEditor.memo.ScrollCaretIntoView;
+        UpdateLineMarkers(FStepEditor, FStepEditor.StepLine);
+      end;
+    end;
+  end;
+end;
+
+procedure TTransformerForm.ShowCallStack;
+var
+  dbg : TFHIRStructureMapDebugContext;
+  f : TWorkspaceFile;
+begin
+  Fstack.Clear;
+  FCallStackSelected := nil;
+  dbg := FDebugInfo;
+  while dbg <> nil do
+  begin
+    FStack.add(dbg.link);
+    dbg := dbg.Parent;
+  end;
+  vtCallStack.RootNodeCount := FStack.Count;
+  if Fstack.Count > 0 then
+  begin
+    f := FWorkspace.findFileByParsedObject(FDebugInfo.map);
+    openWorkspaceFile(f);
+    SetStepLine(FEditor, FDebugInfo.focus.LocationStart.line-1);
+  end;
+end;
+
+procedure TTransformerForm.ShowVariable(variable: TVariable);
+begin
+  FVariable := variable;
+  vtVarDetails.RootNodeCount := 0;
+  vtVarDetails.RootNodeCount := 1;
+end;
+
+procedure TTransformerForm.ShowVars(vars : TVariables);
+begin
+  FVariables := vars;
+  vtVars.RootNodeCount := 0;
+  vtVars.RootNodeCount := FVariables.Count;
+  FVarsSelected := nil;
+  ClearVariable;
 end;
 
 procedure TTransformerForm.HideError;
@@ -2057,26 +2813,25 @@ begin
     having two conflicting markers (or two of the same marker). There's no
     way to stop it from doing that, or to easily tell which markers came from
     which lines, so we simply delete and re-create all markers on the line. }
-  UpdateLineMarkers(FirstAffectedLine);
+  UpdateLineMarkers(FEditor, FirstAffectedLine);
 end;
 
-procedure TTransformerForm.UpdateLineMarkers(const Line: Integer);
+procedure TTransformerForm.UpdateLineMarkers(editor : TEditorInformation; const Line: Integer);
 var
   NewMarker: Integer;
 begin
-  if Line >= FEditor.Memo.Lines.Count then
+  if Line >= Editor.Memo.Lines.Count then
     Exit;
 
   { Delete all markers on the line. To flush out any possible duplicates,
     even the markers we'll be adding next are deleted. }
-  if FEditor.Memo.GetMarkers(Line) <> [] then
-    FEditor.Memo.DeleteAllMarkersOnLine(Line);
+  if Editor.Memo.GetMarkers(Line) <> [] then
+    Editor.Memo.DeleteAllMarkersOnLine(Line);
 
-//  if FStepLine = Line then
-//    Memo.AddMarker(Line, mmLineStep)
-//  else
-  if FEditor.ErrorLine = Line then
-    FEditor.Memo.AddMarker(Line, mmLineError)
+  if editor.StepLine = Line then
+    Editor.Memo.AddMarker(Line, mmLineStep)
+  else if Editor.ErrorLine = Line then
+    Editor.Memo.AddMarker(Line, mmLineError)
 //  else if NewMarker in [mmIconBreakpoint, mmIconBreakpointGood] then
 //    Memo.AddMarker(Line, mmLineBreakpoint)
 //  else if NewMarker = mmIconBreakpointBad then
@@ -2088,7 +2843,7 @@ var
   Line: Integer;
 begin
   for Line := 0 to FEditor.Memo.Lines.Count-1 do
-    UpdateLineMarkers(Line);
+    UpdateLineMarkers(FEditor, Line);
 end;
 
 { TEditorInformation }
@@ -2227,7 +2982,19 @@ begin
   Call(SCI_MARKERSETBACK, mmLineBreakpointBad, clOlive);
   Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineStep, clWhite);
-  Call(SCI_MARKERSETBACK, mmLineStep, clBlue);
+  Call(SCI_MARKERSETBACK, mmLineStep, clLime);
+end;
+
+{ TPathSelection }
+
+constructor TPathSelection.create(caption: String; lineStart, colStart, lineEnd, colEnd: integer);
+begin
+  Inherited Create;
+  FCaption := caption;
+  FlineStart := lineStart;
+  FcolStart := colStart;
+  FlineEnd := lineEnd;
+  FcolEnd := colEnd;
 end;
 
 end.

@@ -34,7 +34,6 @@ type
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
-    function oid2Uri(oid : String) : String; override;
   end;
 
 implementation

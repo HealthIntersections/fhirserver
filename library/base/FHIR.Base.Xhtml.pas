@@ -59,6 +59,7 @@ Type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     property Name : String read FName write FName;
     property Value : String read FValue write FValue;
@@ -127,6 +128,7 @@ Type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
     function getTypesForProperty(propName : string): String; override;
@@ -483,6 +485,11 @@ end;
 function TFHIRAttribute.getTypesForProperty(propName : string): String;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFHIRAttribute.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRAttribute.isEmpty: boolean;
@@ -905,6 +912,11 @@ begin
     for attr in FAttributes do
       if attr.Name = name then
         exit(true);
+end;
+
+function TFhirXHtmlNode.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFhirXHtmlNode.isEmpty: boolean;

@@ -75,7 +75,7 @@ uses
   PathDialogForms in 'PathDialogForms.pas' {PathDialogForm},
   ValidationOutcomes in 'ValidationOutcomes.pas' {ValidationOutcomeForm},
   FHIR.Npp.Visualiser in 'FHIR.Npp.Visualiser.pas' {FHIRVisualizer},
-  FHIR.Npp.PathDebugger in 'FHIR.Npp.PathDebugger.pas' {FHIRPathDebuggerForm},
+  FHIR.Base.PathDebugger in '..\library\base\FHIR.Base.PathDebugger.pas' {FHIRPathDebuggerForm},
   FHIR.Npp.Welcome in 'FHIR.Npp.Welcome.pas' {FHIR.Npp.WelcomeForm},
   FHIR.Npp.Version in 'FHIR.Npp.Version.pas',
   UpgradePrompt in 'UpgradePrompt.pas' {UpgradePromptForm},
@@ -195,7 +195,12 @@ uses
   VirtualTrees.Utils in '..\dependencies\treeview\Source\VirtualTrees.Utils.pas',
   VirtualTrees.Export in '..\dependencies\treeview\Source\VirtualTrees.Export.pas',
   VTHeaderPopup in '..\dependencies\treeview\Source\VTHeaderPopup.pas',
-  FHIR.Support.Lang in '..\library\support\FHIR.Support.Lang.pas';
+  FHIR.Support.Lang in '..\library\support\FHIR.Support.Lang.pas',
+  FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
+  FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
+  FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
 
 {$R *.res}
 

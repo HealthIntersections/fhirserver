@@ -5,7 +5,6 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Profiles,
   FHIR.Transformer.Workspace, FHIR.Transformer.Context;
@@ -45,6 +44,7 @@ type
     FWorkspace: TWorkspace;
     FMap: TWorkspaceFile;
     FCache: TResourceMemoryCache;
+    FOnTransformDebug: TFHIRStructureMapDebugEvent;
     procedure SetSource(const Value: TWorkspaceFile);
     procedure SetWorkspace(const Value: TWorkspace);
     procedure SetMap(const Value: TWorkspaceFile);
@@ -68,6 +68,7 @@ type
     property OnWantSource : TConversionEngineFetchSourceEvent read FOnWantSource write FOnWantSource;
     property OnStatus : TConversionEngineStatusEvent read FOnStatus write FOnStatus;
     property OnLog : TConversionEngineLogEvent read FOnLog write FOnLog;
+    property OnTransformDebug : TFHIRStructureMapDebugEvent read FOnTransformDebug write FOnTransformDebug;
 
     property Context : TFHIRTransformerContext read FContext;
 
@@ -175,33 +176,42 @@ begin
   for f in FWorkspace.maps do
   begin
     map := parseMap(f);
+    f.parsed := map;
     FMapUtils.Lib.Add(map.url, map.Link);
   end;
-  log('Load the CDA Source');
-  stream := fetchSource(FSource);
   try
-    elem := TFHIRMMManager.parse(FContext, stream, ffXml);
+    log('Load the CDA Source');
+    stream := fetchSource(FSource);
     try
-      log('Parse the Map');
-      map := parseMap(self.map);
+      elem := TFHIRMMManager.parse(FContext, stream, ffXml);
       try
-        log('Execute the Conversion [url]');
-        services := TLocalTransformerServices.Create(relog, FContext, FFactory.link);
+        log('Parse the Map');
+        if self.map.parsed <> nil then
+          map := (self.map.parsed as TFhirStructureMap).link
+        else
+          map := parseMap(self.map);
         try
-          FMapUtils.Services := Services.Link;
-          FMapUtils.transform(nil, elem, map, nil);
-          assert(services.outcomes.Count = 1);
+          log('Execute the Conversion [url]');
+          services := TLocalTransformerServices.Create(relog, FContext, FFactory.link);
+          try
+            FMapUtils.Services := Services.Link;
+            FMapUtils.OnDebug := FOnTransformDebug;
+            FMapUtils.transform(nil, elem, map, nil);
+            assert(services.outcomes.Count = 1);
+          finally
+            services.Free;
+          end;
         finally
-          services.Free;
+          map.Free;
         end;
       finally
-        map.Free;
+        elem.Free;
       end;
     finally
-      elem.Free;
+      stream.free;
     end;
   finally
-    stream.free;
+    FWorkspace.ClearParsedObjects;
   end;
 end;
 
@@ -212,25 +222,11 @@ end;
 
 procedure TCDAConversionEngine.load;
 var
-  cache : TFHIRPackageManager;
   r : TFhirResource;
 begin
   FFactory := TFHIRFactoryR4.Create;
   FContext := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
-  if FCache.List.Empty then
-  begin
-    cache := TFHIRPackageManager.Create(true);
-    try
-      log('Loading the FHIR Package');
-      cache.loadPackage('hl7.fhir.core', '4.0.0', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'], FCache.load);
-      log('Loading the CDA Package');
-      cache.loadPackage('hl7.fhir.cda', '0.0.1', ['CodeSystem', 'ValueSet', 'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'], FCache.load);
-    finally
-      cache.Free;
-    end;
-  end;
-  for r in FCache.List do
-    FContext.SeeResource(r);
+  FContext.loadFromCache(FCache);
   FMapUtils := TFHIRStructureMapUtilities.Create(FContext.Link, TFslMap<TFHIRStructureMap>.create, nil, FFactory.link);
 end;
 

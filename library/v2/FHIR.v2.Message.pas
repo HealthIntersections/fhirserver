@@ -52,6 +52,7 @@ type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
@@ -260,6 +261,11 @@ end;
 function TV2Object.getId: String;
 begin
   result := id;
+end;
+
+function TV2Object.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TV2Object.makeCodeValue(v: String): TFHIRObject;

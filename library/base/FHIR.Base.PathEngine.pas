@@ -36,12 +36,18 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 type
+
   TFHIRTypeDetailsV = class (TFslObject)
   public
     function link : TFHIRTypeDetailsV;
   end;
 
   TFHIRPathExpressionNodeV = class;
+  TTreeDataPointer = record
+    expr : TFHIRPathExpressionNodeV;
+    isOp : boolean;
+  end;
+  PTreeDataPointer = ^TTreeDataPointer;
 
   TFHIRPathExpressionNodeVisitProc = reference to procedure(item : TFHIRPathExpressionNodeV);
 

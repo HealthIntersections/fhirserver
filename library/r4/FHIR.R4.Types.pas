@@ -2975,6 +2975,7 @@ Type
     procedure setIdValue(id : String); override;
     function noExtensions : TFhirElement;
     property DisallowExtensions : boolean read FDisallowExtensions write FDisallowExtensions;
+    function hasExtensions : boolean; override;
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
@@ -13114,6 +13115,11 @@ begin
       exit(true);
 end;
       
+function TFhirElement.hasExtensions: boolean;
+begin
+  result := FextensionList.Count > 0;
+end;
+
 function TFhirElement.getExtensionString(url: String): String;
 var
   ex : TFhirExtension;

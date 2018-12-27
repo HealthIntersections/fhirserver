@@ -132,6 +132,7 @@ type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -155,6 +156,7 @@ type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -1103,6 +1105,11 @@ begin
     result := nil;
 end;
 
+function TFHIRGraphQLSearchWrapper.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRGraphQLSearchWrapper.makeCodeValue(v: String): TFHIRObject;
 begin
   result := FBundle.makeCodeValue(v);
@@ -1184,6 +1191,11 @@ begin
     result := TFHIRProperty.Create(self, propname, 'resource', false, TFHIRResourceV, FEntry.resource.Link)
   else
     result := nil;
+end;
+
+function TFHIRGraphQLSearchEdge.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRGraphQLSearchEdge.makeCodeValue(v: String): TFHIRObject;

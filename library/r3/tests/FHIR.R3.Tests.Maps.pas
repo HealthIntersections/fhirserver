@@ -1,4 +1,4 @@
-unit StructureMapTests;
+unit FHIR.R3.Tests.Maps;
 
 
 {
@@ -34,12 +34,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   DUnitX.TestFramework,
-  TextUtilities,
-  FHIR.Support.Base, 
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.ElementModel,
-  FHIR.Version.Context, FHIRTestWorker, FHIR.Version.MapUtilities, FHIR.Version.Profiles;
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
+  FHIR.Support.Base, FHIR.Support.Comparisons,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Parser,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.ElementModel, FHIR.R3.Context, FHIR.R3.Tests.Worker, FHIR.R3.MapUtilities, FHIR.R3.Profiles;
 
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
@@ -121,7 +122,7 @@ end;
 
 constructor StructureMapTestCaseAttribute.Create;
 begin
-  inherited Create(IncludeTrailingPathDelimiter(PUB_HOME) + 'build\guides\ccda\maps', '.map');
+  inherited Create(IncludeTrailingPathDelimiter(PUB_HOME) + 'build\guides\ccda\maps', '.map', 0);
 end;
 
 { TMapTransformTests }

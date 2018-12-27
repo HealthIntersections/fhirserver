@@ -38,7 +38,7 @@ uses
   SysUtils, Classes, System.NetEncoding,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.ElementModel,
   FHIR.Client.Base, FHIR.Client.Threaded;
 
 type
@@ -57,6 +57,7 @@ type
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
+    function makeElementModelManager : TFHIRBaseMMManager; override;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
@@ -122,7 +123,8 @@ uses
   Soap.EncdDecd,
   FHIR.Client.HTTP,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Context, FHIR.R4.Validator, FHIR.R4.Profiles, FHIR.R4.Operations,
-  FHIR.R4.Narrative, FHIR.R4.PathEngine, FHIR.R4.Constants, FHIR.R4.Client, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.AuthMap;
+  FHIR.R4.Narrative, FHIR.R4.PathEngine, FHIR.R4.Constants, FHIR.R4.Client, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.AuthMap,
+  FHIR.R4.ElementModel;
 
 { TFHIRFactoryR4 }
 
@@ -289,6 +291,11 @@ begin
     result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
   else
     raise EFHIRException.create('Unknown Supported Data Type '+type_);
+end;
+
+function TFHIRFactoryR4.makeElementModelManager: TFHIRBaseMMManager;
+begin
+  result := TFHIRMMManager.Create;
 end;
 
 function TFHIRFactoryR4.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;

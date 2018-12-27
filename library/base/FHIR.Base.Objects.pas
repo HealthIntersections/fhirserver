@@ -316,6 +316,7 @@ type
     function makeCodeValue(v : String) : TFHIRObject; virtual; abstract;
     function makeIntValue(v : String) : TFHIRObject; virtual; abstract;
     function hasExtension(url : String) : boolean; virtual;
+    function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
     function extensions(url : String) : TFslList<TFHIRObject>; virtual;
@@ -482,6 +483,7 @@ type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     property value : string read FValue write FValue;
     function isEmpty : boolean; override;
@@ -513,6 +515,7 @@ type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
   end;
 
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
@@ -923,6 +926,11 @@ end;
 function TFHIRObjectText.getTypesForProperty(propName : string): String;
 begin
   raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+function TFHIRObjectText.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRObjectText.isEmpty: boolean;
@@ -1395,6 +1403,11 @@ begin
   result := value.getTypesForProperty(propName);
 end;
 
+function TFHIRSelection.hasExtensions: boolean;
+begin
+  result := FValue.hasExtensions;
+end;
+
 function TFHIRSelection.Link: TFHIRSelection;
 begin
   result := TFHIRSelection(inherited link);
@@ -1495,7 +1508,7 @@ begin
   result := TFHIRObjectList.Create;
   try
     for s in self do
-      result.Add(s.link);
+      result.Add(s.value.link);
     result.Link;
   finally
     result.Free;

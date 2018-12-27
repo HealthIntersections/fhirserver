@@ -50,6 +50,7 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     function getTypesForProperty(propName : string): String; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions: boolean; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
     function makeStringValue(v : String) : TFHIRObject; override;
@@ -68,6 +69,7 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     function getTypesForProperty(propName : string): String; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions: boolean; override;
     function fhirType : string; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -351,6 +353,11 @@ begin
   raise EFHIRTodo.create('TFHIRConstant.getTypesForProperty');
 end;
 
+function TFHIRConstant.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRConstant.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
@@ -423,6 +430,11 @@ end;
 function TFHIRClassTypeInfo.getTypesForProperty(propName : string): String;
 begin
   raise EFHIRTodo.create('TFHIRClassTypeInfo.getTypesForProperty');
+end;
+
+function TFHIRClassTypeInfo.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRClassTypeInfo.getId: String;

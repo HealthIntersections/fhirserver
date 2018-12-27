@@ -112,7 +112,11 @@ uses
   ScintFormats in '..\dependencies\ui\ScintFormats.pas',
   FHIR.v2.Scint in '..\library\v2\FHIR.v2.Scint.pas',
   FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
-  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas';
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Transformer.SettingsDialog in 'FHIR.Transformer.SettingsDialog.pas' {TransformerOptionsForm},
+  FHIR.Base.PathDebugger in '..\library\base\FHIR.Base.PathDebugger.pas' {FHIRPathDebuggerForm},
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm};
 
 {$R *.res}
 
@@ -120,8 +124,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TTransformerForm, TransformerForm);
-  Application.CreateForm(TListSelectorForm, ListSelectorForm);
-  Application.CreateForm(TPackageCacheForm, PackageCacheForm);
-  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
+  Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
+  Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
+  Application.CreateForm(TWorkingForm, WorkingForm);
   Application.Run;
 end.

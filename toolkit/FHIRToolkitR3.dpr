@@ -154,12 +154,13 @@ uses
   LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame},
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
   FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
-  ScintFormats in '..\dependencies\ui\ScintFormats.pas';
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  AApplication.CreateForm(TMasterToolsForm, MasterToolsForm);
-  pplication.Run;
+  Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.Run;
 end.

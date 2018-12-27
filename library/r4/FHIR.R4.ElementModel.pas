@@ -34,7 +34,7 @@ uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Cda.Narrative,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.ElementModel,
   FHIR.R4.Base, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Common;
 
 
@@ -124,8 +124,6 @@ type
   	FChildren : TFslList<TFHIRMMElement>;
 	  FProperty : TFHIRMMProperty;
 	  FElementProperty : TFHIRMMProperty; // this is used when special is set to true - it tracks the underlying element property which is used in a few places
-    FlocStart: TSourceLocation;
-    FlocEnd: TSourceLocation;
     FSpecial : TFHIRMMSpecialElement;
     FXhtml : TFhirXHtmlNode; // if this is populated, then value will also hold the string representation
 
@@ -150,6 +148,7 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     function getTypesForProperty(propName : string): String; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -161,8 +160,6 @@ type
     property elementProp : TFHIRMMProperty read FElementProperty;
     property index : integer read FIndex write FIndex;
     property special : TFHIRMMSpecialElement read FSpecial;
-    property LocStart : TSourceLocation read FLocStart;
-    property LocEnd : TSourceLocation read FLocEnd;
     property xhtml : TFhirXHtmlNode read FXhtml write SetXhtml;
     property profiles : TProfileUsages read GetProfiles;
 
@@ -172,6 +169,7 @@ type
     function hasComments : boolean;
     function hasValue : boolean;
     function hasIndex : boolean;
+    function isMetadataBased : boolean; override;
     procedure GetChildrenByName(name : String; children : TFHIRSelectionList); override;
     procedure getNamedChildrenWithWildcard(name : String; children : TFslList<TFHIRMMElement>);
     function getNamedChild(name : String) : TFHIRMMElement;
@@ -220,21 +218,23 @@ type
     procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String);  overload; virtual; abstract;
   end;
 
-  TFHIRMMManager = class (TFslObject)
+  TFHIRMMManager = class (TFHIRBaseMMManager)
   public
     class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
     class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
     class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = '');
     class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = '');
     class function makeParser(context : TFHIRWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
+    function parseV(context : TFHIRWorkerContextV; source : TStream; inputFormat : TFhirFormat) : TFHIRObject; override;
+    procedure composeV(context : TFHIRWorkerContextV; e : TFHIRObject; destination : TStream; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = ''); override;
   end;
 
   TFHIRMMXmlParser = class (TFHIRMMParserBase)
   private
     function line(node : TMXmlElement) : integer;
     function col(node : TMXmlElement) : integer;
-    function start(node : TMXmlElement) : TSourceLocation;
-    function end_(node : TMXmlElement) : TSourceLocation;
+    function start(node : TMXmlNamedNode) : TSourceLocation;
+    function end_(node : TMXmlNamedNode) : TSourceLocation;
     function pathPrefix(ns : String) : String;
 
     procedure checkRootNode(document : TMXmlDocument);
@@ -321,6 +321,7 @@ type
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
     function getTypesForProperty(propName : string): String; override;
+    function hasExtensions : boolean; override;
     function fhirType : string; override;
     function getId : string; override;
     function Equals(other : TObject) : boolean; override;
@@ -607,14 +608,15 @@ end;
 function TFHIRMMProperty.getChildProperties(elementName, statedType : String): TFslList<TFHIRMMProperty>;
 var
   ed, child : TFHIRElementDefinition;
-  sd : TFHIRStructureDefinition;
+  sd, sdt : TFHIRStructureDefinition;
   children : TFHIRElementDefinitionList;
-  t : String;
+  t, url : String;
   all, ok : boolean;
   tr : TFhirElementDefinitionType;
 begin
   ed := definition;
   sd := structure;
+  url := '';
   children := getChildMap(sd, ed);
   try
     if (children.isEmpty()) then
@@ -651,8 +653,25 @@ begin
               t := ed.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-defaulttype');
             ok := false;
             for tr in ed.type_list do
+            begin
               if (tr.Code = t) then
                 ok := true;
+              if (isAbsoluteUrl(tr.code)) then
+              begin
+                sdt := context.fetchResource(frtStructureDefinition, tr.code) as TFHIRStructureDefinition;
+                try
+                  if (sdt <> nil) and (sdt.type_ = t) then
+                  begin
+                    url := tr.code;
+                    ok := true;
+                  end;
+                finally
+                  sdt.free;
+                end;
+              end;
+              if ok then
+                break;
+            end;
              if (not ok) then
                raise EDefinitionException.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+definition.path);
           end
@@ -666,7 +685,24 @@ begin
       end;
       if ('xhtml' <> t) then
       begin
-        sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
+        for tr in ed.type_List do
+        begin
+          if (tr.code = t) then
+          begin
+            if (tr.hasProfileList) then
+            begin
+              assert(tr.profileList.Count = 1);
+              url := tr.profileList[0].value;
+            end
+            else
+              url := sdNs(t, context.OverrideVersionNs);
+            break;
+          end;
+        end;
+        if (url = '') then
+          raise EFHIRException.create('Unable to find type ' + t + ' for element ' + elementName + ' with path ' + ed.path);
+
+        sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, url));
         try
           if (sd = nil) then
               raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+definition.path);
@@ -956,6 +992,11 @@ begin
   result := true;
 end;
 
+function TFHIRMMElement.isMetadataBased: boolean;
+begin
+  result := true;
+end;
+
 function TFHIRMMElement.isPrimitive: boolean;
 begin
   if (Ftype <> '') then
@@ -989,8 +1030,8 @@ end;
 
 function TFHIRMMElement.markLocation(start, end_: TSourceLocation): TFHIRMMElement;
 begin
-  FLocStart := start;
-  FLocEnd := end_;
+  LocationStart := start;
+  LocationEnd := end_;
   result := self;
 end;
 
@@ -1058,6 +1099,18 @@ end;
 function TFHIRMMElement.hasComments: boolean;
 begin
   result := (FComments <> nil) and (FComments.count > 0);
+end;
+
+function TFHIRMMElement.hasExtensions: boolean;
+var
+  c : TFHIRMMElement;
+begin
+  result := False;
+  if FChildren = nil then
+    exit;
+  for c in FChildren do
+    if c.name = 'extension' then
+      exit(true);
 end;
 
 function TFHIRMMElement.link: TFHIRMMElement;
@@ -1416,6 +1469,11 @@ begin
   end;
 end;
 
+procedure TFHIRMMManager.composeV(context: TFHIRWorkerContextV; e: TFHIRObject; destination: TStream; outputFormat: TFhirFormat; style: TFHIROutputStyle; base: String);
+begin
+  compose(context as TFHIRWorkerContext, e as TFHIRMMElement, destination, outputFormat, style);
+end;
+
 class function TFHIRMMManager.makeParser(context: TFHIRWorkerContext; format: TFhirFormat): TFHIRMMParserBase;
 begin
   case format of
@@ -1463,6 +1521,12 @@ begin
     f.free;
   end;
 end;
+
+function TFHIRMMManager.parseV(context: TFHIRWorkerContextV; source: TStream; inputFormat: TFhirFormat): TFHIRObject;
+begin
+  result := parse(context as TFHIRWorkerContext, source, inputFormat);
+end;
+
 
 { TFHIRMMXmlParser }
 
@@ -1612,7 +1676,7 @@ begin
 end;
 
 
-function TFHIRMMXmlParser.end_(node: TMXmlElement): TSourceLocation;
+function TFHIRMMXmlParser.end_(node: TMXmlNamedNode): TSourceLocation;
 begin
   result := node.Stop;
 end;
@@ -1687,7 +1751,7 @@ begin
           if (prop.Name = 'value') and context.isPrimitive() then
             context.Value := av
           else
-            context.getChildren().add(TFHIRMMElement.create(prop.Name, prop.Link, prop.getType(), av).markLocation(start(node), end_(node)));
+            context.getChildren().add(TFHIRMMElement.create(prop.Name, prop.Link, prop.getType(), av).markLocation(start(attr), end_(attr)));
         end
         else
           logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+attr.name+'"', IssueSeverityERROR);
@@ -1705,7 +1769,7 @@ begin
         begin
           if (not prop.isChoice()) and ('xhtml' = prop.getType()) then
           begin
-            if PropertyRepresentationCdaText in prop.definition.representation then 
+            if PropertyRepresentationCdaText in prop.definition.representation then
               xhtml := TCDANarrativeParser.parse(e)
             else
               xhtml := TFHIRXhtmlParser.parse('en', xppReject, [xopValidatorMode], e, path, FHIR_NS);
@@ -1856,7 +1920,7 @@ begin
   end;
 end;
 
-function TFHIRMMXmlParser.start(node: TMXmlElement): TSourceLocation;
+function TFHIRMMXmlParser.start(node: TMXmlNamedNode): TSourceLocation;
 begin
   result := node.Start;
 end;
@@ -2698,6 +2762,11 @@ end;
 function TFHIRCustomResource.getTypesForProperty(propName : string): String;
 begin
   raise EFHIRTodo.create('TFHIRCustomResource.getTypesForProperty');
+end;
+
+function TFHIRCustomResource.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRCustomResource.isMetaDataBased: boolean;

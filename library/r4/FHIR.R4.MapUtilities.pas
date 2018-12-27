@@ -41,7 +41,7 @@ type
   TVariableMode = (vmINPUT, vmOUTPUT);
 
 const
-  CODES_TVariableMode : array [TVariableMode] of string = ('input', 'output');
+  CODES_TVariableMode : array [TVariableMode] of string = ('source', 'target');
   AUTO_VAR_NAME = 'vvv';
   RENDER_MULTIPLE_TARGETS_ONELINE = true;
 
@@ -56,7 +56,7 @@ type
 
     function link : TVariable; overload;
     function copy : TVariable;
-    function summary : string;
+    function summary(mode : boolean = false) : string;
 
     property mode : TVariableMode read Fmode write Fmode;
     property name : String read Fname write Fname;
@@ -67,6 +67,8 @@ type
   private
     list : TFslList<TVariable>;
     function GetSummary: string;
+    function GetCount: Integer;
+    function GetVariable(index: integer): TVariable;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -76,6 +78,8 @@ type
     function copy : TVariables;
     function get(mode : TVariableMode; name : String) : TFHIRObject;
     property summary : string read GetSummary;
+    property Count : Integer read GetCount;
+    property variable[index : integer] : TVariable read GetVariable; default;
   end;
 
   TTransformerServices = class abstract (TFslObject)
@@ -102,6 +106,40 @@ type
     property group : TFhirStructureMapGroup read FGroup;
   end;
 
+  TFHIRStructureMapDebugContext = class (TFslObject)
+  private
+    FRule: TFhirStructureMapGroupRule;
+    FMap: TFHIRStructureMap;
+    FAppInfo: TFslObject;
+    FTarget: TFhirStructureMapGroupRuleTarget;
+    FVariables: TVariables;
+    FGroup: TFhirStructureMapGroup;
+    FParent: TFHIRStructureMapDebugContext;
+    function getdescription: String;
+    function GetFocus: TFHIRObject;
+    function GetName: String;
+  public
+    constructor create(parent : TFHIRStructureMapDebugContext; appInfo : TFslObject;
+       map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget;
+       variables : TVariables);
+    destructor Destroy; override;
+    function link : TFHIRStructureMapDebugContext; overload;
+
+    property parent : TFHIRStructureMapDebugContext read FParent;
+    property appInfo : TFslObject read FAppInfo;
+    property map : TFHIRStructureMap read FMap;
+    property group : TFhirStructureMapGroup read FGroup;
+    property rule: TFhirStructureMapGroupRule read FRule;
+    property target : TFhirStructureMapGroupRuleTarget read FTarget;
+    property variables : TVariables read FVariables;
+
+    property name : String read GetName;
+    property description : String read GetDescription;
+    property focus : TFHIRObject read GetFocus;
+  end;
+
+  TFHIRStructureMapDebugEvent = procedure(sender : TObject; info : TFHIRStructureMapDebugContext) of Object;
+
   TFHIRStructureMapUtilities = class (TFslObject)
   private
     FWorker : TFHIRWorkerContext;
@@ -110,6 +148,7 @@ type
     FLib : TFslMap<TFHIRStructureMap>;
     FServices : TTransformerServices;
     FFactory : TFHIRFactoryR4;
+    FOnDebug: TFHIRStructureMapDebugEvent;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderImports(b : TStringBuilder; map : TFHIRStructureMap);
@@ -138,6 +177,7 @@ type
     procedure parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
     procedure parseParameter(target : TFHIRStructureMapGroupRuleTarget; lexer : TFHIRPathLexer);
 
+    function debug(dbgContext : TFHIRStructureMapDebugContext; appInfo : TFslObject; map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget; variables : TVariables) : TFHIRStructureMapDebugContext;
     procedure log(s : String);
     procedure getChildrenByName(item : TFHIRObject; name : String; result : TFslList<TFHIRObject>);
     function runTransform(ruleId : String; appInfo : TFslObject; map : TFHIRStructureMap; group : TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables; dest : TFHIRObject; element, srcVar : String; root : boolean) : TFHIRObject;
@@ -150,11 +190,11 @@ type
     procedure resolveGroupReference(map : TFHIRStructureMap; source : TFHIRStructureMapGroup; name : TFhirId; var tgtGroup : TFHIRStructureMapGroup; var tgtMap : TFHIRStructureMap);
     procedure resolveGroupByTypes(map : TFHIRStructureMap; ruleid : String; source : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; srcType, tgtType : String; var tgtGroup : TFHIRStructureMapGroup; var tgtMap : TFHIRStructureMap);
     function determineTypeFromSourceType(map : TFHIRStructureMap; ruleId : String; source : TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; base : TFHIRObject; types : TArray<String>) : String;
-    procedure executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; atRoot : boolean);
-    procedure executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; atRoot : boolean);
+    procedure executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
+    procedure executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
     function analyseSource(groupId, ruleId : String; appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource; errorlocation, indent : String) : TFslList<TVariables>;
     procedure processTarget(ruleId : String; appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; group : TFhirStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; srcVar : String; atRoot: boolean);
-    procedure executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
+    procedure executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent; dbgContext : TFHIRStructureMapDebugContext);
     function getParamStringNoNull(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter; message : String) : String;
     function getParamString(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : String;
     function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
@@ -173,6 +213,7 @@ type
     function parse(text, sourceName : String) : TFHIRStructureMap;
     procedure transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
 
+    property OnDebug : TFHIRStructureMapDebugEvent read FOnDebug write FOnDebug;
     property Services : TTransformerServices read FServices write SetServices;
   end;
 
@@ -190,6 +231,23 @@ begin
   fpe := TFHIRPathEngine.Create(context.link, nil);
   fpp := TFHIRPathParser.create;
   FFactory := factory;
+end;
+
+function TFHIRStructureMapUtilities.debug(dbgContext: TFHIRStructureMapDebugContext; appInfo: TFslObject; map: TFHIRStructureMap; group: TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target: TFhirStructureMapGroupRuleTarget; variables: TVariables): TFHIRStructureMapDebugContext;
+begin
+  if assigned(FOnDebug) then
+  begin
+    result := TFHIRStructureMapDebugContext.create(dbgContext, appInfo, map, group, rule, target, variables);
+    try
+      if (group <> nil) then
+        FOnDebug(self, result);
+      result.link;
+    finally
+      result.Free;
+    end;
+  end
+  else
+    result := nil;
 end;
 
 destructor TFHIRStructureMapUtilities.destroy;
@@ -818,6 +876,7 @@ begin
     lexer.token('map');
     result := TFHIRStructureMap.Create;
     try
+      result.LocationStart := lexer.CurrentStartLocation;
       result.Url := lexer.readConstant('url');
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
@@ -839,6 +898,7 @@ begin
       result.text := TFhirNarrative.Create;
       result.text.status := NarrativeStatusGenerated;
       result.text.div_ := TFHIRXhtmlParser.parse('en', xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
+      result.LocationEnd := lexer.CurrentLocation;
       result.link;
     finally
       result.free;
@@ -1038,9 +1098,12 @@ procedure TFHIRStructureMapUtilities.parseGroup(result : TFHIRStructureMap; lexe
 var
   group : TFHIRStructureMapGroup;
   newFmt : boolean;
+  loc : TSourceLocation;
 begin
+  loc := lexer.CurrentStartLocation;
   lexer.token('group');
   group := result.GroupList.Append;
+  group.LocationStart := loc;
   newFmt := false;
   if (lexer.hasToken('for')) then
   begin
@@ -1128,6 +1191,7 @@ begin
   if (newFmt and lexer.hasToken(';')) then
     lexer.next();
   lexer.skipComments();
+  group.LocationEnd := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer; newFmt : boolean);
@@ -1162,6 +1226,7 @@ var
   done : boolean;
 begin
   rule := list.Append;
+  rule.LocationStart := lexer.CurrentStartLocation;
   if not newFMt then
   begin
     rule.Name := lexer.takeDottedToken();
@@ -1254,6 +1319,7 @@ begin
   if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
   lexer.skipComments();
+  rule.LocationEnd := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -1281,6 +1347,7 @@ var
   node : TFHIRPathExpressionNode;
 begin
   source := rule.sourceList.Append;
+  source.LocationStart := lexer.CurrentStartLocation;
   source.Context := lexer.take();
 
   if (source.Context = 'search') and lexer.hasToken('(') then
@@ -1342,6 +1409,7 @@ begin
     source.logMessage := node.toString();
     source.logMessageElement.Tag := node;
   end;
+  source.LocationEnd := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseTarget(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -1353,6 +1421,7 @@ var
   p : TFhirStructureMapGroupRuleTargetParameter;
 begin
   target := rule.targetList.Append;
+  target.LocationStart := lexer.CurrentStartLocation;
   start := lexer.take();
   if (lexer.hasToken('.')) then
   begin
@@ -1442,6 +1511,7 @@ begin
       target.listMode := target.listMode; // + [MapListModeLAST];
     lexer.next();
   end;
+  target.LocationEnd := lexer.CurrentLocation;
 end;
 
 
@@ -1471,16 +1541,20 @@ end;
 procedure TFHIRStructureMapUtilities.transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
 var
   vars : TVariables;
+  dbg : TFHIRStructureMapDebugContext;
 begin
   log('Start Transform '+map.Url);
-
   vars := TVariables.create;
   try
     vars.add(vmINPUT, 'src', source.Link);
     if (target <> nil) then
       vars.add(vmOUTPUT, 'tgt', target.Link);
-
-    executeGroup('', appInfo, map, vars, map.GroupList[0], true);
+    dbg := debug(nil, appInfo, map, nil, nil, nil, vars);
+    try
+      executeGroup('', appInfo, map, vars, map.GroupList[0], true, dbg);
+    finally
+      dbg.free;
+    end;
 //    if target is TFHIRMMElement then
 //      (target as TFHIRMMElement).sort;
   finally
@@ -1488,25 +1562,31 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; atRoot : boolean);
+procedure TFHIRStructureMapUtilities.executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
 var
   r : TFHIRStructureMapGroupRule;
   rg : TFHIRStructureMapGroup;
   rm  : TFHIRStructureMap;
+  dbg : TFHIRStructureMapDebugContext;
 begin
   log(indent+'Group : '+group.Name+'; vars = '+vars.summary);
-  // todo: check inputs
-  if (group.extends <> '') then
-  begin
-    resolveGroupReference(map, group, group.extendsElement, rg, rm);
-    executeGroup(indent+' ', appInfo, rm, vars, rg, false);
-  end;
+  dbg := debug(dbgContext, appInfo, map, group, nil, nil, vars);
+  try
+    // todo: check inputs
+    if (group.extends <> '') then
+    begin
+      resolveGroupReference(map, group, group.extendsElement, rg, rm);
+      executeGroup(indent+' ', appInfo, rm, vars, rg, false, dbg);
+    end;
 
-  for r in group.ruleList do
-    executeRule(indent+'  ', appInfo, map, vars, group, r, atRoot);
+    for r in group.ruleList do
+      executeRule(indent+'  ', appInfo, map, vars, group, r, atRoot, dbg);
+  finally
+    dbg.free;
+  end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; atRoot : boolean);
+procedure TFHIRStructureMapUtilities.executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
 var
   srcVars, v, vdef : TVariables;
   sources : TFslList<TVariables>;
@@ -1517,61 +1597,73 @@ var
   srcType, tgtType : String;
   rg : TFHIRStructureMapGroup;
   rm  : TFHIRStructureMap;
+  dbg1, dbg2 : TFHIRStructureMapDebugContext;
 begin
   log(indent+'rule : "'+rule.Name+'"; vars = '+vars.summary);
   srcVars := vars.copy();
   try
     if (rule.sourceList.count <> 1) then
       raise EFHIRException.create('Rule '+group.name+' not handled yet');
-    sources := analyseSource(group.name, rule.name, appInfo, srcVars, rule.sourceList[0], map.url, indent);
+    dbg1 := debug(dbgContext, appInfo, map, group, rule, nil, vars);
     try
-      if (sources <> nil) then
-      begin
-        for v in sources do
+      sources := analyseSource(group.name, rule.name, appInfo, srcVars, rule.sourceList[0], map.url, indent);
+      try
+        if (sources <> nil) then
         begin
-          for t in rule.TargetList do
-            if rule.sourceList.Count = 1 then
-              processTarget(rule.name, appInfo, v, map, group, t, rule.sourceList[0].variable, atRoot)
-            else
-              processTarget(rule.name, appInfo, v, map, group, t, '', atRoot);
+          for v in sources do
+          begin
+            for t in rule.TargetList do
+            begin
+              dbg2 := debug(dbg1, appInfo, map, group, rule, t, v);
+              try
+                if rule.sourceList.Count = 1 then
+                  processTarget(rule.name, appInfo, v, map, group, t, rule.sourceList[0].variable, atRoot)
+                else
+                  processTarget(rule.name, appInfo, v, map, group, t, '', atRoot);
+              finally
+                dbg2.Free;
+              end;
+            end;
 
-          if (rule.ruleList.Count > 0) then
-          begin
-            for childrule in rule.ruleList do
-              executeRule(indent +'  ', appInfo, map, v, group, childrule, false);
-          end
-          else if (rule.dependentList.Count > 0) then
-          begin
-            for dependent in rule.dependentList do
-              executeDependency(indent+'  ', appInfo, map, v, group, dependent);
-          end
-          else if (rule.sourceList.count = 1) and (rule.sourceList[0].variable <> '') and (rule.targetList.count = 1) and
-             (rule.targetList[0].variable <> '') and (rule.targetList[0].transform = MapTransformCreate) and (not rule.targetList[0].hasParameterList) then
-          begin
-            // simple inferred, map by type
-            writeln(v.summary);
-            src := v.get(vmINPUT, rule.sourceList[0].variable);
-            if (src = nil) then
-              raise Exception.Create('No source at rule '+map.url+'#'+group.name+'.'+rule.name);
-            tgt := v.get(vmOUTPUT, rule.targetList[0].variable);
-            if (tgt = nil) then
-              raise Exception.Create('No target at rule '+map.url+'#'+group.name+'.'+rule.name);
-            srcType := src.fhirType();
-            tgtType := tgt.fhirType();
-            resolveGroupByTypes(map, rule.name, group, rule, srcType, tgtType, rg, rm);
-            vdef := TVariables.create;
-            try
-              vdef.add(vmINPUT, rg.inputList[0].name, src.link);
-              vdef.add(vmOUTPUT, rg.inputList[1].name, tgt.link);
-              executeGroup(indent+'  ', appInfo, rm, vdef, rg, false);
-            finally
-              vdef.Free;
+            if (rule.ruleList.Count > 0) then
+            begin
+              for childrule in rule.ruleList do
+                executeRule(indent +'  ', appInfo, map, v, group, childrule, false, dbg1);
+            end
+            else if (rule.dependentList.Count > 0) then
+            begin
+              for dependent in rule.dependentList do
+                executeDependency(indent+'  ', appInfo, map, v, group, dependent, dbg1);
+            end
+            else if (rule.sourceList.count = 1) and (rule.sourceList[0].variable <> '') and (rule.targetList.count = 1) and
+               (rule.targetList[0].variable <> '') and (rule.targetList[0].transform = MapTransformCreate) and (not rule.targetList[0].hasParameterList) then
+            begin
+              // simple inferred, map by type
+              src := v.get(vmINPUT, rule.sourceList[0].variable);
+              if (src = nil) then
+                raise Exception.Create('No source at rule '+map.url+'#'+group.name+'.'+rule.name);
+              tgt := v.get(vmOUTPUT, rule.targetList[0].variable);
+              if (tgt = nil) then
+                raise Exception.Create('No target at rule '+map.url+'#'+group.name+'.'+rule.name);
+              srcType := src.fhirType();
+              tgtType := tgt.fhirType();
+              resolveGroupByTypes(map, rule.name, group, rule, srcType, tgtType, rg, rm);
+              vdef := TVariables.create;
+              try
+                vdef.add(vmINPUT, rg.inputList[0].name, src.link);
+                vdef.add(vmOUTPUT, rg.inputList[1].name, tgt.link);
+                executeGroup(indent+'  ', appInfo, rm, vdef, rg, false, dbg1);
+              finally
+                vdef.Free;
+              end;
             end;
           end;
         end;
+      finally
+        sources.Free;
       end;
     finally
-      sources.Free;
+      dbg1.Free;
     end;
   finally
     srcVars.Free;
@@ -1702,7 +1794,7 @@ begin
   name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
 end;
 
-procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
+procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent; dbgContext : TFHIRStructureMapDebugContext);
 var
   targetMap : TFHIRStructureMap;
   target : TFHIRStructureMapGroup;
@@ -1734,7 +1826,7 @@ begin
         raise EFHIRException.create('Rule ''+dependent.Name+'' '+CODES_TVariableMode[mode]+' variable "'+input.Name+'" has no value');
       v.add(mode, input.Name, vv.Link);
     end;
-    executeGroup(indent+'  ', appInfo, targetMap, v, target, false);
+    executeGroup(indent+'  ', appInfo, targetMap, v, target, false, dbgContext);
   finally
     v.free;
   end;
@@ -2191,7 +2283,6 @@ procedure TFHIRStructureMapUtilities.log(s: String);
 begin
   if FServices <> nil then
     FServices.log(s);
-  writeln(s);
 end;
 
 function TFHIRStructureMapUtilities.matchesByType(map: TFHIRStructureMap; ruleId : String; grp: TFHIRStructureMapGroup; tnSrc, tnTgt: String): boolean;
@@ -2450,14 +2541,16 @@ begin
   result := TVariable(inherited link);
 end;
 
-function TVariable.summary: string;
+function TVariable.summary(mode : boolean = false): string;
 begin
   if Fobj = nil then
     result := name+': null'
   else if Fobj is TFHIRPrimitiveType then
-    result := name+': "'+(Fobj as TFHIRPrimitiveType).StringValue+'"{'+inttostr(FObj.FslObjectReferenceCount+1)+'}'
+    result := name+': "'+(Fobj as TFHIRPrimitiveType).StringValue+'"'
   else
-    result := name+': ('+FObj.fhirType()+'){'+inttostr(FObj.FslObjectReferenceCount+1)+'}';
+    result := name+': ('+FObj.fhirType()+')';
+  if mode then
+    result := CODES_TVariableMode[Fmode]+': ' +result;
 end;
 
 { TVariables }
@@ -2515,6 +2608,11 @@ begin
       exit(v.obj);
 end;
 
+function TVariables.GetCount: Integer;
+begin
+  result := list.Count;
+end;
+
 function TVariables.GetSummary: string;
 var
   s, t : TFslStringBuilder;
@@ -2535,6 +2633,11 @@ begin
     s.Free;
     t.Free;
   end;
+end;
+
+function TVariables.GetVariable(index: integer): TVariable;
+begin
+  result := list[index];
 end;
 
 function TVariables.link: TVariables;
@@ -2563,6 +2666,70 @@ begin
   FMap.Free;
   FGroup.Free;
   inherited;
+end;
+
+{ TFHIRStructureMapDebugContext }
+
+constructor TFHIRStructureMapDebugContext.create(parent: TFHIRStructureMapDebugContext; appInfo: TFslObject; map: TFHIRStructureMap; group: TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target: TFhirStructureMapGroupRuleTarget; variables: TVariables);
+begin
+  inherited create;
+  FParent := parent.link;
+  FRule := rule.Link;
+  FMap := map.link;
+  FAppInfo := appInfo.link;
+  FTarget := target.link;
+  FVariables := variables.link;
+  FGroup := group.link;
+end;
+
+function TFHIRStructureMapDebugContext.getdescription: String;
+begin
+  if target <> nil then
+    result := map.url+'#'+group.name+'.'+rule.name+'.[target]'
+  else if rule <> nil then
+    result := map.url+'#'+group.name+'.'+rule.name
+  else if group <> nil then
+    result := map.url+'#'+group.name
+  else
+    result := map.url;
+end;
+
+function TFHIRStructureMapDebugContext.GetFocus: TFHIRObject;
+begin
+  if target <> nil then
+    result := FTarget
+  else if rule <> nil then
+    result := rule
+  else if group <> nil then
+    result := group
+  else
+    result := map;
+end;
+
+function TFHIRStructureMapDebugContext.GetName: String;
+begin
+  if rule <> nil then
+    result := group.name +'.'+rule.name
+  else if group <> nil then
+    result := group.name
+  else
+    result := map.name;
+end;
+
+destructor TFHIRStructureMapDebugContext.Destroy;
+begin
+  FRule.Free;
+  FMap.Free;
+  FAppInfo.Free;
+  FTarget.Free;
+  FVariables.Free;
+  FGroup.Free;
+  inherited;
+end;
+
+function TFHIRStructureMapDebugContext.link: TFHIRStructureMapDebugContext;
+begin
+  result := TFHIRStructureMapDebugContext(inherited link);
 end;
 
 end.

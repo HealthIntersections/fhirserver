@@ -31,13 +31,6 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-//  SysUtils, Classes, Math, RegExpr, Generics.Collections, Character,
-//  FHIR.Support.Utilities, TextUtilities, SystemSupport, FHIR.Support.Utilities,
-//  FHIR.Support.Base, FHIR.Support.Utilities, 
-//  FHIR.Xml.Builder,
-//
-//  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Profiles, FHIR.Version.Constants,
-//  FHIR.Version.Parser;
   SysUtils, Classes,
   FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Parser,

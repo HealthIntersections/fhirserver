@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.ElementModel,
   FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
 
 
@@ -147,6 +147,8 @@ type
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
+    function isMetadataBased : boolean; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -216,13 +218,15 @@ type
     procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  overload; virtual; abstract;
   end;
 
-  TFHIRMMManager = class (TFslObject)
+  TFHIRMMManager = class (TFHIRBaseMMManager)
   public
     class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
     class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
     class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
     class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
     class function makeParser(context : TFHIRWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
+    function parseV(context : TFHIRWorkerContextV; source : TStream; inputFormat : TFhirFormat) : TFHIRObject; override;
+    procedure composeV(context : TFHIRWorkerContextV; e : TFHIRObject; destination : TStream; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = ''); override;
   end;
 
   TFHIRMMXmlParser = class (TFHIRMMParserBase)
@@ -938,6 +942,11 @@ begin
   result := true;
 end;
 
+function TFHIRMMElement.isMetadataBased: boolean;
+begin
+  result := true;
+end;
+
 function TFHIRMMElement.isPrimitive: boolean;
 begin
   if (Ftype <> '') then
@@ -1040,6 +1049,16 @@ end;
 function TFHIRMMElement.hasComments: boolean;
 begin
   result := (FComments <> nil) and (FComments.count > 0);
+end;
+
+function TFHIRMMElement.hasExtensions: boolean;
+var
+  c : TFHIRMMElement;
+begin
+  result := False;
+  for c in FChildren do
+    if c.name = 'extension' then
+      exit(true);
 end;
 
 function TFHIRMMElement.link: TFHIRMMElement;
@@ -1323,6 +1342,11 @@ begin
   end;
 end;
 
+procedure TFHIRMMManager.composeV(context: TFHIRWorkerContextV; e: TFHIRObject; destination: TStream; outputFormat: TFhirFormat; style: TFHIROutputStyle; base: String);
+begin
+  compose(context as TFHIRWorkerContext, e as TFHIRMMElement, destination, outputFormat, style = OutputStylePretty, base);
+end;
+
 class function TFHIRMMManager.makeParser(context: TFHIRWorkerContext; format: TFhirFormat): TFHIRMMParserBase;
 begin
   case format of
@@ -1369,6 +1393,11 @@ begin
   finally
     f.free;
   end;
+end;
+
+function TFHIRMMManager.parseV(context: TFHIRWorkerContextV; source: TStream; inputFormat: TFhirFormat): TFHIRObject;
+begin
+  result := parse(context as TFHIRWorkerContext, source, inputFormat);
 end;
 
 { TFHIRMMXmlParser }

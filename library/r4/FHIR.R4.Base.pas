@@ -64,6 +64,7 @@ type
     destructor Destroy; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
     function fhirType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
@@ -161,6 +162,11 @@ end;
 function TFHIRTuple4.getId: String;
 begin
   result := '';
+end;
+
+function TFHIRTuple4.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 procedure TFHIRTuple4.setIdValue(id: String);

@@ -22,6 +22,7 @@ Type
     FIsDirty: boolean;
     FFormat: TTransformerFormat;
     FErrorLine : Integer;
+    FParsed: TObject;
     function GetTitle: string;
   public
     constructor Create(filename : String; format : TTransformerFormat); overload;
@@ -31,6 +32,7 @@ Type
     property filename : String read FFilename write FFilename;
     property title : string read GetTitle; // derived from filename
     property row : integer read FRow write FRow;  // persisted in UI settings, not the worksapce (version control)
+    property parsed : TObject read FParsed write FParsed;
   end;
 
   TWorkspace = class (TFSLObject)
@@ -49,6 +51,8 @@ Type
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
+    function findObject(obj: TObject;
+      list: TFslList<TWorkspaceFile>): TWorkspaceFile;
   public
     constructor Create(folder : String);
 
@@ -71,12 +75,14 @@ Type
 
     function includesFile(fn : String) : boolean;
     function findFileByName(fn : String) : TWorkspaceFile;
+    function findFileByParsedObject(Obj : TObject) : TWorkspaceFile;
 
     procedure reload;
     procedure save;
     procedure ClearOpenFiles;
     procedure OpenFile(f : TWorkspaceFile);
     function listOpenFiles : TFslList<TWorkspaceFile>;
+    procedure ClearParsedObjects;
   end;
 
 implementation
@@ -134,6 +140,24 @@ begin
   end;
 end;
 
+procedure TWorkspace.ClearParsedObjects;
+var
+  f : TWorkspaceFile;
+begin
+  for f in FMessages do
+   f.parsed := nil;
+  for f in FDocuments do
+   f.parsed := nil;
+  for f in FMaps do
+   f.parsed := nil;
+  for f in FScripts do
+   f.parsed := nil;
+  for f in FTemplates do
+   f.parsed := nil;
+  for f in FResources do
+   f.parsed := nil;
+end;
+
 constructor TWorkspace.Create(folder: String);
 begin
   inherited Create;
@@ -170,6 +194,16 @@ begin
   result := nil;
 end;
 
+function TWorkspace.findObject(obj : TObject; list: TFslList<TWorkspaceFile>): TWorkspaceFile;
+var
+  item : TWorkspaceFile;
+begin
+  for item in list do
+    if obj = item.parsed then
+      exit(item);
+  result := nil;
+end;
+
 function TWorkspace.findFileByName(fn: String): TWorkspaceFile;
 var
   o : TWorkspaceFile;
@@ -195,6 +229,31 @@ begin
   result := nil;
 end;
 
+
+function TWorkspace.findFileByParsedObject(Obj: TObject): TWorkspaceFile;
+var
+  o : TWorkspaceFile;
+begin
+  o := findObject(Obj, messages);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, documents);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, resources);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, scripts);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, maps);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, templates);
+  if (o <> nil) then
+    exit(o);
+  result := nil;
+end;
 
 function TWorkspace.hasFile(fn: String; list: TFslList<TWorkspaceFile>): boolean;
 var

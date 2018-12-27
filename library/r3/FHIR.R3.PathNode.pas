@@ -45,10 +45,14 @@ type
 
   TFHIRPathFunction = (
     pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
-    pfRepeat, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfIif, pfToInteger, pfToDecimal, pfToString,
+    pfRepeat, pfAggregate, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfUnion, pfCombine, pfIntersect, pfExclude,
+    pfIif, pfUpper, pfLower, pfToChars,
     pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
-    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse, pfCombine, pfType, pfOfType,
-    pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfCustom);
+    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse,
+    pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
+    pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToTime,
+    pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
+    pfCustom);
 
   TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure); // structure is not used in FHIR.R3.PathEngine, but is in CQL
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
@@ -60,35 +64,84 @@ const
 
   CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = (
     '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
-    'repeat', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'iif', 'toInteger', 'toDecimal', 'toString',
+    'repeat', 'aggregate', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'union', 'combine', 'intersect', 'exclude',
+    'iif', 'upper', 'lower', 'toChars',
     'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
-    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse', 'combine', 'type', 'ofType',
-    'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'xx-custom-xx');
+    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse',
+    'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
+    'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToTime',
+    'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
+    'xx-custom-xx');
 
+  FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';
+  FP_NS = 'http://hl7.org/fhirpath/';
+  FP_String = 'http://hl7.org/fhirpath/String';
+  FP_Boolean = 'http://hl7.org/fhirpath/Boolean';
+  FP_Integer = 'http://hl7.org/fhirpath/Integer';
+  FP_Decimal = 'http://hl7.org/fhirpath/Decimal';
+  FP_Quantity = 'http://hl7.org/fhirpath/Quantity';
+  FP_DateTime = 'http://hl7.org/fhirpath/DateTime';
+  FP_Time = 'http://hl7.org/fhirpath/Time';
+  FP_SimpleTypeInfo = 'http://hl7.org/fhirpath/SimpleTypeInfo';
+  FP_ClassInfo = 'http://hl7.org/fhirpath/ClassInfo';
 
 
 type
-  TFHIRTypeDetails = class (TFHIRTypeDetailsV)
+  TFHIRProfiledType = class (TFslObject)
+  private
+    Furi : String;
+    FProfiles : TStringList; // or, not and
+    FBindings : TFslList<TFHIRElementDefinitionBinding>;
+  public
+    constructor Create(s : string);
+    destructor Destroy; override;
+    function Link : TFHIRProfiledType; overload;
+
+    property uri : String read FUri;
+    property profiles : TStringList read FProfiles;
+    property bindings : TFslList<TFHIRElementDefinitionBinding> read FBindings;
+
+    function hasProfiles : boolean;
+    function hasBindings : boolean;
+    function hasBinding(b : TFhirElementDefinitionBinding) : boolean;
+    procedure addProfile(s : String); overload;
+    procedure addProfiles(list : TFhirUriList); overload;
+    procedure addBinding(b : TFHIRElementDefinitionBinding);
+    function isSystemType: boolean;
+
+    class function ns(s : String) : String;
+  end;
+
+  TFHIRTypeDetails = class (TFslObject)
   private
     id : integer;
-    FTypes : TStringList;
+    FTypes : TFslList<TFHIRProfiledType>;
     FCollectionStatus : TFHIRCollectionStatus;
+    function typesContains(t : String) : boolean;
+    function getSystemType(url : string) : String;
   public
     constructor Create(status : TFHIRCollectionStatus; types : array of String);
-    constructor CreateList(status : TFHIRCollectionStatus; types : TStringList);
+    constructor CreateList(status : TFHIRCollectionStatus; types : TFslList<TFHIRProfiledType>); overload;
+    constructor CreateList(status : TFHIRCollectionStatus; types : TStringList); overload;
     destructor Destroy; override;
     function Link : TFHIRTypeDetails; overload;
-    procedure addType(n : String);
+
+    procedure addType(pt : TFHIRProfiledType); overload;
+    function addType(n : String) : String; overload;
+    function addType(n, p : String) : String; overload;
+
     procedure addTypes(n : TStringList); overload;
     procedure addTypes(types : array of String); overload;
-    function hasType(types : array of String) : boolean; overload;
-    function hasType(types : TStringList) : boolean; overload;
-    function hasType(typeName : String) : boolean; overload;
-    procedure update(source : TFHIRTypeDetails);
+    function hasType(context : TFHIRWorkerContext; typeName : String) : boolean; overload;
+    function hasType(context : TFHIRWorkerContext; types : array of String) : boolean; overload;
+    function hasType(context : TFHIRWorkerContext; types : TStringList) : boolean; overload;
+    procedure update(source : TFHIRTypeDetails); overload;
+    procedure update(status : TFHIRCollectionStatus; types : TStringList); overload;
     function union(right : TFHIRTypeDetails) : TFHIRTypeDetails;
+    function intersect(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function hasNoTypes() : boolean;
     function toSingleton : TFHIRTypeDetails;
-    property types : TStringList read FTypes;
+    property types : TFslList<TFHIRProfiledType> read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
     function type_ : String;
@@ -97,7 +150,7 @@ type
   TFHIRPathExpressionNode = class (TFHIRPathExpressionNodeV)
   private
     FName: String;
-    FConstant : string;
+    FConstant : TFHIRObject;
     FFunctionId : TFHIRPathFunction;
     FParameters : TFslList<TFHIRPathExpressionNode>;
     FInner: TFHIRPathExpressionNode;
@@ -120,6 +173,7 @@ type
     procedure SetTypes(const Value: TFHIRTypeDetails);
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
+    procedure SetConstant(const Value: TFHIRObject);
   public
     constructor Create(uniqueId : Integer);
     destructor Destroy; override;
@@ -147,11 +201,11 @@ type
     function check(out msg : String; refCount : integer): boolean;
     function location : String;
     function opLocation : String;
-    function presentConstant : String;
+    function presentConstant: String;
 
     property kind : TFHIRPathExpressionNodeKind read FKind write FKind;
     property name : String read FName write FName;
-    property constant : String read FConstant write FConstant;
+    property constant : TFHIRObject read FConstant write SetConstant;
     property FunctionId : TFHIRPathFunction read FFunctionId write SetFunctionId;
     property Parameters : TFslList<TFHIRPathExpressionNode> read FParameters;
     property Inner : TFHIRPathExpressionNode read FInner write SetInner;
@@ -218,8 +272,7 @@ begin
             break;
       end;
     enkConstant:
-      if FConstant = '' then
-        msg := 'No Constant provided @ '+location;
+      ; // nothing
     enkGroup:
       if FGroup = nil then
         msg := 'No Group provided @ '+location
@@ -247,7 +300,7 @@ end;
 function TFHIRPathExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
-    result := StringArrayExistsSensitive(['$this', '$resource'], name)
+    result := StringArrayExistsSensitive(['$this', '$resource', '$total'], name)
   else
     result := true;
 end;
@@ -266,6 +319,7 @@ begin
   FGroup.Free;
   FTypes.Free;
   FOpTypes.Free;
+  FConstant.Free;
   inherited;
 end;
 
@@ -323,10 +377,11 @@ begin
   case kind of
     enkName : result := name;
     enkFunction : result := CODES_TFHIRPathFunctions[FunctionId]+'()';
-    enkConstant : result := '"'+constant+'"';
+    enkConstant : result := '"'+presentConstant+'"';
     enkGroup : result := '(Group)';
   end;
-  result := result + ': '+Types.describe;
+  if Types <> nil then
+    result := result + ': '+Types.describe;
 end;
 
 function TFHIRPathExpressionNode.nodeOpName: String;
@@ -352,9 +407,10 @@ begin
     result := FParameters.Count;
 end;
 
-function TFHIRPathExpressionNode.presentConstant: String;
+procedure TFHIRPathExpressionNode.SetConstant(const Value: TFHIRObject);
 begin
-  result := constant;
+  FConstant.Free;
+  FConstant := Value;
 end;
 
 procedure TFHIRPathExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
@@ -381,9 +437,38 @@ begin
   case FKind of
     enkName: result := inttostr(uniqueId)+': '+FName;
     enkFunction: result := inttostr(uniqueId)+': '+CODES_TFHIRPathFunctions[FFunctionId]+'()';
-    enkConstant: result := inttostr(uniqueId)+': "'+FConstant+'"';
+    enkConstant: result := inttostr(uniqueId)+': "'+presentConstant+'"';
     enkGroup: result := inttostr(uniqueId)+': (Group)';
   end;
+end;
+
+function TFHIRPathExpressionNode.presentConstant: String;
+var
+  q : TFhirQuantity;
+begin
+  if (FConstant is TFHIRString) then
+    result := ''''+jsonEscape(FConstant.primitiveValue, true)+''''
+  else if (FConstant is TFHIRQuantity) then
+  begin
+    q := constant as TFhirQuantity;
+    result := q.value+' '''+q.unit_+'''';
+  end
+  else
+    result := jsonEscape(Fconstant.primitiveValue, true);
+end;
+
+function isToken(s : String) : boolean;
+var
+  i : integer;
+begin
+  if s = '' then
+    exit(false);
+  if not CharInSet(s[1], ['a'..'z', 'A'..'Z', '_']) then
+    exit(false);
+  for i := 2 to length(s) do
+    if not CharInSet(s[1], ['a'..'z', 'A'..'Z', '0'..'9', '_']) then
+      exit(false);
+  result := true;
 end;
 
 function TFHIRPathExpressionNode.toString: String;
@@ -397,7 +482,10 @@ begin
 		case kind of
 		enkName:
       begin
-        b.append(name);
+        if isToken(name) then
+          b.append(name)
+        else
+          b.append('"'+name+'"');
       end;
 		enkFunction:
       begin
@@ -423,9 +511,7 @@ begin
           b.append(')');
       end;
 		enkConstant:
-      begin
-    	  b.append(jsonEscape(constant, true));
-			end;
+      b.append(presentConstant);
 		enkGroup:
       begin
   			b.append('(');
@@ -533,19 +619,89 @@ begin
   FGroup := Value;
 end;
 
+{ TFHIRProfiledType }
+
+constructor TFHIRProfiledType.Create(s: string);
+begin
+  inherited Create;
+  FUri := ns(s);
+end;
+
+destructor TFHIRProfiledType.Destroy;
+begin
+  FProfiles.Free;
+  FBindings.Free;
+  inherited;
+end;
+
+function TFHIRProfiledType.Link : TFHIRProfiledType;
+begin
+  result := TFHIRProfiledType(inherited Link);
+end;
+
+procedure TFHIRProfiledType.addBinding(b: TFHIRElementDefinitionBinding);
+begin
+  if (Fbindings = nil) then
+    Fbindings := TFslList<TFHIRElementDefinitionBinding>.create;
+  FBindings.add(b);
+end;
+
+procedure TFHIRProfiledType.addProfile(s: String);
+begin
+  if (FProfiles = nil) then
+    Fprofiles := TStringList.Create;
+  Fprofiles.add(s);
+end;
+
+procedure TFHIRProfiledType.addProfiles(list: TFhirUriList);
+var
+  t : TFHIRUri;
+begin
+  for t in list do
+    addProfile(t.value);
+end;
+
+function TFHIRProfiledType.hasProfiles: boolean;
+begin
+  result := (FProfiles <> nil) and (FProfiles.count > 0);
+end;
+
+function TFHIRProfiledType.hasBinding(b: TFhirElementDefinitionBinding): boolean;
+begin
+  result := false;
+end;
+
+function TFHIRProfiledType.hasBindings: boolean;
+begin
+  result := (FBindings <> nil) and (FBindings.count > 0);
+end;
+
+function TFHIRProfiledType.isSystemType : boolean;
+begin
+  result := Furi.startsWith(FP_NS);
+end;
+
+class function TFHIRProfiledType.ns(s: String): String;
+begin
+  if s.StartsWith('http:') then
+    result := s
+  else if (s.contains('.')) then
+    result := FHIR_SD_NS+s.substring(0, s.indexof('.'))+'#'+s
+  else
+    result := FHIR_SD_NS+s;
+end;
 
 { TFHIRTypeDetails }
 
 var
   gc : integer = 0;
 
-constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
+constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TFslList<TFHIRProfiledType>);
 begin
   inherited Create;
-  FTypes := TStringList.create;
-  FTypes.Sorted := true;
+  FTypes := TFslList<TFHIRProfiledType>.create;
   FCollectionStatus := status;
-  addTypes(types);
+  FTypes.AddAll(types);
   inc(gc);
   id := gc;
 end;
@@ -553,8 +709,17 @@ end;
 constructor TFHIRTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
 begin
   inherited Create;
-  FTypes := TStringList.create;
-  FTypes.Sorted := true;
+  FTypes := TFslList<TFHIRProfiledType>.create;
+  FCollectionStatus := status;
+  addTypes(types);
+  inc(gc);
+  id := gc;
+end;
+
+constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
+begin
+  inherited Create;
+  FTypes := TFslList<TFHIRProfiledType>.create;
   FCollectionStatus := status;
   addTypes(types);
   inc(gc);
@@ -567,11 +732,65 @@ begin
   inherited;
 end;
 
-procedure TFHIRTypeDetails.addType(n: String);
+function TFHIRTypeDetails.Link: TFHIRTypeDetails;
 begin
-  if (n <> '') then
-    if not hasType(n) then
-      FTypes.add(n);
+  result := TFHIRTypeDetails(inherited Link);
+end;
+
+procedure TFHIRTypeDetails.addType(pt : TFHIRProfiledType);
+var
+  et : TFHIRProfiledType;
+  p : string;
+  b : TFHIRElementDefinitionBinding;
+begin
+  for et in Ftypes do
+  begin
+    if (et.uri = pt.uri) then
+    begin
+      if (pt.profiles <> nil) then
+      begin
+        for p in pt.profiles do
+          if (not et.hasProfiles or (et.profiles.IndexOf(p) = -1)) then
+            et.addProfile(p);
+      end;
+
+      if (pt.bindings <> nil) then
+      begin
+        for b in pt.bindings do
+          if (not et.hasBindings or not et.hasBinding(b)) then
+            et.addBinding(b.link);
+      end;
+      exit;
+    end;
+  end;
+  Ftypes.add(pt.Link);
+end;
+
+function TFHIRTypeDetails.addType(n: String) : String;
+var
+  pt : TFHIRProfiledType;
+begin
+  pt := TFHIRProfiledType.Create(n);
+  try
+    result := pt.uri;
+    addType(pt);
+  finally
+    pt.Free;
+  end;
+end;
+
+function TFHIRTypeDetails.addType(n, p: String) : String;
+var
+  pt : TFHIRProfiledType;
+begin
+  pt := TFHIRProfiledType.Create(n);
+  try
+    pt.addProfile(p);
+    result := pt.uri;
+    addType(pt);
+  finally
+    pt.Free;
+  end;
 end;
 
 procedure TFHIRTypeDetails.addTypes(n: TStringList);
@@ -590,70 +809,112 @@ begin
     addType(t);
 end;
 
-function TFHIRTypeDetails.describe: String;
+function TFHIRTypeDetails.hasType(context : TFHIRWorkerContext; typeName: String): boolean;
 begin
-  result := FTypes.commaText;
+  result := hasType(context, [typename])
 end;
 
-function TFHIRTypeDetails.hasNoTypes: boolean;
+function TFHIRTypeDetails.hasType(context : TFHIRWorkerContext; types: TStringList): boolean;
 begin
-  result := FTypes.count = 0;
+  result := hasType(context, types.ToStringArray);
 end;
 
-function TFHIRTypeDetails.hasType(types: TStringList): boolean;
+function TFHIRTypeDetails.typesContains(t : String) : boolean;
 var
-  t : String;
+  pt : TFHIRProfiledType;
 begin
-  result := false;
-  for t in types do
-    if hasType(t) then
+  for pt in FTypes do
+    if (pt.uri = t) then
       exit(true);
+  exit(false);
 end;
 
-function TFHIRTypeDetails.hasType(typeName: String): boolean;
+
+function TFHIRTypeDetails.type_: String;
 begin
-  result := FTypes.indexOf(typeName) > -1;
+  result := describe; // todo?
 end;
 
-function TFHIRTypeDetails.Link: TFHIRTypeDetails;
-begin
-  result := TFHIRTypeDetails(inherited Link);
-end;
-
-function TFHIRTypeDetails.hasType(types: array of String): boolean;
+function TFHIRTypeDetails.hasType(context : TFHIRWorkerContext; types: array of String): boolean;
 var
-  t : String;
+  n, t, id, tail : String;
+  sd, w : TFhirStructureDefinition;
 begin
-  result := false;
-  for t in types do
-    if hasType(t) then
+  for n in types do
+  begin
+    t := TFHIRProfiledType.ns(n);
+    if (typesContains(t)) then
       exit(true);
+    if (StringArrayExistsSensitive(['boolean', 'string', 'integer', 'decimal', 'Quantity', 'dateTime', 'time', 'ClassInfo', 'SimpleTypeInfo'], n)) then
+    begin
+      t := FP_NS+capitalise(n);
+      if (typesContains(t)) then
+        exit(true);
+    end;
+  end;
+
+  for n in types do
+  begin
+    if n.contains('#') then
+      id := n.substring(0, n.indexOf('#'))
+    else
+      id := n;
+    tail := '';
+    if (n.contains('#')) then
+    begin
+      tail := n.substring( n.indexOf('#')+1);
+      tail := tail.substring(tail.indexOf('.'));
+    end;
+    t := TFHIRProfiledType.ns(n);
+    sd := context.fetchResource(frtStructureDefinition, t) as TFhirStructureDefinition;
+    try
+      while (sd <> nil) do
+      begin
+        if (tail = '') and (typesContains(sd.Url)) then
+          exit(true);
+        if (tail = '') and (getSystemType(sd.url) <> '') and typesContains(getSystemType(sd.Url)) then
+          exit(true);
+        if (tail <> '') and typesContains(sd.Url+'#'+sd.type_+tail) then
+          exit(true);
+        if (sd.BaseDefinition <> '')  then
+        begin
+          if (sd.baseDefinition = 'http://hl7.org/fhir/StructureDefinition/Element') and
+            (sd.Type_ <> 'string') and (sd.Type_ <> 'uri') then
+              w := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/string') as TFhirStructureDefinition
+            else
+              w := context.fetchResource(frtStructureDefinition, sd.BaseDefinition) as TFhirStructureDefinition;
+        end
+        else
+          w := nil;
+        sd.Free;
+        sd := w;
+      end;
+    finally
+      sd.Free;
+    end;
+  end;
+  result := false;
 end;
 
-function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
+function TFHIRTypeDetails.getSystemType(url : String) : String;
+var
+  code : String;
 begin
-  result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
-end;
-
-function TfhirTypeDetails.type_: String;
-begin
-
-end;
-
-function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
-begin
-  result := TFHIRTypeDetails.createList(csNULL, FTypes);
-  if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
-    result.FcollectionStatus := csUNORDERED
-  else
-    result.FcollectionStatus := csORDERED;
-  result.addTypes(types);
-  result.addTypes(right.types);
+  result := '';
+  if (url.startsWith('http://hl7.org/fhir/StructureDefinition/')) then
+  begin
+    code := url.substring(40);
+    if StringArrayExistsSensitive(['string',  'boolean', 'integer', 'decimal', 'dateTime', 'time', 'Quantity'], code) then
+      exit(FP_NS+capitalise(code));
+  end;
 end;
 
 procedure TFHIRTypeDetails.update(source: TFHIRTypeDetails);
+var
+  pt : TFHIRProfiledType;
 begin
-  addTypes(source.types);
+  for pt in source.Types do
+    addType(pt);
   if (FcollectionStatus = csNULL) then
     FcollectionStatus := source.collectionStatus
   else if (source.FcollectionStatus = csUNORDERED) then
@@ -662,6 +923,89 @@ begin
     FcollectionStatus := csORDERED;
 end;
 
+function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
+var
+  pt : TFHIRProfiledType;
+begin
+  result := TFHIRTypeDetails.create(csNULL, []);
+  try
+    if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
+      result.FcollectionStatus := csUNORDERED
+    else
+      result.FcollectionStatus := csORDERED;
+    for pt in types do
+      result.addType(pt);
+    for pt in right.types do
+      result.addType(pt);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TFHIRTypeDetails.update(status: TFHIRCollectionStatus; types: TStringList);
+var
+  s : String;
+begin
+  for s in Types do
+    addType(s);
+  if (FcollectionStatus = csNULL) then
+    FcollectionStatus := status
+  else if (status = csUNORDERED) then
+    FcollectionStatus := status
+  else
+    FcollectionStatus := csORDERED;
+end;
+
+function TFHIRTypeDetails.intersect(right: TFHIRTypeDetails): TFHIRTypeDetails;
+var
+  pt, r : TFHIRProfiledType;
+  found : boolean;
+begin
+  result := TFHIRTypeDetails.create(csNULL, []);
+  try
+    if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
+      result.FcollectionStatus := csUNORDERED
+    else
+      result.FcollectionStatus := csORDERED;
+    for pt in types do
+    begin
+      found := false;
+      for r in right.types do
+        found := found or (pt.uri = r.uri);
+      if (found) then
+        result.addType(pt);
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRTypeDetails.hasNoTypes: boolean;
+begin
+  result := FTypes.count = 0;
+end;
+
+function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
+begin
+  result := TFHIRTypeDetails.create(csSINGLETON, []);
+  try
+    result.FTypes.AddAll(FTypes);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRTypeDetails.describe: String;
+var
+  pt : TFHIRProfiledType;
+begin
+   result := '';
+   for pt in Types do
+     CommaAdd(result, pt.uri);
+end;
 
 { TFHIRExpressionNodeComposer }
 

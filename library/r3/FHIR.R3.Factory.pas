@@ -26,8 +26,8 @@
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-  POSSIBILITY OF SUCH DAMAGE.  
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 }
 
 interface
@@ -38,7 +38,7 @@ uses
   SysUtils, Classes, System.NetEncoding,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.ElementModel,
   FHIR.Client.Base, FHIR.Client.Threaded;
 
 type
@@ -56,6 +56,7 @@ type
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
+    function makeElementModelManager : TFHIRBaseMMManager; override;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
@@ -120,7 +121,7 @@ implementation
 uses
   Soap.EncdDecd,
   FHIR.Client.HTTP,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator, FHIR.R3.Profiles, FHIR.R3.Operations,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator, FHIR.R3.Profiles, FHIR.R3.Operations, FHIR.R3.ElementModel,
   FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.AuthMap;
 
 { TFHIRFactoryR3 }
@@ -283,6 +284,11 @@ begin
     result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
   else
     raise EFHIRException.create('Unknown Supported Data Type '+type_);
+end;
+
+function TFHIRFactoryR3.makeElementModelManager: TFHIRBaseMMManager;
+begin
+  result := TFHIRMMManager.create;
 end;
 
 function TFHIRFactoryR3.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
@@ -1903,3 +1909,4 @@ end;
 
 
 end.
+

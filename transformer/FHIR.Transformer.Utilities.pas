@@ -14,7 +14,6 @@ function MsgBoxP(const Text, Caption: PChar; const Typ: TMsgBoxType; const Butto
 function MsgBox(const Text, Caption: String; const Typ: TMsgBoxType; const Buttons: Cardinal): Integer;
 function MsgBoxFmt(const Text: String; const Args: array of const; const Caption: String; const Typ: TMsgBoxType; const Buttons: Cardinal): Integer;
 
-
 implementation
 
 var

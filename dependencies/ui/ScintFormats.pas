@@ -319,15 +319,16 @@ begin
       end;
     stStartElement, stElementWhitespace, stEndElement, stAttributeStart, stAttributeEnd:
       begin
-      Attributes.ForeColor := clNavy;
+      Attributes.ForeColor := clPurple;
       end;
     stElementName :
       begin
-      Attributes.ForeColor := clMaroon;
+      Attributes.ForeColor := clBlack;
+      Attributes.FontStyle := [fsBold];
       end;
     stAttributeName :
       begin
-      Attributes.ForeColor := clRed;
+      Attributes.ForeColor := clNavy;
       end;
     stAttributeValue :
       begin
@@ -422,6 +423,9 @@ begin
   begin
     ConsumeCharsNot([ch, '\']);
     done := not (CurCharIs('\') and NextCharIs(ch));
+    if not done and CurCharIs('\') then
+      ConsumeChar;
+
   end;
   ConsumeChar(ch);
   CommitStyle(jstValueString);

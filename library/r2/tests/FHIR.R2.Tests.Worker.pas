@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
   FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory,
   FHIR.Version.Parser,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.PathEngine, FHIR.R2.Context,
   FHIR.Support.MsXml, FHIR.Support.Json,
@@ -58,7 +58,7 @@ Type
 
   TTestingWorkerContext = class (TBaseWorkerContext)
   public
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
+    function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version: string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; overload; override;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
@@ -86,14 +86,14 @@ begin
   GWorkerContext.Free;
 end;
 
-function TTestingWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+function TTestingWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRTodo.create('Not done for testing');
 end;
 
 function TTestingWorkerContext.supportsSystem(system, version: string): boolean;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRTodo.create('Not done for testing');
 end;
 
 
@@ -111,22 +111,22 @@ end;
 
 function TTestingWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRTodo.create('Not done for testing');
 end;
 
 function TTestingWorkerContext.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRTodo.create('Not done for testing');
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRTodo.create('Not done for testing');
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create();
+  raise EFHIRTodo.create('Not done for testing');
 end;
 
 { FHIRFolderBasedTestCaseAttribute }

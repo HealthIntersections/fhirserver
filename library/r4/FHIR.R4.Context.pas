@@ -33,7 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources;
 
@@ -52,6 +53,8 @@ type
     property SearchParameters : TFslList<TFHIRSearchParameter> read FSearchParameters;
   end;
 
+
+  TResourceMemoryCache = class;
 
   TFHIRWorkerContext = class abstract (TFHIRWorkerContextWithFactory)
   private
@@ -79,12 +82,17 @@ type
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
 
+    procedure loadFromCache(cache : TResourceMemoryCache); overload;
     property OverrideVersionNs : String read FOverrideVersionNs write FOverrideVersionNs;
   end;
 
   TResourceMemoryCache = class (TFslObject)
   private
     Flist : TFslList<TFHIRResource>;
+    FResourceTypes: TArray<String>;
+    FPackages: TArray<String>;
+    FOnLog: TWorkProgressEvent;
+    FLoadPackage : String;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -92,6 +100,11 @@ type
 
     property List : TFslList<TFHIRResource> read FList;
     procedure load(rType, id : String; stream : TStream);
+    property Packages : TArray<String> read FPackages write FPackages;
+    property ResourceTypes : TArray<String> read FResourceTypes write FResourceTypes;
+    property OnLog : TWorkProgressEvent read FOnLog write FOnLog;
+
+    procedure checkLoaded;
   end;
 
 
@@ -148,6 +161,15 @@ begin
 end;
 
 
+procedure TFHIRWorkerContext.loadFromCache(cache: TResourceMemoryCache);
+var
+  r : TFhirResource;
+begin
+  cache.checkLoaded;
+  for r in cache.List do
+    SeeResource(r);
+end;
+
 { TFHIRCustomResourceInformation }
 
 constructor TFHIRCustomResourceInformation.Create(definition: TFHIRStructureDefinition);
@@ -172,6 +194,27 @@ end;
 
 
 { TResourceMemoryCache }
+
+procedure TResourceMemoryCache.checkLoaded;
+var
+  cache : TFHIRPackageManager;
+  s, l, r : String;
+begin
+  if FList.Empty then
+  begin
+    cache := TFHIRPackageManager.Create(true);
+    try
+      for s in FPackages do
+      begin
+        FLoadPackage := s;
+        StringSplit(s, '#', l, r);
+        cache.loadPackage(l, r, FResourceTypes, load, FOnLog);
+      end;
+    finally
+      cache.Free;
+    end;
+  end;
+end;
 
 constructor TResourceMemoryCache.Create;
 begin
