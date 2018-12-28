@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "test release"
+        as.returnvalue = "Release to support R4"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -101,6 +101,7 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
+        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\64\\fhirnpp.dll
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
@@ -109,6 +110,7 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
+        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\32\\fhirnpp.dll
         id = {E9F3AF5B-7373-420D-903C-FD1D0F24A30B}
@@ -129,12 +131,13 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Plugin (32)"
+        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
         iconfile = C:\\work\\fhirserver\\npp\\mainicon.ico
         id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
-        includecompiledate = false
+        includecompiledate = true
         includemanifest = false
         includeverinfo = true
         isdebug = false
@@ -151,21 +154,20 @@ begin
         platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\npp\\fhirnpp.dpr
         regenerateresource = true
-        releaseversion = 0
+        releaseversion = 47
         resourcecompilertype = rcBorland
         startingdir = C:\\work\\fhirserver\\npp\\
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
-        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
         verboseoutput = false
         versioninfokeys = "CompanyName\=" +
                           "FileDescription\=" +
-                          "FileVersion\=1.0.0.1" +
+                          "FileVersion\=1.0.47.1" +
                           "InternalName\=" +
                           "LegalCopyright\=" +
                           "LegalTrademarks\=" +
@@ -251,6 +253,7 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Plugin (64)"
+        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -273,21 +276,20 @@ begin
         platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\npp\\fhirnpp.dpr
         regenerateresource = true
-        releaseversion = 0
+        releaseversion = 47
         resourcecompilertype = rcBorland
         startingdir = C:\\work\\fhirserver\\npp\\
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
-        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
         verboseoutput = false
         versioninfokeys = "CompanyName\=" +
                           "FileDescription\=" +
-                          "FileVersion\=1.0.0.1" +
+                          "FileVersion\=1.0.47.1" +
                           "InternalName\=" +
                           "LegalCopyright\=" +
                           "LegalTrademarks\=" +
@@ -328,7 +330,7 @@ begin
           includetd32 = false
           inlining = inOn
           iochecking = true
-          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
+          librarypath = $(BDSLIB)\\win64\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
           linkeroutput = 0
           localsymbols = false
           mapfile = 0
@@ -362,6 +364,7 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set AppVerName in Inno Script"
+        enabled = false
         id = {EC89A4F6-46B5-442D-A33A-944AFEE95993}
         inifile = C:\\work\\fhirserver\\install\\install-npp.iss
         newvalue = 1.0.%BuildCount%
@@ -374,6 +377,7 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set OutputFilename in Inno Script"
+        enabled = false
         id = {ACC022AD-C186-4AA5-A36D-448F59DDDB0D}
         inifile = C:\\work\\fhirserver\\install\\install-npp.iss
         newvalue = npp-install-1.0.%BuildCount%
@@ -384,6 +388,7 @@ begin
       action.innosetup.execute
       begin
         description = "Build the plugin install"
+        enabled = false
         id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
         innoversion = Inno5
         scriptfile = C:\\work\\fhirserver\\install\\install-npp.iss
@@ -396,6 +401,7 @@ begin
       begin
         captureoutput = true
         description = "Sign the plugin install"
+        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -416,60 +422,6 @@ begin
         timeoutlength = 1
         useerrordialogmonitor = false
         waitforcompletion = true
-      end
-      action.7zip.create
-      begin
-        archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-32.zip
-        archivetype = zZip
-        compressionlevel = clNormal
-        createsfxarchive = false
-        deleteaftercompression = false
-        enabletimeout = false
-        expandimpersonationtoken = false
-        fileslist = "C:\\work\\fhirserver\\npp\\i32\\*.*" +
-                    ""
-        id = {94DCA096-0552-45F2-B128-3033DA030CE8}
-        ifarchiveexists = exUpdate
-        impersonateusenetcredonly = false
-        impersonateuser = false
-        logprocessparameters = true
-        multithreaded = false
-        recurse = zrOn
-        rootdirectory = C:\\work\\fhirserver\\install\\build\\
-        solidmode = true
-        terminateontimeout = false
-        timeoutlength = 2
-        useerrordialogmonitor = false
-        usevolumesize = false
-        volumesize = 4000
-        volumesizeunits = m
-      end
-      action.7zip.create
-      begin
-        archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-64.zip
-        archivetype = zZip
-        compressionlevel = clNormal
-        createsfxarchive = false
-        deleteaftercompression = false
-        enabletimeout = false
-        expandimpersonationtoken = false
-        fileslist = "C:\\work\\fhirserver\\npp\\i64\\*.*" +
-                    ""
-        id = {87764C4E-F0F0-48A8-80E2-A6E07E4EC464}
-        ifarchiveexists = exUpdate
-        impersonateusenetcredonly = false
-        impersonateuser = false
-        logprocessparameters = true
-        multithreaded = false
-        recurse = zrOn
-        rootdirectory = C:\\work\\fhirserver\\install\\build\\
-        solidmode = true
-        terminateontimeout = false
-        timeoutlength = 2
-        useerrordialogmonitor = false
-        usevolumesize = false
-        volumesize = 4000
-        volumesizeunits = m
       end
       action.files.copy
       begin
@@ -501,30 +453,76 @@ begin
         target = C:\\work\\fhirserver\\npp\\i64\\fhirnpp.dll
         targetisdir = false
       end
+      action.7zip.create
+      begin
+        archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-32.zip
+        archivetype = zZip
+        compressionlevel = clNormal
+        createsfxarchive = false
+        enabletimeout = false
+        expandimpersonationtoken = false
+        fileslist = "C:\\work\\fhirserver\\npp\\i32\\*.*" +
+                    ""
+        id = {94DCA096-0552-45F2-B128-3033DA030CE8}
+        ifarchiveexists = exUpdate
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logprocessparameters = true
+        multithreaded = false
+        recurse = zrOn
+        rootdirectory = C:\\work\\fhirserver\\install\\build\\
+        solidmode = true
+        terminateontimeout = false
+        timeoutlength = 2
+        useerrordialogmonitor = false
+        usevolumesize = false
+        volumesize = 4000
+        volumesizeunits = m
+      end
+      action.7zip.create
+      begin
+        archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-64.zip
+        archivetype = zZip
+        compressionlevel = clNormal
+        createsfxarchive = false
+        enabletimeout = false
+        expandimpersonationtoken = false
+        fileslist = "C:\\work\\fhirserver\\npp\\i64\\*.*" +
+                    ""
+        id = {87764C4E-F0F0-48A8-80E2-A6E07E4EC464}
+        ifarchiveexists = exUpdate
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logprocessparameters = true
+        multithreaded = false
+        recurse = zrOn
+        rootdirectory = C:\\work\\fhirserver\\install\\build\\
+        solidmode = true
+        terminateontimeout = false
+        timeoutlength = 2
+        useerrordialogmonitor = false
+        usevolumesize = false
+        volumesize = 4000
+        volumesizeunits = m
+      end
       action.ftp.connect
       begin
-        allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
-        allowselfsignedcertificate = false
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
-        encryptdatachannel = false
         ftpconnectionname = HealthIntersections
         ftphost = 27.123.25.1
         ftpport = 21
         id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
-        logsslnegotiation = false
         passive = true
         proxyport = 0
         proxytype = fpcmNone
-        tlsmode = ExplicitTLS
         transfertype = ftBinary
         useglobalopt = false
         usehost = true
         useproxy = false
         userid = healthi3
-        usessl = false
       end
       action.ftp.upload.file
       begin
