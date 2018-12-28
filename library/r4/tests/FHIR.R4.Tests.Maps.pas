@@ -1,6 +1,5 @@
 unit FHIR.R4.Tests.Maps;
 
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -32,10 +31,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   DUnitX.TestFramework,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Support.Base, 
+  FHIR.Support.Base, FHIR.Support.Comparisons,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
@@ -47,11 +46,12 @@ type
   end;
 
   TTestTransformerServices = class(TTransformerServices)
-  private
   public
-    function oid2Uri(oid : String) : String; override;
     function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
+    function performSearch(appInfo : TFslObject; url : String) : TFslList<TFHIRObject>; override;
+    function createType(appInfo : TFslObject; tn : String) : TFHIRObject; override;
+    procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); override;
   end;
 
   [TextFixture]
@@ -76,6 +76,25 @@ type
     [TestCase] procedure testCD;
   end;
 
+  MapParserTest2CaseAttribute = class (CustomTestCaseSourceAttribute)
+  protected
+    function GetCaseInfoArray : TestCaseInfoArray; override;
+  end;
+
+  [TextFixture]
+  TMapParserTests2 = Class (TObject)
+  private
+    ctxt : TFHIRWorkerContext;
+    utils : TFHIRStructureMapUtilities;
+  Published
+    [SetupFixture] procedure setup;
+    [TearDownFixture] procedure teardown;
+
+    [MapParserTest2Case]
+    procedure Test(filename : String);
+  End;
+
+
 implementation
 
 function normalise(text : String) : String;
@@ -96,10 +115,10 @@ var
 begin
   ctxt := TTestingWorkerContext.Use;
   try
-    utils := TFHIRStructureMapUtilities.Create(ctxt.link, nil, nil);
+    utils := TFHIRStructureMapUtilities.Create(ctxt.link, nil, nil, nil);
     try
       source := fileToString(filename, TEncoding.UTF8);
-      map := utils.parse(source);
+      map := utils.parse(source, filename);
       try
         output := utils.render(map);
         StringToFile(output, filename+'.outp', TEncoding.UTF8);
@@ -129,7 +148,7 @@ procedure TMapTransformTests.loadMap(filename: String);
 var
   map : TFHIRStructureMap;
 begin
-  map := utils.parse(FileToString(filename, TEncoding.UTF8));
+  map := utils.parse(FileToString(filename, TEncoding.UTF8), filename);
   utils.lib.AddOrSetValue(map.url, map);
 end;
 
@@ -147,7 +166,7 @@ procedure TMapTransformTests.setup;
 begin
   ctxt := TTestingWorkerContext.Use;
   (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
   loadMaps(FHIR_SRC_FILE(['guides', 'ccda', 'maps']));
 end;
 
@@ -188,17 +207,24 @@ end;
 
 { TTestTransformerServices }
 
+procedure TTestTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
+begin
+  raise EFslException.Create('Not done yet');
+end;
+
+function TTestTransformerServices.createType(appInfo: TFslObject; tn: String): TFHIRObject;
+begin
+  raise EFslException.Create('Not done yet');
+end;
+
 procedure TTestTransformerServices.log(s: String);
 begin
   writeln(s);
 end;
 
-function TTestTransformerServices.oid2Uri(oid: String): String;
+function TTestTransformerServices.performSearch(appInfo: TFslObject; url: String): TFslList<TFHIRObject>;
 begin
-  if oid = '2.16.840.1.113883.6.1' then
-    result := 'http://loinc.org'
-  else
-    result := 'http://unknown.com/what?';
+  raise EFslException.Create('Not done yet');
 end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
@@ -206,7 +232,71 @@ begin
   raise EFHIRTodo.create('TTestTransformerServices.translate');
 end;
 
+{ MapParserTest2CaseAttribute }
+
+function MapParserTest2CaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+var
+  st : TStringList;
+  s : String;
+  i : integer;
+begin
+  st := TStringList.Create;
+  try
+    for s in TDirectory.GetFiles('C:\work\org.hl7.fhir\build\implementations\r3maps\R3toR4') do
+      if s.endsWith('map') then
+        st.Add(s);
+    for s in TDirectory.GetFiles('C:\work\org.hl7.fhir\build\implementations\r3maps\R4toR3') do
+      if s.endsWith('map') then
+        st.Add(s);
+    SetLength(result, st.Count);
+    for i := 0 to st.Count - 1 do
+    begin
+      result[i].Name := st[i].Substring(50);
+      SetLength(result[i].Values, 1);
+      result[i].Values[0] := st[i];
+    end;
+  finally
+    st.Free;
+  end;
+end;
+
+{ TMapParserTests2 }
+
+procedure TMapParserTests2.Test(filename: String);
+var
+  source, output, s : String;
+  ok : boolean;
+  map : TFHIRStructureMap;
+begin
+  source := fileToString(filename, TEncoding.UTF8);
+  map := utils.parse(source, filename);
+  try
+    output := utils.render(map);
+
+    source := source.replace('  ', ' ').replace(' '#13#10, #13#10).replace(#13#10#13#10, #13#10);
+    output := output.replace('  ', ' ').replace(' '#13#10, #13#10).replace(#13#10#13#10, #13#10);
+    ok := checkTextIsSame(source, output, s);
+    assert.IsTrue(ok, s);
+  finally
+    map.free;
+  end;
+end;
+
+procedure TMapParserTests2.setup;
+begin
+  ctxt := TTestingWorkerContext.Use;
+//  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
+end;
+
+procedure TMapParserTests2.teardown;
+begin
+  // todo
+
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
+  TDUnitX.RegisterTestFixture(TMapParserTests2);
 //  TDUnitX.RegisterTestFixture(TMapTransformTests);
 end.

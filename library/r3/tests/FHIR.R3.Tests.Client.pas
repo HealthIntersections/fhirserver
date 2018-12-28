@@ -1,4 +1,4 @@
-unit FHIRClientTests;
+unit FHIR.R3.Tests.Client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -32,18 +32,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-//  SysUtils, Classes, Math, RegExpr, Generics.Collections, Character,
-//  FHIR.Support.Utilities, TextUtilities, SystemSupport, FHIR.Support.Utilities,
-//  FHIR.Support.Base, FHIR.Support.Utilities, 
-//  FHIR.Xml.Builder,
-//
-//  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Profiles, FHIR.Version.Constants,
-//  FHIR.Version.Parser;
   SysUtils, Classes,
   FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Parser,
-  FHIR.Version.Context,
-  FHIR.Version.PathEngine, FHIRTestWorker,
+  FHIR.Base.Objects, FHIR.Version.Parser,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Context, FHIR.R3.PathEngine, FHIR.R3.Tests.Worker,
   DUnitX.TestFramework;
 
 
@@ -60,6 +52,8 @@ Type
   end;
 
 implementation
+
+
 
 
 { TFhirHTTPClientTests }

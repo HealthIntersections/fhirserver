@@ -1,4 +1,4 @@
-unit FHIRParserTests;
+unit FHIR.R2.Tests.Parser;
 
 
 {
@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.ElementModel,
-  FHIR.R2.Context, FHIRTestWorker, XmlTests, JsonTests;
+  FHIR.Base.Objects, FHIR.R2.Resources, FHIR.R2.Parser, FHIR.R2.ElementModel,
+  FHIR.R2.Context, FHIR.R2.Tests.Worker, FHIR.Support.Tests, FHIR.Support.Comparisons;
 
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
@@ -67,19 +67,20 @@ var
   re : TFHIRMMElement;
   ctxt : TFHIRWorkerContext;
 begin
-  r := TFHIRXmlParser.parseFile(nil, 'en', filename);
+//  AllocConsole;
+  r := TFHIRParsers2.parseFile(nil, ffXml, 'en', filename);
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRXmlComposer.composeFile(nil, r, 'en', fn);
+      TFHIRParsers2.composeFile(nil, ffXml, r, 'en', fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRJsonComposer.composeFile(nil, r, 'en', j1, true);
+    TFHIRParsers2.composeFile(nil, ffJson, r, 'en', j1, OutputStylePretty);
   finally
     r.Free;
   end;
@@ -111,19 +112,19 @@ begin
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRJsonParser.parseFile(nil, 'en', j2); // crossover too
+  r := TFHIRParsers2.parseFile(nil, ffJson, 'en', j2); // crossover too
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRJsonComposer.composeFile(nil, r, 'en', fn);
+      TFHIRParsers2.composeFile(nil, ffJson, r, 'en', fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRXmlComposer.composeFile(nil, r, 'en', x1);
+    TFHIRParsers2.composeFile(nil, ffXml, r, 'en', x1, OutputStyleNormal);
   finally
     r.Free;
   end;

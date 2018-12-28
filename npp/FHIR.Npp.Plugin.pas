@@ -76,7 +76,7 @@ uses
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Npp.Version, FHIR.Npp.Utilities,
   FHIR.Npp.Toolbox, FHIR.Npp.About, FHIR.Npp.Configuration, FHIR.Npp.Make, FHIR.Npp.Fetch, PathDialogForms, ValidationOutcomes, FHIR.Npp.CodeGen,
   FHIR.Cache.PackageManagerDialog, FHIR.Cache.PackageManager,
-  FHIR.Npp.Visualiser, FHIR.Npp.PathDebugger, FHIR.Npp.Welcome, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm, FHIR.Npp.SaveAs;
+  FHIR.Npp.Visualiser, FHIR.Base.PathDebugger, FHIR.Npp.Welcome, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm, FHIR.Npp.SaveAs;
 
 const
   INDIC_INFORMATION = 21;
@@ -230,6 +230,10 @@ type
     procedure processLoadingResults(id : integer; response : TBackgroundTaskPackage);
     procedure processUpgradeResults(id : integer; response : TBackgroundTaskPackage);
 
+    function GetDebuggerSetting(name : TFHIRPathDebuggerFormSetting) : Integer;
+    procedure SetDebuggerSetting(name : TFHIRPathDebuggerFormSetting; value : Integer);
+    function GetDebuggerSettingStr(name : TFHIRPathDebuggerFormSetting) : String;
+    procedure SetDebuggerSettingStr(name : TFHIRPathDebuggerFormSetting; value : String);
     function parseError : String;
   public
     constructor Create;
@@ -659,6 +663,30 @@ begin
   if (not Assigned(FHIRVisualizer)) then
     FHIRVisualizer := TFHIRVisualizer.Create(self, 2);
   FHIRVisualizer.Show;
+end;
+
+function TFHIRPlugin.GetDebuggerSetting(name: TFHIRPathDebuggerFormSetting): Integer;
+begin
+  case name of
+    settingDebuggerHeight: result := Settings.DebuggerHeight;
+    settingDebuggerWidth: result := Settings.DebuggerWidth;
+    settingDebuggerSourceHeight: result := Settings.DebuggerSourceHeight;
+    settingDebuggerBreaksWidth: result := Settings.DebuggerBreaksWidth;
+    settingDebuggerActivePage: result := Settings.DebuggerActivePage;
+    settingDebuggerFontSize: result := Settings.FontSize;
+  else
+    result := 0;
+  end;
+end;
+
+function TFHIRPlugin.GetDebuggerSettingStr(name: TFHIRPathDebuggerFormSetting): String;
+begin
+  case name of
+    settingDebuggerBreaksWidth : result := settings.DebuggerBreaks;
+    settingDebuggerFontName : result := settings.FontName;
+  else
+    result := '';
+  end;
 end;
 
 function SplitElement(var src : String) : String;
@@ -1140,7 +1168,7 @@ begin
   if (parse(0, fmt, res)) then
   try
     FuncMatchesClear;
-    ok := RunPathDebugger(self, FContext.Version[FCurrentFileInfo.workingVersion].Worker, FContext.Version[FCurrentFileInfo.workingVersion].Factory, res, res, FHIRToolbox.edtPath.Text, fmt, types, items);
+    ok := RunPathDebugger(self, FContext.Version[FCurrentFileInfo.workingVersion].Worker, GetDebuggerSetting, SetDebuggerSetting, GetDebuggerSettingStr, SetDebuggerSettingStr, FContext.Version[FCurrentFileInfo.workingVersion].Factory, res, res, FHIRToolbox.edtPath.Text, fmt, types, items);
     try
       if ok then
       begin
@@ -1467,6 +1495,24 @@ procedure TFHIRPlugin.reset;
 begin
   SetLength(FLastSrc, 1);
   FLastSrc[0] := 1;
+end;
+
+procedure TFHIRPlugin.SetDebuggerSetting(name: TFHIRPathDebuggerFormSetting; value: Integer);
+begin
+  case name of
+    settingDebuggerHeight: Settings.DebuggerHeight := value;
+    settingDebuggerWidth: Settings.DebuggerWidth := value;
+    settingDebuggerSourceHeight: Settings.DebuggerSourceHeight := value;
+    settingDebuggerBreaksWidth: Settings.DebuggerBreaksWidth := value;
+    settingDebuggerActivePage: Settings.DebuggerActivePage := value;
+  end;
+end;
+
+procedure TFHIRPlugin.SetDebuggerSettingStr(name: TFHIRPathDebuggerFormSetting; value: String);
+begin
+  case name of
+    settingDebuggerBreaksWidth : settings.DebuggerBreaks := value;
+  end;
 end;
 
 procedure TFHIRPlugin.SetSelection(start, stop: integer);

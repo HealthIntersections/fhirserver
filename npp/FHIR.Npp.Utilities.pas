@@ -35,12 +35,6 @@ uses
   FHIR.Support.Base, System.Generics.Defaults, FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine;
 
 type
-  TTreeDataPointer = record
-    expr : TFHIRPathExpressionNodeV;
-    isOp : boolean;
-  end;
-  PTreeDataPointer = ^TTreeDataPointer;
-
   TFHIRAnnotationLevel = (alError, alWarning, alHint, alMatch);
 
   TFHIRAnnotation = class (TFslObject)

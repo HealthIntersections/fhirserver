@@ -78,7 +78,7 @@ Interface
 Uses
   {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
   SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug,} EncdDecd,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase,
+  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL,
   IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, FHIR.Web.Socket,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.MXml,
@@ -3748,6 +3748,9 @@ procedure TFhirWebServer.DoConnect(AContext: TIdContext);
 var
   ci: TFHIRWebServerClientInfo;
 begin
+  if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+    TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
+
   InterlockedIncrement(GCounterWebConnections);
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);

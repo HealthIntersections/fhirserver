@@ -360,8 +360,8 @@ begin
       term.Free;
       term := TUcumExpressionParser.Parse(FModel, destUnit);
       dst := oConv.convert(term);
-      s := TUcumExpressionComposer.compose(src.Unit_);
-      d := TUcumExpressionComposer.compose(dst.Unit_);
+      s := TUcumExpressionComposer.compose(src, false);
+      d := TUcumExpressionComposer.compose(dst, false);
       if s <> d then
         raise ETerminologyError.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
       t := value.Multiply(src.Value);
@@ -413,7 +413,7 @@ begin
     Try
       c := conv.convert(t);
       Try
-        result := TUcumPair.Create(value.Value.Multiply(c.Value), TUcumExpressionComposer.Compose(c.Unit_))
+        result := TUcumPair.Create(value.Value.Multiply(c.Value), TUcumExpressionComposer.Compose(c, false))
       Finally
         c.Free;
       End;
@@ -439,7 +439,7 @@ begin
     Try
       c := conv.convert(t);
       Try
-        result := TUcumExpressionComposer.Compose(c.Unit_);
+        result := TUcumExpressionComposer.Compose(c, false);
       Finally
         c.Free;
       End;
@@ -627,7 +627,7 @@ begin
       Try
         c := conv.convert(t);
         Try
-          cu := TUcumExpressionComposer.Compose(c.Unit_);
+          cu := TUcumExpressionComposer.Compose(c, false);
           if cu <> canonical then
             result := 'unit '+code+' has the canonical units '+cu+', not '+canonical+' as required.';
         Finally
@@ -651,7 +651,6 @@ var
   conv : TUcumConverter;
   c : TUcumCanonical;
   cu : String;
-  term : TUcumTerm;
   sym : TUcumSymbol;
   b : TUcumBaseUnit;
 begin
@@ -668,23 +667,19 @@ begin
       Try
         c := conv.convert(t);
         Try
-          term := c.Unit_;
-          cu := TUcumExpressionComposer.Compose(term);
-          if (term <> nil) and (term.Component <> nil) and (term.Operator = NOOP) And (term.Component is TUcumSymbol) Then
-          Begin
-            sym := TUcumSymbol(term.Component);
-            if (sym.Exponent = 1) and (sym.Unit_ is TUcumBaseUnit) Then
-            begin
-              b := TUcumBaseUnit(sym.Unit_);
-              if not (propertyType = FModel.Properties[b.PropertyType].Name) then
-                result := 'unit '+code+' is of the property type '+FModel.Properties[b.PropertyType].Name+' ('+cu+'), not '+propertyType+' as required.';
-              Exit;
-            End;
-          End;
+          cu := TUcumExpressionComposer.Compose(c, false);
+			    if (c.Units.Count = 1) then
+          begin
+  					if (propertyType = model.Properties[c.Units[0].Base.PropertyType].Name) then
+	  					exit('')
+		  			else
+			  			exit('unit '+code+' is of the property type '+model.Properties[c.Units[0].Base.PropertyType].Name+' ('+cu+'), not '+propertyType+' as required.');
+			    end;
+
+          // defined special case
           if (propertyType = 'concentration') and (cu = 'm-3') then
-           // exit
-          else
-            result := 'unit '+code+' has the base units '+cu+', and is not from the property '+propertyType+' as required.';
+            exit('');
+           exit('unit '+code+' has the base units '+cu+', and is not from the property '+propertyType+' as required.');
         Finally
           c.Free;
         End;

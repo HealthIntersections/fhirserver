@@ -33,12 +33,12 @@ unit FHIR.R3.Xml;
 
 interface
 
-// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
+// FHIR v3.0.1 generated 2018-06-12T19:15:59+10:00
 
 uses
-  SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml,
-  FHIR.Base.Parser, FHIR.Base.Objects,
+  SysUtils, Classes, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml, 
+  FHIR.Base.Parser, FHIR.Base.Objects, 
   FHIR.R3.ParserBase, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types;
 
 Type
@@ -2528,7 +2528,6 @@ Type
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); override;
-  public
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
 
@@ -2666,7 +2665,7 @@ begin
     result.value := GetAttribute(element, 'value');
     i := StringArrayIndexOfSensitive(aNames, result.value);
     if i < 0 then
-      raise EXmlException.Create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
+      raise EXmlException.create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
     result.system := aSystems[i];
     child := FirstChild(element);
     while (child <> nil) do
@@ -43295,7 +43294,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise EXmlException.Create('Error: the element '+element.localName+' is not recognised as a valid resource name');
+    raise EXmlException.create('Error: the element '+element.localName+' is not recognised as a valid resource name');
 end;
 
 procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; resource: TFhirResource);
@@ -43887,7 +43886,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise EXmlException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise EXmlException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 
@@ -44432,7 +44431,7 @@ begin
     result := parseVisionPrescription(element, element.Name)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise EXmlException.Create('error: the element '+element.Name+' is not a valid fragment name');
+    raise EXmlException.create('error: the element '+element.Name+' is not a valid fragment name');
 end;
 
 function TFHIRXmlParser.ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFhirType;
@@ -44506,7 +44505,7 @@ begin
   else if (type_ = TFhirDuration) then
     result := parseDuration(element, name)
   else
-    raise EXmlException.Create('Unknown Type');
+    raise EXmlException.create('Unknown Type');
 end;
 
 procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject);

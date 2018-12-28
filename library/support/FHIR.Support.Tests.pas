@@ -38,7 +38,7 @@ Uses
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
-  FHIR.Support.Certs,
+  FHIR.Support.Certs, FHIR.Support.Comparisons,
   DUnitX.TestFramework;
 
 var
@@ -68,12 +68,14 @@ Type
     [TestCase] procedure testAddAll;
     [TestCase] procedure testReplace;
     [TestCase] procedure testMap;
+    [TestCase] procedure testSort;
   end;
 
   TFslTestObject = class (TFslObject)
   private
     FValue: String;
   public
+    constructor create(value : String); overload;
     property value : String read FValue write FValue;
   end;
 
@@ -649,12 +651,6 @@ Type
 //    [TestCase] Procedure testGenDSA_256;
   End;
      *)
-function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
-function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
-function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
-
-var
-  showdiff : boolean = true;
 
 implementation
 
@@ -674,6 +670,45 @@ begin
     Assert.IsTrue(l.Count = 1);
   finally
     l.Free;
+  end;
+end;
+
+procedure TFslGenericsTests.testSort;
+var
+  list : TFslList<TFslTestObject>;
+begin
+  list := TFslList<TFslTestObject>.Create;
+  try
+    list.Add(TFslTestObject.Create('a'));
+    list.Sort(function (const L, R: TFslTestObject): Integer begin
+        result := CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 1);
+    Assert.IsTrue(list[0].value = 'a');
+    list.Insert(0, TFslTestObject.Create('b'));
+    Assert.IsTrue(list.Count = 2);
+    Assert.IsTrue(list[0].value = 'b');
+    Assert.IsTrue(list[1].value = 'a');
+    list.Sort(function (const l, r : TFslTestObject) : Integer begin
+        result := CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 2);
+    Assert.IsTrue(list[0].value = 'a');
+    Assert.IsTrue(list[1].value = 'b');
+    list.Insert(1, TFslTestObject.Create('c'));
+    Assert.IsTrue(list.Count = 3);
+    Assert.IsTrue(list[0].value = 'a');
+    Assert.IsTrue(list[1].value = 'c');
+    Assert.IsTrue(list[2].value = 'b');
+    list.Sort(function (const l, r : TFslTestObject) : Integer begin
+        result := 0 - CompareStr(l.value, r.value);
+      end);
+    Assert.IsTrue(list.Count = 3);
+    Assert.IsTrue(list[0].value = 'c');
+    Assert.IsTrue(list[1].value = 'b');
+    Assert.IsTrue(list[2].value = 'a');
+  finally
+    list.Free;
   end;
 end;
 
@@ -783,267 +818,6 @@ function TFslString.Link: TFslString;
 begin
  result := TFslString(inherited link);
 end;
-
-function PadString(const AStr: String; AWidth: Integer; APadChar: Char; APadLeft: Boolean): String;
-var
-  i: Integer;
-begin
-  if Length(AStr) >= AWidth then
-    Result := AStr
-  else
-  begin
-    SetLength(Result, AWidth - length(AStr));
-    for i := 1 to length(result) - length(AStr) do
-      result[i] := APadChar;
-    if APadLeft then
-      result := result+AStr
-    else
-      result := AStr+result;
-  end;
-end;
-
-
-function MakeXmlPretty(ASrc: String): String;
-var
-  i: Integer;
-  l: Integer;
-  LLevelIsSimple: Boolean;
-  b : TStringBuilder;
-begin
-  Result := '';
-  b := TStringBuilder.Create;
-  try
-    l := -1;
-    LLevelIsSimple := False;
-    for i := 1 to length(ASrc) do
-      begin
-      if ASrc[i] = '<' then
-        begin
-        if (i < length(ASrc)) and (ASrc[i + 1] = '?') then
-          begin
-          b.Append(ASrc[i]);
-          end
-        else if (i < length(ASrc)) and (ASrc[i + 1] = '/') then
-          begin
-          if not LLevelIsSimple then
-            begin
-            b.append(#13#10 + PadString('', l * 2, ' ', False) + ASrc[i]);
-            end
-          else
-            begin
-            b.append(ASrc[i]);
-            end;
-          dec(l);
-          LLevelIsSimple := False;
-          end
-        else if (i < length(ASrc)) and (ASrc[i + 1] = '!') then
-        begin
-          b.append(#13#10 + PadString('', l * 2, ' ', False) + ASrc[i])
-        end
-        else
-          begin
-          inc(l);
-          LLevelIsSimple := True;
-          if l <> 0 then
-            begin
-            b.append(#13#10 + PadString('', l * 2, ' ', False) + ASrc[i]);
-            end
-          else
-            begin
-            If (i = 1) Or ((i > 1) And ((ASrc[i - 1] = #13) Or (ASrc[i-1] =  #10))) Then
-              begin
-              b.append(ASrc[i]);
-              end
-            else
-              begin
-              b.append(#13#10 + ASrc[i]);
-              end;
-            end;
-          end;
-        end
-      else
-        begin
-        If (ASrc[i] = '>') And ( (ASrc[i-1] = '/') Or (ASrc[i-1] = '?') Or (ASrc[i-1] = '-')) Then
-          begin
-          b.append(ASrc[i]);
-          If (ASrc[i-1] = '?') or (ASrc[i-1] = '-') Then
-            begin
-            b.append(#13#10);
-            end;
-          if ASrc[i-1] = '/' then
-            begin
-            dec(l);
-            LLevelIsSimple := False;
-            end;
-          end
-        Else If Not ((ASrc[i] = #9) Or (ASrc[i] = #10) Or (ASrc[i] = #13)) Then
-          begin
-          if LLevelIsSimple or (ASrc[1] <> ' ') then
-            begin
-            b.append(ASrc[i]);
-            end;
-          end;
-        end
-      end;
-    Result := b.ToString;
-  finally
-    b.free;
-  end;
-end;
-
-function normalise(text : String) : String;
-begin
-  result := text.Trim.replace(#13, ' ').replace(#10, ' ').replace(#9, ' ');
-  while result.Contains('  ') do
-    result := result.Replace('  ', ' ');
-end;
-
-function unbase64(text : String) : TBytes;
-begin
-  result := DecodeBase64(AnsiString(text));
-end;
-
-function CompareAttributes(path : String; src, tgt : TMXmlElement) : string;
-var
-//  i : integer;
-//  sa, ta : IXMLDOMNode;
-//  sn : String;
-  b1, b2 : TBytes;
-  a, b : TMXmlAttribute;
-  s : String;
-begin
-  result := '';
-  for s in src.Attributes.Keys do
-  begin
-    if not ((s = 'xmlns') or s.StartsWith('xmlns:')) then
-    begin
-      a := src.Attributes[s];
-      if not tgt.Attributes.TryGetValue(s, b) then
-        exit('Attributes differ at '+path+': missing attribute '+s);
-      if normalise(a.value) <> normalise(b.value) then
-      begin
-        b1 := unBase64(a.value);
-        b2 := unBase64(b.value);
-        if not sameBytes(b1, b2) then
-          exit('Attributes differ at '+path+': value '+normalise(a.value) +'/'+ normalise(b.value));
-      end;
-    end;
-  end;
-  for s in tgt.Attributes.Keys do
-  begin
-    if not ((s = 'xmlns') or s.StartsWith('xmlns:')) then
-    begin
-      a := tgt.Attributes[s];
-      if not src.Attributes.TryGetValue(s, b) then
-        exit('Attributes differ at '+path+': missing attribute '+s);
-      if normalise(a.value) <> normalise(b.value) then
-      begin
-        b1 := unBase64(a.value);
-        b2 := unBase64(b.value);
-        if not sameBytes(b1, b2) then
-          exit('Attributes differ at '+path+': value '+normalise(a.value) +'/'+ normalise(b.value));
-      end;
-    end;
-  end;
-end;
-
-function skipBlankText(node : TMXmlElement) : TMXmlElement;
-begin
-  while (node <> nil) and (((node.nodeType = ntText) and StringIsWhitespace(node.text)) or (node.nodeType = ntComment)) do
-    node := node.next;
-  result := node;
-end;
-
-function CompareElements(path : String; e1, e2 : TMXmlElement) : String;
-var
-  c1, c2 : TMXmlElement;
-  s : String;
-begin
-  if e1.namespaceURI <> e2.namespaceURI then
-    exit('Namespaces differ at '+path+': '+e1.namespaceURI+'/'+e2.namespaceURI);
-  if e1.localName <> e2.localName then
-    exit('Names differ at '+path+': '+e1.localName+'/'+e2.localName);
-  path := path + '/'+e1.localName;
-  s := compareAttributes(path, e1, e2);
-  if (s <> '') then
-    exit(s);
-
-  c1 := e1.first;
-  c2 := e2.first;
-  c1 := skipBlankText(c1);
-  c2 := skipBlankText(c2);
-  while (c1 <> nil) and (c2 <> nil) do
-  begin
-    if (c1.nodeType <> c2.nodeType) then
-      exit('node type mismatch in children of '+path+': '+inttostr(ord(e1.nodeType))+'/'+inttostr(ord(e2.nodeType)));
-    if (c1.nodeType = ntText) then
-    begin
-      if normalise(c1.text) <> normalise(c2.text) then
-        exit('Text differs at '+path+': '+normalise(c1.text) +'/'+ normalise(c2.text));
-    end
-    else if (c1.nodeType = ntElement) then
-    begin
-      s := CompareElements(path, c1, c2);
-      if (s <> '') then
-        exit(s);
-    end;
-
-    c1 := skipBlankText(c1.next);
-    c2 := skipBlankText(c2.next);
-  end;
-  if (c1 <> nil) then
-    exit('node mismatch - more nodes in source in children of '+path);
-  if (c2 <> nil) then
-    exit('node mismatch - more nodes in target in children of '+path);
-  result := '';
-end;
-
-function CompareXml(filename1, filename2 : String; var msg : string) : boolean;
-var
-  src, tgt : TMXmlDocument;
-begin
-  src := TMXmlParser.ParseFile(filename1, [xpResolveNamespaces]);
-  try
-    tgt := TMXmlParser.ParseFile(filename2, [xpResolveNamespaces]);
-    try
-      msg := CompareElements('', src.document, tgt.document);
-      result := msg = '';
-    finally
-      tgt.Free;
-    end;
-  finally
-    src.free;
-  end
-end;
-
-function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
-{$IFDEF DIFF}
-var
-  x1, x2, f1, f2, cmd : String;
-{$ENDIF}
-begin
-  result := compareXML(filename1, filename2, msg);
-{$IFDEF DIFF}
-  if not result and showdiff then
-  begin
-    showdiff := false;
-    x1 := FileToString(filename1 {$IFDEF UNICODE}, TEncoding.UTF8 {$ENDIF});
-    x2 := FileToString(filename2 {$IFDEF UNICODE}, TEncoding.UTF8 {$ENDIF});
-    x1 := MakeXmlPretty(x1);
-    x2 := MakeXmlPretty(x2);
-    x1 := x1.Replace('&#39;', '''').Replace('&quot;', '"');
-    x2 := x2.Replace('&#39;', '''').Replace('&quot;', '"');
-
-    f1 := MakeTempFilename +'-source.xml';
-    f2 := MakeTempFilename +'-dest.xml';
-    StringToFile(x1, f1{$IFDEF UNICODE}, TEncoding.UTF8{$ENDIF});
-    StringToFile(x2, f2{$IFDEF UNICODE}, TEncoding.UTF8{$ENDIF});
-    cmd := f1+' '+f2;
-    ShellExecute(0, 'open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), PChar(ExtractFilePath(f1)), SW_MAXIMIZE);
-  end;
-{$ENDIF}
-end;
-
 
 { TXmlTests }
 
@@ -1382,7 +1156,7 @@ begin
   focus := findSample(test.attribute['id']).firstElement;
   nodes := tests.select(test.element('xpath').attribute['value'], focus);
   try
-  if test.element('outcomes').Attributes.ContainsKey('count') then
+  if test.element('outcomes').hasAttribute['count'] then
     Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
   else
   begin
@@ -1453,7 +1227,7 @@ begin
 
   focus := TMsXmlParser.FirstChild(findSampleMs(test.attribute['id']));
   nodes := focus.selectNodes(test.element('xpath').attribute['value']);
-  if test.element('outcomes').Attributes.ContainsKey('count') then
+  if test.element('outcomes').HasAttribute['count'] then
     Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.length, 'MS: Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.length))
   else
   begin
@@ -1494,7 +1268,7 @@ begin
       else if outcome.attribute['type'] = 'text' then
       begin
         Assert.IsTrue(node.nodeType = NODE_TEXT, 'MS: Node '+inttostr(i)+' has the wrong type (expected text, found '+inttostr(node.nodeType));
-        if outcome.Attributes.ContainsKey('value') then
+        if outcome.HasAttribute['value'] then
           Assert.IsTrue(node.text = outcome.Attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong type (expected text "'+outcome.Attribute['value']+'", found '+node.text);
       end
       else if outcome.attribute['type'] = 'comment' then
@@ -3948,136 +3722,6 @@ end;
 //
 
 
-function compareObjectsTurtle(path : String; t1, t2 : TTurtleObject) : String;
-var
-  c1, c2 : TTurtleComplex;
-  l1, l2 : TTurtleList;
-  o1, o2 : TTurtleObject;
-  key, s : String;
-  i : integer;
-begin
-  result := '';
-  if (t1.ClassName <> t2.ClassName) then
-    result := 'Objects at '+path+' have different types ("'+t1.ClassName+'"/"'+t2.ClassName+'")'
-  else if t1 is TTurtleLiteral then
-  begin
-    if TTurtleLiteral(t1).value <> TTurtleLiteral(t2).value then
-      result := 'Objects at '+path+' have different values ("'+TTurtleLiteral(t1).value+'"/"'+TTurtleLiteral(t2).value+'")'
-    else if TTurtleLiteral(t1).type_ <> TTurtleLiteral(t2).type_ then
-      result := 'Objects at '+path+' have different types ("'+TTurtleLiteral(t1).type_+'"/"'+TTurtleLiteral(t2).type_+'")'
-  end
-  else if t1 is TTurtleURL then
-  begin
-    if TTurtleURL(t1).uri <> TTurtleURL(t2).uri then
-      result := 'Objects at '+path+' have different uris ("'+TTurtleURL(t1).uri+'"/"'+TTurtleURL(t2).uri+'")'
-  end
-  else if t1 is TTurtleComplex then
-  begin
-    c1 := TTurtleComplex(t1);
-    c2 := TTurtleComplex(t2);
-    if c1.predicates.Count <> c2.predicates.Count then
-      result := 'Objects at '+path+' have different property counts ("'+inttostr(c1.predicates.Count)+'"/"'+inttostr(c2.predicates.Count)+'")'
-    else
-    begin
-      for key in c1.predicates.Keys do
-      begin
-        o1 := c1.predicates[key];
-        if not c2.predicates.TryGetValue(key, o2) then
-          exit('Object at '+path+' has no property for "'+key+'" ("'+c1.predicates.SortedKeys.CommaText+'" vs "'+c2.predicates.SortedKeys.CommaText+'")')
-        else
-        begin
-          s := compareObjectsTurtle(path+' / '+key, o1, o2);
-          if s <> '' then
-            exit(s);
-        end;
-      end;
-    end;
-  end
-  else if t1 is TTurtleList then
-  begin
-    l1 := TTurtleList(t1);
-    l2 := TTurtleList(t2);
-    if l1.List.Count <> l2.list.Count then
-      result := 'Objects at '+path+' have different property counts ("'+inttostr(l1.list.Count)+'"/"'+inttostr(l2.list.Count)+'")'
-    else
-    begin
-      for i := 0 to l1.List.count - 1 do
-      begin
-        s := compareObjectsTurtle(path+' # '+inttostr(i), l1.List[i], l2.List[i]);
-        if s <> '' then
-          exit(s);
-      end;
-    end;
-  end
-end;
-
-function compareTurtle(t1, t2 : TTurtleDocument; var msg : string) : boolean;
-var
-  i : integer;
-  p1, p2 : TTurtlePredicate;
-begin
-  if t1.objects.Count <> t2.objects.Count then
-    msg := 'Object Counts differ ('+inttostr(t1.objects.Count)+'/'+inttostr(t2.objects.Count)+')'
-  else
-  begin
-    for i := 0 to t1.objects.Count - 1 do
-    begin
-      p1 := t1.objects[i];
-      p2 := t2.objects[i];
-      if (p1.URL.uri <> p2.URL.uri) then
-        msg := 'URL mismatch: "'+p1.URL.uri+'"/"'+p2.URL.uri+'"'
-      else
-        msg := compareObjectsTurtle(p1.URL.uri, p1.Value, p2.Value);
-    end;
-  end;
-  result := msg = '';
-end;
-
-function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
-var
-  t1, t2 : TTurtleDocument;
-  f1, f2, cmd : String;
-begin
-  result := false;
-  try
-    t1 := TTurtleParser.parse(src1);
-    try
-      t2 := TTurtleParser.parse(src2);
-      try
-        result := compareTurtle(t1, t2, msg);
-        if not result then
-        begin
-          f1 := MakeTempFilename +'-source.xml';
-          f2 := MakeTempFilename +'-dest.xml';
-      StringToFile(src1, f1, TEncoding.UTF8);
-      StringToFile(src2, f2, TEncoding.UTF8);
-
-//          TRDFGenerator.saveToFile(t1, f1);
-//          TRDFGenerator.saveToFile(t2, f2);
-          cmd := f1+' '+f2;
-          ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
-        end;
-      finally
-        t2.free;
-      end;
-    finally
-      t1.free;
-    end;
-  except
-    on e : Exception do
-    begin
-      msg := e.Message;
-      f1 := MakeTempFilename +'-source.xml';
-      f2 := MakeTempFilename +'-dest.xml';
-      StringToFile(src1, f1, TEncoding.UTF8);
-      StringToFile(src2, f2, TEncoding.UTF8);
-      cmd := f1+' '+f2;
-      ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
-    end;
-  end;
-end;
-
-
 var
   globalInt : cardinal;
   cs : TRTLCriticalSection;
@@ -4708,132 +4352,6 @@ begin
   tests.Free;
 end;
 
-function CompareObjectsJson(path : String; o1, o2 : TJsonObject) : String; forward;
-
-function CompareNodes(path : String; n1, n2 : TJsonNode) : String;
-var
-  s, s1, s2 : String;
-  i : integer;
-begin
-  if n1.ClassName <> n2.ClassName then
-    exit('properties differ at '+path+': type '+n1.ClassName+'/'+n2.ClassName)
-  else if (n1 is TJsonBoolean) then
-  begin
-    if ((n1 as TJsonBoolean).value <> (n2 as TJsonBoolean).value) then
-      exit('boolean property values differ at '+path+': type '+booltoStr((n1 as TJsonBoolean).value)+'/'+boolToStr((n2 as TJsonBoolean).value))
-  end
-  else if (n1 is TJsonString) then
-  begin
-    s1 := (n1 as TJsonString).value;
-    s2 := (n2 as TJsonString).value;
-    if not (s1.contains('<div') and s2.contains('<div'))  then
-      if s1 <> s2 then
-        if not SameBytes(unbase64(s1), unbase64(s2)) then
-          exit('string property values differ at '+path+': type '+s1+'/'+s2)
-  end
-  else if (n1 is TJsonNumber) then
-  begin
-    if ((n1 as TJsonNumber).value <> (n2 as TJsonNumber).value) then
-      exit('number property values differ at '+path+': type '+(n1 as TJsonNumber).value+'/'+(n2 as TJsonNumber).value)
-  end
-  else if (n1 is TJsonObject) then
-  begin
-    s := CompareObjectsJson(path, (n1 as TJsonObject), (n2 as TJsonObject));
-    if s <> '' then
-      exit(s)
-  end
-  else if (n1 is TJsonArray) then
-  begin
-    if ((n1 as TJsonArray).Count <> (n2 as TJsonArray).Count) then
-      exit('array properties differ at '+path+': count '+inttostr((n1 as TJsonArray).Count)+'/'+inttostr((n2 as TJsonArray).Count))
-    else
-      for I := 0 to (n1 as TJsonArray).Count - 1 do
-      begin
-        s := compareNodes(path+'['+inttostr(i)+']', (n1 as TJsonArray).Item[i], (n2 as TJsonArray).Item[i]);
-        if s <> '' then
-          exit(s)
-      end;
-  end
-  else if (n1 is TJsonNull) then
-  begin
-    // nothing to compare
-  end
-  else
-    exit('unhandled property '+n1.className);
-end;
-
-function CompareObjectsJson(path : String; o1, o2 : TJsonObject) : String;
-var
-  n : String;
-  n1: TJsonNode;
-  s : string;
-begin
-  for n in o1.properties.Keys do
-    if (n <> 'fhir_comments') then
-    begin
-      n1 := o1.properties[n];
-      if o2.properties.ContainsKey(n) then
-      begin
-        s := compareNodes(path+'.'+n, n1, o2.properties[n]);
-        if (s <> '') then
-          exit(s);
-      end
-      else
-        exit('properties differ at '+path+': missing property '+n);
-    end;
-  for n in o2.properties.Keys do
-    if (n <> 'fhir_comments') then
-      if not o1.properties.ContainsKey(n) then
-        exit('properties differ at '+path+': missing property '+n);
-end;
-
-function CompareJson(filename1, filename2 : String; var msg : string) : boolean;
-var
-  j1, j2 : TJsonObject;
-begin
-  j1 := TJSONParser.ParseFile(filename1);
-  try
-    j2 := TJSONParser.ParseFile(filename2);
-    try
-      msg := CompareObjectsJson('$', j1, j2);
-      result := msg = '';
-    finally
-      j2.free;
-    end;
-  finally
-    j1.Free;
-  end;
-end;
-
-function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
-{$IFDEF DIFF}
-var
-  j1, j2 : TJsonObject;
-  f1, f2, cmd : String;
-{$ENDIF}
-begin
-  result := compareJson(filename1, filename2, msg);
-{$IFDEF DIFF}
-  if not result and showdiff then
-  begin
-    showdiff := false;
-    j1 := TJSONParser.ParseFile(filename1);
-    j2 := TJSONParser.ParseFile(filename2);
-    try
-
-      f1 := MakeTempFilename +'-source.xml';
-      f2 := MakeTempFilename +'-dest.xml';
-      StringToFile(TJsonWriter.writeObjectStr(j1, true), f1, TEncoding.UTF8);
-      StringToFile(TJsonWriter.writeObjectStr(j2, true), f2, TEncoding.UTF8);
-      cmd := f1+' '+f2;
-      ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
-    finally
-      j2.Free;
-      j1.Free;
-    end;
-  end;
-{$ENDIF}
-end;
 
 (*
 { TDigitalSignatureTests }
@@ -5052,6 +4570,14 @@ begin
   finally
     list.Free;
   end;
+end;
+
+{ TFslTestObject }
+
+constructor TFslTestObject.create(value: String);
+begin
+  Create;
+  self.value := value;
 end;
 
 initialization

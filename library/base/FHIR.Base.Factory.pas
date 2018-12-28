@@ -34,7 +34,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.ElementModel,
   FHIR.Client.Base;
 
 type
@@ -131,6 +131,7 @@ type
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; virtual; abstract;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; virtual; abstract;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual; abstract;
+    function makeElementModelManager : TFHIRBaseMMManager; virtual; abstract;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; virtual; abstract;
     function createPropertyList(name : String; bPrimitiveValues : Boolean) : TFHIRPropertyList; Virtual;
 

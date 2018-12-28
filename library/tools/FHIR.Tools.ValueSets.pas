@@ -708,7 +708,7 @@ begin
     end;
     if mt <> '' then
       result.AddParamStr('message', mt);
-    if (cause <> itUnknown) then
+    if not (cause in [itNull, itUnknown]) then
       result.addParamStr('cause', CODES_TFhirIssueType[cause]);
     result.Link;
   finally
@@ -836,6 +836,7 @@ begin
         else
         begin
           result := true;
+          i := 0;
           for fc in cfl do
           begin
             if ('concept' = fc.prop) and (fc.Op = foIsA) then
@@ -880,6 +881,7 @@ begin
             end;
             if not result then
               break;
+            inc(i);
           end;
         end;
       finally

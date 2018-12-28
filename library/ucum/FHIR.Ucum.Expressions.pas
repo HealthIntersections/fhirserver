@@ -120,6 +120,52 @@ Type
     function getTokenAsInt() : integer;
   End;
 
+  TUcumCanonicalUnit = class (TFslObject)
+  private
+    FBase : TUcumBaseUnit;
+    FExponent : integer;
+    procedure SetBase(value : TUcumBaseUnit);
+  public
+    constructor Create(base : TUcumBaseUnit; exponent : integer); overload;
+    destructor Destroy; Override;
+    property base : TUcumBaseUnit read FBase write SetBase;
+    property exponent : integer read FExponent write FExponent;
+  end;
+
+
+  TUcumCanonical = class (TFslObject)
+  private
+    FValue : TFslDecimal;
+    FUnits : TFslList<TUcumCanonicalUnit>;
+  public
+    constructor Create; Override;
+    destructor Destroy; Override;
+    procedure multiplyValue(i : TFslDecimal); overload;
+    procedure multiplyValue(i : integer); overload;
+    procedure divideValue(i : TFslDecimal); overload;
+    procedure divideValue(i : integer); overload;
+
+    Property Value : TFslDecimal read FValue write FValue;
+    Property Units : TFslList<TUcumCanonicalUnit> read FUnits;
+  End;
+
+  TUcumConverter = class (TFslObject)
+  private
+    Fmodel : TUcumModel;
+    Fhandlers : TUcumRegistry;
+    Fone : TUcumFactor;
+
+    Procedure debug(indent, state : String; oUnit : TUcumTerm); overload;
+  	Procedure debug(indent, state : String; can : TUcumCanonical); overload;
+  	function expandDefinedUnit(indent : String; unit_ : TUcumDefinedUnit) : TUcumCanonical; overload;
+   	function normalise(indent : String; term : TUcumTerm) : TUcumCanonical; overload;
+   	function normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical; overload;
+  public
+    constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
+    destructor Destroy; Override;
+    Function convert(oTerm: TUcumTerm) : TUcumCanonical;
+  End;
+
   TUcumExpressionParser = class (TFslObject)
   private
     FModel : TUcumModel;
@@ -141,7 +187,8 @@ Type
     class Procedure composeFactor(oBuilder : TFslStringBuilder; comp : TUcumFactor);
     class Procedure composeOp(oBuilder : TFslStringBuilder; op : TUcumOperator);
   public
-    class Function compose(Term : TUcumTerm) : String;
+    class Function compose(Term : TUcumTerm) : String; overload;
+    class Function compose(can : TUcumCanonical; value : boolean) : String;  overload;
   End;
 
   TUcumFormalStructureComposer = class (TFslObject)
@@ -152,52 +199,9 @@ Type
     class Procedure composeFactor(oBldr : TFslStringBuilder; oFactor : TUcumFactor);
     class Procedure composeOp(oBldr : TFslStringBuilder; aOperator : TUcumOperator);
   Public
-    class Function compose(oTerm : TUcumTerm) : String;
+    class Function compose(oTerm : TUcumTerm) : String; overload;
   End;
 
-
-
-
-  TUcumCanonical = class (TFslObject)
-  private
-    FValue : TFslDecimal;
-    FUnit : TUcumTerm;
-    Procedure SetUnit(Value : TUcumTerm);
-  public
-    constructor Create; Override;
-    destructor Destroy; Override;
-    procedure multiplyValue(i : TFslDecimal); overload;
-    procedure multiplyValue(i : integer); overload;
-    procedure divideValue(i : TFslDecimal); overload;
-    procedure divideValue(i : integer); overload;
-
-    Property Value : TFslDecimal read FValue write FValue;
-    Property Unit_ : TUcumTerm read FUnit write SetUnit;
-  End;
-
-  TUcumConverter = class (TFslObject)
-  private
-    Fmodel : TUcumModel;
-    Fhandlers : TUcumRegistry;
-    Fone : TUcumFactor;
-
-    function SortTerms(oTerm : TUcumTerm): Boolean; Overload;
-    Function SortTerms(oCan : TUcumCanonical): Boolean; Overload;
-
-    Function  convertTerm(oTerm: TUcumTerm) : TUcumCanonical;
-    Procedure debug(sState : String; oUnit : TUcumTerm);
-    Function  getEndTerm(oTerm: TUcumTerm) : TUcumTerm;
-    Function  removeDuplicateComponents(oUnit : TUcumTerm) : TUcumTerm;
-    Function  findDuplicateCompOwner(oTerm: TUcumTerm; oComp : TUcumSymbol) : TUcumTerm;
-    Procedure flipExponents(oTerm: TUcumTerm);
-    Function  convertComp(oContext : TUcumCanonical; oComp : TUcumComponent) : TUcumComponent;
-    Function  convertSymbol(oContext : TUcumCanonical; oComp : TUcumSymbol) : TUcumComponent;
-    Procedure applyExponent(oTerm: TUcumTerm; iExponent : Integer);
-  public
-    constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
-    destructor Destroy; Override;
-    Function convert(oTerm: TUcumTerm) : TUcumCanonical;
-  End;
 
 Const
   NO_CHAR = #0;
@@ -712,6 +716,34 @@ begin
     oBuilder.append('.');
 End;
 
+class Function TUcumExpressionComposer.compose(can : TUcumCanonical; value : boolean) : String;
+var
+  b : TStringBuilder;
+  first : boolean;
+  c : TUcumCanonicalUnit;
+begin
+  b := TStringBuilder.Create;
+  try
+	  if (value) then
+	  	b.append(can.Value.asDecimal);
+    first := true;
+	  for c in can.units do
+    begin
+	  	if (first) then
+        first := false
+      else
+        b.append('.');
+	  	b.append(c.Base.Code);
+	  	if (c.exponent <> 1) then
+	  		b.append(c.exponent);
+	  end;
+	  result := b.ToString;
+  finally
+    b.free;
+  end;
+end;
+
+
 { TUcumConverter }
 
 constructor TUcumConverter.Create(oModel: TUcumModel; oHandlers: TUcumRegistry);
@@ -730,384 +762,199 @@ begin
   inherited;
 end;
 
-procedure TUcumConverter.applyExponent(oTerm: TUcumTerm; iExponent: Integer);
-var
-  sym : TUcumSymbol;
-begin
-  if (oTerm <> nil) Then
-  Begin
-    if (oTerm.Component <> nil) Then
-    Begin
-      if (oTerm.Component is TUcumTerm) Then
-        applyExponent(TUcumTerm(oTerm.Component), iExponent)
-      else if (oTerm.Component is TUcumSymbol) Then
-      Begin
-        sym := TUcumSymbol(oTerm.Component);
-        sym.Exponent := sym.Exponent * iExponent;
-      End;
-    End;
-    applyExponent(oTerm.Term, iExponent);
-  End;
-end;
-
-
 function TUcumConverter.convert(oTerm: TUcumTerm): TUcumCanonical;
 var
   bSorted : Boolean;
 begin
-  result := convertTerm(oTerm);
-  repeat
-    bSorted := SortTerms(result);
-  until not bSorted;
+  result := normalise('  ', oTerm);
 end;
 
-function TUcumConverter.convertComp(oContext: TUcumCanonical; oComp: TUcumComponent): TUcumComponent;
+function TUcumConverter.normalise(indent : String; term : TUcumTerm) : TUcumCanonical;
 var
-  t : TUcumCanonical;
+  temp : TUcumCanonical;
+  divb : boolean;
+  t : TUcumTerm;
+  c, sf, st : TUcumCanonicalUnit;
+  o : TUcumSymbol;
+  i, j : integer;
 begin
-  if oComp is TUcumTerm Then
-  Begin
-    t := convertTerm(TUcumTerm(oComp));
-    oContext.multiplyValue(t.Value);
-    result := t.Unit_.Link;
-  End else if oComp is TUcumFactor Then
-  Begin
-    oContext.multiplyValue(TUcumFactor(oComp).Factor);
-    result := Fone.Link; // nothing to convert
-  End else if oComp is TUcumSymbol Then
-    result := convertSymbol(oContext, TUcumSymbol(oComp))
-  else
-    raise ETerminologyError.create('unknown TUcumComponent type '+oComp.ClassName);
-end;
+  result := TUcumCanonical.create();
+  try
+    result.Value := TFslDecimal.Create(1);
 
-function TUcumConverter.convertSymbol(oContext: TUcumCanonical; oComp: TUcumSymbol): TUcumComponent;
-var
-  sym : TUcumSymbol;
-  unit_ : TUcumDefinedUnit;
-  u : string;
-  oCanonical : TUcumTerm;                                                                                                              
-  ret : TUcumTerm;
-  i : integer;
-  t1 : TUcumCanonical;
-  t : TUcumComponent;
-begin
-  if oComp.Prefix <> nil Then
-  Begin
-    //oContext.MultiplyValue(oComp.Prefix.Value);
-    for i := 1 to abs(oComp.Exponent) do
-      if oComp.Exponent < 0 then
-        oContext.DivideValue(oComp.Prefix.Value)
-      Else
-        oContext.MultiplyValue(oComp.Prefix.Value);
-  End;
-
-  if oComp.Unit_.Kind = UcumBASEUNIT Then
-  Begin
-    sym := TUcumSymbol.Create;
-    sym.Unit_ := oComp.Unit_.Link;
-    sym.Exponent := oComp.Exponent;
-    result := sym;
-  End
-  else
-  Begin
-    unit_ := TUcumDefinedUnit(oComp.Unit_);
-    u := unit_.Value.unit_;
-    if unit_.isSpecial Then
-    Begin
-      if not Fhandlers.ExistsByName(unit_.Code) Then
-        raise ETerminologyError.create('Not handled yet (special unit: '+unit_.Code+')')
-      else
-      Begin
-        u := Fhandlers.HandlerByCode[unit_.code].Units;
-        oContext.multiplyValue(Fhandlers.HandlerByCode[unit_.code].Value);
-      End;
-    End
-    else
-    Begin
-      for i := 1 to abs(oComp.Exponent) do
-        if oComp.Exponent < 0 then
-          oContext.DivideValue(unit_.Value.Value)
-        Else
-          oContext.MultiplyValue(unit_.Value.Value);
-//      oContext.multiplyValue(unit_.Value.Value);
-    End;
-    oCanonical := TUcumExpressionParser.parse(FModel, u);
-    Try
-      if (oCanonical.Component <> nil) and (oCanonical.Operator <> NOOP) And (oCanonical.Term = nil) Then
-      Begin
-        result := convertComp(oContext, oCanonical.Component);
-        if (oComp.Exponent <> 1) Then
-          if result is TUcumFactor Then
-            TUcumFactor(result).Factor := oComp.Exponent + TUcumFactor(result).Factor
-          else if result is TUcumSymbol Then
-            TUcumSymbol(result).Exponent := oComp.Exponent * TUcumSymbol(result).Exponent
-          else if result is TUcumTerm Then
-            applyExponent(TUcumTerm(result), oComp.Exponent)
+		debug(indent, 'canonicalise', term);
+    divb := false;
+		t := term;
+		while (t <> nil) do
+    begin
+    	if (t.Component is TUcumTerm) then
+      begin
+    		temp := normalise(indent+'  ', t.Component as TUcumTerm);
+        try
+          if (divb) then
+          begin
+            result.divideValue(temp.Value);
+            for c in temp.Units do
+              c.exponent := 0 - c.exponent;
+          end
           else
-            raise ETerminologyError.create('unknown TUcumComponent type '+oComp.ClassName);
-      End
-      else
-      Begin
-        t1 := convertTerm(oCanonical);
-        Try
-          ret := t1.Unit_;
-          result := ret.Link;
-          if (oComp.Exponent = -1) and (ret.Component <> nil) and (ret.Operator <> NOOP) and (ret.Term <> nil) and (ret.Term.Component <> nil)
-              and (ret.Term.Operator = NOOP) And (ret.Term.Term = nil) Then
-          Begin
-            t := ret.Term.Component.Link;
-            ret.Term.Component := ret.Component.Link;
-            ret.Component := t.Link;
-            oContext.divideValue(t1.Value);
-          End
-          else if oComp.Exponent <> 1 Then
-          Begin
-            assert(oComp.Exponent <> 0);
-            for i := 1 to abs(oComp.Exponent) Do
-              if oComp.Exponent < 0 Then
-                  oContext.DivideValue(t1.Value)
-                else
-                  oContext.multiplyValue(t1.Value);
-            // what we have to do is push the exponent into the all the symbols contained herein
-            applyExponent(ret, oComp.Exponent);
-          End
-          else
-            oContext.multiplyValue(t1.Value);
+          begin
+            result.multiplyValue(temp.Value);
+          end;
+          result.Units.addAll(temp.Units);
         finally
-          t1.Free;
-        End;
-      End;
-    Finally
-      oCanonical.Free;
-    End;
-  End;
-end;
-
-function TUcumConverter.convertTerm(oTerm: TUcumTerm): TUcumCanonical;
-var
-  t : TUcumCanonical;
-  end_ : TUcumTerm;
-begin
-  result := TUcumCanonical.Create();
-  Try
-    result.FValue := TFslDecimal.valueOf(1);
-    result.FValue.Precision := 24; // there's no question about that precision
-    result.FUnit := TUcumTerm.Create;
-    if (oTerm.Component <> nil) Then
-      Result.Unit_.Component := convertComp(Result, oTerm.Component);
-    if (oTerm.Operator <> NOOP) Then
-      Result.Unit_.Operator := oTerm.Operator;
-    if (oTerm.Term <> nil) Then
-    Begin
-      t := convertTerm(oTerm.Term);
-      Try
-        if (result.Unit_.Operator = DIVISION) and (t.Unit_ <> nil) Then
-        Begin
-          debug('going to flip @ '+result.value.AsDecimal+'/'+t.value.AsDecimal, t.Unit_);
-          result.Value := Result.Value.Divide(t.Value);
-          Result.Unit_.Operator := MULTIPLICATION;
-          flipExponents(t.Unit_);
-          Result.Unit_.setTermCheckOp(t.Unit_.Link);
-          debug('flipped @ -> '+result.value.AsDecimal, result.Unit_);
-        End
-        Else
-        Begin
-          result.Value := Result.Value.Multiply(t.Value);
-          if (t.Unit_ <> Nil) Then
-            Result.Unit_.setTermCheckOp(t.Unit_.Link)
+          temp.Free;
+        end;
+    	end
+      else if (t.Component is TUcumFactor) then
+      begin
+    		if (divb) then
+    			result.divideValue((t.Component as TUcumFactor).Factor)
+    		else
+    			result.multiplyValue((t.Component as TUcumFactor).Factor);
+    	end
+      else if (t.Component is TUcumSymbol) then
+      begin
+    		o := t.Component as TUcumSymbol;
+  			temp := normalise(indent, o);
+        try
+          if (divb) then
+          begin
+            result.divideValue(temp.Value);
+            for c in temp.Units do
+              c.exponent := 0 - c.exponent;
+          end
           else
-            Result.Unit_.Operator := NOOP;
-        End;
-      finally
-        t.Free;
-      End;
-    End;
+          begin
+            result.multiplyValue(temp.Value);
+          end;
+          result.Units.addAll(temp.Units);
+        finally
+          temp.Free;
+        end;
+    	end;
+			divb := t.Operator = DIVISION;
+			t := t.term;
+		end;
 
-    // normalise
-    debug('normalise', Result.Unit_);
-    if (Result.Unit_.Operator <> NOOP) And (Result.Unit_.Operator = DIVISION) Then
-    Begin
-      assert(false);
-//      Result.Unit_.Operator := MULTIPLICATION;
-//      flipExponents(Result.Unit_.Term);
-//      debug('flipped', Result.Unit_);
-    End;
+		debug(indent, 'collate', Result);
 
-    if (Result.Unit_.Component = nil) or (Result.Unit_.Component = Fone) Then
-    Begin
-      Result.Unit_ := Result.Unit_.Term.Link;
-      debug('trimmed', Result.Unit_);
-    End;
+		for i := result.Units.Count - 1 downto 0 do
+    begin
+			sf := result.Units[i];
+  		for j := i-1 downto 0 do
+      begin
+				st := result.Units[j];
+				if (st.Base = sf.Base) then
+        begin
+					st.exponent := sf.exponent+st.exponent;
+					result.Units.Delete(i);
+					break;
+				end;
+			end;
+		end;
 
-    // everything in scope is a multiplication operation. If oComp is a TUcumTerm, then
-    // we are going to tack our TUcumTerm on the end of that TUcumTerm as a multiplication, and
-    // make oComp our TUcumTerm
+		for i := result.Units.Count - 1 downto 0 do
+    begin
+			sf := result.Units[i];
+			if (sf.exponent = 0) then
+				result.Units.delete(i);
+		end;
 
-    if (Result.Unit_ <> Nil) And (Result.Unit_.Component <> nil) And (Result.Unit_.Component is TUcumTerm) Then
-    Begin
-      end_ := getEndTerm(TUcumTerm(Result.Unit_.Component));
-      assert(end_.Operator = NOOP);
-      end_.Operator := MULTIPLICATION;
-      end_.setTermCheckOp(Result.Unit_.Term.Link);
-      Result.Unit_ := TUcumTerm(Result.Unit_.Component).Link;
-      debug('reorged', Result.Unit_);
-    End;
-
-    if (Result.Unit_ <> Nil) And ((Result.Unit_.Component = nil) or (Result.Unit_.Component = Fone)) Then
-    Begin
-     Result.Unit_ := Result.Unit_.Term.link;
-     debug('trimmed', Result.Unit_);
-    End;
-
-    // now we have a linear list of terms, each with one TUcumComponent.
-    // we scan through the list looking for common components to factor out
-    // we have to scan into the list because we may have deep duplicates
-    // from the previous flattening operation. we also remove anything that's
-    // ended up with an exponent of 0 during this operation
-    if (Result.Unit_ <> Nil) Then
-      Result.Unit_ := removeDuplicateComponents(Result.Unit_).Link;
-
-    if (Result.Unit_ <> Nil) And (Result.Unit_.Term = nil) Then
-      Result.Unit_.Operator := NOOP;
-
-    debug('norm finished', Result.Unit_);
-//  System.out.println("value: "+Result.Value.toPlainString()+"; units: "+new ExpResultsionComposer().compose(Result.Unit_));
-    Result.Link;
-  Finally
+		debug(indent, 'sort', result);
+    result.Units.Sort(function (const L, R: TUcumCanonicalUnit): Integer begin
+    	 result := l.Base.Code.compareTo(r.Base.Code);
+      end);
+		debug(indent, 'done', result);
+		result.Link;
+  finally
     result.Free;
-  End;
+  end;
 end;
 
-procedure TUcumConverter.debug(sState: String; oUnit: TUcumTerm);
+Procedure TUcumConverter.debug(indent, state : String; oUnit : TUcumTerm);
 begin
-//  writeln(sstate+': '+TUcumExpressionComposer.compose(oUnit));
+//		System.out.println(indent+state+": "+new ExpressionComposer().compose(unit));
 end;
 
-function TUcumConverter.findDuplicateCompOwner(oTerm: TUcumTerm; oComp: TUcumSymbol): TUcumTerm;
+Procedure TUcumConverter.debug(indent, state : String; can : TUcumCanonical);
+begin
+//  writeln(indent+state+': '+TUcumExpressionComposer.compose(can, true));
+end;
+
+function TUcumConverter.normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical;
 var
-  sym : TUcumSymbol;
+  can : TUcumCanonical;
+  c : TUcumCanonicalUnit;
+  i : integer;
 begin
-  result := nil;
-  if (oTerm <> nil) Then
-  Begin
-    if (oTerm.Component is TUcumSymbol) Then
-    Begin
-       sym := TUcumSymbol(oTerm.Component);
-       if (sym.Prefix = oComp.Prefix) And (// i.e. nil
-                                          sym.Unit_ = oComp.Unit_) Then
-         result := oTerm
-    End;
-    if result = nil Then
-      result := findDuplicateCompOwner(oTerm.Term, oComp);
-  End;
-end;
-
-procedure TUcumConverter.flipExponents(oTerm: TUcumTerm);
-begin
-  if (oTerm.Component is TUcumSymbol) Then
-    TUcumSymbol(oTerm.Component).invertExponent;
-
-  if (oTerm.Term <> nil) Then
-    flipExponents(oTerm.Term);
-end;
-
-function TUcumConverter.getEndTerm(oTerm: TUcumTerm): TUcumTerm;
-begin
-  if (oTerm.Term <> nil) Then
-    result := getEndTerm(oTerm.Term)
-  else
-    result := oTerm;
-end;
-
-function TUcumConverter.removeDuplicateComponents(oUnit: TUcumTerm): TUcumTerm;
-var
-  symO, symI : TUcumSymbol;
-  inner : TUcumTerm;
-begin
-  if (ounit = nil) Then
-    result := nil                
-  Else
-  Begin
-   assert(oUnit.Component is TUcumSymbol); // because that should be all that's left
-   symO := TUcumSymbol(oUnit.Component);
-   inner := findDuplicateCompOwner(oUnit.Term, symO);
-   if (inner <> nil) Then
-   Begin
-     symI := TUcumSymbol(inner.Component);
-     symI.Exponent := symI.Exponent+symO.Exponent;
-     result := removeDuplicateComponents(oUnit.Term);
-   End
-   Else if (symO.Exponent = 0) Then
-     result := removeDuplicateComponents(oUnit.Term)
-   Else
-   Begin
-     oUnit.setTermCheckOp(removeDuplicateComponents(oUnit.Term).Link);
-     result := oUnit;
-   End;
-  End;
-end;
-
-function TUcumConverter.SortTerms(oTerm : TUcumTerm): Boolean;
-var
-  t1,t2 : TUcumTerm;
-begin
-  if oTerm.Term.Term = nil then
-    result := false
-  Else
-  begin
-    assert(oTerm.Term.Operator = MULTIPLICATION);
-    assert(oTerm.Term.Component is TUcumSymbol);
-    assert(oTerm.Term.Term.Component is TUcumSymbol);
-    if TUcumSymbol(oTerm.Term.Component).FUnit_.code > TUcumSymbol(oTerm.Term.Term.Component).FUnit_.code Then
-    Begin                
-      result := true;
-      t1 := oTerm.Term.Link;
-      t2 := oTerm.Term.Term.Link;
-      t1.Term := t2.Term.Link;
-      oTerm.Term := t2;
-      oTerm.Term.Term := t1;
-      oTerm.Term.Operator := MULTIPLICATION;
-      if oTerm.Term.Term.Term <> nil Then
-        oTerm.Term.Term.Operator := MULTIPLICATION
-      Else
-        oTerm.Term.Term.Operator := NOOP;
-    End
+  result := TUcumCanonical.Create;
+  try
+    result.Value := TFSLDecimal.create(1);
+  	if (sym.Unit_ is TUcumBaseUnit) then
+    begin
+  		result.Units.add(TUcumCanonicalUnit.create(sym.Unit_.Link as TUcumBaseUnit, sym.exponent));
+  	end
     else
-      result := SortTerms(oTerm.Term);
-  End;
-End;
-
-function TUcumConverter.SortTerms(oCan : TUcumCanonical): Boolean;
-var
-  t1,t2 : TUcumTerm;
-begin
-  if (oCan.Unit_ = nil) or (oCan.Unit_.Term = nil) then
-    result := false
-  Else
-  begin
-    debug('before sort', oCan.Unit_);
-    assert(oCan.Unit_.Operator = MULTIPLICATION);
-    assert(oCan.Unit_.Component is TUcumSymbol);
-    assert(oCan.Unit_.Term.Component is TUcumSymbol);
-    if TUcumSymbol(oCan.Unit_.Component).FUnit_.code > TUcumSymbol(oCan.Unit_.Term.Component).FUnit_.code Then
-    Begin
-      result := true;
-      t1 := oCan.Unit_.Link;
-      t2 := oCan.Unit_.Term.Link;
-      t1.Term := t2.Term.Link;
-      oCan.Unit_ := t2;
-      oCan.Unit_.Term := t1;
-      oCan.Unit_.Operator := MULTIPLICATION;
-      if oCan.Unit_.Term.Term <> nil Then
-        oCan.Unit_.Term.Operator := MULTIPLICATION
-      Else
-        oCan.Unit_.Term.Operator := NOOP;
-    End
-    else
-      result := SortTerms(oCan.Unit_);
-    debug('after sort', oCan.Unit_);
-  End;
+    begin
+			can := expandDefinedUnit(indent, sym.Unit_ as TUcumDefinedUnit);
+			for c in can.Units do
+				c.exponent := c.exponent * sym.exponent;
+			result.Units.addAll(can.Units);
+			if (sym.exponent > 0) then
+				for i := 1 to sym.exponent do
+					result.multiplyValue(can.Value)
+			else
+				for i := -1 downto sym.exponent do
+					result.divideValue(can.Value);
+		end;
+		if (sym.Prefix <> nil) then
+    begin
+			if (sym.Exponent > 0) then
+				for i := 1 to sym.exponent do
+					result.multiplyValue(sym.Prefix.Value)
+			else
+				for i := -1 downto sym.exponent do
+					result.divideValue(sym.Prefix.Value);
+		end;
+		result.Link;
+  finally
+    result.Free;
+  end;
 end;
+
+function TUcumConverter.expandDefinedUnit(indent : String; unit_ : TUcumDefinedUnit) : TUcumCanonical;
+var
+  u : string;
+  h : TUcumUnitHandler;
+  t : TUcumTerm;
+  p : TUcumExpressionParser;
+begin
+  u := unit_.Value.unit_;
+  if (unit_.isSpecial) then
+  begin
+    h := Fhandlers.HandlerByCode[unit_.code];
+  	if (h = nil) then
+      raise ETerminologyError.create('Not handled yet (special unit)')
+    else
+   		u := h.Units;
+  end;
+
+  t := TUcumExpressionParser.Parse(Fmodel, u);
+  try
+		debug(indent, 'now handle', t);
+		result := normalise(indent+'  ', t);
+    try
+  		result.multiplyValue(unit_.Value.Value);
+      result.Link;
+    finally
+      result.Free;
+    end;
+  finally
+    t.Free;
+  end;
+end;
+
 
 { TUcumComponent }
 
@@ -1121,12 +968,12 @@ end;
 constructor TUcumCanonical.Create;
 begin
   inherited;
-
+  FUnits := TFslList<TUcumCanonicalUnit>.create;
 end;
 
 destructor TUcumCanonical.Destroy;
 begin
-  FUnit.Free;
+  FUnits.Free;
   inherited;
 end;
 
@@ -1149,13 +996,6 @@ procedure TUcumCanonical.multiplyValue(i: TFslDecimal);
 begin
   Value := FValue.Multiply(i);
 end;
-
-procedure TUcumCanonical.SetUnit(Value: TUcumTerm);
-begin
-  FUnit.Free;
-  FUnit := Value;
-end;
-
 
 class Function TUcumFormalStructureComposer.compose(oTerm : TUcumTerm) : String;
 var
@@ -1199,8 +1039,8 @@ End;
 
 class Procedure TUcumFormalStructureComposer.composeSymbol(oBldr : TFslStringBuilder; oSymbol : TUcumSymbol);
 Begin
-  if oSymbol.Exponent <> 1 then
-    oBldr.append('(');
+//  if oSymbol.Exponent <> 1 then
+  oBldr.append('(');
   if (oSymbol.Prefix <> nil) Then
     oBldr.append(oSymbol.Prefix.Names[0]);
 
@@ -1210,8 +1050,8 @@ Begin
     oBldr.append(' ^ ');
     oBldr.append(inttostr(oSymbol.Exponent));
   End;
-  if oSymbol.Exponent <> 1 then
-    oBldr.append(')');
+//  if oSymbol.Exponent <> 1 then
+  oBldr.append(')');
 End;
 
 class Procedure TUcumFormalStructureComposer.composeFactor(oBldr : TFslStringBuilder; oFactor : TUcumFactor);
@@ -1229,6 +1069,27 @@ Begin
   else
     oBldr.append(' * ');
 End;
+
+{ TUcumCanonicalUnit }
+
+constructor TUcumCanonicalUnit.Create(base : TUcumBaseUnit; exponent : integer);
+begin
+  Inherited Create;
+  self.base := base;
+  self.exponent := exponent;
+end;
+
+destructor TUcumCanonicalUnit.Destroy;
+begin
+  FBase.Free;
+  inherited;
+end;
+
+procedure TUcumCanonicalUnit.SetBase(value : TUcumBaseUnit);
+begin
+  FBase.Free;
+  FBase := value;
+end;
 
 
 End.

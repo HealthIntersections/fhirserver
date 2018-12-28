@@ -31,9 +31,7 @@ interface
 
 uses
   SysUtils, Classes, System.Character,
-  FHIR.Support.Base,
-  FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Support.MXml, FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 const
@@ -55,11 +53,13 @@ Type
     procedure Assign(oSource : TFslObject); override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     property Name : String read FName write FName;
     property Value : String read FValue write FValue;
@@ -119,8 +119,8 @@ Type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
-    constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
-    constructor Create(name : String) ; Overload;
+    constructor Create(nodeType : TFHIRHtmlNodeType); Overload;
+    constructor Create(name : String); Overload;
     destructor Destroy; Override;
     function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
@@ -128,9 +128,11 @@ Type
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
 
     property Attributes : TFHIRAttributeList read GetAttributes;
     function allChildrenAreText : boolean;
@@ -306,7 +308,64 @@ Type
     class Function elementIsOk(policy : TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; name : String) : boolean;
   end;
 
+  TCDANarrativeParser = class (TFslObject)
+  private
+    class procedure processAttributes(ed : TMXmlElement; x : TFHIRXhtmlNode; names : Array of String); overload;
+    class procedure processChildren(ed : TMXmlElement; x : TFHIRXhtmlNode); overload;
+    class procedure processChildNode(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processBreak(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processCaption(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processCol(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processColGroup(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processContent(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processFootNote(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processFootNodeRef(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processItem(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processlinkHtml(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processList(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processParagraph(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processRenderMultiMedia(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processSub(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processSup(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTable(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTBody(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTd(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTFoot(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTh(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTHead(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+    class procedure processTr(n : TMXmlElement; xn : TFHIRXhtmlNode); overload;
+
+    class procedure processAttributes(xml : TXmlBuilder; x : TFHIRXHtmlNode; names : array of String); overload;
+    class procedure processChildren(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processChildNode(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processBreak(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processCaption(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processCol(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processColGroup(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processContent(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processFootNote(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processFootNodeRef(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processItem(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processlinkHtml(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processList(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processParagraph(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processRenderMultiMedia(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processSub(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processSup(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTable(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTBody(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTd(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTFoot(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTh(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTHead(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+    class procedure processTr(xml : TXmlBuilder; x : TFHIRXHtmlNode); overload;
+  public
+    class function parse(element : TMXmlElement) : TFhirXHtmlNode;
+    class procedure render(xml : TXmlBuilder; node: TFhirXHtmlNode);
+  end;
+
 function compareDeep(div1, div2 : TFhirXHtmlNode; allowNull : boolean) : boolean; overload;
+
 
 implementation
 
@@ -423,6 +482,16 @@ begin
   result := '';
 end;
 
+function TFHIRAttribute.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFHIRAttribute.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRAttribute.isEmpty: boolean;
 begin
   result := inherited isEmpty and (FName = '') and (FValue = '');
@@ -460,7 +529,7 @@ procedure TFHIRAttribute.setIdValue(id: String);
 begin
 end;
 
-procedure TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
@@ -829,6 +898,11 @@ begin
   result := '';
 end;
 
+function TFhirXHtmlNode.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
 function TFhirXHtmlNode.hasAttribute(name: String): boolean;
 var
   attr : TFHIRAttribute;
@@ -838,6 +912,11 @@ begin
     for attr in FAttributes do
       if attr.Name = name then
         exit(true);
+end;
+
+function TFhirXHtmlNode.hasExtensions: boolean;
+begin
+  result := false;
 end;
 
 function TFhirXHtmlNode.isEmpty: boolean;
@@ -928,7 +1007,7 @@ begin
   end;
 end;
 
-procedure TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject);
+function TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
@@ -983,7 +1062,6 @@ end;
 class function TFHIRXhtmlParser.doParse(lang: String; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
 var
   attr : TMXmlAttribute;
-  n : String;
   child : TMXmlElement;
 begin
   result := TFhirXHtmlNode.create(fhntElement);
@@ -991,11 +1069,10 @@ begin
     result.Name := node.localName;
     defaultNS := checkNS(options, result, node, defaultNS);
     path := path + '/h:'+result.Name;
-    for n in node.Attributes.Keys do
+    for attr in node.Attributes do
     begin
-      attr := node.attributes[n];
-      if not n.startsWith('xmlns') and attributeIsOk(policy, options, result.Name, n, attr.Value) then
-        result.Attributes.add(n, attr.value);
+      if not attr.Name.startsWith('xmlns') and attributeIsOk(policy, options, result.Name, attr.Name, attr.Value) then
+        result.Attributes.add(attr.Name, attr.value);
     end;
     child := node.First;
     while (child <> nil) do
@@ -1231,6 +1308,539 @@ begin
 //    result := false; //div1.equals(div2);
     raise EFHIRTodo.create('compareDeep');
   end;
+end;
+
+{ TCDANarrativeParser }
+
+class procedure TCDANarrativeParser.processChildren(ed : TMXmlElement; x : TFHIRXhtmlNode);
+var
+  n : TMXmlElement;
+begin
+  for n in ed.Children do
+    processChildNode(n, x);
+end;
+
+class procedure TCDANarrativeParser.processChildNode(n : TMXmlElement; xn : TFHIRXhtmlNode);
+begin
+  case n.NodeType of
+    ntText: if not StringIsWhitespace(n.Text) then xn.AddText(n.Text);
+    ntComment: xn.AddComment(n.Text);
+    ntDocument: raise ELibraryException.create('Not supported yet');
+    ntAttribute: raise ELibraryException.create('Not supported yet'); // should never happen
+    ntProcessingInstruction: raise ELibraryException.create('Not supported yet');
+    ntDocumentDeclaration: raise ELibraryException.create('Not supported yet');
+    ntCData: raise ELibraryException.create('Not supported yet');
+    ntElement:
+      begin
+      if (n.Name = 'br') then
+        processBreak(n, xn)
+      else if (n.name = 'caption') then
+        processCaption(n, xn)
+      else if (n.name = 'col') then
+        processCol(n, xn)
+      else if (n.name = 'colgroup') then
+        processColGroup(n, xn)
+      else if (n.name = 'content') then
+        processContent(n, xn)
+      else if (n.name = 'footnote') then
+        processFootNote(n, xn)
+      else if (n.name = 'footnoteRef') then
+        processFootNodeRef(n, xn)
+      else if (n.name = 'item') then
+        processItem(n, xn)
+      else if (n.name = 'linkHtml') then
+        processlinkHtml(n, xn)
+      else if (n.name = 'list') then
+        processList(n, xn)
+      else if (n.name = 'paragraph') then
+        processParagraph(n, xn)
+      else if (n.name = 'renderMultiMedia') then
+        processRenderMultiMedia(n, xn)
+      else if (n.name = 'sub') then
+        processSub(n, xn)
+      else if (n.name = 'sup') then
+        processSup(n, xn)
+      else if (n.name = 'table') then
+        processTable(n, xn)
+      else if (n.name = 'tbody') then
+        processTBody(n, xn)
+      else if (n.name = 'td') then
+        processTd(n, xn)
+      else if (n.name = 'tfoot') then
+        processTFoot(n, xn)
+      else if (n.name = 'th') then
+        processTh(n, xn)
+      else if (n.name = 'thead') then
+        processTHead(n, xn)
+      else if (n.name = 'tr') then
+        processTr(n, xn)
+      else
+        raise EFHIRException.Create('Unknown element '+n.name);
+    end;
+  end;
+end;
+
+class procedure TCDANarrativeParser.processBreak(n : TMXmlElement; xn : TFHIRXhtmlNode);
+begin
+  xn.addTag('br');
+end;
+
+class procedure TCDANarrativeParser.processCaption(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('h2');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processCol(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('col');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'span', 'width', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processColGroup(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('colgroup');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'span', 'width', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processContent(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('span');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode']);
+  // todo: do something with revised..., 'revised'
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processFootNote(n : TMXmlElement; xn : TFHIRXhtmlNode);
+begin
+  raise ELibraryException.create('element '+n.name+' not handled yet');
+end;
+
+class procedure TCDANarrativeParser.processFootNodeRef(n : TMXmlElement; xn : TFHIRXhtmlNode);
+begin
+  raise ELibraryException.create('element '+n.name+' not handled yet');
+end;
+
+class procedure TCDANarrativeParser.processItem(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('li');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processlinkHtml(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('a');
+  processAttributes(n, xc, ['name', 'href', 'rel', 'rev', 'title', 'ID', 'language', 'styleCode']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processList(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+  lt : String;
+begin
+  lt := n.Attribute['listType'];
+  if (lt = 'ordered') then
+    xc := xn.addTag('ol')
+  else
+    xc := xn.addTag('ul');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processParagraph(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('p');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processRenderMultiMedia(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+  v : String;
+begin
+  xc := xn.addTag('img');
+  v := n.Attribute['referencedObject'];
+  xn.attribute('src', v);
+  processAttributes(n, xc, ['ID', 'language', 'styleCode']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processSub(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('sub');
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processSup(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('sup');
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processTable(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('table');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'summary', 'width', 'border', 'frame', 'rules', 'cellspacing', 'cellpadding']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processTBody(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('tbody');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processTd(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('td');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processTFoot(n : TMXmlElement; xn : TFHIRXhtmlNode);
+begin
+  raise ELibraryException.create('element '+n.name+' not handled yet');
+end;
+
+class procedure TCDANarrativeParser.processTh(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('th');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processTHead(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('thead');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processTr(n : TMXmlElement; xn : TFHIRXhtmlNode);
+var
+  xc : TFHIRXhtmlNode;
+begin
+  xc := xn.addTag('tr');
+  processAttributes(n, xc, ['ID', 'language', 'styleCode', 'align', 'char', 'charoff', 'valign']);
+  processChildren(n, xc);
+end;
+
+class procedure TCDANarrativeParser.processAttributes(ed : TMXmlElement; x : TFHIRXhtmlNode; names : Array of String);
+var
+  n, v : String;
+begin
+  for n in names do
+  begin
+    if (ed.hasAttribute[n]) then
+    begin
+      v := ed.Attribute[n];
+      if (n = 'ID') then
+        x.attribute('id', v)
+      else
+        x.attribute(n, v);
+    end;
+  end;
+end;
+
+class function TCDANarrativeParser.parse(element: TMXmlElement): TFhirXHtmlNode;
+begin
+  result := TFhirXHtmlNode.Create('div');
+  try
+    processAttributes(element, result, ['ID', 'language', 'styleCode']);
+    processChildren(element, result);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+class procedure TCDANarrativeParser.processChildren(xml : TXmlBuilder; x : TFHIRXHtmlNode);
+var
+  n : TFHIRXHtmlNode;
+begin
+  for n in x.ChildNodes do
+    processChildNode(xml, n);
+end;
+
+class procedure TCDANarrativeParser.processChildNode(xml : TXmlBuilder; x : TFHIRXHtmlNode);
+begin
+  case x.NodeType of
+    fhntText : xml.Text(x.Content);
+    fhntComment: xml.Comment(x.Content);
+    fhntDocument:;
+    fhntElement:
+      if (x.name = 'br') then
+        processBreak(xml, x)
+      else if (x.name = 'h2') then
+        processCaption(xml, x)
+      else if (x.name = 'col') then
+        processCol(xml, x)
+      else if (x.name = 'colgroup') then
+        processColGroup(xml, x)
+      else if (x.name = 'span') then
+        processContent(xml, x)
+      else if (x.name = 'footnote') then
+        processFootNote(xml, x)
+      else if (x.name = 'footnoteRef') then
+        processFootNodeRef(xml, x)
+      else if (x.name = 'li') then
+        processItem(xml, x)
+      else if (x.name = 'linkHtml') then
+        processlinkHtml(xml, x)
+      else if (x.name = 'ul') or (x.name = 'ol') then
+        processList(xml, x)
+      else if (x.name = 'p') then
+        processParagraph(xml, x)
+      else if (x.name = 'img') then
+        processRenderMultiMedia(xml, x)
+      else if (x.name = 'sub') then
+        processSub(xml, x)
+      else if (x.name = 'sup') then
+        processSup(xml, x)
+      else if (x.name = 'table') then
+        processTable(xml, x)
+      else if (x.name = 'tbody') then
+        processTBody(xml, x)
+      else if (x.name = 'td') then
+        processTd(xml, x)
+      else if (x.name = 'tfoot') then
+        processTFoot(xml, x)
+      else if (x.name = 'th') then
+        processTh(xml, x)
+      else if (x.name = 'thead') then
+        processTHead(xml, x)
+      else if (x.name = 'tr') then
+        processTr(xml, x)
+      else
+        raise EFHIRException.create('Unknown element '+x.name);
+  end;
+end;
+
+class procedure TCDANarrativeParser.processBreak(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  xml.Tag('br');
+end;
+
+class procedure TCDANarrativeParser.processCaption(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode']);
+  xml.Open('caption');
+  processChildren(xml, x);
+  xml.Close('caption');
+end;
+
+class procedure TCDANarrativeParser.processCol(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'span', 'width', 'align', 'char', 'charoff', 'valign']);
+  xml.open('col');
+  processChildren(xml, x);
+  xml.close('col');
+end;
+
+class procedure TCDANarrativeParser.processColGroup(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'span', 'width', 'align', 'char', 'charoff', 'valign']);
+  xml.open('colgroup');
+  processChildren(xml, x);
+  xml.close('colgroup');
+end;
+
+class procedure TCDANarrativeParser.processContent(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode']);
+  xml.open('content');
+  // todo: do something with revised..., 'revised'
+  processChildren(xml, x);
+  xml.close('content');
+end;
+
+class procedure TCDANarrativeParser.processFootNote(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  raise ELibraryException.create('element '+x.name+' not handled yet');
+end;
+
+class procedure TCDANarrativeParser.processFootNodeRef(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  raise ELibraryException.create('element '+x.name+' not handled yet');
+end;
+
+class procedure TCDANarrativeParser.processItem(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode']);
+  xml.open('item');
+  processChildren(xml, x);
+  xml.close('item');
+end;
+
+class procedure TCDANarrativeParser.processlinkHtml(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+var
+  v : String;
+begin
+  v := x.GetAttribute('src');
+  xml.addAttribute('referencedObject', v);
+  processAttributes(xml, x, ['name', 'href', 'rel', 'rev', 'title', 'id', 'language', 'styleCode']);
+  xml.open('linkHtml');
+  processChildren(xml, x);
+  xml.close('linkHtml');
+end;
+
+class procedure TCDANarrativeParser.processList(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  if (x.name = 'ol') then
+    xml.addAttribute('listType', 'ordered')
+  else
+    xml.addAttribute('listType', 'unordered');
+  processAttributes(xml, x, ['id', 'language', 'styleCode']);
+  xml.open('list');
+  processChildren(xml, x);
+  xml.close('list');
+end;
+
+class procedure TCDANarrativeParser.processParagraph(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode']);
+  xml.open('paragraph');
+  processChildren(xml, x);
+  xml.close('paragraph');
+end;
+
+class procedure TCDANarrativeParser.processRenderMultiMedia(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+var
+  v : String;
+begin
+  v := x.GetAttribute('src');
+  xml.addAttribute('referencedObject', v);
+  processAttributes(xml, x, ['id', 'language', 'styleCode']);
+  xml.open('renderMultiMedia');
+  processChildren(xml, x);
+  xml.close('renderMultiMedia');
+end;
+
+class procedure TCDANarrativeParser.processSub(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  xml.open('sub');
+  processChildren(xml, x);
+  xml.close('sub');
+end;
+
+class procedure TCDANarrativeParser.processSup(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  xml.open('sup');
+  processChildren(xml, x);
+  xml.close('sup');
+end;
+
+class procedure TCDANarrativeParser.processTable(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'summary', 'width', 'border', 'frame', 'rules', 'cellspacing', 'cellpadding']);
+  xml.open('table');
+  processChildren(xml, x);
+  xml.close('table');
+end;
+
+class procedure TCDANarrativeParser.processTBody(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'align', 'char', 'charoff', 'valign']);
+  xml.open('tbody');
+  processChildren(xml, x);
+  xml.close('tbody');
+end;
+
+class procedure TCDANarrativeParser.processTd(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'align', 'char', 'charoff', 'valign']);
+  xml.open('td');
+  processChildren(xml, x);
+  xml.close('td');
+end;
+
+class procedure TCDANarrativeParser.processTFoot(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  raise ELibraryException.create('element '+x.name+' not handled yet');
+end;
+
+class procedure TCDANarrativeParser.processTh(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'align', 'char', 'charoff', 'valign']);
+  xml.open('th');
+  processChildren(xml, x);
+  xml.close('th');
+end;
+
+class procedure TCDANarrativeParser.processTHead(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'align', 'char', 'charoff', 'valign']);
+  xml.open('thead');
+  processChildren(xml, x);
+  xml.close('thead');
+end;
+
+class procedure TCDANarrativeParser.processTr(xml : TXmlBuilder; x : TFHIRXhtmlNode);
+begin
+  processAttributes(xml, x, ['id', 'language', 'styleCode', 'align', 'char', 'charoff', 'valign']);
+  xml.open('tr');
+  processChildren(xml, x);
+  xml.close('tr');
+end;
+
+class procedure TCDANarrativeParser.processAttributes(xml : TXmlBuilder; x : TFHIRXHtmlNode; names : array of String);
+var
+  n, v : String;
+begin
+  for n in names do
+  begin
+    if (x.hasAttribute(n)) then
+    begin
+      v := x.getAttribute(n);
+      if (n = 'id') then
+        xml.addAttribute('ID', v)
+      else
+        xml.addAttribute(n, v);
+    end;
+  end;
+end;
+
+class procedure TCDANarrativeParser.render(xml: TXmlBuilder; node: TFhirXHtmlNode);
+begin
+  processAttributes(xml, node, ['ID', 'language', 'styleCode']);
+  xml.open('text');
+  processChildren(xml, node);
+  xml.close('text');
 end;
 
 end.

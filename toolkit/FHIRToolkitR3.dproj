@@ -376,6 +376,8 @@
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.Graph.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.ObsGraph.pas"/>
+        <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
+        <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

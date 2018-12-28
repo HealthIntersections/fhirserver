@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.ElementModel,
   FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
 
 
@@ -146,7 +146,9 @@ type
     function link : TFHIRMMElement; overload;
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
+    function isMetadataBased : boolean; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -216,13 +218,15 @@ type
     procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  overload; virtual; abstract;
   end;
 
-  TFHIRMMManager = class (TFslObject)
+  TFHIRMMManager = class (TFHIRBaseMMManager)
   public
     class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
     class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
     class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
     class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
     class function makeParser(context : TFHIRWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
+    function parseV(context : TFHIRWorkerContextV; source : TStream; inputFormat : TFhirFormat) : TFHIRObject; override;
+    procedure composeV(context : TFHIRWorkerContextV; e : TFHIRObject; destination : TStream; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = ''); override;
   end;
 
   TFHIRMMXmlParser = class (TFHIRMMParserBase)
@@ -314,7 +318,7 @@ type
     procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRCustomResource; overload;
     function Clone : TFHIRCustomResource; overload;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
@@ -938,6 +942,11 @@ begin
   result := true;
 end;
 
+function TFHIRMMElement.isMetadataBased: boolean;
+begin
+  result := true;
+end;
+
 function TFHIRMMElement.isPrimitive: boolean;
 begin
   if (Ftype <> '') then
@@ -1042,6 +1051,16 @@ begin
   result := (FComments <> nil) and (FComments.count > 0);
 end;
 
+function TFHIRMMElement.hasExtensions: boolean;
+var
+  c : TFHIRMMElement;
+begin
+  result := False;
+  for c in FChildren do
+    if c.name = 'extension' then
+      exit(true);
+end;
+
 function TFHIRMMElement.link: TFHIRMMElement;
 begin
   result := TFHIRMMElement(inherited Link);
@@ -1104,7 +1123,7 @@ begin
   raise EFHIRTodo.create('TFHIRMMElement.setIdValue');
 end;
 
-procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRMMElement.setProperty');
 end;
@@ -1323,6 +1342,11 @@ begin
   end;
 end;
 
+procedure TFHIRMMManager.composeV(context: TFHIRWorkerContextV; e: TFHIRObject; destination: TStream; outputFormat: TFhirFormat; style: TFHIROutputStyle; base: String);
+begin
+  compose(context as TFHIRWorkerContext, e as TFHIRMMElement, destination, outputFormat, style = OutputStylePretty, base);
+end;
+
 class function TFHIRMMManager.makeParser(context: TFHIRWorkerContext; format: TFhirFormat): TFHIRMMParserBase;
 begin
   case format of
@@ -1369,6 +1393,11 @@ begin
   finally
     f.free;
   end;
+end;
+
+function TFHIRMMManager.parseV(context: TFHIRWorkerContextV; source: TStream; inputFormat: TFhirFormat): TFHIRObject;
+begin
+  result := parse(context as TFHIRWorkerContext, source, inputFormat);
 end;
 
 { TFHIRMMXmlParser }
@@ -1486,12 +1515,12 @@ end;
 
 function TFHIRMMXmlParser.empty(element : TMXmlElement) : boolean ;
 var
-  n : String;
+  a : TMXmlAttribute;
   node : TMXmlElement;
 begin
-  for n in element.attributes.keys do
+  for a in element.attributes do
   begin
-    if (n <> 'xmlns') and not n.startsWith('xmlns:') then
+    if (a.name <> 'xmlns') and not a.name.startsWith('xmlns:') then
       exit(false);
   end;
   if ('' <> trim(element.text)) then
@@ -1570,12 +1599,11 @@ begin
       end;
     end;
 
-    for s in node.Attributes.Keys do
+    for attr in node.Attributes do
     begin
-      attr := node.Attributes[s];
-      if not ((s = 'xmlns') or StringStartsWith(s, 'xmlns:')) then
+      if not ((attr.name = 'xmlns') or StringStartsWith(attr.name, 'xmlns:')) then
       begin
-        prop := getAttrProp(properties, s);
+        prop := getAttrProp(properties, attr.name);
         if (prop <> nil) then
         begin
           av := attr.Value;
@@ -1587,7 +1615,7 @@ begin
             context.getChildren().add(TFHIRMMElement.create(prop.Name, prop.Link, prop.getType(), av).markLocation(start(node), end_(node)));
         end
         else
-          logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+s+'"', IssueSeverityERROR);
+          logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Undefined attribute "@'+attr.name+'"', IssueSeverityERROR);
       end;
     end;
 
@@ -2552,7 +2580,7 @@ begin
   raise EFHIRTodo.create('TFHIRCustomResource.makeProperty');
 end;
 
-procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRCustomResource.setProperty');
 end;

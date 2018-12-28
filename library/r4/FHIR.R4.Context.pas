@@ -32,8 +32,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
-  FHIR.Support.Base, 
+  SysUtils, Classes,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources;
 
@@ -53,8 +54,11 @@ type
   end;
 
 
+  TResourceMemoryCache = class;
+
   TFHIRWorkerContext = class abstract (TFHIRWorkerContextWithFactory)
-  protected
+  private
+    FOverrideVersionNs: String;  protected
     function GetVersion: TFHIRVersion; override;
   public
     function link : TFHIRWorkerContext; overload;
@@ -77,12 +81,37 @@ type
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
+
+    procedure loadFromCache(cache : TResourceMemoryCache); overload;
+    property OverrideVersionNs : String read FOverrideVersionNs write FOverrideVersionNs;
   end;
+
+  TResourceMemoryCache = class (TFslObject)
+  private
+    Flist : TFslList<TFHIRResource>;
+    FResourceTypes: TArray<String>;
+    FPackages: TArray<String>;
+    FOnLog: TWorkProgressEvent;
+    FLoadPackage : String;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function Link : TResourceMemoryCache; overload;
+
+    property List : TFslList<TFHIRResource> read FList;
+    procedure load(rType, id : String; stream : TStream);
+    property Packages : TArray<String> read FPackages write FPackages;
+    property ResourceTypes : TArray<String> read FResourceTypes write FResourceTypes;
+    property OnLog : TWorkProgressEvent read FOnLog write FOnLog;
+
+    procedure checkLoaded;
+  end;
+
 
 implementation
 
 uses
-  FHIR.R4.Utilities;
+  FHIR.R4.Utilities, FHIR.R4.ParserBase, FHIR.R4.Json;
 
 { TFHIRWorkerContext }
 
@@ -132,6 +161,15 @@ begin
 end;
 
 
+procedure TFHIRWorkerContext.loadFromCache(cache: TResourceMemoryCache);
+var
+  r : TFhirResource;
+begin
+  cache.checkLoaded;
+  for r in cache.List do
+    SeeResource(r);
+end;
+
 { TFHIRCustomResourceInformation }
 
 constructor TFHIRCustomResourceInformation.Create(definition: TFHIRStructureDefinition);
@@ -154,5 +192,60 @@ begin
   result := TFHIRCustomResourceInformation(inherited Link);
 end;
 
+
+{ TResourceMemoryCache }
+
+procedure TResourceMemoryCache.checkLoaded;
+var
+  cache : TFHIRPackageManager;
+  s, l, r : String;
+begin
+  if FList.Empty then
+  begin
+    cache := TFHIRPackageManager.Create(true);
+    try
+      for s in FPackages do
+      begin
+        FLoadPackage := s;
+        StringSplit(s, '#', l, r);
+        cache.loadPackage(l, r, FResourceTypes, load, FOnLog);
+      end;
+    finally
+      cache.Free;
+    end;
+  end;
+end;
+
+constructor TResourceMemoryCache.Create;
+begin
+  inherited;
+  Flist := TFslList<TFhirResource>.create
+end;
+
+destructor TResourceMemoryCache.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TResourceMemoryCache.Link: TResourceMemoryCache;
+begin
+  result := TResourceMemoryCache(inherited link);
+end;
+
+procedure TResourceMemoryCache.load(rType, id: String; stream: TStream);
+var
+  p : TFHIRJsonParser;
+begin
+  p := TFHIRJsonParser.Create(nil, 'en');
+  try
+    p.source := stream;
+    p.Parse;
+    FList.add(p.resource.link as TFhirResource);
+  finally
+    p.Free;
+  end;
+
+end;
 
 end.

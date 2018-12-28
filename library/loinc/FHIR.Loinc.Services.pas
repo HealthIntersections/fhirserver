@@ -883,7 +883,7 @@ var
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : cardinal;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iCode, iAnswers : cardinal;
   iFlags : Byte;
   names : TCardinalArray;
   name : Cardinal;
@@ -907,6 +907,11 @@ begin
       end;
     end;
   End
+  else if AnswerLists.FindCode(sCode, iIndex, FDesc) then
+  begin
+    AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
+    list.Add(Desc.GetEntry(iDescription, ilang));
+  end;
 end;
 
 

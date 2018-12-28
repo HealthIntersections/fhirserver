@@ -34,14 +34,16 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.PathEngine,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Factory;
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.PathEngine, FHIR.Base.Factory,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Factory, FHIR.R4.ElementModel;
 
 type
   TVariableMode = (vmINPUT, vmOUTPUT);
 
 const
-  CODES_TVariableMode : array [TVariableMode] of string = ('input', 'output');
+  CODES_TVariableMode : array [TVariableMode] of string = ('source', 'target');
+  AUTO_VAR_NAME = 'vvv';
+  RENDER_MULTIPLE_TARGETS_ONELINE = true;
 
 type
   TVariable = class (TFslObject)
@@ -54,6 +56,7 @@ type
 
     function link : TVariable; overload;
     function copy : TVariable;
+    function summary(mode : boolean = false) : string;
 
     property mode : TVariableMode read Fmode write Fmode;
     property name : String read Fname write Fname;
@@ -62,81 +65,163 @@ type
 
   TVariables = class (TFslObject)
   private
-		list : TFslList<TVariable>;
+    list : TFslList<TVariable>;
+    function GetSummary: string;
+    function GetCount: Integer;
+    function GetVariable(index: integer): TVariable;
   public
     constructor Create; override;
     destructor Destroy; override;
 
     function Link : TVariables; overload;
-		procedure add(mode : TVariableMode; name : String; obj : TFHIRObject);
-		function copy : TVariables;
-		function get(mode : TVariableMode; name : String) : TFHIRObject;
+    procedure add(mode : TVariableMode; name : String; obj : TFHIRObject);
+    function copy : TVariables;
+    function get(mode : TVariableMode; name : String) : TFHIRObject;
+    property summary : string read GetSummary;
+    property Count : Integer read GetCount;
+    property variable[index : integer] : TVariable read GetVariable; default;
   end;
 
   TTransformerServices = class abstract (TFslObject)
   private
   public
-    function oid2Uri(oid : String) : String; virtual; abstract;
+    function link : TTransformerServices; overload;
+
     function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; virtual; abstract;
     procedure log(s : String); virtual; abstract;
+    function performSearch(appInfo : TFslObject; url : String) : TFslList<TFHIRObject>; virtual; abstract;
+    function createType(appInfo : TFslObject; tn : String) : TFHIRObject; virtual; abstract;
+    procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); virtual; abstract; // an already created resource is provided; this is to identify/store it
   end;
+
+  TResolvedGroup = class (TFslObject)
+  private
+    FMap: TFhirStructureMap;
+    FGroup: TFhirStructureMapGroup;
+  public
+    constructor Create(map : TFhirStructureMap; group : TFhirStructureMapGroup);
+    destructor Destroy; override;
+
+    property map : TFhirStructureMap read FMap;
+    property group : TFhirStructureMapGroup read FGroup;
+  end;
+
+  TFHIRStructureMapDebuggingStatus = (dsRunToBreakpoint, dsStepOut, dsStepOver, dsStepIn);
+
+  TFHIRStructureMapDebugContext = class (TFslObject)
+  private
+    FRule: TFhirStructureMapGroupRule;
+    FMap: TFHIRStructureMap;
+    FAppInfo: TFslObject;
+    FTarget: TFhirStructureMapGroupRuleTarget;
+    FVariables: TVariables;
+    FGroup: TFhirStructureMapGroup;
+    FParent: TFHIRStructureMapDebugContext;
+    FStatus: TFHIRStructureMapDebuggingStatus;
+    function getdescription: String;
+    function GetFocus: TFHIRObject;
+    function GetName: String;
+    function GetLine: integer;
+  public
+    constructor create(parent : TFHIRStructureMapDebugContext; appInfo : TFslObject;
+       map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget;
+       variables : TVariables);
+    destructor Destroy; override;
+    function link : TFHIRStructureMapDebugContext; overload;
+
+    property parent : TFHIRStructureMapDebugContext read FParent;
+    property appInfo : TFslObject read FAppInfo;
+    property map : TFHIRStructureMap read FMap;
+    property group : TFhirStructureMapGroup read FGroup;
+    property rule: TFhirStructureMapGroupRule read FRule;
+    property target : TFhirStructureMapGroupRuleTarget read FTarget;
+    property variables : TVariables read FVariables;
+
+    property name : String read GetName;
+    property description : String read GetDescription;
+    property focus : TFHIRObject read GetFocus;
+    property line : integer read GetLine;
+
+    property status : TFHIRStructureMapDebuggingStatus read FStatus write FStatus;
+  end;
+
+  TFHIRStructureMapDebugEvent = procedure(sender : TObject; info : TFHIRStructureMapDebugContext) of Object;
 
   TFHIRStructureMapUtilities = class (TFslObject)
   private
-	  FWorker : TFHIRWorkerContext;
-   	fpp : TFHIRPathParser;
-   	fpe : TFHIRPathEngine;
-  	FLib : TFslMap<TFHIRStructureMap>;
-  	FServices : TTransformerServices;
+    FWorker : TFHIRWorkerContext;
+    fpp : TFHIRPathParser;
+    fpe : TFHIRPathEngine;
+    FLib : TFslMap<TFHIRStructureMap>;
+    FServices : TTransformerServices;
+    FFactory : TFHIRFactoryR4;
+    FOnDebug: TFHIRStructureMapDebugEvent;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderImports(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderGroup(b : TStringBuilder; g : TFHIRStructureMapGroup);
     procedure renderDoco(b : TStringBuilder; doco : String);
     procedure RenderRule(b : TStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
-    procedure RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
-    procedure renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget);
+    procedure RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
+    procedure renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
     procedure renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
     procedure renderConceptMap(b : TStringBuilder; map : TFHIRConceptMap);
 
     function getGroup(map : TFHIRConceptMap; source, target : String) : TFHIRConceptMapGroup;
-    function fromEnum(s : String; codes : Array of String) : integer;
+    function fromEnum(s : String; codes : Array of String; lexer : TFHIRPathLexer) : integer;
     function readPrefix(prefixes : TFslStringDictionary; lexer : TFHIRPathLexer) : String;
     function readEquivalence(lexer : TFHIRPathLexer) : TFhirConceptMapEquivalenceEnum;
     function readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
+    function isSimpleSyntax(rule : TFhirStructureMapGroupRule) : boolean;
     procedure parseConceptMap(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseUses(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
-    procedure parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer);
-    procedure parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer);
+    procedure parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer; newFmt : boolean);
+    procedure parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer; newFmt : boolean);
     procedure parseSource(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
     procedure parseTarget(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
     procedure parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
     procedure parseParameter(target : TFHIRStructureMapGroupRuleTarget; lexer : TFHIRPathLexer);
 
+    function debug(dbgContext : TFHIRStructureMapDebugContext; appInfo : TFslObject; map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget; variables : TVariables) : TFHIRStructureMapDebugContext;
     procedure log(s : String);
     procedure getChildrenByName(item : TFHIRObject; name : String; result : TFslList<TFHIRObject>);
-    function runTransform(appInfo : TFslObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
-    procedure executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
-    procedure executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
-    function analyseSource(appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TFslList<TVariables>;
-    procedure processTarget(appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
-    procedure executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
+    function runTransform(ruleId : String; appInfo : TFslObject; map : TFHIRStructureMap; group : TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables; dest : TFHIRObject; element, srcVar : String; root : boolean) : TFHIRObject;
+    function buildCoding(uri, code : String) : TFHIRCoding;
+    function findMatchingMaps(value : String) : TFslList<TFHIRStructureMap>;
+    function matchesType(map : TFHIRStructureMap; actualType, statedType : String): boolean;
+    function matchesByType(map : TFHIRStructureMap; ruleId : String; grp : TFHIRStructureMapGroup; tn: String) : boolean; overload;
+    function matchesByType(map : TFHIRStructureMap; ruleId : String; grp : TFHIRStructureMapGroup; tnSrc, tnTgt: String) : boolean;  overload;
+    function getActualType(map : TFHIRStructureMap; statedType : String) : String;
+    procedure resolveGroupReference(map : TFHIRStructureMap; source : TFHIRStructureMapGroup; name : TFhirId; var tgtGroup : TFHIRStructureMapGroup; var tgtMap : TFHIRStructureMap);
+    procedure resolveGroupByTypes(map : TFHIRStructureMap; ruleid : String; source : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; srcType, tgtType : String; var tgtGroup : TFHIRStructureMapGroup; var tgtMap : TFHIRStructureMap);
+    function determineTypeFromSourceType(map : TFHIRStructureMap; ruleId : String; source : TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; base : TFHIRObject; types : TArray<String>) : String;
+    procedure executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
+    procedure executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
+    function analyseSource(groupId, ruleId : String; appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource; errorlocation, indent : String) : TFslList<TVariables>;
+    procedure processTarget(ruleId : String; appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; group : TFhirStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; srcVar : String; atRoot: boolean);
+    procedure executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent; dbgContext : TFHIRStructureMapDebugContext);
+    function getParamStringNoNull(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter; message : String) : String;
     function getParamString(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : String;
     function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
+    function checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
+    procedure SetServices(const Value: TTransformerServices);
   public
-    constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices);
+    constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices; factory : TFHIRFactoryR4);
     destructor Destroy; override;
 
-  	property Lib : TFslMap<TFHIRStructureMap> read FLib;
+    property Lib : TFslMap<TFHIRStructureMap> read FLib;
 
     function render(map : TFHIRStructureMap) : String; overload;
     function render(map : TFHIRConceptMap) : String; overload;
-	  function parse(text : String) : TFHIRStructureMap;
+    function parse(text, sourceName : String) : TFHIRStructureMap;
     procedure transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
+
+    property OnDebug : TFHIRStructureMapDebugEvent read FOnDebug write FOnDebug;
+    property Services : TTransformerServices read FServices write SetServices;
   end;
 
 
@@ -144,15 +229,31 @@ implementation
 
 { TFHIRStructureMapUtilities }
 
-constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext;
-  lib: TFslMap<TFHIRStructureMap>; services: TTransformerServices);
+constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext; lib: TFslMap<TFHIRStructureMap>; services: TTransformerServices; factory : TFHIRFactoryR4);
 begin
   inherited Create;
-	FWorker := context;
+  FWorker := context;
   FLib := lib;
   FServices := services;
   fpe := TFHIRPathEngine.Create(context.link, nil);
   fpp := TFHIRPathParser.create;
+  FFactory := factory;
+end;
+
+function TFHIRStructureMapUtilities.debug(dbgContext: TFHIRStructureMapDebugContext; appInfo: TFslObject; map: TFHIRStructureMap; group: TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target: TFhirStructureMapGroupRuleTarget; variables: TVariables): TFHIRStructureMapDebugContext;
+begin
+  if assigned(FOnDebug) then
+  begin
+    result := TFHIRStructureMapDebugContext.create(dbgContext, appInfo, map, group, rule, target, variables);
+    try
+      FOnDebug(self, result);
+      result.link;
+    finally
+      result.Free;
+    end;
+  end
+  else
+    result := nil;
 end;
 
 destructor TFHIRStructureMapUtilities.destroy;
@@ -160,9 +261,81 @@ begin
   FWorker.Free;
   fpe.Free;
   fpp.Free;
-	FLib.Free;
-	FServices.Free;
+  FLib.Free;
+  FServices.Free;
+  FFactory.Free;
   inherited;
+end;
+
+function TFHIRStructureMapUtilities.determineTypeFromSourceType(map: TFHIRStructureMap; ruleId : String; source: TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; base: TFHIRObject; types: TArray<String>): String;
+var
+  tn : String;
+  rm : TFHIRStructureMap;
+  grp, rg : TFhirStructureMapGroup;
+  imp : TFhirCanonical;
+  impMapList : TFslList<TFHIRStructureMap>;
+  impMap : TFHIRStructureMap;
+begin
+  tn := base.fhirType();
+  if (tgt.hasTag('type')) then
+    exit(tgt.Tags['type']);
+
+  rm := nil;
+  rg := nil;
+  for grp in map.groupList do
+  begin
+    if (matchesByType(map, ruleId, grp, tn)) then
+    begin
+      if (rg = nil) then
+      begin
+        rm := map;
+        rg := grp;
+      end
+      else
+        raise EFHIRException.create('Multiple possible matches looking for default rule for "'+tn+'"');
+    end;
+  end;
+  if (rg <> nil) then
+  begin
+    tn := getActualType(rm, rg.inputList[1].type_);
+    tgt.tags['type'] := tn;
+    exit(tn);
+  end;
+
+  for imp in map.importList do
+  begin
+    impMapList := findMatchingMaps(imp.value);
+    try
+      if (impMapList.count = 0) then
+        raise EFHIRException.create('Unable to find map(s) for '+imp.value);
+      for impMap in impMapList do
+      begin
+        if (impMap.url <> map.url) then
+        begin
+          for grp in impMap.groupList do
+          begin
+            if (matchesByType(impMap, ruleId, grp, tn)) then
+            begin
+              if (rg = nil) then
+              begin
+                rm := impMap;
+                rg := grp;
+              end
+              else
+                raise EFHIRException('Multiple possible matches for default rule for "'+tn+'" in '+rm.url+'#'+rg.name+' and '+impMap.url+'#'+grp.name);
+            end;
+          end;
+        end;
+      end;
+    finally
+      impMapList.Free;
+    end;
+  end;
+  if (rg = nil) then
+    raise EFHIRException.create('No matches found for default rule for "'+tn+'" from '+map.url);
+  tn := getActualType(rm, rg.inputList[1].type_);
+  tgt.tags['type'] := tn;
+  exit(tn);
 end;
 
 function TFHIRStructureMapUtilities.render(map : TFHIRStructureMap) : String;
@@ -172,21 +345,21 @@ var
 begin
   b := TStringBuilder.create();
   try
-		b.append('map "');
-		b.append(map.Url);
-		b.append('" = "');
-		b.append(jsonEscape(map.Name, true));
-		b.append('"'#13#10#13#10);
+    b.append('map "');
+    b.append(map.Url);
+    b.append('" = "');
+    b.append(jsonEscape(map.Name, true));
+    b.append('"'#13#10#13#10);
 
     renderContained(b, map);
-		renderUses(b, map);
-		renderImports(b, map);
-		for g in map.groupList do
-			renderGroup(b, g);
-		result := b.toString();
+    renderUses(b, map);
+    renderImports(b, map);
+    for g in map.groupList do
+      renderGroup(b, g);
+    result := b.toString();
   finally
     b.free;
-	end;
+  end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderUses(b : TStringBuilder; map : TFHIRStructureMap);
@@ -197,7 +370,14 @@ begin
   begin
     b.append('uses "');
     b.append(s.url);
-    b.append('" as ');
+    b.append('" ');
+    if (s.alias <> '') then
+    begin
+      b.append('alias ');
+      b.append(s.alias);
+      b.append(' ');
+    end;
+    b.append('as ');
     b.append(CODES_TFhirMapModelModeEnum[s.Mode]);
     b.append(#13#10);
     renderDoco(b, s.Documentation);
@@ -224,36 +404,71 @@ procedure TFHIRStructureMapUtilities.renderGroup(b : TStringBuilder; g : TFHIRSt
 var
   gi : TFHIRStructureMapGroupInput;
   r : TFHIRStructureMapGroupRule;
+  first : boolean;
 begin
-		b.append('group ');
-		b.append(g.Name);
-		if (g.extends <> '') then
+  b.append('group ');
+  b.append(g.Name);
+  b.append('(');
+  first := true;
+  for gi in g.inputList do
+  begin
+    if (first) then
+      first := false
+    else
+      b.append(', ');
+    b.append(CODES_TFhirMapInputModeEnum[gi.Mode]);
+    b.append(' ');
+    b.append(gi.name);
+    if (gi.type_ <> '') then
     begin
-			b.append(' extends ');
-			b.append(g.Extends);
-		end;
-		if (g.Documentation <> '') then
-			renderDoco(b, g.Documentation);
-		b.append(#13#10);
-		for gi in g.inputList do
+      b.append(' : ');
+      b.append(gi.type_);
+    end;
+  end;
+  b.append(')');
+  if (g.extends <> '') then
+  begin
+    b.append(' extends ');
+    b.append(g.Extends);
+  end;
+  case g.typeMode of
+    MapGroupTypeModeTypes: b.append(' <<types>>');
+    MapGroupTypeModeTypeAndTypes: b.append(' <<type+>>');
+  end;
+  b.append(' {');
+  if (g.Documentation <> '') then
+    renderDoco(b, g.Documentation);
+  b.append(#13#10);
+  for r in g.ruleList do
+    renderRule(b, r, 2);
+  b.append('}'#13#10#13#10);
+  end;
+
+function TFHIRStructureMapUtilities.checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
+begin
+  result := (rule.sourceList.count = 1) and (rule.sourceList[0].element <> '') and (rule.sourceList[0].variable <> '') and
+        (rule.targetList.count = 1) and (rule.targetList[0].Variable <> '') and (rule.targetList[0].transform in [MapTransformNull, MapTransformCreate]) and (rule.targetList[0].parameterList.count = 0) and
+        (rule.dependentList.count = 0) and (rule.ruleList.count = 0);
+end;
+
+function matchesname(n : string; source : TFhirStructureMapGroupRuleSourceList) : boolean;
+var
+  s : String;
+begin
+  result := false;
+  if (source.count = 1) and (source[0].element <> '') then
+  begin
+    s := source[0].element;
+    if (n = s) or (n = '"'+s+'"') then
+      result := true
+    else if (source[0].type_ <> '') then
     begin
-			b.append('  input ');
-			b.append(gi.Name);
-			if (gi.type_ <> '') then
-      begin
-				b.append(' : ');
-				b.append(gi.Type_);
-			end;
-			b.append(' as ');
-			b.append(CODES_TFhirMapInputModeEnum[gi.Mode]);
-			b.append(';'#13#10);
-		end;
-		if (g.inputList.Count > 0) then
-			b.append(#13#10);
-		for r in g.ruleList do
-			renderRule(b, r, 2);
-		b.append(#13#10'endgroup'#13#10);
-	end;
+      s := source[0].element+'-'+source[0].type_;
+      if (n = s) or (n = '"'+s+'"') then
+        result := true
+    end;
+  end;
+end;
 
 procedure TFHIRStructureMapUtilities.RenderRule(b : TStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
 var
@@ -261,11 +476,13 @@ var
   rs : TFHIRStructureMapGroupRuleSource;
   rt : TFHIRStructureMapGroupRuleTarget;
   rd : TFHIRStructureMapGroupRuleDependent;
+  ir : TFHIRStructureMapGroupRule;
   rdp : TFHIRString;
+  canBeAbbreviated : boolean;
+  i : integer;
 begin
   b.append(StringPadLeft('', ' ', indent));
-  b.append(r.Name);
-  b.append(': for ');
+	canBeAbbreviated := checkisSimple(r);
   first := true;
   for rs in r.sourceList do
   begin
@@ -273,47 +490,57 @@ begin
       first := false
     else
       b.append(', ');
-    renderSource(b, rs);
+    renderSource(b, rs, canBeAbbreviated);
   end;
-  if (r.targetList.count > 1) then
+	if (r.targetList.count > 1) then
   begin
-    b.append(' make ');
+    b.append(' -> ');
     first := true;
     for rt in r.targetList do
     begin
       if (first) then
         first := false
       else
-        b.append(', ');
-      b.append(#13#10);
-      b.append(StringPadLeft('', ' ', indent+4));
-      renderTarget(b, rt);
+      begin
+        b.append(',');
+        if (RENDER_MULTIPLE_TARGETS_ONELINE) then
+          b.append(' ')
+        else
+        begin
+          b.append('\r\n');
+          b.append(StringPadLeft('', ' ', indent+4));
+        end;
+      end;
+      renderTarget(b, rt, false);
     end;
   end
-  else if (r.targetList.count > 0) then
+  else if (r.targetList.Count > 0) then
   begin
-    b.append(' make ');
-    renderTarget(b, r.TargetList[0]);
+    b.append(' -> ');
+    renderTarget(b, r.targetList[0], canBeAbbreviated);
   end;
-  if (r.ruleList.Count > 0) then
+  if (r.ruleList.count > 0) then
   begin
     b.append(' then {');
-    renderDoco(b, r.Documentation);
+    b.append(#13#10);
+    for ir in r.ruleList do
+      renderRule(b, ir, indent+2);
     b.append(StringPadLeft('', ' ', indent));
-    b.append('}'#13#10);
+	  b.append('}');
   end
   else
   begin
-    if (r.dependentList.Count > 0) then
+    if r.dependentList.Count > 0 then
     begin
-      first := true;
+      b.append(' then ');
+	    first := true;
       for rd in r.dependentList do
       begin
-        if (first) then
+       if (first) then
           first := false
         else
           b.append(', ');
-        b.append(rd.Name);
+        b.append(rd.name);
         b.append('(');
         ifirst := true;
         for rdp in rd.variableList do
@@ -324,30 +551,62 @@ begin
             b.append(', ');
           b.append(rdp.value);
         end;
+        b.append(')');
       end;
     end;
-    renderDoco(b, r.Documentation);
-    b.append(#13#10);
   end;
+  if (r.name <> '') then
+  begin
+    if not matchesName(r.name, r.sourceList) then
+    begin
+      b.append(' "');
+	    b.append(r.name);
+      b.append('"');
+    end;
+  end;
+  b.append(';');
+  renderDoco(b, r.documentation);
+  b.append(#13#10);
 end;
 
-procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
+procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
 begin
   b.append(rs.Context);
-  if (rs.Element <> '') then
+  if (rs.context = '@search') then
+  begin
+    b.append('(');
+    b.append(rs.element);
+    b.append(')');
+  end
+  else if (rs.element <> '') then
   begin
     b.append('.');
-    b.append(rs.Element);
+    b.append(rs.element);
   end;
-//  if (rs.ListMode <> MapListModeNull) then
-//  begin
-//    b.append(' ');
-//    if (rs.ListMode = MapListModeShare) then
-//      b.append('only_one')
-//    else
-//      b.append(CODES_TFhirMapListModeEnum[rs.ListMode]);
-//  end;
-  if (rs.Variable <> '') then
+  if (rs.type_ <> '') then
+  begin
+      b.append(' : ');
+      b.append(rs.type_);
+      if (rs.min <> '') then
+      begin
+        b.append(' ');
+        b.append(rs.Min);
+        b.append('..');
+        b.append(rs.Max);
+      end;
+  end;
+  if (rs.ListMode <> MapSourceListModeNull) then
+  begin
+    b.append(' ');
+    b.append(CODES_TFhirMapSourceListModeEnum[rs.ListMode]);
+  end;
+	if (rs.defaultValue <> nil) then
+  begin
+    b.append(' default ');
+		assert(rs.defaultValue is TFhirString);
+	  b.append('''+jsonEscape((rs.defaultValue as TFhirString).value, true)+''');
+  end;
+  if not canbeAbbreviated and (rs.Variable <> '') then
   begin
     b.append(' as ');
     b.append(rs.Variable);
@@ -362,23 +621,34 @@ begin
     b.append(' check ');
     b.append(rs.Check);
   end;
+  if (rs.logMessage <> '') then
+  begin
+    b.append(' log ');
+    b.append(rs.logMessage);
+  end;
 end;
 
-procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget);
+procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
 var
   first : boolean;
   rtp : TFHIRStructureMapGroupRuleTargetParameter;
-//  lm : TFhirMapListModeEnum;
+  lm : TFhirMapTargetListModeEnum;
 begin
-  b.append(rt.Context);
-  if (rt.Element <> '')  then
+  if (rt.context <> '') then
   begin
-    b.append('.');
-    b.append(rt.Element);
+    if (rt.contextType = MapContextTypeType) then
+      b.append('@');
+    b.append(rt.Context);
+    if (rt.Element <> '')  then
+    begin
+      b.append('.');
+      b.append(rt.Element);
+    end;
   end;
-  if (rt.Transform <> MapTransformNull) then
+  if not canbeAbbreviated and (rt.Transform <> MapTransformNull) then
   begin
-    b.append(' = ');
+    if (rt.context <> '') then
+      b.append(' = ');
     if (rt.Transform = MapTransformCopy) and (rt.parameterList.count = 1) then
     begin
       renderTransformParam(b, rt.ParameterList[0]);
@@ -407,22 +677,22 @@ begin
       b.append(')');
     end;
   end;
-  if (rt.Variable <> '') then
+  if not canbeAbbreviated and (rt.Variable <> '') then
   begin
     b.append(' as ');
     b.append(rt.Variable);
   end;
-//  for lm := low(TFhirMapListModeEnum) to high(TFhirMapListModeEnum) do
-//    if lm in rt.listMode then
-//    begin
-//      b.append(' ');
-//      b.append(CODES_TFhirMapListModeEnum[lm]);
-//      if (lm = MapListModeShare) then
-//      begin
-//        b.append(' ');
-//        b.append(rt.ListRuleId);
-//      end;
-//    end;
+  for lm := low(TFhirMapTargetListModeEnum) to high(TFhirMapTargetListModeEnum) do
+    if lm in rt.listMode then
+    begin
+      b.append(' ');
+      b.append(CODES_TFhirMapTargetListModeEnum[lm]);
+      if (lm = MapTargetListModeShare) then
+      begin
+        b.append(' ');
+        b.append(rt.listRuleId);
+      end;
+    end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
@@ -439,9 +709,9 @@ begin
     b.append((rtp.Value as TFHIRInteger).StringValue)
   else
   begin
-    b.append('"');
+    b.append('''');
     b.append(jsonEscape((rtp.Value as TFHIRString).StringValue, true));
-    b.append('"');
+    b.append('''');
   end;
 end;
 
@@ -452,15 +722,15 @@ begin
   b := TStringBuilder.create();
   try
     renderConceptMap(b, map);
-		result := b.toString();
+    result := b.toString();
   finally
     b.free;
-	end;
+  end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
 const
-  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', ':', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
+  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', '-', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
 var
   prefixes : TFslStringDictionary;
   g : TFhirConceptMapGroup;
@@ -491,7 +761,7 @@ var
     b.append(prefixes[system]);
     b.append(':');
     if code.Contains(' ') then
-      b.append('"'+jsonEscape(code, true)+'"')
+      b.append('''+jsonEscape(code, true)+''')
     else
       b.append(jsonEscape(code, false));
   end;
@@ -604,18 +874,20 @@ begin
   end;
 end;
 
-function TFHIRStructureMapUtilities.parse(text : String) : TFHIRStructureMap;
+function TFHIRStructureMapUtilities.parse(text, sourceName : String) : TFHIRStructureMap;
 var
   lexer : TFHIRPathLexer;
 begin
   lexer := TFHIRPathLexer4.Create(text);
   try
-		if (lexer.done()) then
-			raise EFHIRException.create('Map Input cannot be empty');
-		lexer.skipComments();
-		lexer.token('map');
-		result := TFHIRStructureMap.Create;
+    lexer.SourceName := sourceName;
+    if (lexer.done()) then
+      raise EFHIRException.create('Map Input cannot be empty');
+    lexer.skipComments();
+    lexer.token('map');
+    result := TFHIRStructureMap.Create;
     try
+      result.LocationStart := lexer.CurrentStartLocation;
       result.Url := lexer.readConstant('url');
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
@@ -631,14 +903,13 @@ begin
       while (lexer.hasToken('imports')) do
         parseImports(result, lexer);
 
-      parseGroup(result, lexer);
-
       while (not lexer.done()) do
         parseGroup(result, lexer);
 
       result.text := TFhirNarrative.Create;
       result.text.status := NarrativeStatusGenerated;
       result.text.div_ := TFHIRXhtmlParser.parse('en', xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
+      result.LocationEnd := lexer.CurrentLocation;
       result.link;
     finally
       result.free;
@@ -654,6 +925,7 @@ var
   map : TFhirConceptMap;
   id, n, v : String;
   prefixes : TFslStringDictionary;
+  g : TFhirConceptMapGroup;
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
   vs, vc, vt : String;
@@ -664,15 +936,15 @@ begin
   map := TFhirConceptMap.create;
   result.ContainedList.add(map);
   id := lexer.readConstant('map id');
-  if (not id.startsWith('#')) then
-    raise lexer.error('Concept Map identifier must start with #');
+  if (id.startsWith('#')) then
+    raise lexer.error('Concept Map identifier ('+id+') must start with #');
   map.Id := id.substring(1);
   lexer.token('{');
   lexer.skipComments();
-  //	  lexer.token('source');
-  //	  map.Source := new UriType(lexer.readConstant('source')));
-  //	  lexer.token('target');
-  //	  map.Source := new UriType(lexer.readConstant('target')));
+  //    lexer.token('source');
+  //    map.Source := new UriType(lexer.readConstant('source')));
+  //    lexer.token('target');
+  //    map.Source := new UriType(lexer.readConstant('target')));
   prefixes := TFslStringDictionary.create;
   try
     while (lexer.hasToken('prefix')) do
@@ -683,13 +955,28 @@ begin
       v := lexer.readConstant('prefix url');
       prefixes.add(n, v);
     end;
+    while (lexer.hasToken('unmapped')) do
+    begin
+      lexer.token('unmapped');
+      lexer.token('for');
+      n := readPrefix(prefixes, lexer);
+      g := getGroup(map, n, '');
+      if g.unmapped = nil then
+        g.unmapped := TFhirConceptMapGroupUnmapped.Create;
+      lexer.token('=');
+      v := lexer.take();
+      if (v = 'provided') then
+        g.unmapped.Mode := ConceptmapUnmappedModeProvided
+      else
+        raise lexer.error('Only unmapped mode PROVIDED is supported at this time');
+    end;
     while (not lexer.hasToken('}')) do
     begin
       vs := readPrefix(prefixes, lexer);
       lexer.token(':');
       vc := lexer.take();
       eq := readEquivalence(lexer);
-      if (tgt.Equivalence <> ConceptMapEquivalenceUNMATCHED) then
+      if (eq <> ConceptMapEquivalenceUNMATCHED) then
         vt := readPrefix(prefixes, lexer)
       else
         vt := '';
@@ -728,7 +1015,9 @@ var
   token : string;
 begin
   token := lexer.take();
-  if (token = '=') then
+  if (token = '-') then
+    result := ConceptMapEquivalenceRELATEDTO
+  else if (token = '=') then
     result := ConceptMapEquivalenceEQUAL
   else if (token = '==') then
     result := ConceptMapEquivalenceEQUIVALENT
@@ -750,11 +1039,39 @@ begin
     raise EFHIRException.create('Unknown equivalence token "'+token+'"');
 end;
 
-function TFHIRStructureMapUtilities.fromEnum(s : String; codes : Array of String) : integer;
+function urlMatches(mask, url : String) : boolean;
+begin
+  result := (url.length > mask.length) and url.startsWith(mask.substring(0, mask.indexOf('*'))) and url.endsWith(mask.substring(mask.indexOf('*')+1));
+end;
+
+function TFHIRStructureMapUtilities.findMatchingMaps(value: String): TFslList<TFHIRStructureMap>;
+var
+  sm : TFHIRStructureMap;
+begin
+  result := TFslList<TFHIRStructureMap>.create;
+  try
+    if (value.contains('*')) then
+    begin
+      for sm in FLib.Values do
+        if (urlMatches(value, sm.url)) then
+          result.add(sm.Link);
+    end
+    else
+    begin
+      if FLib.TryGetValue(value, sm) then
+        result.add(sm.Link);
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRStructureMapUtilities.fromEnum(s : String; codes : Array of String; lexer : TFHIRPathLexer) : integer;
 begin
   result := StringArrayIndexOfSensitive(codes, s);
   if result = -1 then
-    raise EFHIRException.create('the code "'+s+'" is not known');
+    raise lexer.error('The code "'+s+'" is not known');
 end;
 
 
@@ -765,8 +1082,13 @@ begin
   lexer.token('uses');
   st := result.StructureList.Append;
   st.Url := lexer.readConstant('url');
+  if lexer.hasToken('alias') then
+  begin
+    lexer.token('alias');
+    st.alias := lexer.take;
+  end;
   lexer.token('as');
-  st.Mode := TFhirMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirMapModelModeEnum));
+  st.Mode := TFhirMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirMapModelModeEnum, lexer));
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     st.Documentation := lexer.take().substring(2).trim();
@@ -776,7 +1098,7 @@ end;
 procedure TFHIRStructureMapUtilities.parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
 begin
   lexer.token('imports');
-  result.ImportList.add(TFHIRUri.Create(lexer.readConstant('url')));
+  result.ImportList.add(TFHIRCanonical.Create(lexer.readConstant('url')));
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     lexer.next();
@@ -786,57 +1108,142 @@ end;
 procedure TFHIRStructureMapUtilities.parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
 var
   group : TFHIRStructureMapGroup;
+  newFmt : boolean;
+  loc : TSourceLocation;
 begin
+  loc := lexer.CurrentStartLocation;
   lexer.token('group');
   group := result.GroupList.Append;
+  group.LocationStart := loc;
+  newFmt := false;
+  if (lexer.hasToken('for')) then
+  begin
+    lexer.token('for');
+    if (lexer.current = 'type') then
+    begin
+      lexer.token('type');
+      lexer.token('+');
+      lexer.token('types');
+      group.TypeMode := MapGroupTypeModeTYPEANDTYPES;
+    end
+    else
+    begin
+      lexer.token('types');
+      group.TypeMode := MapGroupTypeModeTYPES;
+     end;
+  end
+  else
+    group.TypeMode := MapGroupTypeModeNone;
+
   group.Name := lexer.take();
+
+  if (lexer.hasToken('(')) then
+  begin
+    newFmt := true;
+    lexer.take();
+    while (not lexer.hasToken(')')) do
+    begin
+      parseInput(group, lexer, true);
+      if (lexer.hasToken(',')) then
+        lexer.token(',');
+    end;
+    lexer.take();
+  end;
   if (lexer.hasToken('extends')) then
   begin
     lexer.next();
-    group.Extends := lexer.take();
+    group.extends := lexer.take();
   end;
-  lexer.skipComments();
-  while lexer.hasToken('input') do
-    parseInput(group, lexer);
-  while (not lexer.hasToken('endgroup')) do
+  if (newFmt) then
   begin
-    if (lexer.done()) then
-      raise EFHIRException.create('premature termination expecting "endgroup"');
-    parseRule(group.ruleList, lexer);
+    group.TypeMode := MapGroupTypeModeNone;
+    if (lexer.hasToken('<')) then
+    begin
+      lexer.token('<');
+      lexer.token('<');
+      if (lexer.hasToken('types')) then
+      begin
+        lexer.token('types');
+        group.TypeMode := MapGroupTypeModeTYPES;
+      end
+      else
+      begin
+        lexer.token('type');
+        lexer.token('+');
+        group.TypeMode := MapGroupTypeModeTYPEANDTYPES;
+      end;
+      lexer.token('>');
+      lexer.token('>');
+    end;
+    lexer.token('{');
   end;
-  lexer.token('endgroup');
   lexer.skipComments();
+  if (newFmt) then
+  begin
+    while (not lexer.hasToken('}')) do
+    begin
+      if (lexer.done()) then
+        raise lexer.error('premature termination expecting "endgroup"');
+      parseRule(group.ruleList, lexer, true);
+    end;
+  end
+  else
+  begin
+    while (lexer.hasToken('input')) do
+      parseInput(group, lexer, false);
+    while (not lexer.hasToken('endgroup')) do
+    begin
+      if (lexer.done()) then
+        raise lexer.error('premature termination expecting "endgroup"');
+      parseRule(group.ruleList, lexer, false);
+    end;
+  end;
+  lexer.next();
+  if (newFmt and lexer.hasToken(';')) then
+    lexer.next();
+  lexer.skipComments();
+  group.LocationEnd := lexer.CurrentLocation;
 end;
 
-procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer);
+procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer; newFmt : boolean);
 var
   input : TFHIRStructureMapGroupInput;
 begin
-  lexer.token('input');
   input := group.inputList.Append;
+  if (newFmt) then
+    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum, lexer))
+  else
+    lexer.token('input');
   input.Name := lexer.take();
   if (lexer.hasToken(':')) then
   begin
     lexer.token(':');
     input.Type_ := lexer.take();
   end;
-  lexer.token('as');
-  input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum));
-  if (lexer.hasComment()) then
-    input.Documentation := lexer.take().substring(2).trim();
-  lexer.skipToken(';');
-  lexer.skipComments();
+  if (not newFmt) then
+  begin
+    lexer.token('as');
+    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum, lexer));
+    if (lexer.hasComment()) then
+      input.Documentation := lexer.take().substring(2).trim();
+    lexer.skipToken(';');
+    lexer.skipComments();
+  end;
 end;
 
-procedure TFHIRStructureMapUtilities.parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer);
+procedure TFHIRStructureMapUtilities.parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer; newFmt : boolean);
 var
   rule : TFhirStructureMapGroupRule;
   done : boolean;
 begin
   rule := list.Append;
-  rule.Name := lexer.takeDottedToken();
-  lexer.token(':');
-  lexer.token('for');
+  rule.LocationStart := lexer.CurrentStartLocation;
+  if not newFMt then
+  begin
+    rule.Name := lexer.takeDottedToken();
+    lexer.token(':');
+    lexer.token('for');
+  end;
   done := false;
   while (not done) do
   begin
@@ -845,9 +1252,12 @@ begin
     if (not done) then
       lexer.next();
   end;
-  if (lexer.hasToken('make')) then
+  if (newFmt and lexer.hasToken('->')) or (not newFmt and lexer.hasToken('make')) then
   begin
-    lexer.token('make');
+    if newFmt then
+      lexer.token('->')
+    else
+      lexer.token('make');
     done := false;
     while (not done) do
     begin
@@ -870,7 +1280,7 @@ begin
       begin
         if (lexer.done()) then
           raise EFHIRException.create('premature termination expecting "}" in nested group');
-        parseRule(rule.ruleList, lexer);
+        parseRule(rule.ruleList, lexer, newFmt);
       end;
       lexer.token('}');
     end
@@ -888,7 +1298,39 @@ begin
   end
   else if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
+  if (isSimpleSyntax(rule)) then
+  begin
+    rule.sourceList[0].variable := AUTO_VAR_NAME;
+    rule.targetList[0].variable := AUTO_VAR_NAME;
+    rule.targetList[0].transform := MapTransformCreate; // with no parameter - e.g. imply what is to be created
+    // no dependencies - imply what is to be done based on types
+  end;
+  if (newFmt) then
+  begin
+    if (lexer.isConstant(true)) then
+    begin
+      rule.Name := lexer.take();
+      if rule.name.startsWith('"') and rule.name.endsWith('"') then
+      begin
+        rule.name := rule.name.subString(1);
+        rule.name := rule.name.subString(0, rule.name.length - 1);
+      end;
+    end
+    else
+    begin
+      if (rule.sourceList.count <> 1) or (rule.sourceList[0].element = '') then
+        raise lexer.error('Complex rules must have an explicit name');
+      if (rule.sourceList[0].type_ <> '') then
+        rule.Name := rule.sourceList[0].Element+'-'+rule.sourceList[0].type_
+      else
+        rule.Name := rule.sourceList[0].Element;
+    end;
+    lexer.token(';');
+  end;
+  if (lexer.hasComment()) then
+    rule.Documentation := lexer.take().substring(2).trim();
   lexer.skipComments();
+  rule.LocationEnd := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -916,24 +1358,46 @@ var
   node : TFHIRPathExpressionNode;
 begin
   source := rule.sourceList.Append;
+  source.LocationStart := lexer.CurrentStartLocation;
   source.Context := lexer.take();
-  if (lexer.hasToken('.')) then
+
+  if (source.Context = 'search') and lexer.hasToken('(') then
+  begin
+    source.Context := '@search';
+    lexer.take();
+    node := fpp.parse(lexer);
+    source.element := node.toString();
+    source.elementElement.Tag := node;
+    lexer.token(')');
+  end
+  else if (lexer.hasToken('.')) then
   begin
     lexer.token('.');
-    source.Element := lexer.take();
+    source.element := lexer.take();
   end;
-  if StringArrayExistsInsensitive(['first', 'last', 'only_one'], lexer.current) then
-    if (lexer.current = 'only_one') then
+  if (lexer.hasToken(':')) then
+  begin
+    // type and cardinality
+    lexer.token(':');
+    source.type_ := lexer.takeDottedToken();
+    if (not lexer.hasToken(['as', 'first', 'last', 'not_first', 'not_last', 'only_one', 'default'])) then
     begin
-//      source.ListMode := MapListModeShare;
-      lexer.take();
-    end
-    else
-      ; // source.ListMode := TFhirMapListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapListModeEnum));
+      source.Min := lexer.take();
+      lexer.token('..');
+      source.Max := lexer.take();
+    end;
+  end;
+  if (lexer.hasToken('default')) then
+  begin
+    lexer.token('default');
+    source.DefaultValue := TFhirString.create(lexer.readConstant('default value'));
+  end;
+  if (StringArrayExistsSensitive(['first', 'last', 'not_first', 'not_last', 'only_one'], lexer.current)) then
+    source.ListMode := TFhirMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapSourceListModeEnum, lexer));
   if (lexer.hasToken('as')) then
   begin
     lexer.take();
-    source.Variable := lexer.take();
+    source.variable := lexer.take();
   end;
   if (lexer.hasToken('where')) then
   begin
@@ -949,68 +1413,95 @@ begin
     source.check := node.toString();
     source.checkElement.Tag := node;
   end;
+  if (lexer.hasToken('log')) then
+  begin
+    lexer.take();
+    node := fpp.parse(lexer);
+    source.logMessage := node.toString();
+    source.logMessageElement.Tag := node;
+  end;
+  source.LocationEnd := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseTarget(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
 var
   target : TFHIRStructureMapGroupRuleTarget;
   isConstant : boolean;
-  name, id : String;
+  name, id, start : String;
   node : TFHIRPathExpressionNode;
   p : TFhirStructureMapGroupRuleTargetParameter;
 begin
   target := rule.targetList.Append;
-  target.Context := lexer.take();
-  target.contextType := MapContextTypeVariable;
+  target.LocationStart := lexer.CurrentStartLocation;
+  start := lexer.take();
   if (lexer.hasToken('.')) then
   begin
+    target.Context := start;
+    target.ContextType := MapContextTypeVariable;
+    start := '';
     lexer.token('.');
     target.Element := lexer.take();
   end;
+  isConstant := false;
   if (lexer.hasToken('=')) then
   begin
+    if (start <> '') then
+       target.Context := start;
     lexer.token('=');
     isConstant := lexer.isConstant(true);
     name := lexer.take();
-    if (lexer.hasToken('(')) then
+  end
+  else
+   name := start;
+
+  if (name = '(') then
+  begin
+    // inline fluentpath expression
+    target.transform := MapTransformEVALUATE;
+    p := target.parameterList.Append;
+    node := fpp.parse(lexer);
+    p.Tag := node;
+    p.Value := TFHIRString.create(node.toString());
+    lexer.token(')');
+  end
+  else if (lexer.hasToken('(')) then
+  begin
+    target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum, lexer));
+    lexer.token('(');
+    if (target.Transform = MapTransformEVALUATE) then
     begin
-      target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum));
-      lexer.token('(');
-      if (target.Transform = MapTransformEVALUATE) then
-      begin
-        parseParameter(target, lexer);
-        lexer.token(',');
-        p := target.parameterList.Append;
-        node := fpp.parse(lexer);
-        p.tag := node;
-        p.Value := TFHIRString.create(node.toString());
-      end
-      else
-      begin
-        while (not lexer.hasToken(')')) do
-        begin
-          parseParameter(target, lexer);
-          if (not lexer.hasToken(')')) then
-            lexer.token(',');
-        end;
-      end;
-      lexer.token(')');
+      parseParameter(target, lexer);
+      lexer.token(',');
+      p := target.parameterList.Append;
+      node := fpp.parse(lexer);
+      p.tag := node;
+      p.Value := TFHIRString.create(node.toString());
     end
     else
     begin
-      target.Transform := MapTransformCopy;
-      if (not isConstant) then
+      while (not lexer.hasToken(')')) do
       begin
-        id := name;
-        while (lexer.hasToken('.')) do
-        begin
-          id := id + lexer.take() + lexer.take();
-        end;
-        target.parameterList.Append.Value := TFHIRId.create(id);
-      end
-      else
-        target.parameterList.Append.Value := readConstant(name, lexer);
+        parseParameter(target, lexer);
+        if (not lexer.hasToken(')')) then
+          lexer.token(',');
+      end;
     end;
+    lexer.token(')');
+  end
+  else if (name <> '') then
+  begin
+    target.Transform := MapTransformCopy;
+    if (not isConstant) then
+    begin
+      id := name;
+      while (lexer.hasToken('.')) do
+      begin
+        id := id + lexer.take() + lexer.take();
+      end;
+      target.parameterList.Append.Value := TFHIRId.create(id);
+    end
+    else
+      target.parameterList.Append.Value := readConstant(name, lexer);
   end;
   if (lexer.hasToken('as')) then
   begin
@@ -1021,16 +1512,17 @@ begin
   begin
     if (lexer.current = 'share') then
     begin
-//      target.listMode := target.listMode + [MapListModeSHARE];
+      target.listMode := target.listMode + [MapTargetListModeShare];
       lexer.next();
       target.ListRuleId := lexer.take();
     end
     else if (lexer.current = 'first') then
-//      target.listMode := target.listMode + [MapListModeFirst]
+      target.listMode := target.listMode + [MapTargetListModeFirst]
     else
       target.listMode := target.listMode; // + [MapListModeLAST];
     lexer.next();
   end;
+  target.LocationEnd := lexer.CurrentLocation;
 end;
 
 
@@ -1060,74 +1552,267 @@ end;
 procedure TFHIRStructureMapUtilities.transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
 var
   vars : TVariables;
+  dbg : TFHIRStructureMapDebugContext;
 begin
+  log('Start Transform '+map.Url);
   vars := TVariables.create;
   try
     vars.add(vmINPUT, 'src', source.Link);
-    vars.add(vmOUTPUT, 'tgt', target.Link);
-
-    executeGroup('', appInfo, map, vars, map.GroupList[0]);
+    if (target <> nil) then
+      vars.add(vmOUTPUT, 'tgt', target.Link);
+    dbg := debug(nil, appInfo, map, nil, nil, nil, vars);
+    try
+      executeGroup('', appInfo, map, vars, map.GroupList[0], true, dbg);
+    finally
+      dbg.free;
+    end;
+//    if target is TFHIRMMElement then
+//      (target as TFHIRMMElement).sort;
   finally
     vars.Free;
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
+procedure TFHIRStructureMapUtilities.executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
 var
   r : TFHIRStructureMapGroupRule;
+  rg : TFHIRStructureMapGroup;
+  rm  : TFHIRStructureMap;
+  dbg : TFHIRStructureMapDebugContext;
 begin
-  log(indent+'Group : '+group.Name);
-  // todo: extends
-  // todo: check inputs
-  for r in group.ruleList do
-    executeRule(indent+'  ', appInfo, map, vars, group, r);
+  log(indent+'Group : '+group.Name+'; vars = '+vars.summary);
+  dbg := debug(dbgContext, appInfo, map, group, nil, nil, vars);
+  try
+    // todo: check inputs
+    if (group.extends <> '') then
+    begin
+      resolveGroupReference(map, group, group.extendsElement, rg, rm);
+      executeGroup(indent+' ', appInfo, rm, vars, rg, false, dbg);
+    end;
+
+    for r in group.ruleList do
+      executeRule(indent+'  ', appInfo, map, vars, group, r, atRoot, dbg);
+  finally
+    dbg.free;
+  end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
+procedure TFHIRStructureMapUtilities.executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; atRoot : boolean; dbgContext : TFHIRStructureMapDebugContext);
 var
-  srcVars, v : TVariables;
+  srcVars, v, vdef : TVariables;
   sources : TFslList<TVariables>;
   t : TFHIRStructureMapGroupRuleTarget;
   childrule : TFHIRStructureMapGroupRule;
   dependent : TFHIRStructureMapGroupRuleDependent;
+  src, tgt : TFHIRObject;
+  srcType, tgtType : String;
+  rg : TFHIRStructureMapGroup;
+  rm  : TFHIRStructureMap;
+  dbg1, dbg2 : TFHIRStructureMapDebugContext;
 begin
-  log(indent+'rule : '+rule.Name);
+  log(indent+'rule : "'+rule.Name+'"; vars = '+vars.summary);
   srcVars := vars.copy();
   try
     if (rule.sourceList.count <> 1) then
-      raise EFHIRException.create('not handled yet');
-    sources := analyseSource(appInfo, srcVars, rule.sourceList[0]);
+      raise EFHIRException.create('Rule '+group.name+' not handled yet');
+    dbg1 := debug(dbgContext, appInfo, map, group, rule, nil, vars);
     try
-      if (sources <> nil) then
-      begin
-        for v in sources do
+      sources := analyseSource(group.name, rule.name, appInfo, srcVars, rule.sourceList[0], map.url, indent);
+      try
+        if (sources <> nil) then
         begin
-          for t in rule.TargetList do
-            processTarget(appInfo, v, map, t);
-          if (rule.ruleList.Count > 0) then
+          for v in sources do
           begin
-            for childrule in rule.ruleList do
-              executeRule(indent +'  ', appInfo, map, v, group, childrule);
-          end
-          else if (rule.dependentList.Count > 0) then
-          begin
-            for dependent in rule.dependentList do
-              executeDependency(indent+'  ', appInfo, map, v, group, dependent);
+            for t in rule.TargetList do
+            begin
+              dbg2 := debug(dbg1, appInfo, map, group, rule, t, v);
+              try
+                if rule.sourceList.Count = 1 then
+                  processTarget(rule.name, appInfo, v, map, group, t, rule.sourceList[0].variable, atRoot)
+                else
+                  processTarget(rule.name, appInfo, v, map, group, t, '', atRoot);
+              finally
+                dbg2.Free;
+              end;
+            end;
+
+            if (rule.ruleList.Count > 0) then
+            begin
+              for childrule in rule.ruleList do
+                executeRule(indent +'  ', appInfo, map, v, group, childrule, false, dbg1);
+            end
+            else if (rule.dependentList.Count > 0) then
+            begin
+              for dependent in rule.dependentList do
+                executeDependency(indent+'  ', appInfo, map, v, group, dependent, dbg1);
+            end
+            else if (rule.sourceList.count = 1) and (rule.sourceList[0].variable <> '') and (rule.targetList.count = 1) and
+               (rule.targetList[0].variable <> '') and (rule.targetList[0].transform = MapTransformCreate) and (not rule.targetList[0].hasParameterList) then
+            begin
+              // simple inferred, map by type
+              src := v.get(vmINPUT, rule.sourceList[0].variable);
+              if (src = nil) then
+                raise Exception.Create('No source at rule '+map.url+'#'+group.name+'.'+rule.name);
+              tgt := v.get(vmOUTPUT, rule.targetList[0].variable);
+              if (tgt = nil) then
+                raise Exception.Create('No target at rule '+map.url+'#'+group.name+'.'+rule.name);
+              srcType := src.fhirType();
+              tgtType := tgt.fhirType();
+              resolveGroupByTypes(map, rule.name, group, rule, srcType, tgtType, rg, rm);
+              vdef := TVariables.create;
+              try
+                vdef.add(vmINPUT, rg.inputList[0].name, src.link);
+                vdef.add(vmOUTPUT, rg.inputList[1].name, tgt.link);
+                executeGroup(indent+'  ', appInfo, rm, vdef, rg, false, dbg1);
+              finally
+                vdef.Free;
+              end;
+            end;
           end;
         end;
+      finally
+        sources.Free;
       end;
     finally
-      sources.Free;
+      dbg1.Free;
     end;
   finally
     srcVars.Free;
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
+procedure TFHIRStructureMapUtilities.resolveGroupByTypes(map: TFHIRStructureMap; ruleid: String; source: TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule; srcType, tgtType: String; var tgtGroup: TFHIRStructureMapGroup; var tgtMap: TFHIRStructureMap);
 var
-  targetMap, impMap : TFHIRStructureMap;
-  target, grp : TFHIRStructureMapGroup;
+  grp : TFHIRStructureMapGroup;
+  imp : TFhirCanonical;
+  impMapList : TFslList<TFHIRStructureMap>;
+  impMap : TFHIRStructureMap;
+begin
+  tgtMap := nil;
+  tgtGroup := nil;
+  for grp in map.groupList do
+  begin
+    if (matchesByType(map, ruleId, grp, srcType, tgtType)) then
+    begin
+      if (tgtMap = nil) then
+      begin
+          tgtMap := map;
+          tgtGroup := grp;
+      end
+      else
+        raise EFHIRException.create('Multiple possible matches looking for rule for "'+srcType+'"/"'+tgtType+'", from rule "'+ruleid+'"');
+    end;
+    if (tgtMap <> nil) then
+      exit;
+  end;
+
+  for imp in map.importList do
+  begin
+    impMapList := findMatchingMaps(imp.value);
+    try
+      if (impMapList.count = 0) then
+        raise EFHIRException('Unable to find map(s) for '+imp.value);
+      for impMap in impMapList do
+      begin
+        if (impMap.url <> map.url) then
+        begin
+          for grp in impMap.groupList do
+          begin
+            if (matchesByType(impMap, ruleId, grp, srcType, tgtType)) then
+              if (tgtMap = nil) then
+              begin
+                tgtMap := impMap;
+                tgtGroup := grp;
+              end
+              else
+                raise EFHIRException.create('Multiple possible matches for rule for "'+srcType+'"/"'+tgtType+'" in '+tgtMap.url+' and '+impMap.url+', from rule "'+ruleid+'"');
+          end;
+        end;
+      end;
+    finally
+      impMapList.Free;
+    end;
+  end;
+  if (tgtMap = nil) then
+      raise EFHIRException.create('No matches found for rule for "'+srcType+'" to "'+tgtType+'" from '+map.url+', from rule "'+ruleid+'"');
+end;
+
+procedure TFHIRStructureMapUtilities.resolveGroupReference(map : TFHIRStructureMap; source : TFHIRStructureMapGroup; name : TFhirId; var tgtGroup : TFHIRStructureMapGroup; var tgtMap : TFHIRStructureMap);
+var
+  grp : TFHIRStructureMapGroup;
+  imp : TFhirCanonical;
+  impMapList : TFslList<TFHIRStructureMap>;
+  impMap : TFHIRStructureMap;
+begin
+  if name.Tag is TResolvedGroup then
+  begin
+    tgtGroup := (name.Tag as TResolvedGroup).FGroup;
+    tgtMap := (name.Tag as TResolvedGroup).FMap;
+    exit;
+  end;
+
+  tgtGroup := nil;
+  tgtMap := nil;
+
+  for grp in map.groupList do
+  begin
+    if (grp.name = name.value) then
+    begin
+      if (tgtMap = nil) then
+      begin
+        tgtGroup := grp;
+        tgtMap := map;
+      end
+      else
+        raise EFHIRException.Create('Multiple possible matches for rule "'+name.value+'"');
+    end;
+  end;
+  if (tgtGroup <> nil) then
+  begin
+ //   name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
+    exit;
+  end;
+
+  for imp in map.importList do
+  begin
+    impMapList := findMatchingMaps(imp.value);
+    try
+      if (impMapList.count = 0) then
+        raise EFHIRException.create('Unable to find map(s) for '+imp.value);
+      for impMap in impMapList do
+      begin
+        if (impMap.url <> map.url) then
+        begin
+          for grp in impMap.groupList do
+          begin
+            if (grp.name = name.value) then
+            begin
+              if (tgtMap = nil) then
+              begin
+                tgtMap := impMap;
+                tgtGroup := grp;
+              end
+              else
+                raise EFHIRException.create('Multiple possible matches for rule group "'+name.value+'" in '+
+                 tgtMap.url+'#'+tgtGroup.Name+' and '+
+                 impMap.url+'#'+grp.name);
+            end;
+          end;
+        end;
+      end;
+    finally
+      impMapList.free;
+    end;
+  end;
+  if (tgtGroup = nil) then
+    raise EFHIRException.create('No matches found for rule "'+name.value+'". Reference found in '+map.url);
+//  name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
+end;
+
+procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent; dbgContext : TFHIRStructureMapDebugContext);
+var
+  targetMap : TFHIRStructureMap;
+  target : TFHIRStructureMapGroup;
   imp : TFHIRUri;
   v : TVariables;
   i : integer;
@@ -1136,43 +1821,7 @@ var
   mode : TVariableMode;
   vv : TFHIRObject;
 begin
-  targetMap := nil;
-  target := nil;
-  for grp in map.GroupList do
-  begin
-    if (grp.Name = dependent.Name) then
-    begin
-      if (targetMap = nil) then
-      begin
-        targetMap := map;
-        target := grp;
-      end
-      else
-        raise EFHIRException.create('Multiple possible matches for rule ''+dependent.Name+''');
-    end;
-  end;
-
-  for imp in map.importList do
-  begin
-    if not FLib.containsKey(imp.value) then
-      raise EFHIRException.create('Unable to find map '+imp.Value);
-    impMap := Flib[imp.Value];
-    for grp in impMap.GroupList do
-    begin
-      if (grp.Name = dependent.Name) then
-      begin
-        if (targetMap = nil) then
-        begin
-          targetMap := impMap;
-          target := grp;
-        end
-        else
-          raise EFHIRException.create('Multiple possible matches for rule ''+dependent.Name+''');
-      end;
-    end;
-  end;
-  if (target = nil) then
-    raise EFHIRException.create('No matches found for rule ''+dependent.Name+''');
+  resolveGroupReference(map, group, dependent.nameElement, target, targetMap);
 
   if (target.InputList.count <> dependent.variableList.count) then
     raise EFHIRException.create('Rule ''+dependent.Name+'' has '+Integer.toString(target.InputList.count)+' but the invocation has '+Integer.toString(dependent.variableList.count)+' variables');
@@ -1192,12 +1841,16 @@ begin
         raise EFHIRException.create('Rule ''+dependent.Name+'' '+CODES_TVariableMode[mode]+' variable "'+input.Name+'" has no value');
       v.add(mode, input.Name, vv.Link);
     end;
-    executeGroup(indent+'  ', appInfo, targetMap, v, target);
+    executeGroup(indent+'  ', appInfo, targetMap, v, target, false, dbgContext);
   finally
     v.free;
   end;
 end;
 
+
+function TFHIRStructureMapUtilities.getActualType(map: TFHIRStructureMap; statedType: String): String;
+begin
+end;
 
 procedure TFHIRStructureMapUtilities.getChildrenByName(item : TFHIRObject; name : String; result : TFslList<TFHIRObject>);
 var
@@ -1208,8 +1861,8 @@ begin
   try
     item.ListChildrenByName(name, list);
     for v in list do
-			if (v <> nil) then
-				result.add(v.value.Link);
+      if (v <> nil) then
+        result.add(v.value.Link);
   finally
     list.Free;
   end;
@@ -1229,65 +1882,142 @@ begin
   exit(g);
 end;
 
-function TFHIRStructureMapUtilities.analyseSource(appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TFslList<TVariables>;
+function TFHIRStructureMapUtilities.analyseSource(groupId, ruleId : String; appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource; errorlocation, indent : String) : TFslList<TVariables>;
 var
   b, r : TFHIRObject;
   expr : TFHIRPathExpressionNode;
-  items : TFslList<TFHIRObject>;
+  items, work : TFslList<TFHIRObject>;
+  item : TFHIRObject;
   v : TVariables;
+  search : String;
+  cb : TFslStringBuilder;
 begin
-  b := vars.get(vmINPUT, src.Context);
-  if (b = nil) then
-    raise EFHIRException.create('Unknown input variable '+src.Context);
-
-  if (src.Condition <> '') then
-  begin
-    expr := TFHIRPathExpressionNode(src.conditionElement.tag);
-    if (expr = nil) then
-    begin
-      expr := fpe.parse(src.condition);
-      //        fpe.check(context.appInfo, ??, ??, expr)
-      src.conditionElement.tag := expr;
-    end;
-    if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
-      exit(nil);
-  end;
-
-  if (src.check <> '') then
-  begin
-    expr := TFHIRPathExpressionNode(src.checkElement.tag);
-    if (expr = nil) then
-    begin
-      expr := fpe.parse(src.check);
-      //        fpe.check(context.appInfo, ??, ??, expr)
-      src.checkElement.tag := expr;
-    end;
-    if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
-      raise EFHIRException.create('Check condition failed');
-  end;
-
   items := TFslList<TFHIRObject>.create;
   try
-    if (src.Element = '') then
-      items.add(b.link)
+    if (src.context = '@search') then
+    begin
+      expr := src.contextElement.Tag as TFHIRPathExpressionNode;
+      if (expr = nil) then
+      begin
+        expr := fpe.parse(src.condition);
+        src.contextElement.tag := expr;
+      end;
+      search := fpe.evaluateToString(vars, src.contextElement, expr); // src.contextElement serves as a holder of nothing to ensure that variables are processed correctly
+      work := services.performSearch(appInfo, search);
+      try
+        items.addAll(work);
+      finally
+        work.free;
+      end;
+    end
     else
-      getChildrenByName(b, src.Element, items);
+    begin
+      b := vars.get(vmINPUT, src.Context);
+      if (b = nil) then
+        raise EFHIRException.create('Unknown input variable '+src.context+' in '+errorlocation+'#'+groupId+'.'+ruleId+' (vars = '+vars.summary+')');
+      if (src.element = '') then
+        items.Add(b.Link)
+      else
+      begin
+        getChildrenByName(b, src.element, items);
+        if (items.Empty and (src.defaultValue <> nil)) then
+          items.Add(src.defaultValue.Link);
+      end;
+    end;
+
+    if src.type_ <> '' then
+    begin
+      work := TFslList<TFHIRObject>.create;
+      try
+        for item in items do
+          if (item <> nil) and not item.hasType(src.type_) then
+            work.Add(item.Link);
+        items.RemoveAll(work);
+      finally
+        work.Free;
+      end;
+    end;
+
+    if (src.Condition <> '') then
+    begin
+      expr := TFHIRPathExpressionNode(src.conditionElement.tag);
+      if (expr = nil) then
+      begin
+        expr := fpe.parse(src.condition);
+        src.conditionElement.tag := expr;
+      end;
+      work := TFslList<TFHIRObject>.create;
+      try
+        for item in items do
+          if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
+            work.Add(item.Link);
+        items.RemoveAll(work);
+      finally
+        work.Free;
+      end;
+      if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
+        exit(nil);
+    end;
+
+    if (src.check <> '') then
+    begin
+      expr := TFHIRPathExpressionNode(src.checkElement.tag);
+      if (expr = nil) then
+      begin
+        expr := fpe.parse(src.check);
+        src.checkElement.tag := expr;
+      end;
+      for item in items do
+        if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
+          raise EFHIRException.create('Check condition failed');
+    end;
+
+    if (src.logMessage <> '') then
+    begin
+      expr := TFHIRPathExpressionNode(src.logMessageElement.tag);
+      if (expr = nil) then
+      begin
+        expr := fpe.parse(src.logMessage);
+        src.logMessageElement.tag := expr;
+      end;
+      cb := TFslStringBuilder.Create;
+      try
+        for item in items do
+          cb.CommaAdd(fpe.evaluateToString(vars, item, expr));
+        if (cb.Length > 0) then
+          FServices.log(cb.toString());
+      finally
+        cb.Free;
+      end;
+    end;
+
+		if (src.listMode <> MapSourceListModeNull) and not items.Empty then
+    begin
+		  case src.listMode of
+        MapSourceListModeFirst: if items.Count > 1 then items.DeleteRange(1, items.Count-1);
+        MapSourceListModeNotFirst: items.Delete(0);
+        MapSourceListModeLast: if items.Count > 1 then items.DeleteRange(0, items.Count-2);
+        MapSourceListModeNotLast:  items.Delete(items.Count - 1);
+        MapSourceListModeOnlyOne: if (items.count > 1) then
+            raise EFHIRException.create('Rule "'+ruleId+'": Check condition failed: the collection has more than one item');
+      end;
+    end;
     result := TFslList<TVariables>.create;
     try
-      for r in items do
+      for item in items do
       begin
         v := vars.copy();
         try
-          if (src.Variable <> '') then
-            v.add(vmINPUT, src.variable, r.Link);
-          result.add(v.Link);
+          if (src.variable <> '') then
+            v.add(vmINPUT, src.variable, item.link);
+          result.add(v.link);
         finally
-          v.Free;
+          v.free;
         end;
       end;
-      result.Link;
+  		result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     items.Free;
@@ -1295,53 +2025,99 @@ begin
 end;
 
 
-procedure TFHIRStructureMapUtilities.processTarget(appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
+procedure TFHIRStructureMapUtilities.processTarget(ruleId : String; appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; group : TFhirStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; srcVar : String; atRoot: boolean);
 var
-  dest, v : TFHIRObject;
+  dest, v, v1 : TFHIRObject;
 begin
-  dest := vars.get(vmOUTPUT, tgt.Context);
-  if (dest = nil) then
-    raise EFHIRException.create('target context not known: '+tgt.Context);
-  if (tgt.Element = '') then
-    raise EFHIRException.create('Not supported yet');
+  dest := nil;
+  if tgt.context <> '' then
+  begin
+    dest := vars.get(vmOUTPUT, tgt.Context);
+    if (dest = nil) then
+  		  raise EFHIRException.create('Rule "'+ruleId+'": target context not known: '+tgt.context);
+    if (tgt.element = '') then
+  		  raise EFHIRException.create('Rule "'+ruleId+'": Not supported yet');
+  end;
+
   v := nil;
   try
-    if (tgt.Transform <> MapTransformNull) then
+    if (tgt.transform <> MapTransformNull) then
     begin
-      v := runTransform(appInfo, map, tgt, vars);
-      if (v <> nil) then
-        dest.setProperty(tgt.Element, v.Link);
+      v := runTransform(ruleId, appInfo, map, group, tgt, vars, dest, tgt.element, srcVar, atRoot);
+      if (v <> nil) and (dest <> nil) then
+      begin
+        v1 := dest.setProperty(tgt.element, v.Link).link; // reset v because some implementations may have to rewrite v when setting the value
+        v.Free;
+        v := v1;
+      end
     end
-    else
+    else if (dest <> nil) then
     begin
-      v := dest.createPropertyValue(tgt.Element);
+      v := dest.createPropertyValue(tgt.element);
       dest.setProperty(tgt.element, v.link);
     end;
-    if (tgt.Variable <> '') and (v <> nil) then
+    if (tgt.variable <> '') and (v <> nil) then
       vars.add(vmOUTPUT, tgt.variable, v.Link);
   finally
     v.Free;
   end;
 end;
 
-function TFHIRStructureMapUtilities.runTransform(appInfo : TFslObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
+function TFHIRStructureMapUtilities.runTransform(ruleId : String; appInfo : TFslObject; map : TFHIRStructureMap; group : TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables; dest : TFHIRObject; element, srcVar : String; root : boolean) : TFHIRObject;
 var
-  factory : TFhirFactoryR4;
   expr : TFHIRPathExpressionNode;
   v : TFHIRSelectionList;
-  src, len : String;
-  l : integer;
+  src, len, tn, id : String;
+  i, l : integer;
   b : TFHIRObject;
+  types : TArray<String>;
+  uses_ : TFhirStructureMapStructure;
+  sb : TStringBuilder;
+  cc : TFhirCodeableConcept;
+  c : TFhirCoding;
 begin
   case tgt.Transform of
     MapTransformCreate :
       begin
-        factory := TFhirFactoryR4.Create;
-        try
-          result := factory.makeByName(getParamString(vars, tgt.ParameterList[0]));
-        finally
-          factory.Free;
+      if (tgt.parameterList.isEmpty) then
+      begin
+        // we have to work out the type. First, we see if there is a single type for the target. If there is, we use that
+        types := dest.getTypesForProperty(element).Split(['|']);
+        if (length(types) = 1) and not ('*' = types[0]) and not (types[0] = 'Resource') then
+          tn := types[0]
+        else if (srcVar <> '') then
+          tn := determineTypeFromSourceType(map, ruleId, group, tgt, vars.get(vmINPUT, srcVar), types)
+        else
+          raise EFHIRException.create('Cannot determine type implicitly because there is no single input variable');
+      end
+      else
+        tn := getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString());
+      // ok, now we resolve the type name against the import statements
+      for uses_ in map.structureList do
+      begin
+        if (uses_.mode = MapModelModeTarget) and (uses_.alias = tn) then
+        begin
+          tn := uses_.url;
+          break;
         end;
+      end;
+      if FServices <> nil then
+        result := FServices.createType(appInfo, tn)
+      else
+        result := FFactory.makeByName(tn);
+      try
+        if (result.isResource and (result.fhirType <> 'Parameters')) then
+        begin
+  //	        res.setIdBase(tgt.getParameter().size() > 1 ? getParamString(vars, tgt.getParameter().get(0)) : UUID.randomUUID().toString().toLowerCase());
+          if (Fservices <> nil) then
+            FServices.createResource(appInfo, result, root);
+          if (tgt.HasTag('profile')) then
+            result.tags['profile'] := tgt.tags['profile'];
+        end;
+        result.Link;
+      finally
+        result.Free;
+      end;
       end;
     MapTransformCOPY :
       begin
@@ -1382,11 +2158,25 @@ begin
       end;
     MapTransformCAST :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+      src := getParamString(vars, tgt.parameterList[0]);
+      if (tgt.parameterList.Count = 1) then
+        raise EFHIRException.create('Implicit type parameters on cast not yet supported');
+      tn := getParamString(vars, tgt.parameterList[1]);
+      if (tn = 'string') then
+        result := TFHIRString.create(src)
+      else
+        raise EFHIRException.create('cast to '+tn+' not yet supported');
       end;
     MapTransformAPPEND :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        sb := TStringBuilder.create(getParamString(vars, tgt.parameterList[0]));
+        try
+          for i := 1 to tgt.parameterList.count - 1 do
+            sb.append(getParamString(vars, tgt.parameterList[i]));
+          result := TFHIRString.create(sb.toString());
+        finally
+          sb.free;
+        end;
       end;
     MapTransformTRANSLATE :
       begin
@@ -1394,7 +2184,22 @@ begin
       end;
     MapTransformREFERENCE :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        b := getParam(vars, tgt.parameterList[0]).link;
+        try
+        if (b = nil) then
+          raise EFHIRException.create('Rule "'+ruleId+'": Unable to find parameter '+tgt.parameterList[0].primitiveValue);
+        if not b.isResource then
+          raise EFHIRException.create('Rule "'+ruleId+'": Transform engine cannot point at an element of type '+b.fhirType());
+        id := b.id;
+          if (id = '') then
+          begin
+            id := NewGuidId;
+            b.id := id;
+          end;
+          result := TFHIRReference.create(b.fhirType()+'/'+id);
+        finally
+          b.Free;
+        end;
       end;
     MapTransformDATEOP :
       begin
@@ -1411,12 +2216,47 @@ begin
           result := TFHIRUri.create('urn:uuid:'+TFHIRResource(b).Id)
         else
           raise EFHIRException.create('Transform engine cannot point at an element of type '+b.fhirType());
-      end
+      end;
+    MapTransformCC:
+      begin
+      cc := TFHIRCodeableConcept.Create;
+      try
+        cc.codingList.Add(buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString())));
+        result := cc.Link;
+      finally
+        cc.Free;
+      end;
+      end;
+    MapTransformC:
+      result := buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString()), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString()));
   else
     raise EFHIRException.create('Transform Unknown');
   end;
 end;
 
+function TFHIRStructureMapUtilities.buildCoding(uri, code : String) : TFHIRCoding;
+var
+  display : String;
+begin
+  // if we can get this as a valueSet, we will
+//
+//	  ValidationResult vr = worker.validateCode(system, code, null);
+//	  if (vr != null && vr.getDisplay() != null)
+//	    display = vr.getDisplay();
+  result := TFhirCoding.Create(uri, code);
+  try
+    result.display := display;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TFHIRStructureMapUtilities.SetServices(const Value: TTransformerServices);
+begin
+  FServices.Free;
+  FServices := Value;
+end;
 
 function TFHIRStructureMapUtilities.getParamString(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : String;
 var
@@ -1429,11 +2269,95 @@ begin
     result := b.primitiveValue();
 end;
 
+function TFHIRStructureMapUtilities.getParamStringNoNull(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter; message : String) : String;
+var
+  b : TFHIRObject;
+begin
+  b := getParam(vars, parameter);
+  if (b = nil) then
+    raise EFHIRException.Create('Unable to find a value for '+parameter.toString()+'. Context: '+message);
+  if not b.hasPrimitiveValue() then
+    raise EFHIRException.Create('Found a value for '+parameter.toString()+', but it has a type of '+b.fhirType()+' and cannot be treated as a string. Context: '+message);
+  result := b.primitiveValue();
+end;
+
+function TFHIRStructureMapUtilities.isSimpleSyntax(rule: TFhirStructureMapGroupRule): boolean;
+begin
+  result := (rule.sourceList.count = 1) and (rule.sourceList[0].context <> '') and (rule.sourceList[0].element <> '') and (rule.sourceList[0].variable = '') and
+        (rule.targetList.count = 1) and (rule.targetList[0].Context <> '') and (rule.targetList[0].Element <> '') and (rule.targetList[0].Variable = '') and (rule.targetList[0].parameterList.count = 0)
+        and (rule.dependentList.count = 0) and (rule.ruleList.count = 0);
+end;
+
 procedure TFHIRStructureMapUtilities.log(s: String);
 begin
   if FServices <> nil then
     FServices.log(s);
 end;
+
+function TFHIRStructureMapUtilities.matchesByType(map: TFHIRStructureMap; ruleId : String; grp: TFHIRStructureMapGroup; tnSrc, tnTgt: String): boolean;
+begin
+  if (grp.typeMode in [MapGroupTypeModeNone, MapGroupTypeModeNull]) then
+    exit(false);
+  if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> MapInputModeSource) or (grp.inputList[1].mode <> MapInputModeTarget) then
+    exit(false);
+  if (grp.inputList[0].type_ = '') or (grp.inputList[1].type_ = '') then
+    exit(false);
+  result := matchesType(map, tnSrc, grp.inputList[0].type_) and matchesType(map, tnTgt, grp.inputList[1].type_);
+end;
+
+function TFHIRStructureMapUtilities.matchesByType(map: TFHIRStructureMap; ruleId: String; grp: TFHIRStructureMapGroup; tn: String): boolean;
+begin
+  if (grp.typeMode <> MapGroupTypeModeTypeAndTypes) then
+    exit(false);
+  if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> MapInputModeSource) or (grp.inputList[1].mode <> MapInputModeTarget) then
+    exit(false);
+  result := matchesType(map, tn, grp.inputList[0].type_);
+end;
+
+function TFHIRStructureMapUtilities.matchesType(map : TFHIRStructureMap; actualType, statedType : String): boolean;
+var
+  imp : TFhirStructureMapStructure;
+  sd : TFhirStructureDefinition;
+begin
+  // check the aliases
+  for imp in map.structureList do
+  begin
+    if (imp.alias <> '') and (statedType = imp.alias) then
+    begin
+      sd := FWorker.fetchResource(frtStructureDefinition, imp.url) as TFhirStructureDefinition;
+      try
+        if (sd <> nil) then
+          statedType := sd.type_;
+        break;
+      finally
+        sd.Free;
+      end;
+    end;
+  end;
+
+  if (isAbsoluteUrl(actualType)) then
+  begin
+    sd := FWorker.fetchResource(frtStructureDefinition, actualType) as TFhirStructureDefinition;
+    try
+      if (sd <> nil) then
+        actualType := sd.type_;
+    finally
+      sd.Free;
+    end;
+  end;
+  if (isAbsoluteUrl(statedType)) then
+  begin
+    sd := FWorker.fetchResource(frtStructureDefinition, statedType) as TFhirStructureDefinition;
+    try
+      if (sd <> nil) then
+        statedType := sd.type_;
+    finally
+      sd.Free;
+    end;
+  end;
+  result := actualType = statedType;
+end;
+
 
 function TFHIRStructureMapUtilities.getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
 var
@@ -1504,7 +2428,7 @@ begin
 
     if (conceptMapUrl.equals('http://hl7.org/fhir/ConceptMap/special-oid2uri')) then
     begin
-      uri := FServices.oid2Uri(src.Code);
+      uri := FWorker.oid2Uri(src.Code);
       if (uri = '') then
         uri := 'urn:oid:'+src.Code;
       if ('uri'.equals(fieldToReturn)) then
@@ -1520,82 +2444,86 @@ begin
         for r in map.ContainedList do
         begin
           if (r is TFHIRConceptMap) and (TFHIRConceptMap(r).Id = conceptMapUrl.substring(1)) then
-            cmap := TFHIRConceptMap(r);
+            cmap := TFHIRConceptMap(r).Link;
         end;
       end
       else
         cmap := TFhirConceptMap(FWorker.fetchResource(frtConceptMap, conceptMapUrl));
-      outcome := nil;
       try
-        done := false;
-        message := '';
-        if (cmap = nil) then
-        begin
-          if (FServices = nil) then
-            message := 'No map found for '+conceptMapUrl
-          else
+        outcome := nil;
+        try
+          done := false;
+          message := '';
+          if (cmap = nil) then
           begin
-            outcome := FServices.translate(appInfo, src, conceptMapUrl);
-            done := true;
-          end;
-        end
-        else
-        begin
-          list := TFslList<TFhirConceptMapGroupElement>.create;
-          try
-            for g in cmap.GroupList do
-              for e in g.ElementList do
-              begin
-                if (src.System = '') and (src.code = e.code) then
-                  list.add(e.Link)
-                else if (src.system <> '') and (src.System = g.source) and (src.code = e.code) then
-                  list.add(e.Link);
-              end;
-            if (list.count = 0) then
-              done := true
-            else if (list[0].TargetList.count = 0) then
-              message := 'Concept map '+conceptMapUrl+' found no translation for '+src.code
+            if (FServices = nil) then
+              message := 'No map found for '+conceptMapUrl
             else
             begin
-              for tgt in list[0].TargetList do
-              begin
-                if (tgt.equivalence in [ConceptMapEquivalenceEQUAL, ConceptMapEquivalenceEQUIVALENT, ConceptMapEquivalenceWIDER]) then
+              outcome := FServices.translate(appInfo, src, conceptMapUrl);
+              done := true;
+            end;
+          end
+          else
+          begin
+            list := TFslList<TFhirConceptMapGroupElement>.create;
+            try
+              for g in cmap.GroupList do
+                for e in g.ElementList do
                 begin
-                  if (done) then
+                  if (src.System = '') and (src.code = e.code) then
+                    list.add(e.Link)
+                  else if (src.system <> '') and (src.System = g.source) and (src.code = e.code) then
+                    list.add(e.Link);
+                end;
+              if (list.count = 0) then
+                done := true
+              else if (list[0].TargetList.count = 0) then
+                message := 'Concept map '+conceptMapUrl+' found no translation for '+src.code
+              else
+              begin
+                for tgt in list[0].TargetList do
+                begin
+                  if (tgt.equivalence in [ConceptMapEquivalenceEQUAL, ConceptMapEquivalenceEQUIVALENT, ConceptMapEquivalenceWIDER]) then
                   begin
-                    message := 'Concept map '+conceptMapUrl+' found multiple matches for '+src.code;
-                    done := false;
+                    if (done) then
+                    begin
+                      message := 'Concept map '+conceptMapUrl+' found multiple matches for '+src.code;
+                      done := false;
+                    end
+                    else
+                    begin
+                      done := true;
+                      outcome := TFHIRCoding.Create;
+                      outcome.code := tgt.code;
+                      outcome.system := g.Target;
+                    end;
                   end
-                  else
+                  else if (tgt.equivalence = ConceptMapEquivalenceUNMATCHED) then
                   begin
                     done := true;
-                    outcome := TFHIRCoding.Create;
-                    outcome.code := tgt.code;
-                    outcome.system := g.Target;
                   end;
-                end
-                else if (tgt.equivalence = ConceptMapEquivalenceUNMATCHED) then
-                begin
-                  done := true;
                 end;
+                if (not done) then
+                  message := 'Concept map '+conceptMapUrl+' found no usable translation for '+src.code;
               end;
-              if (not done) then
-                message := 'Concept map '+conceptMapUrl+' found no usable translation for '+src.code;
+            finally
+              list.Free;
             end;
-          finally
-            list.Free;
           end;
+          if (not done) then
+            raise EFHIRException.create(message);
+          if (outcome = nil) then
+            result := nil
+          else if ('code' = fieldToReturn) then
+            result := TFHIRCode.create(outcome.code)
+          else
+            result := outcome.Link;
+        finally
+          outcome.Free;
         end;
-        if (not done) then
-          raise EFHIRException.create(message);
-        if (outcome = nil) then
-          result := nil
-        else if ('code' = fieldToReturn) then
-          result := TFHIRCode.create(outcome.code)
-        else
-          result := outcome.Link;
       finally
-        outcome.Free;
+        cmap.Free;
       end;
     end;
   finally
@@ -1624,6 +2552,18 @@ end;
 function TVariable.link: TVariable;
 begin
   result := TVariable(inherited link);
+end;
+
+function TVariable.summary(mode : boolean = false): string;
+begin
+  if Fobj = nil then
+    result := name+': null'
+  else if Fobj is TFHIRPrimitiveType then
+    result := name+': "'+(Fobj as TFHIRPrimitiveType).StringValue+'"'
+  else
+    result := name+': ('+FObj.fhirType()+')';
+  if mode then
+    result := CODES_TVariableMode[Fmode]+': ' +result;
 end;
 
 { TVariables }
@@ -1678,7 +2618,39 @@ begin
   result := nil;
   for v in list do
     if (v.mode = mode) and (v.name = name) then
-			exit(v.obj);
+      exit(v.obj);
+end;
+
+function TVariables.GetCount: Integer;
+begin
+  result := list.Count;
+end;
+
+function TVariables.GetSummary: string;
+var
+  s, t : TFslStringBuilder;
+  v : TVariable;
+begin
+  s := TFslStringBuilder.Create;
+  t := TFslStringBuilder.Create;
+  try
+    for v in list do
+    begin
+      if (v.mode = vmINPUT) then
+        s.CommaAdd(v.summary())
+      else
+        t.CommaAdd(v.summary());
+    end;
+    result := 'source variables ['+s.toString()+'], target variables ['+t.toString()+']';
+  finally
+    s.Free;
+    t.Free;
+  end;
+end;
+
+function TVariables.GetVariable(index: integer): TVariable;
+begin
+  result := list[index];
 end;
 
 function TVariables.link: TVariables;
@@ -1686,6 +2658,113 @@ begin
   result := TVariables(inherited Link);
 end;
 
+{ TTransformerServices }
+
+function TTransformerServices.link: TTransformerServices;
+begin
+  result := TTransformerServices(inherited link);
+end;
+
+{ TResolvedGroup }
+
+constructor TResolvedGroup.Create(map: TFhirStructureMap; group: TFhirStructureMapGroup);
+begin
+  inherited create;
+  FMap := map;
+  FGroup := group;
+end;
+
+destructor TResolvedGroup.Destroy;
+begin
+  FMap.Free;
+  FGroup.Free;
+  inherited;
+end;
+
+{ TFHIRStructureMapDebugContext }
+
+constructor TFHIRStructureMapDebugContext.create(parent: TFHIRStructureMapDebugContext; appInfo: TFslObject; map: TFHIRStructureMap; group: TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target: TFhirStructureMapGroupRuleTarget; variables: TVariables);
+begin
+  inherited create;
+  FParent := parent.link;
+  FRule := rule.Link;
+  FMap := map.link;
+  FAppInfo := appInfo.link;
+  FTarget := target.link;
+  FVariables := variables.link;
+  FGroup := group.link;
+  if FParent = nil then
+    status := dsRunToBreakpoint
+  else case FParent.status of
+    dsRunToBreakpoint: status := dsRunToBreakpoint;
+    dsStepOut: status := dsRunToBreakpoint;
+    dsStepOver: status := dsRunToBreakpoint;
+    dsStepIn: status := dsStepOver;
+  end;
+end;
+
+function TFHIRStructureMapDebugContext.getdescription: String;
+begin
+  if target <> nil then
+    result := map.url+'#'+group.name+'.'+rule.name+'.[target]'
+  else if rule <> nil then
+    result := map.url+'#'+group.name+'.'+rule.name
+  else if group <> nil then
+    result := map.url+'#'+group.name
+  else
+    result := map.url;
+end;
+
+function TFHIRStructureMapDebugContext.GetFocus: TFHIRObject;
+begin
+  if target <> nil then
+    result := FTarget
+  else if rule <> nil then
+    result := rule
+  else if group <> nil then
+    result := group
+  else
+    result := map;
+end;
+
+function TFHIRStructureMapDebugContext.GetLine: integer;
+begin
+  if target <> nil then
+    result := FTarget.LocationStart.line
+  else if rule <> nil then
+    result := rule.LocationStart.line
+  else if group <> nil then
+    result := group.LocationStart.line
+  else
+    result := map.LocationStart.line;
+end;
+
+function TFHIRStructureMapDebugContext.GetName: String;
+begin
+  if rule <> nil then
+    result := group.name +'.'+rule.name
+  else if group <> nil then
+    result := group.name
+  else
+    result := map.name;
+end;
+
+destructor TFHIRStructureMapDebugContext.Destroy;
+begin
+  FRule.Free;
+  FMap.Free;
+  FAppInfo.Free;
+  FTarget.Free;
+  FVariables.Free;
+  FGroup.Free;
+  FParent.Free;
+  inherited;
+end;
+
+function TFHIRStructureMapDebugContext.link: TFHIRStructureMapDebugContext;
+begin
+  result := TFHIRStructureMapDebugContext(inherited link);
+end;
 
 end.
 
