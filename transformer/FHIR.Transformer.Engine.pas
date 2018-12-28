@@ -12,9 +12,11 @@ uses
 type
   TConversionEngine = class;
 
+  TCheckBreakpointEvent = function (line : integer) : boolean of Object;
   TConversionEngineFetchSourceEvent = function (sender : TConversionEngine; f : TWorkspaceFile) : TStream of object;
   TConversionEngineStatusEvent = procedure (sender : TConversionEngine; message : String) of object;
   TConversionEngineLogEvent = procedure (sender : TConversionEngine; message : String) of object;
+  TConversionEngineCompiledEvent = procedure (sender : TConversionEngine; f : TWorkspaceFile; checkBreakpointProc : TCheckBreakpointEvent) of object;
 
   TLocalTransformerServices = class (TTransformerServices)
   private
@@ -35,12 +37,23 @@ type
     procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); override;
   end;
 
+  TMapBreakpointResolver = class (TFslObject)
+  private
+    FMap : TFhirStructureMap;
+    function checkRule(rule : TFhirStructureMapGroupRule; line : integer) : boolean;
+  public
+    constructor Create(map : TFhirStructureMap);
+    destructor Destroy; override;
+    function checkBreakpoint(line : integer) : boolean;
+  end;
+
   TConversionEngine = class abstract (TFslObject)
   private
     FSource: TWorkspaceFile;
     FOnWantSource: TConversionEngineFetchSourceEvent;
     FOnStatus: TConversionEngineStatusEvent;
     FOnLog: TConversionEngineLogEvent;
+    FOnCompiled: TConversionEngineCompiledEvent;
     FWorkspace: TWorkspace;
     FMap: TWorkspaceFile;
     FCache: TResourceMemoryCache;
@@ -69,6 +82,7 @@ type
     property OnStatus : TConversionEngineStatusEvent read FOnStatus write FOnStatus;
     property OnLog : TConversionEngineLogEvent read FOnLog write FOnLog;
     property OnTransformDebug : TFHIRStructureMapDebugEvent read FOnTransformDebug write FOnTransformDebug;
+    property OnCompiled: TConversionEngineCompiledEvent read FOnCompiled write FOnCompiled;
 
     property Context : TFHIRTransformerContext read FContext;
 
@@ -171,13 +185,27 @@ var
   map : TFHIRStructureMap;
   elem : TFHIRMMElement;
   services : TLocalTransformerServices;
+  mbpr : TMapBreakpointResolver;
 begin
   log('Parse the Workspace Maps');
   for f in FWorkspace.maps do
   begin
     map := parseMap(f);
-    f.parsed := map;
-    FMapUtils.Lib.Add(map.url, map.Link);
+    try
+      f.parsed := map;
+      FMapUtils.Lib.Add(map.url, map.Link);
+      if assigned(FOnCompiled) then
+      begin
+        mbpr := TMapbreakpointResolver.create(map.Link);
+        try
+          FOnCompiled(self, f, mbpr.checkBreakPoint);
+        finally
+          mbpr.free;
+        end;
+      end;
+    finally
+      map.free;
+    end;
   end;
   try
     log('Load the CDA Source');
@@ -225,7 +253,7 @@ var
   r : TFhirResource;
 begin
   FFactory := TFHIRFactoryR4.Create;
-  FContext := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
+  FContext := TFHIRTransformerContext.Create(FFactory.link);
   FContext.loadFromCache(FCache);
   FMapUtils := TFHIRStructureMapUtilities.Create(FContext.Link, TFslMap<TFHIRStructureMap>.create, nil, FFactory.link);
 end;
@@ -252,22 +280,27 @@ var
   sd : TFHIRStructureDefinition;
 begin
   sd := FContext.fetchResource(frtStructureDefinition, sdNs(tn)) as TFHIRStructureDefinition;
-  if (sd <> nil) and (sd.kind = StructureDefinitionKindLogical) then
-  begin
-    // result := Manager.build(context, sd);
-    raise Exception.Create('Not Done yet');
-  end
-  else
-  begin
-    if (tn.startsWith('http://hl7.org/fhir/StructureDefinition/')) then
-      tn := tn.substring('http://hl7.org/fhir/StructureDefinition/'.length);
-    result := FFactory.makeByName(tn);
+  try
+    if (sd <> nil) and (sd.kind = StructureDefinitionKindLogical) then
+    begin
+      // result := Manager.build(context, sd);
+      raise Exception.Create('Not Done yet');
+    end
+    else
+    begin
+      if (tn.startsWith('http://hl7.org/fhir/StructureDefinition/')) then
+        tn := tn.substring('http://hl7.org/fhir/StructureDefinition/'.length);
+      result := FFactory.makeByName(tn);
+    end;
+  finally
+    sd.free;
   end;
 end;
 
 destructor TLocalTransformerServices.Destroy;
 begin
   FOutcomes.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -290,6 +323,55 @@ end;
 function TLocalTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
   raise Exception.Create('Not done yet');
+end;
+
+{ TMapBreakpointResolver }
+
+function TMapBreakpointResolver.checkRule(rule: TFhirStructureMapGroupRule; line: integer): boolean;
+var
+  tgt : TFhirStructureMapGroupRuleTarget;
+  r : TFhirStructureMapGroupRule;
+begin
+  result := false;
+  if rule.LocationStart.line = line then
+    exit(true);
+  for tgt in rule.targetList do
+    if tgt.LocationStart.line = line then
+      exit(true);
+  for r in rule.ruleList do
+    if checkRule(r, line) then
+      exit(true);
+end;
+
+constructor TMapBreakpointResolver.Create(map: TFhirStructureMap);
+begin
+  Inherited Create;
+  FMap := map;
+end;
+
+destructor TMapBreakpointResolver.Destroy;
+begin
+  FMap.Free;
+  inherited;
+end;
+
+function TMapBreakpointResolver.checkBreakpoint(line: integer): boolean;
+var
+  grp : TFhirStructureMapGroup;
+  rule : TFhirStructureMapGroupRule;
+begin
+  line := line + 1;
+  result := false;
+  for grp in FMap.groupList do
+  begin
+    if grp.LocationStart.line = line then
+      exit(true);
+    for rule in grp.ruleList do
+    begin
+      if checkRule(rule, line) then
+        exit(true);
+    end;
+  end;
 end;
 
 end.

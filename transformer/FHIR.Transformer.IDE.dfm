@@ -543,6 +543,7 @@ object TransformerForm: TTransformerForm
               Header.Font.Style = []
               Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
               TabOrder = 1
+              OnColumnResize = vtVarDetailsColumnResize
               OnFreeNode = vtVarDetailsFreeNode
               OnGetText = vtVarDetailsGetText
               OnInitChildren = vtVarDetailsInitChildren
@@ -946,7 +947,7 @@ object TransformerForm: TTransformerForm
           TabOrder = 5
           OnClick = btnOpenSourceClick
         end
-        object BitBtn1: TBitBtn
+        object btnRunNoDebug: TBitBtn
           Left = 118
           Top = 118
           Width = 109
@@ -1085,7 +1086,7 @@ object TransformerForm: TTransformerForm
     Left = 25
     Top = 90
     Bitmap = {
-      494C010129008800280110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010129008800300110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2792,7 +2793,7 @@ object TransformerForm: TTransformerForm
         OnClick = mnuPrettyClick
       end
       object mnuDense: TMenuItem
-        Caption = 'Made &Dense'
+        Caption = 'Make &Dense'
         ImageIndex = 31
         OnClick = mnuDenseClick
       end
@@ -2937,6 +2938,7 @@ object TransformerForm: TTransformerForm
   end
   object pmEditor: TPopupMenu
     Images = ImageList1
+    OnPopup = pmEditorPopup
     Left = 97
     Top = 161
     object pmnuCut: TMenuItem

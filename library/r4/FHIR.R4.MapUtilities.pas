@@ -106,6 +106,8 @@ type
     property group : TFhirStructureMapGroup read FGroup;
   end;
 
+  TFHIRStructureMapDebuggingStatus = (dsRunToBreakpoint, dsStepOut, dsStepOver, dsStepIn);
+
   TFHIRStructureMapDebugContext = class (TFslObject)
   private
     FRule: TFhirStructureMapGroupRule;
@@ -115,9 +117,11 @@ type
     FVariables: TVariables;
     FGroup: TFhirStructureMapGroup;
     FParent: TFHIRStructureMapDebugContext;
+    FStatus: TFHIRStructureMapDebuggingStatus;
     function getdescription: String;
     function GetFocus: TFHIRObject;
     function GetName: String;
+    function GetLine: integer;
   public
     constructor create(parent : TFHIRStructureMapDebugContext; appInfo : TFslObject;
        map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget;
@@ -136,6 +140,9 @@ type
     property name : String read GetName;
     property description : String read GetDescription;
     property focus : TFHIRObject read GetFocus;
+    property line : integer read GetLine;
+
+    property status : TFHIRStructureMapDebuggingStatus read FStatus write FStatus;
   end;
 
   TFHIRStructureMapDebugEvent = procedure(sender : TObject; info : TFHIRStructureMapDebugContext) of Object;
@@ -239,8 +246,7 @@ begin
   begin
     result := TFHIRStructureMapDebugContext.create(dbgContext, appInfo, map, group, rule, target, variables);
     try
-      if (group <> nil) then
-        FOnDebug(self, result);
+      FOnDebug(self, result);
       result.link;
     finally
       result.Free;
@@ -257,6 +263,7 @@ begin
   fpp.Free;
   FLib.Free;
   FServices.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -298,26 +305,30 @@ begin
   for imp in map.importList do
   begin
     impMapList := findMatchingMaps(imp.value);
-    if (impMapList.count = 0) then
-      raise EFHIRException.create('Unable to find map(s) for '+imp.value);
-    for impMap in impMapList do
-    begin
-      if (impMap.url <> map.url) then
+    try
+      if (impMapList.count = 0) then
+        raise EFHIRException.create('Unable to find map(s) for '+imp.value);
+      for impMap in impMapList do
       begin
-        for grp in impMap.groupList do
+        if (impMap.url <> map.url) then
         begin
-          if (matchesByType(impMap, ruleId, grp, tn)) then
+          for grp in impMap.groupList do
           begin
-            if (rg = nil) then
+            if (matchesByType(impMap, ruleId, grp, tn)) then
             begin
-              rm := impMap;
-              rg := grp;
-            end
-            else
-              raise EFHIRException('Multiple possible matches for default rule for "'+tn+'" in '+rm.url+'#'+rg.name+' and '+impMap.url+'#'+grp.name);
+              if (rg = nil) then
+              begin
+                rm := impMap;
+                rg := grp;
+              end
+              else
+                raise EFHIRException('Multiple possible matches for default rule for "'+tn+'" in '+rm.url+'#'+rg.name+' and '+impMap.url+'#'+grp.name);
+            end;
           end;
         end;
       end;
+    finally
+      impMapList.Free;
     end;
   end;
   if (rg = nil) then
@@ -1698,24 +1709,28 @@ begin
   for imp in map.importList do
   begin
     impMapList := findMatchingMaps(imp.value);
-    if (impMapList.count = 0) then
-      raise EFHIRException('Unable to find map(s) for '+imp.value);
-    for impMap in impMapList do
-    begin
-      if (impMap.url <> map.url) then
+    try
+      if (impMapList.count = 0) then
+        raise EFHIRException('Unable to find map(s) for '+imp.value);
+      for impMap in impMapList do
       begin
-        for grp in impMap.groupList do
+        if (impMap.url <> map.url) then
         begin
-          if (matchesByType(impMap, ruleId, grp, srcType, tgtType)) then
-            if (tgtMap = nil) then
-            begin
-              tgtMap := impMap;
-              tgtGroup := grp;
-            end
-            else
-              raise EFHIRException.create('Multiple possible matches for rule for "'+srcType+'"/"'+tgtType+'" in '+tgtMap.url+' and '+impMap.url+', from rule "'+ruleid+'"');
+          for grp in impMap.groupList do
+          begin
+            if (matchesByType(impMap, ruleId, grp, srcType, tgtType)) then
+              if (tgtMap = nil) then
+              begin
+                tgtMap := impMap;
+                tgtGroup := grp;
+              end
+              else
+                raise EFHIRException.create('Multiple possible matches for rule for "'+srcType+'"/"'+tgtType+'" in '+tgtMap.url+' and '+impMap.url+', from rule "'+ruleid+'"');
+          end;
         end;
       end;
+    finally
+      impMapList.Free;
     end;
   end;
   if (tgtMap = nil) then
@@ -1754,7 +1769,7 @@ begin
   end;
   if (tgtGroup <> nil) then
   begin
-    name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
+ //   name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
     exit;
   end;
 
@@ -1791,7 +1806,7 @@ begin
   end;
   if (tgtGroup = nil) then
     raise EFHIRException.create('No matches found for rule "'+name.value+'". Reference found in '+map.url);
-  name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
+//  name.Tag := TResolvedGroup.Create(tgtMap.Link, tgtGroup.link);
 end;
 
 procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent; dbgContext : TFHIRStructureMapDebugContext);
@@ -2050,7 +2065,6 @@ end;
 
 function TFHIRStructureMapUtilities.runTransform(ruleId : String; appInfo : TFslObject; map : TFHIRStructureMap; group : TFHIRStructureMapGroup; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables; dest : TFHIRObject; element, srcVar : String; root : boolean) : TFHIRObject;
 var
-  factory : TFhirFactoryR4;
   expr : TFHIRPathExpressionNode;
   v : TFHIRSelectionList;
   src, len, tn, id : String;
@@ -2062,166 +2076,161 @@ var
   cc : TFhirCodeableConcept;
   c : TFhirCoding;
 begin
-  factory := TFhirFactoryR4.Create;
-  try
-    case tgt.Transform of
-      MapTransformCreate :
-        begin
-        if (tgt.parameterList.isEmpty) then
-        begin
-          // we have to work out the type. First, we see if there is a single type for the target. If there is, we use that
-          types := dest.getTypesForProperty(element).Split(['|']);
-          if (length(types) = 1) and not ('*' = types[0]) and not (types[0] = 'Resource') then
-            tn := types[0]
-          else if (srcVar <> '') then
-            tn := determineTypeFromSourceType(map, ruleId, group, tgt, vars.get(vmINPUT, srcVar), types)
-          else
-            raise EFHIRException.create('Cannot determine type implicitly because there is no single input variable');
-        end
+  case tgt.Transform of
+    MapTransformCreate :
+      begin
+      if (tgt.parameterList.isEmpty) then
+      begin
+        // we have to work out the type. First, we see if there is a single type for the target. If there is, we use that
+        types := dest.getTypesForProperty(element).Split(['|']);
+        if (length(types) = 1) and not ('*' = types[0]) and not (types[0] = 'Resource') then
+          tn := types[0]
+        else if (srcVar <> '') then
+          tn := determineTypeFromSourceType(map, ruleId, group, tgt, vars.get(vmINPUT, srcVar), types)
         else
-          tn := getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString());
-        // ok, now we resolve the type name against the import statements
-        for uses_ in map.structureList do
+          raise EFHIRException.create('Cannot determine type implicitly because there is no single input variable');
+      end
+      else
+        tn := getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString());
+      // ok, now we resolve the type name against the import statements
+      for uses_ in map.structureList do
+      begin
+        if (uses_.mode = MapModelModeTarget) and (uses_.alias = tn) then
         begin
-          if (uses_.mode = MapModelModeTarget) and (uses_.alias = tn) then
-          begin
-            tn := uses_.url;
-            break;
-          end;
+          tn := uses_.url;
+          break;
         end;
-        if FServices <> nil then
-          result := FServices.createType(appInfo, tn)
-        else
-          result := factory.makeByName(tn);
+      end;
+      if FServices <> nil then
+        result := FServices.createType(appInfo, tn)
+      else
+        result := FFactory.makeByName(tn);
+      try
+        if (result.isResource and (result.fhirType <> 'Parameters')) then
+        begin
+  //	        res.setIdBase(tgt.getParameter().size() > 1 ? getParamString(vars, tgt.getParameter().get(0)) : UUID.randomUUID().toString().toLowerCase());
+          if (Fservices <> nil) then
+            FServices.createResource(appInfo, result, root);
+          if (tgt.HasTag('profile')) then
+            result.tags['profile'] := tgt.tags['profile'];
+        end;
+        result.Link;
+      finally
+        result.Free;
+      end;
+      end;
+    MapTransformCOPY :
+      begin
+        result := getParam(vars, tgt.ParameterList[0]).Link;
+      end;
+    MapTransformEVALUATE :
+      begin
+        expr := tgt.Tag as TFHIRPathExpressionNode;
+        if (expr = nil) then
+        begin
+          expr := fpe.parse(getParamString(vars, tgt.ParameterList[1]));
+          tgt.tag := expr;
+        end;
+        v := fpe.evaluate(nil, nil, getParam(vars, tgt.ParameterList[0]), expr);
         try
-          if (result.isResource and (result.fhirType <> 'Parameters')) then
-          begin
-    //	        res.setIdBase(tgt.getParameter().size() > 1 ? getParamString(vars, tgt.getParameter().get(0)) : UUID.randomUUID().toString().toLowerCase());
-            if (Fservices <> nil) then
-              FServices.createResource(appInfo, result, root);
-            if (tgt.HasTag('profile')) then
-              result.tags['profile'] := tgt.tags['profile'];
-          end;
-          result.Link;
+          if (v.count <> 1) then
+            raise EFHIRException.create('evaluation of '+expr.toString()+' returned '+Integer.toString(v.count)+' objects');
+          result := v[0].value.Link;
         finally
-          result.Free;
+          v.Free;
         end;
-        end;
-      MapTransformCOPY :
+      end;
+    MapTransformTRUNCATE :
+      begin
+        src := getParamString(vars, tgt.ParameterList[0]);
+        len := getParamString(vars, tgt.ParameterList[1]);
+        if (StringIsInteger32(len)) then
         begin
-          result := getParam(vars, tgt.ParameterList[0]).Link;
+          l := StrToInt(len);
+          if (src.length > l) then
+            src := src.substring(0, l);
         end;
-      MapTransformEVALUATE :
-        begin
-          expr := tgt.Tag as TFHIRPathExpressionNode;
-          if (expr = nil) then
-          begin
-            expr := fpe.parse(getParamString(vars, tgt.ParameterList[1]));
-            tgt.tag := expr;
-          end;
-          v := fpe.evaluate(nil, nil, getParam(vars, tgt.ParameterList[0]), expr);
-          try
-            if (v.count <> 1) then
-              raise EFHIRException.create('evaluation of '+expr.toString()+' returned '+Integer.toString(v.count)+' objects');
-            result := v[0].value.Link;
-          finally
-            v.Free;
-          end;
-        end;
-      MapTransformTRUNCATE :
-        begin
-          src := getParamString(vars, tgt.ParameterList[0]);
-          len := getParamString(vars, tgt.ParameterList[1]);
-          if (StringIsInteger32(len)) then
-          begin
-            l := StrToInt(len);
-            if (src.length > l) then
-              src := src.substring(0, l);
-          end;
-          result := TFHIRString(src);
-        end;
-      MapTransformESCAPE :
-        begin
-          raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
-        end;
-      MapTransformCAST :
-        begin
-        src := getParamString(vars, tgt.parameterList[0]);
-        if (tgt.parameterList.Count = 1) then
-          raise EFHIRException.create('Implicit type parameters on cast not yet supported');
-        tn := getParamString(vars, tgt.parameterList[1]);
-        if (tn = 'string') then
-          result := TFHIRString.create(src)
-        else
-          raise EFHIRException.create('cast to '+tn+' not yet supported');
-        end;
-      MapTransformAPPEND :
-        begin
-          sb := TStringBuilder.create(getParamString(vars, tgt.parameterList[0]));
-          try
-            for i := 1 to tgt.parameterList.count - 1 do
-              sb.append(getParamString(vars, tgt.parameterList[i]));
-            result := TFHIRString.create(sb.toString());
-          finally
-            sb.free;
-          end;
-        end;
-      MapTransformTRANSLATE :
-        begin
-          result := translate(appInfo, map, vars, tgt.ParameterList);
-        end;
-      MapTransformREFERENCE :
-        begin
-          b := getParam(vars, tgt.parameterList[0]).link;
-          try
-          if (b = nil) then
-            raise EFHIRException.create('Rule "'+ruleId+'": Unable to find parameter '+tgt.parameterList[0].primitiveValue);
-          if not b.isResource then
-            raise EFHIRException.create('Rule "'+ruleId+'": Transform engine cannot point at an element of type '+b.fhirType());
-          id := b.id;
-            if (id = '') then
-            begin
-              id := NewGuidId;
-              b.id := id;
-            end;
-            result := TFHIRReference.create(b.fhirType()+'/'+id);
-          finally
-            b.Free;
-          end;
-        end;
-      MapTransformDATEOP :
-        begin
-          raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
-        end;
-      MapTransformUUID :
-        begin
-          result := TFHIRId.Create(NewGuidId);
-        end;
-      MapTransformPOINTER :
-        begin
-          b := getParam(vars, tgt.ParameterList[0]);
-          if (b is TFHIRResource) then
-            result := TFHIRUri.create('urn:uuid:'+TFHIRResource(b).Id)
-          else
-            raise EFHIRException.create('Transform engine cannot point at an element of type '+b.fhirType());
-        end;
-      MapTransformCC:
-        begin
-        cc := TFHIRCodeableConcept.Create;
+        result := TFHIRString(src);
+      end;
+    MapTransformESCAPE :
+      begin
+        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+      end;
+    MapTransformCAST :
+      begin
+      src := getParamString(vars, tgt.parameterList[0]);
+      if (tgt.parameterList.Count = 1) then
+        raise EFHIRException.create('Implicit type parameters on cast not yet supported');
+      tn := getParamString(vars, tgt.parameterList[1]);
+      if (tn = 'string') then
+        result := TFHIRString.create(src)
+      else
+        raise EFHIRException.create('cast to '+tn+' not yet supported');
+      end;
+    MapTransformAPPEND :
+      begin
+        sb := TStringBuilder.create(getParamString(vars, tgt.parameterList[0]));
         try
-          cc.codingList.Add(buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString())));
-          result := cc.Link;
+          for i := 1 to tgt.parameterList.count - 1 do
+            sb.append(getParamString(vars, tgt.parameterList[i]));
+          result := TFHIRString.create(sb.toString());
         finally
-          cc.Free;
+          sb.free;
         end;
+      end;
+    MapTransformTRANSLATE :
+      begin
+        result := translate(appInfo, map, vars, tgt.ParameterList);
+      end;
+    MapTransformREFERENCE :
+      begin
+        b := getParam(vars, tgt.parameterList[0]).link;
+        try
+        if (b = nil) then
+          raise EFHIRException.create('Rule "'+ruleId+'": Unable to find parameter '+tgt.parameterList[0].primitiveValue);
+        if not b.isResource then
+          raise EFHIRException.create('Rule "'+ruleId+'": Transform engine cannot point at an element of type '+b.fhirType());
+        id := b.id;
+          if (id = '') then
+          begin
+            id := NewGuidId;
+            b.id := id;
+          end;
+          result := TFHIRReference.create(b.fhirType()+'/'+id);
+        finally
+          b.Free;
         end;
-      MapTransformC:
-        result := buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString()), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString()));
-    else
-      raise EFHIRException.create('Transform Unknown');
-    end;
-  finally
-    factory.Free;
+      end;
+    MapTransformDATEOP :
+      begin
+        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+      end;
+    MapTransformUUID :
+      begin
+        result := TFHIRId.Create(NewGuidId);
+      end;
+    MapTransformPOINTER :
+      begin
+        b := getParam(vars, tgt.ParameterList[0]);
+        if (b is TFHIRResource) then
+          result := TFHIRUri.create('urn:uuid:'+TFHIRResource(b).Id)
+        else
+          raise EFHIRException.create('Transform engine cannot point at an element of type '+b.fhirType());
+      end;
+    MapTransformCC:
+      begin
+      cc := TFHIRCodeableConcept.Create;
+      try
+        cc.codingList.Add(buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString())));
+        result := cc.Link;
+      finally
+        cc.Free;
+      end;
+      end;
+    MapTransformC:
+      result := buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString()), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString()));
+  else
+    raise EFHIRException.create('Transform Unknown');
   end;
 end;
 
@@ -2435,82 +2444,86 @@ begin
         for r in map.ContainedList do
         begin
           if (r is TFHIRConceptMap) and (TFHIRConceptMap(r).Id = conceptMapUrl.substring(1)) then
-            cmap := TFHIRConceptMap(r);
+            cmap := TFHIRConceptMap(r).Link;
         end;
       end
       else
         cmap := TFhirConceptMap(FWorker.fetchResource(frtConceptMap, conceptMapUrl));
-      outcome := nil;
       try
-        done := false;
-        message := '';
-        if (cmap = nil) then
-        begin
-          if (FServices = nil) then
-            message := 'No map found for '+conceptMapUrl
-          else
+        outcome := nil;
+        try
+          done := false;
+          message := '';
+          if (cmap = nil) then
           begin
-            outcome := FServices.translate(appInfo, src, conceptMapUrl);
-            done := true;
-          end;
-        end
-        else
-        begin
-          list := TFslList<TFhirConceptMapGroupElement>.create;
-          try
-            for g in cmap.GroupList do
-              for e in g.ElementList do
-              begin
-                if (src.System = '') and (src.code = e.code) then
-                  list.add(e.Link)
-                else if (src.system <> '') and (src.System = g.source) and (src.code = e.code) then
-                  list.add(e.Link);
-              end;
-            if (list.count = 0) then
-              done := true
-            else if (list[0].TargetList.count = 0) then
-              message := 'Concept map '+conceptMapUrl+' found no translation for '+src.code
+            if (FServices = nil) then
+              message := 'No map found for '+conceptMapUrl
             else
             begin
-              for tgt in list[0].TargetList do
-              begin
-                if (tgt.equivalence in [ConceptMapEquivalenceEQUAL, ConceptMapEquivalenceEQUIVALENT, ConceptMapEquivalenceWIDER]) then
+              outcome := FServices.translate(appInfo, src, conceptMapUrl);
+              done := true;
+            end;
+          end
+          else
+          begin
+            list := TFslList<TFhirConceptMapGroupElement>.create;
+            try
+              for g in cmap.GroupList do
+                for e in g.ElementList do
                 begin
-                  if (done) then
+                  if (src.System = '') and (src.code = e.code) then
+                    list.add(e.Link)
+                  else if (src.system <> '') and (src.System = g.source) and (src.code = e.code) then
+                    list.add(e.Link);
+                end;
+              if (list.count = 0) then
+                done := true
+              else if (list[0].TargetList.count = 0) then
+                message := 'Concept map '+conceptMapUrl+' found no translation for '+src.code
+              else
+              begin
+                for tgt in list[0].TargetList do
+                begin
+                  if (tgt.equivalence in [ConceptMapEquivalenceEQUAL, ConceptMapEquivalenceEQUIVALENT, ConceptMapEquivalenceWIDER]) then
                   begin
-                    message := 'Concept map '+conceptMapUrl+' found multiple matches for '+src.code;
-                    done := false;
+                    if (done) then
+                    begin
+                      message := 'Concept map '+conceptMapUrl+' found multiple matches for '+src.code;
+                      done := false;
+                    end
+                    else
+                    begin
+                      done := true;
+                      outcome := TFHIRCoding.Create;
+                      outcome.code := tgt.code;
+                      outcome.system := g.Target;
+                    end;
                   end
-                  else
+                  else if (tgt.equivalence = ConceptMapEquivalenceUNMATCHED) then
                   begin
                     done := true;
-                    outcome := TFHIRCoding.Create;
-                    outcome.code := tgt.code;
-                    outcome.system := g.Target;
                   end;
-                end
-                else if (tgt.equivalence = ConceptMapEquivalenceUNMATCHED) then
-                begin
-                  done := true;
                 end;
+                if (not done) then
+                  message := 'Concept map '+conceptMapUrl+' found no usable translation for '+src.code;
               end;
-              if (not done) then
-                message := 'Concept map '+conceptMapUrl+' found no usable translation for '+src.code;
+            finally
+              list.Free;
             end;
-          finally
-            list.Free;
           end;
+          if (not done) then
+            raise EFHIRException.create(message);
+          if (outcome = nil) then
+            result := nil
+          else if ('code' = fieldToReturn) then
+            result := TFHIRCode.create(outcome.code)
+          else
+            result := outcome.Link;
+        finally
+          outcome.Free;
         end;
-        if (not done) then
-          raise EFHIRException.create(message);
-        if (outcome = nil) then
-          result := nil
-        else if ('code' = fieldToReturn) then
-          result := TFHIRCode.create(outcome.code)
-        else
-          result := outcome.Link;
       finally
-        outcome.Free;
+        cmap.Free;
       end;
     end;
   finally
@@ -2680,6 +2693,14 @@ begin
   FTarget := target.link;
   FVariables := variables.link;
   FGroup := group.link;
+  if FParent = nil then
+    status := dsRunToBreakpoint
+  else case FParent.status of
+    dsRunToBreakpoint: status := dsRunToBreakpoint;
+    dsStepOut: status := dsRunToBreakpoint;
+    dsStepOver: status := dsRunToBreakpoint;
+    dsStepIn: status := dsStepOver;
+  end;
 end;
 
 function TFHIRStructureMapDebugContext.getdescription: String;
@@ -2706,6 +2727,18 @@ begin
     result := map;
 end;
 
+function TFHIRStructureMapDebugContext.GetLine: integer;
+begin
+  if target <> nil then
+    result := FTarget.LocationStart.line
+  else if rule <> nil then
+    result := rule.LocationStart.line
+  else if group <> nil then
+    result := group.LocationStart.line
+  else
+    result := map.LocationStart.line;
+end;
+
 function TFHIRStructureMapDebugContext.GetName: String;
 begin
   if rule <> nil then
@@ -2724,6 +2757,7 @@ begin
   FTarget.Free;
   FVariables.Free;
   FGroup.Free;
+  FParent.Free;
   inherited;
 end;
 

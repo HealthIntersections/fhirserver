@@ -16,7 +16,7 @@ f10: validate
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
@@ -55,6 +55,7 @@ const
   TEMPLATE_CDA = 'todo';
 
   spCaretPos = 0;
+  spMode = 1;
   spStatus = 2;
 
   { Memo marker numbers }
@@ -69,6 +70,15 @@ const
   mmLineStep = 13;           { blue line highlight }
   inSquiggly = 0;
   inPendingSquiggly = 1;
+
+  DBG_STOPPED = 0;
+  DBG_EXECUTE = 1;
+  DBG_STEP_OVER = 2;
+  DBG_STEP_OUT = 3;
+  DBG_STEP_INTO = 4;
+  // values 10 or above will abort debugging run
+  DBG_STOP = 10;
+  DBG_CLOSING = 11;
 
 type
   TTreeDataPointer = record
@@ -101,16 +111,23 @@ type
     FInfo: TWorkspaceFile;
     FMemo: TScintEdit;
     FTab: TTabSheet;
+    FFileIsReadOnly: boolean;
+    FReadOnly: boolean;
+
     procedure SetInfo(const Value: TWorkspaceFile);
+    procedure SetReadOnly(const Value: boolean);
 
   public
-    destructor destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
     property id : TWorkspaceFile read FInfo write SetInfo;
     property tab : TTabSheet read FTab write FTab;
     property memo : TScintEdit read FMemo write FMemo;
+    property fileIsReadOnly : boolean read FFileIsReadOnly write FFileIsReadOnly;
     property isDirty : boolean read FIsDirty write FIsDirty;
     property ErrorLine : Integer read FErrorLine write FErrorLine;
     property StepLine : Integer read FStepLine write FStepLine;
+    property readOnly : boolean read FReadOnly write SetReadOnly;
   end;
 
   TIDEScintEdit = class(TScintEdit)
@@ -293,7 +310,7 @@ type
     tbStepOver: TToolButton;
     tbStepOut: TToolButton;
     tbStop: TToolButton;
-    BitBtn1: TBitBtn;
+    btnRunNoDebug: TBitBtn;
     vtCallStack: TVirtualStringTree;
     Splitter4: TSplitter;
     Panel15: TPanel;
@@ -393,27 +410,35 @@ type
     procedure vtVarDetailsInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
     procedure vtVarDetailsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+    procedure pmEditorPopup(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
-    FSelected : PVirtualNode;
+    FCache : TResourceMemoryCache;
+
+    FEditor : TEditorInformation;
+    FLoading : boolean;
+    FProgress : TWorkingForm;
+
+    FWorkspaceWidth : integer;
+    FDebugHeight : integer;
+
     FLastFindOptions: TFindOptions;
     FLastFindText: String;
     FLastReplaceText: String;
-    FLoading : boolean;
-    FCache : TResourceMemoryCache;
-    FEditor : TEditorInformation;
-    FWorkspaceWidth : integer;
-    FDebugHeight : integer;
-    FPathSelection : TFslList<TPathSelection>;
-    FStepOutcome : integer;
-    FDebugInfo : TFHIRStructureMapDebugContext;
-    FStepEditor : TEditorInformation;
-    FProgress : TWorkingForm;
-    FStack : TFslList<TFHIRStructureMapDebugContext>;
+
+    FSelected : PVirtualNode;
     FCallStackSelected : PVirtualNode;
     FVarsSelected : PVirtualNode;
+
+    FPathSelection : TFslList<TPathSelection>;
+    FRunning : boolean;
     FWantClose : boolean;
+    FDebugInfo : TFHIRStructureMapDebugContext;
+    FStepEditor : TEditorInformation;
+    FStepOutcome : integer;
+    FStack : TFslList<TFHIRStructureMapDebugContext>;
     FVariables : TVariables;
     FVariable : TVariable;
 
@@ -436,7 +461,9 @@ type
 
     procedure mnuPastWorkspaceClick(Sender: TObject);
     procedure memoChange(Sender: TObject; const Info: TScintEditChangeInfo);
-    procedure memoExit(Sender: TObject);
+    procedure memoStatusChange(Sender: TObject);
+    procedure MemoMarginClick(Sender: TObject; MarginNumber: Integer; Line: Integer);
+
     procedure ZoomIn;
     procedure ZoomOut;
     procedure ZoomReset;
@@ -455,7 +482,7 @@ type
     procedure checkCDA(src, title : String);
     procedure checkResource(src, title : String);
     procedure checkJS(src, title : String);
-    procedure checkMap(src, title : String);
+    procedure checkMap(src, title : String; f : TWorkspaceFile);
     procedure checkTemplate(src, title : String);
 
     procedure SetErrorLine(ALine: Integer);
@@ -465,6 +492,7 @@ type
     procedure MemoLinesDeleted(FirstLine, Count, FirstAffectedLine: Integer);
     procedure MemoLinesInserted(FirstLine, Count: integer);
     procedure UpdateAllLineMarkers();
+    procedure ToggleBreakPoint(Line: Integer);
 
     function parseCDA(context : TFHIRWorkerContext) : TFHIRObject;
     function parseResource(context : TFHIRWorkerContext) : TFHIRObject;
@@ -474,14 +502,17 @@ type
     function GetFPDebuggerSettingStr(name : TFHIRPathDebuggerFormSetting) : String;
     procedure SetFPDebuggerSettingStr(name : TFHIRPathDebuggerFormSetting; value : String);
 
+    procedure startRunning;
+    procedure stopRunning;
     procedure executeTransform(debug: boolean);
-    procedure ShowCallStack;
+    procedure ShowCallStack(f : TWorkspaceFile);
     procedure ClearCallStack;
     procedure ShowVars(vars : TVariables);
     procedure ClearVars;
     procedure ShowVariable(variable : TVariable);
     procedure ClearVariable;
     procedure DebugTransform(sender : TObject; info : TFHIRStructureMapDebugContext);
+    procedure DoCompiled(sender : TConversionEngine; f : TWorkspaceFile; checkBreakpointProc : TCheckBreakpointEvent);
   public
     { Public declarations }
   end;
@@ -568,7 +599,10 @@ end;
 
 procedure TTransformerForm.btnExecuteClick(Sender: TObject);
 begin
-  executeTransform(true);
+  if FDebugInfo <> nil then
+    FStepOutcome := DBG_EXECUTE
+  else
+    executeTransform(true);
 end;
 
 procedure TTransformerForm.executeTransform(debug : boolean);
@@ -576,6 +610,7 @@ var
   engine : TCDAConversionEngine;
 begin
   try
+    startRunning;
     engine := TCDAConversionEngine.create;
     try
       engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
@@ -593,6 +628,7 @@ begin
       engine.free;
     end;
   finally
+    stopRunning;
     if FWantClose then
       Close;
   end;
@@ -768,7 +804,8 @@ procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
     cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
     if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
       cbxSource.ItemIndex := 0;
-    btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+    btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+    btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
   end;
 begin
    case cbxEventType.ItemIndex of
@@ -791,7 +828,8 @@ begin
     FWorkspace.Script := cbxScript.Text;
     FWorkspace.Save;
   end;
-  btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
 end;
 
 procedure TTransformerForm.cbxSourceChange(Sender: TObject);
@@ -801,7 +839,8 @@ begin
     FWorkspace.Source := cbxSource.Text;
     FWorkspace.Save;
   end;
-  btnExecute.enabled := (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
 end;
 
 function TTransformerForm.parseCDA(context: TFHIRWorkerContext): TFHIRObject;
@@ -859,7 +898,10 @@ begin
     mnuRemoveEmptyLines.Enabled := false;
     mnuCompile.Enabled := false;
     tbCompile.Enabled := false;
+
     Caption := 'FHIR Transformer IDE';
+    pnlStatus.Panels[spMode].Text := '';
+    pnlStatus.Panels[spCaretPos].Text := '';
   end
   else
   begin
@@ -867,13 +909,13 @@ begin
     Caption := pgTabs.ActivePage.Caption+'- FHIR Transformer';
     mnuSearch.Enabled := true;
     mnuFindNext.Enabled := true;
-    mnuReplace.Enabled := true;
+    mnuReplace.Enabled := not FEditor.memo.ReadOnly;
     mnuGoto.Enabled := true;
     mnuCompare.Enabled := FEditor.id.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
     tbCompare.Enabled := mnuCompare.Enabled;
-    mnuPretty.Enabled := FEditor.id.format in [fmtCDA, fmtResource];
-    mnuDense.Enabled := FEditor.id.format in [fmtCDA, fmtResource];
-    mnuEOL.Enabled := true;
+    mnuPretty.Enabled := not FRunning and (FEditor.id.format in [fmtCDA, fmtResource]);
+    mnuDense.Enabled := not FRunning and (FEditor.id.format in [fmtCDA, fmtResource]);
+    mnuEOL.Enabled := not FRunning;
     mnuWindowsEOL.Checked := false;
     mnuUnixEOL.Checked := false;
     mnuCompile.Enabled := true;
@@ -882,8 +924,8 @@ begin
       sleCRLF: mnuWindowsEOL.Checked := true;
       sleLF: mnuUnixEOL.Checked := true;
     end;
-    mnuRemoveEmptyLines.Enabled := true;
-    memoExit(nil);
+    mnuRemoveEmptyLines.Enabled := not FRunning;
+    memoStatusChange(nil);
   end;
   tbSaveAll.Enabled := anyFilesDirty;
   mnuSaveAll.Enabled := tbSaveAll.Enabled;
@@ -900,7 +942,15 @@ begin
   FWorkspace.save;
   if FIni.ReadBool('Workspace', 'AutoSave', false) then
   begin
-    mnuSaveAllClick(nil);
+    for i := pgTabs.PageCount - 1 downto 1 do
+    begin
+      f := editorForTab(pgTabs.Pages[i]);
+      if (f <> FEditor) then
+      begin
+        saveWorkspaceFile(f);
+        closeWorkspaceFile(f, false);
+      end;
+    end;
     exit;
   end;
 
@@ -956,18 +1006,44 @@ begin
   FWorkspace.save;
 end;
 
-procedure TTransformerForm.DebugTransform(sender: TObject; info: TFHIRStructureMapDebugContext);
+procedure TTransformerForm.pmEditorPopup(Sender: TObject);
 begin
+  pmnuCut.Enabled := not FEditor.memo.ReadOnly and (FEditor.memo.SelText <> '');
+  pmnuPaste.Enabled := not FEditor.memo.ReadOnly and (Clipboard.HasFormat(CF_TEXT));
+end;
+
+procedure TTransformerForm.DebugTransform(sender: TObject; info: TFHIRStructureMapDebugContext);
+var
+  bpi : TBreakPointInfo;
+  f : TWorkspaceFile;
+begin
+  if (info.group = nil) then
+    exit; // don't break for the root map
+  f := FWorkspace.findFileByParsedObject(FDebugInfo.map);
+  if (info.status = dsRunToBreakpoint) then
+  begin
+    if (f = nil) or not f.hasBreakPoint(info.line, bpi) then
+      exit;
+  end;
+
   // set up viewing the info
   FDebugInfo := info.Link;
   try
-    ShowCallStack;
+    ShowCallStack(f);
     ShowVars(FDebugInfo.variables);
     setDebugStatus(true);
     try
-      FStepOutcome := 0;
-      while FStepOutcome = 0 do
+      FStepOutcome := DBG_STOPPED;
+      while FStepOutcome = DBG_STOPPED do
         Application.ProcessMessages;
+      case FStepOutcome of
+        DBG_EXECUTE: FDebugInfo.status := dsRunToBreakpoint;
+        DBG_STEP_OVER: FDebugInfo.status := dsStepOver;
+        DBG_STEP_OUT: FDebugInfo.status := dsStepOut;
+        DBG_STEP_INTO: FDebugInfo.status := dsStepIn;
+        DBG_STOP: FDebugInfo.status := dsRunToBreakpoint;
+        DBG_CLOSING: FDebugInfo.status := dsRunToBreakpoint;
+      end;
     finally
       setDebugStatus(false);
       ClearCallStack;
@@ -980,8 +1056,22 @@ begin
     FDebugInfo.Free;
     FDebugInfo := nil;
   end;
-  if FStepOutcome >= 10 then
+  if FStepOutcome >= DBG_STOP then
     abort;
+end;
+
+procedure TTransformerForm.DoCompiled(sender: TConversionEngine; f: TWorkspaceFile; checkBreakpointProc: TCheckBreakpointEvent);
+var
+  bpi : TBreakPointInfo;
+  valid : boolean;
+  editor : TEditorInformation;
+begin
+  editor := editorForFile(f);
+  for bpi in f.BreakPoints do
+  begin
+    bpi.invalid := not checkBreakpointProc(bpi.line);
+    UpdateLineMarkers(editor, bpi.line);
+  end;
 end;
 
 function TTransformerForm.DoSave(command : String) : boolean;
@@ -997,6 +1087,11 @@ begin
   if FIni.ReadBool('Workspace', 'AutoSave', false) then
   begin
     mnuSaveAllClick(nil);
+    for i := 1 to pgTabs.PageCount - 1 do
+    begin
+      e := editorForTab(pgTabs.Pages[i]);
+      FWorkspace.OpenFile(e.id);
+    end;
     exit;
   end;
 
@@ -1059,8 +1154,11 @@ end;
 
 procedure TTransformerForm.edtWorkspaceChange(Sender: TObject);
 begin
-  FWorkspace.name := edtWorkspace.Text;
-  FWorkspace.save;
+  if not FLoading then
+  begin
+    FWorkspace.name := edtWorkspace.Text;
+    FWorkspace.save;
+  end;
 end;
 
 function TTransformerForm.engineGetSource(sender: TConversionEngine; f: TWorkspaceFile): TStream;
@@ -1109,8 +1207,8 @@ begin
     if (p.obj is TWorkspaceFile) then
     begin
       mnuDuplicate.Enabled := true;
-      mnuRename.Enabled := true;
-      mnuDrop.Enabled := true;
+      mnuRename.Enabled := not FRunning;
+      mnuDrop.Enabled := not FRunning;
       node := node.Parent;
     end
     else
@@ -1205,9 +1303,14 @@ begin
   if FIni.ReadBool('Workspace', 'AutoSave', false) then
   begin
     mnuSaveAllClick(nil);
+    for i := 1 to pgTabs.PageCount - 1 do
+    begin
+      e := editorForTab(pgTabs.Pages[i]);
+      FWorkspace.OpenFile(e.id);
+    end;
     if FDebugInfo <> nil then
     begin
-      FStepOutcome := 11;
+      FStepOutcome := DBG_CLOSING;
       FWantClose := true;
     end;
     exit;
@@ -1242,7 +1345,7 @@ begin
   end;
   if (FDebugInfo <> nil) and CanClose then
   begin
-    FStepOutcome := 11;
+    FStepOutcome := DBG_CLOSING;
     FWantClose := true;
   end;
 end;
@@ -1272,6 +1375,9 @@ begin
      LoadWorkspace(TWorkspace.Create(s));
   end;
   edtFHIRPath.Text := FIni.ReadString('debug', 'FHIRPath', '');
+  vtVarDetails.Header.Columns[0].Width := FIni.ReadInteger('debug', 'var-details-col-1', vtVarDetails.Header.Columns[0].Width);
+  vtVarDetails.Header.Columns[1].Width := FIni.ReadInteger('debug', 'var-details-col-2', vtVarDetails.Header.Columns[1].Width);
+  vtVarDetails.Header.Columns[2].Width := FIni.ReadInteger('debug', 'var-details-col-3', vtVarDetails.Header.Columns[2].Width);
 end;
 
 procedure TTransformerForm.FormDestroy(Sender: TObject);
@@ -1466,7 +1572,7 @@ begin
     LinesInsertedOrDeleted;
 end;
 
-procedure TTransformerForm.memoExit(Sender: TObject);
+procedure TTransformerForm.memoStatusChange(Sender: TObject);
 begin
   if FEditor = nil then
     exit;
@@ -1474,14 +1580,20 @@ begin
   FEditor.id.Row := FEditor.memo.CaretLine;
   if (FEditor.ErrorLine < 0) then
     HideError;
+  if FEditor.memo.ReadOnly then
+    pnlStatus.Panels[spMode].Text := 'LOCK'
+  else if FEditor.memo.InsertMode then
+    pnlStatus.Panels[spMode].Text := 'INS'
+  else
+    pnlStatus.Panels[spMode].Text := 'OVR';
   pnlStatus.Panels[spCaretPos].Text := Format('%4d:%4d', [FEditor.memo.CaretLine + 1, FEditor.memo.CaretColumnExpanded + 1]);
 
   // undo/redo
-  mnuUndo.Enabled := FEditor.memo.CanUndo;
-  tbUndo.Enabled := FEditor.memo.CanUndo;
-  mnuRedo.Enabled := FEditor.memo.CanUndo;
+  mnuUndo.Enabled := not FEditor.memo.ReadOnly and FEditor.memo.CanUndo;
+  tbUndo.Enabled := not FEditor.memo.ReadOnly and FEditor.memo.CanUndo;
+  mnuRedo.Enabled := not FEditor.memo.ReadOnly and FEditor.memo.CanUndo;
   // clipbrd
-  mnuCut.Enabled := FEditor.memo.SelText <> '';
+  mnuCut.Enabled := not FEditor.memo.ReadOnly and (FEditor.memo.SelText <> '');
   tbCut.Enabled := mnuCut.Enabled;
   pmnuCut.Enabled := mnuCut.Enabled;
   mnuCopy.Enabled := mnuCut.Enabled;
@@ -1899,8 +2011,8 @@ begin
     if (p.obj is TWorkspaceFile) then
     begin
       pmDuplicate.Enabled := true;
-      pmRename.Enabled := true;
-      pmDrop.Enabled := true;
+      pmRename.Enabled := not FRunning;
+      pmDrop.Enabled := not FRunning;
       node := node.Parent;
     end
     else
@@ -1988,6 +2100,13 @@ end;
 procedure TTransformerForm.vtCallStackRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   FCallStackSelected := Nil;
+end;
+
+procedure TTransformerForm.vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+begin
+  FIni.WriteInteger('debug', 'var-details-col-1', vtVarDetails.Header.Columns[0].Width);
+  FIni.WriteInteger('debug', 'var-details-col-2', vtVarDetails.Header.Columns[1].Width);
+  FIni.WriteInteger('debug', 'var-details-col-3', vtVarDetails.Header.Columns[2].Width);
 end;
 
 procedure TTransformerForm.vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -2280,6 +2399,7 @@ var
   editor : TScintEdit;
   s : String;
   info : TEditorInformation;
+  bpi : TBreakPointInfo;
 begin
   info := findWorkspaceFile(f);
   if info <> nil then
@@ -2301,8 +2421,9 @@ begin
     editor.Parent := tab;
     editor.Font.Assign(mConsole.Font);
     editor.OnChange := memoChange;
-    editor.OnUpdateUI := memoExit;
+    editor.OnUpdateUI := memoStatusChange;
     editor.OnKeyDown := FormKeyDown;
+    editor.OnMarginClick := MemoMarginClick;
     editor.LineNumbers := true;
     editor.PopupMenu := pmEditor;
     editor.Align := alClient;
@@ -2326,11 +2447,16 @@ begin
     FEditor := info;
 
     s := makeAbsolutePath(f.filename, FWorkspace.folder);
+    editor.ReadOnly := FileIsReadOnly(s);
+    info.fileIsReadOnly := editor.ReadOnly;
     editor.Lines.LoadFromFile(s);
     editor.ClearUndo;
     editor.CaretLine := f.row;
     info.isDirty := false;
     info.ErrorLine := -1;
+    info.StepLine := -1;
+    for bpi in f.BreakPoints do
+      UpdateLineMarkers(info, bpi.line);
     pgTabs.ActivePage := tab;
     pgTabsChange(pgTabs);
   end;
@@ -2359,6 +2485,38 @@ begin
   mnuEndDebugging.Enabled := enabled;
 end;
 
+procedure TTransformerForm.startRunning;
+var
+  i : integer;
+begin
+  FRunning := true;
+  for i := 1 to pgTabs.PageCount - 1 do
+    editorForTab(pgTabs.Pages[i]).readOnly := true;
+  cbxEventType.Enabled := false;
+  cbxScript.Enabled := false;
+  cbxSource.Enabled := false;
+  cbxEventTypeChange(nil);
+  cbxScriptChange(nil);
+  cbxSourceChange(nil);
+  pgTabsChange(nil);
+end;
+
+procedure TTransformerForm.stopRunning;
+var
+  i : integer;
+begin
+  FRunning := false;
+  for i := 1 to pgTabs.PageCount - 1 do
+    editorForTab(pgTabs.Pages[i]).readOnly := false;
+  cbxEventType.Enabled := true;
+  cbxScript.Enabled := true;
+  cbxSource.Enabled := true;
+  cbxEventTypeChange(nil);
+  cbxScriptChange(nil);
+  cbxSourceChange(nil);
+  pgTabsChange(nil);
+end;
+
 procedure TTransformerForm.status(color: TColor; msg: String);
 begin
   pnlStatus.Color := color;
@@ -2366,6 +2524,7 @@ begin
   pnlStatus.Update;
   Application.ProcessMessages;
 end;
+
 
 procedure TTransformerForm.tbHomeClick(Sender: TObject);
 begin
@@ -2383,22 +2542,22 @@ end;
 
 procedure TTransformerForm.tbStepIntoClick(Sender: TObject);
 begin
-  FStepOutcome := 1;
+  FStepOutcome := DBG_STEP_INTO;
 end;
 
 procedure TTransformerForm.tbStepOutClick(Sender: TObject);
 begin
-  FStepOutcome := 3;
+  FStepOutcome := DBG_STEP_OUT;
 end;
 
 procedure TTransformerForm.tbStepOverClick(Sender: TObject);
 begin
-  FStepOutcome := 2;
+  FStepOutcome := DBG_STEP_OVER;
 end;
 
 procedure TTransformerForm.tbStopClick(Sender: TObject);
 begin
-  FStepOutcome := 4;
+  FStepOutcome := DBG_STOP;
 end;
 
 procedure TTransformerForm.Timer1Timer(Sender: TObject);
@@ -2411,10 +2570,21 @@ begin
   end
   else
   begin
-    mnuPaste.Enabled := Clipboard.HasFormat(CF_TEXT);
+    mnuPaste.Enabled := not FEditor.memo.ReadOnly and Clipboard.HasFormat(CF_TEXT);
     tbPaste.Enabled := mnuPaste.Enabled;
     pmnuPaste.Enabled := mnuPaste.Enabled;
   end;
+end;
+
+procedure TTransformerForm.ToggleBreakPoint(Line: Integer);
+var
+  bpi : TBreakPointInfo;
+begin
+  if FEditor.id.hasBreakPoint(Line, bpi) then
+    FEditor.id.BreakPoints.Remove(bpi)
+  else
+    FEditor.id.BreakPoints.Add(TBreakPointInfo.Create(line));
+  UpdateLineMarkers(FEditor, Line);
 end;
 
 procedure TTransformerForm.closeWorkspaceFile(editor : TEditorInformation; checkSave : boolean);
@@ -2590,7 +2760,7 @@ begin
       fmtCDA: checkCDA(FEditor.memo.RawText, FEditor.id.title);
       fmtResource: checkResource(FEditor.memo.RawText, FEditor.id.title);
       fmtJS: checkJS(FEditor.memo.RawText, FEditor.id.title);
-      fmtMap: checkMap(FEditor.memo.RawText, FEditor.id.title);
+      fmtMap: checkMap(FEditor.memo.RawText, FEditor.id.title, FEditor.id);
       fmtTemplate: checkTemplate(FEditor.memo.RawText, FEditor.id.title);
     end;
     status(clGreen, FEditor.id.title+' is syntactically valid at '+FormatDateTime('c', now));
@@ -2671,13 +2841,25 @@ begin
   raise Exception.Create('Not Done Yet');
 end;
 
-procedure TTransformerForm.checkMap(src, title : String);
+procedure TTransformerForm.checkMap(src, title : String; f : TWorkspaceFile);
 var
   utils : TFHIRStructureMapUtilities;
+  map : TFHIRStructureMap;
+  mbpr : TMapbreakpointResolver;
 begin
   utils := TFHIRStructureMapUtilities.Create(nil, nil, nil, nil);
   try
-    utils.parse(src, title).free;
+    map := utils.parse(src, title);
+    try
+      mbpr := TMapbreakpointResolver.create(map.Link);
+      try
+        DoCompiled(nil, f, mbpr.checkBreakPoint);
+      finally
+        mbpr.free;
+      end;
+    finally
+      map.free;
+    end;
   finally
     utils.Free;
   end;
@@ -2744,10 +2926,9 @@ begin
   end;
 end;
 
-procedure TTransformerForm.ShowCallStack;
+procedure TTransformerForm.ShowCallStack(f : TWorkspaceFile);
 var
   dbg : TFHIRStructureMapDebugContext;
-  f : TWorkspaceFile;
 begin
   Fstack.Clear;
   FCallStackSelected := nil;
@@ -2760,7 +2941,6 @@ begin
   vtCallStack.RootNodeCount := FStack.Count;
   if Fstack.Count > 0 then
   begin
-    f := FWorkspace.findFileByParsedObject(FDebugInfo.map);
     openWorkspaceFile(f);
     SetStepLine(FEditor, FDebugInfo.focus.LocationStart.line-1);
   end;
@@ -2795,6 +2975,12 @@ begin
     FEditor.ErrorLine := FEditor.ErrorLine + Count;
 end;
 
+procedure TTransformerForm.MemoMarginClick(Sender: TObject; MarginNumber, Line: Integer);
+begin
+  if (MarginNumber = 1) and (FEditor.id.format in [fmtJS, fmtMap, fmtTemplate]) then
+    ToggleBreakPoint(Line);
+end;
+
 procedure TTransformerForm.MemoLinesDeleted(FirstLine, Count, FirstAffectedLine: Integer);
 var
   I, Line: Integer;
@@ -2818,7 +3004,7 @@ end;
 
 procedure TTransformerForm.UpdateLineMarkers(editor : TEditorInformation; const Line: Integer);
 var
-  NewMarker: Integer;
+  bpi : TBreakPointInfo;
 begin
   if Line >= Editor.Memo.Lines.Count then
     Exit;
@@ -2832,10 +3018,11 @@ begin
     Editor.Memo.AddMarker(Line, mmLineStep)
   else if Editor.ErrorLine = Line then
     Editor.Memo.AddMarker(Line, mmLineError)
-//  else if NewMarker in [mmIconBreakpoint, mmIconBreakpointGood] then
-//    Memo.AddMarker(Line, mmLineBreakpoint)
-//  else if NewMarker = mmIconBreakpointBad then
-//    Memo.AddMarker(Line, mmLineBreakpointBad);
+  else if editor.id.hasBreakPoint(line, bpi) then
+    if (bpi.invalid) then
+      Editor.Memo.AddMarker(Line, mmLineBreakpointBad)
+    else
+      Editor.Memo.AddMarker(Line, mmLineBreakpoint);
 end;
 
 procedure TTransformerForm.UpdateAllLineMarkers;
@@ -2848,6 +3035,11 @@ end;
 
 { TEditorInformation }
 
+constructor TEditorInformation.Create;
+begin
+  inherited;
+end;
+
 destructor TEditorInformation.destroy;
 begin
   FInfo.free;
@@ -2858,6 +3050,15 @@ procedure TEditorInformation.SetInfo(const Value: TWorkspaceFile);
 begin
   FInfo.free;
   FInfo := Value;
+end;
+
+procedure TEditorInformation.SetReadOnly(const Value: boolean);
+begin
+  FReadOnly := Value;
+  if FReadOnly then
+    memo.ReadOnly := true
+  else
+    memo.ReadOnly := fileIsReadOnly;
 end;
 
 { TIDEScintEdit }
@@ -2974,10 +3175,10 @@ begin
   Call(SCI_MARKERDEFINE, mmLineError, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineError, clWhite);
   Call(SCI_MARKERSETBACK, mmLineError, clRed);
-  Call(SCI_MARKERDEFINE, mmLineBreakpoint, SC_MARK_BACKGROUND);
+  Call(SCI_MARKERDEFINE, mmLineBreakpoint, SC_MARK_CIRCLE);
   Call(SCI_MARKERSETFORE, mmLineBreakpoint, clWhite);
   Call(SCI_MARKERSETBACK, mmLineBreakpoint, clRed);
-  Call(SCI_MARKERDEFINE, mmLineBreakpointBad, SC_MARK_BACKGROUND);
+  Call(SCI_MARKERDEFINE, mmLineBreakpointBad, SC_MARK_CIRCLE);
   Call(SCI_MARKERSETFORE, mmLineBreakpointBad, clLime);
   Call(SCI_MARKERSETBACK, mmLineBreakpointBad, clOlive);
   Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKGROUND);

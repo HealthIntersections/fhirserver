@@ -762,9 +762,13 @@ begin
     if ('xhtml' <> t) then
     begin
       sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
-      if (sd = nil) then
-          raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
-        children := getChildMap(sd, sd.snapshot.elementList[0]);
+      try
+        if (sd = nil) then
+            raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
+          children := getChildMap(sd, sd.snapshot.elementList[0]);
+      finally
+        sd.free;
+      end;
     end;
     result := TFslList<TFHIRMMProperty>.create;
     for child in children do
