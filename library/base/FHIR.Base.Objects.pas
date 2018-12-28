@@ -316,6 +316,7 @@ type
     function makeCodeValue(v : String) : TFHIRObject; virtual; abstract;
     function makeIntValue(v : String) : TFHIRObject; virtual; abstract;
     function hasExtension(url : String) : boolean; virtual;
+    function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
     function extensions(url : String) : TFslList<TFHIRObject>; virtual;
@@ -329,11 +330,12 @@ type
     function createIterator(bInheritedProperties, bPrimitiveValues : Boolean) : TFHIRPropertyIterator;
 
     // create a class that is the correct type for the named property
-    function createPropertyValue(propName : string): TFHIRObject; virtual; abstract;
+    function createPropertyValue(propName : string): TFHIRObject; virtual;
     function getPropertyValue(propName : string): TFHIRProperty; virtual;
+    function getTypesForProperty(propName : string): String; virtual;
 
     // set the value of the property. For properties with cardinality > 1, append to the list, or use insertProperty
-    procedure setProperty(propName : string; propValue : TFHIRObject); virtual; abstract;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; virtual;
     procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); virtual;
 
     // delete the value. propValue is used where cardinality > 1, to pick the correct item to delete
@@ -460,7 +462,7 @@ type
     procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
     Property version : TFHIRVersion read GetVersion;
     function versionString : String;
-
+    function oid2Uri(oid : String) : String; virtual; abstract;
   end;
 
   TFHIRObjectText = class (TFHIRObject)
@@ -475,11 +477,13 @@ type
     constructor Create(value : TBytes); Overload;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     property value : string read FValue write FValue;
     function isEmpty : boolean; override;
@@ -503,13 +507,15 @@ type
     property value : TFHIRObject read FValue;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getTypesForProperty(propName : string): String; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function fhirType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
   end;
 
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
@@ -652,6 +658,11 @@ begin
   end;
 end;
 
+function TFHIRObject.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise EFHIRException.create('The property "'+propName+'" on "'+fhirType+'" is unknown"');
+end;
+
 procedure TFHIRObject.GetChildrenByName(name: string; list: TFHIRSelectionList);
 begin
   // nothing to add here
@@ -665,6 +676,11 @@ begin
     result := FTags[name]
   else
     result := '';
+end;
+
+function TFHIRObject.getTypesForProperty(propName: string): String;
+begin
+  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (getting types for property)"');
 end;
 
 function TFHIRObject.GetFhirObjectVersion: TFHIRVersion;
@@ -784,8 +800,7 @@ begin
   result := (FCommentsStart <> nil) and (FCommentsStart.count > 0);
 end;
 
-procedure TFHIRObject.insertProperty(propName: string; propValue: TFHIRObject;
-  index: integer);
+procedure TFHIRObject.insertProperty(propName: string; propValue: TFHIRObject; index: integer);
 begin
   raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (inserting value)"');
 end;
@@ -908,6 +923,16 @@ begin
   result := '';
 end;
 
+function TFHIRObjectText.getTypesForProperty(propName : string): String;
+begin
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+function TFHIRObjectText.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRObjectText.isEmpty: boolean;
 begin
   result := inherited isEmpty and (FValue = '');
@@ -939,7 +964,7 @@ procedure TFHIRObjectText.setIdValue(id: String);
 begin
 end;
 
-procedure TFHIRObjectText.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRObjectText.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
@@ -1316,6 +1341,11 @@ begin
   list.SetItem(i, new);
 end;
 
+function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;
+begin
+  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (setting property)"');
+end;
+
 function TFHIRObject.toString: String;
 begin
   if isPrimitive then
@@ -1368,6 +1398,16 @@ begin
   result := value.getId;
 end;
 
+function TFHIRSelection.getTypesForProperty(propName : string): String;
+begin
+  result := value.getTypesForProperty(propName);
+end;
+
+function TFHIRSelection.hasExtensions: boolean;
+begin
+  result := FValue.hasExtensions;
+end;
+
 function TFHIRSelection.Link: TFHIRSelection;
 begin
   result := TFHIRSelection(inherited link);
@@ -1393,9 +1433,9 @@ begin
   value.setIdValue(id);
 end;
 
-procedure TFHIRSelection.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRSelection.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  value.setProperty(propName, propValue);
+  result := value.setProperty(propName, propValue);
 end;
 
 { TFHIRSelectionList }
@@ -1468,7 +1508,7 @@ begin
   result := TFHIRObjectList.Create;
   try
     for s in self do
-      result.Add(s.link);
+      result.Add(s.value.link);
     result.Link;
   finally
     result.Free;

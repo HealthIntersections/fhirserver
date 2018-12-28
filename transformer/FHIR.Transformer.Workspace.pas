@@ -3,7 +3,7 @@ unit FHIR.Transformer.Workspace;
 interface
 
 uses
-  SysUtils, Classes, IniFiles,
+  SysUtils, Classes, IniFiles, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXML;
 
 Const
@@ -15,26 +15,40 @@ type
 function detectFormat(fn : String) : TTransformerFormat;
 
 Type
+  TBreakPointInfo = class (TFSLObject)
+  private
+    Fline: integer;
+    Finvalid: boolean;
+  public
+    constructor create(line : integer);
+    property line : integer read Fline write Fline;
+    property invalid : boolean read Finvalid write Finvalid;
+  end;
+
   TWorkspaceFile = class (TFSLObject)
   private
     FFilename: String;
     FRow: integer;
     FIsDirty: boolean;
-    FKey: integer;
     FFormat: TTransformerFormat;
+    FErrorLine : Integer;
+    FParsed: TObject;
+    FBreakPoints: TFslList<TBreakPointInfo>;
     function GetTitle: string;
+    function breakpointSummary : String;
   public
     constructor Create(filename : String; format : TTransformerFormat); overload;
-    constructor Create(filename : String; format : TTransformerFormat; row : integer); overload;
+    constructor Create(filename : String; format : TTransformerFormat; row : integer; bpl : String); overload;
+    destructor Destroy; override;
     function link : TWorkspaceFile; overload;
     property format : TTransformerFormat read FFormat;
     property filename : String read FFilename write FFilename;
     property title : string read GetTitle; // derived from filename
-
-    property key : integer read FKey write FKey; // this is not persisted; just used locally
-
     property row : integer read FRow write FRow;  // persisted in UI settings, not the worksapce (version control)
-    property isDirty : boolean read FIsDirty write FIsDirty; // status
+    property parsed : TObject read FParsed write FParsed;
+
+    property BreakPoints: TFslList<TBreakPointInfo> read FBreakPoints;
+    function hasBreakPoint(line : integer; var bpi : TBreakPointInfo): boolean;
   end;
 
   TWorkspace = class (TFSLObject)
@@ -53,7 +67,7 @@ Type
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
-    function GetFileByKey(key: integer): TWorkspaceFile;
+    function findObject(obj: TObject; list: TFslList<TWorkspaceFile>): TWorkspaceFile;
   public
     constructor Create(folder : String);
 
@@ -76,19 +90,17 @@ Type
 
     function includesFile(fn : String) : boolean;
     function findFileByName(fn : String) : TWorkspaceFile;
-    property FileByKey[key : integer] : TWorkspaceFile read GetFileByKey;
+    function findFileByParsedObject(Obj : TObject) : TWorkspaceFile;
 
     procedure reload;
     procedure save;
     procedure ClearOpenFiles;
     procedure OpenFile(f : TWorkspaceFile);
     function listOpenFiles : TFslList<TWorkspaceFile>;
+    procedure ClearParsedObjects;
   end;
 
 implementation
-
-var
-  GLastKey : integer = 0;
 
 function detectFormat(fn : String) : TTransformerFormat;
 var
@@ -143,6 +155,24 @@ begin
   end;
 end;
 
+procedure TWorkspace.ClearParsedObjects;
+var
+  f : TWorkspaceFile;
+begin
+  for f in FMessages do
+   f.parsed := nil;
+  for f in FDocuments do
+   f.parsed := nil;
+  for f in FMaps do
+   f.parsed := nil;
+  for f in FScripts do
+   f.parsed := nil;
+  for f in FTemplates do
+   f.parsed := nil;
+  for f in FResources do
+   f.parsed := nil;
+end;
+
 constructor TWorkspace.Create(folder: String);
 begin
   inherited Create;
@@ -179,6 +209,16 @@ begin
   result := nil;
 end;
 
+function TWorkspace.findObject(obj : TObject; list: TFslList<TWorkspaceFile>): TWorkspaceFile;
+var
+  item : TWorkspaceFile;
+begin
+  for item in list do
+    if obj = item.parsed then
+      exit(item);
+  result := nil;
+end;
+
 function TWorkspace.findFileByName(fn: String): TWorkspaceFile;
 var
   o : TWorkspaceFile;
@@ -204,31 +244,31 @@ begin
   result := nil;
 end;
 
-function TWorkspace.GetFileByKey(key: integer): TWorkspaceFile;
-var
-  item : TWorkspaceFile;
-begin
-  result := nil;
-  for item in messages do
-    if item.key = key then
-      exit(item);
-  for item in documents do
-    if item.key = key then
-      exit(item);
-  for item in resources do
-    if item.key = key then
-      exit(item);
-  for item in scripts do
-    if item.key = key then
-      exit(item);
-  for item in maps do
-    if item.key = key then
-      exit(item);
-  for item in templates do
-    if item.key = key then
-      exit(item);
-end;
 
+function TWorkspace.findFileByParsedObject(Obj: TObject): TWorkspaceFile;
+var
+  o : TWorkspaceFile;
+begin
+  o := findObject(Obj, messages);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, documents);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, resources);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, scripts);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, maps);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, templates);
+  if (o <> nil) then
+    exit(o);
+  result := nil;
+end;
 
 function TWorkspace.hasFile(fn: String; list: TFslList<TWorkspaceFile>): boolean;
 var
@@ -312,6 +352,7 @@ var
   s : String;
   fmt : String;
   row : integer;
+  bpl : String;
 begin
   st := TStringList.create;
   iniVC := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.control']));
@@ -332,19 +373,20 @@ begin
     for s in st do
     begin
       fmt := iniVC.ReadString('Files', s, '');
-      row := iniT.ReadInteger('Files', s, 0);
+      row := iniT.ReadInteger(s, 'Row', 0);
+      bpl := iniT.ReadString(s, 'BreakPoints', '');
       if fmt = 'v2' then
-        FMessages.Add(TWorkspaceFile.Create(s, fmtV2, row))
+        FMessages.Add(TWorkspaceFile.Create(s, fmtV2, row, bpl))
       else if fmt = 'cda' then
-        FDocuments.Add(TWorkspaceFile.Create(s, fmtCDA, row))
+        FDocuments.Add(TWorkspaceFile.Create(s, fmtCDA, row, bpl))
       else if fmt = 'fhir' then
-        FResources.Add(TWorkspaceFile.Create(s, fmtResource, row))
+        FResources.Add(TWorkspaceFile.Create(s, fmtResource, row, bpl))
       else if fmt = 'js' then
-        FScripts.Add(TWorkspaceFile.Create(s, fmtJS, row))
+        FScripts.Add(TWorkspaceFile.Create(s, fmtJS, row, bpl))
       else if fmt = 'map' then
-        FMaps.Add(TWorkspaceFile.Create(s, fmtMap, row))
+        FMaps.Add(TWorkspaceFile.Create(s, fmtMap, row, bpl))
       else if fmt = 'liquid' then
-        FTemplates.Add(TWorkspaceFile.Create(s, fmtTemplate, row));
+        FTemplates.Add(TWorkspaceFile.Create(s, fmtTemplate, row, bpl));
     end;
     if FEventType = -1 then
       if FMessages.Count > 0 then
@@ -383,37 +425,40 @@ begin
     for f in FMessages do
     begin
       iniVC.WriteString('Files', f.filename, 'v2');
-      iniT.WriteInteger('Files', f.filename, f.row);
+      iniT.WriteInteger(f.filename, 'Row', f.row);
     end;
     iniVC.EraseSection('Documents');
     for f in FDocuments do
     begin
       iniVC.WriteString('Files', f.filename, 'cda');
-      iniT.WriteInteger('Files', f.filename, f.row);
+      iniT.WriteInteger(f.filename, 'Row', f.row);
     end;
     iniVC.EraseSection('Resources');
     for f in FResources do
     begin
       iniVC.WriteString('Files', f.filename, 'fhir');
-      iniT.WriteInteger('Files', f.filename, f.row);
+      iniT.WriteInteger(f.filename, 'Row', f.row);
     end;
     iniVC.EraseSection('Scripts');
     for f in FScripts do
     begin
       iniVC.WriteString('Files', f.filename, 'js');
-      iniT.WriteInteger('Files', f.filename, f.row);
+      iniT.WriteInteger(f.filename, 'Row', f.row);
+      iniT.WriteString(f.filename, 'BreakPoints', f.breakpointSummary);
     end;
     iniVC.EraseSection('Maps');
     for f in FMaps do
     begin
       iniVC.WriteString('Files', f.filename, 'map');
-      iniT.WriteInteger('Files', f.filename, f.row);
+      iniT.WriteInteger(f.filename, 'Row', f.row);
+      iniT.WriteString(f.filename, 'BreakPoints', f.breakpointSummary);
     end;
     iniVC.EraseSection('Templates');
     for f in FTemplates do
     begin
       iniVC.WriteString('Files', f.filename, 'liquid');
-      iniT.WriteInteger('Files', f.filename, f.row);
+      iniT.WriteInteger(f.filename, 'Row', f.row);
+      iniT.WriteString(f.filename, 'BreakPoints', f.breakpointSummary);
     end;
   finally
     iniVC.Free;
@@ -426,23 +471,46 @@ end;
 constructor TWorkspaceFile.Create(filename: String; format : TTransformerFormat);
 begin
   Create;
-  Inc(GLastKey);
-  FKey := GLastKey;
   FFilename := filename;
   FFormat := format;
   FRow := 0;
+  FBreakPoints := TFslList<TBreakPointInfo>.create;
 end;
 
-constructor TWorkspaceFile.Create(filename : string; format : TTransformerFormat; row : integer);
+function TWorkspaceFile.breakpointSummary: String;
+var
+  b : TFslStringBuilder;
+  bpi : TBreakPointInfo;
+begin
+  b := TFslStringBuilder.Create;
+  try
+    for bpi in FBreakPoints do
+      b.CommaAdd(inttostr(bpi.line));
+    result := b.toString;
+  finally
+    b.Free;
+  end;
+end;
+
+constructor TWorkspaceFile.Create(filename : string; format : TTransformerFormat; row : integer; bpl : String);
 var
   l, r : String;
+  s : String;
 begin
   Create;
-  Inc(GLastKey);
-  FKey := GLastKey;
   FFilename := filename;
   FFormat := format;
   FRow := row;
+  FBreakPoints := TFslList<TBreakPointInfo>.create;
+  for s in bpl.Split([',']) do
+    if StringIsInteger32(s) then
+      FBreakPoints.Add(TBreakPointInfo.create(StrToInt(s)));
+end;
+
+destructor TWorkspaceFile.Destroy;
+begin
+  FBreakpoints.free;
+  inherited;
 end;
 
 function TWorkspaceFile.GetTitle: string;
@@ -450,9 +518,32 @@ begin
   result := FFilename;
 end;
 
+function TWorkspaceFile.hasBreakPoint(line: integer; var bpi : TBreakPointInfo): boolean;
+var
+  t : TBreakPointInfo;
+begin
+  result := false;
+  for t in FBreakPoints do
+  begin
+    if t.line = line then
+    begin
+      bpi := t;
+      exit(true);
+    end;
+  end;
+end;
+
 function TWorkspaceFile.link: TWorkspaceFile;
 begin
   result := TWorkspaceFile(inherited link);
+end;
+
+{ TBreakPointInfo }
+
+constructor TBreakPointInfo.create(line: integer);
+begin
+  Inherited Create;
+  FLine := line;
 end;
 
 end.

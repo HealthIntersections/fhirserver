@@ -19,9 +19,9 @@ uses
   FHIR.Cache.PackageManagerDialog in '..\library\cache\FHIR.Cache.PackageManagerDialog.pas' {PackageCacheForm},
   FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
   FHIR.Cda.Documents in '..\library\cda\FHIR.Cda.Documents.pas',
-  FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
   FHIR.Cda.Objects in '..\library\cda\FHIR.Cda.Objects.pas',
   FHIR.Cda.Parser in '..\library\cda\FHIR.Cda.Parser.pas',
+  FHIR.Cda.Scint in '..\library\cda\FHIR.Cda.Scint.pas',
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Cda.Writer in '..\library\cda\FHIR.Cda.Writer.pas',
   FHIR.Client.Base in '..\library\client\FHIR.Client.Base.pas',
@@ -55,8 +55,6 @@ uses
   FHIR.R4.Utilities in '..\library\r4\FHIR.R4.Utilities.pas',
   FHIR.R4.Validator in '..\library\r4\FHIR.R4.Validator.pas',
   FHIR.R4.Xml in '..\library\r4\FHIR.R4.Xml.pas',
-  FHIR.Scint.CDA in '..\library\ui\FHIR.Scint.CDA.pas',
-  FHIR.Scint.Formats in '..\library\ui\FHIR.Scint.Formats.pas',
   FHIR.Smart.Utilities in '..\library\smart\FHIR.Smart.Utilities.pas',
   FHIR.Support.Base in '..\library\support\FHIR.Support.Base.pas',
   FHIR.Support.Certs in '..\library\support\FHIR.Support.Certs.pas',
@@ -110,7 +108,15 @@ uses
   VirtualTrees.StyleHooks in '..\dependencies\treeview\Source\VirtualTrees.StyleHooks.pas',
   VirtualTrees.Utils in '..\dependencies\treeview\Source\VirtualTrees.Utils.pas',
   VirtualTrees.WorkerThread in '..\dependencies\treeview\Source\VirtualTrees.WorkerThread.pas',
-  FHIR.R4.Scint in '..\library\r4\FHIR.R4.Scint.pas';
+  FHIR.R4.Scint in '..\library\r4\FHIR.R4.Scint.pas',
+  ScintFormats in '..\dependencies\ui\ScintFormats.pas',
+  FHIR.v2.Scint in '..\library\v2\FHIR.v2.Scint.pas',
+  FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Transformer.SettingsDialog in 'FHIR.Transformer.SettingsDialog.pas' {TransformerOptionsForm},
+  FHIR.Base.PathDebugger in '..\library\base\FHIR.Base.PathDebugger.pas' {FHIRPathDebuggerForm},
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm};
 
 {$R *.res}
 
@@ -118,8 +124,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TTransformerForm, TransformerForm);
-  Application.CreateForm(TListSelectorForm, ListSelectorForm);
-  Application.CreateForm(TPackageCacheForm, PackageCacheForm);
-  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
+  Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
+  Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
+  Application.CreateForm(TWorkingForm, WorkingForm);
   Application.Run;
 end.

@@ -1,4 +1,4 @@
-unit FHIRValidatorTests;
+unit FHIR.R2.Tests.Validator;
 
 
 {
@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base, AdvBuffers,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIRTestWorker, FHIR.R2.Validator, FHIR.Version.Parser,
-  FHIR.R2.Context,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Tests,
+  FHIR.Base.Objects, FHIR.Server.Session, FHIR.R2.Parser, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.R2.Context, FHIR.R2.Tests.Worker, FHIR.R2.Validator,
   DUnitX.TestFramework;
 
 type
@@ -115,9 +115,8 @@ type
 implementation
 
 uses
-  SysUtils, Classes, FHIR.Support.Utilities,
-  FHIR.Base.Parser,
-  FHIR.R2.Types, FHIR.R2.Resources;
+  SysUtils, Classes,
+  FHIR.Base.Parser, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Xml, FHIR.R2.Json;
 
 { TFHIRValidatorTests }
 
@@ -137,7 +136,7 @@ var
   val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
-  msg : TFhirOperationOutcomeIssue;
+  msg : TFhirOperationOutcomeIssueW;
 begin
   src := TFslBuffer.Create;
   try
@@ -152,11 +151,11 @@ begin
         val.Free;
       end;
       ec := 0;
-      for msg in ctxt.Errors do
-        if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
+      for msg in ctxt.Issues do
+        if msg.severity in [isFatal, isError] then
         begin
           inc(ec);
-          writeln(msg.details.text);
+          writeln(msg.display);
         end;
       Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d', [errorCount, ec]));
     finally
@@ -175,7 +174,7 @@ var
   val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
-  msg : TFhirOperationOutcomeIssue;
+  msg : TFhirOperationOutcomeIssueW;
   s : string;
 begin
   if (fmt = ffXml) then
@@ -199,11 +198,11 @@ begin
         end;
         ec := 0;
         s := '';
-        for msg in ctxt.Errors do
-          if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
+        for msg in ctxt.Issues do
+          if msg.severity in [isFatal, isError] then
           begin
             inc(ec);
-            s := s + msg.locationList[0].value+': '+ msg.details.text+'. ';
+            s := s + msg.display+'. ';
           end;
         Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
       finally

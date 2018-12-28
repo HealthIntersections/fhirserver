@@ -144,16 +144,14 @@ var
 //  sn : String;
   b1, b2 : TBytes;
   a, b : TMXmlAttribute;
-  s : String;
 begin
   result := '';
-  for s in src.Attributes.Keys do
+  for a in src.Attributes do
   begin
-    if not ((s = 'xmlns') or s.StartsWith('xmlns:')) then
+    if not ((a.name = 'xmlns') or a.name.StartsWith('xmlns:')) then
     begin
-      a := src.Attributes[s];
-      if not tgt.Attributes.TryGetValue(s, b) then
-        exit('Attributes differ at '+path+': missing attribute '+s);
+      if not tgt.getAttrByName(a.name, b) then
+        exit('Attributes differ at '+path+': missing attribute '+a.name);
       if normalise(a.value) <> normalise(b.value) then
       begin
         b1 := unBase64(a.value);
@@ -163,13 +161,12 @@ begin
       end;
     end;
   end;
-  for s in tgt.Attributes.Keys do
+  for a in tgt.Attributes do
   begin
-    if not ((s = 'xmlns') or s.StartsWith('xmlns:')) then
+    if not ((a.name = 'xmlns') or a.name.StartsWith('xmlns:')) then
     begin
-      a := tgt.Attributes[s];
-      if not src.Attributes.TryGetValue(s, b) then
-        exit('Attributes differ at '+path+': missing attribute '+s);
+      if not src.getAttrByName(a.name, b) then
+        exit('Attributes differ at '+path+': missing attribute '+a.name);
       if normalise(a.value) <> normalise(b.value) then
       begin
         b1 := unBase64(a.value);
@@ -251,13 +248,10 @@ begin
 end;
 
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
-{$IFDEF DIFF}
 var
   x1, x2, f1, f2, cmd : String;
-{$ENDIF}
 begin
   result := compareXML(filename1, filename2, msg);
-{$IFDEF DIFF}
   if not result and showdiff then
   begin
     showdiff := false;
@@ -273,9 +267,8 @@ begin
     StringToFile(x1, f1{$IFDEF UNICODE}, TEncoding.UTF8{$ENDIF});
     StringToFile(x2, f2{$IFDEF UNICODE}, TEncoding.UTF8{$ENDIF});
     cmd := f1+' '+f2;
-    ShellExecute(0, 'open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), PChar(ExtractFilePath(f1)), SW_MAXIMIZE);
+    ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
   end;
-{$ENDIF}
 end;
 
 function CompareObjectsJson(path : String; o1, o2 : TJsonObject) : String; forward;
@@ -376,14 +369,11 @@ begin
 end;
 
 function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
-{$IFDEF DIFF}
 var
   j1, j2 : TJsonObject;
   f1, f2, cmd : String;
-{$ENDIF}
 begin
   result := compareJson(filename1, filename2, msg);
-{$IFDEF DIFF}
   if not result and showdiff then
   begin
     showdiff := false;
@@ -402,7 +392,6 @@ begin
       j1.Free;
     end;
   end;
-{$ENDIF}
 end;
 
 function compareObjectsTurtle(path : String; t1, t2 : TTurtleObject) : String;

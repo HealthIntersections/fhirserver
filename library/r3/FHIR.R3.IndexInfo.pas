@@ -18,7 +18,7 @@ unit FHIR.R3.IndexInfo;
      endorse or promote products derived from this software without specific 
      prior written permission.
   
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
@@ -33,12 +33,12 @@ unit FHIR.R3.IndexInfo;
 
 interface
 
-// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
+// FHIR v3.0.1 generated 2018-06-12T19:15:59+10:00
 
 uses
-  SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities,
-  FHIR.Base.Common,
+  SysUtils, Classes, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, 
+  FHIR.Base.Common, 
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.Tools.Indexing;
 
 Type
@@ -395,8 +395,8 @@ Type
     {$ENDIF}
   public
     procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList); override;
- end;
- TFHIRIndexBuilderX = TFHIRIndexBuilderR3;
+  end;
+  TFHIRIndexBuilderX = TFHIRIndexBuilderR3;
 
 implementation
 

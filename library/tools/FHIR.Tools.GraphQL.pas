@@ -126,12 +126,13 @@ type
     property Bundle : TFHIRBundleW read FBundle write SetBundle;
     function fhirType : String; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -149,12 +150,13 @@ type
     function fhirType : String; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -1103,6 +1105,11 @@ begin
     result := nil;
 end;
 
+function TFHIRGraphQLSearchWrapper.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRGraphQLSearchWrapper.makeCodeValue(v: String): TFHIRObject;
 begin
   result := FBundle.makeCodeValue(v);
@@ -1128,8 +1135,9 @@ procedure TFHIRGraphQLSearchWrapper.setIdValue(id: String);
 begin
 end;
 
-procedure TFHIRGraphQLSearchWrapper.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRGraphQLSearchWrapper.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
+  result := nil;
 end;
 
 { TFHIRGraphQLSearchEdge }
@@ -1185,6 +1193,11 @@ begin
     result := nil;
 end;
 
+function TFHIRGraphQLSearchEdge.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRGraphQLSearchEdge.makeCodeValue(v: String): TFHIRObject;
 begin
   result := FEntry.makeCodeValue(v);
@@ -1210,8 +1223,9 @@ procedure TFHIRGraphQLSearchEdge.setIdValue(id: String);
 begin
 end;
 
-procedure TFHIRGraphQLSearchEdge.setProperty(propName: string; propValue: TFHIRObject);
+function TFHIRGraphQLSearchEdge.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
+  result := nil;
 end;
 
 function TFHIRGraphQLEngine.getSingleValue(arg: TGraphQLArgument): string;

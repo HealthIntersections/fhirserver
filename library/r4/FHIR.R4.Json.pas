@@ -36,9 +36,9 @@ interface
 // FHIR v4.0.0 generated 2018-12-15T16:22:09+11:00
 
 uses
-  SysUtils, Classes, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, 
-  FHIR.Base.Parser, FHIR.Base.Objects, 
+  SysUtils, Classes,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json,
+  FHIR.Base.Parser, FHIR.Base.Objects,
   FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types;
 
 Type
@@ -3586,7 +3586,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
-    raise EJsonException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
+    raise EParserException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"', value.LocationStart.line+1, value.LocationStart.col+1);
   result := TFHIREnum.create;
   try
     if (value <> nil) then
@@ -61428,7 +61428,7 @@ begin
 {$IFDEF FHIR_ACCOUNT}
   {$IFDEF FHIR_ACCOUNT}
    else if s = 'Account' Then
-    result := ParseAccount(jsn) 
+    result := ParseAccount(jsn)
   {$ENDIF}
 {$ENDIF FHIR_ACCOUNT}
 {$IFDEF FHIR_ACTIVITYDEFINITION}
@@ -61614,7 +61614,7 @@ begin
 {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
   {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
    else if s = 'CoverageEligibilityRequest' Then
-    result := ParseCoverageEligibilityRequest(jsn) 
+    result := ParseCoverageEligibilityRequest(jsn)
   {$ENDIF}
 {$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
 {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
@@ -61800,7 +61800,7 @@ begin
 {$IFDEF FHIR_IMMUNIZATIONEVALUATION}
   {$IFDEF FHIR_IMMUNIZATIONEVALUATION}
    else if s = 'ImmunizationEvaluation' Then
-    result := ParseImmunizationEvaluation(jsn) 
+    result := ParseImmunizationEvaluation(jsn)
   {$ENDIF}
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
 {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
@@ -61986,7 +61986,7 @@ begin
 {$IFDEF FHIR_NAMINGSYSTEM}
   {$IFDEF FHIR_NAMINGSYSTEM}
    else if s = 'NamingSystem' Then
-    result := ParseNamingSystem(jsn) 
+    result := ParseNamingSystem(jsn)
   {$ENDIF}
 {$ENDIF FHIR_NAMINGSYSTEM}
 {$IFDEF FHIR_NUTRITIONORDER}
@@ -62172,7 +62172,7 @@ begin
 {$IFDEF FHIR_SPECIMEN}
   {$IFDEF FHIR_SPECIMEN}
    else if s = 'Specimen' Then
-    result := ParseSpecimen(jsn) 
+    result := ParseSpecimen(jsn)
   {$ENDIF}
 {$ENDIF FHIR_SPECIMEN}
 {$IFDEF FHIR_SPECIMENDEFINITION}
@@ -62296,7 +62296,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise EJsonException.create('error: the element '+s+' is not a valid resource name');
+    raise EParserException.create('error: the element '+s+' is not a valid resource name', jsn.LocationStart.line+1, jsn.locationStart.col+1);
 end;
 
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;

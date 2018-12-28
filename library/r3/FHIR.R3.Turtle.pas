@@ -33,12 +33,12 @@ unit FHIR.R3.Turtle;
 
 interface
 
-// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
+// FHIR v3.0.1 generated 2018-06-12T19:15:59+10:00
 
 uses
-  SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Turtle,
-  FHIR.Base.Parser, FHIR.Base.Objects,
+  SysUtils, Classes, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Turtle, 
+  FHIR.Base.Parser, FHIR.Base.Objects, 
   FHIR.R3.ParserBase, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types;
 
 Type
@@ -3951,6 +3951,8 @@ end;
 procedure TFHIRTurtleComposer.ComposeQuantity(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuantity; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
+var
+  cb, c : TTurtleComplex;
 begin
   if (elem = nil) then
     exit;
@@ -35738,7 +35740,7 @@ var
   this : TTurtleComplex;
 begin
   if (resource = nil) Then
-    raise ERdfException.create('error - resource is nil');
+    Raise ERdfException.Create('error - resource is nil');
   this := parent;
   Case resource.ResourceType of
 {$IFDEF FHIR_PARAMETERS}

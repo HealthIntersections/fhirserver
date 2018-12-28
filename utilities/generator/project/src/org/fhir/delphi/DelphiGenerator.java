@@ -894,13 +894,14 @@ public class DelphiGenerator {
     StringBuilder setprops = new StringBuilder();
     StringBuilder insprops = new StringBuilder();
     StringBuilder makeprops = new StringBuilder();
+    StringBuilder propTypes = new StringBuilder();
     StringBuilder delprops = new StringBuilder();
     StringBuilder replprops = new StringBuilder();
     StringBuilder reorderprops = new StringBuilder();
     impl.append("{ "+tn+" }\r\n\r\n");
 
     for (ElementDefn e : root.getElements()) {
-      generateField(e, root.getName(), defPriv1, defPriv2, defPub, impl, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, delprops, replprops, reorderprops, tn, "", category, tn.equals("TFhirExtension"), jsReg, tj);
+      generateField(e, root.getName(), defPriv1, defPriv2, defPub, impl, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, tn.equals("TFhirExtension"), jsReg, tj);
     }
 
     def.append("  // "+makeDocoSafe(root.getDefinition(), "// ")+"\r\n");
@@ -927,9 +928,10 @@ public class DelphiGenerator {
     def.append("    procedure Assign(oSource : TFslObject); override;\r\n");
     def.append("    function Link : "+tn+"; overload;\r\n");
     def.append("    function Clone : "+tn+"; overload;\r\n");
-    def.append("    procedure setProperty(propName : string; propValue : TFHIRObject); override;\r\n");
+    def.append("    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;\r\n");
     def.append("    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;\r\n");
     def.append("    function createPropertyValue(propName : string): TFHIRObject; override;\r\n");
+    def.append("    function getTypesForProperty(propName : string): String; override;\r\n");
     def.append("    procedure deleteProperty(propName : string; value : TFHIRObject); override;\r\n");
     def.append("    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;\r\n");
     def.append("    procedure reorderProperty(propName : string; source, destination : integer); override;\r\n");
@@ -1084,13 +1086,13 @@ public class DelphiGenerator {
     impl2.append("  inherited;\r\n");
     impl2.append(getprops.toString());
     impl2.append("end;\r\n\r\n");
-    impl2.append("procedure "+tn+".setProperty(propName: string; propValue: TFHIRObject);\r\n");
+    impl2.append("function "+tn+".setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;\r\n");
     impl2.append("begin\r\n");
     if (setprops.length() > 7) {
       impl2.append("  "+setprops.toString().substring(7));
-      impl2.append("  else inherited;\r\n");
+      impl2.append("  else result := inherited setProperty(propName, propValue);;\r\n");
     } else {
-      impl2.append("  inherited;\r\n");
+      impl2.append("  result := inherited setProperty(propName, propValue);\r\n");
     }
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".insertProperty(propName: string; propValue: TFHIRObject; index : integer);\r\n");
@@ -1109,6 +1111,14 @@ public class DelphiGenerator {
       impl2.append("  else result := inherited createPropertyValue(propName);\r\n");
     } else
       impl2.append("  result := inherited createPropertyValue(propName);\r\n");
+    impl2.append("end;\r\n\r\n");
+    impl2.append("function "+tn+".getTypesForProperty(propName: string) : String;\r\n");
+    impl2.append("begin\r\n");
+    if (propTypes.length() > 7) {
+      impl2.append("  "+propTypes.toString().substring(7));
+      impl2.append("  else result := inherited getTypesForProperty(propName);\r\n");
+    } else
+      impl2.append("  result := inherited getTypesForProperty(propName);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".deleteProperty(propName : string; value : TFHIRObject);\r\n");
     impl2.append("begin\r\n");
@@ -1202,6 +1212,7 @@ public class DelphiGenerator {
     StringBuilder setprops = new StringBuilder();
     StringBuilder insprops = new StringBuilder();
     StringBuilder makeprops = new StringBuilder();
+    StringBuilder propTypes = new StringBuilder();
     StringBuilder delprops = new StringBuilder();
     StringBuilder replprops = new StringBuilder();
     StringBuilder reorderprops = new StringBuilder();
@@ -1227,7 +1238,7 @@ public class DelphiGenerator {
     workingComposerR = new StringBuilder();
 
     for (ElementDefn e : root.getElements()) {
-      generateField(e, root.getName(), defPriv1, defPriv2, defPub, impl, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, delprops, replprops, reorderprops, tn, "", category, e.getName().equals("Extension"), jsReg, tj);
+      generateField(e, root.getName(), defPriv1, defPriv2, defPub, impl, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, e.getName().equals("Extension"), jsReg, tj);
     }
 
     def.append("  // "+makeDocoSafe(root.getDefinition(), "// ")+"\r\n");
@@ -1250,9 +1261,10 @@ public class DelphiGenerator {
     def.append("    procedure Assign(oSource : TFslObject); override;\r\n");
     def.append("    function Link : "+tn+"; overload;\r\n");
     def.append("    function Clone : "+tn+"; overload;\r\n");
-    def.append("    procedure setProperty(propName : string; propValue : TFHIRObject); override;\r\n");
+    def.append("    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;\r\n");
     def.append("    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;\r\n");
     def.append("    function createPropertyValue(propName : string) : TFHIRObject; override;\r\n");
+    def.append("    function getTypesForProperty(propName : string): String; override;\r\n");
     def.append("    procedure deleteProperty(propName : string; value : TFHIRObject); override;\r\n");
     def.append("    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;\r\n");
     def.append("    procedure reorderProperty(propName : string; source, destination : integer); override;\r\n");
@@ -1445,10 +1457,10 @@ public class DelphiGenerator {
     impl2.append("  inherited;\r\n");
     impl2.append(getprops.toString());
     impl2.append("end;\r\n\r\n");
-    impl2.append("procedure "+tn+".setProperty(propName: string; propValue: TFHIRObject);\r\n");
+    impl2.append("function "+tn+".setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;\r\n");
     impl2.append("begin\r\n");
     impl2.append("  "+setprops.toString().substring(7));
-    impl2.append("  else inherited;\r\n");
+    impl2.append("  else result := inherited setProperty(propName, propValue);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".insertProperty(propName: string; propValue: TFHIRObject; index : integer);\r\n");
     impl2.append("begin\r\n");
@@ -1466,6 +1478,14 @@ public class DelphiGenerator {
       impl2.append("  else result := inherited createPropertyValue(propName);\r\n");
     } else
       impl2.append("  result := inherited createPropertyValue(propName);\r\n");
+    impl2.append("end;\r\n\r\n");
+    impl2.append("function "+tn+".getTypesForProperty(propName: string) : String;\r\n");
+    impl2.append("begin\r\n");
+    if (propTypes.length() > 7) {
+      impl2.append("  "+propTypes.toString().substring(7));
+      impl2.append("  else result := inherited getTypesForProperty(propName);\r\n");
+    } else
+      impl2.append("  result := inherited getTypesForProperty(propName);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".deleteProperty(propName: string; value : TFHIRObject);\r\n");
     impl2.append("begin\r\n");
@@ -1989,6 +2009,7 @@ public class DelphiGenerator {
     StringBuilder setprops = new StringBuilder();
     StringBuilder insprops = new StringBuilder();
     StringBuilder makeprops = new StringBuilder();
+    StringBuilder propTypes = new StringBuilder();
     StringBuilder delprops = new StringBuilder();
     StringBuilder replprops = new StringBuilder();
     StringBuilder reorderprops = new StringBuilder();
@@ -2005,7 +2026,7 @@ public class DelphiGenerator {
     impl.append("{ "+tn+" }\r\n\r\n");
 
     for (ElementDefn c : e.getElements()) {
-      generateField(c, e.getPath(), defPriv1, defPriv2, defPub, impl, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, delprops, replprops, reorderprops, tn, "", category, e.getName().equals("Extension"), jsReg, tj);
+      generateField(c, e.getPath(), defPriv1, defPriv2, defPub, impl, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, e.getName().equals("Extension"), jsReg, tj);
     }
 
     def.append("  protected\r\n");
@@ -2020,9 +2041,10 @@ public class DelphiGenerator {
     def.append("    procedure Assign(oSource : TFslObject); override;\r\n");
     def.append("    function Link : "+tn+"; overload;\r\n");
     def.append("    function Clone : "+tn+"; overload;\r\n");
-    def.append("    procedure setProperty(propName : string; propValue : TFHIRObject); override;\r\n");
+    def.append("    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;\r\n");
     def.append("    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;\r\n");
     def.append("    function createPropertyValue(propName : string) : TFHIRObject; override;\r\n");
+    def.append("    function getTypesForProperty(propName : string): String; override;\r\n");
     def.append("    procedure deleteProperty(propName : string; value : TFHIRObject); override;\r\n");
     def.append("    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;\r\n");
     def.append("    procedure reorderProperty(propName : string; source, destination : integer); override;\r\n");
@@ -2079,10 +2101,10 @@ public class DelphiGenerator {
     impl2.append("  inherited;\r\n");
     impl2.append(getprops.toString());
     impl2.append("end;\r\n\r\n");
-    impl2.append("procedure "+tn+".setProperty(propName : string; propValue: TFHIRObject);\r\n");
+    impl2.append("function "+tn+".setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;\r\n");
     impl2.append("begin\r\n");
     impl2.append("  "+setprops.toString().substring(7));
-    impl2.append("  else inherited;\r\n");
+    impl2.append("  else result := inherited setProperty(propName, propValue);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".insertProperty(propName: string; propValue: TFHIRObject; index : integer);\r\n");
     impl2.append("begin\r\n");
@@ -2100,6 +2122,14 @@ public class DelphiGenerator {
       impl2.append("  else result := inherited createPropertyValue(propName);\r\n");
     } else
       impl2.append("  result := inherited createPropertyValue(propName);\r\n");
+    impl2.append("end;\r\n\r\n");
+    impl2.append("function "+tn+".getTypesForProperty(propName: string) : String;\r\n");
+    impl2.append("begin\r\n");
+    if (propTypes.length() > 7) {
+      impl2.append("  "+propTypes.toString().substring(7));
+      impl2.append("  else result := inherited getTypesForProperty(propName);\r\n");
+    } else
+      impl2.append("  result := inherited getTypesForProperty(propName);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".deleteProperty(propName: string; value : TFHIRObject);\r\n");
     impl2.append("begin\r\n");
@@ -2619,7 +2649,7 @@ public class DelphiGenerator {
     return b.toString();
   }
 
-  private void generateField(ElementDefn e, String path, StringBuilder defPriv1, StringBuilder defPriv2, StringBuilder defPub, StringBuilder impl, StringBuilder create, StringBuilder destroy, StringBuilder assign, StringBuilder empty, StringBuilder getkids, StringBuilder getkidsvars, StringBuilder getprops, StringBuilder getpropsvars, StringBuilder setprops, StringBuilder insprops, StringBuilder makeprops, StringBuilder delprops, StringBuilder replprops, StringBuilder reorderprops, String cn, String pt, ClassCategory category, boolean isExtension, StringBuilder jsReg, String tj) throws Exception {
+  private void generateField(ElementDefn e, String path, StringBuilder defPriv1, StringBuilder defPriv2, StringBuilder defPub, StringBuilder impl, StringBuilder create, StringBuilder destroy, StringBuilder assign, StringBuilder empty, StringBuilder getkids, StringBuilder getkidsvars, StringBuilder getprops, StringBuilder getpropsvars, StringBuilder setprops, StringBuilder insprops, StringBuilder makeprops, StringBuilder propTypes, StringBuilder delprops, StringBuilder replprops, StringBuilder reorderprops, String cn, String pt, ClassCategory category, boolean isExtension, StringBuilder jsReg, String tj) throws Exception {
 
     String tn;
     if (e.getTypes().size() > 0 && e.getTypes().get(0).isUnboundGenericParam())
@@ -2764,11 +2794,12 @@ public class DelphiGenerator {
           if (generics) {
             getpropsvars.append("  o : TFHIREnum"+rId+";\r\n");
             getprops.append("  prop := oList[oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"'))];\r\n  for o in F"+getTitle(s)+" do\r\n      prop,list.add(o.Link){3};\r\n");
-          } else
+          } else 
             getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', true, TFHIREnum"+rId+", F"+getTitle(s)+".Link)){3};\r\n");
+          propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeCodeNoParams())+"'\r\n");
           if (e.getName().endsWith("[x]"))
             throw new Exception("Not done yet");
-          setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+"List.add(asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
+          setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+"List.add(asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue)); {1}\r\n    result := propValue;\r\n  end\r\n");
           insprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".insertItem(index, asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
           reorderprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".move(source, destination) {1}\r\n");
         }
@@ -2868,14 +2899,15 @@ public class DelphiGenerator {
             getprops.append("  prop := oList[oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"'))];\r\n  for o"+getTitle(s)+" in F"+getTitle(s)+" do\r\n    prop.List.add(o"+getTitle(s)+".Link){3a};\r\n");
           } else
             getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', true, "+tn+", F"+getTitle(s)+".Link)){3};\r\n");
+          propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeCodeNoParams())+"'\r\n");
           if (e.getName().endsWith("[x]"))
             throw new Exception("Not done yet");
           if (typeIsPrimitive(e.typeCode())) {
-            setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(as"+tn.substring(5)+"(propValue)){2}\r\n");
+            setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+".add(as"+tn.substring(5)+"(propValue)){2};     result := propValue;\r\n\r\n  end\r\n");
             insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, as"+tn.substring(5)+"(propValue)){2}\r\n");
             reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2}\r\n");
           } else {
-            setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(propValue as "+tn+"){2a}\r\n");
+            setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+".add(propValue as "+tn+"){2a};\r\n    result := propValue;\r\n  end\r\n");
             insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, propValue as "+tn+"){2a}\r\n");
             reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2a}\r\n");
           }
@@ -2995,19 +3027,20 @@ public class DelphiGenerator {
             impl.append("Procedure "+cn+".Set"+getTitle(s)+"(value : TFhirEnum"+rId+");\r\nbegin\r\n  F"+getTitle(s)+".free;\r\n  F"+getTitle(s)+" := value;\r\nend;\r\n\r\n");
             impl.append("Function "+cn+".Get"+getTitle(s)+"ST : "+tn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := "+tn+"(0)\r\n  else\r\n    result := "+tn+"(StringArrayIndexOfSensitive(CODES_"+tn+", F"+getTitle(s)+".value));\r\nend;\r\n\r\n");
             impl.append("Procedure "+cn+".Set"+getTitle(s)+"ST(value : "+tn+");\r\nbegin\r\n  if ord(value) = 0 then\r\n    "+getTitle(s)+"Element := nil\r\n  else\r\n    "+getTitle(s)+"Element := TFhirEnum"+rId+".create(SYSTEMS_"+tn+"[value], CODES_"+tn+"[value]);\r\nend;\r\n\r\n");
-            setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue)\r\n");
+            setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue);\r\n    result := propValue\r\n  end\r\n");
             replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", new){4}\r\n");          
             delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
           } else {
             impl.append("Procedure "+cn+".Set"+getTitle(s)+"(value : TFhirEnum"+rId+");\r\nbegin\r\n  F"+getTitle(s)+".free;\r\n  F"+getTitle(s)+" := value;\r\nend;\r\n\r\n");
             impl.append("Procedure "+cn+".Set"+getTitle(s)+"ST(value : "+tn+");\r\nbegin\r\n  if ord(value) = 0 then\r\n    "+getTitle(s)+" := nil\r\n  else\r\n    "+getTitle(s)+" := TFhirEnum"+rId+".create(SYSTEMS_"+tn+rId+"[value], CODES_"+tn+rId+"[value]);\r\nend;\r\n\r\n");
-            setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+" := asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue)\r\n");
+            setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := asEnum"+rId+"(SYSTEMS_"+tn+", CODES_"+tn+", propValue)\r\n    result := propValue;\r\n  end\r\n");
             replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{4}\r\n");          
             delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
           }
           assign.append("  F"+getTitle(s)+" := "+cn+"(oSource).F"+getTitle(s)+".Link;\r\n");
           getkids.append("  if (child_name = '"+e.getName()+"') Then\r\n     list.add(self.link, '"+e.getName()+"', F"+getTitle(s)+".Link);\r\n");
           getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', false, TFHIREnum"+rId+", "+propV+".Link));{1}\r\n");
+          propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeCodeNoParams())+"'\r\n");
         }
         if (e.getName().endsWith("[x]"))
           throw new Exception("Not done yet");
@@ -3059,19 +3092,20 @@ public class DelphiGenerator {
           else
             getkids.append("  if (child_name = '"+e.getName()+"') Then\r\n     list.add(self.link, '"+e.getName()+"', F"+getTitle(s)+".Link);\r\n");
           getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', false, "+tn+", "+propV+".Link));{2}\r\n");
+          propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeCodeNoParams())+"'\r\n");
           if (e.getName().endsWith("[x]")) {
             if (!typeIsPrimitive(e.typeCode()))
-              setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then "+propV.substring(1)+" := propValue as "+tn+"{4}\r\n");
+              setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{4};\r\n    result := propValue;\r\n  end\r\n");
             else 
-              setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then "+propV.substring(1)+" := propValue as "+tn+"{5}\r\n");
+              setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{5};\r\n   result := propValue;\r\n  end\r\n");
           } else {
             delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
             if (!typeIsPrimitive(e.typeCode()) && !e.typeCode().equals("xhtml")) {
               replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{4}\r\n");          
               if (simpleTypes.containsKey(tn))
-                setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := propValue as "+tn+"{4a}\r\n");
+                setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := propValue as "+tn+"{4a};\r\n    result := propValue;\r\n  end\r\n");
               else {
-                setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+" := propValue as "+tn+"{4b}\r\n");
+                setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{4b};\r\n    result := propValue;\r\n  end\r\n");
                 if (typeIsAbstract(e.typeCode())) {
                   makeprops.append("  else if (propName = '"+e.getName()+"') then raise EFHIRException.create('Cannot make property "+propV.substring(1)+"')\r\n");
                 } else {
@@ -3080,15 +3114,17 @@ public class DelphiGenerator {
               }
             } else {
               if (!simpleTypes.containsKey(tn) && !tn.equals("TFhirXHtmlNode")) {
-                setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+" := propValue as "+tn+"{5b}\r\n");          
+                setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{5b};\r\n    result := propValue;\r\n  end\r\n");          
                 replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{5b}\r\n");          
                 makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
               } else if (tn.equals("TFhirCode"+rId)) {
-                setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asCode"+rId+"(propValue)\r\n");
+                setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := asCode"+rId+"(propValue);\r\n    result := propValue;\r\n  end\r\n");
                 replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asCode"+rId+"(new){5b}\r\n");          
+                makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
               } else {
-                setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := as"+tn.substring(5)+"(propValue){5a}\r\n");          
+                setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := as"+tn.substring(5)+"(propValue){5a};\r\n    result := propValue;\r\n  end\r\n");          
                 replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := as"+tn.substring(5)+"(new){5b}\r\n");          
+                makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
               }
             }
           }
@@ -3812,6 +3848,8 @@ public class DelphiGenerator {
       def.append("    function isEnum : boolean; override;\r\n");
     }
     def.append("    function fhirType : string; override;\r\n");
+    if (pn.equals("TDateTimeEx"))
+        def.append("    function dateValue : TDateTimeEx; override;\r\n");
     if (!derived) {
       def.append("  Published\r\n");
       def.append("    // The actual value of the "+t.getCode()+"\r\n");
@@ -3855,7 +3893,12 @@ public class DelphiGenerator {
     impl2.append("begin\r\n");
     impl2.append("  result := '"+(t.getCode().equals("enum") ? "code" : t.getCode())+"';\r\n");
     impl2.append("end;\r\n\r\n");
-
+    if (pn.equals("TDateTimeEx")) {
+      impl2.append("function TFhir"+tn+rId+".dateValue : TDateTimeEx;\r\n");
+      impl2.append("begin\r\n");
+      impl2.append("  result := FValue;\r\n");
+      impl2.append("end;\r\n\r\n");
+    }
     if (tn.equals("Enum")) {
       impl2.append("function TFHIREnum.isEnum : boolean;\r\n");
       impl2.append("begin\r\n");
@@ -4004,7 +4047,7 @@ public class DelphiGenerator {
       prsrImplJ.append("begin\r\n");
       prsrImplJ.append("  i := StringArrayIndexOfSensitive(aNames, JsonToString(value));\r\n");
       prsrImplJ.append("  if (value <> nil) and (i < 0) then\r\n");
-      prsrImplJ.append("    raise EJsonException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"');\r\n");
+      prsrImplJ.append("    raise EParserException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"', value.LocationStart.line+1, value.LocationStart.col+1);\r\n");
       prsrImplJ.append("  result := TFHIREnum"+rId+".create;\r\n");
       prsrImplJ.append("  try\r\n");
       prsrImplJ.append("    if (value <> nil) then\r\n");
@@ -4334,7 +4377,8 @@ public class DelphiGenerator {
     def.append("    function isPrimitive : boolean; override;\r\n");
     def.append("    function hasPrimitiveValue : boolean; override;\r\n");
     def.append("    function primitiveValue : string; override;\r\n");
-    def.append("    procedure setProperty(propName: string; propValue: TFHIRObject); override;\r\n");
+    def.append("    function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;\r\n");
+    def.append("    function toString : String; override;\r\n");
     def.append("  End;\r\n");   
     def.append("  TFHIRPrimitiveType"+rId+"Class = class of TFHIRPrimitiveType"+rId+";\r\n");
     def.append("  \r\n");
@@ -4387,15 +4431,20 @@ public class DelphiGenerator {
     impl2.append("begin\r\n");
     impl2.append("  result := StringValue;\r\n");
     impl2.append("end;\r\n\r\n");
-    impl2.append("procedure TFHIRPrimitiveType.setProperty(propName: string; propValue: TFHIRObject);\r\n");
+    impl2.append("function TFHIRPrimitiveType.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;\r\n");
     impl2.append("begin\r\n");
     impl2.append("  if (propName = 'value') then\r\n");
     impl2.append("  begin\r\n");
     impl2.append("    StringValue := propValue.primitiveValue;\r\n");
     impl2.append("    propValue.Free;\r\n");
+    impl2.append("    result := self;\r\n");
     impl2.append("  end\r\n");
     impl2.append("  else\r\n");
-    impl2.append("    inherited;\r\n");
+    impl2.append("    result := inherited setProperty(propName, propValue);\r\n");
+    impl2.append("end;\r\n\r\n");
+    impl2.append("function TFHIRPrimitiveType.toString : String;\r\n");
+    impl2.append("begin\r\n");
+    impl2.append("  result := StringValue;\r\n");
     impl2.append("end;\r\n\r\n");
 
     prsrdefX.append("    Procedure ParseElementAttributes(value : TFhirElement"+rId+"; path : string; element : TMXmlElement);\r\n");
@@ -4822,7 +4871,7 @@ public class DelphiGenerator {
             "  s := jsn['resourceType'];\r\n "+
             removeFirst(prsrRegJ.toString(), "else ")+
             "  else\r\n"+
-            "    raise EJsonException.create('error: the element '+s+' is not a valid resource name');\r\n" +
+            "    raise EParserException.create('error: the element '+s+' is not a valid resource name', jsn.LocationStart.line+1, jsn.locationStart.col+1);\r\n" +
             "end;\r\n\r\n"
         );
 

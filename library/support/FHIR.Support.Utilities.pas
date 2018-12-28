@@ -393,49 +393,49 @@ function UriForKnownOid(oid : String) : String;
 
 type
   TAnsiStringBuilder = Class(TFslObject)
-    Private
-      FContent : AnsiString;
-      FLength : Integer;
-      FBufferSize : integer;
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
+  Private
+    FContent : AnsiString;
+    FLength : Integer;
+    FBufferSize : integer;
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
 
-      Function AsString : AnsiString;
-      Function ToString : String; override;
+    Function AsString : AnsiString;
+    Function ToString : String; override;
 
-      Procedure Clear;
+    Procedure Clear;
 
-      Procedure Append(ch : AnsiChar); Overload;
-      Procedure Append(Const sStr : AnsiString); Overload;
-      Procedure AppendLine(Const sStr : AnsiString); Overload;
-      Procedure Append(Const iInt : Integer); Overload;
-      Procedure AppendPadded(Const sStr : AnsiString; iCount : Integer; cPad : AnsiChar = ' ');
-      Procedure AppendFixed(Const sStr : AnsiString; iCount : Integer; cPad : AnsiChar = ' ');
-      Procedure Append(const bBytes : Array of Byte; amount : Integer); Overload;
-      Procedure Append(Const oBuilder : TAnsiStringBuilder); Overload;
-      Procedure AppendEOL;
+    Procedure Append(ch : AnsiChar); Overload;
+    Procedure Append(Const sStr : AnsiString); Overload;
+    Procedure AppendLine(Const sStr : AnsiString); Overload;
+    Procedure Append(Const iInt : Integer); Overload;
+    Procedure AppendPadded(Const sStr : AnsiString; iCount : Integer; cPad : AnsiChar = ' ');
+    Procedure AppendFixed(Const sStr : AnsiString; iCount : Integer; cPad : AnsiChar = ' ');
+    Procedure Append(const bBytes : Array of Byte; amount : Integer); Overload;
+    Procedure Append(Const oBuilder : TAnsiStringBuilder); Overload;
+    Procedure AppendEOL;
 
-      Procedure CommaAdd(Const sStr : AnsiString); Overload;
+    Procedure CommaAdd(Const sStr : AnsiString); Overload;
 
-      Procedure AddByteAsBytes(iVal : Byte);
-      Procedure AddWordAsBytes(iVal : word);
-      Procedure AddCardinalAsBytes(iVal : Cardinal);
-      Procedure AddInt64AsBytes(iVal : Int64);
+    Procedure AddByteAsBytes(iVal : Byte);
+    Procedure AddWordAsBytes(iVal : word);
+    Procedure AddCardinalAsBytes(iVal : Cardinal);
+    Procedure AddInt64AsBytes(iVal : Int64);
 
-      // index is zero based. zero means insert before first character
-      Procedure Insert(Const sStr : AnsiString; iIndex : Integer); Overload;
-      Procedure Insert(Const oBuilder : TAnsiStringBuilder; iIndex : Integer); Overload;
+    // index is zero based. zero means insert before first character
+    Procedure Insert(Const sStr : AnsiString; iIndex : Integer); Overload;
+    Procedure Insert(Const oBuilder : TAnsiStringBuilder; iIndex : Integer); Overload;
 
-      Procedure Delete(iIndex, iLength : Integer);
+    Procedure Delete(iIndex, iLength : Integer);
 
-      Property BufferSize : integer read FBufferSize write FBufferSize;
-      Function IndexOf(Const sStr : AnsiString; bCase : Boolean = False) : Integer;
-      Function LastIndexOf(Const sStr : AnsiString; bCase : Boolean = False) : Integer;
+    Property BufferSize : integer read FBufferSize write FBufferSize;
+    Function IndexOf(Const sStr : AnsiString; bCase : Boolean = False) : Integer;
+    Function LastIndexOf(Const sStr : AnsiString; bCase : Boolean = False) : Integer;
 
-      Property Length : Integer Read FLength;
-      Procedure Read(index : integer; var buffer; ilength : integer);
-      Procedure Overwrite(index : integer; content : AnsiString);
+    Property Length : Integer Read FLength;
+    Procedure Read(index : integer; var buffer; ilength : integer);
+    Procedure Overwrite(index : integer; content : AnsiString);
   End;
 
 type
@@ -455,96 +455,97 @@ Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiCh
 Type
   {$IFDEF NO_BUILDER}
   TFslStringBuilder = Class(TFslObject)
-    Private
-      FContent : String;
-      FLength : Integer;
-      FBufferSize : integer;
+  Private
+    FContent : String;
+    FLength : Integer;
+    FBufferSize : integer;
 
-      Procedure Append(Const bytes : TBytes); Overload;
-      Procedure Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer); Overload;
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
+    Procedure Append(Const bytes : TBytes); Overload;
+    Procedure Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer); Overload;
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
 
-      Function AsString : String;
-      Function ToString : String;
+    Function AsString : String;
+    Function ToString : String;
 
-      Procedure Clear;
+    Procedure Clear;
 
-      Procedure Append(ch : Char); Overload;
-      Procedure Append(Const sStr : String); Overload;
-      Procedure AppendLine(Const sStr : String); Overload;
-      Procedure Append(Const iInt : Integer); Overload;
-      Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-      Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-      Procedure Append(const bBytes : Array of Byte; amount : Integer); Overload;
-      Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
-      Procedure AppendEOL;
+    Procedure Append(ch : Char); Overload;
+    Procedure Append(Const sStr : String); Overload;
+    Procedure AppendLine(Const sStr : String); Overload;
+    Procedure Append(Const iInt : Integer); Overload;
+    Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+    Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+    Procedure Append(const bBytes : Array of Byte; amount : Integer); Overload;
+    Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
+    Procedure AppendEOL;
 
-      Procedure CommaAdd(Const sStr : String); Overload;
+    Procedure CommaAdd(Const sStr : String); Overload;
 
-      Procedure AddByteAsBytes(iVal : Byte);
-      Procedure AddWordAsBytes(iVal : word);
-      Procedure AddCardinalAsBytes(iVal : Cardinal);
-      Procedure AddInt64AsBytes(iVal : Int64);
+    Procedure AddByteAsBytes(iVal : Byte);
+    Procedure AddWordAsBytes(iVal : word);
+    Procedure AddCardinalAsBytes(iVal : Cardinal);
+    Procedure AddInt64AsBytes(iVal : Int64);
 
-      // index is zero based. zero means insert before first character
-      Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
-      Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
+    // index is zero based. zero means insert before first character
+    Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
+    Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
 
-      Procedure Delete(iIndex, iLength : Integer);
+    Procedure Delete(iIndex, iLength : Integer);
 
-      Property BufferSize : integer read FBufferSize write FBufferSize;
-      Function IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-      Function LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
+    Property BufferSize : integer read FBufferSize write FBufferSize;
+    Function IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
+    Function LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
 
-      Property Length : Integer Read FLength;
-      Procedure Read(index : integer; var buffer; ilength : integer);
-      Procedure Overwrite(index : integer; content : String);
-      function toString: String; override;
+    Property Length : Integer Read FLength;
+    Procedure Read(index : integer; var buffer; ilength : integer);
+    Procedure Overwrite(index : integer; content : String);
+    function toString: String; override;
   End;
 
 
   {$ELSE}
   TFslStringBuilder = Class (TFslObject)
-    Private
-      FBuilder : TStringBuilder;
+  Private
+    FBuilder : TStringBuilder;
 
-      Function GetLength : Integer;
-      function GetAsString: String;
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
-      Property AsString : String read GetAsString;
+    Function GetLength : Integer;
+    function GetAsString: String;
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
+    Property AsString : String read GetAsString;
 
-      Procedure Clear;
+    Procedure Clear;
 
-      Procedure Append(ch : Char); Overload;
-      Procedure Append(Const sStr : String); Overload;
-      Procedure Append(Const sStr : AnsiString); Overload;
-      Procedure AppendLine(Const sStr : String); Overload;
-      Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-      Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-      Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
-      Procedure AppendEOL;
+    Procedure Append(ch : Char); Overload;
+    Procedure Append(Const sStr : String); Overload;
+    Procedure Append(Const sStr : AnsiString); Overload;
+    Procedure AppendLine(Const sStr : String); Overload;
+    Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+    Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+    Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
+    Procedure AppendEOL;
 
-      Procedure CommaAdd(Const sStr : String); Overload;
+    Procedure CommaAdd(Const sStr : String); Overload;
+    procedure CommaAddIfNotNull(const sStr: String);
 
-      Procedure AddByteAsBytes(iVal : Byte);
-      Procedure AddWordAsBytes(iVal : word);
-      Procedure AddCardinalAsBytes(iVal : Cardinal);
-      Procedure AddInt64AsBytes(iVal : Int64);
+    Procedure AddByteAsBytes(iVal : Byte);
+    Procedure AddWordAsBytes(iVal : word);
+    Procedure AddCardinalAsBytes(iVal : Cardinal);
+    Procedure AddInt64AsBytes(iVal : Int64);
 
-      // index is zero based. zero means insert before first character
-      Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
-      Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
+    // index is zero based. zero means insert before first character
+    Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
+    Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
 
-      Procedure Delete(iIndex, iLength : Integer);
+    Procedure Delete(iIndex, iLength : Integer);
 
-      Procedure WriteToStream(aStream : TStream; encoding : TEncoding = nil); overload;
+    Procedure WriteToStream(aStream : TStream; encoding : TEncoding = nil); overload;
 
-      Property Length : Integer Read GetLength;
-      function ToString : String; override;
+    Property Length : Integer Read GetLength;
+    function ToString : String; override;
   End;
   {$ENDIF}
 
@@ -6818,6 +6819,16 @@ end;
 
 procedure TFslStringBuilder.CommaAdd(const sStr: String);
 begin
+  if Length > 0 Then
+    Append(', ');
+  Append(sStr);
+end;
+
+procedure TFslStringBuilder.CommaAddIfNotNull(const sStr: String);
+begin
+  if sStr = '' then
+    exit;
+
   if Length > 0 Then
     Append(', ');
   Append(sStr);

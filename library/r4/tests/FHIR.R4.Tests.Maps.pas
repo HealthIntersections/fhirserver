@@ -46,11 +46,12 @@ type
   end;
 
   TTestTransformerServices = class(TTransformerServices)
-  private
   public
-    function oid2Uri(oid : String) : String; override;
     function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
+    function performSearch(appInfo : TFslObject; url : String) : TFslList<TFHIRObject>; override;
+    function createType(appInfo : TFslObject; tn : String) : TFHIRObject; override;
+    procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); override;
   end;
 
   [TextFixture]
@@ -114,7 +115,7 @@ var
 begin
   ctxt := TTestingWorkerContext.Use;
   try
-    utils := TFHIRStructureMapUtilities.Create(ctxt.link, nil, nil);
+    utils := TFHIRStructureMapUtilities.Create(ctxt.link, nil, nil, nil);
     try
       source := fileToString(filename, TEncoding.UTF8);
       map := utils.parse(source, filename);
@@ -165,7 +166,7 @@ procedure TMapTransformTests.setup;
 begin
   ctxt := TTestingWorkerContext.Use;
   (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
   loadMaps(FHIR_SRC_FILE(['guides', 'ccda', 'maps']));
 end;
 
@@ -206,17 +207,24 @@ end;
 
 { TTestTransformerServices }
 
+procedure TTestTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
+begin
+  raise EFslException.Create('Not done yet');
+end;
+
+function TTestTransformerServices.createType(appInfo: TFslObject; tn: String): TFHIRObject;
+begin
+  raise EFslException.Create('Not done yet');
+end;
+
 procedure TTestTransformerServices.log(s: String);
 begin
   writeln(s);
 end;
 
-function TTestTransformerServices.oid2Uri(oid: String): String;
+function TTestTransformerServices.performSearch(appInfo: TFslObject; url: String): TFslList<TFHIRObject>;
 begin
-  if oid = '2.16.840.1.113883.6.1' then
-    result := 'http://loinc.org'
-  else
-    result := 'http://unknown.com/what?';
+  raise EFslException.Create('Not done yet');
 end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
@@ -278,7 +286,7 @@ procedure TMapParserTests2.setup;
 begin
   ctxt := TTestingWorkerContext.Use;
 //  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
 end;
 
 procedure TMapParserTests2.teardown;

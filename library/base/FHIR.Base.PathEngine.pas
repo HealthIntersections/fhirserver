@@ -36,12 +36,18 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 type
+
   TFHIRTypeDetailsV = class (TFslObject)
   public
     function link : TFHIRTypeDetailsV;
   end;
 
   TFHIRPathExpressionNodeV = class;
+  TTreeDataPointer = record
+    expr : TFHIRPathExpressionNodeV;
+    isOp : boolean;
+  end;
+  PTreeDataPointer = ^TTreeDataPointer;
 
   TFHIRPathExpressionNodeVisitProc = reference to procedure(item : TFHIRPathExpressionNodeV);
 
@@ -752,7 +758,7 @@ end;
 
 function TFHIRPathLexer.error(msg: String; location: TSourceLocation): Exception;
 begin
-  result := Exception.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+getLine(location.line)+'"');
+  result := EParserException.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+getLine(location.line)+'"', location.line, location.col);
 end;
 
 function TFHIRPathLexer.getLine(line: integer): String;

@@ -89,6 +89,7 @@
         <Icon_MainIcon>FHIRTransformer_Icon.ico</Icon_MainIcon>
         <UWP_DelphiLogo44>..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png</UWP_DelphiLogo150>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -127,9 +128,9 @@
         </DCCReference>
         <DCCReference Include="..\library\cda\FHIR.Cda.Base.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Documents.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Narrative.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Objects.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Parser.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Scint.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Types.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Writer.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.Base.pas"/>
@@ -163,8 +164,6 @@
         <DCCReference Include="..\library\r4\FHIR.R4.Utilities.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Validator.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Xml.pas"/>
-        <DCCReference Include="..\library\ui\FHIR.Scint.CDA.pas"/>
-        <DCCReference Include="..\library\ui\FHIR.Scint.Formats.pas"/>
         <DCCReference Include="..\library\smart\FHIR.Smart.Utilities.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Base.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Certs.pas"/>
@@ -223,6 +222,23 @@
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Utils.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.WorkerThread.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Scint.pas"/>
+        <DCCReference Include="..\dependencies\ui\ScintFormats.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Scint.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Narrative.pas"/>
+        <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
+        <DCCReference Include="FHIR.Transformer.SettingsDialog.pas">
+            <Form>TransformerOptionsForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\library\base\FHIR.Base.PathDebugger.pas">
+            <Form>FHIRPathDebuggerForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
+        <DCCReference Include="FHIR.Transformer.WorkingDialog.pas">
+            <Form>WorkingForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

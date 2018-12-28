@@ -36,8 +36,8 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  SysUtils, Classes, 
+  FHIR.Support.Utilities, FHIR.Support.Stream, 
   FHIR.Base.Objects, FHIR.R2.Types, FHIR.R2.Resources;
 
 Type

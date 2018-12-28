@@ -138,11 +138,11 @@ Type
 
   TMXmlElement = class (TMXmlNamedNode)
   private
-    FAttributes : TFslMap<TMXmlAttribute>;
+    FAttributes : TFslList<TMXmlAttribute>;
     FChildren : TFslList<TMXmlElement>;
     FText : string;
     FNext : TMXmlElement;
-    function GetAttributes: TFslMap<TMXmlAttribute>;
+    function GetAttributes: TFslList<TMXmlAttribute>;
     function GetChildren: TFslList<TMXmlElement>;
     function GetHasAttributes: boolean;
     function GetHasChildren: boolean;
@@ -159,6 +159,7 @@ Type
     procedure SetAttributeNS(ns, name: String; const Value: String);
     function GetAllText: String;
     procedure fixChildren;
+    function GetHasAttribute(name: String): boolean;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -166,8 +167,9 @@ Type
     destructor Destroy; override;
     Function Link : TMXmlElement; overload;
 
-    property Attributes : TFslMap<TMXmlAttribute> read GetAttributes;
+    property Attributes : TFslList<TMXmlAttribute> read GetAttributes;
     property HasAttributes  : boolean read GetHasAttributes;
+    property HasAttribute[name : String]  : boolean read GetHasAttribute;
     property Children : TFslList<TMXmlElement> read GetChildren;
     property HasChildren : boolean read GetHasChildren;
     property Text : string read GetText write SetText;
@@ -187,6 +189,8 @@ Type
     property allText : String read GetAllText;
     property attribute[name : String] : String read GetAttribute write SetAttribute;
     property attributeNS[ns, name : String] : String read GetAttributeNS write SetAttributeNS;
+    function getAttrByName(name: String; var attr : TMXmlAttribute): boolean;
+    function RemoveAttribute(name : String) : boolean;
     function element(name : String) : TMXmlElement;
     function elementNS(ns, name : String) : TMXmlElement;
     procedure listElements(name : String; list : TFslList<TMXmlElement>);
@@ -523,27 +527,26 @@ begin
     FChildren[FChildren.count - 1].Next := nil;
   end;
   if HasAttributes then
-    for a in Attributes.Values do
+    for a in Attributes do
       a.Parent := self;
 end;
 
 function TMXmlElement.getAbbreviationPriv(ns: String; var abbrev : String) : boolean;
 var
-  s, v : String;
+  a : TMXmlAttribute;
 begin
   if HasAttributes then
   begin
-    for s in FAttributes.Keys do
+    for a in FAttributes do
     begin
-      v := FAttributes[s].Value;
-      if (s = 'xmlns') and (v = ns) then
+      if (a.Name = 'xmlns') and (a.Value = ns) then
       begin
         abbrev := '';
         exit(true);
       end;
-      if (s.StartsWith('xmlns:')) and (v = ns) then
+      if (a.Name.StartsWith('xmlns:')) and (a.Value = ns) then
       begin
-        abbrev := s.Substring(6);
+        abbrev := a.name.Substring(6);
         exit(true);
       end;
     end;
@@ -560,12 +563,12 @@ var
 begin
   if not getAbbreviationPriv(ns, result) then
   begin
-    if not Attributes.ContainsKey('xmlns') then
+    if not hasAttribute['xmlns'] then
       attribute['xmlns'] := ns
     else
     begin
       i := 0;
-      while attributes.ContainsKey('xmlns:n'+inttostr(i)) do
+      while hasAttribute['xmlns:n'+inttostr(i)] do
         inc(i);
       result := 'n'+inttostr(i);
       attribute['xmlns:'+result] := ns;
@@ -597,12 +600,27 @@ begin
   end;
 end;
 
+function TMXmlElement.getAttrByName(name: String; var attr: TMXmlAttribute): boolean;
+var
+  a : TMXmlAttribute;
+begin
+  if FAttributes = nil then
+    exit(false);
+  result := false;
+  for a in FAttributes do
+    if a.Name = name then
+    begin
+      attr := a;
+      exit(true);
+    end;
+end;
+
 function TMXmlElement.GetAttribute(name: String): String;
 var
   attr : TMXmlAttribute;
 begin
   result := '';
-  if HasAttributes and FAttributes.TryGetValue(name, attr) then
+  if getAttrByName(name, attr) then
     result := attr.Value;
 end;
 
@@ -612,15 +630,15 @@ var
 begin
   result := '';
   if HasAttributes then
-    for attr in FAttributes.Values do
+    for attr in FAttributes do
       if (attr.NamespaceURI = ns) and (attr.LocalName = name) then
         exit(attr.Value);
 end;
 
-function TMXmlElement.GetAttributes: TFslMap<TMXmlAttribute>;
+function TMXmlElement.GetAttributes: TFslList<TMXmlAttribute>;
 begin
   if (FAttributes = nil) then
-    FAttributes := TFslMap<TMXmlAttribute>.create;
+    FAttributes := TFslList<TMXmlAttribute>.create;
   result := FAttributes;
 end;
 
@@ -629,6 +647,18 @@ begin
   if (FChildren = nil) then
     FChildren := TFslList<TMXmlElement>.create;
   result := FChildren;
+end;
+
+function TMXmlElement.GetHasAttribute(name: String): boolean;
+var
+  attr : TMXmlAttribute;
+begin
+  if FAttributes = nil then
+    exit(false);
+  result := false;
+  for attr in FAttributes do
+    if attr.Name = name then
+      exit(true);
 end;
 
 function TMXmlElement.GetHasAttributes: boolean;
@@ -704,16 +734,26 @@ begin
     result := parent.Children[i-1];
 end;
 
+function TMXmlElement.RemoveAttribute(name: String): boolean;
+var
+  attr : TMXmlAttribute;
+begin
+  result := getAttrByName(name, attr);
+  if result then
+    FAttributes.Remove(attr)
+end;
+
 procedure TMXmlElement.SetAttribute(name: String; const Value: String);
 var
   attr : TMXmlAttribute;
 begin
-  if not Attributes.TryGetValue(name, attr) then
+  if not getAttrByName(name, attr) then
   begin
     attr := TMXmlAttribute.Create(name, Value);
-    Attributes.Add(name, attr);
-  end;
-  attr.Value := Value;
+    Attributes.Add(attr);
+  end
+  else
+    attr.Value := Value;
 end;
 
 procedure TMXmlElement.SetAttributeNS(ns, name: String; const Value: String);
@@ -724,7 +764,7 @@ var
 begin
   done := false;
   if HasAttributes then
-    for attr in FAttributes.Values do
+    for attr in FAttributes do
       if (attr.NamespaceURI = ns) and (attr.LocalName = name) then
       begin
         attr.Value := Value;
@@ -741,12 +781,12 @@ begin
       if s = '' then
       begin
         attr.Name := name;
-        Attributes.Add(name, attr.Link)
+        Attributes.Add(attr.Link)
       end
       else
       begin
         attr.Name := s+':'+name;
-        Attributes.Add(s+':'+name, attr.Link);
+        Attributes.Add(attr.Link);
       end;
     finally
       attr.Free;
@@ -795,8 +835,9 @@ end;
 
 procedure TMXmlElement.writeToXml(b: TStringBuilder; pretty : boolean; indent : integer);
 var
-  s : String;
+  a : TMXmlAttribute;
   c : TMXmlElement;
+  s : String;
 begin
   if pretty then
     b.Append(StringPadLeft('', ' ', indent*2));
@@ -823,12 +864,12 @@ begin
       b.Append(Name);
       if HasAttributes then
       begin
-        for s in attributes.Keys do
+        for a in attributes do
         begin
           b.Append(' ');
-          b.Append(s);
+          b.Append(a.Name);
           b.Append('="');
-          b.Append(FormatTextToXML(Attributes[s].Value, xmlAttribute));
+          b.Append(FormatTextToXML(a.Value, xmlAttribute));
           b.Append('"');
         end;
       end;
@@ -1340,7 +1381,7 @@ begin
     while (s <> '/>') And (s <> '>') Do
       begin
       rule(isXmlName(s), 'The attribute name '+s+' is illegal');
-      e.Attributes.Add(s, ReadAttribute(s));
+      e.Attributes.Add(ReadAttribute(s));
       s := ReadToken(true);
       end;
     If s = '>' Then
@@ -1535,7 +1576,7 @@ end;
 procedure TMXmlParser.rule(test: boolean; message: String);
 begin
   if not test then
-    raise EXmlException.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
+    raise EParserException.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col), FLocation.line, FLocation.col);
 end;
 
 function describeTokens(tokens : Array of String) : String;
@@ -1577,7 +1618,7 @@ begin
     if StringArrayExistsSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))) then
       node.axis := TMXPathExpressionAxis(StringArrayIndexOfSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))))
     else
-      raise EXmlException.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')));
+      raise EParserException.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')), FLocation.Line, FLocation.Col);
     s := s.Substring(s.IndexOf('::')+2);
   end
   else
@@ -1620,7 +1661,7 @@ begin
   begin
     // starting at the root...
     if not readNext then
-      raise EXmlException.Create('Syntax error..');
+      raise EParserException.Create('Syntax error..', FLocation.Line, FLocation.Col);
     readNext := false;
     node.NodeType := xentRoot; // no value in this case
   end
@@ -1753,12 +1794,12 @@ end;
 
 function TMXmlParser.resolveNamespace(element: TMXmlElement; abbrev: String): String;
 var
-  s : String;
+  a : TMXmlAttribute;
 begin
   if element.hasAttributes then
-    for s in element.Attributes.Keys do
-      if (s = 'xmlns:'+abbrev) then
-        exit(element.Attributes[s].Value);
+    for a in element.Attributes do
+      if (a.Name = 'xmlns:'+abbrev) then
+        exit(a.Value);
   if element.Parent <> nil then
     result := resolveNamespace(element.Parent, abbrev)
   else
@@ -1767,14 +1808,29 @@ end;
 
 procedure TMXmlParser.resolveNamespaces(element: TMXmlElement; defNs : String);
 var
-  s : String;
+  ns : String;
   p : TArray<String>;
   c : TMXmlElement;
+  a : TMXmlAttribute;
 begin
   if element.hasAttributes then
-    for s in element.Attributes.Keys do
-      if (s = 'xmlns') then
-        defNs := element.Attributes[s].Value;
+  begin
+    for a in element.Attributes do
+      if (a.Name = 'xmlns') then
+        defNs := a.Value;
+    for a in element.Attributes do
+    begin
+      if (a.name.contains(':')) then
+      begin
+        ns := a.name.Substring(0, a.name.IndexOf(':'));
+        if ns <> 'xmlns' then
+        begin
+          a.NamespaceURI := resolveNamespace(element, ns);
+          a.LocalName := a.name.Substring(a.name.IndexOf(':')+1);
+        end;
+      end;
+    end;
+  end;
   p := element.Name.Split([':']);
   if length(p) = 1 then
   Begin
@@ -2902,7 +2958,7 @@ begin
       end;
     axisAttribute:
       if node is TMXmlElement then
-        for a in TMXmlElement(node).Attributes.Values do
+        for a in TMXmlElement(node).Attributes do
           if event(context, a) then
             list.Add(a.Link);
 

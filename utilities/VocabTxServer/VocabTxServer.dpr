@@ -190,7 +190,17 @@ uses
   FHIR.Server.Factory in '..\..\Server\FHIR.Server.Factory.pas',
   FHIR.Tools.NDJsonParser in '..\..\library\tools\FHIR.Tools.NDJsonParser.pas',
   FHIR.Support.Lang in '..\..\library\support\FHIR.Support.Lang.pas',
-  FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas';
+  FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas',
+  FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Cda.Base in '..\..\library\cda\FHIR.Cda.Base.pas',
+  FHIR.Cda.Documents in '..\..\library\cda\FHIR.Cda.Documents.pas',
+  FHIR.Cda.Narrative in '..\..\library\cda\FHIR.Cda.Narrative.pas',
+  FHIR.Cda.Objects in '..\..\library\cda\FHIR.Cda.Objects.pas',
+  FHIR.Cda.Types in '..\..\library\cda\FHIR.Cda.Types.pas',
+  FHIR.Cda.Parser in '..\..\library\cda\FHIR.Cda.Parser.pas',
+  FHIR.Cda.Writer in '..\..\library\cda\FHIR.Cda.Writer.pas',
+  FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
+  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas';
 
 {$R *.res}
 

@@ -32,7 +32,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
+  SysUtils, Classes, IniFiles, zlib, Generics.Collections, System.Types,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Support.Stream, FHIR.Web.Fetcher;
 
@@ -182,9 +182,9 @@ type
     procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version : String; list : TStrings);
 
     function packageExists(id, ver : String) : boolean;
-    procedure loadPackage(id, ver : String; resources : Array of String; loadEvent : TPackageLoadingEvent); overload;
-    procedure loadPackage(idver : String; resources : Array of String; loadEvent : TPackageLoadingEvent); overload;
-    procedure loadPackage(id, ver : String; resources : TFslStringSet; loadEvent : TPackageLoadingEvent); overload;
+    procedure loadPackage(id, ver : String; resources : Array of String; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
+    procedure loadPackage(idver : String; resources : Array of String; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
+    procedure loadPackage(id, ver : String; resources : TFslStringSet; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
 
     procedure import(content : TBytes); overload;
 
@@ -680,29 +680,36 @@ begin
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(id, ver: String; resources: Array of String; loadEvent: TPackageLoadingEvent);
+procedure TFHIRPackageManager.loadPackage(id, ver: String; resources: Array of String; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
   fsl : TFslStringSet;
 begin
   fsl := TFslStringSet.Create(resources);
   try
-    loadPackage(id, ver, fsl, loadEvent);
+    loadPackage(id, ver, fsl, loadEvent, progressEvent);
   finally
     fsl.Free;
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadEvent: TPackageLoadingEvent);
+procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
   s, t, i : String;
+  c : integer;
   f : TFileStream;
+  l : TStringDynArray;
 begin
   if (id = 'hl7.fhir.core') and (ver = '4.0.0') and packageExists(id, 'current') then
     ver := 'current';
 
   if not packageExists(id, ver) then
     raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
-  for s in TDirectory.GetFiles(Path([FFolder, id+'#'+ver, 'package'])) do
+  if assigned(progressEvent) then
+    progressEvent(self, 0, false, 'Scanning Package');
+  l := TDirectory.GetFiles(Path([FFolder, id+'#'+ver, 'package']));
+  c := 0;
+  for s in l do
+  begin
     if not s.endsWith('package.json') then
     begin
       t := PathTitle(s);
@@ -717,15 +724,21 @@ begin
           f.Free;
         end;
       end;
+      if assigned(progressEvent) then
+        progressEvent(self, trunc((c / length(l)) * 100), false, 'Package '+id+'#'+ver+': Load '+t+'/'+i);
     end;
+    inc(c);
+  end;
+  if assigned(progressEvent) then
+    progressEvent(self, 100, true, 'Complete');
 end;
 
-procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadEvent: TPackageLoadingEvent);
+procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
   id, ver : String;
 begin
   StringSplit(idver, '#', id, ver);
-  loadPackage(id, ver, resources, loadEvent);
+  loadPackage(id, ver, resources, loadEvent, progressEvent);
 end;
 
 procedure TFHIRPackageManager.analysePackage(dir: String; v : String; profiles, canonicals: TFslStringDictionary);

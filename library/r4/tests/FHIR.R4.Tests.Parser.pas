@@ -95,7 +95,7 @@ end;
 procedure TFHIRParserTests.RoundTripTest(filename: String);
 var
   r : TFHIRResource;
-  fn, j1, j2, x1, x2 : String;             
+  fn, j1, j2, x1, x2 : String;             
   b : boolean;
   msg : String;
   re : TFHIRMMElement;

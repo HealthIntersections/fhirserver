@@ -153,7 +153,9 @@ uses
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
   LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame},
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
-  FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas';
+  FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
 
 {$R *.res}
 

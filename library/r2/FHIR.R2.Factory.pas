@@ -5,24 +5,24 @@
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without modification,
+  
+  Redistribution and use in source and binary forms, with or without modification, 
   are permitted provided that the following conditions are met:
-
-   * Redistributions of source code must retain the above copyright notice, this
+  
+   * Redistributions of source code must retain the above copyright notice, this 
      list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above copyright notice,
-     this list of conditions and the following disclaimer in the documentation
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
      and/or other materials provided with the distribution.
-   * Neither the name of HL7 nor the names of its contributors may be used to
-     endorse or promote products derived from this software without specific
+   * Neither the name of HL7 nor the names of its contributors may be used to 
+     endorse or promote products derived from this software without specific 
      prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -32,13 +32,13 @@
 
 interface
 
-// FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
+// FHIR v3.2.0 generated 2018-05-15T06:28:00+10:00
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.NetEncoding,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.ElementModel,
   FHIR.Client.Base, FHIR.Client.Threaded;
 
 type
@@ -56,6 +56,7 @@ type
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
+    function makeElementModelManager : TFHIRBaseMMManager; override;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
@@ -89,8 +90,11 @@ type
     function wrapConceptMap(r : TFHIRResourceV) : TFhirConceptMapW; override;
     function wrapParams(r : TFHIRResourceV) : TFHIRParametersW; override;
     function wrapAuditEvent(r : TFHIRResourceV) : TFhirAuditEventW; override;
+    function wrapBinary(r : TFHIRResourceV) : TFhirBinaryW; override;
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; override;
     function wrapSubscription(r : TFHIRResourceV) : TFhirSubscriptionW; override;
+    function wrapMeta(r : TFHIRResourceV) : TFhirMetaW; overload; override;
+    function wrapMeta(r : TFHIRObject) : TFhirMetaW; overload; override;
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; override;
     function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; override;
     function makeOpReqLookup : TFHIRLookupOpRequestW; override;
@@ -102,14 +106,11 @@ type
     function wrapPatient(r : TFHIRResourceV) : TFhirPatientW; override;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; override;
     function wrapBundleEntry(o : TFHIRObject) : TFhirBundleEntryW; override;
-    function wrapMeta(r : TFHIRResourceV) : TFhirMetaW; overload; override;
-    function wrapMeta(r : TFHIRObject) : TFhirMetaW; overload; override;
-    function wrapBinary(r : TFHIRResourceV) : TFhirBinaryW; overload; override;
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; override;
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; override;
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
-    function makeDtFromForm(part : TMimePart; lang, name : String; type_ : String) : TFHIRXVersionElementWrapper; override;
+    function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
   end;
@@ -120,7 +121,7 @@ implementation
 uses
   Soap.EncdDecd,
   FHIR.Client.HTTP,
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Parser, FHIR.R2.Context, FHIR.R2.Validator, FHIR.R2.Profiles, FHIR.R2.Operations,
+  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Parser, FHIR.R2.Context, FHIR.R2.Validator, FHIR.R2.Profiles, FHIR.R2.Operations, FHIR.R2.ElementModel,
   FHIR.R2.Narrative, FHIR.R2.PathEngine, FHIR.R2.Constants, FHIR.R2.Client, FHIR.R2.Common, FHIR.R2.Utilities, FHIR.R2.AuthMap;
 
 { TFHIRFactoryR2 }
@@ -213,7 +214,7 @@ begin
   http := TFHIRHTTPCommunicator.Create(url);
   try
     if kind = fctCrossPlatform then
-      http.useIndy := true;
+      http.UseIndy := true;
     http.timeout := timeout;
     http.proxy := proxy;
     result := TFhirClient2.create(worker, 'en', http.link);
@@ -275,7 +276,7 @@ begin
   result := TFhirDecimal.Create(s);
 end;
 
-function TFHIRFactoryR2.makeDtFromForm(part: TMimePart; lang, name: String; type_: String): TFHIRXVersionElementWrapper;
+function TFHIRFactoryR2.makeDtFromForm(part: TMimePart; lang, name: String; type_: string): TFHIRXVersionElementWrapper;
 begin
   if type_ = 'Coding' then
     result := wrapCoding(LoadDTFromFormParam(nil, part, lang, name, TFhirCoding))
@@ -283,6 +284,11 @@ begin
     result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
   else
     raise EFHIRException.create('Unknown Supported Data Type '+type_);
+end;
+
+function TFHIRFactoryR2.makeElementModelManager: TFHIRBaseMMManager;
+begin
+  result := TFHIRMMManager.Create;
 end;
 
 function TFHIRFactoryR2.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
@@ -319,7 +325,7 @@ end;
 
 function TFHIRFactoryR2.makeOpReqSubsumes: TFHIRSubsumesOpRequestW;
 begin
-  result := nil;
+  raise EFslException.Create('Not supported in R2');
 end;
 
 function TFHIRFactoryR2.makeOpRespLookup: TFHIRLookupOpResponseW;
@@ -329,12 +335,12 @@ end;
 
 function TFHIRFactoryR2.makeOpRespSubsumes: TFHIRSubsumesOpResponseW;
 begin
-  result := nil;
+  raise EFslException.Create('Not supported in R2');
 end;
 
 function TFHIRFactoryR2.makeParameters: TFHIRParametersW;
 begin
-  result := TFHIRParameters2.Create(TFhirParameters.create);
+  result := TFHIRParameters2.Create(TFHIRParameters.Create);
 end;
 
 function TFHIRFactoryR2.makeParamsFromForm(s: TStream): TFHIRResourceV;
@@ -359,7 +365,7 @@ end;
 
 function TFHIRFactoryR2.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  result := TFhirTerminologyCapabilities2.create(TFHIRParameters.create);
+  raise EFslException.Create('Not supported in R2');
 end;
 
 function TFHIRFactoryR2.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
@@ -427,7 +433,7 @@ end;
 
 function TFHIRFactoryR2.specUrl: String;
 begin
-  result := 'http://hl7.org/fhir/DSTU2';
+  result := 'http://build.fhir.org';
 end;
 
 function TFHIRFactoryR2.version: TFHIRVersion;
@@ -453,7 +459,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRBinary2.create(r);
+    result := TFhirBinary2.Create(r);
 end;
 
 function TFHIRFactoryR2.wrapBundle(r: TFHIRResourceV): TFhirBundleW;
@@ -461,7 +467,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRBundle2.create(r);
+    result := TFhirBundle2.Create(r);
 end;
 
 function TFHIRFactoryR2.wrapBundleEntry(o: TFHIRObject): TFhirBundleEntryW;
@@ -501,7 +507,7 @@ begin
   if o = nil then
     result := nil
   else
-    result := TFhirCoding2.create(o);
+  result := TFhirCoding2.create(o);
 end;
 
 function TFHIRFactoryR2.wrapConceptMap(r: TFHIRResourceV): TFhirConceptMapW;
@@ -514,7 +520,7 @@ end;
 
 function TFHIRFactoryR2.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;
 begin
-  result := nil;
+  raise EFslException.Create('Not supported in R2');
 end;
 
 function TFHIRFactoryR2.wrapExtension(o: TFHIRObject): TFhirExtensionW;
@@ -540,7 +546,7 @@ begin
     TFHIRMeta2(result).resource := (r as TFHIRResource).link;
   end
   else
-    result := TFHIRMeta2.create(r as TFhirMeta)
+    result := TFHIRMeta2.create((r as TFhirMeta))
 end;
 
 function TFHIRFactoryR2.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;
@@ -607,7 +613,10 @@ end;
 
 function TFHIRFactoryR2.wrapStructureMap(o: TFHIRResourceV): TFHIRStructureMapW;
 begin
-  result := nil;
+  if o = nil then
+    result := nil
+  else
+  raise EFslException.Create('Not supported in R2');
 end;
 
 function TFHIRFactoryR2.wrapSubscription(r: TFHIRResourceV): TFhirSubscriptionW;
@@ -628,7 +637,7 @@ end;
 
 function TFHIRFactoryR2.makeBase64Binary(s: string): TFHIRObject;
 begin
-  result := TFhirBase64Binary.Create(decodeBase64(s));
+  result := TFhirBase64Binary.Create(decodeBase64(AnsiString(s)));
 end;
 
 function TFHIRFactoryR2.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;
@@ -1550,8 +1559,7 @@ begin
   else if name = 'VisionPrescription' then
     result := TFhirVisionPrescription.create()
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-  else if name = 'CapabilityStatement' then
-    result := TFhirConformance.Create()
+
   else
     result := nil;
 end;
@@ -1559,4 +1567,3 @@ end;
 
 
 end.
-

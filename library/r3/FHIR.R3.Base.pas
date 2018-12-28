@@ -31,7 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Base.Objects;
+  FHIR.Support.Base,
+  FHIR.Base.Objects, FHIR.Base.Lang;
 
 type
   TFHIRObject3 = class (TFHIRObject)
@@ -53,6 +54,25 @@ type
   end;
 
   TFHIRResourceX = TFHIRResource3;
+
+  // a set of named properties
+  TFHIRTuple3 = class (TFHIRObject3)
+  private
+    FProperties : TFslMap<TFHIRSelectionList>;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
+    function fhirType : String; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+    procedure GetChildrenByName(name: string; list: TFHIRSelectionList); override;
+
+    procedure addProperty(name : String; values : TFHIRSelectionList);
+  end;
+  TFHIRTuple = TFHIRTuple3;
 
 implementation
 
@@ -102,6 +122,61 @@ end;
 function TFHIRResource3.makeStringValue(v: String): TFHIRObject;
 begin
   result := TFhirString.Create(v);
+end;
+
+{ TFHIRTuple3 }
+
+constructor TFHIRTuple3.Create;
+begin
+  inherited;
+  FProperties := TFslMap<TFHIRSelectionList>.create;
+end;
+
+destructor TFHIRTuple3.Destroy;
+begin
+  FProperties.free;
+  inherited;
+end;
+
+procedure TFHIRTuple3.addProperty(name: String; values: TFHIRSelectionList);
+begin
+  FProperties.Add(name, values);
+end;
+
+function TFHIRTuple3.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
+function TFHIRTuple3.fhirType: String;
+begin
+  result := 'Tuple';
+end;
+
+procedure TFHIRTuple3.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+  if FProperties.ContainsKey(name) then
+    list.addAll(FProperties[name]);
+end;
+
+function TFHIRTuple3.getId: String;
+begin
+  result := '';
+end;
+
+function TFHIRTuple3.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
+procedure TFHIRTuple3.setIdValue(id: String);
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
+function TFHIRTuple3.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
 end.

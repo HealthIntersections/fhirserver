@@ -165,7 +165,12 @@ uses
   FHIR.Tools.DiffEngine in '..\library\tools\FHIR.Tools.DiffEngine.pas',
   Import2html in 'Import2html.pas' {ContentImport},
   ExampleScenarioEditor in 'ExampleScenarioEditor.pas' {exampleScenarioEditorFrame: TFrame},
-  ScenarioRendering in 'ScenarioRendering.pas' {ESRender};
+  ScenarioRendering in 'ScenarioRendering.pas' {ESRender},
+  FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
+  FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
+  FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
 
 {$R *.res}
 

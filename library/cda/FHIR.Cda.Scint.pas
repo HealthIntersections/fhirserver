@@ -1,4 +1,4 @@
-unit FHIR.Scint.CDA;
+unit FHIR.CDA.Scint;
 
 {
 Copyright (c) 2014+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -244,15 +244,16 @@ begin
       end;
     stStartElement, stElementWhitespace, stEndElement, stAttributeStart, stAttributeEnd:
       begin
-      Attributes.ForeColor := clNavy;
+      Attributes.ForeColor := clPurple;
       end;
     stElementName :
       begin
-      Attributes.ForeColor := clMaroon;
+      Attributes.ForeColor := clBlack;
+      Attributes.FontStyle := [fsBold];
       end;
     stAttributeName :
       begin
-      Attributes.ForeColor := clRed;
+      Attributes.ForeColor := clNavy;
       end;
     stAttributeValue :
       begin

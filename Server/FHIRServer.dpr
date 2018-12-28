@@ -370,7 +370,13 @@ uses
   FHIR.Server.v2Server in 'FHIR.Server.v2Server.pas',
   FHIR.v2.Protocol in '..\library\v2\FHIR.v2.Protocol.pas',
   FHIR.v2.Message in '..\library\v2\FHIR.v2.Message.pas',
-  FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas';
+  FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas',
+  FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
+  FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
+  FHIR.Cda.Objects in '..\library\cda\FHIR.Cda.Objects.pas',
+  FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
+  FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

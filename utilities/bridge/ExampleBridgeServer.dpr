@@ -188,7 +188,9 @@ uses
   FHIR.Server.Factory in '..\..\Server\FHIR.Server.Factory.pas',
   FHIR.Tools.NDJsonParser in '..\..\library\tools\FHIR.Tools.NDJsonParser.pas',
   FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas',
-  FHIR.Support.Lang in '..\..\library\support\FHIR.Support.Lang.pas';
+  FHIR.Support.Lang in '..\..\library\support\FHIR.Support.Lang.pas',
+  FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas',
+  FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas';
 
 var
   gsrv : TExampleFhirServer;

@@ -179,3 +179,5 @@ System
 /dependencies/treeview/Source/*.hpp
 /library/r4gen
 /utilities/_v2JS
+/install/build/*.zip
+/utilities/nppformats/release/*.zip

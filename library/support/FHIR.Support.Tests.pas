@@ -1156,7 +1156,7 @@ begin
   focus := findSample(test.attribute['id']).firstElement;
   nodes := tests.select(test.element('xpath').attribute['value'], focus);
   try
-  if test.element('outcomes').Attributes.ContainsKey('count') then
+  if test.element('outcomes').hasAttribute['count'] then
     Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
   else
   begin
@@ -1227,7 +1227,7 @@ begin
 
   focus := TMsXmlParser.FirstChild(findSampleMs(test.attribute['id']));
   nodes := focus.selectNodes(test.element('xpath').attribute['value']);
-  if test.element('outcomes').Attributes.ContainsKey('count') then
+  if test.element('outcomes').HasAttribute['count'] then
     Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.length, 'MS: Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.length))
   else
   begin
@@ -1268,7 +1268,7 @@ begin
       else if outcome.attribute['type'] = 'text' then
       begin
         Assert.IsTrue(node.nodeType = NODE_TEXT, 'MS: Node '+inttostr(i)+' has the wrong type (expected text, found '+inttostr(node.nodeType));
-        if outcome.Attributes.ContainsKey('value') then
+        if outcome.HasAttribute['value'] then
           Assert.IsTrue(node.text = outcome.Attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong type (expected text "'+outcome.Attribute['value']+'", found '+node.text);
       end
       else if outcome.attribute['type'] = 'comment' then

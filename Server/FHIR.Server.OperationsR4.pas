@@ -379,9 +379,11 @@ type
   public
     constructor Create(ServerContext: TFHIRServerContext);
     destructor Destroy; override;
-    function oid2Uri(oid : String) : String; override;
     function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
+    function performSearch(appInfo : TFslObject; url : String) : TFslList<TFHIRObject>; override;
+    function createType(appInfo : TFslObject; tn : String) : TFHIRObject; override;
+    procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); override;
   end;
 
 
@@ -3397,7 +3399,7 @@ begin
             try
               outcome := TFHIRServerContext(native(manager).ServerContext).Factory.makeByName(map.targetType);
               try
-                utils := TFHIRStructureMapUtilities.Create(vc(manager).link, lib.Link, TServerTransformerServices.create(native(manager).ServerContext.link));
+                utils := TFHIRStructureMapUtilities.Create(vc(manager).link, lib.Link, TServerTransformerServices.create(native(manager).ServerContext.link), nil);
                 try
                   try
                     utils.transform(nil, params.content, map, outcome);
@@ -3477,6 +3479,16 @@ begin
   FServerContext := ServerContext;
 end;
 
+procedure TServerTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TServerTransformerServices.createType(appInfo: TFslObject; tn: String): TFHIRObject;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 destructor TServerTransformerServices.Destroy;
 begin
   FServerContext.Free;
@@ -3488,9 +3500,10 @@ begin
   // nothing right now
 end;
 
-function TServerTransformerServices.oid2Uri(oid: String): String;
+function TServerTransformerServices.performSearch(appInfo: TFslObject;
+  url: String): TFslList<TFHIRObject>;
 begin
-  result := FServerContext.oid2URI(oid);
+  raise Exception.Create('Not done yet');
 end;
 
 function TServerTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
