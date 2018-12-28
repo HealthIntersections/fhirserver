@@ -102,8 +102,16 @@ begin
         deletehidden = false
         deletereadonly = false
         failifnofile = false
-        filespec = "C:\\Users\\Grahame Grieve\\AppData\\Roaming\\Notepad\+\+\\plugins\\fhirnpp.dll"
+        filespec = C:\\work\\fhirserver\\Exec\\64\\fhirnpp.dll
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
+      end
+      action.files.delete
+      begin
+        deletehidden = false
+        deletereadonly = false
+        failifnofile = false
+        filespec = C:\\work\\fhirserver\\Exec\\32\\fhirnpp.dll
+        id = {E9F3AF5B-7373-420D-903C-FD1D0F24A30B}
       end
       action.delphi.build
       begin
@@ -120,7 +128,7 @@ begin
         configname = Release
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
-        description = "Compile the Plugin"
+        description = "Compile the Plugin (32)"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -150,6 +158,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -179,7 +188,7 @@ begin
                              "-w-UNSAFE_CODE\=0" +
                              "-w-UNSAFE_CAST\=0" +
                              ""
-          conditionals = NPPUNICODE;RELEASE;FHIR3
+          conditionals = NPPUNICODE;RELEASE
           consoleapp = false
           debuginfo = false
           definitionsonly = false
@@ -206,7 +215,7 @@ begin
           namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
           openstrings = true
           optimisation = true
-          outputdir = "C:\\Users\\Grahame Grieve\\AppData\\Roaming\\Notepad\+\+\\plugins"
+          outputdir = C:\\work\\fhirserver\\Exec\\32
           overflowchecking = false
           packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
           rangechecking = false
@@ -220,6 +229,129 @@ begin
           stringchecks = true
           typedpointers = false
           unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
+          unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\npp32
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = false
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 1
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10Tokyo
+        description = "Compile the Plugin (64)"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\npp\\mainicon.ico
+        id = {7E26154F-EF16-456A-9B0E-6F113596BA00}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = true
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 1033
+        majorversion = 1
+        minorversion = 0
+        platform = Win64
+        platformsdktype = ProjectSDK
+        projectfile = C:\\work\\fhirserver\\npp\\fhirnpp.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\npp\\
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        usefastdcccompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        verboseoutput = false
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.1" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = false
+          alwaysusedofsearchpath = false
+          assertions = true
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                             "-w-UNSAFE_CODE\=0" +
+                             "-w-UNSAFE_CAST\=0" +
+                             ""
+          conditionals = NPPUNICODE;RELEASE
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = false
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = false
+          frameworktype = VCL
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
+          openstrings = true
+          optimisation = true
+          outputdir = C:\\work\\fhirserver\\Exec\\64
+          overflowchecking = false
+          packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
+          unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\npp64
           usedebugdcu = false
           usepackages = false
           varstringchecks = true
@@ -285,24 +417,114 @@ begin
         useerrordialogmonitor = false
         waitforcompletion = true
       end
+      action.7zip.create
+      begin
+        archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-32.zip
+        archivetype = zZip
+        compressionlevel = clNormal
+        createsfxarchive = false
+        deleteaftercompression = false
+        enabletimeout = false
+        expandimpersonationtoken = false
+        fileslist = "C:\\work\\fhirserver\\npp\\i32\\*.*" +
+                    ""
+        id = {94DCA096-0552-45F2-B128-3033DA030CE8}
+        ifarchiveexists = exUpdate
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logprocessparameters = true
+        multithreaded = false
+        recurse = zrOn
+        rootdirectory = C:\\work\\fhirserver\\install\\build\\
+        solidmode = true
+        terminateontimeout = false
+        timeoutlength = 2
+        useerrordialogmonitor = false
+        usevolumesize = false
+        volumesize = 4000
+        volumesizeunits = m
+      end
+      action.7zip.create
+      begin
+        archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-64.zip
+        archivetype = zZip
+        compressionlevel = clNormal
+        createsfxarchive = false
+        deleteaftercompression = false
+        enabletimeout = false
+        expandimpersonationtoken = false
+        fileslist = "C:\\work\\fhirserver\\npp\\i64\\*.*" +
+                    ""
+        id = {87764C4E-F0F0-48A8-80E2-A6E07E4EC464}
+        ifarchiveexists = exUpdate
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logprocessparameters = true
+        multithreaded = false
+        recurse = zrOn
+        rootdirectory = C:\\work\\fhirserver\\install\\build\\
+        solidmode = true
+        terminateontimeout = false
+        timeoutlength = 2
+        useerrordialogmonitor = false
+        usevolumesize = false
+        volumesize = 4000
+        volumesizeunits = m
+      end
+      action.files.copy
+      begin
+        clearattributes = false
+        failifexists = false
+        failifzerofiles = true
+        filespec = C:\\work\\fhirserver\\Exec\\32\\fhirnpp.dll
+        force = false
+        id = {2F5B8A3D-1536-4CA1-8F2E-573B7FC91952}
+        logfilesaffected = true
+        overwrite = true
+        overwritereadonly = false
+        recurse = false
+        target = C:\\work\\fhirserver\\npp\\i32\\fhirnpp.dll
+        targetisdir = false
+      end
+      action.files.copy
+      begin
+        clearattributes = false
+        failifexists = false
+        failifzerofiles = true
+        filespec = C:\\work\\fhirserver\\Exec\\64\\fhirnpp.dll
+        force = false
+        id = {06019E28-8E8C-42C1-AF79-836196C25199}
+        logfilesaffected = true
+        overwrite = true
+        overwritereadonly = false
+        recurse = false
+        target = C:\\work\\fhirserver\\npp\\i64\\fhirnpp.dll
+        targetisdir = false
+      end
       action.ftp.connect
       begin
+        allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+        allowselfsignedcertificate = false
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
+        encryptdatachannel = false
         ftpconnectionname = HealthIntersections
         ftphost = 27.123.25.1
         ftpport = 21
         id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+        logsslnegotiation = false
         passive = true
         proxyport = 0
         proxytype = fpcmNone
+        tlsmode = ExplicitTLS
         transfertype = ftBinary
         useglobalopt = false
         usehost = true
         useproxy = false
         userid = healthi3
+        usessl = false
       end
       action.ftp.upload.file
       begin
@@ -320,6 +542,54 @@ begin
         localdir = C:\\work\\fhirserver\\install\\build
         recursive = false
         remotefile = public_html/FhirServer/npp-install-1.0.%BuildCount%.exe
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhir-npp-32.zip
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {F3B29DEB-2CB0-4F25-B296-FA98724F0B6D}
+        localdir = C:\\work\\fhirserver\\install\\build
+        recursive = false
+        remotefile = public_html/FhirServer/fhir-npp-32.zip
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhir-npp-64.zip
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {7F0B6002-2904-47EE-B32B-E8CCA332A43B}
+        localdir = C:\\work\\fhirserver\\install\\build
+        recursive = false
+        remotefile = public_html/FhirServer/fhir-npp-64.zip
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128
