@@ -136,12 +136,12 @@ Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.exe";    DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\ssleay32.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\libeay32.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\openssl32.exe"; DestName: "openssl.exe";    DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\ssleay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\libeay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\openssl32.exe"; DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
 
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "folder";  String: "{app}\web"

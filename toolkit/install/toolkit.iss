@@ -29,10 +29,13 @@ ArchitecturesAllowed=x64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR4.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR3.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\toolkit.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\*.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR4.exe";                                 DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR3.exe";                                 DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\toolkit.png";    DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\*.xml";          DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\ssleay64.dll";                                                 DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\libeay64.dll";                                                 DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\openssl64.exe";                                                DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Toolkit (R4)"; Filename: "{app}\FHIRToolkitR4.exe"

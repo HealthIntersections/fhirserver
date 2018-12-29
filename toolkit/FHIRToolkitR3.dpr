@@ -31,6 +31,7 @@ program FHIRToolkitR3;
 uses
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
+  SysUtils, IdSSLOpenSSLHeaders,
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
@@ -160,6 +161,7 @@ uses
 {$R *.res}
 
 begin
+  IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.Run;

@@ -29,7 +29,7 @@ program FHIRToolkitR4;
 
 uses
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
-  System.StartUpCopy,
+  SysUtils, IdSSLOpenSSLHeaders,
   FMX.Forms,
   FHIR.Version.Client in '..\library\version\FHIR.Version.Client.pas',
   FHIR.Support.Osx in '..\library\support\FHIR.Support.Osx.pas',
@@ -175,6 +175,7 @@ uses
 {$R *.res}
 
 begin
+  IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.Run;

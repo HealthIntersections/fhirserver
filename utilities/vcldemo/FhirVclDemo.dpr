@@ -2,6 +2,7 @@ program FhirVclDemo;
 
 uses
   FastMM4 in '..\..\dependencies\FMM\FastMM4.pas' {Vcl.Forms},
+  SysUtils, IdSSLOpenSSLHeaders,
   Vcl.Forms,
   MainApplicationWindow in '..\MainApplicationWindow.pas' {MainWindowForm},
   FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
@@ -74,6 +75,7 @@ uses
 {$R *.res}
 
 begin
+  IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainWindowForm, MainWindowForm);
