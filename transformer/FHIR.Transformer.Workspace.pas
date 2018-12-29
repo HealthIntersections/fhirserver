@@ -11,6 +11,7 @@ Const
 
 type
   TTransformerFormat = (fmtV2, fmtCDA, fmtResource, fmtJS, fmtMap, fmtTemplate);
+  TTrasnformOutcomeMode = (tomIgnore, tomSaveTo, tomCompare);
 
 function detectFormat(fn : String) : TTransformerFormat;
 
@@ -64,6 +65,8 @@ Type
     FEventType: integer;
     FSource: String;
     FScript: String;
+    FTarget: String;
+    FOutcome: TTrasnformOutcomeMode;
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
@@ -80,6 +83,8 @@ Type
     property EventType : integer read FEventType write FEventType;
     property Source : String read FSource write FSource;
     property Script : String read FScript write FScript;
+    property Target : String read FTarget write FTarget;
+    property Outcome : TTrasnformOutcomeMode read FOutcome write FOutcome;
 
     property messages : TFslList<TWorkspaceFile> read FMessages;
     property documents : TFslList<TWorkspaceFile> read FDocuments;
@@ -368,6 +373,8 @@ begin
     FEventType := iniT.ReadInteger('Status', 'EventType', -1);
     FSource := iniT.ReadString('Status', 'Source', '');
     FScript := iniT.ReadString('Status', 'Script', '');
+    FTarget := iniT.ReadString('Status', 'Target', '');
+    FOutcome := TTrasnformOutcomeMode(iniT.ReadInteger('Status', 'Outcome', 0));
     st.clear;
     iniVC.ReadSection('Files', st);
     for s in st do
@@ -420,6 +427,8 @@ begin
     iniT.WriteInteger('Status', 'EventType', FEventType);
     iniT.WriteString('Status', 'Source', FSource);
     iniT.WriteString('Status', 'Script', FScript);
+    iniT.WriteString('Status', 'Target', FTarget);
+    iniT.WriteInteger('Status', 'Outcome', Ord(FOutcome));
 
     iniVC.EraseSection('Files');
     for f in FMessages do

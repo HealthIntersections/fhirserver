@@ -3,6 +3,8 @@ program FHIRTransformer;
 uses
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
+  SysUtils,
+  IdSSLOpenSSLHeaders,
   Vcl.Forms,
   FHIR.Base.Common in '..\library\base\FHIR.Base.Common.pas',
   FHIR.Base.Factory in '..\library\base\FHIR.Base.Factory.pas',
@@ -116,16 +118,19 @@ uses
   FHIR.Transformer.SettingsDialog in 'FHIR.Transformer.SettingsDialog.pas' {TransformerOptionsForm},
   FHIR.Base.PathDebugger in '..\library\base\FHIR.Base.PathDebugger.pas' {FHIRPathDebuggerForm},
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
-  FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm};
+  FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm},
+  FHIR.Transformer.FileChangedDlg in 'FHIR.Transformer.FileChangedDlg.pas' {FileChangedForm};
 
 {$R *.res}
 
 begin
+  IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TTransformerForm, TransformerForm);
   Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
   Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
   Application.CreateForm(TWorkingForm, WorkingForm);
+  Application.CreateForm(TFileChangedForm, FileChangedForm);
   Application.Run;
 end.
