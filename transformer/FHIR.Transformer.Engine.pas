@@ -58,6 +58,7 @@ type
     FMap: TWorkspaceFile;
     FCache: TResourceMemoryCache;
     FOnTransformDebug: TFHIRStructureMapDebugEvent;
+    FOutcomes: TFslList<TFhirObject>;
     procedure SetSource(const Value: TWorkspaceFile);
     procedure SetWorkspace(const Value: TWorkspace);
     procedure SetMap(const Value: TWorkspaceFile);
@@ -71,6 +72,7 @@ type
     function fetchSource(f : TWorkspaceFile) : TStream;
     function parseMap(f : TWorkspaceFile) : TFhirStructureMap;
   public
+    constructor Create; override;
     destructor Destroy; override;
     function link : TConversionEngine; overload;
 
@@ -85,6 +87,7 @@ type
     property OnCompiled: TConversionEngineCompiledEvent read FOnCompiled write FOnCompiled;
 
     property Context : TFHIRTransformerContext read FContext;
+    property Outcomes: TFslList<TFhirObject> read FOutcomes;
 
     procedure load; virtual; abstract;
     procedure execute; virtual; abstract;
@@ -103,8 +106,15 @@ implementation
 
 { TConversionEngine }
 
+constructor TConversionEngine.Create;
+begin
+  inherited;
+  FOutcomes := TFslList<TFhirObject>.create;
+end;
+
 destructor TConversionEngine.Destroy;
 begin
+  FOutcomes.Free;
   FMapUtils.Free;
   FCache.Free;
   FWorkspace.Free;
@@ -186,6 +196,7 @@ var
   elem : TFHIRMMElement;
   services : TLocalTransformerServices;
   mbpr : TMapBreakpointResolver;
+  res : TFhirResource;
 begin
   log('Parse the Workspace Maps');
   for f in FWorkspace.maps do
@@ -226,6 +237,8 @@ begin
             FMapUtils.OnDebug := FOnTransformDebug;
             FMapUtils.transform(nil, elem, map, nil);
             assert(services.outcomes.Count = 1);
+            for res in services.outcomes do
+              FOutcomes.Add(res.Link);
           finally
             services.Free;
           end;

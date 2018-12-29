@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "add OSX package release"
+        as.returnvalue = "Fix SSL issue"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -119,7 +119,7 @@ begin
         deletehidden = false
         deletereadonly = true
         failifnofile = false
-        filespec = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\FHIRToolkit*.exe
+        filespec = C:\\work\\fhirserver\\toolkit\\install\\FHIRToolkit*.exe
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
       end
       action.delphi.build
@@ -138,7 +138,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R4 (win64)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -168,6 +167,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -197,7 +197,7 @@ begin
                              "-w-UNSAFE_CODE\=0" +
                              "-w-UNSAFE_CAST\=0" +
                              ""
-          conditionals = RELEASE;FHIR4
+          conditionals = RELEASE;FHIR4;FMX
           consoleapp = false
           debuginfo = false
           definitionsonly = false
@@ -260,7 +260,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R3 (win64)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -290,6 +289,129 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        verboseoutput = false
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.1" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = true
+          alwaysusedofsearchpath = false
+          assertions = true
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                             "-w-UNSAFE_CODE\=0" +
+                             "-w-UNSAFE_CAST\=0" +
+                             ""
+          conditionals = RELEASE;FHIR3;FMX
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = false
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = false
+          frameworktype = VCL
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
+          openstrings = true
+          optimisation = true
+          outputdir = C:\\work\\fhirserver\\toolkit\\install
+          overflowchecking = false
+          packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R3.Questionnaire2;FHIR.Version.Factory\=FHIR.R3.Factory;FHIR.Version.Common\=FHIR.R3.Common
+          unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = false
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 1
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10Tokyo
+        description = "Compile the Transformer (32bit)"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\transformer\\mainicon.ico
+        id = {2F9BEC7E-4D62-4827-8B3F-E999A59A2AED}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = true
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 1033
+        majorversion = 1
+        minorversion = 0
+        platform = Win32
+        platformsdktype = ProjectSDK
+        projectfile = C:\\work\\fhirserver\\transformer\\FHIRTransformer.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\toolkit\\
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -343,7 +465,7 @@ begin
           mapfile = 0
           maxstacksize = 1048576
           minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
           openstrings = true
           optimisation = true
           outputdir = C:\\work\\fhirserver\\toolkit\\install
@@ -360,7 +482,7 @@ begin
           stringchecks = true
           typedpointers = false
           unitaliases = FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R3.Questionnaire2;FHIR.Version.Factory\=FHIR.R3.Factory;FHIR.Version.Common\=FHIR.R3.Common
-          unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
+          unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\r432
           usedebugdcu = false
           usepackages = false
           varstringchecks = true
@@ -461,6 +583,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -490,7 +613,7 @@ begin
                              "-w-UNSAFE_CODE\=0" +
                              "-w-UNSAFE_CAST\=0" +
                              ""
-          conditionals = RELEASE;FHIR3
+          conditionals = RELEASE;FHIR3;FMX
           consoleapp = false
           debuginfo = false
           definitionsonly = false
@@ -536,6 +659,14 @@ begin
           usepackages = false
           varstringchecks = true
         end
+      end
+      action.files.delete
+      begin
+        deletehidden = false
+        deletereadonly = false
+        failifnofile = true
+        filespec = C:\\work\\fhirserver\\toolkit\\install\\osx\\FHIRToolkit.app\\Contents\\MacOS\\FHIRToolkit
+        id = {8A74CB5B-2893-4F7F-A835-E22A0FBE2BDD}
       end
       action.directory.rename
       begin
@@ -586,6 +717,7 @@ begin
         archivetype = zZip
         compressionlevel = clUltra
         createsfxarchive = false
+        deleteaftercompression = false
         description = "Build OSX installer"
         enabletimeout = false
         expandimpersonationtoken = false
@@ -634,22 +766,28 @@ begin
       end
       action.ftp.connect
       begin
+        allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+        allowselfsignedcertificate = false
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
+        encryptdatachannel = false
         ftpconnectionname = HealthIntersections
         ftphost = 27.123.25.1
         ftpport = 21
         id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+        logsslnegotiation = false
         passive = true
         proxyport = 0
         proxytype = fpcmNone
+        tlsmode = ExplicitTLS
         transfertype = ftBinary
         useglobalopt = false
         usehost = true
         useproxy = false
         userid = healthi3
+        usessl = false
       end
       action.ftp.upload.file
       begin

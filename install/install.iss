@@ -1,13 +1,13 @@
-﻿[Setup]
+[Setup]
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.dev
+AppVerName=Version 1.0.255
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver-1.0.dev
+OutputBaseFilename=fhirserver-1.0.255
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -114,16 +114,16 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";                Des
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Libraries\FMM\64\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
-Source: "C:\work\fhirserver\Libraries\js\chakra\x64_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
+;Source: "C:\work\fhirserver\Libraries\js\chakra\x64_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Libraries\FMM\32\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "C:\work\fhirserver\Libraries\js\chakra\x86_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
+;Source: "C:\work\fhirserver\Libraries\js\chakra\x86_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                                  DestDir: "{app}";   Flags: ignoreversion onlyifdoesntexist; DestName: "fhirserver.ini"; Permissions: users-full
 
 ; Web resources
-Source: "C:\work\fhirserver\web\*.*";                                        DestDir: {app}\web; Flags: ignoreversion recursesubdirs
+Source: "C:\work\fhirserver\server\web\*.*";                                        DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
 ; Package Management
 Source: "C:\ProgramData\.fhir\packages\packages.ini";               DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
@@ -132,16 +132,14 @@ Source: "C:\ProgramData\.fhir\packages\packages.ini";               DestDir: "C:
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\Exec\lang.txt";                           DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
-Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.exe";    DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\ssleay32.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\libeay32.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\openssl32.exe"; DestName: "openssl.exe";    DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\ssleay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\libeay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\openssl32.exe"; DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
 
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "folder";  String: "{app}\web"

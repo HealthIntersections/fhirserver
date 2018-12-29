@@ -1,17 +1,9 @@
-Welcome to the FHIR Notepad++ install
+This program will install the FHIR Notepad++ plug-in - 32 or 64bit
 
-This program will install the fhir Notepad++ plug-in.
+* Notepad++ Help About will say whether you you have 32 or 64 bit
+* Choose the location of the installed version of Notepad++
+  (installer guesses the default location, but this is often wrong)
 
-Choosing a Directory
---------------------
-
-This installer guesses that Notepad++ has been installed to it's 
-default location (C:\Program Files (x86)\Notepad++).
-If you installed it somewhere else, then you'll have to change
-the location accordingly.
-
-Notes:  
-* The plug-in and the install are both very alpha
-* if Notepad++ is running during the install, you'll 
-  need to restart it after the install is complete
+If Notepad++ is running during the install, you'll need to restart 
+it after the install is complete
 

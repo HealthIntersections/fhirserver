@@ -1949,14 +1949,14 @@ begin
       work := TFslList<TFHIRObject>.create;
       try
         for item in items do
-          if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
+        begin
+          if (not fpe.evaluateToBoolean(appinfo, nil, item, expr)) then
             work.Add(item.Link);
+        end;
         items.RemoveAll(work);
       finally
         work.Free;
       end;
-      if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
-        exit(nil);
     end;
 
     if (src.check <> '') then
@@ -1968,7 +1968,7 @@ begin
         src.checkElement.tag := expr;
       end;
       for item in items do
-        if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
+        if (not fpe.evaluateToBoolean(appinfo, nil, item, expr)) then
           raise EFHIRException.create('Check condition failed');
     end;
 

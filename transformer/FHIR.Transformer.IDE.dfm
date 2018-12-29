@@ -12,6 +12,7 @@ object TransformerForm: TTransformerForm
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnActivate = FormActivate
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -763,9 +764,6 @@ object TransformerForm: TTransformerForm
       object TabSheet1: TTabSheet
         Caption = 'Home'
         ImageIndex = 8
-        DesignSize = (
-          1058
-          251)
         object Label1: TLabel
           Left = 16
           Top = 12
@@ -800,13 +798,19 @@ object TransformerForm: TTransformerForm
           Height = 13
           Caption = 'Script'
         end
+        object Label6: TLabel
+          Left = 32
+          Top = 121
+          Width = 43
+          Height = 13
+          Caption = 'Outcome'
+        end
         object cbxEventType: TComboBox
           Left = 101
           Top = 37
-          Width = 933
+          Width = 305
           Height = 21
           Style = csDropDownList
-          Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
           OnChange = cbxEventTypeChange
           Items.Strings = (
@@ -816,16 +820,15 @@ object TransformerForm: TTransformerForm
         object cbxSource: TComboBox
           Left = 101
           Top = 91
-          Width = 907
+          Width = 276
           Height = 21
           Style = csDropDownList
-          Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           OnChange = cbxSourceChange
         end
         object btnExecute: TBitBtn
           Left = 32
-          Top = 118
+          Top = 145
           Width = 70
           Height = 25
           Caption = 'Debug'
@@ -862,20 +865,18 @@ object TransformerForm: TTransformerForm
         object cbxScript: TComboBox
           Left = 101
           Top = 64
-          Width = 907
+          Width = 276
           Height = 21
           Style = csDropDownList
-          Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
           OnChange = cbxScriptChange
         end
         object btnOpenScript: TBitBtn
-          Left = 1012
+          Left = 383
           Top = 63
           Width = 23
           Height = 23
           Hint = 'Open'
-          Anchors = [akTop, akRight]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
@@ -909,12 +910,11 @@ object TransformerForm: TTransformerForm
           OnClick = btnOpenScriptClick
         end
         object btnOpenSource: TBitBtn
-          Left = 1012
+          Left = 383
           Top = 91
           Width = 23
           Height = 23
           Hint = 'Open'
-          Anchors = [akTop, akRight]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
@@ -948,8 +948,8 @@ object TransformerForm: TTransformerForm
           OnClick = btnOpenSourceClick
         end
         object btnRunNoDebug: TBitBtn
-          Left = 118
-          Top = 118
+          Left = 108
+          Top = 145
           Width = 109
           Height = 25
           Caption = 'Run (No Debug)'
@@ -982,6 +982,67 @@ object TransformerForm: TTransformerForm
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
           TabOrder = 6
           OnClick = mnuRunNoDebugClick
+        end
+        object cbxOutcome: TComboBox
+          Left = 101
+          Top = 118
+          Width = 80
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 7
+          OnChange = cbxOutcomeChange
+          OnClick = cbxOutcomeChange
+          Items.Strings = (
+            'Ignore'
+            'Save To'
+            'Compare To')
+        end
+        object cbxTarget: TComboBox
+          Left = 187
+          Top = 118
+          Width = 190
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 8
+          OnChange = cbxSourceChange
+        end
+        object btnOpenTarget: TBitBtn
+          Left = 383
+          Top = 118
+          Width = 23
+          Height = 23
+          Hint = 'Open'
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+          OnClick = btnOpenTargetClick
         end
       end
     end
@@ -1086,7 +1147,7 @@ object TransformerForm: TTransformerForm
     Left = 25
     Top = 90
     Bitmap = {
-      494C010129008800300110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010129008800380110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2650,6 +2711,7 @@ object TransformerForm: TTransformerForm
     end
     object Edit1: TMenuItem
       Caption = '&Edit'
+      Enabled = False
       object mnuUndo: TMenuItem
         Caption = '&Undo'
         ImageIndex = 20
@@ -2727,7 +2789,7 @@ object TransformerForm: TTransformerForm
     end
     object Execute1: TMenuItem
       Caption = '&Execute'
-      object Go1: TMenuItem
+      object mnuExecute: TMenuItem
         Caption = '&Go'
         ImageIndex = 27
         ShortCut = 116

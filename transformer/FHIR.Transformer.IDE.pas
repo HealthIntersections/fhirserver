@@ -16,17 +16,17 @@ f10: validate
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, Generics.Collections,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, IOUtils,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
   ScintEdit, ScintInt, ScintFormats,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell,
   FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
-  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine,
-  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.WorkingDialog;
+  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
+  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg;
 
 const
   TEMPLATE_V2 = 'MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'+#13#10+
@@ -113,6 +113,7 @@ type
     FTab: TTabSheet;
     FFileIsReadOnly: boolean;
     FReadOnly: boolean;
+    FFileTime : TDateTime;
 
     procedure SetInfo(const Value: TWorkspaceFile);
     procedure SetReadOnly(const Value: boolean);
@@ -128,6 +129,7 @@ type
     property ErrorLine : Integer read FErrorLine write FErrorLine;
     property StepLine : Integer read FStepLine write FStepLine;
     property readOnly : boolean read FReadOnly write SetReadOnly;
+    property FileTime : TDateTime read FFileTime write FFileTime;
   end;
 
   TIDEScintEdit = class(TScintEdit)
@@ -227,7 +229,7 @@ type
     cbxEventType: TComboBox;
     cbxSource: TComboBox;
     Execute1: TMenuItem;
-    Go1: TMenuItem;
+    mnuExecute: TMenuItem;
     btnExecute: TBitBtn;
     mnuPackageManager: TMenuItem;
     pgDebug: TPageControl;
@@ -314,6 +316,10 @@ type
     vtCallStack: TVirtualStringTree;
     Splitter4: TSplitter;
     Panel15: TPanel;
+    Label6: TLabel;
+    cbxOutcome: TComboBox;
+    cbxTarget: TComboBox;
+    btnOpenTarget: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -412,6 +418,9 @@ type
     procedure vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
     procedure pmEditorPopup(Sender: TObject);
+    procedure cbxOutcomeChange(Sender: TObject);
+    procedure btnOpenTargetClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -448,10 +457,11 @@ type
     procedure makeNewFile(title, ext, template : String; fmt : TTransformerFormat; category : TFslList<TWorkspaceFile>);
 
     function findWorkspaceFile(f : TWorkspaceFile) : TEditorInformation;
-    procedure openWorkspaceFile(f : TWorkspaceFile);
+    function openWorkspaceFile(f : TWorkspaceFile) : TEditorInformation;
     procedure saveWorkspaceFile(editor : TEditorInformation);
     procedure closeWorkspaceFile(editor : TEditorInformation; checkSave : boolean);
-    procedure renameWorkspaceFile(editor : TEditorInformation);
+    procedure renameWorkspaceFile(editor : TEditorInformation; fn : String);
+    procedure updateWorkspaceFile(editor : TEditorInformation; src : String);
     function editorForTab(tab : TTabSheet) : TEditorInformation;
     function editorForFile(f : TWorkspaceFile) : TEditorInformation;
     function anyFilesDirty : boolean;
@@ -608,6 +618,9 @@ end;
 procedure TTransformerForm.executeTransform(debug : boolean);
 var
   engine : TCDAConversionEngine;
+  f : TWorkspaceFile;
+  editor :TEditorInformation;
+  s, fns, fnt : String;
 begin
   try
     startRunning;
@@ -624,6 +637,37 @@ begin
         engine.OnTransformDebug := DebugTransform;
       engine.load;
       engine.execute;
+      if engine.Outcomes.Count = 0 then
+        MessageDlg('No output from Transform', mtInformation, [mbok], 0)
+      else if engine.Outcomes.Count > 1 then
+        MessageDlg('Multiple outputs from Transform - not handled yet', mtError, [mbok], 0)
+      else
+        case FWorkspace.Outcome of
+          tomIgnore : MessageDlg('Transform Complete with no errors', mtInformation, [mbok], 0);
+          tomSaveTo :
+            begin
+            f := cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile;
+            editor := editorForFile(f);
+            if (editor = nil) then
+              editor := openWorkspaceFile(f);
+            if isXml(editor.memo.RawText) then
+              s := resourceToString(engine.Outcomes[0] as TFhirResource, ffXml, OutputStylePretty)
+            else
+              s := resourceToString(engine.Outcomes[0] as TFhirResource, ffJson, OutputStylePretty);
+            updateWorkspaceFile(editor, s);
+            end;
+          tomCompare :
+            begin
+            f := cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile;
+            fns := makeAbsolutePath(f.filename, FWorkspace.folder);
+            fnt := Path([SystemTemp, 'generated-'+ExtractFileName(fns)]);
+            if isXml(FileToString(fns, TEncoding.UTF8)) then
+              StringToFile(resourceToString(engine.Outcomes[0] as TFhirResource, ffXml, OutputStylePretty), fnt, TEncoding.UTF8)
+            else
+              StringToFile(resourceToString(engine.Outcomes[0] as TFhirResource, ffJson, OutputStylePretty), fnt, TEncoding.UTF8);
+            ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar('"'+fns+'" "'+fnt+'"'), true);
+            end;
+        end;
     finally
       engine.free;
     end;
@@ -662,6 +706,12 @@ procedure TTransformerForm.btnOpenSourceClick(Sender: TObject);
 begin
   if cbxSource.ItemIndex > -1 then
     openWorkspaceFile(cbxSource.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
+end;
+
+procedure TTransformerForm.btnOpenTargetClick(Sender: TObject);
+begin
+  if cbxTarget.ItemIndex > -1 then
+    openWorkspaceFile(cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile);
 end;
 
 function tail(s : String) : String;
@@ -786,7 +836,7 @@ begin
 end;
 
 procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
-  procedure loadSource(srcList, scrList : TFslList<TWorkspaceFile>; caption : String);
+  procedure loadSource(srcList, scrList, dstList : TFslList<TWorkspaceFile>; caption : String);
   var
     f : TWorkspaceFile;
   begin
@@ -804,21 +854,39 @@ procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
     cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
     if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
       cbxSource.ItemIndex := 0;
-    btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-    btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+
+    cbxTarget.Items.Clear;
+    for f in dstlist do
+      cbxTarget.Items.AddObject(f.title, f);
+    cbxTarget.ItemIndex := cbxTarget.Items.IndexOf(FWorkspace.Target);
+    if (cbxTarget.ItemIndex = -1) and (cbxTarget.Items.Count > 0) then
+      cbxTarget.ItemIndex := 0;
+
+    btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1));
+    mnuExecute.Enabled := btnExecute.enabled;
+    btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1));
+    mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
   end;
 begin
    case cbxEventType.ItemIndex of
-    0: LoadSource(FWorkspace.messages, FWorkspace.scripts, 'Scripts');
-    1: LoadSource(FWorkspace.documents, FWorkspace.maps, 'Maps');
+    0: LoadSource(FWorkspace.messages, FWorkspace.scripts, FWorkspace.resources, 'Scripts');
+    1: LoadSource(FWorkspace.documents, FWorkspace.maps, FWorkspace.resources, 'Maps');
   end;
   if not Floading then
   begin
     FWorkspace.EventType := cbxEventType.ItemIndex;
     FWorkspace.Source := cbxSource.Text;
     FWorkspace.Script := cbxScript.Text;
+    FWorkspace.Target := cbxTarget.Text;
+    FWorkspace.Outcome := TTrasnformOutcomeMode(cbxOutcome.ItemIndex);
     FWorkspace.Save;
   end;
+end;
+
+procedure TTransformerForm.cbxOutcomeChange(Sender: TObject);
+begin
+  cbxTarget.Enabled := cbxOutcome.ItemIndex > 0;
+  FWorkspace.Outcome := TTrasnformOutcomeMode(cbxOutcome.ItemIndex);
 end;
 
 procedure TTransformerForm.cbxScriptChange(Sender: TObject);
@@ -1019,10 +1087,10 @@ var
 begin
   if (info.group = nil) then
     exit; // don't break for the root map
-  f := FWorkspace.findFileByParsedObject(FDebugInfo.map);
+  f := FWorkspace.findFileByParsedObject(info.map);
   if (info.status = dsRunToBreakpoint) then
   begin
-    if (f = nil) or not f.hasBreakPoint(info.line, bpi) then
+    if (f = nil) or not f.hasBreakPoint(info.line-1, bpi) or (info.target <> nil) then
       exit;
   end;
 
@@ -1137,7 +1205,7 @@ var
   i : integer;
   e : TEditorInformation;
 begin
-  for i := 1 to pgTabs.PageCount do
+  for i := 1 to pgTabs.PageCount - 1 do
   begin
     e := editorForTab(pgTabs.Pages[i]);
     if e.id = f then
@@ -1281,6 +1349,39 @@ begin
     FindNext(pgTabs.ActivePage.Controls[0] as TScintEdit);
 end;
 
+procedure TTransformerForm.FormActivate(Sender: TObject);
+var
+  i : integer;
+  e : TEditorInformation;
+  s, ts : string;
+begin
+  for i := 1 to pgTabs.PageCount - 1 do
+  begin
+    e := editorForTab(pgTabs.Pages[i]);
+    s := makeAbsolutePath(e.id.filename, FWorkspace.folder);
+    if e.FileTime <> TFile.GetLastWriteTimeUtc(s) then
+    begin
+      FileChangedForm := TFileChangedForm.Create(self);
+      try
+        FileChangedForm.lblinfo.Caption := 'File '+e.id.title+' has changed on disk - what do you want to do? (if comparing, save the merge to disk, then come back and reload)';
+        case FileChangedForm.ShowModal of
+          mrOk : e.memo.Lines.LoadFromFile(s);
+          mrRetry :
+            begin
+              ts := Path([SystemTemp, 'loaded-'+ExtractFileName(s)]);
+              StringToFile(e.memo.rawText, ts, TEncoding.UTF8);
+              ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar('"'+s+'" "'+ts+'"'), true);
+            end;
+          mrIgnore : ;// nothing
+        end;
+        e.FileTime := TFile.GetLastWriteTimeUtc(s);
+      finally
+        FileChangedForm.Free;
+      end;
+    end;
+  end;
+end;
+
 procedure TTransformerForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
   dirty : boolean;
@@ -1355,6 +1456,7 @@ var
   s : String;
   i : integer;
 begin
+  Application.OnActivate := FormActivate;
   FPathSelection := TFslList<TPathSelection>.create;
   FStack := TFslList<TFHIRStructureMapDebugContext>.create;
 
@@ -1486,6 +1588,10 @@ begin
     edtWorkspace.Hint := proj.folder;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 6;
+    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
+    if cbxOutcome.ItemIndex = -1 then
+      cbxOutcome.ItemIndex := 0;
+    cbxOutcomeChange(nil);
     cbxEventType.ItemIndex := FWorkspace.EventType;
     cbxEventTypeChange(nil);
     files := FWorkspace.listOpenFiles;
@@ -1873,7 +1979,7 @@ begin
       FWorkspace.save;
       vtWorkspace.RootNodeCount := 0;
       vtWorkspace.RootNodeCount := 6;
-      renameWorkspaceFile(editorForFile(f));
+      renameWorkspaceFile(editorForFile(f), s);
     end;
   end;
 end;
@@ -2393,17 +2499,18 @@ begin
   result := nil;
 end;
 
-procedure TTransformerForm.openWorkspaceFile(f : TWorkspaceFile);
+function TTransformerForm.openWorkspaceFile(f : TWorkspaceFile) : TEditorInformation;
 var
   tab : TTabSheet;
   editor : TScintEdit;
   s : String;
-  info : TEditorInformation;
   bpi : TBreakPointInfo;
 begin
-  info := findWorkspaceFile(f);
-  if info <> nil then
-    pgTabs.ActivePage := info.tab
+  result := findWorkspaceFile(f);
+  if result <> nil then
+  begin
+    pgTabs.ActivePage := result.tab;
+  end
   else
   begin
     tab := TTabSheet.Create(pgTabs);
@@ -2439,24 +2546,25 @@ begin
       fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
     end;
 
-    info := TEditorInformation.create;
-    editor.context := info;
-    info.memo := editor;
-    info.id := f.link;
-    info.tab := tab;
-    FEditor := info;
+    result := TEditorInformation.create;
+    editor.context := result;
+    result.memo := editor;
+    result.id := f.link;
+    result.tab := tab;
+    FEditor := result;
 
     s := makeAbsolutePath(f.filename, FWorkspace.folder);
     editor.ReadOnly := FileIsReadOnly(s);
-    info.fileIsReadOnly := editor.ReadOnly;
+    result.FileTime := TFile.GetLastWriteTimeUtc(s);
+    result.fileIsReadOnly := editor.ReadOnly;
     editor.Lines.LoadFromFile(s);
     editor.ClearUndo;
     editor.CaretLine := f.row;
-    info.isDirty := false;
-    info.ErrorLine := -1;
-    info.StepLine := -1;
+    result.isDirty := false;
+    result.ErrorLine := -1;
+    result.StepLine := -1;
     for bpi in f.BreakPoints do
-      UpdateLineMarkers(info, bpi.line);
+      UpdateLineMarkers(result, bpi.line);
     pgTabs.ActivePage := tab;
     pgTabsChange(pgTabs);
   end;
@@ -2470,6 +2578,7 @@ begin
     exit;
   s := makeAbsolutePath(editor.id.filename, FWorkspace.folder);
   editor.memo.Lines.SaveToFile(s);
+  editor.FileTime := TFile.GetLastWriteTimeUtc(s);
   editor.isDirty := false;
 end;
 
@@ -2606,11 +2715,12 @@ begin
   editor.Free;
 end;
 
-procedure TTransformerForm.renameWorkspaceFile(editor : TEditorInformation);
+procedure TTransformerForm.renameWorkspaceFile(editor : TEditorInformation; fn : String);
 begin
   if editor = nil then
     exit;
   editor.tab.Caption := editor.id.title;
+  editor.FileTime := TFile.GetLastWriteTimeUtc(fn);
 end;
 
 procedure TTransformerForm.ReplaceDialogReplace(Sender: TObject);
@@ -3023,6 +3133,11 @@ begin
       Editor.Memo.AddMarker(Line, mmLineBreakpointBad)
     else
       Editor.Memo.AddMarker(Line, mmLineBreakpoint);
+end;
+
+procedure TTransformerForm.updateWorkspaceFile(editor: TEditorInformation; src: String);
+begin
+  editor.memo.RawText := src;
 end;
 
 procedure TTransformerForm.UpdateAllLineMarkers;

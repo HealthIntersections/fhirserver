@@ -8,7 +8,7 @@
         <AppType>Library</AppType>
         <FrameworkType>VCL</FrameworkType>
         <ProjectVersion>18.5</ProjectVersion>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -97,7 +97,7 @@
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\npp32</DCC_DcuOutput>
         <Debugger_HostApplication>C:\Program Files (x86)\Notepad++\notepad++.exe</Debugger_HostApplication>
-        <DCC_ExeOutput>C:\Users\graha\AppData\Roaming\Notepad++\plugins\</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
         <Manifest_File>None</Manifest_File>
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_Build>0</VerInfo_Build>
@@ -118,7 +118,7 @@
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Manifest_File>(None)</Manifest_File>
-        <DCC_ExeOutput>C:\Users\graha\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>

@@ -17,33 +17,35 @@ AppPublisher=Health Intersections
 AppPublisherURL=http://healthintersections.com.au
 AppSupportURL=http://wiki.hl7.org/index.php?title=FHIR_Notepad%2B%2B_Plugin_Documentation
 AppUpdatesURL=http://healthintersections.com.au/FhirServer
-DefaultDirName={pf32}\Notepad++
+DefaultDirName={pf}\Notepad++
 DefaultGroupName=FHIR Applications
 DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.30
+OutputBaseFilename=npp-install-1.0.34
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.30
+AppVerName=1.0.34
 
-; C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\Config
+[Components]
+Name: "n64"; Description: "64bit Notepad++"; Types: custom; Flags: exclusive
+Name: "n32"; Description: "32bit Notepad++"; Types: custom; Flags: exclusive
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 ; 1st, the plug-in itself
-Source: "C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\fhirnpp.dll"; DestDir: "{app}\plugins";                                         Flags: ignoreversion
-; supporting ssl files
-Source: "C:\work\fhirserver\install\ssl32\libeay32.dll";                         DestDir: "{app}\plugins\fhir";                                    Flags: ignoreversion
-Source: "C:\work\fhirserver\install\ssl32\ssleay32.dll";                         DestDir: "{app}\plugins\fhir";                                    Flags: ignoreversion
-; n++ config file
-Source: "C:\Program Files (x86)\Notepad++\allowAppDataPlugins.xml";              DestDir: "{app}";                                                 Flags: ignoreversion
-
+Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\libeay32.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\ssleay32.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\64\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n64
+Source: "C:\work\fhirserver\Exec\libeay64.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64;  DestName: "libeay32.dll"
+Source: "C:\work\fhirserver\Exec\ssleay64.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64;  DestName: "ssleay32.dll"
+Source: "C:\Program Files\Notepad++\allowAppDataPlugins.xml";   DestDir: "{app}";               Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"; ValueType: dword; ValueName: "notepad++.exe"; ValueData: "10000"; Flags: createvalueifdoesntexist 
