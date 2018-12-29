@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = test
+        as.returnvalue = "fix various path bugs"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -155,6 +155,7 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
+          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServerTests.exe
           id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
@@ -175,6 +176,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Tokyo
           description = "Compile the Server Tests"
+          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -282,6 +284,7 @@ begin
         action.process.execute
         begin
           captureoutput = true
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -421,13 +424,13 @@ begin
             recordfieldalign = fa8
             referenceinfo = true
             safedivide = false
-            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-            showhints = true
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
+            showhints = false
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
             unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
             usedebugdcu = true
             usepackages = false
@@ -580,13 +583,13 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
             showhints = true
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
             unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p64
             usedebugdcu = false
             usepackages = false
@@ -763,13 +766,13 @@ begin
             recordfieldalign = fa8
             referenceinfo = true
             safedivide = false
-            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
             showhints = true
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
             unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d32
             usedebugdcu = true
             usepackages = false
@@ -922,13 +925,13 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
             showhints = true
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
             unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p32
             usedebugdcu = false
             usepackages = false
@@ -1049,7 +1052,6 @@ begin
       action.group
       begin
         description = "Do the upload"
-        enabled = false
         id = {10259440-4D8D-497E-8521-A9AF3BB6ADED}
         action.ftp.connect
         begin
@@ -1079,37 +1081,13 @@ begin
           connectionname = HealthIntersections2
           detailedlogging = false
           enabletimeout = false
-          filespec = fhirserver64-1.0.%BuildCount%.exe
+          filespec = fhirserver-1.0.%BuildCount%.exe
           forcenextclockskewupdate = true
           gaplength = 5
           id = {616E5E3D-0227-428E-ABAE-E5FE924B32D3}
           localdir = C:\\work\\fhirserver\\install\\build
           recursive = false
-          remotefile = public_html/FhirServer/fhirserver64-1.0.%BuildCount%.exe
-          retryifuploadfails = true
-          serverclockskew = 0
-          throttlespeed = 128
-          throttleupload = false
-          timeoutlength = 10
-          updateonly = false
-          usefilespec = true
-        end
-        action.ftp.upload.file
-        begin
-          allowgap = true
-          autoreconnect = true
-          autoupdateskew = true
-          checkfilesizes = false
-          connectionname = HealthIntersections2
-          detailedlogging = false
-          enabletimeout = false
-          filespec = fhirserver32-1.0.%BuildCount%.exe
-          forcenextclockskewupdate = true
-          gaplength = 5
-          id = {C32184C1-BC1D-48D4-AC50-51DE54F2BC5D}
-          localdir = C:\\work\\fhirserver\\install\\build
-          recursive = false
-          remotefile = public_html/FhirServer/fhirserver32-1.0.%BuildCount%.exe
+          remotefile = public_html/FhirServer/fhirserver-1.0.%BuildCount%.exe
           retryifuploadfails = true
           serverclockskew = 0
           throttlespeed = 128
@@ -1132,7 +1110,7 @@ begin
           nodename = item
           nodetext = "" +
                      "      <title\>FHIRServer release 1.0.%BuildCount% %BuildDate%</title\>" +
-                     "      <link\>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.%BuildCount%.exe</link\>" +
+                     "      <link\>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe</link\>" +
                      "      <description\>%BuildDate% (v1.0.%BuildCount%): %purpose%</description\>" +
                      ""
           parentxpath = /rss/channel
@@ -1199,8 +1177,7 @@ begin
           encoding = ANSI
           filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                          "   <td\>%BuildDate%</td\>" +
-                         "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
-                         "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver32-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                         "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
                          "   <td\></td\>" +
                          ""
           id = {DD774D63-84AB-4364-90E6-6EB06228AC1D}

@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.30
+OutputBaseFilename=npp-install-1.0.34
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.30
+AppVerName=1.0.34
 
 [Components]
 Name: "n64"; Description: "64bit Notepad++"; Types: custom; Flags: exclusive
