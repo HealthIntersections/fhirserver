@@ -19556,7 +19556,6 @@ const
   {$ENDIF}
   {$IFDEF WINDOWS}
 var
-  {$IFDEF WIN32}
   SSL_DLL_name : String = 'ssleay32.dll';  {Do not localize}
   //The following is a workaround for an alternative name for
   //one of the OpenSSL .DLL's.  If you compile the .DLL's using
@@ -19564,11 +19563,6 @@ var
   //ssleay32.dll like you would expect.
   SSL_DLL_name_alt : String = 'libssl32.dll';  {Do not localize}
   SSLCLIB_DLL_name : String = 'libeay32.dll';  {Do not localize}
-  {$ELSE}
-  SSL_DLL_name : String = 'ssleay64.dll';  {Do not localize}
-  SSL_DLL_name_alt : String = 'libssl64.dll';  {Do not localize}
-  SSLCLIB_DLL_name : String = 'libeay64.dll';  {Do not localize}
-  {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 
