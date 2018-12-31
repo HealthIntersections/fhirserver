@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.255
+AppVerName=FHRServer v1.0.269
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver-1.0.255
+OutputBaseFilename=fhirserver-1.0.269
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -113,12 +113,12 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";                Des
 ; Executable files
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Libraries\FMM\64\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
-Source: "C:\work\fhirserver\Libraries\js\chakra\x64_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
+Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Libraries\FMM\32\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "C:\work\fhirserver\Libraries\js\chakra\x86_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\Exec\32\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode 
+Source: "C:\work\fhirserver\Exec\32\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                                  DestDir: "{app}";   Flags: ignoreversion onlyifdoesntexist; DestName: "fhirserver.ini"; Permissions: users-full
 

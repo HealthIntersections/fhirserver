@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix various path bugs"
+        as.returnvalue = "fix SSL version"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -409,7 +409,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\fhirserver\\dependencies\\jcl"
             linkeroutput = 0
             localsymbols = true
             mapfile = 3
@@ -583,7 +583,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl
             showhints = true
             showwarnings = true
             stackframes = false
@@ -766,7 +766,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = true
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl
             showhints = true
             showwarnings = true
             stackframes = false
@@ -925,7 +925,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl
             showhints = true
             showwarnings = true
             stackframes = false
@@ -996,7 +996,7 @@ begin
         description = "Set AppVerName in Inno Script"
         id = {67BCA8BE-B229-4DB8-AC45-6ECA07F624AC}
         inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = "Version 1.0.%BuildCount%"
+        newvalue = "FHRServer v1.0.%BuildCount%"
         section = Setup
         valuename = AppVerName
         valuetype = vtString
@@ -1177,7 +1177,7 @@ begin
           encoding = ANSI
           filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                          "   <td\>%BuildDate%</td\>" +
-                         "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                         "   <td\><a title\=\"%purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
                          "   <td\></td\>" +
                          ""
           id = {DD774D63-84AB-4364-90E6-6EB06228AC1D}

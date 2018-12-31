@@ -11,7 +11,7 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{B39DF16F-6D54-4346-BB9E-3C6619BA11A2}
-AppName="FHIR Notepad++ plugin"
+AppName=FHIR Notepad++ plugin
 AppVersion=1.x
 AppPublisher=Health Intersections
 AppPublisherURL=http://healthintersections.com.au
@@ -28,7 +28,7 @@ SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.34
+AppVerName=FHIR Notepad++ plugin v1.0.34
 
 [Components]
 Name: "n64"; Description: "64bit Notepad++"; Types: custom; Flags: exclusive

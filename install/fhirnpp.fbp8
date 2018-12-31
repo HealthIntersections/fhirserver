@@ -101,7 +101,6 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
-        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\64\\fhirnpp.dll
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
@@ -110,7 +109,6 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
-        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\32\\fhirnpp.dll
         id = {E9F3AF5B-7373-420D-903C-FD1D0F24A30B}
@@ -131,7 +129,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Plugin (32)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -253,7 +250,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Plugin (64)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -364,10 +360,9 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set AppVerName in Inno Script"
-        enabled = false
         id = {EC89A4F6-46B5-442D-A33A-944AFEE95993}
         inifile = C:\\work\\fhirserver\\install\\install-npp.iss
-        newvalue = 1.0.%BuildCount%
+        newvalue = "FHIR Notepad\+\+ Plugin 1.0.%BuildCount%"
         section = Setup
         valuename = AppVerName
         valuetype = vtString
@@ -377,7 +372,6 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set OutputFilename in Inno Script"
-        enabled = false
         id = {ACC022AD-C186-4AA5-A36D-448F59DDDB0D}
         inifile = C:\\work\\fhirserver\\install\\install-npp.iss
         newvalue = npp-install-1.0.%BuildCount%
@@ -388,7 +382,6 @@ begin
       action.innosetup.execute
       begin
         description = "Build the plugin install"
-        enabled = false
         id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
         innoversion = Inno5
         scriptfile = C:\\work\\fhirserver\\install\\install-npp.iss
@@ -401,7 +394,6 @@ begin
       begin
         captureoutput = true
         description = "Sign the plugin install"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -672,6 +664,20 @@ begin
         xmlfile = C:\\work\\fhirserver\\install\\fhirnpp.rss
         xsltfile = C:\\work\\fhirserver\\install\\rssn.xslt
       end
+      action.textfile.create
+      begin
+        createdirectory = true
+        encoding = ANSI
+        filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
+                       "   <td\>%BuildDate%</td\>" +
+                       "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                       "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
+                       ""
+        id = {51E4D80C-D83C-4B02-86CE-2E3D0F68CB71}
+        newfilename = C:\\work\\fhirserver\\toolkit\\install\\fhirnpp.inc
+        overwriteexisting = true
+        writebom = true
+      end
       action.ftp.upload.file
       begin
         allowgap = true
@@ -685,6 +691,30 @@ begin
         forcenextclockskewupdate = true
         gaplength = 5
         id = {8C56FE7B-F9C7-472D-BF17-D8DE32AF51FA}
+        localdir = C:\\work\\fhirserver\\install
+        recursive = false
+        remotefile = public_html/FhirServer/fhirnpp.inc
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhirnpp.htm
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {E7922647-F49D-433A-B17B-67FD2E41566A}
         localdir = C:\\work\\fhirserver\\install
         recursive = false
         remotefile = public_html/FhirServer/fhirnpp.htm
