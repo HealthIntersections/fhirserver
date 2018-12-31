@@ -97,7 +97,7 @@ begin
       TV2JavascriptHelper.registerv2Objects(js, fpe);
       script := FOnGetScript(self, scriptName);
       try
-        js.execute(script.content, '', script.name, [message, client, factory]);
+        js.executeObj(script.content, '', script.name, [message, client, factory]);
       finally
         script.Free;
       end;
