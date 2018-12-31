@@ -40,11 +40,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 ; 1st, the plug-in itself
 Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\libeay32.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\ssleay32.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\32\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\32\ssleay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
 Source: "C:\work\fhirserver\Exec\64\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n64
-Source: "C:\work\fhirserver\Exec\libeay64.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64;  DestName: "libeay32.dll"
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64;  DestName: "ssleay32.dll"
+Source: "C:\work\fhirserver\Exec\64\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64  
+Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64  
 Source: "C:\Program Files\Notepad++\allowAppDataPlugins.xml";   DestDir: "{app}";               Flags: ignoreversion
 
 [Registry]
