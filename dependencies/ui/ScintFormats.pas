@@ -72,9 +72,6 @@ type
     procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
     function LineTextSpans(const S: TScintRawString): Boolean; override;
     procedure StyleNeeded; override;
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; Override;
   end;
 
   TJsonStylerStyle = (
@@ -95,9 +92,34 @@ type
     procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
     function LineTextSpans(const S: TScintRawString): Boolean; override;
     procedure StyleNeeded; override;
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; Override;
+  end;
+
+  TJSStylerStyle = (
+    jsWhitespace,
+    jsGrammar,
+    jsString,
+    jsNumber,
+    jsReservedWord,
+    jsType,
+    jsComment,
+    jsRegEx,
+    jsText
+  );
+
+  TJSStyler = class(TScintCustomStyler)
+  private
+    procedure scanWhitespace;
+    procedure scanComment;
+    procedure scanString(ch : ansichar);
+    procedure scanReservedWord(s : String);
+    procedure scanNumber;
+    procedure scanToken(isType : boolean);
+    procedure scanRegEx;
+  protected
+    procedure CommitStyle(Style: TJSStylerStyle);
+    procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
+    function LineTextSpans(const S: TScintRawString): Boolean; override;
+    procedure StyleNeeded; override;
   end;
 
   TLiquidStylerStyle = (
@@ -121,9 +143,6 @@ type
     procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
     function LineTextSpans(const S: TScintRawString): Boolean; override;
     procedure StyleNeeded; override;
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; Override;
   end;
 
 implementation
@@ -152,22 +171,21 @@ const
   COLOUR_BODY = $FFEEFF;
   COLOUR_ENTRY = $FFFFEE;
 
+  // JS:
+  JS_RESERVED_WORDS : array of String = ['var', 'function', 'try', 'undefined', 'null', 'return', 'void', 'typeof', 'Infinity',
+    'NaN', 'true', 'false', 'if', 'else', 'new', 'instanceof', 'this', 'catch', 'finally', 'let', 'const', 'throw'];
+  JS_GRAMMAR_CHARS = ['[', ']', ',', ':', '/', '*', '&', '|', '!', '=', '{', '}', '(', ')', ';', '%', '.', '?', '+', '<', '>'];
+  JS_TOKEN_START = AlphaUnderscoreChars+ ['$'];
+  JS_TOKEN_CHAR = AlphaDigitUnderscoreChars;
+  JS_REGEX_START = ['a'..'z', 'A'..'Z', '/', '[', '$', '^', '(', '\'];
+  JS_REGEX_FLAGS = ['g', 'i', 'm'];
+
 { TXmlStyler }
 
 procedure TXmlStyler.CommitStyle(Style: TXmlStylerStyle);
 begin
   LineState := Ord(Style);
   inherited CommitStyle(LineState);
-end;
-
-constructor TXmlStyler.Create(AOwner: TComponent);
-begin
-  inherited;
-end;
-
-destructor TXmlStyler.Destroy;
-begin
-  inherited;
 end;
 
 function TXmlStyler.LineTextSpans(const S: TScintRawString): Boolean;
@@ -359,27 +377,17 @@ end;
 
 { TJsonStyler }
 
-destructor TJsonStyler.Destroy;
-begin
-  inherited;
-end;
-
 procedure TJsonStyler.CommitStyle(Style: TJsonStylerStyle);
 begin
   LineState := Ord(Style);
   inherited CommitStyle(LineState);
 end;
 
-constructor TJsonStyler.Create(AOwner: TComponent);
-begin
-  inherited;
-end;
-
 procedure TJsonStyler.GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes);
 var
   st : TJsonStylerStyle;
 begin
-  st := TJsonStylerStyle(style and $F);
+  st := TJsonStylerStyle(style);
   case st of
     jstWhitespace :
       Attributes.ForeColor := clBlack;
@@ -471,18 +479,6 @@ begin
 end;
 
 { TLiquidStyler }
-
-constructor TLiquidStyler.Create(AOwner: TComponent);
-begin
-  inherited;
-
-end;
-
-destructor TLiquidStyler.Destroy;
-begin
-
-  inherited;
-end;
 
 procedure TLiquidStyler.CommitStyle(Style: TLiquidStylerStyle);
 begin
@@ -631,6 +627,220 @@ begin
     lqCommented : scanCommented;
   else
     raise ELibraryException.create('Error Message');
+  end;
+end;
+
+{ TJSStyler }
+
+procedure TJSStyler.CommitStyle(Style: TJSStylerStyle);
+begin
+  LineState := Ord(Style);
+  inherited CommitStyle(LineState);
+end;
+
+procedure TJSStyler.GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes);
+var
+  st : TJSStylerStyle;
+begin
+  st := TJSStylerStyle(style);
+  case st of
+    jsWhitespace, jsText :
+      Attributes.ForeColor := clBlack;
+    jsGrammar:
+      begin
+      Attributes.FontStyle := [fsBold];
+      Attributes.ForeColor := clPurple;
+      end;
+    jsString : Attributes.ForeColor := clMaroon;
+    jsNumber : Attributes.ForeColor := clBlue;
+    jsReservedWord :
+      begin
+      Attributes.FontStyle := [fsBold];
+      Attributes.ForeColor := clNavy;
+      end;
+    jsType : Attributes.ForeColor := clNavy;
+    jsComment:
+      begin
+      Attributes.FontStyle := [fsItalic];
+      Attributes.ForeColor := clDkGray;
+      end;
+    jsRegEx: Attributes.ForeColor := clRed;
+  end;
+end;
+
+function TJSStyler.LineTextSpans(const S: TScintRawString): Boolean;
+begin
+  result := false;
+end;
+
+procedure TJSStyler.scanComment;
+begin
+  ConsumeUntil('*/', true);
+  CommitStyle(jsComment);
+  scanWhitespace;
+end;
+
+procedure TJSStyler.scanNumber;
+begin
+  if CurCharIs('0') and NextCharIs('b') then
+  begin
+    ConsumeChar;
+    ConsumeChar;
+    ConsumeChars(['0', '1']);
+  end
+  else if CurCharIs('0') and NextCharIs('o') then
+  begin
+    ConsumeChar;
+    ConsumeChar;
+    ConsumeChars(['0'..'7']);
+  end
+  else if CurCharIs('0') and NextCharIs('x') then
+  begin
+    ConsumeChar;
+    ConsumeChar;
+    ConsumeChars(['0'..'7', 'a'..'f', 'A'..'F']);
+  end
+  else
+    ConsumeChars(['0'..'9', 'e', '-', '.']);
+  CommitStyle(jsNumber);
+end;
+
+procedure TJSStyler.scanRegEx;
+var
+  done : boolean;
+  ch : ansichar;
+begin
+  // scanning a regex is like scanning a string - terminated by / unless escaped
+  ch := '/';
+  ConsumeChar(ch);
+  done := false;
+  while not done do
+  begin
+    ConsumeCharsNot([ch, '\']);
+    done := CurCharIs(ch);
+    if not done and CurCharIs('\') then
+      ConsumeChar(2);
+  end;
+  ConsumeChar(ch);
+  // and also may conclude with a flag
+  if CurCharIn(JS_REGEX_FLAGS) then
+    ConsumeChar();
+  CommitStyle(jsRegEx);
+end;
+
+procedure TJSStyler.scanReservedWord(s: String);
+var
+  i : integer;
+begin
+  for i := 1 to s.Length do
+    ConsumeChar;
+  CommitStyle(jsReservedWord);
+end;
+
+procedure TJSStyler.scanString(ch: ansichar);
+var
+  done : boolean;
+begin
+  ConsumeChar(ch);
+  done := false;
+  while not done do
+  begin
+    ConsumeCharsNot([ch, '\']);
+    done := CurCharIs(ch);
+    if not done and CurCharIs('\') then
+      ConsumeChar(2);
+  end;
+  ConsumeChar(ch);
+  CommitStyle(jsString);
+end;
+
+procedure TJSStyler.scanToken(isType: boolean);
+begin
+  ConsumeChar;
+  while CurCharIn(JS_TOKEN_CHAR) do
+    ConsumeChar;
+  if isType then
+    CommitStyle(jsType)
+  else
+    CommitStyle(jsText);
+end;
+
+procedure TJSStyler.scanWhitespace;
+var
+  nextIsType : boolean;
+  rw : boolean;
+  s : String;
+begin
+  nextIsType := false;
+  while not EndOfLine do
+  begin
+    if CurCharIn(WhitespaceChars) then
+    begin
+      ConsumeChars(WhitespaceChars);
+      CommitStyle(jsWhitespace);
+    end
+    else if hasGrammar('//') then
+    begin
+      ConsumeAllRemaining;
+      CommitStyle(jsComment);
+      CommitStyle(jsWhitespace);
+    end
+    else if hasGrammar('/*') then
+      scanComment
+    else if CurCharIs('/') and NextCharIn(JS_REGEX_START) then
+      scanRegEx
+    else if CurCharIn(JS_GRAMMAR_CHARS) then
+    begin
+      ConsumeChar;
+      CommitStyle(jsGrammar);
+    end
+    else if CurCharIs('''') then
+      ScanString('''')
+    else if CurCharIs('"') then
+      ScanString('"')
+    else if hasToken('new') then
+    begin
+      scanReservedWord('new');
+      nextIsType := true;
+    end
+    else
+    begin
+      rw := false;
+      for s in JS_RESERVED_WORDS do
+      begin
+        if hasToken(s) then
+        begin
+          rw := true;
+          scanReservedWord(s);
+          break;
+        end;
+      end;
+      if not rw then
+      begin
+        if CurCharIn(['-', '0'..'9']) then
+          ScanNumber()
+        else if CurCharIn(JS_TOKEN_START) then
+          ScanToken(nextIsType)
+        else
+        begin
+          ConsumeAllRemaining;
+          CommitStyle(jsWhitespace);
+        end;
+        nextIsType := false;
+      end;
+    end;
+  end;
+end;
+
+procedure TJSStyler.StyleNeeded;
+var
+  startState : TJSStylerStyle;
+begin
+  startState := TJSStylerStyle(LineState);
+  case startState of
+    jsComment : scanComment;
+  else
+    scanWhitespace;
   end;
 end;
 

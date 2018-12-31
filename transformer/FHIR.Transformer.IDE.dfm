@@ -357,6 +357,10 @@ object TransformerForm: TTransformerForm
         TabOrder = 0
         object tbConsole: TTabSheet
           Caption = 'Console'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel5: TPanel
             Left = 967
             Top = 0
@@ -430,6 +434,10 @@ object TransformerForm: TTransformerForm
         object tbBreakpoints: TTabSheet
           Caption = 'Breakpoints'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel8: TPanel
             Left = 0
             Top = 0
@@ -453,6 +461,10 @@ object TransformerForm: TTransformerForm
         object tbVariables: TTabSheet
           Caption = 'Variables'
           ImageIndex = 3
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Splitter3: TSplitter
             Left = 353
             Top = 0
@@ -562,7 +574,7 @@ object TransformerForm: TTransformerForm
                 end
                 item
                   Position = 2
-                  Width = 219
+                  Width = 223
                   WideText = 'Value'
                 end>
             end
@@ -617,6 +629,10 @@ object TransformerForm: TTransformerForm
         object TabSheet3: TTabSheet
           Caption = 'FHIRPath Evaluator'
           ImageIndex = 4
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel2: TPanel
             Left = 0
             Top = 0
@@ -764,6 +780,10 @@ object TransformerForm: TTransformerForm
       object TabSheet1: TTabSheet
         Caption = 'Home'
         ImageIndex = 8
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label1: TLabel
           Left = 16
           Top = 12
@@ -1147,7 +1167,7 @@ object TransformerForm: TTransformerForm
     Left = 25
     Top = 90
     Bitmap = {
-      494C010129008800380110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101290088004C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2882,6 +2902,19 @@ object TransformerForm: TTransformerForm
       object mnuOptions: TMenuItem
         Caption = '&Options'
         OnClick = mnuOptionsClick
+      end
+    end
+    object Help1: TMenuItem
+      Caption = '&Help'
+      object estException1: TMenuItem
+        Caption = '&Test Exception'
+        OnClick = estException1Click
+      end
+      object N11: TMenuItem
+        Caption = '-'
+      end
+      object About1: TMenuItem
+        Caption = '&About'
       end
     end
   end

@@ -20,13 +20,16 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
+  JclDebug,
   ScintEdit, ScintInt, ScintFormats,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell,
   FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
+  FHIR.Javascript,
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
   FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
-  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg;
+  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor, FHIR.Transformer.Debugger,
+  FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg;
 
 const
   TEMPLATE_V2 = 'MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'+#13#10+
@@ -58,85 +61,8 @@ const
   spMode = 1;
   spStatus = 2;
 
-  { Memo marker numbers }
-  mmIconHasEntry = 0;        { grey dot }
-  mmIconEntryProcessed = 1;  { green dot }
-  mmIconBreakpoint = 2;      { stop sign }
-  mmIconBreakpointGood = 3;  { stop sign + check }
-  mmIconBreakpointBad = 4;   { stop sign + X }
-  mmLineError = 10;          { red line highlight }
-  mmLineBreakpoint = 11;     { red line highlight }
-  mmLineBreakpointBad = 12;  { ugly olive line highlight }
-  mmLineStep = 13;           { blue line highlight }
-  inSquiggly = 0;
-  inPendingSquiggly = 1;
-
-  DBG_STOPPED = 0;
-  DBG_EXECUTE = 1;
-  DBG_STEP_OVER = 2;
-  DBG_STEP_OUT = 3;
-  DBG_STEP_INTO = 4;
-  // values 10 or above will abort debugging run
-  DBG_STOP = 10;
-  DBG_CLOSING = 11;
 
 type
-  TTreeDataPointer = record
-    obj : TFslObject;
-    obj2 : TFslObject;
-  end;
-  PTreeDataPointer = ^TTreeDataPointer;
-
-  TPathSelection = class (TFslObject)
-  private
-    FcolStart: integer;
-    FlineStart: integer;
-    FcolEnd: integer;
-    Fcaption: String;
-    FlineEnd: integer;
-  public
-    constructor create(caption : String; lineStart, colStart, lineEnd, colEnd : integer);
-    property caption : String read Fcaption write Fcaption;
-    property lineStart : integer read FlineStart write FlineStart;
-    property colStart : integer read FcolStart write FcolStart;
-    property lineEnd : integer read FlineEnd write FlineEnd;
-    property colEnd : integer read FcolEnd write FcolEnd;
-  end;
-
-  TEditorInformation = class (TFslObject)
-  private
-    FErrorLine: Integer;
-    FStepLine: Integer;
-    FIsDirty: boolean;
-    FInfo: TWorkspaceFile;
-    FMemo: TScintEdit;
-    FTab: TTabSheet;
-    FFileIsReadOnly: boolean;
-    FReadOnly: boolean;
-    FFileTime : TDateTime;
-
-    procedure SetInfo(const Value: TWorkspaceFile);
-    procedure SetReadOnly(const Value: boolean);
-
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    property id : TWorkspaceFile read FInfo write SetInfo;
-    property tab : TTabSheet read FTab write FTab;
-    property memo : TScintEdit read FMemo write FMemo;
-    property fileIsReadOnly : boolean read FFileIsReadOnly write FFileIsReadOnly;
-    property isDirty : boolean read FIsDirty write FIsDirty;
-    property ErrorLine : Integer read FErrorLine write FErrorLine;
-    property StepLine : Integer read FStepLine write FStepLine;
-    property readOnly : boolean read FReadOnly write SetReadOnly;
-    property FileTime : TDateTime read FFileTime write FFileTime;
-  end;
-
-  TIDEScintEdit = class(TScintEdit)
-  protected
-    procedure CreateWnd; override;
-  end;
-
   TTransformerForm = class(TForm)
     Panel1: TPanel;
     pnlWorkspace: TPanel;
@@ -320,6 +246,10 @@ type
     cbxOutcome: TComboBox;
     cbxTarget: TComboBox;
     btnOpenTarget: TBitBtn;
+    Help1: TMenuItem;
+    N11: TMenuItem;
+    About1: TMenuItem;
+    estException1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -421,6 +351,7 @@ type
     procedure cbxOutcomeChange(Sender: TObject);
     procedure btnOpenTargetClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure estException1Click(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -523,6 +454,10 @@ type
     procedure ClearVariable;
     procedure DebugTransform(sender : TObject; info : TFHIRStructureMapDebugContext);
     procedure DoCompiled(sender : TConversionEngine; f : TWorkspaceFile; checkBreakpointProc : TCheckBreakpointEvent);
+
+    procedure HandleException(Sender: TObject; E: Exception);
+    Procedure InitExceptions;
+    procedure CloseExceptions;
   public
     { Public declarations }
   end;
@@ -535,6 +470,7 @@ implementation
 {$R *.dfm}
 
 uses FHIR.Transformer.SettingsDialog;
+
 
 function isXml(s : String) : boolean;
 begin
@@ -1251,6 +1187,11 @@ begin
   raise Exception.Create('Not Done yet');
 end;
 
+procedure TTransformerForm.estException1Click(Sender: TObject);
+begin
+  raise Exception.Create('Test Exception');
+end;
+
 procedure TTransformerForm.Exit1Click(Sender: TObject);
 begin
   Close;
@@ -1414,6 +1355,7 @@ begin
       FStepOutcome := DBG_CLOSING;
       FWantClose := true;
     end;
+    CanClose := true;
     exit;
   end;
 
@@ -1456,6 +1398,7 @@ var
   s : String;
   i : integer;
 begin
+  InitExceptions;
   Application.OnActivate := FormActivate;
   FPathSelection := TFslList<TPathSelection>.create;
   FStack := TFslList<TFHIRStructureMapDebugContext>.create;
@@ -1495,6 +1438,7 @@ begin
   FWorkspace.Free;
   FPathSelection.Free;
   FStack.Free;
+  CloseExceptions;
 end;
 
 procedure TTransformerForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1549,7 +1493,7 @@ var
   sel : TScintRange;
 begin
   ps := TPathSelection(lbFHIRPathOutcomes.Items.Objects[lbFHIRPathOutcomes.ItemIndex]);
-  if (ps.FLineStart <> -1) then
+  if (ps.LineStart <> -1) then
   begin
     sel.StartPos := FEditor.memo.GetPositionFromLineColumn(ps.lineStart, ps.colStart);
     sel.EndPos := FEditor.memo.GetPositionFromLineColumn(ps.lineEnd, ps.colEnd);
@@ -1574,6 +1518,8 @@ begin
     FormCloseQuery(nil, close);
     if not close then
       exit;
+    for i := pgTabs.PageCount - 1 downto 1 do
+      closeWorkspaceFile(editorForTab(pgTabs.Pages[i]), false);
   end;
   FWorkspace.Free;
   FWorkspace := proj;
@@ -2542,6 +2488,7 @@ begin
           editor.Styler := TXmlStyler.Create(self)
         else
           editor.Styler := TJsonStyler.Create(self);
+      fmtJS : editor.Styler := TJSStyler.Create(self);
       fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
       fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
     end;
@@ -2671,7 +2618,7 @@ end;
 
 procedure TTransformerForm.Timer1Timer(Sender: TObject);
 begin
-  if pgTabs.ActivePageIndex = 0 then
+  if (pgTabs.ActivePageIndex = 0) or (Feditor = nil) then
   begin
     mnuPaste.Enabled := false;
     tbPaste.Enabled := false;
@@ -2947,8 +2894,15 @@ begin
 end;
 
 procedure TTransformerForm.checkJS(src, title : String);
+var
+  js : TJavascript;
 begin
-  raise Exception.Create('Not Done Yet');
+  js := TJavascript.Create(ExtractFilePath(ParamStr(0)));
+  try
+    js.compile(src, title);
+  finally
+    js.Free;
+  end;
 end;
 
 procedure TTransformerForm.checkMap(src, title : String; f : TWorkspaceFile);
@@ -3148,170 +3102,27 @@ begin
     UpdateLineMarkers(FEditor, Line);
 end;
 
-{ TEditorInformation }
-
-constructor TEditorInformation.Create;
+procedure TTransformerForm.InitExceptions;
 begin
-  inherited;
+  JclStartExceptionTracking;
+  Application.OnException := HandleException;
 end;
 
-destructor TEditorInformation.destroy;
+procedure TTransformerForm.CloseExceptions;
+Begin
+End;
+
+procedure TTransformerForm.HandleException(Sender: TObject; E: Exception);
 begin
-  FInfo.free;
-  inherited;
+  ExceptionHandlerDialog := TExceptionHandlerDialog.Create(self);
+  Try
+    ExceptionHandlerDialog.eMessage.Caption := e.Message+#13#10#13#10+e.StackTrace;
+    ExceptionHandlerDialog.ShowModal;
+  Finally
+    ExceptionHandlerDialog.Free;
+  End;
 end;
 
-procedure TEditorInformation.SetInfo(const Value: TWorkspaceFile);
-begin
-  FInfo.free;
-  FInfo := Value;
-end;
-
-procedure TEditorInformation.SetReadOnly(const Value: boolean);
-begin
-  FReadOnly := Value;
-  if FReadOnly then
-    memo.ReadOnly := true
-  else
-    memo.ReadOnly := fileIsReadOnly;
-end;
-
-{ TIDEScintEdit }
-
-procedure TIDEScintEdit.CreateWnd;
-const
-  PixmapHasEntry: array[0..8] of PAnsiChar = (
-    '5 5 2 1',
-    'o c #808080',
-    '. c #c0c0c0',
-    'ooooo',
-    'o...o',
-    'o...o',
-    'o...o',
-    'ooooo',
-    nil);
-  PixmapEntryProcessed: array[0..8] of PAnsiChar = (
-    '5 5 2 1',
-    'o c #008000',
-    '. c #00ff00',
-    'ooooo',
-    'o...o',
-    'o...o',
-    'o...o',
-    'ooooo',
-    nil);
-  PixmapBreakpoint: array[0..14] of PAnsiChar = (
-    '9 10 3 1',
-    '= c none',
-    'o c #000000',
-    '. c #ff0000',
-    '=========',
-    '==ooooo==',
-    '=o.....o=',
-    'o.......o',
-    'o.......o',
-    'o.......o',
-    'o.......o',
-    'o.......o',
-    '=o.....o=',
-    '==ooooo==',
-    nil);
-  PixmapBreakpointGood: array[0..15] of PAnsiChar = (
-    '9 10 4 1',
-    '= c none',
-    'o c #000000',
-    '. c #ff0000',
-    '* c #00ff00',
-    '======oo=',
-    '==oooo**o',
-    '=o....*o=',
-    'o....**.o',
-    'o....*..o',
-    'o...**..o',
-    'o**.*...o',
-    'o.***...o',
-    '=o.*...o=',
-    '==ooooo==',
-    nil);
-  PixmapBreakpointBad: array[0..15] of PAnsiChar = (
-    '9 10 4 1',
-    '= c none',
-    'o c #000000',
-    '. c #ff0000',
-    '* c #ffff00',
-    '=========',
-    '==ooooo==',
-    '=o.....o=',
-    'o.*...*.o',
-    'o.**.**.o',
-    'o..***..o',
-    'o.**.**.o',
-    'o.*...*.o',
-    '=o.....o=',
-    '==ooooo==',
-    nil);
-//const
-//  SC_MARK_BACKFORE = 3030;  { new marker type added in my Scintilla build }
-begin
-  inherited;
-
-  Call(SCI_SETCARETWIDTH, 2, 0);
-  Call(SCI_AUTOCSETAUTOHIDE, 0, 0);
-  Call(SCI_AUTOCSETCANCELATSTART, 0, 0);
-  Call(SCI_AUTOCSETDROPRESTOFWORD, 1, 0);
-  Call(SCI_AUTOCSETIGNORECASE, 1, 0);
-  Call(SCI_AUTOCSETMAXHEIGHT, 7, 0);
-
-  Call(SCI_ASSIGNCMDKEY, Ord('Z') or ((SCMOD_SHIFT or SCMOD_CTRL) shl 16), SCI_REDO);
-
-  Call(SCI_SETSCROLLWIDTH, 1024 * CallStr(SCI_TEXTWIDTH, 0, 'X'), 0);
-
-//  Call(SCI_INDICSETSTYLE, inSquiggly, INDIC_SQUIGGLE);
-//  Call(SCI_INDICSETFORE, inSquiggly, clRed);
-//  Call(SCI_INDICSETSTYLE, inPendingSquiggly, INDIC_HIDDEN);
-
-  Call(SCI_SETMARGINTYPEN, 1, SC_MARGIN_SYMBOL);
-  Call(SCI_SETMARGINWIDTHN, 1, 21);
-  Call(SCI_SETMARGINSENSITIVEN, 1, 1);
-  Call(SCI_SETMARGINCURSORN, 1, SC_CURSORARROW);
-  Call(SCI_SETMARGINTYPEN, 2, SC_MARGIN_BACK);
-  Call(SCI_SETMARGINMASKN, 2, 0);
-  Call(SCI_SETMARGINWIDTHN, 2, 1);
-  Call(SCI_SETMARGINTYPEN, 3, SC_MARGIN_SYMBOL);
-  Call(SCI_SETMARGINMASKN, 3, 0);
-  Call(SCI_SETMARGINWIDTHN, 3, 1);
-  Call(SCI_SETMARGINLEFT, 0, 2);
-
-  Call(SCI_MARKERDEFINEPIXMAP, mmIconHasEntry, LPARAM(@PixmapHasEntry));
-  Call(SCI_MARKERDEFINEPIXMAP, mmIconEntryProcessed, LPARAM(@PixmapEntryProcessed));
-  Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpoint, LPARAM(@PixmapBreakpoint));
-  Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpointGood, LPARAM(@PixmapBreakpointGood));
-  Call(SCI_MARKERDEFINEPIXMAP, mmIconBreakpointBad, LPARAM(@PixmapBreakpointBad));
-  Call(SCI_MARKERDEFINE, mmLineError, SC_MARK_BACKGROUND);
-  Call(SCI_MARKERSETFORE, mmLineError, clWhite);
-  Call(SCI_MARKERSETBACK, mmLineError, clRed);
-  Call(SCI_MARKERDEFINE, mmLineBreakpoint, SC_MARK_CIRCLE);
-  Call(SCI_MARKERSETFORE, mmLineBreakpoint, clWhite);
-  Call(SCI_MARKERSETBACK, mmLineBreakpoint, clRed);
-  Call(SCI_MARKERDEFINE, mmLineBreakpointBad, SC_MARK_CIRCLE);
-  Call(SCI_MARKERSETFORE, mmLineBreakpointBad, clLime);
-  Call(SCI_MARKERSETBACK, mmLineBreakpointBad, clOlive);
-  Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKGROUND);
-  Call(SCI_MARKERSETFORE, mmLineStep, clWhite);
-  Call(SCI_MARKERSETBACK, mmLineStep, clLime);
-end;
-
-{ TPathSelection }
-
-constructor TPathSelection.create(caption: String; lineStart, colStart, lineEnd, colEnd: integer);
-begin
-  Inherited Create;
-  FCaption := caption;
-  FlineStart := lineStart;
-  FcolStart := colStart;
-  FlineEnd := lineEnd;
-  FcolEnd := colEnd;
-end;
 
 end.
 
