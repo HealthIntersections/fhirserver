@@ -151,7 +151,6 @@ uses
   FHIR.Client.Javascript in '..\..\library\client\FHIR.Client.Javascript.pas',
   FHIR.Server.EventJs in '..\..\Server\FHIR.Server.EventJs.pas',
   FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
-  FHIR.Javascript.Chakra in '..\..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.R4.Factory in '..\..\library\r4\FHIR.R4.Factory.pas',
   FHIR.Tx.CountryCode in '..\..\Server\FHIR.Tx.CountryCode.pas',
   FHIR.Tx.UsState in '..\..\Server\FHIR.Tx.UsState.pas',

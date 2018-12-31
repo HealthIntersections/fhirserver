@@ -32,7 +32,6 @@ uses
   FHIR.Client.Threaded in '..\library\client\FHIR.Client.Threaded.pas',
   FHIR.Javascript in '..\library\javascript\FHIR.Javascript.pas',
   FHIR.Javascript.Base in '..\library\javascript\FHIR.Javascript.Base.pas',
-  FHIR.Javascript.Chakra in '..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.R4.AuthMap in '..\library\r4\FHIR.R4.AuthMap.pas',
   FHIR.R4.Base in '..\library\r4\FHIR.R4.Base.pas',
   FHIR.R4.Client in '..\library\r4\FHIR.R4.Client.pas',

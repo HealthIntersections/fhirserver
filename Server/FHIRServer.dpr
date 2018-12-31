@@ -126,7 +126,6 @@ uses
   FHIR.Database.Utilities in '..\library\database\FHIR.Database.Utilities.pas',
   FHIR.Javascript in '..\library\javascript\FHIR.Javascript.pas',
   FHIR.Javascript.Base in '..\library\javascript\FHIR.Javascript.Base.pas',
-  FHIR.Javascript.Chakra in '..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.Loinc.Importer in '..\library\loinc\FHIR.Loinc.Importer.pas',
   FHIR.Loinc.Publisher in '..\library\loinc\FHIR.Loinc.Publisher.pas',
   FHIR.Loinc.Services in '..\library\loinc\FHIR.Loinc.Services.pas',

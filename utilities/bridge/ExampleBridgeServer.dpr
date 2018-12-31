@@ -148,7 +148,6 @@ uses
   FHIR.Client.Javascript in '..\..\library\client\FHIR.Client.Javascript.pas',
   FHIR.Server.EventJs in '..\..\Server\FHIR.Server.EventJs.pas',
   FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
-  FHIR.Javascript.Chakra in '..\..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.Support.Javascript in '..\..\library\support\FHIR.Support.Javascript.pas',
   FHIR.Support.Signatures in '..\..\library\support\FHIR.Support.Signatures.pas',
   FHIR.R3.Factory in '..\..\library\r3\FHIR.R3.Factory.pas',
