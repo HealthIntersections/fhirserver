@@ -167,6 +167,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -288,6 +289,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -409,6 +411,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -580,6 +583,7 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -713,6 +717,7 @@ begin
         archivetype = zZip
         compressionlevel = clUltra
         createsfxarchive = false
+        deleteaftercompression = false
         description = "Build OSX installer"
         enabletimeout = false
         expandimpersonationtoken = false
@@ -761,22 +766,28 @@ begin
       end
       action.ftp.connect
       begin
+        allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+        allowselfsignedcertificate = false
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
+        encryptdatachannel = false
         ftpconnectionname = HealthIntersections
         ftphost = 27.123.25.1
         ftpport = 21
         id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+        logsslnegotiation = false
         passive = true
         proxyport = 0
         proxytype = fpcmNone
+        tlsmode = ExplicitTLS
         transfertype = ftBinary
         useglobalopt = false
         usehost = true
         useproxy = false
         userid = healthi3
+        usessl = false
       end
       action.ftp.upload.file
       begin
@@ -918,6 +929,21 @@ begin
         overwriteexisting = true
         writebom = true
       end
+      action.files.copy
+      begin
+        clearattributes = false
+        failifexists = false
+        failifzerofiles = true
+        filespec = C:\\work\\fhirserver\\toolkit\\install\\toolkit.inc
+        force = false
+        id = {15113D8C-07CF-484B-85FE-00504328F11A}
+        logfilesaffected = true
+        overwrite = true
+        overwritereadonly = true
+        recurse = false
+        target = C:\\work\\fhirserver\\toolkit\\install\\toolkit.txt
+        targetisdir = false
+      end
       action.ftp.upload.file
       begin
         allowgap = true
@@ -958,6 +984,30 @@ begin
         localdir = C:\\work\\fhirserver\\toolkit\\install
         recursive = false
         remotefile = public_html/FhirServer/toolkit.inc
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = toolkit.txt
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {F06EFBEB-1B37-4683-8ED5-A27F72B1E65D}
+        localdir = C:\\work\\fhirserver\\toolkit\\install
+        recursive = false
+        remotefile = public_html/FhirServer/toolkit.txt
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128
