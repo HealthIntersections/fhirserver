@@ -308,7 +308,6 @@ begin
       action.group
       begin
         description = "64 bit build"
-        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
         action.files.delete
         begin
@@ -650,7 +649,6 @@ begin
       action.group
       begin
         description = "32 bit build"
-        enabled = false
         id = {E0E09074-DAE5-4B7A-A5C3-342806452053}
         action.files.delete
         begin
@@ -989,65 +987,70 @@ begin
           waitforcompletion = true
         end
       end
-      action.ini.write
+      action.group
       begin
-        allowcreate = false
-        deleteifblank = false
-        description = "Set AppVerName in Inno Script"
-        id = {67BCA8BE-B229-4DB8-AC45-6ECA07F624AC}
-        inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = "FHRServer v1.0.%BuildCount%"
-        section = Setup
-        valuename = AppVerName
-        valuetype = vtString
-      end
-      action.ini.write
-      begin
-        allowcreate = false
-        deleteifblank = false
-        description = "Set OutputFilename in Inno Script"
-        id = {E61E92EC-ECAC-4806-8F79-4DEBED5FCA9E}
-        inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = fhirserver-1.0.%BuildCount%
-        section = Setup
-        valuename = OutputBaseFilename
-        valuetype = vtString
-      end
-      action.innosetup.execute
-      begin
-        description = "Build the server install"
-        id = {C5CF014A-87B5-452D-86B1-40CC349E5F4A}
-        innoversion = Inno5
-        scriptfile = C:\\work\\fhirserver\\install\\install.iss
-        showprogress = true
-        unicode = false
-        usecommandline = true
-        usepreprocessor = false
-      end
-      action.process.execute
-      begin
-        captureoutput = true
-        description = "Sign the server install"
-        enablelivecapture = true
-        enablereturncodecheck = true
-        enabletimeout = false
-        expandimpersonationtoken = false
-        hidewindow = true
-        id = {AA3BB9B0-F4A4-478F-8D47-80366B463656}
-        impersonateusenetcredonly = false
-        impersonateuser = false
-        logoutput = true
-        logprocessparameters = true
-        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.0.%BuildCount%.exe\""
-        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-        redirectstderr = true
-        returncodecomparator = rcEqualTo
-        returncodetocheck = 0
-        startindir = "C:\\Program Files (x86)\\kSign"
-        terminateontimeout = false
-        timeoutlength = 1
-        useerrordialogmonitor = false
-        waitforcompletion = true
+        description = "Build Install"
+        id = {D4582147-49FC-42EF-8D85-74B4A37ABBB7}
+        action.ini.write
+        begin
+          allowcreate = false
+          deleteifblank = false
+          description = "Set AppVerName in Inno Script"
+          id = {67BCA8BE-B229-4DB8-AC45-6ECA07F624AC}
+          inifile = C:\\work\\fhirserver\\install\\install.iss
+          newvalue = "FHRServer v1.0.%BuildCount%"
+          section = Setup
+          valuename = AppVerName
+          valuetype = vtString
+        end
+        action.ini.write
+        begin
+          allowcreate = false
+          deleteifblank = false
+          description = "Set OutputFilename in Inno Script"
+          id = {E61E92EC-ECAC-4806-8F79-4DEBED5FCA9E}
+          inifile = C:\\work\\fhirserver\\install\\install.iss
+          newvalue = fhirserver-1.0.%BuildCount%
+          section = Setup
+          valuename = OutputBaseFilename
+          valuetype = vtString
+        end
+        action.innosetup.execute
+        begin
+          description = "Build the server install"
+          id = {C5CF014A-87B5-452D-86B1-40CC349E5F4A}
+          innoversion = Inno5
+          scriptfile = C:\\work\\fhirserver\\install\\install.iss
+          showprogress = true
+          unicode = false
+          usecommandline = true
+          usepreprocessor = false
+        end
+        action.process.execute
+        begin
+          captureoutput = true
+          description = "Sign the server install"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = true
+          id = {AA3BB9B0-F4A4-478F-8D47-80366B463656}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.0.%BuildCount%.exe\""
+          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          startindir = "C:\\Program Files (x86)\\kSign"
+          terminateontimeout = false
+          timeoutlength = 1
+          useerrordialogmonitor = false
+          waitforcompletion = true
+        end
       end
       action.group
       begin
