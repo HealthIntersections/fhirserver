@@ -376,7 +376,13 @@ uses
   FHIR.Cda.Objects in '..\library\cda\FHIR.Cda.Objects.pas',
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
-  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  ChakraDebug in '..\dependencies\chakracore-delphi\ChakraDebug.pas',
+  ChakraCoreUtils in '..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
+  ChakraCoreClasses in '..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
+  ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
+  Compat in '..\dependencies\chakracore-delphi\Compat.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

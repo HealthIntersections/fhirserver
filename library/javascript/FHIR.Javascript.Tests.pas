@@ -356,7 +356,7 @@ begin
     except
       on e : exception do
       begin
-        Assert.isTrue(e is EJavascriptScript, 'exception had wrong class "'+e.ClassName+'" instead of "EJavascriptScript"');
+        Assert.isTrue(e is EJavascriptHost, 'exception had wrong class "'+e.ClassName+'" instead of "EJavascriptScript"');
         Assert.isTrue(e.message = 'test exception', 'exception had wrong text "'+e.Message+'" instead of "test exception"');
       end;
     end;

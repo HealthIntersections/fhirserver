@@ -200,7 +200,13 @@ uses
   FHIR.Cda.Parser in '..\..\library\cda\FHIR.Cda.Parser.pas',
   FHIR.Cda.Writer in '..\..\library\cda\FHIR.Cda.Writer.pas',
   FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
-  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas';
+  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
+  ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
+  ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
+  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
+  Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
+  ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas';
 
 {$R *.res}
 

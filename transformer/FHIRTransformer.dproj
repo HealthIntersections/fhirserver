@@ -90,6 +90,8 @@
         <UWP_DelphiLogo44>..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png</UWP_DelphiLogo150>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -243,6 +245,15 @@
             <Form>FileChangedForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="FHIR.Transformer.Debugger.pas"/>
+        <DCCReference Include="FHIR.Transformer.Editor.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreVersion.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -276,7 +287,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRTransformer.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\Exec\32\FHIRTransformer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>FHIRTransformer.exe</RemoteName>
                         <Overwrite>true</Overwrite>

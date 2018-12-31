@@ -157,6 +157,7 @@
         <DCC_IMPLICIT_IMPORT>error</DCC_IMPLICIT_IMPORT>
         <DCC_UNIT_INIT_SEQ>error</DCC_UNIT_INIT_SEQ>
         <DCC_FILE_OPEN_UNITSRC>error</DCC_FILE_OPEN_UNITSRC>
+        <Debugger_RunParams>R:\fhir\publish  C:\work\org.hl7.fhir\build</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -221,7 +222,6 @@
         <DCCReference Include="..\..\library\java\FHIR.Java.Wrapper.pas"/>
         <DCCReference Include="..\..\library\javascript\FHIR.Javascript.pas"/>
         <DCCReference Include="..\..\library\javascript\FHIR.Javascript.Base.pas"/>
-        <DCCReference Include="..\..\library\javascript\FHIR.Javascript.Chakra.pas"/>
         <DCCReference Include="..\..\library\javascript\FHIR.Javascript.ObjectsTests.pas"/>
         <DCCReference Include="..\..\library\javascript\FHIR.Javascript.Tests.pas"/>
         <DCCReference Include="..\..\library\loinc\FHIR.Loinc.Importer.pas"/>
@@ -250,10 +250,6 @@
         <DCCReference Include="..\..\library\r2\FHIR.R2.Questionnaire.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Tags.pas"/>
-        <DCCReference Include="..\..\library\r2\tests\FHIR.R2.Tests.Parser.pas"/>
-        <DCCReference Include="..\..\library\r2\tests\FHIR.R2.Tests.PathEngine.pas"/>
-        <DCCReference Include="..\..\library\r2\tests\FHIR.R2.Tests.Validator.pas"/>
-        <DCCReference Include="..\..\library\r2\tests\FHIR.R2.Tests.Worker.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Types.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Utilities.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Validator.pas"/>
@@ -283,13 +279,6 @@
         <DCCReference Include="..\..\library\r3\FHIR.R3.Questionnaire.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Tags.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.Client.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.Liquid.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.Maps.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.Parser.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.PathEngine.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.Validator.pas"/>
-        <DCCReference Include="..\..\library\r3\tests\FHIR.R3.Tests.Worker.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Turtle.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Types.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Utilities.pas"/>
@@ -486,6 +475,12 @@
         <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\dependencies\Stem\YuStemmer.pas"/>
+        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCore.pas"/>
+        <DCCReference Include="..\..\dependencies\chakracore-delphi\Compat.pas"/>
+        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
+        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
+        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
+        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -515,13 +510,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServerTests.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\Exec\64\FHIRServerTests.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServerTests.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServerTests.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\..\Exec\64\FHIRServerTests.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServerTests.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
