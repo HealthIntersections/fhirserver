@@ -373,6 +373,7 @@ type
     function CurCharIn(const Chars: TScintRawCharSet): Boolean;
     function CurCharIs(const C: AnsiChar): Boolean;
     function NextCharNotInSet(const Chars: TScintRawCharSet): AnsiChar;
+    function NextCharIn(const Chars: TScintRawCharSet): boolean;
     function hasToken(const token : String) : boolean;
     function hasGrammar(const token : String) : boolean;
     procedure GetStyleAttributes(const Style: Integer;
@@ -2115,6 +2116,11 @@ end;
 function TScintCustomStyler.LineTextSpans(const S: TScintRawString): Boolean;
 begin
   Result := False;
+end;
+
+function TScintCustomStyler.NextCharIn(const Chars: TScintRawCharSet): boolean;
+begin
+  Result := (FCurIndex < FTextLen) and (FText[FCurIndex+1] in Chars);
 end;
 
 function TScintCustomStyler.NextCharIs(const C: AnsiChar): Boolean;

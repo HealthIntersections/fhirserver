@@ -76,7 +76,6 @@ Type
     Function ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
     Function ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
-    Function GetPropertyIndex(sName : String):Integer;
 
   public
     constructor Create; Override;
@@ -104,7 +103,7 @@ Type
      * @param isRegex
      * @return
      *)
-    Function search(kind : TConceptKind; text : String; isRegex : Boolean) : TUcumConceptList; overload;
+    Function search(kind : TConceptKind; text : String; isRegex : Boolean) : TFslList<TUcumConcept>; overload;
 
     (*
      * return a list of the defined types of units in this UCUM version
@@ -173,7 +172,7 @@ Type
      * @return
      * @throws OHFException
      *)
-    Function getDefinedForms(code : String) : TUcumDefinedUnitList;
+    Function getDefinedForms(code : String) : TFslMap<TUcumDefinedUnit>;
 
     (**
      * given a value/unit pair, return the canonical form as a value/unit pair
@@ -470,20 +469,21 @@ begin
   end;
 end;
 
-function TUcumServices.getDefinedForms(code: String): TUcumDefinedUnitList;
+function TUcumServices.getDefinedForms(code: String): TFslMap<TUcumDefinedUnit>;
 var
   base : TUcumBaseUnit;
   i : integer;
+  du : TUcumDefinedUnit;
 begin
   if Code = '' then
     RaiseError('Convert', 'A unit is required');
-  result := TUcumDefinedUnitList.Create;
+  result := TFslMap<TUcumDefinedUnit>.Create;
   Try
-    base := FModel.baseUnits.GetByCode(code);
+    base := FModel.baseUnits[code];
     if assigned(base) then
-      for i := 0 to FModel.definedUnits.count - 1 do
-        if not FModel.definedUnits[i].isSpecial And (getCanonicalUnits(FModel.definedUnits[i].code) = code) Then
-          result.Add(FModel.definedUnits[i].Link);
+      for du in FModel.definedUnits.Values do
+        if not du.isSpecial And (getCanonicalUnits(du.code) = code) Then
+          result.Add(du.code, du.Link);
     result.link;
   Finally
     result.free;
@@ -498,13 +498,13 @@ end;
 procedure TUcumServices.getCommonUnits(propertyName: String; oList : TFslStringList);
 var
   i : integer;
+  p : TUcumProperty;
 begin
   oList.Clear;
   oList.SortAscending;
   oList.Sorted;
-  i := Model.Properties.IndexByName(propertyName);
-  if i > -1 Then
-    oList.Assign(Model.Properties[i].CommonUnits);
+  if Model.Properties.TryGetValue(propertyName, p) then
+    oList.Assign(p.CommonUnits);
 end;
 
 function TUcumServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -515,12 +515,13 @@ end;
 procedure TUcumServices.getProperties(oList: TFslStringList);
 var
   i : integer;
+  p : TUcumProperty;
 begin
   oList.Clear;
   oList.SortAscending;
   oList.Sorted;
-  for i := 0 to Model.Properties.Count - 1 do
-    oList.Add(Model.Properties[i].Name);
+  for p in Model.Properties.Values do
+    oList.Add(p.Name);
 end;
 
 function TUcumServices.multiply(o1, o2: TUcumPair): TUcumPair;
@@ -542,7 +543,7 @@ begin
   result := 'UCUM';
 end;
 
-function TUcumServices.search(kind: TConceptKind; text: String; isRegex: Boolean): TUcumConceptList;
+function TUcumServices.search(kind: TConceptKind; text: String; isRegex: Boolean): TFslList<TUcumConcept>;
 var
   oSearch : TUcumSearch;
 begin
@@ -832,6 +833,8 @@ var
   oXml : TMXmlDocument;
   oElem : TMXmlElement;
   oErrors : TFslStringList;
+  bu : TUcumBaseUnit;
+  du :  TUcumDefinedUnit;
 begin
   oXml := TMXmlParser.parseFile(sFilename, [xpDropWhitespace]);
   try
@@ -847,9 +850,15 @@ begin
      if oElem.Name = 'prefix' Then
        FModel.prefixes.Add(ParsePrefix(oElem))
      Else if oElem.Name = 'base-unit' Then
-       FModel.baseUnits.Add(ParseBaseUnit(oElem))
+     begin
+       bu := ParseBaseUnit(oElem);
+       FModel.baseUnits.Add(bu.code, bu)
+     end
      Else if oElem.Name = 'unit' Then
-       FModel.definedUnits.Add(ParseUnit(oElem))
+     begin
+       du := ParseUnit(oElem);
+       FModel.definedUnits.Add(du.code, du);
+     end
      else
        raise ETerminologySetup.create('unrecognised element '+oElem.Name);
       oElem := oElem.nextElement;
@@ -1021,7 +1030,7 @@ Begin
       else if oChild.Name = 'printSymbol' Then
         result.printSymbol := oChild.allText
       else if oChild.Name = 'property' Then
-        result.PropertyType := GetPropertyIndex(oChild.allText)
+        result.PropertyType := oChild.allText
       else
         raise ETerminologyError.Create('unknown element in base unit: '+oChild.Name);
       oChild := oChild.nextElement;
@@ -1051,7 +1060,7 @@ Begin
       else if oChild.Name = 'printSymbol' Then
         result.printSymbol := oChild.allText
       else if oChild.Name = 'property' Then
-        result.PropertyType := GetPropertyIndex(oChild.allText)
+        result.PropertyType := oChild.allText
       else if oChild.Name = 'value' Then
       begin
         result.value.unit_ := oChild.attribute['Unit'];
@@ -1070,17 +1079,6 @@ Begin
     result.Free;
   End;
 End;
-
-
-function TUcumServices.GetPropertyIndex(sName: String): Integer;
-begin
-  result :=  FModel.Properties.IndexByName(sName);
-  if result = -1 then
-    result := FModel.Properties.AddByName(sName);
-end;
-
-
-
 
 { TUcumFilterContext }
 

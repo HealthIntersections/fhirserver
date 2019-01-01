@@ -430,11 +430,11 @@ Begin
       if StringStartsWithSensitive(sym, Fmodel.Prefixes[i].Code) Then
       Begin
         Unit_ := Fmodel.getUnit(Copy(sym, Length(Fmodel.Prefixes[i].Code)+1, $FF));
-	if (Unit_ <> nil) and ((Unit_.Kind = UcumBASEUNIT) or TUcumDefinedUnit(Unit_).metric) Then
+      	if (Unit_ <> nil) and ((Unit_.Kind = UcumBASEUNIT) or TUcumDefinedUnit(Unit_).metric) Then
         Begin
           selected := Fmodel.Prefixes[i];
-	  break;
-	End;
+          break;
+        End;
       End;
     End;
 
@@ -888,7 +888,7 @@ var
   c : TUcumCanonicalUnit;
   i : integer;
 begin
-  result := TUcumCanonical.Create;
+   result := TUcumCanonical.Create;
   try
     result.Value := TFSLDecimal.create(1);
   	if (sym.Unit_ is TUcumBaseUnit) then
@@ -898,15 +898,19 @@ begin
     else
     begin
 			can := expandDefinedUnit(indent, sym.Unit_ as TUcumDefinedUnit);
-			for c in can.Units do
-				c.exponent := c.exponent * sym.exponent;
-			result.Units.addAll(can.Units);
-			if (sym.exponent > 0) then
-				for i := 1 to sym.exponent do
-					result.multiplyValue(can.Value)
-			else
-				for i := -1 downto sym.exponent do
-					result.divideValue(can.Value);
+      try
+        for c in can.Units do
+          c.exponent := c.exponent * sym.exponent;
+        result.Units.addAll(can.Units);
+        if (sym.exponent > 0) then
+          for i := 1 to sym.exponent do
+            result.multiplyValue(can.Value)
+        else
+          for i := -1 downto sym.exponent do
+            result.divideValue(can.Value);
+      finally
+        can.free;
+      end;
 		end;
 		if (sym.Prefix <> nil) then
     begin

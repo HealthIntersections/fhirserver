@@ -32,7 +32,6 @@ uses
   FHIR.Client.Threaded in '..\library\client\FHIR.Client.Threaded.pas',
   FHIR.Javascript in '..\library\javascript\FHIR.Javascript.pas',
   FHIR.Javascript.Base in '..\library\javascript\FHIR.Javascript.Base.pas',
-  FHIR.Javascript.Chakra in '..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.R4.AuthMap in '..\library\r4\FHIR.R4.AuthMap.pas',
   FHIR.R4.Base in '..\library\r4\FHIR.R4.Base.pas',
   FHIR.R4.Client in '..\library\r4\FHIR.R4.Client.pas',
@@ -119,7 +118,16 @@ uses
   FHIR.Base.PathDebugger in '..\library\base\FHIR.Base.PathDebugger.pas' {FHIRPathDebuggerForm},
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm},
-  FHIR.Transformer.FileChangedDlg in 'FHIR.Transformer.FileChangedDlg.pas' {FileChangedForm};
+  FHIR.Transformer.FileChangedDlg in 'FHIR.Transformer.FileChangedDlg.pas' {FileChangedForm},
+  FHIR.Transformer.Debugger in 'FHIR.Transformer.Debugger.pas',
+  FHIR.Transformer.Editor in 'FHIR.Transformer.Editor.pas',
+  ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
+  ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
+  ChakraCoreClasses in '..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  ChakraCoreUtils in '..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
+  ChakraCoreVersion in '..\dependencies\chakracore-delphi\ChakraCoreVersion.pas',
+  ChakraDebug in '..\dependencies\chakracore-delphi\ChakraDebug.pas',
+  Compat in '..\dependencies\chakracore-delphi\Compat.pas';
 
 {$R *.res}
 

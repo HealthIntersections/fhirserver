@@ -8,7 +8,7 @@
 AppId={{9FD61024-BC9A-4226-ADA5-E72254250B6C}
 AppName=FHIR Toolkit
 AppVersion=0.1
-AppVerName=0.0.0 (FHIR Version )
+AppVerName=FHIR ToolKit v0.0.48 (FHIR Version 3.0.1.12956)
 AppPublisher=Health Intersections
 AppPublisherURL=http://www.healthintersections.com.au/FhirServer
 AppSupportURL=http://www.healthintersections.com.au/FhirServer
@@ -18,7 +18,7 @@ DefaultGroupName=FHIR Applications
 AllowNoIcons=yes
 LicenseFile=C:\work\fhirserver\toolkit\install\licence.txt
 OutputDir=C:\work\fhirserver\toolkit\install
-OutputBaseFilename=fhir-toolkit-install-0.0.0
+OutputBaseFilename=fhir-toolkit-install-0.0.48
 SetupIconFile=C:\work\fhirserver\toolkit\AppEndorser_Icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -32,11 +32,12 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR4.exe";                                 DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR3.exe";                                 DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\FHIRTransformer.exe";                               DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\32\cde-scintilla.dll";                                         DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\32\chakracore.dll";                                            DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\toolkit.png";    DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\*.xml";          DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";                                                 DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\libeay64.dll";                                                 DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\openssl64.exe";                                                DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";                                              DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\libeay32.dll";                                              DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Toolkit (R4)"; Filename: "{app}\FHIRToolkitR4.exe"

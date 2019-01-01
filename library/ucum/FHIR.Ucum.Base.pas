@@ -53,15 +53,6 @@ type
     Property CommonUnits : TFslStringlist read FCommonUnits;
   end;
 
-  TUcumPropertyList = class (TFslNameList)
-  Private
-    function GetUcumProperty(iIndex : integer): TUcumProperty;
-  Protected
-    Function ItemClass : TFslObjectClass; override;
-  Public
-    Property UcumProperty[iIndex : integer] : TUcumProperty read GetUcumProperty; default;
-  End;
-
   TUcumConcept = class (TFslObject)
   private
     Fcode : String;
@@ -84,15 +75,6 @@ type
     Property Text : String read FText write FText;
   End;
 
-  TUcumConceptList = class (TFslObjectList)
-  Private
-    function GetUcumItem(iIndex : integer): TUcumConcept;
-  Protected
-    Function ItemClass : TFslObjectClass; override;
-  Public
-    Property UcumItem[iIndex : integer] : TUcumConcept read GetUcumItem; default;
-  End;
-
   TUcumPrefix = class (TUcumConcept)
   private
     Fvalue : TFslDecimal;
@@ -106,21 +88,12 @@ type
     procedure SetPrecision(i : integer);
   End;
 
-  TUcumPrefixList = class (TFslObjectList)
-  Private
-    function GetUcumItem(iIndex : integer): TUcumPrefix;
-  Protected
-    Function ItemClass : TFslObjectClass; override;
-  Public
-    Property UcumItem[iIndex : integer] : TUcumPrefix read GetUcumItem; default;
-  End;
-
   TUcumUnit = class (TUcumConcept)
   private
-    FProperty : Integer;
+    FProperty : string;
   Public
     function Link : TUcumUnit; Overload;
-    Property PropertyType : Integer read FProperty write FProperty; // the kind of thing this represents
+    Property PropertyType : string read FProperty write FProperty; // the kind of thing this represents
   End;
 
   TUcumBaseUnit = class (TUcumUnit)
@@ -131,18 +104,6 @@ type
   public
     function Link : TUcumBaseUnit; Overload;
     Property dim : Char read FDim write FDim;
-  End;
-
-  TUcumBaseUnitList = class (TFslObjectList)
-  Private
-    function GetUcumItem(iIndex : integer): TUcumBaseUnit;
-  Protected
-    Function ItemClass : TFslObjectClass; override;
-  Public
-    Function ExistsByCode(const sCode : String) : Boolean;
-    Function GetByCode(const sCode : String) : TUcumBaseUnit;
-
-    Property UcumItem[iIndex : integer] : TUcumBaseUnit read GetUcumItem; default;
   End;
 
   TUcumValue = class (TFslObject)
@@ -179,25 +140,12 @@ type
     Property value : TUcumValue read Fvalue; // Value details
   End;
 
-  TUcumDefinedUnitList = class (TFslObjectList)
-  Private
-    function GetUcumItem(iIndex : integer): TUcumDefinedUnit;
-  Protected
-    Function ItemClass : TFslObjectClass; override;
-  Public
-    Function ExistsByCode(const sCode : String) : Boolean;
-    Function GetByCode(const sCode : String) : TUcumDefinedUnit;
-
-    Property UcumItem[iIndex : integer] : TUcumDefinedUnit read GetUcumItem; default;
-  End;
-
-
   TUcumModel = class (TFslObject)
   private
-    FProperties : TUcumPropertyList;
-    Fprefixes : TUcumPrefixList;
-    FbaseUnits : TUcumBaseUnitList;
-    FdefinedUnits : TUcumDefinedUnitList;
+    FProperties : TFslMap<TUcumProperty>;
+    Fprefixes : TFslList<TUcumPrefix>;
+    FbaseUnits : TFslMap<TUcumBaseUnit>;
+    FdefinedUnits : TFslMap<TUcumDefinedUnit>;
     FVersion : String;
     FRevisionDate : String;
   public
@@ -210,12 +158,12 @@ type
 
     Function GetUnit(sCode : String) : TUcumUnit;
 
-    Property prefixes : TUcumPrefixList read Fprefixes;
-    Property baseUnits : TUcumBaseUnitList read FbaseUnits;
-    Property definedUnits : TUcumDefinedUnitList read FdefinedUnits;
+    Property prefixes : TFslList<TUcumPrefix> read Fprefixes;
+    Property baseUnits : TFslMap<TUcumBaseUnit> read FbaseUnits;
+    Property definedUnits : TFslMap<TUcumDefinedUnit> read FdefinedUnits;
     Property Version : String read FVersion write FVersion;
     Property RevisionDate : String read FRevisionDate write FRevisionDate;
-    Property Properties : TUcumPropertyList read FProperties;
+    Property Properties : TFslMap<TUcumProperty> read FProperties;
   End;
 
 const
@@ -323,78 +271,6 @@ begin
   result := TUcumDefinedUnit(Inherited Link);
 end;
 
-{ TUcumPrefixList }
-
-function TUcumPrefixList.GetUcumItem(iIndex: integer): TUcumPrefix;
-begin
-  result := TUcumPrefix(inherited ObjectByIndex[iIndex]);
-end;
-
-function TUcumPrefixList.ItemClass: TFslObjectClass;
-begin
-  result := TUcumPrefix;
-end;
-
-{ TUcumBaseUnitList }
-
-function TUcumBaseUnitList.ExistsByCode(const sCode: String): Boolean;
-begin
-  result := GetByCode(sCode) <> nil;
-end;
-
-function TUcumBaseUnitList.GetByCode(const sCode: String): TUcumBaseUnit;
-var
-  i : integer;
-begin
-  result := nil;
-  for i := 0 to Count -1 do
-    if UcumItem[i].code = sCode then
-    begin
-      result := UcumItem[i];
-      exit;
-    End;
-end;
-
-function TUcumBaseUnitList.GetUcumItem(iIndex: integer): TUcumBaseUnit;
-begin
-  result := TUcumBaseUnit(inherited ObjectByIndex[iIndex]);
-end;
-
-function TUcumBaseUnitList.ItemClass: TFslObjectClass;
-begin
-  result := TUcumBaseUnit;
-end;
-
-{ TUcumDefinedUnitList }
-
-function TUcumDefinedUnitList.ExistsByCode(const sCode: String): Boolean;
-begin
-  result := GetByCode(sCode) <> nil;
-end;
-
-function TUcumDefinedUnitList.GetByCode(const sCode: String): TUcumDefinedUnit;
-var
-  i : integer;
-begin
-  result := nil;
-  for i := 0 to Count -1 do
-    if UcumItem[i].code = sCode then
-    begin
-      result := UcumItem[i];
-      exit;
-    End;
-end;
-
-function TUcumDefinedUnitList.GetUcumItem(iIndex: integer): TUcumDefinedUnit;
-begin
-  result := TUcumDefinedUnit(inherited ObjectByIndex[iIndex]);
-end;
-
-function TUcumDefinedUnitList.ItemClass: TFslObjectClass;
-begin
-  result := TUcumDefinedUnit;
-end;
-
 { TUcumModel }
 
 procedure TUcumModel.clear;
@@ -410,10 +286,12 @@ end;
 constructor TUcumModel.Create;
 begin
   inherited;
-  Fprefixes := TUcumPrefixList.Create;
-  FbaseUnits := TUcumBaseUnitList.Create;
-  FdefinedUnits := TUcumDefinedUnitList.Create;
-  FProperties := TUcumPropertyList.Create;
+  Fprefixes := TFslList<TUcumPrefix>.Create;
+  FbaseUnits := TFslMap<TUcumBaseUnit>.Create;
+  FbaseUnits.defaultValue := nil;
+  FdefinedUnits := TFslMap<TUcumDefinedUnit>.Create;
+  FdefinedUnits.defaultValue := nil;
+  FProperties := TFslMap<TUcumProperty>.Create;
 end;
 
 destructor TUcumModel.Destroy;
@@ -427,38 +305,14 @@ end;
 
 function TUcumModel.GetUnit(sCode: String): TUcumUnit;
 begin
-  result := FbaseUnits.GetByCode(sCode);
+  result := FbaseUnits[sCode];
   if result = nil Then
-    result := FdefinedUnits.GetByCode(sCode);
+    result := FdefinedUnits[sCode];
 end;
 
 function TUcumModel.Link: TUcumModel;
 begin
   result := TUcumModel(inherited Link);
-end;
-
-{ TUcumConceptList }
-
-function TUcumConceptList.GetUcumItem(iIndex: integer): TUcumConcept;
-begin
-  result := TUcumConcept(inherited ObjectByIndex[iIndex]);
-end;
-
-function TUcumConceptList.ItemClass: TFslObjectClass;
-begin
-  result := TUcumConcept;
-end;
-
-{ TUcumPropertyList }
-
-function TUcumPropertyList.GetUcumProperty(iIndex: integer): TUcumProperty;
-begin
-  result := TUcumProperty(Inherited ObjectByIndex[iIndex]);
-end;
-
-function TUcumPropertyList.ItemClass: TFslObjectClass;
-begin
-  result := TUcumProperty;
 end;
 
 { TUcumProperty }

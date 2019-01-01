@@ -11,7 +11,7 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{B39DF16F-6D54-4346-BB9E-3C6619BA11A2}
-AppName="FHIR Notepad++ plugin"
+AppName=FHIR Notepad++ plugin
 AppVersion=1.x
 AppPublisher=Health Intersections
 AppPublisherURL=http://healthintersections.com.au
@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.34
+OutputBaseFilename=npp-install-1.0.2
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.34
+AppVerName=FHIR Notepad++ Plugin 1.0.2
 
 [Components]
 Name: "n64"; Description: "64bit Notepad++"; Types: custom; Flags: exclusive
@@ -40,11 +40,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 ; 1st, the plug-in itself
 Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\libeay32.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\ssleay32.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\32\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\32\ssleay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
 Source: "C:\work\fhirserver\Exec\64\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n64
-Source: "C:\work\fhirserver\Exec\libeay64.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64;  DestName: "libeay32.dll"
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";                 DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64;  DestName: "ssleay32.dll"
+Source: "C:\work\fhirserver\Exec\64\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64  
+Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64  
 Source: "C:\Program Files\Notepad++\allowAppDataPlugins.xml";   DestDir: "{app}";               Flags: ignoreversion
 
 [Registry]

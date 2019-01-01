@@ -728,61 +728,124 @@ begin
   end;
 end;
 
+function isToken(s : String) : Boolean;
+var
+  i : integer;
+begin
+  if (s = '') then
+    result := false
+  else if not CharInSet(s[1], ['A'..'Z', 'a'..'z', '_']) then
+    result := false
+  else
+  begin
+    result := true;
+    for i := 2 to s.Length do
+      if not CharInSet(s[i], ['A'..'Z', 'a'..'z', '_', '0'..'9']) then
+        exit(false);
+  end;
+end;
+
+type
+   TPrefixMode = (pmSource, pmDepends, pmTarget, pmProduct);
+   TPrefixInformation = class (TFslObject)
+   private
+    FMode: TPrefixMode;
+    FAbbrev: String;
+    FUrl: String;
+   public
+     constructor create(mode : TPrefixMode; abbrev, url : String);
+     property mode : TPrefixMode read FMode write FMode;
+     property abbrev : String read FAbbrev write FAbbrev;
+     property url : String read FUrl write FUrl;
+   end;
+
+{ TPrefixInformation }
+
+constructor TPrefixInformation.create(mode: TPrefixMode; abbrev, url: String);
+begin
+  inherited create;
+  FMode := mode;
+  FAbbrev := abbrev;
+  FUrl := url;
+end;
+
+
+function intToStrND(i, v : integer) : String;
+begin
+  if i = v then
+    result := ''
+  else
+    result := inttostr(i);
+end;
+
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
 const
   CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', '-', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
 var
-  prefixes : TFslStringDictionary;
+  prefixes : TFslList<TPrefixInformation>;
   g : TFhirConceptMapGroup;
   e : TFhirConceptMapGroupElement;
   t : TFhirConceptMapGroupElementTarget;
   d : TFhirConceptMapGroupElementTargetDependsOn;
-  s : String;
+  pi : TPrefixInformation;
   f : boolean;
-  procedure seeSystem(base, url : String);
+  function getUri(mode : TPrefixMode; url : String) : TPrefixInformation;
+  var
+    pi : TPrefixInformation;
+  begin
+    result := nil;
+    for pi in prefixes do
+      if (pi.mode = mode) and (pi.url = url) then
+        exit(pi);
+  end;
+
+  function hasAbbrev(abbrev : String) : boolean;
+  var
+    pi : TPrefixInformation;
+  begin
+    result := false;
+    for pi in prefixes do
+      if (pi.abbrev = abbrev) then
+        exit(true);
+  end;
+
+  procedure seeSystem(mode : TPrefixMode; abbrev, url : String);
   var
     i : integer;
   begin
-    if not prefixes.ContainsKey(url) then
-    begin
-      if not prefixes.ContainsValue(base) then
-        prefixes.Add(url, base)
-      else
-      begin
-        i := 1;
-        while prefixes.ContainsValue(base+inttostr(i)) do
-          inc(i);
-        prefixes.Add(url, base+inttostr(i));
-      end;
-    end;
+    i := 0;
+    if getUri(mode, url) <> nil then
+      exit;
+    while hasAbbrev(abbrev+intToStrND(i, 0)) do
+      inc(i);
+    prefixes.Add(TPrefixInformation.create(mode, abbrev+intToStrND(i, 0), url));
   end;
-  procedure app(system, code : String);
+
+  procedure app(mode : TPrefixMode; system, code : String);
   begin
-    b.append(prefixes[system]);
+    b.append(getUri(mode, system).FAbbrev);
     b.append(':');
-    if code.Contains(' ') then
-      b.append('''+jsonEscape(code, true)+''')
+    if not isToken(code) then
+      b.append('"'+jsonEscape(code, true)+'"')
     else
       b.append(jsonEscape(code, false));
   end;
 begin
-  prefixes := TFslStringDictionary.create;
+  prefixes := TFslList<TPrefixInformation>.create;
   try
     b.append('conceptmap "');
-    b.append(map.Url);
-    b.append('" = "');
-    b.append(jsonEscape(map.Name, true));
+    b.append(map.id);
     b.append('" {'#13#10#13#10);
 
     if (map.source is TFhirUri) then
     begin
-      b.Append('source "');
+      b.Append(' source "');
       b.append(jsonEscape(TFhirUri(map.source).value, true));
       b.append('"'#13#10);
     end;
     if (map.target is TFhirUri) then
     begin
-      b.Append('target "');
+      b.Append(' target "');
       b.append(jsonEscape(TFhirUri(map.target).value, true));
       b.append('"'#13#10);
     end;
@@ -791,25 +854,38 @@ begin
     for g in map.groupList do
       for e in g.elementList do
       begin
-        seeSystem('s', g.source);
+        seeSystem(pmSource, 's', g.source);
         for t in e.targetList do
         begin
-          seeSystem('t', g.target);
+          seeSystem(pmTarget, 't', g.target);
           for d in t.dependsOnList do
-           seeSystem('d', d.system);
+           seeSystem(pmDepends, 'd', d.system);
           for d in t.productList do
-           seeSystem('p', d.system);
+           seeSystem(pmProduct, 'p', d.system);
         end;
       end;
-    for s in prefixes.Keys do
+    for pi in prefixes do
     begin
-      b.Append('prefix "');
-      b.append(prefixes[s]);
+      b.Append(' prefix ');
+      b.append(pi.abbrev);
       b.Append(' = "');
-      b.append(jsonEscape(s, true));
+      b.append(jsonEscape(pi.url, true));
       b.append('"'#13#10);
     end;
     b.append(#13#10);
+
+    for g in map.groupList do
+    begin
+      if (g.unmapped <> nil) then
+      begin
+        b.append('  unmapped for ');
+        b.append(getUri(pmSource, g.source).FAbbrev);
+        b.append(' = ');
+        b.append(CODES_TFhirConceptmapUnmappedModeEnum[g.unmapped.Create.mode]);
+        b.append(#13#10#13#10);
+      end;
+    end;
+
 
     // now render
     for g in map.groupList do
@@ -817,7 +893,8 @@ begin
       begin
         for t in e.targetList do
         begin
-          app(g.source, e.code);
+          b.Append(' ');
+          app(pmSource, g.source, e.code);
           b.Append(' ');
           if (t.dependsOnList.Count > 0) then
           begin
@@ -826,7 +903,7 @@ begin
             for d in t.dependsOnList do
             begin
               if f then f := false else b.Append(', ');
-              app(d.system, d.code);
+              app(pmDepends, d.system, d.code);
             end;
             b.Append(']');
           end;
@@ -834,7 +911,7 @@ begin
           b.Append(' ');
           if (t.code <> '') then
           begin
-            app(g.target, t.code);
+            app(pmTarget, g.target, t.code);
             if (t.productList.Count > 0) then
             begin
               b.Append('[');
@@ -842,7 +919,7 @@ begin
               for d in t.productList do
               begin
                 if f then f := false else b.Append(', ');
-                app(d.system, d.code);
+                app(pmProduct, d.system, d.code);
               end;
               b.Append(']');
             end;
@@ -937,8 +1014,8 @@ begin
   result.ContainedList.add(map);
   id := lexer.readConstant('map id');
   if (id.startsWith('#')) then
-    raise lexer.error('Concept Map identifier ('+id+') must start with #');
-  map.Id := id.substring(1);
+    raise lexer.error('Concept Map identifier ('+id+') must not start with #');
+  map.Id := id;
   lexer.token('{');
   lexer.skipComments();
   //    lexer.token('source');
@@ -974,7 +1051,10 @@ begin
     begin
       vs := readPrefix(prefixes, lexer);
       lexer.token(':');
-      vc := lexer.take();
+      if lexer.isStringConstant then
+        vc := lexer.readConstant('token')
+      else
+        vc := lexer.take();
       eq := readEquivalence(lexer);
       if (eq <> ConceptMapEquivalenceUNMATCHED) then
         vt := readPrefix(prefixes, lexer)
@@ -988,7 +1068,10 @@ begin
       if (tgt.Equivalence <> ConceptMapEquivalenceUNMATCHED) then
       begin
         lexer.token(':');
-        tgt.Code := lexer.take();
+        if lexer.isStringConstant then
+          tgt.Code := lexer.readConstant('token')
+        else
+          tgt.Code := lexer.take();
       end;
       if (lexer.hasComment())  then
         tgt.Comment := lexer.take().substring(2).trim();

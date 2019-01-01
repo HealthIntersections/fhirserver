@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils,
-   FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Base,
+  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Base,
   FHIR.Ucum.Base, FHIR.Ucum.Expressions, FHIR.Ucum.Handlers;
 
 Type
@@ -80,25 +80,26 @@ End;
 
 procedure TUcumValidator.checkCodes;
 var
-  i : Integer;
+  bu : TUcumBaseUnit;
+  du : TUcumDefinedUnit;
 Begin
-  for i := 0 to Fmodel.BaseUnits.Count - 1 Do
-    checkUnitCode(FModel.BaseUnits[i].Code, true);
+  for bu in Fmodel.baseUnits.Values Do
+    checkUnitCode(bu.Code, true);
 
-  for i := 0 to Fmodel.DefinedUnits.Count - 1 Do
-    checkUnitCode(FModel.DefinedUnits[i].Code, true);
+  for du in Fmodel.DefinedUnits.Values do
+    checkUnitCode(du.Code, true);
 End;
 
 
 procedure TUcumValidator.checkUnits;
 var
-  i : integer;
+  du : TUcumDefinedUnit;
 Begin
-  for i := 0 to Fmodel.DefinedUnits.Count - 1 Do
-    if not Fmodel.DefinedUnits[i].isSpecial Then
-      checkUnitCode(Fmodel.DefinedUnits[i].Value.Unit_, false)
-    else if not Fhandlers.ExistsByName(Fmodel.DefinedUnits[i].Code) Then
-       Fresult.add('No Handler for '+Fmodel.DefinedUnits[i].Code);
+  for du in Fmodel.DefinedUnits.values Do
+    if not du.isSpecial Then
+      checkUnitCode(du.Value.Unit_, false)
+    else if not Fhandlers.ExistsByName(du.Code) Then
+       Fresult.add('No Handler for '+du.Code);
 End;
 
 

@@ -41,20 +41,21 @@ Type
   TUcumSearch = class (TFslObject)
   Private
     FRegex : TRegEx;
-    Procedure searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TFslObjectList; text : String; isRegex : boolean);
+    Procedure searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumBaseUnit>; text : String; isRegex : boolean); overload;
+    Procedure searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumDefinedUnit>; text : String; isRegex : boolean); overload;
     function matchesUnit(model : TUcumModel; oUnit : TUcumUnit; text : String; isRegex : boolean) : boolean;
-    Procedure searchPrefixes(concepts : TUcumConceptList; prefixes : TUcumPrefixList; text : String; isRegex : boolean);
+    Procedure searchPrefixes(concepts : TFslList<TUcumConcept>; prefixes : TFslList<TUcumPrefix>; text : String; isRegex : boolean);
     function matchesConcept(concept : TUcumConcept; text : String; isRegex : boolean) : boolean;
     function matches(value : String; text : String; isRegex : boolean) : boolean;
   Public
-    Function doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TUcumConceptList;
+    Function doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TFslList<TUcumConcept>;
   End;
 
 
 Implementation
 
 
-Function TUcumSearch.doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TUcumConceptList;
+Function TUcumSearch.doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TFslList<TUcumConcept>;
 begin
   if isRegex Then
   begin
@@ -62,7 +63,7 @@ begin
   End;
 
 
-  result := TUcumConceptList.Create;
+  result := TFslList<TUcumConcept>.Create;
   Try
     if (akind = UcumNull) or (akind = UcumPREFIX) Then
       searchPrefixes(result, model.prefixes, text, isRegex);
@@ -76,13 +77,22 @@ begin
   End;
 end;
 
-Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TFslObjectList; text : String; isRegex : boolean);
+Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumBaseUnit>; text : String; isRegex : boolean);
 var
-  i : integer;
+  bu : TUcumBaseUnit;
 begin
-  for i := 0 to units.Count - 1 do
-    if matchesUnit(model, units[i] as TUcumUnit, text, isRegex) Then
-      concepts.add(units[i].Link);
+  for bu in units.Values do
+    if matchesUnit(model, bu, text, isRegex) Then
+      concepts.add(bu.Link);
+end;
+
+Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumDefinedUnit>; text : String; isRegex : boolean);
+var
+  bu : TUcumDefinedUnit;
+begin
+  for bu in units.Values do
+    if matchesUnit(model, bu, text, isRegex) Then
+      concepts.add(bu.Link);
 end;
 
 function TUcumSearch.matchesUnit(model : TUcumModel; oUnit : TUcumUnit; text : String; isRegex : boolean) : boolean;
@@ -91,7 +101,7 @@ begin
 end;
 
 
-Procedure TUcumSearch.searchPrefixes(concepts : TUcumConceptList; prefixes : TUcumPrefixList; text : String; isRegex : boolean);
+Procedure TUcumSearch.searchPrefixes(concepts : TFslList<TUcumConcept>; prefixes : TFslList<TUcumPrefix>; text : String; isRegex : boolean);
 var
   i : integer;
 begin

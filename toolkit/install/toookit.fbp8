@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix SSL issue"
+        as.returnvalue = "Fix minor bugs and work on SSL distribution"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -475,7 +475,7 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source;C:\\work\\fhirserver\\dependencies\\jcl
           showhints = true
           showwarnings = true
           stackframes = false
@@ -683,7 +683,7 @@ begin
         description = "Set AppVerName in Inno Script"
         id = {EC89A4F6-46B5-442D-A33A-944AFEE95993}
         inifile = C:\\work\\fhirserver\\toolkit\\install\\toolkit.iss
-        newvalue = "0.0.%BuildCount% (FHIR Version %FhirVersion%)"
+        newvalue = "FHIR ToolKit v0.0.%BuildCount% (FHIR Version %FhirVersion%)"
         section = Setup
         valuename = AppVerName
         valuetype = vtString
@@ -921,14 +921,28 @@ begin
         encoding = ANSI
         filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                        "   <td\>%BuildDate%</td\>" +
-                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
-                       "  <td\></td\>" +
-                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
+                       "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                       "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
                        ""
         id = {058B75F6-AA98-47B9-A380-8070023C5CC4}
         newfilename = C:\\work\\fhirserver\\toolkit\\install\\toolkit.inc
         overwriteexisting = true
         writebom = true
+      end
+      action.files.copy
+      begin
+        clearattributes = false
+        failifexists = false
+        failifzerofiles = true
+        filespec = C:\\work\\fhirserver\\toolkit\\install\\toolkit.inc
+        force = false
+        id = {15113D8C-07CF-484B-85FE-00504328F11A}
+        logfilesaffected = true
+        overwrite = true
+        overwritereadonly = true
+        recurse = false
+        target = C:\\work\\fhirserver\\toolkit\\install\\toolkit.txt
+        targetisdir = false
       end
       action.ftp.upload.file
       begin
@@ -970,6 +984,30 @@ begin
         localdir = C:\\work\\fhirserver\\toolkit\\install
         recursive = false
         remotefile = public_html/FhirServer/toolkit.inc
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = toolkit.txt
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {F06EFBEB-1B37-4683-8ED5-A27F72B1E65D}
+        localdir = C:\\work\\fhirserver\\toolkit\\install
+        recursive = false
+        remotefile = public_html/FhirServer/toolkit.txt
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128

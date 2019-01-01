@@ -463,6 +463,8 @@ var
 begin
   if s = '' then
     exit(false);
+  if s = '$this' then
+    exit(true);
   if not CharInSet(s[1], ['a'..'z', 'A'..'Z', '_']) then
     exit(false);
   for i := 2 to length(s) do

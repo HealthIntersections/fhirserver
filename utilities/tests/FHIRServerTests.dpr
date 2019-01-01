@@ -95,7 +95,6 @@ uses
   FHIR.Java.Wrapper in '..\..\library\java\FHIR.Java.Wrapper.pas',
   FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
   FHIR.Javascript.Base in '..\..\library\javascript\FHIR.Javascript.Base.pas',
-  FHIR.Javascript.Chakra in '..\..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.Javascript.ObjectsTests in '..\..\library\javascript\FHIR.Javascript.ObjectsTests.pas',
   FHIR.Javascript.Tests in '..\..\library\javascript\FHIR.Javascript.Tests.pas',
   FHIR.Loinc.Importer in '..\..\library\loinc\FHIR.Loinc.Importer.pas',
@@ -124,10 +123,6 @@ uses
   FHIR.R2.Questionnaire in '..\..\library\r2\FHIR.R2.Questionnaire.pas',
   FHIR.R2.Resources in '..\..\library\r2\FHIR.R2.Resources.pas',
   FHIR.R2.Tags in '..\..\library\r2\FHIR.R2.Tags.pas',
-  FHIR.R2.Tests.Parser in '..\..\library\r2\tests\FHIR.R2.Tests.Parser.pas',
-  FHIR.R2.Tests.PathEngine in '..\..\library\r2\tests\FHIR.R2.Tests.PathEngine.pas',
-  FHIR.R2.Tests.Validator in '..\..\library\r2\tests\FHIR.R2.Tests.Validator.pas',
-  FHIR.R2.Tests.Worker in '..\..\library\r2\tests\FHIR.R2.Tests.Worker.pas',
   FHIR.R2.Types in '..\..\library\r2\FHIR.R2.Types.pas',
   FHIR.R2.Utilities in '..\..\library\r2\FHIR.R2.Utilities.pas',
   FHIR.R2.Validator in '..\..\library\r2\FHIR.R2.Validator.pas',
@@ -157,13 +152,6 @@ uses
   FHIR.R3.Questionnaire in '..\..\library\r3\FHIR.R3.Questionnaire.pas',
   FHIR.R3.Resources in '..\..\library\r3\FHIR.R3.Resources.pas',
   FHIR.R3.Tags in '..\..\library\r3\FHIR.R3.Tags.pas',
-  FHIR.R3.Tests.Client in '..\..\library\r3\tests\FHIR.R3.Tests.Client.pas',
-  FHIR.R3.Tests.Liquid in '..\..\library\r3\tests\FHIR.R3.Tests.Liquid.pas',
-  FHIR.R3.Tests.Maps in '..\..\library\r3\tests\FHIR.R3.Tests.Maps.pas',
-  FHIR.R3.Tests.Parser in '..\..\library\r3\tests\FHIR.R3.Tests.Parser.pas',
-  FHIR.R3.Tests.PathEngine in '..\..\library\r3\tests\FHIR.R3.Tests.PathEngine.pas',
-  FHIR.R3.Tests.Validator in '..\..\library\r3\tests\FHIR.R3.Tests.Validator.pas',
-  FHIR.R3.Tests.Worker in '..\..\library\r3\tests\FHIR.R3.Tests.Worker.pas',
   FHIR.R3.Turtle in '..\..\library\r3\FHIR.R3.Turtle.pas',
   FHIR.R3.Types in '..\..\library\r3\FHIR.R3.Types.pas',
   FHIR.R3.Utilities in '..\..\library\r3\FHIR.R3.Utilities.pas',
@@ -359,7 +347,13 @@ uses
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
-  YuStemmer in '..\..\dependencies\Stem\YuStemmer.pas';
+  YuStemmer in '..\..\dependencies\Stem\YuStemmer.pas',
+  ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
+  Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
+  ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
+  ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
+  ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
+  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas';
 
 var
   runner : ITestRunner;

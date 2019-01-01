@@ -74,7 +74,8 @@ begin
   xml := 'C:\temp\xml.xml';
   json := 'C:\temp\json.json';
   json2 := 'C:\temp\json2.json';
-  TFIle.Delete(src);
+  if FileExists(src) then  
+    TFIle.Delete(src);
   TFile.Copy(FHIR_PUB_FILE('observation-decimal.xml'), src, false);
   obs := TFHIRParsers.ParseFile(nil, ffXml, 'en', src) as TFhirObservation;
   try

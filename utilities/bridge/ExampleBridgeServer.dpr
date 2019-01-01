@@ -148,7 +148,6 @@ uses
   FHIR.Client.Javascript in '..\..\library\client\FHIR.Client.Javascript.pas',
   FHIR.Server.EventJs in '..\..\Server\FHIR.Server.EventJs.pas',
   FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
-  FHIR.Javascript.Chakra in '..\..\library\javascript\FHIR.Javascript.Chakra.pas',
   FHIR.Support.Javascript in '..\..\library\support\FHIR.Support.Javascript.pas',
   FHIR.Support.Signatures in '..\..\library\support\FHIR.Support.Signatures.pas',
   FHIR.R3.Factory in '..\..\library\r3\FHIR.R3.Factory.pas',
@@ -190,7 +189,13 @@ uses
   FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas',
   FHIR.Support.Lang in '..\..\library\support\FHIR.Support.Lang.pas',
   FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas',
-  FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas';
+  FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
+  Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
+  ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
+  ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
+  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
+  ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas';
 
 var
   gsrv : TExampleFhirServer;
