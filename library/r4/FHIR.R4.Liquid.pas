@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, System.Character,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.R4.Resources, FHIR.R4.PathNode, FHIR.R4.PathEngine, FHIR.R4.Context, FHIR.R4.Base;
 
@@ -47,6 +47,7 @@ type
     destructor Destroy; override;
     procedure addChar(ch : char);
     function link : TFHIRLiquidConstant; overload;
+    function toString : String; override;
   end;
 
   TFHIRLiquidStatement = class (TFHIRLiquidNode)
@@ -58,6 +59,7 @@ type
   public
     destructor Destroy; override;
     function link : TFHIRLiquidStatement; overload;
+    function toString : String; override;
 
     property statement : string read FStatement write FStatement;
   end;
@@ -74,6 +76,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidIf; overload;
+    function toString : String; override;
 
     property condition : string read FCondition write FCOndition;
     property thenBody : TFSLList<TFHIRLiquidNode> read FThenBody;
@@ -92,9 +95,25 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidLoop; overload;
+    function toString : String; override;
 
     property varName : String read FVarName write FVarName;
     property condition : string read FCondition write FCOndition;
+    property body : TFSLList<TFHIRLiquidNode> read FBody;
+  end;
+
+  // we keep all the comment content in order to reproduce the original
+  TFHIRLiquidComment = class (TFHIRLiquidNode)
+  private
+    FBody : TFSLList<TFHIRLiquidNode>;
+  protected
+    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TFHIRLiquidComment; overload;
+    function toString : String; override;
+
     property body : TFSLList<TFHIRLiquidNode> read FBody;
   end;
 
@@ -108,6 +127,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidInclude; overload;
+    function toString : String; override;
 
     property page : String read FPage write FPage;
     property params : TFslMap<TFHIRPathExpressionNode> read FParams;
@@ -124,12 +144,15 @@ type
 
     property body : TFSLList<TFHIRLiquidNode> read FBody;
     property source : String read FSource write FSource;
+
+    function toString : String; override;
   end;
 
   TFHIRLiquidParser = class (TFslObject)
   private
     source : String;
     cursor : integer;
+    FCurrent, FLast : TSourceLocation;
     fpe : TFHIRPathEngine;
     FSourceName : String;
     function next1 : char;
@@ -139,6 +162,7 @@ type
     function parseIf(cnt : String) : TFHIRLiquidNode;
     function parseLoop(cnt : String) : TFHIRLiquidNode;
     function parseInclude(cnt : String) : TFHIRLiquidNode;
+    function parseComment(cnt : String) : TFHIRLiquidNode;
     function parseStatement() : TFHIRLiquidStatement;
     function parseList(list : TFslList<TFHIRLiquidNode>; terminators : Array of String) : String;
     function parse : TFHIRLiquidDocument;
@@ -247,6 +271,11 @@ begin
   result := TFHIRLiquidConstant(inherited Link);
 end;
 
+function TFHIRLiquidConstant.toString: String;
+begin
+  result := FConstant;
+end;
+
 { TFHIRLiquidStatement }
 
 destructor TFHIRLiquidStatement.Destroy;
@@ -265,6 +294,11 @@ end;
 function TFHIRLiquidStatement.link: TFHIRLiquidStatement;
 begin
   result := TFHIRLiquidStatement(inherited Link);
+end;
+
+function TFHIRLiquidStatement.toString: String;
+begin
+  result := '{{ '+FStatement+' }}';
 end;
 
 { TFHIRLiquidIf }
@@ -305,6 +339,29 @@ end;
 function TFHIRLiquidIf.link: TFHIRLiquidIf;
 begin
   result := TFHIRLiquidIf(inherited Link);
+end;
+
+function TFHIRLiquidIf.toString: String;
+var
+  b : TStringBuilder;
+  n : TFHIRLiquidNode;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('{% if '+condition+' %}');
+    for n in FThenBody do
+      b.Append(n.ToString);
+    if not FElseBody.Empty then
+    begin
+      b.Append('{% else %}');
+      for n in FElseBody do
+        b.Append(n.ToString);
+    end;
+    b.Append('{% endif %}');
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
 end;
 
 { TFHIRLiquidLoop }
@@ -354,6 +411,23 @@ begin
   result := TFHIRLiquidLoop(inherited Link);
 end;
 
+function TFHIRLiquidLoop.toString: String;
+var
+  b : TStringBuilder;
+  n : TFHIRLiquidNode;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('{% loop '+condition+' %}');
+    for n in FBody do
+      b.Append(n.ToString);
+    b.Append('{% endloop %}');
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 { TFHIRLiquidDocument }
 
 constructor TFHIRLiquidDocument.Create;
@@ -373,6 +447,21 @@ begin
   result := TFHIRLiquidDocument(inherited Link);
 end;
 
+function TFHIRLiquidDocument.toString: String;
+var
+  b : TStringBuilder;
+  n : TFHIRLiquidNode;
+begin
+  b := TStringBuilder.Create;
+  try
+    for n in FBody do
+      b.Append(n.ToString);
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 { TFHIRLiquidParser }
 
 constructor TFHIRLiquidParser.Create(source: String);
@@ -380,12 +469,21 @@ begin
   inherited Create;
   self.source := source;
   cursor := 1;
+  FCurrent.line := 1;
+  FCurrent.col := 1;
 end;
 
 function TFHIRLiquidParser.grab: char;
 begin
   inc(cursor);
   result := source[cursor-1];
+  if result = #10 then
+  begin
+    inc(FCurrent.Line);
+    FCurrent.Col := 1;
+  end
+  else if result <> #13 then
+    inc(FCurrent.Col);
 end;
 
 function TFHIRLiquidParser.next1: char;
@@ -415,6 +513,19 @@ begin
   end;
 end;
 
+function TFHIRLiquidParser.parseComment(cnt: String): TFHIRLiquidNode;
+var
+  res : TFHIRLiquidComment;
+begin
+  res := TFHIRLiquidComment.create();
+  try
+    parseList(res.body, ['endcomment']);
+    result := res.Link;
+  finally
+    res.Free;
+  end;
+end;
+
 function TFHIRLiquidParser.parseList(list: TFslList<TFHIRLiquidNode>; terminators: array of String): String;
 var
   cnt : String;
@@ -439,8 +550,10 @@ begin
           list.add(parseLoop(cnt.substring(4).trim()))
         else if (cnt.startsWith('include ')) then
           list.add(parseInclude(cnt.substring(7).trim()))
+        else if (cnt.Trim= 'comment') then
+          list.add(parseComment(cnt.substring(7).trim()))
         else
-          raise EFHIRException.create(sourceName+': Unknown flow control statement '+cnt);
+          raise EParserException.create(sourceName+': Unknown flow control statement '+cnt, FLast.line, FLast.col);
       end
       else // next2() == '{'
       begin
@@ -488,7 +601,7 @@ begin
   while (i <= cnt.length) and (not cnt[i].isWhitespace) do
     inc(i);
   if (i > cnt.Length) or (i = 0) then
-    raise EFHIRException.create(sourceName+': Error reading include: '+cnt);
+    raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
   res := TFHIRLiquidInclude.create();
   try
     res.page := cnt.substring(0, i-1);
@@ -500,10 +613,10 @@ begin
       while (i <= cnt.length) and (cnt[i] <> '=') do
         inc(i);
       if (i > cnt.Length) or (j = i) then
-        raise EFHIRException.create(sourceName+': Error reading include: '+cnt);
+        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
       n := cnt.substring(j-1, i-j);
       if (res.params.ContainsKey(n)) then
-        raise EFHIRException.create(sourceName+': Error reading include: '+cnt);
+        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
       inc(i);
       res.params.AddOrSetValue(n, fpe.parse(cnt, i));
       while (i <= cnt.length) and (cnt[i].isWhitespace) do
@@ -534,7 +647,7 @@ begin
       inc(i);
     s := cnt.substring(j-1, i-j);
     if ('in' <> s) then
-      raise EFHIRException.create(sourceName+': Error reading loop: '+cnt);
+      raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast.line, FLast.col);
     res.condition := cnt.substring(i).trim();
     parseList(res.body, ['endloop']);
     result := res.Link;
@@ -555,7 +668,7 @@ begin
     while (cursor <= source.length) and not ((next1() = '}') and (next2() = '}')) do
       b.append(grab());
     if not ((next1() = '}') and (next2() = '}')) then
-      raise EFHIRException.create(sourceName+': Unterminated Liquid statement {{ '+b.toString());
+      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.toString(), FCurrent.line, FCurrent.col);
     grab();
     grab();
     res := TFHIRLiquidStatement.create();
@@ -574,6 +687,7 @@ function TFHIRLiquidParser.parseTag(ch: char): String;
 var
   b : TStringBuilder;
 begin
+  FLast := FCurrent;
   grab();
   grab();
   b := TStringBuilder.create();
@@ -581,7 +695,7 @@ begin
     while (cursor <= source.length) and not ((next1() = '%') and(next2() = '}')) do
       b.append(grab());
     if not ((next1() = '%') and (next2() = '}')) then
-      raise EFHIRException.create(sourceName+': Unterminated Liquid statement {% '+b.toString());
+      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.toString(), FCurrent.line, FCurrent.col);
     grab();
     grab();
     result := b.toString().trim();
@@ -713,6 +827,65 @@ end;
 function TFHIRLiquidInclude.link: TFHIRLiquidInclude;
 begin
   result := TFHIRLiquidInclude(inherited link);
+end;
+
+function TFHIRLiquidInclude.toString: String;
+var
+  b : TStringBuilder;
+  s : String;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('{% include '+FPage+' %}');
+    for s in FParams.Keys do
+      b.Append(s+' = '+FParams[s].ToString);
+    b.Append('{% endloop %}');
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+{ TFHIRLiquidComment }
+
+constructor TFHIRLiquidComment.Create;
+begin
+  inherited;
+  FBody := TFSLList<TFHIRLiquidNode>.create;
+end;
+
+destructor TFHIRLiquidComment.Destroy;
+begin
+  FBody.Free;
+  inherited;
+end;
+
+procedure TFHIRLiquidComment.evaluate(b: TStringBuilder;
+  resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+begin
+
+end;
+
+function TFHIRLiquidComment.link: TFHIRLiquidComment;
+begin
+  result := TFHIRLiquidComment(inherited Link);
+end;
+
+function TFHIRLiquidComment.toString: String;
+var
+  b : TStringBuilder;
+  n : TFHIRLiquidNode;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append('{% comment %}');
+    for n in FBody do
+      b.Append(n.ToString);
+    b.Append('{% endcomment %}');
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
 end;
 
 end.

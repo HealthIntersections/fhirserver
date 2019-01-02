@@ -283,6 +283,7 @@ type
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
+    function link : TFHIRPathEngine; overload;
 
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
     property OnResolveConstant : TFHIRResolveConstantEvent read FOnResolveConstant write FOnResolveConstant;
@@ -5187,6 +5188,11 @@ begin
     exit(false);
   s := list[0].code;
   result := (s = 'Element') or (s = 'BackboneElement') or (s = 'Resource') or (s = 'DomainResource');
+end;
+
+function TFHIRPathEngine.link: TFHIRPathEngine;
+begin
+  result := TFHIRPathEngine(inherited Link);
 end;
 
 function TFHIRPathEngine.getElementDefinition(sd : TFHIRStructureDefinition; path : String; allowPM : boolean; var specifiedType : String) : TFHIRElementDefinition;

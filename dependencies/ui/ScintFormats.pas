@@ -197,7 +197,7 @@ procedure TXmlStyler.StyleNeeded;
 var
   startState : TXmlStylerStyle;
 begin
-  startState := TXmlStylerStyle(LineState and $F);
+  startState := TXmlStylerStyle(LineState);
 
   case startState of
     stText: scanText;
@@ -329,7 +329,7 @@ procedure TXmlStyler.GetStyleAttributes(const Style: Integer; var Attributes: TS
 var
   st : TXMLStylerStyle;
 begin
-  st := TXMLStylerStyle(style and $F);
+  st := TXMLStylerStyle(style);
   case st of
     stText :
       begin
@@ -743,7 +743,7 @@ var
 begin
   ConsumeChar(ch);
   done := false;
-  while not done do
+  while not done and not EndOfLine do
   begin
     ConsumeCharsNot([ch, '\']);
     done := CurCharIs(ch);

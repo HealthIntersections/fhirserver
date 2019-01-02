@@ -92,6 +92,7 @@
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -141,7 +142,6 @@
         <DCCReference Include="..\library\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\library\javascript\FHIR.Javascript.pas"/>
         <DCCReference Include="..\library\javascript\FHIR.Javascript.Base.pas"/>
-        <DCCReference Include="..\library\javascript\FHIR.Javascript.Chakra.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.AuthMap.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Base.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Client.pas"/>
@@ -245,7 +245,6 @@
             <Form>FileChangedForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="FHIR.Transformer.Debugger.pas"/>
         <DCCReference Include="FHIR.Transformer.Editor.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
@@ -254,6 +253,8 @@
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreVersion.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Message.pas"/>
+        <DCCReference Include="..\library\r4\FHIR.R4.Liquid.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

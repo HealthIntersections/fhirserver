@@ -39,7 +39,7 @@ uses
 type
   TV2ContentKind = (ckString, ckNull, ckBinary, ckEscape);
 
-  // inherut from TFHIRObject so w can use FHIRPath on the objects
+  // inherit from TFHIRObject so we can use FHIRPath on the objects
   // the underlying framework insists that this has a version.
   TV2Object = class (TFHIRObject)
   private

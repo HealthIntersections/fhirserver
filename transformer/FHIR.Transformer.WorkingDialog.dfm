@@ -1,10 +1,10 @@
 object WorkingForm: TWorkingForm
   Left = 0
   Top = 0
-  BorderStyle = bsNone
-  Caption = 'WorkingForm'
-  ClientHeight = 59
-  ClientWidth = 449
+  BorderStyle = bsDialog
+  Caption = 'Loading FHIR Packages'
+  ClientHeight = 53
+  ClientWidth = 451
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
