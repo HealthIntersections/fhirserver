@@ -258,6 +258,8 @@ type
     function getExtensionByUrl(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
+    function getExtensionDateAsString(url : String) : String; overload;
+    function getExtensionBoolean(url : String) : boolean;
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtension(url : String; t : TFHIRType);
@@ -265,13 +267,14 @@ type
     procedure setExtensionMarkdown(url, value : String);
     procedure setExtensionCanonical(url, value : String);
     procedure setExtensionInteger(url, value : String);
-    procedure setExtensionBoolean(url, value : String);
     procedure setExtensionDecimal(url, value : String);
     procedure setExtensionURI(url, value : String);
     procedure setExtensionDate(url, value : String);
     procedure setExtensionDateTime(url, value : String);
     procedure setExtensionTime(url, value : String);
     procedure setExtensionCode(url, value : String);
+    procedure setExtensionBoolean(url, value : String); overload;
+    procedure setExtensionBoolean(url : String; value : boolean); overload;
   end;
 
   TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
@@ -2109,6 +2112,25 @@ begin
       result := i;
 end;
 
+function TFHIRElementHelper.getExtensionBoolean(url: String): boolean;
+var
+  ndx : Integer;
+begin
+  ndx := getExtension(url);
+  if (ndx = -1) then
+    result := false
+  else if (self.ExtensionList.Item(ndx).value is TFhirBoolean) then
+    result := TFhirBoolean(self.ExtensionList.Item(ndx).value).value
+  else if (self.ExtensionList.Item(ndx).value is TFhirString) then
+    result := TFhirString(self.ExtensionList.Item(ndx).value).value <> ''
+  else if (self.ExtensionList.Item(ndx).value is TFhirCode) then
+    result := TFhirCode(self.ExtensionList.Item(ndx).value).value <> ''
+  else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
+    result := TFhirUri(self.ExtensionList.Item(ndx).value).value <> ''
+  else
+    result := false;
+end;
+
 function TFHIRElementHelper.getExtensionByUrl(url: String): TFHIRExtension;
 var
   i : integer;
@@ -2166,6 +2188,16 @@ begin
   ext := self.ExtensionList.Append;
   ext.url := url;
   ext.value := t.link;
+end;
+
+procedure TFHIRElementHelper.setExtensionBoolean(url: String; value: boolean);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirBoolean.Create(value);
 end;
 
 procedure TFHIRElementHelper.setExtensionBoolean(url, value: String);
@@ -2286,6 +2318,23 @@ begin
   for i := 0 to self.ExtensionList.Count - 1 do
     if self.ExtensionList[i].url = url then
       inc(result);
+end;
+
+function TFHIRElementHelper.getExtensionDateAsString(url: String): String;
+var
+  ndx : Integer;
+begin
+  ndx := getExtension(url);
+  if (ndx = -1) then
+    result := ''
+  else if (self.ExtensionList.Item(ndx).value is TFhirDate) then
+    result := TFhirDate(self.ExtensionList.Item(ndx).value).value.toString('yyyy-mm-dd')
+  else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
+    result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.toString('yyyy-mm-dd')
+  else if (self.ExtensionList.Item(ndx).value is TFhirInstant) then
+    result := TFhirInstant(self.ExtensionList.Item(ndx).value).value.toString('yyyy-mm-dd')
+  else
+    result := '';
 end;
 
 { TFHIRDomainResourceHelper }

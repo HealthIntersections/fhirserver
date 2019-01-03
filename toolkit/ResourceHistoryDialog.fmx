@@ -1,0 +1,158 @@
+object ResourceHistoryForm: TResourceHistoryForm
+  Left = 0
+  Top = 0
+  Caption = 'Edit History Entry'
+  ClientHeight = 476
+  ClientWidth = 397
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 1
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 436.000000000000000000
+    Size.Width = 397.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    object btnOk: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      ModalResult = 1
+      Position.X = 205.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 96.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'OK'
+      OnClick = btnOkClick
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 308.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+    object btnAsChild: TButton
+      Position.X = 120.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 96.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Add Child'
+      Visible = False
+    end
+  end
+  object lblDate: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 24.000000000000000000
+    Text = 'Date:'
+    TabOrder = 12
+  end
+  object lblId: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 56.000000000000000000
+    Text = 'Id:'
+    TabOrder = 11
+  end
+  object LblOnBehalfOf: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 120.000000000000000000
+    Text = 'On Behalf of:'
+    TabOrder = 10
+  end
+  object LblAuthor: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 88.000000000000000000
+    Text = 'Author:'
+    TabOrder = 9
+  end
+  object lblNotes: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 208.000000000000000000
+    Text = 'Notes:'
+    TabOrder = 8
+  end
+  object edtDate: TDateEdit
+    Date = 43468.000000000000000000
+    OnChange = edtDateChange
+    Position.X = 88.000000000000000000
+    Position.Y = 24.000000000000000000
+    Size.Width = 297.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+  end
+  object edtId: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 1
+    Position.X = 88.000000000000000000
+    Position.Y = 56.000000000000000000
+    Size.Width = 297.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtDateChange
+    OnChangeTracking = edtDateChange
+  end
+  object edtOnBehalfOf: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 3
+    Position.X = 88.000000000000000000
+    Position.Y = 120.000000000000000000
+    Size.Width = 297.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtDateChange
+    OnChangeTracking = edtDateChange
+  end
+  object edtAuthor: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 2
+    Position.X = 88.000000000000000000
+    Position.Y = 88.000000000000000000
+    Size.Width = 297.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtDateChange
+    OnChangeTracking = edtDateChange
+  end
+  object memNotes: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    TextSettings.WordWrap = True
+    OnChange = edtDateChange
+    OnChangeTracking = edtDateChange
+    Position.X = 16.000000000000000000
+    Position.Y = 232.000000000000000000
+    Size.Width = 361.000000000000000000
+    Size.Height = 169.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Viewport.Width = 361.000000000000000000
+    Viewport.Height = 169.000000000000000000
+  end
+  object cbSubst: TCheckBox
+    Position.X = 16.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'Substantive Change'
+  end
+  object cbBreaking: TCheckBox
+    Position.X = 16.000000000000000000
+    Position.Y = 176.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'Change not backwards compatible'
+  end
+end

@@ -588,6 +588,31 @@ begin
           userid = healthi3
           usessl = false
         end
+        action.ftp.connect
+        begin
+          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+          allowselfsignedcertificate = false
+          connecttimeoutinsec = 0
+          cookie = q3B4xMWDXfAo74OHf/5tMSdZ
+          detailedlogging = false
+          enablekeepalives = false
+          encryptdatachannel = false
+          ftpconnectionname = fhir.org
+          ftphost = 192.185.190.126
+          ftpport = 21
+          id = {1C151550-8F1D-4A24-B182-F6C2DDA922BA}
+          logsslnegotiation = false
+          passive = false
+          proxyport = 0
+          proxytype = fpcmNone
+          tlsmode = ExplicitTLS
+          transfertype = ftBinary
+          useglobalopt = false
+          usehost = true
+          useproxy = false
+          userid = npp-ftp@fhir.org
+          usessl = false
+        end
         action.ftp.upload.file
         begin
           allowgap = true
@@ -618,7 +643,7 @@ begin
           autoreconnect = true
           autoupdateskew = true
           checkfilesizes = false
-          connectionname = HealthIntersections
+          connectionname = fhir.org
           detailedlogging = false
           enabletimeout = false
           filespec = fhir-npp-32-1.0.%BuildCount%.zip
@@ -627,7 +652,7 @@ begin
           id = {F3B29DEB-2CB0-4F25-B296-FA98724F0B6D}
           localdir = C:\\work\\fhirserver\\install\\build
           recursive = false
-          remotefile = public_html/FhirServer/fhir-npp-32-1.0.%BuildCount%.zip
+          remotefile = downloads/fhir-npp-32-1.0.%BuildCount%.zip
           retryifuploadfails = true
           serverclockskew = 0
           throttlespeed = 128
@@ -642,7 +667,7 @@ begin
           autoreconnect = true
           autoupdateskew = true
           checkfilesizes = false
-          connectionname = HealthIntersections
+          connectionname = fhir.org
           detailedlogging = false
           enabletimeout = false
           filespec = fhir-npp-64-1.0.%BuildCount%.zip
@@ -651,7 +676,7 @@ begin
           id = {7F0B6002-2904-47EE-B32B-E8CCA332A43B}
           localdir = C:\\work\\fhirserver\\install\\build
           recursive = false
-          remotefile = public_html/FhirServer/fhir-npp-64-1.0.%BuildCount%.zip
+          remotefile = downloads/fhir-npp-64-1.0.%BuildCount%.zip
           retryifuploadfails = true
           serverclockskew = 0
           throttlespeed = 128
@@ -805,6 +830,13 @@ begin
           detailedlogging = false
           id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
         end
+        action.ftp.disconnect
+        begin
+          autoreconnect = false
+          connectionname = fhir.org
+          detailedlogging = false
+          id = {6C431726-1D96-4C58-A8BD-125C8947226B}
+        end
       end
     end
   end
@@ -845,6 +877,11 @@ begin
     name = ftppassword
     variablescope = vtProject
     variabletype = btString
+  end
+  variable
+  begin
+    name = ftppassword-fhir
+    variablescope = vtProject
   end
   variable
   begin

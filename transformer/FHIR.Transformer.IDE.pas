@@ -28,7 +28,7 @@ uses
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
   FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
-  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor, FHIR.Transformer.Debugger,
+  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor,
   FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg;
 
 const

@@ -358,6 +358,10 @@ object TransformerForm: TTransformerForm
         TabOrder = 0
         object tbConsole: TTabSheet
           Caption = 'Console'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel5: TPanel
             Left = 967
             Top = 0
@@ -758,6 +762,10 @@ object TransformerForm: TTransformerForm
       object TabSheet1: TTabSheet
         Caption = 'Home'
         ImageIndex = 8
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           1058
           251)
@@ -1152,7 +1160,7 @@ object TransformerForm: TTransformerForm
     Left = 25
     Top = 90
     Bitmap = {
-      494C01012C0088007C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C008800800110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

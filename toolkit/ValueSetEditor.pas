@@ -40,7 +40,7 @@ uses
   FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog, TranslationsEditorDialog,
-  ResourceEditingSupport, System.ImageList, FMX.ImgList;
+  ResourceEditingSupport, System.ImageList, FMX.ImgList, ResourceHistoryDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -180,10 +180,35 @@ type
     Label25: TLabel;
     edtVSVersion: TEdit;
     btnNameTranslations: TButton;
-    Panel5: TPanel;
     Label26: TLabel;
-    chkMaintained: TCheckBox;
-    chkApproved: TCheckBox;
+    Label27: TLabel;
+    edtSteward: TEdit;
+    TreeViewItem1: TTreeViewItem;
+    tbHl7: TTabItem;
+    VertScrollBox3: TVertScrollBox;
+    Label28: TLabel;
+    gridHistory: TGrid;
+    DateColumn1: TDateColumn;
+    StringColumn16: TStringColumn;
+    StringColumn17: TStringColumn;
+    StringColumn18: TStringColumn;
+    btnHistoryAdd: TButton;
+    btnHistoryEdit: TButton;
+    btnHistoryUp: TButton;
+    btnHistoryDown: TButton;
+    btnHistoryDelete: TButton;
+    StringColumn19: TStringColumn;
+    CheckColumn3: TCheckColumn;
+    CheckColumn4: TCheckColumn;
+    Label29: TLabel;
+    memOpenIssues: TMemo;
+    Label30: TLabel;
+    Label31: TLabel;
+    edtLegalese: TEdit;
+    Label32: TLabel;
+    edtVDeprecated: TEdit;
+    edtVersionPolicy: TEdit;
+    Label33: TLabel;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -239,25 +264,37 @@ type
     procedure btnExportClick(Sender: TObject);
     procedure rbAllClick(Sender: TObject);
     procedure btnNameTranslationsClick(Sender: TObject);
+    procedure gridHistoryGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure gridHistorySelChanged(Sender: TObject);
+    procedure btnHistoryAddClick(Sender: TObject);
+    procedure btnHistoryEditClick(Sender: TObject);
+    procedure btnHistoryUpClick(Sender: TObject);
+    procedure btnHistoryDownClick(Sender: TObject);
+    procedure btnHistoryDeleteClick(Sender: TObject);
+    procedure gridHistorySetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
   private
     tvCompose, tvExpansion : TTreeViewItem;
+    FHistory : TFhirExtensionList;
     function GetValueSet: TFHIRValueSet;
     function readJurisdiction : Integer;
     function getJurisdiction(i : integer) : TFHIRCodeableConcept;
 
     procedure loadMetadata;
+    procedure loadHL7Process;
     procedure loadCompose(compose: TFhirValueSetCompose);
     procedure loadRule(rule: TFhirValueSetComposeInclude);
     procedure loadExpansion(expansion: TFhirValueSetExpansion);
     procedure loadParameters();
 
     procedure commitMetadata;
+    procedure commitHL7Process;
     procedure commitCompose(compose: TFhirValueSetCompose);
     procedure commitRule(rule: TFhirValueSetComposeInclude);
     procedure commitExpansion(expansion: TFhirValueSetExpansion);
 
   public
-    { Public declarations }
+    destructor Destroy; override;
+
     property ValueSet : TFHIRValueSet read GetValueSet;
     procedure load; override;
 
@@ -402,6 +439,77 @@ begin
     tvStructureClick(nil);
     ResourceIsDirty := true;
   end;
+end;
+
+procedure TValueSetEditorFrame.btnHistoryAddClick(Sender: TObject);
+var
+  ext : TFhirExtension;
+  frm : TResourceHistoryForm;
+begin
+  ext := TFhirExtension.Create;
+  try
+    ext.url := 'http://hl7.org/fhir/StructureDefinition/resource-history';
+    ext.setExtensionDate('date', TDateTimeEx.makeToday.toXML);
+    frm := TResourceHistoryForm.create(self);
+    try
+       frm.Extension := ext.Link;
+       if frm.showModal = mrOk then
+       begin
+         FHistory.InsertItem(0, ext.link);
+         gridHistory.RowCount := 0;
+         gridHistory.RowCount := FHistory.count;
+         inputChanged(nil);
+       end;
+    finally
+      frm.free;
+    end;
+  finally
+    ext.Free;
+  end;
+end;
+
+procedure TValueSetEditorFrame.btnHistoryDeleteClick(Sender: TObject);
+begin
+  FHistory.Remove(gridHistory.Row);
+  gridHistory.RowCount := 0;
+  gridHistory.RowCount := FHistory.count;
+  inputChanged(nil);
+end;
+
+procedure TValueSetEditorFrame.btnHistoryDownClick(Sender: TObject);
+begin
+  FHistory.Exchange(gridHistory.Row, gridHistory.Row + 1);
+  gridHistory.RowCount := 0;
+  gridHistory.RowCount := FHistory.count;
+  inputChanged(nil);
+end;
+
+procedure TValueSetEditorFrame.btnHistoryEditClick(Sender: TObject);
+var
+  ext : TFhirExtension;
+  frm : TResourceHistoryForm;
+begin
+  ext := FHistory[gridHistory.Row];
+  frm := TResourceHistoryForm.create(self);
+  try
+     frm.Extension := ext.Link;
+     if frm.showModal = mrOk then
+     begin
+       inputChanged(nil);
+       gridHistory.RowCount := 0;
+       gridHistory.RowCount := FHistory.count;
+     end;
+  finally
+    frm.free;
+  end;
+end;
+
+procedure TValueSetEditorFrame.btnHistoryUpClick(Sender: TObject);
+begin
+  FHistory.Exchange(gridHistory.Row, gridHistory.Row - 1);
+  gridHistory.RowCount := 0;
+  gridHistory.RowCount := FHistory.count;
+  inputChanged(nil);
 end;
 
 procedure TValueSetEditorFrame.btnAddFilterClick(Sender: TObject);
@@ -789,6 +897,8 @@ begin
   obj := tvStructure.Selected.TagObject;
   if obj is TFhirValueSet then
     CommitMetadata
+  else if obj = nil then
+    commitHL7Process
   else if obj is TFhirValueSetCompose then
     commitCompose(obj as TFhirValueSetCompose)
   else if obj is TFhirValueSetComposeInclude then
@@ -837,6 +947,12 @@ begin
   rule.version := edtSystemVersion.Text;
 end;
 
+destructor TValueSetEditorFrame.Destroy;
+begin
+  FHistory.Free;
+  inherited;
+end;
+
 procedure TValueSetEditorFrame.commitCompose(compose: TFhirValueSetCompose);
 begin
   if dedLockedDate.Text = '' then
@@ -852,6 +968,44 @@ begin
   expansion.identifier := edtIdentifier.text ;
   expansion.total := edtTotal.Text;
   expansion.offset := edtOffset.text;
+end;
+
+procedure TValueSetEditorFrame.commitHL7Process;
+var
+  cp : TFhirContactDetail;
+  s : String;
+begin
+  if edtSteward.Text = '' then
+    ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-steward')
+  else
+  begin
+    if ValueSet.hasExtension('http://hl7.org/fhir/StructureDefinition/resource-steward') then
+     cp := ValueSet.getExtensionValue('http://hl7.org/fhir/StructureDefinition/resource-steward') as TFhirContactDetail
+    else
+    begin
+      cp := TFhirContactDetail.Create;
+      ValueSet.addExtension('http://hl7.org/fhir/StructureDefinition/resource-steward', cp);
+    end;
+    cp.name := edtSteward.Text
+  end;
+  if edtLegalese.Text = '' then
+    ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/codesystem-MIFNotation')
+  else
+    ValueSet.setExtensionString('http://hl7.org/fhir/StructureDefinition/codesystem-MIFNotation', edtLegalese.Text);
+  if edtVDeprecated.Text = '' then
+    ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-versionDeprecated')
+  else
+    ValueSet.setExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versionDeprecated', edtVDeprecated.Text);
+  if edtVersionPolicy.Text = '' then
+    ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy')
+  else
+    ValueSet.setExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy', edtVersionPolicy.Text);
+  ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-history');
+  ValueSet.extensionList.AddAll(FHistory);
+  ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-openIssue');
+  for s in memOpenIssues.Lines do
+    if s <> '' then
+      ValueSet.addExtension('http://hl7.org/fhir/StructureDefinition/resource-openIssue', s);
 end;
 
 function TValueSetEditorFrame.GetValueSet: TFHIRValueSet;
@@ -1074,6 +1228,48 @@ begin
     2: filter.value  := value.AsString;
   end;
   ResourceIsDirty := true;
+end;
+
+procedure TValueSetEditorFrame.gridHistoryGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  ext : TFhirExtension;
+begin
+  ext := FHistory[ARow];
+  Value := '';
+  case aCol of
+    0 { date }: Value := ext.getExtensionDateAsString('date');
+    1 { id }: Value := ext.getExtensionString('id');
+    2 { wg }: Value := ext.getExtensionString('onBehalfOf');
+    3 { editor }: Value := ext.getExtensionString('author');
+    4 { subst? }: Value := ext.getExtensionBoolean('substantive');
+    5 { breaking? }: Value := not ext.getExtensionBoolean('backwardCompatible');
+    6 { notes }: Value := ext.getExtensionString('notes');
+  end;
+end;
+
+procedure TValueSetEditorFrame.gridHistorySelChanged(Sender: TObject);
+begin
+  btnHistoryAdd.Enabled := true;
+  btnHistoryEdit.Enabled := gridHistory.Row > -1;
+  btnHistoryUp.Enabled := gridHistory.Row > 0;
+  btnHistoryDown.Enabled := gridHistory.Row < gridHistory.RowCount-1;
+  btnHistoryDelete.Enabled := gridHistory.Row > -1;
+end;
+
+procedure TValueSetEditorFrame.gridHistorySetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+var
+  ext : TFhirExtension;
+begin
+  ext := FHistory[ARow];
+  case aCol of
+    0 { date }: ext.setExtensionDate('date', value.AsString);
+    1 { id }: ext.setExtensionString('id', value.AsString);
+    2 { wg }: ext.setExtensionString('onBehalfOf', value.AsString);
+    3 { editor }: ext.setExtensionString('author', value.AsString);
+    4 { subst }: ext.setExtensionBoolean('substantive', value.AsBoolean);
+    5 { breaking }: ext.setExtensionBoolean('backwardCompatible', not value.AsBoolean);
+    6 { notes }: ext.setExtensionString('notes', value.AsString);
+  end;
 end;
 
 procedure TValueSetEditorFrame.gridIdentifiersGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -1410,6 +1606,43 @@ begin
   btnDeleteContainsDesignation.Enabled := false;
 end;
 
+procedure TValueSetEditorFrame.loadHL7Process;
+var
+  cp : TFhirContactDetail;
+  ext : TFhirExtension;
+begin
+  if ValueSet.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-steward') then
+    ValueSet.getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/valueset-steward').url := 'http://hl7.org/fhir/StructureDefinition/resource-steward';
+
+  if ValueSet.hasExtension('http://hl7.org/fhir/StructureDefinition/resource-steward') then
+    cp := ValueSet.getExtensionValue('http://hl7.org/fhir/StructureDefinition/resource-steward') as TFhirContactDetail
+  else
+    cp := nil;
+  if cp = nil then
+    edtSteward.Text := ''
+  else
+    edtSteward.Text := cp.name;
+
+  edtLegalese.Text := ValueSet.getExtensionString('http://hl7.org/fhir/StructureDefinition/codesystem-MIFNotation');
+  edtVDeprecated.Text := ValueSet.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versionDeprecated');
+  edtVersionPolicy.Text := ValueSet.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy');
+
+  if FHistory = nil then
+    FHistory := TFhirExtensionList.Create
+  else
+    FHistory.clear;
+  memOpenIssues.Text := '';
+  for ext in ValueSet.extensionList do
+  begin
+    if ext.url = 'http://hl7.org/fhir/StructureDefinition/resource-history' then
+      FHistory.Add(ext.Link);
+    if ext.url = 'http://hl7.org/fhir/StructureDefinition/resource-openIssue' then
+      memOpenIssues.lines.Add(ext.value.primitiveValue);
+  end;
+
+  gridHistory.RowCount := FHistory.Count;
+end;
+
 procedure TValueSetEditorFrame.rbListClick(Sender: TObject);
 begin
   tabSelect.TabIndex := 1;
@@ -1483,6 +1716,13 @@ begin
       tbMetadata.TagObject := obj;
       tbStructure.ActiveTab := tbMetadata;
       loadMetadata;
+      btnExport.Enabled := false;
+    end
+    else if obj = nil then
+    begin
+      tbMetadata.TagObject := obj;
+      tbStructure.ActiveTab := tbHl7;
+      loadHL7Process;
       btnExport.Enabled := false;
     end
     else if obj is TFhirValueSetCompose then

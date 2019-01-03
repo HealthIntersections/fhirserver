@@ -36,7 +36,7 @@ uses
   FMX.Memo, FMX.Edit, FMX.DateTimeCtrls, System.ImageList, FMX.ImgList,
   FHIR.Support.Utilities,
   ResourceEditingSupport, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
-  ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog;
+  ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog, FMX.TabControl, ResourceHistoryDialog;
 
 type
   TCodeSystemConceptForm = class(TForm)
@@ -60,10 +60,24 @@ type
     ToolbarImages: TImageList;
     btnDisplay: TButton;
     btnDefinition: TButton;
-    Panel5: TPanel;
-    Label26: TLabel;
+    TabControl1: TTabControl;
+    tbGeneral: TTabItem;
+    tbHl7: TTabItem;
+    Label18: TLabel;
+    gridHistory: TGrid;
+    DateColumn1: TDateColumn;
+    StringColumn18: TStringColumn;
+    StringColumn19: TStringColumn;
+    btnHistoryAdd: TButton;
+    btnHistoryEdit: TButton;
+    btnHistoryUp: TButton;
+    btnHistoryDown: TButton;
+    btnHistoryDelete: TButton;
     Label4: TLabel;
-    Edit1: TEdit;
+    memOpenIssues: TMemo;
+    Label5: TLabel;
+    CheckColumn1: TCheckColumn;
+    CheckColumn2: TCheckColumn;
     procedure FormShow(Sender: TObject);
     procedure edtCodeChangeTracking(Sender: TObject);
     procedure gridDesignationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -73,10 +87,19 @@ type
     procedure btnAddDesignationClick(Sender: TObject);
     procedure btnDisplayClick(Sender: TObject);
     procedure btnDefinitionClick(Sender: TObject);
+    procedure btnHistoryAddClick(Sender: TObject);
+    procedure btnHistoryEditClick(Sender: TObject);
+    procedure btnHistoryUpClick(Sender: TObject);
+    procedure btnHistoryDownClick(Sender: TObject);
+    procedure btnHistoryDeleteClick(Sender: TObject);
+    procedure gridHistoryGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure gridHistorySelChanged(Sender: TObject);
+    procedure gridHistorySetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
   private
     FLoading : boolean;
     FConcept: TFHIRCodeSystemConcept;
     FCodeSystem: TFhirCodeSystem;
+    FHistory : TFhirExtensionList;
     procedure SetConcept(const Value: TFHIRCodeSystemConcept);
     procedure loadProperties;
     procedure loadProperty(Value: TFhirCodeSystemProperty; top : Double);
@@ -133,6 +156,79 @@ begin
   editStringDialog(self, 'Concept Display', btnDisplay, edtDIsplay, CodeSystem, Concept.displayElement);
 end;
 
+procedure TCodeSystemConceptForm.btnHistoryAddClick(Sender: TObject);
+var
+  ext : TFhirExtension;
+  frm : TResourceHistoryForm;
+begin
+  ext := TFhirExtension.Create;
+  try
+    ext.url := 'http://hl7.org/fhir/StructureDefinition/concept-history';
+    ext.setExtensionDate('date', TDateTimeEx.makeToday.toXML);
+    frm := TResourceHistoryForm.create(self);
+    try
+       frm.Adapt([hfDate, hfAuthor, hfSubst, hfBreaking, hfNotes]);
+       frm.Extension := ext.Link;
+       if frm.showModal = mrOk then
+       begin
+         FHistory.InsertItem(0, ext.link);
+         gridHistory.RowCount := 0;
+         gridHistory.RowCount := FHistory.count;
+         edtCodeChangeTracking(nil);
+       end;
+    finally
+      frm.free;
+    end;
+  finally
+    ext.Free;
+  end;
+end;
+
+procedure TCodeSystemConceptForm.btnHistoryDeleteClick(Sender: TObject);
+begin
+  FHistory.Exchange(gridHistory.Row, gridHistory.Row + 1);
+  gridHistory.RowCount := 0;
+  gridHistory.RowCount := FHistory.count;
+  edtCodeChangeTracking(nil);
+end;
+
+procedure TCodeSystemConceptForm.btnHistoryDownClick(Sender: TObject);
+begin
+  FHistory.Exchange(gridHistory.Row, gridHistory.Row + 1);
+  gridHistory.RowCount := 0;
+  gridHistory.RowCount := FHistory.count;
+  edtCodeChangeTracking(nil);
+end;
+
+procedure TCodeSystemConceptForm.btnHistoryEditClick(Sender: TObject);
+var
+  ext : TFhirExtension;
+  frm : TResourceHistoryForm;
+begin
+  ext := FHistory[gridHistory.Row];
+  frm := TResourceHistoryForm.create(self);
+  try
+     frm.Adapt([hfDate, hfAuthor, hfSubst, hfBreaking, hfNotes]);
+     frm.Extension := ext.Link;
+     if frm.showModal = mrOk then
+     begin
+       edtCodeChangeTracking(nil);
+       gridHistory.RowCount := 0;
+       gridHistory.RowCount := FHistory.count;
+     end;
+  finally
+    frm.free;
+  end;
+end;
+
+procedure TCodeSystemConceptForm.btnHistoryUpClick(Sender: TObject);
+begin
+  FHistory.Exchange(gridHistory.Row, gridHistory.Row - 1);
+  gridHistory.RowCount := 0;
+  gridHistory.RowCount := FHistory.count;
+  edtCodeChangeTracking(nil);
+end;
+
 destructor TCodeSystemConceptForm.Destroy;
 var
   Value: TFhirCodeSystemProperty;
@@ -141,6 +237,7 @@ begin
     value.TagObject := nil;
   FCodeSystem.Free;
   FConcept.Free;
+  FHistory.Free;
   inherited;
 end;
 
@@ -197,6 +294,12 @@ begin
 //          ConceptPropertyTypeCoding: ;
       end;
     end;
+    Concept.removeExtension('http://hl7.org/fhir/StructureDefinition/concept-history');
+    Concept.extensionList.AddAll(FHistory);
+    Concept.removeExtension('http://hl7.org/fhir/StructureDefinition/concept-openIssue');
+    for s in memOpenIssues.Lines do
+      if s <> '' then
+        Concept.addExtension('http://hl7.org/fhir/StructureDefinition/concept-openIssue', s);
   end;
 end;
 
@@ -204,6 +307,7 @@ procedure TCodeSystemConceptForm.FormShow(Sender: TObject);
 var
   prop: TFhirCodeSystemProperty;
   value : TFhirCodeSystemConceptProperty;
+  ext : TFhirExtension;
   d : TDateTime;
 begin
   FLoading := true;
@@ -235,10 +339,24 @@ begin
         end;
       end;
     end;
+    if FHistory = nil then
+      FHistory := TFhirExtensionList.Create
+    else
+      FHistory.clear;
+    memOpenIssues.Text := '';
+    for ext in Concept.extensionList do
+    begin
+      if ext.url = 'http://hl7.org/fhir/StructureDefinition/concept-history' then
+        FHistory.Add(ext.Link);
+      if ext.url = 'http://hl7.org/fhir/StructureDefinition/concept-openIssue' then
+        memOpenIssues.lines.Add(ext.value.primitiveValue);
+    end;
+    gridHistory.RowCount := FHistory.Count;
 
   finally
     FLoading := false;
   end;
+  TabControl1.ActiveTab := tbGeneral;
 end;
 
 procedure TCodeSystemConceptForm.gridDesignationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -273,6 +391,44 @@ begin
   btnOk.Enabled := true;
 end;
 
+procedure TCodeSystemConceptForm.gridHistoryGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  ext : TFhirExtension;
+begin
+  ext := FHistory[ARow];
+  Value := '';
+  case aCol of
+    0 { date }: Value := ext.getExtensionDateAsString('date');
+    1 { editor }: Value := ext.getExtensionString('author');
+    2 { subst? }: Value := ext.getExtensionBoolean('substantive');
+    3 { breaking? }: Value := not ext.getExtensionBoolean('backwardCompatible');
+    4 { notes }: Value := ext.getExtensionString('notes');
+  end;
+end;
+
+procedure TCodeSystemConceptForm.gridHistorySelChanged(Sender: TObject);
+begin
+  btnHistoryAdd.Enabled := true;
+  btnHistoryEdit.Enabled := gridHistory.Row > -1;
+  btnHistoryUp.Enabled := gridHistory.Row > 0;
+  btnHistoryDown.Enabled := gridHistory.Row < gridHistory.RowCount-1;
+  btnHistoryDelete.Enabled := gridHistory.Row > -1;
+end;
+
+procedure TCodeSystemConceptForm.gridHistorySetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+var
+  ext : TFhirExtension;
+begin
+  ext := FHistory[ARow];
+  case aCol of
+    0 { date }: ext.setExtensionDate('date', value.AsString);
+    1 { editor }: ext.setExtensionString('author', value.AsString);
+    2 { subst }: ext.setExtensionBoolean('substantive', value.AsBoolean);
+    3 { breaking }: ext.setExtensionBoolean('backwardCompatible', not value.AsBoolean);
+    4 { notes }: ext.setExtensionString('notes', value.AsString);
+  end;
+end;
+
 procedure TCodeSystemConceptForm.loadProperties;
 var
   top : Double;
@@ -286,7 +442,7 @@ begin
     loadProperty(value, top);
     top := top + delta;
   end;
-  Height := trunc(top + delta + 10 + panel1.height);
+  Height := trunc(top + delta + 10 + panel1.height)+20;
   if top = lblProperties.Position.Y + DELTA then
     lblProperties.visible := false;
 
@@ -300,8 +456,8 @@ var
   ded : TDateEdit;
   ted : TTimeEdit;
 begin
-  lbl := TLabel.Create(self);
-  lbl.Parent := self;
+  lbl := TLabel.Create(tbGeneral);
+  lbl.Parent := tbGeneral;
   lbl.Position.X := lblProperties.Position.X;
   lbl.Position.Y := top + 2;
   lbl.Text := value.code;
@@ -311,8 +467,8 @@ begin
   case value.type_ of
     ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger:
       begin
-      edt := TEdit.Create(self);
-      edt.Parent := self;
+      edt := TEdit.Create(tbGeneral);
+      edt.Parent := tbGeneral;
       edt.Position.X := edtCode.Position.X;
       edt.Position.Y := top;
       value.TagObject := edt;
@@ -324,8 +480,8 @@ begin
       end;
     ConceptPropertyTypeBoolean :
       begin
-      cb := TCheckBox.Create(self);
-      cb.Parent := self;
+      cb := TCheckBox.Create(tbGeneral);
+      cb.Parent := tbGeneral;
       cb.Position.X := edtCode.Position.X;
       cb.Position.Y := top+2;
       value.TagObject := cb;
@@ -338,13 +494,13 @@ begin
 //    ConceptPropertyTypeCoding, {@enum.value ConceptPropertyTypeCoding  }
     ConceptPropertyTypeDateTime: {@enum.value ConceptPropertyTypeDateTime  }
       begin
-      ded := TDateEdit.Create(self);
-      ded.Parent := self;
+      ded := TDateEdit.Create(tbGeneral);
+      ded.Parent := tbGeneral;
       ded.Position.X := edtCode.Position.X;
       ded.Position.Y := top+2;
       value.TagObject := ded;
       ded.Height := edtCode.Height;
-      ded.Width := (edtDIsplay.Position.X + edtDIsplay.Width - ded.Position.X) / 2 - 5;
+      ded.Width := (edtDisplay.Position.X + edtDIsplay.Width - ded.Position.X) / 2 - 5;
       ded.Hint := value.description;
       ded.OnChange := edtCodeChangeTracking;
       ded.OnClick := edtCodeChangeTracking;
