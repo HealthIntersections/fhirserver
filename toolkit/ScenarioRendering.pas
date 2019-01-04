@@ -32,7 +32,9 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  {$IFDEF WINDOWS}
   shellapi, fmx.platform.win, winapi.windows,
+  {$ENDIF}
   FHIR.Version.Utilities, FHIR.Base.Objects,FHIR.Version.Resources,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FDownloadForm;
 
@@ -64,12 +66,15 @@ implementation
 {$R *.fmx}
 
 procedure TESRender.Button10Click(Sender: TObject);
+{$IFDEF WINDOWS}
 var
   str: string;
   SEInfo: TShellExecuteInfo;
   ExitCode: DWORD;
   ExecuteFile, ParamString, StartInString: string;
+{$ENDIF}
 begin
+{$IFDEF WINDOWS}
 if directoryexists(edit1.text) then str:=edit1.text else  str := getCurrentDir;
   SetCurrentDir(ESRenderFolder+'\simpleRender');
   resourceToFile(resource, '.\current.xml', ffXml, OutputStylePretty);
@@ -100,7 +105,9 @@ if directoryexists(edit1.text) then str:=edit1.text else  str := getCurrentDir;
     ShellExecute(0, 'open', '.\current.html', '', '', SW_SHOWNORMAL);
     SetCurrentDir(str);
   end;
-
+{$ELSE}
+  raise Exception.Create('Not done yet');
+{$ENDIF}
 end;
 
 procedure TESRender.Button1Click(Sender: TObject);
