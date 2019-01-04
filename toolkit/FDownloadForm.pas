@@ -20,7 +20,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Controls.Presentation,
   IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, System.Zip,
-  IdSSLOpenSSL;
+  IdSSLOpenSSL, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL;
 
 type
 
@@ -31,6 +31,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Label1: TLabel;
+    IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -84,6 +85,8 @@ begin
   unzipLocation:= aunzipLocation;
   httpclient := TIdHTTP.Create(nil);
   httpclient.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(httpclient);
+  TIdSSLIOHandlerSocketOpenSSL(httpclient.IOHandler).SSLOptions.SSLVersions:=[sslvTLSv1_1,sslvTLSv1_2];
+
   httpclient.Request.UserAgent := 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1';
   httpclient.HandleRedirects := true;
   httpclient.OnWorkBegin := idhttp1WorkBegin;
