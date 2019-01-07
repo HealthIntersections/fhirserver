@@ -8,10 +8,10 @@
       <Unit0>
         <Filename Value="TestFHIRApplication.lpr"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos X="51" Y="13"/>
         <UsageCount Value="104"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\reference-platform\support\FHIR.Support.Objects.pas"/>
@@ -264,24 +264,20 @@
       </Unit35>
       <Unit36>
         <Filename Value="..\..\..\com.healthintersections.fhir\website\FhirServer\snomed-intl.inc"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="18" Y="2"/>
         <UsageCount Value="41"/>
-        <Loaded Value="True"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\..\..\com.healthintersections.fhir\website\FhirServer\toolkit.inc"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="41"/>
-        <Loaded Value="True"/>
       </Unit37>
     </Units>
-    <JumpHistory Count="1">
-      <Position1>
-        <Filename Value="TestFHIRApplication.lpr"/>
-        <Caret Line="14" Column="54"/>
-      </Position1>
-    </JumpHistory>
+    <General>
+      <ActiveWindowIndexAtStart Value="-1"/>
+    </General>
+    <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>
 </CONFIG>

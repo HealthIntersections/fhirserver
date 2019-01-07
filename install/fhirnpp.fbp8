@@ -784,7 +784,7 @@ begin
           connectionname = HealthIntersections
           detailedlogging = false
           enabletimeout = false
-          filespec = fhirnpp.htm
+          filespec = fhirnpp.inc
           forcenextclockskewupdate = true
           gaplength = 5
           id = {8C56FE7B-F9C7-472D-BF17-D8DE32AF51FA}
