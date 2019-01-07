@@ -163,7 +163,9 @@ uses
 {$R *.res}
 
 begin
+  {$IFDEF WINDOWS}
   IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
+  {$ENDIF}
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.Run;
