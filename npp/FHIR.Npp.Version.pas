@@ -34,7 +34,7 @@ interface
 {
 [npp-settings]
 } const
-BuildCount=2
+BuildCount=37
 ;
 
 implementation
