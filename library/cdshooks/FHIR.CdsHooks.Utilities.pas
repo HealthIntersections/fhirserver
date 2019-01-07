@@ -379,7 +379,7 @@ begin
       b.Append('  <div class="card-summary">');
       if card.detail <> '' then
       begin
-        md := TMarkdownProcessor.CreateDialect(mdDaringFireball);
+        md := TMarkdownProcessor.CreateDialect(mdCommonMark);
         try
           md.UnSafe := false;
           b.Append(md.process(card.detail));

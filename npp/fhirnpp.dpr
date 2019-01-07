@@ -200,7 +200,8 @@ uses
   FHIR.Cda.Narrative in '..\library\cda\FHIR.Cda.Narrative.pas',
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
-  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
 
 {$R *.res}
 

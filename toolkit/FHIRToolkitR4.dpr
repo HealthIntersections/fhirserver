@@ -172,7 +172,8 @@ uses
   FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
-  ResourceHistoryDialog in 'ResourceHistoryDialog.pas' {ResourceHistoryForm};
+  ResourceHistoryDialog in 'ResourceHistoryDialog.pas' {ResourceHistoryForm},
+  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
 
 {$R *.res}
 

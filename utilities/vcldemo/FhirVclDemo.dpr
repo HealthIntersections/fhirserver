@@ -2,7 +2,8 @@ program FhirVclDemo;
 
 uses
   FastMM4 in '..\..\dependencies\FMM\FastMM4.pas' {Vcl.Forms},
-  SysUtils, IdSSLOpenSSLHeaders,
+  SysUtils,
+  IdSSLOpenSSLHeaders,
   Vcl.Forms,
   MainApplicationWindow in '..\MainApplicationWindow.pas' {MainWindowForm},
   FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
@@ -70,7 +71,8 @@ uses
   FHIR.Support.Osx in '..\..\library\support\FHIR.Support.Osx.pas',
   FHIR.Support.Logging in '..\..\library\support\FHIR.Support.Logging.pas',
   FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas',
-  FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas';
+  FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
+  HTMLEntities in '..\..\..\markdown\source\HTMLEntities.pas';
 
 {$R *.res}
 

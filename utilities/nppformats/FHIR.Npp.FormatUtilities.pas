@@ -328,7 +328,7 @@ var
   s : String;
   md : TMarkdownProcessor;
 begin
-  md := TMarkdownProcessor.CreateDialect(mdDaringFireball);
+  md := TMarkdownProcessor.CreateDialect(mdCommonMark);
   try
     s := TEncoding.UTF8.getString(SelectedBytes);
     s := md.process(s);
