@@ -173,7 +173,7 @@ uses
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   ResourceHistoryDialog in 'ResourceHistoryDialog.pas' {ResourceHistoryForm},
-  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.res}
 

@@ -206,7 +206,7 @@ uses
   ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
   Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
   ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
-  HTMLEntities in '..\..\..\markdown\source\HTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.res}
 

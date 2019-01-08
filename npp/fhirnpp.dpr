@@ -201,7 +201,7 @@ uses
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
-  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.res}
 

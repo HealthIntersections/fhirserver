@@ -1913,7 +1913,7 @@ var
 begin
   result := false;
   for i := 0 to Tables.Count - 1 do
-    if Tables[i].Name = name then
+    if SameText(Tables[i].Name, name) then
       result := true;
 end;
 

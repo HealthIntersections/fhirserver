@@ -62,6 +62,7 @@ var
 
 function LoadEAYExtensions : boolean;
 procedure UnloadEAYExtensions;
+function WhichFailedToLoad2 : String;
 
 type
   TIdX509Helper = class helper for TIdX509
@@ -1170,6 +1171,7 @@ end;
 
 var
   gLoadCount : Integer;
+  GLoadInfo : TStringList = nil;
 
 function DllPath : String;
 var
@@ -1184,17 +1186,25 @@ function LoadFunctionCLib(const FceName: {$IFDEF WINCE}TIdUnicodeString{$ELSE}st
 begin
   Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(GetCryptLibHandle, {$IFDEF WINCE}PWideChar{$ELSE}PChar{$ENDIF}(FceName));
   if (Result = nil) and ACritical then
-  begin
-    raise ELibraryException.create('Count not load '+FceName+' from '+DllPath);
-  end;
+    raise ELibraryException.create('Count not load '+FceName+' from '+DllPath)
+  else
+    GLoadInfo.add('Count not load '+FceName+' from '+DllPath);
 end;
 
+function WhichFailedToLoad2 : String;
+begin
+  if GLoadInfo = nil then
+    result := ''
+  else
+    result := GLoadInfo.commaText;
+end;
 
 function LoadEAYExtensions : boolean;
 begin
   inc(gLoadCount);
   if gLoadCount = 1 then
   begin
+    GLoadInfo := TStringList.create;
     @BN_num_bits := LoadFunctionCLib('BN_num_bits');
     @BN_bn2bin := LoadFunctionCLib('BN_bn2bin');
     @BN_bin2bn := LoadFunctionCLib('BN_bin2bn');
@@ -1235,6 +1245,7 @@ begin
     @EVP_VerifyFinal := nil;
     @DSA_new := nil;
     @DSA_free := nil;
+    GLoadInfo.Free;
   end;
 end;
 

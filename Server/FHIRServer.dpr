@@ -382,7 +382,7 @@ uses
   ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
-  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

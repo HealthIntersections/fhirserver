@@ -471,7 +471,6 @@
         <DCCReference Include="..\..\library\v2\FHIR.v2.Message.pas"/>
         <DCCReference Include="..\..\library\v2\FHIR.v2.Protocol.pas"/>
         <DCCReference Include="..\..\library\v2\FHIR.v2.Tests.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\dependencies\Stem\YuStemmer.pas"/>
@@ -481,7 +480,10 @@
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\HTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
+        <DCCReference Include="..\..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

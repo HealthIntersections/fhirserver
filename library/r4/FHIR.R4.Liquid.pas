@@ -340,8 +340,6 @@ var
 begin
   c := ctxt.FEngine.debug(ctxt, self);
   try
-    if (FCompiled = nil) then
-      FCompiled := c.FEngine.fpe.parse(FStatement);
     b.append(c.FEngine.fpe.evaluateToString(ctxt, resource, FCompiled));
   finally
     c.free;
@@ -385,8 +383,6 @@ var
 begin
   c := ctxt.FEngine.debug(ctxt, self);
   try
-    if (FCompiled = nil) then
-      FCompiled := ctxt.Fengine.fpe.parse(FCondition);
     ok := ctxt.Fengine.fpe.evaluateToBoolean(ctxt, resource, resource, FCompiled);
     if ok then
       list := FThenBody
@@ -449,13 +445,11 @@ var
   o : TFHIRSelection;
   c : TFHIRLiquidEngineContext;
 begin
-  if (FCompiled = nil) then
-    FCompiled := ctxt.Fengine.fpe.parse(FCondition);
   list := ctxt.Fengine.fpe.evaluate(ctxt, resource, resource, FCompiled);
   try
     for o in list do
     begin
-      c := ctxt.FEngine.debug(ctxt, self, FVarName, o);
+      c := ctxt.FEngine.debug(ctxt, self, FVarName, o.value);
       try
         for n in FBody do
           n.evaluate(b, resource, c);
@@ -644,6 +638,7 @@ begin
   res := TFHIRLiquidIf.Create;
   try
     res.condition := cnt.substring(3).trim();
+    res.FCompiled := fpe.parse(res.Condition);
     term := parseList(res.thenBody, ['else', 'endif']);
     if ('else' = term) then
       term := parseList(res.elseBody, ['endif']);
@@ -711,6 +706,7 @@ begin
     if ('in' <> s) then
       raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast.line, FLast.col);
     res.condition := cnt.substring(i).trim();
+    res.FCompiled := fpe.parse(res.condition);
     parseList(res.body, ['endloop']);
     result := res.Link;
   finally
@@ -736,6 +732,7 @@ begin
     res := TFHIRLiquidStatement.create();
     try
       res.statement := b.toString().trim();
+      res.FCompiled := fpe.parse(res.Statement);
       result := res.link;
     finally
       res.Free;
