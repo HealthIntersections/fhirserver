@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkitR4.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -132,6 +132,7 @@
         <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=FHIR Toolkit;CFBundleIdentifier=org.fhir.tools.toolkit;CFBundleVersion=0.0.1;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities;NSLocationAlwaysUsageDescription=The reason for accessing the location information of the user;NSLocationWhenInUseUsageDescription=The reason for accessing the location information of the user;NSContactsUsageDescription=The reason for accessing the contacts;CFBundleShortVersionString=1.0.0;NSLocationAlwaysAndWhenInUseUsageDescription=The reason for accessing the location information of the user</VerInfo_Keys>
         <DCC_UnitAlias>FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.Tags=FHIR.R4.Tags;FHIR.Version.TestCases=FHIR.R4.TestCases;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Base=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Factory=FHIR.R4.Factory;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.ParserBase=FHIR.R4.ParserBase;FHIR.Version.Patch=FHIR.R4.Patch;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.PathNode=FHIR.R4.PathNode;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r4osx</DCC_DcuOutput>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
@@ -442,6 +443,11 @@
         <DCCReference Include="..\library\cda\FHIR.Cda.Base.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
+        <DCCReference Include="ResourceHistoryDialog.pas">
+            <Form>ResourceHistoryForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\markdown\source\HTMLEntities.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -537,18 +543,18 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRToolkitR4.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR4.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRToolkitR4.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FHIRToolkitR4.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -568,15 +574,20 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIRToolkitR4.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIRToolkitR4.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win64">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRToolkitR4.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>FHIRToolkitR4.exe</RemoteName>
+                <DeployFile LocalName="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -593,11 +604,6 @@
                 <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="OSX32">
                         <RemoteName>FHIRToolkitR4</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Class="DependencyModule">
-                    <Platform Name="OSX64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

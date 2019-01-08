@@ -39,6 +39,7 @@ uses
 
 type
   EChakraCore = class(Exception)
+  private
     ErrorCode: JsErrorCode;
     Error: JsValueRef;
   public
@@ -46,6 +47,7 @@ type
   end;
   EChakraCoreEngine = class(EChakraCore);
   EChakraCoreScript = class(EChakraCore)
+  private
     Line: Integer;
     Column: Integer;
     Source: UnicodeString;

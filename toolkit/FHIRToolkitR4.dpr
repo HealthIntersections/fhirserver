@@ -29,7 +29,8 @@ program FHIRToolkitR4;
 
 uses
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
-  SysUtils, IdSSLOpenSSLHeaders,
+  SysUtils,
+  IdSSLOpenSSLHeaders,
   FMX.Forms,
   FHIR.Version.Client in '..\library\version\FHIR.Version.Client.pas',
   FHIR.Support.Osx in '..\library\support\FHIR.Support.Osx.pas',
@@ -170,13 +171,18 @@ uses
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
-  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  ResourceHistoryDialog in 'ResourceHistoryDialog.pas' {ResourceHistoryForm},
+  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
 
 {$R *.res}
 
 begin
+  {$IFDEF WINDOWS}
   IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
+  {$ENDIF}
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TResourceHistoryForm, ResourceHistoryForm);
   Application.Run;
 end.

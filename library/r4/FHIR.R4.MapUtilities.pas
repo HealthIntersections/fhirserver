@@ -65,7 +65,7 @@ type
 
   TVariables = class (TFslObject)
   private
-    list : TFslList<TVariable>;
+    FList : TFslList<TVariable>;
     function GetSummary: string;
     function GetCount: Integer;
     function GetVariable(index: integer): TVariable;
@@ -80,6 +80,7 @@ type
     property summary : string read GetSummary;
     property Count : Integer read GetCount;
     property variable[index : integer] : TVariable read GetVariable; default;
+    property list : TFslList<TVariable> read FList;
   end;
 
   TTransformerServices = class abstract (TFslObject)
@@ -2654,7 +2655,7 @@ end;
 constructor TVariables.create;
 begin
   inherited;
-  list := TFslList<TVariable>.create;
+  Flist := TFslList<TVariable>.create;
 end;
 
 destructor TVariables.destroy;

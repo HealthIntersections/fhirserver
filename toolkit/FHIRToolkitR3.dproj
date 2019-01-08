@@ -379,6 +379,7 @@
         <DCCReference Include="..\library\tools\FHIR.Tools.ObsGraph.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
+        <DCCReference Include="..\..\markdown\source\HTMLEntities.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -466,7 +467,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRToolkitR3.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -484,7 +485,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRToolkitR3.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FHIRToolkitR3.rsm</RemoteName>
                         <Overwrite>true</Overwrite>

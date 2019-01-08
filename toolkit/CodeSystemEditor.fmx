@@ -28,14 +28,21 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 791.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 787.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
         IsSelected = False
         TabOrder = 0
         Text = 'Metadata'
+      end
+      object tvHl7: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 4
+        Text = 'HL7 Process'
       end
       object tvProperties: TTreeViewItem
         IsChecked = False
@@ -81,10 +88,12 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
       Size.Width = 770.000000000000000000
       Size.Height = 816.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 4
       TabOrder = 0
       TabPosition = None
       Sizes = (
+        770s
+        816s
         770s
         816s
         770s
@@ -97,7 +106,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -913,16 +922,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           TabPosition = Top
           Sizes = (
             770s
-            725s
+            746s
             770s
-            725s)
+            746s)
           object TabItem1: TTabItem
             CustomIcon = <
               item
               end>
             IsSelected = False
-            Size.Width = 42.000000000000000000
-            Size.Height = 26.000000000000000000
+            Size.Height = 5.000000000000000000
             Size.PlatformDefault = False
             StyleLookup = ''
             TabOrder = 0
@@ -932,14 +940,14 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             object tvConceptTree: TTreeView
               Align = Client
               Size.Width = 770.000000000000000000
-              Size.Height = 725.000000000000000000
+              Size.Height = 746.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 0
               OnClick = tvConceptTreeChange
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
               Viewport.Width = 770.000000000000000000
-              Viewport.Height = 725.000000000000000000
+              Viewport.Height = 746.000000000000000000
             end
           end
           object TabItem2: TTabItem
@@ -947,8 +955,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               item
               end>
             IsSelected = True
-            Size.Width = 43.000000000000000000
-            Size.Height = 26.000000000000000000
+            Size.Height = 5.000000000000000000
             Size.PlatformDefault = False
             StyleLookup = ''
             TabOrder = 0
@@ -960,7 +967,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               CanFocus = True
               ClipChildren = True
               Size.Width = 770.000000000000000000
-              Size.Height = 725.000000000000000000
+              Size.Height = 746.000000000000000000
               Size.PlatformDefault = False
               TextSettings.VertAlign = Leading
               TabOrder = 0
@@ -970,7 +977,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnSetValue = grdConceptsSetValue
               OnCellDblClick = grdConceptsCellDblClick
               Viewport.Width = 770.000000000000000000
-              Viewport.Height = 725.000000000000000000
+              Viewport.Height = 746.000000000000000000
               object IntegerColumn1: TIntegerColumn
                 Enabled = False
                 Header = 'Depth'
@@ -1058,6 +1065,234 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           end
         end
       end
+      object tbHl7: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'HL7 Process'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object VertScrollBox3: TVertScrollBox
+          Align = Client
+          Size.Width = 770.000000000000000000
+          Size.Height = 816.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Viewport.Width = 770.000000000000000000
+          Viewport.Height = 816.000000000000000000
+          object edtSteward: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 3
+            Position.X = 136.000000000000000000
+            Position.Y = 40.000000000000000000
+            Size.Width = 305.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object Label16: TLabel
+            StyledSettings = [Family, Size]
+            Position.X = 24.000000000000000000
+            Position.Y = 8.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claMaroon
+            Text = 'HL7 Process'
+            TabOrder = 4
+          end
+          object Label17: TLabel
+            Position.X = 24.000000000000000000
+            Position.Y = 40.000000000000000000
+            Size.Width = 120.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Steward:'
+            TabOrder = 8
+          end
+          object Label18: TLabel
+            StyledSettings = [Family, Size, FontColor]
+            Position.X = 24.000000000000000000
+            Position.Y = 168.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            Text = 'Editorial History'
+            TabOrder = 10
+          end
+          object gridHistory: TGrid
+            CanFocus = True
+            ClipChildren = True
+            Position.X = 24.000000000000000000
+            Position.Y = 200.000000000000000000
+            Size.Width = 625.000000000000000000
+            Size.Height = 169.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 11
+            OnSelChanged = gridHistorySelChanged
+            OnGetValue = gridHistoryGetValue
+            OnSetValue = gridHistorySetValue
+            Viewport.Width = 625.000000000000000000
+            Viewport.Height = 169.000000000000000000
+            object DateColumn1: TDateColumn
+              Header = 'Date'
+              Size.Width = 80.000000000000000000
+            end
+            object StringColumn16: TStringColumn
+              Header = 'Id'
+              Size.Width = 80.000000000000000000
+            end
+            object StringColumn18: TStringColumn
+              Header = 'Editor'
+            end
+            object StringColumn17: TStringColumn
+              Header = 'Workgroup'
+              Size.Width = 80.000000000000000000
+            end
+            object CheckColumn3: TCheckColumn
+              Header = 'S?'
+            end
+            object CheckColumn4: TCheckColumn
+              Header = 'B?'
+            end
+            object StringColumn19: TStringColumn
+              Header = 'Notes'
+              Size.Width = 200.000000000000000000
+            end
+          end
+          object btnHistoryAdd: TButton
+            Position.X = 24.000000000000000000
+            Position.Y = 376.000000000000000000
+            TabOrder = 16
+            Text = 'Add'
+            OnClick = btnHistoryAddClick
+          end
+          object btnHistoryEdit: TButton
+            Position.X = 112.000000000000000000
+            Position.Y = 376.000000000000000000
+            TabOrder = 15
+            Text = 'Edit'
+            OnClick = btnHistoryEditClick
+          end
+          object btnHistoryUp: TButton
+            Position.X = 200.000000000000000000
+            Position.Y = 376.000000000000000000
+            TabOrder = 14
+            Text = 'Up'
+            OnClick = btnHistoryUpClick
+          end
+          object btnHistoryDown: TButton
+            Position.X = 288.000000000000000000
+            Position.Y = 376.000000000000000000
+            TabOrder = 13
+            Text = 'Down'
+            OnClick = btnHistoryDownClick
+          end
+          object btnHistoryDelete: TButton
+            Position.X = 376.000000000000000000
+            Position.Y = 376.000000000000000000
+            TabOrder = 12
+            Text = 'Delete'
+            OnClick = btnHistoryDeleteClick
+          end
+          object Label19: TLabel
+            StyledSettings = [Family, Size, FontColor]
+            Position.X = 24.000000000000000000
+            Position.Y = 408.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            Text = 'Open Issues'
+            TabOrder = 9
+          end
+          object memOpenIssues: TMemo
+            Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+            DataDetectorTypes = []
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+            Position.X = 24.000000000000000000
+            Position.Y = 432.000000000000000000
+            Size.Width = 465.000000000000000000
+            Size.Height = 105.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 17
+            Viewport.Width = 465.000000000000000000
+            Viewport.Height = 105.000000000000000000
+          end
+          object Label20: TLabel
+            StyledSettings = [Family, Size, FontColor]
+            Position.X = 24.000000000000000000
+            Position.Y = 542.000000000000000000
+            Size.Width = 465.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.StyleExt = {00040000000200000004000000}
+            Text = 'One open issue per line'
+            TabOrder = 18
+          end
+          object Label21: TLabel
+            Position.X = 24.000000000000000000
+            Position.Y = 69.000000000000000000
+            Size.Width = 120.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Legalese:'
+            TabOrder = 7
+          end
+          object Label22: TLabel
+            Position.X = 24.000000000000000000
+            Position.Y = 98.000000000000000000
+            Size.Width = 120.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Version Deprecated:'
+            TabOrder = 6
+          end
+          object Label23: TLabel
+            Position.X = 24.000000000000000000
+            Position.Y = 128.000000000000000000
+            Size.Width = 120.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Versioning Policy:'
+            TabOrder = 5
+          end
+          object edtLegalese: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 2
+            Position.X = 136.000000000000000000
+            Position.Y = 69.000000000000000000
+            Size.Width = 305.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtVDeprecated: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 1
+            Position.X = 136.000000000000000000
+            Position.Y = 98.000000000000000000
+            Size.Width = 305.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtVersionPolicy: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 0
+            Position.X = 136.000000000000000000
+            Position.Y = 128.000000000000000000
+            Size.Width = 305.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+        end
+      end
     end
   end
   object dlgExport: TSaveDialog
@@ -1115,32 +1350,32 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031849444154384F5D536B481461143DDFCCEEAA33ECD34DADDC71D71E9A9595
-              45661105563F828A8A327F58A91144111145FD31E80115F4A32208224B2D2892
-              C81ED0030BB2202863456BEDA9BBF6DA74F1B1DBACBBB33B33CD3795A4072EF3
-              71EF39F70EF74130060777ECB0CF88F7AFE114A5C8A42A19D42711F233AAB2AD
-              1D29CA9D93171A8774E25F8C4A5053BD75D5969905A7DDD1F45CF6F537847E84
-              75BF73BC05C9B9D908F0A1AEFA76DF9EA3B57577F58006F6EF1787AAB76ED836
-              6D61A3A7B92F9DF9A609B36D20A5F930154E84312681791384E363DC9E5B5CB8
-              D1E272743EF5B6F9A84E4F402B53B1F0AA978DD4AC464A7327E26737E35E90E0
-              2367C5A4AA0530DC6C45E4D85A64DCF0329366E5AF33BBD2BD2DDEB60FEC81ED
-              1BAC9579736E7B9EF43986CF55C0F8AC13ACDB01C3C23C701D5D98A0C4E09C23
-              004361905018D2CEE5709E69615C8B5C25BC677203B9BAA5ACA26CEA8A06E9F1
-              2770996688C13078730AC06B36384C7F10B0A501621C62240E3ECB82E8CF0852
-              964DC6F54F8F2A0D1C91E7195ABF423C5D0ED1C2C1B4FD3222A7CAC1980CE0EF
-              BED4F5E2AAF950A42452775D81787C2392E128B8C34DE0CC4A116352D54C3596
-              80355F003FC189A4ACC0ECCE02EF12E0B73B74A36FEAA331CAA15C44133042CD
-              64F412FF818C9EEC2830644C4C85CCD02521A9460CBDEB81F83D049625880482
-              10BFF4C03DD0AF1B7D531FC3109D43B9E08C4810121A692269E9062BD890080C
-              C068D79A664905FAC43F95C6F1403886C4C0308C3976C83D83C0128FDE44764A
-              71412037DBB129FD73DC16D39A078E8521CBAC6DD67AF8C160B0201BB6FD2B81
-              DE7E248B7290A85A0AE3BD367415A8FE8783B1BD0CDDED86F6B7BBBF940A72DA
-              BE6B9066E7000F3A216963A308B01CA45F71A8F77D7A8C727A96B965AA3971FE
-              FCC04857E82A574F5F7C4D68F6B360B5DE7A1CC09471500C2C98B7412D533FA0
-              4D21509A235FF23D2F3F525BD7487523B74077DB2A38DB5C25138BAD59E3EDCC
-              FB3E845EF831DCFE1D9C164FCE17D03D4DEEAAF779AB8E5CBC7CEB8F6ACC3552
-              FC3BE7343939D74448061D9504B537AA30DE3769681A7DCEC06F8BFC468132CB
-              189D0000000049454E44AE426082}
+              031549444154384F5D5369481461187EBE99DD5567D8D3B3DA5D573B3CD048BB
+              EB47773F828A8A0E7F981704524444517F0AB2A0827E44044114990506125D42
+              07599450108A8B9ADBA9BB96B6E6E0B1DBACBBB33B33CD3795A40FBCCCC7FB3E
+              CFFB0EEF41300DC76B6BED45B191AD9CA2949A542583FA244286222ADBD695A4
+              3C3C7FB5695C27FEC59404276A2A375714175EF4445273D9F601083F42BA3F6D
+              860589854E0478A1F76667CFA1D3D7EB1FE9010DECDF2F4ED654EEACCE5BD694
+              DB22A432039AD0690359970FD3FC5930462530DD41383EC7EC9EC545BBACEE54
+              DFAB0E6F0FD5E90968652AF6B40B6CF8C416243DF72176692F9A83049F392B66
+              572F83E16E1BC267B621B3C9CBE414CFDB6E71A775BCEEF07E628FEDDB69ADCA
+              2B7990FB52704C5C2E87B1D507D6E38061451EB8AE5ECC54A2482B7103E32110
+              210469FF06A45F6A655C2B5DCBF99C390DE476C5EEF2DDF33636482D5FC0659A
+              210643E0CD4900AFD9D804FD41C09602883188E118F82C0B22436124AD9F833B
+              5F9E551938222F32B47D8778B10CA2858369DF0D842F94813119C03F7AA7EBC5
+              CD4BA04809241FB805F1EC2E24421170A7EE83332BA58C495533D5681CD67C37
+              F8996948C80ACC9E2CF02E37FC76876EF44D7D344639948B481C46A8998C5EE2
+              3F90A9939D02864C8BA99019BA2424D988F10FFD100705B02C41381084F8AD1F
+              9ED111DDE89BFA1886E81CCA0567449C1061B289E4751F58B70DF1C0288C76AD
+              6996646058FC53299D074251C4472760CCB643EE1F0356E5E84D64E72E2D0CE4
+              3A1D7B52BFC66C51AD79E05818B2CCDA66ED801F0CC60A9DB01DDD04FC1C41A2
+              341BF1EAD530367BD15BA8FA9F8E450F3374B71B3ADF1F0CAC71CA29471A212D
+              C8069EF8206963A308B01CA45F31A88F7BF418E5F8D7BA65AA3977E5CAE86457
+              E82A5715AC6CF4BCE867C16ABDCD710073D3A1185830EF835AA611409B42DF1A
+              975CFFE14D59DDF5FA26AA9BBC05BADBB6EC74AF6BF9ACA5D6AC1976E6E33084
+              B77E4C740E82D3E289256EF415C8BD0D3E6F75DDB51BF7FEA8A65D23C5BF734E
+              91130B4D8464D05149507F4614A6A33B05F7A79E33F01B802C467B155D820500
+              00000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

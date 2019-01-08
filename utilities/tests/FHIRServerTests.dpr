@@ -353,7 +353,8 @@ uses
   ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
   ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
   ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas';
+  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  HTMLEntities in '..\..\..\markdown\source\HTMLEntities.pas';
 
 var
   runner : ITestRunner;

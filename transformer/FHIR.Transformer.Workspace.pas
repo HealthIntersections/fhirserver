@@ -11,7 +11,7 @@ Const
 
 type
   TTransformerFormat = (fmtV2, fmtCDA, fmtResource, fmtJS, fmtMap, fmtTemplate);
-  TTrasnformOutcomeMode = (tomIgnore, tomSaveTo, tomCompare);
+  TTransformOutcomeMode = (tomIgnore, tomSaveTo, tomCompare);
 
 function detectFormat(fn : String) : TTransformerFormat;
 
@@ -26,6 +26,10 @@ Type
     property invalid : boolean read Finvalid write Finvalid;
   end;
 
+  TCompilerStatus = (csNotCompiled, csOk, csError, csWorking);
+
+  TWorkspace = class;
+
   TWorkspaceFile = class (TFSLObject)
   private
     FFilename: String;
@@ -33,23 +37,36 @@ Type
     FIsDirty: boolean;
     FFormat: TTransformerFormat;
     FErrorLine : Integer;
-    FParsed: TObject;
     FBreakPoints: TFslList<TBreakPointInfo>;
+    FcompileStatus: TCompilerStatus;
+    FWorkspace : TWorkspace; // no link
+    FCompiled : TFslObject;
+    FFmtInfo : String;
+    FErrorMsg: String;
     function GetTitle: string;
     function breakpointSummary : String;
+    procedure SetCompiled(const Value: TFslObject);
   public
-    constructor Create(filename : String; format : TTransformerFormat); overload;
-    constructor Create(filename : String; format : TTransformerFormat; row : integer; bpl : String); overload;
+    constructor Create(workspace : TWorkspace; filename : String; format : TTransformerFormat); overload;
+    constructor Create(workspace : TWorkspace; filename : String; format : TTransformerFormat; row : integer; bpl : String); overload;
     destructor Destroy; override;
     function link : TWorkspaceFile; overload;
     property format : TTransformerFormat read FFormat;
     property filename : String read FFilename write FFilename;
     property title : string read GetTitle; // derived from filename
     property row : integer read FRow write FRow;  // persisted in UI settings, not the worksapce (version control)
-    property parsed : TObject read FParsed write FParsed;
 
+    property compileStatus : TCompilerStatus read FcompileStatus write FcompileStatus;
     property BreakPoints: TFslList<TBreakPointInfo> read FBreakPoints;
     function hasBreakPoint(line : integer; var bpi : TBreakPointInfo): boolean;
+
+    function stream : TStream;
+    function actualName : String;
+    function source : String;
+    property compiled : TFslObject read FCompiled write SetCompiled;
+    property errorLine : integer read FErrorLine write FErrorLine;
+    property errorMsg : String read FErrorMsg write FErrorMsg;
+    property fmtInfo : String read FFmtInfo write FFmtInfo;
   end;
 
   TWorkspace = class (TFSLObject)
@@ -66,7 +83,8 @@ Type
     FSource: String;
     FScript: String;
     FTarget: String;
-    FOutcome: TTrasnformOutcomeMode;
+    FOutcome: TTransformOutcomeMode;
+    FAllFiles: TFslList<TWorkspaceFile>;
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
@@ -84,8 +102,9 @@ Type
     property Source : String read FSource write FSource;
     property Script : String read FScript write FScript;
     property Target : String read FTarget write FTarget;
-    property Outcome : TTrasnformOutcomeMode read FOutcome write FOutcome;
+    property Outcome : TTransformOutcomeMode read FOutcome write FOutcome;
 
+    property allFiles : TFslList<TWorkspaceFile> read FAllFiles;
     property messages : TFslList<TWorkspaceFile> read FMessages;
     property documents : TFslList<TWorkspaceFile> read FDocuments;
     property resources : TFslList<TWorkspaceFile> read FResources;
@@ -165,17 +184,17 @@ var
   f : TWorkspaceFile;
 begin
   for f in FMessages do
-   f.parsed := nil;
+   f.compiled := nil;
   for f in FDocuments do
-   f.parsed := nil;
+   f.compiled := nil;
   for f in FMaps do
-   f.parsed := nil;
+   f.compiled := nil;
   for f in FScripts do
-   f.parsed := nil;
+   f.compiled := nil;
   for f in FTemplates do
-   f.parsed := nil;
+   f.compiled := nil;
   for f in FResources do
-   f.parsed := nil;
+   f.compiled := nil;
 end;
 
 constructor TWorkspace.Create(folder: String);
@@ -187,12 +206,14 @@ begin
   FResources := TFslList<TWorkspaceFile>.create;
   FScripts := TFslList<TWorkspaceFile>.create;
   FTemplates := TFslList<TWorkspaceFile>.create;
+  FAllFiles := TFslList<TWorkspaceFile>.create;
   FFolder := folder;
   reload;
 end;
 
 destructor TWorkspace.Destroy;
 begin
+  FAllFiles.Free;
   FMessages.Free;
   FDocuments.Free;
   FMaps.Free;
@@ -219,7 +240,7 @@ var
   item : TWorkspaceFile;
 begin
   for item in list do
-    if obj = item.parsed then
+    if obj = item.compiled then
       exit(item);
   result := nil;
 end;
@@ -374,7 +395,7 @@ begin
     FSource := iniT.ReadString('Status', 'Source', '');
     FScript := iniT.ReadString('Status', 'Script', '');
     FTarget := iniT.ReadString('Status', 'Target', '');
-    FOutcome := TTrasnformOutcomeMode(iniT.ReadInteger('Status', 'Outcome', 0));
+    FOutcome := TTransformOutcomeMode(iniT.ReadInteger('Status', 'Outcome', 0));
     st.clear;
     iniVC.ReadSection('Files', st);
     for s in st do
@@ -383,18 +404,24 @@ begin
       row := iniT.ReadInteger(s, 'Row', 0);
       bpl := iniT.ReadString(s, 'BreakPoints', '');
       if fmt = 'v2' then
-        FMessages.Add(TWorkspaceFile.Create(s, fmtV2, row, bpl))
+        FMessages.Add(TWorkspaceFile.Create(Self, s, fmtV2, row, bpl))
       else if fmt = 'cda' then
-        FDocuments.Add(TWorkspaceFile.Create(s, fmtCDA, row, bpl))
+        FDocuments.Add(TWorkspaceFile.Create(Self, s, fmtCDA, row, bpl))
       else if fmt = 'fhir' then
-        FResources.Add(TWorkspaceFile.Create(s, fmtResource, row, bpl))
+        FResources.Add(TWorkspaceFile.Create(Self, s, fmtResource, row, bpl))
       else if fmt = 'js' then
-        FScripts.Add(TWorkspaceFile.Create(s, fmtJS, row, bpl))
+        FScripts.Add(TWorkspaceFile.Create(Self, s, fmtJS, row, bpl))
       else if fmt = 'map' then
-        FMaps.Add(TWorkspaceFile.Create(s, fmtMap, row, bpl))
+        FMaps.Add(TWorkspaceFile.Create(Self, s, fmtMap, row, bpl))
       else if fmt = 'liquid' then
-        FTemplates.Add(TWorkspaceFile.Create(s, fmtTemplate, row, bpl));
+        FTemplates.Add(TWorkspaceFile.Create(Self, s, fmtTemplate, row, bpl));
     end;
+    FAllFiles.AddAll(FMessages);
+    FAllFiles.AddAll(FDocuments);
+    FAllFiles.AddAll(FResources);
+    FAllFiles.AddAll(FScripts);
+    FAllFiles.AddAll(FMaps);
+    FAllFiles.AddAll(FTemplates);
     if FEventType = -1 then
       if FMessages.Count > 0 then
         FEventType := 0
@@ -477,13 +504,19 @@ end;
 
 { TWorkspaceFile }
 
-constructor TWorkspaceFile.Create(filename: String; format : TTransformerFormat);
+constructor TWorkspaceFile.Create(workspace : TWorkspace; filename: String; format : TTransformerFormat);
 begin
   Create;
+  FWorkspace := workspace;
   FFilename := filename;
   FFormat := format;
   FRow := 0;
   FBreakPoints := TFslList<TBreakPointInfo>.create;
+end;
+
+function TWorkspaceFile.actualName: String;
+begin
+  result := makeAbsolutePath(filename, FWorkspace.folder)
 end;
 
 function TWorkspaceFile.breakpointSummary: String;
@@ -501,12 +534,13 @@ begin
   end;
 end;
 
-constructor TWorkspaceFile.Create(filename : string; format : TTransformerFormat; row : integer; bpl : String);
+constructor TWorkspaceFile.Create(workspace : TWorkspace; filename : string; format : TTransformerFormat; row : integer; bpl : String);
 var
   l, r : String;
   s : String;
 begin
   Create;
+  FWorkspace := workspace;
   FFilename := filename;
   FFormat := format;
   FRow := row;
@@ -519,6 +553,7 @@ end;
 destructor TWorkspaceFile.Destroy;
 begin
   FBreakpoints.free;
+  FCompiled.Free;
   inherited;
 end;
 
@@ -545,6 +580,22 @@ end;
 function TWorkspaceFile.link: TWorkspaceFile;
 begin
   result := TWorkspaceFile(inherited link);
+end;
+
+procedure TWorkspaceFile.SetCompiled(const Value: TFslObject);
+begin
+  FCompiled.Free;
+  FCompiled := Value;
+end;
+
+function TWorkspaceFile.source: String;
+begin
+  result := FileToString(actualName, TEncoding.UTF8);
+end;
+
+function TWorkspaceFile.stream: TStream;
+begin
+  result := TFileStream.Create(actualName, fmOpenRead + fmShareDenyWrite);
 end;
 
 { TBreakPointInfo }

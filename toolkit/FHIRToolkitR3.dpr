@@ -31,7 +31,8 @@ program FHIRToolkitR3;
 uses
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
-  SysUtils, IdSSLOpenSSLHeaders,
+  SysUtils,
+  IdSSLOpenSSLHeaders,
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
@@ -156,12 +157,15 @@ uses
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
   FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
-  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas';
+  FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  HTMLEntities in '..\..\markdown\source\HTMLEntities.pas';
 
 {$R *.res}
 
 begin
+  {$IFDEF WINDOWS}
   IdOpenSSLSetLibPath(extractFilePath(paramstr(0)));
+  {$ENDIF}
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.Run;

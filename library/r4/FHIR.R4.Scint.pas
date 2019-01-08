@@ -8,53 +8,47 @@ uses
   FHIR.Support.Base;
 
 
-type
-  // 4 bits
-  TMapStylerZone = (
-    szBase,
-    szSpacer,
-    szMap1,
-    szMap2,
-    szUses1,
-    szUses2,
-    szImports,
-    szGroup,
-    szRule
-  );
+const
+  AlphaChars = ['A'..'Z', 'a'..'z'];
+  DigitChars = ['0'..'9'];
+  HexDigitChars = DigitChars + ['A'..'F', 'a'..'f'];
+  AlphaUnderscoreChars = AlphaChars + ['_'];
+  AlphaDigitChars = AlphaChars + DigitChars;
+  AlphaDigitUnderscoreChars = AlphaChars + DigitChars + ['_'];
+  MAP_RESERVED_WORDS_GEN : array of String = ['map', 'uses', 'source', 'target', 'produced', 'consumed', 'alias', 'as', 'imports', 'group'];
+  MAP_RESERVED_WORDS_RULE : array of String = ['group', 'source', 'target', 'as', 'where', 'check', 'then', 'log', '$this'];
+  MAP_GRAMMAR_CHARS = ['[', ']', ',', ':', '/', '*', '&', '|', '!', '=', '{', '}', '(', ')', ';', '%', '.', '?', '+', '-', '<', '>'];
+  MAP_TOKEN_START = AlphaUnderscoreChars;
+  MAP_TOKEN_CHAR = AlphaDigitUnderscoreChars;
 
+type
   TMapStylerStyle = (
-    stNull,
-    stNoUse,
+    // outside a group
+    stGenText,
+    stGenComment,
+    stGenKnownToken,
+    stGenGrammar,
+    stGenString,
+    stGenError,
+    // inside a group
+    stText,
     stComment,
     stKnownToken,
     stGrammar,
     stString,
-    stField
-//    stCommentConceptMap,
-//    stCommentstGroup,
-//    stRule,
-//    stStringDoubleQuot,
-//    stStringSingleQuote
+    stField,
+    stNumber
   );
 
   TFHIRMapStyler = class(TScintCustomStyler)
   private
-    procedure CommitStyle(Zone : TMapStylerZone; Style: TMapStylerStyle);
-    procedure scanZone(zone : TMapStylerZone);
-    procedure scanBase;
-    procedure scanMap1;
-    procedure scanMap2;
-    procedure scanUses1;
-    procedure scanUses2;
-    procedure scanImports;
+    procedure CommitStyle(Style: TMapStylerStyle);
+    procedure scanGen;
     procedure scanGroup;
-    procedure scanRule;
-    procedure scanComment(zone : TMapStylerZone);
-    procedure scanString(zone : TMapStylerZone; ch : AnsiChar);
-    procedure scanSuspectString(zone : TMapStylerZone; ch, endchar : AnsiChar);
-    procedure scanToken(zone: TMapStylerZone); overload;
-    procedure scanToken(zone: TMapStylerZone; token : String); overload;
-    procedure scanGrammar(zone: TMapStylerZone; token : String); overload;
+    procedure scanNumber;
+    procedure scanToken(style : TMapStylerStyle);
+    procedure scanString(ch : ansichar; style : TMapStylerStyle);
+    procedure scanReservedWord(s : String; style : TMapStylerStyle);
   protected
     procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
     function LineTextSpans(const S: TScintRawString): Boolean; override;
@@ -68,8 +62,6 @@ implementation
 
 const
   WhitespaceChars = [#0..' '];
-  EolnChars = [#13, #10];
-  ALL_ZONES = [szBase, szMap1, szMap2, szUses1, szUses2, szImports, szGroup, szRule];
 
 
 { TFHIRMapStyler }
@@ -84,49 +76,45 @@ begin
   inherited;
 end;
 
-procedure TFHIRMapStyler.CommitStyle(Zone : TMapStylerZone; Style: TMapStylerStyle);
+procedure TFHIRMapStyler.CommitStyle(Style: TMapStylerStyle);
 begin
-  LineState := Ord(Style) + (Ord(Zone) shl 4);
+  LineState := Ord(Style);
   inherited CommitStyle(LineState);
 end;
 
 procedure TFHIRMapStyler.GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes);
 var
   st : TMapStylerStyle;
-  zone : TMapStylerZone;
 begin
-  st := TMapStylerStyle(style and $F);
-  zone := TMapStylerZone(style shr 4);
-  if (zone in ALL_ZONES) then
-  begin
-    case st of
-      stNull, stNoUse: ; // nothing.
-      stComment:
-        begin
-        Attributes.FontStyle := [fsItalic];
-        Attributes.ForeColor := clGreen;
-        end;
-      stKnownToken :
-        begin
-        Attributes.FontStyle := [fsBold];
-        Attributes.ForeColor := clPurple;
-        end;
-      stString :
-        begin
-        Attributes.FontStyle := [];
-        Attributes.ForeColor := clNavy;
-        end;
-      stField :
-        begin
-        Attributes.FontStyle := [];
-        Attributes.ForeColor := clMaroon;
-        end;
-      stGrammar :
-        begin
-        Attributes.FontStyle := [fsBold];
-        Attributes.ForeColor := clBlack;
-        end;
-    end;
+  st := TMapStylerStyle(style);
+  case st of
+    stGenText, stText: ; // nothing.
+    stGenComment, stComment:
+      begin
+      Attributes.FontStyle := [fsItalic];
+      Attributes.ForeColor := clGreen;
+      end;
+    stGenKnownToken, stKnownToken :
+      begin
+      Attributes.FontStyle := [fsBold];
+      Attributes.ForeColor := clBlack;
+      end;
+    stGenString, stString :
+      begin
+      Attributes.FontStyle := [];
+      Attributes.ForeColor := clNavy;
+      end;
+    stGenError, stField :
+      begin
+      Attributes.FontStyle := [];
+      Attributes.ForeColor := clMaroon;
+      end;
+    stGenGrammar, stGrammar :
+      begin
+      Attributes.FontStyle := [fsBold];
+      Attributes.ForeColor := clPurple;
+      end;
+    stNumber : Attributes.ForeColor := clBlue;
   end;
 end;
 
@@ -135,293 +123,172 @@ begin
   result := false;
 end;
 
-procedure TFHIRMapStyler.StyleNeeded;
+procedure TFHIRMapStyler.scanGen;
 var
-  startState : TMapStylerStyle;
-  zone : TMapStylerZone;
+  rw : boolean;
+  s : String;
 begin
-  startState := TMapStylerStyle(LineState and $f);
-  zone := TMapStylerZone(LineState shr 4);
-  case startState of
-    stNull, stKnownToken: scanZone(zone);
-    stComment: scanComment(zone);
-    stString, stField: scanString(zone, '"');
-    stGrammar: scanZone(zone);
-  else
-    raise ELibraryException.create('Error Message');
-  end;
-  inherited;
-end;
-
-procedure TFHIRMapStyler.scanBase;
-begin
-  ConsumeChars(WhitespaceChars);
-  CommitStyle(szBase, stNull);
-  if CurCharIs('/') and NextCharIs('/') then
-    ScanComment(szBase)
-  else if hasToken('map') then
-    scanMap1
-  else if hasToken('uses') then
-    scanUses1
-  else if hasToken('imports') then
-    scanImports
-  else if hasToken('group') then
-    scanGroup
-  else
+  while not EndOfLine do
   begin
-    ConsumeAllRemaining;
-    CommitStyle(szBase, stNull);
+    if CurCharIn(WhitespaceChars) then
+    begin
+      ConsumeChars(WhitespaceChars);
+      CommitStyle(stGenText);
+    end
+    else if hasGrammar('//') then
+    begin
+      ConsumeAllRemaining;
+      CommitStyle(stGenComment);
+      CommitStyle(stGenText);
+    end
+    else if CurCharIn(MAP_GRAMMAR_CHARS) then
+    begin
+      ConsumeChar;
+      CommitStyle(stGenGrammar);
+    end
+    else if CurCharIs('''') then
+      ScanString('''', stGenError)
+    else if CurCharIs('"') then
+      ScanString('"', stGenString)
+    else if hasToken('group') then
+      ScanGroup
+    else
+    begin
+      rw := false;
+      for s in MAP_RESERVED_WORDS_GEN do
+      begin
+        if hasToken(s) then
+        begin
+          rw := true;
+          scanReservedWord(s, stGenKnownToken);
+          break;
+        end;
+      end;
+      if not rw then
+      begin
+        if CurCharIn(MAP_TOKEN_START) then
+          ScanToken(stGenText)
+        else
+        begin
+          ConsumeAllRemaining;
+          CommitStyle(stGenText);
+        end;
+      end;
+    end;
   end;
-end;
-
-procedure TFHIRMapStyler.scanComment(zone : TMapStylerZone);
-begin
-  ConsumeCharsNot(EolnChars);
-  CommitStyle(zone, stComment);
-  scanZone(zone);
-end;
-
-procedure TFHIRMapStyler.scanGrammar(zone: TMapStylerZone; token: String);
-var
-  i : integer;
-begin
-  for i := 1 to token.Length do
-    ConsumeChar();
-  CommitStyle(zone, stGrammar);
 end;
 
 procedure TFHIRMapStyler.scanGroup;
+var
+  rw : boolean;
+  s : String;
 begin
   while not EndOfLine do
   begin
-    ConsumeChars(WhitespaceChars);
-    CommitStyle(szGroup, stNull);
-    if hasGrammar('//') then
-      scanComment(szGroup)
-    else if hasToken('group') or hasToken('source') or hasToken('target') or hasToken('extends') then
-      scanToken(szGroup)
-    else if hasGrammar('<<types>>') then
-      scanToken(szGroup, '<<types>>')
-    else if hasGrammar('<<type+>>') then
-      scanToken(szGroup, '<<type+>>')
-    else if hasGrammar('(') then
-      scanGrammar(szGroup, ')')
-    else if hasGrammar(')') then
-      scanGrammar(szGroup, ')')
-    else if hasGrammar(',') then
-      scanGrammar(szGroup, ',')
-    else if hasGrammar('{') then
+    if CurCharIn(WhitespaceChars) then
     begin
-      scanGrammar(szRule, '{');
-      scanRule;
+      ConsumeChars(WhitespaceChars);
+      CommitStyle(stText);
     end
-    else
+    else if hasGrammar('//') then
     begin
-      ConsumeCharsNot(WhitespaceChars+['(', ',', ')']);
-      CommitStyle(szGroup, stNull);
-    end;
-  end;
-end;
-
-procedure TFHIRMapStyler.scanImports;
-begin
-  if not CurCharIs('"') then
-  begin
-    ConsumeCharsNot(WhitespaceChars);
-    CommitStyle(szImports, stKnownToken);
-  end;
-  ConsumeChars(WhitespaceChars);
-  CommitStyle(szImports, stNull);
-  if CurCharIs('"') then
-  begin
-    scanString(szImports, '"');
-    ConsumeAllRemaining;
-    CommitStyle(szBase, stNull);
-  end
-  else
-    CommitStyle(szImports, stNull);
-end;
-
-procedure TFHIRMapStyler.scanMap1;
-begin
-  if not CurCharIs('"') then
-  begin
-    ConsumeCharsNot(WhitespaceChars);
-    CommitStyle(szMap1, stKnownToken);
-  end;
-  ConsumeChars(WhitespaceChars);
-  CommitStyle(szMap1, stNull);
-  if CurCharIs('"') then
-    scanString(szMap1, '"');
-  ConsumeChars(WhitespaceChars);
-  CommitStyle(szMap1, stNull);
-  if hasGrammar('=') then
-    scanMap2
-  else
-  begin
-    ConsumeAllRemaining;
-    CommitStyle(szMap1, stNull);
-  end;
-end;
-
-procedure TFHIRMapStyler.scanMap2;
-begin
-  if not CurCharIs('"') then
-  begin
-    ConsumeCharsNot(WhitespaceChars);
-    CommitStyle(szMap2, stKnownToken);
-  end;
-  ConsumeChars(WhitespaceChars);
-  CommitStyle(szMap2, stNull);
-  if CurCharIs('"') then
-  begin
-    scanString(szMap2, '"');
-    CommitStyle(szBase, stNull);
-  end
-  else
-  begin
-    ConsumeAllRemaining;
-    CommitStyle(szMap2, stNull);
-  end;
-end;
-
-procedure TFHIRMapStyler.scanRule;
-begin
-  CommitStyle(szRule, stNull);
-  while not EndOfLine do
-  begin
-    ConsumeChars(WhitespaceChars);
-    CommitStyle(szRule, stNull);
-    if hasGrammar('//') then
-      scanComment(szRule)
-    else if CurCharIs('"') then
-      scanSuspectString(szRule, '"', ';')
+      ConsumeAllRemaining;
+      CommitStyle(stComment);
+      CommitStyle(stText);
+    end
+    else if CurCharIn(MAP_GRAMMAR_CHARS) then
+    begin
+      ConsumeChar;
+      CommitStyle(stGrammar);
+    end
     else if CurCharIs('''') then
-      scanString(szRule, '''')
-    else if hasGrammar('->') then
-      scanToken(szGroup, '->')
-    else if hasToken('then') or hasToken('check') or hasToken('where') or hasToken('log') or hasToken('as') then
-      scanToken(szRule)
-    else if hasGrammar('(') then
-      scanGrammar(szRule, ')')
-    else if hasGrammar(')') then
-      scanGrammar(szRule, ')')
-    else if hasGrammar(',') then
-      scanGrammar(szRule, ',')
-    else if hasGrammar(';') then
-      scanGrammar(szRule, ';')
-    else if hasGrammar(':') then
-      scanGrammar(szRule, ':')
-    else if hasGrammar('..') then
-      scanGrammar(szRule, '..')
-    else if hasGrammar('}') then
-    begin
-      scanGrammar(szRule, '}');
-      if not CharInSet(NextCharNotInSet(WhitespaceChars), [';', '"']) then // end of group as a whole
-      begin
-        scanGroup;
-        CommitStyle(szGroup, stNull);
-      end;
-    end
-    else if hasGrammar('{') then
-    begin
-      scanGrammar(szRule, '{');
-      scanRule;
-    end
+      ScanString('''', stString)
+    else if CurCharIs('"') then
+      ScanString('"', stField)
     else
     begin
-      ConsumeCharsNot(WhitespaceChars+['(', ',', ')']);
-      CommitStyle(szRule, stNull);
+      rw := false;
+      for s in MAP_RESERVED_WORDS_GEN do
+      begin
+        if hasToken(s) then
+        begin
+          rw := true;
+          scanReservedWord(s, stKnownToken);
+          break;
+        end;
+      end;
+      if not rw then
+      begin
+        if CurCharIn(['0'..'9']) then
+          ScanNumber()
+        else if CurCharIn(MAP_TOKEN_START) then
+          ScanToken(stText)
+        else
+        begin
+          ConsumeAllRemaining;
+          CommitStyle(stText);
+        end;
+      end;
     end;
   end;
-
 end;
 
-procedure TFHIRMapStyler.scanString(zone: TMapStylerZone; ch : AnsiChar);
+procedure TFHIRMapStyler.scanNumber;
 begin
-  ConsumeChar(ch);
-  ConsumeCharsNot([ch]);
-  ConsumeChar(ch);
-  CommitStyle(zone, stString);
-end;
-
-procedure TFHIRMapStyler.scanSuspectString(zone: TMapStylerZone; ch, endchar: AnsiChar);
-begin
-  ConsumeChar(ch);
-  ConsumeCharsNot([ch]);
-  ConsumeChar(ch);
-  if NextCharNotInSet(WhitespaceChars) <> endchar then
-    CommitStyle(zone, stField)
+  if CurCharIs('0') and NextCharIs('x') then
+  begin
+    ConsumeChar;
+    ConsumeChar;
+    ConsumeChars(['0'..'7', 'a'..'f', 'A'..'F']);
+  end
   else
-    CommitStyle(zone, stString);
+    ConsumeChars(['0'..'9', 'e', '-', '.']);
+  CommitStyle(stNumber);
 end;
 
-procedure TFHIRMapStyler.scanToken(zone: TMapStylerZone; token: String);
+procedure TFHIRMapStyler.scanReservedWord(s: String; style: TMapStylerStyle);
 var
   i : integer;
 begin
-  for i := 1 to token.Length do
-    ConsumeChar();
-  CommitStyle(zone, stKnownToken);
+  for i := 1 to s.Length do
+    ConsumeChar;
+  CommitStyle(style);
 end;
 
-procedure TFHIRMapStyler.scanToken(zone: TMapStylerZone);
+procedure TFHIRMapStyler.scanString(ch : ansichar; style : TMapStylerStyle);
+var
+  done : boolean;
 begin
-  ConsumeChars(['a'..'z', 'A'..'Z', '0'..'9', '_']);
-  CommitStyle(zone, stKnownToken);
+  ConsumeChar(ch);
+  done := false;
+  while not done and not EndOfLine do
+  begin
+    ConsumeCharsNot([ch, '\']);
+    done := CurCharIs(ch);
+    if not done and CurCharIs('\') then
+      ConsumeChar(2);
+  end;
+  ConsumeChar(ch);
+  CommitStyle(style);
 end;
 
-procedure TFHIRMapStyler.scanUses1;
+procedure TFHIRMapStyler.scanToken(style: TMapStylerStyle);
 begin
-  if not CurCharIs('"') then
-  begin
-    ConsumeCharsNot(WhitespaceChars);
-    CommitStyle(szUses1, stKnownToken);
-  end;
-  while not EndOfLine and not hasToken('as') do
-  begin
-    ConsumeChars(WhitespaceChars);
-    CommitStyle(szUses1, stNull);
-    if CurCharIs('"') then
-      scanString(szUses1, '"')
-    else if hasToken('alias') then
-      scanToken(szUses1)
-    else if not hasToken('as') then
-    begin
-      ConsumeCharsNot(WhitespaceChars);
-      CommitStyle(szUses1, stNull);
-    end;
-  end;
-  if not EndOfLine then
-  begin
-    scanToken(szUses1);
-    scanUses2;
-  end;
+  ConsumeChar;
+  while CurCharIn(MAP_TOKEN_CHAR) do
+    ConsumeChar;
+  CommitStyle(style);
 end;
 
-procedure TFHIRMapStyler.scanUses2;
+procedure TFHIRMapStyler.StyleNeeded;
+var
+  startState : TMapStylerStyle;
 begin
-  ConsumeChars(WhitespaceChars);
-  CommitStyle(szMap2, stNull);
-  if not EndOfLine then
-  begin
-    ConsumeCharsNot(WhitespaceChars);
-    CommitStyle(szBase, stNull);
-  end;
-end;
-
-procedure TFHIRMapStyler.scanZone(zone: TMapStylerZone);
-begin
-  case zone of
-    szBase : scanBase;
-    szMap1 : scanMap1;
-    szMap2 : scanMap2;
-    szUses1 : scanUses1;
-    szUses2 : scanUses2;
-    szImports : scanImports;
-    szGroup : scanGroup;
-    szRule : scanRule;
-  end;
+  startState := TMapStylerStyle(LineState);
+  if startState in [stGenText..stGenError] then
+    scanGen
+  else
+    ScanGroup;
 end;
 
 end.

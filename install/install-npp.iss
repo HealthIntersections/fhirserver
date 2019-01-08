@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.2
+OutputBaseFilename=npp-install-1.0.37
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=FHIR Notepad++ Plugin 1.0.2
+AppVerName=FHIR Notepad++ Plugin 1.0.37
 
 [Components]
 Name: "n64"; Description: "64bit Notepad++"; Types: custom; Flags: exclusive
@@ -38,6 +38,8 @@ Name: "n32"; Description: "32bit Notepad++"; Types: custom; Flags: exclusive
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
+Source: "C:\work\fhirserver\install\installer.dll";               Flags: dontcopy;
+
 ; 1st, the plug-in itself
 Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n32
 Source: "C:\work\fhirserver\Exec\32\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
@@ -51,3 +53,58 @@ Source: "C:\Program Files\Notepad++\allowAppDataPlugins.xml";   DestDir: "{app}"
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"; ValueType: dword; ValueName: "notepad++.exe"; ValueData: "10000"; Flags: createvalueifdoesntexist 
 
 
+[Code]
+var
+  LoadInstallPage : TOutputProgressWizardPage;
+
+type
+  TMyCallback = procedure(IntParam: Integer; StrParam: WideString);
+
+Function MyDllDownloadPackages(urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
+
+procedure InitCallback(IntParam: Integer; StrParam: WideString);
+begin
+  LoadInstallPage.SetProgress(intparam, 100);
+  LoadInstallPage.SetText(StrParam, '');
+end;
+
+procedure InstallPackages;
+var
+  done : boolean;
+  s : String;
+  msg : String;
+begin
+  LoadInstallPage.SetText('Installing R3/R4/CDA Packages...', '');
+  LoadInstallPage.SetProgress(0, 100);
+  LoadInstallPage.Show;
+  try
+    s := ',hl7.fhir.core#3.0.1,hl7.fhir.core#4.0.0,hl7.fhir.core#1.0.2';
+    repeat
+      done := true;
+      msg := MyDllDownloadPackages(s, @InitCallback);
+      if msg <> '' then
+        done := MsgBox('Downloading the packages failed : '+msg+#13#10+'Try again? (can be done later through installed applications)', mbError, MB_YESNO) = mrNo;
+    until done;
+  finally
+    LoadInstallPage.Hide;
+  end;
+
+end;
+
+Procedure CreatePostInstallPage;
+Begin
+  LoadInstallPage := CreateOutputProgressPage('Perform Installation tasks', '');
+End;
+
+procedure InitializeWizard();
+Begin
+  CreatePostInstallPage;
+End;
+
+
+procedure CurStepChanged(CurStep: TSetupStep);
+Begin
+  if (CurStep = ssPostInstall)  Then
+    InstallPackages;
+End;
+                                                                          

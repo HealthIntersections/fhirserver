@@ -55,11 +55,23 @@ type
 function MsgBoxP(const Text, Caption: PChar; const Typ: TMsgBoxType; const Buttons: Cardinal): Integer;
 function MsgBox(const Text, Caption: String; const Typ: TMsgBoxType; const Buttons: Cardinal): Integer;
 function MsgBoxFmt(const Text: String; const Args: array of const; const Caption: String; const Typ: TMsgBoxType; const Buttons: Cardinal): Integer;
+function isXml(s : String) : boolean;
 
 implementation
 
 var
   MessageBoxCaptions: array[TMsgBoxType] of PChar;
+
+function isXml(s : String) : boolean;
+begin
+  if not s.Contains('<') then
+    result := false
+  else if not s.Contains('{') then
+    result := true
+  else
+    result := s.IndexOf('<') < s.IndexOf('{');
+end;
+
 
 function MsgBoxFmt(const Text: String; const Args: array of const; const Caption: String; const Typ: TMsgBoxType; const Buttons: Cardinal): Integer;
 begin

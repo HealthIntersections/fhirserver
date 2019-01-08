@@ -23,12 +23,12 @@ uses
   JclDebug,
   ScintEdit, ScintInt, ScintFormats,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell,
-  FHIR.Ui.ListSelector, FHIR.Cda.Scint, FHIR.V2.Scint,
+  FHIR.Ui.ListSelector,
   FHIR.Javascript,
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
-  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.Scint, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
-  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor, FHIR.Transformer.Debugger,
+  FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
+  FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor,
   FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg;
 
 const
@@ -61,6 +61,15 @@ const
   spMode = 1;
   spStatus = 2;
 
+const
+  DBG_STOPPED = 0;
+  DBG_EXECUTE = 1;
+  DBG_STEP_OVER = 2;
+  DBG_STEP_OUT = 3;
+  DBG_STEP_INTO = 4;
+  // values 10 or above will abort debugging run
+  DBG_STOP = 10;
+  DBG_CLOSING = 11;
 
 type
   TTransformerForm = class(TForm)
@@ -216,8 +225,6 @@ type
     ListBox1: TListBox;
     Panel8: TPanel;
     Panel9: TPanel;
-    Panel10: TPanel;
-    ListBox3: TListBox;
     Panel12: TPanel;
     Panel13: TPanel;
     Splitter3: TSplitter;
@@ -250,6 +257,9 @@ type
     N11: TMenuItem;
     About1: TMenuItem;
     estException1: TMenuItem;
+    lblExecutionError: TLabel;
+    N12: TMenuItem;
+    mnuRecompileAll: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -352,13 +362,17 @@ type
     procedure btnOpenTargetClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure estException1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure mnuRecompileAllClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
     FCache : TResourceMemoryCache;
+    FEngine : TTransformEngine;
 
     FEditor : TEditorInformation;
     FLoading : boolean;
+    FInitialised : boolean;
     FProgress : TWorkingForm;
 
     FWorkspaceWidth : integer;
@@ -373,14 +387,13 @@ type
     FVarsSelected : PVirtualNode;
 
     FPathSelection : TFslList<TPathSelection>;
-    FRunning : boolean;
+    FRunningState : boolean;
     FWantClose : boolean;
-    FDebugInfo : TFHIRStructureMapDebugContext;
+    FDebugInfo : TTransformEngineDebugContext;
     FStepEditor : TEditorInformation;
     FStepOutcome : integer;
-    FStack : TFslList<TFHIRStructureMapDebugContext>;
-    FVariables : TVariables;
-    FVariable : TVariable;
+    FVariables : TFslList<TTransformEngineExecutionVariable>;
+    FVariable : TTransformEngineExecutionVariable;
 
     function DoSave(command : String) : boolean;
     function nodeCaption(i : integer) : String;
@@ -410,31 +423,18 @@ type
     procedure ZoomReset;
 
     procedure status(color : TColor; msg : String);
-    function engineGetSource(sender : TConversionEngine; f : TWorkspaceFile) : TStream;
-    procedure engineStatus(sender : TConversionEngine; message : String);
-    procedure engineLog(sender : TConversionEngine; message : String);
+    procedure eventLog(sender : TTransformEngine; message : String);
     procedure cacheLog(sender : TObject; pct : integer; done : boolean; desc : String);
     procedure setDebugStatus(enabled : boolean);
+    procedure checkExecutionState;
 
-    function rewriteV2(src, title: String): String;
-    function rewriteCDA(src, title: String): String;
-
-    procedure checkV2(src, title : String);
-    procedure checkCDA(src, title : String);
-    procedure checkResource(src, title : String);
-    procedure checkJS(src, title : String);
-    procedure checkMap(src, title : String; f : TWorkspaceFile);
-    procedure checkTemplate(src, title : String);
-
-    procedure SetErrorLine(ALine: Integer);
     procedure SetStepLine(editor : TEditorInformation; ALine: Integer);
-    procedure HideError();
-    procedure UpdateLineMarkers(editor : TEditorInformation; const Line: Integer);
     procedure MemoLinesDeleted(FirstLine, Count, FirstAffectedLine: Integer);
     procedure MemoLinesInserted(FirstLine, Count: integer);
-    procedure UpdateAllLineMarkers();
     procedure ToggleBreakPoint(Line: Integer);
 
+    function loadEvent : TExecutionDetails;
+    function canExecute : boolean;
     function parseCDA(context : TFHIRWorkerContext) : TFHIRObject;
     function parseResource(context : TFHIRWorkerContext) : TFHIRObject;
     procedure runFHIRPath(debug: boolean);
@@ -445,19 +445,23 @@ type
 
     procedure startRunning;
     procedure stopRunning;
-    procedure executeTransform(debug: boolean);
-    procedure ShowCallStack(f : TWorkspaceFile);
+    procedure ShowCallStack;
     procedure ClearCallStack;
-    procedure ShowVars(vars : TVariables);
+    procedure ShowVars(vars : TFslList<TTransformEngineExecutionVariable>);
     procedure ClearVars;
-    procedure ShowVariable(variable : TVariable);
+    procedure ShowVariable(variable : TTransformEngineExecutionVariable);
     procedure ClearVariable;
-    procedure DebugTransform(sender : TObject; info : TFHIRStructureMapDebugContext);
-    procedure DoCompiled(sender : TConversionEngine; f : TWorkspaceFile; checkBreakpointProc : TCheckBreakpointEvent);
+    procedure DebugTransform(sender : TTransformEngine; info : TTransformEngineDebugContext);
 
     procedure HandleException(Sender: TObject; E: Exception);
     Procedure InitExceptions;
     procedure CloseExceptions;
+
+    procedure InitialiseExec;
+    procedure ExecutorUpdateFile(sender : TTransformEngine; f : TWorkspaceFile);
+    procedure ExecutorStateUpdate(sender : TTransformEngine);
+    procedure ExecutorStatusMessage(sender : TTransformEngine; color : TColor; msg: String; beep : UInt);
+    function ExecutorOpenFile(sender : TTransformEngine; f : TWorkspaceFile) : TEditorInformation;
   public
     { Public declarations }
   end;
@@ -471,16 +475,6 @@ implementation
 
 uses FHIR.Transformer.SettingsDialog;
 
-
-function isXml(s : String) : boolean;
-begin
-  if not s.Contains('<') then
-    result := false
-  else if not s.Contains('{') then
-    result := true
-  else
-    result := s.IndexOf('<') < s.IndexOf('{');
-end;
 
 function makeXmlDense(src : String) : String;
 var
@@ -544,73 +538,19 @@ begin
 end;
 
 procedure TTransformerForm.btnExecuteClick(Sender: TObject);
+var
+  ev : TExecutionDetails;
 begin
   if FDebugInfo <> nil then
     FStepOutcome := DBG_EXECUTE
   else
-    executeTransform(true);
-end;
-
-procedure TTransformerForm.executeTransform(debug : boolean);
-var
-  engine : TCDAConversionEngine;
-  f : TWorkspaceFile;
-  editor :TEditorInformation;
-  s, fns, fnt : String;
-begin
-  try
-    startRunning;
-    engine := TCDAConversionEngine.create;
+  begin
+    ev := loadEvent;
     try
-      engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
-      engine.map := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
-      engine.cache := FCache.Link;
-      engine.workspace := FWorkspace.link;
-      engine.OnWantSource := engineGetSource;
-      engine.OnStatus := engineStatus;
-      engine.OnLog := engineLog;
-      if debug then
-        engine.OnTransformDebug := DebugTransform;
-      engine.load;
-      engine.execute;
-      if engine.Outcomes.Count = 0 then
-        MessageDlg('No output from Transform', mtInformation, [mbok], 0)
-      else if engine.Outcomes.Count > 1 then
-        MessageDlg('Multiple outputs from Transform - not handled yet', mtError, [mbok], 0)
-      else
-        case FWorkspace.Outcome of
-          tomIgnore : MessageDlg('Transform Complete with no errors', mtInformation, [mbok], 0);
-          tomSaveTo :
-            begin
-            f := cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile;
-            editor := editorForFile(f);
-            if (editor = nil) then
-              editor := openWorkspaceFile(f);
-            if isXml(editor.memo.RawText) then
-              s := resourceToString(engine.Outcomes[0] as TFhirResource, ffXml, OutputStylePretty)
-            else
-              s := resourceToString(engine.Outcomes[0] as TFhirResource, ffJson, OutputStylePretty);
-            updateWorkspaceFile(editor, s);
-            end;
-          tomCompare :
-            begin
-            f := cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile;
-            fns := makeAbsolutePath(f.filename, FWorkspace.folder);
-            fnt := Path([SystemTemp, 'generated-'+ExtractFileName(fns)]);
-            if isXml(FileToString(fns, TEncoding.UTF8)) then
-              StringToFile(resourceToString(engine.Outcomes[0] as TFhirResource, ffXml, OutputStylePretty), fnt, TEncoding.UTF8)
-            else
-              StringToFile(resourceToString(engine.Outcomes[0] as TFhirResource, ffJson, OutputStylePretty), fnt, TEncoding.UTF8);
-            ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar('"'+fns+'" "'+fnt+'"'), true);
-            end;
-        end;
+      FEngine.debug(ev);
     finally
-      engine.free;
+      ev.Free;
     end;
-  finally
-    stopRunning;
-    if FWantClose then
-      Close;
   end;
 end;
 
@@ -749,8 +689,15 @@ begin
 end;
 
 procedure TTransformerForm.mnuRunNoDebugClick(Sender: TObject);
+var
+  ev : TExecutionDetails;
 begin
-  executeTransform(false);
+  ev := loadEvent;
+  try
+    FEngine.run(ev);
+  finally
+    ev.Free;
+  end;
 end;
 
 procedure TTransformerForm.cacheLog(sender : TObject; pct : integer; done : boolean; desc : String);
@@ -768,6 +715,22 @@ begin
   begin
     FProgress.Free;
     FProgress := nil;
+  end;
+end;
+
+function TTransformerForm.canExecute: boolean;
+var
+  ev : TExecutionDetails;
+  msg : String;
+begin
+  ev := loadEvent;
+  try
+    lblExecutionError.Caption := '';
+    result := (ev <> nil) and FEngine.canRun(ev, msg);
+    if not result then
+      lblExecutionError.Caption := msg;
+  finally
+    ev.Free;
   end;
 end;
 
@@ -797,11 +760,7 @@ procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
     cbxTarget.ItemIndex := cbxTarget.Items.IndexOf(FWorkspace.Target);
     if (cbxTarget.ItemIndex = -1) and (cbxTarget.Items.Count > 0) then
       cbxTarget.ItemIndex := 0;
-
-    btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1));
-    mnuExecute.Enabled := btnExecute.enabled;
-    btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1));
-    mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
+    checkExecutionState;
   end;
 begin
    case cbxEventType.ItemIndex of
@@ -814,7 +773,7 @@ begin
     FWorkspace.Source := cbxSource.Text;
     FWorkspace.Script := cbxScript.Text;
     FWorkspace.Target := cbxTarget.Text;
-    FWorkspace.Outcome := TTrasnformOutcomeMode(cbxOutcome.ItemIndex);
+    FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
     FWorkspace.Save;
   end;
 end;
@@ -822,7 +781,7 @@ end;
 procedure TTransformerForm.cbxOutcomeChange(Sender: TObject);
 begin
   cbxTarget.Enabled := cbxOutcome.ItemIndex > 0;
-  FWorkspace.Outcome := TTrasnformOutcomeMode(cbxOutcome.ItemIndex);
+  FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
 end;
 
 procedure TTransformerForm.cbxScriptChange(Sender: TObject);
@@ -832,8 +791,8 @@ begin
     FWorkspace.Script := cbxScript.Text;
     FWorkspace.Save;
   end;
-  btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
 end;
 
 procedure TTransformerForm.cbxSourceChange(Sender: TObject);
@@ -843,8 +802,16 @@ begin
     FWorkspace.Source := cbxSource.Text;
     FWorkspace.Save;
   end;
-  btnExecute.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FRunning and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
+end;
+
+procedure TTransformerForm.checkExecutionState;
+begin
+  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  mnuExecute.Enabled := btnExecute.enabled;
+  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
 end;
 
 function TTransformerForm.parseCDA(context: TFHIRWorkerContext): TFHIRObject;
@@ -875,6 +842,8 @@ begin
 end;
 
 procedure TTransformerForm.pgTabsChange(Sender: TObject);
+var
+  e : TEditorInformation;
 begin
   if pgTabs.ActivePageIndex = 0 then
   begin
@@ -909,17 +878,22 @@ begin
   end
   else
   begin
-    FEditor := editorForTab(pgTabs.ActivePage); // (pgTabs.ActivePage.Controls[0] as TScintEdit).context as TEditorInformation;
-    Caption := pgTabs.ActivePage.Caption+'- FHIR Transformer';
+    e := editorForTab(pgTabs.ActivePage);
+    if e <> FEditor then
+    begin
+      FEditor := e;
+      FEngine.setActiveEditor(FEditor);
+      Caption := pgTabs.ActivePage.Caption+'- FHIR Transformer';
+    end;
     mnuSearch.Enabled := true;
     mnuFindNext.Enabled := true;
     mnuReplace.Enabled := not FEditor.memo.ReadOnly;
     mnuGoto.Enabled := true;
     mnuCompare.Enabled := FEditor.id.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
     tbCompare.Enabled := mnuCompare.Enabled;
-    mnuPretty.Enabled := not FRunning and (FEditor.id.format in [fmtCDA, fmtResource]);
-    mnuDense.Enabled := not FRunning and (FEditor.id.format in [fmtCDA, fmtResource]);
-    mnuEOL.Enabled := not FRunning;
+    mnuPretty.Enabled := not FEngine.Running and (FEditor.id.format in [fmtCDA, fmtResource]);
+    mnuDense.Enabled := not FEngine.Running and (FEditor.id.format in [fmtCDA, fmtResource]);
+    mnuEOL.Enabled := not FEngine.Running;
     mnuWindowsEOL.Checked := false;
     mnuUnixEOL.Checked := false;
     mnuCompile.Enabled := true;
@@ -928,7 +902,7 @@ begin
       sleCRLF: mnuWindowsEOL.Checked := true;
       sleLF: mnuUnixEOL.Checked := true;
     end;
-    mnuRemoveEmptyLines.Enabled := not FRunning;
+    mnuRemoveEmptyLines.Enabled := not FEngine.Running;
     memoStatusChange(nil);
   end;
   tbSaveAll.Enabled := anyFilesDirty;
@@ -1016,37 +990,25 @@ begin
   pmnuPaste.Enabled := not FEditor.memo.ReadOnly and (Clipboard.HasFormat(CF_TEXT));
 end;
 
-procedure TTransformerForm.DebugTransform(sender: TObject; info: TFHIRStructureMapDebugContext);
-var
-  bpi : TBreakPointInfo;
-  f : TWorkspaceFile;
+procedure TTransformerForm.DebugTransform(sender: TTransformEngine; info: TTransformEngineDebugContext);
 begin
-  if (info.group = nil) then
-    exit; // don't break for the root map
-  f := FWorkspace.findFileByParsedObject(info.map);
-  if (info.status = dsRunToBreakpoint) then
-  begin
-    if (f = nil) or not f.hasBreakPoint(info.line-1, bpi) or (info.target <> nil) then
-      exit;
-  end;
-
   // set up viewing the info
   FDebugInfo := info.Link;
   try
-    ShowCallStack(f);
-    ShowVars(FDebugInfo.variables);
+    ShowCallStack;
+    ShowVars(info.variables);
     setDebugStatus(true);
     try
       FStepOutcome := DBG_STOPPED;
       while FStepOutcome = DBG_STOPPED do
         Application.ProcessMessages;
       case FStepOutcome of
-        DBG_EXECUTE: FDebugInfo.status := dsRunToBreakpoint;
-        DBG_STEP_OVER: FDebugInfo.status := dsStepOver;
-        DBG_STEP_OUT: FDebugInfo.status := dsStepOut;
-        DBG_STEP_INTO: FDebugInfo.status := dsStepIn;
-        DBG_STOP: FDebugInfo.status := dsRunToBreakpoint;
-        DBG_CLOSING: FDebugInfo.status := dsRunToBreakpoint;
+        DBG_EXECUTE: FDebugInfo.status := tdsRunToBreakpoint;
+        DBG_STEP_OVER: FDebugInfo.status := tdsStepOver;
+        DBG_STEP_OUT: FDebugInfo.status := tdsStepOut;
+        DBG_STEP_INTO: FDebugInfo.status := tdsStepIn;
+        DBG_STOP: FDebugInfo.status := tdsRunToBreakpoint;
+        DBG_CLOSING: FDebugInfo.status := tdsRunToBreakpoint;
       end;
     finally
       setDebugStatus(false);
@@ -1062,20 +1024,6 @@ begin
   end;
   if FStepOutcome >= DBG_STOP then
     abort;
-end;
-
-procedure TTransformerForm.DoCompiled(sender: TConversionEngine; f: TWorkspaceFile; checkBreakpointProc: TCheckBreakpointEvent);
-var
-  bpi : TBreakPointInfo;
-  valid : boolean;
-  editor : TEditorInformation;
-begin
-  editor := editorForFile(f);
-  for bpi in f.BreakPoints do
-  begin
-    bpi.invalid := not checkBreakpointProc(bpi.line);
-    UpdateLineMarkers(editor, bpi.line);
-  end;
 end;
 
 function TTransformerForm.DoSave(command : String) : boolean;
@@ -1165,31 +1113,42 @@ begin
   end;
 end;
 
-function TTransformerForm.engineGetSource(sender: TConversionEngine; f: TWorkspaceFile): TStream;
-var
-  editor : TEditorInformation;
-begin
-  editor := findWorkspaceFile(f);
-  if editor = nil then
-    result := nil
-  else
-    result := TStringStream.Create(editor.memo.RawText);
-end;
-
-procedure TTransformerForm.engineLog(sender: TConversionEngine; message: String);
+procedure TTransformerForm.eventLog(sender: TTransformEngine; message: String);
 begin
   mConsole.Lines.add(message);
   mConsole.perform(EM_LINESCROLL, 0, mConsole.Lines.Count);
 end;
 
-procedure TTransformerForm.engineStatus(sender: TConversionEngine; message: String);
-begin
-  raise Exception.Create('Not Done yet');
-end;
-
 procedure TTransformerForm.estException1Click(Sender: TObject);
 begin
   raise Exception.Create('Test Exception');
+end;
+
+function TTransformerForm.ExecutorOpenFile(sender: TTransformEngine;f: TWorkspaceFile): TEditorInformation;
+begin
+  raise Exception.Create('Not implemented yet');
+end;
+
+procedure TTransformerForm.ExecutorStateUpdate(sender: TTransformEngine);
+begin
+  if sender.Running <> FRunningState then
+    startRunning
+  else
+    stopRunning;
+end;
+
+procedure TTransformerForm.ExecutorStatusMessage(sender: TTransformEngine; color: TColor; msg: String; beep: UInt);
+begin
+  status(color, msg);
+  if (beep <> 0) then
+    MessageBeep(beep);
+end;
+
+procedure TTransformerForm.ExecutorUpdateFile(sender: TTransformEngine; f: TWorkspaceFile);
+begin
+  vtWorkspace.InvalidateNode(PVirtualNode(f.TagObject));
+  pgTabsChange(nil);
+  checkExecutionState;
 end;
 
 procedure TTransformerForm.Exit1Click(Sender: TObject);
@@ -1216,8 +1175,8 @@ begin
     if (p.obj is TWorkspaceFile) then
     begin
       mnuDuplicate.Enabled := true;
-      mnuRename.Enabled := not FRunning;
-      mnuDrop.Enabled := not FRunning;
+      mnuRename.Enabled := not FEngine.Running;
+      mnuDrop.Enabled := not FEngine.Running;
       node := node.Parent;
     end
     else
@@ -1299,7 +1258,7 @@ begin
   for i := 1 to pgTabs.PageCount - 1 do
   begin
     e := editorForTab(pgTabs.Pages[i]);
-    s := makeAbsolutePath(e.id.filename, FWorkspace.folder);
+    s := e.id.actualName;
     if e.FileTime <> TFile.GetLastWriteTimeUtc(s) then
     begin
       FileChangedForm := TFileChangedForm.Create(self);
@@ -1401,7 +1360,6 @@ begin
   InitExceptions;
   Application.OnActivate := FormActivate;
   FPathSelection := TFslList<TPathSelection>.create;
-  FStack := TFslList<TFHIRStructureMapDebugContext>.create;
 
   FCache := TResourceMemoryCache.create;
   FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#0.0.1'];
@@ -1429,15 +1387,13 @@ procedure TTransformerForm.FormDestroy(Sender: TObject);
 var
   i : integer;
 begin
-  for i := 1 to pgTabs.PageCount - 1 do
-    editorForTab(pgTabs.Pages[i]).Free;
   for i := mnuWorkspace.Count - 1 downto 1 do
     mnuWorkspace.Items[I].Free;
   FIni.Free;
   FCache.Free;
+  FEngine.Free;
   FWorkspace.Free;
   FPathSelection.Free;
-  FStack.Free;
   CloseExceptions;
 end;
 
@@ -1449,6 +1405,11 @@ begin
     ZoomIn;
   if (key = 48) and (Shift = [ssCtrl]) then
     ZoomReset;
+end;
+
+procedure TTransformerForm.FormShow(Sender: TObject);
+begin
+  Timer1.Enabled := true;
 end;
 
 function TTransformerForm.GetFPDebuggerSetting(name: TFHIRPathDebuggerFormSetting): Integer;
@@ -1474,6 +1435,13 @@ begin
     if L <> Low(L) then
       editor.CaretLine := L - 1;
   end;
+end;
+
+procedure TTransformerForm.InitialiseExec;
+begin
+  FInitialised := true;
+  FEngine.initialise(FCache);
+  FEngine.CompileAll;
 end;
 
 procedure TTransformerForm.InitializeFindText(Dlg: TFindDialog; editor : TScintEdit);
@@ -1502,6 +1470,27 @@ begin
   end;
 end;
 
+function TTransformerForm.loadEvent: TExecutionDetails;
+begin
+  result := TExecutionDetails.create;
+  try
+    result.kind := TExecutionKind(cbxEventType.ItemIndex);
+    if cbxSource.ItemIndex = -1 then
+      exit(nil);
+    result.focus := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
+    if cbxScript.ItemIndex = -1 then
+      exit(nil);
+    result.script := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
+    result.outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
+    if cbxTarget.ItemIndex = -1 then
+      exit(nil);
+    result.target := (cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile).link;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 procedure TTransformerForm.LoadWorkspace(proj: TWorkspace);
 var
   f : TWorkspaceFile;
@@ -1521,8 +1510,16 @@ begin
     for i := pgTabs.PageCount - 1 downto 1 do
       closeWorkspaceFile(editorForTab(pgTabs.Pages[i]), false);
   end;
+  FEngine.Free;
   FWorkspace.Free;
   FWorkspace := proj;
+  FEngine := TTransformEngine.Create(FWorkspace.link);
+  FEngine.OnFileUpdate := ExecutorUpdateFile;
+  FEngine.OnStateUpdate := ExecutorStateUpdate;
+  FEngine.OnStatusMessage := ExecutorStatusMessage;
+  FEngine.OnDebug := DebugTransform;
+  FEngine.OnOpenFile := ExecutorOpenFile;
+  FEngine.OnLog := eventLog;
   FIni.DeleteKey('Workspaces', proj.folder);
   key := FIni.ReadInteger('Workspace', 'last', 0) + 1;
   FIni.WriteInteger('Workspace', 'last', key);
@@ -1568,6 +1565,11 @@ begin
   finally
     st.Free;
   end;
+  if FInitialised then
+  begin
+    FEngine.initialise(FCache);
+    FEngine.CompileAll;
+  end;
 end;
 
 
@@ -1586,8 +1588,9 @@ begin
       raise EFslException.Create('The file "'+sdNew.FileName+'" is already in the '+UI_NAME);
     s := makeRelativePath(sdNew.FileName, FWorkspace.folder);
     StringToFile(template, sdNew.FileName, TEncoding.UTF8);
-    f := TWorkspaceFile.Create(s, fmt);
+    f := TWorkspaceFile.Create(FWorkspace, s, fmt);
     category.Add(f);
+    FWorkspace.allFiles.Add(f.link);
     FWorkspace.save;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 6;
@@ -1616,6 +1619,8 @@ procedure TTransformerForm.memoChange(Sender: TObject; const Info: TScintEditCha
   end;
 begin
   FEditor.isDirty := true;
+  FEditor.id.compileStatus := csWorking;
+  ExecutorUpdateFile(FEngine, FEditor.id);
   tbSave.Enabled := FEditor.isDirty;
   mnuSave.Enabled := tbSave.Enabled;
   tbSaveAll.Enabled := anyFilesDirty;
@@ -1631,7 +1636,7 @@ begin
 
   FEditor.id.Row := FEditor.memo.CaretLine;
   if (FEditor.ErrorLine < 0) then
-    HideError;
+    FEditor.HideError;
   if FEditor.memo.ReadOnly then
     pnlStatus.Panels[spMode].Text := 'LOCK'
   else if FEditor.memo.InsertMode then
@@ -1702,7 +1707,7 @@ begin
     list := PTreeDataPointer(vtWorkspace.GetNodeData(FSelected.Parent)).obj as TFslList<TWorkspaceFile>;
     case MessageDlg('Drop '+f.filename+'. Do you want to delete the actual file?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo, TMsgDlgBtn.mbCancel], 0) of
       mrCancel : abort;
-      mrYes : DeleteFile(makeAbsolutePath(f.filename, FWorkspace.folder));
+      mrYes : DeleteFile(f.actualName);
       mrNo : saveWorkspaceFile(editorForFile(f));
     end;
     list.Remove(f);
@@ -1726,7 +1731,7 @@ begin
     f := (p.obj as TWorkspaceFile);
     node := FSelected.Parent;
     list := PTreeDataPointer(vtWorkspace.GetNodeData(FSelected.Parent)).obj as TFslList<TWorkspaceFile>;
-    makeNewFile(nodeCaption(node.Index), ExtractFileExt(f.filename), FileToString(makeAbsolutePath(f.filename, FWorkspace.folder), TEncoding.UTF8), f.format, list);
+    makeNewFile(nodeCaption(node.Index), ExtractFileExt(f.filename), f.source, f.format, list);
   end;
 end;
 
@@ -1793,7 +1798,7 @@ begin
 
     fmt := detectFormat(odImport.FileName);
     s := makeRelativePath(odImport.FileName, FWorkspace.folder);
-    f := TWorkspaceFile.Create(s, fmt);
+    f := TWorkspaceFile.Create(FWorkspace, s, fmt);
     case fmt of
       fmtV2: category := FWorkspace.messages;
       fmtResource: category := FWorkspace.resources;
@@ -1803,6 +1808,7 @@ begin
       fmtCDA: category := FWorkspace.documents;
     end;
     category.Add(f);
+    FWorkspace.allFiles.Add(f.link);
     FWorkspace.save;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 6;
@@ -1845,20 +1851,25 @@ var
   st : TStringList;
   s, f : String;
 begin
-  f := '';
-  st := TStringList.create;
-  try
-    FIni.ReadSection('Workspaces', st);
-    for s in st do
-      if FIni.ReadInteger('Workspaces', s, 0) = (Sender as TMenuItem).Tag then
-        f := s;
-  finally
-    st.free;
-  end;
-  if (folderExists(f)) then
-    LoadWorkspace(TWorkspace.Create(f))
+  if FEngine.Running then
+    MessageDlg('Cannot change workspace while debugging', mtError, [mbok], 0)
   else
-    MessageDlg('Unable to find '+f, mtError, [mbok], 0);
+  begin
+    f := '';
+    st := TStringList.create;
+    try
+      FIni.ReadSection('Workspaces', st);
+      for s in st do
+        if FIni.ReadInteger('Workspaces', s, 0) = (Sender as TMenuItem).Tag then
+          f := s;
+    finally
+      st.free;
+    end;
+    if (folderExists(f)) then
+      LoadWorkspace(TWorkspace.Create(f))
+    else
+      MessageDlg('Unable to find '+f, mtError, [mbok], 0);
+  end;
 end;
 
 procedure TTransformerForm.mnuPrettyClick(Sender: TObject);
@@ -1871,6 +1882,12 @@ begin
     fmtMap: raise Exception.create('Not Supported');
     fmtTemplate: raise Exception.create('Not Supported Yet');
   end;
+end;
+
+procedure TTransformerForm.mnuRecompileAllClick(Sender: TObject);
+begin
+  FEngine.clear;
+  FEngine.compileAll;
 end;
 
 procedure TTransformerForm.mnuRedoClick(Sender: TObject);
@@ -1919,7 +1936,7 @@ begin
     begin
       if FWorkspace.includesFile(sdNew.FileName) then
         raise EFslException.Create('The file "'+sdNew.FileName+'" is already in the '+UI_NAME);
-      RenameFile(makeAbsolutePath(f.filename, FWorkspace.folder), sdNew.FileName);
+      RenameFile(f.actualName, sdNew.FileName);
       s := makeRelativePath(sdNew.FileName, FWorkspace.folder);
       f.filename := s;
       FWorkspace.save;
@@ -2063,8 +2080,8 @@ begin
     if (p.obj is TWorkspaceFile) then
     begin
       pmDuplicate.Enabled := true;
-      pmRename.Enabled := not FRunning;
-      pmDrop.Enabled := not FRunning;
+      pmRename.Enabled := not FEngine.Running;
+      pmDrop.Enabled := not FEngine.Running;
       node := node.Parent;
     end
     else
@@ -2091,54 +2108,55 @@ end;
 procedure TTransformerForm.vtCallStackClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  dbg : TFHIRStructureMapDebugContext;
+  dbg : TTransformEngineExecutionPoint;
   f :  TWorkspaceFile;
   sel : TScintRange;
 begin
   p := vtCallStack.GetNodeData(FCallStackSelected);
-  dbg := p.obj as TFHIRStructureMapDebugContext;
+  dbg := p.obj as TTransformEngineExecutionPoint;
   if (dbg = nil) then
     exit;
-  if (dbg.focus.LocationStart.line <> -1) then
+  if (dbg.Start.line <> -1) then
   begin
-    f := FWorkspace.findFileByParsedObject(dbg.map);
-    if f <> nil then
+    if dbg.file_ <> nil then
     begin
-      openWorkspaceFile(f);
-      sel.StartPos := FEditor.memo.GetPositionFromLineColumn(dbg.focus.LocationStart.line-1, dbg.focus.LocationStart.col-1);
-      sel.EndPos := FEditor.memo.GetPositionFromLineColumn(dbg.focus.LocationEnd.line-1, dbg.focus.LocationEnd.col-1);
+      openWorkspaceFile(dbg.file_);
+      sel.StartPos := FEditor.memo.GetPositionFromLineColumn(dbg.Start.line-1, dbg.Start.col-1);
+      sel.EndPos := FEditor.memo.GetPositionFromLineColumn(dbg.Stop.line-1, dbg.Stop.col-1);
       FEditor.memo.Selection := sel;
       FEditor.memo.ScrollCaretIntoView;
     end;
   end;
-  ShowVars(dbg.variables);
+  if dbg.variables <> nil then
+    ShowVars(dbg.variables);
 end;
 
 procedure TTransformerForm.vtCallStackDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
 var
   p : PTreeDataPointer;
-  dbg : TFHIRStructureMapDebugContext;
+  dbg : TTransformEngineExecutionPoint;
 begin
   p := vtWorkspace.GetNodeData(Node);
-  dbg := p.obj as TFHIRStructureMapDebugContext;
-  if dbg.target <> nil then
-    TargetCanvas.Font.Color := clMaroon
-  else if dbg.rule <> nil then
-    TargetCanvas.Font.Color := clBlack
-  else if dbg.group <> nil then
-    TargetCanvas.Font.Color := clNavy
-  else
-    TargetCanvas.Font.Color := clGreen;
+  dbg := p.obj as TTransformEngineExecutionPoint;
+  case dbg.kind of
+    epJavscript: TargetCanvas.Font.Color := clPurple;
+    epMap: TargetCanvas.Font.Color := clYellow;
+    epMapGroup: TargetCanvas.Font.Color := clNavy;
+    epMapRule: TargetCanvas.Font.Color := clBlack;
+    epMapTarget: TargetCanvas.Font.Color := clMaroon;
+    epLiquidStatement: TargetCanvas.Font.Color := clOlive;
+    epLiquidTag: TargetCanvas.Font.Color := clGreen;
+  end;
 end;
 
 procedure TTransformerForm.vtCallStackGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
-  dbg : TFHIRStructureMapDebugContext;
+  dbg : TTransformEngineExecutionPoint;
 begin
   p := vtWorkspace.GetNodeData(Node);
-  dbg := p.obj as TFHIRStructureMapDebugContext;
-  CellText := dbg.Name;
+  dbg := p.obj as TTransformEngineExecutionPoint;
+  CellText := dbg.desc;
 end;
 
 procedure TTransformerForm.vtCallStackInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
@@ -2146,7 +2164,7 @@ var
   p : PTreeDataPointer;
 begin
   p := vtWorkspace.GetNodeData(Node);
-  p.obj := FStack[Node.Index];
+  p.obj := FDebugInfo.callStack[Node.Index];
 end;
 
 procedure TTransformerForm.vtCallStackRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -2178,8 +2196,8 @@ var
 begin
   p := vtWorkspace.GetNodeData(Node);
   b := p.obj2 as TFHIRObject;
-  if (p.obj is TVariable) then
-    n := (p.obj as TVariable).name
+  if (p.obj is TTransformEngineExecutionVariable) then
+    n := (p.obj as TTransformEngineExecutionVariable).name
   else
     n := (p.obj as TFHIRProperty).name;
   case Column of
@@ -2270,34 +2288,40 @@ end;
 procedure TTransformerForm.vtVarsClick(Sender: TObject);
 var
   p : PTreeDataPointer;
-  v : TVariable;
+  v : TTransformEngineExecutionVariable;
 begin
   p := vtVars.GetNodeData(FVarsSelected);
-  v := p.obj as TVariable;
+  v := p.obj as TTransformEngineExecutionVariable;
   ShowVariable(v);
 end;
 
 procedure TTransformerForm.vtVarsDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
 var
   p : PTreeDataPointer;
-  v : TVariable;
+  v : TTransformEngineExecutionVariable;
 begin
   p := vtWorkspace.GetNodeData(Node);
-  v := p.obj as TVariable;
-  if v.mode = vmINPUT then
-    TargetCanvas.Font.Color := clNavy
-  else
-    TargetCanvas.Font.Color := clMaroon;
+  v := p.obj as TTransformEngineExecutionVariable;
+  case v.mode of
+    tvmNone: TargetCanvas.Font.Color := clBlack;
+    tvmInput: TargetCanvas.Font.Color := clNavy;
+    tvmOutput: TargetCanvas.Font.Color := clMaroon;
+  end;
 end;
 
 procedure TTransformerForm.vtVarsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
-  v : TVariable;
+  v : TTransformEngineExecutionVariable;
 begin
   p := vtWorkspace.GetNodeData(Node);
-  v := p.obj as TVariable;
-  CellText := v.summary(true);
+  v := p.obj as TTransformEngineExecutionVariable;
+  if v.value <> '' then
+    CellText := v.name+' = "'+v.value+'"'
+  else
+    CellText := v.name+': '+v.typeName;
+  if v.mode <> tvmNone then
+    CellText := CellText + ' ['+CODES_TTransformEngineExecutionVariableMode[v.mode]+']';
 end;
 
 procedure TTransformerForm.vtVarsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
@@ -2348,7 +2372,12 @@ begin
       5: ImageIndex := 14;
     end
   else
-    ImageIndex := 15;
+    case (p.obj as TWorkspaceFile).compileStatus of
+      csNotCompiled: ImageIndex := 41;
+      csOk: ImageIndex := 15;
+      csError: ImageIndex := 42;
+      csWorking: ImageIndex := 43;
+    end;
 end;
 
 procedure TTransformerForm.vtWorkspaceGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
@@ -2395,6 +2424,7 @@ begin
   begin
     pp := vtWorkspace.GetNodeData(parentNode);
     p.obj := (pp.obj as TFslList<TWorkspaceFile>)[Node.Index];
+    (p.obj as TWorkspaceFile).TagObject := TObject(node);
     InitialStates := [];
   end;
 end;
@@ -2448,9 +2478,6 @@ end;
 function TTransformerForm.openWorkspaceFile(f : TWorkspaceFile) : TEditorInformation;
 var
   tab : TTabSheet;
-  editor : TScintEdit;
-  s : String;
-  bpi : TBreakPointInfo;
 begin
   result := findWorkspaceFile(f);
   if result <> nil then
@@ -2470,63 +2497,29 @@ begin
       fmtMap: tab.ImageIndex := 13;
       fmtTemplate: tab.ImageIndex := 14;
     end;
-    editor := TIDEScintEdit.create(tab);
-    editor.Parent := tab;
-    editor.Font.Assign(mConsole.Font);
-    editor.OnChange := memoChange;
-    editor.OnUpdateUI := memoStatusChange;
-    editor.OnKeyDown := FormKeyDown;
-    editor.OnMarginClick := MemoMarginClick;
-    editor.LineNumbers := true;
-    editor.PopupMenu := pmEditor;
-    editor.Align := alClient;
-    case f.format of
-      fmtV2 :  editor.Styler := TV2Styler.Create(self);
-      fmtCDA  : editor.Styler := TCDAStyler.Create(self);
-      fmtResource:
-        if isXml(editor.rawText) then
-          editor.Styler := TXmlStyler.Create(self)
-        else
-          editor.Styler := TJsonStyler.Create(self);
-      fmtJS : editor.Styler := TJSStyler.Create(self);
-      fmtMap : editor.Styler := TFHIRMapStyler.Create(self);
-      fmtTemplate : editor.Styler := TLiquidStyler.Create(self);
-    end;
-
-    result := TEditorInformation.create;
-    editor.context := result;
-    result.memo := editor;
-    result.id := f.link;
+    result := TEditorInformation.create(f.link);
+    FEngine.editors.Add(result);
     result.tab := tab;
+    result.init();
+    result.memo.Font.Assign(mConsole.Font);
+    result.memo.OnChange := memoChange;
+    result.memo.OnUpdateUI := memoStatusChange;
+    result.memo.OnKeyDown := FormKeyDown;
+    result.memo.OnMarginClick := MemoMarginClick;
+    result.memo.PopupMenu := pmEditor;
     FEditor := result;
-
-    s := makeAbsolutePath(f.filename, FWorkspace.folder);
-    editor.ReadOnly := FileIsReadOnly(s);
-    result.FileTime := TFile.GetLastWriteTimeUtc(s);
-    result.fileIsReadOnly := editor.ReadOnly;
-    editor.Lines.LoadFromFile(s);
-    editor.ClearUndo;
-    editor.CaretLine := f.row;
-    result.isDirty := false;
-    result.ErrorLine := -1;
-    result.StepLine := -1;
-    for bpi in f.BreakPoints do
-      UpdateLineMarkers(result, bpi.line);
+    FEngine.setActiveEditor(FEditor);
     pgTabs.ActivePage := tab;
     pgTabsChange(pgTabs);
   end;
+  if result.id.compileStatus = csError then
+    status(clMaroon, result.id.errorMsg);
 end;
 
 procedure TTransformerForm.saveWorkspaceFile(editor : TEditorInformation);
-var
-  s, v : String;
 begin
-  if editor = nil then
-    exit;
-  s := makeAbsolutePath(editor.id.filename, FWorkspace.folder);
-  editor.memo.Lines.SaveToFile(s);
-  editor.FileTime := TFile.GetLastWriteTimeUtc(s);
-  editor.isDirty := false;
+  editor.save;
+  // memoChange(editor);
 end;
 
 procedure TTransformerForm.setDebugStatus(enabled: boolean);
@@ -2545,7 +2538,7 @@ procedure TTransformerForm.startRunning;
 var
   i : integer;
 begin
-  FRunning := true;
+  FRunningState := true;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := true;
   cbxEventType.Enabled := false;
@@ -2561,7 +2554,7 @@ procedure TTransformerForm.stopRunning;
 var
   i : integer;
 begin
-  FRunning := false;
+  FRunningState := false;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := false;
   cbxEventType.Enabled := true;
@@ -2618,6 +2611,8 @@ end;
 
 procedure TTransformerForm.Timer1Timer(Sender: TObject);
 begin
+  if not FInitialised then
+    InitialiseExec;
   if (pgTabs.ActivePageIndex = 0) or (Feditor = nil) then
   begin
     mnuPaste.Enabled := false;
@@ -2640,7 +2635,7 @@ begin
     FEditor.id.BreakPoints.Remove(bpi)
   else
     FEditor.id.BreakPoints.Add(TBreakPointInfo.Create(line));
-  UpdateLineMarkers(FEditor, Line);
+  FEditor.UpdateLineMarkers(Line);
 end;
 
 procedure TTransformerForm.closeWorkspaceFile(editor : TEditorInformation; checkSave : boolean);
@@ -2659,8 +2654,9 @@ begin
   if pgTabs.ActivePage = editor.tab then
     pgTabs.TabIndex := pgTabs.TabIndex - 1;
   editor.tab.Free;
-  editor.Free;
+  FEngine.editors.Remove(editor);
 end;
+
 
 procedure TTransformerForm.renameWorkspaceFile(editor : TEditorInformation; fn : String);
 begin
@@ -2709,65 +2705,16 @@ begin
   end;
 end;
 
-function TTransformerForm.rewriteCDA(src, title : String) : String;
-var
-  stream, outStream : TStringStream;
-  elem : TFHIRMMElement;
-  engine : TCDAConversionEngine;
-begin
-  engine := TCDAConversionEngine.create;
-  try
-    engine.cache := FCache.Link;
-    engine.workspace := FWorkspace.link;
-    engine.OnWantSource := engineGetSource;
-    engine.OnStatus := engineStatus;
-    engine.OnLog := engineLog;
-    engine.load;
-    stream := TStringStream.Create(src, TEncoding.UTF8);
-    try
-      elem := TFHIRMMManager.parse(engine.Context, stream, ffXml);
-      try
-        outStream := TStringStream.Create;
-        try
-          TFHIRMMManager.compose(engine.Context, elem, outStream, ffXml, OutputStylePretty);
-          result := outStream.DataString;
-        finally
-          outStream.Free;
-        end;
-      finally
-        elem.free;
-      end;
-    finally
-      stream.free;
-    end;
-  finally
-    engine.free;
-  end;
-end;
-
-function TTransformerForm.rewriteV2(src, title : String) : String;
-var
-  utils : TFHIRStructureMapUtilities;
-  map : TFHIRStructureMap;
-begin
-   utils := TFHIRStructureMapUtilities.Create(nil, nil, nil, nil);
-   try
-     map := utils.parse(src, title);
-     try
-       result := utils.render(map);
-     finally
-       map.Free;
-     end;
-   finally
-     utils.Free;
-   end;
-end;
-
 procedure TTransformerForm.mnuChooseWorkspaceClick(Sender: TObject);
 begin
-  fd.DefaultFolder := FWorkspace.folder;
-  if fd.Execute then
-    LoadWorkspace(TWorkspace.Create(fd.FileName));
+  if FEngine.Running then
+    MessageDlg('Cannot change workspace while debugging', mtError, [mbok], 0)
+  else
+  begin
+    fd.DefaultFolder := FWorkspace.folder;
+    if fd.Execute then
+      LoadWorkspace(TWorkspace.Create(fd.FileName));
+  end;
 end;
 
 procedure TTransformerForm.mnuCompareClick(Sender: TObject);
@@ -2779,16 +2726,23 @@ begin
   src := FEditor.memo.RawText;
   fmt := 1;
   case FEditor.id.format of
-    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtV2: output := FEngine.canonical(FEditor.id);
     fmtCDA:
       begin
       fmt := 2;
-      output := rewriteCDA(src, FEditor.id.title);
+      output := FEngine.canonical(FEditor.id);
       end;
-    fmtResource: raise Exception.create('Not Supported Yet');
+    fmtResource:
+      begin
+      if isXml(src) then
+        fmt := 2
+      else
+        fmt := 3;
+      output := FEngine.canonical(FEditor.id);
+      end;
     fmtJS: raise Exception.create('Not Supported Yet');
-    fmtMap: output := rewriteV2(src, FEditor.id.title);
-    fmtTemplate: raise Exception.create('Not Supported Yet');
+    fmtMap: output := FEngine.canonical(FEditor.id);
+    fmtTemplate: output := FEngine.canonical(FEditor.id);
   end;
   showdiff := true;
   if fmt = 1 then
@@ -2805,58 +2759,37 @@ begin
     if CheckXMLIsSame(fnin, fnout, msg) then
       ShowMessage('ok');
   end
+  else if fmt = 3 then
+  begin
+    fnin := path(['c:\temp', 'source.json']);
+    fnout := path(['c:\temp', 'output.json']);
+    StringToFile(src, fnin, TEncoding.UTF8);
+    StringToFile(output, fnout, TEncoding.UTF8);
+    if CheckJsonIsSame(fnin, fnout, msg) then
+      ShowMessage('ok');
+  end
 end;
 
 procedure TTransformerForm.mnuCompileClick(Sender: TObject);
 begin
-  SetErrorLine(-1);
-  status(clNavy, 'Checking '+FEditor.id.title);
-  try
-    case FEditor.id.format of
-      fmtV2: checkV2(FEditor.memo.RawText, FEditor.id.title);
-      fmtCDA: checkCDA(FEditor.memo.RawText, FEditor.id.title);
-      fmtResource: checkResource(FEditor.memo.RawText, FEditor.id.title);
-      fmtJS: checkJS(FEditor.memo.RawText, FEditor.id.title);
-      fmtMap: checkMap(FEditor.memo.RawText, FEditor.id.title, FEditor.id);
-      fmtTemplate: checkTemplate(FEditor.memo.RawText, FEditor.id.title);
-    end;
-    status(clGreen, FEditor.id.title+' is syntactically valid at '+FormatDateTime('c', now));
-    MessageBeep(SOUND_SYSTEM_INFORMATION);
-  except
-    on e : EParserException do
-    begin
-      SetErrorLine(e.Line-1);
-      status(clMaroon, 'Error Compiling: '+e.message);
-      MessageBeep(SOUND_SYSTEM_ERROR)
-    end;
-    on e : Exception do
-    begin
-      status(clMaroon, 'Error Compiling: '+e.message);
-      MessageBeep(SOUND_SYSTEM_ERROR);
-    end;
-  end;
+  FEngine.compile(FEditor.id, true);
+
 end;
 
 procedure TTransformerForm.Rewrite1Click(Sender: TObject);
 begin
   case FEditor.id.format of
-    fmtV2: raise Exception.Create('Not Supported Yet');
-    fmtCDA: FEditor.memo.RawText := rewriteCDA(FEditor.memo.RawText, FEditor.id.title);
-    fmtResource: raise Exception.create('Not Supported Yet');
+    fmtV2: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
+    fmtCDA: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
+    fmtResource: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
     fmtJS: raise Exception.create('Not Supported Yet');
-    fmtMap: FEditor.memo.RawText := rewriteV2(FEditor.memo.RawText, FEditor.id.title);
-    fmtTemplate: raise Exception.create('Not Supported Yet');
+    fmtMap: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
+    fmtTemplate: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
   end;
-end;
-
-procedure TTransformerForm.checkV2(src, title : String);
-begin
-  raise Exception.Create('Not Done Yet');
 end;
 
 procedure TTransformerForm.ClearCallStack;
 begin
-  FStack.Clear;
   vtCallStack.RootNodeCount := 0;
   FCallStackSelected := nil;
 end;
@@ -2873,85 +2806,6 @@ begin
   FVariables := nil;
 end;
 
-procedure TTransformerForm.checkCDA(src, title : String);
-begin
-  rewriteCDA(src, title); // just ignore output
-end;
-
-procedure TTransformerForm.checkResource(src, title : String);
-var
-  p : TFHIRParser;
-begin
-  if isXml(src) then
-    p := TFHIRXmlParser.Create(nil, 'en')
-  else
-    p := TFHIRJsonParser.Create(nil, 'en');
-  try
-    p.parseResource(src).Free;
-  finally
-    p.free;
-  end;
-end;
-
-procedure TTransformerForm.checkJS(src, title : String);
-var
-  js : TJavascript;
-begin
-  js := TJavascript.Create(ExtractFilePath(ParamStr(0)));
-  try
-    js.compile(src, title);
-  finally
-    js.Free;
-  end;
-end;
-
-procedure TTransformerForm.checkMap(src, title : String; f : TWorkspaceFile);
-var
-  utils : TFHIRStructureMapUtilities;
-  map : TFHIRStructureMap;
-  mbpr : TMapbreakpointResolver;
-begin
-  utils := TFHIRStructureMapUtilities.Create(nil, nil, nil, nil);
-  try
-    map := utils.parse(src, title);
-    try
-      mbpr := TMapbreakpointResolver.create(map.Link);
-      try
-        DoCompiled(nil, f, mbpr.checkBreakPoint);
-      finally
-        mbpr.free;
-      end;
-    finally
-      map.free;
-    end;
-  finally
-    utils.Free;
-  end;
-end;
-
-procedure TTransformerForm.checkTemplate(src, title : String);
-begin
-  raise Exception.Create('Not Done Yet');
-end;
-
-procedure TTransformerForm.SetErrorLine(ALine: Integer);
-var
-  OldLine: Integer;
-begin
-  if FEditor.ErrorLine <> ALine then
-  begin
-    OldLine := FEditor.ErrorLine;
-    FEditor.ErrorLine := ALine;
-    if OldLine >= 0 then
-      UpdateLineMarkers(FEditor, OldLine);
-    if FEditor.ErrorLine >= 0 then
-    begin
-      FEditor.memo.CaretLine := FEditor.ErrorLine;
-      FEditor.memo.ScrollCaretIntoView;
-      UpdateLineMarkers(FEditor, FEditor.ErrorLine);
-    end;
-  end;
-end;
 
 procedure TTransformerForm.SetFPDebuggerSetting(name: TFHIRPathDebuggerFormSetting; value: Integer);
 begin
@@ -2974,7 +2828,7 @@ begin
       OldLine := FStepEditor.StepLine;
       FStepEditor.StepLine := -1;
       if OldLine >= 0 then
-        UpdateLineMarkers(FStepEditor, OldLine);
+        FStepEditor.UpdateLineMarkers(OldLine);
     end;
     FStepEditor := editor;
     if FStepEditor <> nil then
@@ -2984,51 +2838,37 @@ begin
       begin
         FStepEditor.memo.CaretLine := FStepEditor.StepLine;
         FStepEditor.memo.ScrollCaretIntoView;
-        UpdateLineMarkers(FStepEditor, FStepEditor.StepLine);
+        FStepEditor.UpdateLineMarkers(FStepEditor.StepLine);
       end;
     end;
   end;
 end;
 
-procedure TTransformerForm.ShowCallStack(f : TWorkspaceFile);
-var
-  dbg : TFHIRStructureMapDebugContext;
+procedure TTransformerForm.ShowCallStack;
 begin
-  Fstack.Clear;
   FCallStackSelected := nil;
-  dbg := FDebugInfo;
-  while dbg <> nil do
+  vtCallStack.RootNodeCount := FDebugInfo.callStack.Count;
+  if FDebugInfo.callStack.Count > 0 then
   begin
-    FStack.add(dbg.link);
-    dbg := dbg.Parent;
-  end;
-  vtCallStack.RootNodeCount := FStack.Count;
-  if Fstack.Count > 0 then
-  begin
-    openWorkspaceFile(f);
-    SetStepLine(FEditor, FDebugInfo.focus.LocationStart.line-1);
+    openWorkspaceFile(FDebugInfo.callStack[0].file_);
+    SetStepLine(FEditor, FDebugInfo.callStack[0].Start.line-1);
   end;
 end;
 
-procedure TTransformerForm.ShowVariable(variable: TVariable);
+procedure TTransformerForm.ShowVariable(variable: TTransformEngineExecutionVariable);
 begin
   FVariable := variable;
   vtVarDetails.RootNodeCount := 0;
   vtVarDetails.RootNodeCount := 1;
 end;
 
-procedure TTransformerForm.ShowVars(vars : TVariables);
+procedure TTransformerForm.ShowVars(vars : TFslList<TTransformEngineExecutionVariable>);
 begin
   FVariables := vars;
   vtVars.RootNodeCount := 0;
   vtVars.RootNodeCount := FVariables.Count;
   FVarsSelected := nil;
   ClearVariable;
-end;
-
-procedure TTransformerForm.HideError;
-begin
-  SetErrorLine(-1);
 end;
 
 procedure TTransformerForm.MemoLinesInserted(FirstLine, Count: integer);
@@ -3063,43 +2903,12 @@ begin
     having two conflicting markers (or two of the same marker). There's no
     way to stop it from doing that, or to easily tell which markers came from
     which lines, so we simply delete and re-create all markers on the line. }
-  UpdateLineMarkers(FEditor, FirstAffectedLine);
-end;
-
-procedure TTransformerForm.UpdateLineMarkers(editor : TEditorInformation; const Line: Integer);
-var
-  bpi : TBreakPointInfo;
-begin
-  if Line >= Editor.Memo.Lines.Count then
-    Exit;
-
-  { Delete all markers on the line. To flush out any possible duplicates,
-    even the markers we'll be adding next are deleted. }
-  if Editor.Memo.GetMarkers(Line) <> [] then
-    Editor.Memo.DeleteAllMarkersOnLine(Line);
-
-  if editor.StepLine = Line then
-    Editor.Memo.AddMarker(Line, mmLineStep)
-  else if Editor.ErrorLine = Line then
-    Editor.Memo.AddMarker(Line, mmLineError)
-  else if editor.id.hasBreakPoint(line, bpi) then
-    if (bpi.invalid) then
-      Editor.Memo.AddMarker(Line, mmLineBreakpointBad)
-    else
-      Editor.Memo.AddMarker(Line, mmLineBreakpoint);
+  FEditor.UpdateLineMarkers(FirstAffectedLine);
 end;
 
 procedure TTransformerForm.updateWorkspaceFile(editor: TEditorInformation; src: String);
 begin
   editor.memo.RawText := src;
-end;
-
-procedure TTransformerForm.UpdateAllLineMarkers;
-var
-  Line: Integer;
-begin
-  for Line := 0 to FEditor.Memo.Lines.Count-1 do
-    UpdateLineMarkers(FEditor, Line);
 end;
 
 procedure TTransformerForm.InitExceptions;

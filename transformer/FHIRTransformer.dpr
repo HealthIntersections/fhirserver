@@ -119,7 +119,6 @@ uses
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm},
   FHIR.Transformer.FileChangedDlg in 'FHIR.Transformer.FileChangedDlg.pas' {FileChangedForm},
-  FHIR.Transformer.Debugger in 'FHIR.Transformer.Debugger.pas',
   FHIR.Transformer.Editor in 'FHIR.Transformer.Editor.pas',
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
   ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
@@ -127,7 +126,9 @@ uses
   ChakraCoreUtils in '..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
   ChakraCoreVersion in '..\dependencies\chakracore-delphi\ChakraCoreVersion.pas',
   ChakraDebug in '..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  Compat in '..\dependencies\chakracore-delphi\Compat.pas';
+  Compat in '..\dependencies\chakracore-delphi\Compat.pas',
+  FHIR.v2.Message in '..\library\v2\FHIR.v2.Message.pas',
+  FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas';
 
 {$R *.res}
 
