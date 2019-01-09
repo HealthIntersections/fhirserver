@@ -1,7 +1,11 @@
-MAINICON ICON "C:\\work\\fhirserver\\utils\\VocabTxServer\\mainicon.ico"
+MAINICON ICON "C:\\Program Files (x86)\\Embarcadero\\Studio\\19.0\\bin\\delphi_PROJECTICON.ico"
+/*
+Include manifest xml for XP/Vista
+*/
+1 24 "C:\\work\\fhirserver\\utilities\\VocabTxServer\\VocabTxServerManifest.xml"
 1 VERSIONINFO
-FILEVERSION 1,0,0,1
-PRODUCTVERSION 1,0,0,1
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
 FILEFLAGSMASK 0x3FL
 FILEFLAGS 0x00L
 FILEOS 0x40004L
@@ -12,7 +16,7 @@ BEGIN
     BEGIN
          BLOCK "040904E4"
          BEGIN
-              VALUE "FileVersion", "1.0.0.1\0"
+              VALUE "FileVersion", "1.0.0.0\0"
               VALUE "ProductVersion", "1.0.0.0\0"
          END
     END

@@ -1117,14 +1117,20 @@ begin
   begin
     p := CodeSystem.property_List[aCol - 4];
     v := c.prop(p.code);
-    if v <> nil then
+    if (v <> nil) and (v.value <> nil) then
       case p.type_ of
         ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger:
           value := v.value.primitiveValue;
         ConceptPropertyTypeDateTime:
-          value := TFHIRDateTime(v.value).value.toString('x');
+          if (v.value is TFHIRDateTime) then
+            value := TFHIRDateTime(v.value).value.toString('x')
+          else
+            value := 0;
         ConceptPropertyTypeBoolean:
-          value := TFHIRBoolean(v.value).value;
+          if v.value is TFHIRBoolean then
+            value := TFHIRBoolean(v.value).value
+          else
+            value := false;
 //        ConceptPropertyTypeCoding: ;
       end;
   end;

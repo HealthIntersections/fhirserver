@@ -56,7 +56,7 @@ Interface
 {$I GraphicConfiguration.inc}
 
 Uses
-  Windows, Classes, ExtCtrls, Graphics, SysUtils,
+  Windows, Classes, Vcl.ExtCtrls, Vcl.Graphics, SysUtils,
   Jpeg,
   GraphicCompression, GraphicStrings, GraphicColor,
   MathSupport;

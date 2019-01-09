@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Graphics,
+  SysUtils, Classes, Vcl.Graphics,
   ScintEdit,
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Cda.Base, FHIR.CDA.Objects, FHIR.CDA.Documents;

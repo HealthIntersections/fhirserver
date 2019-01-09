@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, SysUtils, Classes, IniFiles, Generics.Collections,
+  SysUtils, Classes, IniFiles, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities;
 
 type

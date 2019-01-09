@@ -37,7 +37,10 @@ interface
 
 uses
 {$ifdef DELPHI}
+  {$IFDEF MSWINDOWS}
   Windows,
+  {$ELSE}
+  {$ENDIF}
 {$endif}
   SysUtils;
 

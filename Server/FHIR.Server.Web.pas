@@ -82,7 +82,7 @@ Uses
   IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, FHIR.Web.Socket,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.MXml,
-  {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF} FHIR.Support.Service,
+  {$IFDEF MSWINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
@@ -93,7 +93,9 @@ Uses
   FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Storage, FHIR.Server.Security, FHIR.Server.XhtmlComp, FHIR.Snomed.Services, FHIR.Snomed.Publisher, FHIR.Server.Ini,
   FHIR.Scim.Server,
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
-  FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.Javascript, FHIR.Server.Subscriptions;
+  FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt,
+  {$IFNDEF NO_JS} FHIR.Server.Javascript, {$ENDIF}
+  FHIR.Server.Subscriptions;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -260,7 +262,9 @@ Type
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     procedure startHooks(ctxt: TFHIRWebServerPatientViewContext; patient: TFHIRPatientW; url: String);
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+   {$IFDEF MSWINDOWS}
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
+    {$ENDIF}
     function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
     procedure CheckAsyncTasks;
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -353,7 +357,9 @@ Type
     FPatientViewServers: TFslStringDictionary;
     FIsTerminologyServerOnly: boolean;
     FThreads : TList<TAsyncTaskThread>;
+    {$IFNDEF NO_JS}
     FOnRegisterJs: TRegisterJavascriptEvent;
+    {$ENDIF}
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
@@ -419,7 +425,9 @@ Type
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
     function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
+    {$IFNDEF NO_JS}
     property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
+    {$ENDIF}
   End;
 
 Function ProcessPath(base, path: String): string;
@@ -637,7 +645,9 @@ begin
       req.LoadParams('');
       req.baseUrl := FContext.Globals.Bases[0];
       Context.message := 'Process ' + name;
+      {$IFNDEF NO_JS}
       GJSHost.registry := FContext.EventScriptRegistry.link;
+      {$ENDIF}
       resp := TFHIRResponse.Create(FContext.ValidatorContext.link);
       try
         resp.OnCreateBuilder := doGetBundleBuilder;
@@ -1041,7 +1051,9 @@ Begin
                 Session := oRequest.Session.link;
 
                 // allow scripting to change anything about the request
+                {$IFNDEF NO_JS}
                 GJsHost.previewRequest(Session, oRequest);
+                {$ENDIF}
 
                 if redirect then
                 begin
@@ -1612,6 +1624,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 function TFhirWebServerEndPoint.HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 var
   id, ver: String;
@@ -1697,6 +1710,7 @@ begin
 //    r.Free;
 //  end;
 end;
+{$ENDIF}
 
 procedure TFhirWebServerEndPoint.HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
 var
@@ -1724,11 +1738,11 @@ begin
     result := HandleWebQuestionnaire(request, response)
   else if request.id.StartsWith('StructureDefinition/') then
     result := HandleWebProfile(request, response)
+  else if request.id = 'Create' then
+    result := HandleWebCreate(request, response)
 {$ENDIF}
   else if request.id.StartsWith('PatientHooks/') then
     result := HandleWebPatientHooks(request, response, secure)
-  else if request.id = 'Create' then
-    result := HandleWebCreate(request, response)
   else if request.id.StartsWith('Patient/') then
     result := HandleWebPatient(request, response, secure)
   else
@@ -3755,8 +3769,10 @@ begin
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
+{$IFNDEF NO_JS}
   GJsHost := TJsHost.Create(FJsPath);
   OnRegisterJs(self, GJsHost);
+{$ENDIF}
 //  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
@@ -3780,8 +3796,10 @@ begin
   finally
     FLock.Unlock;
   end;
+  {$IFNDEF NO_JS}
   GJsHost.Free;
   GJshost := nil;
+  {$ENDIF}
 {$IFDEF MSWINDOWS}
   CoUninitialize;
 {$ENDIF}
@@ -4201,8 +4219,10 @@ begin
     logResponse(id, response);
     t := GetTickCount - t;
     logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
+    {$IFNDEF OSX}
     if GService <> nil then
       logt(GService.ThreadStatus);
+    {$ENDIF}
   finally
     InterlockedDecrement(GCounterWebRequests);
     MarkExit(AContext);
@@ -4752,8 +4772,10 @@ begin
 {$IFDEF MSWINDOWS}
     CoInitialize(nil);
 {$ENDIF}
+    {$IFNDEF NO_JS}
     GJsHost := TJsHost.Create(FServer.FJsPath);
     FServer.OnRegisterJs(self, GJsHost);
+    {$ENDIF}
 //    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
@@ -4804,8 +4826,10 @@ begin
       FServer.FMaintenanceThread := nil;
     except
     end;
+    {$IFNDEF NO_JS}
     GJsHost.Free;
     GJsHost := nil;
+    {$ENDIF}
 
 
 {$IFDEF MSWINDOWS}
@@ -4832,8 +4856,10 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Subscription Thread');
+  {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create(FServer.FJsPath);
   FServer.OnRegisterJs(self, GJsHost);
+  {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
   try
@@ -4860,8 +4886,10 @@ begin
   except
     logt('Failing TFhirServerSubscriptionThread');
   end;
+  {$IFNDEF NO_JS}
   GJsHost.Free;
   GJsHost := nil;
+  {$ENDIF}
   SetThreadName('');
 end;
 
@@ -4880,8 +4908,10 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Email Thread');
+  {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create(FServer.FJsPath);
   FServer.OnRegisterJs(self, GJsHost);
+  {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
   try
@@ -4913,8 +4943,10 @@ begin
   except
     logt('Failing TFhirServerEmailThread');
   end;
+  {$IFNDEF NO_JS}
   GJsHost.Free;
   GJsHost := nil;
+  {$ENDIF}
   SetThreadName('');
 end;
 
@@ -5067,9 +5099,13 @@ begin
   t := 0;
 
   SetThreadName('Server Async Thread');
+  {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create(FServer.FWebServer.FJsPath);
+  {$ENDIF}
   try
+    {$IFNDEF NO_JS}
     FServer.FWebServer.OnRegisterJs(self, GJsHost);
+    {$ENDIF}
     status(atsWaiting, 'Waiting to start');
     sleep(100);
     response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);
@@ -5127,14 +5163,18 @@ begin
     FServer.FWebServer.FLock.Unlock;
   end;
   FreeOnTerminate := true;
+  {$IFNDEF NO_JS}
   GJsHost.Free;
   GJsHost := nil;
+  {$ENDIF}
   SetThreadName('');
 end;
 
 procedure TAsyncTaskThread.kill;
 begin
+  {$IFNDEF OSX}
   TerminateThread(ThreadHandle, 1);
+  {$ENDIF}
 end;
 
 procedure TAsyncTaskThread.saveOutcome;

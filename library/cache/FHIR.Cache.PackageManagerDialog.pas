@@ -446,7 +446,7 @@ begin
   if FSelNode <> nil then
   begin
     pp := vtPackages.GetNodeData(FSelNode);
-    if not (pp.obj is TFHIRPackageDependencyInfo) then
+    if (pp.obj is TFHIRPackageObject) then
       ok := true;
   end;
   btnDelete.Enabled := ok;

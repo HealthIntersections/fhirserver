@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$DEFINE SCINTILLA}
+{.$.DEFINE ADDICT} // if you have a copy of Addict in the delphi pathway (not open source)
 
 Interface
 
@@ -46,7 +47,8 @@ Uses
 
   FHIR.WP.Document, FHIR.WP.Builder, FHIR.WP.Control, FHIR.WP.Toolbar, FHIR.WP.Format, FHIR.WP.Dialogs,
   FHIR.WP.Types, FHIR.WP.Definers, FHIR.WP.Renderer, FHIR.WP.Widgets, FHIR.WP.Snomed, FHIR.WP.Settings,
-  FHIR.WP.Addict, FHIR.WP.Working, FHIR.WP.V2Ft,
+  {$IFDEF ADDICT} FHIR.WP.Addict, {$ENDIF}
+  FHIR.WP.Working, FHIR.WP.V2Ft,
 
   CDEOptions, OidFetcher, CdaheaderForm;
 
@@ -1177,9 +1179,11 @@ Begin
     wrdEditor.Settings.Release;
   End;
 
+{$IFDEF ADDICT}
   wrdEditor.Speller := TWPAddictSpeller.Create
     (TWPAddictDictionary.Create('C:\Temp',
     wrdEditor.Settings.SpellCheckUppercaseWords));
+{$ENDIF}
   wrdEditor.Printer := getDefaultPrinter;
   wrdEditor.PageLayoutController := BuildPageLayoutController;
 

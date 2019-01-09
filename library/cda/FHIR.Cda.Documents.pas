@@ -862,8 +862,10 @@ end;
 procedure TCDAAttachment.SaveToFile(filename: String);
 begin
   FBuffer.SaveToFileName(filename);
+  {$IFNDEF OSX}
   if FDateTime <> 0 then
     FileSetModified(filename, FDateTime);
+  {$ENDIF}
 end;
 
 procedure TCDAAttachment.SetBuffer(const Value: TFslBuffer);

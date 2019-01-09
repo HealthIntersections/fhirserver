@@ -12,7 +12,7 @@ unit ScintEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, ScintInt;
+  Windows, Messages, SysUtils, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, ScintInt;
 
 type
   TScintEditChangeInfo = record
@@ -24,7 +24,7 @@ type
   TScintEditCharAddedEvent = procedure(Sender: TObject; Ch: AnsiChar) of object;
   TScintEditDropFilesEvent = procedure(Sender: TObject; X, Y: Integer;
     AFiles: TStrings) of object;
-  TScintHintInfo = {$IFDEF UNICODE} Controls. {$ENDIF} THintInfo;
+  TScintHintInfo = {$IFDEF UNICODE} Vcl.Controls. {$ENDIF} THintInfo;
   TScintEditHintShowEvent = procedure(Sender: TObject;
     var Info: TScintHintInfo) of object;
   TScintEditMarginClickEvent = procedure(Sender: TObject; MarginNumber: Integer;
