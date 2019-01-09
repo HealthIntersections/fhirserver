@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix OSX version of toolkit"
+        as.returnvalue = "fix bug editing code systems with property type mismatches"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -660,8 +660,7 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
-        enabled = false
-        failifnofile = true
+        failifnofile = false
         filespec = C:\\work\\fhirserver\\toolkit\\install\\osx\\FHIRToolkit.app\\Contents\\MacOS\\FHIRToolkit
         id = {8A74CB5B-2893-4F7F-A835-E22A0FBE2BDD}
       end
