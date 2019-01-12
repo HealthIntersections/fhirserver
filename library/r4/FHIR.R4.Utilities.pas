@@ -304,6 +304,8 @@ type
     function hasType(t : String; out profile : String) : boolean;  overload;
     function hasType(t : String) : boolean; overload;
     function getType(t : String) : TFhirElementDefinitionType; overload;
+    function minInt : Integer;
+    function maxInt : Integer;
   end;
 
   TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
@@ -369,6 +371,7 @@ type
     function forceExtension(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
+    function getExtensionBool(url : String) : boolean; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
     function getExtensionByUrl(url : String) : TFHIRExtension;
     procedure removeExtension(url : String); overload;
@@ -2434,6 +2437,20 @@ begin
       else
         inc(t);
     end;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionBool(url: String): boolean;
+var
+  ndx : Integer;
+begin
+  ndx := getExtension(url);
+  if (ndx = -1) then
+    result := false
+  else if (self.ExtensionList.Item(ndx).value is TFHIRPrimitiveType) then
+    result := (TFHIRPrimitiveType(self.ExtensionList.Item(ndx).value).primitiveValue = 'true')
+      or (TFHIRPrimitiveType(self.ExtensionList.Item(ndx).value).primitiveValue = '1')
+  else
+    result := false;
 end;
 
 function TFHIRDomainResourceHelper.getExtensionByUrl( url: String): TFHIRExtension;
@@ -4690,6 +4707,16 @@ begin
   for edt in type_List do
     if edt.code = t then
       exit(true);
+end;
+
+function TFhirElementDefinitionHelper.maxInt: Integer;
+begin
+  result := StrToIntDef(max, MAXINT);
+end;
+
+function TFhirElementDefinitionHelper.minInt: Integer;
+begin
+  result := StrToIntDef(min, 0);
 end;
 
 function TFhirElementDefinitionHelper.hasType(t: String; out profile: String): boolean;

@@ -43,10 +43,10 @@ Uses
 Type
   TNodeStack = class(TFslObject)
   private
-    parent: TNodeStack;
+    FParent: TNodeStack;
     literalPath: String; // fhir path format
     logicalPaths: TStringList; // dotted format, various entry points
-    element: TFHIRMMElement;
+    FElement: TFHIRMMElement;
     definition: TFHIRElementDefinition;
     type_: TFHIRElementDefinition;
     // extension : TFHIRElementDefinition;
@@ -57,23 +57,35 @@ Type
     function getLiteralPath : String;
     function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
     function addToLiteralPath(path: Array of String): String;
+
+    property element : TFHIRMMElement read FElement write FElement;
+    property parent : TNodeStack read FParent write FParent;
   end;
 
   TElementInfo = class(TFslObject)
   private
-    name: String;
-    element: TFHIRMMElement;
-    path: String;
-    definition: TFHIRElementDefinition;
-    slice : TFHIRElementDefinition;
+    Fname: String;
+    Felement: TFHIRMMElement;
+    Fpath: String;
+    Fdefinition: TFHIRElementDefinition;
+    Fslice : TFHIRElementDefinition;
     count: integer;
-    index : integer;
-    sliceindex : integer;
+    Findex : integer;
+    Fsliceindex : integer;
+    FadditionalSlice : boolean;
 
-    function locationStart: TSourceLocation;
-    function locationEnd: TSourceLocation;
   public
     constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
+    property additionalSlice : boolean read FadditionalSlice write FadditionalSlice;
+    property definition: TFHIRElementDefinition read Fdefinition write Fdefinition;
+    property slice : TFHIRElementDefinition read FSlice write FSlice;
+    property path: String read Fpath write Fpath;
+    property index : integer read FIndex write FIndex;
+    property name: String read FName write FName;
+    property sliceindex : integer read Fsliceindex write Fsliceindex;
+    property element: TFHIRMMElement read Felement write Felement;
+    function locationStart: TSourceLocation;
+    function locationEnd: TSourceLocation;
   end;
 
   TChildIterator = class(TFslObject)
@@ -92,15 +104,31 @@ Type
     function count: integer;
   end;
 
+  TFhirProfileUsage = class
+  private
+    FChecked : boolean;
+    Fprofile : TFhirStructureDefinition;
+  public
+    function uncheckedProfiles : TFhirStructureDefinitionList;
+    property Checked : boolean read FChecked write FChecked;
+    property profile : TFhirStructureDefinition read FProfile write FProfile;
+  end;
+
   TValidationProfileSet = class (TFslObject)
   private
     FCanonical : TStringList;
     FDefinitions : TFHIRStructureDefinitionList;
+    FIsProcessed : boolean;
+    FUncheckedProfiles : TFslList<TFhirProfileUsage>;
+    function GetHasProfiles : boolean;
   public
     constructor Create; overload; override;
     constructor Create(profile : String); overload;
     constructor Create(profile : TFHIRStructureDefinition); overload;
     destructor Destroy; override;
+    property isProcessed : boolean read FIsProcessed write FIsProcessed;
+    property hasProfiles : boolean read GetHasProfiles;
+    property uncheckedProfiles : TFslList<TFhirProfileUsage> read FUncheckedProfiles;
   end;
 
   TFHIRValidator4 = class(TFHIRValidatorV)
@@ -3657,6 +3685,18 @@ begin
   FCanonical.Free;
   FDefinitions.Free;
   inherited;
+end;
+
+function TValidationProfileSet.GetHasProfiles : boolean;
+begin
+  result := false; // todo
+end;
+
+{ TFhirProfileUsage }
+
+function TFhirProfileUsage.uncheckedProfiles : TFhirStructureDefinitionList;
+begin
+  result := nil;
 end;
 
 end.

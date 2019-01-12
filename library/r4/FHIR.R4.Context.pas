@@ -65,12 +65,18 @@ type
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function fetchCodeSystem(url : String ) : TFhirCodeSystem;
+    function fetchValueSet(url : String ) : TFhirValueSet;
+    function fetchConceptMap(url : String ) : TFhirConceptMap;
+    function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
+    function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(system, version, code : String) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;  abstract;
+    function getSliceList(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;
     function getStructure(url : String) : TFHIRStructureDefinition; overload; virtual; abstract;
     function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; virtual; abstract;
     function getCustomResource(name : String) : TFHIRCustomResourceInformation; virtual; abstract;
@@ -135,6 +141,16 @@ begin
   result := validateCode(system, version, code, vs.Resource as TFHIRValueSet);
 end;
 
+function TFHIRWorkerContext.fetchCodeSystem(url: String): TFhirCodeSystem;
+begin
+  result := fetchResource(frtCodeSystem, url) as TFHIRCodeSystem;
+end;
+
+function TFHIRWorkerContext.fetchConceptMap(url: String): TFhirConceptMap;
+begin
+  result := fetchResource(frtConceptMap, url) as TFHIRConceptMap;
+end;
+
 function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
 var
   t : TFhirResourceType;
@@ -143,6 +159,26 @@ begin
     result := fetchResource(t, url)
   else
     raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
+end;
+
+function TFHIRWorkerContext.fetchStructureDefinition(url: String): TFhirStructureDefinition;
+begin
+  result := fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
+end;
+
+function TFHIRWorkerContext.fetchStructureMap(url: String): TFhirStructureMap;
+begin
+  result := fetchResource(frtStructureMap, url) as TFHIRStructureMap;
+end;
+
+function TFHIRWorkerContext.fetchValueSet(url: String): TFhirValueSet;
+begin
+  result := fetchResource(frtValueSet, url) as TFHIRValueSet;
+end;
+
+function TFHIRWorkerContext.getSliceList(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
+begin
+  raise Exception.Create('Error Message');
 end;
 
 procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);
