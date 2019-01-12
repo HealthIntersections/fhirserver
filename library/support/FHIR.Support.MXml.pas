@@ -37,7 +37,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Character, RegularExpressions,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  MarkdownHtmlEntities;
 
 const
   DEF_BUF_SIZE = 128;
@@ -321,7 +322,7 @@ Type
     property NamespaceAbbreviations : TFslStringDictionary read FNamespaceAbbreviations;
   end;
 
-  TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments);
+  TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities);
   TMXmlParserOptions = set of TMXmlParserOption;
 
   TMXmlParser = class (TFslObject)
@@ -329,6 +330,7 @@ Type
     reader : TFslTextReader;
     options : TMXmlParserOptions;
     b : TStringBuilder;
+    FHtmlEntities : TDictionary<String, String>;
 
     FLocation, FStartLocation : TSourceLocation;
 
@@ -355,6 +357,8 @@ Type
     function parseXPath : TMXPathExpressionNode; overload;
     function newGroup(next: TMXPathExpressionNode): TMXPathExpressionNode;
   public
+    constructor Create; override;
+    destructor Destroy; override;
     class function parse(content : String; options : TMXmlParserOptions) : TMXmlDocument; overload;
     class function parse(content : TStream; options : TMXmlParserOptions) :  TMXmlDocument; overload;
     class function parse(content : TFslStream; options : TMXmlParserOptions) : TMXmlDocument; overload;
@@ -1124,6 +1128,19 @@ begin
   end;
 end;
 
+constructor TMXmlParser.Create;
+begin
+  inherited;
+  FHtmlEntities := TDictionary<String, String>.create;
+  registerEntities(FHtmlEntities);
+end;
+
+destructor TMXmlParser.Destroy;
+begin
+  FHtmlEntities.Free;
+  inherited;
+end;
+
 procedure TMXmlParser.gatherPrecedence(var start: TMXPathExpressionNode; ops: TMXPathExpressionOperationSet);
 var
   work : boolean;
@@ -1305,6 +1322,8 @@ begin
         b.Append('>')
       else If v = 'apos' Then
         b.Append('''')
+      else If (xpHTMLEntities in options) and FHtmlEntities.ContainsKey('&'+v+';') Then //
+        b.Append(FHtmlEntities['&'+v+';'])
       else
         rule(false, 'Illegal Entity "'+v+'" in "'+s+'"');
     end
