@@ -4487,11 +4487,11 @@ begin
         if (not pt.hasType(context, a.uri)) then
         begin
           ok := false;
-          sd := context.fetchResource(frtStructureDefinition, a.uri) as TFhirStructureDefinition;
+          sd := context.fetchStructureDefinition(a.uri);
           while not ok and (sd <> nil) do
           begin
             ok := pt.hasType(context, sd.type_);
-            sd := context.fetchResource(frtStructureDefinition, sd.baseDefinition) as TFhirStructureDefinition;
+            sd := context.fetchStructureDefinition(sd.baseDefinition);
           end;
           if (not ok) then
           raise EFHIRPath.create('The parameter type "'+a.uri+'" is not legal for '+CODES_TFHIRPathFunctions[funcId]+' parameter '+Integer.toString(i)+', expecting '+pt.describe());
@@ -5022,7 +5022,7 @@ begin
         url := TFHIRProfiledType.ns(type_);
     end;
 
-    sd := worker.fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition;
+    sd := worker.fetchStructureDefinition(url);
     if (sd = nil) then
       raise EFHIRPath.create('Unknown type '+type_); // this really is an error, because we can only get to here if the internal infrastrucgture is wrong
     m := nil;
@@ -5034,7 +5034,7 @@ begin
       begin
         if specifiedType <> '' then
         begin
-          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+specifiedType) as TFhirStructureDefinition;
+          dt := worker.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+specifiedType);
           if (dt = nil) then
             raise EFHIRPath.create('unknown data type '+specifiedType);
           sdl.add(dt);
@@ -5042,7 +5042,7 @@ begin
         else
           for t in m.type_List do
           begin
-            dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code) as TFhirStructureDefinition;
+            dt := worker.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+t.Code) as TFhirStructureDefinition;
             if (dt = nil) then
               raise EFHIRPath.create('unknown data type '+t.code);
             sdl.add(dt);

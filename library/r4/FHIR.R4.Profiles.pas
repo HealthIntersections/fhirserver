@@ -378,7 +378,7 @@ end;
 //        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profile <> '') and (diffMatches[0].type_List[0].Code <> 'Reference') then
 //        begin
 //          p := diffMatches[0].type_List[0].profile;
-//          sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
+//          sd := context.fetchStructureDefinition(p);
 //          try
 //            if (sd <> nil) then
 //            begin
@@ -721,7 +721,7 @@ begin
     result := nil
   else
   begin
-    vs := context.fetchResource(frtValueSet, ed.binding.valueSet) as TFhirValueSet;
+    vs := context.fetchValueSet(ed.binding.valueSet);
     try
       vs1 := context.expand(vs, [expOptLimited]);
       try
@@ -868,9 +868,9 @@ end;
 //begin
 //  result := nil;
 //  if (type_.profile <> '') then
-//    result := context.fetchResource(frtStructureDefinition, type_.profile) as TFhirStructureDefinition;
+//    result := context.fetchStructureDefinition(type_.profile);
 //  if (result = nil) then
-//    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
+//    result := context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+type_.code);
 //  if (result = nil) then
 //    logt('XX: failed to find profile for type: ' + type_.code); // debug GJM
 //end;
@@ -1356,8 +1356,8 @@ end;
 //          try
 //            if (base.binding.valueSet is TFHIrReference) and (derived.binding.valueSet is TFHIrReference) then
 //            begin
-//            vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
-//            vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+//            vsBase := context.fetchValueSet(base.binding.valueSet as TFhirReference).reference);
+//            vsDerived := context.fetchValueSet,(derived.binding.valueSet as TFhirReference).reference);
 //              if (vsBase <> nil) and (vsDerived <> nil) then
 //              begin
 //            expBase := context.expand(vsBase);
@@ -1684,7 +1684,7 @@ end;
 
 function TBaseWorkerContextR4.getStructure(url: String): TFHIRStructureDefinition;
 begin
-  result := fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition
+  result := fetchStructureDefinition(url)
 end;
 
 function TBaseWorkerContextR4.link: TBaseWorkerContextR4;
@@ -1852,7 +1852,7 @@ begin
     p := r as TFHirStructureDefinition;
     if (p.snapshot = nil) and (p.baseDefinition <> '') and (p.kind <> StructureDefinitionKindLogical) then
     begin
-      sd := fetchResource(frtStructureDefinition, p.baseDefinition) as TFhirStructureDefinition;
+      sd := fetchStructureDefinition(p.baseDefinition);
       if sd = nil then
         raise EDefinitionException.create('Unknown base profile: "'+p.baseDefinition+'"');
       try

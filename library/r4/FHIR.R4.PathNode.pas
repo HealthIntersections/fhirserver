@@ -868,7 +868,7 @@ begin
       tail := tail.substring(tail.indexOf('.'));
     end;
     t := TFHIRProfiledType.ns(n);
-    sd := context.fetchResource(frtStructureDefinition, t) as TFhirStructureDefinition;
+    sd := context.fetchStructureDefinition(t);
     try
       while (sd <> nil) do
       begin
@@ -882,9 +882,9 @@ begin
         begin
           if (sd.baseDefinition = 'http://hl7.org/fhir/StructureDefinition/Element') and
             (sd.Type_ <> 'string') and (sd.Type_ <> 'uri') then
-              w := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/string') as TFhirStructureDefinition
+              w := context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/string')
             else
-              w := context.fetchResource(frtStructureDefinition, sd.BaseDefinition) as TFhirStructureDefinition;
+              w := context.fetchStructureDefinition(sd.BaseDefinition);
         end
         else
           w := nil;

@@ -1065,7 +1065,7 @@ var
   begin
     inc(step);
     if assigned(CallBack) then Callback(step, 'Check Delete '+name);
-    if meta.hasTable(name) then
+    if meta.hasTable(name, true) then
       FConn.DropTable(name);
   end;
 begin

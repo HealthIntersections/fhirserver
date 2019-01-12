@@ -285,9 +285,10 @@ begin
   for c in meta.labels.forEnum do
     if not hasTag(tcSecurity, c.system, c.code) then
       addTag(0, tcSecurity, c.system, c.code, c.display);
-  for u in meta.profiles do
-    if not hasTag(tcProfile, 'urn:ietf:rfc:3986', u) then
-      addTag(0, tcProfile, 'urn:ietf:rfc:3986', u, '');
+  if meta <> nil then
+    for u in meta.profiles do
+      if not hasTag(tcProfile, 'urn:ietf:rfc:3986', u) then
+        addTag(0, tcProfile, 'urn:ietf:rfc:3986', u, '');
 end;
 
 procedure TFHIRTagList.removeTag(category: TFHIRTagCategory; system, code: String);
