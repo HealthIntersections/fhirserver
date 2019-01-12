@@ -881,7 +881,7 @@ begin
       FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
       GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, factory.versionString, FContext.link));
       if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
-        ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail');
+        ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: '+WhichFailedToLoad+', '+WhichFailedToLoad2+')');
       checkSSL; // really, this is just to init internal structures in openSSL
 
       FVerCheckTaskId := GBackgroundTasks.registerTaskEngine(TVersionChecker.Create(CheckVersionUpgradeOutome));

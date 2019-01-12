@@ -1044,7 +1044,7 @@ class Function TFHIRXhtmlParser.parse(lang : String; policy : TFHIRXhtmlParserPo
 var
   doc : TMXmlDocument;
 begin
-  doc := TMXmlParser.Parse(content, [xpResolveNamespaces]);
+  doc := TMXmlParser.Parse(content, [xpResolveNamespaces, xpHTMLEntities]);
   try
     result := parse(lang, policy, options, doc.document, '', '');
   finally

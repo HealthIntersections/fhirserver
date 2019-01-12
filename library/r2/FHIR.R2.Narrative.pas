@@ -573,7 +573,8 @@ end;
 
 procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);
 begin
-  generateDR(res as TFHIRDomainResource);
+  if (res is TFHIRDomainResource) then
+    generateDR(res as TFHIRDomainResource);
 end;
 
 procedure TFHIRNarrativeGenerator.generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean);

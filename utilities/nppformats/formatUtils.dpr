@@ -48,7 +48,8 @@ uses
   FHIR.Npp.FormatUtilities in 'FHIR.Npp.FormatUtilities.pas',
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
-  MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas';
+  MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.res}
 

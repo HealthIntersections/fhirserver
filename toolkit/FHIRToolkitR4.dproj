@@ -447,6 +447,7 @@
             <Form>ResourceHistoryForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -171,7 +171,7 @@ type
     property Procedures : TStringList read FProcedures;
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
 
-    function HasTable(name : String) : boolean;
+    function HasTable(name : String; caseSensitive : boolean = false) : boolean;
     function GetTable(name : String) : TKDBTable;
   end;
 
@@ -1907,13 +1907,13 @@ begin
       result := Tables[i];
 end;
 
-function TKDBMetaData.HasTable(name: String): boolean;
+function TKDBMetaData.HasTable(name: String; caseSensitive : boolean = false): boolean;
 var
   i : integer;
 begin
   result := false;
   for i := 0 to Tables.Count - 1 do
-    if Tables[i].Name = name then
+    if (caseSensitive and (Tables[i].Name = name)) or (not caseSensitive and (SameText(Tables[i].Name, name))) then
       result := true;
 end;
 

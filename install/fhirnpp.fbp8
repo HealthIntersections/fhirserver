@@ -19,9 +19,11 @@ begin
         variables = "BuildCount" +
                     "certpword" +
                     "ftppassword" +
+                    "ftppassword-fhir" +
                     "npp-purpose" +
                     ""
         variabletypes = "String" +
+                        "String" +
                         "String" +
                         "String" +
                         "String" +
@@ -63,7 +65,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Release to support R4"
+        as.returnvalue = "update markdown to use CommonMark"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -162,7 +164,6 @@ begin
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
-          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -284,7 +285,6 @@ begin
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
-          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -408,7 +408,6 @@ begin
           archivetype = zZip
           compressionlevel = clNormal
           createsfxarchive = false
-          deleteaftercompression = false
           enabletimeout = false
           expandimpersonationtoken = false
           fileslist = "C:\\work\\fhirserver\\tmp\\build\\npp\\i32\\*.*" +
@@ -471,7 +470,6 @@ begin
           archivetype = zZip
           compressionlevel = clNormal
           createsfxarchive = false
-          deleteaftercompression = false
           enabletimeout = false
           expandimpersonationtoken = false
           fileslist = "C:\\work\\fhirserver\\tmp\\build\\npp\\i64\\*.*" +
@@ -546,7 +544,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\"  \"C:\\work\\fhirserver\\install\\build\\npp-install-1.0.%BuildCount%.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Notepad\+\+ Plugin\" /du \"http://www.healthintersections.com.au\"  \"C:\\work\\fhirserver\\install\\build\\npp-install-1.0.%BuildCount%.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -561,57 +559,44 @@ begin
       action.group
       begin
         description = Upload
-        enabled = false
         id = {CE10A1D8-3E04-486D-A875-FADFA7F66BB1}
         action.ftp.connect
         begin
-          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
-          allowselfsignedcertificate = false
           connecttimeoutinsec = 0
           cookie = q3B4xMWDXfAo74OHdw\=\=
           detailedlogging = false
           enablekeepalives = false
-          encryptdatachannel = false
           ftpconnectionname = HealthIntersections
           ftphost = 27.123.25.1
           ftpport = 21
           id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
-          logsslnegotiation = false
           passive = true
           proxyport = 0
           proxytype = fpcmNone
-          tlsmode = ExplicitTLS
           transfertype = ftBinary
           useglobalopt = false
           usehost = true
           useproxy = false
           userid = healthi3
-          usessl = false
         end
         action.ftp.connect
         begin
-          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
-          allowselfsignedcertificate = false
           connecttimeoutinsec = 0
           cookie = q3B4xMWDXfAo74OHf/5tMSdZ
           detailedlogging = false
           enablekeepalives = false
-          encryptdatachannel = false
           ftpconnectionname = fhir.org
           ftphost = 192.185.190.126
           ftpport = 21
           id = {1C151550-8F1D-4A24-B182-F6C2DDA922BA}
-          logsslnegotiation = false
-          passive = false
+          passive = true
           proxyport = 0
           proxytype = fpcmNone
-          tlsmode = ExplicitTLS
           transfertype = ftBinary
           useglobalopt = false
           usehost = true
           useproxy = false
           userid = npp-ftp@fhir.org
-          usessl = false
         end
         action.ftp.upload.file
         begin
@@ -767,11 +752,11 @@ begin
           encoding = ANSI
           filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                          "   <td\>%BuildDate%</td\>" +
-                         "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
-                         "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
+                         "   <td\><a title\=\"%npp-purpose%\" href\=\"http://www.healthintersections.com.au/FhirServer/npp-install-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                         "   <td\></td\>" +
                          ""
           id = {51E4D80C-D83C-4B02-86CE-2E3D0F68CB71}
-          newfilename = C:\\work\\fhirserver\\toolkit\\install\\fhirnpp.inc
+          newfilename = C:\\work\\fhirserver\\install\\fhirnpp.inc
           overwriteexisting = true
           writebom = true
         end
@@ -784,7 +769,7 @@ begin
           connectionname = HealthIntersections
           detailedlogging = false
           enabletimeout = false
-          filespec = fhirnpp.htm
+          filespec = fhirnpp.inc
           forcenextclockskewupdate = true
           gaplength = 5
           id = {8C56FE7B-F9C7-472D-BF17-D8DE32AF51FA}

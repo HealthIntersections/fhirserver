@@ -31,7 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Graphics,
+  SysUtils, Classes, Graphics, Generics.Collections,
+  MarkdownCommonMark,
   ScintEdit,
   FHIR.Support.Base;
 
@@ -143,6 +144,29 @@ type
     procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
     function LineTextSpans(const S: TScintRawString): Boolean; override;
     procedure StyleNeeded; override;
+  end;
+
+  // commonmark markdown:
+  //   cmText : black
+  //   cmEntity : blue / bold
+  //   cmControlChar : purple/bold
+  //   cmDelimiter : Maroon/bold
+  //   cmCode : navy
+  //   cmURL : maroon
+  //
+  // commonmark styler is slow; full parsing is required (though the parser is fastish)
+
+  TCommonMarkStyler = class (TScintCustomStyler)
+  private
+    FLines : TObjectList<TCMLine>;
+  protected
+    procedure CommitStyle(Style: TCommonMarkStyle);
+    procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
+    function LineTextSpans(const S: TScintRawString): Boolean; override;
+    procedure StyleNeeded; override;
+    procedure ContentChanged(text : string); override;
+  public
+    destructor Destroy; override;
   end;
 
 implementation
@@ -841,6 +865,87 @@ begin
     jsComment : scanComment;
   else
     scanWhitespace;
+  end;
+end;
+
+{ TCommonMarkStyler }
+
+procedure TCommonMarkStyler.CommitStyle(Style: TCommonMarkStyle);
+begin
+  LineState := Ord(Style);
+  inherited CommitStyle(LineState);
+end;
+
+procedure TCommonMarkStyler.ContentChanged;
+begin
+  FLines.Free;
+  FLines := TCommonMarkEngine.parseStyles(Text);
+end;
+
+destructor TCommonMarkStyler.Destroy;
+begin
+  FLines.Free;
+  inherited;
+end;
+
+procedure TCommonMarkStyler.GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes);
+var
+  st : TCommonMarkStyle;
+begin
+  st := TCommonMarkStyle(style and $F);
+  case st of
+    cmUnknown, cmText : Attributes.ForeColor := clBlack;
+    cmEntity :
+      begin
+      Attributes.ForeColor := clBlue;
+      Attributes.FontStyle := [fsBold];
+      end;
+    cmControlChar :
+      begin
+      Attributes.ForeColor := clPurple;
+      Attributes.FontStyle := [fsBold];
+      Attributes.BackColor := clLtGray;
+      end;
+    cmDelimiter :
+      begin
+      Attributes.ForeColor := clMaroon;
+      Attributes.FontStyle := [fsBold];
+      end;
+    cmCode : Attributes.ForeColor := clNavy;
+    cmURL : Attributes.ForeColor := clMaroon;
+  end;
+end;
+
+function TCommonMarkStyler.LineTextSpans(const S: TScintRawString): Boolean;
+begin
+  result := false;
+end;
+
+procedure TCommonMarkStyler.StyleNeeded;
+var
+  line : TCMLine;
+  i : integer;
+  st : TCommonMarkStyle;
+begin
+  if FLines = nil then
+  begin
+    ConsumeAllRemaining;
+    CommitStyle(cmText);
+  end
+  else
+  begin
+    line := FLines[FirstLine];
+    i := 0;
+    while (i < line.StyleCount) do
+    begin
+      st := line.Styles[i];
+      while (i < line.StyleCount) and (line.Styles[i] = st) do
+      begin
+        ConsumeChar;
+        inc(i);
+      end;
+      CommitStyle(st);
+    end;
   end;
 end;
 

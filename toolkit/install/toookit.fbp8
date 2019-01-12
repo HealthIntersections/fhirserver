@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix minor bugs and work on SSL distribution"
+        as.returnvalue = "fix OSX version of toolkit"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -167,7 +167,6 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
-        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -289,7 +288,6 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
-        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -411,7 +409,6 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
-        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -583,7 +580,6 @@ begin
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
-        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -664,6 +660,7 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
+        enabled = false
         failifnofile = true
         filespec = C:\\work\\fhirserver\\toolkit\\install\\osx\\FHIRToolkit.app\\Contents\\MacOS\\FHIRToolkit
         id = {8A74CB5B-2893-4F7F-A835-E22A0FBE2BDD}
@@ -717,7 +714,6 @@ begin
         archivetype = zZip
         compressionlevel = clUltra
         createsfxarchive = false
-        deleteaftercompression = false
         description = "Build OSX installer"
         enabletimeout = false
         expandimpersonationtoken = false
@@ -766,28 +762,22 @@ begin
       end
       action.ftp.connect
       begin
-        allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
-        allowselfsignedcertificate = false
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
-        encryptdatachannel = false
         ftpconnectionname = HealthIntersections
         ftphost = 27.123.25.1
         ftpport = 21
         id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
-        logsslnegotiation = false
         passive = true
         proxyport = 0
         proxytype = fpcmNone
-        tlsmode = ExplicitTLS
         transfertype = ftBinary
         useglobalopt = false
         usehost = true
         useproxy = false
         userid = healthi3
-        usessl = false
       end
       action.ftp.upload.file
       begin

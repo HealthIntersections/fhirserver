@@ -344,7 +344,6 @@ uses
   FHIR.v2.Message in '..\..\library\v2\FHIR.v2.Message.pas',
   FHIR.v2.Protocol in '..\..\library\v2\FHIR.v2.Protocol.pas',
   FHIR.v2.Tests in '..\..\library\v2\FHIR.v2.Tests.pas',
-  MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
   YuStemmer in '..\..\dependencies\Stem\YuStemmer.pas',
@@ -353,7 +352,13 @@ uses
   ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
   ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
   ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas';
+  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
+  MarkdownCommonMarkTests in '..\..\..\markdown\tests\MarkdownCommonMarkTests.pas',
+  MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
+  MarkdownDaringFireballTests in '..\..\..\markdown\tests\MarkdownDaringFireballTests.pas',
+  InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
+  FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas';
 
 var
   runner : ITestRunner;

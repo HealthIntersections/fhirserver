@@ -381,7 +381,8 @@ uses
   ChakraCoreClasses in '..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
   ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
-  Compat in '..\dependencies\chakracore-delphi\Compat.pas';
+  Compat in '..\dependencies\chakracore-delphi\Compat.pas',
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

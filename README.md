@@ -1,7 +1,7 @@
 fhirserver
 ==========
 
-Reference Implementation Server for the FHIR Specification. 
+Reference Implementation Server + Libraries for the FHIR Specification. 
 
 Basic Information
 -----------------
@@ -21,6 +21,11 @@ For binary releases of this content, see http://www.healthintersections.com.au/F
 This project is maintained by the FHIR Project lead. The server runs in 
 multiple locations, including http://test.fhir.org, and other places. 
 
+Support
+-------
+
+See <https://chat.fhir.org/#narrow/stream/179281-pascal>
+
 Reference Server
 ----------------
 
@@ -39,10 +44,18 @@ The open source FHIR Server includes delphi/pascal implementations of:
 * OAuth/openID Connect (including google/facebook clients)
 * Turtle format (RDF)
 * GraphQL
+* HL7 V2
+* CDA
+* Liquid Templating language
 * Javascript and Java invocation libraries
 * SCIM
 * LOINC/SNOMED/RxNorm/CVX/UCUM
 * CQL (Clinical Query Language)
+* Graphical Components
+  * Scintilla Wrapper (per InnoSetup) with XMl/JSON/Javascript syntax highlighters
+  * simple quick graphing library
+  * De Novo word processor
+  * FHIR FMX Components
 * All of FHIR + FHIRPath + smart all launch + cds-hooks, of course
 
 Compiling 
@@ -52,7 +65,7 @@ This is pascal code that (in principle) compiles under Delphi XE3+ (any edition,
 Note that in practice, various subtle but breaking changes have been introduced to the runtime
 library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessary.
 
-Support for Free Pascal(/Lazarus) would be good, and is in progress, but depends on bug
+Support for Free Pascal(/Lazarus) would be good, and is in progress, but depends on future bug
 fixes in free pascal. Contributions are welcome
 
 The FhirServer depends on the following other GitHub repositories:
@@ -75,8 +88,8 @@ Design Time support
 -------------------
 
 For design time support for the GUI applications, you need to install treeview and 
-synedit, then open and compile the packages in /packages, and install the 2 design
-time packages.
+synedit (see in dependencies folders), then open and compile the packages in /packages, 
+and install the 2 design time packages.
 
 Note that the FHIRServer is a *big* compile. You may have problems compiling in 
 resource constrained environments.

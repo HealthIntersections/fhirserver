@@ -1,5 +1,34 @@
 unit FHIR.R4.Liquid;
 
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+
 interface
 
 uses
@@ -311,8 +340,6 @@ var
 begin
   c := ctxt.FEngine.debug(ctxt, self);
   try
-    if (FCompiled = nil) then
-      FCompiled := c.FEngine.fpe.parse(FStatement);
     b.append(c.FEngine.fpe.evaluateToString(ctxt, resource, FCompiled));
   finally
     c.free;
@@ -356,8 +383,6 @@ var
 begin
   c := ctxt.FEngine.debug(ctxt, self);
   try
-    if (FCompiled = nil) then
-      FCompiled := ctxt.Fengine.fpe.parse(FCondition);
     ok := ctxt.Fengine.fpe.evaluateToBoolean(ctxt, resource, resource, FCompiled);
     if ok then
       list := FThenBody
@@ -420,13 +445,11 @@ var
   o : TFHIRSelection;
   c : TFHIRLiquidEngineContext;
 begin
-  if (FCompiled = nil) then
-    FCompiled := ctxt.Fengine.fpe.parse(FCondition);
   list := ctxt.Fengine.fpe.evaluate(ctxt, resource, resource, FCompiled);
   try
     for o in list do
     begin
-      c := ctxt.FEngine.debug(ctxt, self, FVarName, o);
+      c := ctxt.FEngine.debug(ctxt, self, FVarName, o.value);
       try
         for n in FBody do
           n.evaluate(b, resource, c);
@@ -615,6 +638,7 @@ begin
   res := TFHIRLiquidIf.Create;
   try
     res.condition := cnt.substring(3).trim();
+    res.FCompiled := fpe.parse(res.Condition);
     term := parseList(res.thenBody, ['else', 'endif']);
     if ('else' = term) then
       term := parseList(res.elseBody, ['endif']);
@@ -682,6 +706,7 @@ begin
     if ('in' <> s) then
       raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast.line, FLast.col);
     res.condition := cnt.substring(i).trim();
+    res.FCompiled := fpe.parse(res.condition);
     parseList(res.body, ['endloop']);
     result := res.Link;
   finally
@@ -707,6 +732,7 @@ begin
     res := TFHIRLiquidStatement.create();
     try
       res.statement := b.toString().trim();
+      res.FCompiled := fpe.parse(res.Statement);
       result := res.link;
     finally
       res.Free;
@@ -899,10 +925,10 @@ begin
         for n in doc.body do
           n.evaluate(b, resource, c);
       finally
-        incl.free;
+        c.Free;
       end;
     finally
-      c.Free;
+      incl.free;
     end;
   finally
     doc.Free;

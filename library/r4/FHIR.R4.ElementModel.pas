@@ -522,7 +522,7 @@ begin
   if name = '' then // one of the special case elements
     exit(true);
 
-  sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+name));
+  sd := context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+name);
   try
     result := (sd <> nil) and (sd.Kind = StructureDefinitionKindPRIMITIVETYPE);
   finally
@@ -658,7 +658,7 @@ begin
                 ok := true;
               if (isAbsoluteUrl(tr.code)) then
               begin
-                sdt := context.fetchResource(frtStructureDefinition, tr.code) as TFHIRStructureDefinition;
+                sdt := context.fetchStructureDefinition(tr.code);
                 try
                   if (sdt <> nil) and (sdt.type_ = t) then
                   begin
@@ -702,7 +702,7 @@ begin
         if (url = '') then
           raise EFHIRException.create('Unable to find type ' + t + ' for element ' + elementName + ' with path ' + ed.path);
 
-        sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, url));
+        sd := context.fetchStructureDefinition(url);
         try
           if (sd = nil) then
               raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+definition.path);
@@ -761,7 +761,7 @@ begin
     end;
     if ('xhtml' <> t) then
     begin
-      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
+      sd := context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+t);
       try
         if (sd = nil) then
             raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
@@ -1394,7 +1394,7 @@ begin
 		            ok := true;
               if (isAbsoluteUrl(tr.code)) then
               begin
-                sdt := FContext.fetchResource(frtStructureDefinition, tr.code) as TFHIRStructureDefinition;
+                sdt := FContext.fetchStructureDefinition(tr.code);
                 try
                   if (sdt <> nil) and (sdt.type_ = t) then
                   begin

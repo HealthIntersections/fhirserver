@@ -98,7 +98,7 @@
         <DCC_RangeChecking>true</DCC_RangeChecking>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64</DCC_DcuOutput>
         <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
-        <DCC_UnitSearchPath>..\Libraries\jcl;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
@@ -471,7 +471,6 @@
         <DCCReference Include="..\..\library\v2\FHIR.v2.Message.pas"/>
         <DCCReference Include="..\..\library\v2\FHIR.v2.Protocol.pas"/>
         <DCCReference Include="..\..\library\v2\FHIR.v2.Tests.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\dependencies\Stem\YuStemmer.pas"/>
@@ -481,6 +480,12 @@
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
+        <DCCReference Include="..\..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
+        <DCCReference Include="..\..\library\r4\InstanceValidator.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Adaptor.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -500,8 +505,8 @@
                     <Source Name="MainSource">FHIRServerTests.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -560,7 +565,6 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
-                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>0</Operation>
                     </Platform>
                 </DeployClass>
@@ -694,12 +698,20 @@
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
+                    <Platform Name="OSX64">
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="DependencyModule">
                     <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX64">
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
@@ -725,6 +737,10 @@
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
+                    <Platform Name="OSX64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.bpl</Extensions>
@@ -744,6 +760,9 @@
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX64">
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -864,6 +883,10 @@
                         <RemoteDir>Contents\Resources</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
+                    <Platform Name="OSX64">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
                 </DeployClass>
                 <DeployClass Required="true" Name="ProjectOutput">
                     <Platform Name="Android">
@@ -883,6 +906,9 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSX64">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">

@@ -37,8 +37,8 @@ uses
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Validator,
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
-  FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory,
-  FHIR.Server.Javascript;
+  FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory
+  {$IFNDEF NO_JS}, FHIR.Server.Javascript {$ENDIF};
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -81,7 +81,9 @@ Type
     FSessionManager : TFHIRSessionManager;
     FTagManager : TFHIRTagManager;
     FNamingSystems : TFslMap<TFHIRNamingSystemW>;
+    {$IFNDEF NO_JS}
     FEventScriptRegistry : TEventScriptRegistry;
+    {$ENDIF}
     FMaps : TFslMap<TFHIRStructureMapW>;
     FSystemId: String;
 
@@ -124,7 +126,9 @@ Type
     property SessionManager : TFHIRSessionManager read FSessionManager;
     property TagManager : TFHIRTagManager read FTagManager;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
+    {$IFNDEF NO_JS}
     property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
+    {$ENDIF}
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
 
@@ -324,7 +328,9 @@ begin
   FSessionManager := TFHIRSessionManager.Create(Globals.link, self);
   FTagManager := TFHIRTagManager.create(storage.Factory.link);
   FNamingSystems := TFslMap<TFHIRNamingSystemW>.create;
+  {$IFNDEF NO_JS}
   FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
+  {$ENDIF}
 
   FMaps := TFslMap<TFHIRStructureMapW>.create;
   if DirectoryExists('c:\temp') then
@@ -338,7 +344,9 @@ destructor TFHIRServerContext.Destroy;
 begin
   FGlobals.Free;
   FMaps.Free;
+  {$IFNDEF NO_JS}
   FEventScriptRegistry.Free;
+  {$ENDIF}
   FJWTServices.Free;
   FNamingSystems.Free;
   FTagManager.Free;
