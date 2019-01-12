@@ -112,7 +112,7 @@
         <Debugger_RunParams>-cmd exec -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot;</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
         <DCC_RangeChecking>true</DCC_RangeChecking>
@@ -467,7 +467,7 @@
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
-        <DCCReference Include="..\..\markdown\source\HTMLEntities.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -524,8 +524,8 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

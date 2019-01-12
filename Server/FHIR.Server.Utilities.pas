@@ -32,7 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, SysUtils, Classes, IniFiles, Generics.Collections,
+  {$IFDEF OSX} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
+  SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Base.Common,

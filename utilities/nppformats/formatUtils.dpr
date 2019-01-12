@@ -49,7 +49,7 @@ uses
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
-  HTMLEntities in '..\..\..\markdown\source\HTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.res}
 

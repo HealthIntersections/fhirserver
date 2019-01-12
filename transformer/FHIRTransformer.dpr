@@ -128,7 +128,11 @@ uses
   ChakraDebug in '..\dependencies\chakracore-delphi\ChakraDebug.pas',
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
   FHIR.v2.Message in '..\library\v2\FHIR.v2.Message.pas',
-  FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas';
+  FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas',
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
+  MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
+  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas';
 
 {$R *.res}
 

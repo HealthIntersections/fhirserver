@@ -114,6 +114,7 @@ type
     FLoading : boolean;
     FStop : boolean;
     FGoUrl: String;
+    FSelNode : PVirtualNode;
     procedure LoadPackages;
     procedure selChanged;
     procedure changeMode;
@@ -439,14 +440,13 @@ end;
 procedure TPackageCacheForm.selChanged;
 var
   ok : boolean;
-  p : PVirtualNode;
   pp : PTreeDataPointer;
 begin
   ok := false;
-  for p in vtPackages.SelectedNodes() do
+  if FSelNode <> nil then
   begin
-    pp := vtPackages.GetNodeData(p);
-    if not (pp.obj is TFHIRPackageDependencyInfo) then
+    pp := vtPackages.GetNodeData(FSelNode);
+    if (pp.obj is TFHIRPackageObject) then
       ok := true;
   end;
   btnDelete.Enabled := ok;
@@ -457,9 +457,12 @@ begin
   importUrl(nil, 'http://hl7.org/fhir/us/core');
 end;
 
-procedure TPackageCacheForm.vtPackagesAddToSelection(Sender: TBaseVirtualTree;
-  Node: PVirtualNode);
+procedure TPackageCacheForm.vtPackagesAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
+  if Node = nil then
+    FSelNode := Node
+  else
+    FSelNode := Node;
   selChanged;
 end;
 
@@ -520,6 +523,7 @@ end;
 
 procedure TPackageCacheForm.vtPackagesRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
+  FSelNode := nil;
   selChanged;
 end;
 

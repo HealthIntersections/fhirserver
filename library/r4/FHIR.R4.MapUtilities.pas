@@ -2408,7 +2408,7 @@ begin
   begin
     if (imp.alias <> '') and (statedType = imp.alias) then
     begin
-      sd := FWorker.fetchResource(frtStructureDefinition, imp.url) as TFhirStructureDefinition;
+      sd := FWorker.fetchStructureDefinition(imp.url);
       try
         if (sd <> nil) then
           statedType := sd.type_;
@@ -2421,7 +2421,7 @@ begin
 
   if (isAbsoluteUrl(actualType)) then
   begin
-    sd := FWorker.fetchResource(frtStructureDefinition, actualType) as TFhirStructureDefinition;
+    sd := FWorker.fetchStructureDefinition(actualType);
     try
       if (sd <> nil) then
         actualType := sd.type_;
@@ -2431,7 +2431,7 @@ begin
   end;
   if (isAbsoluteUrl(statedType)) then
   begin
-    sd := FWorker.fetchResource(frtStructureDefinition, statedType) as TFhirStructureDefinition;
+    sd := FWorker.fetchStructureDefinition(statedType) ;
     try
       if (sd <> nil) then
         statedType := sd.type_;
@@ -2532,7 +2532,7 @@ begin
         end;
       end
       else
-        cmap := TFhirConceptMap(FWorker.fetchResource(frtConceptMap, conceptMapUrl));
+        cmap := FWorker.fetchConceptMap(conceptMapUrl);
       try
         outcome := nil;
         try

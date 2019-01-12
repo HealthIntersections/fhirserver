@@ -142,7 +142,7 @@
         <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\HTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>

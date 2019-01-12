@@ -12,7 +12,7 @@ unit ScintEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, ScintInt;
+  Windows, Messages, SysUtils, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, ScintInt;
 
 type
   TScintEditChangeInfo = record
@@ -24,7 +24,7 @@ type
   TScintEditCharAddedEvent = procedure(Sender: TObject; Ch: AnsiChar) of object;
   TScintEditDropFilesEvent = procedure(Sender: TObject; X, Y: Integer;
     AFiles: TStrings) of object;
-  TScintHintInfo = {$IFDEF UNICODE} Controls. {$ENDIF} THintInfo;
+  TScintHintInfo = {$IFDEF UNICODE} Vcl.Controls. {$ENDIF} THintInfo;
   TScintEditHintShowEvent = procedure(Sender: TObject;
     var Info: TScintHintInfo) of object;
   TScintEditMarginClickEvent = procedure(Sender: TObject; MarginNumber: Integer;
@@ -393,7 +393,7 @@ type
     property TextLength: Integer read FTextLen;
     property FirstLine : Integer read FFirstLine;
     property LastLine : Integer read FLastLine;
-    procedure ResetSystem;
+    procedure ContentChanged(text : string); virtual;
   end;
 
   EScintEditError = class(Exception);
@@ -509,6 +509,9 @@ var
   Info: TScintEditChangeInfo;
 begin
   inherited Changed;
+  if FStyler <> nil then
+    FStyler.ContentChanged(rawText);
+  
   if Assigned(FOnChange) then begin
     Info.Inserting := AInserting;
     Info.StartPos := AStartPos;
@@ -1341,7 +1344,10 @@ procedure TScintEdit.SetStyler(const Value: TScintCustomStyler);
 begin
   if FStyler <> Value then begin
     if Assigned(Value) then
+    begin
       Value.FreeNotification(Self);
+      Value.ContentChanged(rawText);
+    end;
     FStyler := Value;
     if HandleAllocated then begin
       Call(SCI_CLEARDOCUMENTSTYLE, 0, 0);
@@ -2163,7 +2169,7 @@ begin
 end;
 
 
-procedure TScintCustomStyler.ResetSystem;
+procedure TScintCustomStyler.ContentChanged;
 begin
 
 end;

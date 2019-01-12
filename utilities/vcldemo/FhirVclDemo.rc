@@ -1,0 +1,5 @@
+MAINICON ICON "C:\\Program Files (x86)\\Embarcadero\\Studio\\19.0\\bin\\delphi_PROJECTICON.ico"
+/*
+Include manifest xml for XP/Vista
+*/
+1 24 "C:\\work\\fhirserver\\utilities\\vcldemo\\FhirVclDemoManifest.xml"

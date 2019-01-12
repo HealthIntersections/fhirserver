@@ -144,13 +144,6 @@ uses
   FHIR.Support.SCrypt in '..\..\library\support\FHIR.Support.SCrypt.pas',
   FHIR.Tx.ICD10 in '..\..\Server\FHIR.Tx.ICD10.pas',
   FHIR.Support.Signatures in '..\..\library\support\FHIR.Support.Signatures.pas',
-  FHIR.Server.Javascript in '..\..\Server\FHIR.Server.Javascript.pas',
-  FHIR.Support.Javascript in '..\..\library\support\FHIR.Support.Javascript.pas',
-  FHIR.R4.Javascript in '..\..\library\r4\FHIR.R4.Javascript.pas',
-  FHIR.Javascript.Base in '..\..\library\javascript\FHIR.Javascript.Base.pas',
-  FHIR.Client.Javascript in '..\..\library\client\FHIR.Client.Javascript.pas',
-  FHIR.Server.EventJs in '..\..\Server\FHIR.Server.EventJs.pas',
-  FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
   FHIR.R4.Factory in '..\..\library\r4\FHIR.R4.Factory.pas',
   FHIR.Tx.CountryCode in '..\..\Server\FHIR.Tx.CountryCode.pas',
   FHIR.Tx.UsState in '..\..\Server\FHIR.Tx.UsState.pas',
@@ -168,9 +161,11 @@ uses
   FHIR.Support.Xml in '..\..\library\support\FHIR.Support.Xml.pas',
   FHIR.Support.Certs in '..\..\library\support\FHIR.Support.Certs.pas',
   FHIR.Web.GraphQL in '..\..\library\web\FHIR.Web.GraphQL.pas',
+  {$IFDEF MSWINDOWS}
   FHIR.Support.MsXml in '..\..\library\support\FHIR.Support.MsXml.pas',
-  FHIR.Support.Utilities in '..\..\library\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Service in '..\..\library\support\FHIR.Support.Service.pas',
+  {$ENDIF }
+  FHIR.Support.Utilities in '..\..\library\support\FHIR.Support.Utilities.pas',
   FHIR.Base.Factory in '..\..\library\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\..\library\base\FHIR.Base.Validator.pas',
   FHIR.Base.Common in '..\..\library\base\FHIR.Base.Common.pas',
@@ -200,13 +195,23 @@ uses
   FHIR.Cda.Writer in '..\..\library\cda\FHIR.Cda.Writer.pas',
   FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
   FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
-  ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
-  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
-  ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
-  Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
+  {$IFNDEF NO_JS}
+  FHIR.Support.Javascript in '..\..\library\support\FHIR.Support.Javascript.pas',
+  FHIR.R4.Javascript in '..\..\library\r4\FHIR.R4.Javascript.pas',
+  FHIR.Javascript.Base in '..\..\library\javascript\FHIR.Javascript.Base.pas',
+  FHIR.Client.Javascript in '..\..\library\client\FHIR.Client.Javascript.pas',
+  FHIR.Server.EventJs in '..\..\Server\FHIR.Server.EventJs.pas',
+  FHIR.Server.Javascript in '..\..\Server\FHIR.Server.Javascript.pas',
+  FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
   ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
-  HTMLEntities in '..\..\..\markdown\source\HTMLEntities.pas';
+  ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
+  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
+  ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
+  ChakraCoreVersion in '..\..\dependencies\chakracore-delphi\ChakraCoreVersion.pas',
+  ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
+  Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
+  {$ENDIF }
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.res}
 

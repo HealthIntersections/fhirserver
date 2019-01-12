@@ -95,7 +95,6 @@ uses
   VirtualTrees.Export in '..\..\dependencies\treeview\source\VirtualTrees.Export.pas',
   FHIR.WP.AnnotationDefiners in '..\..\library\wp\FHIR.WP.AnnotationDefiners.pas',
   FHIR.WP.Snomed in '..\..\library\wp\FHIR.WP.Snomed.pas',
-  FHIR.WP.Addict in '..\..\library\wp\FHIR.WP.Addict.pas',
   CDEOptions in 'CDEOptions.pas' {CDEOptionsForm},
   OidFetcher in 'OidFetcher.pas' {OidFetcherForm},
   cdaHeaderForm in 'cdaHeaderForm.pas',

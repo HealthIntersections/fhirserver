@@ -6,7 +6,7 @@
         <MainSource>VocabTxServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -120,8 +120,10 @@
     <PropertyGroup Condition="'$(Cfg_1_OSX32)'!=''">
         <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR4;NO_JS;NO_CONVERSION;$(DCC_Define)</DCC_Define>
         <Manifest_File>(None)</Manifest_File>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIRBaseX=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;$(DCC_UnitAlias)</DCC_UnitAlias>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -139,7 +141,7 @@
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIRBaseX=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_Define>NO_CONVERSION;$(DCC_Define)</DCC_Define>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r464nc\</DCC_DcuOutput>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -276,13 +278,6 @@
         <DCCReference Include="..\..\library\support\FHIR.Support.SCrypt.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.ICD10.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Server.Javascript.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Javascript.pas"/>
-        <DCCReference Include="..\..\library\r4\FHIR.R4.Javascript.pas"/>
-        <DCCReference Include="..\..\library\javascript\FHIR.Javascript.Base.pas"/>
-        <DCCReference Include="..\..\library\client\FHIR.Client.Javascript.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Server.EventJs.pas"/>
-        <DCCReference Include="..\..\library\javascript\FHIR.Javascript.pas"/>
         <DCCReference Include="..\..\library\r4\FHIR.R4.Factory.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.CountryCode.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.UsState.pas"/>
@@ -302,7 +297,6 @@
         <DCCReference Include="..\..\library\web\FHIR.Web.GraphQL.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.MsXml.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.Utilities.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Service.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Common.pas"/>
@@ -332,13 +326,8 @@
         <DCCReference Include="..\..\library\cda\FHIR.Cda.Writer.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.ElementModel.pas"/>
         <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageManager.pas"/>
-        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
-        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
-        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
-        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCore.pas"/>
-        <DCCReference Include="..\..\dependencies\chakracore-delphi\Compat.pas"/>
-        <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\HTMLEntities.pas"/>
+        <DCCReference Include="..\..\library\support\FHIR.Support.Javascript.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -360,8 +349,8 @@
                     <Source Name="MainSource">VocabTxServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -415,11 +404,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>VocabTxServer.exe</RemoteName>
@@ -430,6 +414,11 @@
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
                         <RemoteName>VocabTxServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

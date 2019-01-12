@@ -3247,7 +3247,8 @@ end;
 
 procedure TFHIRMeta3.clearProfiles;
 begin
-  m.profileList.Clear;
+  if m <> nil then
+    m.profileList.Clear;
 end;
 
 procedure TFHIRMeta3.clearTags;
@@ -3333,10 +3334,13 @@ function TFHIRMeta3.profiles: TArray<String>;
 var
   i : integer;
 begin
-  SetLength(result, m.profileList.Count);
-  if Element <> nil then
-    for i := 0 to m.profileList.Count - 1 do
-      result[i] := m.profileList[i].value;
+  if m <> nil then
+  begin
+    SetLength(result, m.profileList.Count);
+    if Element <> nil then
+      for i := 0 to m.profileList.Count - 1 do
+        result[i] := m.profileList[i].value;
+  end;
 end;
 
 procedure TFHIRMeta3.removeLabel(system, code: String);

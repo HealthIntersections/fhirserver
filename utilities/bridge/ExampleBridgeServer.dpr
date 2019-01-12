@@ -196,7 +196,7 @@ uses
   ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
   ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
   ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  HTMLEntities in '..\..\..\markdown\source\HTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 var
   gsrv : TExampleFhirServer;
