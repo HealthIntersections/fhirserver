@@ -155,7 +155,7 @@ procedure TBulkDataDialog.Button4Click(Sender: TObject);
 begin
   cbxPatients.Items.Clear;
   cbxPatients.Items.Add('All Accessible Patients');
-  loadLookup(cbxPatients, frtPatient, '_summary=text');
+  loadLookup(cbxPatients, frtPatient, '_summary=true');
 end;
 
 destructor TBulkDataDialog.Destroy;
@@ -264,6 +264,7 @@ begin
         s := FASync.Summary;
         FASync.free;
         FASync := nil;
+        Timer1.enabled := false;
         MessageDlg(s, TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbok], 0);
       end;
     end;

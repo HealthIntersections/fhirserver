@@ -356,7 +356,9 @@ uses
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   MarkdownCommonMarkTests in '..\..\..\markdown\tests\MarkdownCommonMarkTests.pas',
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
-  MarkdownDaringFireballTests in '..\..\..\markdown\tests\MarkdownDaringFireballTests.pas';
+  MarkdownDaringFireballTests in '..\..\..\markdown\tests\MarkdownDaringFireballTests.pas',
+  InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
+  FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas';
 
 var
   runner : ITestRunner;

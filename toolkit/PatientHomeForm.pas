@@ -277,8 +277,10 @@ begin
     3: Value := txt(name.suffixList);
     4: Value := CODES_TFhirNameUseEnum[name.use];
     5: Value := gen(name.period);
-    6: Value := name.familyElement.getExtensionString('http://hl7.org/fhir/StructureDefinition/humanname-fathers-family');
-    7: Value := name.familyElement.getExtensionString('http://hl7.org/fhir/StructureDefinition/humanname-mothers-family')
+    6: if name.familyElement <> nil then
+         Value := name.familyElement.getExtensionString('http://hl7.org/fhir/StructureDefinition/humanname-fathers-family');
+    7: if name.familyElement <> nil then
+         Value := name.familyElement.getExtensionString('http://hl7.org/fhir/StructureDefinition/humanname-mothers-family')
   end;
 end;
 
