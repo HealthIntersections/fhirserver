@@ -18,7 +18,7 @@ unit FHIR.R2.IndexInfo;
      endorse or promote products derived from this software without specific 
      prior written permission.
   
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
@@ -37,8 +37,8 @@ interface
 
 uses
   SysUtils, Classes, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, 
-  FHIR.Base.Common, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Base.Common,
   FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.Tools.Indexing;
 
 Type
@@ -242,6 +242,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_ORGANIZATION}
     procedure buildIndexesForOrganization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PARAMETERS}
+    procedure buildIndexesForParameters(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_PATIENT}
     procedure buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -520,8 +523,8 @@ begin
   indexes.add('Bundle', '_security', 'Security Labels applied to this resource', sptTOKEN, [], '', sxpNormal);
   indexes.add('Bundle', '_tag', 'Tags applied to this resource', sptTOKEN, [], '', sxpNormal);
   indexes.add('Bundle', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNull);
-  indexes.add('Bundle', 'composition', 'The first resource in the bundle, if the bundle type is "document" - this is a composition, and this parameter provides access to searches its contents', sptREFERENCE, [], '', sxpNormal);
-  indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', sptREFERENCE, [], '', sxpNormal);
+  indexes.add('Bundle', 'composition', 'The first resource in the bundle, if the bundle type is "document" - this is a composition, and this parameter provides access to searches its contents', sptREFERENCE, ['Composition'], '', sxpNormal);
+  indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', sptREFERENCE, ['MessageHeader'], '', sxpNormal);
   indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection', sptTOKEN, [], '', sxpNormal);
 end;
 {$ENDIF}
@@ -1881,6 +1884,19 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_PARAMETERS}
+procedure TFHIRIndexBuilderR2.buildIndexesForParameters(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('Parameters', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNull);
+  indexes.add('Parameters', '_id', 'Logical id of this artifact', sptTOKEN, [], '', sxpNormal);
+  indexes.add('Parameters', '_lastUpdated', 'When the resource version last changed', sptDATE, [], '', sxpNormal);
+  indexes.add('Parameters', '_profile', 'Profiles this resource claims to conform to', sptURI, [], '', sxpNormal);
+  indexes.add('Parameters', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNull);
+  indexes.add('Parameters', '_security', 'Security Labels applied to this resource', sptTOKEN, [], '', sxpNormal);
+  indexes.add('Parameters', '_tag', 'Tags applied to this resource', sptTOKEN, [], '', sxpNormal);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_PATIENT}
 procedure TFHIRIndexBuilderR2.buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -2707,6 +2723,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_PATIENT}
   buildIndexesForPatient(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PARAMETERS}
+  buildIndexesForParameters(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_PAYMENTNOTICE}
   buildIndexesForPaymentNotice(Indexes, compartments);
