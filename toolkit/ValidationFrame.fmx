@@ -112,8 +112,8 @@ object ValidationEngineFrame: TValidationEngineFrame
         DefaultItemStyles.GroupFooterStyle = ''
         ShowCheckboxes = True
         OnChangeCheck = lbPackagesChangeCheck
-        Viewport.Width = 177.000000000000000000
-        Viewport.Height = 193.000000000000000000
+        Viewport.Width = 173.000000000000000000
+        Viewport.Height = 189.000000000000000000
         object pmAddAsset: TPopupMenu
           Left = 32
           Top = 114
@@ -159,8 +159,8 @@ object ValidationEngineFrame: TValidationEngineFrame
         DefaultItemStyles.GroupFooterStyle = ''
         ShowCheckboxes = True
         OnChangeCheck = lbOtherChangeCheck
-        Viewport.Width = 177.000000000000000000
-        Viewport.Height = 165.000000000000000000
+        Viewport.Width = 173.000000000000000000
+        Viewport.Height = 161.000000000000000000
       end
       object btnAdd: TButton
         Anchors = [akLeft, akBottom]
@@ -361,8 +361,8 @@ object ValidationEngineFrame: TValidationEngineFrame
         Size.Height = 454.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
-        Viewport.Width = 663.000000000000000000
-        Viewport.Height = 454.000000000000000000
+        Viewport.Width = 659.000000000000000000
+        Viewport.Height = 450.000000000000000000
       end
       object dlgOpenFile: TOpenDialog
         Filter = 
