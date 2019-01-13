@@ -520,8 +520,8 @@ begin
   indexes.add('Bundle', '_security', 'Security Labels applied to this resource', sptTOKEN, [], '', sxpNormal);
   indexes.add('Bundle', '_tag', 'Tags applied to this resource', sptTOKEN, [], '', sxpNormal);
   indexes.add('Bundle', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNull);
-  indexes.add('Bundle', 'composition', 'The first resource in the bundle, if the bundle type is "document" - this is a composition, and this parameter provides access to searches its contents', sptREFERENCE, [], '', sxpNormal);
-  indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', sptREFERENCE, [], '', sxpNormal);
+  indexes.add('Bundle', 'composition', 'The first resource in the bundle, if the bundle type is "document" - this is a composition, and this parameter provides access to searches its contents', sptREFERENCE, ['Composition'], '', sxpNormal);
+  indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', sptREFERENCE, ['MessageHeader'], '', sxpNormal);
   indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection', sptTOKEN, [], '', sxpNormal);
 end;
 {$ENDIF}

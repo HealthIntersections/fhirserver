@@ -1223,7 +1223,7 @@ begin
         end;
       end
       else
-begin
+      begin
         if not assigned(FOnResolveReference) then
           raise EFHIRPath.create('resolve() - resolution services are '+exp.name+' not implemented yet');
         res := FOnResolveReference(self, context.appInfo, s);

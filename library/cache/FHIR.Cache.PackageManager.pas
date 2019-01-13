@@ -1100,7 +1100,7 @@ begin
     p.Version := '4.0.0';
     p.Canonical := 'http://hl7.org/fhir';
     p.Date := Now;
-    p.Description := 'FHIR Current Build';
+    p.Description := 'FHIR R4';
     p.FHIRVersion := '4.0.0';
     p.Url := 'http://build.fhir.org/';
     list.Add(p.Link);
