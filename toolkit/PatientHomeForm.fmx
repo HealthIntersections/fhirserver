@@ -57,18 +57,17 @@ object PatientHomeFrame: TPatientHomeFrame
     TabPosition = PlatformDefault
     Sizes = (
       950s
-      581s
+      602s
       950s
-      581s
+      602s
       950s
-      581s)
+      602s)
     object TabItem1: TTabItem
       CustomIcon = <
         item
         end>
       IsSelected = True
-      Size.Width = 82.000000000000000000
-      Size.Height = 26.000000000000000000
+      Size.Height = 5.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
@@ -156,8 +155,7 @@ object PatientHomeFrame: TPatientHomeFrame
         item
         end>
       IsSelected = False
-      Size.Width = 75.000000000000000000
-      Size.Height = 26.000000000000000000
+      Size.Height = 5.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
@@ -250,8 +248,7 @@ object PatientHomeFrame: TPatientHomeFrame
         item
         end>
       IsSelected = False
-      Size.Width = 93.000000000000000000
-      Size.Height = 26.000000000000000000
+      Size.Height = 5.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
@@ -269,7 +266,7 @@ object PatientHomeFrame: TPatientHomeFrame
         Margins.Right = 2.000000000000000000
         Margins.Bottom = 2.000000000000000000
         Size.Width = 946.000000000000000000
-        Size.Height = 577.000000000000000000
+        Size.Height = 598.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
         object Panel3: TPanel
@@ -292,7 +289,7 @@ object PatientHomeFrame: TPatientHomeFrame
         object lbCompositions: TListBox
           Align = Client
           Size.Width = 942.000000000000000000
-          Size.Height = 540.000000000000000000
+          Size.Height = 561.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
           OnDblClick = lbCompositionsDblClick
@@ -301,7 +298,7 @@ object PatientHomeFrame: TPatientHomeFrame
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
           Viewport.Width = 942.000000000000000000
-          Viewport.Height = 540.000000000000000000
+          Viewport.Height = 561.000000000000000000
         end
       end
     end

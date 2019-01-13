@@ -363,7 +363,6 @@ end;
 
 procedure TCDAStyler.SetMode(const Value: TCDAStylerMode);
 begin
-  ResetSystem;
   FMode := Value;
 end;
 

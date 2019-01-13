@@ -327,8 +327,8 @@ begin
       cbxVersion.Items.Add('1.4.0 (May 2016)');
     if Settings.CacheManager.packageExists('hl7.fhir.core', '3.0.1') then
       cbxVersion.Items.Add('3.0.1 (R3)');
-    if Settings.CacheManager.packageExists('hl7.fhir.core', '3.4.0') then
-      cbxVersion.Items.Add('3.4.0 (R4)');
+    if Settings.CacheManager.packageExists('hl7.fhir.core', '4.0.0') then
+      cbxVersion.Items.Add('4.0.0 (R4)');
     if cbxVersion.Items.Count = 0 then
       raise EFHIRException.create('Invalid installation/system - no FHIR packages found');
 

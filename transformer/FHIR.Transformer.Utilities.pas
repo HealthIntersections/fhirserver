@@ -239,6 +239,7 @@ begin
   Call(SCI_MARKERDEFINE, mmLineStep, SC_MARK_BACKGROUND);
   Call(SCI_MARKERSETFORE, mmLineStep, clWhite);
   Call(SCI_MARKERSETBACK, mmLineStep, clLime);
+  TabWidth := 4;
 end;
 
 

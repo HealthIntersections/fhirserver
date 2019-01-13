@@ -393,7 +393,7 @@ type
     property TextLength: Integer read FTextLen;
     property FirstLine : Integer read FFirstLine;
     property LastLine : Integer read FLastLine;
-    procedure ResetSystem;
+    procedure ContentChanged(text : string); virtual;
   end;
 
   EScintEditError = class(Exception);
@@ -509,6 +509,9 @@ var
   Info: TScintEditChangeInfo;
 begin
   inherited Changed;
+  if FStyler <> nil then
+    FStyler.ContentChanged(rawText);
+  
   if Assigned(FOnChange) then begin
     Info.Inserting := AInserting;
     Info.StartPos := AStartPos;
@@ -1341,7 +1344,10 @@ procedure TScintEdit.SetStyler(const Value: TScintCustomStyler);
 begin
   if FStyler <> Value then begin
     if Assigned(Value) then
+    begin
       Value.FreeNotification(Self);
+      Value.ContentChanged(rawText);
+    end;
     FStyler := Value;
     if HandleAllocated then begin
       Call(SCI_CLEARDOCUMENTSTYLE, 0, 0);
@@ -2163,7 +2169,7 @@ begin
 end;
 
 
-procedure TScintCustomStyler.ResetSystem;
+procedure TScintCustomStyler.ContentChanged;
 begin
 
 end;

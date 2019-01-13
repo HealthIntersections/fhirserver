@@ -255,6 +255,10 @@
         <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
         <DCCReference Include="..\library\v2\FHIR.v2.Message.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Liquid.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -281,10 +285,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -294,10 +298,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
