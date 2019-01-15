@@ -397,7 +397,7 @@
         <DCCReference Include="..\..\library\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="FHIR.Tests.FullServer.pas"/>
         <DCCReference Include="..\FHIR.Tests.GraphDefinition.pas"/>
-        <DCCReference Include="..\FHIR.Tests.GraphQL.pas"/>
+        <DCCReference Include="FHIR.Tests.GraphQL.pas"/>
         <DCCReference Include="..\FHIR.Tests.IETFLang.pas"/>
         <DCCReference Include="..\FHIR.Tests.IdUriParser.pas"/>
         <DCCReference Include="FHIR.Tests.RestFulServer.pas"/>

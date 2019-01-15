@@ -164,7 +164,7 @@ type
     property profiles : TProfileUsages read GetProfiles;
 
 
-
+    procedure markValidation(profile : TFHIRStructureDefinition; element : TFhirElementDefinition);
     function hasChildren : boolean;
     function hasComments : boolean;
     function hasValue : boolean;
@@ -1037,6 +1037,11 @@ begin
   LocationStart := start;
   LocationEnd := end_;
   result := self;
+end;
+
+procedure TFHIRMMElement.markValidation(profile: TFHIRStructureDefinition; element: TFhirElementDefinition);
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 function TFHIRMMElement.getId: String;

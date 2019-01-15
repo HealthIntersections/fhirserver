@@ -379,7 +379,7 @@ type
 
 const
   ALL_INTERACTIONS = [fiRead..fiDelete];
-  CODES_TFHIRBundleEntrySearchMode : array [TFHIRBundleEntrySearchMode] of String = ('Unknown', 'Match', 'Include', 'Outcome');
+  CODES_TFHIRBundleEntrySearchMode : array [TFHIRBundleEntrySearchMode] of String = ('', 'match', 'include', 'outcome');
   All_TFHIRBundleEntrySearchMode = [smUnknown..smOutcome];
 
 type

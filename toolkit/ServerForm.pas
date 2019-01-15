@@ -191,7 +191,7 @@ procedure TServerFrame.btnBulkDataClick(Sender: TObject);
 var
   form : TBulkDataDialog;
 begin
-  form := TBulkDataDialog.create(self);
+  form := TBulkDataDialog.create(self.form);
   try
     form.server := client.link;
     form.settings := settings.link;

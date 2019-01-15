@@ -47,7 +47,7 @@ begin
   if gResources = nil then
     gResources := TFslMap<TFHIRResource>.create;
   if gTestDoc = nil then
-    gTestDoc := TJSONParser.ParseFile('C:\work\org.hl7.fhir\build\tests\resources\liquid-tests.json');
+    gTestDoc := TJSONParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\liquid\liquid-tests.json');
   tests := gTestDoc.arr['tests'];
   SetLength(result, tests.Count);
   for i := 0 to tests.Count - 1 do

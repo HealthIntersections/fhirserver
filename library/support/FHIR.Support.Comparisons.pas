@@ -548,10 +548,10 @@ begin
   result := compareText(src1, src2, msg);
   if not result then
   begin
-    f1 := MakeTempFilename +'-source.xml';
-    f2 := MakeTempFilename +'-dest.xml';
+    f1 := MakeTempFilename +'-source.txt';
+    f2 := MakeTempFilename +'-dest.txt';
     StringToFile(src1, f1, TEncoding.UTF8);
-     StringToFile(src2, f2, TEncoding.UTF8);
+    StringToFile(src2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
   end;

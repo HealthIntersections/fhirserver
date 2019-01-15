@@ -139,7 +139,7 @@ end;
 
 constructor StructureMapTestCaseAttribute.Create;
 begin
-  inherited Create(FHIR_SRC_FILE('guides\ccda\maps'), '.map', 0);
+  inherited Create('guides\ccda\maps', '.map', 0);
 end;
 
 { TMapTransformTests }
@@ -242,10 +242,10 @@ var
 begin
   st := TStringList.Create;
   try
-    for s in TDirectory.GetFiles('C:\work\org.hl7.fhir\build\implementations\r3maps\R3toR4') do
+    for s in TDirectory.GetFiles('C:\work\org.hl7.fhir\org.fhir.interversion\r4\R3toR4') do
       if s.endsWith('map') then
         st.Add(s);
-    for s in TDirectory.GetFiles('C:\work\org.hl7.fhir\build\implementations\r3maps\R4toR3') do
+    for s in TDirectory.GetFiles('C:\work\org.hl7.fhir\org.fhir.interversion\r4\R4toR3') do
       if s.endsWith('map') then
         st.Add(s);
     SetLength(result, st.Count);
@@ -273,8 +273,8 @@ begin
   try
     output := utils.render(map);
 
-    source := source.replace('  ', ' ').replace(' '#13#10, #13#10).replace(#13#10#13#10, #13#10);
-    output := output.replace('  ', ' ').replace(' '#13#10, #13#10).replace(#13#10#13#10, #13#10);
+    source := source.replace('  ', ' ', [rfReplaceAll]).replace(' '#13#10, #13#10, [rfReplaceAll]).replace(#13#10#13#10, #13#10, [rfReplaceAll]);
+    output := output.replace('  ', ' ', [rfReplaceAll]).replace(' '#13#10, #13#10, [rfReplaceAll]).replace(#13#10#13#10, #13#10, [rfReplaceAll]);
     ok := checkTextIsSame(source, output, s);
     assert.IsTrue(ok, s);
   finally

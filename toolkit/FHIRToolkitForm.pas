@@ -162,6 +162,7 @@ type
     btnFromUrl: TButton;
     Button10: TButton;
     MenuItem7: TMenuItem;
+    MenuItem10: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -195,6 +196,7 @@ type
     procedure mnuTransformationClick(Sender: TObject);
     procedure btnFromUrlClick(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
+    procedure MenuItem10Click(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -1061,6 +1063,11 @@ begin
     lbServers.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
     lbServers.ListItems[i].Data := FServers[i];
   end;
+end;
+
+procedure TMasterToolsForm.MenuItem10Click(Sender: TObject);
+begin
+  MessageDlg('test', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbok], 0);
 end;
 
 procedure TMasterToolsForm.MenuItem7Click(Sender: TObject);
