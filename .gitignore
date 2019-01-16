@@ -181,3 +181,4 @@ System
 /utilities/_v2JS
 /install/build/*.zip
 /utilities/nppformats/release/*.zip
+/Exec/64/fhir-vcl-demo.log

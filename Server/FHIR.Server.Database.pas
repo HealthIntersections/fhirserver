@@ -59,6 +59,9 @@ const
 
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
+  KEY_SAVE_SIZE = 20;
+
+
 type
   TKeyPair = class (TFslObject)
   private
@@ -5298,6 +5301,7 @@ begin
         cfg.cmdOperation := conn.ColStringByName['cmdOperation'] = '1';
         cfg.versionUpdates := conn.ColStringByName['versionUpdates'] = '1';
         cfg.LastResourceId := conn.ColIntegerByName['LastId'];
+        cfg.storedResourceId := conn.ColIntegerByName['LastId'];
       end;
       conn.terminate;
       if conn.Owner.Platform = kdbMySQL then
@@ -5450,7 +5454,11 @@ begin
 end;
 
 destructor TFHIRNativeStorageService.Destroy;
+var
+  rc : TFHIRResourceConfig;
 begin
+  for rc in ServerContext.ResConfig.Values do
+    DB.ExecSQL('Update Types set LastId = '+inttostr(rc.lastResourceId)+' where ResourceTypeKey = '+inttostr(rc.key), 'key-update');
   FQueue.free;
   FSpaces.Free;
   FRegisteredValueSets.Free;
@@ -6741,11 +6749,18 @@ end;
 
 function TFHIRNativeStorageService.NextResourceKeyGetId(aType: String; var id: string): integer;
 begin
+  if aType = 'Composition' then
+    writeln('test');
   FLock.Lock('NextResourceKey');
   try
     inc(FLastResourceKey);
     result := FLastResourceKey;
     inc(ServerContext.ResConfig[aType].LastResourceId);
+    if ServerContext.ResConfig[aType].LastResourceId > ServerContext.ResConfig[aType].storedResourceId then
+    begin
+      ServerContext.ResConfig[aType].storedResourceId := ServerContext.ResConfig[aType].LastResourceId + KEY_SAVE_SIZE;
+      DB.ExecSQL('Update Types set LastId = '+inttostr(ServerContext.ResConfig[aType].storedResourceId)+' where ResourceTypeKey = '+inttostr(ServerContext.ResConfig[aType].key), 'key-update');
+    end;
     id := inttostr(ServerContext.ResConfig[aType].LastResourceId);
   finally
     FLock.Unlock;
@@ -6756,6 +6771,8 @@ function TFHIRNativeStorageService.NextResourceKeySetId(aType: String; id: strin
 var
   i: integer;
 begin
+  if aType = 'Composition' then
+    writeln('test');
   FLock.Lock('NextResourceKey');
   try
     inc(FLastResourceKey);
@@ -6764,7 +6781,14 @@ begin
     begin
       i := StrToInt(id);
       if (i > ServerContext.ResConfig[aType].LastResourceId) then
+      begin
         ServerContext.ResConfig[aType].LastResourceId := i;
+        if ServerContext.ResConfig[aType].LastResourceId > ServerContext.ResConfig[aType].storedResourceId then
+        begin
+          ServerContext.ResConfig[aType].storedResourceId := ServerContext.ResConfig[aType].LastResourceId + KEY_SAVE_SIZE;
+          DB.ExecSQL('Update Types set LastId = '+inttostr(ServerContext.ResConfig[aType].storedResourceId)+' where ResourceTypeKey = '+inttostr(ServerContext.ResConfig[aType].key), 'key-update');
+        end;
+      end;
     end;
   finally
     FLock.Unlock;
