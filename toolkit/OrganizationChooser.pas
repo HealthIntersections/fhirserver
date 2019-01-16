@@ -33,6 +33,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.ListBox, FMX.StdCtrls, FMX.Controls.Presentation,
+  FHIR.Ui.Fmx,
   FHIR.Version.Resources;
 
 type
@@ -67,7 +68,7 @@ begin
       OrganizationSelectionForm.ListBox1.Items.Add(o.name);
     if orgs.Count > 0 then
       OrganizationSelectionForm.ListBox1.ItemIndex := 0;
-    result := OrganizationSelectionForm.ShowModal = mrOk;
+    result := ShowModalHack(OrganizationSelectionForm) = mrOk;
     if result then
       org := orgs[OrganizationSelectionForm.ListBox1.ItemIndex];
   finally

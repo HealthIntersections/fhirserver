@@ -41,7 +41,7 @@ uses
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders,
-  FHIR.Support.Certs, FHIR.Support.Threads, FHIR.Support.Base,
+  FHIR.Support.Certs, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Ui.Fmx,
   FHIR.Support.Logging,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Web.Fetcher,
@@ -280,7 +280,7 @@ begin
     {$IFDEF FHIR3} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create; {$ENDIF}
     {$IFDEF FHIR4} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create; {$ENDIF}
     form.Server := TRegisteredFHIRServer.Create;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       FSettings.registerServer('', form.Server);
       loadServers;
@@ -410,7 +410,7 @@ begin
     form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
     form.Versions := TFHIRVersionFactories.Create;
     form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).Link;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       FSettings.updateServerInfo('', form.Server);
       loadServers;
@@ -492,7 +492,7 @@ begin
 {$ENDIF}
 
     form.caption := 'Create New File';
-    if (form.ShowModal = mrOk) then
+    if (ShowModalHack(form) = mrOk) then
       case form.ListBox1.ItemIndex of
         0 : newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
         1 : newResource(TFhirValueSet, TValueSetEditorFrame);
@@ -608,7 +608,7 @@ begin
   form := TSettingsForm.create(self);
   try
     form.Settings := FSettings.link;
-    if form.showmodal = mrOk then
+    if showmodalHack(form) = mrOk then
       for i := 0 to tbMain.TabCount - 1 do
         if tbMain.Tabs[i].TagObject is TBaseFrame then
           TBaseFrame(tbMain.Tabs[i].TagObject).SettingsChanged;
@@ -640,7 +640,7 @@ begin
       form.current := frame.currentResource.Link;
       form.original := frame.originalResource.Link;
       form.Factory := FFactory.link;
-      form.ShowModal;
+      ShowModalHack(form);
     finally
       form.Free;
     end;
@@ -828,7 +828,7 @@ begin
       form.Button1.enabled := canCancel;
       form.Button1.OnClick := btnStopClick;
       form.proc := proc;
-      form.ShowModal;
+      ShowModalHack(form);
     finally
       form.Free;
     end;
@@ -920,7 +920,7 @@ begin
     if not dirty then
       CanClose := true
     else
-      CanClose := form.ShowModal = mrOk;
+      CanClose := ShowModalHack(form) = mrOk;
       for i := 0 to form.ListBox1.Items.Count - 1 do
         if form.ListBox1.ListItems[i].IsChecked then
           if not TBaseFrame(form.ListBox1.Items.Objects[i]).save then
@@ -1106,7 +1106,7 @@ begin
     ResourceLanguageForm := TResourceLanguageForm.Create(self);
     try
       ResourceLanguageForm.Resource := frame.currentResource.Link;
-      if ResourceLanguageForm.ShowModal = mrOk then
+      if ShowModalHack(ResourceLanguageForm) = mrOk then
         frame.reload;
     finally
       ResourceLanguageForm.Free;
@@ -1191,7 +1191,7 @@ begin
     try
       upg.Settings := FSettings.link;
       upg.lblVersion.Text := 'The current version is '+ver+', you are running 0.0.'+inttostr(buildCount)+'. Upgrade?';
-      case upg.ShowModal of
+      case ShowModalHack(upg) of
         mrContinue : UpgradeOnClose := true;
         mrYes:
 
@@ -1214,7 +1214,7 @@ var
 begin
   form := TAboutForm.Create(self);
   try
-    form.ShowModal;
+    ShowModalHack(form);
   finally
     form.Free;
   end;
@@ -1471,6 +1471,7 @@ procedure TMasterToolsForm.Timer1Timer(Sender: TObject);
 var
   frame : TBaseFrame;
 begin
+  ModalHackUPdateStatus;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
   tbnSave.Enabled := false;
   tbnSaveAs.Enabled := false;

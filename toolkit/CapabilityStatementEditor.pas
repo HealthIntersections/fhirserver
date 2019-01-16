@@ -36,7 +36,7 @@ uses
   FMX.ImgList, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit,
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Menus,
   BaseResourceFrame,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
 
@@ -310,7 +310,7 @@ begin
       if res.interaction(TypeRestfulInteractionHistoryType) = nil then form.cbHistoryType.Enabled := true;
       if res.interaction(TypeRestfulInteractionPatch) = nil then form.cbPatch.Enabled := true;
     end;
-    if form.showmodal = mrOk then
+    if showmodalHack(form) = mrOk then
     begin
       for res in rest.resourceList do
       begin
@@ -364,7 +364,7 @@ begin
     for r in rs do
       if r <> frtCustom then
         form.ListBox1.Items.addObject(CODES_TFhirResourceType[r], TObject(r));
-    if form.showmodal = mrOk then
+    if showmodalHack(form) = mrOk then
     begin
       for i := 0 to form.ListBox1.Items.Count - 1 do
         if form.ListBox1.ListItems[i].isChecked then
@@ -503,7 +503,7 @@ begin
 
     if form.ListBox1.Items.Count = 0 then
       ShowMessage('No resources to delete')
-    else if form.ShowModal = mrOk then
+    else if ShowModalHack(form) = mrOk then
     begin
       for i := 0 to form.ListBox1.Items.Count - 1 do
         if form.ListBox1.ListItems[i].IsChecked then
@@ -531,7 +531,7 @@ begin
     form := TSearchParameterEditorForm.create(self);
     try
       form.param := p.link;
-      if form.showModal = mrOk then
+      if showModalHack(form) = mrOk then
       begin
         res.searchParamList.Add(p.link);
         gridSearch.RowCount := res.searchParamList.Count;
@@ -585,7 +585,7 @@ begin
         end;
         if form.ListBox1.Items.Count = 0 then
           ShowMessage('No Standard Search Parameters Left to add')
-        else if form.ShowModal = mrOk then
+        else if ShowModalHack(form) = mrOk then
         begin
           for i := 0 to form.ListBox1.Items.Count - 1 do
             if form.ListBox1.ListItems[i].IsChecked then
@@ -646,7 +646,7 @@ begin
   form := TSearchParameterEditorForm.create(self);
   try
     form.param := p.link;
-    if form.showModal = mrOk then
+    if showModalHack(form) = mrOk then
     begin
       gridSearch.RowCount := 0;
       gridSearch.RowCount := sp.Count;
@@ -690,7 +690,7 @@ begin
       if res.interaction(TypeRestfulInteractionHistoryType) <> nil then form.cbHistoryType.Enabled := true;
       if res.interaction(TypeRestfulInteractionPatch) <> nil then form.cbPatch.Enabled := true;
     end;
-    if form.showmodal = mrOk then
+    if showmodalHack(form) = mrOk then
     begin
       for res in rest.resourceList do
       begin

@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.Objects, FMX.ListBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl,
   FMX.Controls.Presentation,
-  FHIR.Support.Utilities,
+  FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Client.ClientDialogFMX;
 
@@ -245,7 +245,7 @@ begin
     form.SoftwareId := SoftwareId;
     form.SoftwareVersion := SoftwareVersion;
     form.edtIssuer.Text := edtIssuerURL.Text;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       if form.Mode = salmOAuthClient then
       begin

@@ -37,7 +37,7 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   FMX.Memo, FMX.TreeView,
   BaseFrame,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx, FHIR.Ui.Fmx,
   FHIR.Cache.PackageManager;
 
 const
@@ -179,7 +179,7 @@ begin
   PackageFinderForm := TPackageFinderForm.create(self);
   try
     PackageFinderForm.OnLoadUrl := importUrl;
-    PackageFinderForm.ShowModal;
+    ShowModalHack(PackageFinderForm);
   finally
     PackageFinderForm.Free;
   end;

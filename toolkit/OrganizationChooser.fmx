@@ -3,6 +3,8 @@ object OrganizationSelectionForm: TOrganizationSelectionForm
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Choose Organization'
+  ClientHeight = 480
+  ClientWidth = 640
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]

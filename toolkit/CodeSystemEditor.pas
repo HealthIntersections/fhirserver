@@ -35,7 +35,7 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame, ToolKitUtilities,
@@ -706,7 +706,7 @@ begin
   try
     form.CodeSystem := CodeSystem.Link;
     form.Concept := sel.Clone;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       grdConcepts.BeginUpdate;
       sel.code := form.Concept.code;
@@ -796,7 +796,7 @@ begin
     frm := TResourceHistoryForm.create(self);
     try
        frm.Extension := ext.Link;
-       if frm.showModal = mrOk then
+       if showModalHack(frm) = mrOk then
        begin
          FHistory.InsertItem(0, ext.link);
          gridHistory.RowCount := 0;
@@ -836,7 +836,7 @@ begin
   frm := TResourceHistoryForm.create(self);
   try
      frm.Extension := ext.Link;
-     if frm.showModal = mrOk then
+     if showModalHack(frm) = mrOk then
      begin
        inputChanged(nil);
        gridHistory.RowCount := 0;

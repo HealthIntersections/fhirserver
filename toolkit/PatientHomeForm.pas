@@ -35,7 +35,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox, FMX.TabControl,
   FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
-  FHIR.Support.Utilities,
+  FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Support.Base, FHIR.Base.Objects,
   FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Version.Types,
   BaseFrame, DocumentGenerationForm, System.Rtti, FMX.Grid.Style, FMX.Grid,
@@ -318,7 +318,7 @@ begin
         form.patient := Patient.Link;
         form.Document := doc.link;
 //        form.Authors := prac.link;
-        form.ShowModal;
+        ShowModalHack(form);
       finally
         form.free;
       end;
