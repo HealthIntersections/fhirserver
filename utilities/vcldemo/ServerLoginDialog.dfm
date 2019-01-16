@@ -106,6 +106,13 @@ object ServerLoginForm: TServerLoginForm
       Height = 13
       Caption = 'Authorization Scope:'
     end
+    object Label5: TLabel
+      Left = 192
+      Top = 80
+      Width = 22
+      Height = 13
+      Caption = 'Host'
+    end
     object cbxServer: TComboBox
       Left = 80
       Top = 13
@@ -125,7 +132,7 @@ object ServerLoginForm: TServerLoginForm
     object edtRedirectPort: TEdit
       Left = 81
       Top = 77
-      Width = 276
+      Width = 88
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
@@ -140,22 +147,13 @@ object ServerLoginForm: TServerLoginForm
       TabOrder = 2
       Text = '4342008'
     end
-    object CheckBox1: TCheckBox
-      Left = 365
-      Top = 76
-      Width = 95
-      Height = 17
-      Anchors = [akTop, akRight]
-      Caption = 'Web Redirector'
-      TabOrder = 3
-    end
     object cbAuthScope: TComboBox
       Left = 120
       Top = 149
       Width = 145
       Height = 21
       ItemIndex = 1
-      TabOrder = 4
+      TabOrder = 3
       Text = 'User'
       Items.Strings = (
         'System'
@@ -167,11 +165,18 @@ object ServerLoginForm: TServerLoginForm
       Width = 379
       Height = 21
       ItemIndex = 0
-      TabOrder = 5
+      TabOrder = 4
       Text = 'c24732fd-9717-4972-8d63-a1a74986f420'
       Items.Strings = (
         'c24732fd-9717-4972-8d63-a1a74986f420'
         '1db72b5d-5233-494c-aa1e-452a9a56321e')
+    end
+    object edtHost: TEdit
+      Left = 232
+      Top = 76
+      Width = 227
+      Height = 21
+      TabOrder = 5
     end
   end
 end

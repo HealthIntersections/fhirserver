@@ -172,11 +172,12 @@ type
     edtRedirectPort: TEdit;
     Label1: TLabel;
     edtPatientId: TEdit;
-    CheckBox1: TCheckBox;
     chkInProgress: TCheckBox;
     Label3: TLabel;
     cbAuthScope: TComboBox;
     cbClientId: TComboBox;
+    Label5: TLabel;
+    edtHost: TEdit;
     procedure FormShow(Sender: TObject);
     procedure btnLoginClick(Sender: TObject);
   private
@@ -216,6 +217,7 @@ begin
   chkInProgress.Checked := ini.readBool('Server', 'InProcess', false);
   // this sets the combobox for Authorization Scope to the appropriate value
   cbAuthScope.Text := ini.ReadString('Server','AuthScope','User');
+  edtHost.Text := ini.ReadString('Server','Host','localhost');
 end;
 
 destructor TServerLoginForm.Destroy;
@@ -243,6 +245,7 @@ begin
   ini.WriteString('Server', 'URL', cbxServer.Text);
   ini.WriteString('Server', 'ClientId', cbClientId.Text);
   ini.WriteString('Server', 'Port', edtRedirectPort.Text);
+  ini.WriteString('Server', 'Host', edtHost.Text);
   ini.WriteString('Server', 'Patient', edtPatientId.Text);
   ini.WriteBool('Server', 'InProcess', chkInProgress.Checked);
   ini.WriteString('Server','AuthScope',cbAuthScope.Text);
@@ -264,6 +267,7 @@ begin
       server.clientsecret := CLIENT_SECRET;
     end;
     server.redirectport := StrToInt(edtRedirectPort.Text);
+    server.host := edtHost.Text;
 
     FProgressForm.Message := 'Logging in';
     FProgressForm.Show;
@@ -312,7 +316,7 @@ begin
               login.scopes := KFHIRAuthScopeAy[fasSystem] // ['openid', 'profile', 'user/Patient.read', 'user/MedicationOrder.read', 'user/MedicationStatement.read', 'user/AllergyIntolerance.read'];
             else
               login.scopes := KFHIRAuthScopeAy[fasUser]; // ['openid', 'profile', 'user/Patient.read', 'user/MedicationOrder.read', 'user/MedicationStatement.read', 'user/AllergyIntolerance.read'];
-            login.name := 'Demo Application';
+            login.name := 'VclDemo';
             login.version := '0.01';
             login.OnOpenURL := DoOpenURL;
             login.OnIdle := DoIdle;

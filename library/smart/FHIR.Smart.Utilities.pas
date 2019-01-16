@@ -156,6 +156,7 @@ type
     FSSLPublicCert: String;
     FSSLPrivateKey: String;
     FId: integer;
+    FHost: string;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -204,6 +205,7 @@ type
 
     // the port for redirecting to this server
     property redirectport : integer read Fredirectport write Fredirectport;
+    property host : string read FHost write FHost;
 
     // backend services
     property issuerUrl : String read FissuerUrl write FissuerUrl;
@@ -240,7 +242,7 @@ implementation
 
 function buildAuthUrl(server : TRegisteredFHIRServer; scopes, state : String) : String;
 begin
-  result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://localhost:'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
+  result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://'+server.host+':'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
 end;
 
 function usesSmartOnFHIR(conf : TFhirCapabilityStatementW; var authorize, token, register: String): Boolean;
@@ -297,8 +299,8 @@ begin
             try
               result := TClientAccessToken.Create;
               try
-                if json.vStr['token_type'] <> 'Bearer' then
-                  raise EFHIRException.create('token type is not "Bearer"');
+                if not sameText(json.vStr['token_type'], 'Bearer') then
+                  raise EFHIRException.create('token type is not "Bearer" (is '+json.vStr['token_type']+')');
                 result.accesstoken := json.vStr['access_token'];
                 result.scopes := json.vStr['scope'];
                 s := json.vStr['expires_in'];
@@ -310,6 +312,7 @@ begin
                 end;
                 if json.vStr['id_token'] <> '' then
                   result.idToken := TJWTUtils.unpack(json.vStr['id_token'], false, nil);
+                result.patient := json.vStr['patient'];
                 result.Link;
               finally
                 result.Free;
@@ -340,9 +343,9 @@ end;
 function getSmartOnFhirAuthToken(server : TRegisteredFHIRServer; authcode : String) : TClientAccessToken;
 begin
   if server.clientsecret = '' then
-    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&client_id='+server.clientid+'&redirect_uri='+EncodeMime('http://localhost:'+inttostr(server.redirectport)+'/done'))
+    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&client_id='+server.clientid+'&redirect_uri='+EncodeMime('http://'+server.host+':'+inttostr(server.redirectport)+'/done'))
   else
-    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&redirect_uri='+EncodeMime('http://localhost:'+inttostr(server.redirectport)+'/done'));
+    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&redirect_uri='+EncodeMime('http://'+server.host+':'+inttostr(server.redirectport)+'/done'));
 end;
 
 { TRegisteredFHIRServer }

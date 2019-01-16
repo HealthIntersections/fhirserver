@@ -46,37 +46,13 @@ The flow is simple:
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
-  System.SysUtils,
-  System.Variants,
-  System.Classes,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  IniFiles,
-  Vcl.ExtCtrls,
-  Vcl.StdCtrls,
-  Vcl.ComCtrls,
-  Vcl.OleCtrls,
-  SHDocVw,
-  PngImage,
-  Generics.Collections,
-  Generics.Defaults,
-  VirtualTrees,
-  FHIR.Support.Base,
-  FHIR.Support.Utilities,
-
-  FHIR.Base.Objects,
-  FHIR.Version.Client,
-  FHIR.Version.Types,
-  FHIR.Version.Resources,
-  FHIR.Version.Utilities,
-  FHIR.Base.Xhtml,
-  ServerLoginDialog,
-  ProgressDialog,
-  FHIRDemoLogging;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, IniFiles,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.OleCtrls,
+  SHDocVw, PngImage, Generics.Collections, Generics.Defaults, VirtualTrees,
+  IdSSLOpenSSLHeaders, IdSSLOpenSSL, IdResourceStringsOpenSSL,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Base.Xhtml,
+  ServerLoginDialog, ProgressDialog, FHIRDemoLogging;
 
 type
   TMainWindowForm = class;
@@ -205,11 +181,10 @@ begin
   Result := ExtractFilePath(Application.ExeName) + '\';
 end;
 
-
-
-
 procedure TMainWindowForm.FormCreate(Sender: TObject);
 begin
+  if not LoadOpenSSLLibrary then
+    raise EIdOSSLCouldNotLoadSSLLibrary.Create(RSOSSLCouldNotLoadSSLLibrary+' ('+WhichFailedToLoad+')');
   FLogService := TFileLoggingService.create(path([AppExePath, 'fhir-vcl-demo.log']));
   FProgressForm := TProgressWindow.Create(self);
   FIni := TIniFile.Create(Path([SystemTemp, 'fhir-vcl-demo.ini']));
@@ -245,7 +220,9 @@ begin
         if ServerLoginForm.ShowModal = mrOk then
         begin
           FClient := ServerLoginForm.Client.link;
-          FPatientId := ServerLoginForm.edtPatientId.Text;
+          FPatientId := ServerLoginForm.Client.smartToken.patient;
+          if FPatientId = '' then
+            FPatientId := ServerLoginForm.edtPatientId.Text;
           LoadPatient;
         end
         else
