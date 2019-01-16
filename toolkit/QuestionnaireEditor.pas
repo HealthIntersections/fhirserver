@@ -36,7 +36,7 @@ uses
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus,FMX.WebBrowser,
   System.ImageList, FMX.ImgList, FMX.Effects, FMX.Filter.Effects,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   FHIR.Version.Questionnaire2,
   BaseResourceFrame,
@@ -287,7 +287,7 @@ begin
   try
     dlg.UsageContext := TFhirUsageContext.Create;
     dlg.Settings := Settings.link;
-    if dlg.ShowModal = mrOk then
+    if ShowModalHack(dlg) = mrOk then
     begin
       Questionnaire.useContextList.Add(dlg.UsageContext.Link);
       grdUseContext.RowCount := Questionnaire.useContextList.Count;
@@ -476,7 +476,7 @@ begin
   try
     dlg.UsageContext := Questionnaire.useContextList[i].Clone;
     dlg.Settings := Settings.link;
-    if dlg.ShowModal = mrOk then
+    if ShowModalHack(dlg) = mrOk then
     begin
       Questionnaire.useContextList[i].assign(dlg.UsageContext);
       grdUseContext.RowCount := 0;
@@ -500,7 +500,7 @@ begin
     form.questionnaire := questionnaire.Link;
     form.Settings := Settings.link;
     form.OnWork := OnWork;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       grdItems.BeginUpdate;
       item.required := form.item.required;
@@ -584,7 +584,7 @@ begin
   try
     dlg.Context := TFHIRExtension.Create;
     dlg.Context.url := 'http://hl7.org/fhir/StructureDefinition/questionnaire-context';
-    if dlg.ShowModal = mrOk then
+    if ShowModalHack(dlg) = mrOk then
     begin
       Questionnaire.extensionList.Add(dlg.Context.Link);
       grdUseContext.RowCount := Questionnaire.GetExtensionCount('http://hl7.org/fhir/StructureDefinition/questionnaire-context');
@@ -608,7 +608,7 @@ begin
   dlg := TQuestionnaireContextForm.create(nil);
   try
     dlg.Context := ext.Clone;
-    if dlg.ShowModal = mrOk then
+    if ShowModalHack(dlg) = mrOk then
     begin
       ext.Assign(dlg.Context);
       grdUseContext.RowCount := 0;

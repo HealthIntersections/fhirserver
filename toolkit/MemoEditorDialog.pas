@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
   FMX.Memo, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts,
   FMX.ListBox,
-  FHIR.Support.Base,
+  FHIR.Support.Base, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitUtilities, ListSelector;
@@ -92,7 +92,7 @@ begin
     MemoEditorForm.Resource := resource.Link;
     MemoEditorForm.Element := element.Link;
     MemoEditorForm.Caption := title;
-    result := MemoEditorForm.ShowModal = mrOk;
+    result := ShowModalHack(MemoEditorForm) = mrOk;
     if result then
     begin
       edit.Text := element.value;
@@ -110,7 +110,7 @@ begin
     MemoEditorForm.Resource := resource.Link;
     MemoEditorForm.Element := element.Link;
     MemoEditorForm.Caption := title;
-    result := MemoEditorForm.ShowModal = mrOk;
+    result := ShowModalHack(MemoEditorForm) = mrOk;
     if result then
     begin
       edit.Text := element.value;
@@ -133,7 +133,7 @@ begin
       MemoEditorForm.Resource := resource.Link;
       MemoEditorForm.Element := md.Link;
       MemoEditorForm.Caption := title;
-      result := MemoEditorForm.ShowModal = mrOk;
+      result := ShowModalHack(MemoEditorForm) = mrOk;
       if result then
       begin
         element.value := md.value;

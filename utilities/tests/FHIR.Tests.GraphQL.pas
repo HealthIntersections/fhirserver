@@ -81,7 +81,7 @@ var
   i: integer;
   name,body : String;
 begin
-  tests := FileToString('C:\work\org.hl7.fhir\build\tests\graphql\parser-tests.gql', TEncoding.UTF8);
+  tests := FileToString('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\parser-tests.gql', TEncoding.UTF8);
   i := 0;
   while (tests <> '') do
   begin
@@ -91,7 +91,7 @@ begin
   end;
   setLength(result, i);
   i := 0;
-  tests := FileToString('C:\work\org.hl7.fhir\build\tests\graphql\parser-tests.gql', TEncoding.UTF8);
+  tests := FileToString('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\parser-tests.gql', TEncoding.UTF8);
   while (tests <> '') do
   begin
     StringSplit(tests, '####', test, tests);
@@ -130,7 +130,7 @@ var
   test : TMXmlElement;
   i: integer;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\graphql\manifest.xml', [xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\manifest.xml', [xpDropWhitespace]);
   try
     test := tests.document.first;
     i := 0;
@@ -164,11 +164,11 @@ end;
 procedure TFHIRGraphQLTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('condition-example.xml')))
+    list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\condition-example.xml'))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('patient-example.xml')));
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('patient-example-xds.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\patient-example.xml'));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\patient-example-xds.xml'));
   end;
 end;
 
@@ -176,7 +176,7 @@ function TFHIRGraphQLTests.LookupResource(appInfo: TFslObject; requestType, id: 
 var
   filename : String;
 begin
-  filename := FHIR_PUB_FILE(requestType+'-'+id+'.xml');
+  filename := 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\'+requestType+'-'+id+'.xml';
   result := FileExists(filename);
   if result then
     res := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
@@ -206,7 +206,7 @@ begin
   else
   begin
     parts := (reference as TFHIRReference).reference.Split(['/']);
-    filename := FHIR_PUB_FILE(parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
+    filename := 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
     result := FileExists(filename);
     if result then
       target := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
@@ -233,12 +233,12 @@ begin
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('patient-example.xml'));
+      resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\patient-example.xml');
     end;
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('patient-example-xds.xml'));
+      resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\patient-example-xds.xml');
       search := TFhirBundleEntrySearch.Create;
       search.score := '0.5';
       search.mode := SearchEntryModeMatch;
@@ -271,9 +271,9 @@ begin
     if length(parts) <> 3 then
       raise ETestCase.create('not done yet '+source+' '+output+' '+context);
     if resource <> '' then
-      filename := FHIR_PUB_FILE(resource+'.xml')
+      filename := 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\'+resource+'.xml'
     else
-      filename := FHIR_PUB_FILE(parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
+      filename := 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml'
   end;
 
   gql := TFHIRGraphQLEngine.Create(TFHIRFactoryX.create);
@@ -284,7 +284,7 @@ begin
     gql.OnSearch := Search;
     if (filename <> '') then
       gql.Focus := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
-    gql.GraphQL := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\build\tests\graphql\'+source);
+    gql.GraphQL := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\'+source);
     gql.GraphQL.OperationName := opName;
     gql.GraphQL.variables.Add(TGraphQLArgument.Create('var', TGraphQLNameValue.Create('true')));
     try
@@ -303,8 +303,9 @@ begin
       str := TStringBuilder.create;
       try
         gql.output.write(str, 0);
-        StringToFile(str.ToString, 'C:\work\org.hl7.fhir\build\tests\graphql\'+output+'.out', TEncoding.UTF8);
-        ok := CheckJsonIsSame('C:\work\org.hl7.fhir\build\tests\graphql\'+output+'.out', 'C:\work\org.hl7.fhir\build\tests\graphql\'+output, msg);
+        StringToFile(str.ToString, 'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\'+output+'.out', TEncoding.UTF8);
+        ok := CheckJsonIsSame(     'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\'+output,
+                                   'C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\graphql\'+output+'.out', msg);
         assert.IsTrue(ok, msg);
       finally
         str.free;

@@ -32,7 +32,7 @@ interface
 uses
   Sysutils, Classes, Generics.Collections, UITypes, Types,
   FMX.Controls, FMX.StdCtrls, FMX.ImgList, FMX.Layouts, FMX.Objects,
-  FMX.Dialogs, FMX.Graphics, FMX.DialogService,
+  FMX.Dialogs, FMX.Graphics, FMX.DialogService, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolKitSettings, BaseFrame,
   QuestionnaireItemPanel, QuestionnaireItemDialog;
@@ -125,7 +125,7 @@ begin
         form.btnAsChild.Visible := true;
         form.btnOk.Text := 'Add Sibling';
       end;
-      if form.ShowModal <> mrCancel then
+      if ShowModalHack(form) <> mrCancel then
       begin
         new.Assign(form.item);
         if form.ModalResult = mrOK then

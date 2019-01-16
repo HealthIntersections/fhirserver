@@ -32,6 +32,7 @@ interface
 uses
   Sysutils, Classes, FMX.Graphics, UITypes,
   FMX.Controls, FMX.StdCtrls, FMX.Types, FMX.Objects, FMX.ImgList, FMX.Edit, FMX.DateTimeCtrls, FMX.ListBox, FMX.ComboEdit,
+  FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitSettings, BaseFrame,
   QuestionnaireItemDialog;
@@ -392,7 +393,7 @@ begin
     form.questionnaire := questionnaire.Link;
     form.Settings := Settings.link;
     form.OnWork := OnWork;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       item.Assign(form.item);
       build;

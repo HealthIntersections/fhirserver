@@ -370,7 +370,7 @@ begin
               raise EFHIRException.create('Incorrect number of arguments');
             if values[0].isPrimitive then
               raise EFHIRException.create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
-            if (arg.Name = 'FHIRPathEngine') then
+            if (arg.Name = 'fhirpath') then
               fp.Append(' and '+vl[0].ToString)
             else if (arg.Name = '_offset') then
               offset := StrToInt(vl[0].ToString)
@@ -1183,7 +1183,7 @@ begin
   else if propName = 'score' then
   begin
     if FEntry.searchScore <> '' then
-      result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, FFactory.makeString(FEntry.searchScore))
+      result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, FFactory.makeDecimal(FEntry.searchScore))
     else
       result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, TFHIRObject(nil));
   end

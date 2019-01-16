@@ -35,7 +35,7 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls, FMX.ListBox,
   FMX.Edit, FMX.Controls.Presentation, FHIR.Support.Utilities,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Smart.Utilities,
-  FHIR.Support.Base,
+  FHIR.Support.Base, FHIR.Ui.Fmx,
   SettingsDialog, FMX.ComboEdit,
   ToolkitSettings;
 
@@ -139,7 +139,7 @@ begin
   try
     form.Settings := FSettings.link;
     form.TabControl1.TabIndex := 1;
-    if form.showmodal = mrOk then
+    if showmodalHack(form) = mrOk then
     begin
       loadServers;
       cbxServer.ItemIndex := 0;

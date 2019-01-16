@@ -158,7 +158,8 @@ uses
   FHIR.Tools.ObsGraph in '..\library\tools\FHIR.Tools.ObsGraph.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
-  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
+  FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas';
 
 {$R *.res}
 

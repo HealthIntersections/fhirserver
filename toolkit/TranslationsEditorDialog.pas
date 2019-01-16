@@ -35,7 +35,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Memo,
   FMX.ScrollBox, FMX.Edit, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Support.Base,
+  FHIR.Support.Base, FHIR.Ui.Fmx,
   FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolKitUtilities;
@@ -92,7 +92,7 @@ begin
     TranslationsEditorForm.Resource := resource.Link;
     TranslationsEditorForm.Element := element.Link;
     TranslationsEditorForm.Caption := title;
-    result := TranslationsEditorForm.ShowModal = mrOk;
+    result := ShowModalHack(TranslationsEditorForm) = mrOk;
     if result then
     begin
       if edit <> nil then

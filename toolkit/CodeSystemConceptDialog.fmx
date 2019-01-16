@@ -60,6 +60,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'Concept'
+      ExplicitSize.cx = 65.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object btnAddDesignation: TButton
         Anchors = [akTop, akRight]
         Position.X = 334.000000000000000000
@@ -138,8 +140,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
         OnSelChanged = gridDesignationsSelChanged
         OnGetValue = gridDesignationsGetValue
         OnSetValue = gridDesignationsSetValue
-        Viewport.Width = 486.000000000000000000
-        Viewport.Height = 48.000000000000000000
+        Viewport.Width = 490.000000000000000000
+        Viewport.Height = 73.000000000000000000
         object PopupColumn2: TPopupColumn
           Header = 'Language'
           Items.Strings = (
@@ -237,8 +239,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
         Size.Height = 137.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 12
-        Viewport.Width = 454.000000000000000000
-        Viewport.Height = 133.000000000000000000
+        Viewport.Width = 458.000000000000000000
+        Viewport.Height = 137.000000000000000000
       end
     end
     object tbHl7: TTabItem
@@ -252,6 +254,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'HL7 Process'
+      ExplicitSize.cx = 84.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object Label18: TLabel
         StyledSettings = [Family, Size, FontColor]
         Position.X = 16.000000000000000000
@@ -272,8 +276,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
         OnSelChanged = gridHistorySelChanged
         OnGetValue = gridHistoryGetValue
         OnSetValue = gridHistorySetValue
-        Viewport.Width = 444.000000000000000000
-        Viewport.Height = 184.000000000000000000
+        Viewport.Width = 464.000000000000000000
+        Viewport.Height = 209.000000000000000000
         object DateColumn1: TDateColumn
           Header = 'Date'
           Size.Width = 80.000000000000000000
@@ -346,8 +350,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
         Size.Height = 105.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 11
-        Viewport.Width = 461.000000000000000000
-        Viewport.Height = 101.000000000000000000
+        Viewport.Width = 465.000000000000000000
+        Viewport.Height = 105.000000000000000000
       end
       object Label5: TLabel
         StyledSettings = [Family, Size, FontColor]

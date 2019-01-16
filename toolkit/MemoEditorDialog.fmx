@@ -111,8 +111,8 @@ object MemoEditorForm: TMemoEditorForm
       DefaultItemStyles.ItemStyle = ''
       DefaultItemStyles.GroupHeaderStyle = ''
       DefaultItemStyles.GroupFooterStyle = ''
-      Viewport.Width = 137.000000000000000000
-      Viewport.Height = 343.000000000000000000
+      Viewport.Width = 133.000000000000000000
+      Viewport.Height = 339.000000000000000000
     end
   end
 end

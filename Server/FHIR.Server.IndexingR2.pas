@@ -152,6 +152,7 @@ Type
     procedure BuildIndexValuesOrderResponse(key : integer; id : string; context : TFhirResource; resource : TFhirOrderResponse);
     procedure BuildIndexValuesOrganization(key : integer; id : string; context : TFhirResource; resource : TFhirOrganization);
     procedure BuildIndexValuesPatient(key : integer; id : string; context : TFhirResource; resource : TFhirPatient);
+    procedure BuildIndexValuesParameters(key : integer; id : string; context : TFhirResource; resource : TFhirParameters);
     procedure BuildIndexValuesPractitioner(key : integer; id : string; context : TFhirResource; resource : TFhirPractitioner);
     procedure buildIndexValuesProcedure(key : integer; id : string; context : TFhirResource; resource : TFhirProcedure);
     procedure BuildIndexValuesProvenance(key : integer; id : string; context : TFhirResource; resource : TFhirProvenance);
@@ -1277,6 +1278,7 @@ begin
     frtOrderResponse : buildIndexValuesOrderResponse(key, id, context, TFhirOrderResponse(resource));
     frtOrganization : buildIndexValuesOrganization(key, id, context, TFhirOrganization(resource));
     frtPatient : buildIndexValuesPatient(key, id, context, TFhirPatient(resource));
+    frtParameters : buildIndexValuesParameters(key, id, context, TFhirParameters(resource));
     frtMedia : buildIndexValuesMedia(key, id, context, TFhirMedia(resource));
     frtPractitioner : buildIndexValuesPractitioner(key, id, context, TFhirPractitioner(resource));
     frtCondition : buildIndexValuesCondition(key, id, context, TFhirCondition(resource));
@@ -1760,7 +1762,7 @@ begin
 
     // ignore the existing id because this is a virtual entry; we don't want the real id to appear twice if the resource also really exists
     target := FKeyEvent(ktResource, inner.FHIRType, id); //FConnection.CountSQL('select Max(ResourceKey) from Ids') + 1;
-    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
+    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey, ForTesting) values (:k, :r, :i, null, '+inttostr(FMasterKey)+', 0)';
     FConnection.Prepare;
     FConnection.BindInteger('k', target);
     FConnection.BindInteger('r', ref);
@@ -2095,6 +2097,11 @@ begin
 end;
 
 
+procedure TFhirIndexManager2.buildIndexValuesParameters(key : integer; id : String; context : TFhirResource; resource: TFhirParameters);
+begin
+end;
+
+
 procedure TFhirIndexManager2.buildIndexValuesPatient(key : integer; id : String; context : TFhirResource; resource: TFhirPatient);
 var
   i, j : integer;
@@ -2137,7 +2144,6 @@ begin
   for i := 0 to resource.careProviderList.Count - 1 Do
     index(context, 'Patient', key, 0, resource.careProviderList[i], CODES_TSearchParamsPatient[spPatient_careprovider]);
 
-
   for i := 0 to resource.link_List.count - 1 do
     index(context, 'Patient', key, 0, resource.link_List[i].other, CODES_TSearchParamsPatient[spPatient_link]);
 
@@ -2165,7 +2171,6 @@ begin
     if ex.url = 'http://hl7.org/fhir/StructureDefinition/us-core-ethnicity' then
       index('Patient', key, 0, ex.value as TFhirCodeableConcept, CODES_TSearchParamsPatient[spPatient_ethnicity]);
   end;
-
 end;
 
 
