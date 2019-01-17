@@ -425,7 +425,12 @@ begin
   end;
 end;
 
-Function MyDllListPackages(Version : PAnsiChar) : PAnsiChar; stdcall;
+function isUser(p : pAnsiChar) : boolean;
+begin
+  result := (p = 'u') or (p = 'user');
+end;
+
+Function MyDllListPackages(mode : PAnsiChar; Version : PAnsiChar) : PAnsiChar; stdcall;
 var
   pcm : TFHIRPackageManager;
   packages : TFslList<TPackageDefinition>;
@@ -435,7 +440,7 @@ begin
   try
     b := TFslStringBuilder.create;
     try
-      pcm := TFHIRPackageManager.Create(false);
+      pcm := TFHIRPackageManager.Create(isUser(mode));
       try
         packages := TFslList<TPackageDefinition>.create;
         try
@@ -477,6 +482,7 @@ type
     FUrls : TArray<String>;
     FIndex : integer;
     FCurrent : String;
+    FUserMode : boolean;
 
     function pct(p : integer) : integer;
     procedure fetchProgress(sender : TObject; progress : integer);
@@ -507,7 +513,7 @@ begin
     TPackageDefinition.addCustomPackages(packages);
     TPackageDefinition.addPackagesFromBuild(packages);
 
-    pcm := TFHIRPackageManager.Create(false);
+    pcm := TFHIRPackageManager.Create(FUserMode);
     try
       pcm.OnCheck := check;
       for i := 0 to length(FUrls) - 1 do // first will be empty
@@ -594,7 +600,7 @@ begin
   result := trunc(d * 100);
 end;
 
-Function MyDllDownloadPackages(urls : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+Function MyDllDownloadPackages(mode : PAnsiChar; urls : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
 var
   fetcher : TPackageFetcher;
   s : String;
@@ -602,6 +608,7 @@ begin
   try
     fetcher := TPackageFetcher.Create;
     try
+      fetcher.FUserMode := isUser(mode);
       fetcher.FCallback := Callback;
       s := urls;
       s := s.Substring(1);

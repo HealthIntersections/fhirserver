@@ -117,6 +117,7 @@
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r264\</DCC_DcuOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -141,7 +142,7 @@
         <DCCReference Include="..\..\dependencies\FMM\FastMM4.pas">
             <Form>Vcl.Forms</Form>
         </DCCReference>
-        <DCCReference Include="..\MainApplicationWindow.pas">
+        <DCCReference Include="MainApplicationWindow.pas">
             <Form>MainWindowForm</Form>
         </DCCReference>
         <DCCReference Include="..\..\dependencies\FMM\FastMM4Messages.pas"/>
@@ -234,8 +235,8 @@
                     <Source Name="MainSource">FhirVclDemo.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

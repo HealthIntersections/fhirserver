@@ -69,6 +69,7 @@ Type
     Fscopes: String;
     FaccessToken: String;
     Fexpires: TDateTime;
+    FPatient: String;
     procedure SetidToken(const Value: TJWT);
   public
     destructor Destroy; override;
@@ -87,6 +88,9 @@ Type
 
     // if an openID token was returned, the details in it (note: unverified)
     property idToken : TJWT read FidToken write SetidToken;
+
+    // patient id specified in the token (if one is)
+    property patient : String read FPatient write FPatient;
 
     // convenient username for the user, if any appropriate information is available
     function username : String;

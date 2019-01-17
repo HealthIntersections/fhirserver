@@ -5,7 +5,7 @@ uses
   SysUtils,
   IdSSLOpenSSLHeaders,
   Vcl.Forms,
-  MainApplicationWindow in '..\MainApplicationWindow.pas' {MainWindowForm},
+  MainApplicationWindow in 'MainApplicationWindow.pas' {MainWindowForm},
   FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
   FHIR.Support.Utilities in '..\..\library\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Base in '..\..\library\support\FHIR.Support.Base.pas',
