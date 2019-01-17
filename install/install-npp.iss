@@ -60,7 +60,7 @@ var
 type
   TMyCallback = procedure(IntParam: Integer; StrParam: WideString);
 
-Function MyDllDownloadPackages(urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
+Function MyDllDownloadPackages(mode : PAnsiChar; urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
 
 procedure InitCallback(IntParam: Integer; StrParam: WideString);
 begin
@@ -81,7 +81,7 @@ begin
     s := ',hl7.fhir.core#3.0.1,hl7.fhir.core#4.0.0,hl7.fhir.core#1.0.2';
     repeat
       done := true;
-      msg := MyDllDownloadPackages(s, @InitCallback);
+      msg := MyDllDownloadPackages('user', s, @InitCallback);
       if msg <> '' then
         done := MsgBox('Downloading the packages failed : '+msg+#13#10+'Try again? (can be done later through installed applications)', mbError, MB_YESNO) = mrNo;
     until done;

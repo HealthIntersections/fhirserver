@@ -43,6 +43,13 @@ object Form10: TForm10
     Height = 13
     Caption = 'value'
   end
+  object Label5: TLabel
+    Left = 352
+    Top = 48
+    Width = 73
+    Height = 13
+    Caption = 'Package Mode:'
+  end
   object Button1: TButton
     Left = 24
     Top = 16
@@ -98,16 +105,16 @@ object Form10: TForm10
   object Button5: TButton
     Left = 24
     Top = 328
-    Width = 75
+    Width = 112
     Height = 33
-    Caption = 'Install'
+    Caption = 'Install Packages'
     TabOrder = 6
     OnClick = Button5Click
   end
   object ProgressBar1: TProgressBar
-    Left = 105
+    Left = 152
     Top = 336
-    Width = 440
+    Width = 393
     Height = 17
     TabOrder = 7
   end
@@ -152,6 +159,22 @@ object Form10: TForm10
     Caption = 'Write'
     TabOrder = 12
     OnClick = Button7Click
+  end
+  object edtPackage: TEdit
+    Left = 440
+    Top = 48
+    Width = 121
+    Height = 21
+    TabOrder = 13
+    Text = 'user'
+  end
+  object Button8: TButton
+    Left = 551
+    Top = 75
+    Width = 76
+    Height = 70
+    Caption = 'Download'
+    TabOrder = 14
   end
   object od: TOpenDialog
     DefaultExt = '*.dll'
