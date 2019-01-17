@@ -738,7 +738,7 @@ begin
   ch := '/';
   ConsumeChar(ch);
   done := false;
-  while not done do
+  while not done and not EndOfLine do
   begin
     ConsumeCharsNot([ch, '\']);
     done := CurCharIs(ch);
@@ -927,7 +927,7 @@ var
   i : integer;
   st : TCommonMarkStyle;
 begin
-  if FLines = nil then
+  if (FLines = nil) or (FirstLine >= FLines.count) then
   begin
     ConsumeAllRemaining;
     CommitStyle(cmText);
