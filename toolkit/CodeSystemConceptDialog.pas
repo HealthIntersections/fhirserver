@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox,
   FMX.Memo, FMX.Edit, FMX.DateTimeCtrls, System.ImageList, FMX.ImgList,
-  FHIR.Support.Utilities,
+  FHIR.Support.Utilities, FHIR.Ui.Fmx,
   ResourceEditingSupport, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog, FMX.TabControl, ResourceHistoryDialog;
 
@@ -169,7 +169,7 @@ begin
     try
        frm.Adapt([hfDate, hfAuthor, hfSubst, hfBreaking, hfNotes]);
        frm.Extension := ext.Link;
-       if frm.showModal = mrOk then
+       if showModalHack(frm) = mrOk then
        begin
          FHistory.InsertItem(0, ext.link);
          gridHistory.RowCount := 0;
@@ -210,7 +210,7 @@ begin
   try
      frm.Adapt([hfDate, hfAuthor, hfSubst, hfBreaking, hfNotes]);
      frm.Extension := ext.Link;
-     if frm.showModal = mrOk then
+     if showModalHack(frm) = mrOk then
      begin
        edtCodeChangeTracking(nil);
        gridHistory.RowCount := 0;

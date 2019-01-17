@@ -35,7 +35,7 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus,
-  FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame,
@@ -453,7 +453,7 @@ begin
     frm := TResourceHistoryForm.create(self);
     try
        frm.Extension := ext.Link;
-       if frm.showModal = mrOk then
+       if showModalHack(frm) = mrOk then
        begin
          FHistory.InsertItem(0, ext.link);
          gridHistory.RowCount := 0;
@@ -493,7 +493,7 @@ begin
   frm := TResourceHistoryForm.create(self);
   try
      frm.Extension := ext.Link;
-     if frm.showModal = mrOk then
+     if showModalHack(frm) = mrOk then
      begin
        inputChanged(nil);
        gridHistory.RowCount := 0;
@@ -686,7 +686,7 @@ begin
       form.ListBox1.Items.AddObject('Include '+rule.summary, rule);
     for rule in ValueSet.compose.excludeList do
       form.ListBox1.Items.AddObject('Exclude '+rule.summary, rule);
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       for i := 0 to form.ListBox1.Items.Count - 1 do
         if form.ListBox1.ListItems[i].IsChecked then
@@ -754,7 +754,7 @@ begin
     form.system := edtSystem.Text;
     form.version :=  edtSystemVersion.Text;
     form.hasConcepts := rule.conceptList.Count > 0;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       if form.replace then
         rule.conceptList.Clear;
@@ -802,7 +802,7 @@ begin
   try
     form.Settings := Settings.link;
     form.ValueSet := ValueSet.Link;
-    if form.ShowModal = mrOk then
+    if ShowModalHack(form) = mrOk then
     begin
       ValueSet.expansion := form.Expansion.expansion.Link;
       if (tvExpansion = nil) then

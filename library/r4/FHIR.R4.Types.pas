@@ -13086,7 +13086,7 @@ var
 begin
   result := 0;
   for ex in ExtensionList do
-    if ex.url = url then
+    if (ex.url = url) or (url = '') then
       inc(result);
 end;
       

@@ -58,6 +58,17 @@ The open source FHIR Server includes delphi/pascal implementations of:
   * FHIR FMX Components
 * All of FHIR + FHIRPath + smart all launch + cds-hooks, of course
 
+Folders
+-------
+
+The full source base has many dependencies on other github projects, and many tools 
+operate across the github projects. In order to properly compile and execute the 
+tests and applications, the following git repositories must be put in these places:
+- https://github.com/grahamegrieve/fhirserver in C:\work\fhirserver
+- https://github.com/grahamegrieve/delphi-markdown in C:\work\markdown
+- http://github.com/hl7/fhir in C:\work\org.hl7.fhir\build
+- https://github.com/hapifhir/org.hl7.fhir.core in C:\work\org.hl7.fhir\org.hl7.fhir.core
+
 Compiling 
 ---------
 

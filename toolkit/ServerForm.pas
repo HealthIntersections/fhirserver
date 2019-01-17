@@ -35,7 +35,7 @@ uses
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   IdComponent,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
   ProviderDirectoryForm, PatientHomeForm, BulkDataForm;
@@ -191,11 +191,11 @@ procedure TServerFrame.btnBulkDataClick(Sender: TObject);
 var
   form : TBulkDataDialog;
 begin
-  form := TBulkDataDialog.create(self);
+  form := TBulkDataDialog.create(self.form);
   try
     form.server := client.link;
     form.settings := settings.link;
-    form.showmodal;
+    showmodalHack(form);
   finally
     form.free;
   end;
@@ -275,7 +275,7 @@ begin
   try
     form.Client := FClient.Link;
     form.Settings := Settings.Link;
-    form.ShowModal;
+    ShowModalHack(form);
   finally
     form.free;
   end;

@@ -793,8 +793,12 @@ var
   bnd : TFHIRResourceV;
   bh : TFHIRBundleW;
   headers : THTTPHeaders;
+  res : TFHIRResourceV;
 begin
-  bh := FClient.BundleFactory.Create(fetchResource(makeUrl(aType)+'?'+params, httpGet, nil, headers));
+  res := fetchResource(makeUrl(aType)+'?'+params, httpGet, nil, headers);
+  if res = nil then
+    raise Exception.Create('Network error: nothing returned from server?');
+  bh := FClient.BundleFactory.Create(res);
   try
     if bh.resource.fhirType <> 'Bundle' then
       raise EFHIRException.create('Found a resource of type '+bh.resource.fhirType+' expecting a Bundle');

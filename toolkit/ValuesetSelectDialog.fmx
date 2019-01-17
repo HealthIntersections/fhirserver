@@ -227,8 +227,8 @@ object ValuesetSelectForm: TValuesetSelectForm
     Options = [AlternatingRowBackground, Editing, ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
     OnGetValue = gridContainsGetValue
     OnSetValue = gridContainsSetValue
-    Viewport.Width = 639.000000000000000000
-    Viewport.Height = 342.000000000000000000
+    Viewport.Width = 643.000000000000000000
+    Viewport.Height = 367.000000000000000000
     object CheckColumn1: TCheckColumn
       Header = 'Use'
       Size.Width = 33.000000000000000000

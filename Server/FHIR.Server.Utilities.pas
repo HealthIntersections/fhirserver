@@ -67,6 +67,7 @@ type
     versionUpdates: Boolean;
 
     lastResourceId : integer;
+    storedResourceId : integer;
 
     constructor Create; override;
   end;
