@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Client.Base, FHIR.Base.Lang;
 
 type
@@ -115,6 +115,8 @@ type
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
     function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV; override;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; override;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload; override;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); override;
     function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; override;
     function searchPostV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList; resource : TFHIRResourceV) : TFHIRResourceV; override;
@@ -386,6 +388,16 @@ begin
   finally
     pack.free;
   end;
+end;
+
+function TFhirFacadeCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
+begin
+  raise Exception.Create('not done yet');
+end;
+
+function TFhirFacadeCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
+begin
+  raise Exception.Create('not done yet');
 end;
 
 function TFhirFacadeCommunicator.operationV(atype: TFhirResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;

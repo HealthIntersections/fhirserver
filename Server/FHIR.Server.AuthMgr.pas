@@ -864,10 +864,10 @@ begin
     response.ContentType := 'application/json';
     json := TJsonWriterDirect.create;
     try
-      json.Start;
+      json.Start(true);
       json.Value('error', 'unsupported_grant_type');
       json.Value('error_description', 'Unknown Grant Type '+params.getVar('grant_type'));
-      json.Finish;
+      json.Finish(true);
       response.ContentText := json.ToString;
     finally
       json.Free;

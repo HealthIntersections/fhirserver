@@ -500,7 +500,7 @@ var
   lexer : TFHIRPathLexer;
   msg : String;
 begin
-  lexer := TFHIRPathLexeR3.Create(path);
+  lexer := TFHIRPathLexeR3.Create(fpv1, path);
   try
     if lexer.done then
       raise lexer.error('Path cannot be empty');
@@ -621,7 +621,7 @@ var
   lexer : TFHIRPathLexer;
   msg : String;
 begin
-  lexer := TFHIRPathLexeR3.Create(path, i);
+  lexer := TFHIRPathLexeR3.Create(fpV1, path, i);
   try
     if lexer.done then
       raise lexer.error('Path cannot be empty');

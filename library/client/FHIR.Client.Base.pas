@@ -134,6 +134,8 @@ Type
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; virtual; abstract;
     function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV; virtual; abstract;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload; virtual; abstract;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); virtual; abstract;
     function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; virtual; abstract;
     function searchPostV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList; resource : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
@@ -210,6 +212,8 @@ Type
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV;
     function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String);
     function searchV(allRecords : boolean; params : TStringList) : TFHIRResourceV; overload;
     function searchV(allRecords : boolean; params : string) : TFHIRResourceV; overload;
@@ -462,6 +466,16 @@ end;
 function TFhirClientV.operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV;
 begin
   result := FCommunicator.operationV(aType, id, opName, params);
+end;
+
+function TFhirClientV.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
+begin
+  result := FCommunicator.patchResourceV(atype, id, patch);
+end;
+
+function TFhirClientV.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
+begin
+  result := FCommunicator.patchResourceV(atype, id, params);
 end;
 
 function TFhirClientV.historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList) : TFHIRResourceV;

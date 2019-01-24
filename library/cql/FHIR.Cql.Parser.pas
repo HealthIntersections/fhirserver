@@ -259,7 +259,7 @@ function TCqlParser.parseCql(lib: String): TCqlLibrary;
 var
   lexer : TCqlLexer;
 begin
-  lexer := TCqlLexer.Create(lib);
+  lexer := TCqlLexer.Create(fpV2, lib);
   try
     result := parseLibrary(lexer);
   finally

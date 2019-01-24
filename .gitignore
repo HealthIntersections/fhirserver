@@ -182,3 +182,5 @@ System
 /install/build/*.zip
 /utilities/nppformats/release/*.zip
 /Exec/64/fhir-vcl-demo.log
+/library/r2gen
+/library/r3gen

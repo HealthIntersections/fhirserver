@@ -64,18 +64,18 @@ type
     {$ENDIF}
 
     procedure createClient;
-    function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TStream;
+    function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
     {$IFDEF MSWINDOWS}
-    function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TStream;
+    function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
     {$ENDIF}
     function makeMultipart(stream: TStream; streamName: string; params: TStringList; var mp : TStream) : String;
-    function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
+    function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders; mtStated : String = '') : TStream;
     function GetHeader(name : String) : String;
     procedure setHeader(name, value : String);
     function makeUrl(tail : String) : String;
     function makeUrlPath(tail : String) : String;
     function serialise(resource : TFhirResourceV):TStream; overload;
-    function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TFhirResourceV;
+    function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders; mtStated : String = '') : TFhirResourceV;
 
     procedure SetTimeout(const Value: cardinal);
     procedure SetUseIndy(const Value: boolean);
@@ -112,6 +112,8 @@ type
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
     function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV; override;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; override;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload; override;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); override;
     function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; override;
     function searchPostV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList; resource : TFHIRResourceV) : TFHIRResourceV; override;
@@ -296,7 +298,7 @@ begin
   result := result + tail;
 end;
 
-function TFHIRHTTPCommunicator.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
+function TFHIRHTTPCommunicator.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders; mtStated : String = '') : TStream;
 begin
   if Assigned(FClient.OnProgress) then
     FClient.OnProgress(FClient, 'Requesting', 0, false);
@@ -306,10 +308,10 @@ begin
   FClient.LastURL := url;
   try
     if FUseIndy then
-      result := exchangeIndy(url, verb, source, headers)
+      result := exchangeIndy(url, verb, source, headers, mtStated)
     {$IFDEF MSWINDOWS}
     else
-      result := exchangeHTTP(url, verb, source, headers)
+      result := exchangeHTTP(url, verb, source, headers, mtStated)
     {$ENDIF}
   finally
     if Assigned(FClient.OnProgress) then
@@ -389,7 +391,7 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.exchangeIndy(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
+function TFHIRHTTPCommunicator.exchangeIndy(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders; mtStated : String = '') : TStream;
 var
   comp : TFHIRParser;
   ok : boolean;
@@ -397,7 +399,10 @@ var
   op : TFHIROperationOutcomeW;
   iss : TFhirOperationOutcomeIssueW;
 begin
-  indy.Request.ContentType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
+  if mtStated <> '' then
+    indy.Request.ContentType := mtStated
+  else
+    indy.Request.ContentType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
   indy.Request.Accept := indy.Request.ContentType;
   if headers.contentType <> '' then
     indy.Request.ContentType := headers.contentType;
@@ -508,7 +513,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-function TFHIRHTTPCommunicator.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TStream;
+function TFHIRHTTPCommunicator.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
 var
   ok : boolean;
   op : TFhirOperationOutcomeW;
@@ -551,7 +556,10 @@ var
       raise EFHIRException.create(cnt)
   end;
 begin
-  http.RequestType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
+  if mtStated <> '' then
+    http.RequestType := mtStated
+  else
+    http.RequestType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
   http.ResponseType := http.RequestType;
   if headers.contentType <> '' then
     http.RequestType := headers.contentType;
@@ -629,13 +637,13 @@ begin
   end;
 {$ENDIF}
 
-function TFHIRHTTPCommunicator.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TFhirResourceV;
+function TFHIRHTTPCommunicator.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TFhirResourceV;
 var
   ret : TStream;
   p : TFHIRParser;
 begin
   FTerminated := false;
-  ret := exchange(url, verb, source, headers);
+  ret := exchange(url, verb, source, headers, mtStated);
   if FTerminated then
     abort;
   try
@@ -883,6 +891,34 @@ begin
     finally
       src.free;
     end;
+  end;
+end;
+
+function TFHIRHTTPCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
+Var
+  src : TStream;
+  headers : THTTPHeaders;
+begin
+  src := TMemoryStream.Create;
+  try
+    TJSONWriter.writeArray(src, patch, false);
+    src.Position := 0;
+    result := fetchResource(MakeUrl(atype+'/'+id), httpPatch, src, headers, 'application/json-patch+json');
+  finally
+    src.free;
+  end;
+end;
+
+function TFHIRHTTPCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
+Var
+  src : TStream;
+  headers : THTTPHeaders;
+begin
+  src := serialise(params);
+  try
+    result := fetchResource(MakeUrl(atype+'/'+id), httpPatch, src, headers);
+  finally
+    src.free;
   end;
 end;
 

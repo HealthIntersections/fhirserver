@@ -158,6 +158,8 @@
         <DCC_UNIT_INIT_SEQ>error</DCC_UNIT_INIT_SEQ>
         <DCC_FILE_OPEN_UNITSRC>error</DCC_FILE_OPEN_UNITSRC>
         <Debugger_RunParams>R:\fhir\publish  C:\work\org.hl7.fhir\build</Debugger_RunParams>
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
+        <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -486,6 +488,7 @@
         <DCCReference Include="..\..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
         <DCCReference Include="..\..\library\r4\InstanceValidator.pas"/>
         <DCCReference Include="..\..\library\r4\FHIR.R4.Adaptor.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Server.ConsentEngine.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -128,7 +128,7 @@ end;
 
 function TFHIRGraphDefinitionParser4.parseV(source: String): TFhirResourceV;
 begin
-  FLexer := TFHIRPathLexer4.Create(source);
+  FLexer := TFHIRPathLexer4.Create(fpV2, source);
   result := readDefinition;
 end;
 

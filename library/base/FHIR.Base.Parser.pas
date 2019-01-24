@@ -746,9 +746,9 @@ begin
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
-    json.Start;
+    json.Start(true);
     ComposeResourceV(json, oResource);
-    json.Finish;
+    json.Finish(true);
   finally
     json.free;
   end;
@@ -868,9 +868,9 @@ begin
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
-    json.Start;
+    json.Start(true);
     ComposeBase(json, name, item);
-    json.Finish;
+    json.Finish(true);
   finally
     json.free;
   end;
@@ -888,12 +888,12 @@ begin
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
-    json.Start;
+    json.Start(true);
     json.ValueArray(name);
     for base in items do
       ComposeBase(json, '', base);
     json.FinishArray;
-    json.Finish;
+    json.Finish(true);
   finally
     json.free;
   end;

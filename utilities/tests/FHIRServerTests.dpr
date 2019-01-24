@@ -358,15 +358,15 @@ uses
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownDaringFireballTests in '..\..\..\markdown\tests\MarkdownDaringFireballTests.pas',
   InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
-  FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas';
+  FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas',
+  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas';
 
 var
   runner : ITestRunner;
   results : IRunResults;
   logger : ITestLogger;
   nunitLogger : ITestLogger;
-  s : String;
-begin
+  s : String;begin
   s := paramstr(1);
   if s <> '' then
     FHIR_PUB_HOME_1 := s;

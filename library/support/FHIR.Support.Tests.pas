@@ -1840,7 +1840,7 @@ var
   s : String;
   ttl : TTurtleDocument;
 begin
-  s := fileToString('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\test\resources\turtle\'+filename, TEncoding.UTF8);
+  s := fileToString('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\turtle\'+filename, TEncoding.UTF8);
   try
     ttl := TTurtleParser.parse(s);
     try
