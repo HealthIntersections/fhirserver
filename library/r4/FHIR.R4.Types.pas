@@ -18185,7 +18185,12 @@ begin
     UrlElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('value')) then
+  else if (propName = 'value[x]') then
+  begin
+    Value := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'value') then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -18202,6 +18207,7 @@ function TFhirExtension.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'url') then result := TFhirString.create() {5b}
   else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -18216,6 +18222,7 @@ procedure TFhirExtension.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := nil
   else if (propName = 'value[x]') then ValueElement := nil{4x}
+  else if (propName = 'value') then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -18224,6 +18231,7 @@ procedure TFhirExtension.replaceProperty(propName : string; existing, new : TFHI
 begin
   if (propName = 'url') then UrlElement := asString(new){5b}
   else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
+  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -20146,7 +20154,12 @@ begin
     SearchParamElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('value')) then
+  else if (propName = 'value[x]') then
+  begin
+    Value := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'value') then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -20164,6 +20177,7 @@ begin
   if (propName = 'path') then result := TFhirString.create() {5b}
   else if (propName = 'searchParam') then result := TFhirString.create() {5b}
   else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20180,6 +20194,7 @@ begin
   if (propName = 'path') then PathElement := nil
   else if (propName = 'searchParam') then SearchParamElement := nil
   else if (propName = 'value[x]') then ValueElement := nil{4x}
+  else if (propName = 'value') then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -20189,6 +20204,7 @@ begin
   if (propName = 'path') then PathElement := asString(new){5b}
   else if (propName = 'searchParam') then SearchParamElement := asString(new){5b}
   else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
+  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -20851,7 +20867,12 @@ begin
     ProfileList.add(asCanonical(propValue)){2};     result := propValue;
 
   end
-  else if (propName.startsWith('subject')) then
+  else if (propName = 'subject[x]') then
+  begin
+    Subject := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'subject') then
   begin
     Subject := propValue as TFhirType{4};
     result := propValue;
@@ -20898,6 +20919,7 @@ function TFhirDataRequirement.createPropertyValue(propName: string) : TFHIRObjec
 begin
   if (propName = 'profile') then result := ProfileList.new(){2}
   else if (propName = 'subject[x]') then raise EFHIRException.create('Cannot make property Subject'){4x}
+  else if (propName = 'subject') then raise EFHIRException.create('Cannot make property Subject'){4x}
   else if (propName = 'mustSupport') then result := MustSupportList.new(){2}
   else if (propName = 'codeFilter') then result := CodeFilterList.new(){2}
   else if (propName = 'dateFilter') then result := DateFilterList.new(){2}
@@ -20924,6 +20946,7 @@ begin
   if (propName = 'type') then Type_Element := nil
   else if (propName = 'profile') then deletePropertyValue('profile', ProfileList, value) {2}
   else if (propName = 'subject[x]') then SubjectElement := nil{4x}
+  else if (propName = 'subject') then SubjectElement := nil{4x}
   else if (propName = 'mustSupport') then deletePropertyValue('mustSupport', MustSupportList, value) {2}
   else if (propName = 'codeFilter') then deletePropertyValue('codeFilter', CodeFilterList, value) {2}
   else if (propName = 'dateFilter') then deletePropertyValue('dateFilter', DateFilterList, value) {2}
@@ -20938,6 +20961,7 @@ begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAllTypesEnum, CODES_TFhirAllTypesEnum, new){4}
   else if (propName = 'profile') then replacePropertyValue('profile', ProfileList, existing, new) {2}
   else if (propName = 'subject[x]') then SubjectElement := new as TFhirType{4x}
+  else if (propName = 'subject') then SubjectElement := new as TFhirType{4x}
   else if (propName = 'mustSupport') then replacePropertyValue('mustSupport', MustSupportList, existing, new) {2}
   else if (propName = 'codeFilter') then replacePropertyValue('codeFilter', CodeFilterList, existing, new) {2}
   else if (propName = 'dateFilter') then replacePropertyValue('dateFilter', DateFilterList, existing, new) {2}
@@ -21287,12 +21311,22 @@ begin
     Type_ := propValue as TFhirCodeableConcept{4b};
     result := propValue;
   end
-  else if (propName.startsWith('dose')) then
+  else if (propName = 'dose[x]') then
   begin
     Dose := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('rate')) then
+  else if (propName = 'dose') then
+  begin
+    Dose := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'rate[x]') then
+  begin
+    Rate := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'rate') then
   begin
     Rate := propValue as TFhirType{4};
     result := propValue;
@@ -21309,7 +21343,9 @@ function TFhirDosageDoseAndRate.createPropertyValue(propName : string) : TFHIROb
 begin
   if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'dose[x]') then raise EFHIRException.create('Cannot make property Dose'){4x}
+  else if (propName = 'dose') then raise EFHIRException.create('Cannot make property Dose'){4x}
   else if (propName = 'rate[x]') then raise EFHIRException.create('Cannot make property Rate'){4x}
+  else if (propName = 'rate') then raise EFHIRException.create('Cannot make property Rate'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21325,7 +21361,9 @@ procedure TFhirDosageDoseAndRate.deleteProperty(propName: string; value : TFHIRO
 begin
   if (propName = 'type') then Type_Element := nil
   else if (propName = 'dose[x]') then DoseElement := nil{4x}
+  else if (propName = 'dose') then DoseElement := nil{4x}
   else if (propName = 'rate[x]') then RateElement := nil{4x}
+  else if (propName = 'rate') then RateElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -21334,7 +21372,9 @@ procedure TFhirDosageDoseAndRate.replaceProperty(propName : string; existing, ne
 begin
   if (propName = 'type') then Type_Element := new as TFhirCodeableConcept{4}
   else if (propName = 'dose[x]') then DoseElement := new as TFhirType{4x}
+  else if (propName = 'dose') then DoseElement := new as TFhirType{4x}
   else if (propName = 'rate[x]') then RateElement := new as TFhirType{4x}
+  else if (propName = 'rate') then RateElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -21665,7 +21705,12 @@ begin
     Timing := propValue as TFhirTiming{4b};
     result := propValue;
   end
-  else if (propName.startsWith('asNeeded')) then
+  else if (propName = 'asNeeded[x]') then
+  begin
+    AsNeeded := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'asNeeded') then
   begin
     AsNeeded := propValue as TFhirType{4};
     result := propValue;
@@ -21723,6 +21768,7 @@ begin
   else if (propName = 'patientInstruction') then result := TFhirString.create() {5b}
   else if (propName = 'timing') then result := TFhirTiming.create(){4b}
   else if (propName = 'asNeeded[x]') then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
+  else if (propName = 'asNeeded') then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
   else if (propName = 'site') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
@@ -21759,6 +21805,7 @@ begin
   else if (propName = 'patientInstruction') then PatientInstructionElement := nil
   else if (propName = 'timing') then TimingElement := nil
   else if (propName = 'asNeeded[x]') then AsNeededElement := nil{4x}
+  else if (propName = 'asNeeded') then AsNeededElement := nil{4x}
   else if (propName = 'site') then SiteElement := nil
   else if (propName = 'route') then RouteElement := nil
   else if (propName = 'method') then MethodElement := nil
@@ -21778,6 +21825,7 @@ begin
   else if (propName = 'patientInstruction') then PatientInstructionElement := asString(new){5b}
   else if (propName = 'timing') then TimingElement := new as TFhirTiming{4}
   else if (propName = 'asNeeded[x]') then AsNeededElement := new as TFhirType{4x}
+  else if (propName = 'asNeeded') then AsNeededElement := new as TFhirType{4x}
   else if (propName = 'site') then SiteElement := new as TFhirCodeableConcept{4}
   else if (propName = 'route') then RouteElement := new as TFhirCodeableConcept{4}
   else if (propName = 'method') then MethodElement := new as TFhirCodeableConcept{4}
@@ -23515,7 +23563,12 @@ end;
 
 function TFhirSubstanceAmount.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName.startsWith('amount')) then
+  if (propName = 'amount[x]') then
+  begin
+    Amount := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'amount') then
   begin
     Amount := propValue as TFhirType{4};
     result := propValue;
@@ -23546,6 +23599,7 @@ end;
 function TFhirSubstanceAmount.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'amount[x]') then raise EFHIRException.create('Cannot make property Amount'){4x}
+  else if (propName = 'amount') then raise EFHIRException.create('Cannot make property Amount'){4x}
   else if (propName = 'amountType') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'amountText') then result := TFhirString.create() {5b}
   else if (propName = 'referenceRange') then result := TFhirSubstanceAmountReferenceRange.create(){4b}
@@ -23564,6 +23618,7 @@ end;
 procedure TFhirSubstanceAmount.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'amount[x]') then AmountElement := nil{4x}
+  else if (propName = 'amount') then AmountElement := nil{4x}
   else if (propName = 'amountType') then AmountTypeElement := nil
   else if (propName = 'amountText') then AmountTextElement := nil
   else if (propName = 'referenceRange') then ReferenceRangeElement := nil
@@ -23574,6 +23629,7 @@ end;
 procedure TFhirSubstanceAmount.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'amount[x]') then AmountElement := new as TFhirType{4x}
+  else if (propName = 'amount') then AmountElement := new as TFhirType{4x}
   else if (propName = 'amountType') then AmountTypeElement := new as TFhirCodeableConcept{4}
   else if (propName = 'amountText') then AmountTextElement := asString(new){5b}
   else if (propName = 'referenceRange') then ReferenceRangeElement := new as TFhirSubstanceAmountReferenceRange{4}
@@ -24757,7 +24813,12 @@ end;
 
 function TFhirPopulation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName.startsWith('age')) then
+  if (propName = 'age[x]') then
+  begin
+    Age := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'age') then
   begin
     Age := propValue as TFhirType{4};
     result := propValue;
@@ -24788,6 +24849,7 @@ end;
 function TFhirPopulation.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'age[x]') then raise EFHIRException.create('Cannot make property Age'){4x}
+  else if (propName = 'age') then raise EFHIRException.create('Cannot make property Age'){4x}
   else if (propName = 'gender') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'race') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'physiologicalCondition') then result := TFhirCodeableConcept.create(){4b}
@@ -24806,6 +24868,7 @@ end;
 procedure TFhirPopulation.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'age[x]') then AgeElement := nil{4x}
+  else if (propName = 'age') then AgeElement := nil{4x}
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'race') then RaceElement := nil
   else if (propName = 'physiologicalCondition') then PhysiologicalConditionElement := nil
@@ -24816,6 +24879,7 @@ end;
 procedure TFhirPopulation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'age[x]') then AgeElement := new as TFhirType{4x}
+  else if (propName = 'age') then AgeElement := new as TFhirType{4x}
   else if (propName = 'gender') then GenderElement := new as TFhirCodeableConcept{4}
   else if (propName = 'race') then RaceElement := new as TFhirCodeableConcept{4}
   else if (propName = 'physiologicalCondition') then PhysiologicalConditionElement := new as TFhirCodeableConcept{4}
@@ -25752,7 +25816,12 @@ begin
     NameElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('timing')) then
+  else if (propName = 'timing[x]') then
+  begin
+    Timing := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'timing') then
   begin
     Timing := propValue as TFhirType{4};
     result := propValue;
@@ -25780,6 +25849,7 @@ function TFhirTriggerDefinition.createPropertyValue(propName: string) : TFHIRObj
 begin
   if (propName = 'name') then result := TFhirString.create() {5b}
   else if (propName = 'timing[x]') then raise EFHIRException.create('Cannot make property Timing'){4x}
+  else if (propName = 'timing') then raise EFHIRException.create('Cannot make property Timing'){4x}
   else if (propName = 'data') then result := DataList.new(){2}
   else if (propName = 'condition') then result := TFhirExpression.create(){4b}
   else result := inherited createPropertyValue(propName);
@@ -25800,6 +25870,7 @@ begin
   if (propName = 'type') then Type_Element := nil
   else if (propName = 'name') then NameElement := nil
   else if (propName = 'timing[x]') then TimingElement := nil{4x}
+  else if (propName = 'timing') then TimingElement := nil{4x}
   else if (propName = 'data') then deletePropertyValue('data', DataList, value) {2}
   else if (propName = 'condition') then ConditionElement := nil
   else
@@ -25811,6 +25882,7 @@ begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirTriggerTypeEnum, CODES_TFhirTriggerTypeEnum, new){4}
   else if (propName = 'name') then NameElement := asString(new){5b}
   else if (propName = 'timing[x]') then TimingElement := new as TFhirType{4x}
+  else if (propName = 'timing') then TimingElement := new as TFhirType{4x}
   else if (propName = 'data') then replacePropertyValue('data', DataList, existing, new) {2}
   else if (propName = 'condition') then ConditionElement := new as TFhirExpression{4}
   else
@@ -27632,7 +27704,12 @@ end;
 
 function TFhirAnnotation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName.startsWith('author')) then
+  if (propName = 'author[x]') then
+  begin
+    Author := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'author') then
   begin
     Author := propValue as TFhirType{4};
     result := propValue;
@@ -27658,6 +27735,7 @@ end;
 function TFhirAnnotation.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'author[x]') then raise EFHIRException.create('Cannot make property Author'){4x}
+  else if (propName = 'author') then raise EFHIRException.create('Cannot make property Author'){4x}
   else if (propName = 'time') then result := TFhirDateTime.create() {5b}
   else if (propName = 'text') then result := TFhirMarkdown.create() {5b}
   else result := inherited createPropertyValue(propName);
@@ -27674,6 +27752,7 @@ end;
 procedure TFhirAnnotation.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'author[x]') then AuthorElement := nil{4x}
+  else if (propName = 'author') then AuthorElement := nil{4x}
   else if (propName = 'time') then TimeElement := nil
   else if (propName = 'text') then TextElement := nil
   else
@@ -27683,6 +27762,7 @@ end;
 procedure TFhirAnnotation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'author[x]') then AuthorElement := new as TFhirType{4x}
+  else if (propName = 'author') then AuthorElement := new as TFhirType{4x}
   else if (propName = 'time') then TimeElement := asDateTime(new){5b}
   else if (propName = 'text') then TextElement := asMarkdown(new){5b}
   else
@@ -29017,7 +29097,12 @@ begin
     Code := propValue as TFhirCoding{4b};
     result := propValue;
   end
-  else if (propName.startsWith('value')) then
+  else if (propName = 'value[x]') then
+  begin
+    Value := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'value') then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -29034,6 +29119,7 @@ function TFhirUsageContext.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'code') then result := TFhirCoding.create(){4b}
   else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -29048,6 +29134,7 @@ procedure TFhirUsageContext.deleteProperty(propName : string; value : TFHIRObjec
 begin
   if (propName = 'code') then CodeElement := nil
   else if (propName = 'value[x]') then ValueElement := nil{4x}
+  else if (propName = 'value') then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -29056,6 +29143,7 @@ procedure TFhirUsageContext.replaceProperty(propName : string; existing, new : T
 begin
   if (propName = 'code') then CodeElement := new as TFhirCoding{4}
   else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
+  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -34836,7 +34924,12 @@ begin
     Label_Element := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('value')) then
+  else if (propName = 'value[x]') then
+  begin
+    Value := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'value') then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -34853,6 +34946,7 @@ function TFhirElementDefinitionExample.createPropertyValue(propName : string) : 
 begin
   if (propName = 'label') then result := TFhirString.create() {5b}
   else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -34867,6 +34961,7 @@ procedure TFhirElementDefinitionExample.deleteProperty(propName: string; value :
 begin
   if (propName = 'label') then Label_Element := nil
   else if (propName = 'value[x]') then ValueElement := nil{4x}
+  else if (propName = 'value') then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -34875,6 +34970,7 @@ procedure TFhirElementDefinitionExample.replaceProperty(propName : string; exist
 begin
   if (propName = 'label') then Label_Element := asString(new){5b}
   else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
+  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -36678,7 +36774,12 @@ begin
     Type_List.add(propValue as TFhirElementDefinitionType){2a};
     result := propValue;
   end
-  else if (propName.startsWith('defaultValue')) then
+  else if (propName = 'defaultValue[x]') then
+  begin
+    DefaultValue := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'defaultValue') then
   begin
     DefaultValue := propValue as TFhirType{4};
     result := propValue;
@@ -36693,12 +36794,22 @@ begin
     OrderMeaningElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('fixed')) then
+  else if (propName = 'fixed[x]') then
   begin
     Fixed := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('pattern')) then
+  else if (propName = 'fixed') then
+  begin
+    Fixed := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'pattern[x]') then
+  begin
+    Pattern := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'pattern') then
   begin
     Pattern := propValue as TFhirType{4};
     result := propValue;
@@ -36708,12 +36819,22 @@ begin
     ExampleList.add(propValue as TFhirElementDefinitionExample){2a};
     result := propValue;
   end
-  else if (propName.startsWith('minValue')) then
+  else if (propName = 'minValue[x]') then
   begin
     MinValue := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('maxValue')) then
+  else if (propName = 'minValue') then
+  begin
+    MinValue := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'maxValue[x]') then
+  begin
+    MaxValue := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'maxValue') then
   begin
     MaxValue := propValue as TFhirType{4};
     result := propValue;
@@ -36798,13 +36919,18 @@ begin
   else if (propName = 'contentReference') then result := TFhirUri.create() {5b}
   else if (propName = 'type') then result := Type_List.new(){2}
   else if (propName = 'defaultValue[x]') then raise EFHIRException.create('Cannot make property DefaultValue'){4x}
+  else if (propName = 'defaultValue') then raise EFHIRException.create('Cannot make property DefaultValue'){4x}
   else if (propName = 'meaningWhenMissing') then result := TFhirMarkdown.create() {5b}
   else if (propName = 'orderMeaning') then result := TFhirString.create() {5b}
   else if (propName = 'fixed[x]') then raise EFHIRException.create('Cannot make property Fixed'){4x}
+  else if (propName = 'fixed') then raise EFHIRException.create('Cannot make property Fixed'){4x}
   else if (propName = 'pattern[x]') then raise EFHIRException.create('Cannot make property Pattern'){4x}
+  else if (propName = 'pattern') then raise EFHIRException.create('Cannot make property Pattern'){4x}
   else if (propName = 'example') then result := ExampleList.new(){2}
   else if (propName = 'minValue[x]') then raise EFHIRException.create('Cannot make property MinValue'){4x}
+  else if (propName = 'minValue') then raise EFHIRException.create('Cannot make property MinValue'){4x}
   else if (propName = 'maxValue[x]') then raise EFHIRException.create('Cannot make property MaxValue'){4x}
+  else if (propName = 'maxValue') then raise EFHIRException.create('Cannot make property MaxValue'){4x}
   else if (propName = 'maxLength') then result := TFhirInteger.create() {5b}
   else if (propName = 'condition') then result := ConditionList.new(){2}
   else if (propName = 'constraint') then result := ConstraintList.new(){2}
@@ -36875,13 +37001,18 @@ begin
   else if (propName = 'contentReference') then ContentReferenceElement := nil
   else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {2}
   else if (propName = 'defaultValue[x]') then DefaultValueElement := nil{4x}
+  else if (propName = 'defaultValue') then DefaultValueElement := nil{4x}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := nil
   else if (propName = 'orderMeaning') then OrderMeaningElement := nil
   else if (propName = 'fixed[x]') then FixedElement := nil{4x}
+  else if (propName = 'fixed') then FixedElement := nil{4x}
   else if (propName = 'pattern[x]') then PatternElement := nil{4x}
+  else if (propName = 'pattern') then PatternElement := nil{4x}
   else if (propName = 'example') then deletePropertyValue('example', ExampleList, value) {2}
   else if (propName = 'minValue[x]') then MinValueElement := nil{4x}
+  else if (propName = 'minValue') then MinValueElement := nil{4x}
   else if (propName = 'maxValue[x]') then MaxValueElement := nil{4x}
+  else if (propName = 'maxValue') then MaxValueElement := nil{4x}
   else if (propName = 'maxLength') then MaxLengthElement := nil
   else if (propName = 'condition') then deletePropertyValue('condition', ConditionList, value) {2}
   else if (propName = 'constraint') then deletePropertyValue('constraint', ConstraintList, value) {2}
@@ -36914,13 +37045,18 @@ begin
   else if (propName = 'contentReference') then ContentReferenceElement := asUri(new){5b}
   else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {2}
   else if (propName = 'defaultValue[x]') then DefaultValueElement := new as TFhirType{4x}
+  else if (propName = 'defaultValue') then DefaultValueElement := new as TFhirType{4x}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asMarkdown(new){5b}
   else if (propName = 'orderMeaning') then OrderMeaningElement := asString(new){5b}
   else if (propName = 'fixed[x]') then FixedElement := new as TFhirType{4x}
+  else if (propName = 'fixed') then FixedElement := new as TFhirType{4x}
   else if (propName = 'pattern[x]') then PatternElement := new as TFhirType{4x}
+  else if (propName = 'pattern') then PatternElement := new as TFhirType{4x}
   else if (propName = 'example') then replacePropertyValue('example', ExampleList, existing, new) {2}
   else if (propName = 'minValue[x]') then MinValueElement := new as TFhirType{4x}
+  else if (propName = 'minValue') then MinValueElement := new as TFhirType{4x}
   else if (propName = 'maxValue[x]') then MaxValueElement := new as TFhirType{4x}
+  else if (propName = 'maxValue') then MaxValueElement := new as TFhirType{4x}
   else if (propName = 'maxLength') then MaxLengthElement := asInteger(new){5b}
   else if (propName = 'condition') then replacePropertyValue('condition', ConditionList, existing, new) {2}
   else if (propName = 'constraint') then replacePropertyValue('constraint', ConstraintList, existing, new) {2}
@@ -37957,7 +38093,12 @@ end;
 
 function TFhirTimingRepeat.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName.startsWith('bounds')) then
+  if (propName = 'bounds[x]') then
+  begin
+    Bounds := propValue as TFhirType{4};
+    result := propValue;
+  end
+  else if (propName = 'bounds') then
   begin
     Bounds := propValue as TFhirType{4};
     result := propValue;
@@ -38046,6 +38187,7 @@ end;
 function TFhirTimingRepeat.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'bounds[x]') then raise EFHIRException.create('Cannot make property Bounds'){4x}
+  else if (propName = 'bounds') then raise EFHIRException.create('Cannot make property Bounds'){4x}
   else if (propName = 'count') then result := TFhirPositiveInt.create() {5b}
   else if (propName = 'countMax') then result := TFhirPositiveInt.create() {5b}
   else if (propName = 'duration') then result := TFhirDecimal.create() {5b}
@@ -38082,6 +38224,7 @@ end;
 procedure TFhirTimingRepeat.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'bounds[x]') then BoundsElement := nil{4x}
+  else if (propName = 'bounds') then BoundsElement := nil{4x}
   else if (propName = 'count') then CountElement := nil
   else if (propName = 'countMax') then CountMaxElement := nil
   else if (propName = 'duration') then DurationElement := nil
@@ -38101,6 +38244,7 @@ end;
 procedure TFhirTimingRepeat.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'bounds[x]') then BoundsElement := new as TFhirType{4x}
+  else if (propName = 'bounds') then BoundsElement := new as TFhirType{4x}
   else if (propName = 'count') then CountElement := asPositiveInt(new){5b}
   else if (propName = 'countMax') then CountMaxElement := asPositiveInt(new){5b}
   else if (propName = 'duration') then DurationElement := asDecimal(new){5b}
