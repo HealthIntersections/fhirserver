@@ -29,7 +29,8 @@ uses
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
   FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor,
-  FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg;
+  FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg,
+  Vcl.OleCtrls, SHDocVw;
 
 const
   TEMPLATE_V2 = 'MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'+#13#10+
@@ -56,6 +57,7 @@ const
   TEMPLATE_LIQUID = '{% comment %} See http://wiki.hl7.org/index.php?title=FHIR_Liquid_Profile for doco {% endcomment %}';
 
   TEMPLATE_CDA = 'todo';
+  TEMPLATE_MARKDOWN = 'Markdown with Liquid support';
 
   spCaretPos = 0;
   spMode = 1;
@@ -260,6 +262,10 @@ type
     lblExecutionError: TLabel;
     N12: TMenuItem;
     mnuRecompileAll: TMenuItem;
+    mnuNewMarkdown: TMenuItem;
+    NewMarkdown1: TMenuItem;
+    TabSheet2: TTabSheet;
+    WebBrowser1: TWebBrowser;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -364,6 +370,7 @@ type
     procedure estException1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure mnuRecompileAllClick(Sender: TObject);
+    procedure NewMarkdown1Click(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -633,6 +640,7 @@ begin
         fmtJS: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
         fmtMap: raise EFslException.Create('Not done yet');
         fmtTemplate: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
+        fmtMarkdown: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
       end;
       try
         lbFHIRPathOutcomes.Items.Clear;
@@ -1405,6 +1413,8 @@ begin
     ZoomIn;
   if (key = 48) and (Shift = [ssCtrl]) then
     ZoomReset;
+  if (key = ord('Z')) and (Shift = [ssCtrl]) then
+    mnuUndoClick(nil);
 end;
 
 procedure TTransformerForm.FormShow(Sender: TObject);
@@ -1530,7 +1540,7 @@ begin
     edtWorkspace.Text := proj.name;
     edtWorkspace.Hint := proj.folder;
     vtWorkspace.RootNodeCount := 0;
-    vtWorkspace.RootNodeCount := 6;
+    vtWorkspace.RootNodeCount := 7;
     cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
     if cbxOutcome.ItemIndex = -1 then
       cbxOutcome.ItemIndex := 0;
@@ -1593,7 +1603,7 @@ begin
     FWorkspace.allFiles.Add(f.link);
     FWorkspace.save;
     vtWorkspace.RootNodeCount := 0;
-    vtWorkspace.RootNodeCount := 6;
+    vtWorkspace.RootNodeCount := 7;
     openWorkspaceFile(f);
   end;
 end;
@@ -1689,6 +1699,7 @@ begin
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: raise Exception.create('Not Supported');
     fmtTemplate: raise Exception.create('Not Supported Yet');
+    fmtMarkdown: raise Exception.create('Not Supported For Markdown');
   end;
 end;
 
@@ -1714,7 +1725,7 @@ begin
     closeWorkspaceFile(editorForFile(f), false);
     FWorkspace.save;
     vtWorkspace.RootNodeCount := 0;
-    vtWorkspace.RootNodeCount := 6;
+    vtWorkspace.RootNodeCount := 7;
   end;
 end;
 
@@ -1805,13 +1816,14 @@ begin
       fmtJS: category := FWorkspace.scripts;
       fmtMap: category := FWorkspace.maps;
       fmtTemplate: category := FWorkspace.templates;
+      fmtMarkdown: category := FWorkspace.markdowns;
       fmtCDA: category := FWorkspace.documents;
     end;
     category.Add(f);
     FWorkspace.allFiles.Add(f.link);
     FWorkspace.save;
     vtWorkspace.RootNodeCount := 0;
-    vtWorkspace.RootNodeCount := 6;
+    vtWorkspace.RootNodeCount := 7;
     openWorkspaceFile(f);
   end;
 end;
@@ -1881,6 +1893,7 @@ begin
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: raise Exception.create('Not Supported');
     fmtTemplate: raise Exception.create('Not Supported Yet');
+    fmtMarkdown: raise Exception.create('Not Supported for Markdown');
   end;
 end;
 
@@ -1941,7 +1954,7 @@ begin
       f.filename := s;
       FWorkspace.save;
       vtWorkspace.RootNodeCount := 0;
-      vtWorkspace.RootNodeCount := 6;
+      vtWorkspace.RootNodeCount := 7;
       renameWorkspaceFile(editorForFile(f), s);
     end;
   end;
@@ -2024,6 +2037,11 @@ begin
   end;
 end;
 
+procedure TTransformerForm.NewMarkdown1Click(Sender: TObject);
+begin
+  makeNewFile('Template', 'md', TEMPLATE_MARKDOWN, fmtMarkdown, FWorkspace.markdowns);
+end;
+
 function TTransformerForm.nodeCaption(i: integer): String;
 begin
   case i of
@@ -2033,6 +2051,7 @@ begin
     3: result := 'Script';
     4: result := 'Map';
     5: result := 'Template';
+    6: result := 'Markdown';
   end
 end;
 
@@ -2052,6 +2071,7 @@ begin
     3: mnuNewScriptClick(self);
     4: mnuNewMapClick(self);
     5: mnuNewTemplateClick(self);
+    6: NewMarkdown1Click(self);
   end;
 end;
 
@@ -2370,6 +2390,7 @@ begin
       3: ImageIndex := 12;
       4: ImageIndex := 13;
       5: ImageIndex := 14;
+      6: ImageIndex := 44;
     end
   else
     case (p.obj as TWorkspaceFile).compileStatus of
@@ -2416,6 +2437,7 @@ begin
       3: p.obj := FWorkspace.scripts;
       4: p.obj := FWorkspace.maps;
       5: p.obj := FWorkspace.templates;
+      6: p.obj := FWorkspace.markdowns;
     end;
     (p.obj as TFslList<TWorkspaceFile>).TagObject := TObject(node);
     InitialStates := [ivsHasChildren, ivsExpanded];
@@ -2496,6 +2518,7 @@ begin
       fmtJS: tab.ImageIndex := 12;
       fmtMap: tab.ImageIndex := 13;
       fmtTemplate: tab.ImageIndex := 14;
+      fmtMarkdown: tab.ImageIndex := 44;
     end;
     result := TEditorInformation.create(f.link);
     FEngine.editors.Add(result);
@@ -2743,6 +2766,7 @@ begin
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: output := FEngine.canonical(FEditor.id);
     fmtTemplate: output := FEngine.canonical(FEditor.id);
+    fmtMarkdown: output := FEngine.canonical(FEditor.id);
   end;
   showdiff := true;
   if fmt = 1 then
@@ -2785,6 +2809,7 @@ begin
     fmtJS: raise Exception.create('Not Supported Yet');
     fmtMap: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
     fmtTemplate: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
+    fmtMarkdown: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
   end;
 end;
 
@@ -2881,7 +2906,7 @@ end;
 
 procedure TTransformerForm.MemoMarginClick(Sender: TObject; MarginNumber, Line: Integer);
 begin
-  if (MarginNumber = 1) and (FEditor.id.format in [fmtJS, fmtMap, fmtTemplate]) then
+  if (MarginNumber = 1) and (FEditor.id.format in [fmtJS, fmtMap, fmtTemplate, fmtMarkdown]) then
     ToggleBreakPoint(Line);
 end;
 

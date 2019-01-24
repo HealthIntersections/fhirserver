@@ -1839,10 +1839,10 @@ begin
   json := TJsonWriterDirect.Create;
   try
     json.Stream := stream.Link;
-    json.Start;
+    json.Start(true);
     json.HasWhitespace := pretty;
     composeElement(e);
-    json.Finish;
+    json.Finish(true);
   finally
     json.free;
   end;

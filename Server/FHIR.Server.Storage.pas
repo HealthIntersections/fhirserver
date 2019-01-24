@@ -34,7 +34,7 @@ interface
 uses
   {$IFDEF OSX} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
   SysUtils, Classes, System.Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging,
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging, FHIR.Support.Json,
   FHIR.Web.Parsers,
   FHIR.Database.Dialects, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
@@ -250,6 +250,8 @@ Type
     function historyInstanceV(atype : string; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
     function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
+    function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload; override;
     procedure terminate; override;
   end;
 
@@ -1248,6 +1250,16 @@ end;
 function TFHIRInternalCommunicator.operationV(atype: string; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
+end;
+
+function TFHIRInternalCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
+begin
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
+end;
+
+function TFHIRInternalCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
+begin
+  raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; opName: String; params: TFHIRResourceV): TFHIRResourceV;

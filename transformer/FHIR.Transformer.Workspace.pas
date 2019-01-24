@@ -10,7 +10,7 @@ Const
   UI_NAME = 'Workspace';
 
 type
-  TTransformerFormat = (fmtV2, fmtCDA, fmtResource, fmtJS, fmtMap, fmtTemplate);
+  TTransformerFormat = (fmtV2, fmtCDA, fmtResource, fmtJS, fmtMap, fmtTemplate, fmtMarkdown);
   TTransformOutcomeMode = (tomIgnore, tomSaveTo, tomCompare);
 
 function detectFormat(fn : String) : TTransformerFormat;
@@ -79,6 +79,7 @@ Type
     FResources: TFslList<TWorkspaceFile>;
     FScripts: TFslList<TWorkspaceFile>;
     FTemplates: TFslList<TWorkspaceFile>;
+    FMarkdowns: TFslList<TWorkspaceFile>;
     FEventType: integer;
     FSource: String;
     FScript: String;
@@ -111,6 +112,7 @@ Type
     property scripts : TFslList<TWorkspaceFile> read FScripts;
     property maps : TFslList<TWorkspaceFile> read FMaps;
     property templates : TFslList<TWorkspaceFile> read FTemplates;
+    property markdowns : TFslList<TWorkspaceFile> read FMarkdowns;
 
     function includesFile(fn : String) : boolean;
     function findFileByName(fn : String) : TWorkspaceFile;
@@ -193,6 +195,8 @@ begin
    f.compiled := nil;
   for f in FTemplates do
    f.compiled := nil;
+  for f in FMarkdowns do
+   f.compiled := nil;
   for f in FResources do
    f.compiled := nil;
 end;
@@ -206,6 +210,7 @@ begin
   FResources := TFslList<TWorkspaceFile>.create;
   FScripts := TFslList<TWorkspaceFile>.create;
   FTemplates := TFslList<TWorkspaceFile>.create;
+  FMarkdowns := TFslList<TWorkspaceFile>.create;
   FAllFiles := TFslList<TWorkspaceFile>.create;
   FFolder := folder;
   reload;
@@ -220,6 +225,7 @@ begin
   FResources.Free;
   FScripts.Free;
   FTemplates.Free;
+  FMarkdowns.Free;
   inherited;
 end;
 
@@ -267,6 +273,9 @@ begin
   o := findFile(fn, templates);
   if (o <> nil) then
     exit(o);
+  o := findFile(fn, markdowns);
+  if (o <> nil) then
+    exit(o);
   result := nil;
 end;
 
@@ -291,6 +300,9 @@ begin
   if (o <> nil) then
     exit(o);
   o := findObject(Obj, templates);
+  if (o <> nil) then
+    exit(o);
+  o := findObject(Obj, markdowns);
   if (o <> nil) then
     exit(o);
   result := nil;
@@ -321,6 +333,8 @@ begin
   if hasFile(fn, maps) then
     exit(true);
   if hasFile(fn, templates) then
+    exit(true);
+  if hasFile(fn, markdowns) then
     exit(true);
   result := false;
 end;
@@ -414,7 +428,9 @@ begin
       else if fmt = 'map' then
         FMaps.Add(TWorkspaceFile.Create(Self, s, fmtMap, row, bpl))
       else if fmt = 'liquid' then
-        FTemplates.Add(TWorkspaceFile.Create(Self, s, fmtTemplate, row, bpl));
+        FTemplates.Add(TWorkspaceFile.Create(Self, s, fmtTemplate, row, bpl))
+      else if fmt = 'markdown' then
+        FMarkdowns.Add(TWorkspaceFile.Create(Self, s, fmtMarkdown, row, bpl));
     end;
     FAllFiles.AddAll(FMessages);
     FAllFiles.AddAll(FDocuments);
@@ -422,6 +438,7 @@ begin
     FAllFiles.AddAll(FScripts);
     FAllFiles.AddAll(FMaps);
     FAllFiles.AddAll(FTemplates);
+    FAllFiles.AddAll(FMarkdowns);
     if FEventType = -1 then
       if FMessages.Count > 0 then
         FEventType := 0
@@ -493,6 +510,13 @@ begin
     for f in FTemplates do
     begin
       iniVC.WriteString('Files', f.filename, 'liquid');
+      iniT.WriteInteger(f.filename, 'Row', f.row);
+      iniT.WriteString(f.filename, 'BreakPoints', f.breakpointSummary);
+    end;
+    iniVC.EraseSection('Markdowns');
+    for f in FMarkdowns do
+    begin
+      iniVC.WriteString('Files', f.filename, 'markdown');
       iniT.WriteInteger(f.filename, 'Row', f.row);
       iniT.WriteString(f.filename, 'BreakPoints', f.breakpointSummary);
     end;

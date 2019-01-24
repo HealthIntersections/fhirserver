@@ -98,6 +98,7 @@ begin
     fmtJS : FMemo.Styler := TJSStyler.Create(tab);
     fmtMap : FMemo.Styler := TFHIRMapStyler.Create(tab);
     fmtTemplate : FMemo.Styler := TLiquidStyler.Create(tab);
+    fmtMarkdown : FMemo.Styler := TCommonMarkStyler.Create(tab);
   end;
   FMemo.ClearUndo;
   FMemo.CaretLine := fInfo.row;

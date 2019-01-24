@@ -238,7 +238,7 @@ begin
       json := TJsonWriterDirect.create;
       try
         json.Stream := vs.link;
-        json.Start;
+        json.Start(true);
         json.HasWhitespace := false;
         json.ValueArray('tags');
         for t in FList do
@@ -252,7 +252,7 @@ begin
           json.FinishObject;
         end;
         json.FinishArray;
-        json.Finish;
+        json.Finish(true);
       finally
         json.free;
       end;

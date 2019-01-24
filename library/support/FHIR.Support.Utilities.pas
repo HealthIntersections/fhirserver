@@ -8849,7 +8849,10 @@ end;
 function TDateTimeEx.SameTime(other: TDateTimeEx): Boolean;
 begin
   if (TimezoneType = dttzUnknown) or (other.TimezoneType = dttzUnknown)  then
-    result := false // unknown, really
+    if (TimezoneType = dttzUnknown) and (other.TimezoneType = dttzUnknown)  then
+      result := self.equal(other)
+    else
+      result := false // unknown, really
   else
     result := sameInstant(UTC.DateTime, other.UTC.DateTime);
 end;

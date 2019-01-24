@@ -71,8 +71,11 @@ type
     function nodeGetChild(nodeIndex : integer; var offset : integer) : TFHIRPathExpressionNodeV; virtual; abstract;
   end;
 
+  TFHIRPathVersion = (fpV1, fpV2);
+
   TFHIRPathLexer = class abstract (TFslObject)
   private
+    FVersion : TFHIRPathVersion;
     FCursor : integer;
     FCurrentLocation : TSourceLocation;
     FCurrent : String;
@@ -97,8 +100,8 @@ type
     function collapseEmptyLists : boolean; virtual;
     function opCodes : TArray<String>; virtual; abstract;
   public
-    constructor Create(path : String); overload;
-    constructor Create(path : String; offset : integer); overload;
+    constructor Create(ver : TFHIRPathVersion; path : String); overload;
+    constructor Create(ver : TFHIRPathVersion; path : String; offset : integer); overload;
     destructor Destroy; override;
     procedure next; virtual;
     property Cursor : integer read FCursor;
@@ -232,6 +235,9 @@ type
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject) : String; overload;
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject; var pathObjects : TArray<TFHIRObject>) : String; overload;
   end;
+
+const
+  ID_CHAR : array [TFHIRPathVersion] of char = ('"', '`');
 
 implementation
 
@@ -458,6 +464,7 @@ begin
           '/': b.Append('/');
           '''': b.Append('''');
           '"': b.Append('"');
+          '`': b.Append('`');
           'u':
             begin
             if i < length(s) - 4 then
@@ -506,9 +513,10 @@ begin
   result := true;
 end;
 
-constructor TFHIRPathLexer.Create(path: String; offset: integer);
+constructor TFHIRPathLexer.Create(ver : TFHIRPathVersion; path: String; offset: integer);
 begin
   inherited Create;
+  FVersion := ver;
   FPath := path;
   FCursor := offset;
   FCurrentLocation.line := 1;
@@ -516,9 +524,10 @@ begin
   next;
 end;
 
-constructor TFHIRPathLexer.Create(path: String);
+constructor TFHIRPathLexer.Create(ver : TFHIRPathVersion; path: String);
 begin
   inherited Create;
+  FVersion := ver;
   FPath := path;
   FCursor := 1;
   FCurrentLocation.line := 1;
@@ -615,10 +624,10 @@ begin
     else if (ch = '%') then
     begin
       nextChar;
-      if FPath[FCursor] = '"' then
+      if (FPath[FCursor] = ID_CHAR[FVersion]) then
       begin
         nextChar;
-        while (FCursor <= FPath.Length) and (FPath[FCursor] <> '"') do
+        while (FCursor <= FPath.Length) and (FPath[FCursor] <> ID_CHAR[FVersion]) do
           nextChar;
         nextChar;
       end
@@ -677,6 +686,25 @@ begin
         raise error('Unterminated string');
       nextChar;
       FCurrent := '"'+copy(FPath, FCurrentStart+1, FCursor-FCurrentStart-2)+'"';
+    end
+    else if (ch = '`') and (FVersion = fpV2) then
+    begin
+      nextChar;
+      escape := false;
+      while (FCursor <= FPath.length) and (escape or (FPath[FCursor] <> '`')) do
+      begin
+        if (escape) then
+          escape := false
+        else
+          escape := (FPath[FCursor] = '\');
+        if CharInSet(FPath[FCursor], [#13, #10, #9]) then
+          raise EFHIRPath.create('illegal character in string');
+        nextChar;
+      end;
+      if (FCursor > FPath.length) then
+        raise error('Unterminated string');
+      nextChar;
+      FCurrent := '`'+copy(FPath, FCurrentStart+1, FCursor-FCurrentStart-2)+'`';
     end
     else if (ch = '''') then
     begin
@@ -881,7 +909,9 @@ end;
 
 function TFHIRPathLexer.readIdentifier(desc: String): String;
 begin
-  if (current.startsWith('"')) then
+  if (FVersion = fpV1) and (current.startsWith('"')) then
+    result := readConstant(desc)
+  else if (FVersion = fpV2) and (current.startsWith('`')) then
     result := readConstant(desc)
   else
     result := take;
@@ -922,7 +952,7 @@ end;
 
 function TFHIRPathLexer.isStringConstant : boolean;
 begin
-  result := (current[1] = '''') or (current[1] = '"');
+  result := (current[1] = '''') or (current[1] = '"') or (current[1] = '`');
 end;
 
 
