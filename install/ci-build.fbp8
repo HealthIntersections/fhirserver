@@ -23,7 +23,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Plugin (32)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -146,7 +145,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Plugin (64)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -269,7 +267,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R4 (win64)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -392,7 +389,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R3 (win64)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -515,7 +511,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Transformer (32bit)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -638,7 +633,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R3 (osx)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -761,7 +755,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Debug Server (DSTU4)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -882,7 +875,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Debug Server (DSTU4)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1002,7 +994,6 @@ begin
         configname = Release
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1965,7 +1956,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Server Tests"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false

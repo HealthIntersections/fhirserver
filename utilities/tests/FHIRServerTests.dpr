@@ -366,7 +366,8 @@ var
   results : IRunResults;
   logger : ITestLogger;
   nunitLogger : ITestLogger;
-  s : String;begin
+  s : String;
+begin
   s := paramstr(1);
   if s <> '' then
     FHIR_PUB_HOME_1 := s;
