@@ -1091,18 +1091,22 @@ type
     function checkNoException : boolean;
     procedure RollUp;
     function privToString: String;
-{$IFNDEF FPC}  public {$ENDIF}
-    class function makeNull : TDateTimeEx; static;
-    class function makeUTC : TDateTimeEx; overload; static;
-    class function makeUTC(value : TDateTime) : TDateTimeEx; overload; static;
-    class function makeToday : TDateTimeEx; overload; static;
-    class function makeLocal : TDateTimeEx; overload; static;
+{$IFNDEF FPC}
+  public
+{$ENDIF}
+
+    // various kind of constructors
+    class function makeNull : TDateTimeEx; static; // because this is record, not a class, it can't be nil. use makeNull / null instead
+    class function makeUTC : TDateTimeEx; overload; static; // now, in UTC timezone
+    class function makeUTC(value : TDateTime) : TDateTimeEx; overload; static;  // stated time in UTC
+    class function makeToday : TDateTimeEx; overload; static; // today, with precision = day + no timezone
+    class function makeLocal : TDateTimeEx; overload; static; // now, in local timezone
     class function makeLocal(precision : TDateTimeExPrecision) : TDateTimeEx; overload; static;
-    class function makeLocal(value : TDateTime) : TDateTimeEx; overload; static;
-    class function make(value : TDateTime; tz : TDateTimeExTimezone) : TDateTimeEx; static;
-    class function fromHL7(value : String) : TDateTimeEx; static;
-    class function fromXML(value : String) : TDateTimeEx; static;
-    class function fromTS(value : TTimestamp; tz : TDateTimeExTimezone = dttzLocal) : TDateTimeEx; overload; static;
+    class function makeLocal(value : TDateTime) : TDateTimeEx; overload; static; // stated time, local timezone
+    class function make(value : TDateTime; tz : TDateTimeExTimezone) : TDateTimeEx; static; // stated time and timezone
+    class function fromHL7(value : String) : TDateTimeEx; static; // load from a v2/cda date format
+    class function fromXML(value : String) : TDateTimeEx; static; // load from XML format
+    class function fromTS(value : TTimestamp; tz : TDateTimeExTimezone = dttzLocal) : TDateTimeEx; overload; static; // load from classic SQL format
     class function fromDB(value : String; tz : TDateTimeExTimezone = dttzUTC) : TDateTimeEx; static; // mainly for SQLite support
       {
          Read a date (date) given the specified format. The specified
@@ -1113,37 +1117,37 @@ type
          If the year is < 100, it will be adjusted to a current year (irrespective of the year length YYYY or YY). See ReadDateStrict
       }
     class function fromFormat(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : TDateTimeEx; static;
-
       {
         Like ReadDate, but years < 100 will not be corrected as if they are 2 digit year representations
       }
     class function fromFormatStrict(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False) : TDateTimeEx; static;
 
+    // null test - because this is a record, not a class, it cannot be nil. use this insead (along with makeNul)
     function null : boolean;
     function notNull : boolean;
 
-    function DateTime : TDateTime;
-    function TimeStamp : TTimeStamp;
-    function truncToDay : TDateTimeEx;
+    function DateTime : TDateTime; // get as a datetime in timezone
+    function TimeStamp : TTimeStamp; // get as an SQL time
 
-    function fixPrecision(precision : TDateTimeExPrecision) : TDateTimeEx;
+    function truncToDay : TDateTimeEx; // get as day
+    function fixPrecision(precision : TDateTimeExPrecision) : TDateTimeEx; // get as stated precision
+    function lessPrecision: TDateTimeEx; // reduce precision by one step
 
-    function Local : TDateTimeEx;
-    function UTC : TDateTimeEx;
-    function Min : TDateTimeEx;
-    function Max : TDateTimeEx;
-    function MinUTC : TDateTimeEx;
-    function MaxUTC : TDateTimeEx;
+    function Local : TDateTimeEx; // convert to local time
+    function UTC : TDateTimeEx; // convert to UTC time
+    function Min : TDateTimeEx; // get starting instance for implicit time period
+    function Max : TDateTimeEx; // get ending instance for implicit time period (e.g. 2016-04-30 ends at 2016-05-01 T 00:00
+    function MinUTC : TDateTimeEx; // get minimum UTC time this could be (e.g. expand for possible times if timeszone missing)
+    function MaxUTC : TDateTimeEx; // get minimum UTC time this could be (e.g. expand for possible times if timeszone missing)
     function AsTz(ihr, imin : Integer):TDateTimeEx; // this date and time in the specified timezone.
 
-    function IncrementMonth: TDateTimeEx;
-    function IncrementYear: TDateTimeEx;
-    function IncrementWeek: TDateTimeEx;
-    function IncrementDay: TDateTimeEx;
-    function add(length : TDuration) : TDateTimeEx;
-    function subtract(length : TDuration) : TDateTimeEx;
-    function difference(other : TDateTimeEx) : TDuration;
-    function lessPrecision: TDateTimeEx;
+    function IncrementMonth: TDateTimeEx; // add one month to the time (1 month, not 30 days)
+    function IncrementYear: TDateTimeEx; // add one year to the time
+    function IncrementWeek: TDateTimeEx; // add a week to the time
+    function IncrementDay: TDateTimeEx; // add one day to the time
+    function add(length : TDuration) : TDateTimeEx; // add arbitrary time (in TDateTime)
+    function subtract(length : TDuration) : TDateTimeEx; // subtract arbitrary time (in TDateTime)
+    function difference(other : TDateTimeEx) : TDuration; // get time between, assuming arbitarily high precision)
 
     function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function equal(other : TDateTimeEx; precision : TDateTimeExPrecision) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same

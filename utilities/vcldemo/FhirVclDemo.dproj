@@ -240,13 +240,13 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="exec\FhirVclDemo.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\..\Exec\64\FhirVclDemo.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FhirVclDemo.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="exec\FhirVclDemo.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\Exec\64\FhirVclDemo.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FhirVclDemo.exe</RemoteName>
                         <Overwrite>true</Overwrite>
