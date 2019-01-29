@@ -1297,8 +1297,13 @@ begin
     result := qtyEquivalent(left as TFHIRQuantity, right as TFHIRQuantity)
   else if (left.hasType(['integer', 'decimal']) and right.hasType(['integer', 'decimal'])) then
     result :=  equivalentNumber(left.primitiveValue(), right.primitiveValue())
-  else if (left.hasType(['date', 'dateTime', 'time', 'instant']) and right.hasType(['date', 'dateTime', 'time', 'instant'])) then
-    result :=  equivalentNumber(left.primitiveValue(), right.primitiveValue())
+  else if (left.dateValue.notNull) and (right.dateValue.notNull) then
+  begin
+    if not left.dateValue.overlaps(right.dateValue) or not left.dateValue.canCompare(right.dateValue) then
+      result := False
+    else
+      result := left.dateValue.sameTime(right.dateValue)
+  end
   else if (left.hasType(['string', 'id', 'code', 'uri']) and right.hasType(['string', 'id', 'code', 'uri'])) then
     result :=  equivalentNumber(convertToString(left), convertToString(right))
   else

@@ -303,6 +303,7 @@ type
     procedure deletePropertyValue(name : String; list : TFHIRObjectList; value : TFHIRObject);
     procedure replacePropertyValue(name : String; list : TFHIRObjectList; existing, new : TFHIRObject);
 
+    function isMatchingName(given, expected : String; types : Array of String) : boolean;
     function GetFhirObjectVersion: TFHIRVersion; virtual;
   public
     constructor Create; override;
@@ -813,6 +814,26 @@ end;
 function TFHIRObject.isEnum: boolean;
 begin
   result := false;
+end;
+
+function TFHIRObject.isMatchingName(given, expected : String; types : Array of String): boolean;
+var
+  s : String;
+begin
+  if given = expected then
+    result := true
+  else if not given.startsWith(expected) then
+    result := false
+  else
+  begin
+    s := given.subString(expected.length);
+    if (s = '[x]') then
+      result := true
+    else if (length(types) = 1) and (types[0] = '*') then
+      result := true
+    else
+      result := StringArrayExistsSensitive(types, s);
+  end;
 end;
 
 function TFHIRObject.isMetaDataBased: boolean;
