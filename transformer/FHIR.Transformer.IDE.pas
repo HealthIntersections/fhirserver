@@ -16,13 +16,14 @@ f10: validate
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, IOUtils,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, IOUtils, ActiveX,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
   JclDebug,
   ScintEdit, ScintInt, ScintFormats,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell,
+  MarkdownCommonMark,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell, FHIR.Support.Threads,
   FHIR.Ui.ListSelector,
   FHIR.Javascript,
   FHIR.Cache.PackageManagerDialog,
@@ -109,7 +110,7 @@ type
     mnuWorkspace: TMenuItem;
     N2: TMenuItem;
     Exit1: TMenuItem;
-    Edit1: TMenuItem;
+    mnuEdit: TMenuItem;
     mnuRedo: TMenuItem;
     mnuUndo: TMenuItem;
     N3: TMenuItem;
@@ -264,8 +265,18 @@ type
     mnuRecompileAll: TMenuItem;
     mnuNewMarkdown: TMenuItem;
     NewMarkdown1: TMenuItem;
-    TabSheet2: TTabSheet;
-    WebBrowser1: TWebBrowser;
+    webPreview: TWebBrowser;
+    N13: TMenuItem;
+    mnuClipboard: TMenuItem;
+    mnuCopyFileName: TMenuItem;
+    mnuCopyDirectory: TMenuItem;
+    mnuCopyContents: TMenuItem;
+    mnuPreView: TMenuItem;
+    pnlPreview: TPanel;
+    splitPreview: TSplitter;
+    Panel16: TPanel;
+    Panel17: TPanel;
+    SpeedButton1: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -371,6 +382,11 @@ type
     procedure FormShow(Sender: TObject);
     procedure mnuRecompileAllClick(Sender: TObject);
     procedure NewMarkdown1Click(Sender: TObject);
+    procedure mnuCopyFileNameClick(Sender: TObject);
+    procedure mnuCopyDirectoryClick(Sender: TObject);
+    procedure mnuCopyContentsClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure mnuPreViewClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -873,6 +889,7 @@ begin
     mnuFindNext.Enabled := false;
     mnuReplace.Enabled := false;
     mnuGoto.Enabled := false;
+    mnuClipboard.Enabled := false;
     mnuPretty.Enabled := false;
     mnuDense.Enabled := false;
     mnuEOL.Enabled := false;
@@ -897,6 +914,7 @@ begin
     mnuFindNext.Enabled := true;
     mnuReplace.Enabled := not FEditor.memo.ReadOnly;
     mnuGoto.Enabled := true;
+    mnuClipboard.Enabled := true;
     mnuCompare.Enabled := FEditor.id.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
     tbCompare.Enabled := mnuCompare.Enabled;
     mnuPretty.Enabled := not FEngine.Running and (FEditor.id.format in [fmtCDA, fmtResource]);
@@ -1420,6 +1438,9 @@ end;
 procedure TTransformerForm.FormShow(Sender: TObject);
 begin
   Timer1.Enabled := true;
+  pnlPreview.Visible := FIni.ReadBool('View', 'Preview', false);
+  splitPreview.Visible := pnlPreview.Visible;
+  mnuPreView.Checked := pnlPreview.Visible;
 end;
 
 function TTransformerForm.GetFPDebuggerSetting(name: TFHIRPathDebuggerFormSetting): Integer;
@@ -1608,6 +1629,29 @@ begin
   end;
 end;
 
+procedure LoadHtmlIntoBrowser(browser: TWebBrowser; const html: String);
+var
+  memStream: TMemoryStream;
+begin
+  //-------------------
+  // Load a blank page.
+  //-------------------
+  browser.Navigate('about:blank');
+  while browser.ReadyState <> READYSTATE_COMPLETE do
+  begin
+    Sleep(5);
+    Application.ProcessMessages;
+  end;
+  //---------------
+  // Load the html.
+  //---------------
+  memStream := TMemoryStream.Create;
+  memStream.Write(Pointer(html)^,Length(html));
+  memStream.Seek(0,0);
+  (browser.Document as IPersistStreamInit).Load(TStreamAdapter.Create(memStream));
+  memStream.Free;
+end;
+
 procedure TTransformerForm.memoChange(Sender: TObject; const Info: TScintEditChangeInfo);
  procedure LinesInsertedOrDeleted;
   var
@@ -1637,6 +1681,10 @@ begin
   mnuSaveAll.Enabled := tbSaveAll.Enabled;
   if Info.LinesDelta <> 0 then
     LinesInsertedOrDeleted;
+  if (Feditor.id.format = fmtMarkdown) and (pnlPreview.Visible) then
+    LoadHtmlIntoBrowser(webPreview, TCommonMarkEngine.process(Feditor.memo.RawText))
+  else
+    webPreview.Navigate('about:blank');
 end;
 
 procedure TTransformerForm.memoStatusChange(Sender: TObject);
@@ -1680,6 +1728,27 @@ var
 begin
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
   editor.CopyToClipboard;
+end;
+
+procedure TTransformerForm.mnuCopyContentsClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := FEditor.memo.RawText;
+  Clipboard.Close;
+end;
+
+procedure TTransformerForm.mnuCopyDirectoryClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := ExtractFileDir(FEditor.id.actualName);
+  Clipboard.Close;
+end;
+
+procedure TTransformerForm.mnuCopyFileNameClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := FEditor.id.actualName;
+  Clipboard.Close;
 end;
 
 procedure TTransformerForm.mnuCutClick(Sender: TObject);
@@ -2113,6 +2182,14 @@ begin
     pmNewItem.Enabled := true;
     pmNewItem.Caption := '&New '+nodeCaption(node.Index);
   end;
+end;
+
+procedure TTransformerForm.mnuPreViewClick(Sender: TObject);
+begin
+  pnlPreview.Visible := not pnlPreview.Visible;
+  splitPreview.Visible := not splitPreview.Visible;
+  mnuPreView.Checked := pnlPreview.Visible;
+  FIni.WriteBool('View', 'Preview', pnlPreview.Visible);
 end;
 
 procedure TTransformerForm.Print1Click(Sender: TObject);
@@ -2894,6 +2971,11 @@ begin
   vtVars.RootNodeCount := FVariables.Count;
   FVarsSelected := nil;
   ClearVariable;
+end;
+
+procedure TTransformerForm.SpeedButton1Click(Sender: TObject);
+begin
+  mnuPreViewClick(nil);
 end;
 
 procedure TTransformerForm.MemoLinesInserted(FirstLine, Count: integer);

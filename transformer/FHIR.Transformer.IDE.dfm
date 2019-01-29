@@ -3,7 +3,7 @@ object TransformerForm: TTransformerForm
   Top = 0
   Caption = 'FHIR Transformer IDE'
   ClientHeight = 595
-  ClientWidth = 1259
+  ClientWidth = 1315
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object TransformerForm: TTransformerForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    1259
+    1315
     595)
   PixelsPerInch = 96
   TextHeight = 13
@@ -34,18 +34,20 @@ object TransformerForm: TTransformerForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1259
+    Width = 1315
     Height = 27
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 1259
     object ToolBar1: TToolBar
       Left = 1
       Top = 1
-      Width = 1257
+      Width = 1313
       Height = 29
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
+      ExplicitWidth = 1257
       object tbNew: TToolButton
         Left = 0
         Top = 0
@@ -325,15 +327,16 @@ object TransformerForm: TTransformerForm
   object Panel3: TPanel
     Left = 193
     Top = 27
-    Width = 1066
+    Width = 1122
     Height = 549
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 896
     object Splitter2: TSplitter
       Left = 0
       Top = 280
-      Width = 1066
+      Width = 1122
       Height = 8
       Cursor = crVSplit
       Align = alBottom
@@ -343,33 +346,33 @@ object TransformerForm: TTransformerForm
     object pnlDebug: TPanel
       Left = 0
       Top = 288
-      Width = 1066
+      Width = 1122
       Height = 261
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitWidth = 1066
       object pgDebug: TPageControl
         Left = 0
         Top = 0
-        Width = 1066
+        Width = 1122
         Height = 261
-        ActivePage = TabSheet2
+        ActivePage = TabSheet3
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 943
         object tbConsole: TTabSheet
           Caption = 'Console'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 1058
           object Panel5: TPanel
-            Left = 967
+            Left = 1023
             Top = 0
             Width = 91
             Height = 233
             Align = alRight
             Alignment = taLeftJustify
             TabOrder = 0
+            ExplicitLeft = 967
             object btnConsoleClear: TButton
               Left = 5
               Top = 61
@@ -401,7 +404,7 @@ object TransformerForm: TTransformerForm
           object mConsole: TMemo
             Left = 0
             Top = 0
-            Width = 967
+            Width = 1023
             Height = 233
             Align = alClient
             Font.Charset = ANSI_CHARSET
@@ -411,38 +414,39 @@ object TransformerForm: TTransformerForm
             Font.Style = []
             ParentFont = False
             TabOrder = 1
+            ExplicitWidth = 967
           end
         end
         object tbBreakpoints: TTabSheet
           Caption = 'Breakpoints'
           ImageIndex = 1
+          ExplicitWidth = 1058
           object Panel8: TPanel
             Left = 0
             Top = 0
-            Width = 1058
+            Width = 1114
             Height = 233
             Align = alClient
             BorderWidth = 4
             Caption = 'Panel8'
             TabOrder = 0
+            ExplicitWidth = 1058
             object ListBox1: TListBox
               Left = 5
               Top = 5
-              Width = 1048
+              Width = 1104
               Height = 223
               Align = alClient
               ItemHeight = 13
               TabOrder = 0
+              ExplicitWidth = 1048
             end
           end
         end
         object tbVariables: TTabSheet
           Caption = 'Debugger'
           ImageIndex = 3
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 1058
           object Splitter3: TSplitter
             Left = 353
             Top = 0
@@ -504,26 +508,28 @@ object TransformerForm: TTransformerForm
           object Panel13: TPanel
             Left = 625
             Top = 0
-            Width = 433
+            Width = 489
             Height = 233
             Align = alClient
             BorderWidth = 4
             TabOrder = 1
+            ExplicitWidth = 433
             object Panel14: TPanel
               Left = 5
               Top = 5
-              Width = 423
+              Width = 479
               Height = 20
               Align = alTop
               Alignment = taLeftJustify
               BevelOuter = bvNone
               Caption = ' Details for Selected Variable'
               TabOrder = 0
+              ExplicitWidth = 423
             end
             object vtVarDetails: TVirtualStringTree
               Left = 5
               Top = 25
-              Width = 423
+              Width = 479
               Height = 203
               Align = alClient
               Header.AutoSizeIndex = 2
@@ -539,6 +545,7 @@ object TransformerForm: TTransformerForm
               OnGetText = vtVarDetailsGetText
               OnInitChildren = vtVarDetailsInitChildren
               OnInitNode = vtVarDetailsInitNode
+              ExplicitWidth = 423
               Columns = <
                 item
                   Position = 0
@@ -552,7 +559,7 @@ object TransformerForm: TTransformerForm
                 end
                 item
                   Position = 2
-                  Width = 223
+                  Width = 275
                   WideText = 'Value'
                 end>
             end
@@ -607,16 +614,18 @@ object TransformerForm: TTransformerForm
         object TabSheet3: TTabSheet
           Caption = 'FHIRPath Evaluator'
           ImageIndex = 4
+          ExplicitWidth = 1058
           object Panel2: TPanel
             Left = 0
             Top = 0
-            Width = 1058
+            Width = 1114
             Height = 28
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 1058
             DesignSize = (
-              1058
+              1114
               28)
             object Label4: TLabel
               Left = 2
@@ -626,7 +635,7 @@ object TransformerForm: TTransformerForm
               Caption = 'FHIRPath:'
             end
             object btnPathGo: TBitBtn
-              Left = 904
+              Left = 960
               Top = 0
               Width = 70
               Height = 25
@@ -661,9 +670,10 @@ object TransformerForm: TTransformerForm
                 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
               TabOrder = 0
               OnClick = btnPathGoClick
+              ExplicitLeft = 904
             end
             object btnPathDebug: TBitBtn
-              Left = 980
+              Left = 1036
               Top = 0
               Width = 70
               Height = 25
@@ -698,26 +708,29 @@ object TransformerForm: TTransformerForm
                 00FFFF00FFBE3FBED515D5FF00FFFF00FFFF00FFFF00FFFF00FF}
               TabOrder = 1
               OnClick = btnPathDebugClick
+              ExplicitLeft = 980
             end
             object edtFHIRPath: TEdit
               Left = 58
               Top = 1
-              Width = 840
+              Width = 896
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
+              ExplicitWidth = 840
             end
           end
           object Panel4: TPanel
             Left = 0
             Top = 28
-            Width = 1058
+            Width = 1114
             Height = 205
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitWidth = 1058
             DesignSize = (
-              1058
+              1114
               205)
             object Label5: TLabel
               Left = 2
@@ -727,9 +740,9 @@ object TransformerForm: TTransformerForm
               Caption = 'Outcome'
             end
             object lbFHIRPathOutcomes: TListBox
-              Left = 58
+              Left = 51
               Top = 6
-              Width = 991
+              Width = 1047
               Height = 187
               Anchors = [akLeft, akTop, akRight, akBottom]
               ItemHeight = 13
@@ -738,334 +751,406 @@ object TransformerForm: TTransformerForm
             end
           end
         end
-        object TabSheet2: TTabSheet
-          Caption = 'Preview'
-          ImageIndex = 4
-          object WebBrowser1: TWebBrowser
-            Left = 0
-            Top = 0
-            Width = 1058
-            Height = 233
-            Align = alClient
-            TabOrder = 0
-            ExplicitLeft = 600
-            ExplicitTop = 104
-            ExplicitWidth = 300
-            ExplicitHeight = 150
-            ControlData = {
-              4C000000596D0000151800000000000000000000000000000000000000000000
-              000000004C000000000000000000000001000000E0D057007335CF11AE690800
-              2B2E126208000000000000004C0000000114020000000000C000000000000046
-              8000000000000000000000000000000000000000000000000000000000000000
-              00000000000000000100000000000000000000000000000000000000}
-          end
-        end
       end
     end
-    object pgTabs: TPageControl
+    object Panel17: TPanel
       Left = 0
       Top = 0
-      Width = 1066
+      Width = 1122
       Height = 280
-      ActivePage = TabSheet1
       Align = alClient
-      Images = ImageList1
-      PopupMenu = pmTabs
+      Caption = 'Panel17'
       TabOrder = 1
-      OnChange = pgTabsChange
-      object TabSheet1: TTabSheet
-        Caption = 'Home'
-        ImageIndex = 8
-        DesignSize = (
-          1058
-          251)
-        object Label1: TLabel
-          Left = 16
-          Top = 12
-          Width = 45
-          Height = 13
-          Caption = 'Execute'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label2: TLabel
-          Left = 32
-          Top = 40
-          Width = 55
-          Height = 13
-          Caption = 'Event Type'
-        end
-        object Label3: TLabel
-          Left = 32
-          Top = 91
-          Width = 33
-          Height = 13
-          Caption = 'Source'
-        end
-        object lblScript: TLabel
-          Left = 32
-          Top = 65
-          Width = 27
-          Height = 13
-          Caption = 'Script'
-        end
-        object Label6: TLabel
-          Left = 32
-          Top = 121
-          Width = 43
-          Height = 13
-          Caption = 'Outcome'
-        end
-        object lblExecutionError: TLabel
-          Left = 223
-          Top = 150
-          Width = 810
-          Height = 13
-          Anchors = [akLeft, akTop, akRight]
-          AutoSize = False
-        end
-        object cbxEventType: TComboBox
-          Left = 101
-          Top = 37
-          Width = 305
-          Height = 21
-          Style = csDropDownList
+      ExplicitLeft = 560
+      ExplicitTop = 9
+      ExplicitWidth = 281
+      ExplicitHeight = 224
+      object splitPreview: TSplitter
+        Left = 942
+        Top = 1
+        Width = 8
+        Height = 278
+        Align = alRight
+        ExplicitLeft = 1138
+        ExplicitTop = 33
+        ExplicitHeight = 549
+      end
+      object pnlPreview: TPanel
+        Left = 950
+        Top = 1
+        Width = 171
+        Height = 278
+        Align = alRight
+        BevelOuter = bvNone
+        Caption = 'pnlPreview'
+        Constraints.MinWidth = 100
+        TabOrder = 0
+        ExplicitLeft = 1144
+        ExplicitTop = 27
+        ExplicitHeight = 549
+        object Panel16: TPanel
+          Left = 0
+          Top = 0
+          Width = 171
+          Height = 24
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          Caption = '         Preview'
           TabOrder = 0
-          OnChange = cbxEventTypeChange
-          Items.Strings = (
-            'Process V2 Message'
-            'Convert CDA Document Using Map')
+          object SpeedButton1: TSpeedButton
+            Left = 4
+            Top = 4
+            Width = 16
+            Height = 16
+            Glyph.Data = {
+              76010000424D760100000000000036000000280000000A0000000A0000000100
+              18000000000040010000D6190000D61900000000000000000000FFFFFFFDFDFF
+              F9F9FDFFFFFFFFFFFFFFFFFFFFFFFFF6F6FDFFFFFFFFFFFFFCFFFEFEFFCFCFFB
+              6F6DF2F3F3FCFFFFFFFFFFFFE2E2FB5856ECD8D8FAFFFFFFF6FFF0F0FD6664F6
+              6360FA6563F2EBEBFCDDDCFA4544EC4D4BF65856EDF3F2FCFBFFFDFDFFCBCAFB
+              6664F86A67FB5E5CF25654F05E5DFB4B4AF0D2D1FAFEFEFFFFFFFFFFFFFDFDFF
+              CBCAFB6765F96764FF6664FF5B59F4D1D0F9FFFFFFFFFFFFFCFFFFFFFFFFFFFF
+              E7E7FE6B68F86B68FF6A67FF605DF2EBEBFCFFFFFFFFFFFFFFFFFFFFFFECEBFE
+              7F7CFB7E7AFE6F6DF96B68F9706EFC6B68F3F4F4FCFFFFFFFEFFFBFBFF8481FE
+              8380FF817EFCDCDBFDCCCCFC6E6CF8716FFB7673F4F6F6FEFCFFFFFFFFD7D7FE
+              8582FEE1E0FEFFFFFFFDFDFFCDCCFC7270F9A2A1F8F7F7FFFFFFFFFFFFFFFFFF
+              F7F7FEFFFFFFFFFFFFFFFFFFFDFDFFE8E8FDF2F2FDFFFFFFFDFF}
+            OnClick = SpeedButton1Click
+          end
         end
-        object cbxSource: TComboBox
-          Left = 101
-          Top = 91
-          Width = 276
-          Height = 21
-          Style = csDropDownList
+        object webPreview: TWebBrowser
+          Left = 0
+          Top = 24
+          Width = 171
+          Height = 254
+          Anchors = [akTop, akRight]
+          Align = alClient
           TabOrder = 1
-          OnChange = cbxSourceChange
+          ExplicitLeft = -104
+          ExplicitTop = 16
+          ExplicitWidth = 935
+          ExplicitHeight = 233
+          ControlData = {
+            4C000000AC110000401A00000000000000000000000000000000000000000000
+            000000004C000000000000000000000001000000E0D057007335CF11AE690800
+            2B2E126208000000000000004C0000000114020000000000C000000000000046
+            8000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000100000000000000000000000000000000000000}
         end
-        object btnExecute: TBitBtn
-          Left = 32
-          Top = 145
-          Width = 70
-          Height = 25
-          Caption = 'Debug'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            001B7600176B00176B00176B0018660018660018660018660018660018660018
-            66FFFFFFFFFFFFFFFFFFFFFFFF00218B5152CDACAFFF8C8EFF8C8EFF8C8EFF8C
-            8EFF6568FF6568FF6568FF7D80FF5152CD001866FFFFFFFFFFFFFFFFFF00218B
-            EFF0FF0014FF0016FF001BFF0020FF0027FF002AFF0034FF0034FF0034FF7D80
-            FF001866FFFFFFFFFFFFFFFFFF00259ADADAFF000FFF0014FF0016FF001BFF00
-            20FF002AFF002AFF0034FF0034FF6568FF001866FFFFFFFFFFFFFFFFFF002DB4
-            DADAFF000AFF000FFF0014FFFFFFFF001BFF0027FF0027FF002AFF0034FF6568
-            FF001866FFFFFFFFFFFFFFFFFF002DB4DADAFF0006FF000AFF000FFFFFFFFFFF
-            FFFF0020FF0027FF002AFF002AFF6568FF001866FFFFFFFFFFFFFFFFFF0036D8
-            DADAFF0200FF0200FF0006FFFFFFFFFFFFFFFFFFFF001BFF0020FF0027FF8C8E
-            FF00176BFFFFFFFFFFFFFFFFFF0036D8DADAFF0700FF0200FF0200FFFFFFFFFF
-            FFFF0014FF0016FF001BFF0020FF8C8EFF00176BFFFFFFFFFFFFFFFFFF0038E4
-            DADAFF0800FF0700FF0200FFFFFFFF0006FF000FFF0014FF0016FF001BFF8C8E
-            FF001B76FFFFFFFFFFFFFFFFFF0038E4DADAFF0D00FF0800FF0700FF0200FF02
-            00FF000AFF000FFF0014FF0016FF8C8EFF001B76FFFFFFFFFFFFFFFFFF0038E4
-            EFF0FF0D00FF0D00FF0800FF0700FF0200FF0006FF000AFF000FFF0014FFACAF
-            FF00218BFFFFFFFFFFFFFFFFFF0038E45152CDEFF0FFDADAFFDADAFFDADAFFDA
-            DAFFDADAFFDADAFFDADAFFEFF0FF6568FF00259AFFFFFFFFFFFFFFFFFFFFFFFF
-            0038E40038E40038E40038E40038E40038E40036D80036D8002FC7002FC7002D
-            B4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-          TabOrder = 2
-          OnClick = btnExecuteClick
-        end
-        object cbxScript: TComboBox
-          Left = 101
-          Top = 64
-          Width = 276
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 3
-          OnChange = cbxScriptChange
-        end
-        object btnOpenScript: TBitBtn
-          Left = 383
-          Top = 63
-          Width = 23
-          Height = 23
-          Hint = 'Open'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
-            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
-            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
-            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
-            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
-            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
-            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
-            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
-            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
-            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
-            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
-            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
-            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
-            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
-            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
-            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
-            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
-            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 4
-          OnClick = btnOpenScriptClick
-        end
-        object btnOpenSource: TBitBtn
-          Left = 383
-          Top = 91
-          Width = 23
-          Height = 23
-          Hint = 'Open'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
-            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
-            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
-            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
-            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
-            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
-            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
-            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
-            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
-            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
-            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
-            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
-            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
-            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
-            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
-            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
-            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
-            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 5
-          OnClick = btnOpenSourceClick
-        end
-        object btnRunNoDebug: TBitBtn
-          Left = 108
-          Top = 145
-          Width = 109
-          Height = 25
-          Caption = 'Run (No Debug)'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            185728164F25164F25164F25154C23154C23154C23154C23154C23154C23154C
-            23FFFFFFFFFFFFFFFFFFFFFFFF1C672F80B48ECBEFD4B8E9C5B8E9C5B8E9C5B8
-            E9C5A1E2B2A1E2B2A1E2B2AFE6BD80B48E154C23FFFFFFFFFFFFFFFFFF1C672F
-            F4FBF64DD1774BCF7449CD7147CB6D44C96941C6653EC25F3EC25F3EC25FAFE6
-            BD154C23FFFFFFFFFFFFFFFFFF217436E8F8EC4FD37A4DD1774BCF7449CD7147
-            CB6D41C66541C6653EC25F3EC25FA1E2B2154C23FFFFFFFFFFFFFFFFFF26873E
-            E8F8EC52D57D4FD37A4DD177FFFFFF49CD7144C96944C96941C6653EC25FA1E2
-            B2154C23FFFFFFFFFFFFFFFFFF26873EE8F8EC54D68052D57D4FD37AFFFFFFFF
-            FFFF47CB6D44C96941C66541C665A1E2B2154C23FFFFFFFFFFFFFFFFFF2CA149
-            E8F8EC56D98556D98554D680FFFFFFFFFFFFFFFFFF49CD7147CB6D44C969B8E9
-            C5164F25FFFFFFFFFFFFFFFFFF2CA149E8F8EC59DB8956D98556D985FFFFFFFF
-            FFFF4DD1774BCF7449CD7147CB6DB8E9C5164F25FFFFFFFFFFFFFFFFFF2FAA4E
-            E8F8EC5ADC8A59DB8956D985FFFFFF54D6804FD37A4DD1774BCF7449CD71B8E9
-            C5185728FFFFFFFFFFFFFFFFFF2FAA4EE8F8EC5CDE8E5ADC8A59DB8956D98556
-            D98552D57D4FD37A4DD1774BCF74B8E9C5185728FFFFFFFFFFFFFFFFFF2FAA4E
-            F4FBF65CDE8E5CDE8E5ADC8A59DB8956D98554D68052D57D4FD37A4DD177CBEF
-            D41C672FFFFFFFFFFFFFFFFFFF2FAA4E80B48EF4FBF6E8F8ECE8F8ECE8F8ECE8
-            F8ECE8F8ECE8F8ECE8F8ECF4FBF6A1E2B2217436FFFFFFFFFFFFFFFFFFFFFFFF
-            2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2CA1492CA1492894442894442687
-            3EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-          TabOrder = 6
-          OnClick = mnuRunNoDebugClick
-        end
-        object cbxOutcome: TComboBox
-          Left = 101
-          Top = 118
-          Width = 80
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 7
-          OnChange = cbxOutcomeChange
-          OnClick = cbxOutcomeChange
-          Items.Strings = (
-            'Ignore'
-            'Save To'
-            'Compare To')
-        end
-        object cbxTarget: TComboBox
-          Left = 187
-          Top = 118
-          Width = 190
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 8
-          OnChange = cbxSourceChange
-        end
-        object btnOpenTarget: TBitBtn
-          Left = 383
-          Top = 118
-          Width = 23
-          Height = 23
-          Hint = 'Open'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
-            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
-            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
-            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
-            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
-            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
-            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
-            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
-            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
-            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
-            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
-            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
-            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
-            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
-            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
-            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
-            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
-            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 9
-          OnClick = btnOpenTargetClick
+      end
+      object pgTabs: TPageControl
+        Left = 1
+        Top = 1
+        Width = 941
+        Height = 278
+        ActivePage = TabSheet1
+        Align = alClient
+        Images = ImageList1
+        PopupMenu = pmTabs
+        TabOrder = 1
+        OnChange = pgTabsChange
+        ExplicitLeft = -399
+        ExplicitTop = -56
+        ExplicitWidth = 680
+        ExplicitHeight = 280
+        object TabSheet1: TTabSheet
+          Caption = 'Home'
+          ImageIndex = 8
+          ExplicitLeft = 5
+          ExplicitTop = 24
+          DesignSize = (
+            933
+            249)
+          object Label1: TLabel
+            Left = 16
+            Top = 12
+            Width = 45
+            Height = 13
+            Caption = 'Execute'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label2: TLabel
+            Left = 32
+            Top = 40
+            Width = 55
+            Height = 13
+            Caption = 'Event Type'
+          end
+          object Label3: TLabel
+            Left = 32
+            Top = 91
+            Width = 33
+            Height = 13
+            Caption = 'Source'
+          end
+          object lblScript: TLabel
+            Left = 32
+            Top = 65
+            Width = 27
+            Height = 13
+            Caption = 'Script'
+          end
+          object Label6: TLabel
+            Left = 32
+            Top = 121
+            Width = 43
+            Height = 13
+            Caption = 'Outcome'
+          end
+          object lblExecutionError: TLabel
+            Left = 223
+            Top = 150
+            Width = 685
+            Height = 13
+            Anchors = [akLeft, akTop, akRight]
+            AutoSize = False
+            ExplicitWidth = 810
+          end
+          object cbxEventType: TComboBox
+            Left = 101
+            Top = 37
+            Width = 305
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 0
+            OnChange = cbxEventTypeChange
+            Items.Strings = (
+              'Process V2 Message'
+              'Convert CDA Document Using Map')
+          end
+          object cbxSource: TComboBox
+            Left = 101
+            Top = 91
+            Width = 276
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 1
+            OnChange = cbxSourceChange
+          end
+          object btnExecute: TBitBtn
+            Left = 32
+            Top = 145
+            Width = 70
+            Height = 25
+            Caption = 'Debug'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              001B7600176B00176B00176B0018660018660018660018660018660018660018
+              66FFFFFFFFFFFFFFFFFFFFFFFF00218B5152CDACAFFF8C8EFF8C8EFF8C8EFF8C
+              8EFF6568FF6568FF6568FF7D80FF5152CD001866FFFFFFFFFFFFFFFFFF00218B
+              EFF0FF0014FF0016FF001BFF0020FF0027FF002AFF0034FF0034FF0034FF7D80
+              FF001866FFFFFFFFFFFFFFFFFF00259ADADAFF000FFF0014FF0016FF001BFF00
+              20FF002AFF002AFF0034FF0034FF6568FF001866FFFFFFFFFFFFFFFFFF002DB4
+              DADAFF000AFF000FFF0014FFFFFFFF001BFF0027FF0027FF002AFF0034FF6568
+              FF001866FFFFFFFFFFFFFFFFFF002DB4DADAFF0006FF000AFF000FFFFFFFFFFF
+              FFFF0020FF0027FF002AFF002AFF6568FF001866FFFFFFFFFFFFFFFFFF0036D8
+              DADAFF0200FF0200FF0006FFFFFFFFFFFFFFFFFFFF001BFF0020FF0027FF8C8E
+              FF00176BFFFFFFFFFFFFFFFFFF0036D8DADAFF0700FF0200FF0200FFFFFFFFFF
+              FFFF0014FF0016FF001BFF0020FF8C8EFF00176BFFFFFFFFFFFFFFFFFF0038E4
+              DADAFF0800FF0700FF0200FFFFFFFF0006FF000FFF0014FF0016FF001BFF8C8E
+              FF001B76FFFFFFFFFFFFFFFFFF0038E4DADAFF0D00FF0800FF0700FF0200FF02
+              00FF000AFF000FFF0014FF0016FF8C8EFF001B76FFFFFFFFFFFFFFFFFF0038E4
+              EFF0FF0D00FF0D00FF0800FF0700FF0200FF0006FF000AFF000FFF0014FFACAF
+              FF00218BFFFFFFFFFFFFFFFFFF0038E45152CDEFF0FFDADAFFDADAFFDADAFFDA
+              DAFFDADAFFDADAFFDADAFFEFF0FF6568FF00259AFFFFFFFFFFFFFFFFFFFFFFFF
+              0038E40038E40038E40038E40038E40038E40036D80036D8002FC7002FC7002D
+              B4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            TabOrder = 2
+            OnClick = btnExecuteClick
+          end
+          object cbxScript: TComboBox
+            Left = 101
+            Top = 64
+            Width = 276
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 3
+            OnChange = cbxScriptChange
+          end
+          object btnOpenScript: TBitBtn
+            Left = 383
+            Top = 63
+            Width = 23
+            Height = 23
+            Hint = 'Open'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+              77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+              18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+              9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+              85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+              540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+              18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+              85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+            OnClick = btnOpenScriptClick
+          end
+          object btnOpenSource: TBitBtn
+            Left = 383
+            Top = 91
+            Width = 23
+            Height = 23
+            Hint = 'Open'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+              77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+              18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+              9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+              85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+              540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+              18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+              85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
+            OnClick = btnOpenSourceClick
+          end
+          object btnRunNoDebug: TBitBtn
+            Left = 108
+            Top = 145
+            Width = 109
+            Height = 25
+            Caption = 'Run (No Debug)'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              185728164F25164F25164F25154C23154C23154C23154C23154C23154C23154C
+              23FFFFFFFFFFFFFFFFFFFFFFFF1C672F80B48ECBEFD4B8E9C5B8E9C5B8E9C5B8
+              E9C5A1E2B2A1E2B2A1E2B2AFE6BD80B48E154C23FFFFFFFFFFFFFFFFFF1C672F
+              F4FBF64DD1774BCF7449CD7147CB6D44C96941C6653EC25F3EC25F3EC25FAFE6
+              BD154C23FFFFFFFFFFFFFFFFFF217436E8F8EC4FD37A4DD1774BCF7449CD7147
+              CB6D41C66541C6653EC25F3EC25FA1E2B2154C23FFFFFFFFFFFFFFFFFF26873E
+              E8F8EC52D57D4FD37A4DD177FFFFFF49CD7144C96944C96941C6653EC25FA1E2
+              B2154C23FFFFFFFFFFFFFFFFFF26873EE8F8EC54D68052D57D4FD37AFFFFFFFF
+              FFFF47CB6D44C96941C66541C665A1E2B2154C23FFFFFFFFFFFFFFFFFF2CA149
+              E8F8EC56D98556D98554D680FFFFFFFFFFFFFFFFFF49CD7147CB6D44C969B8E9
+              C5164F25FFFFFFFFFFFFFFFFFF2CA149E8F8EC59DB8956D98556D985FFFFFFFF
+              FFFF4DD1774BCF7449CD7147CB6DB8E9C5164F25FFFFFFFFFFFFFFFFFF2FAA4E
+              E8F8EC5ADC8A59DB8956D985FFFFFF54D6804FD37A4DD1774BCF7449CD71B8E9
+              C5185728FFFFFFFFFFFFFFFFFF2FAA4EE8F8EC5CDE8E5ADC8A59DB8956D98556
+              D98552D57D4FD37A4DD1774BCF74B8E9C5185728FFFFFFFFFFFFFFFFFF2FAA4E
+              F4FBF65CDE8E5CDE8E5ADC8A59DB8956D98554D68052D57D4FD37A4DD177CBEF
+              D41C672FFFFFFFFFFFFFFFFFFF2FAA4E80B48EF4FBF6E8F8ECE8F8ECE8F8ECE8
+              F8ECE8F8ECE8F8ECE8F8ECF4FBF6A1E2B2217436FFFFFFFFFFFFFFFFFFFFFFFF
+              2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2CA1492CA1492894442894442687
+              3EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            TabOrder = 6
+            OnClick = mnuRunNoDebugClick
+          end
+          object cbxOutcome: TComboBox
+            Left = 101
+            Top = 118
+            Width = 80
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 7
+            OnChange = cbxOutcomeChange
+            OnClick = cbxOutcomeChange
+            Items.Strings = (
+              'Ignore'
+              'Save To'
+              'Compare To')
+          end
+          object cbxTarget: TComboBox
+            Left = 187
+            Top = 118
+            Width = 190
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 8
+            OnChange = cbxSourceChange
+          end
+          object btnOpenTarget: TBitBtn
+            Left = 383
+            Top = 118
+            Width = 23
+            Height = 23
+            Hint = 'Open'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+              77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+              18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+              9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+              85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+              540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+              18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+              85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 9
+            OnClick = btnOpenTargetClick
+          end
         end
       end
     end
@@ -1073,7 +1158,7 @@ object TransformerForm: TTransformerForm
   object pnlStatus: TStatusBar
     Left = 0
     Top = 576
-    Width = 1259
+    Width = 1315
     Height = 19
     AutoHint = True
     Panels = <
@@ -1090,10 +1175,11 @@ object TransformerForm: TTransformerForm
         Width = 300
       end>
     SizeGrip = False
+    ExplicitWidth = 1259
   end
   object btnMaximise: TBitBtn
-    Left = 1232
-    Top = 24
+    Left = 1288
+    Top = 27
     Width = 22
     Height = 22
     Anchors = [akTop, akRight]
@@ -1130,8 +1216,8 @@ object TransformerForm: TTransformerForm
     OnClick = btnMaximiseClick
   end
   object btnNormalSize: TBitBtn
-    Left = 1232
-    Top = 24
+    Left = 1288
+    Top = 27
     Width = 22
     Height = 22
     Anchors = [akTop, akRight]
@@ -2868,9 +2954,8 @@ object TransformerForm: TTransformerForm
         OnClick = Exit1Click
       end
     end
-    object Edit1: TMenuItem
+    object mnuEdit: TMenuItem
       Caption = '&Edit'
-      Enabled = False
       object mnuUndo: TMenuItem
         Caption = '&Undo'
         ImageIndex = 20
@@ -2932,6 +3017,24 @@ object TransformerForm: TTransformerForm
         ShortCut = 16455
         OnClick = mnuGotoClick
       end
+      object N13: TMenuItem
+        Caption = '-'
+      end
+      object mnuClipboard: TMenuItem
+        Caption = 'Clip&board'
+        object mnuCopyFileName: TMenuItem
+          Caption = 'Copy &File Name'
+          OnClick = mnuCopyFileNameClick
+        end
+        object mnuCopyDirectory: TMenuItem
+          Caption = 'Copy &Directory'
+          OnClick = mnuCopyDirectoryClick
+        end
+        object mnuCopyContents: TMenuItem
+          Caption = 'Copy &Contents'
+          OnClick = mnuCopyContentsClick
+        end
+      end
     end
     object Settings1: TMenuItem
       Caption = '&View'
@@ -2944,6 +3047,10 @@ object TransformerForm: TTransformerForm
         Caption = '&Package Manager'
         ImageIndex = 29
         OnClick = mnuPackageManagerClick
+      end
+      object mnuPreView: TMenuItem
+        Caption = 'Pre&View'
+        OnClick = mnuPreViewClick
       end
     end
     object Execute1: TMenuItem
@@ -3132,11 +3239,10 @@ object TransformerForm: TTransformerForm
   end
   object odImport: TOpenDialog
     Filter = 
-      'Known Files|*.msg;*.hl7;*.cda;*.json;*.xml;*.js;*.map;*.liquid|M' +
-      'essages (*.msg, *.hl7)|*.msg;*.hl7|CDA Documents (*.cda, *.xml)|' +
-      '*.cda;*.xml|Resources (*.json, *.xml)|*.json;*.xml|Scripts (*.js' +
-      ')|*.js|Maps (*.map)|*.map|Templates (*.liquid)|*.liquid|All File' +
-      's|*.*'
+      'Known Files|; *.md|Messages (*.msg, *.hl7)|*.msg;*.hl7|CDA Docum' +
+      'ents (*.cda, *.xml)|*.cda;*.xml|Resources (*.json, *.xml)|*.json' +
+      ';*.xml|Scripts (*.js)|*.js|Maps (*.map)|*.map|Templates (*.liqui' +
+      'd)|*.liquid|Markdowns (*.md)|*.md|All Files|*.*'
     Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
     Left = 48
     Top = 300

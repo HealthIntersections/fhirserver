@@ -164,6 +164,11 @@ begin
     exit(fmtJs);
   if s.Contains('{%') or s.Contains('{{') then
     exit(fmtTemplate);
+  if s.StartsWith('# ') then
+    exit(fmtMarkdown);
+  if fn.endsWith('.md') then
+    exit(fmtMarkdown);
+
   raise Exception.create('unknown format');
 end;
 

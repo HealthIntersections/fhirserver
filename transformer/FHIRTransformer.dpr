@@ -75,7 +75,6 @@ uses
   FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas',
   FHIR.Support.Signatures in '..\library\support\FHIR.Support.Signatures.pas',
   FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
   FHIR.Support.Turtle in '..\library\support\FHIR.Support.Turtle.pas',
   FHIR.Support.Utilities in '..\library\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Xml in '..\library\support\FHIR.Support.Xml.pas',
@@ -132,7 +131,8 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
-  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas';
+  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
+  FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas';
 
 {$R *.res}
 

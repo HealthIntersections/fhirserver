@@ -185,7 +185,6 @@
         <DCCReference Include="..\library\support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Xml.pas"/>
@@ -259,6 +258,7 @@
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
+        <DCCReference Include="..\library\support\FHIR.Support.Threads.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
