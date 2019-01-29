@@ -904,7 +904,7 @@ begin
       begin
       Attributes.ForeColor := clPurple;
       Attributes.FontStyle := [fsBold];
-      Attributes.BackColor := clLtGray;
+      Attributes.BackColor := clYellow;
       end;
     cmDelimiter :
       begin
