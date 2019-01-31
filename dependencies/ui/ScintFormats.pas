@@ -879,7 +879,7 @@ end;
 procedure TCommonMarkStyler.ContentChanged;
 begin
   FLines.Free;
-  FLines := TCommonMarkEngine.parseStyles(Text);
+  FLines := TCommonMarkEngine.parseStyles(Text, true);
 end;
 
 destructor TCommonMarkStyler.Destroy;

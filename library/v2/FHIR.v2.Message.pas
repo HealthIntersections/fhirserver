@@ -47,12 +47,15 @@ type
   protected
     function GetFhirObjectVersion: TFHIRVersion; override;
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
   public
     property id : String read Fid write FId;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function hasExtensions : boolean; override;
+
+    function SerialiseUsingProperties : boolean; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
@@ -66,6 +69,7 @@ type
     FValue: String;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
   public
     constructor Create(kind : TV2ContentKind; value : String);
     function link : TV2Content; overload;
@@ -85,8 +89,10 @@ type
     procedure SetText(const Value: String);
     function GetComponent(index: integer): TV2Cell;
     function GetContent(index: integer): TV2Content;
+    function GetSimple: String;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -99,6 +105,7 @@ type
 
     function isEmpty : boolean; override;
     property text : String read GetText write SetText;
+    property simple : String read GetSimple;
     function fhirType : String; override;
   end;
 
@@ -108,6 +115,7 @@ type
     function GetElement(index: integer): TV2Cell;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -127,6 +135,7 @@ type
     function GetField(index: integer): TV2Field;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
   public
     constructor Create; overload; override;
     constructor Create(code : String); overload;
@@ -147,6 +156,7 @@ type
     function GetSegment(index: integer): TV2Segment;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -212,6 +222,7 @@ type
     function escape(b : TStringBuilder; src : String) : AnsiString;
     procedure composeBinary(b : TStringBuilder; cnt : TV2Content);
     procedure composeEscape(b : TStringBuilder; cnt : TV2Content);
+    procedure composeContent(b : TStringBuilder; cnt : TV2Content);
     procedure composeCell(b : TStringBuilder; cell : TV2Cell; ch : AnsiChar);
     procedure composeField(b : TStringBuilder; fld : TV2Field);
     procedure composeSegment(b : TStringBuilder; seg : TV2Segment);
@@ -219,6 +230,8 @@ type
   public
     class function composeString(msg : TV2Message; options : TV2ComposerOptions = []) : String; overload;
     class function composeBytes(msg : TV2Message; options : TV2ComposerOptions = []) : TBytes; overload;
+    class function composeString(obj : TV2Object; options : TV2ComposerOptions = []) : String; overload;
+    class function composeBytes(obj : TV2Object; options : TV2ComposerOptions = []) : TBytes; overload;
     class procedure compose(msg : TV2Message; dst : TStream; options : TV2ComposerOptions = []); overload;
     class procedure compose(msg : TV2Message; dst : TFslStream; options : TV2ComposerOptions = []); overload;
     class procedure compose(msg : TV2Message; dst : TFslBuffer; options : TV2ComposerOptions = []); overload;
@@ -268,6 +281,13 @@ begin
   result := false;
 end;
 
+procedure TV2Object.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  if bInheritedProperties then
+    inherited;
+  oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFhirId, TFhirId.Create(FId)));
+end;
+
 function TV2Object.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v).noExtensions;
@@ -291,6 +311,11 @@ end;
 function TV2Object.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFSLException.Create('Not supported');
+end;
+
+function TV2Object.SerialiseUsingProperties: boolean;
+begin
+  result := true;
 end;
 
 { TV2Content }
@@ -327,6 +352,14 @@ end;
 function TV2Content.link: TV2Content;
 begin
   result := TV2Content(inherited link);
+end;
+
+procedure TV2Content.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  if bInheritedProperties then
+    inherited;
+  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFhirString, TFhirString.Create(FValue)));
+  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirCode, TFhirCode.Create(CODES_TV2ContentKind[FKind])));
 end;
 
 { TV2Cell }
@@ -380,6 +413,14 @@ begin
   result := FContentList[index-1];
 end;
 
+function TV2Cell.GetSimple: String;
+begin
+  if (componentList <> nil) and (componentList.Count > 1) then
+    result := componentList[0].simple
+  else
+    result := text;
+end;
+
 function TV2Cell.GetText: String;
 var
   cnt : TV2Content;
@@ -410,6 +451,14 @@ end;
 function TV2Cell.link: TV2Cell;
 begin
   result := TV2Cell(inherited Link);
+end;
+
+procedure TV2Cell.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  if bInheritedProperties then
+    inherited;
+  oList.add(TFHIRProperty.create<TV2Content>(self, 'content', 'Content', true, TV2Content, FContentList));
+  oList.add(TFHIRProperty.create<TV2Cell>(self, 'component', 'Cell', true, TV2Cell, FComponentList));
 end;
 
 procedure TV2Cell.SetText(const Value: String);
@@ -474,6 +523,13 @@ end;
 function TV2Field.link: TV2Field;
 begin
   result := TV2Field(inherited Link);
+end;
+
+procedure TV2Field.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  if bInheritedProperties then
+    inherited;
+  oList.add(TFHIRProperty.create<TV2Cell>(self, 'element', 'Cell', true, TV2Cell, FElementList));
 end;
 
 { TV2Segment }
@@ -542,6 +598,13 @@ begin
   result := TV2Segment(inherited link);
 end;
 
+procedure TV2Segment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  if bInheritedProperties then
+    inherited;
+  oList.add(TFHIRProperty.create<TV2Field>(self, 'field', 'Field', true, TV2Field, FFieldList));
+end;
+
 { TV2Message }
 
 constructor TV2Message.Create;
@@ -587,6 +650,13 @@ end;
 function TV2Message.link: TV2Message;
 begin
   result := TV2Message(inherited link);
+end;
+
+procedure TV2Message.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  if bInheritedProperties then
+    inherited;
+  oList.add(TFHIRProperty.create<TV2Segment>(self, 'segment', 'Segment', true, TV2Segment, FSegmentList));
 end;
 
 { TV2Parser }
@@ -1128,6 +1198,36 @@ begin
   result := TEncoding.UTF8.GetBytes(composeString(msg, options));
 end;
 
+class function TV2Composer.composeString(obj: TV2Object; options: TV2ComposerOptions): String;
+var
+  this : TV2Composer;
+  b : TStringBuilder;
+begin
+  this := TV2Composer.Create;
+  try
+    this.FOptions := options;
+    this.init;
+    b := TStringBuilder.Create;
+    try
+      if obj is TV2Message then
+        this.composeMessage(b, obj as TV2Message)
+      else if obj is TV2Segment then
+        this.composeSegment(b, obj as TV2Segment)
+      else if obj is TV2Field then
+        this.composeField(b, obj as TV2Field)
+      else if obj is TV2Cell then
+        this.composeCell(b, obj as TV2Cell, '^')
+      else if obj is TV2Content then
+        this.composeContent(b, obj as TV2Content);
+      result := b.ToString;
+    finally
+      b.Free;
+    end;
+  finally
+    this.free;
+  end;
+end;
+
 procedure TV2Composer.composeCell(b: TStringBuilder; cell: TV2Cell; ch: AnsiChar);
 var
   first : boolean;
@@ -1157,6 +1257,16 @@ begin
         ckEscape: composeEscape(b, cnt);
       end;
     end;
+  end;
+end;
+
+procedure TV2Composer.composeContent(b: TStringBuilder; cnt: TV2Content);
+begin
+  case cnt.kind of
+    ckString: b.Append(cnt.FValue);
+    ckNull: b.Append('""');
+    ckBinary: composeBinary(b, cnt);
+    ckEscape: composeEscape(b, cnt);
   end;
 end;
 
@@ -1285,6 +1395,11 @@ begin
 end;
 
 
+class function TV2Composer.composeBytes(obj: TV2Object; options: TV2ComposerOptions): TBytes;
+begin
+  result := TEncoding.UTF8.GetBytes(composeString(obj, options));
+end;
+
 procedure TV2Composer.init;
 begin
   FEscapeCharacter := '\';
@@ -1298,7 +1413,7 @@ end;
 
 function TV2FHIRPathExtensions.isValidFunction(name: String): boolean;
 begin
-  result := (name = 'text') or (name = 'element');
+  result := (name = 'text') or (name = 'element') or (name = 'simple') ;
 end;
 
 function TV2FHIRPathExtensions.functionApplies(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; name: String): boolean;
@@ -1309,6 +1424,8 @@ begin
   for item in focus do
   begin
     if (item.value is TV2Cell) and (name = 'text') then
+      exit(true);
+    if (item.value is TV2Cell) and (name = 'simple') then
       exit(true);
     if (item.value is TV2Segment) and (name = 'element') then
       exit(true);
@@ -1325,6 +1442,8 @@ begin
   try
     if (focus is TV2Cell) and (name = 'text') then
       result.add(TFHIRString.Create(TV2Cell(focus).text));
+    if (focus is TV2Cell) and (name = 'simple') then
+      result.add(TFHIRString.Create(TV2Cell(focus).simple));
     if (focus is TV2Segment) and (name = 'element') then
     begin
       sel := engine.evaluate(context.appInfo, context.resource, params[0]);

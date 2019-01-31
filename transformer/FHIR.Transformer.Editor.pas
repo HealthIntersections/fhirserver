@@ -6,7 +6,9 @@ uses
   SysUtils, Classes, Controls, Vcl.ComCtrls, IOUtils,
   ScintEdit, ScintFormats, FHIR.Cda.Scint, FHIR.V2.Scint,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.R4.Scint,
+  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.v2.Message,
+  FHIR.R4.Scint, FHIR.R4.Context, FHIR.R4.ElementModel, FHIR.R4.Parser, FHIR.R4.Xml, FHIR.R4.Json,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities;
 
 type
@@ -25,7 +27,8 @@ type
 
     procedure SetInfo(const Value: TWorkspaceFile);
     procedure SetReadOnly(const Value: boolean);
-
+    function parseCDA(context: TFHIRWorkerContext): TFHIRObject;
+    function parseResource(context: TFHIRWorkerContext): TFHIRObject;
   public
     constructor Create(f : TWorkspaceFile);
     destructor Destroy; override;
@@ -44,6 +47,7 @@ type
     procedure UpdateAllLineMarkers();
     procedure HideError();
 
+    function parse(context: TFHIRWorkerContext) : TFHIRObject;
 
     procedure init;
     procedure save;
@@ -111,6 +115,48 @@ begin
   StepLine := -1;
   for bpi in FInfo.BreakPoints do
     UpdateLineMarkers(bpi.line);
+end;
+
+function TEditorInformation.parseCDA(context: TFHIRWorkerContext): TFHIRObject;
+var
+  ss : TStringStream;
+begin
+  ss := TStringStream.Create(memo.RawText, TEncoding.UTF8);
+  try
+    result := TFHIRMMManager.parse(context, ss, ffXml);
+  finally
+    ss.Free;
+  end;
+end;
+
+function TEditorInformation.parseResource(context: TFHIRWorkerContext): TFHIRObject;
+var
+  p : TFHIRParser;
+begin
+  if isXml(memo.RawText) then
+    p := TFHIRXmlParser.Create(context.link, 'en')
+  else
+    p := TFHIRJsonParser.Create(context.link, 'en');
+  try
+    result := p.parseResource(memo.RawText);
+  finally
+    p.Free;
+  end;
+end;
+
+
+function TEditorInformation.parse(context: TFHIRWorkerContext): TFHIRObject;
+begin
+  case id.format of
+    fmtV2: result := TV2Parser.parse(memo.RawText);
+    fmtCDA: result := parseCDA(context);
+    fmtResource: result := parseResource(context);
+    fmtJS: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
+    fmtMap: raise EFslException.Create('Not done yet');
+    fmtTemplate: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
+    fmtMarkdown: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
+  end;
+
 end;
 
 procedure TEditorInformation.save;

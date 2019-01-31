@@ -28,6 +28,7 @@ uses
   FHIR.Javascript,
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
+  FHIR.v2.Message,
   FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor,
   FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg,
@@ -61,8 +62,9 @@ const
   TEMPLATE_MARKDOWN = 'Markdown with Liquid support';
 
   spCaretPos = 0;
-  spMode = 1;
-  spStatus = 2;
+  spPath = 1;
+  spMode = 2;
+  spStatus = 3;
 
 const
   DBG_STOPPED = 0;
@@ -265,18 +267,12 @@ type
     mnuRecompileAll: TMenuItem;
     mnuNewMarkdown: TMenuItem;
     NewMarkdown1: TMenuItem;
-    webPreview: TWebBrowser;
     N13: TMenuItem;
     mnuClipboard: TMenuItem;
     mnuCopyFileName: TMenuItem;
     mnuCopyDirectory: TMenuItem;
     mnuCopyContents: TMenuItem;
-    mnuPreView: TMenuItem;
-    pnlPreview: TPanel;
-    splitPreview: TSplitter;
-    Panel16: TPanel;
     Panel17: TPanel;
-    SpeedButton1: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -385,8 +381,6 @@ type
     procedure mnuCopyFileNameClick(Sender: TObject);
     procedure mnuCopyDirectoryClick(Sender: TObject);
     procedure mnuCopyContentsClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
-    procedure mnuPreViewClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -418,7 +412,7 @@ type
     FVariables : TFslList<TTransformEngineExecutionVariable>;
     FVariable : TTransformEngineExecutionVariable;
 
-    function DoSave(command : String) : boolean;
+    function DoSave(cmdCode, cmdTitle : String) : boolean;
     function nodeCaption(i : integer) : String;
     procedure LoadWorkspace(proj: TWorkspace);
     procedure makeNewFile(title, ext, template : String; fmt : TTransformerFormat; category : TFslList<TWorkspaceFile>);
@@ -431,6 +425,7 @@ type
     procedure updateWorkspaceFile(editor : TEditorInformation; src : String);
     function editorForTab(tab : TTabSheet) : TEditorInformation;
     function editorForFile(f : TWorkspaceFile) : TEditorInformation;
+    function describeEditorPath : String;
     function anyFilesDirty : boolean;
 
     procedure FindNext(editor : TScintEdit);
@@ -458,8 +453,6 @@ type
 
     function loadEvent : TExecutionDetails;
     function canExecute : boolean;
-    function parseCDA(context : TFHIRWorkerContext) : TFHIRObject;
-    function parseResource(context : TFHIRWorkerContext) : TFHIRObject;
     procedure runFHIRPath(debug: boolean);
     function GetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting) : Integer;
     procedure SetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting; value : Integer);
@@ -485,8 +478,8 @@ type
     procedure ExecutorStateUpdate(sender : TTransformEngine);
     procedure ExecutorStatusMessage(sender : TTransformEngine; color : TColor; msg: String; beep : UInt);
     function ExecutorOpenFile(sender : TTransformEngine; f : TWorkspaceFile) : TEditorInformation;
+    procedure SaveInputs;
   public
-    { Public declarations }
   end;
 
 var
@@ -496,7 +489,7 @@ implementation
 
 {$R *.dfm}
 
-uses FHIR.Transformer.SettingsDialog;
+uses FHIR.Transformer.SettingsDialog, FHIR.Transformer.MarkdownPreview;
 
 
 function makeXmlDense(src : String) : String;
@@ -623,13 +616,13 @@ end;
 
 procedure TTransformerForm.btnPathDebugClick(Sender: TObject);
 begin
-  DoSave('Debug FHIRPath');
+  DoSave('debug-fp', 'Debug');
   runFHIRPath(true);
 end;
 
 procedure TTransformerForm.btnPathGoClick(Sender: TObject);
 begin
-  DoSave('Execute FHIRPath');
+  DoSave('execute-fp', 'Execute');
   runFHIRPath(false);
 end;
 
@@ -643,28 +636,28 @@ var
   s : String;
   ps : TPathSelection;
   types : TFHIRTypeDetailsV;
+  fmt : TFHIRFormat;
 begin
   context := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
   try
     context.loadFromCache(FCache);
     engine := TFHIRPathEngine.Create(context.Link, nil); // todo: do we need UCUM?
     try
-      case FEditor.id.format of
-        fmtV2: raise EFslException.Create('Not done yet');
-        fmtCDA: b := parseCDA(context);
-        fmtResource: b := parseResource(context);
-        fmtJS: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
-        fmtMap: raise EFslException.Create('Not done yet');
-        fmtTemplate: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
-        fmtMarkdown: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
-      end;
+      engine.registerExtension(TV2FHIRPathExtensions.create);
+      b := FEditor.Parse(context);
       try
         lbFHIRPathOutcomes.Items.Clear;
         FPathSelection.Clear;
         try
           if debug then
-            RunPathDebugger(self, context, GetFPDebuggerSetting, setFPDebuggerSetting, getFPDebuggerSettingStr, setFPDebuggerSettingStr,
-            context.Factory, nil, b, edtFHIRPath.text, ffXml, types, ol)
+          begin
+            if isXml(FEditor.memo.RawText) then
+              fmt := ffXml
+            else
+              fmt := ffJson;
+            RunPathDebugger(self, context, engine, GetFPDebuggerSetting, setFPDebuggerSetting, getFPDebuggerSettingStr, setFPDebuggerSettingStr,
+              context.Factory, nil, b, edtFHIRPath.text, fmt, types, ol)
+          end
           else
             ol := engine.evaluate(nil, b, edtFHIRPath.text);
           try
@@ -838,33 +831,6 @@ begin
   mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
 end;
 
-function TTransformerForm.parseCDA(context: TFHIRWorkerContext): TFHIRObject;
-var
-  ss : TStringStream;
-begin
-  ss := TStringStream.Create(FEditor.memo.RawText, TEncoding.UTF8);
-  try
-    result := TFHIRMMManager.parse(context, ss, ffXml);
-  finally
-    ss.Free;
-  end;
-end;
-
-function TTransformerForm.parseResource(context: TFHIRWorkerContext): TFHIRObject;
-var
-  p : TFHIRParser;
-begin
-  if isXml(FEditor.memo.RawText) then
-    p := TFHIRXmlParser.Create(context.link, 'en')
-  else
-    p := TFHIRJsonParser.Create(context.link, 'en');
-  try
-    result := p.parseResource(FEditor.memo.RawText);
-  finally
-    p.Free;
-  end;
-end;
-
 procedure TTransformerForm.pgTabsChange(Sender: TObject);
 var
   e : TEditorInformation;
@@ -900,6 +866,7 @@ begin
     Caption := 'FHIR Transformer IDE';
     pnlStatus.Panels[spMode].Text := '';
     pnlStatus.Panels[spCaretPos].Text := '';
+    pnlStatus.Panels[spPath].Text := '';
   end
   else
   begin
@@ -1052,7 +1019,87 @@ begin
     abort;
 end;
 
-function TTransformerForm.DoSave(command : String) : boolean;
+function hasChar(s : String; ch : Char; terminators : TSysCharSet) : boolean;
+var
+  i : integer;
+begin
+  result := false;
+  i := 1;
+  while i <= length(s) do
+  begin
+    if s[i] = ch then
+      exit(true);
+    if CharInSet(s[i], terminators) then
+      exit(false);
+    inc(i);
+  end;
+end;
+
+function describeV2Path(s : String; indent : integer) : String;
+var
+  f, r, c, sc, i : integer;
+begin
+  result := copy(s, 1, 3);
+  f := 0;
+  r := 0;
+  c := 0;
+  sc := 0;
+  i := 1;
+  while i <= indent do
+  begin
+    case s[i] of
+      '|' : begin
+          inc(f);
+          r := 0;
+          c := 1;
+          sc := 1;
+        end;
+      '~' : begin
+          inc(r);
+          c := 1;
+          sc := 1;
+        end;
+      '^' : begin
+          inc(c);
+          sc := 1;
+        end;
+      '&' : inc(sc);
+    end;
+    inc(i);
+  end;
+  if f > 0 then
+  begin
+    result := result + '-'+inttostr(f);
+    if r > 0 then
+      result := result + '['+inttostr(r)+']';
+    if (c > 1) or (hasChar(s.Substring(i), '^', ['|', '~'])) or (hasChar(s.Substring(i), '&', ['|', '~', '^'])) then
+    begin
+      result := result + '-'+inttostr(c);
+      if (sc > 1) or (hasChar(s.Substring(i), '&', ['|', '~', '^'])) then
+        result := result + '-'+inttostr(sc);
+    end;
+  end;
+end;
+
+function TTransformerForm.describeEditorPath: String;
+begin
+  case FEditor.id.format of
+    fmtV2: result := describeV2Path(FEditor.memo.Lines[FEditor.memo.CaretLine], FEditor.memo.CaretColumn);
+    fmtCDA: result := '';
+    fmtResource: result := '';
+    fmtJS: result := '';
+    fmtMap: result := '';
+    fmtTemplate: result := '';
+    fmtMarkdown: result := '';
+  end;
+end;
+
+procedure TTransformerForm.SaveInputs;
+begin
+  FIni.WriteString('debug', 'FHIRPath', edtFHIRPath.Text);
+end;
+
+function TTransformerForm.DoSave(cmdCode, cmdTitle : String) : boolean;
 var
   dirty : boolean;
   form : TListSelectorForm;
@@ -1061,8 +1108,8 @@ var
 begin
   dirty := false;
   result := false;
-  FIni.WriteString('debug', 'FHIRPath', edtFHIRPath.Text);
-  if FIni.ReadBool('Workspace', 'AutoSave', false) then
+  saveInputs;
+  if FIni.ReadBool('Workspace', 'AutoSave-'+cmdCode, false) then
   begin
     mnuSaveAllClick(nil);
     for i := 1 to pgTabs.PageCount - 1 do
@@ -1070,14 +1117,14 @@ begin
       e := editorForTab(pgTabs.Pages[i]);
       FWorkspace.OpenFile(e.id);
     end;
-    exit;
+    exit(true);
   end;
 
   form := TListSelectorForm.Create(self);
   try
     form.Caption := 'Unsaved Content found. Which files do you want to save?';
     form.okWithNoneSelected := true;
-    form.Verb := command;
+    form.Verb := cmdTitle;
     for i := 1 to pgTabs.PageCount - 1 do
     begin
       e := editorForTab(pgTabs.Pages[i]);
@@ -1103,7 +1150,7 @@ begin
     else
       result := true;
     if form.cbDontAsk.Checked then
-      FIni.WriteBool('Workspace', 'AutoSave', true);
+      FIni.WriteBool('Workspace', 'AutoSave-'+cmdCode, true);
   finally
     form.Free;
   end;
@@ -1438,9 +1485,6 @@ end;
 procedure TTransformerForm.FormShow(Sender: TObject);
 begin
   Timer1.Enabled := true;
-  pnlPreview.Visible := FIni.ReadBool('View', 'Preview', false);
-  splitPreview.Visible := pnlPreview.Visible;
-  mnuPreView.Checked := pnlPreview.Visible;
 end;
 
 function TTransformerForm.GetFPDebuggerSetting(name: TFHIRPathDebuggerFormSetting): Integer;
@@ -1492,7 +1536,7 @@ var
   sel : TScintRange;
 begin
   ps := TPathSelection(lbFHIRPathOutcomes.Items.Objects[lbFHIRPathOutcomes.ItemIndex]);
-  if (ps.LineStart <> -1) then
+  if (ps.LineStart >= 0) then
   begin
     sel.StartPos := FEditor.memo.GetPositionFromLineColumn(ps.lineStart, ps.colStart);
     sel.EndPos := FEditor.memo.GetPositionFromLineColumn(ps.lineEnd, ps.colEnd);
@@ -1629,29 +1673,6 @@ begin
   end;
 end;
 
-procedure LoadHtmlIntoBrowser(browser: TWebBrowser; const html: String);
-var
-  memStream: TMemoryStream;
-begin
-  //-------------------
-  // Load a blank page.
-  //-------------------
-  browser.Navigate('about:blank');
-  while browser.ReadyState <> READYSTATE_COMPLETE do
-  begin
-    Sleep(5);
-    Application.ProcessMessages;
-  end;
-  //---------------
-  // Load the html.
-  //---------------
-  memStream := TMemoryStream.Create;
-  memStream.Write(Pointer(html)^,Length(html));
-  memStream.Seek(0,0);
-  (browser.Document as IPersistStreamInit).Load(TStreamAdapter.Create(memStream));
-  memStream.Free;
-end;
-
 procedure TTransformerForm.memoChange(Sender: TObject; const Info: TScintEditChangeInfo);
  procedure LinesInsertedOrDeleted;
   var
@@ -1681,10 +1702,6 @@ begin
   mnuSaveAll.Enabled := tbSaveAll.Enabled;
   if Info.LinesDelta <> 0 then
     LinesInsertedOrDeleted;
-  if (Feditor.id.format = fmtMarkdown) and (pnlPreview.Visible) then
-    LoadHtmlIntoBrowser(webPreview, TCommonMarkEngine.process(Feditor.memo.RawText))
-  else
-    webPreview.Navigate('about:blank');
 end;
 
 procedure TTransformerForm.memoStatusChange(Sender: TObject);
@@ -1702,6 +1719,7 @@ begin
   else
     pnlStatus.Panels[spMode].Text := 'OVR';
   pnlStatus.Panels[spCaretPos].Text := Format('%4d:%4d', [FEditor.memo.CaretLine + 1, FEditor.memo.CaretColumnExpanded + 1]);
+  pnlStatus.Panels[spPath].Text := describeEditorPath;
 
   // undo/redo
   mnuUndo.Enabled := not FEditor.memo.ReadOnly and FEditor.memo.CanUndo;
@@ -2182,14 +2200,6 @@ begin
     pmNewItem.Enabled := true;
     pmNewItem.Caption := '&New '+nodeCaption(node.Index);
   end;
-end;
-
-procedure TTransformerForm.mnuPreViewClick(Sender: TObject);
-begin
-  pnlPreview.Visible := not pnlPreview.Visible;
-  splitPreview.Visible := not splitPreview.Visible;
-  mnuPreView.Checked := pnlPreview.Visible;
-  FIni.WriteBool('View', 'Preview', pnlPreview.Visible);
 end;
 
 procedure TTransformerForm.Print1Click(Sender: TObject);
@@ -2873,8 +2883,23 @@ end;
 
 procedure TTransformerForm.mnuCompileClick(Sender: TObject);
 begin
-  FEngine.compile(FEditor.id, true);
-
+  if Feditor.id.format = fmtMarkdown then
+  begin
+    MarkdownPreviewForm := TMarkdownPreviewForm.create(self);
+    try
+      MarkdownPreviewForm.HTML := TCommonMarkEngine.process(FEditor.memo.RawText, true).replace(#10, #13#10).replace(#13#10#13#10, #13#10#13#10#13#10);
+      MarkdownPreviewForm.Percent := FIni.ReadFloat('View', 'Markdown-Preview-Width', 0.5);
+      if FIni.ReadBool('View', 'Markdown-Preview-Maximised', false) then
+        MarkdownPreviewForm.WindowState := wsMaximized;
+      MarkdownPreviewForm.ShowModal;
+      FIni.writeFloat('View', 'Markdown-Preview-Width', MarkdownPreviewForm.Percent);
+      FIni.WriteBool('View', 'Markdown-Preview-Maximised', MarkdownPreviewForm.WindowState = wsMaximized);
+    finally
+      MarkdownPreviewForm.free;
+    end;
+  end
+  else
+    FEngine.compile(FEditor.id, true);
 end;
 
 procedure TTransformerForm.Rewrite1Click(Sender: TObject);
@@ -2971,11 +2996,6 @@ begin
   vtVars.RootNodeCount := FVariables.Count;
   FVarsSelected := nil;
   ClearVariable;
-end;
-
-procedure TTransformerForm.SpeedButton1Click(Sender: TObject);
-begin
-  mnuPreViewClick(nil);
 end;
 
 procedure TTransformerForm.MemoLinesInserted(FirstLine, Count: integer);

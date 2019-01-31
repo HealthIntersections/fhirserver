@@ -132,7 +132,8 @@ uses
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
-  FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas';
+  FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
+  FHIR.Transformer.MarkdownPreview in 'FHIR.Transformer.MarkdownPreview.pas' {MarkdownPreviewForm};
 
 {$R *.res}
 
@@ -145,5 +146,6 @@ begin
   Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
   Application.CreateForm(TWorkingForm, WorkingForm);
   Application.CreateForm(TFileChangedForm, FileChangedForm);
+  Application.CreateForm(TMarkdownPreviewForm, MarkdownPreviewForm);
   Application.Run;
 end.

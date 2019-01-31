@@ -220,13 +220,14 @@ type
   Public
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
-    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFHIRObject>); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
     constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass); Overload;
     destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
+    class function create<T : TFslObject>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty; Overload;
 
     Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
@@ -345,6 +346,7 @@ type
     // replace the value of the property with a new value
     procedure replaceProperty(propName : string; existing : TFHIRObject; new : TFHIRObject); virtual;
     procedure reorderProperty(propName : string; source, destination : integer); virtual;
+    function SerialiseUsingProperties : boolean; virtual;
 
     // tags...
     Property Tags[name : String] : String read getTags write SetTags;
@@ -1169,9 +1171,7 @@ begin
     FList.Add(FOwner.makeCodeValue(sValue));
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TFslList<TFHIRObject>);
-var
-  i : integer;
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass);
 begin
   Create;
   FOwner := oOwner;
@@ -1179,9 +1179,21 @@ begin
   FType := sType;
   FClass := cClass;
   FIsList := bList;
-  FList := TFHIRObjectList.create;
-  for I := 0 to oList.count - 1 do
-    FList.Add(oList[i].Link);
+  FList := TFHIRObjectList.Create;
+end;
+
+class function TFHIRProperty.create<T>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty;
+var
+  o : T;
+begin
+  result := TFHIRProperty.create(oOwner, sName, sType, bList, cClass);
+  try
+    for o in oList do
+      result.FList.Add(o.Link);
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 { TFHIRPropertyList }
@@ -1360,6 +1372,11 @@ begin
   if (i = -1) then
     raise EFHIRException.create('Unable to find object in '+name+' to remove it');
   list.SetItem(i, new);
+end;
+
+function TFHIRObject.SerialiseUsingProperties: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;

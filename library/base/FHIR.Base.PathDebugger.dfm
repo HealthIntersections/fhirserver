@@ -315,7 +315,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
         Left = 4
         Top = 23
         Width = 203
-        Height = 353
+        Height = 321
         Align = alClient
         Header.AutoSizeIndex = 0
         Header.Font.Charset = DEFAULT_CHARSET
@@ -335,6 +335,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
         OnGetImageIndex = vtExpressionsGetImageIndex
         OnInitChildren = vtExpressionsInitChildren
         OnInitNode = vtExpressionsInitNode
+        ExplicitHeight = 306
         Columns = <>
       end
       object Panel5: TPanel
@@ -348,13 +349,40 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
         Caption = ' Break Point Marks'
         TabOrder = 1
       end
+      object Panel6: TPanel
+        Left = 4
+        Top = 344
+        Width = 203
+        Height = 32
+        Align = alBottom
+        BevelOuter = bvNone
+        TabOrder = 2
+        object rbXml: TRadioButton
+          Left = 55
+          Top = 6
+          Width = 113
+          Height = 17
+          Caption = 'XML'
+          TabOrder = 0
+          OnClick = rbXmlClick
+        end
+        object rbJson: TRadioButton
+          Left = 3
+          Top = 6
+          Width = 46
+          Height = 17
+          Caption = 'JSON'
+          TabOrder = 1
+          OnClick = rbJsonClick
+        end
+      end
     end
     object PageControl1: TPageControl
       Left = 214
       Top = 0
       Width = 558
       Height = 380
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       TabOrder = 1
       OnChange = PageControl1Change
@@ -366,6 +394,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
           Width = 550
           Height = 352
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
         end
       end
@@ -378,6 +407,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
           Width = 550
           Height = 352
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
         end
       end
@@ -390,6 +420,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
           Width = 550
           Height = 352
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
         end
       end
@@ -402,6 +433,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
           Width = 550
           Height = 352
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
         end
       end
@@ -414,6 +446,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
           Width = 550
           Height = 352
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
         end
       end
@@ -436,7 +469,7 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
     Left = 12
     Top = 104
     Bitmap = {
-      494C010103000C00740010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

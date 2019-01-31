@@ -3,7 +3,7 @@ object TransformerForm: TTransformerForm
   Top = 0
   Caption = 'FHIR Transformer IDE'
   ClientHeight = 595
-  ClientWidth = 1315
+  ClientWidth = 960
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object TransformerForm: TTransformerForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    1315
+    960
     595)
   PixelsPerInch = 96
   TextHeight = 13
@@ -34,53 +34,68 @@ object TransformerForm: TTransformerForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1315
+    Width = 960
     Height = 27
     Align = alTop
     TabOrder = 0
-    ExplicitWidth = 1259
+    ExplicitWidth = 1315
     object ToolBar1: TToolBar
       Left = 1
       Top = 1
-      Width = 1313
+      Width = 958
       Height = 29
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
-      ExplicitWidth = 1257
+      ExplicitWidth = 1313
       object tbNew: TToolButton
         Left = 0
         Top = 0
+        Hint = 'New File'
         Caption = 'New File'
         ImageIndex = 0
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbNewClick
       end
       object tbOpen: TToolButton
         Left = 23
         Top = 0
+        Hint = 'Add Existing File'
         Caption = 'Add Existing File'
         ImageIndex = 1
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuOpenClick
       end
       object tbSave: TToolButton
         Left = 46
         Top = 0
+        Hint = 'Save'
         Caption = 'Save'
         ImageIndex = 2
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuSaveClick
       end
       object tbSaveAll: TToolButton
         Left = 69
         Top = 0
+        Hint = 'Save'
         Caption = 'Save All'
         ImageIndex = 35
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuSaveAllClick
       end
       object tbPrint: TToolButton
         Left = 92
         Top = 0
+        Hint = 'Print'
         Caption = 'Print'
         ImageIndex = 24
+        ParentShowHint = False
+        ShowHint = True
       end
       object ToolButton5: TToolButton
         Left = 115
@@ -93,43 +108,61 @@ object TransformerForm: TTransformerForm
       object tbUndo: TToolButton
         Left = 123
         Top = 0
+        Hint = 'Undo'
         Caption = 'Undo'
         ImageIndex = 20
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuUndoClick
       end
       object tbCut: TToolButton
         Left = 146
         Top = 0
+        Hint = 'Cut'
         Caption = 'Cut'
         ImageIndex = 5
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCutClick
       end
       object tbCopy: TToolButton
         Left = 169
         Top = 0
+        Hint = 'Copy'
         Caption = 'Copy'
         ImageIndex = 6
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCopyClick
       end
       object tbPaste: TToolButton
         Left = 192
         Top = 0
+        Hint = 'Paste'
         Caption = 'Paste'
         ImageIndex = 7
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuPasteClick
       end
       object tbFind: TToolButton
         Left = 215
         Top = 0
+        Hint = 'Find'
         Caption = 'Find'
         ImageIndex = 16
+        ParentShowHint = False
+        ShowHint = True
         OnClick = FindDialogFind
       end
       object tbCompare: TToolButton
         Left = 238
         Top = 0
+        Hint = 'Compare Round Trip'
         Caption = 'Compare Round Trip'
         ImageIndex = 28
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCompareClick
       end
       object ToolButton2: TToolButton
@@ -143,8 +176,11 @@ object TransformerForm: TTransformerForm
       object tbPackageManager: TToolButton
         Left = 269
         Top = 0
+        Hint = 'Package Manager'
         Caption = 'Package Manager'
         ImageIndex = 29
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuPackageManagerClick
       end
       object ToolButton3: TToolButton
@@ -158,15 +194,21 @@ object TransformerForm: TTransformerForm
       object tbHome: TToolButton
         Left = 300
         Top = 0
+        Hint = 'Home'
         Caption = 'Home'
         ImageIndex = 8
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbHomeClick
       end
       object tbCompile: TToolButton
         Left = 323
         Top = 0
+        Hint = 'Check Syntax'
         Caption = 'Check Syntax'
         ImageIndex = 34
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCompileClick
       end
       object ToolButton1: TToolButton
@@ -180,40 +222,55 @@ object TransformerForm: TTransformerForm
       object tbExecute: TToolButton
         Left = 354
         Top = 0
+        Hint = 'Execute'
         Caption = 'Execute'
         ImageIndex = 27
+        ParentShowHint = False
+        ShowHint = True
         OnClick = btnExecuteClick
       end
       object tbStepInto: TToolButton
         Left = 377
         Top = 0
+        Hint = 'Step Into'
         Caption = 'Step Into'
         Enabled = False
         ImageIndex = 36
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStepIntoClick
       end
       object tbStepOver: TToolButton
         Left = 400
         Top = 0
+        Hint = 'Step Over'
         Caption = 'Step Over'
         Enabled = False
         ImageIndex = 37
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStepOverClick
       end
       object tbStepOut: TToolButton
         Left = 423
         Top = 0
+        Hint = 'Step Out'
         Caption = 'Step Out'
         Enabled = False
         ImageIndex = 38
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStepOutClick
       end
       object tbStop: TToolButton
         Left = 446
         Top = 0
-        Caption = 'tbStop'
+        Hint = 'Stop'
+        Caption = 'Stop'
         Enabled = False
         ImageIndex = 39
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStopClick
       end
     end
@@ -327,16 +384,16 @@ object TransformerForm: TTransformerForm
   object Panel3: TPanel
     Left = 193
     Top = 27
-    Width = 1122
+    Width = 767
     Height = 549
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 896
+    ExplicitWidth = 1122
     object Splitter2: TSplitter
       Left = 0
       Top = 280
-      Width = 1122
+      Width = 767
       Height = 8
       Cursor = crVSplit
       Align = alBottom
@@ -346,33 +403,33 @@ object TransformerForm: TTransformerForm
     object pnlDebug: TPanel
       Left = 0
       Top = 288
-      Width = 1122
+      Width = 767
       Height = 261
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 1066
+      ExplicitWidth = 1122
       object pgDebug: TPageControl
         Left = 0
         Top = 0
-        Width = 1122
+        Width = 767
         Height = 261
         ActivePage = TabSheet3
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 943
+        ExplicitWidth = 1122
         object tbConsole: TTabSheet
           Caption = 'Console'
-          ExplicitWidth = 1058
+          ExplicitWidth = 1114
           object Panel5: TPanel
-            Left = 1023
+            Left = 668
             Top = 0
             Width = 91
             Height = 233
             Align = alRight
             Alignment = taLeftJustify
             TabOrder = 0
-            ExplicitLeft = 967
+            ExplicitLeft = 1023
             object btnConsoleClear: TButton
               Left = 5
               Top = 61
@@ -404,7 +461,7 @@ object TransformerForm: TTransformerForm
           object mConsole: TMemo
             Left = 0
             Top = 0
-            Width = 1023
+            Width = 668
             Height = 233
             Align = alClient
             Font.Charset = ANSI_CHARSET
@@ -414,39 +471,39 @@ object TransformerForm: TTransformerForm
             Font.Style = []
             ParentFont = False
             TabOrder = 1
-            ExplicitWidth = 967
+            ExplicitWidth = 1023
           end
         end
         object tbBreakpoints: TTabSheet
           Caption = 'Breakpoints'
           ImageIndex = 1
-          ExplicitWidth = 1058
+          ExplicitWidth = 1114
           object Panel8: TPanel
             Left = 0
             Top = 0
-            Width = 1114
+            Width = 759
             Height = 233
             Align = alClient
             BorderWidth = 4
             Caption = 'Panel8'
             TabOrder = 0
-            ExplicitWidth = 1058
+            ExplicitWidth = 1114
             object ListBox1: TListBox
               Left = 5
               Top = 5
-              Width = 1104
+              Width = 749
               Height = 223
               Align = alClient
               ItemHeight = 13
               TabOrder = 0
-              ExplicitWidth = 1048
+              ExplicitWidth = 1104
             end
           end
         end
         object tbVariables: TTabSheet
           Caption = 'Debugger'
           ImageIndex = 3
-          ExplicitWidth = 1058
+          ExplicitWidth = 1114
           object Splitter3: TSplitter
             Left = 353
             Top = 0
@@ -508,28 +565,28 @@ object TransformerForm: TTransformerForm
           object Panel13: TPanel
             Left = 625
             Top = 0
-            Width = 489
+            Width = 134
             Height = 233
             Align = alClient
             BorderWidth = 4
             TabOrder = 1
-            ExplicitWidth = 433
+            ExplicitWidth = 489
             object Panel14: TPanel
               Left = 5
               Top = 5
-              Width = 479
+              Width = 124
               Height = 20
               Align = alTop
               Alignment = taLeftJustify
               BevelOuter = bvNone
               Caption = ' Details for Selected Variable'
               TabOrder = 0
-              ExplicitWidth = 423
+              ExplicitWidth = 479
             end
             object vtVarDetails: TVirtualStringTree
               Left = 5
               Top = 25
-              Width = 479
+              Width = 124
               Height = 203
               Align = alClient
               Header.AutoSizeIndex = 2
@@ -545,7 +602,7 @@ object TransformerForm: TTransformerForm
               OnGetText = vtVarDetailsGetText
               OnInitChildren = vtVarDetailsInitChildren
               OnInitNode = vtVarDetailsInitNode
-              ExplicitWidth = 423
+              ExplicitWidth = 479
               Columns = <
                 item
                   Position = 0
@@ -559,7 +616,7 @@ object TransformerForm: TTransformerForm
                 end
                 item
                   Position = 2
-                  Width = 275
+                  Width = 10
                   WideText = 'Value'
                 end>
             end
@@ -614,18 +671,18 @@ object TransformerForm: TTransformerForm
         object TabSheet3: TTabSheet
           Caption = 'FHIRPath Evaluator'
           ImageIndex = 4
-          ExplicitWidth = 1058
+          ExplicitWidth = 1114
           object Panel2: TPanel
             Left = 0
             Top = 0
-            Width = 1114
+            Width = 759
             Height = 28
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 1058
+            ExplicitWidth = 1114
             DesignSize = (
-              1114
+              759
               28)
             object Label4: TLabel
               Left = 2
@@ -635,8 +692,8 @@ object TransformerForm: TTransformerForm
               Caption = 'FHIRPath:'
             end
             object btnPathGo: TBitBtn
-              Left = 960
-              Top = 0
+              Left = 605
+              Top = 2
               Width = 70
               Height = 25
               Anchors = [akTop, akRight]
@@ -670,11 +727,10 @@ object TransformerForm: TTransformerForm
                 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
               TabOrder = 0
               OnClick = btnPathGoClick
-              ExplicitLeft = 904
             end
             object btnPathDebug: TBitBtn
-              Left = 1036
-              Top = 0
+              Left = 681
+              Top = 2
               Width = 70
               Height = 25
               Anchors = [akTop, akRight]
@@ -708,29 +764,27 @@ object TransformerForm: TTransformerForm
                 00FFFF00FFBE3FBED515D5FF00FFFF00FFFF00FFFF00FFFF00FF}
               TabOrder = 1
               OnClick = btnPathDebugClick
-              ExplicitLeft = 980
             end
             object edtFHIRPath: TEdit
               Left = 58
-              Top = 1
-              Width = 896
+              Top = 4
+              Width = 541
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
-              ExplicitWidth = 840
             end
           end
           object Panel4: TPanel
             Left = 0
             Top = 28
-            Width = 1114
+            Width = 759
             Height = 205
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitWidth = 1058
+            ExplicitWidth = 1114
             DesignSize = (
-              1114
+              759
               205)
             object Label5: TLabel
               Left = 2
@@ -740,9 +794,9 @@ object TransformerForm: TTransformerForm
               Caption = 'Outcome'
             end
             object lbFHIRPathOutcomes: TListBox
-              Left = 51
+              Left = 58
               Top = 6
-              Width = 1047
+              Width = 695
               Height = 187
               Anchors = [akLeft, akTop, akRight, akBottom]
               ItemHeight = 13
@@ -756,111 +810,30 @@ object TransformerForm: TTransformerForm
     object Panel17: TPanel
       Left = 0
       Top = 0
-      Width = 1122
+      Width = 767
       Height = 280
       Align = alClient
       Caption = 'Panel17'
       TabOrder = 1
-      ExplicitLeft = 560
-      ExplicitTop = 9
-      ExplicitWidth = 281
-      ExplicitHeight = 224
-      object splitPreview: TSplitter
-        Left = 942
-        Top = 1
-        Width = 8
-        Height = 278
-        Align = alRight
-        ExplicitLeft = 1138
-        ExplicitTop = 33
-        ExplicitHeight = 549
-      end
-      object pnlPreview: TPanel
-        Left = 950
-        Top = 1
-        Width = 171
-        Height = 278
-        Align = alRight
-        BevelOuter = bvNone
-        Caption = 'pnlPreview'
-        Constraints.MinWidth = 100
-        TabOrder = 0
-        ExplicitLeft = 1144
-        ExplicitTop = 27
-        ExplicitHeight = 549
-        object Panel16: TPanel
-          Left = 0
-          Top = 0
-          Width = 171
-          Height = 24
-          Align = alTop
-          Alignment = taLeftJustify
-          BevelOuter = bvNone
-          Caption = '         Preview'
-          TabOrder = 0
-          object SpeedButton1: TSpeedButton
-            Left = 4
-            Top = 4
-            Width = 16
-            Height = 16
-            Glyph.Data = {
-              76010000424D760100000000000036000000280000000A0000000A0000000100
-              18000000000040010000D6190000D61900000000000000000000FFFFFFFDFDFF
-              F9F9FDFFFFFFFFFFFFFFFFFFFFFFFFF6F6FDFFFFFFFFFFFFFCFFFEFEFFCFCFFB
-              6F6DF2F3F3FCFFFFFFFFFFFFE2E2FB5856ECD8D8FAFFFFFFF6FFF0F0FD6664F6
-              6360FA6563F2EBEBFCDDDCFA4544EC4D4BF65856EDF3F2FCFBFFFDFDFFCBCAFB
-              6664F86A67FB5E5CF25654F05E5DFB4B4AF0D2D1FAFEFEFFFFFFFFFFFFFDFDFF
-              CBCAFB6765F96764FF6664FF5B59F4D1D0F9FFFFFFFFFFFFFCFFFFFFFFFFFFFF
-              E7E7FE6B68F86B68FF6A67FF605DF2EBEBFCFFFFFFFFFFFFFFFFFFFFFFECEBFE
-              7F7CFB7E7AFE6F6DF96B68F9706EFC6B68F3F4F4FCFFFFFFFEFFFBFBFF8481FE
-              8380FF817EFCDCDBFDCCCCFC6E6CF8716FFB7673F4F6F6FEFCFFFFFFFFD7D7FE
-              8582FEE1E0FEFFFFFFFDFDFFCDCCFC7270F9A2A1F8F7F7FFFFFFFFFFFFFFFFFF
-              F7F7FEFFFFFFFFFFFFFFFFFFFDFDFFE8E8FDF2F2FDFFFFFFFDFF}
-            OnClick = SpeedButton1Click
-          end
-        end
-        object webPreview: TWebBrowser
-          Left = 0
-          Top = 24
-          Width = 171
-          Height = 254
-          Anchors = [akTop, akRight]
-          Align = alClient
-          TabOrder = 1
-          ExplicitLeft = -104
-          ExplicitTop = 16
-          ExplicitWidth = 935
-          ExplicitHeight = 233
-          ControlData = {
-            4C000000AC110000401A00000000000000000000000000000000000000000000
-            000000004C000000000000000000000001000000E0D057007335CF11AE690800
-            2B2E126208000000000000004C0000000114020000000000C000000000000046
-            8000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000100000000000000000000000000000000000000}
-        end
-      end
+      ExplicitWidth = 1122
       object pgTabs: TPageControl
         Left = 1
         Top = 1
-        Width = 941
+        Width = 765
         Height = 278
         ActivePage = TabSheet1
         Align = alClient
         Images = ImageList1
         PopupMenu = pmTabs
-        TabOrder = 1
+        TabOrder = 0
         OnChange = pgTabsChange
-        ExplicitLeft = -399
-        ExplicitTop = -56
-        ExplicitWidth = 680
-        ExplicitHeight = 280
+        ExplicitWidth = 941
         object TabSheet1: TTabSheet
           Caption = 'Home'
           ImageIndex = 8
-          ExplicitLeft = 5
-          ExplicitTop = 24
+          ExplicitWidth = 933
           DesignSize = (
-            933
+            757
             249)
           object Label1: TLabel
             Left = 16
@@ -906,7 +879,7 @@ object TransformerForm: TTransformerForm
           object lblExecutionError: TLabel
             Left = 223
             Top = 150
-            Width = 685
+            Width = 509
             Height = 13
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -1158,13 +1131,17 @@ object TransformerForm: TTransformerForm
   object pnlStatus: TStatusBar
     Left = 0
     Top = 576
-    Width = 1315
+    Width = 960
     Height = 19
     AutoHint = True
     Panels = <
       item
         Text = '0, 0'
         Width = 50
+      end
+      item
+        Text = 'Path'
+        Width = 150
       end
       item
         Text = 'INS'
@@ -1175,10 +1152,10 @@ object TransformerForm: TTransformerForm
         Width = 300
       end>
     SizeGrip = False
-    ExplicitWidth = 1259
+    ExplicitWidth = 1315
   end
   object btnMaximise: TBitBtn
-    Left = 1288
+    Left = 933
     Top = 27
     Width = 22
     Height = 22
@@ -1214,9 +1191,10 @@ object TransformerForm: TTransformerForm
       CDEADBCDEBDCCDEFDFD0}
     TabOrder = 4
     OnClick = btnMaximiseClick
+    ExplicitLeft = 1288
   end
   object btnNormalSize: TBitBtn
-    Left = 1288
+    Left = 933
     Top = 27
     Width = 22
     Height = 22
@@ -1251,6 +1229,7 @@ object TransformerForm: TTransformerForm
     TabOrder = 5
     Visible = False
     OnClick = btnNormalSizeClick
+    ExplicitLeft = 1288
   end
   object ImageList1: TImageList
     Left = 25
@@ -3048,10 +3027,6 @@ object TransformerForm: TTransformerForm
         ImageIndex = 29
         OnClick = mnuPackageManagerClick
       end
-      object mnuPreView: TMenuItem
-        Caption = 'Pre&View'
-        OnClick = mnuPreViewClick
-      end
     end
     object Execute1: TMenuItem
       Caption = '&Execute'
@@ -3239,10 +3214,11 @@ object TransformerForm: TTransformerForm
   end
   object odImport: TOpenDialog
     Filter = 
-      'Known Files|; *.md|Messages (*.msg, *.hl7)|*.msg;*.hl7|CDA Docum' +
-      'ents (*.cda, *.xml)|*.cda;*.xml|Resources (*.json, *.xml)|*.json' +
-      ';*.xml|Scripts (*.js)|*.js|Maps (*.map)|*.map|Templates (*.liqui' +
-      'd)|*.liquid|Markdowns (*.md)|*.md|All Files|*.*'
+      'Known Files|*.msg;*.hl7;*.cda;*.xml;*.json;*.js;*.map;*.liquid;*' +
+      '.md|Messages (*.msg, *.hl7)|*.msg;*.hl7|CDA Documents (*.cda, *.' +
+      'xml)|*.cda;*.xml|Resources (*.json, *.xml)|*.json;*.xml|Scripts ' +
+      '(*.js)|*.js|Maps (*.map)|*.map|Templates (*.liquid)|*.liquid|Mar' +
+      'kdowns (*.md)|*.md|All Files|*.*'
     Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
     Left = 48
     Top = 300
