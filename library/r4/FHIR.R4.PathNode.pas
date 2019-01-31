@@ -48,13 +48,13 @@ type
     pfRepeat, pfAggregate, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfUnion, pfCombine, pfIntersect, pfExclude,
     pfIif, pfUpper, pfLower, pfToChars,
     pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
-    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse,
+    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse, pfAllTrue, pfAnyTrue,
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
     pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToTime,
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
     pfCustom);
 
-  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure); // structure is not used in FHIR.R4.PathEngine, but is in CQL
+  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in FHIR.R4.PathEngine, but is in CQL
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
 
 const
@@ -67,7 +67,7 @@ const
     'repeat', 'aggregate', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'union', 'combine', 'intersect', 'exclude',
     'iif', 'upper', 'lower', 'toChars',
     'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
-    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse',
+    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse', 'allTrue', 'anyTrue',
     'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
     'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToTime',
     'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
@@ -272,6 +272,8 @@ begin
             break;
       end;
     enkConstant:
+      ; // nothing
+    enkUnary:
       ; // nothing
     enkGroup:
       if FGroup = nil then
@@ -1167,7 +1169,7 @@ begin
       json.Stream := oStream;
       oStream.Stream := stream;
       json.HasWhitespace := FStyle = OutputStylePretty;
-      json.Start;
+      json.Start(true);
       json.ValueArray('outcome');
       for base in items do
         j.ComposeBase(json, '', base);
@@ -1178,7 +1180,7 @@ begin
       json.FinishObject;
       if (types <> nil) then
         json.Value('types', types.ToString);
-      json.Finish;
+      json.Finish(true);
     finally
       json.free;
     end;

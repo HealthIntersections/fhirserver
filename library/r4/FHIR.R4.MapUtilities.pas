@@ -956,7 +956,7 @@ function TFHIRStructureMapUtilities.parse(text, sourceName : String) : TFHIRStru
 var
   lexer : TFHIRPathLexer;
 begin
-  lexer := TFHIRPathLexer4.Create(text);
+  lexer := TFHIRPathLexer4.Create(fpV2, text);
   try
     lexer.SourceName := sourceName;
     if (lexer.done()) then

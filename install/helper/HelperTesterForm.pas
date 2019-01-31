@@ -54,6 +54,9 @@ type
     eValue: TEdit;
     Button6: TButton;
     Button7: TButton;
+    Label5: TLabel;
+    edtPackage: TEdit;
+    Button8: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -80,8 +83,8 @@ implementation
 
 type
   TInstallerCallback = procedure (IntParam: Integer; StrParam: WideString) of object;
-  TMyDllListPackages = Function (Version : PAnsiChar) : PAnsiChar; stdcall;
-  TMyDllDownloadPackages = Function (url : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+  TMyDllListPackages = Function (mode : PAnsiChar; Version : PAnsiChar) : PAnsiChar; stdcall;
+  TMyDllDownloadPackages = Function (mode : PAnsiChar; url : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
   TMyDllInstallDatabase = Function (ExeName, IniFile, Password, version, packages, mode : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
   TMyDllGetIniValue = Function (IniFile, Key : PAnsiChar) : PAnsiChar; stdcall;
   TMyDllSetIniValue = Procedure (IniFile, Key, value : PAnsiChar); stdcall;
@@ -131,7 +134,7 @@ var
   pl, tl : TArray<String>;
 begin
   v := edit1.Text;
-  s := MyDllListPackages(PAnsiChar(v));
+  s := MyDllListPackages(PAnsiChar(edtPackage.Text), PAnsiChar(v));
   p := s;
   p := p.replace(#13#10, '~');
   pl := p.Split(['~']);
@@ -175,7 +178,7 @@ begin
       s := s + ','+urls[i];
 
   showMessage(s);
-  showMessage(MyDllDownloadPackages(PAnsiChar(s), progress));
+  showMessage(MyDllDownloadPackages(PAnsiChar(edtPackage.Text), PAnsiChar(s), progress));
 end;
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;

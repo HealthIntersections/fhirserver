@@ -3544,7 +3544,7 @@ var
   lexer : TFHIRPathLexer;
   msg : String;
 begin
-  lexer := TFHIRPathLexer2.Create(path);
+  lexer := TFHIRPathLexer2.Create(fpV1, path);
   try
     if lexer.done then
       raise lexer.error('Path cannot be empty');

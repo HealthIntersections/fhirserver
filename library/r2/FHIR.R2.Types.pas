@@ -12226,7 +12226,7 @@ begin
     UrlElement := asUri(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('value')) then
+  else if (isMatchingName(propName, 'value', ['*'])) then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -12242,6 +12242,7 @@ end;
 function TFhirExtension.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'url') then result := TFhirUri.create() {5b}
+  else if (isMatchingName(propName, 'value', ['*'])) then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -12255,6 +12256,7 @@ end;
 procedure TFhirExtension.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := nil
+  else if (isMatchingName(propName, 'value', ['*'])) then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -12262,6 +12264,7 @@ end;
 procedure TFhirExtension.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := asUri(new){5b}
+  else if (isMatchingName(propName, 'value', ['*'])) then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -14011,7 +14014,7 @@ begin
     WhenElement := asInstant(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('who')) then
+  else if (isMatchingName(propName, 'who', ['Uri', 'Reference'])) then
   begin
     Who := propValue as TFhirType{4};
     result := propValue;
@@ -14039,6 +14042,7 @@ function TFhirSignature.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'type') then result := Type_List.new(){2}
   else if (propName = 'when') then result := TFhirInstant.create() {5b}
+  else if (isMatchingName(propName, 'who', ['Uri', 'Reference'])) then raise EFHIRException.create('Cannot make property Who'){4x}
   else if (propName = 'contentType') then result := TFhirCode.create() {5b}
   else if (propName = 'blob') then result := TFhirBase64Binary.create() {5b}
   else result := inherited createPropertyValue(propName);
@@ -14058,6 +14062,7 @@ procedure TFhirSignature.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'type') then deletePropertyValue('type', Type_List, value) {2}
   else if (propName = 'when') then WhenElement := nil
+  else if (isMatchingName(propName, 'who', ['Uri', 'Reference'])) then WhoElement := nil{4x}
   else if (propName = 'contentType') then ContentTypeElement := nil
   else if (propName = 'blob') then BlobElement := nil
   else
@@ -14068,6 +14073,7 @@ procedure TFhirSignature.replaceProperty(propName : string; existing, new : TFHI
 begin
   if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {2}
   else if (propName = 'when') then WhenElement := asInstant(new){5b}
+  else if (isMatchingName(propName, 'who', ['Uri', 'Reference'])) then WhoElement := new as TFhirType{4x}
   else if (propName = 'contentType') then ContentTypeElement := asCode(new){5b}
   else if (propName = 'blob') then BlobElement := asBase64Binary(new){5b}
   else
@@ -16698,7 +16704,7 @@ end;
 
 function TFhirAnnotation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName.startsWith('author')) then
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then
   begin
     Author := propValue as TFhirType{4};
     result := propValue;
@@ -16723,7 +16729,8 @@ end;
 
 function TFhirAnnotation.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'time') then result := TFhirDateTime.create() {5b}
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then raise EFHIRException.create('Cannot make property Author'){4x}
+  else if (propName = 'time') then result := TFhirDateTime.create() {5b}
   else if (propName = 'text') then result := TFhirString.create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
@@ -16738,7 +16745,8 @@ end;
 
 procedure TFhirAnnotation.deleteProperty(propName : string; value : TFHIRObject);
 begin
-  if (propName = 'time') then TimeElement := nil
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then AuthorElement := nil{4x}
+  else if (propName = 'time') then TimeElement := nil
   else if (propName = 'text') then TextElement := nil
   else
     inherited deleteProperty(propName, value);
@@ -16746,7 +16754,8 @@ end;
 
 procedure TFhirAnnotation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'time') then TimeElement := asDateTime(new){5b}
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then AuthorElement := new as TFhirType{4x}
+  else if (propName = 'time') then TimeElement := asDateTime(new){5b}
   else if (propName = 'text') then TextElement := asString(new){5b}
   else
     inherited replaceProperty(propName, existing, new);
@@ -21014,7 +21023,7 @@ begin
     DescriptionElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('valueSet')) then
+  else if (isMatchingName(propName, 'valueSet', ['Uri', 'Reference'])) then
   begin
     ValueSet := propValue as TFhirType{4};
     result := propValue;
@@ -21030,6 +21039,7 @@ end;
 function TFhirElementDefinitionBinding.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (isMatchingName(propName, 'valueSet', ['Uri', 'Reference'])) then raise EFHIRException.create('Cannot make property ValueSet'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21045,6 +21055,7 @@ procedure TFhirElementDefinitionBinding.deleteProperty(propName: string; value :
 begin
   if (propName = 'strength') then StrengthElement := nil
   else if (propName = 'description') then DescriptionElement := nil
+  else if (isMatchingName(propName, 'valueSet', ['Uri', 'Reference'])) then ValueSetElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -21053,6 +21064,7 @@ procedure TFhirElementDefinitionBinding.replaceProperty(propName : string; exist
 begin
   if (propName = 'strength') then StrengthElement := asEnum(SYSTEMS_TFhirBindingStrengthEnum, CODES_TFhirBindingStrengthEnum, new){4}
   else if (propName = 'description') then DescriptionElement := asString(new){5b}
+  else if (isMatchingName(propName, 'valueSet', ['Uri', 'Reference'])) then ValueSetElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -21961,7 +21973,7 @@ begin
     NameReferenceElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('defaultValue')) then
+  else if (isMatchingName(propName, 'defaultValue', ['*'])) then
   begin
     DefaultValue := propValue as TFhirType{4};
     result := propValue;
@@ -21971,27 +21983,27 @@ begin
     MeaningWhenMissingElement := asMarkdown(propValue){5a};
     result := propValue;
   end
-  else if (propName.startsWith('fixed')) then
+  else if (isMatchingName(propName, 'fixed', ['*'])) then
   begin
     Fixed := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('pattern')) then
+  else if (isMatchingName(propName, 'pattern', ['*'])) then
   begin
     Pattern := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('example')) then
+  else if (isMatchingName(propName, 'example', ['*'])) then
   begin
     Example := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('minValue')) then
+  else if (isMatchingName(propName, 'minValue', ['*'])) then
   begin
     MinValue := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName.startsWith('maxValue')) then
+  else if (isMatchingName(propName, 'maxValue', ['*'])) then
   begin
     MaxValue := propValue as TFhirType{4};
     result := propValue;
@@ -22068,7 +22080,13 @@ begin
   else if (propName = 'base') then result := TFhirElementDefinitionBase.create(){4b}
   else if (propName = 'type') then result := Type_List.new(){2}
   else if (propName = 'nameReference') then result := TFhirString.create() {5b}
+  else if (isMatchingName(propName, 'defaultValue', ['*'])) then raise EFHIRException.create('Cannot make property DefaultValue'){4x}
   else if (propName = 'meaningWhenMissing') then result := TFhirMarkdown.create() {5b}
+  else if (isMatchingName(propName, 'fixed', ['*'])) then raise EFHIRException.create('Cannot make property Fixed'){4x}
+  else if (isMatchingName(propName, 'pattern', ['*'])) then raise EFHIRException.create('Cannot make property Pattern'){4x}
+  else if (isMatchingName(propName, 'example', ['*'])) then raise EFHIRException.create('Cannot make property Example'){4x}
+  else if (isMatchingName(propName, 'minValue', ['*'])) then raise EFHIRException.create('Cannot make property MinValue'){4x}
+  else if (isMatchingName(propName, 'maxValue', ['*'])) then raise EFHIRException.create('Cannot make property MaxValue'){4x}
   else if (propName = 'maxLength') then result := TFhirInteger.create() {5b}
   else if (propName = 'condition') then result := ConditionList.new(){2}
   else if (propName = 'constraint') then result := ConstraintList.new(){2}
@@ -22133,7 +22151,13 @@ begin
   else if (propName = 'base') then BaseElement := nil
   else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {2}
   else if (propName = 'nameReference') then NameReferenceElement := nil
+  else if (isMatchingName(propName, 'defaultValue', ['*'])) then DefaultValueElement := nil{4x}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := nil
+  else if (isMatchingName(propName, 'fixed', ['*'])) then FixedElement := nil{4x}
+  else if (isMatchingName(propName, 'pattern', ['*'])) then PatternElement := nil{4x}
+  else if (isMatchingName(propName, 'example', ['*'])) then ExampleElement := nil{4x}
+  else if (isMatchingName(propName, 'minValue', ['*'])) then MinValueElement := nil{4x}
+  else if (isMatchingName(propName, 'maxValue', ['*'])) then MaxValueElement := nil{4x}
   else if (propName = 'maxLength') then MaxLengthElement := nil
   else if (propName = 'condition') then deletePropertyValue('condition', ConditionList, value) {2}
   else if (propName = 'constraint') then deletePropertyValue('constraint', ConstraintList, value) {2}
@@ -22163,7 +22187,13 @@ begin
   else if (propName = 'base') then BaseElement := new as TFhirElementDefinitionBase{4}
   else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {2}
   else if (propName = 'nameReference') then NameReferenceElement := asString(new){5b}
+  else if (isMatchingName(propName, 'defaultValue', ['*'])) then DefaultValueElement := new as TFhirType{4x}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asMarkdown(new){5b}
+  else if (isMatchingName(propName, 'fixed', ['*'])) then FixedElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'pattern', ['*'])) then PatternElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'example', ['*'])) then ExampleElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'minValue', ['*'])) then MinValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'maxValue', ['*'])) then MaxValueElement := new as TFhirType{4x}
   else if (propName = 'maxLength') then MaxLengthElement := asInteger(new){5b}
   else if (propName = 'condition') then replacePropertyValue('condition', ConditionList, existing, new) {2}
   else if (propName = 'constraint') then replacePropertyValue('constraint', ConstraintList, existing, new) {2}
@@ -23042,7 +23072,7 @@ end;
 
 function TFhirTimingRepeat.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName.startsWith('bounds')) then
+  if (isMatchingName(propName, 'bounds', ['Quantity', 'Range', 'Period'])) then
   begin
     Bounds := propValue as TFhirType{4};
     result := propValue;
@@ -23107,7 +23137,8 @@ end;
 
 function TFhirTimingRepeat.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'count') then result := TFhirInteger.create() {5b}
+  if (isMatchingName(propName, 'bounds', ['Quantity', 'Range', 'Period'])) then raise EFHIRException.create('Cannot make property Bounds'){4x}
+  else if (propName = 'count') then result := TFhirInteger.create() {5b}
   else if (propName = 'duration') then result := TFhirDecimal.create() {5b}
   else if (propName = 'durationMax') then result := TFhirDecimal.create() {5b}
   else if (propName = 'frequency') then result := TFhirInteger.create() {5b}
@@ -23135,7 +23166,8 @@ end;
 
 procedure TFhirTimingRepeat.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'count') then CountElement := nil
+  if (isMatchingName(propName, 'bounds', ['Quantity', 'Range', 'Period'])) then BoundsElement := nil{4x}
+  else if (propName = 'count') then CountElement := nil
   else if (propName = 'duration') then DurationElement := nil
   else if (propName = 'durationMax') then DurationMaxElement := nil
   else if (propName = 'durationUnits') then DurationUnitsElement := nil
@@ -23151,7 +23183,8 @@ end;
 
 procedure TFhirTimingRepeat.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'count') then CountElement := asInteger(new){5b}
+  if (isMatchingName(propName, 'bounds', ['Quantity', 'Range', 'Period'])) then BoundsElement := new as TFhirType{4x}
+  else if (propName = 'count') then CountElement := asInteger(new){5b}
   else if (propName = 'duration') then DurationElement := asDecimal(new){5b}
   else if (propName = 'durationMax') then DurationMaxElement := asDecimal(new){5b}
   else if (propName = 'durationUnits') then DurationUnitsElement := asEnum(SYSTEMS_TFhirUnitsOfTimeEnum, CODES_TFhirUnitsOfTimeEnum, new){4}

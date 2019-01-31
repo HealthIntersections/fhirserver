@@ -826,7 +826,7 @@ begin
     try
       writer.HasWhitespace := true;
       writer.Stream := ss.Link;
-      writer.Start;
+      writer.Start(true);
       writer.ValueArray('cards');
       for card in FCards do
       begin
@@ -835,7 +835,7 @@ begin
         writer.FinishObject;
       end;
       writer.FinishArray;
-      writer.Finish;
+      writer.Finish(true);
     finally
       writer.Free;
     end;

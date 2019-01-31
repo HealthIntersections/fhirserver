@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.Base.Common, FHIR.Support.Json,
   FHIR.R4.Parser, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.Context, FHIR.R4.Common;
 
 Type
@@ -54,6 +54,8 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
     function vreadResource(atype : TFhirResourceType; id, vid : String) : TFHIRResource;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload;
+    function patchResource(atype : TFhirResourceType; id : String; params : TFHIRParameters) : TFHIRResource; overload;
+    function patchResource(atype : TFhirResourceType; id : String; patch : TJsonArray) : TFHIRResource; overload;
     procedure deleteResource(atype : TFhirResourceType; id : String);
     function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload;
     function search(allRecords : boolean; params : string) : TFHIRBundle; overload;
@@ -83,6 +85,16 @@ end;
 function TFhirClient4.opWrapper : TFhirOperationOutcomeWClass;
 begin
   result := TFhirOperationOutcome4;
+end;
+
+function TFhirClient4.patchResource(atype: TFhirResourceType; id: String; patch: TJsonArray): TFHIRResource;
+begin
+  result := patchResourceV(CODES_TFHIRResourceType[atype], id, patch) as TFhirResource;
+end;
+
+function TFhirClient4.patchResource(atype: TFhirResourceType; id: String; params: TFHIRParameters): TFHIRResource;
+begin
+  result := patchResourceV(CODES_TFHIRResourceType[atype], id, params) as TFhirResource;
 end;
 
 function TFhirClient4.version : TFHIRVersion;

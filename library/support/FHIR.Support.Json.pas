@@ -261,8 +261,8 @@ Type
     Function Link: TJSONWriter; overload;
     function canInject : boolean; virtual;
 
-    Procedure Start; virtual; abstract;
-    Procedure Finish; virtual;  abstract;
+    Procedure Start(obj : boolean = true); virtual; abstract;
+    Procedure Finish(obj : boolean = true); virtual;  abstract;
 
     Procedure Value(Const name : String; Const avalue : String); overload;
     Procedure ValueNumber(Const name : String; Const avalue : String); overload;
@@ -293,14 +293,18 @@ Type
 
     Procedure WriteObject(name : String; obj : TJsonObject); overload;
     Procedure WriteObjectInner(obj : TJsonObject);
-    Procedure WriteArray(name : String; arr : TJsonArray);
+    Procedure WriteArray(name : String; arr : TJsonArray); overload;
 
     function ToString : String; override;
 
     class Function writeObject(obj : TJsonObject; pretty : boolean = false) : TBytes; overload;
+    class Function writeArray(arr : TJsonArray; pretty : boolean = false) : TBytes; overload;
     class Function writeObjectStr(obj : TJsonObject; pretty : boolean = false) : String; overload;
+    class Function writeArrayStr(arr : TJsonArray; pretty : boolean = false) : String; overload;
     class Procedure writeObject(stream : TStream; obj : TJsonObject; pretty : boolean = false); overload;
     class Procedure writeObject(stream : TFslStream; obj : TJsonObject; pretty : boolean = false); overload;
+    class Procedure writeArray(stream : TStream; arr : TJsonArray; pretty : boolean = false); overload;
+    class Procedure writeArray(stream : TFslStream; arr : TJsonArray; pretty : boolean = false); overload;
   end;
 
   TJsonWriterDirect = class (TJSONWriter)
@@ -316,8 +320,8 @@ Type
   Public
     Function Link: TJsonWriterDirect; overload;
     function canInject : boolean; override;
-    Procedure Start; override;
-    Procedure Finish; override;
+    Procedure Start(obj : boolean); override;
+    Procedure Finish(obj : boolean); override;
 
     Procedure ValueBytes(Const name : String; bytes : TBytes); override;
     Procedure ValueObject(Const name : String); Overload; override;
@@ -354,8 +358,8 @@ Type
     procedure doValue(name, value : String); override;
   public
     Function Link: TJsonWriterCanonical; overload;
-    Procedure Start; override;
-    Procedure Finish; override;
+    Procedure Start(obj : boolean); override;
+    Procedure Finish(obj : boolean); override;
     Procedure ValueObject(Const name : String); Overload; override;
     Procedure ValueObject; Overload; override;
     Procedure FinishObject; override;
@@ -782,9 +786,9 @@ begin
   try
     this.HasWhitespace := pretty;
     this.Stream := stream.Link;
-    this.Start;
+    this.Start(true);
     this.writeObjectInner(obj);
-    this.Finish;
+    this.Finish(true);
   finally
     this.Free;
   end;
@@ -811,6 +815,11 @@ begin
       WriteObject('', v as TJsonObject);
   end;
   FinishArray;
+end;
+
+class function TJSONWriter.writeArrayStr(arr: TJsonArray; pretty: boolean): String;
+begin
+  result := TEncoding.UTF8.GetString(writeArray(arr, pretty));
 end;
 
 procedure TJSONWriter.WriteObjectInner(obj: TJsonObject);
@@ -862,6 +871,49 @@ end;
 procedure TJSONWriter.ValueObject;
 begin
   raise EJsonException.Create('Need to override '+className+'.ValueObject');
+end;
+
+class procedure TJSONWriter.WriteArray(stream: TStream; arr: TJsonArray; pretty: boolean);
+var
+  s : TFslVCLStream;
+begin
+  s := TFslVCLStream.Create;
+  try
+    s.Stream := stream;
+    writeArray(s, arr, pretty);
+  finally
+    s.Free;
+  end;
+end;
+
+class procedure TJSONWriter.WriteArray(stream: TFslStream; arr: TJsonArray; pretty: boolean);
+var
+  this : TJsonWriterDirect;
+begin
+  this := TJsonWriterDirect.Create;
+  try
+    this.HasWhitespace := pretty;
+    this.Stream := stream.link;
+    this.Start(false);
+    this.WriteArray('', arr);
+    this.Finish(false);
+  finally
+    this.Free;
+  end;
+end;
+
+class function TJSONWriter.WriteArray(arr: TJsonArray; pretty: boolean): TBytes;
+var
+  mem : TBytesStream;
+begin
+  mem := TBytesStream.Create;
+  try
+    writeArray(mem, arr, pretty);
+    result := mem.Bytes;
+    SetLength(result, mem.size);
+  finally
+    mem.Free
+  end;
 end;
 
 procedure TJSONWriter.ValueObject(const name: String);
@@ -983,7 +1035,8 @@ procedure TJsonWriterDirect.Start;
 begin
   if not HasStream then
     Stream := TFslStringStream.create;
-  ProduceLine('{');
+  if obj then
+    ProduceLine('{');
   LevelDown;
 end;
 
@@ -993,7 +1046,8 @@ begin
     ProduceLine(UseCache);
   LevelUp;
   Assert(Level = 0);
-  ProduceLine('}');
+  if obj then
+    ProduceLine('}');
 end;
 
 function TJsonWriterDirect.canInject: boolean;
@@ -1027,8 +1081,13 @@ end;
 
 procedure TJsonWriterDirect.ValueArray(const name : String);
 begin
-  DoName(name);
-  ProduceLine(UseName + '[');
+  if name <> '' then
+  begin
+    DoName(name);
+    ProduceLine(UseName + '[');
+  end
+  else
+    ProduceLine('[');
   LevelDown;
 end;
 

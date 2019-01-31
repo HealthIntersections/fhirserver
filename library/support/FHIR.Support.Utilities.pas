@@ -1051,6 +1051,19 @@ type
     fraction: Cardinal;
   end;
 
+  {
+    TDateTimeEx defines an enhanced date time type that is timezone and precision aware.
+
+    As a record, TDateTimeEx does not need to be allocated or freed
+    (though a no-op 'link' operation is defined for syntactical convenience of TFslObject users, it does nothing)
+
+    In addition, conversion operations to several formats are defined
+     - XML: YYYY-MM-DDTHH:NN:SS.sss with timezone HH:NN
+     - HL7  YYYYMMDDHHNNSS.sss with timezone HHNN
+     - Human - local format defined by C
+
+     null: an uninitialised date time - one with no value - has no source. All constructors of valid date time must set the source (piggy back on string init/final routines)
+  }
   TDateTimeEx = record {$IFNDEF FPC}
   private {$ENDIF}
     Source : String; // for debugging convenience, and also used to mark whether the record has any content
@@ -1077,19 +1090,23 @@ type
     procedure check;
     function checkNoException : boolean;
     procedure RollUp;
-    function privToString: String;{$IFNDEF FPC}
-  public {$ENDIF}
-    class function makeNull : TDateTimeEx; static;
-    class function makeUTC : TDateTimeEx; overload; static;
-    class function makeUTC(value : TDateTime) : TDateTimeEx; overload; static;
-    class function makeToday : TDateTimeEx; overload; static;
-    class function makeLocal : TDateTimeEx; overload; static;
+    function privToString: String;
+{$IFNDEF FPC}
+  public
+{$ENDIF}
+
+    // various kind of constructors
+    class function makeNull : TDateTimeEx; static; // because this is record, not a class, it can't be nil. use makeNull / null instead
+    class function makeUTC : TDateTimeEx; overload; static; // now, in UTC timezone
+    class function makeUTC(value : TDateTime) : TDateTimeEx; overload; static;  // stated time in UTC
+    class function makeToday : TDateTimeEx; overload; static; // today, with precision = day + no timezone
+    class function makeLocal : TDateTimeEx; overload; static; // now, in local timezone
     class function makeLocal(precision : TDateTimeExPrecision) : TDateTimeEx; overload; static;
-    class function makeLocal(value : TDateTime) : TDateTimeEx; overload; static;
-    class function make(value : TDateTime; tz : TDateTimeExTimezone) : TDateTimeEx; static;
-    class function fromHL7(value : String) : TDateTimeEx; static;
-    class function fromXML(value : String) : TDateTimeEx; static;
-    class function fromTS(value : TTimestamp; tz : TDateTimeExTimezone = dttzLocal) : TDateTimeEx; overload; static;
+    class function makeLocal(value : TDateTime) : TDateTimeEx; overload; static; // stated time, local timezone
+    class function make(value : TDateTime; tz : TDateTimeExTimezone) : TDateTimeEx; static; // stated time and timezone
+    class function fromHL7(value : String) : TDateTimeEx; static; // load from a v2/cda date format
+    class function fromXML(value : String) : TDateTimeEx; static; // load from XML format
+    class function fromTS(value : TTimestamp; tz : TDateTimeExTimezone = dttzLocal) : TDateTimeEx; overload; static; // load from classic SQL format
     class function fromDB(value : String; tz : TDateTimeExTimezone = dttzUTC) : TDateTimeEx; static; // mainly for SQLite support
       {
          Read a date (date) given the specified format. The specified
@@ -1100,35 +1117,37 @@ type
          If the year is < 100, it will be adjusted to a current year (irrespective of the year length YYYY or YY). See ReadDateStrict
       }
     class function fromFormat(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : TDateTimeEx; static;
-
       {
         Like ReadDate, but years < 100 will not be corrected as if they are 2 digit year representations
       }
     class function fromFormatStrict(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False) : TDateTimeEx; static;
 
+    // null test - because this is a record, not a class, it cannot be nil. use this insead (along with makeNul)
     function null : boolean;
     function notNull : boolean;
 
-    function DateTime : TDateTime;
-    function TimeStamp : TTimeStamp;
-    function truncToDay : TDateTimeEx;
+    function DateTime : TDateTime; // get as a datetime in timezone
+    function TimeStamp : TTimeStamp; // get as an SQL time
 
-    function fixPrecision(precision : TDateTimeExPrecision) : TDateTimeEx;
+    function truncToDay : TDateTimeEx; // get as day
+    function fixPrecision(precision : TDateTimeExPrecision) : TDateTimeEx; // get as stated precision
+    function lessPrecision: TDateTimeEx; // reduce precision by one step
 
-    function Local : TDateTimeEx;
-    function UTC : TDateTimeEx;
-    function Min : TDateTimeEx;
-    function Max : TDateTimeEx;
+    function Local : TDateTimeEx; // convert to local time
+    function UTC : TDateTimeEx; // convert to UTC time
+    function Min : TDateTimeEx; // get starting instance for implicit time period
+    function Max : TDateTimeEx; // get ending instance for implicit time period (e.g. 2016-04-30 ends at 2016-05-01 T 00:00
+    function MinUTC : TDateTimeEx; // get minimum UTC time this could be (e.g. expand for possible times if timeszone missing)
+    function MaxUTC : TDateTimeEx; // get minimum UTC time this could be (e.g. expand for possible times if timeszone missing)
     function AsTz(ihr, imin : Integer):TDateTimeEx; // this date and time in the specified timezone.
 
-    function IncrementMonth: TDateTimeEx;
-    function IncrementYear: TDateTimeEx;
-    function IncrementWeek: TDateTimeEx;
-    function IncrementDay: TDateTimeEx;
-    function add(length : TDuration) : TDateTimeEx;
-    function subtract(length : TDuration) : TDateTimeEx;
-    function difference(other : TDateTimeEx) : TDuration;
-    function lessPrecision: TDateTimeEx;
+    function IncrementMonth: TDateTimeEx; // add one month to the time (1 month, not 30 days)
+    function IncrementYear: TDateTimeEx; // add one year to the time
+    function IncrementWeek: TDateTimeEx; // add a week to the time
+    function IncrementDay: TDateTimeEx; // add one day to the time
+    function add(length : TDuration) : TDateTimeEx; // add arbitrary time (in TDateTime)
+    function subtract(length : TDuration) : TDateTimeEx; // subtract arbitrary time (in TDateTime)
+    function difference(other : TDateTimeEx) : TDuration; // get time between, assuming arbitarily high precision)
 
     function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function equal(other : TDateTimeEx; precision : TDateTimeExPrecision) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
@@ -1136,7 +1155,10 @@ type
     function after(other : TDateTimeEx; inclusive : boolean):boolean; // returns true if this is after other
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
     function between(imin, imax : TDateTimeEx; inclusive : boolean):boolean;
+    function overlaps(other : TDateTimeEx):boolean; // if the intersection of the possible bounds of self and other is non-empty
     function compare(other : TDateTimeEx) : integer;
+    function canCompare(other : TDateTimeEx) : boolean; // true if the precision is the same time, and timezone info allows for comparison
+    function precisionMatches(other: TDateTimeEx): boolean; // if precisions match (after ignoring trailing zeroes on fraction
 
     {
     Valid formatting strings are
@@ -7747,6 +7769,33 @@ begin
   result.TimezoneMins := TimezoneMins;
 end;
 
+function TDateTimeEx.precisionMatches(other: TDateTimeEx): boolean;
+var
+  this, that : TDateTimeExPrecision;
+begin
+  this := FPrecision;
+  if (this = dtpNanoSeconds) and (fraction = 0) then
+    this := dtpSec;
+  that := other.FPrecision;
+  if (that = dtpNanoSeconds) and (fraction = 0) then
+    that := dtpSec;
+  result := this = that;
+  if result and (this = dtpNanoSeconds) then
+    result := FractionPrecision = other.FractionPrecision;
+end;
+
+function TDateTimeEx.canCompare(other: TDateTimeEx): boolean;
+begin
+  if not precisionMatches(other) then
+    exit(false)
+  else if (TimezoneType = dttzUnknown) and (other.TimezoneType = dttzUnknown)  then
+    exit(true)
+  else if (TimezoneType = dttzUnknown) or (other.TimezoneType = dttzUnknown)  then
+    exit(false)
+  else
+    exit(true);
+end;
+
 procedure TDateTimeEx.check;
 var
   err : String;
@@ -8630,7 +8679,65 @@ begin
   end;
   result.RollUp;
   result.FPrecision := dtpNanoSeconds;
+  result.Source := result.toXML;
   result.check;
+end;
+
+function TDateTimeEx.MaxUTC: TDateTimeEx;
+begin
+  if TimezoneType = dttzUnknown then
+  begin
+    result := add(14/24);
+    result.TimezoneType := dttzUTC;
+  end
+  else
+    result := UTC;
+  case FPrecision of
+    dtpYear:
+      begin
+      result.Month := 1;
+      result.Day := 1;
+      result.Hour := 0;
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpMonth:
+      begin
+      result.Day := 1;
+      result.Hour := 0;
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpDay:
+      begin
+      result.Hour := 0;
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpHour:
+      begin
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpMin:
+      begin
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpSec:
+      begin
+      result.fraction := 0;
+      end;
+    dtpNanoSeconds:
+      begin
+      end;
+  end;
+  result.FPrecision := dtpNanoSeconds;
+  result.Source := result.toXML;
 end;
 
 function TDateTimeEx.Min: TDateTimeEx;
@@ -8681,6 +8788,64 @@ begin
       end;
   end;
   result.FPrecision := dtpNanoSeconds;
+  result.Source := result.toXML;
+end;
+
+function TDateTimeEx.MinUTC: TDateTimeEx;
+begin
+  if TimezoneType = dttzUnknown then
+  begin
+    result := subtract(14/24);
+    result.TimezoneType := dttzUTC;
+  end
+  else
+    result := UTC;
+  case FPrecision of
+    dtpYear:
+      begin
+      result.Month := 1;
+      result.Day := 1;
+      result.Hour := 0;
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpMonth:
+      begin
+      result.Day := 1;
+      result.Hour := 0;
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpDay:
+      begin
+      result.Hour := 0;
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpHour:
+      begin
+      result.minute := 0;
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpMin:
+      begin
+      result.Second := 0;
+      result.fraction := 0;
+      end;
+    dtpSec:
+      begin
+      result.fraction := 0;
+      end;
+    dtpNanoSeconds:
+      begin
+      end;
+  end;
+  result.FPrecision := dtpNanoSeconds;
+  result.Source := result.toXML;
 end;
 
 class operator TDateTimeEx.NotEqual(a, b: TDateTimeEx): Boolean;
@@ -8696,6 +8861,17 @@ end;
 function TDateTimeEx.null: boolean;
 begin
   result := Source = '';
+end;
+
+function TDateTimeEx.overlaps(other: TDateTimeEx): boolean;
+var
+  x1, x2, y1, y2 : TDateTimeEx;
+begin
+  x1 := self.MinUTC;
+  x2 := self.MaxUTC;
+  y1 := other.MinUTC;
+  y2 := other.MaxUTC;
+  result := (x1 <= y2) and (y1 <= x2);
 end;
 
 function TDateTimeEx.privToString: String;
@@ -8849,7 +9025,10 @@ end;
 function TDateTimeEx.SameTime(other: TDateTimeEx): Boolean;
 begin
   if (TimezoneType = dttzUnknown) or (other.TimezoneType = dttzUnknown)  then
-    result := false // unknown, really
+    if (TimezoneType = dttzUnknown) and (other.TimezoneType = dttzUnknown)  then
+      result := self.equal(other)
+    else
+      result := false // unknown, really
   else
     result := sameInstant(UTC.DateTime, other.UTC.DateTime);
 end;

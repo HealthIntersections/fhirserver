@@ -3094,10 +3094,22 @@ public class DelphiGenerator {
           getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', false, "+tn+", "+propV+".Link));{2}\r\n");
           propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeCodeNoParams())+"'\r\n");
           if (e.getName().endsWith("[x]")) {
-            if (!typeIsPrimitive(e.typeCode()))
-              setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{4};\r\n    result := propValue;\r\n  end\r\n");
-            else 
-              setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{5};\r\n   result := propValue;\r\n  end\r\n");
+            String ename = e.getName().replace("[x]", "");
+            StringBuilder types = new StringBuilder("[");
+            boolean first = true;
+            for (TypeRef t : e.getTypes()) {
+              if (first) first = false; else types.append(", ");
+              types.append("'"+Utilities.capitalize(t.getName())+"'");
+            }
+            types.append("]");              
+            if (!typeIsPrimitive(e.typeCode())) {
+              setprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{4};\r\n    result := propValue;\r\n  end\r\n");
+            } else { 
+              setprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{5};\r\n   result := propValue;\r\n  end\r\n");
+            }
+            delprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then "+propV.substring(1)+"Element := nil{4x}\r\n");
+            replprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then "+propV.substring(1)+"Element := new as "+tn+"{4x}\r\n");          
+            makeprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then raise EFHIRException.create('Cannot make property "+propV.substring(1)+"'){4x}\r\n");
           } else {
             delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
             if (!typeIsPrimitive(e.typeCode()) && !e.typeCode().equals("xhtml")) {

@@ -32,7 +32,7 @@ interface
 uses
   Windows, Sysutils, Classes, IniFiles,
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
 
   FHIR.Web.Fetcher,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
@@ -40,7 +40,8 @@ uses
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
   FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base,
 
-  FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4, FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities,
+  FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
+  FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities,
 
   FHIR.Tools.Indexing, FHIR.Version.Client,
   FHIR.Tx.Manager, FHIR.Tx.Server,
@@ -72,6 +73,7 @@ Type
     FEndPoint : TFhirWebServerEndpoint;
     FClientJson : TFhirClient;
 
+    function parseJson(s : String) : TFHIRResource;
     procedure ConnectToDatabases();
     function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
     Procedure checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
@@ -98,7 +100,8 @@ Type
     [TestCase] Procedure TestPatientCreate;
 //    [TestCase] Procedure TestBatch;
 //    [TestCase] Procedure TestTransaction;
-//    [TestCase] Procedure TestPatientPatch;
+    [TestCase] Procedure TestObservationPatchJson;
+    [TestCase] Procedure TestObservationPatchNative;
 
     [TestCase] Procedure TestValueSetExpand1;
     [TestCase] Procedure TestValueSetExpand2;
@@ -279,6 +282,24 @@ begin
   FTerminologies.load(FIni, FDatabases, true);
 end;
 
+function TFullServerTests.parseJson(s: String): TFHIRResource;
+var
+  p : TFHIRJsonParser;
+begin
+  p := TFHIRJsonParser.Create(nil, 'en');
+  try
+    p.source := TStringStream.Create(s);
+    try
+      p.parse;
+      result := p.resource.link as TFhirResource;
+    finally
+      p.source.Free;
+    end;
+  finally
+    p.Free;
+  end; 
+end;
+
 procedure TFullServerTests.Setup;
 begin
   FIni := TFHIRServerIniFile.Create('C:\work\fhirserver\Exec\fhir.dev.local.ini');
@@ -314,6 +335,56 @@ begin
     Assert.IsTrue(r <> nil);
   finally
     r.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestObservationPatchJson;
+var
+  p : TJsonArray;
+  r : TFHIRObservation;
+begin
+  p := TJsonParser.ParseNode('[ {"op":"replace","path":"/effectiveDateTime","value":"2019-01-23"} ]') as TJsonArray;
+  try
+    r := FClientJson.patchResource(frtObservation, 'example', p) as TFHIRObservation;
+    try
+      Assert.IsTrue(r.effective is TFHIRDateTime, 'Wrong type');
+      Assert.IsTrue((r.effective as TFHIRDateTime).StringValue = '2019-01-23', 'Wrong value');      
+    finally
+      r.Free;
+    end;
+  finally
+    p.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestObservationPatchNative;
+var
+  p : TFHIRParameters;
+  r : TFHIRObservation;
+begin
+  p := parseJson(
+    '{'+#13#10+
+    '  "resourceType": "Parameters",'+#13#10+
+    '  "parameter": ['+#13#10+
+    '    {'+#13#10+
+    '      "name": "operation",'+#13#10+
+    '      "part": [ {"name":"type", "valueCode":"replace" },'+#13#10+
+    '                {"name":"path", "valueString":"effective" },'+#13#10+
+    '                {"name":"value", "valueDateTime":"2019-01-23" }'+#13#10+
+    '              ]'+#13#10+
+    '    }'+#13#10+
+    '  ]'+#13#10+
+    '}'+#13#10) as TFHIRParameters;
+  try
+    r := FClientJson.patchResource(frtObservation, 'example', p) as TFHIRObservation;
+    try
+      Assert.IsTrue(r.effective is TFHIRDateTime, 'Wrong type');
+      Assert.IsTrue((r.effective as TFHIRDateTime).StringValue = '2019-01-23', 'Wrong value');      
+    finally
+      r.Free;
+    end;
+  finally
+    p.Free;
   end;
 end;
 

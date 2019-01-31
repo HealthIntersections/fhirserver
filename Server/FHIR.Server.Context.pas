@@ -37,7 +37,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Validator,
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
-  FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory
+  FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine
   {$IFNDEF NO_JS}, FHIR.Server.Javascript {$ENDIF};
 
 Const
@@ -101,6 +101,7 @@ Type
     FTaskFolder: String;
     FGlobals: TFHIRServerSettings;
     FServerFactory : TFHIRServerFactory;
+    FConsentEngine: TFHIRConsentEngine;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -108,6 +109,8 @@ Type
     procedure SetJWTServices(const Value: TJWTServices);
     function GetFactory: TFHIRFactory;
     procedure SetGlobals(const Value: TFHIRServerSettings);
+
+    procedure SetConsentEngine(const Value: TFHIRConsentEngine);
   public
     constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
@@ -124,6 +127,7 @@ Type
     property Indexes : TFHIRIndexInformation read FIndexes;
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
     property SessionManager : TFHIRSessionManager read FSessionManager;
+    property ConsentEngine : TFHIRConsentEngine read FConsentEngine write SetConsentEngine;
     property TagManager : TFHIRTagManager read FTagManager;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
     {$IFNDEF NO_JS}
@@ -331,6 +335,7 @@ begin
   {$IFNDEF NO_JS}
   FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
   {$ENDIF}
+  FConsentEngine := TFHIRNullConsentEngine.Create;
 
   FMaps := TFslMap<TFHIRStructureMapW>.create;
   if DirectoryExists('c:\temp') then
@@ -342,6 +347,7 @@ end;
 
 destructor TFHIRServerContext.Destroy;
 begin
+  FConsentEngine.Free;
   FGlobals.Free;
   FMaps.Free;
   {$IFNDEF NO_JS}
@@ -409,6 +415,12 @@ procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin
   FJWTServices.Free;
   FJWTServices := Value;
+end;
+
+procedure TFHIRServerContext.SetConsentEngine(const Value: TFHIRConsentEngine);
+begin
+  FConsentEngine.Free;
+  FConsentEngine := Value;
 end;
 
 procedure TFHIRServerContext.SetGlobals(const Value: TFHIRServerSettings);

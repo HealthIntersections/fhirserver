@@ -821,7 +821,7 @@ begin
       json.Stream := oStream;
       oStream.Stream := stream;
       json.HasWhitespace := FStyle = OutputStylePretty;
-      json.Start;
+      json.Start(true);
       json.ValueArray('outcome');
       for base in items do
         j.ComposeBase(json, '', base);
@@ -832,7 +832,7 @@ begin
       json.FinishObject;
       if (types <> nil) then
         json.Value('types', types.ToString);
-      json.Finish;
+      json.Finish(true);
     finally
       json.free;
     end;

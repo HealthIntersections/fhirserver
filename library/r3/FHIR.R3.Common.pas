@@ -4207,18 +4207,19 @@ end;
 
 procedure TFhirTerminologyCapabilities3.setContext(Value: String);
 begin
+  raise Exception.Create('Not done yet');
 end;
 
 
 procedure TFhirTerminologyCapabilities3.setDate(Value: TDateTimeEx);
 begin
+  (FRes as TFhirParameters).AddParameter('date', TFhirDateTime.create(Value));
 end;
 
 
 procedure TFhirTerminologyCapabilities3.setDescription(Value: String);
 begin
 end;
-
 
 procedure TFhirTerminologyCapabilities3.setName(Value: String);
 begin
@@ -4237,11 +4238,13 @@ end;
 
 procedure TFhirTerminologyCapabilities3.setUrl(Value: String);
 begin
+  (FRes as TFhirParameters).AddParameter('url', TFhirUri.create(Value));
 end;
 
 
 procedure TFhirTerminologyCapabilities3.setVersion(Value: String);
 begin
+  (FRes as TFhirParameters).AddParameter('version', TFhirCode.create(Value));
 end;
 
 

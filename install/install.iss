@@ -112,12 +112,12 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";                Des
 
 ; Executable files
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
+;Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\64\sqlite3.dll";                            DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\32\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
+;Source: "C:\work\fhirserver\Exec\32\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FastMM_FullDebugMode.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode 
 Source: "C:\work\fhirserver\Exec\32\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\sqlite3.dll";                            DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
@@ -225,8 +225,8 @@ Function MyDllGetIniValue(ini, name : pansichar) : pansichar; external 'MyDllGet
 Procedure MyDllSetIniValue(ini, name, value : pansichar); external 'MyDllSetIniValue@files:installer.dll stdcall setuponly';
 Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
 Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load, packages, mode : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
-Function MyDllListPackages(Version : PAnsiChar) : PAnsiChar; external 'MyDllListPackages@files:installer.dll stdcall setuponly';
-Function MyDllDownloadPackages(urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
+Function MyDllListPackages(mode : PAnsiChar; Version : PAnsiChar) : PAnsiChar; external 'MyDllListPackages@files:installer.dll stdcall setuponly';
+Function MyDllDownloadPackages(mode : PAnsiChar; urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
 
 
 // ------ Firewall management ---------------------------------------------------------------------------------
@@ -1926,7 +1926,7 @@ var
   pl, s, t, pi : String;
   i : integer;
 begin
-  pl := MyDllListPackages('1.0.2');
+  pl := MyDllListPackages('system', '1.0.2');
   
   PackagesR2.Text := pl;
   for i := 0 to packagesR2.count - 1 do 
@@ -1949,7 +1949,7 @@ var
   pl, s, t, pi : String;
   i : integer;
 begin
-  pl := MyDllListPackages('3.0.1');
+  pl := MyDllListPackages('system', '3.0.1');
   
   PackagesR3.Text := pl;
   for i := 0 to packagesR3.count - 1 do 
@@ -1972,7 +1972,7 @@ var
   pl, s, t, pi : String;
   i : integer;
 begin
-  pl := MyDllListPackages('3.5.0');
+  pl := MyDllListPackages('system', '3.5.0');
   
   PackagesR4.Text := pl;
   for i := 0 to packagesR4.count - 1 do 
@@ -2197,7 +2197,7 @@ begin
     try
       repeat
         done := true;
-        msg := MyDllDownloadPackages(pl2, @InitCallback);
+        msg := MyDllDownloadPackages('system', pl2, @InitCallback);
         if msg <> '' then
           done := MsgBox('Downloading the packages failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
       until done;

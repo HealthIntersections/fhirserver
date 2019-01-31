@@ -3,7 +3,7 @@ object TransformerForm: TTransformerForm
   Top = 0
   Caption = 'FHIR Transformer IDE'
   ClientHeight = 595
-  ClientWidth = 1259
+  ClientWidth = 960
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object TransformerForm: TTransformerForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    1259
+    960
     595)
   PixelsPerInch = 96
   TextHeight = 13
@@ -34,51 +34,68 @@ object TransformerForm: TTransformerForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1259
+    Width = 960
     Height = 27
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 1315
     object ToolBar1: TToolBar
       Left = 1
       Top = 1
-      Width = 1257
+      Width = 958
       Height = 29
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
+      ExplicitWidth = 1313
       object tbNew: TToolButton
         Left = 0
         Top = 0
+        Hint = 'New File'
         Caption = 'New File'
         ImageIndex = 0
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbNewClick
       end
       object tbOpen: TToolButton
         Left = 23
         Top = 0
+        Hint = 'Add Existing File'
         Caption = 'Add Existing File'
         ImageIndex = 1
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuOpenClick
       end
       object tbSave: TToolButton
         Left = 46
         Top = 0
+        Hint = 'Save'
         Caption = 'Save'
         ImageIndex = 2
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuSaveClick
       end
       object tbSaveAll: TToolButton
         Left = 69
         Top = 0
+        Hint = 'Save'
         Caption = 'Save All'
         ImageIndex = 35
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuSaveAllClick
       end
       object tbPrint: TToolButton
         Left = 92
         Top = 0
+        Hint = 'Print'
         Caption = 'Print'
         ImageIndex = 24
+        ParentShowHint = False
+        ShowHint = True
       end
       object ToolButton5: TToolButton
         Left = 115
@@ -91,43 +108,61 @@ object TransformerForm: TTransformerForm
       object tbUndo: TToolButton
         Left = 123
         Top = 0
+        Hint = 'Undo'
         Caption = 'Undo'
         ImageIndex = 20
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuUndoClick
       end
       object tbCut: TToolButton
         Left = 146
         Top = 0
+        Hint = 'Cut'
         Caption = 'Cut'
         ImageIndex = 5
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCutClick
       end
       object tbCopy: TToolButton
         Left = 169
         Top = 0
+        Hint = 'Copy'
         Caption = 'Copy'
         ImageIndex = 6
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCopyClick
       end
       object tbPaste: TToolButton
         Left = 192
         Top = 0
+        Hint = 'Paste'
         Caption = 'Paste'
         ImageIndex = 7
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuPasteClick
       end
       object tbFind: TToolButton
         Left = 215
         Top = 0
+        Hint = 'Find'
         Caption = 'Find'
         ImageIndex = 16
+        ParentShowHint = False
+        ShowHint = True
         OnClick = FindDialogFind
       end
       object tbCompare: TToolButton
         Left = 238
         Top = 0
+        Hint = 'Compare Round Trip'
         Caption = 'Compare Round Trip'
         ImageIndex = 28
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCompareClick
       end
       object ToolButton2: TToolButton
@@ -141,8 +176,11 @@ object TransformerForm: TTransformerForm
       object tbPackageManager: TToolButton
         Left = 269
         Top = 0
+        Hint = 'Package Manager'
         Caption = 'Package Manager'
         ImageIndex = 29
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuPackageManagerClick
       end
       object ToolButton3: TToolButton
@@ -156,15 +194,21 @@ object TransformerForm: TTransformerForm
       object tbHome: TToolButton
         Left = 300
         Top = 0
+        Hint = 'Home'
         Caption = 'Home'
         ImageIndex = 8
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbHomeClick
       end
       object tbCompile: TToolButton
         Left = 323
         Top = 0
+        Hint = 'Check Syntax'
         Caption = 'Check Syntax'
         ImageIndex = 34
+        ParentShowHint = False
+        ShowHint = True
         OnClick = mnuCompileClick
       end
       object ToolButton1: TToolButton
@@ -178,40 +222,55 @@ object TransformerForm: TTransformerForm
       object tbExecute: TToolButton
         Left = 354
         Top = 0
+        Hint = 'Execute'
         Caption = 'Execute'
         ImageIndex = 27
+        ParentShowHint = False
+        ShowHint = True
         OnClick = btnExecuteClick
       end
       object tbStepInto: TToolButton
         Left = 377
         Top = 0
+        Hint = 'Step Into'
         Caption = 'Step Into'
         Enabled = False
         ImageIndex = 36
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStepIntoClick
       end
       object tbStepOver: TToolButton
         Left = 400
         Top = 0
+        Hint = 'Step Over'
         Caption = 'Step Over'
         Enabled = False
         ImageIndex = 37
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStepOverClick
       end
       object tbStepOut: TToolButton
         Left = 423
         Top = 0
+        Hint = 'Step Out'
         Caption = 'Step Out'
         Enabled = False
         ImageIndex = 38
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStepOutClick
       end
       object tbStop: TToolButton
         Left = 446
         Top = 0
-        Caption = 'tbStop'
+        Hint = 'Stop'
+        Caption = 'Stop'
         Enabled = False
         ImageIndex = 39
+        ParentShowHint = False
+        ShowHint = True
         OnClick = tbStopClick
       end
     end
@@ -325,15 +384,16 @@ object TransformerForm: TTransformerForm
   object Panel3: TPanel
     Left = 193
     Top = 27
-    Width = 1066
+    Width = 767
     Height = 549
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 1122
     object Splitter2: TSplitter
       Left = 0
       Top = 280
-      Width = 1066
+      Width = 767
       Height = 8
       Cursor = crVSplit
       Align = alBottom
@@ -343,33 +403,33 @@ object TransformerForm: TTransformerForm
     object pnlDebug: TPanel
       Left = 0
       Top = 288
-      Width = 1066
+      Width = 767
       Height = 261
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitWidth = 1122
       object pgDebug: TPageControl
         Left = 0
         Top = 0
-        Width = 1066
+        Width = 767
         Height = 261
-        ActivePage = tbConsole
+        ActivePage = TabSheet3
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 1122
         object tbConsole: TTabSheet
           Caption = 'Console'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 1114
           object Panel5: TPanel
-            Left = 967
+            Left = 668
             Top = 0
             Width = 91
             Height = 233
             Align = alRight
             Alignment = taLeftJustify
             TabOrder = 0
+            ExplicitLeft = 1023
             object btnConsoleClear: TButton
               Left = 5
               Top = 61
@@ -401,7 +461,7 @@ object TransformerForm: TTransformerForm
           object mConsole: TMemo
             Left = 0
             Top = 0
-            Width = 967
+            Width = 668
             Height = 233
             Align = alClient
             Font.Charset = ANSI_CHARSET
@@ -411,42 +471,39 @@ object TransformerForm: TTransformerForm
             Font.Style = []
             ParentFont = False
             TabOrder = 1
+            ExplicitWidth = 1023
           end
         end
         object tbBreakpoints: TTabSheet
           Caption = 'Breakpoints'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 1114
           object Panel8: TPanel
             Left = 0
             Top = 0
-            Width = 1058
+            Width = 759
             Height = 233
             Align = alClient
             BorderWidth = 4
             Caption = 'Panel8'
             TabOrder = 0
+            ExplicitWidth = 1114
             object ListBox1: TListBox
               Left = 5
               Top = 5
-              Width = 1048
+              Width = 749
               Height = 223
               Align = alClient
               ItemHeight = 13
               TabOrder = 0
+              ExplicitWidth = 1104
             end
           end
         end
         object tbVariables: TTabSheet
           Caption = 'Debugger'
           ImageIndex = 3
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 1114
           object Splitter3: TSplitter
             Left = 353
             Top = 0
@@ -508,26 +565,28 @@ object TransformerForm: TTransformerForm
           object Panel13: TPanel
             Left = 625
             Top = 0
-            Width = 433
+            Width = 134
             Height = 233
             Align = alClient
             BorderWidth = 4
             TabOrder = 1
+            ExplicitWidth = 489
             object Panel14: TPanel
               Left = 5
               Top = 5
-              Width = 423
+              Width = 124
               Height = 20
               Align = alTop
               Alignment = taLeftJustify
               BevelOuter = bvNone
               Caption = ' Details for Selected Variable'
               TabOrder = 0
+              ExplicitWidth = 479
             end
             object vtVarDetails: TVirtualStringTree
               Left = 5
               Top = 25
-              Width = 423
+              Width = 124
               Height = 203
               Align = alClient
               Header.AutoSizeIndex = 2
@@ -543,6 +602,7 @@ object TransformerForm: TTransformerForm
               OnGetText = vtVarDetailsGetText
               OnInitChildren = vtVarDetailsInitChildren
               OnInitNode = vtVarDetailsInitNode
+              ExplicitWidth = 479
               Columns = <
                 item
                   Position = 0
@@ -556,7 +616,7 @@ object TransformerForm: TTransformerForm
                 end
                 item
                   Position = 2
-                  Width = 223
+                  Width = 10
                   WideText = 'Value'
                 end>
             end
@@ -611,20 +671,18 @@ object TransformerForm: TTransformerForm
         object TabSheet3: TTabSheet
           Caption = 'FHIRPath Evaluator'
           ImageIndex = 4
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
+          ExplicitWidth = 1114
           object Panel2: TPanel
             Left = 0
             Top = 0
-            Width = 1058
+            Width = 759
             Height = 28
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 1114
             DesignSize = (
-              1058
+              759
               28)
             object Label4: TLabel
               Left = 2
@@ -634,8 +692,8 @@ object TransformerForm: TTransformerForm
               Caption = 'FHIRPath:'
             end
             object btnPathGo: TBitBtn
-              Left = 904
-              Top = 0
+              Left = 605
+              Top = 2
               Width = 70
               Height = 25
               Anchors = [akTop, akRight]
@@ -671,8 +729,8 @@ object TransformerForm: TTransformerForm
               OnClick = btnPathGoClick
             end
             object btnPathDebug: TBitBtn
-              Left = 980
-              Top = 0
+              Left = 681
+              Top = 2
               Width = 70
               Height = 25
               Anchors = [akTop, akRight]
@@ -709,8 +767,8 @@ object TransformerForm: TTransformerForm
             end
             object edtFHIRPath: TEdit
               Left = 58
-              Top = 1
-              Width = 840
+              Top = 4
+              Width = 541
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
@@ -719,13 +777,14 @@ object TransformerForm: TTransformerForm
           object Panel4: TPanel
             Left = 0
             Top = 28
-            Width = 1058
+            Width = 759
             Height = 205
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitWidth = 1114
             DesignSize = (
-              1058
+              759
               205)
             object Label5: TLabel
               Left = 2
@@ -737,7 +796,7 @@ object TransformerForm: TTransformerForm
             object lbFHIRPathOutcomes: TListBox
               Left = 58
               Top = 6
-              Width = 991
+              Width = 695
               Height = 187
               Anchors = [akLeft, akTop, akRight, akBottom]
               ItemHeight = 13
@@ -748,314 +807,323 @@ object TransformerForm: TTransformerForm
         end
       end
     end
-    object pgTabs: TPageControl
+    object Panel17: TPanel
       Left = 0
       Top = 0
-      Width = 1066
+      Width = 767
       Height = 280
-      ActivePage = TabSheet1
       Align = alClient
-      Images = ImageList1
-      PopupMenu = pmTabs
+      Caption = 'Panel17'
       TabOrder = 1
-      OnChange = pgTabsChange
-      object TabSheet1: TTabSheet
-        Caption = 'Home'
-        ImageIndex = 8
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
-        DesignSize = (
-          1058
-          251)
-        object Label1: TLabel
-          Left = 16
-          Top = 12
-          Width = 45
-          Height = 13
-          Caption = 'Execute'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label2: TLabel
-          Left = 32
-          Top = 40
-          Width = 55
-          Height = 13
-          Caption = 'Event Type'
-        end
-        object Label3: TLabel
-          Left = 32
-          Top = 91
-          Width = 33
-          Height = 13
-          Caption = 'Source'
-        end
-        object lblScript: TLabel
-          Left = 32
-          Top = 65
-          Width = 27
-          Height = 13
-          Caption = 'Script'
-        end
-        object Label6: TLabel
-          Left = 32
-          Top = 121
-          Width = 43
-          Height = 13
-          Caption = 'Outcome'
-        end
-        object lblExecutionError: TLabel
-          Left = 223
-          Top = 150
-          Width = 810
-          Height = 13
-          Anchors = [akLeft, akTop, akRight]
-          AutoSize = False
-        end
-        object cbxEventType: TComboBox
-          Left = 101
-          Top = 37
-          Width = 305
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 0
-          OnChange = cbxEventTypeChange
-          Items.Strings = (
-            'Process V2 Message'
-            'Convert CDA Document Using Map')
-        end
-        object cbxSource: TComboBox
-          Left = 101
-          Top = 91
-          Width = 276
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 1
-          OnChange = cbxSourceChange
-        end
-        object btnExecute: TBitBtn
-          Left = 32
-          Top = 145
-          Width = 70
-          Height = 25
-          Caption = 'Debug'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            001B7600176B00176B00176B0018660018660018660018660018660018660018
-            66FFFFFFFFFFFFFFFFFFFFFFFF00218B5152CDACAFFF8C8EFF8C8EFF8C8EFF8C
-            8EFF6568FF6568FF6568FF7D80FF5152CD001866FFFFFFFFFFFFFFFFFF00218B
-            EFF0FF0014FF0016FF001BFF0020FF0027FF002AFF0034FF0034FF0034FF7D80
-            FF001866FFFFFFFFFFFFFFFFFF00259ADADAFF000FFF0014FF0016FF001BFF00
-            20FF002AFF002AFF0034FF0034FF6568FF001866FFFFFFFFFFFFFFFFFF002DB4
-            DADAFF000AFF000FFF0014FFFFFFFF001BFF0027FF0027FF002AFF0034FF6568
-            FF001866FFFFFFFFFFFFFFFFFF002DB4DADAFF0006FF000AFF000FFFFFFFFFFF
-            FFFF0020FF0027FF002AFF002AFF6568FF001866FFFFFFFFFFFFFFFFFF0036D8
-            DADAFF0200FF0200FF0006FFFFFFFFFFFFFFFFFFFF001BFF0020FF0027FF8C8E
-            FF00176BFFFFFFFFFFFFFFFFFF0036D8DADAFF0700FF0200FF0200FFFFFFFFFF
-            FFFF0014FF0016FF001BFF0020FF8C8EFF00176BFFFFFFFFFFFFFFFFFF0038E4
-            DADAFF0800FF0700FF0200FFFFFFFF0006FF000FFF0014FF0016FF001BFF8C8E
-            FF001B76FFFFFFFFFFFFFFFFFF0038E4DADAFF0D00FF0800FF0700FF0200FF02
-            00FF000AFF000FFF0014FF0016FF8C8EFF001B76FFFFFFFFFFFFFFFFFF0038E4
-            EFF0FF0D00FF0D00FF0800FF0700FF0200FF0006FF000AFF000FFF0014FFACAF
-            FF00218BFFFFFFFFFFFFFFFFFF0038E45152CDEFF0FFDADAFFDADAFFDADAFFDA
-            DAFFDADAFFDADAFFDADAFFEFF0FF6568FF00259AFFFFFFFFFFFFFFFFFFFFFFFF
-            0038E40038E40038E40038E40038E40038E40036D80036D8002FC7002FC7002D
-            B4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-          TabOrder = 2
-          OnClick = btnExecuteClick
-        end
-        object cbxScript: TComboBox
-          Left = 101
-          Top = 64
-          Width = 276
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 3
-          OnChange = cbxScriptChange
-        end
-        object btnOpenScript: TBitBtn
-          Left = 383
-          Top = 63
-          Width = 23
-          Height = 23
-          Hint = 'Open'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
-            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
-            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
-            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
-            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
-            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
-            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
-            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
-            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
-            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
-            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
-            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
-            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
-            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
-            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
-            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
-            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
-            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 4
-          OnClick = btnOpenScriptClick
-        end
-        object btnOpenSource: TBitBtn
-          Left = 383
-          Top = 91
-          Width = 23
-          Height = 23
-          Hint = 'Open'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
-            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
-            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
-            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
-            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
-            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
-            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
-            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
-            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
-            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
-            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
-            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
-            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
-            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
-            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
-            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
-            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
-            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 5
-          OnClick = btnOpenSourceClick
-        end
-        object btnRunNoDebug: TBitBtn
-          Left = 108
-          Top = 145
-          Width = 109
-          Height = 25
-          Caption = 'Run (No Debug)'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            185728164F25164F25164F25154C23154C23154C23154C23154C23154C23154C
-            23FFFFFFFFFFFFFFFFFFFFFFFF1C672F80B48ECBEFD4B8E9C5B8E9C5B8E9C5B8
-            E9C5A1E2B2A1E2B2A1E2B2AFE6BD80B48E154C23FFFFFFFFFFFFFFFFFF1C672F
-            F4FBF64DD1774BCF7449CD7147CB6D44C96941C6653EC25F3EC25F3EC25FAFE6
-            BD154C23FFFFFFFFFFFFFFFFFF217436E8F8EC4FD37A4DD1774BCF7449CD7147
-            CB6D41C66541C6653EC25F3EC25FA1E2B2154C23FFFFFFFFFFFFFFFFFF26873E
-            E8F8EC52D57D4FD37A4DD177FFFFFF49CD7144C96944C96941C6653EC25FA1E2
-            B2154C23FFFFFFFFFFFFFFFFFF26873EE8F8EC54D68052D57D4FD37AFFFFFFFF
-            FFFF47CB6D44C96941C66541C665A1E2B2154C23FFFFFFFFFFFFFFFFFF2CA149
-            E8F8EC56D98556D98554D680FFFFFFFFFFFFFFFFFF49CD7147CB6D44C969B8E9
-            C5164F25FFFFFFFFFFFFFFFFFF2CA149E8F8EC59DB8956D98556D985FFFFFFFF
-            FFFF4DD1774BCF7449CD7147CB6DB8E9C5164F25FFFFFFFFFFFFFFFFFF2FAA4E
-            E8F8EC5ADC8A59DB8956D985FFFFFF54D6804FD37A4DD1774BCF7449CD71B8E9
-            C5185728FFFFFFFFFFFFFFFFFF2FAA4EE8F8EC5CDE8E5ADC8A59DB8956D98556
-            D98552D57D4FD37A4DD1774BCF74B8E9C5185728FFFFFFFFFFFFFFFFFF2FAA4E
-            F4FBF65CDE8E5CDE8E5ADC8A59DB8956D98554D68052D57D4FD37A4DD177CBEF
-            D41C672FFFFFFFFFFFFFFFFFFF2FAA4E80B48EF4FBF6E8F8ECE8F8ECE8F8ECE8
-            F8ECE8F8ECE8F8ECE8F8ECF4FBF6A1E2B2217436FFFFFFFFFFFFFFFFFFFFFFFF
-            2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2CA1492CA1492894442894442687
-            3EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-          TabOrder = 6
-          OnClick = mnuRunNoDebugClick
-        end
-        object cbxOutcome: TComboBox
-          Left = 101
-          Top = 118
-          Width = 80
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 7
-          OnChange = cbxOutcomeChange
-          OnClick = cbxOutcomeChange
-          Items.Strings = (
-            'Ignore'
-            'Save To'
-            'Compare To')
-        end
-        object cbxTarget: TComboBox
-          Left = 187
-          Top = 118
-          Width = 190
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 8
-          OnChange = cbxSourceChange
-        end
-        object btnOpenTarget: TBitBtn
-          Left = 383
-          Top = 118
-          Width = 23
-          Height = 23
-          Hint = 'Open'
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-            078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-            BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
-            CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
-            39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
-            D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
-            DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
-            1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
-            DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
-            EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
-            77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
-            18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
-            8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
-            9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
-            9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
-            85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
-            FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
-            540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-            00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
-            18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
-            85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 9
-          OnClick = btnOpenTargetClick
+      ExplicitWidth = 1122
+      object pgTabs: TPageControl
+        Left = 1
+        Top = 1
+        Width = 765
+        Height = 278
+        ActivePage = TabSheet1
+        Align = alClient
+        Images = ImageList1
+        PopupMenu = pmTabs
+        TabOrder = 0
+        OnChange = pgTabsChange
+        ExplicitWidth = 941
+        object TabSheet1: TTabSheet
+          Caption = 'Home'
+          ImageIndex = 8
+          ExplicitWidth = 933
+          DesignSize = (
+            757
+            249)
+          object Label1: TLabel
+            Left = 16
+            Top = 12
+            Width = 45
+            Height = 13
+            Caption = 'Execute'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label2: TLabel
+            Left = 32
+            Top = 40
+            Width = 55
+            Height = 13
+            Caption = 'Event Type'
+          end
+          object Label3: TLabel
+            Left = 32
+            Top = 91
+            Width = 33
+            Height = 13
+            Caption = 'Source'
+          end
+          object lblScript: TLabel
+            Left = 32
+            Top = 65
+            Width = 27
+            Height = 13
+            Caption = 'Script'
+          end
+          object Label6: TLabel
+            Left = 32
+            Top = 121
+            Width = 43
+            Height = 13
+            Caption = 'Outcome'
+          end
+          object lblExecutionError: TLabel
+            Left = 223
+            Top = 150
+            Width = 509
+            Height = 13
+            Anchors = [akLeft, akTop, akRight]
+            AutoSize = False
+            ExplicitWidth = 810
+          end
+          object cbxEventType: TComboBox
+            Left = 101
+            Top = 37
+            Width = 305
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 0
+            OnChange = cbxEventTypeChange
+            Items.Strings = (
+              'Process V2 Message'
+              'Convert CDA Document Using Map')
+          end
+          object cbxSource: TComboBox
+            Left = 101
+            Top = 91
+            Width = 276
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 1
+            OnChange = cbxSourceChange
+          end
+          object btnExecute: TBitBtn
+            Left = 32
+            Top = 145
+            Width = 70
+            Height = 25
+            Caption = 'Debug'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              001B7600176B00176B00176B0018660018660018660018660018660018660018
+              66FFFFFFFFFFFFFFFFFFFFFFFF00218B5152CDACAFFF8C8EFF8C8EFF8C8EFF8C
+              8EFF6568FF6568FF6568FF7D80FF5152CD001866FFFFFFFFFFFFFFFFFF00218B
+              EFF0FF0014FF0016FF001BFF0020FF0027FF002AFF0034FF0034FF0034FF7D80
+              FF001866FFFFFFFFFFFFFFFFFF00259ADADAFF000FFF0014FF0016FF001BFF00
+              20FF002AFF002AFF0034FF0034FF6568FF001866FFFFFFFFFFFFFFFFFF002DB4
+              DADAFF000AFF000FFF0014FFFFFFFF001BFF0027FF0027FF002AFF0034FF6568
+              FF001866FFFFFFFFFFFFFFFFFF002DB4DADAFF0006FF000AFF000FFFFFFFFFFF
+              FFFF0020FF0027FF002AFF002AFF6568FF001866FFFFFFFFFFFFFFFFFF0036D8
+              DADAFF0200FF0200FF0006FFFFFFFFFFFFFFFFFFFF001BFF0020FF0027FF8C8E
+              FF00176BFFFFFFFFFFFFFFFFFF0036D8DADAFF0700FF0200FF0200FFFFFFFFFF
+              FFFF0014FF0016FF001BFF0020FF8C8EFF00176BFFFFFFFFFFFFFFFFFF0038E4
+              DADAFF0800FF0700FF0200FFFFFFFF0006FF000FFF0014FF0016FF001BFF8C8E
+              FF001B76FFFFFFFFFFFFFFFFFF0038E4DADAFF0D00FF0800FF0700FF0200FF02
+              00FF000AFF000FFF0014FF0016FF8C8EFF001B76FFFFFFFFFFFFFFFFFF0038E4
+              EFF0FF0D00FF0D00FF0800FF0700FF0200FF0006FF000AFF000FFF0014FFACAF
+              FF00218BFFFFFFFFFFFFFFFFFF0038E45152CDEFF0FFDADAFFDADAFFDADAFFDA
+              DAFFDADAFFDADAFFDADAFFEFF0FF6568FF00259AFFFFFFFFFFFFFFFFFFFFFFFF
+              0038E40038E40038E40038E40038E40038E40036D80036D8002FC7002FC7002D
+              B4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            TabOrder = 2
+            OnClick = btnExecuteClick
+          end
+          object cbxScript: TComboBox
+            Left = 101
+            Top = 64
+            Width = 276
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 3
+            OnChange = cbxScriptChange
+          end
+          object btnOpenScript: TBitBtn
+            Left = 383
+            Top = 63
+            Width = 23
+            Height = 23
+            Hint = 'Open'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+              77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+              18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+              9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+              85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+              540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+              18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+              85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+            OnClick = btnOpenScriptClick
+          end
+          object btnOpenSource: TBitBtn
+            Left = 383
+            Top = 91
+            Width = 23
+            Height = 23
+            Hint = 'Open'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+              77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+              18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+              9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+              85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+              540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+              18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+              85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
+            OnClick = btnOpenSourceClick
+          end
+          object btnRunNoDebug: TBitBtn
+            Left = 108
+            Top = 145
+            Width = 109
+            Height = 25
+            Caption = 'Run (No Debug)'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              185728164F25164F25164F25154C23154C23154C23154C23154C23154C23154C
+              23FFFFFFFFFFFFFFFFFFFFFFFF1C672F80B48ECBEFD4B8E9C5B8E9C5B8E9C5B8
+              E9C5A1E2B2A1E2B2A1E2B2AFE6BD80B48E154C23FFFFFFFFFFFFFFFFFF1C672F
+              F4FBF64DD1774BCF7449CD7147CB6D44C96941C6653EC25F3EC25F3EC25FAFE6
+              BD154C23FFFFFFFFFFFFFFFFFF217436E8F8EC4FD37A4DD1774BCF7449CD7147
+              CB6D41C66541C6653EC25F3EC25FA1E2B2154C23FFFFFFFFFFFFFFFFFF26873E
+              E8F8EC52D57D4FD37A4DD177FFFFFF49CD7144C96944C96941C6653EC25FA1E2
+              B2154C23FFFFFFFFFFFFFFFFFF26873EE8F8EC54D68052D57D4FD37AFFFFFFFF
+              FFFF47CB6D44C96941C66541C665A1E2B2154C23FFFFFFFFFFFFFFFFFF2CA149
+              E8F8EC56D98556D98554D680FFFFFFFFFFFFFFFFFF49CD7147CB6D44C969B8E9
+              C5164F25FFFFFFFFFFFFFFFFFF2CA149E8F8EC59DB8956D98556D985FFFFFFFF
+              FFFF4DD1774BCF7449CD7147CB6DB8E9C5164F25FFFFFFFFFFFFFFFFFF2FAA4E
+              E8F8EC5ADC8A59DB8956D985FFFFFF54D6804FD37A4DD1774BCF7449CD71B8E9
+              C5185728FFFFFFFFFFFFFFFFFF2FAA4EE8F8EC5CDE8E5ADC8A59DB8956D98556
+              D98552D57D4FD37A4DD1774BCF74B8E9C5185728FFFFFFFFFFFFFFFFFF2FAA4E
+              F4FBF65CDE8E5CDE8E5ADC8A59DB8956D98554D68052D57D4FD37A4DD177CBEF
+              D41C672FFFFFFFFFFFFFFFFFFF2FAA4E80B48EF4FBF6E8F8ECE8F8ECE8F8ECE8
+              F8ECE8F8ECE8F8ECE8F8ECF4FBF6A1E2B2217436FFFFFFFFFFFFFFFFFFFFFFFF
+              2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2FAA4E2CA1492CA1492894442894442687
+              3EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            TabOrder = 6
+            OnClick = mnuRunNoDebugClick
+          end
+          object cbxOutcome: TComboBox
+            Left = 101
+            Top = 118
+            Width = 80
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 7
+            OnChange = cbxOutcomeChange
+            OnClick = cbxOutcomeChange
+            Items.Strings = (
+              'Ignore'
+              'Save To'
+              'Compare To')
+          end
+          object cbxTarget: TComboBox
+            Left = 187
+            Top = 118
+            Width = 190
+            Height = 21
+            Style = csDropDownList
+            TabOrder = 8
+            OnChange = cbxSourceChange
+          end
+          object btnOpenTarget: TBitBtn
+            Left = 383
+            Top = 118
+            Width = 23
+            Height = 23
+            Hint = 'Open'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+              078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+              BE078DBEFF00FFFF00FF078DBE25A1D172C7E785D7FA66CDF965CDF965CDF965
+              CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FF078DBE4CBCE7
+              39A8D1A0E2FB6FD4FA6FD4F96ED4FA6FD4F96FD4FA6FD4FA6FD4FA6ED4F93EB1
+              D984D7EB078DBEFF00FF078DBE72D6FA078DBEAEEAFC79DCFB79DCFB79DCFB79
+              DCFB79DCFB7ADCFB79DCFA79DCFA44B5D9AEF1F9078DBEFF00FF078DBE79DDFB
+              1899C79ADFF392E7FB84E4FB83E4FC83E4FC84E4FC83E4FC83E4FB84E5FC48B9
+              DAB3F4F9078DBEFF00FF078DBE82E3FC43B7DC65C3E0ACF0FD8DEBFC8DEBFC8D
+              EBFD8DEBFD8DEBFC8DEBFD0C85184CBBDAB6F7F96DCAE0078DBE078DBE8AEAFC
+              77DCF3229CC6FDFFFFC8F7FEC9F7FEC9F7FEC9F7FEC8F7FE0C85183CBC5D0C85
+              18DEF9FBD6F6F9078DBE078DBE93F0FE93F0FD1697C5078DBE078DBE078DBE07
+              8DBE078DBE0C851852D97F62ED9741C4650C8518078DBE078DBE078DBE9BF5FE
+              9AF6FE9AF6FE9BF5FD9BF6FE9AF6FE9BF5FE0C851846CE6C59E48858E18861EB
+              9440C1650C8518FF00FF078DBEFEFEFEA0FBFFA0FBFEA0FBFEA1FAFEA1FBFE0C
+              85180C85180C85180C851856E18447CD6E0C85180C85180C8518FF00FF078DBE
+              FEFEFEA5FEFFA5FEFFA5FEFF078CB643B7DC43B7DC43B7DC0C85184EDD7936BA
+              540C8518FF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+              00FFFF00FFFF00FF0C851840D0650C8518FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85182AB7432DBA490C85
+              18FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FF0C851821B5380C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C85180C8518FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
+              85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 9
+            OnClick = btnOpenTargetClick
+          end
         end
       end
     end
@@ -1063,13 +1131,17 @@ object TransformerForm: TTransformerForm
   object pnlStatus: TStatusBar
     Left = 0
     Top = 576
-    Width = 1259
+    Width = 960
     Height = 19
     AutoHint = True
     Panels = <
       item
         Text = '0, 0'
         Width = 50
+      end
+      item
+        Text = 'Path'
+        Width = 150
       end
       item
         Text = 'INS'
@@ -1080,10 +1152,11 @@ object TransformerForm: TTransformerForm
         Width = 300
       end>
     SizeGrip = False
+    ExplicitWidth = 1315
   end
   object btnMaximise: TBitBtn
-    Left = 1232
-    Top = 24
+    Left = 933
+    Top = 27
     Width = 22
     Height = 22
     Anchors = [akTop, akRight]
@@ -1118,10 +1191,11 @@ object TransformerForm: TTransformerForm
       CDEADBCDEBDCCDEFDFD0}
     TabOrder = 4
     OnClick = btnMaximiseClick
+    ExplicitLeft = 1288
   end
   object btnNormalSize: TBitBtn
-    Left = 1232
-    Top = 24
+    Left = 933
+    Top = 27
     Width = 22
     Height = 22
     Anchors = [akTop, akRight]
@@ -1155,12 +1229,13 @@ object TransformerForm: TTransformerForm
     TabOrder = 5
     Visible = False
     OnClick = btnNormalSizeClick
+    ExplicitLeft = 1288
   end
   object ImageList1: TImageList
     Left = 25
     Top = 90
     Bitmap = {
-      494C01012C008800800110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D008800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1171,120 +1246,120 @@ object TransformerForm: TTransformerForm
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      0000CFB8B40091605A00814B450088544F0093686100A47C7700C9A7A400F3E8
+      E900000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000009056
+      4F006E251D0072231D00934B2F009B5A3C00954946008E373700975458009D77
+      6E00768670000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000008C483F007B21
+      1900B0582D00BF6A3300BB5A3300BE59330089221F00453F12001F5D0D003981
+      2B005B9C4D00D6B5B50000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000B9837C008A211900AE3C
+      260095622A003B51160048491600554015004D3B14000E750A00135D06001252
+      0100277B1E004C4A2900E6CED200000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000FAF6F50097352A00A72523004D48
+      1D00068A0E003D6D1D003D641A004E531F003C5A1A00028807000C8A0A001473
+      0A000C770500255D13008C505100F5E9EB000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000D9B1AA00AC26240052571D00039D
+      0E0010770D0061501F006D542A00874F3100BB543A006062240020951100137D
+      0D00047F030011890D006D1F2200C79195000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000C4766B00A930280027711300098C
+      0A001B6D0E003B63150078411D00C6703800D6824100F29B4300D0783D00A957
+      300071621F0025530E007A1C1C00984C4A000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000C46E62008B492D00257B1A00239C
+      25002D932F00138728007E5C2400D5813500D8A83F00DE9E4100DA8B4100E18A
+      3F00E7923C008B1D19007920170098534C000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000CBA69B006F91580037B841003BB0
+      40005BAE5D0042C2610060903800B5622A00FAD44600DBA94000C5833F00AE61
+      3700A94128009C281C007B1E1500AE706A000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000E4D7D00099C88B0088FAA0007BBE
+      6F007BA85A0057D4650069AD6C00C0945100FFEE5000E5C04000CC963E00DA8D
+      3A00C4722F00B667280091352A00D8B3AE000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000093987800DDD9A800B2E0
+      B40097CB8C0093C97B00CEE0B400FFFFCC00FCED6100EDC93800F4A23E00B782
+      30001A5A12003A3F1100CF767000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000A8AFA800D2C78F00DDD9
+      B000C9EBD100C8E3C300EDF0C000FFFFC700FFF68F00FFBC4800A86427001680
+      1D0000E0130014700B00E2DBDC00000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000008E988C00D4E3
+      AD00FFFFEB00E1E8C600E2D7A500DCD89800CFC88D009EAA6B0036B83E0012FF
+      290011BD0F009EA99C0000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000000000ACB5
+      AD0092A47700C8F1A700C1F9B200A6E19B007BED820075B56A0043E6480034AE
+      3500C2C4C0000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000EBECEB0098A89A006D976F00699569005E8F5F008A967A00B4B6AD00F9F9
+      F900000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2700,11 +2775,11 @@ object TransformerForm: TTransformerForm
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000424D3E000000000000003E000000
       2800000040000000C00000000100010000000000000600000000000000000000
-      000000000000000000000000FFFFFF0000000000000000000000000000000000
+      000000000000000000000000FFFFFF00FFFF000000000000F00F000000000000
+      E007000000000000C00300000000000080010000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      000000000000000080010000000000008001000000000000C003000000000000
+      E007000000000000F00F000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       C007FFFFFFFFFFFF8003FFFFFFFFFFFF8003FFFFFFFFFFFF8003F81FF81FF81F
       8203F81FF81FF81F8303F81FF81FF81F8383F81FF81FF81F8303F81FF81FF81F
       8203F81FF81FF81F8003FFFFFFFFFFFF8003FFFFFFFFFFFF8003FFFFFFFFFFFF
@@ -2789,6 +2864,10 @@ object TransformerForm: TTransformerForm
           Caption = '&Template'
           OnClick = mnuNewTemplateClick
         end
+        object mnuNewMarkdown: TMenuItem
+          Caption = 'Mar&kdown '
+          OnClick = NewMarkdown1Click
+        end
       end
       object mnuOpen: TMenuItem
         Caption = '&Open'
@@ -2854,9 +2933,8 @@ object TransformerForm: TTransformerForm
         OnClick = Exit1Click
       end
     end
-    object Edit1: TMenuItem
+    object mnuEdit: TMenuItem
       Caption = '&Edit'
-      Enabled = False
       object mnuUndo: TMenuItem
         Caption = '&Undo'
         ImageIndex = 20
@@ -2917,6 +2995,24 @@ object TransformerForm: TTransformerForm
         Caption = '&Go to Line...'
         ShortCut = 16455
         OnClick = mnuGotoClick
+      end
+      object N13: TMenuItem
+        Caption = '-'
+      end
+      object mnuClipboard: TMenuItem
+        Caption = 'Clip&board'
+        object mnuCopyFileName: TMenuItem
+          Caption = 'Copy &File Name'
+          OnClick = mnuCopyFileNameClick
+        end
+        object mnuCopyDirectory: TMenuItem
+          Caption = 'Copy &Directory'
+          OnClick = mnuCopyDirectoryClick
+        end
+        object mnuCopyContents: TMenuItem
+          Caption = 'Copy &Contents'
+          OnClick = mnuCopyContentsClick
+        end
       end
     end
     object Settings1: TMenuItem
@@ -3085,6 +3181,10 @@ object TransformerForm: TTransformerForm
       Caption = 'New &Template'
       OnClick = mnuNewTemplateClick
     end
+    object NewMarkdown1: TMenuItem
+      Caption = 'New Mar&kdown'
+      OnClick = NewMarkdown1Click
+    end
   end
   object pmWorkspace: TPopupMenu
     OnPopup = pmWorkspacePopup
@@ -3114,11 +3214,11 @@ object TransformerForm: TTransformerForm
   end
   object odImport: TOpenDialog
     Filter = 
-      'Known Files|*.msg;*.hl7;*.cda;*.json;*.xml;*.js;*.map;*.liquid|M' +
-      'essages (*.msg, *.hl7)|*.msg;*.hl7|CDA Documents (*.cda, *.xml)|' +
-      '*.cda;*.xml|Resources (*.json, *.xml)|*.json;*.xml|Scripts (*.js' +
-      ')|*.js|Maps (*.map)|*.map|Templates (*.liquid)|*.liquid|All File' +
-      's|*.*'
+      'Known Files|*.msg;*.hl7;*.cda;*.xml;*.json;*.js;*.map;*.liquid;*' +
+      '.md|Messages (*.msg, *.hl7)|*.msg;*.hl7|CDA Documents (*.cda, *.' +
+      'xml)|*.cda;*.xml|Resources (*.json, *.xml)|*.json;*.xml|Scripts ' +
+      '(*.js)|*.js|Maps (*.map)|*.map|Templates (*.liquid)|*.liquid|Mar' +
+      'kdowns (*.md)|*.md|All Files|*.*'
     Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
     Left = 48
     Top = 300

@@ -2414,10 +2414,10 @@ begin
   json := TJsonWriterDirect.create;
   try
     json.Stream := stream.Link;
-    json.Start;
+    json.Start(true);
     json.HasWhitespace := style = OutputStylePretty;
     composeElement(e);
-    json.Finish;
+    json.Finish(true);
   finally
     json.free;
   end;

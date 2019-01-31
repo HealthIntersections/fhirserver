@@ -738,7 +738,7 @@ begin
   ch := '/';
   ConsumeChar(ch);
   done := false;
-  while not done do
+  while not done and not EndOfLine do
   begin
     ConsumeCharsNot([ch, '\']);
     done := CurCharIs(ch);
@@ -879,7 +879,7 @@ end;
 procedure TCommonMarkStyler.ContentChanged;
 begin
   FLines.Free;
-  FLines := TCommonMarkEngine.parseStyles(Text);
+  FLines := TCommonMarkEngine.parseStyles(Text, true);
 end;
 
 destructor TCommonMarkStyler.Destroy;
@@ -904,7 +904,7 @@ begin
       begin
       Attributes.ForeColor := clPurple;
       Attributes.FontStyle := [fsBold];
-      Attributes.BackColor := clLtGray;
+      Attributes.BackColor := clYellow;
       end;
     cmDelimiter :
       begin
@@ -927,7 +927,7 @@ var
   i : integer;
   st : TCommonMarkStyle;
 begin
-  if FLines = nil then
+  if (FLines = nil) or (FirstLine >= FLines.count) then
   begin
     ConsumeAllRemaining;
     CommitStyle(cmText);

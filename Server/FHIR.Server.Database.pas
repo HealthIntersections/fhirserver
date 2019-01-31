@@ -2160,16 +2160,21 @@ var
   needSecure : boolean;
   list : TMatchingResourceList;
   parser : TFHIRParser;
+  comp : TFHIRComposer;
   json, json2 : TJsonObject;
   xml : TMXmlDocument;
+  res : TFHIRResourceV;
   ms : TFslMemoryStream;
   src : TBytes;
   meta : TFhirMetaW;
   b : TFHIRBundleW;
+  diff : TDifferenceEngine;
+  params : TFHIRParametersW;
 begin
   result := false;
   json := nil;
   xml := nil;
+  res := nil;
   nvid := 0;
   key := 0;
   try
@@ -2177,7 +2182,7 @@ begin
     if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
 
-    if ok and (not check(response, (request.patchJson <> nil) or (request.patchXml <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), itRequired) or
+    if ok and (not check(response, (request.Resource <> nil) or (request.patchJson <> nil) or (request.patchXml <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), itRequired) or
        not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), itInvalid)) then
       ok := false;
 
@@ -2216,22 +2221,34 @@ begin
       end;
     end;
 
-    // ok, now time to actually get the resource, so we can patch it
-    if (request.patchJson <> nil) then
-      FConnection.SQL := 'Select Secure, StatedDate, VersionId, JsonContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc'
-    else
-      FConnection.SQL := 'Select Secure, StatedDate, VersionId, XmlContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
-    FConnection.Prepare;
-    try
-      FConnection.Execute;
-      if not check(response, FConnection.FetchNext, 500, lang, 'Not Found internally', itNotFound) then
-        ok := false
-      else if (request.patchJson <> nil) then
-        json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
+    if ok then
+    begin
+      // ok, now time to actually get the resource, so we can patch it
+      if (request.patchJson <> nil) then
+        FConnection.SQL := 'Select Secure, StatedDate, VersionId, JsonContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc'
       else
-        xml := TMXmlParser.Parse(FConnection.ColBlobByName['XmlContent'], [xpResolveNamespaces])
-    finally
-      FConnection.Terminate;
+        FConnection.SQL := 'Select Secure, StatedDate, VersionId, XmlContent from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
+      FConnection.Prepare;
+      try
+        FConnection.Execute;
+        if not check(response, FConnection.FetchNext, 500, lang, 'Resource Not Found internally', itNotFound) then
+          ok := false
+        else if (request.patchJson <> nil) then
+          json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
+        else if (request.patchXml <> nil) then
+          xml := TMXmlParser.Parse(FConnection.ColBlobByName['XmlContent'], [xpResolveNamespaces])
+        else
+        begin
+          parser := factory.makeParser(request.Context.link, ffXml, 'en');
+          try
+            res := parser.parseResource(FConnection.ColBlobByName['XmlContent']);
+          finally
+            parser.Free;
+          end;
+        end;
+      finally
+        FConnection.Terminate;
+      end;
     end;
 
     if ok then
@@ -2261,7 +2278,7 @@ begin
             json2.Free;
           end;
         end
-        else
+        else if (request.patchXml <> nil) then
         begin
           TXmlPatchEngine.execute(xml, xml, request.patchXml);
           request.Source.AsText := xml.ToXml;
@@ -2274,9 +2291,32 @@ begin
           finally
             parser.Free;
           end;
+        end
+        else // request.resource <> nil
+        begin
+          params := factory.wrapParams(request.Resource.link);
+          try
+            diff := TDifferenceEngine.Create(request.Context.link, factory.link);
+            try
+              request.Resource := diff.applyDifference(res, params) as TFHIRResourceV;
+              comp := factory.makeComposer(request.Context.link, ffXml, 'en', OutputStyleNormal);
+              try
+                request.Source.AsBytes := comp.ComposeBytes(request.Resource);
+              finally
+                comp.Free;
+              end;
+              request.PostFormat := ffXml;
+            finally
+              diff.Free;
+            end;
+          finally
+            params.Free;
+          end;
         end;
       finally
         json.Free;
+        xml.Free;
+        res.Free;
       end;
 
       // ok, now we have a resource.....
@@ -2323,7 +2363,7 @@ begin
           FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
 
           FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
-            'SessionKey, Secure, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :sec, :tb, :xc, :xs, :jc, :js)';
+            'SessionKey, ForTesting, Secure, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
           FConnection.prepare;
           try
             FConnection.BindInteger('k', key);
@@ -2338,6 +2378,7 @@ begin
             else
               FConnection.BindInteger('s', request.Session.Key);
             FConnection.BindInteger('f', 2);
+            FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
             FConnection.BindBlob('tb', tags.json);
             src := EncodeResource(request.resource, true, soFull);
             FConnection.BindBlob('xc', src);
@@ -4887,7 +4928,7 @@ begin
         b := FConnection.ColBlobByName['JsonContent'];
         parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
         try
-          result := parser.parseResource(s);
+          result := parser.parseResource(b);
         finally
           parser.free;
         end;

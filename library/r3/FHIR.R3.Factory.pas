@@ -365,7 +365,7 @@ end;
 
 function TFHIRFactoryR3.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  raise Exception.create('Not supported in R3');
+  result := TFhirTerminologyCapabilities3.create(TFHIRParameters.create);
 end;
 
 function TFHIRFactoryR3.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;

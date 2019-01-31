@@ -608,7 +608,7 @@ function TFHIRStructureMapUtilities.parse(text : String) : TFHIRStructureMap;
 var
   lexer : TFHIRPathLexer;
 begin
-  lexer := TFHIRPathLexer3.Create(text);
+  lexer := TFHIRPathLexer3.Create(fpV1, text);
   try
 		if (lexer.done()) then
 			raise EFHIRException.create('Map Input cannot be empty');
