@@ -831,7 +831,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\xml-patch-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\xml-patch-tests.xml', [xpResolveNamespaces]);
   try
     test := tests.document.first;
     i := 0;
@@ -891,7 +891,7 @@ end;
 
 procedure TXmlPatchTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\xml-patch-tests.xml', [xpResolveNamespaces, xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\xml-patch-tests.xml', [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
@@ -951,7 +951,7 @@ var
   path : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1051,7 +1051,7 @@ end;
 
 procedure TXPathParserTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
   functionNames := TStringList.Create;
 end;
 
@@ -1069,7 +1069,7 @@ var
   tcase : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1300,10 +1300,10 @@ end;
 
 procedure TXPathEngineTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
   tests.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
   tests.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
-  mstests := TMsXmlParser.Parse('C:\work\org.hl7.fhir\build\tests\xml\xpath-tests.xml');
+  mstests := TMsXmlParser.Parse('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml');
   mstests.setProperty('SelectionNamespaces','xmlns:f=''http://hl7.org/fhir'' xmlns:h=''http://www.w3.org/1999/xhtml''');
 end;
 

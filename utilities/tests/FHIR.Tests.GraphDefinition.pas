@@ -70,7 +70,7 @@ var
   i: integer;
 begin
   if tests = nil then
-    tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\graphdefinition\manifest.xml', [xpDropWhitespace]);
+    tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition\manifest.xml', [xpDropWhitespace]);
 
   test := tests.document.first;
   i := 0;
@@ -180,7 +180,7 @@ var
   test : TMXmlElement;
 begin
   if tests = nil then
-    tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\graphdefinition\manifest.xml', [xpDropWhitespace]);
+    tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition\manifest.xml', [xpDropWhitespace]);
 
   result := nil;
   test := tests.document.first;
@@ -204,7 +204,7 @@ var
 begin
   Assert.IsTrue(name <> '');
   test := findTest(name);
-  src := FileToString(path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']]), TEncoding.UTF8);
+  src := FileToString(path(['C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition', test.attribute['source']]), TEncoding.UTF8);
   gd := nil;
   try
     parser := TFHIRGraphDefinitionParser4.create;
@@ -213,7 +213,7 @@ begin
     finally
       parser.free;
     end;
-//    StringToFile(TFHIRGraphDefinitionParser4.asString(gd, false), path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']+'.out']), TEncoding.UTF8);
+//    StringToFile(TFHIRGraphDefinitionParser4.asString(gd, false), path(['C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition', test.attribute['source']+'.out']), TEncoding.UTF8);
     engine := TFHIRGraphDefinitionEngine4.Create(TTestingWorkerContext.Use);
     try
       engine.OnListResources := ListResources;
@@ -228,7 +228,7 @@ begin
 
       engine.execute;
 
-      f := TFileStream.Create(path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']+'.bundle']), fmCreate);
+      f := TFileStream.Create(path(['C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition', test.attribute['source']+'.bundle']), fmCreate);
       try
         x := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en');
         try

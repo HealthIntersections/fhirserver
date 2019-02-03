@@ -1093,7 +1093,7 @@ begin
       try
         for be in bel do
           list.Add(TFHIRGraphQLSearchEdge.create(ffactory.link, be.Link));
-        result := TFHIRProperty.Create(self, propname, 'edge', true, nil, TFslList<TFHIRObject>(list));
+        result := TFHIRProperty.Create<TFHIRGraphQLSearchEdge>(self, propname, 'edge', true, nil, list);
       finally
         bel.Free;
       end;

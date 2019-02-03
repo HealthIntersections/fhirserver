@@ -170,7 +170,7 @@ Type
   TBackgroundTaskEngine = class;
 
   TBackgroundTaskEvent = procedure (id : integer; response : TBackgroundTaskPackage) of object;
-  TBackgroundTaskStatus = (btsWaiting, btsProcessing, btsCancelling, btsReady, btsClosed);
+  TBackgroundTaskStatus = (btsWaiting, btsProcessing, btsCancelling, btsReady, btsClosed,  btsWaitingForUIResponse, btwRespondingOnUI, btsUIResponded);
 
   TBackgroundTaskThread = class(TThread)
   private
@@ -179,6 +179,18 @@ Type
     procedure Execute; override;
   public
     constructor Create(engine : TBackgroundTaskEngine); // no link
+  end;
+
+  TBackgroundTaskUIRequest = class (TFslObject)
+  private
+  public
+    function link : TBackgroundTaskUIRequest; overload;
+  end;
+
+  TBackgroundTaskUIResponse = class (TFslObject)
+  private
+  public
+    function link : TBackgroundTaskUIResponse; overload;
   end;
 
   TBackgroundTaskEngine = class abstract (TFslObject)
@@ -196,11 +208,16 @@ Type
     FWantStop : boolean;
     FWaiting : TBackgroundTaskPackage;
     FStatus : TBackgroundTaskStatus;
+    FUIRequest : TBackgroundTaskUIRequest;
+    FUIResponse : TBackgroundTaskUIResponse;
     procedure break;
     procedure stop;
     procedure threadProc;
     procedure doExec(pck : TBackgroundTaskPackage);
     procedure setStatus(v : TBackgroundTaskStatus);
+  protected
+    FUIException : String;
+    FUIExceptionClass : TClass;
   public
     constructor Create(notify : TBackgroundTaskEvent);
     destructor Destroy; override;
@@ -215,6 +232,13 @@ Type
     property response : TBackgroundTaskPackage read FResponse write SetResponse;
     procedure execute; virtual; abstract;
     procedure progress(state : String; pct : integer); // -1 for no pct. may throw EAbort
+
+    // ask for an interaction with the user, passing request and getting response (or an exception)
+    // a task that calls this must override performUIInteraction
+    procedure uiInteraction(request : TBackgroundTaskUIRequest; response : TBackgroundTaskUIResponse);
+
+    // override this if the engine will call uiInteraction. It will happen on the main UI thread so is blocking for that thread
+    procedure performUIInteraction(request : TBackgroundTaskUIRequest; response : TBackgroundTaskUIResponse); virtual;
   end;
 
   TBackgroundTaskManager = class (TFslObject)
@@ -681,6 +705,12 @@ begin
   end;
 end;
 
+procedure TBackgroundTaskEngine.performUIInteraction(
+  request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
+begin
+
+end;
+
 procedure TBackgroundTaskEngine.progress(state: String; pct: integer);
 begin
   if FWantStop or FWantBreak then
@@ -750,6 +780,11 @@ begin
     GBackgroundTasks.log('close task '+name);
     setStatus(btsClosed);
   end;
+end;
+
+procedure TBackgroundTaskEngine.uiInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 procedure TBackgroundTaskEngine.break;
@@ -834,7 +869,10 @@ procedure TBackgroundTaskManager.primaryThreadCheck;
 var
   e : TBackgroundTaskEngine;
   resp : TBackgroundTaskPackage;
+  uReq : TBackgroundTaskUIRequest;
+  uResp : TBackgroundTaskUIResponse;
 begin
+  // first round: are any tasks complete
   for e in FEngines do
   begin
     resp := nil;
@@ -862,6 +900,51 @@ begin
       exit; // only one outcome per iteration - don't tie up the pimary thread
     end;
   end;
+  // second round: any tasks want user interaction
+  for e in FEngines do
+  begin
+    resp := nil;
+    FLock.Lock;
+    try
+      if e.FStatus = btsWaitingForUIResponse then
+      begin
+        log('UI Response needed for '+e.name);
+        e.FStatus := btsWaitingForUIResponse;
+        uReq := e.FUIRequest.Link;
+        uResp := e.FUIResponse.Link;
+      end;
+    finally
+      FLock.Unlock;
+    end;
+
+    if uReq <> nil then
+    begin
+      try
+        log('get UI response for '+e.name);
+        try
+          e.OnNotify(e.FId, resp);
+        except
+          on ex : Exception do
+          begin
+            e.FUIException := ex.Message;
+            e.FUIExceptionClass := ex.ClassType;
+          end;
+        end;
+        FLock.Lock;
+        try
+          e.FStatus := btsUIResponded;
+        finally
+          FLock.Unlock;
+        end;
+        log('finished getting UI Response for '+e.name);
+      finally
+        uReq.Free;
+        uResp.Free;
+      end;
+      exit; // only one outcome per iteration - don't tie up the pimary thread
+    end;
+  end;
+
 end;
 
 procedure TBackgroundTaskManager.queueTask(id: integer; package: TBackgroundTaskPackage);
@@ -950,6 +1033,20 @@ begin
 end;
 
 
+
+{ TBackgroundTaskUIRequest }
+
+function TBackgroundTaskUIRequest.link: TBackgroundTaskUIRequest;
+begin
+  result := TBackgroundTaskUIRequest(inherited link);
+end;
+
+{ TBackgroundTaskUIResponse }
+
+function TBackgroundTaskUIResponse.link: TBackgroundTaskUIResponse;
+begin
+  result := TBackgroundTaskUIResponse(inherited link);
+end;
 
 Initialization
   InitUnit;

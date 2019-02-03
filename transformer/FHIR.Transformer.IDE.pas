@@ -163,11 +163,6 @@ type
     mnuGoto: TMenuItem;
     FindNext2: TMenuItem;
     mnuClose: TMenuItem;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    cbxEventType: TComboBox;
-    cbxSource: TComboBox;
     Execute1: TMenuItem;
     mnuExecute: TMenuItem;
     btnExecute: TBitBtn;
@@ -180,8 +175,6 @@ type
     btnConsoleCopy: TButton;
     mConsole: TMemo;
     tbExecute: TToolButton;
-    cbxScript: TComboBox;
-    lblScript: TLabel;
     ools1: TMenuItem;
     mnuCompare: TMenuItem;
     ToolButton3: TToolButton;
@@ -213,8 +206,6 @@ type
     mnuSaveAll: TMenuItem;
     tbSaveAll: TToolButton;
     mnuChooseWorkspace: TMenuItem;
-    btnOpenScript: TBitBtn;
-    btnOpenSource: TBitBtn;
     btnMaximise: TBitBtn;
     btnNormalSize: TBitBtn;
     tbBreakpoints: TTabSheet;
@@ -254,10 +245,6 @@ type
     vtCallStack: TVirtualStringTree;
     Splitter4: TSplitter;
     Panel15: TPanel;
-    Label6: TLabel;
-    cbxOutcome: TComboBox;
-    cbxTarget: TComboBox;
-    btnOpenTarget: TBitBtn;
     Help1: TMenuItem;
     N11: TMenuItem;
     About1: TMenuItem;
@@ -273,6 +260,8 @@ type
     mnuCopyDirectory: TMenuItem;
     mnuCopyContents: TMenuItem;
     Panel17: TPanel;
+    VirtualStringTree1: TVirtualStringTree;
+    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -321,11 +310,8 @@ type
     procedure FindDialogFind(Sender: TObject);
     procedure ReplaceDialogReplace(Sender: TObject);
     procedure mnuGotoClick(Sender: TObject);
-    procedure cbxEventTypeChange(Sender: TObject);
-    procedure cbxSourceChange(Sender: TObject);
     procedure mnuPackageManagerClick(Sender: TObject);
     procedure btnExecuteClick(Sender: TObject);
-    procedure cbxScriptChange(Sender: TObject);
     procedure Rewrite1Click(Sender: TObject);
     procedure mnuCompareClick(Sender: TObject);
     procedure mnuSaveClick(Sender: TObject);
@@ -340,8 +326,6 @@ type
     procedure mnuCompileClick(Sender: TObject);
     procedure mnuSaveAllClick(Sender: TObject);
     procedure mnuChooseWorkspaceClick(Sender: TObject);
-    procedure btnOpenScriptClick(Sender: TObject);
-    procedure btnOpenSourceClick(Sender: TObject);
     procedure btnMaximiseClick(Sender: TObject);
     procedure btnNormalSizeClick(Sender: TObject);
     procedure btnPathGoClick(Sender: TObject);
@@ -371,8 +355,6 @@ type
     procedure vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
     procedure pmEditorPopup(Sender: TObject);
-    procedure cbxOutcomeChange(Sender: TObject);
-    procedure btnOpenTargetClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure estException1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -588,24 +570,6 @@ begin
   btnNormalSize.Visible := false;
 end;
 
-procedure TTransformerForm.btnOpenScriptClick(Sender: TObject);
-begin
-  if cbxScript.ItemIndex > -1 then
-    openWorkspaceFile(cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
-end;
-
-procedure TTransformerForm.btnOpenSourceClick(Sender: TObject);
-begin
-  if cbxSource.ItemIndex > -1 then
-    openWorkspaceFile(cbxSource.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
-end;
-
-procedure TTransformerForm.btnOpenTargetClick(Sender: TObject);
-begin
-  if cbxTarget.ItemIndex > -1 then
-    openWorkspaceFile(cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile);
-end;
-
 function tail(s : String) : String;
 begin
   if s.Contains('/') then
@@ -751,83 +715,11 @@ begin
   end;
 end;
 
-procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
-  procedure loadSource(srcList, scrList, dstList : TFslList<TWorkspaceFile>; caption : String);
-  var
-    f : TWorkspaceFile;
-  begin
-    lblScript.Caption := caption;
-    cbxScript.Items.Clear;
-    for f in scrlist do
-      cbxScript.Items.AddObject(f.title, f);
-    cbxScript.ItemIndex := cbxScript.Items.IndexOf(FWorkspace.Script);
-    if (cbxScript.ItemIndex = -1) and (cbxScript.Items.Count > 0) then
-      cbxScript.ItemIndex := 0;
-
-    cbxSource.Items.Clear;
-    for f in srclist do
-      cbxSource.Items.AddObject(f.title, f);
-    cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
-    if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
-      cbxSource.ItemIndex := 0;
-
-    cbxTarget.Items.Clear;
-    for f in dstlist do
-      cbxTarget.Items.AddObject(f.title, f);
-    cbxTarget.ItemIndex := cbxTarget.Items.IndexOf(FWorkspace.Target);
-    if (cbxTarget.ItemIndex = -1) and (cbxTarget.Items.Count > 0) then
-      cbxTarget.ItemIndex := 0;
-    checkExecutionState;
-  end;
-begin
-   case cbxEventType.ItemIndex of
-    0: LoadSource(FWorkspace.messages, FWorkspace.scripts, FWorkspace.resources, 'Scripts');
-    1: LoadSource(FWorkspace.documents, FWorkspace.maps, FWorkspace.resources, 'Maps');
-  end;
-  if not Floading then
-  begin
-    FWorkspace.EventType := cbxEventType.ItemIndex;
-    FWorkspace.Source := cbxSource.Text;
-    FWorkspace.Script := cbxScript.Text;
-    FWorkspace.Target := cbxTarget.Text;
-    FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-    FWorkspace.Save;
-  end;
-end;
-
-procedure TTransformerForm.cbxOutcomeChange(Sender: TObject);
-begin
-  cbxTarget.Enabled := cbxOutcome.ItemIndex > 0;
-  FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-end;
-
-procedure TTransformerForm.cbxScriptChange(Sender: TObject);
-begin
-  if not Floading then
-  begin
-    FWorkspace.Script := cbxScript.Text;
-    FWorkspace.Save;
-  end;
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-end;
-
-procedure TTransformerForm.cbxSourceChange(Sender: TObject);
-begin
-  if not Floading then
-  begin
-    FWorkspace.Source := cbxSource.Text;
-    FWorkspace.Save;
-  end;
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-end;
-
 procedure TTransformerForm.checkExecutionState;
 begin
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  btnExecute.enabled := false; // not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
   mnuExecute.Enabled := btnExecute.enabled;
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  btnRunNoDebug.enabled := false; // not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
   mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
 end;
 
@@ -1547,23 +1439,23 @@ end;
 
 function TTransformerForm.loadEvent: TExecutionDetails;
 begin
-  result := TExecutionDetails.create;
-  try
-    result.kind := TExecutionKind(cbxEventType.ItemIndex);
-    if cbxSource.ItemIndex = -1 then
-      exit(nil);
-    result.focus := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
-    if cbxScript.ItemIndex = -1 then
-      exit(nil);
-    result.script := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
-    result.outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-    if cbxTarget.ItemIndex = -1 then
-      exit(nil);
-    result.target := (cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile).link;
-    result.Link;
-  finally
-    result.Free;
-  end;
+//  result := TExecutionDetails.create;
+//  try
+//    result.kind := TExecutionKind(cbxEventType.ItemIndex);
+//    if cbxSource.ItemIndex = -1 then
+//      exit(nil);
+//    result.focus := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
+//    if cbxScript.ItemIndex = -1 then
+//      exit(nil);
+//    result.script := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
+//    result.outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
+//    if cbxTarget.ItemIndex = -1 then
+//      exit(nil);
+//    result.target := (cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile).link;
+//    result.Link;
+//  finally
+//    result.Free;
+//  end;
 end;
 
 procedure TTransformerForm.LoadWorkspace(proj: TWorkspace);
@@ -1606,12 +1498,12 @@ begin
     edtWorkspace.Hint := proj.folder;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 7;
-    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
-    if cbxOutcome.ItemIndex = -1 then
-      cbxOutcome.ItemIndex := 0;
-    cbxOutcomeChange(nil);
-    cbxEventType.ItemIndex := FWorkspace.EventType;
-    cbxEventTypeChange(nil);
+//    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
+//    if cbxOutcome.ItemIndex = -1 then
+//      cbxOutcome.ItemIndex := 0;
+//    cbxOutcomeChange(nil);
+//    cbxEventType.ItemIndex := FWorkspace.EventType;
+//    cbxEventTypeChange(nil);
     files := FWorkspace.listOpenFiles;
     try
       for f in files do
@@ -2651,12 +2543,12 @@ begin
   FRunningState := true;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := true;
-  cbxEventType.Enabled := false;
-  cbxScript.Enabled := false;
-  cbxSource.Enabled := false;
-  cbxEventTypeChange(nil);
-  cbxScriptChange(nil);
-  cbxSourceChange(nil);
+//  cbxEventType.Enabled := false;
+//  cbxScript.Enabled := false;
+//  cbxSource.Enabled := false;
+//  cbxEventTypeChange(nil);
+//  cbxScriptChange(nil);
+//  cbxSourceChange(nil);
   pgTabsChange(nil);
 end;
 
@@ -2667,12 +2559,12 @@ begin
   FRunningState := false;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := false;
-  cbxEventType.Enabled := true;
-  cbxScript.Enabled := true;
-  cbxSource.Enabled := true;
-  cbxEventTypeChange(nil);
-  cbxScriptChange(nil);
-  cbxSourceChange(nil);
+//  cbxEventType.Enabled := true;
+//  cbxScript.Enabled := true;
+//  cbxSource.Enabled := true;
+//  cbxEventTypeChange(nil);
+//  cbxScriptChange(nil);
+//  cbxSourceChange(nil);
   pgTabsChange(nil);
 end;
 
