@@ -1,0 +1,21 @@
+<Group xmlns="http://hl7.org/fhir"> 
+ <active value="true"/>
+ <type value="person"/>
+ <actual value="true"/>
+ <name value="Test Group"/>
+ <characteristic>  <!-- 0..* Trait of group members -->
+  <code>
+    <coding>
+      <system value="http://hl7.org/fhir/StructureDefinition/Patient"/>
+      <code value="Patient.gender"/>
+    </coding>
+  </code>
+  <valueCodeableConcept>
+    <coding>
+      <system value="http://hl7.org/fhir/ValueSet/administrative-gender"/>
+      <code value="male"/>
+    </coding>
+  </valueCodeableConcept>
+  <exclude value="false"/>
+ </characteristic>
+</Group>
