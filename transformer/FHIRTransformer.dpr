@@ -133,7 +133,8 @@ uses
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
-  FHIR.Transformer.MarkdownPreview in 'FHIR.Transformer.MarkdownPreview.pas' {MarkdownPreviewForm};
+  FHIR.Transformer.MarkdownPreview in 'FHIR.Transformer.MarkdownPreview.pas' {MarkdownPreviewForm},
+  FHIR.Conversion.Engine in '..\library\conversion\FHIR.Conversion.Engine.pas';
 
 {$R *.res}
 
