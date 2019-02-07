@@ -217,7 +217,7 @@ Type
     procedure setStatus(v : TBackgroundTaskStatus);
   protected
     FUIException : String;
-    FUIExceptionClass : TClass;
+    FUIExceptionClass : ExceptClass;
   public
     constructor Create(notify : TBackgroundTaskEvent);
     destructor Destroy; override;
@@ -705,10 +705,9 @@ begin
   end;
 end;
 
-procedure TBackgroundTaskEngine.performUIInteraction(
-  request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
+procedure TBackgroundTaskEngine.performUIInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
 begin
-
+  raise Exception.Create('The method '+className+'.performUIInteraction needs to be overridden');
 end;
 
 procedure TBackgroundTaskEngine.progress(state: String; pct: integer);
@@ -784,7 +783,13 @@ end;
 
 procedure TBackgroundTaskEngine.uiInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
 begin
-  raise Exception.Create('Not done yet');
+  FRequest := request;
+  FResponse := response;
+  FStatus := btsWaitingForUIResponse;
+  while FStatus <> btsUIResponded do
+    sleep(50);
+  if FUIExceptionClass <> nil then
+    raise FUIExceptionClass.Create(FUIException);
 end;
 
 procedure TBackgroundTaskEngine.break;
@@ -912,6 +917,11 @@ begin
         e.FStatus := btsWaitingForUIResponse;
         uReq := e.FUIRequest.Link;
         uResp := e.FUIResponse.Link;
+      end
+      else
+      begin
+        uReq := nil;
+        uResp := nil;
       end;
     finally
       FLock.Unlock;
@@ -920,6 +930,8 @@ begin
     if uReq <> nil then
     begin
       try
+        e.FUIExceptionClass := nil;
+        e.FUIException := '';
         log('get UI response for '+e.name);
         try
           e.OnNotify(e.FId, resp);
@@ -927,7 +939,7 @@ begin
           on ex : Exception do
           begin
             e.FUIException := ex.Message;
-            e.FUIExceptionClass := ex.ClassType;
+            e.FUIExceptionClass := ExceptClass(ex.ClassType);
           end;
         end;
         FLock.Lock;

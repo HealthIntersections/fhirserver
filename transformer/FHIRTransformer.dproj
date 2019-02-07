@@ -289,10 +289,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -302,10 +302,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

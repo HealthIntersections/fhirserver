@@ -3813,8 +3813,10 @@ var
   l, r : TFHIRSelection;
   eq : TEqualityTriState;
 begin
-  if (left.count = 0) or (right.count = 0) then
+  if (left.count = 0) then
     exit(TFHIRSelectionList.Create);
+  if (right.count = 0) then
+    exit(TFHIRSelectionList.Create(TFHIRBoolean.create(false)));
   ans := true;
   for l in left do
   begin
