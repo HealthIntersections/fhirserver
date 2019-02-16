@@ -200,7 +200,7 @@ begin
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
-        GJsHost := TJsHost.Create('');
+        GJsHost := TJsHost.Create;
         try
           if FindCmdLineSwitch('installer') then
           begin

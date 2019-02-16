@@ -1184,7 +1184,7 @@ public class DelphiGenerator {
     if (!isAbstract) {
       jsClass.append("procedure define"+tj+"Js(js : TFHIRJavascript);\r\n");
       jsClass.append("var\r\n  def : TJavascriptClassDefinition;\r\nbegin\r\n");
-      jsClass.append("  def := js.defineClass('"+tj+"', nil, '"+tj+"', js.FHIRFactoryJs);\r\n");
+      jsClass.append("  def := js.defineClass('"+tj+version+"', nil, "/*+"'"+tj+version+"', "*/+"js.FHIRFactoryJs);\r\n");
       jsClass.append("  define"+tj+"PropsJs(js, def);\r\n");
       jsClass.append("end;\r\n\r\n");
     }
@@ -1558,6 +1558,7 @@ public class DelphiGenerator {
         prsrImplX.append("  GetObjectLocation(resource, element);\r\n");      
       prsrImplX.append(workingParserXA.toString());
       prsrImplX.append("end;\r\n\r\n");
+
       prsrdefX.append("    Function Parse"+root.getName()+"Child(resource : "+tn+"; path : string; child : TMXmlElement) : boolean;\r\n");
       prsrImplX.append("Function TFHIRXmlParser.Parse"+root.getName()+"Child(resource : "+tn+"; path : string; child : TMXmlElement) : boolean;\r\n");
       prsrImplX.append("begin\r\n");
@@ -2103,7 +2104,7 @@ public class DelphiGenerator {
     impl2.append("end;\r\n\r\n");
     impl2.append("function "+tn+".setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;\r\n");
     impl2.append("begin\r\n");
-    impl2.append("  "+setprops.toString().substring(7));
+    impl2.append("  "+(setprops == null || setprops.length() < 7 ? "??"  : setprops.toString().substring(7)));
     impl2.append("  else result := inherited setProperty(propName, propValue);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("procedure "+tn+".insertProperty(propName: string; propValue: TFHIRObject; index : integer);\r\n");
@@ -2192,7 +2193,7 @@ public class DelphiGenerator {
     jsClass.append("end;\r\n\r\n");
     jsClass.append("procedure define"+tj+"Js(js : TFHIRJavascript);\r\n");
     jsClass.append("var\r\n  def : TJavascriptClassDefinition;\r\nbegin\r\n");
-    jsClass.append("  def := js.defineClass('"+tj+"', nil, '"+tj+"', js.FHIRFactoryJs);\r\n");
+    jsClass.append("  def := js.defineClass('"+tj+version+"', nil, "/*+"'"+tj+version+"', "*/+"js.FHIRFactoryJs);\r\n");
     jsClass.append("  define"+tj+"PropsJs(js, def);\r\n");
     jsClass.append("end;\r\n\r\n");
     jsCode.procs.add(jsClass.toString());
@@ -3242,10 +3243,10 @@ public class DelphiGenerator {
 
     if (specType.equals("")) {
       String rawTn = getRawTnForType(e.typeCode());
-      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+specType+"', '"+e.typeCode()+"', js.getFHIR"+rawTn+"Prop, js.setFHIR"+rawTn+"Prop);\r\n");
+      jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+en+specType+"', '"+e.typeCode()+version+"', js.getFHIR"+rawTn+"Prop, js.setFHIR"+rawTn+"Prop);\r\n");
     } else {
       String rawTn = getRawTnForType(Utilities.uncapitalize(specType));
-      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName().replace("[x]", "")+specType+"', '"+Utilities.uncapitalize(specType)+"', js.getFHIR"+rawTn+"Prop, js.setFHIR"+rawTn+"Prop);\r\n");
+      jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+en.replace("[x]", "")+specType+"', '"+Utilities.uncapitalize(specType+version)+"', js.getFHIR"+rawTn+"Prop, js.setFHIR"+rawTn+"Prop);\r\n");
     }        
   }
 
@@ -3272,7 +3273,7 @@ public class DelphiGenerator {
           String enf = e.getName().replace("[x]", "");
           String en = getElementName(e.getName().replace("[x]", ""));
   
-          jsReg.append("  js.registerElement(def, '"+tj+"', '"+enf+t.getName()+"', '"+t.getName()+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
+          jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+enf+t.getName()+"', '"+t.getName()+version+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
         }
       }
     } else {
@@ -3286,9 +3287,9 @@ public class DelphiGenerator {
         if (Utilities.noString(e.typeCode())) {
 
           String bt = typeNames.get(e).substring(5); 
-          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
+          jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+e.getName()+"', '"+bt+version+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
         } else
-          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
+          jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+e.getName()+"', '"+e.typeCode()+version+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
       }
     }
   }
@@ -3304,9 +3305,9 @@ public class DelphiGenerator {
       if (Utilities.noString(e.typeCode())) {
 
         String bt = typeNames.get(e).substring(5); 
-        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', js.getFHIRArrayProp, js.setFHIRArrayProp);\r\n");
+        jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+e.getName()+"', '"+bt+version+"', js.getFHIRArrayProp, js.setFHIRArrayProp);\r\n");
       } else
-        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', js.getFHIRArrayProp, js.setFHIRArrayProp);\r\n");
+        jsReg.append("  js.registerElement(def, '"+tj+version+"', '"+e.getName()+"', '"+e.typeCode()+version+"', js.getFHIRArrayProp, js.setFHIRArrayProp);\r\n");
     }
   }
 
@@ -3405,12 +3406,17 @@ public class DelphiGenerator {
   private String parseName(String tn) {
     if (tn.equals("TFhirResource"+rId))
       return "InnerResource";
+    else if (tn.equals(""))
+      return "??";
     else
       return tn.startsWith("TFhir") ? tn.substring(5) : tn.substring(1);
   }
 
   private String parseNameR(String tn) {
-    return tn.startsWith("TFhir") ? tn.substring(5) : tn.substring(1);
+    if (tn.equals(""))
+      return "??";
+    else
+      return tn.startsWith("TFhir") ? tn.substring(5) : tn.substring(1);
   }
 
   private String getParam3(String tn) {

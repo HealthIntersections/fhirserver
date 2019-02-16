@@ -92,7 +92,7 @@ begin
   fpe := factory.makePathEngine(client.Worker.link, nil);
   try
     fpe.registerExtension(TV2FHIRPathExtensions.create);
-    js := TFHIRJavascript.Create('ChakraCore.dll', nil, FJSFactory);
+    js := TFHIRJavascript.Create(nil, FJSFactory);
     try
       TV2JavascriptHelper.registerv2Objects(js, fpe);
       script := FOnGetScript(self, scriptName);

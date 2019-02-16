@@ -37,7 +37,7 @@ uses
   FHIR.Support.Stream, FHIR.Web.Fetcher;
 
 type
-  TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool);
+  TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen);
   TFHIRPackageKindSet = set of TFHIRPackageKind;
 
 type
@@ -198,9 +198,9 @@ type
   end;
 
 const
-  All_Package_Kinds = [fpkCore..fpkTool];
-  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool');
-  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools');
+  All_Package_Kinds = [fpkCore..fpkToolGen];
+  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool', 'GenPack');
+  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package');
   NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
   ANALYSIS_VERSION = 2;
   CACHE_VERSION = 2;
@@ -435,10 +435,12 @@ begin
     result := fpkIG
   else if kind = 'fhir.tool' then
     result := fpkTool
+  else if kind = 'fhir.core.gen' then
+    result := fpkToolGen
   else if kind = 'fhir.template' then
     result := fpkIGTemplate
   else if kind <> '' then
-    raise ELibraryException.create('Unknown Package Kind')
+    raise ELibraryException.create('Unknown Package Kind: '+kind)
   else if id = 'hl7.fhir.core' then
     result := fpkCore
   else
@@ -539,21 +541,24 @@ begin
                 else
                 begin
                   dep := npm.obj['dependencies'];
-                  for n in dep.properties.Keys do
+                  if dep <> nil then
                   begin
-                    if n = 'hl7.fhir.core' then
-                      v.fhirVersion := dep.str[n]
-                    else
+                    for n in dep.properties.Keys do
                     begin
-                      d := TFHIRPackageDependencyInfo.Create;
-                      try
-                        d.id := n;
-                        d.version := dep.str[n];
-                        v.dependencies.add(d.Link);
-                      finally
-                        d.Free;
-                      end;
-                    end
+                      if n = 'hl7.fhir.core' then
+                        v.fhirVersion := dep.str[n]
+                      else
+                      begin
+                        d := TFHIRPackageDependencyInfo.Create;
+                        try
+                          d.id := n;
+                          d.version := dep.str[n];
+                          v.dependencies.add(d.Link);
+                        finally
+                          d.Free;
+                        end;
+                      end
+                    end;
                   end;
                 end;
                 pck.versions.Add(v.link);

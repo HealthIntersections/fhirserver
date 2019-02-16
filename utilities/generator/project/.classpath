@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/commons-codec-1.9.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.convertors"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.r4"/>
-	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/hapi-fhir-base-3.4.0.jar"/>
 	<classpathentry kind="lib" path="C:/work/fhirserver/utilities/generator/dependencies/javaparser-core-3.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/hapi-fhir-base-3.7.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -316,7 +316,6 @@ Type
     FFacebookLike: boolean;
     FHostSms: String; // for status update messages
     FSourceProvider: TFHIRWebServerSourceProvider;
-    FJsPath : String;
 
     // web configuration
     FHost: String;
@@ -3681,7 +3680,6 @@ var
   fn: String;
   txu: String;
 begin
-  FJsPath := ini.admin['js-path'];
   fn := ini.admin['logging-in'];
   if (fn <> '') and ((fn <> '-')) then
   begin
@@ -3770,7 +3768,7 @@ begin
   CoInitialize(nil);
 {$ENDIF}
 {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create(FJsPath);
+  GJsHost := TJsHost.Create;
   OnRegisterJs(self, GJsHost);
 {$ENDIF}
 //  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
@@ -4773,7 +4771,7 @@ begin
     CoInitialize(nil);
 {$ENDIF}
     {$IFNDEF NO_JS}
-    GJsHost := TJsHost.Create(FServer.FJsPath);
+    GJsHost := TJsHost.Create;
     FServer.OnRegisterJs(self, GJsHost);
     {$ENDIF}
 //    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
@@ -4857,7 +4855,7 @@ var
 begin
   SetThreadName('Server Subscription Thread');
   {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create(FServer.FJsPath);
+  GJsHost := TJsHost.Create;
   FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
@@ -4909,7 +4907,7 @@ var
 begin
   SetThreadName('Server Email Thread');
   {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create(FServer.FJsPath);
+  GJsHost := TJsHost.Create;
   FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
@@ -5100,7 +5098,7 @@ begin
 
   SetThreadName('Server Async Thread');
   {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create(FServer.FWebServer.FJsPath);
+  GJsHost := TJsHost.Create;
   {$ENDIF}
   try
     {$IFNDEF NO_JS}

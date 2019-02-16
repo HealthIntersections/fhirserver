@@ -43,6 +43,7 @@ type
     FDefiningType : String;
     FName : String;
     FFHIRType : String;
+    function FHIRTypeNV : String;
   end;
 
   TFHIRJavascript = class;
@@ -50,13 +51,16 @@ type
   TFHIRJavascript = class (TFslJavascript)
   private
     FDefinedElements : TFslMap<TFHIRJavascriptDefinedElement>;
-    FWorker : TFHIRWorkerContextWithFactory;
-    FVersion : TFHIRVersion;
+    FFactories : TFslMap<TFHIRFactory>;
+    function createObj(name : string) : TFHIRObject;
+    function factory(v : TFHIRVersion) : TFHIRFactory;
   public
-    constructor Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes); overload;
+    constructor Create; override;
     destructor Destroy; override;
 
-    property version : TFHIRVersion read FVersion;
+    procedure registerFactory(reg : TRegisterFHIRTypes; fact : TFHIRFactory; isDefault : boolean);
+
+    function wrap(o : TObject; owns : boolean) : JsValueRef; overload; override;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
 
@@ -98,23 +102,42 @@ uses
 
 { TFHIRJavascript }
 
-constructor TFHIRJavascript.Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
+constructor TFHIRJavascript.Create;
 begin
-  inherited create(chakraPath);
+  inherited create;
   FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create;
-  FWorker := worker;
-  reg(self);
-  TFHIRClientJSHelper.registerFHIRClient(self, worker);
+//  TFHIRClientJSHelper.registerFHIRClient(self, worker);
 //  TFHIRServerJsHelper.registerFHIRServerEvent(self);
 end;
 
 destructor TFHIRJavascript.Destroy;
 begin
   FDefinedElements.free;
-  FWorker.Free;
   inherited;
 end;
 
+const
+  VER_DIGIT : Array [TFHIRVersion] of String = ('', '1', '2', '3', '4');
+
+function TFHIRJavascript.createObj(name: string): TFHIRObject;
+var
+  v : TFHIRVersion;
+begin
+  for v in SUPPORTED_VERSIONS do
+  if name.EndsWith[VER_DIGIT[v]) then
+  !
+
+
+
+
+end;
+
+function TFHIRJavascript.factory(v: TFHIRVersion): TFHIRFactory;
+begin
+  result := FFactories[CODES_TFHIRVersion[v]];
+  if result = nil then
+    raise EJavascriptApplication.Create('No factory registered for FHIR '+CODES_TFHIRVersion[v]);
+end;
 
 procedure TFHIRJavascript.registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter: TJsGetterFunction; setter: TJsSetterProcedure);
 var
@@ -131,13 +154,19 @@ begin
   classDef.defineProperty(name, def, getter, setter);
 end;
 
-function TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+fuprocedure TFHIRJavascript.registerFactory(reg: TRegisterFHIRTypes;
+  fact: TFHIRFactory; isDefault: boolean);
+begin
+
+end;
+
+nction TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 var
   obj : TFHIRObject;
   prop : TJavascriptRegisteredProperty;
   v : TJsValue;
 begin
-  obj := TFHIRJavascript(js).FWorker.Factory.makeByName(classDef.Name);
+  obj := TFHIRJavascript(js).createObj(classDef.Name);
   try
     if length(params) > 0 then
     begin
@@ -170,7 +199,7 @@ begin
   if (p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
       result := js.getNull
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
@@ -196,21 +225,29 @@ begin
   try
     if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
-    else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    else if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
     begin
-      res := TFHIRJavascript(propDef.Javascript).FWorker.Factory.makeByName(def.FFHIRType);
+      res := TFHIRJavascript(propDef.Javascript).CreateObj(def.FFHIRType);
       try
-        res.setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+        res.setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end;
     end
     else
-      p.Values[0].setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+      p.Values[0].setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
   finally
     p.Free;
   end;
+end;
+
+function TFHIRJavascript.wrap(o: TObject; owns: boolean): JsValueRef;
+begin
+  if o is TFHIRObject then
+    result := wrap(o, (o as TFHIRObject).JSType, owns)
+  else
+    result := inherited wrap(o, owns);
 end;
 
 function TFHIRJavascript.getFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
@@ -291,7 +328,7 @@ begin
   if (p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    if (p.Values.Count = 0) or ((p.Values[0].fhirType <> def.FFHIRType) and (def.FFHIRType <> 'Resource')) then
+    if (p.Values.Count = 0) or ((p.Values[0].JSType <> def.FFHIRType) and (def.FHIRTypeNV <> 'Resource')) then
       result := js.getNull
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
@@ -299,7 +336,7 @@ begin
       result := p.Values[0].jsHandle
     else
     begin
-      result := js.wrap(p.Values[0].Link, p.Values[0].fhirType, true);
+      result := js.wrap(p.Values[0].Link, p.Values[0].JSType, true);
       p.Values[0].jsHandle := result;
       p.Values[0].jsInstance := js.InstanceId;
     end;
@@ -325,7 +362,7 @@ begin
   if (p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
       result := js.getNull
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a binary but it had mutiple values')
@@ -351,9 +388,9 @@ begin
   try
     if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
-    else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    else if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
     begin
-      res := FWorker.Factory.makeBase64Binary(js.asString(value));
+      res := factory(obj.fhirObjectVersion).makeBase64Binary(js.asString(value));
       try
         obj.setProperty(def.FName, res.Link);
       finally
@@ -361,7 +398,7 @@ begin
       end;
     end
     else
-      p.Values[0].setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+      p.Values[0].setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -379,7 +416,7 @@ begin
   if (p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
       result := js.getNull
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a boolean but it had mutiple values')
@@ -404,12 +441,12 @@ begin
   try
      if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
-    else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    else if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
     begin
-      obj.setProperty(def.FName, FWorker.Factory.makeBoolean(js.asBoolean(value)));
+      obj.setProperty(def.FName, factory(obj.fhirObjectVersion).makeBoolean(js.asBoolean(value)));
     end
     else
-      p.Values[0].setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+      p.Values[0].setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -427,7 +464,7 @@ begin
   if (p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
       result := js.getNull
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a datetime but it had mutiple values')
@@ -453,18 +490,18 @@ begin
   try
     if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
-    else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    else if (p.Values.Count = 0) or (p.Values[0].JSType <> def.FFHIRType) then
     begin
-      res := TFHIRJavascript(propDef.Javascript).FWorker.Factory.makeByName(def.FFHIRType);
+      res := TFHIRJavascript(propDef.Javascript).factory(obj.fhirObjectVersion).makeByName(def.FHIRTypeNV);
       try
-        res.setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+        res.setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end
     end
     else
-      p.Values[0].setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+      p.Values[0].setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -510,16 +547,16 @@ begin
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as an integer but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
     begin
-      res := TFHIRJavascript(propDef.Javascript).FWorker.Factory.makeByName(def.FFHIRType);
+      res := TFHIRJavascript(propDef.Javascript).factory(obj.fhirObjectVersion).makeByName(def.FFHIRType);
       try
-        res.setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+        res.setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end;
     end
     else
-      p.Values[0].setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+      p.Values[0].setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -563,9 +600,9 @@ begin
      if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
-      obj.setProperty(def.FName, FWorker.Factory.makeDecimal(js.asString(value)))
+      obj.setProperty(def.FName, factory(obj.fhirObjectVersion).makeDecimal(js.asString(value)))
     else
-      p.Values[0].setProperty('value', FWorker.Factory.makeString(js.asString(value)));
+      p.Values[0].setProperty('value', factory(obj.fhirObjectVersion).makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -607,5 +644,14 @@ begin
     raise EJavascriptException.Create('Javascript: Undefived class "'+TFHIRObject(source).fhirType+'"');
 end;
 
+{ TFHIRJavascriptDefinedElement }
+
+function TFHIRJavascriptDefinedElement.FHIRTypeNV: String;
+begin
+  result := FFHIRType.Substring(0, FFHIRType.Length-1);
+end;
+
 end.
+
+// FWorker.Factory.makeByName
 

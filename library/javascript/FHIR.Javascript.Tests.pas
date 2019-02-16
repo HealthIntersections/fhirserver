@@ -319,7 +319,7 @@ procedure TJavascriptTests.TestHelloWorld;
 var
   js : TJavascript;
 begin
-  js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+  js := TJavascript.Create();
   try
     js.OnLog := JSLog;
     Assert.IsTrue(js.asString(js.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
@@ -333,7 +333,7 @@ var
   js : TJavascript;
 begin
   FLog.Clear;
-  js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+  js := TJavascript.Create();
   try
     js.OnLog := JSLog;
     js.execute('console.log("Hello world");', 'test.js');
@@ -347,7 +347,7 @@ procedure TJavascriptTests.TestException;
 var
   js : TJavascript;
 begin
-  js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+  js := TJavascript.Create;
   try
     js.OnLog := JSLog;
     try
@@ -369,7 +369,7 @@ procedure TJavascriptTests.TestAppException;
 var
   js : TJavascript;
 begin
-  js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+  js := TJavascript.Create;
   try
     js.OnLog := JSLog;
     FRaise := true;
@@ -398,7 +398,7 @@ begin
   i := TIntObj.Create;
   try
     i.value := 1;
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       defineTestTypes(js, false);
       o := js.wrap(i, 'TIntObj', false);
@@ -426,7 +426,7 @@ var
 begin
   i := TPropObj.Create('test');
   try
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       defineTestTypes(js, false);
       o := js.wrap(i, i.ClassName, false);
@@ -444,7 +444,7 @@ procedure TJavascriptTests.TestType;
 var
   js : TJavascript;
 begin
-  js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+  js := TJavascript.Create;
   try
     js.OnLog := JSLog;
     defineTestTypes(js, false);
@@ -467,7 +467,7 @@ begin
   i := TArrayObj.Create;
   try
     i.value.CommaText := 'test,test1';
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       js.OnLog := JSLog;
       defineTestTypes(js, false);
@@ -497,7 +497,7 @@ begin
   i := TArrayObj.Create;
   try
     i.value.CommaText := 'test,test1';
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       js.OnLog := JSLog;
       defineTestTypes(js, false);
@@ -527,7 +527,7 @@ begin
   i := TArrayObj.Create;
   try
     i.value.CommaText := 'test,test1';
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       js.OnLog := JSLog;
       defineTestTypes(js, true);
@@ -558,7 +558,7 @@ begin
   i := TComplexArrayObj.Create;
   try
     i.value.add(TPropObj.Create('v1'));
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       js.OnLog := JSLog;
       defineTestTypes(js, false);
@@ -588,7 +588,7 @@ begin
   i := TComplexArrayObj.Create;
   try
     i.value.add(TPropObj.Create('v1'));
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       js.OnLog := JSLog;
       defineTestTypes(js, false);
@@ -618,7 +618,7 @@ begin
   i := TComplexArrayObj.Create;
   try
     i.value.add(TPropObj.Create('v1'));
-    js := TJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+    js := TJavascript.Create;
     try
       js.OnLog := JSLog;
       defineTestTypes(js, false);

@@ -220,7 +220,7 @@ valueOf()	Returns the primitive value of an array
     procedure freeObject(obj : TObject); virtual;
     function checkSetupDefinitions(definitions : String) : string; virtual;
   public
-    constructor Create(chakraPath : String); overload; virtual;
+    constructor Create; virtual;
     destructor Destroy; override;
 
     property InstanceId : cardinal read FInstanceId;
@@ -255,6 +255,7 @@ valueOf()	Returns the primitive value of an array
       you can have as many constructors as you like for a single underlying class
     }
     function defineClass(name : String; context : Pointer; factoryName : String; factory : TJsFactoryFunction) : TJavascriptClassDefinition; overload;
+    function defineClass(name : String; context : Pointer; factory : TJsFactoryFunction) : TJavascriptClassDefinition; overload;
     function hasDefinedClass(name : String) : boolean;
     function getDefinedClass(name : String) : TJavascriptClassDefinition;
 
@@ -365,9 +366,9 @@ valueOf()	Returns the primitive value of an array
         definer: a procedure that defines properties for the object - using defineProperty above
         owns : true if the object is owned by the javascript engine and should be cleaned up when done
     }
-    function wrap(o : TObject; className : String; owns : boolean) : JsValueRef; overload;
-    function wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef; overload;
-    function wrap(o : TObject; owns : boolean) : JsValueRef; overload;
+    function wrap(o : TObject; className : String; owns : boolean) : JsValueRef; overload; virtual;
+    function wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef; overload; virtual;
+    function wrap(o : TObject; owns : boolean) : JsValueRef; overload; virtual;
 
     // todo: add a wrap variant that uses RTTI , and one that uses IDispatch
 
@@ -654,7 +655,7 @@ end;
 threadvar
   gjs : TJavascript;
 
-constructor TJavascript.Create(chakraPath : String);
+constructor TJavascript.Create;
 var
   msg : String;
 begin
@@ -667,6 +668,11 @@ begin
   FOwnedObjects := TObjectList<TObject>.create;
   registerConsoleLog;
   init;
+end;
+
+function TJavascript.defineClass(name: String; context: Pointer; factory: TJsFactoryFunction): TJavascriptClassDefinition;
+begin
+  result := defineClass(name, context, name, factory);
 end;
 
 destructor TJavascript.Destroy;

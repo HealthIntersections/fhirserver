@@ -89,13 +89,12 @@ Type
   // then, we retain it as long as we can
   TJsHost = class (TFslObject)
   private
-    FChakraPath : String;
     FRegistry: TEventScriptRegistry;
     FEngines : array[TFHIRVersion] of TFHIRJavascript;
     procedure SetRegistry(const Value: TEventScriptRegistry);
     function checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
   public
-    constructor Create(chakraPath : String);
+    constructor Create; override;
     destructor Destroy; override;
 
     procedure registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
@@ -159,12 +158,11 @@ begin
   result := FEngines[version];
 end;
 
-constructor TJsHost.Create(chakraPath : String);
+constructor TJsHost.Create;
 var
   v : TFHIRVersion;
 begin
   inherited create;
-  FChakraPath := chakraPath;
   for v in FHIR_ALL_VERSIONS do
     FEngines[v] := nil;
 end;
@@ -182,10 +180,7 @@ end;
 
 procedure TJsHost.registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
 begin
-  if (FChakraPath <> '') then
-    FEngines[worker.version] := TFHIRJavascript.Create(FChakraPath, worker.link, reg)
-  else
-    worker.free;
+  FEngines[worker.version] := TFHIRJavascript.Create(worker.link, reg)
 end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);

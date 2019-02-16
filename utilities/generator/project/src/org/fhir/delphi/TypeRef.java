@@ -108,7 +108,7 @@ public class TypeRef {
   }
 
   public boolean isUnboundGenericParam() {
-		return name.equals("[param]");
+		return name != null && name.equals("[param]");
 	}
 
 	public boolean isXhtml() {

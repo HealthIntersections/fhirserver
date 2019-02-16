@@ -7,9 +7,11 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser,
   FHIR.Javascript,
-  FHIR.v2.Message,
+  FHIR.v2.Message, FHIR.v2.Javascript,
+  FHIR.Cda.Objects, FHIR.Cda.Javascript,
   FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Profiles,
-  FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Liquid, FHIR.R4.PathEngine,
+  FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Client, FHIR.Client.HTTP, FHIR.R4.Javascript,
+  FHIR.Conversion.Engine, FHIR.Javascript.Base,
   FHIR.Transformer.Utilities, FHIR.Transformer.Workspace, FHIR.Transformer.Context, FHIR.Transformer.Editor;
 
 type
@@ -49,27 +51,6 @@ type
     constructor Create(map : TFhirStructureMap);
     destructor Destroy; override;
     function checkBreakpoint(line : integer) : boolean;
-  end;
-
-  TExecutionKind = (ekV2, ekCDA);
-  TExecutionDetails = class (TFslObject)
-  private
-    FFocus: TWorkspaceFile;
-    FScript: TWorkspaceFile;
-    FKind: TExecutionKind;
-    FTarget: TWorkspaceFile;
-    FOutcome: TTransformOutcomeMode;
-    procedure SetFocus(const Value: TWorkspaceFile);
-    procedure SetTarget(const Value: TWorkspaceFile);
-    procedure SetScript(const Value: TWorkspaceFile);
-  public
-    destructor Destroy; override;
-
-    property kind : TExecutionKind read FKind write FKind;
-    property focus : TWorkspaceFile read FFocus write SetFocus;
-    property script : TWorkspaceFile read FScript write SetScript;
-    property outcome : TTransformOutcomeMode read FOutcome write FOutcome;
-    property target : TWorkspaceFile read FTarget write SetTarget;
   end;
 
   TTransformEngineExecutionVariableMode = (tvmNone, tvmInput, tvmOutput);
@@ -175,6 +156,8 @@ type
     FPathEngine : TFHIRPathEngine;
     FServices : TLocalTransformerServices;
     FRunning: boolean;
+    FTerminologyServer: string;
+    FTxServer : TFhirClient4;
 
 
     function getOpenFile(f : TWorkspaceFile; out editor : TEditorInformation) : boolean;
@@ -187,9 +170,12 @@ type
     function compileTemplate(f : TWorkspaceFile; src : String) : TFslObject;
     procedure compileAll(list : TFslList<TWorkspaceFile>; all : boolean); overload;
 
-    function checkCanRun(executionDetails : TExecutionDetails; upd : boolean; var s: String): boolean;
-    procedure executeCDA(ev : TExecutionDetails; debug : boolean);
+    function checkCanRun(executionDetails : TWorkspaceExecConfig; upd : boolean; var s: String): boolean;
+    procedure executeCDA(ev : TWorkspaceExecConfig; debug : boolean);
     procedure DebugTransform(sender : TObject; info : TFHIRStructureMapDebugContext);
+    procedure SetTerminologyServer(const Value: string);
+    procedure CheckTerminologyServer;
+    procedure JSLog(sender : TJavascript; message : String);
   public
     constructor Create(workspace : TWorkspace);
     destructor Destroy; override;
@@ -198,6 +184,7 @@ type
     property workspace : TWorkspace read FWorkspace;
     property editors : TFslList<TEditorInformation> read FEditors;
     property Context : TFHIRTransformerContext read FContext;
+    property terminologyServer : string read FTerminologyServer write SetTerminologyServer;
 
     property running : boolean read FRunning;
     property OnFileUpdate : TTransformEngineFileEvent read FOnFileUpdate write FOnFileUpdate;
@@ -213,9 +200,9 @@ type
     procedure compileAll; overload;
     procedure compile(f: TWorkspaceFile; openIfFail : boolean);
     function canonical(f: TWorkspaceFile) : String;
-    function canRun(executionDetails : TExecutionDetails; var s : String) : boolean;
-    procedure run(executionDetails : TExecutionDetails);
-    procedure debug(executionDetails : TExecutionDetails);
+    function canRun(executionDetails : TWorkspaceExecConfig; var s : String) : boolean;
+    procedure run(executionDetails : TWorkspaceExecConfig);
+    procedure debug(executionDetails : TWorkspaceExecConfig);
   end;
 
 (*  TConversionEngine = class abstract (TFslObject)
@@ -608,46 +595,78 @@ begin
     end;
 end;
 
-function TTransformEngine.canRun(executionDetails : TExecutionDetails; var s: String): boolean;
+function TTransformEngine.canRun(executionDetails : TWorkspaceExecConfig; var s: String): boolean;
 begin
   result := checkCanRun(executionDetails, false, s);
 end;
 
-function TTransformEngine.checkCanRun(executionDetails : TExecutionDetails; upd : boolean; var s: String): boolean;
+function TTransformEngine.checkCanRun(executionDetails : TWorkspaceExecConfig; upd : boolean; var s: String): boolean;
+  function checkFileSet(files : TFslList<TWorkspaceFile>) : boolean;
+  var
+    f : TWorkspaceFile;
+  begin
+    if upd then
+      compileAll(files, false);
+    for f in files do
+    begin
+      if f.compileStatus in [csError, csNotCompiled] then
+      begin
+        if f.compileStatus = csNotCompiled then
+          s := 'Compilation is not complete yet'
+        else
+          s := f.title+': '+f.errorMsg;
+        exit(false);
+      end;
+    end;
+    result := true;
+  end;
 var
   f : TWorkspaceFile;
 begin
-  result := false;
-  case executionDetails.kind of
-    ekV2:
-      s := 'V2 Execution not done yet';
-    ekCDA:
-      begin
-        for f in workspace.maps do
-        begin
-          if upd then
-            compileAll(FWorkspace.maps, false);
-          if f.compileStatus in [csError, csNotCompiled] then
-          begin
-            if f.compileStatus = csNotCompiled then
-              s := 'Compilation is not complete yet'
-            else
-              s := f.title+': '+f.errorMsg;
-            exit(false);
-          end;
-        end;
-        if executionDetails.FFocus.compileStatus in [csError, csNotCompiled] then
-        begin
-          if upd then
-            compile(executionDetails.FFocus, false);
-          if executionDetails.FFocus.compileStatus = csNotCompiled then
-            s := 'Compilation is not complete yet'
-          else
-            s := f.title+': '+executionDetails.FFocus.errorMsg;
-          exit(false);
-        end;
-        result := true;
-      end;
+  if FTerminologyServer = '' then
+  begin
+    s := 'No Terminology Server';
+    exit(false);
+  end;
+
+  if not checkFileSet(FWorkspace.maps) then
+    exit(false);
+  if not checkFileSet(FWorkspace.scripts) then
+    exit(false);
+  if not checkFileSet(FWorkspace.templates) then
+    exit(false);
+  f := FWorkspace.findFileByName(executionDetails.script);
+  if f = nil then
+  begin
+    s := 'Unable to find '+executionDetails.script;
+    exit(false);
+  end;
+  f := FWorkspace.findFileByName(executionDetails.focus);
+  if f = nil then
+  begin
+    s := 'Unable to find '+executionDetails.script;
+    exit(false);
+  end;
+
+  if f.compileStatus in [csError, csNotCompiled] then
+  begin
+    if upd then
+      compile(f, false);
+    if f.compileStatus = csNotCompiled then
+      s := 'Compilation is not complete yet'
+    else
+      s := f.title+': '+f.errorMsg;
+    exit(false);
+  end;
+  result := true;
+end;
+
+procedure TTransformEngine.CheckTerminologyServer;
+begin
+  if FTxServer = nil then
+  begin
+    FTxServer := TFhirClient4.Create(FContext.Link, 'en', TFHIRHTTPCommunicator.Create(FTerminologyServer));
+    FTxServer.conformance(true); // check it inits ok
   end;
 end;
 
@@ -762,7 +781,7 @@ function TTransformEngine.compileJS(f: TWorkspaceFile; src: String) : TFslObject
 var
   js : TJavascript;
 begin
-  js := TJavascript.Create(ExtractFilePath(ParamStr(0)));
+  js := TJavascript.Create;
   try
     js.compile(src, f.title);
     result := nil; // for now
@@ -838,15 +857,38 @@ begin
   FEditors := TFslList<TEditorInformation>.create;
 end;
 
-procedure TTransformEngine.debug(executionDetails : TExecutionDetails);
+procedure TTransformEngine.debug(executionDetails : TWorkspaceExecConfig);
 var
   msg : String;
+  services : TFHIRConversionEngine;
+  js : TFHIRJavascript;
 begin
   if not checkCanRun(executionDetails, true, msg) then
     raise Exception.Create(msg);
-  case executionDetails.kind of
-    ekV2 : raise Exception.Create('Not done yet');
-    ekCDA: executeCDA(executionDetails, true);
+  CheckTerminologyServer;
+  services := TFHIRConversionEngine.Create(FContext.Link, FTxServer.link, nil);
+  try
+    js := TFHIRJavascript.Create(FContext.Link, registerFHIRTypes);
+    try
+      services.registerConversionEngine(js, FContext);
+      TV2JavascriptHelper.registerv2Objects(js);
+
+//      !
+      // v2, cda:
+
+      js.OnLog := JSLog;
+
+//      Assert.IsTrue(js.asString(js.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
+  finally
+    js.Free;
+  end;
+
+  //  create javascript
+  //  register conversion engine
+  //  go;
+
+  finally
+    services.Free;
   end;
 end;
 
@@ -901,36 +943,36 @@ begin
   inherited;
 end;
 
-procedure TTransformEngine.executeCDA(ev: TExecutionDetails; debug: boolean);
-var
-  lib : TFslMap<TFHIRStructureMap>;
-  mu : TFHIRStructureMapUtilities;
-  map : TFHIRStructureMap;
-  f : TWorkspaceFile;
-  src : TFHIRMMElement;
+procedure TTransformEngine.executeCDA(ev: TWorkspaceExecConfig; debug: boolean);
+//var
+//  lib : TFslMap<TFHIRStructureMap>;
+//  mu : TFHIRStructureMapUtilities;
+//  map : TFHIRStructureMap;
+//  f : TWorkspaceFile;
+//  src : TFHIRMMElement;
 begin
-  lib := TFslMap<TFHIRStructureMap>.create;
-  try
-    for f in workspace.maps do
-    begin
-      map := f.compiled as TFHIRStructureMap;
-      lib.Add(map.url, map.link);
-    end;
-    map := ev.script.compiled as TFhirStructureMap;
-    mu := TFHIRStructureMapUtilities.Create(FContext.Link, lib.Link, FServices.link, TFHIRFactoryR4.create);
-    try
-      src := ev.FFocus.compiled as TFHIRMMElement;
-      FServices.outcomes.Clear;
-      if debug then
-        mu.OnDebug := DebugTransform;
-      mu.transform(nil, src, map, nil);
-      assert(FServices.outcomes.Count = 1);
-    finally
-      mu.Free;
-    end;
-  finally
-    lib.Free;
-  end;
+//  lib := TFslMap<TFHIRStructureMap>.create;
+//  try
+//    for f in workspace.maps do
+//    begin
+//      map := f.compiled as TFHIRStructureMap;
+//      lib.Add(map.url, map.link);
+//    end;
+//    map := ev.script.compiled as TFhirStructureMap;
+//    mu := TFHIRStructureMapUtilities.Create(FContext.Link, lib.Link, FServices.link, TFHIRFactoryR4.create);
+//    try
+//      src := ev.FFocus.compiled as TFHIRMMElement;
+//      FServices.outcomes.Clear;
+//      if debug then
+//        mu.OnDebug := DebugTransform;
+//      mu.transform(nil, src, map, nil);
+//      assert(FServices.outcomes.Count = 1);
+//    finally
+//      mu.Free;
+//    end;
+//  finally
+//    lib.Free;
+//  end;
 end;
 (*
 var
@@ -1018,21 +1060,27 @@ begin
   FServices := TLocalTransformerServices.Create(self, FContext.Link, TFHIRFactoryR4.create);
 end;
 
+procedure TTransformEngine.JSLog(sender: TJavascript; message: String);
+begin
+  if assigned(FOnLog) then
+    FOnLog(self, message);
+end;
+
 function TTransformEngine.link: TTransformEngine;
 begin
   result := TTransformEngine(inherited Link);
 end;
 
-procedure TTransformEngine.run(executionDetails : TExecutionDetails);
+procedure TTransformEngine.run(executionDetails : TWorkspaceExecConfig);
 var
   msg : String;
 begin
-  if not checkCanRun(executionDetails, true, msg) then
-    raise Exception.Create(msg);
-  case executionDetails.kind of
-    ekV2 : raise Exception.Create('Not done yet');
-    ekCDA: executeCDA(executionDetails, false);
-  end;
+//  if not checkCanRun(executionDetails, true, msg) then
+//    raise Exception.Create(msg);
+//  case executionDetails.kind of
+//    ekV2 : raise Exception.Create('Not done yet');
+//    ekCDA: executeCDA(executionDetails, false);
+//  end;
 end;
 
 procedure TTransformEngine.setActiveEditor(editor: TEditorInformation);
@@ -1044,32 +1092,14 @@ begin
   editor.focus := true;
 end;
 
-{ TExecutionDetails }
-
-destructor TExecutionDetails.Destroy;
+procedure TTransformEngine.SetTerminologyServer(const Value: string);
 begin
-  FFocus.Free;
-  FScript.Free;
-  FTarget.Free;
-  inherited;
-end;
-
-procedure TExecutionDetails.SetFocus(const Value: TWorkspaceFile);
-begin
-  FFocus.Free;
-  FFocus := Value;
-end;
-
-procedure TExecutionDetails.SetScript(const Value: TWorkspaceFile);
-begin
-  FScript.Free;
-  FScript := Value;
-end;
-
-procedure TExecutionDetails.SetTarget(const Value: TWorkspaceFile);
-begin
-  FTarget.Free;
-  FTarget := Value;
+  FTerminologyServer := Value;
+  if (FTxServer <> nil) and (FTxServer.address <> Value) then
+  begin
+    FTxServer.Free;
+    FTxServer := nil;
+  end;
 end;
 
 { TTransformEngineDebugContext }

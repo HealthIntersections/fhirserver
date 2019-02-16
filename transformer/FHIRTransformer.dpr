@@ -134,7 +134,11 @@ uses
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
   FHIR.Transformer.MarkdownPreview in 'FHIR.Transformer.MarkdownPreview.pas' {MarkdownPreviewForm},
-  FHIR.Conversion.Engine in '..\library\conversion\FHIR.Conversion.Engine.pas';
+  FHIR.Conversion.Engine in '..\library\conversion\FHIR.Conversion.Engine.pas',
+  FHIR.Transformer.ExecConfig in 'FHIR.Transformer.ExecConfig.pas' {TransformerExecConfigForm},
+  FHIR.R4.Javascript in '..\library\r4\FHIR.R4.Javascript.pas',
+  FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas',
+  FHIR.Cda.Javascript in '..\library\cda\FHIR.Cda.Javascript.pas';
 
 {$R *.res}
 
@@ -148,5 +152,6 @@ begin
   Application.CreateForm(TWorkingForm, WorkingForm);
   Application.CreateForm(TFileChangedForm, FileChangedForm);
   Application.CreateForm(TMarkdownPreviewForm, MarkdownPreviewForm);
+  Application.CreateForm(TTransformerExecConfigForm, TransformerExecConfigForm);
   Application.Run;
 end.

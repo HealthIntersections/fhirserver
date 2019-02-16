@@ -366,6 +366,7 @@ type
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
     function fhirType : String; virtual; abstract;
+    function JSType : String; virtual; // same as fhirType, but with version number appended
     function getId : String; virtual; abstract;
     procedure setIdValue(id : String); virtual; abstract;
     function isPrimitive : boolean; virtual;
@@ -856,6 +857,11 @@ end;
 function TFHIRObject.isType: boolean;
 begin
   result := false;
+end;
+
+function TFHIRObject.JSType: String;
+begin
+  result := fhirType;
 end;
 
 function TFHIRObject.GetCommentsEnd: TFslStringList;
