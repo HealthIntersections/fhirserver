@@ -90,14 +90,13 @@ Type
   TJsHost = class (TFslObject)
   private
     FRegistry: TEventScriptRegistry;
-    FEngines : array[TFHIRVersion] of TFHIRJavascript;
+    FEngine : TFHIRJavascript;
     procedure SetRegistry(const Value: TEventScriptRegistry);
-    function checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    procedure registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
+    procedure registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes; isDefault : boolean);
 
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
 
@@ -136,7 +135,7 @@ begin
     FRegistry.getApplicableScripts(event, rn, scripts);
     if (scripts.count > 0) then
     begin
-      engine := checkHasEngine(before.fhirObjectVersion);
+      engine := FEngine;
       engine.readOnly := true;
       s := engine.wrap(session.Link, 'Session', true);
       b := engine.wrap(before.Link, rn, true);
@@ -151,36 +150,25 @@ begin
   end;
 end;
 
-function TJsHost.checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
-begin
-  if FEngines[version] = nil then
-    raise EJavascriptApplication.Create('Javascript is not supported on this server for version '+CODES_TFHIRVersion[version]);
-  result := FEngines[version];
-end;
-
 constructor TJsHost.Create;
 var
   v : TFHIRVersion;
 begin
   inherited create;
-  for v in FHIR_ALL_VERSIONS do
-    FEngines[v] := nil;
+  FEngine := TFHIRJavascript.create;
 end;
 
 destructor TJsHost.Destroy;
-var
-  v : TFHIRVersion;
 begin
-  for v in FHIR_ALL_VERSIONS do
-    FEngines[v].Free;
+  FEngine.Free;
   FRegistry.Free;
   inherited;
 end;
 
 
-procedure TJsHost.registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
+procedure TJsHost.registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes; isDefault : boolean);
 begin
-  FEngines[worker.version] := TFHIRJavascript.Create(worker.link, reg)
+  FEngine.registerFactory(reg, worker.Factory, isDefault);
 end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);
@@ -196,7 +184,8 @@ begin
       FRegistry.getApplicableScripts(ttDataAccessed, '', scripts);
     if (scripts.count > 0) then
     begin
-      engine := checkHasEngine(request.Version);
+      engine := FEngine;
+      engine.readOnly := false;
       s := engine.wrap(session.Link, 'Session', true);
       r := engine.wrap(request.Link, 'Request', true);
       for script in scripts do

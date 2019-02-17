@@ -92,8 +92,9 @@ begin
   fpe := factory.makePathEngine(client.Worker.link, nil);
   try
     fpe.registerExtension(TV2FHIRPathExtensions.create);
-    js := TFHIRJavascript.Create(nil, FJSFactory);
+    js := TFHIRJavascript.Create;
     try
+//      js.registerFactory();
       TV2JavascriptHelper.registerv2Objects(js, fpe);
       script := FOnGetScript(self, scriptName);
       try

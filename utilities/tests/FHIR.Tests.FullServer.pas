@@ -146,7 +146,7 @@ end;
 
 procedure TFullServerTests.registerJs(sender : TObject; js : TJsHost);
 begin
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes, true);
 end;
 
 procedure TFullServerTests.checkDatabase(db: TKDBManager; factory: TFHIRFactory; serverFactory: TFHIRServerFactory);

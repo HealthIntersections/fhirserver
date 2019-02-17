@@ -51,6 +51,7 @@ Type
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
     [TestCase] Procedure TestPatient;
+    [TestCase] Procedure TestPatientUnknownProperty;
     [TestCase] Procedure TestPatient2;
     [TestCase] Procedure TestObservation;
   End;
@@ -81,7 +82,8 @@ end;
 
 procedure TFHIRJavascriptTests.Setup;
 begin
-  FJs := TFHIRJavascript.Create(makeContext, registerFHIRTypes);
+  FJs := TFHIRJavascript.Create;
+  FJs.registerFactory(registerFHIRTypes, TFHIRFactoryR4.Create, true);
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;
@@ -157,7 +159,7 @@ begin
 
     FJs.execute(
       'function func(pat) {'+#13#10+
-      ' pat.identifier.push(new Identifier({ "system" : "http://something-else", "value" : "v1"}));'+#13#10+
+      ' pat.identifier.push(new Identifier4({ "system" : "http://something-else", "value" : "v1"}));'+#13#10+
       '}'+#13#10,
       'test.js', 'func', [FJs.wrap(pat.Link, true)]);
     Assert.IsTrue(pat.identifierList.count = 3);
@@ -174,6 +176,33 @@ begin
       '1'#13#10);
     Assert.IsTrue(pat.identifierList.count = 1);
     Assert.IsTrue(pat.identifierList[0].system = 'http://something-else-again');
+  finally
+    pat.Free;
+  end;
+end;
+
+procedure TFHIRJavascriptTests.TestPatientUnknownProperty;
+var
+  pat : TFHIRPatient;
+begin
+  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  try
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' console.log(pat.id1);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      'undefined'#13#10);
+    FLog.clear;
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      '  pat.id1 = "3120";'+#13#10+
+      '  console.log(pat.id1);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      '3120'#13#10);
   finally
     pat.Free;
   end;
