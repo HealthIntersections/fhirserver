@@ -5,7 +5,7 @@
         <MainSource>FHIRServerTests.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -85,10 +85,11 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_32</DCC_DcuOutput>
         <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
-        <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <DCC_TYPEINFO_IMPLICITLY_ADDED>false</DCC_TYPEINFO_IMPLICITLY_ADDED>

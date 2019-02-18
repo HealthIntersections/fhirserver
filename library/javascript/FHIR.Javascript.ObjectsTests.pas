@@ -54,6 +54,8 @@ Type
     [TestCase] Procedure TestPatientUnknownProperty;
     [TestCase] Procedure TestPatient2;
     [TestCase] Procedure TestObservation;
+    [TestCase] Procedure TestPatientMutation;
+    [TestCase] Procedure TestPatientImmutable;
   End;
 
 implementation
@@ -180,6 +182,45 @@ begin
     pat.Free;
   end;
 end;
+
+procedure TFHIRJavascriptTests.TestPatientImmutable;
+var
+  pat : TFHIRPatient;
+begin
+  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  try
+    FJs.ImmutableObjects := true;
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' var p2 = { id: 23};'+#13#10+
+      ' console.log(p2.id);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      '23'#13#10);
+  finally
+    pat.Free;
+  end;
+end;
+
+procedure TFHIRJavascriptTests.TestPatientMutation;
+var
+  pat : TFHIRPatient;
+begin
+  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  try
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' var p2 = { id: 23};'+#13#10+
+      ' console.log(p2.id);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      '23'#13#10);
+  finally
+    pat.Free;
+  end;
+end;
 
 procedure TFHIRJavascriptTests.TestPatientUnknownProperty;
 var

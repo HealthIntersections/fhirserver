@@ -34,7 +34,7 @@ uses
   IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Certs, FHIR.Support.Stream,
   FHIR.Base.Lang,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
 type
   TClientApplicationVerifier = class (TFslObject)

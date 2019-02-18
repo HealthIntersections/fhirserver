@@ -202,6 +202,7 @@ valueOf()	Returns the primitive value of an array
     FOnLog : TJavascriptConsoleLogEvent;
     FDefinedClasses : TDictionary<String,TJavascriptClassDefinition>;
     FOwnedObjects : TObjectList<TObject>;
+    FImmutableObjects: boolean;
     FReadOnly: boolean;
 
     FPIdGetter : JsPropertyIdRef;
@@ -225,6 +226,7 @@ valueOf()	Returns the primitive value of an array
 
     property InstanceId : cardinal read FInstanceId;
     property Debugging : boolean read FDebugging write FDebugging;
+    property ImmutableObjects : boolean read FImmutableObjects write FImmutableObjects;
 
     // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
     procedure reset;
@@ -1006,10 +1008,23 @@ var
   p : TJavascriptRegisteredProperty;
   d : JsValueRef;
   ok : bytebool;
+  args : PJsValueRefArray;
+  func, res : JsValueRef;
 begin
   JsCheck(JsCreateExternalObject(o, nil, result));
   if owns then
     jsCheck(JsSetObjectBeforeCollectCallback(result, self, FreeCallBack));
+  if FImmutableObjects then
+  begin
+    jsCheck(JsGetProperty(result, getPropertyId('freeze'), func));
+    GetMem(args, 1 * SizeOf(JsValueRef));
+    try
+      args[0] := result;
+      jsCheck(JsCallFunction(func, pointer(args), 1, @res));
+    finally
+      Freemem(args);
+    end;
+  end;
   for p in classDef.FProperties do
   begin
     if p.FPropId = nil then
@@ -1022,7 +1037,8 @@ begin
         jsCheck(JsCreateFunction(SetterCallback, p, p.FSetterJS));
       jsCheck(JsCreateObject(d));
       jsCheck(JsSetProperty(d, FPIdGetter, p.FGetterJS, true));
-      jsCheck(JsSetProperty(d, FPIdSetter, p.FSetterJS, true));
+      if not FImmutableObjects then
+        jsCheck(JsSetProperty(d, FPIdSetter, p.FSetterJS, true));
       jsCheck(JsDefineProperty(result, p.FPropId, d, ok));
       assert(ok);
     end

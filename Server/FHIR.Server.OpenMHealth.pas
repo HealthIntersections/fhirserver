@@ -36,7 +36,7 @@ uses
   IdContext, IdCustomHTTPServer,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
+  FHIR.Server.Session, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
 type
   TOpenMHealthAdaptor = class (TFHIRFormatAdaptor)

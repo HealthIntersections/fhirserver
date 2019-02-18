@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
+  FHIR.Base.Objects, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Version.Parser,
   FHIR.Web.GraphQL, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
   FHIR.R4.GraphDefinition,
   FHIR.R4.Tests.Worker, FHIR.Support.Tests;
