@@ -57,7 +57,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
-    procedure registerFactory(reg : TRegisterFHIRTypes; fact : TFHIRFactory; isDefault : boolean);
+    procedure registerFactory(reg : TRegisterFHIRTypes; version : TFHIRVersion; fact : TFHIRFactory);
     function factory(v : TFHIRVersion) : TFHIRFactory;
 
     function wrap(o : TObject; owns : boolean) : JsValueRef; overload; override;
@@ -124,7 +124,6 @@ const
 function TFHIRJavascript.createObj(name: string): TFHIRObject;
 var
   v : TFHIRVersion;
-  f : TFHIRFactory;
 begin
   for v in SUPPORTED_VERSIONS do
     if name.EndsWith(VER_DIGIT[v]) then
@@ -154,12 +153,10 @@ begin
   classDef.defineProperty(name, def, getter, setter);
 end;
 
-procedure TFHIRJavascript.registerFactory(reg: TRegisterFHIRTypes; fact: TFHIRFactory; isDefault: boolean);
+procedure TFHIRJavascript.registerFactory(reg: TRegisterFHIRTypes; version : TFHIRVersion; fact: TFHIRFactory);
 begin
   reg(Self);
-  FFactories.AddOrSetValue(CODES_TFHIRVersion[fact.version], fact);
-  if isDefault then
-    FFactories.AddOrSetValue(CODES_TFHIRVersion[fhirVersionUnknown], fact.link);
+  FFactories.AddOrSetValue(CODES_TFHIRVersion[version], fact);
 end;
 
 function TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;

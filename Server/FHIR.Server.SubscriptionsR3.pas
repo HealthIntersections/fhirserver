@@ -109,7 +109,6 @@ var
   end;
 var
   subscription: TFhirSubscription;
-  expr : TFHIRPathExpressionNode;
 begin
   subscription := sub.Resource as TFhirSubscription;
   ts := TStringList.Create;

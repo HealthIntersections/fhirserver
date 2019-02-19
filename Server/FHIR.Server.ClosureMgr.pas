@@ -242,7 +242,7 @@ begin
               group := getGroup(map, match.uriSrc, match.uritgt);
               element := group.addElement(match.codeSrc);
             end;
-            target := element.addTarget(match.codetgt, cmeSpecializes);
+            {target := }element.addTarget(match.codetgt, cmeSpecializes);
           end;
         end;
       end;
@@ -281,14 +281,12 @@ begin
       if elements.ContainsKey(key) then
         element := elements[key]
       else
-      begin
         element := getGroup(map, conn.ColStringByName['UrlSrc'], conn.ColStringByName['UrlTgt']).addElement(conn.ColStringByName['CodeSrc']);
-        try
-          elements.Add(key, element.link);
-          element.addTarget(conn.ColStringByName['CodeTgt'], cmeSubsumes).Free;
-        finally
-          element.Free;
-        end;
+      try
+        elements.Add(key, element.link);
+        element.addTarget(conn.ColStringByName['CodeTgt'], cmeSubsumes).Free;
+      finally
+        element.Free;
       end;
     end;
     conn.terminate;

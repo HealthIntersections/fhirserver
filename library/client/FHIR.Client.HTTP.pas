@@ -515,7 +515,6 @@ end;
 {$IFDEF MSWINDOWS}
 function TFHIRHTTPCommunicator.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
 var
-  ok : boolean;
   op : TFhirOperationOutcomeW;
   code : integer;
   procedure processException;
@@ -579,44 +578,43 @@ begin
 
   repeat
     http.SetAddress(url);
-    ok := false;
-      case verb of
-        httpGet :
-          begin
-          http.RequestMethod := 'GET';
-          end;
-        httpPost :
-          begin
-          http.RequestMethod := 'POST';
-          http.Request := TFslBuffer.create;
-          http.Request.LoadFromStream(source);
-          end;
-        httpPut :
-          begin
-          http.RequestMethod := 'PUT';
-          http.Request.LoadFromStream(source);
-          end;
-        httpDelete :
-          http.RequestMethod := 'DELETE';
-        httpPatch :
-          begin
-          http.RequestMethod := 'PATCH';
-          http.RequestType := 'application/json-patch+json; charset=utf-8';
-          end;
-        httpOptions :
-          begin
-          http.RequestMethod := 'OPTIONS';
-          end;
-      end;
+    case verb of
+      httpGet :
+        begin
+        http.RequestMethod := 'GET';
+        end;
+      httpPost :
+        begin
+        http.RequestMethod := 'POST';
+        http.Request := TFslBuffer.create;
+        http.Request.LoadFromStream(source);
+        end;
+      httpPut :
+        begin
+        http.RequestMethod := 'PUT';
+        http.Request.LoadFromStream(source);
+        end;
+      httpDelete :
+        http.RequestMethod := 'DELETE';
+      httpPatch :
+        begin
+        http.RequestMethod := 'PATCH';
+        http.RequestType := 'application/json-patch+json; charset=utf-8';
+        end;
+      httpOptions :
+        begin
+        http.RequestMethod := 'OPTIONS';
+        end;
+    end;
 
-      http.Response := TFslBuffer.create;
-      http.Execute;
+    http.Response := TFslBuffer.create;
+    http.Execute;
 
-      code := StrToInt(http.ResponseCode);
-      FClient.LastStatus := code;
-      FClient.LastStatusMsg := http.ResponseText;
-      if (code < 200) or (code >= 600) Then
-        raise EFHIRException.create('unexpected condition');
+    code := StrToInt(http.ResponseCode);
+    FClient.LastStatus := code;
+    FClient.LastStatusMsg := http.ResponseText;
+    if (code < 200) or (code >= 600) Then
+      raise EFHIRException.create('unexpected condition');
     if (code >= 300) and (code < 400) then
       url := http.getResponseHeader('Location');
   until (code < 300) or (code >= 400);
@@ -629,12 +627,11 @@ begin
 
   if code >= 300 then
     processException;
-      ok := true;
-      result := TMemoryStream.Create;
+  result := TMemoryStream.Create;
   // if this breaks, the stream leaks
-      http.Response.SaveToStream(result);
-      result.Position := 0;
-  end;
+  http.Response.SaveToStream(result);
+  result.Position := 0;
+end;
 {$ENDIF}
 
 function TFHIRHTTPCommunicator.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TFhirResourceV;

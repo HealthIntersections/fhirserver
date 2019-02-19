@@ -88,7 +88,7 @@ type
     destructor Destroy; override;
     procedure addChar(ch : char);
     function link : TFHIRLiquidConstant; overload;
-    function toString : String; override;
+    function ToString : String; override;
   end;
 
   TFHIRLiquidStatement = class (TFHIRLiquidNode)
@@ -100,7 +100,7 @@ type
   public
     destructor Destroy; override;
     function link : TFHIRLiquidStatement; overload;
-    function toString : String; override;
+    function ToString : String; override;
 
     property statement : string read FStatement write FStatement;
   end;
@@ -117,7 +117,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidIf; overload;
-    function toString : String; override;
+    function ToString : String; override;
 
     property condition : string read FCondition write FCOndition;
     property thenBody : TFSLList<TFHIRLiquidNode> read FThenBody;
@@ -136,7 +136,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidLoop; overload;
-    function toString : String; override;
+    function ToString : String; override;
 
     property varName : String read FVarName write FVarName;
     property condition : string read FCondition write FCOndition;
@@ -153,7 +153,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidComment; overload;
-    function toString : String; override;
+    function ToString : String; override;
 
     property body : TFSLList<TFHIRLiquidNode> read FBody;
   end;
@@ -168,7 +168,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRLiquidInclude; overload;
-    function toString : String; override;
+    function ToString : String; override;
 
     property page : String read FPage write FPage;
     property params : TFslMap<TFHIRPathExpressionNode> read FParams;
@@ -186,7 +186,7 @@ type
     property body : TFSLList<TFHIRLiquidNode> read FBody;
     property source : String read FSource write FSource;
 
-    function toString : String; override;
+    function ToString : String; override;
   end;
 
   TFHIRLiquidParser = class (TFslObject)
@@ -294,7 +294,7 @@ end;
 
 procedure TFHIRLiquidConstant.closeUp;
 begin
-  FConstant := b.toString();
+  FConstant := b.ToString();
   b.Free;
   b := nil;
 end;
@@ -321,7 +321,7 @@ begin
   result := TFHIRLiquidConstant(inherited Link);
 end;
 
-function TFHIRLiquidConstant.toString: String;
+function TFHIRLiquidConstant.ToString: String;
 begin
   result := FConstant;
 end;
@@ -351,7 +351,7 @@ begin
   result := TFHIRLiquidStatement(inherited Link);
 end;
 
-function TFHIRLiquidStatement.toString: String;
+function TFHIRLiquidStatement.ToString: String;
 begin
   result := '{{ '+FStatement+' }}';
 end;
@@ -400,7 +400,7 @@ begin
   result := TFHIRLiquidIf(inherited Link);
 end;
 
-function TFHIRLiquidIf.toString: String;
+function TFHIRLiquidIf.ToString: String;
 var
   b : TStringBuilder;
   n : TFHIRLiquidNode;
@@ -467,7 +467,7 @@ begin
   result := TFHIRLiquidLoop(inherited Link);
 end;
 
-function TFHIRLiquidLoop.toString: String;
+function TFHIRLiquidLoop.ToString: String;
 var
   b : TStringBuilder;
   n : TFHIRLiquidNode;
@@ -503,7 +503,7 @@ begin
   result := TFHIRLiquidDocument(inherited Link);
 end;
 
-function TFHIRLiquidDocument.toString: String;
+function TFHIRLiquidDocument.ToString: String;
 var
   b : TStringBuilder;
   n : TFHIRLiquidNode;
@@ -651,7 +651,7 @@ end;
 function TFHIRLiquidParser.parseInclude(cnt: String): TFHIRLiquidNode;
 var
   i, j : integer;
-  s, n : String;
+  n : String;
   res : TFHIRLiquidInclude;
 begin
   i := 1;
@@ -726,12 +726,12 @@ begin
     while (cursor <= source.length) and not ((next1() = '}') and (next2() = '}')) do
       b.append(grab());
     if not ((next1() = '}') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.toString(), FCurrent.line, FCurrent.col);
+      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.ToString(), FCurrent.line, FCurrent.col);
     grab();
     grab();
     res := TFHIRLiquidStatement.create();
     try
-      res.statement := b.toString().trim();
+      res.statement := b.ToString().trim();
       res.FCompiled := fpe.parse(res.Statement);
       result := res.link;
     finally
@@ -754,10 +754,10 @@ begin
     while (cursor <= source.length) and not ((next1() = '%') and(next2() = '}')) do
       b.append(grab());
     if not ((next1() = '%') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.toString(), FCurrent.line, FCurrent.col);
+      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.ToString(), FCurrent.line, FCurrent.col);
     grab();
     grab();
-    result := b.toString().trim();
+    result := b.ToString().trim();
   finally
     b.Free;
   end;
@@ -822,7 +822,7 @@ begin
     finally
       ctxt.free;
     end;
-    result := b.toString();
+    result := b.ToString();
   finally
     b.free;
   end;
@@ -846,7 +846,7 @@ begin
     finally
       ctxt.free;
     end;
-    result := b.toString();
+    result := b.ToString();
   finally
     b.free;
   end;
@@ -940,7 +940,7 @@ begin
   result := TFHIRLiquidInclude(inherited link);
 end;
 
-function TFHIRLiquidInclude.toString: String;
+function TFHIRLiquidInclude.ToString: String;
 var
   b : TStringBuilder;
   s : String;
@@ -988,7 +988,7 @@ begin
   result := TFHIRLiquidComment(inherited Link);
 end;
 
-function TFHIRLiquidComment.toString: String;
+function TFHIRLiquidComment.ToString: String;
 var
   b : TStringBuilder;
   n : TFHIRLiquidNode;

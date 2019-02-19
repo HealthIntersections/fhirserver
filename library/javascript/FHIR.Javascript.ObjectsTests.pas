@@ -46,7 +46,6 @@ Type
     FLog : TStringList;
     FJs : TFHIRJavascript;
     procedure JSLog(sender : TJavascript; message : String);
-    function makeContext : TFHIRWorkerContextWithFactory;
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
@@ -77,15 +76,11 @@ type
 
 { TJavascriptTests }
 
-function TFHIRJavascriptTests.makeContext: TFHIRWorkerContextWithFactory;
-begin
-  result := TTestWorkerContext.Create(TFHIRFactoryX.Create);
-end;
-
 procedure TFHIRJavascriptTests.Setup;
 begin
   FJs := TFHIRJavascript.Create;
-  FJs.registerFactory(registerFHIRTypes, TFHIRFactoryR4.Create, true);
+  FJs.registerFactory(registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.Create);
+  FJs.registerFactory(registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.Create);
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;

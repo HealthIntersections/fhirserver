@@ -454,7 +454,6 @@ Begin
     sHeaders := sHeaders + 'Accept: '+ FResponseType +cReturn;
 
   repeat
-    bok := true;
     again := false;
     If FSecure Then
       FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,

@@ -480,7 +480,6 @@ var
   ir : TFHIRStructureMapGroupRule;
   rdp : TFHIRString;
   canBeAbbreviated : boolean;
-  i : integer;
 begin
   b.append(StringPadLeft('', ' ', indent));
 	canBeAbbreviated := checkisSimple(r);
@@ -1009,7 +1008,6 @@ var
   vs, vc, vt : String;
   eq : TFhirConceptMapEquivalenceEnum;
 begin
-  tgt := nil;
   lexer.token('conceptmap');
   map := TFhirConceptMap.create;
   result.ContainedList.add(map);
@@ -1897,7 +1895,6 @@ procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo 
 var
   targetMap : TFHIRStructureMap;
   target : TFHIRStructureMapGroup;
-  imp : TFHIRUri;
   v : TVariables;
   i : integer;
   input : TFHIRStructureMapGroupInput;
@@ -1968,7 +1965,7 @@ end;
 
 function TFHIRStructureMapUtilities.analyseSource(groupId, ruleId : String; appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource; errorlocation, indent : String) : TFslList<TVariables>;
 var
-  b, r : TFHIRObject;
+  b : TFHIRObject;
   expr : TFHIRPathExpressionNode;
   items, work : TFslList<TFHIRObject>;
   item : TFHIRObject;
@@ -2158,7 +2155,6 @@ var
   uses_ : TFhirStructureMapStructure;
   sb : TStringBuilder;
   cc : TFhirCodeableConcept;
-  c : TFhirCoding;
 begin
   case tgt.Transform of
     MapTransformCreate :

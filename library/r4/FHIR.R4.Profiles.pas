@@ -1993,7 +1993,6 @@ function TProfileManager.getProfileStructure(source: TFHirStructureDefinition; u
 var
   id, code : String;
 begin
-  result := false;
   if url.StartsWith('#') then
   begin
     profile := source.Link;

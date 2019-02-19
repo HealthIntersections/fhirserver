@@ -1793,8 +1793,6 @@ var
 begin
   try
     ok := true;
-    count := 0;
-    offset := 0;
     { todo:
      conformance
      quantity searches
@@ -1992,7 +1990,6 @@ begin
         if (list.Count = 0) then
         begin
           ExecuteCreate(context, request, response, idMaybeNew, 0);
-          result := false;
           ok := false;
         end
         else
@@ -6179,13 +6176,11 @@ end;
 
 procedure TFHIRNativeStorageService.Sweep;
 var
-  key : integer;
   d: TDateTime;
   list: TFslList<TFHIRResourceV>;
   storage: TFHIRNativeOperationEngine;
   conn: TKDBConnection;
 begin
-  key := 0;
   list := nil;
   d := TDateTimeEx.makeUTC.DateTime;
   ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping Sessions';

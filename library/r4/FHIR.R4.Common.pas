@@ -945,10 +945,7 @@ begin
 end;
 
 procedure TFHIRBundle4.clearLinks;
-var
-  b : TFHIRBundle;
 begin
-  b := resource as TFHIRBundle;
   bundle.link_List.Clear;
 end;
 
@@ -1192,7 +1189,6 @@ procedure TFHIRCapabilityStatement4.listSearchParams(name: String; list: TFslLis
 var
   r : TFhirCapabilityStatementRest;
   rr : TFhirCapabilityStatementRestResource;
-  int : TFhirCapabilityStatementRestResourceInteraction;
   sp : TFhirCapabilityStatementRestResourceSearchParam;
 begin
   for r in statement.restList do
@@ -2641,7 +2637,6 @@ end;
 
 function TFhirCodeSystemConcept4.getCode(code: String): TFhirCodeSystemConceptW;
 begin
-  result := nil;
   if (code = c.Code) then
     result := self.link
   else

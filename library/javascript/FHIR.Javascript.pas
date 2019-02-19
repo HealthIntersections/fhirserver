@@ -658,8 +658,6 @@ threadvar
   gjs : TJavascript;
 
 constructor TJavascript.Create;
-var
-  msg : String;
 begin
   inherited create;
 

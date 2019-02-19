@@ -3279,7 +3279,6 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  d : TFHIRLookupOpRespDesignationW;
   p : TFHIRLookupOpRespPropertyW;
   did : UInt64;
   exp : TSnomedExpression;

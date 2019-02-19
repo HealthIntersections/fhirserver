@@ -148,7 +148,7 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function hasExtensions : boolean; override;
-    function isMetadataBased : boolean; override;
+    function isMetaDataBased : boolean; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -444,13 +444,13 @@ begin
     if (ed = nil) then
       raise EDefinitionException.create('Unable to resolve '+definition.contentReference+' at '+definition.path+' on '+structure.Url);
   end;
-  if (definition.type_List.count() = 0) then
+  if (ed.type_List.count() = 0) then
     result := ''
-  else if (definition.type_list.count() > 1) then
+  else if (ed.type_list.count() > 1) then
   begin
-    t := definition.type_list[0].Code;
+    t := ed.type_list[0].Code;
     all := true;
-    for tr in definition.type_list do
+    for tr in ed.type_list do
     begin
       if (t <> tr.Code) then
         all := false;
@@ -459,7 +459,7 @@ begin
       result := t
     else
     begin
-      tail := definition.Path.substring(definition.Path.lastIndexOf('.')+1);
+      tail := ed.Path.substring(definition.Path.lastIndexOf('.')+1);
       if (tail.endsWith('[x]') and elementName.startsWith(tail.substring(0, tail.length-3))) then
       begin
         name := elementName.substring(tail.length-3);
@@ -473,7 +473,7 @@ begin
     end;
   end
   else
-    result := definition.type_list[0].Code;
+    result := ed.type_list[0].Code;
 end;
 
 function TFHIRMMProperty.hasType(elementName: String): boolean;
@@ -1207,7 +1207,6 @@ end;
 
 function TFHIRMMParserBase.getDefinition(line, col: integer; ns, name: String): TFHIRStructureDefinition;
 begin
-  result := nil;
   if (ns = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no namespace)', IssueSeverityFATAL);
@@ -1228,7 +1227,6 @@ var
   sd : TFHIRStructureDefinition;
   list : TFslList<TFHIRStructureDefinition>;
 begin
-  result := nil;
   if (name = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
@@ -1478,7 +1476,6 @@ begin
   try
     if (sd = nil) then
       exit(nil);
-    result := nil;
     result := TFHIRMMElement.create(element.localName, TFHIRMMProperty.create(Fcontext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
     checkElement(element, path, result.Prop);
     result.markLocation(start(element), end_(element));
@@ -1571,7 +1568,7 @@ procedure TFHIRMMXmlParser.parseChildren(path : String; node : TMXmlElement; con
 var
   properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
-  s, text : String;
+  text : String;
   attr : TMXmlAttribute;
   child : TMXmlElement;
   e : TMXmlElement;

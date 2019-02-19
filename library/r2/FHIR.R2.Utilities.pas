@@ -4130,7 +4130,6 @@ end;
 
 function TFhirValueSetCodeSystemHelper.locate(parent : TFhirValueSetCodeSystemConcept; list : TFhirValueSetCodeSystemConceptList; code : String; var foundParent, foundConcept : TFhirValueSetCodeSystemConcept) : boolean;
 var
-  i : integer;
   c : TFhirValueSetCodeSystemConcept;
 begin
   result := false;
@@ -4880,7 +4879,6 @@ end;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 var
   p :  TFHIRParser;
-  pc : TFHIRParserClass;
 begin
   if format = ffUnspecified then
     format := DetectFormat(stream);
@@ -4954,7 +4952,6 @@ var
   pm : TParseMap;
   i, j : integer;
   n, v : String;
-  p : TFhirParametersParameter;
 begin
   result := TFhirParameters.Create;
   try

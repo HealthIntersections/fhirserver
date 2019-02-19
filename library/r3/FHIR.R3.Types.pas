@@ -2523,7 +2523,7 @@ Type
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
     function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;
-    function toString : String; override;
+    function ToString : String; override;
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
   
@@ -32417,19 +32417,14 @@ begin
   result := inherited isEmpty ;
 end;
 
-function TFhirCount.equals(other : TObject) : boolean; 
-var
-  o : TFhirCount;
+function TFhirCount.equals(other : TObject) : boolean;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirCount)) then
     result := false
   else
-  begin
-    o := TFhirCount(other);
     result := true;
-  end;
 end;
 
 function TFhirCount.Link : TFhirCount;
@@ -32642,19 +32637,14 @@ begin
   result := inherited isEmpty ;
 end;
 
-function TFhirMoney.equals(other : TObject) : boolean; 
-var
-  o : TFhirMoney;
+function TFhirMoney.equals(other : TObject) : boolean;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirMoney)) then
     result := false
   else
-  begin
-    o := TFhirMoney(other);
     result := true;
-  end;
 end;
 
 function TFhirMoney.Link : TFhirMoney;
@@ -32868,18 +32858,13 @@ begin
 end;
 
 function TFhirAge.equals(other : TObject) : boolean; 
-var
-  o : TFhirAge;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirAge)) then
     result := false
   else
-  begin
-    o := TFhirAge(other);
     result := true;
-  end;
 end;
 
 function TFhirAge.Link : TFhirAge;
@@ -33093,18 +33078,13 @@ begin
 end;
 
 function TFhirDistance.equals(other : TObject) : boolean; 
-var
-  o : TFhirDistance;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirDistance)) then
     result := false
   else
-  begin
-    o := TFhirDistance(other);
     result := true;
-  end;
 end;
 
 function TFhirDistance.Link : TFhirDistance;
@@ -33317,19 +33297,14 @@ begin
   result := inherited isEmpty ;
 end;
 
-function TFhirDuration.equals(other : TObject) : boolean; 
-var
-  o : TFhirDuration;
+function TFhirDuration.equals(other : TObject) : boolean;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirDuration)) then
     result := false
   else
-  begin
-    o := TFhirDuration(other);
     result := true;
-  end;
 end;
 
 function TFhirDuration.Link : TFhirDuration;

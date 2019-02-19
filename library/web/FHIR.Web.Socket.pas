@@ -116,7 +116,7 @@ end;
 function TIdWebSocket.read(wait : boolean) : TIdWebSocketCommand;
 var
   h, l : byte;
-  fin, msk : boolean;
+  fin : boolean;
   op : byte;
   mk : TIdBytes;
   len : cardinal;
@@ -133,7 +133,7 @@ begin
       raise EIdException.create('Multiple frames not done yet');
     op := h and $0F;
     l := FConnection.IOHandler.ReadByte;
-    msk := (l and $80) > 0;
+    // ? msk := (l and $80) > 0;
     len := l and $7F;
     if len = 126 then
       len := FConnection.IOHandler.ReadUInt16

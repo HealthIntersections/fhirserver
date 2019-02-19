@@ -331,7 +331,7 @@ begin
       begin
         // special case for bug in R4...
         index := StringArrayIndexOfInsensitive(targets, name);
-        if i = -1 then
+        if index = -1 then
           raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
         else
           result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
@@ -622,7 +622,6 @@ var
   like: Boolean;
 begin
   begin
-    like := false;
     if value.Contains('|') then
     begin
       StringSplit(value, '|', ref, value);

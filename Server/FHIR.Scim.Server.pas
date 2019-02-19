@@ -541,7 +541,6 @@ function TSCIMServer.loadUser(key: integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
-  result := nil;
   conn := db.GetConnection('scim.loadUser');
   try
     conn.SQL := 'Select Password, Content from Users where Status = 1 and UserKey = '''+inttostr(key)+'''';
@@ -570,7 +569,6 @@ function TSCIMServer.loadUser(id: String; var key : integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
-  result := nil;
   conn := db.GetConnection('scim.loadUser');
   try
     conn.SQL := 'Select UserKey, Password, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';

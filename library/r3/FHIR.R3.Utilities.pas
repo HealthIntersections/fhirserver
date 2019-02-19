@@ -2595,7 +2595,7 @@ var
   rest : TFHIRCapabilityStatementRest;
   res : TFHIRCapabilityStatementRestResource;
   cmd : TFHIRCapabilityStatementRestResourceInteraction;
-  ok, found : boolean;
+  found : boolean;
   c : TFHIRCommandType;
 begin
   result := false;
@@ -2605,16 +2605,15 @@ begin
     begin
       if CODES_TFhirResourceTypesEnum[res.type_] = name then
       begin
-        ok := true;
+        found := false;
         for c := low(TFHIRCommandType) to high(TFHIRCommandType) do
           if c in commands then
           begin
-            found := false;
             for cmd in res.interactionList do
               if CODES_TFhirTypeRestfulInteractionEnum[cmd.code] = CODES_TFHIRCommandType[c] then
                 found := true;
           end;
-        if ok then
+        if found then
           exit(true);
       end;
     end;

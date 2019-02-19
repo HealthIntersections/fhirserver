@@ -472,7 +472,6 @@ end;
 function TUcumServices.getDefinedForms(code: String): TFslMap<TUcumDefinedUnit>;
 var
   base : TUcumBaseUnit;
-  i : integer;
   du : TUcumDefinedUnit;
 begin
   if Code = '' then
@@ -497,7 +496,6 @@ end;
 
 procedure TUcumServices.getCommonUnits(propertyName: String; oList : TFslStringList);
 var
-  i : integer;
   p : TUcumProperty;
 begin
   oList.Clear;
@@ -514,7 +512,6 @@ end;
 
 procedure TUcumServices.getProperties(oList: TFslStringList);
 var
-  i : integer;
   p : TUcumProperty;
 begin
   oList.Clear;
@@ -559,7 +556,6 @@ end;
 
 function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
-  result := nil;
   raise ETerminologyError.Create('to do');
 end;
 
@@ -652,8 +648,6 @@ var
   conv : TUcumConverter;
   c : TUcumCanonical;
   cu : String;
-  sym : TUcumSymbol;
-  b : TUcumBaseUnit;
 begin
   if Code = '' then
     RaiseError('Convert', 'A unit is required');

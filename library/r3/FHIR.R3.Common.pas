@@ -931,10 +931,7 @@ begin
 end;
 
 procedure TFHIRBundle3.clearLinks;
-var
-  b : TFHIRBundle;
 begin
-  b := resource as TFHIRBundle;
   bundle.link_List.Clear;
 end;
 

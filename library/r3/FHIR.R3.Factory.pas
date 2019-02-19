@@ -379,7 +379,7 @@ var
 begin
   for a in ALL_RESOURCE_TYPES do
     if CODES_TFhirResourceType[a] = name then
-      result := RESOURCE_CATEGORY[a];
+      exit(RESOURCE_CATEGORY[a]);
   result := tcOther;
 end;
 

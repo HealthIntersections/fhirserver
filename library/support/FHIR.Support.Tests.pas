@@ -82,7 +82,7 @@ Type
   TFslTestObjectList = class (TFslObjectList)
   private
   protected
-    function itemClass : TFslObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
   end;
 
@@ -657,6 +657,7 @@ implementation
 
 { TFslGenericsTests }
 
+{$HINTS OFF}
 procedure TFslGenericsTests.testSimple;
 var
   l : TFslList<TFslObject>;
@@ -672,6 +673,7 @@ begin
     l.Free;
   end;
 end;
+{$HINTS ON}
 
 procedure TFslGenericsTests.testSort;
 var

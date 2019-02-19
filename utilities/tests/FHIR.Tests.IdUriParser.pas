@@ -39,7 +39,6 @@ type
   TIdUriParserTests = Class (TObject)
   private
     procedure ok(uri : String);
-    procedure fail(uri : String);
   public
     [TestCase] Procedure TestOK;
     [TestCase] Procedure TestFail;
@@ -62,18 +61,6 @@ begin
   o := TIdUri.create(uri);
   try
     Assert.IsTrue(o <> nil);
-  finally
-    o.free;
-  end;
-end;
-
-procedure TIdUriParserTests.fail(uri: String);
-var
-  o : TIdUri;
-begin
-  o := TIdUri.create(uri);
-  try
-    Assert.IsTrue(false);
   finally
     o.free;
   end;

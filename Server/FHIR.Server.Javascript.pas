@@ -96,10 +96,8 @@ Type
     constructor Create; override;
     destructor Destroy; override;
 
-    procedure registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes; isDefault : boolean);
-
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
-
+    property engine : TFHIRJavascript read FEngine;
     procedure previewRequest(session : TFHIRSession; request : TFHIRRequest);
     procedure checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
   end;
@@ -151,8 +149,6 @@ begin
 end;
 
 constructor TJsHost.Create;
-var
-  v : TFHIRVersion;
 begin
   inherited create;
   FEngine := TFHIRJavascript.create;
@@ -163,12 +159,6 @@ begin
   FEngine.Free;
   FRegistry.Free;
   inherited;
-end;
-
-
-procedure TJsHost.registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes; isDefault : boolean);
-begin
-  FEngine.registerFactory(reg, worker.Factory, isDefault);
 end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);

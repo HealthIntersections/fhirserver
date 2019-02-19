@@ -169,7 +169,7 @@ type
     function hasComments : boolean;
     function hasValue : boolean;
     function hasIndex : boolean;
-    function isMetadataBased : boolean; override;
+    function isMetaDataBased : boolean; override;
     procedure GetChildrenByName(name : String; children : TFHIRSelectionList); override;
     procedure getNamedChildrenWithWildcard(name : String; children : TFslList<TFHIRMMElement>);
     function getNamedChild(name : String) : TFHIRMMElement;
@@ -1268,7 +1268,6 @@ end;
 
 function TFHIRMMParserBase.getDefinition(line, col: integer; ns, name: String; noException : boolean = false): TFHIRStructureDefinition;
 begin
-  result := nil;
   if (ns = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no namespace)', IssueSeverityFATAL);
@@ -1298,7 +1297,6 @@ var
   list : TFslList<TFHIRStructureDefinition>;
   sd : TFHIRStructureDefinition;
 begin
-  result := nil;
   if (name = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
@@ -1626,7 +1624,6 @@ begin
   try
     if (sd = nil) then
       exit(nil);
-    result := nil;
     result := TFHIRMMElement.create(element.localName, TFHIRMMProperty.create(Fcontext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
     checkElement(element, path, result.Prop);
     result.markLocation(start(element), end_(element));
@@ -1719,7 +1716,7 @@ procedure TFHIRMMXmlParser.parseChildren(path : String; node : TMXmlElement; con
 var
   properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
-  s, text : String;
+  text : String;
   attr : TMXmlAttribute;
   child : TMXmlElement;
   e : TMXmlElement;

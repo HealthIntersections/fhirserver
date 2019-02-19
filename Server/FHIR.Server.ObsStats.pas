@@ -489,13 +489,13 @@ end;
 
 function TObservationStatsEvaluator.genKurtosis: Double;
 var
-  av : Double;
+//  av : Double;
   obs : TObservation;
   t, m, d : double;
 begin
   if FKurtosis <> -MaxInt then
     exit(FKurtosis);
-  av := genAverage;
+  //av := genAverage;
   m := 0;
   d := 0;
   for Obs in FValidData do

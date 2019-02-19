@@ -1903,7 +1903,7 @@ Type
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
     function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;
-    function toString : String; override;
+    function ToString : String; override;
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
   

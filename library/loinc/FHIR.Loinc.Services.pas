@@ -1946,7 +1946,6 @@ var
   iRefs : TCardinalArray;
   i : integer;
   p : TFHIRLookupOpRespPropertyW;
-  d : TFHIRLookupOpRespDesignationW;
   {$ENDIF}
 begin
   langs := langsForLang(lang);
@@ -2123,7 +2122,6 @@ function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirF
   function getProp(i : integer) : String;
   var
     langs : TLangArray;
-    lang : byte;
     code : String;
     idesc, names, entry, stems : Cardinal;
     comp, iprop, time, system, scale, method, clss : Cardinal;

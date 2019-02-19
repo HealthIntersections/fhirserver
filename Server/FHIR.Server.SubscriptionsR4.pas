@@ -276,7 +276,6 @@ var
   request : TFHIRRequest;
   response : TFHIRResponse;
   url : string;
-  i : integer;
   ex: TFhirExtension;
   entry : TFhirBundleEntry;
   bundle : TFHIRBundle;

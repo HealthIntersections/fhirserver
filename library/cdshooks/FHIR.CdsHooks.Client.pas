@@ -79,6 +79,7 @@ type
     property error : String read FError write FError;
   end;
 
+  {$HINTS OFF} // while in dev
   TCDSHooksManagerWorkThread = class (TFslThread)
   private
     Fmanager : TCDSHooksManager;

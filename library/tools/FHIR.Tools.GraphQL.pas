@@ -74,7 +74,7 @@ type
     function targetTypeOk(arguments : TFslList<TGraphQLArgument>; dest : TFHIRResourceV) : boolean;
 
     function filter(context : TFHIRResourceV; prop:TFHIRProperty; arguments : TFslList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TFslList<TFHIRObject>;
-    function filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundleW)  : TFslList<TFHIRResourceV>; overload;
+//    function filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundleW)  : TFslList<TFHIRResourceV>; overload;
     function filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFHIRResourceV>)  : TFslList<TFHIRResourceV>; overload;
     procedure processObject(context : TFHIRResourceV; source : TFHIRObject; target : TGraphQLObjectValue; selection : TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
@@ -435,41 +435,41 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundleW): TFslList<TFHIRResourceV>;
-var
-  be : TFHIRBundleEntryW;
-  node : TFHIRPathExpressionNodeV;
-  bel : TFslList<TFHIRBundleEntryW>;
-begin
-  result := TFslList<TFHIRResourceV>.create;
-  try
-    bel := bnd.entries;
-    try
-      if bel.Count > 0 then
-      begin
-        if (FHIRPathEngine = nil) then
-          for be in bel do
-            result.Add(be.resource.Link)
-        else
-        begin
-          node := FPathEngine.parseV(getSingleValue(FHIRPathEngine));
-          try
-            for be in bel do
-              if FPathEngine.evaluateToBoolean(nil, be.resource, be.resource, node) then
-                result.Add(be.resource.Link)
-          finally
-            node.Free;
-          end;
-        end;
-      end;
-    finally
-      bel.Free;
-    end;
-    result.link;
-  finally
-    result.Free;
-  end;
-end;
+//function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundleW): TFslList<TFHIRResourceV>;
+//var
+//  be : TFHIRBundleEntryW;
+//  node : TFHIRPathExpressionNodeV;
+//  bel : TFslList<TFHIRBundleEntryW>;
+//begin
+//  result := TFslList<TFHIRResourceV>.create;
+//  try
+//    bel := bnd.entries;
+//    try
+//      if bel.Count > 0 then
+//      begin
+//        if (FHIRPathEngine = nil) then
+//          for be in bel do
+//            result.Add(be.resource.Link)
+//        else
+//        begin
+//          node := FPathEngine.parseV(getSingleValue(FHIRPathEngine));
+//          try
+//            for be in bel do
+//              if FPathEngine.evaluateToBoolean(nil, be.resource, be.resource, node) then
+//                result.Add(be.resource.Link)
+//          finally
+//            node.Free;
+//          end;
+//        end;
+//      end;
+//    finally
+//      bel.Free;
+//    end;
+//    result.link;
+//  finally
+//    result.Free;
+//  end;
+//end;
 
 function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFHIRResourceV>): TFslList<TFHIRResourceV>;
 var
@@ -786,8 +786,6 @@ begin
     finally
       params.Free;
     end;
-    arg := nil;
-    new := nil;
 
     vl := filterResources(field.argument('FHIRPathEngine'), list);
     try
@@ -922,8 +920,6 @@ begin
   list := TFslList<TFHIRResourceV>.create;
   try
     FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), field.Arguments, list);
-    arg := nil;
-    new := nil;
 
     vl := filterResources(field.argument('FHIRPathEngine'), list);
     try

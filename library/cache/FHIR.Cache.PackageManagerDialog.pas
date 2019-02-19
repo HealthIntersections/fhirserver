@@ -496,7 +496,7 @@ end;
 
 procedure TPackageCacheForm.vtPackagesInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
 var
-  p, pp : PTreeDataPointer;
+  p : PTreeDataPointer;
 begin
   p := vtPackages.GetNodeData(Node);
   ChildCount := p.obj.childCount;

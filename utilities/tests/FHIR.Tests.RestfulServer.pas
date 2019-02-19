@@ -565,7 +565,8 @@ end;
 
 procedure TRestFulServerTests.registerJs(snder: TObject; js: TJsHost);
 begin
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes, true);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
 end;
 
 procedure TRestFulServerTests.Setup;

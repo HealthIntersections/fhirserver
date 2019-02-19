@@ -139,7 +139,7 @@ type
     procedure setSearchMode(Value: TFHIRBundleEntrySearchMode); override;
     procedure setSearchMpiMatch(Value: String); override;
     procedure setSearchScore(Value: String); override;
-    function getUrl: String; override;
+    function getURL: String; override;
     procedure setUrl(Value: String);  override;
     function getrequestIfNoneExist: String; override;
     procedure setrequestIfNoneExist(Value: String); override;
@@ -173,8 +173,8 @@ type
     function getTotal: integer; override;
     procedure setTotal(Value: integer); override;
     function title : String; override;
-    function gettype : TBundleType; override;
-    procedure settype(value: TBundleType); override;
+    function getType : TBundleType; override;
+    procedure setType(value: TBundleType); override;
     function getLastUpdated : TDateTimeEx; override;
     procedure setLastUpdated(Value: TDateTimeEx); override;
     function getTimestamp: TDateTimeEx; override;
@@ -228,7 +228,7 @@ type
     procedure impl(url, desc : String); override;
     procedure fmt(mt : String); override;
 
-    function getUrl: String; override;
+    function getURL: String; override;
     procedure setUrl(Value: String); override;
     function getName : String; override;
     procedure setName(value : String); override;
@@ -349,9 +349,9 @@ type
 
   TFhirValueSetComposeIncludeFilter2 = class (TFhirValueSetComposeIncludeFilterW)
   public
-    function getprop : String; override;
-    function getop : TFilterOperator; override;
-    function getvalue : String; override;
+    function getProp : String; override;
+    function getOp : TFilterOperator; override;
+    function getValue : String; override;
     procedure setOp(Value: TFilterOperator); override;
     procedure setProp(Value: String); override;
     procedure setValue(Value: String); override;
@@ -359,8 +359,8 @@ type
 
   TFhirValueSetComposeIncludeConcept2 = class (TFhirValueSetComposeIncludeConceptW)
   public
-    function getcode : String; override;
-    function getdisplay : String; override;
+    function getCode : String; override;
+    function getDisplay : String; override;
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
@@ -368,8 +368,8 @@ type
 
   TFhirValueSetComposeInclude2 = class (TFhirValueSetComposeIncludeW)
   public
-    function getsystem : String; override;
-    function getversion : String; override;
+    function getSystem : String; override;
+    function getVersion : String; override;
     function valueSets : TArray<String>; override;
     function hasConcepts : boolean; override;
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; override;
@@ -418,10 +418,10 @@ type
     function vs : TFhirValueSet;
     function cs : TFHIRValueSetCodeSystem;
   public
-    function getname : String; override;
-    function geturl : String; override;
-    function getversion : String; override;
-    function getdescription : String; override;
+    function getName : String; override;
+    function getURL : String; override;
+    function getVersion : String; override;
+    function getDescription : String; override;
     function copyright : String; override;
     function language : String; override;
 
@@ -461,7 +461,7 @@ type
   private
     function vs : TFhirValueSet;
   public
-    function getname : String; override;
+    function getName : String; override;
     function getURL : String; override;
     function checkCompose(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
@@ -472,7 +472,7 @@ type
     function hasExpansion : boolean; override;
     function expansion : TFhirValueSetExpansionW; override;
     function forceExpansion : TFhirValueSetExpansionW; override;
-    procedure setURL(value : String); override;
+    procedure setUrl(value : String); override;
     procedure setName(value : String); override;
     function getVersion : String; override;
     procedure setVersion(value : String); override;
@@ -558,7 +558,7 @@ type
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
   public
-    function geturl : String; override;
+    function getURL : String; override;
     function getDate: TDateTimeEx; override;
     function getDescription: String; override;
     function getName: String; override;
@@ -585,6 +585,7 @@ type
     procedure force;
     procedure setResource(value : TFHIRResource);
     function m : TFhirMeta;
+  protected
     function NoElementOk : boolean; override;
   public
     destructor Destroy; override;
@@ -872,10 +873,7 @@ begin
 end;
 
 procedure TFHIRBundle2.clearLinks;
-var
-  b : TFHIRBundle;
 begin
-  b := resource as TFHIRBundle;
   bundle.link_List.Clear;
 end;
 
@@ -1090,8 +1088,6 @@ begin
 end;
 
 function TFHIRCapabilityStatement2.hasRest: boolean;
-var
-  cs : TFHIRCapabilityStatement;
 begin
   result := statement.restList.Count > 0;
 end;
@@ -1120,10 +1116,7 @@ end;
 procedure TFHIRCapabilityStatement2.listSearchParams(name: String; list: TFslList<TFHIRSearchParamDefinitionW>);
 var
   r : TFhirConformanceRest;
-  it : TFhirConformanceRestInteraction;
   rr : TFhirConformanceRestResource;
-  int : TFhirConformanceRestResourceInteraction;
-  i : TFHIRInteraction;
   sp : TFhirConformanceRestResourceSearchParam;
 begin
   for r in statement.restList do
@@ -3499,8 +3492,6 @@ begin
 end;
 
 function TFHIRSubscription2.GetSummary: String;
-var
-  s : TFhirString;
 begin
   result := sub.channel.type_Element.value+#1+sub.channel.endpoint+#1+sub.channel.payload;
   result := result+#0+sub.channel.header;
@@ -3530,8 +3521,6 @@ begin
 end;
 
 procedure TFHIRSubscription2.Setheaders(Value: TArray<String>);
-var
-  s : String;
 begin
   if length(value) = 0 then
     sub.channel.header := ''
@@ -3728,7 +3717,6 @@ end;
 
 function TFhirObservation2.categories: TFslList<TFHIRCodingW>;
 var
-  cc : TFHIRCodeableConcept;
   c : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
@@ -3831,8 +3819,6 @@ begin
 end;
 
 function TFHIRLookupOpRequest2.propList: TArray<String>;
-var
-  i : integer;
 begin
   SetLength(result, 0);
 end;

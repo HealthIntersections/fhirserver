@@ -571,13 +571,11 @@ var
   iList : TRefSetMemberEntryArray;
   iDummy, iRefSet, iMembers, iDescs, children, iTypes, iName, iFields : Cardinal;
   types, fields, values : TCardinalArray;
-  bDescSet : Boolean;
   aMembers : TSnomedReferenceSetMemberArray;
   date : TSnomedDate;
   ok : boolean;
   did : UInt64;
 Begin
-  bDescSet := false;
   SetLength(aMembers, 0);
   SetLength(iList, 0);
   SetLength(alLDesc, 0);

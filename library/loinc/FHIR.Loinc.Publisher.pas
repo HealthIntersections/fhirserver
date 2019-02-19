@@ -451,7 +451,6 @@ var
   iRefs : TCardinalArray;
   i : integer;
   lang : byte;
-  iCount : integer;
 Begin
   iRefs := nil;
   if FLoinc.CodeList.FindCode(sCode, iIndex) Then
@@ -460,10 +459,8 @@ Begin
     assert(sCode = sCode1);
     html.Header('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription, lang));
     html.StartTable(true);
-    iCount := 0;
     if iComponent <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Component');
       html.AddTableCell(GetConceptDesc(iComponent));
@@ -471,7 +468,6 @@ Begin
     End;
     if iProperty <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Property');
       html.AddTableCell(GetConceptDesc(iProperty));
@@ -479,7 +475,6 @@ Begin
     End;
     if iTimeAspect <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Time Aspect');
       html.AddTableCell(GetConceptDesc(iTimeAspect));
@@ -487,7 +482,6 @@ Begin
     End;
     if iSystem <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('System');
       html.AddTableCell(GetConceptDesc(iSystem));
@@ -495,7 +489,6 @@ Begin
     End;
     if iScale <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Scale');
       html.AddTableCell(GetConceptDesc(iScale));
@@ -503,7 +496,6 @@ Begin
     End;
     if iMethod <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Method');
       html.AddTableCell(GetConceptDesc(iMethod));
@@ -511,14 +503,12 @@ Begin
     End;
     if iClass <> 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Class');
       html.AddTableCell(GetConceptDesc(iClass));
       html.EndTableRow;
     End;
 
-    inc(iCount);
     html.StartRow();
     html.AddTableCell('Type');
     if iFlags and FLAGS_CLIN > 0 Then
@@ -531,7 +521,6 @@ Begin
       html.AddTableCell('Lab');
     html.EndTableRow;
 
-    inc(iCount);
     html.StartRow();
     html.AddTableCell('Status');
     if iFlags and FLAGS_HOLD > 0 Then
@@ -542,7 +531,6 @@ Begin
 
     if iFlags and FLAGS_ROOT > 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Root');
       html.AddTableCell('This is a root of a set');
@@ -551,14 +539,12 @@ Begin
 
     if iFlags and FLAGS_UNITS > 0 Then
     Begin
-      inc(iCount);
       html.StartRow();
       html.AddTableCell('Units');
       html.AddTableCell('Units are required');
       html.EndTableRow;
     End;
 
-    inc(iCount);
     html.StartRow();
     html.AddTableCell('Order/Obs Status');
     if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then

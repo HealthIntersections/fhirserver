@@ -960,7 +960,6 @@ var
   hb, pb : TBytes;
   h, p : TJsonObject;
 begin
-  result := nil;
   StringSplit(token, '.', header, payload);
   StringSplit(payload, '.', payload, sig);
   check(header <> '', 'Header not found reading JWT');

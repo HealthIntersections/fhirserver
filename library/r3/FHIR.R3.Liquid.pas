@@ -481,7 +481,7 @@ end;
 function TFHIRLiquidParser.parseInclude(cnt: String): TFHIRLiquidNode;
 var
   i, j : integer;
-  s, n : String;
+  n : String;
   res : TFHIRLiquidInclude;
 begin
   i := 1;

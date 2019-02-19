@@ -3516,7 +3516,6 @@ end;
 procedure TFHIRNativeStorageServiceR4.checkDefinitions;
 var
   s, sx : string;
-  c, t : integer;
   fpe : TFHIRPathEngine;
   sd : TFhirStructureDefinition;
   ed: TFhirElementDefinition;
@@ -3525,8 +3524,6 @@ var
   expr : TFHIRPathExpressionNode;
 begin
   s := '';
-  c := 0;
-  t := 0;
   fpe := TFHIRPathEngine.create(vc, TUcumServiceImplementation.Create(ServerContext.TerminologyServer.CommonTerminologies.Ucum.Link));
   try
     for sd in vc.Profiles.ProfilesByURL.Values do
@@ -3539,7 +3536,6 @@ begin
             sx := inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'); //inv.expression
             if (sx <> '') and not sx.contains('$parent') then
             begin
-              inc(t);
               try
                 expr := fpe.parse(sx);
                 try
@@ -3550,8 +3546,6 @@ begin
                   try
                     if (td.hasNoTypes) then
                       s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): no possible result from '+sx + #13#10
-                    else
-                      inc(c);
                   finally
                     td.free;
                   end;
@@ -3585,7 +3579,7 @@ begin
   if resource.ResourceType = frtValueSet then
   begin
     vs := TFHIRValueSet(resource);
-    ServerContext.TerminologyServer.checkTerminologyResource(resource)
+    ServerContext.TerminologyServer.checkTerminologyResource(vs)
   end
   else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
     ServerContext.TerminologyServer.checkTerminologyResource(resource)

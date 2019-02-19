@@ -5149,12 +5149,12 @@ End;
 
 Procedure TFslZipReader.ReadUnknownLengthDeflate(partName : string; oBuffer : TFslBuffer);
 Var
-  iCurrent, iCRC : LongWord;
+  iCurrent{, iCRC} : LongWord;
   iByte : Byte;
   oMem : TFslMemoryStream;
   iSizeComp : LongWord;
   iSizeUncomp : LongWord;
-  count : integer;
+//  count : integer;
   first : boolean;
 Begin
   // well, we don't know how long it's going to be.
@@ -5170,7 +5170,7 @@ Begin
     iByte := 156;
     oMem.Write(iByte, 1);
     iCurrent := ReadLongWord;
-    count := 0;
+//    count := 0;
     repeat
       first := true;
       While first or (Not EndCondition(iCurrent)) Do
@@ -5180,11 +5180,11 @@ Begin
         iCurrent := (iCurrent And $FFFFFF00) Shr 8 + ReadByte Shl 24;
         first := false;
       End;
-      inc(count);
+//      inc(count);
     until true; // (partName <> 'fhir.schema.json.zip') or (count > 1);
     If iCurrent <> SIG_DATA_DESCRIPTOR Then
       RaiseError('ReadUnknownLengthDeflate', 'Error in zip structure: Source is not terminated by a Data Descriptor');
-    iCRC := ReadLongWord;                // crc-32                          4 bytes
+    {iCRC := }ReadLongWord;                // crc-32                          4 bytes
     iSizeComp := ReadLongWord;           // compressed size                 4 bytes
     iSizeUncomp := ReadLongWord;         // uncompressed size               4 bytes
     {$WARNINGS OFF} // a widening notifications in this check and the assertion in ReadKnownDeflate

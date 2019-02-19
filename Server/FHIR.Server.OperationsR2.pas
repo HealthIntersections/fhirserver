@@ -50,12 +50,13 @@ type
     procedure registerOperations; override;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); override;
     function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList; override;
-    Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
     function readRef(ref : TFHIRObject) : string; override;
     function getOpException(op : TFHIRResourceV) : String; override;
     procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); override;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
+  public
+    procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
   end;
 
   TFhirNativeOperationR2 = class (TFhirNativeOperation)
@@ -1140,7 +1141,6 @@ procedure TFhirValidationOperation.Execute(context : TOperationContext; manager:
 type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
   outcome : TFHIROperationOutcomeW;
-  i : integer;
   profileId : String;
   profile : TFHirStructureDefinition;
   profiles : TValidationProfileSet;
@@ -2409,7 +2409,6 @@ end;
 
 procedure TFhirVersionsOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  profile : TFHirStructureDefinition;
   p : TFhirParameters;
 begin
   try
@@ -2826,7 +2825,6 @@ end;
 procedure TFHIRNativeStorageServiceR2.checkDefinitions;
 var
   s, sx : string;
-  c, t : integer;
   fpe : TFHIRPathEngine;
   sd : TFhirStructureDefinition;
   ed: TFhirElementDefinition;
@@ -2835,8 +2833,6 @@ var
   expr : TFHIRPathExpressionNode;
 begin
   s := '';
-  c := 0;
-  t := 0;
   fpe := TFHIRPathEngine.create(vc, TUcumServiceImplementation.Create(ServerContext.TerminologyServer.CommonTerminologies.Ucum.Link));
   try
     for sd in vc.Profiles.ProfilesByURL.Values do
@@ -2850,7 +2846,6 @@ begin
             sx := inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'); //inv.expression
             if (sx <> '') and not sx.contains('$parent') then
             begin
-              inc(t);
               try
                 expr := fpe.parse(sx);
                 try
@@ -2861,8 +2856,6 @@ begin
                   try
                     if (td.hasNoTypes) then
                       s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): no possible result from '+sx + #13#10
-                    else
-                      inc(c);
                   finally
                     td.free;
                   end;
@@ -2895,7 +2888,7 @@ begin
   if resource.ResourceType = frtValueSet then
   begin
     vs := TFHIRValueSet(resource);
-    ServerContext.TerminologyServer.checkTerminologyResource(resource)
+    ServerContext.TerminologyServer.checkTerminologyResource(vs)
   end
   else if resource.ResourceType in [frtConceptMap] then
     ServerContext.TerminologyServer.checkTerminologyResource(resource)
