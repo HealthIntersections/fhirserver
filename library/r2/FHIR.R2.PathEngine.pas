@@ -1117,7 +1117,7 @@ end;
 
 function TFHIRPathEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TDateTimeEx.makeLocal));
+  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TFslDateTime.makeLocal));
 end;
 
 function TFHIRPathEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -1499,7 +1499,7 @@ end;
 
 function TFHIRPathEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday));
+  result := TFHIRSelectionList.Create(TFhirDate.Create(TFslDateTime.makeToday));
 end;
 
 function TFHIRPathEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -3137,9 +3137,9 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateTimeEx.fromXML(s))
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(s))
   else
-    result := TFHIRDate.create(TDateTimeEx.fromXML(s));
+    result := TFHIRDate.create(TFslDateTime.fromXML(s));
 end;
 
 function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;

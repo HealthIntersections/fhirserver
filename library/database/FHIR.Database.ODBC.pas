@@ -65,7 +65,7 @@ type
     function GetColBlobV(ACol: Word): TBytes; Override;
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
-    function GetColDateTimeExV(ACol: Word): TDateTimeEx; Override;
+    function GetColDateTimeExV(ACol: Word): TFslDateTime; Override;
     function GetColTypeV(ACol: Word): TKDBColumnType; Override;
     function GetColKeyV(ACol: Word): Integer; Override;
     function GetRowsAffectedV: Integer; Override;
@@ -87,7 +87,7 @@ type
     procedure BindDoubleV(AParamName: String; AParamValue: Double); Override;
     procedure BindStringV(AParamName: String; AParamValue: String); Override;
     procedure BindTimeStampV(AParamName: String; AParamValue: TTimeStamp); Override;
-    procedure BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx); Override;
+    procedure BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime); Override;
     procedure BindBlobV(AParamName: String; AParamValue: TBytes); Override;
     procedure BindNullV(AParamName: String); Override;
     function DatabaseSizeV : int64; Override;
@@ -200,9 +200,9 @@ begin
   Result := FStmt.ColInt64[ACol];
 end;
 
-function TKDBOdbcConnection.GetColDateTimeExV(ACol: Word): TDateTimeEx;
+function TKDBOdbcConnection.GetColDateTimeExV(ACol: Word): TFslDateTime;
 begin
-  result := TDateTimeEx.fromTS(GetColTimestampV(ACol));
+  result := TFslDateTime.fromTS(GetColTimestampV(ACol));
 end;
 
 function TKDBOdbcConnection.GetColDoubleV(ACol: Word): Double;
@@ -510,7 +510,7 @@ begin
   BindInteger(AParamName, AParamValue);
 end;
 
-procedure TKDBOdbcConnection.BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx);
+procedure TKDBOdbcConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
 begin
   BindTimeStampV(AParamName, AParamValue.TimeStamp);
 end;

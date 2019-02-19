@@ -666,8 +666,8 @@ begin
       se.event.outcome := AuditEventOutcome4
     else
       se.event.outcome := AuditEventOutcome8; // no way we are going down...
-    se.event.dateTime := TDateTimeEx.makeUTC;
-    se.Tag := TDateTimeExWrapper.Create(se.event.dateTime);
+    se.event.dateTime := TFslDateTime.makeUTC;
+    se.Tag := TFslDateTimeWrapper.Create(se.event.dateTime);
 
     se.source := TFhirAuditEventSource.create;
     se.source.site := ServerContext.Globals.OwnerName;
@@ -1376,7 +1376,7 @@ begin
 //            end;
 //          end;
 
-        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.setLastUpdated(TFslDateTime.makeUTC);
         bundle.setId(NewGuidId);
         response.HTTPCode := 200;
         response.Message := 'OK';
@@ -2553,8 +2553,8 @@ begin
           raise EFHIRException.create('no code or coding found');
         if (req.duration <> '') then
         begin
-          ose.start := TDateTimeEx.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
-          ose.finish := TDateTimeEx.makeUTC.DateTime;
+          ose.start := TFslDateTime.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
+          ose.finish := TFslDateTime.makeUTC.DateTime;
         end
         else if (req.period <> nil) then
         begin
@@ -2671,7 +2671,7 @@ begin
       keys := TKeyList.Create;
       try
         bundle.setId(FhirGUIDToString(CreateGUID));
-        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.setLastUpdated(TFslDateTime.makeUTC);
         summaryStatus := request.Summary;
 
         base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/$lastn?';
@@ -3053,7 +3053,7 @@ begin
           try
             bundle.id := copy(GUIDToString(CreateGUID), 2, 36).ToLower;
             bundle.meta := TFHIRMeta.Create;
-            bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+            bundle.meta.lastUpdated := TFslDateTime.makeUTC;
 //            bundle.base := native(manager).ServerContext.FormalURLPlain;
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
@@ -3220,7 +3220,7 @@ begin
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := ServerContext.Globals.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
@@ -3266,10 +3266,10 @@ begin
         system := 'http://hl7.org/fhir/consentcategorycodes';
         code := 'smart-on-fhir';
       end;
-      pc.dateTime := TDateTimeEx.makeUTC;
+      pc.dateTime := TFslDateTime.makeUTC;
       pc.period := TFHIRPeriod.Create;
       pc.period.start := pc.dateTime;
-      pc.period.end_ := TDateTimeEx.makeUTC(session.expires);
+      pc.period.end_ := TFslDateTime.makeUTC(session.expires);
       pc.patient := TFHIRReference.Create;
       pc.patient.reference := Session.Compartments[0].ToString;
       // todo: do we have a reference for the consentor?

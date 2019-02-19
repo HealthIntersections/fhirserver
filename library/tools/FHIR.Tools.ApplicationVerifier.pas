@@ -33,8 +33,7 @@ uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Certs, FHIR.Support.Stream,
-  FHIR.Base.Lang,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
+  FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory;
 
 type
   TClientApplicationVerifier = class (TFslObject)
@@ -42,6 +41,7 @@ type
     FServer: String;
     FCertificate: String;
     FPassword: String;
+    FFactory : TFHIRFactory;
     procedure getSSLpassword(var Password: String);
     function performVerification(jwt : String) : TJsonObject;
   public
@@ -51,7 +51,7 @@ type
     property Password : String read FPassword write FPassword;
 
     function check(jwt : TJWT; html : TStringBuilder; var summary : String) : boolean; overload;
-    function check(jwt : TJWT; params : TFHIRParameters) : boolean; overload;
+    function check(jwt : TJWT; params : TFHIRParametersW) : boolean; overload;
   end;
 
 implementation
@@ -90,50 +90,68 @@ begin
   end;
 end;
 
-function TClientApplicationVerifier.check(jwt : TJWT; params : TFHIRParameters) : boolean;
+function TClientApplicationVerifier.check(jwt : TJWT; params : TFHIRParametersW) : boolean;
 var
-  p, p1 : TFhirParametersParameter;
+  p, p1 : TFhirParametersParameterW;
   json, obj : TJsonObject;
   item : TJsonNode;
 begin
   json := performVerification(jwt.originalSource);
   try
     result := json.str['status'] = 'approved';
-    p := params.parameterList.Append;
-    p.name := 'message';
-    p.value := TFHIRString.Create(json.str['message']);
+    p := params.addParam('message');
+    try
+      p.value := FFactory.makeString(json.str['message']);
+    finally
+      p.Free;
+    end;
     for item in json.forceArr['endorsements'] do
       if item is TJsonObject then
       begin
         obj := item as TJsonObject;
-        p := params.parameterList.Append;
-        p.name := 'endorsement';
-        if (obj.has('type')) then
-        begin
-          p1 := p.partList.Append;
-          p1.name := 'type';
-          p1.value := TFHIRCode.Create(obj.str['type']);
-        end;
-        if (obj.has('comment')) then
-        begin
-          p1 := p.partList.Append;
-          p1.name := 'comment';
-          p1.value := TFHIRString.Create(obj.str['comment']);
-        end;
-        if (obj.has('endorser')) then
-        begin
-          if (obj.obj['endorser'].has('name')) then
+        p := params.addParam('endorsement');
+        try
+          if (obj.has('type')) then
           begin
-            p1 := p.partList.Append;
-            p1.name := 'endorser';
-            p1.value := TFHIRString.Create(obj.obj['endorser'].str['name']);
+            p1 := p.addParam('type');
+            try
+              p1.value := FFactory.makeCode(obj.str['type']);
+            finally
+              p1.free;
+            end;
           end;
-          if (obj.obj['endorser'].has('url')) then
+          if (obj.has('comment')) then
           begin
-            p1 := p.partList.Append;
-            p1.name := 'url';
-            p1.value := TFHIRString.Create(obj.obj['endorser'].str['url']);
+            p1 := p.addParam('comment');
+            try
+              p1.value := FFactory.makeString(obj.str['comment']);
+            finally
+              p1.free;
+            end;
           end;
+          if (obj.has('endorser')) then
+          begin
+            if (obj.obj['endorser'].has('name')) then
+            begin
+              p1 := p.addParam('endorser');
+              try
+                p1.value := FFactory.makeString(obj.obj['endorser'].str['name']);
+            finally
+              p1.free;
+            end;
+            end;
+            if (obj.obj['endorser'].has('url')) then
+            begin
+              p1 := p.addParam('url');
+              try
+                p1.value := FFactory.makeString(obj.obj['endorser'].str['url']);
+            finally
+              p1.free;
+            end;
+            end;
+          end;
+        finally
+          p.Free;
         end;
       end;
   finally

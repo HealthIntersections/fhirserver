@@ -2071,7 +2071,7 @@ end;
 
 function TFHIRPathEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TDateTimeEx.makeLocal).noExtensions);
+  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TFslDateTime.makeLocal).noExtensions);
 end;
 
 function TFHIRPathEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -2468,7 +2468,7 @@ end;
 
 function TFHIRPathEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday).noExtensions);
+  result := TFHIRSelectionList.Create(TFhirDate.Create(TFslDateTime.makeToday).noExtensions);
 end;
 
 function TFHIRPathEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -4401,9 +4401,9 @@ begin
       v := v.substring(0, 10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateTimeEx.fromXML(value)).noExtensions()
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(value)).noExtensions()
   else
-    result := TFHIRDate.create(TDateTimeEx.fromXML(value)).noExtensions();
+    result := TFHIRDate.create(TFslDateTime.fromXML(value)).noExtensions();
 end;
 
 function TFHIRPathEngine.qtyEqual(left, right: TFHIRQuantity): boolean;
@@ -5286,9 +5286,9 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateTimeEx.fromXML(s)).noExtensions as TFhirType
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType
   else
-    result := TFHIRDate.create(TDateTimeEx.fromXML(s)).noExtensions as TFhirType;
+    result := TFHIRDate.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType;
 end;
 
 //function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;

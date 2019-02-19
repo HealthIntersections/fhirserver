@@ -839,7 +839,7 @@ begin
             map.id := NewGuidId;
             map.version := v;
             map.status := psActive;
-            map.date := TDateTimeEx.makeUTC;
+            map.date := TFslDateTime.makeUTC;
             map.name := 'Closure Table '+n+' initialized';
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -863,7 +863,7 @@ begin
               map.id := NewGuidId;
               map.version := inttostr(cm.version);
               map.status := psActive;
-              map.date := TDateTimeEx.makeUTC;
+              map.date := TFslDateTime.makeUTC;
               map.name := 'Updates for Closure Table '+n;
               if (v <> '') then
               begin

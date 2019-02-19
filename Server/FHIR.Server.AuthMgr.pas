@@ -996,10 +996,10 @@ begin
           raise EFHIRException.create('Stated Issuer does not match registered issuer');
         if not nonceIsUnique(jwt.id) then
           raise EFHIRException.create('Repeat Nonce Token - not allowed');
-        if (jwt.expires > TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE)then
+        if (jwt.expires > TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE)then
           raise EFHIRException.create('JWT Expiry is too far in the future - ('+FormatDateTime('c', jwt.expires)+', must be < 5 minutes)');
-        if (jwt.expires < TDateTimeEx.makeUTC.DateTime) then
-          raise EFHIRException.create('JWT expiry ('+TDateTimeEx.make(jwt.expires, dttzUTC).toXML+') is too old');
+        if (jwt.expires < TFslDateTime.makeUTC.DateTime) then
+          raise EFHIRException.create('JWT expiry ('+TFslDateTime.make(jwt.expires, dttzUTC).toXML+') is too old');
 
         jwk := TJWKList.create(client.publicKey);
         try
@@ -1018,7 +1018,7 @@ begin
             json.Start;
             json.Value('access_token', session.Cookie);
             json.Value('token_type', 'Bearer');
-            json.Value('expires_in', trunc((session.Expires - TDateTimeEx.makeUTC.DateTime) / DATETIME_SECOND_ONE));
+            json.Value('expires_in', trunc((session.Expires - TFslDateTime.makeUTC.DateTime) / DATETIME_SECOND_ONE));
             json.Value('scope', session.scopes);
             json.Finish;
             response.ContentText := json.ToString;

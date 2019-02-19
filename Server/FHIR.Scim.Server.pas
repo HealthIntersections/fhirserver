@@ -216,13 +216,13 @@ end;
 
 procedure TSCIMServer.DefineAdminUser(conn : TKDBConnection; un, pw, em: String);
 var
-  now : TDateTimeEx;
+  now : TFslDateTime;
   user : TSCIMUser;
   key : integer;
   list : TStringList;
   s : String;
 begin
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := un;
@@ -268,13 +268,13 @@ end;
 
 procedure TSCIMServer.DefineSystem(conn : TKDBConnection);
 var
-  now : TDateTimeEx;
+  now : TFslDateTime;
   user : TSCIMUser;
   key : integer;
   list : TStringList;
   s : String;
 begin
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := SCIM_SYSTEM_USER;
@@ -315,12 +315,12 @@ end;
 
 procedure TSCIMServer.DefineAnonymousUser(conn : TKDBConnection);
 var
-  now : TDateTimeEx;
+  now : TFslDateTime;
   user : TSCIMUser;
   key : integer;
   s : String;
 begin
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := SCIM_ANONYMOUS_USER;
@@ -423,7 +423,7 @@ function TSCIMServer.loadOrCreateUser(id, name, email: String; var key : integer
 var
   conn : TKDBConnection;
   new, upd : boolean;
-  now : TDateTimeEx;
+  now : TFslDateTime;
   s : String;
 begin
   upd := false;
@@ -477,7 +477,7 @@ begin
 
       if new or upd then
       begin
-        now := TDateTimeEx.makeUTC;
+        now := TFslDateTime.makeUTC;
         if new then
         begin
           key := GetNextUserKey;
@@ -688,12 +688,12 @@ var
   username : String;
   conn : TKDBConnection;
   key : integer;
-  now : TDateTimeEx;
+  now : TFslDateTime;
 begin
   if (request.Document <> '/scim/Users') then
     raise ESCIMException.Create(404, 'NOT FOUND', '', 'Path Error - must be /scim/Users');
 
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(LoadIncoming(request));
   try
     user.check;
@@ -770,7 +770,7 @@ var
   nUser, eUser : TSCIMUser;
   password : String;
   conn : TKDBConnection;
-  now : TDateTimeEx;
+  now : TFslDateTime;
   id : String;
   b : TBytes;
 begin
@@ -778,7 +778,7 @@ begin
   if (id = '1') or (id = '2') then
     raise ESCIMException.Create(409, 'Forbidden', '', 'Server does not allow update to system defined users');
 
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   nUser := TSCIMUser.Create(LoadIncoming(request));
   try
     nUser.id := id;
@@ -1049,7 +1049,7 @@ begin
             try
               if bNew then
               begin
-                user.created := TDateTimeEx.makeUTC;
+                user.created := TFslDateTime.makeUTC;
                 user.lastModified := user.created;
                 user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(uk);
                 user.version := '1';

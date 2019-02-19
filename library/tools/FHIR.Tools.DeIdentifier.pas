@@ -86,7 +86,7 @@ type
     procedure SavePseudoData(conn : TKDBConnection; aType : TFhirResourceType; id : String; pd : TPseudoData);
     function fetchData(aType : TFhirResourceType; id : String; gender : TFhirAdministrativeGenderEnum) : TPseudoData;
 
-    function fuzzify(date : TDateTimeEx) : TDateTimeEx;
+    function fuzzify(date : TFslDateTime) : TFslDateTime;
     procedure processPatient(res : TFhirPatient);
     procedure processPerson(res : TFhirPerson);
     procedure processPractitioner(res : TFhirPractitioner);
@@ -178,7 +178,7 @@ begin
   end;
 end;
 
-function TFHIRDeIdentifier.fuzzify(date: TDateTimeEx): TDateTimeEx;
+function TFHIRDeIdentifier.fuzzify(date: TFslDateTime): TFslDateTime;
 var
   diff : TDateTime;
 begin

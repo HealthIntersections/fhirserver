@@ -316,7 +316,7 @@ type
     Function Link: TFHIRNativeStorageService; virtual;
     function engineFactory(lang : String; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
     procedure Initialise();
-//    procedure SaveResource(res: TFHIRResourceV; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
+//    procedure SaveResource(res: TFHIRResourceV; dateTime: TFslDateTime; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
     function ProfilesAsOptionList: String; override;
@@ -351,7 +351,7 @@ type
     function ExpandVS(vs: TFHIRValueSetW; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; override;
     function LookupCode(system, version, code: String): String; override;
     procedure QueueResource(r: TFHIRResourceV); overload; override;
-    procedure QueueResource(r: TFHIRResourceV; dateTime: TDateTimeEx); overload; override;
+    procedure QueueResource(r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
     procedure RunValidation; override;
 
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
@@ -368,8 +368,8 @@ type
     function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; override;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); override;
     procedure MarkTaskForDownload(key : integer; names : TStringList); override;
-    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
-    procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); override;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl : String; var transactionTime, expires : TFslDateTime; names : TStringList; var outcome : TBytes): boolean; override;
+    procedure setAsyncTaskDetails(key : integer; transactionTime : TFslDateTime; request : String); override;
     procedure recordDownload(key : integer; name : String); override;
     procedure fetchExpiredTasks(tasks : TFslList<TAsyncTaskInformation>); override;
     procedure MarkTaskDeleted(key : integer); override;
@@ -382,12 +382,12 @@ type
     Property DB: TKDBManager read FDB;
   end;
 
-  TDateTimeExWrapper = class (TFslObject)
+  TFslDateTimeWrapper = class (TFslObject)
   private
-    FValue : TDateTimeEx;
+    FValue : TFslDateTime;
   public
-    constructor Create(value : TDateTimeEx);
-    property Value : TDateTimeEx read FValue;
+    constructor Create(value : TFslDateTime);
+    property Value : TFslDateTime read FValue;
   end;
 
 
@@ -433,7 +433,7 @@ begin
 end;
 
 
-Constructor TDateTimeExWrapper.Create(value : TDateTimeEx);
+Constructor TFslDateTimeWrapper.Create(value : TFslDateTime);
 begin
   inherited Create;
   FValue := value;
@@ -454,7 +454,7 @@ begin
       try
         if (op <> nil) then
         begin
-          op.tag := TDateTimeExWrapper.create(TDateTimeEx.makeLocal);
+          op.tag := TFslDateTimeWrapper.create(TFslDateTime.makeLocal);
           list.Add(op.Resource.link);
         end;
       finally
@@ -490,7 +490,7 @@ var
   begin
     if (makeRequest) then
     begin
-      entry.responseDate := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
+      entry.responseDate := TFslDateTime.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
       entry.responseEtag := 'W/'+FConnection.ColStringByName['VersionId'];
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
@@ -700,7 +700,7 @@ begin
     begin
       mw := factory.wrapMeta(request.Resource);
       try
-        mw.lastUpdated := TDateTimeEx.makeUTC;
+        mw.lastUpdated := TFslDateTime.makeUTC;
         mw.versionId := '1';
         checkNotSubsetted(mw, 'Creating resource');
         tags := TFHIRTagList.create(factory.link);
@@ -833,7 +833,7 @@ procedure TFHIRNativeOperationEngine.ExecuteDelete(request: TFHIRRequest; respon
 var
   resourceKey : Integer;
   key, nvid, i, versionKey : Integer;
-  tnow : TDateTimeEx;
+  tnow : TFslDateTime;
   tags : TFHIRTagList;
   list : TMatchingResourceList;
   ok : boolean;
@@ -887,7 +887,7 @@ begin
 
     if ok then
     begin
-      tnow := TDateTimeEx.makeUTC;
+      tnow := TFslDateTime.makeUTC;
       key := FRepository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
@@ -1166,18 +1166,18 @@ begin
     for i := 0 to request.Parameters.getItemCount - 1 do
       if request.Parameters.VarName(i) = '_since' then
       begin
-        since := TDateTimeEx.fromXML(request.Parameters.Value[request.Parameters.VarName(i)]).DateTime;
+        since := TFslDateTime.fromXML(request.Parameters.Value[request.Parameters.VarName(i)]).DateTime;
         FConnection.SQL := FConnection.SQL + ' and StatedDate >= :since ';
         base := base +'_since='+request.Parameters.Value[request.Parameters.VarName(i)];
       end
       else if request.Parameters.VarName(i) = '_prior' then
       begin
-        prior := TDateTimeEx.fromXML(request.Parameters.Value[request.Parameters.VarName(i)]).DateTime;
+        prior := TFslDateTime.fromXML(request.Parameters.Value[request.Parameters.VarName(i)]).DateTime;
         FConnection.SQL := FConnection.SQL + ' and StatedDate <= :prior ';
         base := base +'&_prior='+request.Parameters.Value[request.Parameters.VarName(i)];
       end;
     if (prior = MIN_DATE) then
-      base := base +'&_prior='+TDateTimeEx.makeUTC.toXML;
+      base := base +'&_prior='+TFslDateTime.makeUTC.toXML;
 
     FConnection.SQL := FConnection.SQL+' order by ResourceVersionKey DESC';
     sql := FConnection.SQL;
@@ -1276,7 +1276,7 @@ begin
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
         bundle.setTotal(total);
         bundle.Tag('sql', sql);
-        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.setLastUpdated(TFslDateTime.makeUTC);
         bundle.addLink('self', base+link);
 
         if (offset > 0) or (Count < total) then
@@ -1819,7 +1819,7 @@ begin
         op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
         keys := TKeyList.Create;
         try
-          bundle.setLastUpdated(TDateTimeEx.makeUTC);
+          bundle.setLastUpdated(TFslDateTime.makeUTC);
 //          bundle.base := request.baseUrl;
 
           summaryStatus := request.Summary;
@@ -2054,7 +2054,7 @@ begin
         tags.writeTags(meta);
         if checkOkToStore(request, response, needSecure) then
         begin
-          meta.lastUpdated := TDateTimeEx.makeUTC;
+          meta.lastUpdated := TFslDateTime.makeUTC;
           meta.versionId := inttostr(nvid);
           CheckNotSubsetted(meta, 'Updating Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
@@ -2344,7 +2344,7 @@ begin
           LoadTags(tags, ResourceKey);
           tags.writeTags(meta);
           // don't need to recheck the approval on the tags, they must already have been loaded before the earlier check
-          meta.lastUpdated := TDateTimeEx.makeUTC;
+          meta.lastUpdated := TFslDateTime.makeUTC;
           meta.versionId := inttostr(nvid);
           CheckNotSubsetted(meta, 'Patching Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
@@ -3574,7 +3574,7 @@ begin
     ne.responseStatus := inttostr(response.HTTPCode);
     ne.responseLocation := response.Location;
     ne.responseEtag := 'W/'+response.versionId;
-    ne.responseDate := TDateTimeEx.makeUTC(response.lastModifiedDate);
+    ne.responseDate := TFslDateTime.makeUTC(response.lastModifiedDate);
   finally
     context.Free;
   end;
@@ -3796,7 +3796,7 @@ begin
           dest.responseStatus := inttostr(response.HTTPCode);
           dest.responseLocation := response.Location;
           dest.responseEtag := 'W/'+response.versionId;
-          dest.responseDate := TDateTimeEx.makeUTC(response.lastModifiedDate);
+          dest.responseDate := TFslDateTime.makeUTC(response.lastModifiedDate);
           dest.resource := response.resource.link;
 
         except
@@ -4741,7 +4741,7 @@ begin
         end;
 
         if TFHIRResourceV(list[i]).Tag <> nil then
-          request.lastModifiedDate := TDateTimeExWrapper(TFHIRResourceV(list[i]).Tag).Value.DateTime;
+          request.lastModifiedDate := TFslDateTimeWrapper(TFHIRResourceV(list[i]).Tag).Value.DateTime;
         request.Session := nil;
         context.upload := true;
         //!! Execute(context, request, response);
@@ -5419,13 +5419,13 @@ begin
     conn.Prepare;
     conn.BindInteger('sk', session.key);
     conn.BindInteger('uk', StrToInt(session.User.id));
-    conn.BindDateTimeEx('d', TDateTimeEx.makeLocal);
+    conn.BindDateTimeEx('d', TFslDateTime.makeLocal);
     conn.BindInteger('p', integer(session.providerCode));
     conn.BindString('i', session.id);
     conn.BindString('n', session.SessionName);
 //    conn.BindString('sn', session.SystemName);
     conn.BindString('e', session.email);
-    conn.BindDateTimeEx('ex', TDateTimeEx.makeLocal(session.expires));
+    conn.BindDateTimeEx('ex', TFslDateTime.makeLocal(session.expires));
     conn.Execute;
     conn.terminate;
     conn.Release;
@@ -5787,7 +5787,7 @@ begin
 
 end;
 
-function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl: String; var transactionTime, expires: TFslDateTime; names : TStringList; var outcome: TBytes): boolean;
 var
   conn : TKDBConnection;
 begin
@@ -5830,7 +5830,7 @@ begin
     conn.SQL := 'Update Sessions set closed = :d where SessionKey = ' +
       inttostr(key);
     conn.Prepare;
-    conn.BindTimeStamp('d', DateTimeToTS(TDateTimeEx.makeUTC.DateTime));
+    conn.BindTimeStamp('d', DateTimeToTS(TFslDateTime.makeUTC.DateTime));
     conn.Execute;
     conn.terminate;
     conn.Release;
@@ -6182,7 +6182,7 @@ var
   conn: TKDBConnection;
 begin
   list := nil;
-  d := TDateTimeEx.makeUTC.DateTime;
+  d := TFslDateTime.makeUTC.DateTime;
   ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping Sessions';
   ServerContext.SessionManager.Sweep;
   FLock.Lock('sweep2');
@@ -6320,7 +6320,7 @@ begin
   end
 end;
 
-procedure TFHIRNativeStorageService.setAsyncTaskDetails(key: integer; transactionTime: TDateTimeEx; request: String);
+procedure TFHIRNativeStorageService.setAsyncTaskDetails(key: integer; transactionTime: TFslDateTime; request: String);
 begin
   DB.connection('async', procedure (conn : TKDBConnection)
     begin
@@ -6438,7 +6438,7 @@ begin
 end;
 
 (*
-procedure TFHIRNativeStorageService.SaveResource(res: TFHIRResourceV; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
+procedure TFHIRNativeStorageService.SaveResource(res: TFHIRResourceV; dateTime: TFslDateTime; origin : TFHIRRequestOrigin);
 var
   request: TFHIRRequest;
   response: TFHIRResponse;
@@ -6752,7 +6752,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.QueueResource(r: TFHIRResourceV; dateTime: TDateTimeEx);
+procedure TFHIRNativeStorageService.QueueResource(r: TFHIRResourceV; dateTime: TFslDateTime);
 begin
   QueueResource(r);
 end;
@@ -7138,9 +7138,9 @@ end;
 
 procedure TFHIRNativeStorageService.MarkTaskForDownload(key: integer; names : TStringList);
 var
-  exp : TDateTimeEx;
+  exp : TFslDateTime;
 begin
-  exp := TDateTimeEx.makeLocal.add(1/24);
+  exp := TFslDateTime.makeLocal.add(1/24);
   DB.connection('async',
     procedure (conn : TKDBConnection)
     begin

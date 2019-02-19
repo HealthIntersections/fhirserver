@@ -1157,7 +1157,7 @@ begin
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, matches(e.primitiveValue, '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?'), 'Not a valid date time');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, not hasTime(e.primitiveValue) or (hasTimeZone(e.primitiveValue)), 'if a date has a time, it must have a timezone');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, (context.maxLength = '') or (context.MaxLength = '0') or (e.primitiveValue.length <= StrToInt(context.MaxLength)), 'value is longer than permitted maximum length of ' + context.MaxLength);
-    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TDateTimeEx.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
+    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TFslDateTime.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
   end;
 
   if (type_= 'time') then
@@ -1170,7 +1170,7 @@ begin
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, yearIsValid(e.primitiveValue), 'The value ''' + e.primitiveValue + ''' does not have a valid year');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, matches(e.primitiveValue, '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?'), 'Not a valid date');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, (context.maxLength = '') or (context.MaxLength = '0') or (e.primitiveValue.length <= StrToInt(context.MaxLength)), 'value is longer than permitted maximum length of ' + context.MaxLength);
-    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TDateTimeEx.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
+    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TFslDateTime.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
   end;
 
   if (type_= 'base64Binary') then
@@ -1220,7 +1220,7 @@ begin
   begin
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, matches(e.primitiveValue, '-?[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))'), 'The instant ''' + e.primitiveValue + ''' is not valid (by regex)');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, yearIsValid(e.primitiveValue), 'The value ''' + e.primitiveValue + ''' does not have a valid year');
-    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TDateTimeEx.isValidXmlDate(e.primitiveValue), 'Not a valid instant');
+    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TFslDateTime.isValidXmlDate(e.primitiveValue), 'Not a valid instant');
   end;
 
   if (type_= 'code') and (e.primitiveValue <> '') then

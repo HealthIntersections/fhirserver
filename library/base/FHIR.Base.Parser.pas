@@ -81,7 +81,7 @@ Type
     procedure checkTimeOut;
   protected
     procedure checkDateFormat(s : string);
-    Function toTDateTimeEx(s : String) : TDateTimeEx;
+    Function toTFslDateTime(s : String) : TFslDateTime;
     function toTBytes(s : String) : TBytes;
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
@@ -218,7 +218,7 @@ Type
 
     function ResourceMediaType: String; virtual;
 
-    function asString(value : TDateTimeEx):String; overload;
+    function asString(value : TFslDateTime):String; overload;
     function asString(value : TBytes):String; overload;
     function asString(value : string):String; overload;
     function asString(value : boolean):String; overload;
@@ -313,7 +313,7 @@ Type
   protected
     procedure ComposeXHtmlNode(parent : TTurtleComplex; parentType, name : String; value: TFhirXHtmlNode; useType : boolean; index : integer); overload;
 
-    function dateXsdType(value : TDateTimeEx) : string;
+    function dateXsdType(value : TFslDateTime) : string;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
@@ -1489,15 +1489,15 @@ begin
   result := DecodeBase64(AnsiString(s));
 end;
 
-function TFHIRParser.toTDateTimeEx(s: String): TDateTimeEx;
+function TFHIRParser.toTFslDateTime(s: String): TFslDateTime;
 begin
   if s = '' then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
-    result := TDateTimeEx.fromXml(s);
+    result := TFslDateTime.fromXml(s);
 end;
 
-function TFHIRComposer.asString(value: TDateTimeEx): String;
+function TFHIRComposer.asString(value: TFslDateTime): String;
 begin
   if value.null then
     result := ''
@@ -1653,7 +1653,7 @@ begin
   parent.addPredicate('fhir:'+parentType+'.'+name, ttlLiteral(TFHIRXhtmlParser.compose(value)));
 end;
 
-function TFHIRTurtleComposerBase.dateXsdType(value: TDateTimeEx): string;
+function TFHIRTurtleComposerBase.dateXsdType(value: TFslDateTime): string;
 begin
   case value.Precision of
     dtpYear : result := 'xsd:gYear';

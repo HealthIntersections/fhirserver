@@ -235,7 +235,7 @@ type
     procedure BindDoubleV(AParamName: String; AParamValue: Double); virtual; abstract;
     procedure BindStringV(AParamName: String; AParamValue: String); virtual; abstract;
     procedure BindTimeStampV(AParamName: String; AParamValue: FHIR.Support.Utilities.TTimeStamp); virtual; abstract;
-    procedure BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx); virtual; abstract;
+    procedure BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime); virtual; abstract;
     procedure BindBlobV(AParamName: String; AParamValue: TBytes); virtual; abstract;
     procedure BindNullV(AParamName: String); virtual; abstract;
     function GetColCountV: Integer; Virtual; Abstract;
@@ -246,7 +246,7 @@ type
     function GetColBlobV(ACol: Word): TBytes; Virtual; Abstract;
     function GetColNullV(ACol: Word): Boolean; Virtual; Abstract;
     function GetColTimestampV(ACol: Word): FHIR.Support.Utilities.TTimestamp; Virtual; Abstract;
-    function GetColDateTimeExV(ACol: Word): TDateTimeEx; Virtual; Abstract;
+    function GetColDateTimeExV(ACol: Word): TFslDateTime; Virtual; Abstract;
     function GetColTypeV(ACol: Word): TKDBColumnType; Virtual; Abstract;
     function GetColKeyV(ACol: Word): Integer; Virtual; Abstract;
     function GetRowsAffectedV: Integer; Virtual; Abstract;
@@ -311,7 +311,7 @@ type
     function GetColBlob(ACol: Integer): TBytes;
     function GetColNull(ACol: Integer): Boolean;
     function GetColTimestamp(ACol: Integer): FHIR.Support.Utilities.TTimestamp;
-    function GetColDateTimeEx(ACol: Integer): TDateTimeEx;
+    function GetColDateTimeEx(ACol: Integer): TFslDateTime;
     function GetColType(ACol: Integer): TKDBColumnType;
     function GetRowsAffected: Integer;
 
@@ -321,7 +321,7 @@ type
     function GetColInt64ByName(AName: String): Int64;
     function GetColDoubleByName(AName: String): Double;
     function GetColTimeStampByName(AName: String): FHIR.Support.Utilities.TTimestamp;
-    function GetColDateTimeExByName(AName: String): TDateTimeEx;
+    function GetColDateTimeExByName(AName: String): TFslDateTime;
     function GetColTypeByName(AName: String): TKDBColumnType;
     function GetColNullByName(AName: String): Boolean;
 
@@ -517,7 +517,7 @@ type
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
-    procedure BindDateTimeEx(AParamName: String; AParamValue: TDateTimeEx);
+    procedure BindDateTimeEx(AParamName: String; AParamValue: TFslDateTime);
 
       {
       Bind a Binary value to a named parameter. You can call this
@@ -592,7 +592,7 @@ type
     {
     Get Column ACol(index) as a DateAndTime
     }
-    property ColDateTimeEx [ACol: Integer]: TDateTimeEx Read GetColDateTimeEx;
+    property ColDateTimeEx [ACol: Integer]: TFslDateTime Read GetColDateTimeEx;
 
       property ColKeyByName       [AName: String]: Integer Read GetColKeyByName;
   
@@ -622,8 +622,8 @@ type
       Get Column "AName" as a TTimeStamp}
     property ColTimeStampByName [AName: String]: FHIR.Support.Utilities.TTimeStamp Read GetColTimeStampByName;
     {
-      Get Column "AName" as a TDateTimeEx}
-    property ColDateTimeExByName [AName: String]: TDateTimeEx Read GetColDateTimeExByName;
+      Get Column "AName" as a TFslDateTime}
+    property ColDateTimeExByName [AName: String]: TFslDateTime Read GetColDateTimeExByName;
     {
       Number of columns in current result set
     }
@@ -930,9 +930,9 @@ begin
   result := GetColTimestamp(ColByName(AName));
 end;
 
-function TKDBConnection.GetColDateTimeExByName(AName: String): TDateTimeEx;
+function TKDBConnection.GetColDateTimeExByName(AName: String): TFslDateTime;
 begin
-  result := TDateTimeEx.fromTS(GetColTimestamp(ColByName(AName)));
+  result := TFslDateTime.fromTS(GetColTimestamp(ColByName(AName)));
 end;
 
 function TKDBConnection.GetColTypeByName(AName: String): TKDBColumnType;
@@ -1208,7 +1208,7 @@ begin
   result := GetColTimestampV(ACol);
 end;
 
-function TKDBConnection.GetColDateTimeEx(ACol: Integer): TDateTimeEx;
+function TKDBConnection.GetColDateTimeEx(ACol: Integer): TFslDateTime;
 begin
   result := GetColDateTimeExV(ACol);
 end;
@@ -1244,7 +1244,7 @@ begin
 
 end;
 
-procedure TKDBConnection.BindDateTimeEx(AParamName: String; AParamValue: TDateTimeEx);
+procedure TKDBConnection.BindDateTimeEx(AParamName: String; AParamValue: TFslDateTime);
 begin
   BindDateTimeExV(aParamName, AParamValue);
 end;

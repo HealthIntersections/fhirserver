@@ -2702,7 +2702,7 @@ begin
   result := TFhirDate.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
+    result.value := toTFslDateTime(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -2738,7 +2738,7 @@ begin
   result := TFhirDateTime.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
+    result.value := toTFslDateTime(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -2879,7 +2879,7 @@ begin
   result := TFhirInstant.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
+    result.value := toTFslDateTime(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin

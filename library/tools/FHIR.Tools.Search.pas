@@ -189,7 +189,7 @@ begin
     sptDate :
       begin
       checkOrderingPrefix;
-      if not TDateTimeEx.isValidXmlDate(value) then
+      if not TFslDateTime.isValidXmlDate(value) then
         raise EFHIRException.create('Numerical Parameter value "value" is not a date');
       end;
     sptString : ; // nothing

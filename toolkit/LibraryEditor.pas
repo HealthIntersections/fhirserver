@@ -224,7 +224,7 @@ begin
   Lib.purpose := edtPurpose.Text;
   Lib.copyright := edtCopyright.Text;
   Lib.status := TFhirPublicationStatusEnum(cbxStatus.ItemIndex);
-  Lib.date := TDateTimeEx.make(dedDate.DateTime, dttzLocal);
+  Lib.date := TFslDateTime.make(dedDate.DateTime, dttzLocal);
   Lib.jurisdictionList.Clear;
   cc := getJurisdiction(cbxJurisdiction.ItemIndex);
   if (cc <> nil) then

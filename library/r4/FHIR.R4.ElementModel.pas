@@ -1876,7 +1876,7 @@ end;
 function TFHIRMMXmlParser.convertForDateFormat(fmt, av : String) : String;
 begin
   if ('v3' = fmt) then
-    result := TDateTimeEx.fromHL7(av).ToXML
+    result := TFslDateTime.fromHL7(av).ToXML
   else
     raise EFHIRException.create('Unknown Data format "'+fmt+'"');
 end;
@@ -1981,7 +1981,7 @@ end;
 function convertForDateFormatToExternal(fmt, v : String) : String;
 begin
   if fmt = 'v3' then
-    result := TDateTimeEx.fromXML(v).toHL7
+    result := TFslDateTime.fromXML(v).toHL7
   else
     raise EFHIRException.create('Unknown Date format "'+fmt+'"');
 end;

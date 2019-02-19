@@ -388,6 +388,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       OnChange = PageControl1Change
       object TabSheet1: TTabSheet
         Caption = 'Resource'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mResource: TMemo
           Left = 0
           Top = 0
@@ -401,6 +405,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       object TabSheet2: TTabSheet
         Caption = 'Context'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mContext: TMemo
           Left = 0
           Top = 0
@@ -414,6 +422,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       object TabSheet3: TTabSheet
         Caption = 'Input'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mInput: TMemo
           Left = 0
           Top = 0
@@ -427,6 +439,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       object TabSheet4: TTabSheet
         Caption = 'Input 2'
         ImageIndex = 3
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mInput2: TMemo
           Left = 0
           Top = 0
@@ -440,6 +456,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       object TabSheet5: TTabSheet
         Caption = 'Outcome'
         ImageIndex = 4
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mOutcome: TMemo
           Left = 0
           Top = 0
@@ -453,6 +473,10 @@ object FHIRPathDebuggerForm: TFHIRPathDebuggerForm
       object TabSheet6: TTabSheet
         Caption = 'Console'
         ImageIndex = 5
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mConsole: TMemo
           Left = 0
           Top = 0

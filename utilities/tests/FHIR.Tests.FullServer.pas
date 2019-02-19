@@ -486,7 +486,7 @@ end;
 procedure TFullServerTests.TestPatientUpdate;
 var
   rb, ra : TFhirPatient;
-  d : TDateTimeEx;
+  d : TFslDateTime;
 begin
   rb := FClientJson.readResource(frtPatient, 'example') as TFHIRPatient;
   try

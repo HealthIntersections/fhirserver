@@ -50,7 +50,7 @@ type
     Property hasSecureOp : boolean read FHasSecureOp write FHasSecureOp;
 
     procedure setId(id : string);
-    procedure setLastUpdated(dt : TDateTimeEx);
+    procedure setLastUpdated(dt : TFslDateTime);
     procedure setTotal(t : integer);
     procedure tag(n, v : String);
     procedure addLink(rt, url : String);
@@ -96,7 +96,7 @@ begin
   FBundle.id := id;
 end;
 
-procedure TFHIRBundleBuilder.setLastUpdated(dt: TDateTimeEx);
+procedure TFHIRBundleBuilder.setLastUpdated(dt: TFslDateTime);
 begin
   FBundle.lastUpdated := dt;
 end;

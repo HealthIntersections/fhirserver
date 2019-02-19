@@ -868,7 +868,7 @@ begin
   CheckTerminologyServer;
   services := TFHIRConversionEngine.Create(FContext.Link, FTxServer.link, nil);
   try
-    js := TFHIRJavascript.Create(FContext.Link, registerFHIRTypes);
+    js := TFHIRJavascript.Create;
     try
       services.registerConversionEngine(js, FContext);
       TV2JavascriptHelper.registerv2Objects(js);

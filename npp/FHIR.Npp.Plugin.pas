@@ -1160,6 +1160,7 @@ var
   items : TFHIRSelectionList;
 //  expr : TFHIRPathExpressionNode;
   ok : boolean;
+  engine : TFHIRPathEngineV;
 begin
   FuncMatchesClear;
   if not waitForContext(FCurrentFileInfo.workingVersion, true) then
@@ -1168,29 +1169,34 @@ begin
   if (parse(0, fmt, res)) then
   try
     FuncMatchesClear;
-    ok := RunPathDebugger(self, FContext.Version[FCurrentFileInfo.workingVersion].Worker, GetDebuggerSetting, SetDebuggerSetting, GetDebuggerSettingStr, SetDebuggerSettingStr, FContext.Version[FCurrentFileInfo.workingVersion].Factory, res, res, FHIRToolbox.edtPath.Text, fmt, types, items);
+    engine := FContext.Version[FCurrentFileInfo.workingVersion].makePathEngine;
     try
-      if ok then
-      begin
-        allSource := true;
-        for item in items do
-          allSource := allSource and not isNullLoc(item.value.LocationStart);
-
-        if Items.Count = 0 then
-          pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomNoMatch, 'no items matched')
-        else if not allSource then
-          pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomNoMatch, FContext.Version[FCurrentFileInfo.workingVersion].Engine.convertToString(items))
-        else
+      ok := RunPathDebugger(self, FContext.Version[FCurrentFileInfo.workingVersion].Worker, engine, GetDebuggerSetting, SetDebuggerSetting, GetDebuggerSettingStr, SetDebuggerSettingStr, FContext.Version[FCurrentFileInfo.workingVersion].Factory, res, res, FHIRToolbox.edtPath.Text, fmt, types, items);
+      try
+        if ok then
         begin
-          if (items.Count = 1) then
-            pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomMatch, '1 matching item')
+          allSource := true;
+          for item in items do
+            allSource := allSource and not isNullLoc(item.value.LocationStart);
+
+          if Items.Count = 0 then
+            pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomNoMatch, 'no items matched')
+          else if not allSource then
+            pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomNoMatch, FContext.Version[FCurrentFileInfo.workingVersion].Engine.convertToString(items))
           else
-            pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomMatch, inttostr(items.Count)+' matching items');
+          begin
+            if (items.Count = 1) then
+              pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomMatch, '1 matching item')
+            else
+              pathOutcomeDialog(self, FHIRToolbox.edtPath.Text, res.fhirType, types, pomMatch, inttostr(items.Count)+' matching items');
+          end;
         end;
+      finally
+        types.Free;
+        items.Free;
       end;
     finally
-      types.Free;
-      items.Free;
+      engine.Free;
     end;
   finally
     res.Free;

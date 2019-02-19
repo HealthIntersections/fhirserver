@@ -244,8 +244,8 @@ begin
   try
     resp.addObs(obs.Resource.Link);
     obs.status := obssFinal;
-    obs.addCode(c);
-    obs.setSubj(subject);
+    obs.setCode(c);
+    obs.subject := subject;
     obs.setPeriod(start, finish);
     FAllData := TFslList<TObservation>.create;
     FValidData := TFslList<TObservation>.create;

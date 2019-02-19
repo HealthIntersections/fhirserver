@@ -110,7 +110,7 @@ begin
       pm := TParseMap.Create(params);
       try
         if pm.VarExists('date') then
-          pIn.AddParameter('date', TFhirDateTime.Create(TDateTimeEx.fromXML(pm.GetVar('date'))));
+          pIn.AddParameter('date', TFhirDateTime.Create(TFslDateTime.fromXML(pm.GetVar('date'))));
         if pm.VarExists('displayLanguage') then
           pIn.AddParameter('displayLanguage', TFhirCode.Create(pm.GetVar('displayLanguage')));
         if pm.VarExists('property') then

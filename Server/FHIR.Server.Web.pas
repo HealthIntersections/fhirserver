@@ -382,7 +382,7 @@ Type
     Procedure StartServer(active: boolean);
     Procedure StopServer;
     procedure SSLPassword(var Password: String);
-    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TDateTimeEx; names : TStringList) : string;
+    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TFslDateTime; names : TStringList) : string;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc: String;
@@ -873,7 +873,7 @@ begin
             json := TJsonObject.Create;
             try
               json.str['access_token'] := Session.Cookie;
-              json.num['expires_in'] := inttostr(trunc((Session.Expires - TDateTimeEx.makeUTC.DateTime) / DATETIME_SECOND_ONE));
+              json.num['expires_in'] := inttostr(trunc((Session.Expires - TFslDateTime.makeUTC.DateTime) / DATETIME_SECOND_ONE));
               json.str['token_type'] := 'bearer';
               response.ResponseNo := 200;
               response.ResponseText := 'OK';
@@ -2527,7 +2527,7 @@ procedure TFhirWebServerEndpoint.ProcessTaskRequest(Context: TOperationContext; 
 var
   status : TAsyncTaskStatus;
   message, s, originalRequest : String;
-  transactionTime, expires : TDateTimeEx;
+  transactionTime, expires : TFslDateTime;
   secure : boolean;
   names : TStringList;
   outcome : TBytes;
@@ -3507,7 +3507,7 @@ end;
 //var
 //  fn : String;
 //begin
-//  fn := FHIR.Support.Utilities.Path([SystemTemp, TDateTimeEx.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
+//  fn := FHIR.Support.Utilities.Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
 //  StringToFile(cert, fn, TEncoding.UTF8);
 //  try
 //    result := TJWKList.create;
@@ -3805,7 +3805,7 @@ begin
   result := ServeUnknownCertificate or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
 end;
 
-function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TDateTimeEx; names: TStringList): string;
+function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;
 var
   j, o : TJsonObject;
   a : TJsonArray;
@@ -4283,7 +4283,7 @@ begin
     package.addUtf8('-----------------------------------------------------------------'#13#10);
     package.addUtf8(id);
     package.addUtf8(' @ ');
-    package.addUtf8(TDateTimeEx.makeUTC.toXML);
+    package.addUtf8(TFslDateTime.makeUTC.toXML);
     if secure then
       package.addUtf8(' (https)');
     package.addUtf8(#13#10);
@@ -4326,7 +4326,7 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
       package.addUtf8('-----------------------------------------------------------------'#13#10);
       package.addUtf8(id);
       package.addUtf8(' @ ');
-      package.addUtf8(TDateTimeEx.makeUTC.toXML);
+      package.addUtf8(TFslDateTime.makeUTC.toXML);
       if (msg <> '') then
         package.addUtf8(' '+msg);
       package.addUtf8(#13#10);

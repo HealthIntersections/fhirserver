@@ -127,7 +127,7 @@ Type
     constructor Create(factory : TFHIRFactory); override;
     destructor Destroy; override;
     procedure RecordFhirSession(session: TFhirSession); override;
-    procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); override;
+    procedure QueueResource(r: TFhirResourceV; dateTime: TFslDateTime); override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
@@ -243,7 +243,7 @@ begin
   result := 1;
 end;
 
-procedure TTestStorageService.QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx);
+procedure TTestStorageService.QueueResource(r: TFhirResourceV; dateTime: TFslDateTime);
 begin
 end;
 
@@ -486,11 +486,11 @@ begin
   oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
   oConf.status := PublicationStatusActive;
   oConf.experimental := false;
-  oConf.date := TDateTimeEx.makeUTC;
+  oConf.date := TFslDateTime.makeUTC;
   oConf.software := TFhirCapabilityStatementSoftware.Create;
   oConf.software.name := 'Reference Server';
   oConf.software.version := SERVER_VERSION;
-  oConf.software.releaseDate := TDateTimeEx.fromXml(SERVER_RELEASE_DATE);
+  oConf.software.releaseDate := TFslDateTime.fromXml(SERVER_RELEASE_DATE);
 end;
 
 function TTestFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;

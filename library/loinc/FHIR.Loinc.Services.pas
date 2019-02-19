@@ -1783,7 +1783,7 @@ begin
       result.version := Version(nil);
       result.name := 'LOINC Value Set - all LOINC codes';
       result.description := 'All LOINC codes';
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
         inc.system := 'http://loinc.org';
@@ -1806,7 +1806,7 @@ begin
       result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text, lang);
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
         inc.system := 'http://loinc.org';
@@ -1836,7 +1836,7 @@ begin
       result.version := Version(nil);
       result.name := 'LOINC Answer List '+id.Substring(20);
       result.description := 'LOINC Answer list for '+Desc.GetEntry(text, lang);
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
         inc.system := 'http://loinc.org';

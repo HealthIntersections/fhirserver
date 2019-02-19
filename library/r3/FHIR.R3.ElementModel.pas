@@ -1724,7 +1724,7 @@ end;
 function TFHIRMMXmlParser.convertForDateFormat(fmt, av : String) : String;
 begin
   if ('v3' = fmt) then
-    result := TDateTimeEx.fromHL7(av).ToXML
+    result := TFslDateTime.fromHL7(av).ToXML
   else
     raise EFHIRException.create('Unknown Data format "'+fmt+'"');
 end;

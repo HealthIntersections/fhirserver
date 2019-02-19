@@ -40,7 +40,7 @@ uses
   {$IFDEF NPPUNICODE} FHIR.Npp.Form, FHIR.Npp.Base, {$ENDIF}
 
   FHIR.Support.Collections,
-  FHIR.V2.Message,
+//  FHIR.V2.Message,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang, FHIR.Base.ElementModel;
 
 const

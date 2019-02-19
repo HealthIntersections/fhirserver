@@ -792,7 +792,7 @@ begin
   ext := TFhirExtension.Create;
   try
     ext.url := 'http://hl7.org/fhir/StructureDefinition/resource-history';
-    ext.setExtensionDate('date', TDateTimeEx.makeToday.toXML);
+    ext.setExtensionDate('date', TFslDateTime.makeToday.toXML);
     frm := TResourceHistoryForm.create(self);
     try
        frm.Extension := ext.Link;
@@ -940,7 +940,7 @@ begin
   CodeSystem.purpose := edtPurpose.Text;
   CodeSystem.copyright := edtCopyright.Text;
   CodeSystem.status := TFhirPublicationStatusEnum(cbxStatus.ItemIndex);
-  CodeSystem.date := TDateTimeEx.make(dedDate.DateTime, dttzLocal);
+  CodeSystem.date := TFslDateTime.make(dedDate.DateTime, dttzLocal);
   CodeSystem.jurisdictionList.Clear;
   cc := getJurisdiction(cbxJurisdiction.ItemIndex);
   if (cc <> nil) then
@@ -1183,7 +1183,7 @@ begin
         ConceptPropertyTypeCode: v.value := TFhirCode.Create(value.AsString);
         ConceptPropertyTypeString: v.value := TFhirString.Create(value.AsString);
         ConceptPropertyTypeInteger: v.value := TFhirInteger.Create(value.AsString);
-        ConceptPropertyTypeDateTime: v.value := TFhirDateTime.Create(TDateTimeEx.fromFormat('x', value.AsString));
+        ConceptPropertyTypeDateTime: v.value := TFhirDateTime.Create(TFslDateTime.fromFormat('x', value.AsString));
         ConceptPropertyTypeBoolean: v.value := TFhirBoolean.Create(value.AsBoolean);
 //        ConceptPropertyTypeCoding: ;
       end;

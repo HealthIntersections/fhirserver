@@ -86,12 +86,12 @@ end;
 procedure TKDBTests.test(manager: TKDBManager);
 var
   conn: TKDBConnection;
-  d, od: TDateTimeEx;
+  d, od: TFslDateTime;
   b: TBytes;
   i64: Int64;
   md: TKDBMetaData;
 begin
-  d := TDateTimeEx.makeLocal(dtpSec);
+  d := TFslDateTime.makeLocal(dtpSec);
 {$IFDEF MACOS}
   b := FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0))) + 'libcgsqlite3.dylib');
 {$ELSE}

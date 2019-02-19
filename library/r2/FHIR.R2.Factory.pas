@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, System.NetEncoding,
-  FHIR.Support.Base, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.ElementModel,
   FHIR.Client.Base, FHIR.Client.Threaded;
@@ -79,6 +79,7 @@ type
     function makeDecimal(s : string) : TFHIRObject; override;
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
+    function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
@@ -113,6 +114,8 @@ type
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
+    function makeDuration(dt : TDateTime) : TFHIRObject; override;
+    function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR2;
 
@@ -271,6 +274,11 @@ begin
   result := TFHIRParsers2.composer(worker as TFHIRWorkerContext, format, lang, style);
 end;
 
+function TFHIRFactoryR2.makeDateTime(value: TFslDateTime): TFHIRObject;
+begin
+  result := TFhirDateTime.Create(value);
+end;
+
 function TFHIRFactoryR2.makeDecimal(s: string): TFHIRObject;
 begin
   result := TFhirDecimal.Create(s);
@@ -284,6 +292,11 @@ begin
     result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
   else
     raise EFHIRException.create('Unknown Supported Data Type '+type_);
+end;
+
+function TFHIRFactoryR2.makeDuration(dt: TDateTime): TFHIRObject;
+begin
+  result := TFhirQuantity.fromDuration(dt);
 end;
 
 function TFHIRFactoryR2.makeElementModelManager: TFHIRBaseMMManager;
@@ -593,6 +606,14 @@ begin
     result := nil
   else
     result := TFhirPatient2.Create(r);
+end;
+
+function TFHIRFactoryR2.wrapPeriod(r: TFHIRObject): TFhirPeriodW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirPeriod2.Create(r);
 end;
 
 function TFHIRFactoryR2.wrapQuantity(r: TFHIRObject): TFhirQuantityW;

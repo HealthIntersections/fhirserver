@@ -542,7 +542,7 @@ begin
         if (edtPTelecom.text <> '') then
           pat.telecomList.add(TFhirContactPoint.fromEdit(edtPTelecom.text));
         if dedPDob.text <> '' then
-          pat.birthDate := TDateTimeEx.makeLocal(dedPDob.date);
+          pat.birthDate := TFslDateTime.makeLocal(dedPDob.date);
         if cbxPGender.itemIndex <> -1 then
           pat.gender := TFhirAdministrativeGenderEnum(cbxPGender.itemIndex);
         if cbxPActive.itemIndex > 0 then
@@ -595,10 +595,10 @@ begin
           params.addPair('identifier', edtPIdentifier.Text);
 
         case cbxPDob.ItemIndex of
-          1: {on} params.addPair('birthdate', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          2: {before} params.addPair('birthdate', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          3: {after}  params.addPair('birthdate', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          4: {around} params.addPair('birthdate', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          1: {on} params.addPair('birthdate', TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
+          2: {before} params.addPair('birthdate', 'le'+TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
+          3: {after}  params.addPair('birthdate', 'ge'+TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
+          4: {around} params.addPair('birthdate', 'ap'+TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
         end;
         case cbxPGender.ItemIndex of
           1: { Male } params.addPair('gender', 'male');
@@ -609,10 +609,10 @@ begin
         case cbxPDeceased.ItemIndex of
           1: { Alive} params.addPair('deceased', 'false');
           2: { Deceased} params.addPair('deceased', 'true');
-          3: { On} params.addPair('death-date', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          4: { Before} params.addPair('death-date', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          5: { After} params.addPair('death-date', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          6: { Around} params.addPair('death-date', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          3: { On} params.addPair('death-date', TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
+          4: { Before} params.addPair('death-date', 'le'+TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
+          5: { After} params.addPair('death-date', 'ge'+TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
+          6: { Around} params.addPair('death-date', 'ap'+TFslDateTime.make(dedPDob.Date, dttzUnknown).toXML);
         end;
         case cbxPActive.ItemIndex of
           1: { true } params.addPair('gender', 'true');

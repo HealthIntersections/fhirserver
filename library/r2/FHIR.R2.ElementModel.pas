@@ -1329,11 +1329,11 @@ end;
 
 function TFHIRMMXmlParser.convertForDateFormat(fmt, av : String) : String;
 var
-  d : TDateTimeEx;
+  d : TFslDateTime;
 begin
   if ('v3' = fmt) then
   begin
-    d := TDateTimeEx.fromHL7(av);
+    d := TFslDateTime.fromHL7(av);
     result := d.ToXML;
   end
   else

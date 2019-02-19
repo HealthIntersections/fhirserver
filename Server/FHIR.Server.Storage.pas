@@ -284,7 +284,7 @@ Type
     procedure RecordFhirSession(session: TFhirSession); virtual; abstract;
     procedure CloseFhirSession(key: integer); virtual; abstract;
     procedure QueueResource(r: TFhirResourceV); overload; virtual; abstract;
-    procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); overload; virtual; abstract;
+    procedure QueueResource(r: TFhirResourceV; dateTime: TFslDateTime); overload; virtual; abstract;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); virtual; abstract;
     function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; virtual; abstract;
 
@@ -305,10 +305,10 @@ Type
     function FetchResource(key : integer) : TFHIRResourceV; virtual; abstract;
 
     function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; virtual;
-    procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); virtual;
+    procedure setAsyncTaskDetails(key : integer; transactionTime : TFslDateTime; request : String); virtual;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); virtual;
     procedure MarkTaskForDownload(key : integer; names : TStringList); virtual;
-    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; virtual;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest : String; var transactionTime, expires : TFslDateTime; names : TStringList; var outcome : TBytes): boolean; virtual;
     procedure recordDownload(key : integer; name : String); virtual;
     procedure fetchExpiredTasks(tasks : TFslList<TAsyncTaskInformation>); virtual;
     procedure MarkTaskDeleted(key : integer); virtual;
@@ -360,7 +360,7 @@ begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
-function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest: String; var transactionTime, expires: TFslDateTime; names : TStringList; var outcome: TBytes): boolean;
 begin
   raise EFHIRException.create('This server does not support Async tasks');
 end;
@@ -415,7 +415,7 @@ begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
-procedure TFHIRStorageService.setAsyncTaskDetails(key: integer; transactionTime: TDateTimeEx; request: String);
+procedure TFHIRStorageService.setAsyncTaskDetails(key: integer; transactionTime: TFslDateTime; request: String);
 begin
   raise EFHIRException.create('This server does not support Async tasks');
 end;
@@ -641,7 +641,7 @@ begin
       oConf.name := 'FHIR Reference Server Conformance Statement';
       oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
-      oConf.date := TDateTimeEx.makeUTC;
+      oConf.date := TFslDateTime.makeUTC;
       oConf.software('Reference Server', SERVER_VERSION, SERVER_RELEASE_DATE);
       if ServerContext.FormalURLPlainOpen <> '' then
         oConf.impl(ServerContext.FormalURLPlainOpen, 'FHIR Server running at '+ServerContext.FormalURLPlainOpen);
@@ -1022,7 +1022,7 @@ begin
       oConf.name := 'FHIR Reference Server Conformance Statement';
       oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
-      oConf.date := TDateTimeEx.makeUTC;
+      oConf.date := TFslDateTime.makeUTC;
 
       for s in ServerContext.TerminologyServer.listSystems do
         oConf.system(s);
@@ -1471,7 +1471,7 @@ begin
 //  try
 //    result.id := 'fso-'+name;
 //    result.meta := TFhirMeta.Create;
-//    result.meta.lastUpdated := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
+//    result.meta.lastUpdated := TFslDateTime.fromXml(FHIR_GENERATED_DATE);
 //    result.meta.versionId := SERVER_VERSION;
 //    result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
 //    result.version := FHIR_GENERATED_VERSION;
@@ -1486,7 +1486,7 @@ begin
 //    result.description := 'Reference FHIR Server Operation Definition for "'+name+'"';
 //    result.status := PublicationStatusDraft;
 //    result.experimental := false;
-//    result.date := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
+//    result.date := TFslDateTime.fromXml(FHIR_GENERATED_DATE);
 //    result.kind := OperationKindOperation;
 //    result.code := name;
 //    result.base := !{$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('http://hl7.org/fhir/OperationDefinition/'+name);

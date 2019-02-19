@@ -4295,7 +4295,7 @@ Begin
   if self = nil then
     result := 0
   else
-    result := TDateTimeEx.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
+    result := TFslDateTime.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
 End;
 
 Function TDicomValue.GetAsDS: AnsiString;
@@ -4311,7 +4311,7 @@ Begin
   if self = nil then
     result := 0
   else
-    result := TDateTimeEx.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
+    result := TFslDateTime.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
 End;
 
 Function TDicomValue.GetAsFD: Double;
@@ -4431,7 +4431,7 @@ Begin
   if self = nil then
     result := 0
   else
-    result := TDateTimeEx.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
+    result := TFslDateTime.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
 End;
 
 Function TDicomValue.GetAsUI: AnsiString;
@@ -4496,7 +4496,7 @@ End;
 
 Procedure TDicomValue.SetAsDA(const Value: TDateTime);
 Begin
-  FBytes := AnsiStringAsBytes(TDateTimeEx.make(value, dttzUnknown).toHL7);
+  FBytes := AnsiStringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
 End;
 
 Procedure TDicomValue.SetAsDS(const Value: AnsiString);
@@ -4506,7 +4506,7 @@ End;
 
 Procedure TDicomValue.SetAsDT(const Value: TDateTime);
 Begin
-  FBytes := AnsiStringAsBytes(TDateTimeEx.make(value, dttzUnknown).toHL7);
+  FBytes := AnsiStringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
 End;
 
 Procedure TDicomValue.SetAsFD(const Value: Double);
@@ -4584,7 +4584,7 @@ End;
 
 Procedure TDicomValue.SetAsTM(const Value: TDateTime);
 Begin
-  FBytes := AnsiStringAsBytes(TDateTimeEx.make(value, dttzUnknown).toHL7);
+  FBytes := AnsiStringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
 End;
 
 Procedure TDicomValue.SetAsUI(const Value: AnsiString);
@@ -4705,9 +4705,9 @@ Begin
     dvtAE : AsAE := s;
     dvtPN : AsUN := AnsiStringAsBytes(s); // direct
     dvtUI : AsUI := s;
-    dvtDA : AsDA := TDateTImeEx.fromHL7(s).DateTime;
-    dvtTM : AsTM := TDateTImeEx.fromHL7(s).DateTime;
-    dvtDT : AsDT := TDateTImeEx.fromHL7(s).DateTime;
+    dvtDA : AsDA := TFslDateTime.fromHL7(s).DateTime;
+    dvtTM : AsTM := TFslDateTime.fromHL7(s).DateTime;
+    dvtDT : AsDT := TFslDateTime.fromHL7(s).DateTime;
     dvtAS : AsAS := s;
     dvtIS : AsIS := s;
     dvtDS : AsDS := s;
