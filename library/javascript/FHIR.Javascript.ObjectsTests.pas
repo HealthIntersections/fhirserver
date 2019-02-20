@@ -184,15 +184,38 @@ var
 begin
   pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
   try
-    FJs.ImmutableObjects := true;
+    FJs.ObjectsImmutable := true;
+    FJs.Strict := true;
+
+    // first, check that reading works
     FJs.execute(
       'function func(pat) {'+#13#10+
-      ' var p2 = { id: 23};'+#13#10+
-      ' console.log(p2.id);'+#13#10+
+      ' console.log(pat.id);'+#13#10+
       '}'+#13#10,
       'test.js', 'func', [FJs.wrap(pat.Link, true)]);
     Assert.IsTrue(Flog.Text =
-      '23'#13#10);
+      'example'#13#10);
+
+    Flog.Clear;
+    // now, check that writing to a new property fails
+    Assert.WillRaise(procedure begin
+      FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' pat.id1 = "23";'+#13#10+
+      ' console.log(pat.id1);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+     end, EJavascriptHost);
+
+    // now, check that writing to an existing property fails
+    Assert.WillRaise(procedure begin
+      FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' pat.id = "23";'+#13#10+
+      ' console.log(pat.id);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+     end, EJavascriptHost);
   finally
     pat.Free;
   end;

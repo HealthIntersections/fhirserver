@@ -49,6 +49,7 @@ type
     function extractHost(url : String) : String;
     function fetch(url : String) : String;
     function fetchPost(url : String; body : string) : String;
+    function fetchPostRedirect(url : String; body : string) : String;
     procedure SetServer(const Value: TRegisteredFHIRServer);
     function makeInitialRequest(var url : String) : String;
     function makeFollowUpRequest(id, url: String) : String;
@@ -76,7 +77,8 @@ begin
   FServer := TRegisteredFHIRServer.create;
   FClient := TIdHttp.Create(nil);
   FClient.AllowCookies := true;
-  FClient.HandleRedirects := true;
+  FClient.HandleRedirects := false;
+  FClient.HTTPOptions := FClient.HTTPOptions + [hoNoProtocolErrorException];
   FSsl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
   FClient.IOHandler := FSsl;
   FSsl.SSLOptions.Mode := sslmClient;
@@ -139,6 +141,27 @@ begin
   end;
 end;
 
+function TSmartOnFhirTestingLogin.fetchPostRedirect(url : String; body : string) : String;
+var
+  post : TBytesStream;
+  resp : TMemoryStream;
+begin
+  FClient.Request.Accept := 'text/html';
+  FClient.Request.ContentType := 'application/x-www-form-urlencoded';
+  post := TBytesStream.create(TEncoding.ASCII.getBytes(body));
+  try
+    resp := TMemoryStream.create;
+    try
+      FClient.Post(url, post, resp);
+      result := FClient.Response.Location;
+    finally
+      resp.free;
+    end;
+  finally
+    post.Free;
+  end;
+end;
+
 procedure TSmartOnFhirTestingLogin.login;
 var
   id, url : String;
@@ -156,13 +179,17 @@ end;
 
 function TSmartOnFhirTestingLogin.makeFinalRequest(url: String): String;
 var
+  cnt : String;
   page : String;
 begin
   FClient.HandleRedirects := false;
-  FClient.HTTPOptions := FClient.HTTPOptions + [hoNoProtocolErrorException];
-  page := fetchPost(extractHost(server.authorizeEndpoint)+url,
-    'form=true&'+
-    'readClinical=1&writeClinical=1&readData=1&writeData=1&readMeds=1&writeMeds=1&readSchedule=1&writeSchedule=1&readAudit=1&writeAudit=1&readDocuments=1&writeDocuments=1&readFinancial=1&writeFinancial=1&readOther=1&writeOther=1');
+  if FScopes.Contains('openid') and (FScopes.Contains('fhirUser') or FScopes.Contains('profile')) then
+    cnt := 'form=true&'+
+      'userInfo=1&readClinical=1&writeClinical=1&readData=1&writeData=1&readMeds=1&writeMeds=1&readSchedule=1&writeSchedule=1&readAudit=1&writeAudit=1&readDocuments=1&writeDocuments=1&readFinancial=1&writeFinancial=1&readOther=1&writeOther=1'
+  else
+    cnt := 'form=true&'+
+      'readClinical=1&writeClinical=1&readData=1&writeData=1&readMeds=1&writeMeds=1&readSchedule=1&writeSchedule=1&readAudit=1&writeAudit=1&readDocuments=1&writeDocuments=1&readFinancial=1&writeFinancial=1&readOther=1&writeOther=1';
+  page := fetchPost(extractHost(server.authorizeEndpoint)+url, cnt);
   result := FClient.Response.Location;
 end;
 
@@ -170,10 +197,12 @@ function TSmartOnFhirTestingLogin.makeFollowUpRequest(id, url: String): String;
 var
   page, l, r : String;
 begin
-  page := fetchPost(extractHost(server.authorizeEndpoint)+url,
+  page := fetchPostRedirect(extractHost(server.authorizeEndpoint)+url,
     'id='+id+'&'+
+    'form=true&'+
     'username='+username+'&'+
     'password='+password);
+  page := fetch(page);
   StringSplit(page, '<form method="POST" action="', l, r);
   StringSplit(r, '"', result, r);
 end;

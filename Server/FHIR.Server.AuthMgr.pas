@@ -1118,7 +1118,8 @@ begin
             json.Value('access_token', session.Cookie);
             json.Value('token_type', 'Bearer');
             json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
-            json.Value('id_token', session.JWTPacked);
+            if session.canGetUser then
+              json.Value('id_token', session.JWTPacked);
             json.Value('scope', scope);
             json.Value('patient', launch);
             json.Finish;
@@ -1251,7 +1252,7 @@ var
   variables : TFslStringDictionary;
 begin
   if session = nil then
-    response.Redirect(FPath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
+    response.Redirect(FPath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
   else
   begin
     if params.getVar('form') = 'true' then

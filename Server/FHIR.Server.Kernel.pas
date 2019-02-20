@@ -820,10 +820,10 @@ begin
   if (dr = '') then
   begin
     case securityMode of
-      ismOpenAccess : FIni.admin['default-rights'] := 'openid,profile,user/*.*';
-      ismClosedAccess : FIni.admin['default-rights'] := 'openid,profile';
-      ismReadOnly : FIni.admin['default-rights'] := 'openid,profile,user/*.read';
-      ismTerminologyServer : FIni.admin['default-rights'] := 'openid,profile,user/CodeSystem.read,user/ConceptMap.read,user/ValueSet.read'
+      ismOpenAccess : FIni.admin['default-rights'] := 'openid,fhirUser,profile,user/*.*';
+      ismClosedAccess : FIni.admin['default-rights'] := 'openid,fhirUser,profile';
+      ismReadOnly : FIni.admin['default-rights'] := 'openid,fhirUser,profile,user/*.read';
+      ismTerminologyServer : FIni.admin['default-rights'] := 'openid,fhirUser,profile,user/CodeSystem.read,user/ConceptMap.read,user/ValueSet.read'
     end;
     dr := FIni.admin['default-rights'];
   end;

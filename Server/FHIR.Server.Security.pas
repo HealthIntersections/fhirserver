@@ -228,7 +228,7 @@ var
   rn : String;
 begin
   FSource := scopes.CommaText.replace(',', ' ');
-  if (scopes.IndexOf('openid') > -1) and (scopes.IndexOf('profile') > -1) and ((base = nil)  or (base.canGetUserInfo)) then
+  if (scopes.IndexOf('openid') > -1) and ((scopes.IndexOf('profile') > -1) or (scopes.IndexOf('fhirUser') > -1)) or ((base <> nil) and base.canGetUserInfo) then
     FUserInfo := true;
   if (scopes.IndexOf(SCIM_ADMINISTRATOR) > -1) and ((base = nil)  or (base.canAdministerUsers)) then
     FAdministerUsers := true;

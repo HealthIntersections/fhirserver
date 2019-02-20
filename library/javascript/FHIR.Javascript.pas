@@ -202,8 +202,8 @@ valueOf()	Returns the primitive value of an array
     FOnLog : TJavascriptConsoleLogEvent;
     FDefinedClasses : TDictionary<String,TJavascriptClassDefinition>;
     FOwnedObjects : TObjectList<TObject>;
-    FImmutableObjects: boolean;
-    FReadOnly: boolean;
+    FImmutableObjects : boolean;
+    FStrict : boolean;
 
     FPIdGetter : JsPropertyIdRef;
     FPIdSetter : JsPropertyIdRef;
@@ -226,7 +226,8 @@ valueOf()	Returns the primitive value of an array
 
     property InstanceId : cardinal read FInstanceId;
     property Debugging : boolean read FDebugging write FDebugging;
-    property ImmutableObjects : boolean read FImmutableObjects write FImmutableObjects;
+    property ObjectsImmutable : boolean read FImmutableObjects write FImmutableObjects;
+    property Strict : boolean read FStrict write FStrict;
 
     // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
     procedure reset;
@@ -368,9 +369,9 @@ valueOf()	Returns the primitive value of an array
         definer: a procedure that defines properties for the object - using defineProperty above
         owns : true if the object is owned by the javascript engine and should be cleaned up when done
     }
-    function wrap(o : TObject; className : String; owns : boolean) : JsValueRef; overload; virtual;
-    function wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef; overload; virtual;
-    function wrap(o : TObject; owns : boolean) : JsValueRef; overload; virtual;
+    function wrap(o : TObject; className : String; owns : boolean; immutable : boolean = false) : JsValueRef; overload; virtual;
+    function wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean; immutable : boolean = false) : JsValueRef; overload; virtual;
+    function wrap(o : TObject; owns : boolean; immutable : boolean = false) : JsValueRef; overload; virtual;
 
     // todo: add a wrap variant that uses RTTI , and one that uses IDispatch
 
@@ -440,11 +441,6 @@ valueOf()	Returns the primitive value of an array
       hook any calls to console.log for debugging purposes
     }
     property OnLog : TJavascriptConsoleLogEvent read FOnLog write FOnLog;
-
-    {
-      Blocks any set property calls
-    }
-    property readOnly : boolean read FReadOnly write FReadOnly;
   end;
 
   TStringListManager = class (TJavascriptArrayManager)
@@ -508,9 +504,6 @@ var
 begin
   prop := TJavascriptRegisteredProperty(callbackState);
   try
-    if prop.FJavascript.readOnly then
-      raise EJavascriptScript.Create('Unable to set the value - the engine is in read-Only mode');
-
     prop.FSetter(prop.FJavascript, prop, prop.FJavascript.getWrapped<TObject>(p[0]), p[1]);
     result := JS_INVALID_REFERENCE;
   except
@@ -939,6 +932,8 @@ var
   vType : JsValueType;
 begin
   sn := ansiString(scriptName);
+  if FStrict then
+    script := '"use strict"; '+script;
 
   // parse + initialise the script
   jsCheck(JsCreateString(PAnsiChar(sn), Length(scriptName), scriptNameJ));
@@ -985,14 +980,14 @@ begin
   jsCheck(JsBoolToBoolean(b, result));
 end;
 
-function TJavascript.wrap(o : TObject; className : String; owns : boolean) : JsValueRef;
+function TJavascript.wrap(o : TObject; className : String; owns : boolean; immutable : boolean = false) : JsValueRef;
 var
   def : TJavascriptClassDefinition;
 begin
   if o = nil then
     result := getNull
   else if FDefinedClasses.TryGetValue(className, def) then
-    result := wrap(o, def, owns)
+    result := wrap(o, def, owns, immutable)
   else
   begin
     if owns then
@@ -1001,28 +996,18 @@ begin
   end;
 end;
 
-function TJavascript.wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef;
+function TJavascript.wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean; immutable : boolean = false) : JsValueRef;
 var
   p : TJavascriptRegisteredProperty;
   d : JsValueRef;
   ok : bytebool;
   args : PJsValueRefArray;
-  func, res : JsValueRef;
+  global, obj, func, res : JsValueRef;
+  vType : JsValueType;
 begin
   JsCheck(JsCreateExternalObject(o, nil, result));
   if owns then
     jsCheck(JsSetObjectBeforeCollectCallback(result, self, FreeCallBack));
-  if FImmutableObjects then
-  begin
-    jsCheck(JsGetProperty(result, getPropertyId('freeze'), func));
-    GetMem(args, 1 * SizeOf(JsValueRef));
-    try
-      args[0] := result;
-      jsCheck(JsCallFunction(func, pointer(args), 1, @res));
-    finally
-      Freemem(args);
-    end;
-  end;
   for p in classDef.FProperties do
   begin
     if p.FPropId = nil then
@@ -1045,6 +1030,20 @@ begin
       if p.FRoutineJS = nil then
         jsCheck(JsCreateFunction(RoutineCallback, p, p.FRoutineJS));
       jsCheck(JsSetProperty(result, p.FPropId, p.FRoutineJS, true));
+    end;
+  end;
+  if immutable or FImmutableObjects then
+  begin
+    jsCheck(JsGetGlobalObject(global));
+    jsCheck(jsGetProperty(global, getPropertyId('Object'), obj));
+    jsCheck(JsGetProperty(obj, getPropertyId('freeze'), func));
+    GetMem(args, 2 * SizeOf(JsValueRef));
+    try
+      args[0] := global;
+      args[1] := result;
+      jsCheck(JsCallFunction(func, pointer(args), 2, @res));
+    finally
+      Freemem(args);
     end;
   end;
 end;
@@ -1171,9 +1170,9 @@ begin
   jsCheck(JsSetObjectBeforeCollectCallback(v, self, nil));
 end;
 
-function TJavascript.wrap(o: TObject; owns: boolean): JsValueRef;
+function TJavascript.wrap(o: TObject; owns: boolean; immutable : boolean = false): JsValueRef;
 begin
-  result := wrap(o, o.ClassName, owns);
+  result := wrap(o, o.ClassName, owns, immutable);
 end;
 
 function TJavascript.makeArray(count: integer; valueProvider: TJavascriptArrayValueProvider): JsValueRef;

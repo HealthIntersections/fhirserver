@@ -60,7 +60,7 @@ type
     procedure registerFactory(reg : TRegisterFHIRTypes; version : TFHIRVersion; fact : TFHIRFactory);
     function factory(v : TFHIRVersion) : TFHIRFactory;
 
-    function wrap(o : TObject; owns : boolean) : JsValueRef; overload; override;
+    function wrap(o : TObject; owns : boolean; immutable : boolean = false) : JsValueRef; overload; override;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
 
@@ -241,12 +241,12 @@ begin
   end;
 end;
 
-function TFHIRJavascript.wrap(o: TObject; owns: boolean): JsValueRef;
+function TFHIRJavascript.wrap(o: TObject; owns: boolean; immutable : boolean = false): JsValueRef;
 begin
   if o is TFHIRObject then
-    result := wrap(o, (o as TFHIRObject).JSType, owns)
+    result := wrap(o, (o as TFHIRObject).JSType, owns, immutable)
   else
-    result := inherited wrap(o, owns);
+    result := inherited wrap(o, owns, immutable);
 end;
 
 function TFHIRJavascript.getFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;

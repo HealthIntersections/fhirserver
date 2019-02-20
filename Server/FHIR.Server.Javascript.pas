@@ -134,11 +134,11 @@ begin
     if (scripts.count > 0) then
     begin
       engine := FEngine;
-      engine.readOnly := true;
-      s := engine.wrap(session.Link, 'Session', true);
-      b := engine.wrap(before.Link, rn, true);
-      a := engine.wrap(after.Link, rn, true);
-      c := engine.wrap(client.link, 'FHIR.Version.Client', true);
+      engine.ObjectsImmutable := true;
+      s := engine.wrap(session.Link, 'Session', true, true);
+      b := engine.wrap(before.Link, rn, true, true);
+      a := engine.wrap(after.Link, rn, true, true);
+      c := engine.wrap(client.link, 'FHIR.Version.Client', true, true);
       engine.addGlobal('fhir', c);
       for script in scripts do
         engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
@@ -175,9 +175,9 @@ begin
     if (scripts.count > 0) then
     begin
       engine := FEngine;
-      engine.readOnly := false;
-      s := engine.wrap(session.Link, 'Session', true);
-      r := engine.wrap(request.Link, 'Request', true);
+      engine.ObjectsImmutable := false;
+      s := engine.wrap(session.Link, 'Session', true, false);
+      r := engine.wrap(request.Link, 'Request', true, false);
       for script in scripts do
         engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, r]);
     end;

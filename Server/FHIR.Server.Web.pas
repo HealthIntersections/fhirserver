@@ -732,7 +732,7 @@ begin
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), false)
     else if request.Document.EndsWith('.phs') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.html')) then
       runPostHandler(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), false)
-    else if request.Document = '/.well-known/openid-configuration' then
+    else if (request.Document = path+'/.well-known/smart-configuration') then
       FAuthServer.HandleDiscovery(AContext, request, response)
     else if request.Document.StartsWith(FPath + '/cds-services') and FCDSHooksServer.active then
       FCDSHooksServer.HandleRequest(false, FPath, Session, AContext, request, response)
@@ -758,10 +758,10 @@ procedure TFhirWebServerEndPoint.PopulateConformance(sender: TObject; conf: TFhi
 begin
   if (FAuthServer <> nil) {and secure} then
     conf.addSmartExtensions(
-      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.AuthPath]),
-      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.TokenPath]),
-      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.RegisterPath]),
-      UrlPath([baseUrl, FContext.FormalURLSecure, FAuthServer.ManagePath]), caps)
+      UrlPath([baseUrl, FAuthServer.AuthPath]),
+      UrlPath([baseUrl, FAuthServer.TokenPath]),
+      UrlPath([baseUrl, FAuthServer.RegisterPath]),
+      UrlPath([baseUrl, FAuthServer.ManagePath]), caps)
   else
     conf.addSmartExtensions('', '', '', '', []); // just set cors
 end;
@@ -2704,7 +2704,7 @@ begin
   if Msg <> '' then
     result := result + '<p><b>' + FormatTextToHTML(Msg) + '</b></p>'#13#10;
 
-  result := result + '<p><a href="' + FAuthServer.BasePath + '/auth?client_id=c.1&response_type=code&scope=openid%20profile%20user/*.*%20' + SCIM_ADMINISTRATOR
+  result := result + '<p><a href="' + FAuthServer.BasePath + '/auth?client_id=c.1&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20' + SCIM_ADMINISTRATOR
     + '&redirect_uri=' + authurl + '/internal&aud=' + authurl + '&state=' + FAuthServer.MakeLoginToken(path, apGoogle) + '">Login using OAuth</a></p>' + #13#10;
 
   if FWebServer.FActualSSLPort <> 0 then
