@@ -153,6 +153,7 @@ type
   //   cmDelimiter : Maroon/bold
   //   cmCode : navy
   //   cmURL : maroon
+  //   cmDel : Red
   //
   // commonmark styler is slow; full parsing is required (though the parser is fastish)
 
@@ -892,7 +893,7 @@ procedure TCommonMarkStyler.GetStyleAttributes(const Style: Integer; var Attribu
 var
   st : TCommonMarkStyle;
 begin
-  st := TCommonMarkStyle(style and $F);
+  st := TCommonMarkStyle(style and $1F);
   case st of
     cmUnknown, cmText : Attributes.ForeColor := clBlack;
     cmEntity :
@@ -912,6 +913,7 @@ begin
       Attributes.FontStyle := [fsBold];
       end;
     cmCode : Attributes.ForeColor := clNavy;
+    cmDel : Attributes.ForeColor := clRed;
     cmURL : Attributes.ForeColor := clMaroon;
   end;
 end;
