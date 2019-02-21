@@ -2664,7 +2664,7 @@ begin
       end
       else
       begin
-        url := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        url := native(manager).ServerContext.FormalURLPlain+'/'+res.fhirType+'/'+res.id;
         exists := false;
         for entry in bundle.entryList do
           if entry.fullUrl = url then
@@ -2673,7 +2673,7 @@ begin
         begin
           entry := bundle.entryList.Append;
           entry.resource := res.Link as TFhirResource;
-          entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+          entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/'+res.fhirType+'/'+res.id;
         end;
       end
     end
@@ -2751,7 +2751,7 @@ begin
 //            bundle.base := native(manager).ServerContext.FormalURLPlain;
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
-            entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/Composition/'+composition.id;
+            entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/Composition/'+composition.id;
               addResource(manager, request.secure, request, bundle, composition, composition.subject, true);
               addSections(manager, request.secure, request, bundle, composition, composition.sectionList);
 

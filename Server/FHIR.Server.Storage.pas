@@ -639,7 +639,7 @@ begin
       oConf.id := 'FhirServer';
       oConf.contact(cpsOther, 'http://healthintersections.com.au/');
       if ServerContext.FormalURLPlain <> '' then
-        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
+        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'metadata'
       else
         oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
@@ -649,8 +649,8 @@ begin
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
       oConf.software('Reference Server', SERVER_VERSION, SERVER_RELEASE_DATE);
-      if ServerContext.FormalURLPlainOpen <> '' then
-        oConf.impl(ServerContext.FormalURLPlainOpen, 'FHIR Server running at '+ServerContext.FormalURLPlainOpen);
+      if ServerContext.FormalURLPlain <> '' then
+        oConf.impl(ServerContext.FormalURLPlain, 'FHIR Server running at '+ServerContext.FormalURLPlain);
       if assigned(OnPopulateConformance) then
         OnPopulateConformance(self, oConf, request.secure, request.baseUrl, ['launch-standalone', 'launch-ehr', 'client-public', 'client-confidential-symmetric', 'sso-openid-connect', 'permission-offline', 'permission-patient', 'permission-user']);
       if factory.version <> fhirVersionRelease2 then
@@ -783,7 +783,7 @@ begin
           if TFhirOperation(FOperations[i]).formalURL <> '' then
             oConf.addOperation(TFhirOperation(FOperations[i]).Name, TFhirOperation(FOperations[i]).formalURL)
           else
-            oConf.addOperation(TFhirOperation(FOperations[i]).Name, AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name);
+            oConf.addOperation(TFhirOperation(FOperations[i]).Name, AppendForwardSlash(ServerContext.FormalURLPlain)+'OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name);
           html.append(' <li>'+TFhirOperation(FOperations[i]).name+': see OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name+'</li>'#13#10);
         end;
         html.append('</ul>'#13#10);
@@ -1020,7 +1020,7 @@ begin
       oConf.id := 'FhirServer';
       oConf.contact(cpsOther, 'http://healthintersections.com.au/');
       if ServerContext.FormalURLPlain <> '' then
-        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
+        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'metadata'
       else
         oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 

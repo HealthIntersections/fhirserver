@@ -3125,7 +3125,7 @@ begin
       end
       else
       begin
-        url := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        url := native(manager).ServerContext.FormalURLPlain+'/'+res.fhirType+'/'+res.id;
         exists := false;
         for entry in bundle.entryList do
           if entry.fullUrl = url then
@@ -3134,7 +3134,7 @@ begin
         begin
           entry := bundle.entryList.Append;
           entry.resource := res.Link as TFhirResource;
-          entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+          entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/'+res.fhirType+'/'+res.id;
         end;
       end
     end
@@ -3218,7 +3218,7 @@ begin
             bundle.identifier.value := NewGuidURN;
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
-            entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/Composition/'+composition.id;
+            entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/Composition/'+composition.id;
             if request.Parameters.getvar('graph') <> '' then
               gd := native(manager).GetResourceById(request, 'GraphDefinition', request.Parameters.getvar('graph'), request.baseUrl, needSecure) as TFHIRGraphDefinition
             else if request.Parameters.getvar('definition') <> '' then

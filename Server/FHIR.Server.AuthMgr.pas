@@ -355,7 +355,7 @@ begin
     if client = nil then
       raise EAuthClientException.create('Unknown Client Identifier "'+client_id+'"', afrNone, '', '');
     redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri', '', '');
-    if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecureClosed+'/internal')) then
+    if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecure+'/internal')) then
       if not isAllowedRedirect(client, redirect_uri) then
         raise EAuthClientException.create('Unacceptable Redirect url "'+redirect_uri+'"', afrNone, '', '');
     state := checkNotEmpty(params.GetVar('state'), 'state', redirect_uri, state);
@@ -556,7 +556,7 @@ begin
   else if request.document.startsWith(FPath+'/auth_dest/state/') then
   begin
     // HL7
-    if not CheckLoginToken(copy(request.document, 25, $FF), id, provider) then
+    if not CheckLoginToken(copy(request.document, 26, $FF), id, provider) then
       raise EAuthClientException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
     uid := params.GetVar('userid');
     name := params.GetVar('fullName');

@@ -5476,8 +5476,12 @@ var
 begin
   conn := DB.GetConnection('oauth2');
   try
-    conn.SQL := 'insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, ClientState) values ('''+id+''')['''+client_id+''']';
+    conn.SQL := 'insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, ClientState) values (:id, :cl, :sc, :ru, 1, '+DBGetDate(DB.Platform)+', :st)';
     conn.prepare;
+    conn.BindString('id', id);
+    conn.BindString('cl', client_id);
+    conn.BindString('sc', scope);
+    conn.BindString('ru', redirect_uri);
     conn.BindBlobFromString('st', state);
     conn.execute;
     conn.Terminate;
@@ -5550,7 +5554,7 @@ begin
     sp.type_ := getTypeForKey(typekey);
     sp.compartment := compartment.Link;
     sp.sessionCompartments := sessionCompartments.link;
-    sp.baseURL := ServerContext.FormalURLPlainOpen; // todo: what?
+    sp.baseURL := ServerContext.FormalURLPlain; // todo: what?
     sp.lang := 'en';
     sp.params := params;
     sp.indexes := ServerContext.Indexes.Link;

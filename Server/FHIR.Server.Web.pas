@@ -251,7 +251,7 @@ Type
 
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
     Function BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
-    Function BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean): String;
+    Function BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean; params : String): String;
 
     function GetResource(Session: TFHIRSession; rtype: String; lang, id, ver, op: String): TFhirResourceV;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
@@ -1060,6 +1060,8 @@ Begin
                     cacheResponse(response, cacheNotAtAll);
                     response.redirect(oRequest.Session.OriginalUrl);
                   end
+                  else if request.unparsedParams.contains('error=') then // oAuth failure
+                    response.redirect(oRequest.baseUrl+'?'+request.unparsedParams)
                   else
                     response.redirect(oRequest.baseUrl);
                 end
@@ -1195,7 +1197,7 @@ Begin
           response.ResponseNo := 200;
           response.contentType := 'text/html; charset=UTF-8';
           response.FreeContentStream := true;
-          response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, logId, e.Msg, ssl));
+          response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, logId, e.Msg, ssl, request.unparsedParams));
         end
         else
           SendError(response, logId, e.status, aFormat, lang, e.message, sPath, e, Session, true, sPath + sDoc, relativeReferenceAdjustment, itLogin);
@@ -2687,9 +2689,10 @@ begin
 end;
 
 
-function TFhirWebServerEndpoint.BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean): String;
+function TFhirWebServerEndpoint.BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean; params : String): String;
 var
   authurl: string;
+  p : TParseMap;
 begin
   authurl := OAuthPath(secure);
 
@@ -2701,6 +2704,16 @@ begin
     TFHIRXhtmlComposer.header(factory, nil, FPath, lang, SERVER_VERSION) + '<h2>' + FWebServer.FOwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10;
 
   result := result + '<p>'#13#10 + GetFhirMessage('MSG_AUTH_REQUIRED', lang) + '</p>'#13#10;
+  if (Msg = '') and (params <> '') then
+  begin
+    p := TParseMap.Create(params);
+    try
+      msg := p.GetVar('error_description');
+    finally
+      p.Free;
+    end;
+  end;
+
   if Msg <> '' then
     result := result + '<p><b>' + FormatTextToHTML(Msg) + '</b></p>'#13#10;
 
@@ -3288,9 +3301,9 @@ end;
 function TFhirWebServerEndpoint.ClientAddress(secure: boolean): String;
 begin
   if secure then
-    result := 'https://localhost:' + inttostr(FWebServer.FActualSSLPort) + FPath
+    result := 'https://'+FWebServer.host+ port(FWebServer.FActualSSLPort, 443) + FPath
   else
-    result := 'http://localhost:' + inttostr(FWebServer.FActualPort) + FPath;
+    result := 'http://'+FWebServer.host+port(FWebServer.FActualPort, 80) + FPath;
 end;
 
 procedure TFhirWebServerEndPoint.RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
@@ -4213,8 +4226,8 @@ begin
     t := GetTickCount - t;
     logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
     {$IFNDEF OSX}
-    if GService <> nil then
-      logt(GService.ThreadStatus);
+//    if GService <> nil then
+//      logt(GService.ThreadStatus);
     {$ENDIF}
   finally
     InterlockedDecrement(GCounterWebRequests);
@@ -4542,6 +4555,8 @@ begin
   context.JWTServices.Password := FSSLPassword;
   context.JWTServices.DatabaseId := context.DatabaseId;
   context.JWTServices.Host := FHost;
+  context.FormalURLPlain := 'http://'+host+port(FActualPort, 80)+path;
+  context.FormalURLSecure := 'https://'+host+port(FActualSSLPort, 443)+path;
 //  context.JWTServices.JWKAddress := ?;
 end;
 
