@@ -86,15 +86,15 @@ Type
     Procedure processUserDelete(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure processUserRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 
-    Procedure processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
+    procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
+    procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
   public
     constructor Create(db : TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
     destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
-    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); override;
+    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession; prefix : String); override;
     Function loadUser(key : integer) : TSCIMUser; overload; override;
     Function loadUser(id : String; var key : integer) : TSCIMUser; overload; override;
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
@@ -595,16 +595,16 @@ begin
   end;
 end;
 
-procedure TSCIMServer.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession);
+procedure TSCIMServer.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession; prefix : String);
 var
   path : String;
 begin
   try
     path := request.Document;
-    if (path.StartsWith('/scim/Users')) then
+    if (path.StartsWith(prefix +'/scim/Users')) then
       processUserRequest(context, request, response)
-    else if (path.StartsWith('/scim/web')) then
-      processWebRequest(context, session, request, response)
+    else if (path.StartsWith(prefix +'/scim/web')) then
+      processWebRequest(context, session, request, response, prefix)
     else
       raise ESCIMException.Create(501, 'NOT IMPLEMENTED', '', 'TSCIMServer.processRequest: Not done yet');
   except
@@ -990,17 +990,17 @@ begin
     result := '??';
 end;
 
-procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 begin
-  if (request.Document = '/scim/web') then
-    processWebUserList(context, session, request, response)
-  else if StringIsInteger16(request.Document.Substring(10)) or (request.Document.Substring(10) = '$new') then
-    processWebUserId(context, session, request, response)
+  if (request.Document = prefix+'/scim/web') then
+    processWebUserList(context, session, request, response, prefix)
+  else if StringIsInteger16(request.Document.Substring(10+prefix.length)) or (request.Document.Substring(10+prefix.length) = '$new') then
+    processWebUserId(context, session, request, response, prefix)
   else
     raise ESCIMException.Create(403, 'FORBIDDEN', '', 'URL not understood');
 end;
 
-procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   variables : TFslStringDictionary;
   conn : TKDBConnection;
@@ -1022,7 +1022,7 @@ begin
       if bnew then
         uk := 2 // anonymous
       else
-        uk := StrToInt(request.Document.Substring(10));
+        uk := StrToInt(request.Document.Substring(10+prefix.length));
       conn.SQL := 'Select Content from Users where status = 1 and UserKey = '+inttostr(uk);
       conn.Prepare;
       conn.Execute;
@@ -1052,7 +1052,7 @@ begin
               begin
                 user.created := TFslDateTime.makeUTC;
                 user.lastModified := user.created;
-                user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(uk);
+                user.location := 'https://'+request.Host+prefix+'/scim/Users/'+inttostr(uk);
                 user.version := '1';
                 user.resourceType := 'User';
                 user.username := p.GetVar('username');
@@ -1071,7 +1071,7 @@ begin
               conn.Execute;
               conn.Terminate;
               IndexUser(conn, user, uk);
-              response.Redirect('/scim/web');
+              response.Redirect(prefix+'/scim/web');
               bDone := true;
               conn.Commit;
             except
@@ -1091,6 +1091,7 @@ begin
           variables.Add('user.password', '<input type="text" name="password" value=""/>')
         else
           variables.Add('user.password', '<i>No Password for this user</i>');
+        variables.Add('prefix', prefix);
         variables.Add('user.external', user.ExternalId);
         if bnew then
         begin
@@ -1135,7 +1136,7 @@ begin
   end;
 end;
 
-procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   variables : TFslStringDictionary;
   conn : TKDBConnection;
@@ -1159,7 +1160,7 @@ begin
             b.Append('<td>');
             b.Append(user.id);
             b.Append('</td>');
-            b.Append('<td><a href="/scim/web/');
+            b.Append('<td><a href="'+prefix+'/scim/web/');
             b.Append(user.id);
             b.Append('">');
             b.Append(user.username);
