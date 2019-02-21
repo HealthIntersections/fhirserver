@@ -356,6 +356,7 @@ type
 
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
     function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; override;
+    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope : String) : boolean; overload; override;
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
     function hasOAuthSessionByKey(key, status : integer) : boolean; override;
@@ -5685,6 +5686,37 @@ begin
    );
 end;
 
+
+function TFHIRNativeStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
+var
+  conn : TKDBConnection;
+begin
+  conn := DB.GetConnection('oauth2');
+  try
+    conn.SQL := 'select Client, Scope, Redirect, ClientState from OAuthLogins where id = :id';
+    conn.Prepare;
+    conn.BindString('id', id);
+    conn.Execute;
+    result := conn.FetchNext;
+    if result then
+    begin
+      client_id := conn.ColStringByName['Client'];
+      redirect := conn.ColStringByName['Redirect'];
+      scope := conn.ColStringByName['Scope'];
+      state := conn.ColBlobAsStringByName['ClientState'];
+    end;
+    conn.Terminate;
+    conn.release;
+  except
+    on e:exception do
+    begin
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
+
+end;
 
 function TFHIRNativeStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
 var

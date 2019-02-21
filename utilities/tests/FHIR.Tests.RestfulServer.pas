@@ -134,7 +134,8 @@ Type
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
-    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; override;
+    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; overload; override;
+    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope : String) : boolean; overload; override;
     procedure updateOAuthSession(id : String; state, key : integer; var client_id : String); override;
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
@@ -195,6 +196,8 @@ Type
     [TestCase] procedure TestSmartStandaloneLaunchCS;
     [TestCase] procedure TestSmartStandaloneLaunchWK;
     [TestCase] procedure TestSmartStandaloneLaunchNU;
+    [TestCase] procedure TestSmartStandaloneLaunchError;
+    [TestCase] procedure TestSmartStandaloneLaunchBadRedirect;
     [TestCase] Procedure TestPatientExampleSmartOnFhir;
 
     [TestCase] Procedure TestConformanceCertificateNone;
@@ -331,6 +334,22 @@ end;
 procedure TTestStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
 begin
   raise EFslException.Create('Not Implemented');
+end;
+
+function TTestStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
+var
+  l : TTestOAuthLogin;
+begin
+  result := FOAuths.ContainsKey(id);
+  if result then
+  begin
+    l := FOAuths[id];
+    client_id := l.client_id;
+    redirect := l.redirect;
+    state := l.state;
+    scope := l.scope;
+  end;
+
 end;
 
 function TTestStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
@@ -1103,15 +1122,16 @@ begin
   tester := TSmartOnFhirTestingLogin.create;
   try
     tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-    tester.server.authorizeEndpoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.AuthServer.AuthPath;
-    tester.server.tokenEndPoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.AuthServer.TokenPath;
+    tester.server.host := 'localhost';
+    tester.server.authorizeEndpoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.path + FEndpoint.AuthServer.AuthPath;
+    tester.server.tokenEndPoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.path + FEndpoint.AuthServer.TokenPath;
     tester.scopes := 'openid profile user/*.*';
     tester.server.clientid := 'web';
     tester.server.redirectport := 961;
     tester.server.clientsecret := 'this-password-is-never-used';
     tester.username := 'test';
     tester.password := 'test';
-    tester.login;
+    tester.login(stmAllOk);
     FClientSSL.SmartToken := tester.token.link;
   finally
     tester.Free;
@@ -1183,6 +1203,41 @@ begin
   Assert.IsTrue(FStore.FLastSystemEvidence = systemUnknown, 'SystemEvidence should be "'+CODES_SystemIdEvidence[systemUnknown]+'" not "'+CODES_SystemIdEvidence[FStore.FLastSystemEvidence]+'"');
 end;
 
+procedure TRestFulServerTests.TestSmartStandaloneLaunchBadRedirect;
+var
+  json : TJsonObject;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  json := getJson('/.well-known/smart-configuration');
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
+      tester.server.tokenEndPoint := json.str['token_endpoint'];
+      tester.scopes := 'openid profile user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      Assert.WillRaiseWithMessage(procedure begin
+        tester.login(stmBadRedirect);
+        end, EFHIRException, 'HTTP/1.1 400 Bad Request');
+    finally
+      tester.Free;
+    end;
+  finally
+    json.Free;
+  end;
+end;
+
 procedure TRestFulServerTests.TestSmartStandaloneLaunchCS;
 var
   cs : TFhirCapabilityStatement;
@@ -1207,7 +1262,7 @@ begin
       tester.server.clientsecret := 'this-password-is-never-used';
       tester.username := 'test';
       tester.password := 'test';
-      tester.login;
+      tester.login(stmAllOk);
       FClientSSL.SmartToken := tester.token.link;
     finally
       tester.Free;
@@ -1223,6 +1278,42 @@ begin
     end;
   finally
     cs.Free;
+  end;
+end;
+
+procedure TRestFulServerTests.TestSmartStandaloneLaunchError;
+var
+  json : TJsonObject;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  json := getJson('/.well-known/smart-configuration');
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
+      tester.server.tokenEndPoint := json.str['token_endpoint'];
+      tester.scopes := 'openid profile user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      Assert.WillRaiseWithMessage(procedure begin
+        tester.login(stmBadLogin);
+        end, EFHIRException, 'http://localhost:961/done?error=access_denied&error_description=Login%20failed&state='+tester.state);
+
+    finally
+      tester.Free;
+    end;
+  finally
+    json.Free;
   end;
 end;
 
@@ -1250,7 +1341,7 @@ begin
       tester.server.clientsecret := 'this-password-is-never-used';
       tester.username := 'test';
       tester.password := 'test';
-      tester.login;
+      tester.login(stmAllOk);
       FClientSSL.SmartToken := tester.token.link;
     finally
       tester.Free;
@@ -1293,7 +1384,7 @@ begin
       tester.server.clientsecret := 'this-password-is-never-used';
       tester.username := 'test';
       tester.password := 'test';
-      tester.login;
+      tester.login(stmAllOk);
       FClientSSL.SmartToken := tester.token.link;
     finally
       tester.Free;
