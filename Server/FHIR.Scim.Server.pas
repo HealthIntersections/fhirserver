@@ -104,6 +104,7 @@ Type
     // install
     Procedure DefineSystem(conn : TKDBConnection);
     Procedure DefineAdminUser(conn : TKDBConnection; un, pw, em : String);
+    Procedure UpdateAdminUser(conn : TKDBConnection; un, pw, em : String);
     Procedure DefineAnonymousUser(conn : TKDBConnection);
 
     property AnonymousRights : TStringList read FAnonymousRights;
@@ -1429,6 +1430,22 @@ begin
   else if path = 'entitlements' then result := 'entitlements'
   else
     result := '';
+end;
+
+procedure TSCIMServer.UpdateAdminUser(conn: TKDBConnection; un, pw, em: String);
+var
+  key : integer;
+begin
+  key := StrToInt(conn.Lookup('Users', 'UserName', un, 'UserKey', 'not found'));
+  conn.SQL := 'Update Users set Password = :pw where UserKey = :uk';
+  conn.Prepare;
+  try
+    conn.BindInteger('uk', key);
+    conn.BindString('pw', HashPassword(key, pw));
+    conn.Execute;
+  finally
+    conn.Terminate;
+  end;
 end;
 
 procedure TSCIMServer.WriteOutgoing(response: TIdHTTPResponseInfo; json: TJsonObject);

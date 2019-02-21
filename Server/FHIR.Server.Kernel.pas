@@ -134,6 +134,7 @@ Type
     procedure Index;
     function InstallDatabase(name : String; securityMode : TFHIRInstallerSecurityMode) : String;
     procedure UnInstallDatabase(name : String);
+    procedure updateAdminPassword(name : String);
 
     property NotServing : boolean read FNotServing write FNotServing;
     property callback : TInstallerCallback read Fcallback write Fcallback;
@@ -228,8 +229,10 @@ begin
               if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
                 ImportUnii(fn,  svc.FDatabases[name]);
             end
-            else if cmd = 'unmount' then
+            else if cmd = 'pword' then
               svc.UninstallDatabase(endpoint)
+            else if cmd = 'unmount' then
+              svc.updateAdminPassword(endpoint)
             else if cmd = 'remount' then
             begin
               if FindCmdLineSwitch('mode', smode, true, [clstValueNextParam]) then
@@ -726,6 +729,67 @@ procedure TFHIRService.UnloadTerminologies;
 begin
   FTerminologies.Free;
   FTerminologies := nil;
+end;
+
+procedure TFHIRService.updateAdminPassword(name: String);
+var
+  db : TKDBManager;
+  dbi : TFHIRDatabaseInstaller;
+  scim : TSCIMServer;
+  salt, un, pw, em, sql, dr, result : String;
+  conn : TKDBConnection;
+  details : TFHIRServerIniComplex;
+  v : TFHIRVersion;
+begin
+  // check that user account details are provided
+  salt := FIni.admin['scim-salt'];
+  if (salt = '') then
+    raise EFHIRException.create('You must define a scim salt in the ini file');
+  un := FIni.admin['username'];
+  if (un = '') then
+    raise EFHIRException.create('You must define an admin username in the ini file');
+  FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
+  if (pw = '') then
+    raise EFHIRException.create('You must provide a admin password as a parameter to the command');
+  em := FIni.admin['email'];
+  if (em = '') then
+    raise EFHIRException.create('You must define an admin email in the ini file');
+
+  details := FIni.endpoints[name];
+  if details = nil then
+    raise EFslException.Create('Undefined endpoint '+name);
+
+  result := details['database'];
+  if result = '' then
+    raise EFslException.Create('No defined database '+name);
+  if FDatabases.ContainsKey(result) then
+    db := FDatabases[result].Link
+  else
+    db := connectToDatabase(result, FIni.databases[result]);
+  try
+    logt('fix admin password for '+result);
+    scim := TSCIMServer.Create(db.Link, salt, FIni.web['host'], FIni.admin['default-rights'], true);
+    try
+      conn := db.GetConnection('setup');
+      try
+        scim.UpdateAdminUser(conn, un, pw, em);
+        conn.Release;
+        logt('done');
+      except
+         on e:exception do
+         begin
+           logt('Error: '+e.Message);
+           conn.Error(e);
+           recordStack(e);
+           raise;
+         end;
+      end;
+    finally
+      scim.Free;
+    end;
+  finally
+    db.free;
+  end;
 end;
 
 procedure TFHIRService.InitialiseRestServer(version : TFHIRVersion);
