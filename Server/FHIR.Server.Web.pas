@@ -266,7 +266,7 @@ Type
     {$ENDIF}
     function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
     procedure CheckAsyncTasks;
-    Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
     Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
@@ -811,6 +811,8 @@ begin
       ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, FPath), true)
     else if request.Document.EndsWith('.hts') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.html')) then
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), true)
+    else if request.Document.StartsWith(FPath+'/scim') then
+      ProcessScimRequest(AContext, request, response, FPath)
     else if request.Document.StartsWith(FPath, false) then
       HandleRequest(AContext, request, response, true, true, FPath, id, Session, cert)
     else if FWebServer.OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([FPath, OWIN_TOKEN_PATH]))) then
@@ -820,8 +822,6 @@ begin
       response.ContentText := 'Authorization is required (OWin at ' + FPath + OWIN_TOKEN_PATH + ')';
       response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
     end
-    else if request.Document.StartsWith('/scim') then
-      ProcessScimRequest(AContext, request, response)
     else if request.Document = '/.well-known/openid-configuration' then
       FAuthServer.HandleDiscovery(AContext, request, response)
     else if request.Document.StartsWith(FPath, false) then
@@ -2488,7 +2488,7 @@ begin
 end;
 
 
-procedure TFhirWebServerEndpoint.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TFhirWebServerEndpoint.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   sCookie: String;
   c: integer;
@@ -2516,7 +2516,7 @@ begin
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Session Expired', request.AcceptLanguage);
       if not Session.canAdministerUsers then
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'This Session is not authorised to manage users', request.AcceptLanguage);
-      FContext.UserProvider.ProcessRequest(AContext, request, response, Session);
+      FContext.UserProvider.ProcessRequest(AContext, request, response, Session, prefix);
     finally
       Session.Free;
     end;
@@ -2815,7 +2815,7 @@ begin
             + '</select> <input type="submit" value="GO"></form></li>' + #13#10);
 
         if (Session.canAdministerUsers) then
-          b.Append('<li><a href="/scim/web">Manage Users</a></li>' + #13#10);
+          b.Append('<li><a href="'+FPath+'/scim/web">Manage Users</a></li>' + #13#10);
 
         b.Append('</ul>' + #13#10 + ''#13#10 + '<hr/>'#13#10 + '<p>' + GetFhirMessage('MSG_HOME_PAGE_3', lang) + '</p>' + #13#10);
 
@@ -3395,7 +3395,8 @@ begin
   s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
   if variables <> nil then
     for n in variables.Keys do
-      s := s.Replace('[%' + n + '%]', variables[n], [rfReplaceAll]);
+      if s.contains('[%' + n + '%]') then
+        s := s.Replace('[%' + n + '%]', variables[n], [rfReplaceAll]);
 
   while s.contains('[%options-reference') do
   begin
