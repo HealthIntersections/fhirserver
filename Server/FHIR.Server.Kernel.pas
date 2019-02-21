@@ -230,9 +230,9 @@ begin
                 ImportUnii(fn,  svc.FDatabases[name]);
             end
             else if cmd = 'pword' then
-              svc.UninstallDatabase(endpoint)
-            else if cmd = 'unmount' then
               svc.updateAdminPassword(endpoint)
+            else if cmd = 'unmount' then
+              svc.UninstallDatabase(endpoint)
             else if cmd = 'remount' then
             begin
               if FindCmdLineSwitch('mode', smode, true, [clstValueNextParam]) then
