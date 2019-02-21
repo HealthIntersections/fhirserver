@@ -968,7 +968,7 @@ begin
   CapabilityStatement.purpose := edtPurpose.Text;
   CapabilityStatement.copyright := edtCopyright.Text;
   CapabilityStatement.status := TFhirPublicationStatusEnum(cbxStatus.ItemIndex);
-  CapabilityStatement.date := TDateTimeEx.make(dedDate.DateTime, dttzLocal);
+  CapabilityStatement.date := TFslDateTime.make(dedDate.DateTime, dttzLocal);
   CapabilityStatement.kind := TFhirCapabilityStatementKindEnum(cbxKind.ItemIndex);
   CapabilityStatement.jurisdictionList.Clear;
   cc := getJurisdiction(cbxJurisdiction.ItemIndex);

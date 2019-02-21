@@ -1692,7 +1692,6 @@ var
   i : integer;
 begin
   i := 0;
-  obj := nil;
   while not ((ItemType = jpitEnd) or (root and (ItemType = jpitEof))) do
   begin
     case ItemType of

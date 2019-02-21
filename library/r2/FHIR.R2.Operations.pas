@@ -50,7 +50,7 @@ Type
     FContext : String;
     FFilter : String;
     FProfile : String;
-    FDate : TDateTimeEx;
+    FDate : TFslDateTime;
     FOffset : String;
     FCount : String;
     procedure SetValueSet(value : TFhirValueSet);
@@ -67,7 +67,7 @@ Type
     property context : String read FContext write FContext;
     property filter : String read FFilter write FFilter;
     property profile : String read FProfile write FProfile;
-    property date : TDateTimeEx read FDate write FDate;
+    property date : TFslDateTime read FDate write FDate;
     property offset : String read FOffset write FOffset;
     property count : String read FCount write FCount;
   end;
@@ -94,7 +94,7 @@ Type
     FSystem : String;
     FVersion : String;
     FCoding : TFhirCoding;
-    FDate : TDateTimeEx;
+    FDate : TFslDateTime;
     procedure SetCoding(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -108,7 +108,7 @@ Type
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property coding : TFhirCoding read FCoding write SetCoding;
-    property date : TDateTimeEx read FDate write FDate;
+    property date : TFslDateTime read FDate write FDate;
   end;
 
   TFHIRLookupOpRespDesignation = class (TFHIROperationObject)
@@ -163,7 +163,7 @@ Type
     FDisplay : String;
     FCoding : TFhirCoding;
     FCodeableConcept : TFhirCodeableConcept;
-    FDate : TDateTimeEx;
+    FDate : TFslDateTime;
     FAbstract : Boolean;
     procedure SetValueSet(value : TFhirValueSet);
     procedure SetCoding(value : TFhirCoding);
@@ -185,7 +185,7 @@ Type
     property display : String read FDisplay write FDisplay;
     property coding : TFhirCoding read FCoding write SetCoding;
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
-    property date : TDateTimeEx read FDate write FDate;
+    property date : TFslDateTime read FDate write FDate;
     property abstract : Boolean read FAbstract write FAbstract;
   end;
 
@@ -686,7 +686,7 @@ begin
   FContext := params.str['context'];
   FFilter := params.str['filter'];
   FProfile := params.str['profile'];
-  FDate := TDateTimeEx.fromXml(params.str['date']);
+  FDate := TFslDateTime.fromXml(params.str['date']);
   FOffset := params.str['offset'];
   FCount := params.str['count'];
   loadExtensions(params);
@@ -698,7 +698,7 @@ begin
   FContext := params.getVar('context');
   FFilter := params.getVar('filter');
   FProfile := params.getVar('profile');
-  FDate := TDateTimeEx.fromXml(params.getVar('date'));
+  FDate := TFslDateTime.fromXml(params.getVar('date'));
   FOffset := params.getVar('offset');
   FCount := params.getVar('count');
   loadExtensions(params);
@@ -806,7 +806,7 @@ begin
   FVersion := params.str['version'];
   if params.param['coding'] <> nil then
     FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
-  FDate := TDateTimeEx.fromXml(params.str['date']);
+  FDate := TFslDateTime.fromXml(params.str['date']);
   loadExtensions(params);
 end;
 
@@ -815,7 +815,7 @@ begin
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
-  FDate := TDateTimeEx.fromXml(params.getVar('date'));
+  FDate := TFslDateTime.fromXml(params.getVar('date'));
   loadExtensions(params);
 end;
 
@@ -999,7 +999,7 @@ begin
     FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
   if params.param['codeableConcept'] <> nil then
     FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FDate := TDateTimeEx.fromXml(params.str['date']);
+  FDate := TFslDateTime.fromXml(params.str['date']);
   FAbstract := params.bool['abstract'];
   loadExtensions(params);
 end;
@@ -1012,7 +1012,7 @@ begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FDisplay := params.getVar('display');
-  FDate := TDateTimeEx.fromXml(params.getVar('date'));
+  FDate := TFslDateTime.fromXml(params.getVar('date'));
   FAbstract := StrToBoolDef(params.getVar('abstract'), false);
   loadExtensions(params);
 end;

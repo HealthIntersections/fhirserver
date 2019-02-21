@@ -163,7 +163,7 @@ Type
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
     procedure QueueResource(r: TFhirResourceV); overload; override;
-    procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); overload; override;
+    procedure QueueResource(r: TFhirResourceV; dateTime: TFslDateTime); overload; override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
     function ProfilesAsOptionList : String; override;
@@ -475,7 +475,7 @@ begin
   try
     result.meta := TFHIRMeta.Create;
     result.meta.versionId := data[0];
-    result.meta.lastUpdated := TDateTimeEx.fromHL7(data[1]);
+    result.meta.lastUpdated := TFslDateTime.fromHL7(data[1]);
     with result.identifierList.Append do
     begin
       system := SYSTEM_ID;
@@ -490,7 +490,7 @@ begin
     end;
     result.gender := TFhirAdministrativeGenderEnum(StrToIntDef(data[6], 0));
     if (data[7] <> '') then
-      result.birthDate := TDateTimeEx.fromHL7(data[7]);
+      result.birthDate := TFslDateTime.fromHL7(data[7]);
     result.active := data[8] = '1';
     result.Link;
   finally
@@ -545,7 +545,7 @@ begin
   if r.meta = nil then
     r.meta := TFHIRMeta.Create;
   r.meta.versionId := '1';
-  r.meta.lastUpdated := TDateTimeEx.makeUTC;
+  r.meta.lastUpdated := TFslDateTime.makeUTC;
 
   data := dataFromPatient(r);
   try
@@ -576,7 +576,7 @@ begin
     if r.meta = nil then
       r.meta := TFHIRMeta.Create;
     r.meta.versionId := inttostr(StrToInt(odata[0])+1);
-    r.meta.lastUpdated := TDateTimeEx.makeUTC;
+    r.meta.lastUpdated := TFslDateTime.makeUTC;
 
     ndata := dataFromPatient(request.Resource as TFHIRPatient);
     try
@@ -720,7 +720,7 @@ begin
   // nothing in this server
 end;
 
-procedure TExampleFhirServerStorage.QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx);
+procedure TExampleFhirServerStorage.QueueResource(r: TFhirResourceV; dateTime: TFslDateTime);
 begin
   // nothing in this server
 end;

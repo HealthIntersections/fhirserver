@@ -179,7 +179,7 @@ begin
           p.Id := j.str['package-id'];
           p.Version := j.str['ig-ver'];
           p.Canonical := j.str['url'];
-          p.Date := TDateTimeEx.fromFormat('DDD, dd mmm, yyyy hh:nn:ss Z', j.str['date']).DateTime;
+          p.Date := TFslDateTime.fromFormat('DDD, dd mmm, yyyy hh:nn:ss Z', j.str['date']).DateTime;
           p.Description := j.str['name'];
           p.FHIRVersion := j.str['version'];
           p.Url := 'https://build.fhir.org/ig/'+j.str['repo'];

@@ -62,10 +62,8 @@ Type
     element: TFHIRMMElement;
     path: String;
     definition: TFHIRElementDefinition;
-    slice : TFHIRElementDefinition;
     count: integer;
     index : integer;
-    sliceindex : integer;
 
     function locStart: TSourceLocation;
     function locEnd: TSourceLocation;
@@ -497,7 +495,6 @@ end;
 
 procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String);
 var
-  p: TFHIRStructureDefinition;
   profiles : TValidationProfileSet;
 begin
   profiles := TValidationProfileSet.create(profile);
@@ -539,7 +536,6 @@ end;
 
 procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; profiles: TValidationProfileSet);
 var
-  stack : TNodeStack;
   profile : TFHIRStructureDefinition;
 begin
   // all the other entry points end up here
@@ -1173,20 +1169,17 @@ procedure TFHIRValidator.validateSections(ctxt : TFHIRValidatorContext; entries:
 var
   sections: TFslList<TFHIRMMElement>;
   section: TFHIRMMElement;
-  i: integer;
   localStack: TNodeStack;
 begin
   sections := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('entry', sections);
-    i := 0;
     for section in sections do
     begin
       localStack := stack.push(section, 1, nil, nil);
       try
         validateBundleReference(ctxt, entries, section.getNamedChild('content'), 'Section Content', localStack, fullUrl, 'Composition', id);
         validateSections(ctxt, entries, section, localStack, fullUrl, id);
-        inc(i);
       finally
         localStack.Free;
       end;
@@ -1800,10 +1793,8 @@ var
   ty: TFHIRStructureDefinition;
   index: integer;
 begin
-  result := nil;
   childDefinitions := getChildMap(profile, ed.name, ed.path, '');
   try
-    Snapshot := nil;
     if (childDefinitions.count = 0) then
     begin
       // going to look at the type
@@ -2075,7 +2066,7 @@ begin
     begin
       if (r.id = pr.substring(1)) and (r is TFHIRStructureDefinition) then
       begin
-        result := r as TFHIRStructureDefinition;
+        exit(r as TFHIRStructureDefinition);
       end;
     end;
     result := nil;
@@ -2305,7 +2296,7 @@ var
   c: char;
 begin
   if (v.trim() <> v) then
-    result := false
+    exit(false)
   else
   begin
     lastWasSpace := true;
@@ -3154,7 +3145,9 @@ var
   msg : String;
   expr : TFHIRPathExpressionNode;
 begin
+  ok := false;
   for inv in ed.constraintList do
+  begin
     if inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') <> '' then
     begin
       expr := inv.Tag as TFHIRPathExpressionNode;
@@ -3163,9 +3156,9 @@ begin
         expr := FPathEngine.parse(inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'));
         inv.Tag := expr;
       end;
-      ok := false;
       try
         ok := FPathEngine.evaluateToBoolean(nil, resource, element, expr);
+        msg := '';
       except
         on e : Exception do
         begin
@@ -3179,6 +3172,7 @@ begin
           ConstraintSeverityWarning: warning(ctxt, IssueTypeInvariant, element.LocStart, element.LocEnd, path, ok, inv.human+FPathEngine.UseLog+' ('+msg+') '+inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'));
         end;
     end;
+  end;
 end;
 
 procedure TFHIRValidator.checkCodingValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRCoding);

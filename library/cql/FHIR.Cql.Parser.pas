@@ -329,6 +329,7 @@ begin
       access := CqlAccessPrivate;
 
     result.Name := lexer.readIdentifier('define name');
+    result.Access := access;
     lexer.token(':');
     result.expression := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
     result.EndPosition := lexer.CurrentLocation;
@@ -679,7 +680,6 @@ function TCqlParser.readContext(lexer: TCqlLexer): TCqlContextType;
 var
   token : String;
 begin
-  result := CqlContextPatient;
   token := lexer.take;
   if token = 'Patient' then
     result := CqlContextPatient
@@ -1306,7 +1306,6 @@ var
 begin
   if lexer.takeToken('let') then
   begin
-    first := true;
     repeat
       s := lexer.readIdentifier('let name');
       lexer.token(':');
@@ -1585,7 +1584,6 @@ end;
 
 function TCqlParser.parseExpression(lexer: TCqlLexer; states : TCqlParserStateSet): TCQLExpressionNode;
 var
-  c : Integer;
   s : String;
   focus : TCQLExpressionNode;
   localStates : TCqlParserStateSet;
@@ -1595,7 +1593,6 @@ begin
   result := TCQLExpressionNode.Create(lexer.nextId);
   try
     result.SourceLocationStart := lexer.CurrentLocation;
-    c := lexer.CurrentStart;
     lexer.checkArithmeticPrefixes;
 
     if lexer.current = '(' then

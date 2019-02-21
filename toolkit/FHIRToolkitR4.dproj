@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkitR4.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -151,7 +151,7 @@
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Factory=FHIR.R4.Factory;FHIR.Version.DiffEngine=FHIR.R4.DiffEngine;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r464</DCC_DcuOutput>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
     </PropertyGroup>
@@ -471,8 +471,8 @@
                     <Source Name="MainSource">FHIRToolkitR4.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -485,6 +485,13 @@
                 <DeployFile LocalName="fhr.icns" Configuration="Debug" Class="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteName>FHIRToolkitR4.icns</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>FHIRToolkitR4.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -505,6 +512,11 @@
                 <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteName>FHIRToolkit.icns</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -535,18 +547,6 @@
                     <Platform Name="OSX32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>FHIRToolkitR4.rsm</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

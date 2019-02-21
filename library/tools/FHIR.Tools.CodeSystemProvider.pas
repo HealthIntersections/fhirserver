@@ -73,7 +73,6 @@ type
   TFHIRCodeSystemEntry = class (TFslObject)
   private
     FCodeSystem : TFHIRCodeSystemW;
-    FValueset : TFHIRValueSetW;
     FSupplements : TFslList<TFHIRCodeSystemW>;
     function GetHasSupplements: boolean;
     function GetSupplements: TFslList<TFHIRCodeSystemW>;
@@ -407,7 +406,7 @@ begin
       result := TFhirCodeSystemProviderContext.create(TFhirCodeSystemProviderContext(context).context.concept(ndx))
     else
     begin
-      ndx := ndx - TFhirCodeSystemProviderContext(context).context.conceptCount;
+//      ndx := ndx - TFhirCodeSystemProviderContext(context).context.conceptCount;
       // what is this doing?
 //      for ex in TFhirCodeSystemProviderContext(context).context.modifierExtensionList do
 //        if (ndx = 0) then

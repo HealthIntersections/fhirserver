@@ -41,6 +41,7 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function JSType : String; override;
   end;
 
   TFHIRObjectX = TFHIRObject3;
@@ -51,6 +52,7 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function JSType : String; override;
   end;
 
   TFHIRResourceX = TFHIRResource3;
@@ -66,6 +68,7 @@ type
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function hasExtensions : boolean; override;
     function fhirType : String; override;
+    function JSType : String; override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
     procedure GetChildrenByName(name: string; list: TFHIRSelectionList); override;
@@ -85,6 +88,11 @@ uses
 function TFHIRObject3.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease3;
+end;
+
+function TFHIRObject3.JSType: String;
+begin
+  result := fhirType+'3';
 end;
 
 function TFHIRObject3.makeCodeValue(v: String): TFHIRObject;
@@ -107,6 +115,11 @@ end;
 function TFHIRResource3.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease3;
+end;
+
+function TFHIRResource3.JSType: String;
+begin
+  result := fhirType+'3';
 end;
 
 function TFHIRResource3.makeCodeValue(v: String): TFHIRObject;
@@ -167,6 +180,11 @@ end;
 function TFHIRTuple3.hasExtensions: boolean;
 begin
   result := false;
+end;
+
+function TFHIRTuple3.JSType: String;
+begin
+  result := fhirType+'3';
 end;
 
 procedure TFHIRTuple3.setIdValue(id: String);

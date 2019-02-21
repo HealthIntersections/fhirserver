@@ -69,6 +69,23 @@ Type
     property fmtInfo : String read FFmtInfo write FFmtInfo;
   end;
 
+  TWorkspaceExecConfig = class (TFSLObject)
+  private
+    FFocus: String;
+    FScript: String;
+    function read : String;
+  public
+    constructor Create; overload; override;
+    constructor Create(src : String); overload;
+
+    function link : TWorkspaceExecConfig; overload;
+
+    function summary : String;
+
+    property script : String read FScript write FScript;
+    property focus : String read FFocus write FFocus;
+  end;
+
   TWorkspace = class (TFSLObject)
   private
     FFolder: String;
@@ -80,12 +97,8 @@ Type
     FScripts: TFslList<TWorkspaceFile>;
     FTemplates: TFslList<TWorkspaceFile>;
     FMarkdowns: TFslList<TWorkspaceFile>;
-    FEventType: integer;
-    FSource: String;
-    FScript: String;
-    FTarget: String;
-    FOutcome: TTransformOutcomeMode;
     FAllFiles: TFslList<TWorkspaceFile>;
+    FConfigurations: TFslList<TWorkspaceExecConfig>;
 
     function hasFile(fn : String; list : TFslList<TWorkspaceFile>) : boolean;
     function findFile(fn : String; list : TFslList<TWorkspaceFile>) : TWorkspaceFile;
@@ -99,12 +112,6 @@ Type
     property name : String read FName write FName;
     property folder : String read FFolder write FFolder;
 
-    property EventType : integer read FEventType write FEventType;
-    property Source : String read FSource write FSource;
-    property Script : String read FScript write FScript;
-    property Target : String read FTarget write FTarget;
-    property Outcome : TTransformOutcomeMode read FOutcome write FOutcome;
-
     property allFiles : TFslList<TWorkspaceFile> read FAllFiles;
     property messages : TFslList<TWorkspaceFile> read FMessages;
     property documents : TFslList<TWorkspaceFile> read FDocuments;
@@ -113,6 +120,7 @@ Type
     property maps : TFslList<TWorkspaceFile> read FMaps;
     property templates : TFslList<TWorkspaceFile> read FTemplates;
     property markdowns : TFslList<TWorkspaceFile> read FMarkdowns;
+    property configurations : TFslList<TWorkspaceExecConfig> read FConfigurations;
 
     function includesFile(fn : String) : boolean;
     function findFileByName(fn : String) : TWorkspaceFile;
@@ -164,6 +172,11 @@ begin
     exit(fmtJs);
   if s.Contains('{%') or s.Contains('{{') then
     exit(fmtTemplate);
+  if s.StartsWith('# ') then
+    exit(fmtMarkdown);
+  if fn.endsWith('.md') then
+    exit(fmtMarkdown);
+
   raise Exception.create('unknown format');
 end;
 
@@ -212,6 +225,7 @@ begin
   FTemplates := TFslList<TWorkspaceFile>.create;
   FMarkdowns := TFslList<TWorkspaceFile>.create;
   FAllFiles := TFslList<TWorkspaceFile>.create;
+  FConfigurations := TFslList<TWorkspaceExecConfig>.create;
   FFolder := folder;
   reload;
 end;
@@ -226,6 +240,7 @@ begin
   FScripts.Free;
   FTemplates.Free;
   FMarkdowns.Free;
+  FConfigurations.Free;
   inherited;
 end;
 
@@ -395,8 +410,8 @@ var
   bpl : String;
 begin
   st := TStringList.create;
-  iniVC := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.control']));
-  iniT := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.status']));
+  iniVC := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.control'])); // persisted in version control
+  iniT := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.status'])); // local only
   try
     FName := iniVC.ReadString('Workspace', 'Name', '');
     if FName = '' then
@@ -405,11 +420,6 @@ begin
       iniVC.WriteString('Workspace', 'Name', FName);
       iniVC.WriteDateTime('Workspace', 'Created', now);
     end;
-    FEventType := iniT.ReadInteger('Status', 'EventType', -1);
-    FSource := iniT.ReadString('Status', 'Source', '');
-    FScript := iniT.ReadString('Status', 'Script', '');
-    FTarget := iniT.ReadString('Status', 'Target', '');
-    FOutcome := TTransformOutcomeMode(iniT.ReadInteger('Status', 'Outcome', 0));
     st.clear;
     iniVC.ReadSection('Files', st);
     for s in st do
@@ -439,11 +449,10 @@ begin
     FAllFiles.AddAll(FMaps);
     FAllFiles.AddAll(FTemplates);
     FAllFiles.AddAll(FMarkdowns);
-    if FEventType = -1 then
-      if FMessages.Count > 0 then
-        FEventType := 0
-      else if FDocuments.Count > 0 then
-        FEventType := 1;
+    st.clear;
+    iniVC.ReadSection('Configurations', st);
+    for s in st do
+      FConfigurations.Add(TWorkspaceExecConfig.Create(iniVC.ReadString('Configurations', s, '')));
   finally
     st.free;
     iniVC.Free;
@@ -456,24 +465,14 @@ procedure TWorkspace.save;
 var
   iniVC, iniT : TIniFile;
   f : TWorkspaceFile;
+  ec : TWorkspaceExecConfig;
+  i : integer;
 begin
-  if FEventType = -1 then
-    if FMessages.Count > 0 then
-      FEventType := 0
-    else if FDocuments.Count > 0 then
-      FEventType := 1;
-
   iniVC := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.control']));
   iniT := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.status']));
   try
     iniVC.WriteString('Workspace', 'Name', FName);
     iniVC.WriteDateTime('Workspace', 'Updated', now);
-    iniT.WriteInteger('Status', 'EventType', FEventType);
-    iniT.WriteString('Status', 'Source', FSource);
-    iniT.WriteString('Status', 'Script', FScript);
-    iniT.WriteString('Status', 'Target', FTarget);
-    iniT.WriteInteger('Status', 'Outcome', Ord(FOutcome));
-
     iniVC.EraseSection('Files');
     for f in FMessages do
     begin
@@ -519,6 +518,13 @@ begin
       iniVC.WriteString('Files', f.filename, 'markdown');
       iniT.WriteInteger(f.filename, 'Row', f.row);
       iniT.WriteString(f.filename, 'BreakPoints', f.breakpointSummary);
+    end;
+    iniVC.EraseSection('Configurations');
+    i := 0;
+    for ec in FConfigurations do
+    begin
+      inc(i);
+      iniVC.WriteString('Configurations', 'ec'+inttostr(i), ec.read);
     end;
   finally
     iniVC.Free;
@@ -628,6 +634,34 @@ constructor TBreakPointInfo.create(line: integer);
 begin
   Inherited Create;
   FLine := line;
+end;
+
+{ TWorkspaceExecConfig }
+
+constructor TWorkspaceExecConfig.Create;
+begin
+  inherited create;
+end;
+
+constructor TWorkspaceExecConfig.Create(src: String);
+begin
+  inherited create;
+  StringSplit(src, ';', FScript, FFocus);
+end;
+
+function TWorkspaceExecConfig.link: TWorkspaceExecConfig;
+begin
+  result := TWorkspaceExecConfig(inherited link);
+end;
+
+function TWorkspaceExecConfig.read: String;
+begin
+  result := FScript+';'+FFocus;
+end;
+
+function TWorkspaceExecConfig.summary: String;
+begin
+  result := 'Script '+script+' applied to '+focus;
 end;
 
 end.

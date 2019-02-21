@@ -40,6 +40,7 @@ uses
   {$IFDEF NPPUNICODE} FHIR.Npp.Form, FHIR.Npp.Base, {$ENDIF}
 
   FHIR.Support.Collections,
+//  FHIR.V2.Message,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang, FHIR.Base.ElementModel;
 
 const
@@ -86,6 +87,9 @@ type
     mConsole: TMemo;
     btnFinish: TBitBtn;
     ImageList1: TImageList;
+    Panel6: TPanel;
+    rbXml: TRadioButton;
+    rbJson: TRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -111,6 +115,8 @@ type
     procedure vtExpressionsGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure rbJsonClick(Sender: TObject);
+    procedure rbXmlClick(Sender: TObject);
   private
     { Private declarations }
     FResource : TFHIRResourceV;
@@ -131,6 +137,7 @@ type
     FStartLast : Int64;
     FTypes : TFHIRTypeDetailsV;
     FOutcome : TFHIRSelectionList;
+    FPackage : TFHIRPathDebugPackage;
 
     FOnGetSetting: TFHIRPathDebuggerFormGetSetting;
     FOnSetSetting: TFHIRPathDebuggerFormSetSetting;
@@ -151,11 +158,15 @@ type
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;
     procedure DoDebug(source : TFHIRPathEngineV; package : TFHIRPathDebugPackage);
+    procedure SetEngine(const Value: TFHIRPathEngineV);
+    procedure ShowPackage;
 
     property OnGetSetting : TFHIRPathDebuggerFormGetSetting read FOnGetSetting write FOnGetSetting;
     property OnSetSetting : TFHIRPathDebuggerFormSetSetting read FOnSetSetting write FOnSetSetting;
     property OnGetSettingStr : TFHIRPathDebuggerFormGetSettingStr read FOnGetSettingStr write FOnGetSettingStr;
     property OnSetSettingStr : TFHIRPathDebuggerFormSetSettingStr read FOnSetSettingStr write FOnSetSettingStr;
+  public
+    property Engine : TFHIRPathEngineV read FEngine write SetEngine;
   end;
 
 var
@@ -168,7 +179,7 @@ const
   DEF_STR_TFHIRPathDebuggerFormSetting : Array [TFHIRPathDebuggerFormSetting] of String = ('', '', '', '', '', '', 'Courier New', '');
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TFHIRWorkerContextWithFactory;
+    services : TFHIRWorkerContextWithFactory; engine : TFHIRPathEngineV;
     GetSetting : TFHIRPathDebuggerFormGetSetting; SetSetting : TFHIRPathDebuggerFormSetSetting; GetSettingStr : TFHIRPathDebuggerFormGetSettingStr; SetSettingStr : TFHIRPathDebuggerFormSetSettingStr;
     factory : TFHIRFactory;
     resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
@@ -200,7 +211,7 @@ begin
 end;
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TFHIRWorkerContextWithFactory;
+    services : TFHIRWorkerContextWithFactory; engine : TFHIRPathEngineV;
     GetSetting : TFHIRPathDebuggerFormGetSetting; SetSetting : TFHIRPathDebuggerFormSetSetting; GetSettingStr : TFHIRPathDebuggerFormGetSettingStr; SetSettingStr : TFHIRPathDebuggerFormSetSettingStr;
     factory : TFHIRFactory;
     resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
@@ -210,7 +221,18 @@ begin
   try
     FHIRPathDebuggerForm.FResource := resource.link;
     FHIRPathDebuggerForm.FContext := context.link;
-    FHIRPathDebuggerForm.FFormat := fmt;
+    if fmt = ffXml then
+    begin
+      FHIRPathDebuggerForm.rbXml.checked := true;
+      FHIRPathDebuggerForm.FFormat := fmt;
+    end
+    else
+    begin
+      FHIRPathDebuggerForm.rbJson.checked := true;
+      FHIRPathDebuggerForm.FFormat := ffJson;
+    end;
+
+    FHIRPathDebuggerForm.Engine := engine.link;
     FHIRPathDebuggerForm.FServices := services.link;
     FHIRPathDebuggerForm.FFactory := factory.Link;
     FHIRPathDebuggerForm.mSource.Text := path;
@@ -218,7 +240,6 @@ begin
     FHIRPathDebuggerForm.OnSetSetting := SetSetting;
     FHIRPathDebuggerForm.OnGetSettingStr := GetSettingStr;
     FHIRPathDebuggerForm.OnSetSettingStr := SetSettingStr;
-
 
     result := FHIRPathDebuggerForm.ShowModal = mrOk;
     types := FHIRPathDebuggerForm.FTypes.Link;
@@ -333,6 +354,26 @@ begin
     FonSetSetting(settingDebuggerActivePage, PageControl1.ActivePageIndex);
 end;
 
+procedure TFHIRPathDebuggerForm.rbJsonClick(Sender: TObject);
+begin
+  FFormat := ffJson;
+  if FPackage <> nil then
+    ShowPackage;
+end;
+
+procedure TFHIRPathDebuggerForm.rbXmlClick(Sender: TObject);
+begin
+  FFormat := ffXml;
+  if FPackage <> nil then
+    ShowPackage;
+end;
+
+procedure TFHIRPathDebuggerForm.SetEngine(const Value: TFHIRPathEngineV);
+begin
+  FEngine.Free;
+  FEngine := Value;
+end;
+
 procedure TFHIRPathDebuggerForm.SetUp;
 begin
   compose(mResource, FResource, 'Resource');
@@ -341,7 +382,6 @@ begin
   mInput2.Text := '';
   mOutcome.Text := '';
   mConsole.Text := '';
-  FEngine := FFactory.makePathEngine(FServices.link, nil);
   FEngine.OnDebug := DoDebug;
   try
     FExpression := FEngine.parseV(mSource.Text);
@@ -448,7 +488,7 @@ var
   ol : TFHIRObjectList;
 begin
   if obj = nil then
-    memo.text := ''
+    memo.text := def
   else
   begin
     ol := obj.asValues;
@@ -535,6 +575,27 @@ begin
   end;
 end;
 
+procedure TFHIRPathDebuggerForm.ShowPackage;
+begin
+  compose(mResource, FResource, 'Resource');
+  compose(mContext, FContext, 'Context');
+  if (Fpackage.IsOperation) then
+  begin
+    TabSheet3.Caption := 'Left';
+    TabSheet4.Caption := 'Right';
+    Compose(mInput, Fpackage.input1, 'Left', 'error?');
+    Compose(mInput2, Fpackage.input2, 'Right', 'not evaluated (short circuit)')
+  end
+  else
+  begin
+    TabSheet3.Caption := 'Focus';
+    TabSheet4.Caption := 'N/A';
+    Compose(mInput, Fpackage.input1, 'Focus', 'error?');
+    Compose(mInput2, Fpackage.input2, 'Input2', 'N/A');
+  end;
+  Compose(mOutcome, Fpackage.outcome, 'Outcome', 'error?');
+end;
+
 procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRPathEngineV; package : TFHIRPathDebugPackage);
 var
   id : string;
@@ -545,12 +606,8 @@ begin
   QueryPerformanceCounter(tc);
   if WantStop(package) then
   begin
-    Compose(mInput, package.input1, 'Input1', 'error?');
-    if (package.IsOperation) then
-      Compose(mInput2, package.input2, 'Input2', 'not evaluated (short circuit)')
-    else
-      Compose(mInput2, package.input2, 'Input2', 'n/a');
-    Compose(mOutcome, package.outcome, 'Outcome', 'error?');
+    FPackage := package;
+    showPackage;
     s := SendMessage(mSource.Handle, EM_LINEINDEX, package.SourceStart.line-1, 0);
     s := s + package.SourceStart.col-1;
     e := SendMessage(mSource.Handle, EM_LINEINDEX, package.SourceEnd.line-1, 0);
@@ -572,6 +629,7 @@ begin
     FMode := emWaiting;
     while FMode = emWaiting do
       Application.ProcessMessages;
+    FPackage := nil;
     if FMode = emAbort then
       abort;
      QueryPerformanceCounter(FStartLast);

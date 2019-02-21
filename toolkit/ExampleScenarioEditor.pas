@@ -1204,7 +1204,7 @@ begin
   (obj).status := TfHIRPublicationStatusEnum(ComboBox2.ItemIndex);
   obj.experimental := CheckBox1.IsChecked;
   obj.id := edtESid.text;
-  obj.date := TDateTimeEx.makeLocal(DateEdit1.DateTime);
+  obj.date := TFslDateTime.makeLocal(DateEdit1.DateTime);
   obj.version := Edit8.text;
   obj.publisher := Edit7.text;
   obj.purpose := Memo3.text;

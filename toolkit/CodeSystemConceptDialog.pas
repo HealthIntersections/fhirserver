@@ -164,7 +164,7 @@ begin
   ext := TFhirExtension.Create;
   try
     ext.url := 'http://hl7.org/fhir/StructureDefinition/concept-history';
-    ext.setExtensionDate('date', TDateTimeEx.makeToday.toXML);
+    ext.setExtensionDate('date', TFslDateTime.makeToday.toXML);
     frm := TResourceHistoryForm.create(self);
     try
        frm.Adapt([hfDate, hfAuthor, hfSubst, hfBreaking, hfNotes]);

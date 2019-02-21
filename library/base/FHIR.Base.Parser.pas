@@ -81,7 +81,7 @@ Type
     procedure checkTimeOut;
   protected
     procedure checkDateFormat(s : string);
-    Function toTDateTimeEx(s : String) : TDateTimeEx;
+    Function toTFslDateTime(s : String) : TFslDateTime;
     function toTBytes(s : String) : TBytes;
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
@@ -218,7 +218,7 @@ Type
 
     function ResourceMediaType: String; virtual;
 
-    function asString(value : TDateTimeEx):String; overload;
+    function asString(value : TFslDateTime):String; overload;
     function asString(value : TBytes):String; overload;
     function asString(value : string):String; overload;
     function asString(value : boolean):String; overload;
@@ -251,6 +251,7 @@ Type
   TFHIRXmlComposerBase = class (TFHIRComposer)
   private
     FComment: String;
+    procedure ComposeByProperties(xml : TXmlBuilder; name : String; base : TFHIRObject);
   Protected
     procedure commentsStart(xml : TXmlBuilder; value : TFHIRObject);
     procedure commentsEnd(xml : TXmlBuilder; value : TFHIRObject);
@@ -276,6 +277,9 @@ Type
   TFHIRJsonComposerBase = class (TFHIRComposer)
   private
     FComments : Boolean;
+    procedure ComposeByProperties(json: TJSONWriter; base : TFHIRObject);
+    procedure composeByPropertiesEntry(json: TJSONWriter; name: String; base: TFHIRObject);
+    procedure composePropValue(json: TJSONWriter; name: String; obj: TFHIRObject);
   Protected
     Procedure PropNull(json : TJSONWriter; name : String); overload;
     Procedure Prop(json : TJSONWriter; name, value : String); overload;
@@ -309,7 +313,7 @@ Type
   protected
     procedure ComposeXHtmlNode(parent : TTurtleComplex; parentType, name : String; value: TFhirXHtmlNode; useType : boolean; index : integer); overload;
 
-    function dateXsdType(value : TDateTimeEx) : string;
+    function dateXsdType(value : TFslDateTime) : string;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
@@ -656,7 +660,38 @@ end;
 
 procedure TFHIRXmlComposerBase.ComposeBase(xml: TXmlBuilder; name: String; base: TFHIRObject);
 begin
-  raise EXmlException.create('Unknown type '+base.fhirType);
+  if base.SerialiseUsingProperties then
+    ComposeByProperties(xml, name, base)
+  else
+    raise EXmlException.create('Unknown type '+base.fhirType);
+end;
+
+procedure TFHIRXmlComposerBase.ComposeByProperties(xml: TXmlBuilder; name: String; base: TFHIRObject);
+var
+  pl : TFHIRPropertyList;
+  p : TFHIRProperty;
+  o : TFHIRObject;
+begin
+  xml.Open(name);
+  pl := base.createPropertyList(true);
+  try
+    for p in pl do
+      for o in p.Values do
+        if o.isPrimitive then
+        begin
+          if o.primitiveValue <> '' then
+          begin
+            xml.AddAttribute('value', o.primitiveValue);
+            // todo: extensions
+            xml.tag(p.name);
+          end
+        end
+        else
+          ComposeByProperties(xml, p.Name, o);
+  finally
+    pl.Free;
+  end;
+  xml.Close(name);
 end;
 
 procedure TFHIRXmlComposerBase.Text(xml : TXmlBuilder; name, value: String);
@@ -791,8 +826,69 @@ procedure TFHIRJsonComposerBase.ComposeBase(json: TJSONWriter; name: String; bas
 begin
   if base is TFHIRSelection then
     composeBase(json, name, TFHIRSelection(base).value)
+  else if base.SerialiseUsingProperties then
+    composeByPropertiesEntry(json, name, base)
   else
     raise EJsonException.create('Unknown type '+base.className);
+end;
+
+procedure TFHIRJsonComposerBase.composeByPropertiesEntry(json: TJSONWriter; name: String; base: TFHIRObject);
+begin
+  json.Value('type', base.fhirType);  // custom. but we're in custom land anyway
+  if not base.isPrimitive then
+    composeByProperties(json, base)
+  else if StringArrayExistsSensitive(['integer', 'unsignedInt', 'positiveInt', 'decimal'], base.fhirType) then
+    json.ValueNumber('value', base.primitiveValue)
+  else if base.fhirType = 'boolean' then
+    json.ValueBoolean('value', base.primitiveValue = 'true')
+  else
+    json.Value('value', base.primitiveValue)
+end;
+
+procedure TFHIRJsonComposerBase.composePropValue(json: TJSONWriter; name : String; obj: TFHIRObject);
+begin
+  if obj.isPrimitive then
+  begin
+    if StringArrayExistsSensitive(['integer', 'unsignedInt', 'positiveInt', 'decimal'], obj.fhirType) then
+      json.ValueNumber(name, obj.primitiveValue)
+    else if obj.fhirType = 'boolean' then
+      json.ValueBoolean(name, obj.primitiveValue = 'true')
+    else
+      json.Value(name, obj.primitiveValue)
+    // todo: extensions
+  end
+  else
+  begin
+    json.ValueObject(name);
+    ComposeByProperties(json, obj);
+    json.FinishObject;
+  end;
+end;
+
+procedure TFHIRJsonComposerBase.composeByProperties(json: TJSONWriter; base: TFHIRObject);
+var
+  pl : TFHIRPropertyList;
+  p : TFHIRProperty;
+  o : TFHIRObject;
+begin
+  pl := base.createPropertyList(true);
+  try
+    for p in pl do
+    begin
+      if p.hasValue then
+        if p.IsList then
+        begin
+          json.ValueArray(p.Name);
+          for o in p.Values do
+            composePropValue(json, '', o);
+          json.FinishArray;
+        end
+        else
+          composePropValue(json, p.Name, p.Values[0]);
+    end;
+  finally
+    pl.Free;
+  end;
 end;
 
 {Procedure TFHIRJsonComposerBase.ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV);
@@ -1393,15 +1489,15 @@ begin
   result := DecodeBase64(AnsiString(s));
 end;
 
-function TFHIRParser.toTDateTimeEx(s: String): TDateTimeEx;
+function TFHIRParser.toTFslDateTime(s: String): TFslDateTime;
 begin
   if s = '' then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
-    result := TDateTimeEx.fromXml(s);
+    result := TFslDateTime.fromXml(s);
 end;
 
-function TFHIRComposer.asString(value: TDateTimeEx): String;
+function TFHIRComposer.asString(value: TFslDateTime): String;
 begin
   if value.null then
     result := ''
@@ -1557,7 +1653,7 @@ begin
   parent.addPredicate('fhir:'+parentType+'.'+name, ttlLiteral(TFHIRXhtmlParser.compose(value)));
 end;
 
-function TFHIRTurtleComposerBase.dateXsdType(value: TDateTimeEx): string;
+function TFHIRTurtleComposerBase.dateXsdType(value: TFslDateTime): string;
 begin
   case value.Precision of
     dtpYear : result := 'xsd:gYear';

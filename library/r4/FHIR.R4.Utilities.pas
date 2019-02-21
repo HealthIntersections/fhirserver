@@ -228,13 +228,13 @@ type
   private
     function getevent: TFhirAuditEvent;
     procedure SetEvent(const Value: TFhirAuditEvent);
-    function GetdateTime: TDateTimeEx;
-    procedure SetDateTime(const Value: TDateTimeEx);
+    function GetdateTime: TFslDateTime;
+    procedure SetDateTime(const Value: TFslDateTime);
     function getParticipantList: TFhirAuditEventAgentList;
     function GetObjectList: TFhirAuditEventEntityList;
   public
     property event : TFhirAuditEvent read GetEvent write SetEvent;
-    property dateTime : TDateTimeEx read GetdateTime write SetDateTime;
+    property dateTime : TFslDateTime read GetdateTime write SetDateTime;
     property participantList : TFhirAuditEventAgentList read getParticipantList;
     property object_List : TFhirAuditEventEntityList read GetObjectList;
   end;
@@ -469,6 +469,7 @@ type
     procedure SetEditString(const Value: String);
   public
     constructor Create(system, code : String); overload;
+    constructor Create(system, code, display : String); overload;
 
     function hasCode(System, Code : String) : boolean;
     class function fromEdit(s : String) : TFhirCoding;
@@ -1350,7 +1351,7 @@ begin
     result := gen(obj.low) + ' -> '+gen(obj.high);
 end;
 
-function gen(obj : TDateTimeEx) : String; overload;
+function gen(obj : TFslDateTime) : String; overload;
 begin
   if (obj.null) then
     result := ''
@@ -2289,7 +2290,7 @@ begin
   removeExtension(url);
   ext := self.ExtensionList.Append;
   ext.url := url;
-  ext.value := TFhirDate.Create(TDateTimeEx.fromXML(value));
+  ext.value := TFhirDate.Create(TFslDateTime.fromXML(value));
 end;
 
 procedure TFHIRElementHelper.setExtensionDateTime(url, value: String);
@@ -2299,7 +2300,7 @@ begin
   removeExtension(url);
   ext := self.ExtensionList.Append;
   ext.url := url;
-  ext.value := TFhirDateTime.Create(TDateTimeEx.fromXML(value));
+  ext.value := TFhirDateTime.Create(TFslDateTime.fromXML(value));
 end;
 
 procedure TFHIRElementHelper.setExtensionDecimal(url, value: String);
@@ -2671,7 +2672,7 @@ var
   rest : TFHIRCapabilityStatementRest;
   res : TFHIRCapabilityStatementRestResource;
   cmd : TFHIRCapabilityStatementRestResourceInteraction;
-  ok, found : boolean;
+  found : boolean;
   c : TFHIRCommandType;
 begin
   result := false;
@@ -2681,17 +2682,15 @@ begin
     begin
       if CODES_TFhirResourceTypesEnum[res.type_] = name then
       begin
-        ok := true;
+        found := false;
         for c := low(TFHIRCommandType) to high(TFHIRCommandType) do
           if c in commands then
           begin
-            found := false;
             for cmd in res.interactionList do
               if CODES_TFhirTypeRestfulInteractionEnum[cmd.code] = CODES_TFHIRCommandType[c] then
                 found := true;
           end;
-        if ok then
-          exit(true);
+        exit(found);
       end;
     end;
   end;
@@ -3061,7 +3060,7 @@ begin
   c := signature.type_List.Append;
   c.system := 'urn:iso-astm:E1762-95:2013';
   c.code := CODES_TSignatureType[code];
-  signature.when := TDateTimeEx.makeUTC;
+  signature.when := TFslDateTime.makeUTC;
   signature.who := TFhirReference.Create(whoRef);
   signature.targetFormat := MIMETYPES_TFHIRFormat[format];
   case format of
@@ -3109,7 +3108,7 @@ begin
     c := sig.type_List.Append;
     c.system := 'urn:iso-astm:E1762-95:2013';
     c.code := CODES_TSignatureType[code];
-    sig.when := TDateTimeEx.makeUTC;
+    sig.when := TFslDateTime.makeUTC;
     sig.who := TFhirReference.Create(whoRef);
     case format of
       ffXml:
@@ -3141,7 +3140,7 @@ begin
       TFhirPeriod(result.occurred).start := cmp.date;
       TFhirPeriod(result.occurred).end_ := cmp.date;
     end;
-    result.recorded := TDateTimeEx.makeUTC;
+    result.recorded := TFslDateTime.makeUTC;
     with result.agentList.Append do
     begin
       c := roleList.Append.codingList.Append;
@@ -4097,15 +4096,15 @@ begin
   else if name = 'base64Binary' then
     result := TFHIRbase64Binary.create(AnsiStringAsBytes('%test content%'))
   else if name = 'instant' then
-    result := TFHIRinstant.create(TDateTimeEx.makeLocal)
+    result := TFHIRinstant.create(TFslDateTime.makeLocal)
   else if name = 'string' then
     result := TFHIRstring.create('%string%')
   else if name = 'uri' then
     result := TFHIRuri.create('http://uri...')
   else if name = 'date' then
-    result := TFHIRdate.create(TDateTimeEx.makeToday)
+    result := TFHIRdate.create(TFslDateTime.makeToday)
   else if name = 'dateTime' then
-    result := TFHIRdateTime.create(TDateTimeEx.makeLocal)
+    result := TFHIRdateTime.create(TFslDateTime.makeLocal)
   else if name = 'time' then
     result := TFHIRtime.create('00:10:00')
   else if name = 'code' then
@@ -4170,7 +4169,7 @@ begin
   if element.FhirType = 'Annotation' then
   begin
     TFHIRAnnotation(element).author := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
-    TFHIRAnnotation(element).time := TDateTimeEx.makeLocal;
+    TFHIRAnnotation(element).time := TFslDateTime.makeLocal;
     TFHIRAnnotation(element).text := 'annotation text';
   end
   else if element.FhirType = 'Attachment' then
@@ -4232,8 +4231,8 @@ begin
   end
   else if element.FhirType = 'Period' then
   begin
-    TFHIRPeriod(element).start := TDateTimeEx.makeLocal;
-    TFHIRPeriod(element).end_ := TDateTimeEx.makeLocal;
+    TFHIRPeriod(element).start := TFslDateTime.makeLocal;
+    TFHIRPeriod(element).end_ := TFslDateTime.makeLocal;
   end
   else if element.FhirType = 'Ratio' then
   begin
@@ -4255,7 +4254,7 @@ begin
       TFHIRSignature(element).type_List[0].code := '1.2.840.10065.1.12.1.1';
       TFHIRSignature(element).type_List[0].display := 'AuthorID';
     end;
-    TFHIRSignature(element).when := TDateTimeEx.makeUTC;
+    TFHIRSignature(element).when := TFslDateTime.makeUTC;
     TFHIRSignature(element).who := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
     TFHIRSignature(element).sigFormat := 'application/signature+xml';
     TFHIRSignature(element).data := AnsiStringAsBytes('signature content');
@@ -4285,7 +4284,7 @@ begin
   end
   else if element.FhirType = 'Timing' then
   begin
-    TFHIRTiming(element).eventList.Append.value := TDateTimeEx.makeLocal;
+    TFHIRTiming(element).eventList.Append.value := TFslDateTime.makeLocal;
     TFHIRTiming(element).repeat_ := TFhirTimingRepeat.create;
     TFHIRTiming(element).repeat_.duration := '1';
 // ggtodo    TFHIRTiming(element).repeat_.durationUnit := UnitsOfTimeH;
@@ -4305,7 +4304,7 @@ begin
   end
   else if element.FhirType = 'Meta' then
   begin
-    TFHIRMeta(element).lastUpdated := TDateTimeEx.makeUTC;
+    TFHIRMeta(element).lastUpdated := TFslDateTime.makeUTC;
   end
   else if (exCoding <> nil) and (element is TFHIRCode) then
     TFHIRCode(element).value := exCoding.code
@@ -4440,7 +4439,7 @@ begin
     result := obj as TFHIRDateTime
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else
@@ -4488,7 +4487,7 @@ begin
     result := obj as TFHIRInstant
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else
@@ -4536,7 +4535,7 @@ begin
     result := obj as TFHIRDate
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else
@@ -4912,7 +4911,7 @@ end;
 
 { TFhirAuditEventHelper }
 
-function TFhirAuditEventHelper.GetdateTime: TDateTimeEx;
+function TFhirAuditEventHelper.GetdateTime: TFslDateTime;
 begin
   result := recorded;
 end;
@@ -4932,7 +4931,7 @@ begin
   result := agentList;
 end;
 
-procedure TFhirAuditEventHelper.SetDateTime(const Value: TDateTimeEx);
+procedure TFhirAuditEventHelper.SetDateTime(const Value: TFslDateTime);
 begin
   recorded := value;
 end;
@@ -4950,6 +4949,14 @@ begin
   Create;
   self.system := system;
   self.code := code;
+end;
+
+constructor TFhirCodingHelper.Create(system, code, display: String);
+begin
+  Create;
+  self.system := system;
+  self.code := code;
+  self.display := display;
 end;
 
 class function TFhirCodingHelper.fromEdit(s: String): TFhirCoding;
@@ -6145,13 +6152,13 @@ var
 begin
   StringSplit(value, '->', s, c);
   if s.Trim <> '' then
-    start := TDateTimeEx.fromXML(s.Trim)
+    start := TFslDateTime.fromXML(s.Trim)
   else
-    start := TDateTimeEx.makeNull;
+    start := TFslDateTime.makeNull;
   if c.Trim <> '' then
-    end_ := TDateTimeEx.fromXML(c.Trim)
+    end_ := TFslDateTime.fromXML(c.Trim)
   else
-    end_ := TDateTimeEx.makeNull;
+    end_ := TFslDateTime.makeNull;
 end;
 
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);

@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.ElementModel,
   FHIR.Client.Base;
@@ -164,7 +164,9 @@ type
     function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; virtual; abstract;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; virtual; abstract;
+    function makeDateTime(dt : TFslDateTime) : TFHIRObject; virtual; abstract;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
+    function makeDuration(dt : TDateTime) : TFHIRObject; virtual; abstract;
 
     function makeParameters : TFHIRParametersW; virtual; abstract;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;
@@ -188,6 +190,7 @@ type
     function wrapSubscription(r : TFHIRResourceV) : TFhirSubscriptionW; virtual; abstract;
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; virtual; abstract;
     function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; virtual; abstract;
+    function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; virtual; abstract;
     function wrapGroup(r : TFHIRResourceV) : TFhirGroupW; virtual; abstract;
     function wrapPatient(r : TFHIRResourceV) : TFhirPatientW; virtual; abstract;
     function wrapBundleEntry(o : TFHIRObject) : TFhirBundleEntryW; virtual; abstract;

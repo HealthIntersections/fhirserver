@@ -220,13 +220,14 @@ type
   Public
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
-    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFHIRObject>); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
     constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
+    constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass); Overload;
     destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
+    class function create<T : TFslObject>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty; Overload;
 
     Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
@@ -303,6 +304,7 @@ type
     procedure deletePropertyValue(name : String; list : TFHIRObjectList; value : TFHIRObject);
     procedure replacePropertyValue(name : String; list : TFHIRObjectList; existing, new : TFHIRObject);
 
+    function isMatchingName(given, expected : String; types : Array of String) : boolean;
     function GetFhirObjectVersion: TFHIRVersion; virtual;
   public
     constructor Create; override;
@@ -344,6 +346,7 @@ type
     // replace the value of the property with a new value
     procedure replaceProperty(propName : string; existing : TFHIRObject; new : TFHIRObject); virtual;
     procedure reorderProperty(propName : string; source, destination : integer); virtual;
+    function SerialiseUsingProperties : boolean; virtual;
 
     // tags...
     Property Tags[name : String] : String read getTags write SetTags;
@@ -363,6 +366,7 @@ type
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
     function fhirType : String; virtual; abstract;
+    function JSType : String; virtual; // same as fhirType, but with version number appended
     function getId : String; virtual; abstract;
     procedure setIdValue(id : String); virtual; abstract;
     function isPrimitive : boolean; virtual;
@@ -371,7 +375,7 @@ type
     function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
-    function dateValue : TDateTimeEx; virtual;
+    function dateValue : TFslDateTime; virtual;
     function isMetaDataBased : boolean; virtual;
 //    Function PerformQuery(path : String) : TFHIRObjectList;
     function hasType(t : String) : boolean; overload;
@@ -472,7 +476,7 @@ type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create(value : String); Overload;
-    constructor Create(value : TDateTimeEx); Overload;
+    constructor Create(value : TFslDateTime); Overload;
     constructor Create(value : boolean); Overload;
     constructor Create(value : TBytes); Overload;
 
@@ -718,9 +722,9 @@ begin
   FTags.AddOrSetValue(name, value);
 end;
 
-function TFHIRObject.dateValue: TDateTimeEx;
+function TFHIRObject.dateValue: TFslDateTime;
 begin
-  result := TDateTimeEx.makeNull;
+  result := TFslDateTime.makeNull;
 end;
 
 procedure TFHIRObject.deleteProperty(propName: string; propValue: TFHIRObject);
@@ -815,6 +819,26 @@ begin
   result := false;
 end;
 
+function TFHIRObject.isMatchingName(given, expected : String; types : Array of String): boolean;
+var
+  s : String;
+begin
+  if given = expected then
+    result := true
+  else if not given.startsWith(expected) then
+    result := false
+  else
+  begin
+    s := given.subString(expected.length);
+    if (s = '[x]') then
+      result := true
+    else if (length(types) = 1) and (types[0] = '*') then
+      result := true
+    else
+      result := StringArrayExistsSensitive(types, s);
+  end;
+end;
+
 function TFHIRObject.isMetaDataBased: boolean;
 begin
   result := false;
@@ -833,6 +857,11 @@ end;
 function TFHIRObject.isType: boolean;
 begin
   result := false;
+end;
+
+function TFHIRObject.JSType: String;
+begin
+  result := fhirType;
 end;
 
 function TFHIRObject.GetCommentsEnd: TFslStringList;
@@ -891,7 +920,7 @@ begin
   self.value := lowercase(BooleanToString(value));
 end;
 
-constructor TFHIRObjectText.create(value: TDateTimeEx);
+constructor TFHIRObjectText.create(value: TFslDateTime);
 begin
   Create;
   self.value := value.toXML;
@@ -1148,9 +1177,7 @@ begin
     FList.Add(FOwner.makeCodeValue(sValue));
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TFslList<TFHIRObject>);
-var
-  i : integer;
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass);
 begin
   Create;
   FOwner := oOwner;
@@ -1158,9 +1185,21 @@ begin
   FType := sType;
   FClass := cClass;
   FIsList := bList;
-  FList := TFHIRObjectList.create;
-  for I := 0 to oList.count - 1 do
-    FList.Add(oList[i].Link);
+  FList := TFHIRObjectList.Create;
+end;
+
+class function TFHIRProperty.create<T>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty;
+var
+  o : T;
+begin
+  result := TFHIRProperty.create(oOwner, sName, sType, bList, cClass);
+  try
+    for o in oList do
+      result.FList.Add(o.Link);
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 { TFHIRPropertyList }
@@ -1339,6 +1378,11 @@ begin
   if (i = -1) then
     raise EFHIRException.create('Unable to find object in '+name+' to remove it');
   list.SetItem(i, new);
+end;
+
+function TFHIRObject.SerialiseUsingProperties: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;

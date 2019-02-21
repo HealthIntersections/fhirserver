@@ -1022,7 +1022,7 @@ procedure TSnomedAnalysis.processSubTable(parts : TFslZipPartList; json : TJsonO
 var
   tbl : TFslStringBuilder;
   child : cardinal;
-  i, j, t : integer;
+  i, j : integer;
   n : TJsonNode;
   rt : cardinal;
   props : TPropertyArray;
@@ -1064,7 +1064,6 @@ begin
 
     if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), rt) then
       raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found');
-    t := 0;
     for i := 0 to children.count - 1 do
     begin
       child := cardinal(children.objects[i]);
@@ -1080,7 +1079,6 @@ begin
         end;
 
         j := 0;
-        inc(t);
         for n in json.arr['columns'] do
         begin
           if j > 0 then

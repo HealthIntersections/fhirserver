@@ -58,7 +58,7 @@ type
     function GetColBlobV(ACol: Word): TBytes; Override;
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
-    function GetColDateTimeExV(ACol: Word): TDateTimeEx; Override;
+    function GetColDateTimeExV(ACol: Word): TFslDateTime; Override;
     function GetColTypeV(ACol: Word): TKDBColumnType; Override;
     function GetColKeyV(ACol: Word): Integer; Override;
     function GetRowsAffectedV: Integer; Override;
@@ -80,7 +80,7 @@ type
     procedure BindDoubleV(AParamName: String; AParamValue: Double); Override;
     procedure BindStringV(AParamName: String; AParamValue: String); Override;
     procedure BindTimeStampV(AParamName: String; AParamValue: TTimeStamp); Override;
-    procedure BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx); Override;
+    procedure BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime); Override;
     procedure BindBlobV(AParamName: String; AParamValue: TBytes); Override;
     procedure BindNullV(AParamName: String); Override;
     function DatabaseSizeV : int64; Override;
@@ -202,7 +202,7 @@ begin
   FStatement.BindBlob(':'+AParamName, @AParamValue[0], length(AParamValue));
 end;
 
-procedure TKDBSQLiteConnection.BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx);
+procedure TKDBSQLiteConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
 begin
   FStatement.BindText(':'+AParamName, AParamValue.UTC.toDB);
 end;
@@ -239,7 +239,7 @@ end;
 
 procedure TKDBSQLiteConnection.BindTimeStampV(AParamName: String; AParamValue: TTimeStamp);
 begin
-  BindDateTimeExV(AParamName, TDateTimeEx.fromTS(aParamValue, dttzUnknown));
+  BindDateTimeExV(AParamName, TFslDateTime.fromTS(aParamValue, dttzUnknown));
 end;
 
 procedure TKDBSQLiteConnection.ClearDatabaseV;
@@ -387,9 +387,9 @@ begin
   result := FStatement.ColumnCount;
 end;
 
-function TKDBSQLiteConnection.GetColDateTimeExV(ACol: Word): TDateTimeEx;
+function TKDBSQLiteConnection.GetColDateTimeExV(ACol: Word): TFslDateTime;
 begin
-  result := TDateTimeEx.fromDB(getColStringV(ACol), dttzUTC);
+  result := TFslDateTime.fromDB(getColStringV(ACol), dttzUTC);
 end;
 
 function TKDBSQLiteConnection.GetColDoubleV(ACol: Word): Double;

@@ -155,12 +155,12 @@ end;
 
 function TFHIRServerJsHelper.FHIRSessionExpiresJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
-  result := js.wrap(TDateTimeEx.make(TFhirSession(this).Expires, dttzUTC).toXML);
+  result := js.wrap(TFslDateTime.make(TFhirSession(this).Expires, dttzUTC).toXML);
 end;
 
 function TFHIRServerJsHelper.FHIRSessionCreatedJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
-  result := js.wrap(TDateTimeEx.make(TFhirSession(this).FirstCreated, dttzUTC).toXML);
+  result := js.wrap(TFslDateTime.make(TFhirSession(this).FirstCreated, dttzUTC).toXML);
 end;
 
 function TFHIRServerJsHelper.FHIRSessionCanReadJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
@@ -334,12 +334,12 @@ end;
 
 function TFHIRServerJsHelper.FHIRRequestGetLastModifiedJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 begin
-  result := js.wrap(TDateTimeEx.make(TFHIRRequest(this).lastModifiedDate, dttzUTC).toXML);
+  result := js.wrap(TFslDateTime.make(TFHIRRequest(this).lastModifiedDate, dttzUTC).toXML);
 end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetLastModifiedJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  TFHIRRequest(this).lastModifiedDate := TDateTimeEx.fromXML(js.asString(value)).makeUTC.DateTime;
+  TFHIRRequest(this).lastModifiedDate := TFslDateTime.fromXML(js.asString(value)).makeUTC.DateTime;
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetLangJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
@@ -389,12 +389,12 @@ end;
 
 function TFHIRServerJsHelper.FHIRRequestGetIfModifiedSinceJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 begin
-  result := js.wrap(TDateTimeEx.make(TFHIRRequest(this).IfModifiedSince, dttzUTC).toXML);
+  result := js.wrap(TFslDateTime.make(TFHIRRequest(this).IfModifiedSince, dttzUTC).toXML);
 end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetIfModifiedSinceJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  TFHIRRequest(this).IfModifiedSince := TDateTimeEx.fromXML(js.asString(value)).makeUTC.DateTime;
+  TFHIRRequest(this).IfModifiedSince := TFslDateTime.fromXML(js.asString(value)).makeUTC.DateTime;
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetIfNoneExistJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;

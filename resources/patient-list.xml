@@ -1,0 +1,26 @@
+<List xmlns="http://hl7.org/fhir"> 
+ <id value="patient-example"/>
+ <status value="current"/>
+ <mode value="working"/>
+ <title value="Example List of Patients"/>
+ <entry>
+  <item>
+    <reference value="Patient/example"/>
+  </item>
+ </entry>
+ <entry>
+  <item>
+    <reference value="Patient/glossy"/>
+  </item>
+ </entry>
+ <entry>
+  <item>
+    <reference value="Patient/genetics-example1"/>
+  </item>
+ </entry>
+ <entry>
+  <item>
+    <reference value="Patient/xx-not-valid"/>
+  </item>
+ </entry>
+</List>

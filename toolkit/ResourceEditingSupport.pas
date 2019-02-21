@@ -134,7 +134,7 @@ begin
   if ded.Text = '' then
     result := nil
   else
-    result := TFhirDateTime.Create(TDateTimeEx.make(trunc(ded.DateTime) + tdt.Time, dttzLocal));
+    result := TFhirDateTime.Create(TFslDateTime.make(trunc(ded.DateTime) + tdt.Time, dttzLocal));
 end;
 
 function getJurisdictionSearch(i: integer): string;

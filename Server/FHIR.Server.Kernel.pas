@@ -92,7 +92,6 @@ Type
   TFHIRService = class (TSystemService)
   private
     FStartTime : cardinal;
-    TestMode : Boolean;
     FIni : TFHIRServerIniFile;
     FSettings : TFHIRServerSettings;
     FDatabases : TFslMap<TKDBManager>;
@@ -118,7 +117,6 @@ Type
     procedure cb(i : integer; s : WideString);
     procedure identifyValueSets(db : TKDBManager);
 //    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
-    function fetchFromUrl(fn : String; var bytes : TBytes) : boolean;
     procedure registerJs(sender: TObject; js: TJsHost);
     function getLoadResourceList(factory: TFHIRFactory;
       mode: TFHIRInstallerSecurityMode): TArray<String>;
@@ -165,10 +163,8 @@ var
   svcName : String;
   dispName : String;
   cmd : String;
-  dir, fn, fn2, ver, ldate, lver, dest, name : String;
+  fn, fn2, name : String;
   svc : TFHIRService;
-  ini : TIniFile;
-  factory : TFHIRFactory;
   smode : String;
   mode : TFHIRInstallerSecurityMode;
 begin
@@ -200,7 +196,7 @@ begin
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
-        GJsHost := TJsHost.Create('');
+        GJsHost := TJsHost.Create;
         try
           if FindCmdLineSwitch('installer') then
           begin
@@ -412,9 +408,10 @@ end;
 
 procedure TFHIRService.registerJs(sender : TObject; js : TJsHost);
 begin
-  js.registerVersion(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create), FHIR.R2.Javascript.registerFHIRTypes);
-  js.registerVersion(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create), FHIR.R3.Javascript.registerFHIRTypes);
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+  js.engine.registerFactory(FHIR.R2.Javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
+  js.engine.registerFactory(FHIR.R3.Javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
 end;
 
 function TFHIRService.CanStart: boolean;
@@ -426,7 +423,6 @@ begin
   end;
   logt('Run Number '+inttostr(FSettings.RunNumber));
 
-  result := false;
   try
     if FDatabases.IsEmpty then
       ConnectToDatabases;
@@ -465,33 +461,6 @@ begin
   inherited;
   logt(KDBManagers.Dump);
 end;
-
-function TFHIRService.fetchFromUrl(fn: String; var bytes: TBytes): boolean;
-var
-  fetch : TInternetFetcher;
-begin
-  fetch := TInternetFetcher.create;
-  try
-    fetch.URL := AppendForwardSlash(fn)+'validator.pack';
-    try
-      fetch.Fetch;
-      bytes := fetch.Buffer.AsBytes;
-      exit(true);
-    except
-    end;
-    fetch.URL := fn;
-    try
-      fetch.Fetch;
-      bytes := fetch.Buffer.AsBytes;
-      exit(true);
-    except
-      exit(false);
-    end;
-  finally
-    fetch.Free;
-  end;
-end;
-
 
 function TFHIRService.connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
 var
@@ -580,8 +549,6 @@ begin
 end;
 
 procedure TFHIRService.CloseDatabase;
-var
-  db : TKDBManager;
 begin
   if FDatabases <> nil then
     FDatabases.Clear;
@@ -623,14 +590,7 @@ end;
 
 procedure TFHIRService.Load(name, plist: String; mode : TFHIRInstallerSecurityMode);
 var
-  f : TFileStream;
-  st : TStringList;
-  s, src, p, pi, pv : String;
-  first : boolean;
-  ini : TIniFile;
-  i : integer;
-  bytes : TBytes;
-  bs : TBytesStream;
+  p, pi, pv : String;
   pl : TArray<String>;
   ploader : TPackageLoader;
   pcm : TFHIRPackageManager;
@@ -774,7 +734,6 @@ var
   store : TFHIRNativeStorageService;
   s : String;
   details : TFHIRServerIniComplex;
-  ep : TFhirWebServerEndpoint;
 begin
   FWebServer := TFhirWebServer.create(FSettings.Link, DisplayName);
   FWebServer.OnRegisterJs := registerJs;
@@ -827,7 +786,7 @@ begin
         ctxt.Validate := true; // move to database config FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
         store.Initialise();
         ctxt.userProvider := TSCIMServer.Create(store.db.link, FIni.admin['scim-salt'], FWebServer.host, FIni.admin['default-rights'], false);
-        ep := FWebServer.registerEndPoint(s, details['path'], ctxt.Link, FIni);
+        FWebServer.registerEndPoint(s, details['path'], ctxt.Link, FIni);
       finally
         ctxt.Free;
       end;
@@ -861,10 +820,10 @@ begin
   if (dr = '') then
   begin
     case securityMode of
-      ismOpenAccess : FIni.admin['default-rights'] := 'openid,profile,user/*.*';
-      ismClosedAccess : FIni.admin['default-rights'] := 'openid,profile';
-      ismReadOnly : FIni.admin['default-rights'] := 'openid,profile,user/*.read';
-      ismTerminologyServer : FIni.admin['default-rights'] := 'openid,profile,user/CodeSystem.read,user/ConceptMap.read,user/ValueSet.read'
+      ismOpenAccess : FIni.admin['default-rights'] := 'openid,fhirUser,profile,user/*.*';
+      ismClosedAccess : FIni.admin['default-rights'] := 'openid,fhirUser,profile';
+      ismReadOnly : FIni.admin['default-rights'] := 'openid,fhirUser,profile,user/*.read';
+      ismTerminologyServer : FIni.admin['default-rights'] := 'openid,fhirUser,profile,user/CodeSystem.read,user/ConceptMap.read,user/ValueSet.read'
     end;
     dr := FIni.admin['default-rights'];
   end;

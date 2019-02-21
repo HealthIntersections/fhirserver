@@ -16,17 +16,19 @@ f10: validate
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, IOUtils,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles, ClipBrd, IOUtils, ActiveX,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList,
   Vcl.ImgList, VirtualTrees, Vcl.Buttons, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.ToolWin,
   JclDebug,
   ScintEdit, ScintInt, ScintFormats,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell,
+  MarkdownCommonMark,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell, FHIR.Support.Threads,
   FHIR.Ui.ListSelector,
   FHIR.Javascript,
   FHIR.Cache.PackageManagerDialog,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
+  FHIR.v2.Message,
   FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities, FHIR.Transformer.Engine, FHIR.Transformer.Context, FHIR.Transformer.Editor,
   FHIR.Transformer.WorkingDialog, FHIR.Transformer.FileChangedDlg, FHIR.Transformer.ExceptionHandlerDlg,
@@ -60,8 +62,9 @@ const
   TEMPLATE_MARKDOWN = 'Markdown with Liquid support';
 
   spCaretPos = 0;
-  spMode = 1;
-  spStatus = 2;
+  spPath = 1;
+  spMode = 2;
+  spStatus = 3;
 
 const
   DBG_STOPPED = 0;
@@ -109,7 +112,7 @@ type
     mnuWorkspace: TMenuItem;
     N2: TMenuItem;
     Exit1: TMenuItem;
-    Edit1: TMenuItem;
+    mnuEdit: TMenuItem;
     mnuRedo: TMenuItem;
     mnuUndo: TMenuItem;
     N3: TMenuItem;
@@ -160,11 +163,6 @@ type
     mnuGoto: TMenuItem;
     FindNext2: TMenuItem;
     mnuClose: TMenuItem;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    cbxEventType: TComboBox;
-    cbxSource: TComboBox;
     Execute1: TMenuItem;
     mnuExecute: TMenuItem;
     btnExecute: TBitBtn;
@@ -177,8 +175,6 @@ type
     btnConsoleCopy: TButton;
     mConsole: TMemo;
     tbExecute: TToolButton;
-    cbxScript: TComboBox;
-    lblScript: TLabel;
     ools1: TMenuItem;
     mnuCompare: TMenuItem;
     ToolButton3: TToolButton;
@@ -210,8 +206,6 @@ type
     mnuSaveAll: TMenuItem;
     tbSaveAll: TToolButton;
     mnuChooseWorkspace: TMenuItem;
-    btnOpenScript: TBitBtn;
-    btnOpenSource: TBitBtn;
     btnMaximise: TBitBtn;
     btnNormalSize: TBitBtn;
     tbBreakpoints: TTabSheet;
@@ -251,10 +245,6 @@ type
     vtCallStack: TVirtualStringTree;
     Splitter4: TSplitter;
     Panel15: TPanel;
-    Label6: TLabel;
-    cbxOutcome: TComboBox;
-    cbxTarget: TComboBox;
-    btnOpenTarget: TBitBtn;
     Help1: TMenuItem;
     N11: TMenuItem;
     About1: TMenuItem;
@@ -264,8 +254,17 @@ type
     mnuRecompileAll: TMenuItem;
     mnuNewMarkdown: TMenuItem;
     NewMarkdown1: TMenuItem;
-    TabSheet2: TTabSheet;
-    WebBrowser1: TWebBrowser;
+    N13: TMenuItem;
+    mnuClipboard: TMenuItem;
+    mnuCopyFileName: TMenuItem;
+    mnuCopyDirectory: TMenuItem;
+    mnuCopyContents: TMenuItem;
+    Panel17: TPanel;
+    vtConfig: TVirtualStringTree;
+    Label1: TLabel;
+    btnAddConfig: TBitBtn;
+    btnEditConfig: TBitBtn;
+    btnDeleteConfig: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -314,11 +313,8 @@ type
     procedure FindDialogFind(Sender: TObject);
     procedure ReplaceDialogReplace(Sender: TObject);
     procedure mnuGotoClick(Sender: TObject);
-    procedure cbxEventTypeChange(Sender: TObject);
-    procedure cbxSourceChange(Sender: TObject);
     procedure mnuPackageManagerClick(Sender: TObject);
     procedure btnExecuteClick(Sender: TObject);
-    procedure cbxScriptChange(Sender: TObject);
     procedure Rewrite1Click(Sender: TObject);
     procedure mnuCompareClick(Sender: TObject);
     procedure mnuSaveClick(Sender: TObject);
@@ -333,8 +329,6 @@ type
     procedure mnuCompileClick(Sender: TObject);
     procedure mnuSaveAllClick(Sender: TObject);
     procedure mnuChooseWorkspaceClick(Sender: TObject);
-    procedure btnOpenScriptClick(Sender: TObject);
-    procedure btnOpenSourceClick(Sender: TObject);
     procedure btnMaximiseClick(Sender: TObject);
     procedure btnNormalSizeClick(Sender: TObject);
     procedure btnPathGoClick(Sender: TObject);
@@ -364,13 +358,21 @@ type
     procedure vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
     procedure pmEditorPopup(Sender: TObject);
-    procedure cbxOutcomeChange(Sender: TObject);
-    procedure btnOpenTargetClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure estException1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure mnuRecompileAllClick(Sender: TObject);
     procedure NewMarkdown1Click(Sender: TObject);
+    procedure mnuCopyFileNameClick(Sender: TObject);
+    procedure mnuCopyDirectoryClick(Sender: TObject);
+    procedure mnuCopyContentsClick(Sender: TObject);
+    procedure btnAddConfigClick(Sender: TObject);
+    procedure vtConfigGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vtConfigInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vtConfigAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtConfigRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure btnEditConfigClick(Sender: TObject);
+    procedure btnDeleteConfigClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -392,6 +394,7 @@ type
     FSelected : PVirtualNode;
     FCallStackSelected : PVirtualNode;
     FVarsSelected : PVirtualNode;
+    FConfigSelected : PVirtualNode;
 
     FPathSelection : TFslList<TPathSelection>;
     FRunningState : boolean;
@@ -402,7 +405,7 @@ type
     FVariables : TFslList<TTransformEngineExecutionVariable>;
     FVariable : TTransformEngineExecutionVariable;
 
-    function DoSave(command : String) : boolean;
+    function DoSave(cmdCode, cmdTitle : String) : boolean;
     function nodeCaption(i : integer) : String;
     procedure LoadWorkspace(proj: TWorkspace);
     procedure makeNewFile(title, ext, template : String; fmt : TTransformerFormat; category : TFslList<TWorkspaceFile>);
@@ -415,6 +418,7 @@ type
     procedure updateWorkspaceFile(editor : TEditorInformation; src : String);
     function editorForTab(tab : TTabSheet) : TEditorInformation;
     function editorForFile(f : TWorkspaceFile) : TEditorInformation;
+    function describeEditorPath : String;
     function anyFilesDirty : boolean;
 
     procedure FindNext(editor : TScintEdit);
@@ -440,10 +444,7 @@ type
     procedure MemoLinesInserted(FirstLine, Count: integer);
     procedure ToggleBreakPoint(Line: Integer);
 
-    function loadEvent : TExecutionDetails;
     function canExecute : boolean;
-    function parseCDA(context : TFHIRWorkerContext) : TFHIRObject;
-    function parseResource(context : TFHIRWorkerContext) : TFHIRObject;
     procedure runFHIRPath(debug: boolean);
     function GetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting) : Integer;
     procedure SetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting; value : Integer);
@@ -469,8 +470,9 @@ type
     procedure ExecutorStateUpdate(sender : TTransformEngine);
     procedure ExecutorStatusMessage(sender : TTransformEngine; color : TColor; msg: String; beep : UInt);
     function ExecutorOpenFile(sender : TTransformEngine; f : TWorkspaceFile) : TEditorInformation;
+    procedure SaveInputs;
+    function loadEvent: TWorkspaceExecConfig;
   public
-    { Public declarations }
   end;
 
 var
@@ -480,7 +482,8 @@ implementation
 
 {$R *.dfm}
 
-uses FHIR.Transformer.SettingsDialog;
+uses FHIR.Transformer.SettingsDialog, FHIR.Transformer.MarkdownPreview,
+  FHIR.Transformer.ExecConfig;
 
 
 function makeXmlDense(src : String) : String;
@@ -544,9 +547,74 @@ begin
     mConsole.lines.SaveToFile(sdText.FileName);
 end;
 
+procedure TTransformerForm.btnDeleteConfigClick(Sender: TObject);
+var
+  p : PTreeDataPointer;
+  ec : TWorkspaceExecConfig;
+begin
+  if FEngine.Running then
+    exit;
+
+  if FConfigSelected <> nil then
+  begin
+    p := vtConfig.GetNodeData(FConfigSelected);
+    ec := p.obj as TWorkspaceExecConfig;
+    if MessageDlg('Delete Configuration '+ec.summary+'?', mtConfirmation, mbYesNo, 0) = mrYes then
+    begin
+      FWorkspace.configurations.Remove(ec);
+      FWorkspace.save;
+      vtConfig.RootNodeCount := 0;
+      vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+      checkExecutionState;
+    end;
+  end;
+end;
+
+procedure TTransformerForm.btnEditConfigClick(Sender: TObject);
+var
+  p : PTreeDataPointer;
+  ec : TWorkspaceExecConfig;
+begin
+  if FEngine.Running then
+    exit;
+
+  ec := nil;
+  if FConfigSelected <> nil then
+  begin
+    p := vtConfig.GetNodeData(FConfigSelected);
+    ec := p.obj as TWorkspaceExecConfig;
+  end
+  else if FWorkspace.configurations.Count = 0 then
+    btnAddConfigClick(self)
+  else
+    ec := FWorkspace.configurations[0];
+  if ec <> nil then
+  begin
+    TransformerExecConfigForm := TTransformerExecConfigForm.create(self);
+    try
+      TransformerExecConfigForm.Workspace := FWorkspace.link;
+      TransformerExecConfigForm.Config := ec.Link;
+      if TransformerExecConfigForm.ShowModal = mrOk then
+      begin
+        FWorkspace.save;
+        if FConfigSelected <> nil then
+          vtConfig.InvalidateNode(FConfigSelected)
+        else
+        begin
+          vtConfig.RootNodeCount := 0;
+          vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+        end;
+        checkExecutionState;
+      end;
+    finally
+      TransformerExecConfigForm.Free;
+    end;
+  end;
+end;
+
 procedure TTransformerForm.btnExecuteClick(Sender: TObject);
 var
-  ev : TExecutionDetails;
+  ev : TWorkspaceExecConfig;
 begin
   if FDebugInfo <> nil then
     FStepOutcome := DBG_EXECUTE
@@ -579,24 +647,6 @@ begin
   btnNormalSize.Visible := false;
 end;
 
-procedure TTransformerForm.btnOpenScriptClick(Sender: TObject);
-begin
-  if cbxScript.ItemIndex > -1 then
-    openWorkspaceFile(cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
-end;
-
-procedure TTransformerForm.btnOpenSourceClick(Sender: TObject);
-begin
-  if cbxSource.ItemIndex > -1 then
-    openWorkspaceFile(cbxSource.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
-end;
-
-procedure TTransformerForm.btnOpenTargetClick(Sender: TObject);
-begin
-  if cbxTarget.ItemIndex > -1 then
-    openWorkspaceFile(cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile);
-end;
-
 function tail(s : String) : String;
 begin
   if s.Contains('/') then
@@ -607,14 +657,49 @@ end;
 
 procedure TTransformerForm.btnPathDebugClick(Sender: TObject);
 begin
-  DoSave('Debug FHIRPath');
+  DoSave('debug-fp', 'Debug');
   runFHIRPath(true);
 end;
 
 procedure TTransformerForm.btnPathGoClick(Sender: TObject);
 begin
-  DoSave('Execute FHIRPath');
+  DoSave('execute-fp', 'Execute');
   runFHIRPath(false);
+end;
+
+procedure TTransformerForm.btnAddConfigClick(Sender: TObject);
+var
+  ec : TWorkspaceExecConfig;
+begin
+  if FEngine.Running then
+    exit;
+
+  ec := TWorkspaceExecConfig.create;
+  try
+    TransformerExecConfigForm := TTransformerExecConfigForm.create(self);
+    try
+      TransformerExecConfigForm.Workspace := FWorkspace.link;
+      TransformerExecConfigForm.Config := ec.Link;
+      if TransformerExecConfigForm.ShowModal = mrOk then
+      begin
+        FWorkspace.configurations.Add(ec.link);
+        if FWorkspace.scripts.Count > 0 then
+          ec.script := FWorkspace.scripts[0].filename;
+        if FWorkspace.documents.Count > 0 then
+          ec.focus := FWorkspace.documents[0].filename
+        else if FWorkspace.messages.Count > 0 then
+          ec.focus := FWorkspace.messages[0].filename;
+        FWorkspace.save;
+        vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+        vtConfig.Refresh;
+        checkExecutionState;
+      end;
+    finally
+      TransformerExecConfigForm.Free;
+    end;
+  finally
+    ec.Free;
+  end;
 end;
 
 procedure TTransformerForm.runFHIRPath(debug : boolean);
@@ -627,28 +712,28 @@ var
   s : String;
   ps : TPathSelection;
   types : TFHIRTypeDetailsV;
+  fmt : TFHIRFormat;
 begin
   context := TFHIRTransformerContext.Create(TFHIRFactoryR4.create);
   try
     context.loadFromCache(FCache);
     engine := TFHIRPathEngine.Create(context.Link, nil); // todo: do we need UCUM?
     try
-      case FEditor.id.format of
-        fmtV2: raise EFslException.Create('Not done yet');
-        fmtCDA: b := parseCDA(context);
-        fmtResource: b := parseResource(context);
-        fmtJS: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
-        fmtMap: raise EFslException.Create('Not done yet');
-        fmtTemplate: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
-        fmtMarkdown: raise EFslException.Create('Not supported - you cannot use FHIRPath with this type');
-      end;
+      engine.registerExtension(TV2FHIRPathExtensions.create);
+      b := FEditor.Parse(context);
       try
         lbFHIRPathOutcomes.Items.Clear;
         FPathSelection.Clear;
         try
           if debug then
-            RunPathDebugger(self, context, GetFPDebuggerSetting, setFPDebuggerSetting, getFPDebuggerSettingStr, setFPDebuggerSettingStr,
-            context.Factory, nil, b, edtFHIRPath.text, ffXml, types, ol)
+          begin
+            if isXml(FEditor.memo.RawText) then
+              fmt := ffXml
+            else
+              fmt := ffJson;
+            RunPathDebugger(self, context, engine, GetFPDebuggerSetting, setFPDebuggerSetting, getFPDebuggerSettingStr, setFPDebuggerSettingStr,
+              context.Factory, nil, b, edtFHIRPath.text, fmt, types, ol)
+          end
           else
             ol := engine.evaluate(nil, b, edtFHIRPath.text);
           try
@@ -698,7 +783,7 @@ end;
 
 procedure TTransformerForm.mnuRunNoDebugClick(Sender: TObject);
 var
-  ev : TExecutionDetails;
+  ev : TWorkspaceExecConfig;
 begin
   ev := loadEvent;
   try
@@ -728,125 +813,35 @@ end;
 
 function TTransformerForm.canExecute: boolean;
 var
-  ev : TExecutionDetails;
+  ev : TWorkspaceExecConfig;
   msg : String;
 begin
   ev := loadEvent;
   try
+    result := false;
     lblExecutionError.Caption := '';
-    result := (ev <> nil) and FEngine.canRun(ev, msg);
-    if not result then
-      lblExecutionError.Caption := msg;
+    if ev = nil then
+      lblExecutionError.Caption := 'Cannot Execute: No Execution Configuration Defined'
+    else if FIni.ReadString('Workspace', 'TerminologyServer', '') = '' then
+      lblExecutionError.Caption := 'Cannot Execute: No Terminolgy Server Defined (Tools...Options)'
+    else if FEngine.canRun(ev, msg) then
+      result := true
+    else
+      lblExecutionError.Caption := 'Cannot Execute: '+msg;
   finally
     ev.Free;
   end;
 end;
 
-procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
-  procedure loadSource(srcList, scrList, dstList : TFslList<TWorkspaceFile>; caption : String);
-  var
-    f : TWorkspaceFile;
-  begin
-    lblScript.Caption := caption;
-    cbxScript.Items.Clear;
-    for f in scrlist do
-      cbxScript.Items.AddObject(f.title, f);
-    cbxScript.ItemIndex := cbxScript.Items.IndexOf(FWorkspace.Script);
-    if (cbxScript.ItemIndex = -1) and (cbxScript.Items.Count > 0) then
-      cbxScript.ItemIndex := 0;
-
-    cbxSource.Items.Clear;
-    for f in srclist do
-      cbxSource.Items.AddObject(f.title, f);
-    cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
-    if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
-      cbxSource.ItemIndex := 0;
-
-    cbxTarget.Items.Clear;
-    for f in dstlist do
-      cbxTarget.Items.AddObject(f.title, f);
-    cbxTarget.ItemIndex := cbxTarget.Items.IndexOf(FWorkspace.Target);
-    if (cbxTarget.ItemIndex = -1) and (cbxTarget.Items.Count > 0) then
-      cbxTarget.ItemIndex := 0;
-    checkExecutionState;
-  end;
-begin
-   case cbxEventType.ItemIndex of
-    0: LoadSource(FWorkspace.messages, FWorkspace.scripts, FWorkspace.resources, 'Scripts');
-    1: LoadSource(FWorkspace.documents, FWorkspace.maps, FWorkspace.resources, 'Maps');
-  end;
-  if not Floading then
-  begin
-    FWorkspace.EventType := cbxEventType.ItemIndex;
-    FWorkspace.Source := cbxSource.Text;
-    FWorkspace.Script := cbxScript.Text;
-    FWorkspace.Target := cbxTarget.Text;
-    FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-    FWorkspace.Save;
-  end;
-end;
-
-procedure TTransformerForm.cbxOutcomeChange(Sender: TObject);
-begin
-  cbxTarget.Enabled := cbxOutcome.ItemIndex > 0;
-  FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-end;
-
-procedure TTransformerForm.cbxScriptChange(Sender: TObject);
-begin
-  if not Floading then
-  begin
-    FWorkspace.Script := cbxScript.Text;
-    FWorkspace.Save;
-  end;
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-end;
-
-procedure TTransformerForm.cbxSourceChange(Sender: TObject);
-begin
-  if not Floading then
-  begin
-    FWorkspace.Source := cbxSource.Text;
-    FWorkspace.Save;
-  end;
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-end;
-
 procedure TTransformerForm.checkExecutionState;
 begin
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  btnExecute.enabled := not FEngine.Running and canExecute;
   mnuExecute.Enabled := btnExecute.enabled;
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  btnRunNoDebug.enabled := not FEngine.Running and canExecute;
   mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
-end;
-
-function TTransformerForm.parseCDA(context: TFHIRWorkerContext): TFHIRObject;
-var
-  ss : TStringStream;
-begin
-  ss := TStringStream.Create(FEditor.memo.RawText, TEncoding.UTF8);
-  try
-    result := TFHIRMMManager.parse(context, ss, ffXml);
-  finally
-    ss.Free;
-  end;
-end;
-
-function TTransformerForm.parseResource(context: TFHIRWorkerContext): TFHIRObject;
-var
-  p : TFHIRParser;
-begin
-  if isXml(FEditor.memo.RawText) then
-    p := TFHIRXmlParser.Create(context.link, 'en')
-  else
-    p := TFHIRJsonParser.Create(context.link, 'en');
-  try
-    result := p.parseResource(FEditor.memo.RawText);
-  finally
-    p.Free;
-  end;
+  btnAddConfig.Enabled := not FEngine.running;
+  btnEditConfig.Enabled := not FEngine.running;
+  btnDeleteConfig.Enabled := not FEngine.running;
 end;
 
 procedure TTransformerForm.pgTabsChange(Sender: TObject);
@@ -873,6 +868,7 @@ begin
     mnuFindNext.Enabled := false;
     mnuReplace.Enabled := false;
     mnuGoto.Enabled := false;
+    mnuClipboard.Enabled := false;
     mnuPretty.Enabled := false;
     mnuDense.Enabled := false;
     mnuEOL.Enabled := false;
@@ -883,6 +879,7 @@ begin
     Caption := 'FHIR Transformer IDE';
     pnlStatus.Panels[spMode].Text := '';
     pnlStatus.Panels[spCaretPos].Text := '';
+    pnlStatus.Panels[spPath].Text := '';
   end
   else
   begin
@@ -897,6 +894,7 @@ begin
     mnuFindNext.Enabled := true;
     mnuReplace.Enabled := not FEditor.memo.ReadOnly;
     mnuGoto.Enabled := true;
+    mnuClipboard.Enabled := true;
     mnuCompare.Enabled := FEditor.id.format in [fmtV2, fmtCDA, fmtResource, fmtMap];
     tbCompare.Enabled := mnuCompare.Enabled;
     mnuPretty.Enabled := not FEngine.Running and (FEditor.id.format in [fmtCDA, fmtResource]);
@@ -1034,7 +1032,87 @@ begin
     abort;
 end;
 
-function TTransformerForm.DoSave(command : String) : boolean;
+function hasChar(s : String; ch : Char; terminators : TSysCharSet) : boolean;
+var
+  i : integer;
+begin
+  result := false;
+  i := 1;
+  while i <= length(s) do
+  begin
+    if s[i] = ch then
+      exit(true);
+    if CharInSet(s[i], terminators) then
+      exit(false);
+    inc(i);
+  end;
+end;
+
+function describeV2Path(s : String; indent : integer) : String;
+var
+  f, r, c, sc, i : integer;
+begin
+  result := copy(s, 1, 3);
+  f := 0;
+  r := 0;
+  c := 0;
+  sc := 0;
+  i := 1;
+  while i <= indent do
+  begin
+    case s[i] of
+      '|' : begin
+          inc(f);
+          r := 0;
+          c := 1;
+          sc := 1;
+        end;
+      '~' : begin
+          inc(r);
+          c := 1;
+          sc := 1;
+        end;
+      '^' : begin
+          inc(c);
+          sc := 1;
+        end;
+      '&' : inc(sc);
+    end;
+    inc(i);
+  end;
+  if f > 0 then
+  begin
+    result := result + '-'+inttostr(f);
+    if r > 0 then
+      result := result + '['+inttostr(r)+']';
+    if (c > 1) or (hasChar(s.Substring(i), '^', ['|', '~'])) or (hasChar(s.Substring(i), '&', ['|', '~', '^'])) then
+    begin
+      result := result + '-'+inttostr(c);
+      if (sc > 1) or (hasChar(s.Substring(i), '&', ['|', '~', '^'])) then
+        result := result + '-'+inttostr(sc);
+    end;
+  end;
+end;
+
+function TTransformerForm.describeEditorPath: String;
+begin
+  case FEditor.id.format of
+    fmtV2: result := describeV2Path(FEditor.memo.Lines[FEditor.memo.CaretLine], FEditor.memo.CaretColumn);
+    fmtCDA: result := '';
+    fmtResource: result := '';
+    fmtJS: result := '';
+    fmtMap: result := '';
+    fmtTemplate: result := '';
+    fmtMarkdown: result := '';
+  end;
+end;
+
+procedure TTransformerForm.SaveInputs;
+begin
+  FIni.WriteString('debug', 'FHIRPath', edtFHIRPath.Text);
+end;
+
+function TTransformerForm.DoSave(cmdCode, cmdTitle : String) : boolean;
 var
   dirty : boolean;
   form : TListSelectorForm;
@@ -1043,8 +1121,8 @@ var
 begin
   dirty := false;
   result := false;
-  FIni.WriteString('debug', 'FHIRPath', edtFHIRPath.Text);
-  if FIni.ReadBool('Workspace', 'AutoSave', false) then
+  saveInputs;
+  if FIni.ReadBool('Workspace', 'AutoSave-'+cmdCode, false) then
   begin
     mnuSaveAllClick(nil);
     for i := 1 to pgTabs.PageCount - 1 do
@@ -1052,14 +1130,14 @@ begin
       e := editorForTab(pgTabs.Pages[i]);
       FWorkspace.OpenFile(e.id);
     end;
-    exit;
+    exit(true);
   end;
 
   form := TListSelectorForm.Create(self);
   try
     form.Caption := 'Unsaved Content found. Which files do you want to save?';
     form.okWithNoneSelected := true;
-    form.Verb := command;
+    form.Verb := cmdTitle;
     for i := 1 to pgTabs.PageCount - 1 do
     begin
       e := editorForTab(pgTabs.Pages[i]);
@@ -1085,7 +1163,7 @@ begin
     else
       result := true;
     if form.cbDontAsk.Checked then
-      FIni.WriteBool('Workspace', 'AutoSave', true);
+      FIni.WriteBool('Workspace', 'AutoSave-'+cmdCode, true);
   finally
     form.Free;
   end;
@@ -1370,7 +1448,7 @@ begin
   FPathSelection := TFslList<TPathSelection>.create;
 
   FCache := TResourceMemoryCache.create;
-  FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#0.0.1'];
+  FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#2.0'];
   FCache.ResourceTypes := [{'CodeSystem', 'ValueSet', }'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'];
   FCache.OnLog := cacheLog;
 
@@ -1471,7 +1549,7 @@ var
   sel : TScintRange;
 begin
   ps := TPathSelection(lbFHIRPathOutcomes.Items.Objects[lbFHIRPathOutcomes.ItemIndex]);
-  if (ps.LineStart <> -1) then
+  if (ps.LineStart >= 0) then
   begin
     sel.StartPos := FEditor.memo.GetPositionFromLineColumn(ps.lineStart, ps.colStart);
     sel.EndPos := FEditor.memo.GetPositionFromLineColumn(ps.lineEnd, ps.colEnd);
@@ -1480,25 +1558,19 @@ begin
   end;
 end;
 
-function TTransformerForm.loadEvent: TExecutionDetails;
+function TTransformerForm.loadEvent: TWorkspaceExecConfig;
+var
+  p : PTreeDataPointer;
 begin
-  result := TExecutionDetails.create;
-  try
-    result.kind := TExecutionKind(cbxEventType.ItemIndex);
-    if cbxSource.ItemIndex = -1 then
-      exit(nil);
-    result.focus := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
-    if cbxScript.ItemIndex = -1 then
-      exit(nil);
-    result.script := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
-    result.outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-    if cbxTarget.ItemIndex = -1 then
-      exit(nil);
-    result.target := (cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile).link;
-    result.Link;
-  finally
-    result.Free;
-  end;
+  if FConfigSelected <> nil then
+  begin
+    p := vtConfig.GetNodeData(FConfigSelected);
+    result := (p.obj as TWorkspaceExecConfig).link;
+  end
+  else if FWorkspace.configurations.Count > 0 then
+    result := FWorkspace.configurations[0].link
+  else
+    result := nil;
 end;
 
 procedure TTransformerForm.LoadWorkspace(proj: TWorkspace);
@@ -1530,6 +1602,7 @@ begin
   FEngine.OnDebug := DebugTransform;
   FEngine.OnOpenFile := ExecutorOpenFile;
   FEngine.OnLog := eventLog;
+  FEngine.terminologyServer := FIni.ReadString('Workspace', 'TerminologyServer', '');
   FIni.DeleteKey('Workspaces', proj.folder);
   key := FIni.ReadInteger('Workspace', 'last', 0) + 1;
   FIni.WriteInteger('Workspace', 'last', key);
@@ -1541,12 +1614,12 @@ begin
     edtWorkspace.Hint := proj.folder;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 7;
-    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
-    if cbxOutcome.ItemIndex = -1 then
-      cbxOutcome.ItemIndex := 0;
-    cbxOutcomeChange(nil);
-    cbxEventType.ItemIndex := FWorkspace.EventType;
-    cbxEventTypeChange(nil);
+//    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
+//    if cbxOutcome.ItemIndex = -1 then
+//      cbxOutcome.ItemIndex := 0;
+//    cbxOutcomeChange(nil);
+//    cbxEventType.ItemIndex := FWorkspace.EventType;
+//    cbxEventTypeChange(nil);
     files := FWorkspace.listOpenFiles;
     try
       for f in files do
@@ -1555,6 +1628,9 @@ begin
       files.Free;
     end;
     pgTabsChange(self);
+    vtConfig.RootNodeCount := 0;
+    vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+    vtConfig.Refresh;
   finally
     FLoading := false;
   end;
@@ -1654,6 +1730,7 @@ begin
   else
     pnlStatus.Panels[spMode].Text := 'OVR';
   pnlStatus.Panels[spCaretPos].Text := Format('%4d:%4d', [FEditor.memo.CaretLine + 1, FEditor.memo.CaretColumnExpanded + 1]);
+  pnlStatus.Panels[spPath].Text := describeEditorPath;
 
   // undo/redo
   mnuUndo.Enabled := not FEditor.memo.ReadOnly and FEditor.memo.CanUndo;
@@ -1680,6 +1757,27 @@ var
 begin
   editor := pgTabs.ActivePage.Controls[0] as TScintEdit;
   editor.CopyToClipboard;
+end;
+
+procedure TTransformerForm.mnuCopyContentsClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := FEditor.memo.RawText;
+  Clipboard.Close;
+end;
+
+procedure TTransformerForm.mnuCopyDirectoryClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := ExtractFileDir(FEditor.id.actualName);
+  Clipboard.Close;
+end;
+
+procedure TTransformerForm.mnuCopyFileNameClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := FEditor.id.actualName;
+  Clipboard.Close;
 end;
 
 procedure TTransformerForm.mnuCutClick(Sender: TObject);
@@ -1833,7 +1931,11 @@ begin
   TransformerOptionsForm := TTransformerOptionsForm.create(self);
   try
     TransformerOptionsForm.ini := FIni;
-    TransformerOptionsForm.ShowModal;
+    if TransformerOptionsForm.ShowModal = mrOk then
+    begin
+      FEngine.terminologyServer := FIni.ReadString('Workspace', 'TerminologyServer', '');
+      checkExecutionState;
+    end;
   finally
     TransformerOptionsForm.free;
   end;
@@ -2190,6 +2292,41 @@ end;
 procedure TTransformerForm.vtCallStackRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   FCallStackSelected := Nil;
+end;
+
+procedure TTransformerForm.vtConfigAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FConfigSelected := Node;
+  checkExecutionState;
+end;
+
+procedure TTransformerForm.vtConfigGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  ec : TWorkspaceExecConfig;
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  ec := p.obj as TWorkspaceExecConfig;
+  case Column of
+    0: CellText := ec.script;
+    1: CellText := ec.focus;
+    2: CellText := ''; // for now
+  end;
+end;
+
+procedure TTransformerForm.vtConfigInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+//  ParentNode = nil
+  p.obj := FWorkspace.configurations[Node.Index];
+end;
+
+procedure TTransformerForm.vtConfigRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FConfigSelected := Nil;
+  checkExecutionState;
 end;
 
 procedure TTransformerForm.vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
@@ -2564,12 +2701,7 @@ begin
   FRunningState := true;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := true;
-  cbxEventType.Enabled := false;
-  cbxScript.Enabled := false;
-  cbxSource.Enabled := false;
-  cbxEventTypeChange(nil);
-  cbxScriptChange(nil);
-  cbxSourceChange(nil);
+  checkExecutionState;
   pgTabsChange(nil);
 end;
 
@@ -2580,12 +2712,7 @@ begin
   FRunningState := false;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := false;
-  cbxEventType.Enabled := true;
-  cbxScript.Enabled := true;
-  cbxSource.Enabled := true;
-  cbxEventTypeChange(nil);
-  cbxScriptChange(nil);
-  cbxSourceChange(nil);
+  checkExecutionState;
   pgTabsChange(nil);
 end;
 
@@ -2796,8 +2923,23 @@ end;
 
 procedure TTransformerForm.mnuCompileClick(Sender: TObject);
 begin
-  FEngine.compile(FEditor.id, true);
-
+  if Feditor.id.format = fmtMarkdown then
+  begin
+    MarkdownPreviewForm := TMarkdownPreviewForm.create(self);
+    try
+      MarkdownPreviewForm.HTML := TCommonMarkEngine.process(FEditor.memo.RawText, true).replace(#10, #13#10).replace(#13#10#13#10, #13#10#13#10#13#10);
+      MarkdownPreviewForm.Percent := FIni.ReadFloat('View', 'Markdown-Preview-Width', 0.5);
+      if FIni.ReadBool('View', 'Markdown-Preview-Maximised', false) then
+        MarkdownPreviewForm.WindowState := wsMaximized;
+      MarkdownPreviewForm.ShowModal;
+      FIni.writeFloat('View', 'Markdown-Preview-Width', MarkdownPreviewForm.Percent);
+      FIni.WriteBool('View', 'Markdown-Preview-Maximised', MarkdownPreviewForm.WindowState = wsMaximized);
+    finally
+      MarkdownPreviewForm.free;
+    end;
+  end
+  else
+    FEngine.compile(FEditor.id, true);
 end;
 
 procedure TTransformerForm.Rewrite1Click(Sender: TObject);

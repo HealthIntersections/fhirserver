@@ -103,7 +103,7 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function hasExtensions : boolean; override;
-    function isMetadataBased : boolean; override;
+    function isMetaDataBased : boolean; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -268,9 +268,9 @@ type
     function Clone : TFHIRCustomResource; overload;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
-    function FhirType : string; override;
+    function fhirType : string; override;
     function getId : string; override;
-    function equals(other : TObject) : boolean; override;
+    function Equals(other : TObject) : boolean; override;
     procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
   end;
 
@@ -381,7 +381,7 @@ end;
 
 function TFHIRMMProperty.hasType(elementName: String): boolean;
 var
-  t, tail, name : String;
+  t, tail : String;
   all : boolean;
   tr : TFhirElementDefinitionType;
 begin
@@ -436,7 +436,7 @@ var
   ed : TFhirElementDefinition;
 begin
   if (FcanBePrimitive <> 0) then
-    result := FcanBePrimitive > 0;
+    exit(FcanBePrimitive > 0);
 
   FcanBePrimitive := -1;
   if (structure.Kind <> StructureDefinitionKindLOGICAL) then
@@ -848,12 +848,7 @@ begin
 end;
 
 function TFHIRMMParserBase.getDefinition(line, col: integer; ns, name: String): TFHIRStructureDefinition;
-var
-  sd : TFHIRStructureDefinition;
-  sdl : TFHIRStructureDefinitionList;
-  sns : String;
 begin
-  result := nil;
   if (ns = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no namespace)', IssueSeverityFATAL);
@@ -874,7 +869,6 @@ var
   sd : TFHIRStructureDefinition;
   list : TFslList<TFHIRStructureDefinition>;
 begin
-  result := nil;
   if (name = '') then
   begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
@@ -902,7 +896,7 @@ var
   child : TFhirElementDefinition;
   tr : TFhirElementDefinitionType;
   t : String;
-  all, ok : boolean;
+  all : boolean;
 begin
   if (prop.isResource) and (statedType <> '') then
   begin
@@ -1109,12 +1103,11 @@ begin
   try
   if (sd = nil) then
     exit(nil);
-    result := nil;
     result := TFHIRMMElement.create(element.localName, TFHIRMMProperty.create(Fcontext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
-  checkElement(element, path, result.Prop);
-  result.markLocation(start(element), end_(element));
+    checkElement(element, path, result.Prop);
+    result.markLocation(start(element), end_(element));
     result.type_ := element.localName;
-  parseChildren(path, element, result);
+    parseChildren(path, element, result);
     result.numberChildren();
   finally
     sd.free;
@@ -1146,7 +1139,6 @@ end;
 
 function TFHIRMMXmlParser.empty(element : TMXmlElement) : boolean ;
 var
-  i : integer;
   a : TMXmlAttribute;
   node : TMXmlElement;
 begin
@@ -1204,14 +1196,13 @@ var
   properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   s, text : String;
-  i : integer;
   attr : TMXmlAttribute;
   child : TMXmlElement;
   e : TMXmlElement;
   av: String;
   xhtml : TFhirXHtmlNode;
   n : TFHIRMMElement;
-  npath, xsiType : String;
+  npath : String;
   ok : boolean;
 begin
   // this parsing routine retains the original order in a the XML file, to support validation
@@ -1332,19 +1323,17 @@ end;
 
 
 function TFHIRMMXmlParser.getTextProp(props : TFslList<TFHIRMMProperty>) : TFHIRMMProperty;
-var
-  p : TFHIRMMProperty;
 begin
   exit(nil);
 end;
 
 function TFHIRMMXmlParser.convertForDateFormat(fmt, av : String) : String;
 var
-  d : TDateTimeEx;
+  d : TFslDateTime;
 begin
   if ('v3' = fmt) then
   begin
-    d := TDateTimeEx.fromHL7(av);
+    d := TFslDateTime.fromHL7(av);
     result := d.ToXML;
   end
   else
@@ -1553,8 +1542,6 @@ end;
 end;
 
 procedure TFHIRMMJsonParser.checkObject(obj: TJsonObject; path : String);
-var
-  found : boolean;
 begin
   if (FPolicy = fvpEVERYTHING) and (obj.properties.count = 0) then
     logError(obj.LocationStart.Line, obj.LocationStart.Col, path, IssueTypeINVALID, 'Object must have some content', IssueSeverityERROR);
@@ -2063,7 +2050,6 @@ var
   properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   name : String;
-  tr : TFHIRElementDefinitionType;
   list : TFHIRSelectionList;
   o : TFHIRSelection;
   n : TFHIRMMElement;

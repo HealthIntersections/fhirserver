@@ -452,7 +452,6 @@ begin
         // now, for each entry in the diff matches, we're going to process the base item
         // our processing scope for base is all the children of the current path
         nbl := findEndOfElement(base, baseCursor);
-        ndc := diffCursor;
         ndl := diffCursor;
         for i := start to diffMatches.Count-1 do
         begin
@@ -1969,7 +1968,6 @@ function TProfileManager.getProfileStructure(source: TFHirStructureDefinition; u
 var
   id, code : String;
 begin
-  result := false;
   if url.StartsWith('#') then
   begin
     profile := source.Link;

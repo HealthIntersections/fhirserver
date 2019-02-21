@@ -2945,7 +2945,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set List';
       result.description := 'Reference Sets defined in this SNOMED-CT version';
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
         inc.system := 'http://snomed.info/sct';
@@ -2977,7 +2977,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.description := 'SNOMED CT Reference Set (All of SNOMED CT)';
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
         inc.system := 'http://snomed.info/sct';
@@ -2998,7 +2998,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set '+id.Substring(16);
       result.description := GetDisplayName(id.Substring(16), '');
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
         inc.system := 'http://snomed.info/sct';
@@ -3027,7 +3027,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
-      result.date := TDateTimeEx.makeUTC;
+      result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       inc.system := 'http://snomed.info/sct';
       filt := inc.addFilter;
@@ -3279,7 +3279,6 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  d : TFHIRLookupOpRespDesignationW;
   p : TFHIRLookupOpRespPropertyW;
   did : UInt64;
   exp : TSnomedExpression;

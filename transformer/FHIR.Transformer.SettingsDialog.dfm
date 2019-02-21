@@ -14,6 +14,13 @@ object TransformerOptionsForm: TTransformerOptionsForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 24
+    Top = 56
+    Width = 93
+    Height = 13
+    Caption = 'Terminology Server'
+  end
   object Panel1: TPanel
     Left = 0
     Top = 259
@@ -49,11 +56,19 @@ object TransformerOptionsForm: TTransformerOptionsForm
     end
   end
   object cbAutosave: TCheckBox
-    Left = 8
-    Top = 24
+    Left = 24
+    Top = 16
     Width = 97
     Height = 17
     Caption = 'Autosave files'
     TabOrder = 1
+  end
+  object cbxTerminologyServer: TComboBox
+    Left = 152
+    Top = 53
+    Width = 449
+    Height = 21
+    TabOrder = 2
+    Text = 'cbxTerminologyServer'
   end
 end

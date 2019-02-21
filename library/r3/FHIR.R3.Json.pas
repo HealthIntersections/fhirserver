@@ -2561,6 +2561,7 @@ Type
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
+  public
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
@@ -2764,7 +2765,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-     result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2818,7 +2819,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-     result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -3034,7 +3035,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-     result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;

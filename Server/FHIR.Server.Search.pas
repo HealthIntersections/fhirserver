@@ -90,7 +90,7 @@ type
     procedure processNumberValue(value : TFslDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
     function filterTypes(types: TArray<String>): TArray<String>;
-    procedure ProcessDateParam(date: TDateTimeEx; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessDateParam(date: TFslDateTime; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessStringParam(var Result: string; name, modifier, value: string; key: Integer; var pfx: string; var sfx: string; types : TArray<String>);
     procedure ProcessUriParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
@@ -331,7 +331,7 @@ begin
       begin
         // special case for bug in R4...
         index := StringArrayIndexOfInsensitive(targets, name);
-        if i = -1 then
+        if index = -1 then
           raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
         else
           result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
@@ -513,7 +513,7 @@ begin
   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value ' + pfx + sqlwrapString(v) + sfx + ')';
 end;
 
-procedure TSearchProcessor.ProcessDateParam(date: TDateTimeEx; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+procedure TSearchProcessor.ProcessDateParam(date: TFslDateTime; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
 var
   qop: TQuantityOperation;
 begin
@@ -530,7 +530,7 @@ begin
   else if findPrefix(value, 'eb') then qop := qopEndsBefore
   else if findPrefix(value, 'ap') then qop := qopApproximate;
   CheckDateFormat(value);
-  date := TDateTimeEx.fromXml(value);
+  date := TFslDateTime.fromXml(value);
   case qop of
     qopEqual:        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value >= ''' + date.Min.UTC.toHL7 + ''' and Value2 <= ''' + date.Max.UTC.toHL7 + ''')';
     qopNotEqual:     result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (Value < ''' + date.Min.UTC.toHL7 + ''' or Value2 > ''' + date.Max.UTC.toHL7 + '''))';
@@ -622,7 +622,6 @@ var
   like: Boolean;
 begin
   begin
-    like := false;
     if value.Contains('|') then
     begin
       StringSplit(value, '|', ref, value);
@@ -674,10 +673,10 @@ end;
 
 function TSearchProcessor.buildParameterDate(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
 var
-  date: TDateTimeEx;
+  date: TFslDateTime;
 begin
   begin
-    date := TDateTimeEx.fromXml(value);
+    date := TFslDateTime.fromXml(value);
     case op of
       fscoEQ:
         result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + date.Min.UTC.toHL7 + ''' and ' + n + '.Value2 = ''' + date.Max.UTC.toHL7 + '''' + j + ')';
@@ -957,7 +956,7 @@ var
   f, isReverse : Boolean;
   ts : TStringList;
   pfx, sfx, n : String;
-  date : TDateTimeEx;
+  date : TFslDateTime;
   a : String;
   type_ : TFhirSearchParamType;
   group : TFHIRGroupW;

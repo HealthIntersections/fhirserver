@@ -48,7 +48,6 @@ Type
     FPassword: String;
     FMethod: TInternetFetcherMethod;
     FContentType: String;
-    FProgress: Integer;
     FBytesToTransfer: Int64;
     FOnProgress: TProgressEvent;
     FAccept: String;

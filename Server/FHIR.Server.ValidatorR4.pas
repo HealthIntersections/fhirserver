@@ -199,7 +199,6 @@ function TFHIRServerWorkerContextR4.getQuestionnaire(url: string): TFhirQuestion
 var
   q : TFhirQuestionnaire;
 begin
-  result := nil;
   if url.StartsWith('Questionnaire/') then
     url := url.Substring(14);
   FLock.lock;

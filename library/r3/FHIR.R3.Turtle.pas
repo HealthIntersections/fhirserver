@@ -2176,7 +2176,7 @@ begin
   result := TFhirDate.Create;
   try
     if (obj.has('http://hl7.org/fhir/value')) then
-      result.value := toTDateTimeEx(obj.stringLiteral('http://hl7.org/fhir/value'));
+      result.value := toTFslDateTime(obj.stringLiteral('http://hl7.org/fhir/value'));
     parseElementProperties(obj, result);
     result.Link;
   finally
@@ -2204,7 +2204,7 @@ begin
   result := TFhirDateTime.Create;
   try
     if (obj.has('http://hl7.org/fhir/value')) then
-      result.value := toTDateTimeEx(obj.stringLiteral('http://hl7.org/fhir/value'));
+      result.value := toTFslDateTime(obj.stringLiteral('http://hl7.org/fhir/value'));
     parseElementProperties(obj, result);
     result.Link;
   finally
@@ -2316,7 +2316,7 @@ begin
   result := TFhirInstant.Create;
   try
     if (obj.has('http://hl7.org/fhir/value')) then
-      result.value := toTDateTimeEx(obj.stringLiteral('http://hl7.org/fhir/value'));
+      result.value := toTFslDateTime(obj.stringLiteral('http://hl7.org/fhir/value'));
     parseElementProperties(obj, result);
     result.Link;
   finally
@@ -3951,8 +3951,6 @@ end;
 procedure TFHIRTurtleComposer.ComposeQuantity(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuantity; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
-var
-  cb, c : TTurtleComplex;
 begin
   if (elem = nil) then
     exit;

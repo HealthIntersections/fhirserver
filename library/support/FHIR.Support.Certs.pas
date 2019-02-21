@@ -841,7 +841,7 @@ class function TJWTUtils.loadRSAPublicKey(contents: TBytes): PRSA;
 var
   fn : String;
 begin
-  fn := Path([SystemTemp, TDateTimeEx.makeUTC.toString('yyyymmddhhnnss.zzz')+'.cer']);
+  fn := Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmddhhnnss.zzz')+'.cer']);
   BytesToFile(contents, fn);
   try
     result := loadRSAPublicKey(AnsiString(fn));
@@ -960,7 +960,6 @@ var
   hb, pb : TBytes;
   h, p : TJsonObject;
 begin
-  result := nil;
   StringSplit(token, '.', header, payload);
   StringSplit(payload, '.', payload, sig);
   check(header <> '', 'Header not found reading JWT');

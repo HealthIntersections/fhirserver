@@ -763,8 +763,6 @@ begin
 end;
 
 function TUcumConverter.convert(oTerm: TUcumTerm): TUcumCanonical;
-var
-  bSorted : Boolean;
 begin
   result := normalise('  ', oTerm);
 end;
@@ -932,7 +930,6 @@ var
   u : string;
   h : TUcumUnitHandler;
   t : TUcumTerm;
-  p : TUcumExpressionParser;
 begin
   u := unit_.Value.unit_;
   if (unit_.isSpecial) then

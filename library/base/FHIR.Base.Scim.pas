@@ -53,25 +53,25 @@ Type
 
   TSCIMObject = class (TFslObject)
   private
-    FCreated : TDateTimeEx;
-    FLastModified : TDateTimeEx;
+    FCreated : TFslDateTime;
+    FLastModified : TFslDateTime;
     FJson : TJsonObject;
-    function GetCreated: TDateTimeEx;
+    function GetCreated: TFslDateTime;
     function GetId: String;
-    function GetLastModified: TDateTimeEx;
+    function GetLastModified: TFslDateTime;
     function GetLocation: String;
     function GetResourceType: String;
     function GetVersion: String;
-    procedure SetCreated(const Value: TDateTimeEx);
+    procedure SetCreated(const Value: TFslDateTime);
     procedure SetId(const Value: String);
-    procedure SetLastModified(const Value: TDateTimeEx);
+    procedure SetLastModified(const Value: TFslDateTime);
     procedure SetLocation(const Value: String);
     procedure SetResourceType(const Value: String);
     procedure SetVersion(const Value: String);
     function GetExternalId: String;
     procedure SetExternalId(const Value: String);
-    function GetCreatedUTC: TDateTimeEx;
-    function GetLastModifiedUTC: TDateTimeEx;
+    function GetCreatedUTC: TFslDateTime;
+    function GetLastModifiedUTC: TFslDateTime;
   protected
     function hasSchema(s : String) : boolean;
     procedure checkSchema(s : String);
@@ -82,10 +82,10 @@ Type
     property id : String read GetId write SetId;
     property ExternalId : String read GetExternalId write SetExternalId;
     property resourceType : String read GetResourceType write SetResourceType;
-    property created : TDateTimeEx read GetCreated write SetCreated;
-    property lastModified : TDateTimeEx read GetLastModified write SetLastModified;
-    property createdUTC : TDateTimeEx read GetCreatedUTC;
-    property lastModifiedUTC : TDateTimeEx read GetLastModifiedUTC;
+    property created : TFslDateTime read GetCreated write SetCreated;
+    property lastModified : TFslDateTime read GetLastModified write SetLastModified;
+    property createdUTC : TFslDateTime read GetCreatedUTC;
+    property lastModifiedUTC : TFslDateTime read GetLastModifiedUTC;
     property location : String read GetLocation write SetLocation;
     property version : String read GetVersion write SetVersion;
     property json : TJsonObject read FJson;
@@ -271,19 +271,19 @@ begin
   inherited;
 end;
 
-function TSCIMObject.GetCreated: TDateTimeEx;
+function TSCIMObject.GetCreated: TFslDateTime;
 begin
   if FJson.has('meta') and FJson.obj['meta'].has('created') then
   begin
     if FCreated.null then
-      FCreated := TDateTimeEx.fromXML(FJson.obj['meta']['created']);
+      FCreated := TFslDateTime.fromXML(FJson.obj['meta']['created']);
   end
   else if not FCreated.null then
-    FCreated := TDateTimeEx.makeNull;
+    FCreated := TFslDateTime.makeNull;
   result := FCreated;
 end;
 
-function TSCIMObject.GetCreatedUTC: TDateTimeEx;
+function TSCIMObject.GetCreatedUTC: TFslDateTime;
 begin
   if FCreated.null then
     result := FCreated
@@ -301,19 +301,19 @@ begin
   result := FJson['id'];
 end;
 
-function TSCIMObject.GetLastModified: TDateTimeEx;
+function TSCIMObject.GetLastModified: TFslDateTime;
 begin
   if FJson.has('meta') and FJson.obj['meta'].has('created') then
   begin
     if FLastModified.null then
-      FLastModified := TDateTimeEx.fromXML(FJson.obj['meta']['created']);
+      FLastModified := TFslDateTime.fromXML(FJson.obj['meta']['created']);
   end
   else if not FLastModified.null then
-    FLastModified := TDateTimeEx.makeNull;
+    FLastModified := TFslDateTime.makeNull;
   result := FLastModified;
 end;
 
-function TSCIMObject.GetLastModifiedUTC: TDateTimeEx;
+function TSCIMObject.GetLastModifiedUTC: TFslDateTime;
 begin
   if FLastModified.null then
     result := FLastModified
@@ -336,7 +336,7 @@ begin
   result := FJson.obj['meta']['version'];
 end;
 
-procedure TSCIMObject.SetCreated(const Value: TDateTimeEx);
+procedure TSCIMObject.SetCreated(const Value: TFslDateTime);
 begin
   FCreated := Value;
   if not FJson.has('meta') then
@@ -370,7 +370,7 @@ begin
   end;
 end;
 
-procedure TSCIMObject.SetLastModified(const Value: TDateTimeEx);
+procedure TSCIMObject.SetLastModified(const Value: TFslDateTime);
 begin
   FLastModified := Value;
   if Value.null then

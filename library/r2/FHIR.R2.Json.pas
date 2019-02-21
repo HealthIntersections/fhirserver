@@ -2083,7 +2083,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-     result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2137,7 +2137,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-     result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2353,7 +2353,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-     result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;

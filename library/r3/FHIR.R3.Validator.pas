@@ -1015,7 +1015,6 @@ var
 begin
   assert(stack <> nil);
   assert(resource <> nil);
-  ok := true;
 
   resourceName := element.type_; // todo: consider namespace...?
   if (defn = nil) then
@@ -1026,7 +1025,7 @@ begin
       defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
       ctxt.owned.Add(defn);
     end;
-    ok := rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
+    rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
   end;
   if (profiles <> nil) then
     for p in profiles.FCanonical do
@@ -1229,20 +1228,17 @@ procedure TFHIRValidator3.validateSections(ctxt : TFHIRValidatorContext; entries
 var
   sections: TFslList<TFHIRMMElement>;
   section: TFHIRMMElement;
-  i: integer;
   localStack: TNodeStack;
 begin
   sections := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('entry', sections);
-    i := 0;
     for section in sections do
     begin
       localStack := stack.push(section, 1, nil, nil);
       try
         validateBundleReference(ctxt, entries, section.getNamedChild('content'), 'Section Content', localStack, fullUrl, 'Composition', id);
         validateSections(ctxt, entries, section, localStack, fullUrl, id);
-        inc(i);
       finally
         localStack.Free;
       end;
@@ -1926,10 +1922,8 @@ var
   ty: TFHIRStructureDefinition;
   index: integer;
 begin
-  result := nil;
   childDefinitions := getChildMap(profile, ed.slicename, ed.path, '');
   try
-    Snapshot := nil;
     if (childDefinitions.count = 0) then
     begin
       // going to look at the type
@@ -2201,7 +2195,7 @@ begin
     begin
       if (r.id = pr.substring(1)) and (r is TFHIRStructureDefinition) then
       begin
-        result := r as TFHIRStructureDefinition;
+        exit(r as TFHIRStructureDefinition);
       end;
     end;
     result := nil;
@@ -2432,7 +2426,7 @@ var
   c: char;
 begin
   if (v.trim() <> v) then
-    result := false
+    exit(false)
   else
   begin
     lastWasSpace := true;
@@ -3293,6 +3287,7 @@ begin
       end;
       try
         ok := FPathEngine.evaluateToBoolean(resource, resource, element, expr);
+        msg := '';
       except
         on e : Exception do
         begin

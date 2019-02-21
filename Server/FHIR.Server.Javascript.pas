@@ -89,19 +89,15 @@ Type
   // then, we retain it as long as we can
   TJsHost = class (TFslObject)
   private
-    FChakraPath : String;
     FRegistry: TEventScriptRegistry;
-    FEngines : array[TFHIRVersion] of TFHIRJavascript;
+    FEngine : TFHIRJavascript;
     procedure SetRegistry(const Value: TEventScriptRegistry);
-    function checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
   public
-    constructor Create(chakraPath : String);
+    constructor Create; override;
     destructor Destroy; override;
 
-    procedure registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
-
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
-
+    property engine : TFHIRJavascript read FEngine;
     procedure previewRequest(session : TFHIRSession; request : TFHIRRequest);
     procedure checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
   end;
@@ -137,12 +133,12 @@ begin
     FRegistry.getApplicableScripts(event, rn, scripts);
     if (scripts.count > 0) then
     begin
-      engine := checkHasEngine(before.fhirObjectVersion);
-      engine.readOnly := true;
-      s := engine.wrap(session.Link, 'Session', true);
-      b := engine.wrap(before.Link, rn, true);
-      a := engine.wrap(after.Link, rn, true);
-      c := engine.wrap(client.link, 'FHIR.Version.Client', true);
+      engine := FEngine;
+      engine.ObjectsImmutable := true;
+      s := engine.wrap(session.Link, 'Session', true, true);
+      b := engine.wrap(before.Link, rn, true, true);
+      a := engine.wrap(after.Link, rn, true, true);
+      c := engine.wrap(client.link, 'FHIR.Version.Client', true, true);
       engine.addGlobal('fhir', c);
       for script in scripts do
         engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
@@ -152,40 +148,17 @@ begin
   end;
 end;
 
-function TJsHost.checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
-begin
-  if FEngines[version] = nil then
-    raise EJavascriptApplication.Create('Javascript is not supported on this server for version '+CODES_TFHIRVersion[version]);
-  result := FEngines[version];
-end;
-
-constructor TJsHost.Create(chakraPath : String);
-var
-  v : TFHIRVersion;
+constructor TJsHost.Create;
 begin
   inherited create;
-  FChakraPath := chakraPath;
-  for v in FHIR_ALL_VERSIONS do
-    FEngines[v] := nil;
+  FEngine := TFHIRJavascript.create;
 end;
 
 destructor TJsHost.Destroy;
-var
-  v : TFHIRVersion;
 begin
-  for v in FHIR_ALL_VERSIONS do
-    FEngines[v].Free;
+  FEngine.Free;
   FRegistry.Free;
   inherited;
-end;
-
-
-procedure TJsHost.registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
-begin
-  if (FChakraPath <> '') then
-    FEngines[worker.version] := TFHIRJavascript.Create(FChakraPath, worker.link, reg)
-  else
-    worker.free;
 end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);
@@ -201,9 +174,10 @@ begin
       FRegistry.getApplicableScripts(ttDataAccessed, '', scripts);
     if (scripts.count > 0) then
     begin
-      engine := checkHasEngine(request.Version);
-      s := engine.wrap(session.Link, 'Session', true);
-      r := engine.wrap(request.Link, 'Request', true);
+      engine := FEngine;
+      engine.ObjectsImmutable := false;
+      s := engine.wrap(session.Link, 'Session', true, false);
+      r := engine.wrap(request.Link, 'Request', true, false);
       for script in scripts do
         engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, r]);
     end;

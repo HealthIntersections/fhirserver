@@ -33,7 +33,7 @@ unit FHIR.R4.IndexInfo;
 
 interface
 
-// FHIR v4.0.0 generated 2018-12-15T16:22:09+11:00
+// FHIR v4.0.0 generated 2018-12-27T22:37:54+11:00
 
 uses
   SysUtils, Classes,
@@ -491,6 +491,7 @@ implementation
 procedure TFHIRIndexBuilderR4.buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Account', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Account', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Account', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Account', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Account', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -517,6 +518,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForActivityDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ActivityDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ActivityDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ActivityDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ActivityDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ActivityDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -554,6 +556,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForAdverseEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AdverseEvent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('AdverseEvent', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AdverseEvent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AdverseEvent', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('AdverseEvent', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -584,6 +587,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AllergyIntolerance', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('AllergyIntolerance', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AllergyIntolerance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AllergyIntolerance', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('AllergyIntolerance', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -619,6 +623,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Appointment', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Appointment', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Appointment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Appointment', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Appointment', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -655,6 +660,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AppointmentResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('AppointmentResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AppointmentResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AppointmentResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('AppointmentResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -681,6 +687,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AuditEvent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('AuditEvent', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AuditEvent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AuditEvent', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('AuditEvent', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -717,6 +724,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForBasic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Basic', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Basic', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Basic', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Basic', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Basic', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -741,6 +749,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Binary', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Binary', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Binary', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Binary', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Binary', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -755,6 +764,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForBiologicallyDerivedProduct(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('BiologicallyDerivedProduct', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('BiologicallyDerivedProduct', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('BiologicallyDerivedProduct', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -770,6 +780,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForBodyStructure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('BodyStructure', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('BodyStructure', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('BodyStructure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('BodyStructure', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('BodyStructure', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -790,6 +801,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Bundle', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Bundle', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Bundle', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Bundle', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Bundle', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -809,6 +821,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CapabilityStatement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CapabilityStatement', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CapabilityStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CapabilityStatement', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CapabilityStatement', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -848,6 +861,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CarePlan', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CarePlan', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CarePlan', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CarePlan', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CarePlan', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -888,6 +902,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CareTeam', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CareTeam', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CareTeam', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CareTeam', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CareTeam', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -916,6 +931,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CatalogEntry', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CatalogEntry', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CatalogEntry', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CatalogEntry', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CatalogEntry', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -931,6 +947,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ChargeItem', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ChargeItem', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ChargeItem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ChargeItem', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ChargeItem', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -968,6 +985,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForChargeItemDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ChargeItemDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ChargeItemDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ChargeItemDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ChargeItemDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ChargeItemDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -998,6 +1016,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Claim', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Claim', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Claim', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Claim', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Claim', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1035,6 +1054,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ClaimResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ClaimResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ClaimResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ClaimResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ClaimResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1063,6 +1083,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ClinicalImpression', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ClinicalImpression', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ClinicalImpression', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ClinicalImpression', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ClinicalImpression', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1095,6 +1116,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCodeSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CodeSystem', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CodeSystem', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CodeSystem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CodeSystem', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CodeSystem', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1131,6 +1153,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCommunication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Communication', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Communication', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Communication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Communication', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Communication', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1166,6 +1189,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCommunicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CommunicationRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CommunicationRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CommunicationRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CommunicationRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CommunicationRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1202,6 +1226,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCompartmentDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CompartmentDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CompartmentDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CompartmentDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CompartmentDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CompartmentDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1232,6 +1257,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Composition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Composition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Composition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Composition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Composition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1272,6 +1298,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ConceptMap', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ConceptMap', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ConceptMap', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ConceptMap', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ConceptMap', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1314,6 +1341,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Condition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Condition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Condition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Condition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Condition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1355,6 +1383,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Consent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Consent', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Consent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Consent', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Consent', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1387,6 +1416,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Contract', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Contract', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Contract', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Contract', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Contract', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1412,6 +1442,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Coverage', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Coverage', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Coverage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Coverage', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Coverage', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1440,6 +1471,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCoverageEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CoverageEligibilityRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CoverageEligibilityRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CoverageEligibilityRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CoverageEligibilityRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CoverageEligibilityRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1464,6 +1496,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForCoverageEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CoverageEligibilityResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('CoverageEligibilityResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CoverageEligibilityResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CoverageEligibilityResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('CoverageEligibilityResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1490,6 +1523,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDetectedIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DetectedIssue', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DetectedIssue', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DetectedIssue', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DetectedIssue', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DetectedIssue', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1515,6 +1549,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Device', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Device', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Device', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Device', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Device', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1524,6 +1559,7 @@ begin
   indexes.add('Device', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Device', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Device', 'device-name', 'A server defined search that may match any of the string fields in Device.deviceName or Device.type.', sptSTRING, [], 'Device.deviceName.name | Device.type.coding.display | Device.type.text', sxpNormal);
+  indexes.add('Device', 'din', 'The donation identification number (DIN)', sptTOKEN, [], 'Device.extension(''http://hl7.org/fhir/SearchParameter/device-extensions-Device-din'')', sxpNormal);
   indexes.add('Device', 'identifier', 'Instance id from manufacturer, owner, and others', sptTOKEN, [], 'Device.identifier', sxpNormal);
   indexes.add('Device', 'location', 'A location, where the resource is found', sptREFERENCE, ['Location'], 'Device.location', sxpNormal);
   indexes.add('Device', 'manufacturer', 'The manufacturer of the device', sptSTRING, [], 'Device.manufacturer', sxpNormal);
@@ -1542,6 +1578,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDeviceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DeviceDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DeviceDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1560,6 +1597,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceMetric', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DeviceMetric', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceMetric', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceMetric', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DeviceMetric', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1580,6 +1618,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DeviceRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DeviceRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1618,6 +1657,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceUseStatement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DeviceUseStatement', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceUseStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceUseStatement', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DeviceUseStatement', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1640,6 +1680,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DiagnosticReport', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DiagnosticReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DiagnosticReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DiagnosticReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DiagnosticReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1648,6 +1689,7 @@ begin
   indexes.add('DiagnosticReport', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('DiagnosticReport', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DiagnosticReport', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DiagnosticReport', 'assessed-condition', 'Condition assessed by genetic test', sptREFERENCE, [], 'DiagnosticReport.extension(''http://hl7.org/fhir/StructureDefinition/DiagnosticReport-geneticsAssessedCondition'')', sxpNormal);
   indexes.add('DiagnosticReport', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'NutritionOrder', 'ServiceRequest', 'ImmunizationRecommendation'], 'DiagnosticReport.basedOn', sxpNormal);
   indexes.add('DiagnosticReport', 'category', 'Which diagnostic discipline/department created the report', sptTOKEN, [], 'DiagnosticReport.category', sxpNormal);
   indexes.add('DiagnosticReport', 'code', 'The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
@@ -1676,6 +1718,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDocumentManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DocumentManifest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DocumentManifest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DocumentManifest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DocumentManifest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DocumentManifest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1711,6 +1754,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DocumentReference', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('DocumentReference', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DocumentReference', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DocumentReference', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('DocumentReference', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1757,6 +1801,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEffectEvidenceSynthesis(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EffectEvidenceSynthesis', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EffectEvidenceSynthesis', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EffectEvidenceSynthesis', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EffectEvidenceSynthesis', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('EffectEvidenceSynthesis', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1788,6 +1833,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Encounter', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Encounter', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Encounter', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Encounter', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Encounter', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1831,6 +1877,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Endpoint', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Endpoint', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Endpoint', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Endpoint', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Endpoint', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1852,6 +1899,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EnrollmentRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EnrollmentRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EnrollmentRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EnrollmentRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('EnrollmentRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1872,6 +1920,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EnrollmentResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EnrollmentResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EnrollmentResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EnrollmentResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('EnrollmentResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1890,6 +1939,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EpisodeOfCare', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EpisodeOfCare', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EpisodeOfCare', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EpisodeOfCare', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('EpisodeOfCare', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1918,6 +1968,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EventDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EventDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EventDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EventDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('EventDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1955,6 +2006,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEvidence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Evidence', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Evidence', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Evidence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Evidence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Evidence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -1992,6 +2044,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForEvidenceVariable(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EvidenceVariable', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EvidenceVariable', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EvidenceVariable', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EvidenceVariable', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('EvidenceVariable', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2029,6 +2082,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForExampleScenario(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ExampleScenario', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ExampleScenario', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ExampleScenario', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ExampleScenario', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ExampleScenario', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2057,6 +2111,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForExplanationOfBenefit(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ExplanationOfBenefit', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ExplanationOfBenefit', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ExplanationOfBenefit', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2094,6 +2149,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('FamilyMemberHistory', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('FamilyMemberHistory', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('FamilyMemberHistory', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('FamilyMemberHistory', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('FamilyMemberHistory', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2120,6 +2176,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForFlag(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Flag', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Flag', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Flag', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Flag', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Flag', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2145,6 +2202,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForGoal(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Goal', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Goal', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Goal', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Goal', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Goal', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2170,6 +2228,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForGraphDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('GraphDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('GraphDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('GraphDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('GraphDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('GraphDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2200,6 +2259,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Group', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Group', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Group', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Group', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Group', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2228,6 +2288,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForGuidanceResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('GuidanceResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('GuidanceResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('GuidanceResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('GuidanceResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('GuidanceResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2247,6 +2308,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForHealthcareService(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('HealthcareService', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('HealthcareService', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('HealthcareService', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('HealthcareService', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('HealthcareService', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2274,6 +2336,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImagingStudy', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ImagingStudy', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImagingStudy', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImagingStudy', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ImagingStudy', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2309,6 +2372,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForImmunization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Immunization', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Immunization', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Immunization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Immunization', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Immunization', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2343,6 +2407,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForImmunizationEvaluation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImmunizationEvaluation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ImmunizationEvaluation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImmunizationEvaluation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImmunizationEvaluation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ImmunizationEvaluation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2366,6 +2431,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForImmunizationRecommendation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImmunizationRecommendation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ImmunizationRecommendation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImmunizationRecommendation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2390,6 +2456,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForImplementationGuide(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImplementationGuide', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ImplementationGuide', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImplementationGuide', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImplementationGuide', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ImplementationGuide', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2424,6 +2491,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForInsurancePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('InsurancePlan', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('InsurancePlan', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('InsurancePlan', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('InsurancePlan', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('InsurancePlan', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2453,6 +2521,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForInvoice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Invoice', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Invoice', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Invoice', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Invoice', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Invoice', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2485,6 +2554,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForLibrary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Library', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Library', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Library', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Library', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Library', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2524,6 +2594,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForLinkage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Linkage', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Linkage', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Linkage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Linkage', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Linkage', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2543,6 +2614,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForList(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('List', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('List', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('List', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('List', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('List', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2574,6 +2646,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForLocation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Location', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Location', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Location', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Location', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Location', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2604,6 +2677,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMeasure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Measure', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Measure', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Measure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Measure', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Measure', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2641,6 +2715,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMeasureReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MeasureReport', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MeasureReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MeasureReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MeasureReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MeasureReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2666,6 +2741,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedia(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Media', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Media', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Media', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Media', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Media', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2698,6 +2774,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Medication', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Medication', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Medication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Medication', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Medication', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2722,6 +2799,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicationAdministration(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationAdministration', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicationAdministration', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationAdministration', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationAdministration', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicationAdministration', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2757,6 +2835,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationDispense', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicationDispense', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationDispense', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationDispense', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicationDispense', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2791,6 +2870,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicationKnowledge(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationKnowledge', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicationKnowledge', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationKnowledge', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationKnowledge', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicationKnowledge', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2819,6 +2899,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicationRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicationRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2855,6 +2936,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicationStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationStatement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicationStatement', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationStatement', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicationStatement', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2886,6 +2968,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProduct(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProduct', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProduct', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProduct', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProduct', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProduct', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2904,6 +2987,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductAuthorization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductAuthorization', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductAuthorization', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductAuthorization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductAuthorization', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductAuthorization', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2924,6 +3008,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductContraindication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductContraindication', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductContraindication', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductContraindication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductContraindication', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductContraindication', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2940,6 +3025,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductIndication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductIndication', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductIndication', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductIndication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductIndication', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductIndication', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2956,6 +3042,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductIngredient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductIngredient', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductIngredient', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductIngredient', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductIngredient', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductIngredient', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2971,6 +3058,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductInteraction(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductInteraction', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductInteraction', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductInteraction', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductInteraction', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductInteraction', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -2987,6 +3075,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductManufactured(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductManufactured', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductManufactured', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductManufactured', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductManufactured', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductManufactured', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3002,6 +3091,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductPackaged(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductPackaged', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductPackaged', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductPackaged', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductPackaged', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductPackaged', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3019,6 +3109,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductPharmaceutical(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductPharmaceutical', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductPharmaceutical', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductPharmaceutical', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductPharmaceutical', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductPharmaceutical', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3037,6 +3128,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMedicinalProductUndesirableEffect(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicinalProductUndesirableEffect', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MedicinalProductUndesirableEffect', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductUndesirableEffect', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductUndesirableEffect', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MedicinalProductUndesirableEffect', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3053,6 +3145,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMessageDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MessageDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MessageDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MessageDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MessageDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MessageDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3088,6 +3181,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MessageHeader', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MessageHeader', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MessageHeader', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MessageHeader', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MessageHeader', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3119,6 +3213,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForMolecularSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MolecularSequence', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('MolecularSequence', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MolecularSequence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MolecularSequence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('MolecularSequence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3150,6 +3245,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('NamingSystem', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('NamingSystem', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('NamingSystem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('NamingSystem', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('NamingSystem', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3185,6 +3281,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForNutritionOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('NutritionOrder', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('NutritionOrder', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('NutritionOrder', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('NutritionOrder', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('NutritionOrder', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3217,6 +3314,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Observation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Observation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Observation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Observation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Observation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3225,6 +3323,7 @@ begin
   indexes.add('Observation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Observation', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Observation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Observation', 'amino-acid-change', 'HGVS Protein Change', sptSTRING, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsAminoAcidChangeName'')', sxpNormal);
   indexes.add('Observation', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'], 'Observation.basedOn', sxpNormal);
   indexes.add('Observation', 'category', 'The classification of the type of observation', sptTOKEN, [], 'Observation.category', sxpNormal);
   indexes.add('Observation', 'code', 'The code of the observation type', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'+'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationStatement.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
@@ -3251,6 +3350,7 @@ begin
   indexes.add('Observation', 'dna-variant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName', sptTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName'').value', sxpNormal);
   indexes.add('Observation', 'encounter', 'Encounter related to the observation', sptREFERENCE, ['EpisodeOfCare', 'Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'+' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Observation', 'focus', 'The focus of an observation when the focus is not the patient of record.', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Observation.focus', sxpNormal);
+  indexes.add('Observation', 'gene-amino-acid-change', 'HGNC gene symbol and HGVS Protein change', sptSTRING, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsAminoAcidChangeName'')', sxpNormal);
   indexes.add('Observation', 'gene-dnavariant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId', sptTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId'').value', sxpNormal);
   indexes.add('Observation', 'gene-identifier', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsGene', sptTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsGene'').value', sxpNormal);
   indexes.add('Observation', 'has-member', 'Related resource that belongs to the Observation group', sptREFERENCE, ['Observation', 'MolecularSequence', 'QuestionnaireResponse'], 'Observation.hasMember', sxpNormal);
@@ -3279,6 +3379,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForObservationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ObservationDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ObservationDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ObservationDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ObservationDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ObservationDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3294,6 +3395,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForOperationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OperationDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('OperationDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('OperationDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('OperationDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('OperationDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3332,6 +3434,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForOperationOutcome(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OperationOutcome', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('OperationOutcome', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('OperationOutcome', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('OperationOutcome', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('OperationOutcome', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3347,6 +3450,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForOrganization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Organization', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Organization', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Organization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Organization', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Organization', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3375,6 +3479,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForOrganizationAffiliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OrganizationAffiliation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('OrganizationAffiliation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('OrganizationAffiliation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('OrganizationAffiliation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('OrganizationAffiliation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3404,6 +3509,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Patient', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Patient', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Patient', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Patient', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Patient', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3419,6 +3525,8 @@ begin
   indexes.add('Patient', 'address-postalcode', 'A postalCode specified in an address', sptSTRING, [], 'Patient.address.postalCode | Person.address.postalCode | Practitioner.address.postalCode | RelatedPerson.address.postalCode', sxpNormal);
   indexes.add('Patient', 'address-state', 'A state specified in an address', sptSTRING, [], 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state', sxpNormal);
   indexes.add('Patient', 'address-use', 'A use code specified in an address', sptTOKEN, [], 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use', sxpNormal);
+  indexes.add('Patient', 'age', 'Searches for patients based on age as calculated based on current date and date of birth.  Deceased patients are excluded from the search.', sptNUMBER, [], '', sxpNormal);
+  indexes.add('Patient', 'birthOrderBoolean', 'Search based on whether a patient was part of a multiple birth or not.', sptTOKEN, [], '', sxpNormal);
   indexes.add('Patient', 'birthdate', 'The patient''s date of birth', sptDATE, [], 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate', sxpNormal);
   indexes.add('Patient', 'death-date', 'The date of death has been provided and satisfies this search value', sptDATE, [], '(Patient.deceased as dateTime)', sxpNormal);
   indexes.add('Patient', 'deceased', 'This patient has been marked as deceased, or as a death date entered', sptTOKEN, [], 'Patient.deceased.exists() and Patient.deceased != false', sxpNormal);
@@ -3430,8 +3538,10 @@ begin
   indexes.add('Patient', 'identifier', 'A patient identifier', sptTOKEN, [], 'Patient.identifier', sxpNormal);
   indexes.add('Patient', 'language', 'Language code (irrespective of use value)', sptTOKEN, [], 'Patient.communication.language', sxpNormal);
   indexes.add('Patient', 'link', 'All patients linked to the given patient', sptREFERENCE, ['Patient', 'RelatedPerson'], 'Patient.link.other', sxpNormal);
+  indexes.add('Patient', 'mothersMaidenName', 'Search based on patient''s mother''s maiden name', sptSTRING, [], 'Patient.extension(http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName)', sxpNormal);
   indexes.add('Patient', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', sptSTRING, [], 'Patient.name', sxpNormal);
   indexes.add('Patient', 'organization', 'The organization that is the custodian of the patient record', sptREFERENCE, ['Organization'], 'Patient.managingOrganization', sxpNormal);
+  indexes.add('Patient', 'part-agree', 'Search by url for a participation agreement, which is stored in a DocumentReference', sptREFERENCE, ['DocumentReference'], 'DocumentReference.extension(''http://example.org/fhir/StructureDefinition/participation-agreement'')', sxpNormal);
   indexes.add('Patient', 'phone', 'A value in a phone contact', sptTOKEN, [], 'Patient.telecom.where(system=''phone'') | Person.telecom.where(system=''phone'') | Practitioner.telecom.where(system=''phone'') | PractitionerRole.telecom.where(system=''phone'') | RelatedPerson.telecom.where(system=''phone'')', sxpNormal);
   indexes.add('Patient', 'phonetic', 'A portion of either family or given name using some kind of phonetic matching algorithm', sptSTRING, [], 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name', sxpPhonetic);
   indexes.add('Patient', 'telecom', 'The value in any kind of telecom details of the patient', sptTOKEN, [], 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom', sxpNormal);
@@ -3445,6 +3555,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPaymentNotice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PaymentNotice', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('PaymentNotice', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PaymentNotice', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PaymentNotice', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('PaymentNotice', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3468,6 +3579,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPaymentReconciliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PaymentReconciliation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('PaymentReconciliation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PaymentReconciliation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PaymentReconciliation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('PaymentReconciliation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3492,6 +3604,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Person', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Person', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Person', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Person', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Person', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3529,6 +3642,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPlanDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PlanDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('PlanDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PlanDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PlanDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('PlanDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3568,6 +3682,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Practitioner', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Practitioner', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Practitioner', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Practitioner', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Practitioner', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3601,6 +3716,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForPractitionerRole(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PractitionerRole', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('PractitionerRole', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PractitionerRole', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PractitionerRole', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('PractitionerRole', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3630,6 +3746,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Procedure', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Procedure', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Procedure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Procedure', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Procedure', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3666,6 +3783,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Provenance', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Provenance', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Provenance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Provenance', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Provenance', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3695,6 +3813,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForQuestionnaire(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Questionnaire', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Questionnaire', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Questionnaire', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Questionnaire', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Questionnaire', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3729,6 +3848,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForQuestionnaireResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('QuestionnaireResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('QuestionnaireResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('QuestionnaireResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('QuestionnaireResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('QuestionnaireResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3742,6 +3862,7 @@ begin
   indexes.add('QuestionnaireResponse', 'based-on', 'Plan/proposal/order fulfilled by this questionnaire response', sptREFERENCE, ['CarePlan', 'ServiceRequest'], 'QuestionnaireResponse.basedOn', sxpNormal);
   indexes.add('QuestionnaireResponse', 'encounter', 'Encounter associated with the questionnaire response', sptREFERENCE, ['Encounter'], 'QuestionnaireResponse.encounter', sxpNormal);
   indexes.add('QuestionnaireResponse', 'identifier', 'The unique identifier for the questionnaire response', sptTOKEN, [], 'QuestionnaireResponse.identifier', sxpNormal);
+  indexes.add('QuestionnaireResponse', 'item-subject', 'Allows searching for QuestionnaireResponses by item value where the item has isSubject=true', sptREFERENCE, [], 'QuestionnaireResponse.item.where(hasExtension(''http://hl7.org/fhir/StructureDefinition/questionnaireresponse-isSubject'')).answer.value.ofType(Reference)', sxpNormal);
   indexes.add('QuestionnaireResponse', 'part-of', 'Procedure or observation this questionnaire response was performed as a part of', sptREFERENCE, ['Observation', 'Procedure'], 'QuestionnaireResponse.partOf', sxpNormal);
   indexes.add('QuestionnaireResponse', 'patient', 'The patient that is the subject of the questionnaire response', sptREFERENCE, ['Patient'], 'QuestionnaireResponse.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('QuestionnaireResponse', 'questionnaire', 'The questionnaire the answers are provided for', sptREFERENCE, ['Questionnaire'], 'QuestionnaireResponse.questionnaire', sxpNormal);
@@ -3760,6 +3881,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForRelatedPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RelatedPerson', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('RelatedPerson', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RelatedPerson', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RelatedPerson', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('RelatedPerson', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3794,6 +3916,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForRequestGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RequestGroup', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('RequestGroup', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RequestGroup', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RequestGroup', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('RequestGroup', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3828,6 +3951,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForResearchDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ResearchDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ResearchDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ResearchDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3865,6 +3989,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForResearchElementDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchElementDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchElementDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ResearchElementDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ResearchElementDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ResearchElementDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3902,6 +4027,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchStudy', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchStudy', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ResearchStudy', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ResearchStudy', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ResearchStudy', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3931,6 +4057,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForResearchSubject(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchSubject', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ResearchSubject', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ResearchSubject', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ResearchSubject', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ResearchSubject', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3953,6 +4080,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RiskAssessment', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('RiskAssessment', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RiskAssessment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RiskAssessment', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('RiskAssessment', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -3982,6 +4110,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForRiskEvidenceSynthesis(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RiskEvidenceSynthesis', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('RiskEvidenceSynthesis', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RiskEvidenceSynthesis', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RiskEvidenceSynthesis', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('RiskEvidenceSynthesis', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4013,6 +4142,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Schedule', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Schedule', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Schedule', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Schedule', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Schedule', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4039,6 +4169,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SearchParameter', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SearchParameter', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SearchParameter', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SearchParameter', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SearchParameter', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4074,6 +4205,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForServiceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ServiceRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ServiceRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ServiceRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ServiceRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ServiceRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4116,6 +4248,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Slot', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Slot', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Slot', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Slot', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Slot', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4139,6 +4272,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Specimen', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Specimen', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Specimen', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Specimen', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Specimen', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4169,6 +4303,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSpecimenDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SpecimenDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SpecimenDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SpecimenDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SpecimenDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SpecimenDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4187,6 +4322,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('StructureDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('StructureDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('StructureDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('StructureDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4229,6 +4365,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureMap', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('StructureMap', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('StructureMap', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('StructureMap', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('StructureMap', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4260,6 +4397,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Subscription', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Subscription', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Subscription', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Subscription', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Subscription', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4281,6 +4419,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Substance', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Substance', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Substance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Substance', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Substance', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4304,6 +4443,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceNucleicAcid(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SubstanceNucleicAcid', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceNucleicAcid', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4319,6 +4459,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstancePolymer(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SubstancePolymer', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstancePolymer', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstancePolymer', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstancePolymer', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SubstancePolymer', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4334,6 +4475,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceProtein(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SubstanceProtein', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceProtein', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceProtein', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceProtein', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SubstanceProtein', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4349,6 +4491,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceReferenceInformation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SubstanceReferenceInformation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceReferenceInformation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceReferenceInformation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4364,6 +4507,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceSourceMaterial(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SubstanceSourceMaterial', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceSourceMaterial', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4379,6 +4523,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSubstanceSpecification(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SubstanceSpecification', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubstanceSpecification', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceSpecification', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceSpecification', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SubstanceSpecification', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4395,6 +4540,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SupplyDelivery', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SupplyDelivery', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SupplyDelivery', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SupplyDelivery', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SupplyDelivery', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4418,6 +4564,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SupplyRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SupplyRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SupplyRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SupplyRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('SupplyRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4444,6 +4591,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Task', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Task', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Task', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Task', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('Task', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4478,6 +4626,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForTerminologyCapabilities(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TerminologyCapabilities', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('TerminologyCapabilities', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('TerminologyCapabilities', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('TerminologyCapabilities', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('TerminologyCapabilities', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4508,6 +4657,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestReport', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('TestReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('TestReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('TestReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('TestReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4529,6 +4679,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestScript', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('TestScript', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('TestScript', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('TestScript', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('TestScript', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4560,6 +4711,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ValueSet', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('ValueSet', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ValueSet', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ValueSet', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('ValueSet', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4594,6 +4746,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForVerificationResult(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('VerificationResult', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('VerificationResult', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('VerificationResult', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('VerificationResult', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('VerificationResult', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);
@@ -4610,6 +4763,7 @@ end;
 procedure TFHIRIndexBuilderR4.buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('VisionPrescription', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('VisionPrescription', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('VisionPrescription', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('VisionPrescription', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
   indexes.add('VisionPrescription', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, [], 'Resource.meta.profile', sxpNormal);

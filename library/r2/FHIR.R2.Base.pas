@@ -40,6 +40,7 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function JSType : String; override;
   end;
 
   TFHIRObjectX = TFHIRObject2;
@@ -50,6 +51,7 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function JSType : String; override;
   end;
 
   TFHIRResourceX = TFHIRResource2;
@@ -65,6 +67,11 @@ uses
 function TFHIRObject2.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease2;
+end;
+
+function TFHIRObject2.JSType: String;
+begin
+  result := fhirType+'2';
 end;
 
 function TFHIRObject2.makeCodeValue(v: String): TFHIRObject;
@@ -88,6 +95,11 @@ end;
 function TFHIRResource2.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease2;
+end;
+
+function TFHIRResource2.JSType: String;
+begin
+  result := fhirType+'2';
 end;
 
 function TFHIRResource2.makeCodeValue(v: String): TFHIRObject;

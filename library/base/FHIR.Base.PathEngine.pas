@@ -218,6 +218,8 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TFHIRPathEngineV; overload;
+
     procedure registerExtension(extension : TFHIRPathEngineExtension);
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
     function parseV(source : String) : TFHIRPathExpressionNodeV; virtual; abstract;
@@ -319,6 +321,11 @@ begin
     result := path;
     focus := list;
   end;
+end;
+
+function TFHIRPathEngineV.link: TFHIRPathEngineV;
+begin
+  result := TFHIRPathEngineV(inherited link);
 end;
 
 procedure TFHIRPathEngineV.registerExtension(extension: TFHIRPathEngineExtension);

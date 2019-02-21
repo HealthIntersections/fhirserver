@@ -523,14 +523,10 @@ var
   iDate : integer;
   iIndex : Cardinal;
   iTemp : Cardinal;
-  iDesc : Integer;
 //  iv3Id : Integer;
-  iId : integer;
-  iCount : Integer;
   iLast : UInt64;
   iModule : integer;
   iTerm : Uint64;
-  iEntry : Integer;
 
   oConcept : TConcept;
   iLoop : Integer;
@@ -547,7 +543,7 @@ Begin
   begin
     s := LoadFile(ConceptFiles[fi]);
     iCursor := -1;
-    iCount := 0;
+//    iCount := 0;
     iCursor := Next(13) + 2;
     While iCursor < Length(s) Do
     Begin
@@ -557,12 +553,12 @@ Begin
       iStatus := Next(9);
       iModule := Next(9);
       iCursor := Next(13); // also is status
-      iDesc := 0;
-      iId := 0;
+//      iDesc := 0;
+//      iId := 0;
 
       iTerm := StrToUInt64(ascopy(s, iStart, iConcept - iStart));
       oConcept := TConcept.Create;
-      iEntry := FConcepts.Add(oConcept);
+//      iEntry := FConcepts.Add(oConcept);
   //      if TrackConceptDuplicates then
   //        FConceptMap.Add(iTerm, iEntry);
       oConcept.Identity := iTerm;
@@ -689,7 +685,7 @@ End;
 procedure TSnomedImporter.ReadDescriptionsFile;
 var
   s : TBytes;
-  iCount, iCursor : Integer;
+  iCursor : Integer;
   iStart, iId, iStatus, iConcept, iTerm, iCaps, iType, iLang, iDate, iModuleId, iConceptStart, iTermStart : Integer;
   oConcept : TConcept;
   iDescId : UInt64;
@@ -718,7 +714,6 @@ begin
   Progress(STEP_READ_DESC, 0, 'Read Description File');
   SetLength(aIndex, 10000);
   aIndexLength := 0;
-  iCount := 0;
   for fi := 0 to DescriptionFiles.Count - 1 do
   begin
     s := LoadFile(DescriptionFiles[fi]);
@@ -778,7 +773,6 @@ begin
       inc(OverallCount);
       if OverallCount mod UPDATE_FREQ_D = 0 then
         Progress(STEP_READ_DESC, iCursor / Length(s), '');
-      inc(iCount);
     End;
   end;
   Progress(STEP_SORT_DESC, 0, 'Sort Descriptions');
@@ -858,7 +852,6 @@ var
   iDate : integer;
   fi : integer;
 
-  iCount : Integer;
  // iIndex : Integer;
   oSource : TConcept;
   oTarget : TConcept;
@@ -901,7 +894,6 @@ Begin
     s := LoadFile(RelationshipFiles[fi]);
     line := 1; // going to skip the first line
     iCursor := -1;
-    iCount := 0;
     iCursor := Next(13) + 2;
     While iCursor < Length(s) Do
     Begin
@@ -964,7 +956,6 @@ Begin
       inc(OverallCount);
       if OverallCount mod UPDATE_FREQ_D = 0 then
         Progress(STEP_READ_REL, fi / RelationshipFiles.Count, '');
-      inc(iCount);
     End;
   End;
 End;
@@ -1744,7 +1735,7 @@ End;
 procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String; isLangRefset : boolean);
 var
   s : TBytes;
-  i, iId, iTime, iDate, iActive, iModule, iRefSetId, iRefComp, l, c : Integer;
+  i, iId, iTime, iDate, iActive, iModule, iRefSetId, iRefComp : Integer;
   sId, sActive, sRefSetId, sRefComp, sModule, sDate : String;
   iRef : UInt64;
 
@@ -1801,11 +1792,8 @@ begin
   try
     for name in sActive.Split([#9]) do
       fieldnames.add(name.trim);
-    l := Length(s);
-    c := 0;
     While iCursor < Length(s) Do
     Begin
-      inc(c);
       iId := iCursor;
       iDate := Next(9);
       iTime := Next(9);
@@ -1847,8 +1835,6 @@ begin
           sVals[i] := ascopy(s, iRefComp+1, integer(offsets[i]) - (iRefComp + 1))
         else
           sVals[i] := ascopy(s, offsets[i-1]+1, offsets[i] - (offsets[i-1] + 1));
-        iVal := 0;
-        iType := 0;
         case types[i] of
           99 {c} :
             begin

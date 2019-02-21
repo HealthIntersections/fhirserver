@@ -889,9 +889,7 @@ var
   em : TFhirConceptMapGroupElementW;
   map : TFhirConceptMapGroupElementTargetW;
   outcome : TFHIRCodingW;
-  found : boolean;
 begin
-  result := nil;
   op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
   try
     try
@@ -913,7 +911,6 @@ begin
         p.Free;
       end;
 
-      found := false;
       result := Factory.wrapParams(factory.makeResource('Parameters'));
       list := GetConceptMapList;
       try
@@ -922,14 +919,12 @@ begin
           cm := list[i];
           if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
           try
-            found := true;
             if em.targetCount = 0 then
               raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
             for map in em.targets.forEnum do
             begin
               if (map.equivalence in [cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
               begin
-                found := true;
                 result.addParamBool('result', true);
                 outcome := factory.wrapCoding(factory.makeByName('Coding'));
                 result.AddParam('outcome', outcome);
@@ -951,11 +946,8 @@ begin
         list.Free;
       end;
 
-      if not found then
-      begin
-        result.AddParamBool('result', false);
-        result.AddParamStr('message', 'no match found');
-      end;
+      result.AddParamBool('result', false);
+      result.AddParamStr('message', 'no match found');
     except
       on e : exception do
       begin
@@ -1293,10 +1285,8 @@ var
   em : TFhirConceptMapGroupElementW;
   map : TFhirConceptMapGroupElementTargetW;
   outcome : TFHIRCodingW;
-  found : boolean;
   p :  TFhirParametersParameterW;
 begin
-  result := nil;
   op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
   try
     try
@@ -1318,18 +1308,15 @@ begin
 //        p.Free;
 //      end;
 
-      found := false;
       result := Factory.wrapParams(factory.makeResource('Parameters'));
       if isOkSource(cm, coding, g, em) then
       try
-        found := false;
         if em.targetCount = 0 then
           raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
         for map in em.targets.forEnum do
         begin
           if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
           begin
-            found := true;
             result.AddParamBool('result', true);
             outcome := Factory.wrapCoding(factory.makeByName('Coding'));
             try
@@ -1346,11 +1333,8 @@ begin
             break;
           end;
         end;
-        if not found then
-        begin
-          result.AddParamBool('result', false);
-          result.AddParamStr('message', 'no match found');
-        end;
+        result.AddParamBool('result', false);
+        result.AddParamStr('message', 'no match found');
       finally
         em.free;
         g.free;

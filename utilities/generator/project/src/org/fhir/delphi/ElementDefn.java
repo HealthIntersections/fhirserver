@@ -480,7 +480,7 @@ public class ElementDefn {
       types.add(tr);
     } else {
       for (TypeRefComponent t : ed.getType()) {
-        if (t.getCode().equals("Reference") && t.hasProfile()) {
+        if ("Reference".equals(t.getCode()) && t.hasProfile()) {
           String ref = t.getProfile().get(0).getValue().substring(40);
           if (ref.equals("Resource"))
             ref = "Any";
@@ -505,7 +505,7 @@ public class ElementDefn {
       }
     }
 
-    if (types.size() == 1 && (types.get(0).getName().equals("Element") || types.get(0).getName().equals("BackboneElement"))) 
+    if (types.size() == 1 && ("Element".equals(types.get(0).getName()) || "BackboneElement".equals(types.get(0).getName()))) 
       types.clear();
     if (typeCode().equals("boolean|integer|decimal|base64Binary|instant|string|uri|date|dateTime|time|code|oid|id|unsignedInt|positiveInt|markdown|Annotation|Attachment|Identifier|CodeableConcept|Coding|Quantity|Range|Period|Ratio|SampledData|Signature|HumanName|Address|ContactPoint|Timing|Reference|Meta")) {
       types.clear();

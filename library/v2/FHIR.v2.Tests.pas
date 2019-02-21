@@ -662,7 +662,7 @@ begin
   fpe := TFHIRPathEngine.Create(nil, nil);
   try
     fpe.registerExtension(TV2FHIRPathExtensions.create);
-    js := TFHIRJavascript.Create('ChakraCore.dll', nil, registerFHIRTypes);
+    js := TFHIRJavascript.Create;
     try
       TV2JavascriptHelper.registerv2Objects(js, fpe);
       js.execute(JS_TEST_SCRIPT, '', 'test', []);

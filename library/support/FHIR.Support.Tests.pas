@@ -82,7 +82,7 @@ Type
   TFslTestObjectList = class (TFslObjectList)
   private
   protected
-    function itemClass : TFslObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
   end;
 
@@ -107,7 +107,7 @@ type
     [TestCase] procedure TestKCriticalSectionSimple;
     [TestCase] procedure TestSemaphore;
     [TestCase] procedure TestTemp;
-    [TestCase] procedure TestDateTimeEx;
+    [TestCase] procedure TesTFslDateTime;
     [TestCase] procedure TestAdvFile;
   end;
 
@@ -657,6 +657,7 @@ implementation
 
 { TFslGenericsTests }
 
+{$HINTS OFF}
 procedure TFslGenericsTests.testSimple;
 var
   l : TFslList<TFslObject>;
@@ -672,6 +673,7 @@ begin
     l.Free;
   end;
 end;
+{$HINTS ON}
 
 procedure TFslGenericsTests.testSort;
 var
@@ -831,7 +833,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\xml-patch-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\xml-patch-tests.xml', [xpResolveNamespaces]);
   try
     test := tests.document.first;
     i := 0;
@@ -891,7 +893,7 @@ end;
 
 procedure TXmlPatchTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\xml-patch-tests.xml', [xpResolveNamespaces, xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\xml-patch-tests.xml', [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
@@ -951,7 +953,7 @@ var
   path : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1051,7 +1053,7 @@ end;
 
 procedure TXPathParserTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
   functionNames := TStringList.Create;
 end;
 
@@ -1069,7 +1071,7 @@ var
   tcase : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1300,10 +1302,10 @@ end;
 
 procedure TXPathEngineTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
   tests.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
   tests.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
-  mstests := TMsXmlParser.Parse('C:\work\org.hl7.fhir\build\tests\xml\xpath-tests.xml');
+  mstests := TMsXmlParser.Parse('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml');
   mstests.setProperty('SelectionNamespaces','xmlns:f=''http://hl7.org/fhir'' xmlns:h=''http://www.w3.org/1999/xhtml''');
 end;
 
@@ -3733,7 +3735,7 @@ Const
 
 procedure TOSXTests.test60sec;
 begin
-  TDateTimeEx.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34, 60, 0), dttzUnknown).toHL7
+  TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34, 60, 0), dttzUnknown).toHL7
 end;
 
 procedure TOSXTests.TestAdvFile;
@@ -3890,39 +3892,39 @@ begin
   Assert.IsNotEmpty(SystemTemp);
 end;
 
-procedure TOSXTests.TestDateTimeEx;
+procedure TOSXTests.TesTFslDateTime;
 var
-  d1, d2 : TDateTimeEx;
+  d1, d2 : TFslDateTime;
   dt1, dt2 : Double;
 begin
   // null
   Assert.IsTrue(d1.null);
   Assert.IsFalse(d1.notNull);
-  d1 := TDateTimeEx.makeToday;
+  d1 := TFslDateTime.makeToday;
   Assert.IsTrue(d1.notNull);
   Assert.IsFalse(d1.null);
-  d1 := TDateTimeEx.makeNull;
+  d1 := TFslDateTime.makeNull;
   Assert.IsTrue(d1.null);
   Assert.IsFalse(d1.notNull);
 
   // format support
-  Assert.IsTrue(TDateTimeEx.fromXML('2013-04-05T12:34:56').toHL7 = '20130405123456');
-  Assert.IsTrue(TDateTimeEx.fromXML('2013-04-05T12:34:56Z').toHL7 = '20130405123456Z');
-  Assert.IsTrue(TDateTimeEx.fromXML('2013-04-05T12:34:56+10:00').toHL7 = '20130405123456+1000');
-  Assert.IsTrue(TDateTimeEx.fromXML('2013-04-05T12:34:56-10:00').toHL7 = '20130405123456-1000');
-  Assert.IsTrue(TDateTimeEx.fromXML('2013-04-05').toHL7 = '20130405');
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456-1000').toXML = '2013-04-05T12:34:56-10:00');
+  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56').toHL7 = '20130405123456');
+  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56Z').toHL7 = '20130405123456Z');
+  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56+10:00').toHL7 = '20130405123456+1000');
+  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56-10:00').toHL7 = '20130405123456-1000');
+  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05').toHL7 = '20130405');
+  Assert.IsTrue(TFslDateTime.fromHL7('20130405123456-1000').toXML = '2013-04-05T12:34:56-10:00');
 
   // Date Time conversion
-  Assert.IsTrue(TDateTimeEx.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000');
+  Assert.IsTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000');
   Assert.WillRaise(test60Sec);
   dt1 := EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0);
-  dt2 := TDateTimeEx.fromHL7('20130405123456').DateTime;
+  dt2 := TFslDateTime.fromHL7('20130405123456').DateTime;
   Assert.IsTrue(dt1 = dt2);
 
   // comparison
-  d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal);
-  d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(15, 0, 0, 0), dttzLocal);
+  d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal);
+  d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(15, 0, 0, 0), dttzLocal);
   Assert.IsTrue(d2.after(d1, false));
   Assert.IsFalse(d1.after(d1, false));
   Assert.IsTrue(d1.after(d1, true));
@@ -3936,37 +3938,37 @@ begin
   Assert.IsTrue(d1.compare(d1) = 0);
 
   // Timezone Wrangling
-  d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
-  d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
+  d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
+  d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
   Assert.IsTrue(sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
   Assert.IsTrue(not d1.equal(d2));
   Assert.IsTrue(d1.sameTime(d2));
-  d1 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
-  d2 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
+  d1 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
+  d2 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
   dt1 := d1.DateTime - TimezoneBias(EncodeDate(2011, 7, 2));
   dt2 := d2.DateTime;
   Assert.IsTrue(sameInstant(dt1, dt2));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
   Assert.IsTrue(not d1.equal(d2));
   Assert.IsTrue(d1.sameTime(d2));
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405120000+1000').sameTime(TDateTimeEx.fromHL7('20130405100000+0800')));
-  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
-  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
-  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T05:30:00.0Z')));
-  Assert.IsTrue(TDateTimeEx.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TDateTimeEx.fromXML('2017-11-05T01:30:00.0-04:00')));
+  Assert.IsTrue(TFslDateTime.fromHL7('20130405120000+1000').sameTime(TFslDateTime.fromHL7('20130405100000+0800')));
+  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
+  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00')));
 
 
   // Min/Max
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000');
-  Assert.IsTrue(TDateTimeEx.fromHL7('201304051234').Min.toHL7 = '20130405123400.000');
-  Assert.IsTrue(TDateTimeEx.fromHL7('201304051234').Max.toHL7 = '20130405123500.000');
+  Assert.IsTrue(TFslDateTime.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
+  Assert.IsTrue(TFslDateTime.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000');
+  Assert.IsTrue(TFslDateTime.fromHL7('201304051234').Min.toHL7 = '20130405123400.000');
+  Assert.IsTrue(TFslDateTime.fromHL7('201304051234').Max.toHL7 = '20130405123500.000');
 
-  Assert.IsTrue(TDateTimeEx.fromHL7('201301010000').before(TDateTimeEx.fromHL7('201301010000'), true));
-  Assert.IsTrue(not TDateTimeEx.fromHL7('201301010000').before(TDateTimeEx.fromHL7('201301010000'), false));
-  Assert.IsTrue(TDateTimeEx.fromHL7('201301010000').before(TDateTimeEx.fromHL7('201301010001'), true));
-  Assert.IsTrue(not TDateTimeEx.fromHL7('201301010001').before(TDateTimeEx.fromHL7('201301010000'), true));
+  Assert.IsTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), true));
+  Assert.IsTrue(not TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), false));
+  Assert.IsTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010001'), true));
+  Assert.IsTrue(not TFslDateTime.fromHL7('201301010001').before(TFslDateTime.fromHL7('201301010000'), true));
   //
 //  d1 := UniversalDateTime;
 //  d2 := LocalDateTime;

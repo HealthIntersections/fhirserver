@@ -75,7 +75,6 @@ uses
   FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas',
   FHIR.Support.Signatures in '..\library\support\FHIR.Support.Signatures.pas',
   FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
   FHIR.Support.Turtle in '..\library\support\FHIR.Support.Turtle.pas',
   FHIR.Support.Utilities in '..\library\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Xml in '..\library\support\FHIR.Support.Xml.pas',
@@ -132,7 +131,14 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
-  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas';
+  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
+  FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
+  FHIR.Transformer.MarkdownPreview in 'FHIR.Transformer.MarkdownPreview.pas' {MarkdownPreviewForm},
+  FHIR.Conversion.Engine in '..\library\conversion\FHIR.Conversion.Engine.pas',
+  FHIR.Transformer.ExecConfig in 'FHIR.Transformer.ExecConfig.pas' {TransformerExecConfigForm},
+  FHIR.R4.Javascript in '..\library\r4\FHIR.R4.Javascript.pas',
+  FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas',
+  FHIR.Cda.Javascript in '..\library\cda\FHIR.Cda.Javascript.pas';
 
 {$R *.res}
 
@@ -145,5 +151,7 @@ begin
   Application.CreateForm(TFHIRPathDebuggerForm, FHIRPathDebuggerForm);
   Application.CreateForm(TWorkingForm, WorkingForm);
   Application.CreateForm(TFileChangedForm, FileChangedForm);
+  Application.CreateForm(TMarkdownPreviewForm, MarkdownPreviewForm);
+  Application.CreateForm(TTransformerExecConfigForm, TransformerExecConfigForm);
   Application.Run;
 end.

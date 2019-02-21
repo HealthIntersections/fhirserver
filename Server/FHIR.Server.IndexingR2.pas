@@ -795,7 +795,7 @@ begin
     raise EFHIRException.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType = sptDate) then
     raise EFHIRException.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing date');
-  FEntries.add(key, parent, ndx, 0, TDateTimeEx.make(min, dttzUnknown).toHL7, TDateTimeEx.make(max, dttzUnknown).toHL7, 0, '', ndx.SearchType);
+  FEntries.add(key, parent, ndx, 0, TFslDateTime.make(min, dttzUnknown).toHL7, TFslDateTime.make(max, dttzUnknown).toHL7, 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager2.index(aType : String; key, parent : integer; value: TFhirIdentifier; name: String);

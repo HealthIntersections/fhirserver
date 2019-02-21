@@ -1122,7 +1122,6 @@ var
   cm, cm1 : TLoadedConceptMap;
   cs : TFhirCodeSystemW;
 begin
-  vs := nil;
   FLock.Lock('DropTerminologyResource');
   try
     if (aType = 'ValueSet') then

@@ -250,7 +250,6 @@ function usesSmartOnFHIR(conf : TFhirCapabilityStatementW; var authorize, token,
 //  cc : TFhirCodeableConcept;
 //  ex1, ex2 : TFhirExtension;
 begin
-  result := false;
   authorize := '';
   token := '';
   if not conf.hasRest then
@@ -272,8 +271,6 @@ var
   json : TJSONObject;
   s : String;
 begin
-  result := nil;
-
   post := TBytesStream.create(TEncoding.UTF8.getBytes(request));
   try
     http := TIdHTTP.Create(nil);

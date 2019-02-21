@@ -32,11 +32,11 @@ interface
 uses
   Windows, Sysutils, Classes, IniFiles,
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests, FHIR.Support.Json,
   FHIR.Base.Factory,
-  FHIR.Version.Constants, FHIR.Version.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Version.Types, FHIR.Version.Resources,
-  FHIR.Version.Utilities, FHIR.Version.Validator, FHIR.Version.IndexInfo, FHIR.R4.Javascript,
-  FHIR.Version.Factory, FHIR.Tools.Indexing, FHIR.Javascript.Base,
+  FHIR.R4.Constants, FHIR.R4.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.R4.Types, FHIR.R4.Resources,
+  FHIR.R4.Utilities, FHIR.R4.Validator, FHIR.R4.IndexInfo, FHIR.R4.Javascript,
+  FHIR.R4.Factory, FHIR.Tools.Indexing, FHIR.Javascript.Base,
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
   FHIR.Smart.Utilities, FHIR.Tests.SmartLogin,
   FHIR.Tx.Server,
@@ -116,6 +116,8 @@ Type
     FLastUserEvidence : TFHIRUseridEvidence;
     FLastSystemEvidence : TFHIRSystemIdEvidence;
     FContext : TFHIRServerContext;
+    FServer : TFhirWebServer;
+    FEndpoint : TFhirWebServerEndpoint;
 
     FOAuths : TFslMap<TTestOAuthLogin>;
 
@@ -127,12 +129,13 @@ Type
     constructor Create(factory : TFHIRFactory); override;
     destructor Destroy; override;
     procedure RecordFhirSession(session: TFhirSession); override;
-    procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); override;
+    procedure QueueResource(r: TFhirResourceV; dateTime: TFslDateTime); override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
-    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; override;
+    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; overload; override;
+    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope : String) : boolean; overload; override;
     procedure updateOAuthSession(id : String; state, key : integer; var client_id : String); override;
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
@@ -172,6 +175,8 @@ Type
     FClientSSLCert : TFhirClient;
     FEndpoint : TFhirWebServerEndpoint;
     procedure registerJs(snder : TObject; js : TJsHost);
+    function SslGet(url: String): TFHIRResource;
+    function getJson(url: String): TJsonObject;
   public
     [Setup] procedure Setup;
     [TearDown] procedure TearDown;
@@ -187,7 +192,14 @@ Type
     [TestCase] Procedure TestPatientExampleXml;
     [TestCase] Procedure TestPatientExampleSSL;
     [TestCase] Procedure TestPatientExampleOWin;
+
+    [TestCase] procedure TestSmartStandaloneLaunchCS;
+    [TestCase] procedure TestSmartStandaloneLaunchWK;
+    [TestCase] procedure TestSmartStandaloneLaunchNU;
+    [TestCase] procedure TestSmartStandaloneLaunchError;
+    [TestCase] procedure TestSmartStandaloneLaunchBadRedirect;
     [TestCase] Procedure TestPatientExampleSmartOnFhir;
+
     [TestCase] Procedure TestConformanceCertificateNone;
     [TestCase] Procedure TestConformanceCertificate;
     [TestCase] Procedure TestConformanceCertificateNotOk;
@@ -243,7 +255,7 @@ begin
   result := 1;
 end;
 
-procedure TTestStorageService.QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx);
+procedure TTestStorageService.QueueResource(r: TFhirResourceV; dateTime: TFslDateTime);
 begin
 end;
 
@@ -322,6 +334,22 @@ end;
 procedure TTestStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
 begin
   raise EFslException.Create('Not Implemented');
+end;
+
+function TTestStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
+var
+  l : TTestOAuthLogin;
+begin
+  result := FOAuths.ContainsKey(id);
+  if result then
+  begin
+    l := FOAuths[id];
+    client_id := l.client_id;
+    redirect := l.redirect;
+    state := l.state;
+    scope := l.scope;
+  end;
+
 end;
 
 function TTestStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
@@ -465,6 +493,8 @@ var
   oConf : TFhirCapabilityStatement;
   c : TFhirContactPoint;
   ct: TFhirContactDetail;
+  rest : TFhirCapabilityStatementRest;
+  ext : TFhirExtension;
 begin
   FStorage.FLastReadUser := request.Session.Username;
   FStorage.FLastReadSystem := request.Session.SystemName;
@@ -486,11 +516,17 @@ begin
   oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
   oConf.status := PublicationStatusActive;
   oConf.experimental := false;
-  oConf.date := TDateTimeEx.makeUTC;
+  oConf.date := TFslDateTime.makeUTC;
   oConf.software := TFhirCapabilityStatementSoftware.Create;
   oConf.software.name := 'Reference Server';
   oConf.software.version := SERVER_VERSION;
-  oConf.software.releaseDate := TDateTimeEx.fromXml(SERVER_RELEASE_DATE);
+  oConf.software.releaseDate := TFslDateTime.fromXml(SERVER_RELEASE_DATE);
+
+  rest := oConf.restList.Append;
+  rest.security := TFhirCapabilityStatementRestSecurity.Create;
+  ext := rest.security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris');
+  ext.addExtension('authorize', 'https://'+FStorage.FServer.host+':'+inttostr(FStorage.FServer.SSLPort)+FStorage.FEndpoint.path + FStorage.FEndpoint.AuthServer.AuthPath);
+  ext.addExtension('token', 'https://'+FStorage.FServer.host+':'+inttostr(FStorage.FServer.SSLPort)+FStorage.FEndpoint.path + FStorage.FEndpoint.AuthServer.TokenPath);
 end;
 
 function TTestFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;
@@ -563,9 +599,33 @@ begin
 end;
 { TRestFulServerTests }
 
+function TRestFulServerTests.getJson(url: String): TJsonObject;
+var
+  http : TIdHTTP;
+  resp : TBytesStream;
+  fmt : TFHIRFormat;
+begin
+  http := TIdHTTP.Create(nil);
+  Try
+    http.Request.Accept := 'application/fhir+json';
+    resp := TBytesStream.create;
+    try
+      http.Get(FEndpoint.ClientAddress(false)+url, resp);
+      resp.position := 0;
+      fmt := ffJson;
+      result := TJSONParser.Parse(resp);
+    finally
+      resp.free;
+    end;
+  finally
+    http.free;
+  end;
+end;
+
 procedure TRestFulServerTests.registerJs(snder: TObject; js: TJsHost);
 begin
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
 end;
 
 procedure TRestFulServerTests.Setup;
@@ -590,6 +650,8 @@ begin
   FServer.OWinSecuritySecure := true;
   FServer.ServeMissingCertificate := true;
   FServer.ServeUnknownCertificate := true;
+  FStore.FServer := FServer;
+  FStore.FEndpoint := FEndpoint;
   FServer.Start(true);
 
   FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(false), false);
@@ -1060,15 +1122,16 @@ begin
   tester := TSmartOnFhirTestingLogin.create;
   try
     tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-    tester.server.authorizeEndpoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.AuthServer.AuthPath;
-    tester.server.tokenEndPoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.AuthServer.TokenPath;
+    tester.server.host := 'localhost';
+    tester.server.authorizeEndpoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.path + FEndpoint.AuthServer.AuthPath;
+    tester.server.tokenEndPoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.path + FEndpoint.AuthServer.TokenPath;
     tester.scopes := 'openid profile user/*.*';
     tester.server.clientid := 'web';
     tester.server.redirectport := 961;
     tester.server.clientsecret := 'this-password-is-never-used';
     tester.username := 'test';
     tester.password := 'test';
-    tester.login;
+    tester.login(stmAllOk);
     FClientSSL.SmartToken := tester.token.link;
   finally
     tester.Free;
@@ -1140,6 +1203,238 @@ begin
   Assert.IsTrue(FStore.FLastSystemEvidence = systemUnknown, 'SystemEvidence should be "'+CODES_SystemIdEvidence[systemUnknown]+'" not "'+CODES_SystemIdEvidence[FStore.FLastSystemEvidence]+'"');
 end;
 
+procedure TRestFulServerTests.TestSmartStandaloneLaunchBadRedirect;
+var
+  json : TJsonObject;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  json := getJson('/.well-known/smart-configuration');
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
+      tester.server.tokenEndPoint := json.str['token_endpoint'];
+      tester.scopes := 'openid profile user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      Assert.WillRaiseWithMessage(procedure begin
+        tester.login(stmBadRedirect);
+        end, EFHIRException, 'HTTP/1.1 400 Bad Request');
+    finally
+      tester.Free;
+    end;
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TRestFulServerTests.TestSmartStandaloneLaunchCS;
+var
+  cs : TFhirCapabilityStatement;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  cs := sslGet('/metadata') as TFhirCapabilityStatement;
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := cs.restList[0].security.getExtensionByUrl('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris').getExtensionString('authorize');
+      tester.server.tokenEndPoint := cs.restList[0].security.getExtensionByUrl('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris').getExtensionString('token');
+      tester.scopes := 'openid fhirUser user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      tester.login(stmAllOk);
+      FClientSSL.SmartToken := tester.token.link;
+    finally
+      tester.Free;
+    end;
+    Assert.IsTrue(FClientSSL.SmartToken.idToken <> nil);
+    res := FClientSSL.readResource(frtPatient, 'example');
+    try
+      Assert.IsNotNull(res, 'no resource returned');
+      Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
+      Assert.IsTrue(res.id = 'example');
+    finally
+      res.Free;
+    end;
+  finally
+    cs.Free;
+  end;
+end;
+
+procedure TRestFulServerTests.TestSmartStandaloneLaunchError;
+var
+  json : TJsonObject;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  json := getJson('/.well-known/smart-configuration');
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
+      tester.server.tokenEndPoint := json.str['token_endpoint'];
+      tester.scopes := 'openid profile user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      Assert.WillRaiseWithMessage(procedure begin
+        tester.login(stmBadLogin);
+        end, EFHIRException, 'http://localhost:961/done?error=access_denied&error_description=Login%20failed&state='+tester.state);
+
+    finally
+      tester.Free;
+    end;
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TRestFulServerTests.TestSmartStandaloneLaunchNU;
+var
+  json : TJsonObject;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  json := getJson('/.well-known/smart-configuration');
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
+      tester.server.tokenEndPoint := json.str['token_endpoint'];
+      tester.scopes := 'user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      tester.login(stmAllOk);
+      FClientSSL.SmartToken := tester.token.link;
+    finally
+      tester.Free;
+    end;
+    Assert.IsTrue(FClientSSL.SmartToken.idToken = nil);
+    res := FClientSSL.readResource(frtPatient, 'example');
+    try
+      Assert.IsNotNull(res, 'no resource returned');
+      Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
+      Assert.IsTrue(res.id = 'example');
+    finally
+      res.Free;
+    end;
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TRestFulServerTests.TestSmartStandaloneLaunchWK;
+var
+  json : TJsonObject;
+  tester : TSmartOnFhirTestingLogin;
+  res : TFhirResource;
+begin
+  FClientSSL.smartToken := nil;
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
+
+  json := getJson('/.well-known/smart-configuration');
+  try
+    tester := TSmartOnFhirTestingLogin.create;
+    try
+      tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+      tester.server.host := 'localhost';
+      tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
+      tester.server.tokenEndPoint := json.str['token_endpoint'];
+      tester.scopes := 'openid profile user/*.*';
+      tester.server.clientid := 'web';
+      tester.server.redirectport := 961;
+      tester.server.clientsecret := 'this-password-is-never-used';
+      tester.username := 'test';
+      tester.password := 'test';
+      tester.login(stmAllOk);
+      FClientSSL.SmartToken := tester.token.link;
+    finally
+      tester.Free;
+    end;
+    Assert.IsTrue(FClientSSL.SmartToken.idToken <> nil);
+    res := FClientSSL.readResource(frtPatient, 'example');
+    try
+      Assert.IsNotNull(res, 'no resource returned');
+      Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
+      Assert.IsTrue(res.id = 'example');
+    finally
+      res.Free;
+    end;
+  finally
+    json.Free;
+  end;
+end;
+
+function TRestFulServerTests.SslGet(url : String) : TFHIRResource;
+var
+  http : TIdHTTP;
+  resp : TBytesStream;
+  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  fmt : TFHIRFormat;
+begin
+  http := TIdHTTP.Create(nil);
+  Try
+    ssl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
+    Try
+      http.IOHandler := ssl;
+      ssl.SSLOptions.Mode := sslmClient;
+      ssl.SSLOptions.Method := sslvTLSv1_2;
+      http.Request.Accept := 'application/fhir+json';
+      resp := TBytesStream.create;
+      try
+        http.Get(FEndpoint.ClientAddress(true)+url, resp);
+        resp.position := 0;
+        fmt := ffJson;
+        result := streamToResource(resp, fmt);
+      finally
+        resp.free;
+      end;
+    finally
+      ssl.free;
+    end;
+  finally
+    http.free;
+  end;
+end;
+
 procedure TRestFulServerTests.TestSSL;
 var
   http : TIdHTTP;
@@ -1169,7 +1464,6 @@ begin
   finally
     http.free;
   end;
-
 end;
 
 procedure TRestFulServerTests.TestLowLevelJson;

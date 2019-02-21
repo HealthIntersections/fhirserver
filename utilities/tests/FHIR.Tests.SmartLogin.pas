@@ -33,9 +33,11 @@ uses
   SysUtils, Classes,
   IdHttp, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
+  FHIR.Base.Lang, FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
 
 type
+  TSmartTestMode = (stmAllOk, stmBadRedirect, stmBadLogin);
+
   TSmartOnFhirTestingLogin = class (TFslObject)
   private
     FScopes: String;
@@ -49,9 +51,10 @@ type
     function extractHost(url : String) : String;
     function fetch(url : String) : String;
     function fetchPost(url : String; body : string) : String;
+    function fetchPostRedirect(url : String; body : string) : String;
     procedure SetServer(const Value: TRegisteredFHIRServer);
-    function makeInitialRequest(var url : String) : String;
-    function makeFollowUpRequest(id, url: String) : String;
+    function makeInitialRequest(var url : String; mode : TSmartTestMode) : String;
+    function makeFollowUpRequest(id, url: String; mode : TSmartTestMode) : String;
     function makeFinalRequest(url: String) : String;
   public
     constructor Create; override;
@@ -62,10 +65,11 @@ type
     property token : TClientAccessToken read FToken;
     property username : String read FUserName write FUserName;
     property password : String read FPassword write FPassword;
+    property state : string read FInitialState;
 
-    procedure login;
-
+    procedure login(mode : TSmartTestMode);
   end;
+
 implementation
 
 { TSmartOnFhirTestingLogin }
@@ -76,11 +80,13 @@ begin
   FServer := TRegisteredFHIRServer.create;
   FClient := TIdHttp.Create(nil);
   FClient.AllowCookies := true;
-  FClient.HandleRedirects := true;
+  FClient.HandleRedirects := false;
+  FClient.HTTPOptions := FClient.HTTPOptions + [hoNoProtocolErrorException];
   FSsl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
   FClient.IOHandler := FSsl;
   FSsl.SSLOptions.Mode := sslmClient;
   FSsl.SSLOptions.Method := sslvTLSv1_2;
+  FInitialState := NewGuidId;
 end;
 
 destructor TSmartOnFhirTestingLogin.Destroy;
@@ -110,6 +116,8 @@ begin
   resp := TMemoryStream.create;
   try
     FClient.Get(url, resp);
+    if FClient.ResponseCode <> 200 then
+      raise EFHIRException.Create(FClient.ResponseText);
     resp.position := 0;
     result := StreamToString(resp, TEncoding.UTF8);
   finally
@@ -139,13 +147,33 @@ begin
   end;
 end;
 
-procedure TSmartOnFhirTestingLogin.login;
+function TSmartOnFhirTestingLogin.fetchPostRedirect(url : String; body : string) : String;
+var
+  post : TBytesStream;
+  resp : TMemoryStream;
+begin
+  FClient.Request.Accept := 'text/html';
+  FClient.Request.ContentType := 'application/x-www-form-urlencoded';
+  post := TBytesStream.create(TEncoding.ASCII.getBytes(body));
+  try
+    resp := TMemoryStream.create;
+    try
+      FClient.Post(url, post, resp);
+      result := FClient.Response.Location;
+    finally
+      resp.free;
+    end;
+  finally
+    post.Free;
+  end;
+end;
+
+procedure TSmartOnFhirTestingLogin.login(mode : TSmartTestMode);
 var
   id, url : String;
 begin
-  FInitialState := NewGuidId;
-  id := makeInitialRequest(url);
-  url := makeFollowupRequest(id, url);
+  id := makeInitialRequest(url, mode);
+  url := makeFollowupRequest(id, url, mode);
   url := makeFinalRequest(url);
   url := url.Substring(url.IndexOf('code=')+5);
   if url.Contains('&') then
@@ -156,33 +184,59 @@ end;
 
 function TSmartOnFhirTestingLogin.makeFinalRequest(url: String): String;
 var
+  cnt : String;
   page : String;
 begin
-  FClient.HandleRedirects := false;
-  FClient.HTTPOptions := FClient.HTTPOptions + [hoNoProtocolErrorException];
-  page := fetchPost(extractHost(server.authorizeEndpoint)+url,
-    'form=true&'+
-    'readClinical=1&writeClinical=1&readData=1&writeData=1&readMeds=1&writeMeds=1&readSchedule=1&writeSchedule=1&readAudit=1&writeAudit=1&readDocuments=1&writeDocuments=1&readFinancial=1&writeFinancial=1&readOther=1&writeOther=1');
+  if FScopes.Contains('openid') and (FScopes.Contains('fhirUser') or FScopes.Contains('profile')) then
+    cnt := 'form=true&'+
+      'userInfo=1&readClinical=1&writeClinical=1&readData=1&writeData=1&readMeds=1&writeMeds=1&readSchedule=1&writeSchedule=1&readAudit=1&writeAudit=1&readDocuments=1&writeDocuments=1&readFinancial=1&writeFinancial=1&readOther=1&writeOther=1'
+  else
+    cnt := 'form=true&'+
+      'readClinical=1&writeClinical=1&readData=1&writeData=1&readMeds=1&writeMeds=1&readSchedule=1&writeSchedule=1&readAudit=1&writeAudit=1&readDocuments=1&writeDocuments=1&readFinancial=1&writeFinancial=1&readOther=1&writeOther=1';
+  page := fetchPost(extractHost(server.authorizeEndpoint)+url, cnt);
   result := FClient.Response.Location;
 end;
 
-function TSmartOnFhirTestingLogin.makeFollowUpRequest(id, url: String): String;
+function TSmartOnFhirTestingLogin.makeFollowUpRequest(id, url: String; mode : TSmartTestMode): String;
 var
   page, l, r : String;
 begin
-  page := fetchPost(extractHost(server.authorizeEndpoint)+url,
-    'id='+id+'&'+
-    'username='+username+'&'+
-    'password='+password);
+  if mode = stmBadLogin then
+    page := fetchPostRedirect(extractHost(server.authorizeEndpoint)+url,
+      'id='+id+'&'+
+      'form=true&'+
+      'username='+username+'X'+'&'+
+      'password='+password+'X')
+  else
+    page := fetchPostRedirect(extractHost(server.authorizeEndpoint)+url,
+      'id='+id+'&'+
+      'form=true&'+
+      'username='+username+'&'+
+      'password='+password);
+  if page.Contains('error=') then
+    raise EFHIRException.Create(page);
+  page := fetch(page);
   StringSplit(page, '<form method="POST" action="', l, r);
   StringSplit(r, '"', result, r);
 end;
 
-function TSmartOnFhirTestingLogin.makeInitialRequest(var url : String) : String;
+function buildAuthUrl(server : TRegisteredFHIRServer; scopes, state : String; mode : TSmartTestMode) : String;
+begin
+  case mode of
+    stmAllOk, stmBadLogin:
+      result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://'+server.host+':'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
+    stmBadRedirect:
+      result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://'+server.host+'-invalid:'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
+  else
+    raise Exception.Create('not done yet');
+  end;
+end;
+
+function TSmartOnFhirTestingLogin.makeInitialRequest(var url : String; mode : TSmartTestMode) : String;
 var
   page, l, r : String;
 begin
-  url := buildAuthUrl(server, scopes, FInitialState);
+  url := buildAuthUrl(server, scopes, FInitialState, mode);
   page := fetch(url);
   StringSplit(page, '<form method="POST" action="', l, r);
   StringSplit(r, '"', url, r);

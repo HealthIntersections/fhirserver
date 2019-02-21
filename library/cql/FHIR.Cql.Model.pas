@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Stream,
   FHIR.Support.Base, 
-  FHIR.Base.Objects, FHIR.Version.PathNode;
+  FHIR.Base.Objects, FHIR.R4.PathNode;
 
 type
   TCqlContextType = (CqlContextPatient, CqlContextPopulation);
@@ -299,6 +299,7 @@ type
   TCqlExpressionDefinition = class (TCqlStatement)
   private
     FExpression: TCqlExpressionNode;
+    FAccess: TCqlAccessLevel;
     procedure SetExpression(const Value: TCqlExpressionNode);
   public
     constructor Create; override;
@@ -306,6 +307,7 @@ type
     function Link : TCqlExpressionDefinition; overload;
 
     property expression : TCqlExpressionNode read FExpression write SetExpression;
+    property access : TCqlAccessLevel read FAccess write FAccess;
   end;
 
   TCqlFunctionParameterDefinition = class (TCqlElement)

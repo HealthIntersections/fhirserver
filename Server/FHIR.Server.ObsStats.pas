@@ -244,8 +244,8 @@ begin
   try
     resp.addObs(obs.Resource.Link);
     obs.status := obssFinal;
-    obs.addCode(c);
-    obs.setSubj(subject);
+    obs.setCode(c);
+    obs.subject := subject;
     obs.setPeriod(start, finish);
     FAllData := TFslList<TObservation>.create;
     FValidData := TFslList<TObservation>.create;
@@ -489,13 +489,13 @@ end;
 
 function TObservationStatsEvaluator.genKurtosis: Double;
 var
-  av : Double;
+//  av : Double;
   obs : TObservation;
   t, m, d : double;
 begin
   if FKurtosis <> -MaxInt then
     exit(FKurtosis);
-  av := genAverage;
+  //av := genAverage;
   m := 0;
   d := 0;
   for Obs in FValidData do

@@ -107,7 +107,8 @@ uses
   FHIR.V2.Objects in '..\..\library\v2\FHIR.V2.Objects.pas',
   FHIR.v2.Publish in '..\..\library\v2\FHIR.v2.Publish.pas',
   FHIR.WP.Format in '..\..\library\wp\FHIR.WP.Format.pas',
-  FHIR.v2.Conformance in '..\..\library\v2\FHIR.v2.Conformance.pas';
+  FHIR.v2.Conformance in '..\..\library\v2\FHIR.v2.Conformance.pas',
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

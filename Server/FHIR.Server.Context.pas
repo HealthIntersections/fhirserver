@@ -89,9 +89,6 @@ Type
 
     FFormalURLPlain: String;
     FFormalURLSecure: String;
-    FFormalURLPlainOpen: String;
-    FFormalURLSecureOpen: String;
-    FFormalURLSecureClosed: String;
 
     FSupportTransaction: Boolean;
     FDoAudit: Boolean;
@@ -140,9 +137,6 @@ Type
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
     property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
-    property FormalURLPlainOpen: String read FFormalURLPlainOpen write FFormalURLPlainOpen;
-    property FormalURLSecureOpen: String read FFormalURLSecureOpen write FFormalURLSecureOpen;
-    property FormalURLSecureClosed: String read FFormalURLSecureClosed write FFormalURLSecureClosed;
     property TaskFolder : String read FTaskFolder;
     Property SupportTransaction: Boolean read FSupportTransaction write FSupportTransaction;
     Property DoAudit: Boolean read FDoAudit write FDoAudit;

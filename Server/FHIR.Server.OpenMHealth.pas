@@ -35,32 +35,35 @@ uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Server.Session;
 
 type
   TOpenMHealthAdaptor = class (TFHIRFormatAdaptor)
   private
-    function loadDataPoint(stream : TStream) : TFHIRObservation;
-    function readDataPoint(json : TJsonObject) : TFHIRObservation;
-    function readHeader(hdr: TJsonObject; obs: TFhirObservation) : String;
-    procedure readPhysicalActivity(body: TJsonObject; obs: TFhirObservation);
-    procedure readBloodGlucose(body: TJsonObject; obs: TFhirObservation);
-    function readTimeInterval(obj : TJsonObject) : TFHIRPeriod;
-    function readQuantity(obj : TJsonObject) : TFHIRQuantity;
+    FFactory : TFHIRFactory;
+    function loadDataPoint(stream : TStream) : TFHIRObservationW;
+    function readDataPoint(json : TJsonObject) : TFHIRObservationW;
+    function readHeader(hdr: TJsonObject; obs: TFHIRObservationW) : String;
+    procedure readPhysicalActivity(body: TJsonObject; obs: TFHIRObservationW);
+    procedure readBloodGlucose(body: TJsonObject; obs: TFHIRObservationW);
+    function readTimeInterval(obj : TJsonObject) : TFHIRPeriodW;
+    function readQuantity(obj : TJsonObject) : TFHIRQuantityW;
     function convertUCUMUnit(s : String) : String;
     function convertObsStat(s : String) : String;
 
-    procedure writeObservation(obs : TFHIRObservation; json : TJsonObject);
-    procedure writeBundle(obs : TFHIRBundle; json : TJsonObject);
-    function writeHeader(obs : TFHIRObservation; hdr : TJsonObject) : String;
-    procedure writePhysicalActivity(obs : TFHIRObservation; body : TJsonObject);
-    procedure writeBloodGlucose(obs : TFHIRObservation; body : TJsonObject);
-    function writePeriod(period : TFHIRPeriod) : TJsonObject;
-    function writeQuantity(qty : TFHIRQuantity) : TJsonObject;
+    procedure writeObservation(obs : TFHIRObservationW; json : TJsonObject);
+    procedure writeBundle(obs : TFHIRBundleW; json : TJsonObject);
+    function writeHeader(obs : TFHIRObservationW; hdr : TJsonObject) : String;
+    procedure writePhysicalActivity(obs : TFHIRObservationW; body : TJsonObject);
+    procedure writeBloodGlucose(obs : TFHIRObservationW; body : TJsonObject);
+    function writePeriod(period : TFHIRPeriodW) : TJsonObject;
+    function writeQuantity(qty : TFHIRQuantityW) : TJsonObject;
     function unconvertUCUMUnit(s : String) : String;
     function unconvertObsStat(s : String) : String;
   public
+    constructor Create(factory : TFHIRFactory);
+    destructor Destroy; override;
     procedure load(req : TFHIRRequest; stream : TStream); override;
     function NewIdStatus : TCreateIdState; override;
     function ResourceName : String; override;
@@ -82,10 +85,10 @@ begin
   try
     if response.Resource = nil then
       raise EFHIRException.create('Cannot represent a resource of (nil) as an OpenMHealth data point')
-    else if response.Resource is TFHIRObservation then
-      writeObservation(response.Resource as TFHIRObservation, json)
-    else if response.Resource is TFHIRBundle then
-      writeBundle(response.Resource as TFHIRBundle, json)
+    else if response.Resource.fhirType = 'Observation' then
+      writeObservation(FFactory.wrapObservation(response.Resource.link), json)
+    else if response.Resource.fhirType = 'Bundle' then
+      writeBundle(FFactory.wrapBundle(response.Resource.link), json)
     else
       raise EFHIRException.create('Cannot represent a resource of type '+response.Resource.fhirType+' as an OpenMHealth data point');
     TJSONWriter.writeObject(stream, json, true);
@@ -154,6 +157,18 @@ begin
     result := s;
 end;
 
+constructor TOpenMHealthAdaptor.Create(factory: TFHIRFactory);
+begin
+  inherited Create;
+  FFactory := factory;
+end;
+
+destructor TOpenMHealthAdaptor.Destroy;
+begin
+  FFactory.free;
+  inherited;
+end;
+
 procedure TOpenMHealthAdaptor.editSearch(req: TFHIRRequest);
 var
   p : String;
@@ -171,14 +186,21 @@ begin
 end;
 
 procedure TOpenMHealthAdaptor.load(req: TFHIRRequest; stream : TStream);
+var
+  obs : TFhirObservationW;
 begin
   req.PostFormat := ffJson;
-  req.Resource := loadDataPoint(stream);
+  obs := loadDataPoint(stream);
+  try
+    req.Resource := obs.Resource.link;
+  finally
+    obs.free;
+  end;
   req.ResourceName := 'Observation';
   req.Id := req.Resource.id;
 end;
 
-function TOpenMHealthAdaptor.loadDataPoint(stream: TStream): TFHIRObservation;
+function TOpenMHealthAdaptor.loadDataPoint(stream: TStream): TFHIRObservationW;
 var
   json : TJsonObject;
 begin
@@ -200,15 +222,14 @@ begin
   result := idCheckNew;
 end;
 
-function TOpenMHealthAdaptor.readDataPoint(json: TJsonObject): TFHIRObservation;
+function TOpenMHealthAdaptor.readDataPoint(json: TJsonObject): TFHIRObservationW;
 var
   schema : string;
 begin
-  result := TFHIRObservation.Create;
+  result := FFactory.wrapObservation(FFactory.makeResource('Observation'));
   try
-    result.meta := TFHIRMeta.Create;
     // not set by OMH
-    result.status := ObservationStatusFinal; // final is reasonable for most mobilde data
+    result.status := obssFinal; // final is reasonable for most mobilde data
 
     if (not json.has('header')) then // it must, but check anyway
       raise EFHIRException.create('Cannot process without header');
@@ -227,23 +248,27 @@ begin
 
 end;
 
-function TOpenMHealthAdaptor.readHeader(hdr: TJsonObject; obs: TFhirObservation) : String;
+function TOpenMHealthAdaptor.readHeader(hdr: TJsonObject; obs: TFHIRObservationW) : String;
 var
-  ext : TFHIRExtension;
   obj : TJsonObject;
+  meta : TFhirMetaW;
+  cc : TFhirCodeableConceptW;
 begin
   // id --> resource.id.
   obs.id := hdr['id'];
 
   // creation_date_time --> extension on metadata. What is the significance of this value? why does it matter? or is it actually last_updated?
-  ext := obs.meta.extensionList.Append;
-  ext.url := 'http://healthintersections.com.au/fhir/StructureDefinition/first-created';
-  ext.value := TFhirDateTime.Create(TDateTimeEx.fromXml(hdr['creation_date_time']));
+  obs.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/first-created', FFactory.makeDateTime(TFslDateTime.fromXml(hdr['creation_date_time'])));
 
   // schema_id --> this maps to a profile on observation. todo: what is the correct URL?
   obj := hdr.obj['schema_id'];
   result := obj['name'];
-  obs.meta.profileList.Add(TFHIRUri.create('http://www.openmhealth.org/schemas/fhir/'+obj['namespace']+'/'+obj['version']+'/'+obj['name']));
+  meta := FFactory.wrapMeta(obs.Resource);
+  try
+    meta.addProfile('http://www.openmhealth.org/schemas/fhir/'+obj['namespace']+'/'+obj['version']+'/'+obj['name']);
+  finally
+    meta.Free;
+  end;
 
   obj := hdr.obj['acquisition_provenance'];
   if (obj <> nil) then
@@ -251,43 +276,40 @@ begin
     // acquisition_provenance.source_name --> observation.device
     if obj.has('source_name') then // though this is required
     begin
-      obs.device := TFhirReference.Create;
-      obs.device.display := obj['source_name'];
+      obs.deviceName := obj['source_name'];
     end;
     // acquisition_provenance.source_creation_date_time --> observation.
     if obj.has('source_creation_date_time') then
     begin
-      obs.issued := TDateTimeEx.fromXml(obj['source_creation_date_time']);
+      obs.issued := TFslDateTime.fromXml(obj['source_creation_date_time']);
     end;
     // acquisition_provenance.modality --> observation.method
     if obj.has('modality') then
     begin
-      obs.method := TFhirCodeableConcept.Create;
-      obs.method.text := obj['modality'];
+      cc := obs.method(true);
+      try
+        cc.text := obj['modality'];
+      finally
+        cc.Free;
+      end;
     end;
   end;
   // user_id --> Observation.subject
   if hdr.has('user_id') then
   begin
-    obs.subject := TFhirReference.Create;
-    obs.subject.reference := 'Patient/'+hdr['user_id'];
+    obs.subject := 'Patient/'+hdr['user_id'];
   end;
 end;
 
-procedure TOpenMHealthAdaptor.readPhysicalActivity(body: TJsonObject; obs: TFhirObservation);
+procedure TOpenMHealthAdaptor.readPhysicalActivity(body: TJsonObject; obs: TFHIRObservationW);
 var
-  c : TFHIRCoding;
   obj : TJsonObject;
 begin
   // physical activity is the category
-  c := obs.categoryList.Append.codingList.Append;
-  c.system := 'http://openmhealth.org/codes';
-  c.code := 'omh';
-  c.display := 'OpenMHealth Data';
+  obs.addCategory('http://openmhealth.org/codes', 'omh', 'OpenMHealth Data');
 
   // code comes from activity name
-  obs.code := TFhirCodeableConcept.Create;
-  obs.code.text := body['activity_name'];
+  obs.setCode(body['activity_name']);
 
   // effective_time_frame --> Observation.effective
   obj := body.obj['effective_time_frame'];
@@ -296,7 +318,7 @@ begin
     if (obj.has('time_interval')) then
       obs.effective := readTimeInterval(obj.obj['time_interval'])
     else if (obj.has('date_time')) then
-      obs.effective := TFhirDateTime.Create(TDateTimeEx.fromXml(obj['date_time']));
+      obs.effectiveDateTime := TFslDateTime.fromXml(obj['date_time']);
   end;
 
   // distance --> Observation.value
@@ -304,98 +326,95 @@ begin
     obs.value := readQuantity(body.obj['distance']);
 
   if body.has('kcal_burned') then
-    obs.addComponent('http://loinc.org', '41981-2').value := readQuantity(body.obj['kcal_burned']);
+    obs.addComp('http://loinc.org', '41981-2').value := readQuantity(body.obj['kcal_burned']);
 
   if body.has('reported_activity_intensity') then
-    obs.addComponent('http://openmhealth.org/codes', 'reported_activity_intensity').value := TFHIRString.create(body['reported_activity_intensity']);
+    obs.addComp('http://openmhealth.org/codes', 'reported_activity_intensity').value := FFactory.makeString(body['reported_activity_intensity']);
 
   if body.has('met_value') then
-    obs.addComponent('http://snomed.info/sct', '698834005').value := readQuantity(body.obj['met_value']);
+    obs.addComp('http://snomed.info/sct', '698834005').value := readQuantity(body.obj['met_value']);
 end;
 
-function TOpenMHealthAdaptor.readQuantity(obj: TJsonObject): TFHIRQuantity;
+function TOpenMHealthAdaptor.readQuantity(obj: TJsonObject): TFHIRQuantityW;
 begin
-  result := TFhirQuantity.Create;
+  result := FFactory.wrapQuantity(FFactory.makeByName('Quantity'));
   try
     result.value := obj['value'];
     result.system := 'http://unitsofmeasure.org';
-    result.unit_ := obj['unit'];
-    result.code := convertUCUMUnit(result.unit_);
+    result.units := obj['unit'];
+    result.code := convertUCUMUnit(result.units);
     result.Link;
   finally
     result.Free;
   end;
 end;
 
-function TOpenMHealthAdaptor.readTimeInterval(obj: TJsonObject): TFHIRPeriod;
+function TOpenMHealthAdaptor.readTimeInterval(obj: TJsonObject): TFHIRPeriodW;
 var
-  qty : TFHIRQuantity;
-  ext : TFHIRExtension;
-  day : TDateTimeEx;
+  qty : TFHIRQuantityW;
+  day : TFslDateTime;
   s : String;
 begin
-  result := TFHIRPeriod.create;
+  result := FFactory.wrapPeriod(FFactory.makeByName('Period'));
   try
     // creation_date_time --> extension on metadata. What is the significance of this value? why does it matter? or is it actually last_updated?
-    ext := result.extensionList.Append;
-    ext.url := 'http://healthintersections.com.au/fhir/StructureDefinition/period-form';
     if obj.has('start_date_time') and obj.has('end_date_time') then
     begin
       // The interval is defined by a precise start and end time
-      result.start := TDateTimeEx.fromXml(obj['start_date_time']);
-      result.end_ := TDateTimeEx.fromXml(obj['end_date_time']);
-      ext.value := TFhirCode.Create('normal');
+      result.start := TFslDateTime.fromXml(obj['start_date_time']);
+      result.end_ := TFslDateTime.fromXml(obj['end_date_time']);
+      result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('normal'));
     end
     else if obj.has('start_date_time') and obj.has('duration') then
     begin
       // The interval is defined by a precise start time and a duration
-      result.start := TDateTimeEx.fromXml(obj['start_date_time']);
+      result.start := TFslDateTime.fromXml(obj['start_date_time']);
       qty := readQuantity(obj.obj['duration']);
       try
         result.end_ := result.start.add(qty.asDuration);
       finally
         qty.Free;
       end;
-      ext.value := TFhirCode.Create('start.duration');
+      result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('start.duration'));
     end
     else if obj.has('end_date_time') and obj.has('duration') then
     begin
       // The interval is defined by a duration and a precise end time
-      result.end_ := TDateTimeEx.fromXml(obj['end_date_time']);
+      result.end_ := TFslDateTime.fromXml(obj['end_date_time']);
       qty := readQuantity(obj.obj['duration']);
       try
         result.start := result.start.subtract(qty.asDuration);
       finally
         qty.Free;
       end;
-      ext.value := TFhirCode.Create('end.duration');
+      result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('end.duration'));
     end
     else
     begin
       // the interval is defined by a date and a part of the day (morning, afternoon, evening, night)
-      day := TDateTimeEx.fromXml(obj['date']);
+      day := TFslDateTime.fromXml(obj['date']);
       s := obj['part_of_day'];
       if (s = 'morning') then
       begin
-        ext.value := TFhirCode.Create('day.morning');
+        result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('day.morning'));
         result.start := day.add(0.25); // 6am --> 12noon
         result.end_ := day.add(0.5);
       end
       else if (s = 'afternoon') then
       begin
-        ext.value := TFhirCode.Create('day.afternoon');
+        result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('day.afternoon'));
         result.start := day.add(0.5); // 12noon --> 6pm
         result.end_ := day.add(0.75);
       end
       else if (s = 'evening') then
       begin
-        ext.value := TFhirCode.Create('day.evening');
+        result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('day.evening'));
         result.start := day.add(0.75); // 6pm --> midnight
         result.end_ := day.add(1);
       end
       else if (s = 'night') then
       begin
-        ext.value := TFhirCode.Create('day.night');
+        result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('day.night'));
         result.start := day.add(0); // midnight --> 6am - but is it the next day?
         result.end_ := day.add(0.25);
       end;
@@ -471,111 +490,137 @@ begin
     result := s;
 end;
 
-procedure TOpenMHealthAdaptor.writeObservation(obs: TFHIRObservation; json: TJsonObject);
+procedure TOpenMHealthAdaptor.writeObservation(obs: TFHIRObservationW; json: TJsonObject);
 var
   schema : String;
 begin
-  schema := writeHeader(obs, json.forceObj['header']);
-  if (schema = 'physical-activity') then
-    writePhysicalActivity(obs, json.forceObj['body'])
-  else if (schema = 'blood-glucose') then
-    writeBloodGlucose(obs, json.forceObj['body'])
-  else
-    raise EFHIRException.create('Unsupported schema type '+schema);
-end;
-
-function TOpenMHealthAdaptor.writePeriod(period: TFHIRPeriod): TJsonObject;
-var
-  form : String;
-  qty : TFhirQuantity;
-begin
-  if (period.start.null) then
-    raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
-  if (period.end_.null) then
-    raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
-
-  result := TJsonObject.Create;
   try
-    form := period.getExtensionString('http://healthintersections.com.au/fhir/StructureDefinition/period-form');
-    if (form = 'start.duration') then
-    begin
-      result['start_date_time'] := period.start.toXml;
-      qty := TFHIRQuantity.fromDuration(period.end_.UTC.dateTime - period.start.UTC.dateTime);
-      try
-        result.obj['duration'] := writeQuantity(qty);
-      finally
-        qty.Free;
-      end;
-    end
-    else if (form = 'end.duration') then
-    begin
-      result['end_date_time'] := period.end_.toXml;
-      qty := TFHIRQuantity.fromDuration(period.start.UTC.dateTime - period.end_.UTC.dateTime);
-      try
-        result.obj['duration'] := writeQuantity(qty);
-      finally
-        qty.Free;
-      end;
-    end
-    else if (form = 'day.morning') then
-    begin
-      result['date'] := period.start.toXml.Substring(0, 10);
-      result.str['part_of_day'] := 'morning';
-    end
-    else if (form = 'day.afternoon') then
-    begin
-      result['date'] := period.start.toXml.Substring(0, 10);
-      result.str['part_of_day'] := 'afternoon';
-    end
-    else if (form = 'day.evening') then
-    begin
-      result['date'] := period.start.toXml.Substring(0, 10);
-      result.str['part_of_day'] := 'evening';
-    end
-    else if (form = 'day.night') then
-    begin
-      result['date'] := period.start.toXml.Substring(0, 10);
-      result.str['part_of_day'] := 'night';
-    end
+    schema := writeHeader(obs, json.forceObj['header']);
+    if (schema = 'physical-activity') then
+      writePhysicalActivity(obs, json.forceObj['body'])
+    else if (schema = 'blood-glucose') then
+      writeBloodGlucose(obs, json.forceObj['body'])
     else
-    begin
-      result['start_date_time'] := period.start.toXml;
-      result['end_date_time'] := period.end_.toXml;
-    end;
-    result.Link;
+      raise EFHIRException.create('Unsupported schema type '+schema);
   finally
-    result.Free;
+    obs.Free;
   end;
 end;
 
-procedure TOpenMHealthAdaptor.writePhysicalActivity(obs: TFHIRObservation; body: TJsonObject);
+function TOpenMHealthAdaptor.writePeriod(period: TFHIRPeriodW): TJsonObject;
 var
-  comp : TFhirObservationComponent;
+  form : String;
+  qty : TFhirQuantityW;
 begin
-  body['activity_name'] := obs.code.text;
+  try
+    if (period.start.null) then
+      raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
+    if (period.end_.null) then
+      raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
+
+    result := TJsonObject.Create;
+    try
+      form := period.getExtensionString('http://healthintersections.com.au/fhir/StructureDefinition/period-form');
+      if (form = 'start.duration') then
+      begin
+        result['start_date_time'] := period.start.toXml;
+        qty := FFactory.wrapQuantity(FFactory.makeDuration(period.end_.UTC.dateTime - period.start.UTC.dateTime));
+        try
+          result.obj['duration'] := writeQuantity(qty);
+        finally
+          qty.Free;
+        end;
+      end
+      else if (form = 'end.duration') then
+      begin
+        result['end_date_time'] := period.end_.toXml;
+        qty := FFactory.wrapQuantity(FFactory.makeDuration(period.start.UTC.dateTime - period.end_.UTC.dateTime));
+        try
+          result.obj['duration'] := writeQuantity(qty);
+        finally
+          qty.Free;
+        end;
+      end
+      else if (form = 'day.morning') then
+      begin
+        result['date'] := period.start.toXml.Substring(0, 10);
+        result.str['part_of_day'] := 'morning';
+      end
+      else if (form = 'day.afternoon') then
+      begin
+        result['date'] := period.start.toXml.Substring(0, 10);
+        result.str['part_of_day'] := 'afternoon';
+      end
+      else if (form = 'day.evening') then
+      begin
+        result['date'] := period.start.toXml.Substring(0, 10);
+        result.str['part_of_day'] := 'evening';
+      end
+      else if (form = 'day.night') then
+      begin
+        result['date'] := period.start.toXml.Substring(0, 10);
+        result.str['part_of_day'] := 'night';
+      end
+      else
+      begin
+        result['start_date_time'] := period.start.toXml;
+        result['end_date_time'] := period.end_.toXml;
+      end;
+      result.Link;
+    finally
+      result.Free;
+    end;
+  finally
+    period.Free;
+  end;
+end;
+
+procedure TOpenMHealthAdaptor.writePhysicalActivity(obs: TFHIRObservationW; body: TJsonObject);
+var
+  comp : TFHIRObservationComponentW;
+begin
+  body['activity_name'] := obs.codeText;
 
   if (obs.effective <> nil) then
   begin
-    if (obs.effective is TFhirPeriod) then
-      body.forceObj['effective_time_frame'].obj['time_interval'] := writePeriod(TFhirPeriod(obs.effective))
-    else if (obs.effective is TFhirDateTime) then
-      body.forceObj['effective_time_frame']['date_time'] := TFhirDateTime(obs.effective).value.toXml;
+    if (obs.effective.fhirType = 'Period') then
+      body.forceObj['effective_time_frame'].obj['time_interval'] := writePeriod(obs.effectivePeriod)
+    else if (obs.effective.fhirType = 'DateTime') then
+      body.forceObj['effective_time_frame']['date_time'] := obs.effectiveDateTime.toXml;
   end;
 
-  if obs.value is TFHIRQuantity then
-    body.obj['distance'] := writeQuantity(obs.value as TFhirQuantity);
+  if obs.value.fhirType = 'Quantity' then
+    body.obj['distance'] := writeQuantity(obs.valueW as TFhirQuantityW);
 
   if obs.getComponent('http://loinc.org', '41981-2', comp) then
-    body.obj['kcal_burned'] := writeQuantity(comp.value as TFhirQuantity);
+  begin
+    try
+      body.obj['kcal_burned'] := writeQuantity(comp.valueW as TFhirQuantityW);
+    finally
+      comp.Free;
+    end;
+  end;
 
   if obs.getComponent('http://openmhealth.org/codes', 'reported_activity_intensity', comp) then
-    body['reported_activity_intensity'] := (comp.value as TFhirString).value;
+  begin
+    try
+      body['reported_activity_intensity'] := comp.valueString;
+    finally
+      comp.Free;
+    end;
+  end;
 
   if obs.getComponent('http://snomed.info/sct', '698834005', comp) then
-    body.obj['met_value'] := writeQuantity(comp.value as TFhirQuantity);
+  begin
+    try
+      body.obj['met_value'] := writeQuantity(comp.value as TFhirQuantityW);
+    finally
+      comp.Free;
+    end;
+  end;
 end;
 
-function TOpenMHealthAdaptor.writeQuantity(qty: TFHIRQuantity): TJsonObject;
+function TOpenMHealthAdaptor.writeQuantity(qty: TFHIRQuantityW): TJsonObject;
 begin
   result := TJsonObject.Create;
   try
@@ -587,23 +632,30 @@ begin
   end;
 end;
 
-function TOpenMHealthAdaptor.writeHeader(obs: TFHIRObservation; hdr: TJsonObject) : String;
+function TOpenMHealthAdaptor.writeHeader(obs: TFHIRObservationW; hdr: TJsonObject) : String;
 var
   obj : TJsonObject;
-  u : TFHIRUri;
+  meta : TFhirMetaW;
+  u : String;
   s : String;
   p : TArray<String>;
+  c : TFhirCodeableConceptW;
 begin
   hdr['id'] := obs.id;
-  if (obs.meta.hasExtension('http://healthintersections.com.au/fhir/StructureDefinition/first-created')) then
-    hdr['creation_date_time'] := obs.meta.getExtensionString('http://healthintersections.com.au/fhir/StructureDefinition/first-created');
+  meta := FFactory.wrapMeta(obs);
+  try
+    if (meta.hasExtension('http://healthintersections.com.au/fhir/StructureDefinition/first-created')) then
+      hdr['creation_date_time'] := meta.getExtensionString('http://healthintersections.com.au/fhir/StructureDefinition/first-created');
 
-  s := '';
-  for u in obs.meta.profileList do
-    if u.value.StartsWith('http://www.openmhealth.org/schemas/fhir/') then
-      s := u.value;
-  if (s = '') then // todo: try doing it anyway
-    raise EFHIRException.create('Cannot represent an observation with no OpenMHealth profile as an OpenMHealth data point');
+    s := '';
+    for u in meta.profiles do
+      if u.StartsWith('http://www.openmhealth.org/schemas/fhir/') then
+        s := u;
+    if (s = '') then // todo: try doing it anyway
+      raise EFHIRException.create('Cannot represent an observation with no OpenMHealth profile as an OpenMHealth data point');
+  finally
+    meta.free;
+  end;
 
   p := s.Split(['/']);
   obj := hdr.forceObj['schema_id'];
@@ -612,62 +664,56 @@ begin
   obj['name'] := p[7];
   result := p[7];
 
-  if (obs.device <> nil) or (obs.issued.notNull) or (obs.method <> nil) then
+  if (obs.hasDevice) or (obs.hasIssued) or (obs.hasMethod) then
   begin
     obj := hdr.forceobj['acquisition_provenance'];
-    if (obs.device <> nil) then
-      obj['source_name'] := obs.device.display;
-    if (obs.issued.notNull) then
+    if (obs.hasDevice) then
+      obj['source_name'] := obs.deviceName;
+    if (obs.hasIssued) then
       obj['source_creation_date_time'] := obs.issued.toXml;
-    if (obs.method <> nil) then
-      obj['modality'] := obs.method.text;
+    if (obs.hasMethod) then
+    begin
+      c := obs.method(false);
+      try
+        obj['modality'] := c.text;
+      finally
+        c.Free;
+      end;
+    end;
   end;
-  if (obs.subject <> nil) and (obs.subject.reference.StartsWith('Patient/')) then
-    hdr['user_id'] := obs.subject.reference.Substring(8);
+  if (obs.hasSubject) and (obs.subject.StartsWith('Patient/')) then
+    hdr['user_id'] := obs.subject.Substring(8);
 end;
 
-procedure TOpenMHealthAdaptor.readBloodGlucose(body: TJsonObject; obs: TFhirObservation);
+procedure TOpenMHealthAdaptor.readBloodGlucose(body: TJsonObject; obs: TFHIRObservationW);
 var
-  c : TFHIRCoding;
-  qty : TFhirQuantity;
-  sp : TFHIRSpecimen;
+  qty : TFhirQuantityW;
+//  sp : TFHIRSpecimenW;
   obj : TJsonObject;
 begin
   // physical activity is the category
-  c := obs.categoryList.Append.codingList.Append;
-  c.system := 'http://openmhealth.org/codes';
-  c.code := 'omh';
-  c.display := 'OpenMHealth Data';
+  obs.addCategory('http://openmhealth.org/codes', 'omh', 'OpenMHealth Data');
 
   // LOINC code depends on units..
   qty := readQuantity(body.obj['blood_glucose']);
   obs.value := qty;
 
-  obs.code := TFhirCodeableConcept.Create;
-  c := obs.code.codingList.Append;
-  c.system := 'http://loinc.org';
   if (qty.code = 'mg/dL') then
-  begin
-    c.code := '2339-0';
-    c.display := 'Glucose [Mass/volume] in Blood';
-  end
+    obs.setCode('http://loinc.org', '2339-0', 'Glucose [Mass/volume] in Blood')
   else
-  begin
-    c.code := '15074-8';
-    c.display := 'Glucose [Moles/volume] in Blood';
-  end;
+    obs.setCode('http://loinc.org', '15074-8', 'Glucose [Moles/volume] in Blood');
 
   // specimen_source --> observation.specimen.code
-  if (body.has('specimen_source')) then
-  begin
-    sp := TFhirSpecimen.Create;
-    sp.id := 'sp';
-    obs.containedList.Add(sp);
-    obs.specimen := TFhirReference.Create;
-    obs.specimen.reference := '#sp';
-    sp.type_ := TFhirCodeableConcept.Create;
-    sp.type_.text := body['specimen_source']; // todo: can this be coded?
-  end;
+//  if (body.has('specimen_source')) then
+//  begin
+//    sp := TFhirSpecimen.Create;
+//    sp.id := 'sp';
+//    obs.containedList.Add(sp);
+//    obs.specimen := TFhirReference.Create;
+//    obs.specimen.reference := '#sp';
+//    sp.type_ := TFhirCodeableConcept.Create;
+//    sp.type_.text := body['specimen_source']; // todo: can this be coded?
+//  end;
 
   // effective_time_frame --> Observation.effective
   obj := body.obj['effective_time_frame'];
@@ -676,79 +722,82 @@ begin
     if (obj.has('time_interval')) then
       obs.effective := readTimeInterval(obj.obj['time_interval'])
     else if (obj.has('date_time')) then
-      obs.effective := TFhirDateTime.Create(TDateTimeEx.fromXml(obj['date_time']));
+      obs.effective := FFactory.makeDateTime(TFslDateTime.fromXml(obj['date_time']));
   end;
 
   // temporal_relationship_to_meal/sleep --> component.value
   if (body.has('temporal_relationship_to_meal')) then
-    obs.addComponent('http://snomed.info/sct', '309602000').value := TFHIRString.create(body['temporal_relationship_to_meal']);
+    obs.addComp('http://snomed.info/sct', '309602000').value := FFactory.makeString(body['temporal_relationship_to_meal']);
   if (body.has('temporal_relationship_to_sleep')) then
-    obs.addComponent('http://snomed.info/sct', '309609009').value := TFHIRString.create(body['temporal_relationship_to_sleep']);
+    obs.addComp('http://snomed.info/sct', '309609009').value := FFactory.makeString(body['temporal_relationship_to_sleep']);
 
   // descriptive stat- follow the $stats patterns
   if (body.has('descriptive_statistic')) then
   begin
-    obs.addComponent('http://hl7.org/fhir/observation-statistics', convertObsStat(body['descriptive_statistic'])).value := obs.value.Link;
+    obs.addComp('http://hl7.org/fhir/observation-statistics', convertObsStat(body['descriptive_statistic'])).value := obs.value.Link;
     obs.value := nil;
   end;
 
   // user_notes --> Observation.comment
   if (body.has('user_notes')) then
-    {$IFDEF FHIR3}
     obs.comment := body['user_notes'];
-    {$ELSE}
-    obs.noteList.Append.text := body['user_notes'];
-    {$ENDIF}
 end;
 
-procedure TOpenMHealthAdaptor.writeBloodGlucose(obs: TFHIRObservation; body: TJsonObject);
+procedure TOpenMHealthAdaptor.writeBloodGlucose(obs: TFHIRObservationW; body: TJsonObject);
 var
-  comp : TFhirObservationComponent;
-  sp : TFHIRSpecimen;
+  comp : TFHIRObservationComponentW;
+//  sp : TFHIRSpecimen;
 begin
   if obs.getComponent('http://hl7.org/fhir/observation-statistics', comp) then
   begin
-    body.obj['blood_glucose'] := writeQuantity(comp.value as TFHIRQuantity);
-    body['descriptive_statistic'] := unconvertObsStat(comp.code.codingList[0].code);
+    body.obj['blood_glucose'] := writeQuantity(comp.valueW as TFHIRQuantityW);
+    body['descriptive_statistic'] := unconvertObsStat(comp.codings[0].code);
   end
   else
-    body.obj['blood_glucose'] := writeQuantity(obs.value as TFHIRQuantity);
+    body.obj['blood_glucose'] := writeQuantity(obs.valueW as TFHIRQuantityW);
 
-  sp := obs.Contained['sp'] as TFhirSpecimen;
-  if (sp <> nil) then
-    body['specimen_source'] := sp.type_.text;
+//  sp := obs.Contained['sp'] as TFhirSpecimen;
+//  if (sp <> nil) then
+//    body['specimen_source'] := sp.type_.text;
 
   if (obs.effective <> nil) then
   begin
-    if (obs.effective is TFhirPeriod) then
-      body.forceObj['effective_time_frame'].obj['time_interval'] := writePeriod(TFhirPeriod(obs.effective))
-    else if (obs.effective is TFhirDateTime) then
-      body.forceObj['effective_time_frame']['date_time'] := TFhirDateTime(obs.effective).value.toXml;
+    if (obs.effective.fhirType  = 'Period') then
+      body.forceObj['effective_time_frame'].obj['time_interval'] := writePeriod(obs.effectivePeriod)
+    else if (obs.effective.fhirType = 'DateTime') then
+      body.forceObj['effective_time_frame']['date_time'] := obs.effectiveDateTime.toXML
   end;
 
   if obs.getComponent('http://snomed.info/sct', '309602000', comp) then
-    body['temporal_relationship_to_meal'] := (comp.value as TFhirString).value;
+    try
+      body['temporal_relationship_to_meal'] := comp.valueString;
+    finally
+      comp.Free;
+    end;
   if obs.getComponent('http://snomed.info/sct', '309609009', comp) then
-    body['temporal_relationship_to_sleep'] := (comp.value as TFhirString).value;
+    try
+      body['temporal_relationship_to_sleep'] := comp.valueString;
+    finally
+      comp.Free;
+    end;
 
-  {$IFDEF FHIR3}
-    body['user_notes'] := obs.comment;
-  {$ELSE}
-  if obs.noteList.Count > 0 then
-    body['user_notes'] := obs.noteList[0].text;
-  {$ENDIF}
+  body['user_notes'] := obs.comment;
 end;
 
-procedure TOpenMHealthAdaptor.writeBundle(obs: TFHIRBundle; json: TJsonObject);
+procedure TOpenMHealthAdaptor.writeBundle(obs: TFHIRBundleW; json: TJsonObject);
 var
   arr : TJsonArray;
-  be : TFhirBundleEntry;
+  be : TFhirBundleEntryW;
 begin
-  arr := json.forceArr['matches'];
-  for be in obs.entryList do
-  begin
-    if be.resource is TFHIRObservation then
-      writeObservation(be.resource as TFHIRObservation, arr.addObject());
+  try
+    arr := json.forceArr['matches'];
+    for be in obs.entries.forEnum do
+    begin
+      if be.resource.fhirType = 'Observation' then
+        writeObservation(FFactory.wrapObservation(be.resource), arr.addObject());
+    end;
+  finally
+    obs.free;
   end;
 end;
 

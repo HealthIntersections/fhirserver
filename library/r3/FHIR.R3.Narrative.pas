@@ -797,7 +797,7 @@ var
   ex: TFHIRExtension;
   url: String;
   ed: TFHIRStructureDefinition;
-  def: TFHIRElementDefinition;
+//  def: TFHIRElementDefinition;
 begin
   results := TFslList<TPropertyWrapper>.create;
   try
@@ -831,7 +831,7 @@ begin
                   end
                   else
                   begin
-                    def := ed.snapshot.ElementList[0];
+//                    def := ed.snapshot.ElementList[0];
                     pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', 'Extension', true, TFHIRExtension,
                       { def.getDefinition(), def.getMin(), def.getMax().equals('*') ? Integer.MAX_VALUE : Integer.parseInt(def.getMax()), } ex));
                     // TPropertyWrapperDirect(pe).Fwrapped.Structure := ed;
@@ -999,7 +999,6 @@ Function TFHIRNarrativeGenerator.getElementDefinition(elements: TFslList<TFHIREl
 var
   element: TFHIRElementDefinition;
 begin
-  result := nil;
   for element in elements do
     if (element.path = path) then
     begin
@@ -1016,7 +1015,6 @@ Function TFHIRNarrativeGenerator.getElementDefinition(elements: TFHIRElementDefi
 var
   element: TFHIRElementDefinition;
 begin
-  result := nil;
   for element in elements do
     if (element.path = path) then
     begin

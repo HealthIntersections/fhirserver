@@ -3083,7 +3083,7 @@ Type
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
     function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;
-    function toString : String; override;
+    function ToString : String; override;
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
   
@@ -3393,15 +3393,15 @@ Type
   //  Used where a FHIR element is a Date, and extensions
   TFhirDate = class (TFhirPrimitiveType)
   Private
-    FValue: TDateTimeEx;
-    procedure setValue(value: TDateTimeEx);
+    FValue: TFslDateTime;
+    procedure setValue(value: TFslDateTime);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
     procedure SetStringValue(value : String); Override;
   Public
-    constructor Create(value : TDateTimeEx); overload;
+    constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
     
     Function Link : TFhirDate; Overload;
@@ -3410,10 +3410,10 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TDateTimeEx; override;
+    function dateValue : TFslDateTime; override;
   Published
     // The actual value of the date
-    property value : TDateTimeEx read FValue write SetValue;
+    property value : TFslDateTime read FValue write SetValue;
   End;    
 
 
@@ -3453,7 +3453,7 @@ Type
 
     
     // Add an already existing FhirDate to the end of the list.
-    procedure AddItem(value : TDateTimeEx); overload;
+    procedure AddItem(value : TFslDateTime); overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3490,15 +3490,15 @@ Type
   //  Used where a FHIR element is a DateTime, and extensions
   TFhirDateTime = class (TFhirPrimitiveType)
   Private
-    FValue: TDateTimeEx;
-    procedure setValue(value: TDateTimeEx);
+    FValue: TFslDateTime;
+    procedure setValue(value: TFslDateTime);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
     procedure SetStringValue(value : String); Override;
   Public
-    constructor Create(value : TDateTimeEx); overload;
+    constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
     
     Function Link : TFhirDateTime; Overload;
@@ -3507,10 +3507,10 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TDateTimeEx; override;
+    function dateValue : TFslDateTime; override;
   Published
     // The actual value of the dateTime
-    property value : TDateTimeEx read FValue write SetValue;
+    property value : TFslDateTime read FValue write SetValue;
   End;    
 
 
@@ -3550,7 +3550,7 @@ Type
 
     
     // Add an already existing FhirDateTime to the end of the list.
-    procedure AddItem(value : TDateTimeEx); overload;
+    procedure AddItem(value : TFslDateTime); overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3875,15 +3875,15 @@ Type
   //  Used where a FHIR element is a Instant, and extensions
   TFhirInstant = class (TFhirPrimitiveType)
   Private
-    FValue: TDateTimeEx;
-    procedure setValue(value: TDateTimeEx);
+    FValue: TFslDateTime;
+    procedure setValue(value: TFslDateTime);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
     procedure SetStringValue(value : String); Override;
   Public
-    constructor Create(value : TDateTimeEx); overload;
+    constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
     
     Function Link : TFhirInstant; Overload;
@@ -3892,10 +3892,10 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TDateTimeEx; override;
+    function dateValue : TFslDateTime; override;
   Published
     // The actual value of the instant
-    property value : TDateTimeEx read FValue write SetValue;
+    property value : TFslDateTime read FValue write SetValue;
   End;    
 
 
@@ -3935,7 +3935,7 @@ Type
 
     
     // Add an already existing FhirInstant to the end of the list.
-    procedure AddItem(value : TDateTimeEx); overload;
+    procedure AddItem(value : TFslDateTime); overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5556,8 +5556,8 @@ Type
     Function GetTitleST : String;
     Procedure SetTitleST(value : String);
     Procedure SetCreation(value : TFhirDateTime);
-    Function GetCreationST : TDateTimeEx;
-    Procedure SetCreationST(value : TDateTimeEx);
+    Function GetCreationST : TFslDateTime;
+    Procedure SetCreationST(value : TFslDateTime);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -5614,7 +5614,7 @@ Type
     property titleElement : TFhirString read FTitle write SetTitle;
 
     // Typed access to The date that the attachment was first created.
-    property creation : TDateTimeEx read GetCreationST write SetCreationST;
+    property creation : TFslDateTime read GetCreationST write SetCreationST;
     // The date that the attachment was first created.
     property creationElement : TFhirDateTime read FCreation write SetCreation;
 
@@ -6607,8 +6607,8 @@ Type
     Procedure SetStatus(value : TFhirCodeableConcept);
     Procedure SetDateRange(value : TFhirPeriod);
     Procedure SetRestoreDate(value : TFhirDateTime);
-    Function GetRestoreDateST : TDateTimeEx;
-    Procedure SetRestoreDateST(value : TDateTimeEx);
+    Function GetRestoreDateST : TFslDateTime;
+    Procedure SetRestoreDateST(value : TFslDateTime);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -6650,7 +6650,7 @@ Type
     property dateRangeElement : TFhirPeriod read FDateRange write SetDateRange;
 
     // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ?Placed on the market? refers to the release of the Medicinal Product into the distribution chain.
-    property restoreDate : TDateTimeEx read GetRestoreDateST write SetRestoreDateST;
+    property restoreDate : TFslDateTime read GetRestoreDateST write SetRestoreDateST;
     // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ?Placed on the market? refers to the release of the Medicinal Product into the distribution chain.
     property restoreDateElement : TFhirDateTime read FRestoreDate write SetRestoreDate;
 
@@ -7858,11 +7858,11 @@ Type
     FStart : TFhirDateTime;
     FEnd_ : TFhirDateTime;
     Procedure SetStart(value : TFhirDateTime);
-    Function GetStartST : TDateTimeEx;
-    Procedure SetStartST(value : TDateTimeEx);
+    Function GetStartST : TFslDateTime;
+    Procedure SetStartST(value : TFslDateTime);
     Procedure SetEnd_(value : TFhirDateTime);
-    Function GetEnd_ST : TDateTimeEx;
-    Procedure SetEnd_ST(value : TDateTimeEx);
+    Function GetEnd_ST : TFslDateTime;
+    Procedure SetEnd_ST(value : TFslDateTime);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -7884,12 +7884,12 @@ Type
     function isEmpty : boolean; override;
   published
     // Typed access to The start of the period. The boundary is inclusive.
-    property start : TDateTimeEx read GetStartST write SetStartST;
+    property start : TFslDateTime read GetStartST write SetStartST;
     // The start of the period. The boundary is inclusive.
     property startElement : TFhirDateTime read FStart write SetStart;
 
     // Typed access to The end of the period. If the end of the period is missing, it means no end was known or planned at the time the instance was created. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
-    property end_ : TDateTimeEx read GetEnd_ST write SetEnd_ST;
+    property end_ : TFslDateTime read GetEnd_ST write SetEnd_ST;
     // The end of the period. If the end of the period is missing, it means no end was known or planned at the time the instance was created. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
     property end_Element : TFhirDateTime read FEnd_ write SetEnd_;
 
@@ -8360,8 +8360,8 @@ Type
     FText : TFhirMarkdown;
     Procedure SetAuthor(value : TFhirType);
     Procedure SetTime(value : TFhirDateTime);
-    Function GetTimeST : TDateTimeEx;
-    Procedure SetTimeST(value : TDateTimeEx);
+    Function GetTimeST : TFslDateTime;
+    Procedure SetTimeST(value : TFslDateTime);
     Procedure SetText(value : TFhirMarkdown);
     Function GetTextST : String;
     Procedure SetTextST(value : String);
@@ -8391,7 +8391,7 @@ Type
     property authorElement : TFhirType read FAuthor write SetAuthor;
 
     // Typed access to Indicates when this particular annotation was made.
-    property time : TDateTimeEx read GetTimeST write SetTimeST;
+    property time : TFslDateTime read GetTimeST write SetTimeST;
     // Indicates when this particular annotation was made.
     property timeElement : TFhirDateTime read FTime write SetTime;
 
@@ -8948,8 +8948,8 @@ Type
     function GetType_List : TFhirCodingList;
     function GetHasType_List : Boolean;
     Procedure SetWhen(value : TFhirInstant);
-    Function GetWhenST : TDateTimeEx;
-    Procedure SetWhenST(value : TDateTimeEx);
+    Function GetWhenST : TFslDateTime;
+    Procedure SetWhenST(value : TFslDateTime);
     Procedure SetWho(value : TFhirReference{TFhirPractitioner});
     Procedure SetOnBehalfOf(value : TFhirReference{TFhirPractitioner});
     Procedure SetTargetFormat(value : TFhirCode);
@@ -8986,7 +8986,7 @@ Type
     property hasType_List : boolean read GetHasType_List;
 
     // Typed access to When the digital signature was signed.
-    property when : TDateTimeEx read GetWhenST write SetWhenST;
+    property when : TFslDateTime read GetWhenST write SetWhenST;
     // When the digital signature was signed.
     property whenElement : TFhirInstant read FWhen write SetWhen;
 
@@ -9802,8 +9802,8 @@ Type
     Function GetVersionIdST : String;
     Procedure SetVersionIdST(value : String);
     Procedure SetLastUpdated(value : TFhirInstant);
-    Function GetLastUpdatedST : TDateTimeEx;
-    Procedure SetLastUpdatedST(value : TDateTimeEx);
+    Function GetLastUpdatedST : TFslDateTime;
+    Procedure SetLastUpdatedST(value : TFslDateTime);
     Procedure SetSource(value : TFhirUri);
     Function GetSourceST : String;
     Procedure SetSourceST(value : String);
@@ -9839,7 +9839,7 @@ Type
     property versionIdElement : TFhirId read FVersionId write SetVersionId;
 
     // Typed access to When the resource last changed - e.g. when the version changed.
-    property lastUpdated : TDateTimeEx read GetLastUpdatedST write SetLastUpdatedST;
+    property lastUpdated : TFslDateTime read GetLastUpdatedST write SetLastUpdatedST;
     // When the resource last changed - e.g. when the version changed.
     property lastUpdatedElement : TFhirInstant read FLastUpdated write SetLastUpdated;
 
@@ -14275,7 +14275,7 @@ end;
 
 { TFhirDate }
 
-Constructor TFhirDate.Create(value : TDateTimeEx);
+Constructor TFhirDate.Create(value : TFslDateTime);
 begin
   Create;
   FValue := value.fixPrecision(dtpDay);
@@ -14291,7 +14291,7 @@ begin
   result := 'date';
 end;
 
-function TFhirDate.dateValue : TDateTimeEx;
+function TFhirDate.dateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -14328,9 +14328,9 @@ end;
 procedure TFhirDate.SetStringValue(value : string);
 begin
   if (value = '') then
-    FValue := TDateTimeEx.makeNull
+    FValue := TFslDateTime.makeNull
   else
-    FValue := TDateTimeEx.fromXml(value);
+    FValue := TFslDateTime.fromXml(value);
 end;
 
 function TFhirDate.equals(other : TObject) : boolean; 
@@ -14363,7 +14363,7 @@ begin
   result := TFhirDate(inherited Clone);
 end;
 
-procedure TFhirDate.setValue(value : TDateTimeEx);
+procedure TFhirDate.setValue(value : TFslDateTime);
 begin
   FValue := value;
 end;
@@ -14404,7 +14404,7 @@ begin
 end;
 
 
-procedure TFhirDateList.AddItem(value: TDateTimeEx);
+procedure TFhirDateList.AddItem(value: TFslDateTime);
 begin
   add(TFhirDate.create(value));
 end;
@@ -14502,7 +14502,7 @@ end;
 
 { TFhirDateTime }
 
-Constructor TFhirDateTime.Create(value : TDateTimeEx);
+Constructor TFhirDateTime.Create(value : TFslDateTime);
 begin
   Create;
   FValue := value;
@@ -14518,7 +14518,7 @@ begin
   result := 'dateTime';
 end;
 
-function TFhirDateTime.dateValue : TDateTimeEx;
+function TFhirDateTime.dateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -14555,9 +14555,9 @@ end;
 procedure TFhirDateTime.SetStringValue(value : string);
 begin
   if (value = '') then
-    FValue := TDateTimeEx.makeNull
+    FValue := TFslDateTime.makeNull
   else
-    FValue := TDateTimeEx.fromXml(value);
+    FValue := TFslDateTime.fromXml(value);
 end;
 
 function TFhirDateTime.equals(other : TObject) : boolean; 
@@ -14590,7 +14590,7 @@ begin
   result := TFhirDateTime(inherited Clone);
 end;
 
-procedure TFhirDateTime.setValue(value : TDateTimeEx);
+procedure TFhirDateTime.setValue(value : TFslDateTime);
 begin
   FValue := value;
 end;
@@ -14631,7 +14631,7 @@ begin
 end;
 
 
-procedure TFhirDateTimeList.AddItem(value: TDateTimeEx);
+procedure TFhirDateTimeList.AddItem(value: TFslDateTime);
 begin
   add(TFhirDateTime.create(value));
 end;
@@ -15374,7 +15374,7 @@ end;
 
 { TFhirInstant }
 
-Constructor TFhirInstant.Create(value : TDateTimeEx);
+Constructor TFhirInstant.Create(value : TFslDateTime);
 begin
   Create;
   FValue := value;
@@ -15390,7 +15390,7 @@ begin
   result := 'instant';
 end;
 
-function TFhirInstant.dateValue : TDateTimeEx;
+function TFhirInstant.dateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -15427,9 +15427,9 @@ end;
 procedure TFhirInstant.SetStringValue(value : string);
 begin
   if (value = '') then
-    FValue := TDateTimeEx.makeNull
+    FValue := TFslDateTime.makeNull
   else
-    FValue := TDateTimeEx.fromXml(value);
+    FValue := TFslDateTime.fromXml(value);
 end;
 
 function TFhirInstant.equals(other : TObject) : boolean; 
@@ -15462,7 +15462,7 @@ begin
   result := TFhirInstant(inherited Clone);
 end;
 
-procedure TFhirInstant.setValue(value : TDateTimeEx);
+procedure TFhirInstant.setValue(value : TFslDateTime);
 begin
   FValue := value;
 end;
@@ -15503,7 +15503,7 @@ begin
 end;
 
 
-procedure TFhirInstantList.AddItem(value: TDateTimeEx);
+procedure TFhirInstantList.AddItem(value: TFslDateTime);
 begin
   add(TFhirInstant.create(value));
 end;
@@ -18185,12 +18185,7 @@ begin
     UrlElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName = 'value[x]') then
-  begin
-    Value := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'value') then
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -18206,8 +18201,7 @@ end;
 function TFhirExtension.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'url') then result := TFhirString.create() {5b}
-  else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
-  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -18221,8 +18215,7 @@ end;
 procedure TFhirExtension.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := nil
-  else if (propName = 'value[x]') then ValueElement := nil{4x}
-  else if (propName = 'value') then ValueElement := nil{4x}
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -18230,8 +18223,7 @@ end;
 procedure TFhirExtension.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := asString(new){5b}
-  else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
-  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -19518,15 +19510,15 @@ begin
   FCreation := value;
 end;
 
-Function TFhirAttachment.GetCreationST : TDateTimeEx;
+Function TFhirAttachment.GetCreationST : TFslDateTime;
 begin
   if FCreation = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FCreation.value;
 end;
 
-Procedure TFhirAttachment.SetCreationST(value : TDateTimeEx);
+Procedure TFhirAttachment.SetCreationST(value : TFslDateTime);
 begin
   if FCreation = nil then
     FCreation := TFhirDateTime.create;
@@ -20154,12 +20146,7 @@ begin
     SearchParamElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName = 'value[x]') then
-  begin
-    Value := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'value') then
+  else if (isMatchingName(propName, 'value', ['DateTime', 'Period', 'Duration'])) then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -20176,8 +20163,7 @@ function TFhirDataRequirementDateFilter.createPropertyValue(propName : string) :
 begin
   if (propName = 'path') then result := TFhirString.create() {5b}
   else if (propName = 'searchParam') then result := TFhirString.create() {5b}
-  else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
-  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (isMatchingName(propName, 'value', ['DateTime', 'Period', 'Duration'])) then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20193,8 +20179,7 @@ procedure TFhirDataRequirementDateFilter.deleteProperty(propName: string; value 
 begin
   if (propName = 'path') then PathElement := nil
   else if (propName = 'searchParam') then SearchParamElement := nil
-  else if (propName = 'value[x]') then ValueElement := nil{4x}
-  else if (propName = 'value') then ValueElement := nil{4x}
+  else if (isMatchingName(propName, 'value', ['DateTime', 'Period', 'Duration'])) then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -20203,8 +20188,7 @@ procedure TFhirDataRequirementDateFilter.replaceProperty(propName : string; exis
 begin
   if (propName = 'path') then PathElement := asString(new){5b}
   else if (propName = 'searchParam') then SearchParamElement := asString(new){5b}
-  else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
-  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'value', ['DateTime', 'Period', 'Duration'])) then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -20867,12 +20851,7 @@ begin
     ProfileList.add(asCanonical(propValue)){2};     result := propValue;
 
   end
-  else if (propName = 'subject[x]') then
-  begin
-    Subject := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'subject') then
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then
   begin
     Subject := propValue as TFhirType{4};
     result := propValue;
@@ -20918,8 +20897,7 @@ end;
 function TFhirDataRequirement.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'profile') then result := ProfileList.new(){2}
-  else if (propName = 'subject[x]') then raise EFHIRException.create('Cannot make property Subject'){4x}
-  else if (propName = 'subject') then raise EFHIRException.create('Cannot make property Subject'){4x}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Subject'){4x}
   else if (propName = 'mustSupport') then result := MustSupportList.new(){2}
   else if (propName = 'codeFilter') then result := CodeFilterList.new(){2}
   else if (propName = 'dateFilter') then result := DateFilterList.new(){2}
@@ -20945,8 +20923,7 @@ procedure TFhirDataRequirement.deleteProperty(propName : string; value : TFHIROb
 begin
   if (propName = 'type') then Type_Element := nil
   else if (propName = 'profile') then deletePropertyValue('profile', ProfileList, value) {2}
-  else if (propName = 'subject[x]') then SubjectElement := nil{4x}
-  else if (propName = 'subject') then SubjectElement := nil{4x}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := nil{4x}
   else if (propName = 'mustSupport') then deletePropertyValue('mustSupport', MustSupportList, value) {2}
   else if (propName = 'codeFilter') then deletePropertyValue('codeFilter', CodeFilterList, value) {2}
   else if (propName = 'dateFilter') then deletePropertyValue('dateFilter', DateFilterList, value) {2}
@@ -20960,8 +20937,7 @@ procedure TFhirDataRequirement.replaceProperty(propName : string; existing, new 
 begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAllTypesEnum, CODES_TFhirAllTypesEnum, new){4}
   else if (propName = 'profile') then replacePropertyValue('profile', ProfileList, existing, new) {2}
-  else if (propName = 'subject[x]') then SubjectElement := new as TFhirType{4x}
-  else if (propName = 'subject') then SubjectElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := new as TFhirType{4x}
   else if (propName = 'mustSupport') then replacePropertyValue('mustSupport', MustSupportList, existing, new) {2}
   else if (propName = 'codeFilter') then replacePropertyValue('codeFilter', CodeFilterList, existing, new) {2}
   else if (propName = 'dateFilter') then replacePropertyValue('dateFilter', DateFilterList, existing, new) {2}
@@ -21311,22 +21287,12 @@ begin
     Type_ := propValue as TFhirCodeableConcept{4b};
     result := propValue;
   end
-  else if (propName = 'dose[x]') then
+  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then
   begin
     Dose := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName = 'dose') then
-  begin
-    Dose := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'rate[x]') then
-  begin
-    Rate := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'rate') then
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range', 'Quantity'])) then
   begin
     Rate := propValue as TFhirType{4};
     result := propValue;
@@ -21342,10 +21308,8 @@ end;
 function TFhirDosageDoseAndRate.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'dose[x]') then raise EFHIRException.create('Cannot make property Dose'){4x}
-  else if (propName = 'dose') then raise EFHIRException.create('Cannot make property Dose'){4x}
-  else if (propName = 'rate[x]') then raise EFHIRException.create('Cannot make property Rate'){4x}
-  else if (propName = 'rate') then raise EFHIRException.create('Cannot make property Rate'){4x}
+  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then raise EFHIRException.create('Cannot make property Dose'){4x}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range', 'Quantity'])) then raise EFHIRException.create('Cannot make property Rate'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21360,10 +21324,8 @@ end;
 procedure TFhirDosageDoseAndRate.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := nil
-  else if (propName = 'dose[x]') then DoseElement := nil{4x}
-  else if (propName = 'dose') then DoseElement := nil{4x}
-  else if (propName = 'rate[x]') then RateElement := nil{4x}
-  else if (propName = 'rate') then RateElement := nil{4x}
+  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then DoseElement := nil{4x}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range', 'Quantity'])) then RateElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -21371,10 +21333,8 @@ end;
 procedure TFhirDosageDoseAndRate.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := new as TFhirCodeableConcept{4}
-  else if (propName = 'dose[x]') then DoseElement := new as TFhirType{4x}
-  else if (propName = 'dose') then DoseElement := new as TFhirType{4x}
-  else if (propName = 'rate[x]') then RateElement := new as TFhirType{4x}
-  else if (propName = 'rate') then RateElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then DoseElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range', 'Quantity'])) then RateElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -21705,12 +21665,7 @@ begin
     Timing := propValue as TFhirTiming{4b};
     result := propValue;
   end
-  else if (propName = 'asNeeded[x]') then
-  begin
-    AsNeeded := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'asNeeded') then
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then
   begin
     AsNeeded := propValue as TFhirType{4};
     result := propValue;
@@ -21767,8 +21722,7 @@ begin
   else if (propName = 'additionalInstruction') then result := AdditionalInstructionList.new(){2}
   else if (propName = 'patientInstruction') then result := TFhirString.create() {5b}
   else if (propName = 'timing') then result := TFhirTiming.create(){4b}
-  else if (propName = 'asNeeded[x]') then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
-  else if (propName = 'asNeeded') then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
   else if (propName = 'site') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
@@ -21804,8 +21758,7 @@ begin
   else if (propName = 'additionalInstruction') then deletePropertyValue('additionalInstruction', AdditionalInstructionList, value) {2}
   else if (propName = 'patientInstruction') then PatientInstructionElement := nil
   else if (propName = 'timing') then TimingElement := nil
-  else if (propName = 'asNeeded[x]') then AsNeededElement := nil{4x}
-  else if (propName = 'asNeeded') then AsNeededElement := nil{4x}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then AsNeededElement := nil{4x}
   else if (propName = 'site') then SiteElement := nil
   else if (propName = 'route') then RouteElement := nil
   else if (propName = 'method') then MethodElement := nil
@@ -21824,8 +21777,7 @@ begin
   else if (propName = 'additionalInstruction') then replacePropertyValue('additionalInstruction', AdditionalInstructionList, existing, new) {2}
   else if (propName = 'patientInstruction') then PatientInstructionElement := asString(new){5b}
   else if (propName = 'timing') then TimingElement := new as TFhirTiming{4}
-  else if (propName = 'asNeeded[x]') then AsNeededElement := new as TFhirType{4x}
-  else if (propName = 'asNeeded') then AsNeededElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then AsNeededElement := new as TFhirType{4x}
   else if (propName = 'site') then SiteElement := new as TFhirCodeableConcept{4}
   else if (propName = 'route') then RouteElement := new as TFhirCodeableConcept{4}
   else if (propName = 'method') then MethodElement := new as TFhirCodeableConcept{4}
@@ -22675,15 +22627,15 @@ begin
   FRestoreDate := value;
 end;
 
-Function TFhirMarketingStatus.GetRestoreDateST : TDateTimeEx;
+Function TFhirMarketingStatus.GetRestoreDateST : TFslDateTime;
 begin
   if FRestoreDate = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FRestoreDate.value;
 end;
 
-Procedure TFhirMarketingStatus.SetRestoreDateST(value : TDateTimeEx);
+Procedure TFhirMarketingStatus.SetRestoreDateST(value : TFslDateTime);
 begin
   if FRestoreDate = nil then
     FRestoreDate := TFhirDateTime.create;
@@ -23563,12 +23515,7 @@ end;
 
 function TFhirSubstanceAmount.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'amount[x]') then
-  begin
-    Amount := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'amount') then
+  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then
   begin
     Amount := propValue as TFhirType{4};
     result := propValue;
@@ -23598,8 +23545,7 @@ end;
 
 function TFhirSubstanceAmount.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'amount[x]') then raise EFHIRException.create('Cannot make property Amount'){4x}
-  else if (propName = 'amount') then raise EFHIRException.create('Cannot make property Amount'){4x}
+  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then raise EFHIRException.create('Cannot make property Amount'){4x}
   else if (propName = 'amountType') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'amountText') then result := TFhirString.create() {5b}
   else if (propName = 'referenceRange') then result := TFhirSubstanceAmountReferenceRange.create(){4b}
@@ -23617,8 +23563,7 @@ end;
 
 procedure TFhirSubstanceAmount.deleteProperty(propName : string; value : TFHIRObject);
 begin
-  if (propName = 'amount[x]') then AmountElement := nil{4x}
-  else if (propName = 'amount') then AmountElement := nil{4x}
+  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then AmountElement := nil{4x}
   else if (propName = 'amountType') then AmountTypeElement := nil
   else if (propName = 'amountText') then AmountTextElement := nil
   else if (propName = 'referenceRange') then ReferenceRangeElement := nil
@@ -23628,8 +23573,7 @@ end;
 
 procedure TFhirSubstanceAmount.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'amount[x]') then AmountElement := new as TFhirType{4x}
-  else if (propName = 'amount') then AmountElement := new as TFhirType{4x}
+  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then AmountElement := new as TFhirType{4x}
   else if (propName = 'amountType') then AmountTypeElement := new as TFhirCodeableConcept{4}
   else if (propName = 'amountText') then AmountTextElement := asString(new){5b}
   else if (propName = 'referenceRange') then ReferenceRangeElement := new as TFhirSubstanceAmountReferenceRange{4}
@@ -24813,12 +24757,7 @@ end;
 
 function TFhirPopulation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'age[x]') then
-  begin
-    Age := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'age') then
+  if (isMatchingName(propName, 'age', ['Range', 'CodeableConcept'])) then
   begin
     Age := propValue as TFhirType{4};
     result := propValue;
@@ -24848,8 +24787,7 @@ end;
 
 function TFhirPopulation.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'age[x]') then raise EFHIRException.create('Cannot make property Age'){4x}
-  else if (propName = 'age') then raise EFHIRException.create('Cannot make property Age'){4x}
+  if (isMatchingName(propName, 'age', ['Range', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Age'){4x}
   else if (propName = 'gender') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'race') then result := TFhirCodeableConcept.create(){4b}
   else if (propName = 'physiologicalCondition') then result := TFhirCodeableConcept.create(){4b}
@@ -24867,8 +24805,7 @@ end;
 
 procedure TFhirPopulation.deleteProperty(propName : string; value : TFHIRObject);
 begin
-  if (propName = 'age[x]') then AgeElement := nil{4x}
-  else if (propName = 'age') then AgeElement := nil{4x}
+  if (isMatchingName(propName, 'age', ['Range', 'CodeableConcept'])) then AgeElement := nil{4x}
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'race') then RaceElement := nil
   else if (propName = 'physiologicalCondition') then PhysiologicalConditionElement := nil
@@ -24878,8 +24815,7 @@ end;
 
 procedure TFhirPopulation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'age[x]') then AgeElement := new as TFhirType{4x}
-  else if (propName = 'age') then AgeElement := new as TFhirType{4x}
+  if (isMatchingName(propName, 'age', ['Range', 'CodeableConcept'])) then AgeElement := new as TFhirType{4x}
   else if (propName = 'gender') then GenderElement := new as TFhirCodeableConcept{4}
   else if (propName = 'race') then RaceElement := new as TFhirCodeableConcept{4}
   else if (propName = 'physiologicalCondition') then PhysiologicalConditionElement := new as TFhirCodeableConcept{4}
@@ -25816,12 +25752,7 @@ begin
     NameElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName = 'timing[x]') then
-  begin
-    Timing := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'timing') then
+  else if (isMatchingName(propName, 'timing', ['Timing', 'Reference', 'Date', 'DateTime'])) then
   begin
     Timing := propValue as TFhirType{4};
     result := propValue;
@@ -25848,8 +25779,7 @@ end;
 function TFhirTriggerDefinition.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'name') then result := TFhirString.create() {5b}
-  else if (propName = 'timing[x]') then raise EFHIRException.create('Cannot make property Timing'){4x}
-  else if (propName = 'timing') then raise EFHIRException.create('Cannot make property Timing'){4x}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'Reference', 'Date', 'DateTime'])) then raise EFHIRException.create('Cannot make property Timing'){4x}
   else if (propName = 'data') then result := DataList.new(){2}
   else if (propName = 'condition') then result := TFhirExpression.create(){4b}
   else result := inherited createPropertyValue(propName);
@@ -25869,8 +25799,7 @@ procedure TFhirTriggerDefinition.deleteProperty(propName : string; value : TFHIR
 begin
   if (propName = 'type') then Type_Element := nil
   else if (propName = 'name') then NameElement := nil
-  else if (propName = 'timing[x]') then TimingElement := nil{4x}
-  else if (propName = 'timing') then TimingElement := nil{4x}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'Reference', 'Date', 'DateTime'])) then TimingElement := nil{4x}
   else if (propName = 'data') then deletePropertyValue('data', DataList, value) {2}
   else if (propName = 'condition') then ConditionElement := nil
   else
@@ -25881,8 +25810,7 @@ procedure TFhirTriggerDefinition.replaceProperty(propName : string; existing, ne
 begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirTriggerTypeEnum, CODES_TFhirTriggerTypeEnum, new){4}
   else if (propName = 'name') then NameElement := asString(new){5b}
-  else if (propName = 'timing[x]') then TimingElement := new as TFhirType{4x}
-  else if (propName = 'timing') then TimingElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'Reference', 'Date', 'DateTime'])) then TimingElement := new as TFhirType{4x}
   else if (propName = 'data') then replacePropertyValue('data', DataList, existing, new) {2}
   else if (propName = 'condition') then ConditionElement := new as TFhirExpression{4}
   else
@@ -26268,15 +26196,15 @@ begin
   FStart := value;
 end;
 
-Function TFhirPeriod.GetStartST : TDateTimeEx;
+Function TFhirPeriod.GetStartST : TFslDateTime;
 begin
   if FStart = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FStart.value;
 end;
 
-Procedure TFhirPeriod.SetStartST(value : TDateTimeEx);
+Procedure TFhirPeriod.SetStartST(value : TFslDateTime);
 begin
   if FStart = nil then
     FStart := TFhirDateTime.create;
@@ -26289,15 +26217,15 @@ begin
   FEnd_ := value;
 end;
 
-Function TFhirPeriod.GetEnd_ST : TDateTimeEx;
+Function TFhirPeriod.GetEnd_ST : TFslDateTime;
 begin
   if FEnd_ = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FEnd_.value;
 end;
 
-Procedure TFhirPeriod.SetEnd_ST(value : TDateTimeEx);
+Procedure TFhirPeriod.SetEnd_ST(value : TFslDateTime);
 begin
   if FEnd_ = nil then
     FEnd_ := TFhirDateTime.create;
@@ -27704,12 +27632,7 @@ end;
 
 function TFhirAnnotation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'author[x]') then
-  begin
-    Author := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'author') then
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then
   begin
     Author := propValue as TFhirType{4};
     result := propValue;
@@ -27734,8 +27657,7 @@ end;
 
 function TFhirAnnotation.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'author[x]') then raise EFHIRException.create('Cannot make property Author'){4x}
-  else if (propName = 'author') then raise EFHIRException.create('Cannot make property Author'){4x}
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then raise EFHIRException.create('Cannot make property Author'){4x}
   else if (propName = 'time') then result := TFhirDateTime.create() {5b}
   else if (propName = 'text') then result := TFhirMarkdown.create() {5b}
   else result := inherited createPropertyValue(propName);
@@ -27751,8 +27673,7 @@ end;
 
 procedure TFhirAnnotation.deleteProperty(propName : string; value : TFHIRObject);
 begin
-  if (propName = 'author[x]') then AuthorElement := nil{4x}
-  else if (propName = 'author') then AuthorElement := nil{4x}
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then AuthorElement := nil{4x}
   else if (propName = 'time') then TimeElement := nil
   else if (propName = 'text') then TextElement := nil
   else
@@ -27761,8 +27682,7 @@ end;
 
 procedure TFhirAnnotation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'author[x]') then AuthorElement := new as TFhirType{4x}
-  else if (propName = 'author') then AuthorElement := new as TFhirType{4x}
+  if (isMatchingName(propName, 'author', ['Reference', 'String'])) then AuthorElement := new as TFhirType{4x}
   else if (propName = 'time') then TimeElement := asDateTime(new){5b}
   else if (propName = 'text') then TextElement := asMarkdown(new){5b}
   else
@@ -27824,15 +27744,15 @@ begin
   FTime := value;
 end;
 
-Function TFhirAnnotation.GetTimeST : TDateTimeEx;
+Function TFhirAnnotation.GetTimeST : TFslDateTime;
 begin
   if FTime = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FTime.value;
 end;
 
-Procedure TFhirAnnotation.SetTimeST(value : TDateTimeEx);
+Procedure TFhirAnnotation.SetTimeST(value : TFslDateTime);
 begin
   if FTime = nil then
     FTime := TFhirDateTime.create;
@@ -29097,12 +29017,7 @@ begin
     Code := propValue as TFhirCoding{4b};
     result := propValue;
   end
-  else if (propName = 'value[x]') then
-  begin
-    Value := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'value') then
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Quantity', 'Range', 'Reference'])) then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -29118,8 +29033,7 @@ end;
 function TFhirUsageContext.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'code') then result := TFhirCoding.create(){4b}
-  else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
-  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Quantity', 'Range', 'Reference'])) then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -29133,8 +29047,7 @@ end;
 procedure TFhirUsageContext.deleteProperty(propName : string; value : TFHIRObject);
 begin
   if (propName = 'code') then CodeElement := nil
-  else if (propName = 'value[x]') then ValueElement := nil{4x}
-  else if (propName = 'value') then ValueElement := nil{4x}
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Quantity', 'Range', 'Reference'])) then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -29142,8 +29055,7 @@ end;
 procedure TFhirUsageContext.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'code') then CodeElement := new as TFhirCoding{4}
-  else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
-  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Quantity', 'Range', 'Reference'])) then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -29561,15 +29473,15 @@ begin
   FWhen := value;
 end;
 
-Function TFhirSignature.GetWhenST : TDateTimeEx;
+Function TFhirSignature.GetWhenST : TFslDateTime;
 begin
   if FWhen = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FWhen.value;
 end;
 
-Procedure TFhirSignature.SetWhenST(value : TDateTimeEx);
+Procedure TFhirSignature.SetWhenST(value : TFslDateTime);
 begin
   if FWhen = nil then
     FWhen := TFhirInstant.create;
@@ -32368,15 +32280,15 @@ begin
   FLastUpdated := value;
 end;
 
-Function TFhirMeta.GetLastUpdatedST : TDateTimeEx;
+Function TFhirMeta.GetLastUpdatedST : TFslDateTime;
 begin
   if FLastUpdated = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FLastUpdated.value;
 end;
 
-Procedure TFhirMeta.SetLastUpdatedST(value : TDateTimeEx);
+Procedure TFhirMeta.SetLastUpdatedST(value : TFslDateTime);
 begin
   if FLastUpdated = nil then
     FLastUpdated := TFhirInstant.create;
@@ -34924,12 +34836,7 @@ begin
     Label_Element := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName = 'value[x]') then
-  begin
-    Value := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'value') then
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then
   begin
     Value := propValue as TFhirType{4};
     result := propValue;
@@ -34945,8 +34852,7 @@ end;
 function TFhirElementDefinitionExample.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'label') then result := TFhirString.create() {5b}
-  else if (propName = 'value[x]') then raise EFHIRException.create('Cannot make property Value'){4x}
-  else if (propName = 'value') then raise EFHIRException.create('Cannot make property Value'){4x}
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then raise EFHIRException.create('Cannot make property Value'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -34960,8 +34866,7 @@ end;
 procedure TFhirElementDefinitionExample.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'label') then Label_Element := nil
-  else if (propName = 'value[x]') then ValueElement := nil{4x}
-  else if (propName = 'value') then ValueElement := nil{4x}
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then ValueElement := nil{4x}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -34969,8 +34874,7 @@ end;
 procedure TFhirElementDefinitionExample.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'label') then Label_Element := asString(new){5b}
-  else if (propName = 'value[x]') then ValueElement := new as TFhirType{4x}
-  else if (propName = 'value') then ValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then ValueElement := new as TFhirType{4x}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -36774,12 +36678,7 @@ begin
     Type_List.add(propValue as TFhirElementDefinitionType){2a};
     result := propValue;
   end
-  else if (propName = 'defaultValue[x]') then
-  begin
-    DefaultValue := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'defaultValue') then
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then
   begin
     DefaultValue := propValue as TFhirType{4};
     result := propValue;
@@ -36794,22 +36693,12 @@ begin
     OrderMeaningElement := asString(propValue){5a};
     result := propValue;
   end
-  else if (propName = 'fixed[x]') then
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then
   begin
     Fixed := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName = 'fixed') then
-  begin
-    Fixed := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'pattern[x]') then
-  begin
-    Pattern := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'pattern') then
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then
   begin
     Pattern := propValue as TFhirType{4};
     result := propValue;
@@ -36819,22 +36708,12 @@ begin
     ExampleList.add(propValue as TFhirElementDefinitionExample){2a};
     result := propValue;
   end
-  else if (propName = 'minValue[x]') then
+  else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then
   begin
     MinValue := propValue as TFhirType{4};
     result := propValue;
   end
-  else if (propName = 'minValue') then
-  begin
-    MinValue := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'maxValue[x]') then
-  begin
-    MaxValue := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'maxValue') then
+  else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then
   begin
     MaxValue := propValue as TFhirType{4};
     result := propValue;
@@ -36918,19 +36797,14 @@ begin
   else if (propName = 'base') then result := TFhirElementDefinitionBase.create(){4b}
   else if (propName = 'contentReference') then result := TFhirUri.create() {5b}
   else if (propName = 'type') then result := Type_List.new(){2}
-  else if (propName = 'defaultValue[x]') then raise EFHIRException.create('Cannot make property DefaultValue'){4x}
-  else if (propName = 'defaultValue') then raise EFHIRException.create('Cannot make property DefaultValue'){4x}
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then raise EFHIRException.create('Cannot make property DefaultValue'){4x}
   else if (propName = 'meaningWhenMissing') then result := TFhirMarkdown.create() {5b}
   else if (propName = 'orderMeaning') then result := TFhirString.create() {5b}
-  else if (propName = 'fixed[x]') then raise EFHIRException.create('Cannot make property Fixed'){4x}
-  else if (propName = 'fixed') then raise EFHIRException.create('Cannot make property Fixed'){4x}
-  else if (propName = 'pattern[x]') then raise EFHIRException.create('Cannot make property Pattern'){4x}
-  else if (propName = 'pattern') then raise EFHIRException.create('Cannot make property Pattern'){4x}
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then raise EFHIRException.create('Cannot make property Fixed'){4x}
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then raise EFHIRException.create('Cannot make property Pattern'){4x}
   else if (propName = 'example') then result := ExampleList.new(){2}
-  else if (propName = 'minValue[x]') then raise EFHIRException.create('Cannot make property MinValue'){4x}
-  else if (propName = 'minValue') then raise EFHIRException.create('Cannot make property MinValue'){4x}
-  else if (propName = 'maxValue[x]') then raise EFHIRException.create('Cannot make property MaxValue'){4x}
-  else if (propName = 'maxValue') then raise EFHIRException.create('Cannot make property MaxValue'){4x}
+  else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then raise EFHIRException.create('Cannot make property MinValue'){4x}
+  else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then raise EFHIRException.create('Cannot make property MaxValue'){4x}
   else if (propName = 'maxLength') then result := TFhirInteger.create() {5b}
   else if (propName = 'condition') then result := ConditionList.new(){2}
   else if (propName = 'constraint') then result := ConstraintList.new(){2}
@@ -37000,19 +36874,14 @@ begin
   else if (propName = 'base') then BaseElement := nil
   else if (propName = 'contentReference') then ContentReferenceElement := nil
   else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {2}
-  else if (propName = 'defaultValue[x]') then DefaultValueElement := nil{4x}
-  else if (propName = 'defaultValue') then DefaultValueElement := nil{4x}
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then DefaultValueElement := nil{4x}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := nil
   else if (propName = 'orderMeaning') then OrderMeaningElement := nil
-  else if (propName = 'fixed[x]') then FixedElement := nil{4x}
-  else if (propName = 'fixed') then FixedElement := nil{4x}
-  else if (propName = 'pattern[x]') then PatternElement := nil{4x}
-  else if (propName = 'pattern') then PatternElement := nil{4x}
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then FixedElement := nil{4x}
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then PatternElement := nil{4x}
   else if (propName = 'example') then deletePropertyValue('example', ExampleList, value) {2}
-  else if (propName = 'minValue[x]') then MinValueElement := nil{4x}
-  else if (propName = 'minValue') then MinValueElement := nil{4x}
-  else if (propName = 'maxValue[x]') then MaxValueElement := nil{4x}
-  else if (propName = 'maxValue') then MaxValueElement := nil{4x}
+  else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MinValueElement := nil{4x}
+  else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MaxValueElement := nil{4x}
   else if (propName = 'maxLength') then MaxLengthElement := nil
   else if (propName = 'condition') then deletePropertyValue('condition', ConditionList, value) {2}
   else if (propName = 'constraint') then deletePropertyValue('constraint', ConstraintList, value) {2}
@@ -37044,19 +36913,14 @@ begin
   else if (propName = 'base') then BaseElement := new as TFhirElementDefinitionBase{4}
   else if (propName = 'contentReference') then ContentReferenceElement := asUri(new){5b}
   else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {2}
-  else if (propName = 'defaultValue[x]') then DefaultValueElement := new as TFhirType{4x}
-  else if (propName = 'defaultValue') then DefaultValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then DefaultValueElement := new as TFhirType{4x}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asMarkdown(new){5b}
   else if (propName = 'orderMeaning') then OrderMeaningElement := asString(new){5b}
-  else if (propName = 'fixed[x]') then FixedElement := new as TFhirType{4x}
-  else if (propName = 'fixed') then FixedElement := new as TFhirType{4x}
-  else if (propName = 'pattern[x]') then PatternElement := new as TFhirType{4x}
-  else if (propName = 'pattern') then PatternElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then FixedElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage'])) then PatternElement := new as TFhirType{4x}
   else if (propName = 'example') then replacePropertyValue('example', ExampleList, existing, new) {2}
-  else if (propName = 'minValue[x]') then MinValueElement := new as TFhirType{4x}
-  else if (propName = 'minValue') then MinValueElement := new as TFhirType{4x}
-  else if (propName = 'maxValue[x]') then MaxValueElement := new as TFhirType{4x}
-  else if (propName = 'maxValue') then MaxValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MinValueElement := new as TFhirType{4x}
+  else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MaxValueElement := new as TFhirType{4x}
   else if (propName = 'maxLength') then MaxLengthElement := asInteger(new){5b}
   else if (propName = 'condition') then replacePropertyValue('condition', ConditionList, existing, new) {2}
   else if (propName = 'constraint') then replacePropertyValue('constraint', ConstraintList, existing, new) {2}
@@ -38093,12 +37957,7 @@ end;
 
 function TFhirTimingRepeat.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'bounds[x]') then
-  begin
-    Bounds := propValue as TFhirType{4};
-    result := propValue;
-  end
-  else if (propName = 'bounds') then
+  if (isMatchingName(propName, 'bounds', ['Duration', 'Range', 'Period'])) then
   begin
     Bounds := propValue as TFhirType{4};
     result := propValue;
@@ -38186,8 +38045,7 @@ end;
 
 function TFhirTimingRepeat.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'bounds[x]') then raise EFHIRException.create('Cannot make property Bounds'){4x}
-  else if (propName = 'bounds') then raise EFHIRException.create('Cannot make property Bounds'){4x}
+  if (isMatchingName(propName, 'bounds', ['Duration', 'Range', 'Period'])) then raise EFHIRException.create('Cannot make property Bounds'){4x}
   else if (propName = 'count') then result := TFhirPositiveInt.create() {5b}
   else if (propName = 'countMax') then result := TFhirPositiveInt.create() {5b}
   else if (propName = 'duration') then result := TFhirDecimal.create() {5b}
@@ -38223,8 +38081,7 @@ end;
 
 procedure TFhirTimingRepeat.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'bounds[x]') then BoundsElement := nil{4x}
-  else if (propName = 'bounds') then BoundsElement := nil{4x}
+  if (isMatchingName(propName, 'bounds', ['Duration', 'Range', 'Period'])) then BoundsElement := nil{4x}
   else if (propName = 'count') then CountElement := nil
   else if (propName = 'countMax') then CountMaxElement := nil
   else if (propName = 'duration') then DurationElement := nil
@@ -38243,8 +38100,7 @@ end;
 
 procedure TFhirTimingRepeat.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'bounds[x]') then BoundsElement := new as TFhirType{4x}
-  else if (propName = 'bounds') then BoundsElement := new as TFhirType{4x}
+  if (isMatchingName(propName, 'bounds', ['Duration', 'Range', 'Period'])) then BoundsElement := new as TFhirType{4x}
   else if (propName = 'count') then CountElement := asPositiveInt(new){5b}
   else if (propName = 'countMax') then CountMaxElement := asPositiveInt(new){5b}
   else if (propName = 'duration') then DurationElement := asDecimal(new){5b}
@@ -39188,18 +39044,13 @@ begin
 end;
 
 function TFhirCount.equals(other : TObject) : boolean; 
-var
-  o : TFhirCount;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirCount)) then
     result := false
   else
-  begin
-    o := TFhirCount(other);
     result := true;
-  end;
 end;
 
 function TFhirCount.Link : TFhirCount;
@@ -39413,18 +39264,13 @@ begin
 end;
 
 function TFhirAge.equals(other : TObject) : boolean; 
-var
-  o : TFhirAge;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirAge)) then
     result := false
   else
-  begin
-    o := TFhirAge(other);
     result := true;
-  end;
 end;
 
 function TFhirAge.Link : TFhirAge;
@@ -39638,18 +39484,13 @@ begin
 end;
 
 function TFhirDistance.equals(other : TObject) : boolean; 
-var
-  o : TFhirDistance;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirDistance)) then
     result := false
   else
-  begin
-    o := TFhirDistance(other);
     result := true;
-  end;
 end;
 
 function TFhirDistance.Link : TFhirDistance;
@@ -39863,18 +39704,13 @@ begin
 end;
 
 function TFhirDuration.equals(other : TObject) : boolean; 
-var
-  o : TFhirDuration;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirDuration)) then
     result := false
   else
-  begin
-    o := TFhirDuration(other);
     result := true;
-  end;
 end;
 
 function TFhirDuration.Link : TFhirDuration;
@@ -44955,12 +44791,12 @@ begin
     result := obj as TFHIRDate
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else
@@ -44975,12 +44811,12 @@ begin
     result := obj as TFHIRDateTime
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else
@@ -45055,12 +44891,12 @@ begin
     result := obj as TFHIRInstant
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else
