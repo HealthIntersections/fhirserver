@@ -15,7 +15,9 @@ public class Generator {
   public static void main(String[] args) throws Exception {
     System.out.println("Generate pascal code for r"+args[1]+" in "+args[0]);
     Definitions definitions;
-    if (args[1].equals("4"))
+    if (args[1].equals("5"))
+      definitions = new DefinitionsLoader5().loadDefinitions("4.1.0");
+    else if (args[1].equals("4"))
       definitions = new DefinitionsLoader4().loadDefinitions("4.0.0");
     else if (args[1].equals("3"))
       definitions = new DefinitionsLoader3().loadDefinitions("3.0.1");
