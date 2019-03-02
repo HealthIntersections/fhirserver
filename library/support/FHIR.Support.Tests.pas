@@ -1,4 +1,4 @@
-unit FHIR.Support.Tests;
+﻿unit FHIR.Support.Tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -109,6 +109,7 @@ type
     [TestCase] procedure TestTemp;
     [TestCase] procedure TesTFslDateTime;
     [TestCase] procedure TestAdvFile;
+    [TestCase] procedure TestRemoveAccents;
   end;
 
 
@@ -3885,6 +3886,13 @@ begin
   finally
     kcs.free;
   end;
+end;
+
+procedure TOSXTests.TestRemoveAccents;
+begin
+  Assert.AreEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
+  Assert.AreEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
+  Assert.AreEqual('Валерии Николаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
 end;
 
 procedure TOSXTests.TestTemp;

@@ -316,7 +316,7 @@ Function DescribeBytes(i : int64) : String;
 procedure CommaAdd(var AStr: String; AStrToAdd: String);
 function RemoveQuotes(AStr: String; AUpperCaseString: Boolean = false): String;
 function IsNumericString(st: String): Boolean;
-function RemoveAccents(const aStr: String): String;
+function RemoveAccents(const s : String): String;
 
 function charLower(ch : char) : char; overload;
 function charLower(s : String) : char; overload;
@@ -2551,7 +2551,7 @@ End;
 Function DegreesToRadians(Const rDegrees : Extended) : Extended;
 Begin 
   Result := Math.DegToRad(rDegrees);
-End;  
+End;
 
 
 Function RadiansToDegrees(Const rRadians : Extended) : Extended;
@@ -5741,15 +5741,45 @@ Begin
 End;
 
 
+{$IFDEF MSWINDOWS}
 
-// http://stackoverflow.com/questions/1891196/convert-hi-ansi-chars-to-ascii-equivalent-e-e-in-delphi2007/1892432#1892432
+const
+  NormalizationOther = 0;
+  NormalizationC = 1;
+  NormalizationD = 2;
+  NormalizationKC = 3;
+  NormalizationKD = 4;
 
-function RemoveAccents(const aStr: String): String;
-type
-  USASCIIString = type AnsiString(20127);//20127 = us ascii
+
+
+function NormalizeString(NormForm: Integer; lpSrcString: LPCWSTR; cwSrcLength: Integer;
+ lpDstString: LPWSTR; cwDstLength: Integer): Integer; stdcall; external 'C:\WINDOWS\system32\normaliz.dll';
+
+function RemoveAccents(const s: String): String;
+var
+  nLength: integer;
+  c: char;
+  i: integer;
+  temp: string;
 begin
-  Result := String(USASCIIString(aStr));
+  nLength := NormalizeString(NormalizationD, PChar(s), Length(s), nil, 0);
+  SetLength(temp, nLength);
+  nLength := NormalizeString(NormalizationD, PChar(s), Length(s), PChar(temp), nLength);
+  SetLength(temp, nLength);
+  result := '';
+  for c in temp do
+    if (c.GetUnicodeCategory <> TUnicodeCategory.ucNonSpacingMark) and (c.GetUnicodeCategory <> TUnicodeCategory.ucCombiningMark) then
+      result := result + c;
 end;
+
+{$ENDIF}
+{$IFDEF OSX}
+function RemoveAccents(const s: String): String;
+begin
+  result :=
+end;
+
+{$ENDIF}
 
 // http://stackoverflow.com/questions/6077258/theres-a-uinttostr-in-delphi-to-let-you-display-uint64-values-but-where-is-strt
 function TryStrToUINT64(StrValue:String; var uValue:UInt64 ):Boolean;
