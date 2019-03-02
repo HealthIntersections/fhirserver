@@ -220,11 +220,11 @@ begin
   result := OpenThreadFunc(THREAD_QUERY_INFORMATION, False, id);
 end;
 
-
 function FileTimeZero : TDateTime;
 begin
   result := EncodeDate(1601, 1, 1);
 end;
+
 function TSystemService.ThreadStatus : String;
 var
   SnapProcHandle: THandle;

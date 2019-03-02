@@ -227,7 +227,6 @@
         <DCC_IMPLICIT_IMPORT>error</DCC_IMPLICIT_IMPORT>
         <DCC_UNIT_INIT_SEQ>error</DCC_UNIT_INIT_SEQ>
         <DCC_FILE_OPEN_UNITSRC>error</DCC_FILE_OPEN_UNITSRC>
-        <Debugger_RunParams>R:\fhir\publish  C:\work\org.hl7.fhir\build</Debugger_RunParams>
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
     </PropertyGroup>

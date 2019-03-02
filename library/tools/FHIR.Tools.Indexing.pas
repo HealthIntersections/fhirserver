@@ -51,6 +51,7 @@ type
     FMapping : String;
     FExpression: TFHIRPathExpressionNodeV;
     procedure SetExpression(const Value: TFHIRPathExpressionNodeV);
+    procedure SetKey(const Value: Integer);
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -61,7 +62,7 @@ type
     property ResourceType : String read FResourceType write FResourceType;
     property Name : String read FName write FName;
     Property Description : String read FDescription write FDescription;
-    Property Key : Integer read FKey write FKey;
+    Property Key : Integer read FKey write SetKey;
     Property SearchType : TFHIRSearchParamType read FSearchType write FSearchType;
     Property TargetTypes : TArray<String> read FTargetTypes write FTargetTypes;
     Property URI : String read FURI write FURI;
@@ -193,6 +194,11 @@ procedure TFhirIndex.SetExpression(const Value: TFHIRPathExpressionNodeV);
 begin
   FExpression.Free;
   FExpression := Value;
+end;
+
+procedure TFhirIndex.SetKey(const Value: Integer);
+begin
+  FKey := Value;
 end;
 
 function TFhirIndex.specifiedTarget: String;

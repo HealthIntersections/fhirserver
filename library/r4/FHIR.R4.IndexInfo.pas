@@ -3538,7 +3538,7 @@ begin
   indexes.add('Patient', 'identifier', 'A patient identifier', sptTOKEN, [], 'Patient.identifier', sxpNormal);
   indexes.add('Patient', 'language', 'Language code (irrespective of use value)', sptTOKEN, [], 'Patient.communication.language', sxpNormal);
   indexes.add('Patient', 'link', 'All patients linked to the given patient', sptREFERENCE, ['Patient', 'RelatedPerson'], 'Patient.link.other', sxpNormal);
-  indexes.add('Patient', 'mothersMaidenName', 'Search based on patient''s mother''s maiden name', sptSTRING, [], 'Patient.extension(http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName)', sxpNormal);
+  indexes.add('Patient', 'mothersMaidenName', 'Search based on patient''s mother''s maiden name', sptSTRING, [], 'Patient.extension(''http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName'')', sxpNormal);
   indexes.add('Patient', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', sptSTRING, [], 'Patient.name', sxpNormal);
   indexes.add('Patient', 'organization', 'The organization that is the custodian of the patient record', sptREFERENCE, ['Organization'], 'Patient.managingOrganization', sxpNormal);
   indexes.add('Patient', 'part-agree', 'Search by url for a participation agreement, which is stored in a DocumentReference', sptREFERENCE, ['DocumentReference'], 'DocumentReference.extension(''http://example.org/fhir/StructureDefinition/participation-agreement'')', sxpNormal);

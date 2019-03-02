@@ -1,4 +1,4 @@
-unit FHIR.Support.Tests;
+﻿unit FHIR.Support.Tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -42,8 +42,8 @@ Uses
   DUnitX.TestFramework;
 
 var
-  FHIR_PUB_HOME_1 : String = 'r:\fhir\publish';  // lots of the tests depend on content found in the FHIR publication
-  FHIR_SRC_HOME_1 : String = 'c:\work\org.hl7.fhir\build'; // or in the source
+  FHIR_PUB_HOME_1 : String = 'c:\work\org.hl7.fhir.old\org.hl7.fhir.r4\build\publish';  // lots of the tests depend on content found in the FHIR publication
+  FHIR_SRC_HOME_1 : String = 'c:\work\org.hl7.fhir.old\org.hl7.fhir.r4\build'; // or in the source
 
 function FHIR_PUB_FILE(fn : String) : String; overload;
 function FHIR_PUB_FILE(parts : Array of String) : String; overload;
@@ -109,6 +109,7 @@ type
     [TestCase] procedure TestTemp;
     [TestCase] procedure TesTFslDateTime;
     [TestCase] procedure TestAdvFile;
+    [TestCase] procedure TestRemoveAccents;
   end;
 
 
@@ -3885,6 +3886,13 @@ begin
   finally
     kcs.free;
   end;
+end;
+
+procedure TOSXTests.TestRemoveAccents;
+begin
+  Assert.AreEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
+  Assert.AreEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
+  Assert.AreEqual('Валерии Николаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
 end;
 
 procedure TOSXTests.TestTemp;
