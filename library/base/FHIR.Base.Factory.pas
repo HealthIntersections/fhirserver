@@ -197,11 +197,13 @@ type
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; virtual; abstract;
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; virtual; abstract;
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; virtual; abstract;
+    function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; virtual; abstract;
 
     function makeOpReqLookup : TFHIRLookupOpRequestW; virtual; abstract;
     function makeOpRespLookup : TFHIRLookupOpResponseW; virtual; abstract;
     function makeOpReqSubsumes : TFHIRSubsumesOpRequestW; virtual; abstract;
     function makeOpRespSubsumes : TFHIRSubsumesOpResponseW; virtual; abstract;
+    function makeValueSetContains : TFhirValueSetExpansionContainsW; virtual; abstract;
   end;
 
   TFHIRVersionFactories = class (TFslObject)

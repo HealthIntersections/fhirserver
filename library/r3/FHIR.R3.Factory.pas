@@ -112,10 +112,12 @@ type
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; override;
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; override;
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
+    function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
+    function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR3;
 
@@ -386,6 +388,11 @@ begin
   result := TFHIRValidator3.Create(worker as TFHIRWorkerContext);
 end;
 
+function TFHIRFactoryR3.makeValueSetContains: TFhirValueSetExpansionContainsW;
+begin
+  result := TFhirValueSetExpansionContains3.Create(TFhirValueSetExpansionContains.create);
+end;
+
 function TFHIRFactoryR3.resCategory(name: String): TTokenCategory;
 var
   a : TFhirResourceType;
@@ -529,6 +536,14 @@ begin
     result := nil
   else
     result := TFhirConceptMap3.Create(r);
+end;
+
+function TFHIRFactoryR3.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFHIRConsent3.Create(o);
 end;
 
 function TFHIRFactoryR3.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;

@@ -359,7 +359,8 @@ uses
   MarkdownDaringFireballTests in '..\..\..\markdown\tests\MarkdownDaringFireballTests.pas',
   InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
   FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas',
-  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas';
+  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
+  FHIR.Server.SimpleConsentEngine in '..\..\Server\FHIR.Server.SimpleConsentEngine.pas';
 
 var
   runner : ITestRunner;

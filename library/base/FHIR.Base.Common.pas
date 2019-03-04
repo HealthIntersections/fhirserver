@@ -1168,6 +1168,49 @@ type
     procedure system(url : String); virtual; abstract;
   end;
 
+  TFhirConsentProvisionAction = (cpaRead, capStore, cpaChange);
+
+  TFhirConsentProvisionW = class abstract (TFHIRXVersionElementWrapper)
+  private
+    function GetAction: TFhirConsentProvisionAction; virtual; abstract;
+    function GetAuthor: String; virtual; abstract;
+    function GetDataPeriodEnd: TFslDateTime; virtual; abstract;
+    function GetDataPeriodStart: TFslDateTime; virtual; abstract;
+    function GetHasDataPeriod: boolean; virtual; abstract;
+    function GetHasProvisionPeriod: boolean; virtual; abstract;
+    function GetPermit: boolean; virtual; abstract;
+    function GetProvisionPeriodEnd: TFslDateTime; virtual; abstract;
+    function GetProvisionPeriodStart: TFslDateTime; virtual; abstract;
+    function GetRecipient: String; virtual; abstract;
+  public
+    function link : TFhirConsentProvisionW; overload;
+    property permit : boolean read GetPermit;
+    property hasProvisionPeriod : boolean read GetHasProvisionPeriod;
+    property provisionPeriodStart : TFslDateTime read GetProvisionPeriodStart;
+    property provisionPeriodEnd : TFslDateTime read GetProvisionPeriodEnd;
+    property author : String read GetAuthor;
+    property recipient : String read GetRecipient;
+    property action : TFhirConsentProvisionAction read GetAction;
+    property hasDataPeriod : boolean read GetHasDataPeriod;
+    property dataPeriodStart : TFslDateTime read GetDataPeriodStart;
+    property dataPeriodEnd : TFslDateTime read GetDataPeriodEnd;
+    function listProvisions : TFslList<TFhirConsentProvisionW>; virtual; abstract;
+  end;
+
+  TFhirConsentW = class abstract (TFHIRXVersionResourceWrapper)
+  protected
+    function GetActive: boolean; virtual; abstract;
+    function GetPatient: String; virtual; abstract;
+    function GetDateTime: TFslDateTime; virtual; abstract;
+  public
+    function link : TFhirConsentW; overload;
+
+    property active : boolean read GetActive;
+    property patient : String read GetPatient;
+    property dateTime : TFslDateTime read GetDateTime;
+    function listProvisions : TFslList<TFhirConsentProvisionW>; virtual; abstract;
+  end;
+
 
 implementation
 
@@ -1909,6 +1952,22 @@ end;
 function TFHIRPeriodW.link: TFHIRPeriodW;
 begin
   result := TFHIRPeriodW(inherited link);
+end;
+
+{ TFhirConsentProvisionW }
+
+{ TFhirConsentW }
+
+function TFhirConsentW.link: TFhirConsentW;
+begin
+  result := TFhirConsentW(inherited link);
+end;
+
+{ TFhirConsentProvisionW }
+
+function TFhirConsentProvisionW.link: TFhirConsentProvisionW;
+begin
+  result := TFhirConsentProvisionW(inherited link);
 end;
 
 end.

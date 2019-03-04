@@ -734,12 +734,10 @@ end;
 procedure TFHIRService.updateAdminPassword(name: String);
 var
   db : TKDBManager;
-  dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
-  salt, un, pw, em, sql, dr, result : String;
+  salt, un, pw, em, result : String;
   conn : TKDBConnection;
   details : TFHIRServerIniComplex;
-  v : TFHIRVersion;
 begin
   // check that user account details are provided
   salt := FIni.admin['scim-salt'];

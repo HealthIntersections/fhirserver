@@ -852,6 +852,18 @@ type
     procedure system(url : String); override;
   end;
 
+  TFHIRConsent3 = class (TFHIRConsentW)
+  private
+    function consent : TFHIRConsent;
+  protected
+    function GetActive: boolean; override;
+    function GetPatient: String; override;
+    function GetDateTime: TFslDateTime; override;
+  public
+    function listProvisions : TFslList<TFhirConsentProvisionW>; override;
+  end;
+
+
 
 implementation
 
@@ -4558,5 +4570,36 @@ begin
   period.start := value;
 end;
 
+{ TFHIRConsent3 }
+
+function TFHIRConsent3.consent: TFHIRConsent;
+begin
+  result := resource as TFHIRConsent;
+end;
+
+function TFHIRConsent3.GetActive: boolean;
+begin
+  result := consent.status = ConsentStateCodesActive;
+end;
+
+function TFHIRConsent3.GetDateTime: TFslDateTime;
+begin
+  result := consent.dateTime;
+end;
+
+function TFHIRConsent3.GetPatient: String;
+begin
+  if consent.patient <> nil then
+    result := consent.patient.reference
+  else
+    result := '';
+end;
+
+function TFHIRConsent3.listProvisions: TFslList<TFhirConsentProvisionW>;
+begin
+  result := nil; // for now
+end;
+
 end.
+
 

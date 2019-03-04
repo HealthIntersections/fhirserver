@@ -110,12 +110,14 @@ type
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; override;
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; override;
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
+    function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
+    function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR2;
 
@@ -378,12 +380,17 @@ end;
 
 function TFHIRFactoryR2.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  raise EFslException.Create('Not supported in R2');
+  result := TFhirTerminologyCapabilities2.create(TFHIRParameters.create);
 end;
 
 function TFHIRFactoryR2.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
 begin
   result := TFHIRValidator2.Create(worker as TFHIRWorkerContext);
+end;
+
+function TFHIRFactoryR2.makeValueSetContains: TFhirValueSetExpansionContainsW;
+begin
+  result := TFhirValueSetExpansionContains2.Create(TFhirValueSetExpansionContains.create);
 end;
 
 function TFHIRFactoryR2.resCategory(name: String): TTokenCategory;
@@ -529,6 +536,11 @@ begin
     result := nil
   else
     result := TFhirConceptMap2.Create(r);
+end;
+
+function TFHIRFactoryR2.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
+begin
+  raise EFslException.Create('Not supported in R2');
 end;
 
 function TFHIRFactoryR2.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;
@@ -1581,6 +1593,8 @@ begin
     result := TFhirVisionPrescription.create()
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
+  else if name = 'CapabilityStatement' then
+    result := TFhirConformance.create()
   else
     result := nil;
 end;

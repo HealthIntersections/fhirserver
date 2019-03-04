@@ -5776,7 +5776,7 @@ end;
 {$IFDEF OSX}
 function RemoveAccents(const s: String): String;
 begin
-  result :=
+  result := OSXRemoveAccents(s);
 end;
 
 {$ENDIF}

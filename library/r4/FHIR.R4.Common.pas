@@ -831,6 +831,17 @@ type
     function url : String; override;
   end;
 
+  TFHIRConsent4 = class (TFHIRConsentW)
+  private
+    function consent : TFHIRConsent;
+  protected
+    function GetActive: boolean; override;
+    function GetPatient: String; override;
+    function GetDateTime: TFslDateTime; override;
+  public
+    function listProvisions : TFslList<TFhirConsentProvisionW>; override;
+  end;
+
   TFHIREventDefinition4 = class (TFHIREventDefinitionW)
   private
     function ed : TFHIREventDefinition;
@@ -4644,6 +4655,36 @@ procedure TFHIRPeriod4.SetStart(const Value: TFslDateTime);
 
 begin
   period.start := value;
+end;
+
+{ TFHIRConsent4 }
+
+function TFHIRConsent4.consent: TFHIRConsent;
+begin
+  result := resource as TFHIRConsent;
+end;
+
+function TFHIRConsent4.GetActive: boolean;
+begin
+  result := consent.status = ConsentStateCodesActive;
+end;
+
+function TFHIRConsent4.GetDateTime: TFslDateTime;
+begin
+  result := consent.dateTime;
+end;
+
+function TFHIRConsent4.GetPatient: String;
+begin
+  if consent.patient <> nil then
+    result := consent.patient.reference
+  else
+    result := '';
+end;
+
+function TFHIRConsent4.listProvisions: TFslList<TFhirConsentProvisionW>;
+begin
+  result := nil; // for now
 end;
 
 end.
