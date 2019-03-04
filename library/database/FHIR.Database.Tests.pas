@@ -48,7 +48,7 @@ Type
   Published
     [TestCase] procedure TestSemaphore;
     [TestCase] procedure TestMSSQL;
-    { [TestCase] } procedure TestMySQL;
+    [TestCase] procedure TestMySQL;
     // {[TestCase] }procedure TestMySQLMaria;
     [TestCase] procedure TestSQLite;
   End;

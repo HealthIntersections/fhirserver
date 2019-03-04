@@ -5,7 +5,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Client.Base,
+  FHIR.Base.Objects, FHIR.Base.Factory,  FHIR.Client.Base,
   FHIR.Server.Session;
 
 type
@@ -39,7 +39,12 @@ type
   end;
 
   TFHIRConsentEngine = class abstract (TFslObject)
+  protected
+    FFactory : TFHIRFactory;
   public
+    Constructor Create(factory : TFHIRFactory); virtual;
+    Destructor Destroy; override;
+
     // initialises the engine, and provides it with a FHIR API Access to a data store
     // that includes patient consent statements. The engine is trusted to access the
     // store as part of the system
@@ -50,6 +55,12 @@ type
     // completes (may be in a different thread). The engine can use this
     // to help maintain it's internal cache
     procedure seeResource(resource : TFHIRResourceV); virtual; abstract;
+
+    // notify the engine that an existing resource has been dropped from the store
+    // called immediately after the transaction to commit the resource
+    // completes (may be in a different thread). The engine can use this
+    // to help maintain it's internal cache
+    procedure dropResource(resource : TFHIRResourceV); virtual; abstract;
 
     // call this when any operation is started. return true if the
     // request should be processed. call this *before* user authorization
@@ -70,6 +81,7 @@ type
   public
     procedure initialise(client : TFhirClientV); override;
     procedure seeResource(resource : TFHIRResourceV); override;
+    procedure dropResource(resource : TFHIRResourceV); override;
     function startOperation(request : TFHIRRequest; client : TFHIRClientV) : TFHIRConsentEngineOperation; override;
   end;
 
@@ -103,6 +115,11 @@ end;
 
 { TFHIRNullConsentEngine }
 
+procedure TFHIRNullConsentEngine.dropResource(resource: TFHIRResourceV);
+begin
+  // nothing
+end;
+
 procedure TFHIRNullConsentEngine.initialise(client: TFhirClientV);
 begin
   // nothing
@@ -116,6 +133,20 @@ end;
 function TFHIRNullConsentEngine.startOperation(request: TFHIRRequest; client: TFHIRClientV): TFHIRConsentEngineOperation;
 begin
   result := TFHIRNullConsentEngineOperation.Create;
+end;
+
+{ TFHIRConsentEngine }
+
+constructor TFHIRConsentEngine.Create(factory: TFHIRFactory);
+begin
+  inherited create;
+  FFactory := factory;
+end;
+
+destructor TFHIRConsentEngine.Destroy;
+begin
+  FFactory.Free;
+  inherited;
 end;
 
 end.

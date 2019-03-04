@@ -329,7 +329,7 @@ begin
   {$IFNDEF NO_JS}
   FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
   {$ENDIF}
-  FConsentEngine := TFHIRNullConsentEngine.Create;
+  FConsentEngine := TFHIRNullConsentEngine.Create(storage.Factory.link);
 
   FMaps := TFslMap<TFHIRStructureMapW>.create;
   if DirectoryExists('c:\temp') then
