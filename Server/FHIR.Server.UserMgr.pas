@@ -56,7 +56,7 @@ type
     function CheckId(id : String; var username, hash : String) : boolean; virtual; abstract;
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; virtual; abstract;
 
-    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); virtual;
+    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession; prefix : String); virtual;
     property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
     function allowInsecure : boolean; virtual;
@@ -76,7 +76,7 @@ begin
   result := false;
 end;
 
-procedure TFHIRUserProvider.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFHIRSession);
+procedure TFHIRUserProvider.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFHIRSession; prefix : String);
 begin
   raise EFHIRException.create('User Management is not supported on this server');
 end;

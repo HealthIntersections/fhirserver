@@ -1192,9 +1192,9 @@ begin
          else if Value.AsString = 'integer' then
            cond.answer := TFhirInteger.Create('0')
          else if Value.AsString = 'date' then
-           cond.answer := TFhirDate.Create(TDateTimeEx.makeToday)
+           cond.answer := TFhirDate.Create(TFslDateTime.makeToday)
          else if Value.AsString = 'dateTime' then
-           cond.answer := TFhirDateTime.Create(TDateTimeEx.makeLocal)
+           cond.answer := TFhirDateTime.Create(TFslDateTime.makeLocal)
          else if Value.AsString = 'time' then
            cond.answer := TFhirTime.Create('00:00')
          else if Value.AsString = 'string' then
@@ -1231,9 +1231,9 @@ begin
        else if cond.answer is TFhirInteger then
          TFhirInteger(cond.answer).value := value.AsString
        else if cond.answer is TFhirDate then
-         TFhirDate(cond.answer).value := TDateTimeEx.fromXML(value.AsString)
+         TFhirDate(cond.answer).value := TFslDateTime.fromXML(value.AsString)
        else if cond.answer is TFhirDateTime then
-         TFhirDateTime(cond.answer).value := TDateTimeEx.fromXML(value.AsString)
+         TFhirDateTime(cond.answer).value := TFslDateTime.fromXML(value.AsString)
        else if cond.answer is TFhirTime then
          TFhirTime(cond.answer).value := value.AsString
        else if cond.answer is TFhirString then
@@ -1319,7 +1319,7 @@ begin
       if not (v.value is TFHIRDate) then
         v.value := TFHIRDate.Create;
       if aCol = 0 then
-        TFHIRDate(v.value).value := TDateTimeEx.fromFormat('c', value.AsString)
+        TFHIRDate(v.value).value := TFslDateTime.fromFormat('c', value.AsString)
     end;
     ItemTypeTime:
     begin
@@ -1692,7 +1692,7 @@ begin
     ItemTypeBoolean : if cbDefaultBoolean.IsChecked    then item.initial := TFhirBoolean.Create(true) else item.initial := nil;
     ItemTypeDecimal : if edtDefaultDecimal.Text <> ''  then item.initial := TFhirDecimal.Create(edtDefaultDecimal.Text) else item.initial := nil;
     ItemTypeInteger : if edtDefaultInteger.Text <> ''  then item.initial := TFhirInteger.Create(edtDefaultDecimal.Text) else item.initial := nil;
-    ItemTypeDate :    if dedDefaultDate.Text <> ''     then item.initial := TFhirDate.Create(TDateTimeEx.make(dedDefaultDate.Date, dttzLocal)) else item.initial := nil;
+    ItemTypeDate :    if dedDefaultDate.Text <> ''     then item.initial := TFhirDate.Create(TFslDateTime.make(dedDefaultDate.Date, dttzLocal)) else item.initial := nil;
     ItemTypeDateTime :if dedDefaultDateTime.Text <> '' then item.initial := storeDateTime(dedDefaultDateTime, tdtDefaultDateTime) else item.initial := nil;
     ItemTypeTime :    if tdtDefaultTime.Text <> ''     then item.initial := TFhirTime.Create(tdtDefaultTime.Text) else item.initial := nil;
     ItemTypeString :  if edtDefaultString.Text <> ''   then item.initial := TFhirString.Create(edtDefaultString.Text) else item.initial := nil;

@@ -358,7 +358,7 @@ Type
     FSystem : String;
     FVersion : String;
     FCoding : TFhirCoding;
-    FDate : TDateTimeEx;
+    FDate : TFslDateTime;
     FDisplayLanguage : String;
     FProperty_List : TList<String>;
     procedure SetCoding(value : TFhirCoding);
@@ -374,7 +374,7 @@ Type
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property coding : TFhirCoding read FCoding write SetCoding;
-    property date : TDateTimeEx read FDate write FDate;
+    property date : TFslDateTime read FDate write FDate;
     property displayLanguage : String read FDisplayLanguage write FDisplayLanguage;
     property property_List : TList<String> read FProperty_List;
   end;
@@ -723,13 +723,13 @@ Type
   //Operation evaluate-measure (Evaluate Measure)
   TFHIREvaluateMeasureOpRequest = class (TFHIROperationRequest)
   private
-    FPeriodStart : TDateTimeEx;
-    FPeriodEnd : TDateTimeEx;
+    FPeriodStart : TFslDateTime;
+    FPeriodEnd : TFslDateTime;
     FMeasure : TFhirReference;
     FReportType : String;
     FPatient : TFhirReference;
     FPractitioner : TFhirReference;
-    FLastReceivedOn : TDateTimeEx;
+    FLastReceivedOn : TFslDateTime;
     procedure SetMeasure(value : TFhirReference);
     procedure SetPatient(value : TFhirReference);
     procedure SetPractitioner(value : TFhirReference);
@@ -741,13 +741,13 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property periodStart : TDateTimeEx read FPeriodStart write FPeriodStart;
-    property periodEnd : TDateTimeEx read FPeriodEnd write FPeriodEnd;
+    property periodStart : TFslDateTime read FPeriodStart write FPeriodStart;
+    property periodEnd : TFslDateTime read FPeriodEnd write FPeriodEnd;
     property measure : TFhirReference read FMeasure write SetMeasure;
     property reportType : String read FReportType write FReportType;
     property patient : TFhirReference read FPatient write SetPatient;
     property practitioner : TFhirReference read FPractitioner write SetPractitioner;
-    property lastReceivedOn : TDateTimeEx read FLastReceivedOn write FLastReceivedOn;
+    property lastReceivedOn : TFslDateTime read FLastReceivedOn write FLastReceivedOn;
   end;
 
   TFHIREvaluateMeasureOpResponse = class (TFHIROperationResponse)
@@ -1173,7 +1173,7 @@ Type
   TFHIREvaluateOpRequest = class (TFHIROperationRequest)
   private
     FRequestId : String;
-    FEvaluateAtDateTime : TDateTimeEx;
+    FEvaluateAtDateTime : TFslDateTime;
     FInputParameters : TFhirParameters;
     FInputDataList : TFslList<TFhirResource>;
     FPatient : TFhirReference;
@@ -1212,7 +1212,7 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property requestId : String read FRequestId write FRequestId;
-    property evaluateAtDateTime : TDateTimeEx read FEvaluateAtDateTime write FEvaluateAtDateTime;
+    property evaluateAtDateTime : TFslDateTime read FEvaluateAtDateTime write FEvaluateAtDateTime;
     property inputParameters : TFhirParameters read FInputParameters write SetInputParameters;
     property inputDataList : TFslList<TFhirResource> read FInputDataList;
     property patient : TFhirReference read FPatient write SetPatient;
@@ -1322,7 +1322,7 @@ Type
     FContext : String;
     FFilter : String;
     FProfile : String;
-    FDate : TDateTimeEx;
+    FDate : TFslDateTime;
     FOffset : String;
     FCount : String;
     FIncludeDesignations : Boolean;
@@ -1347,7 +1347,7 @@ Type
     property context : String read FContext write FContext;
     property filter : String read FFilter write FFilter;
     property profile : String read FProfile write FProfile;
-    property date : TDateTimeEx read FDate write FDate;
+    property date : TFslDateTime read FDate write FDate;
     property offset : String read FOffset write FOffset;
     property count : String read FCount write FCount;
     property includeDesignations : Boolean read FIncludeDesignations write FIncludeDesignations;
@@ -1387,7 +1387,7 @@ Type
     FDisplay : String;
     FCoding : TFhirCoding;
     FCodeableConcept : TFhirCodeableConcept;
-    FDate : TDateTimeEx;
+    FDate : TFslDateTime;
     FAbstract : Boolean;
     FDisplayLanguage : String;
     procedure SetValueSet(value : TFhirValueSet);
@@ -1410,7 +1410,7 @@ Type
     property display : String read FDisplay write FDisplay;
     property coding : TFhirCoding read FCoding write SetCoding;
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
-    property date : TDateTimeEx read FDate write FDate;
+    property date : TFslDateTime read FDate write FDate;
     property abstract : Boolean read FAbstract write FAbstract;
     property displayLanguage : String read FDisplayLanguage write FDisplayLanguage;
   end;
@@ -2384,7 +2384,7 @@ begin
   FVersion := params.str['version'];
   if params.param['coding'] <> nil then
     FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
-  FDate := TDateTimeEx.fromXml(params.str['date']);
+  FDate := TFslDateTime.fromXml(params.str['date']);
   FDisplayLanguage := params.str['displayLanguage'];
   for p in params.parameterList do
     if p.name = 'property' then
@@ -2399,7 +2399,7 @@ begin
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
-  FDate := TDateTimeEx.fromXml(params.getVar('date'));
+  FDate := TFslDateTime.fromXml(params.getVar('date'));
   FDisplayLanguage := params.getVar('displayLanguage');
   for s in params.getVar('property').Split([';']) do
     FProperty_List.add(s); 
@@ -3449,8 +3449,8 @@ end;
 
 procedure TFHIREvaluateMeasureOpRequest.load(params : TFHIRParameters);
 begin
-  FPeriodStart := TDateTimeEx.fromXml(params.str['periodStart']);
-  FPeriodEnd := TDateTimeEx.fromXml(params.str['periodEnd']);
+  FPeriodStart := TFslDateTime.fromXml(params.str['periodStart']);
+  FPeriodEnd := TFslDateTime.fromXml(params.str['periodEnd']);
   if params.param['measure'] <> nil then
     FMeasure := (params.param['measure'].value as TFhirReference).Link; {ob.5d}
   FReportType := params.str['reportType'];
@@ -3458,16 +3458,16 @@ begin
     FPatient := (params.param['patient'].value as TFhirReference).Link; {ob.5d}
   if params.param['practitioner'] <> nil then
     FPractitioner := (params.param['practitioner'].value as TFhirReference).Link; {ob.5d}
-  FLastReceivedOn := TDateTimeEx.fromXml(params.str['lastReceivedOn']);
+  FLastReceivedOn := TFslDateTime.fromXml(params.str['lastReceivedOn']);
   loadExtensions(params);
 end;
 
 procedure TFHIREvaluateMeasureOpRequest.load(params : TParseMap);
 begin
-  FPeriodStart := TDateTimeEx.fromXml(params.getVar('periodStart'));
-  FPeriodEnd := TDateTimeEx.fromXml(params.getVar('periodEnd'));
+  FPeriodStart := TFslDateTime.fromXml(params.getVar('periodStart'));
+  FPeriodEnd := TFslDateTime.fromXml(params.getVar('periodEnd'));
   FReportType := params.getVar('reportType');
-  FLastReceivedOn := TDateTimeEx.fromXml(params.getVar('lastReceivedOn'));
+  FLastReceivedOn := TFslDateTime.fromXml(params.getVar('lastReceivedOn'));
   loadExtensions(params);
 end;
 
@@ -4857,7 +4857,7 @@ var
   p : TFhirParametersParameter;
 begin
   FRequestId := params.str['requestId'];
-  FEvaluateAtDateTime := TDateTimeEx.fromXml(params.str['evaluateAtDateTime']);
+  FEvaluateAtDateTime := TFslDateTime.fromXml(params.str['evaluateAtDateTime']);
   FInputParameters := (params.res['inputParameters'] as TFhirParameters).Link;{ob.5a}
   for p in params.parameterList do
     if p.name = 'inputData' then
@@ -4894,7 +4894,7 @@ end;
 procedure TFHIREvaluateOpRequest.load(params : TParseMap);
 begin
   FRequestId := params.getVar('requestId');
-  FEvaluateAtDateTime := TDateTimeEx.fromXml(params.getVar('evaluateAtDateTime'));
+  FEvaluateAtDateTime := TFslDateTime.fromXml(params.getVar('evaluateAtDateTime'));
   loadExtensions(params);
 end;
 
@@ -5227,7 +5227,7 @@ begin
   FContext := params.str['context'];
   FFilter := params.str['filter'];
   FProfile := params.str['profile'];
-  FDate := TDateTimeEx.fromXml(params.str['date']);
+  FDate := TFslDateTime.fromXml(params.str['date']);
   FOffset := params.str['offset'];
   FCount := params.str['count'];
   FIncludeDesignations := params.bool['includeDesignations'];
@@ -5247,7 +5247,7 @@ begin
   FContext := params.getVar('context');
   FFilter := params.getVar('filter');
   FProfile := params.getVar('profile');
-  FDate := TDateTimeEx.fromXml(params.getVar('date'));
+  FDate := TFslDateTime.fromXml(params.getVar('date'));
   FOffset := params.getVar('offset');
   FCount := params.getVar('count');
   FIncludeDesignations := StrToBoolDef(params.getVar('includeDesignations'), false);
@@ -5390,7 +5390,7 @@ begin
     FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
   if params.param['codeableConcept'] <> nil then
     FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FDate := TDateTimeEx.fromXml(params.str['date']);
+  FDate := TFslDateTime.fromXml(params.str['date']);
   FAbstract := params.bool['abstract'];
   FDisplayLanguage := params.str['displayLanguage'];
   loadExtensions(params);
@@ -5404,7 +5404,7 @@ begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FDisplay := params.getVar('display');
-  FDate := TDateTimeEx.fromXml(params.getVar('date'));
+  FDate := TFslDateTime.fromXml(params.getVar('date'));
   FAbstract := StrToBoolDef(params.getVar('abstract'), false);
   FDisplayLanguage := params.getVar('displayLanguage');
   loadExtensions(params);

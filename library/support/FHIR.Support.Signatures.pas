@@ -139,7 +139,7 @@ Type
     function loadXml(source: TBytes) : TMXmlDocument;
     function canonicaliseXml(method : TXmlCanonicalisationMethodSet; source : TBytes; var dom : TMXmlDocument) : TBytes; overload;
     function canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom : TMXmlElement) : TBytes; overload;
-    function canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom : TMXmlDocument) : TBytes; overload;
+//    function canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom : TMXmlDocument) : TBytes; overload;
     function canonicaliseXml(method : TXmlCanonicalisationMethodSet; source : TBytes) : TBytes; overload;
 
     // digest and signing routine
@@ -317,22 +317,22 @@ begin
   end;
 end;
 
-function TDigitalSigner.canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom: TMXMLDocument): TBytes;
-var
-  xb : TFslXmlBuilder;
-begin
-  xb := TFslXmlBuilder.Create;
-  try
-    xb.Canonicalise := method;
-    xb.Start;
-    xb.WriteXml(dom);
-    xb.Finish;
-    result := TEncoding.UTF8.GetBytes(xb.Build);
-  finally
-    xb.Free;
-  end;
-end;
-
+//function TDigitalSigner.canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom: TMXMLDocument): TBytes;
+//var
+//  xb : TFslXmlBuilder;
+//begin
+//  xb := TFslXmlBuilder.Create;
+//  try
+//    xb.Canonicalise := method;
+//    xb.Start;
+//    xb.WriteXml(dom);
+//    xb.Finish;
+//    result := TEncoding.UTF8.GetBytes(xb.Build);
+//  finally
+//    xb.Free;
+//  end;
+//end;
+//
 procedure TDigitalSigner.checkDigest(ref: TMXmlElement; doc: TMXMLDocument);
 var
   bytes, digest : TBytes;

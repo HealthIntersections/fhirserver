@@ -5159,7 +5159,6 @@ end;
 
 function  THL7V2Dictionary.VersionDefined(aVersion : THL7V2Version; var sDesc: String): Boolean;
 begin
-  result := False;
   Raise EHL7V2Exception.Create('Need to override VersionDefined in '+ClassName);
 end;
 

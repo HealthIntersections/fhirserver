@@ -135,7 +135,7 @@ begin
           session.UserEvidence := userInternal
         else
           session.UserEvidence := userAnonymous;
-        session.expires := TDateTimeEx.makeUTC.DateTime + DATETIME_SECOND_ONE * 60 * 60;
+        session.expires := TFslDateTime.makeUTC.DateTime + DATETIME_SECOND_ONE * 60 * 60;
         // 1 hour
         session.Cookie := intcookie;
         session.providerCode := apNone;
@@ -232,11 +232,11 @@ begin
     if result then
     begin
       session.useCount := session.useCount + 1;
-      if session.expires > TDateTimeEx.makeUTC.DateTime then
+      if session.expires > TFslDateTime.makeUTC.DateTime then
       begin
         session.Link;
         check := (session.providerCode in [apFacebook, apGoogle]) and
-          (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime);
+          (session.NextTokenCheck < TFslDateTime.makeUTC.DateTime);
       end
       else
       begin
@@ -266,7 +266,7 @@ begin
       begin
         session.useCount := session.useCount + 1;
         c := session.Key;
-        if (session.expires > TDateTimeEx.makeUTC.DateTime) and not ((session.providerCode in [apFacebook, apGoogle]) and (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime)) then
+        if (session.expires > TFslDateTime.makeUTC.DateTime) and not ((session.providerCode in [apFacebook, apGoogle]) and (session.NextTokenCheck < TFslDateTime.makeUTC.DateTime)) then
           result := session.Link
         else
           FSessions.Remove(session.Cookie);
@@ -288,11 +288,11 @@ begin
       result.UserName := result.User.formattedName;
       result.SystemName := 'unknown';
       result.SessionName := result.UserName+' ('+result.SystemName+')';
-      result.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * 500;
+      result.expires := TFslDateTime.makeLocal.DateTime + DATETIME_SECOND_ONE * 500;
       result.Cookie := NewGuidUrn;
       result.providerCode := apInternal;
       result.ProviderName := 'Internal';
-      result.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+      result.NextTokenCheck := TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
       result.scopes := TFHIRSecurityRights.allScopes;
       FLock.Lock('RegisterSession2');
       try
@@ -442,10 +442,10 @@ begin
         session.UserName := session.User.bestName;
         session.SystemName := 'unknown';
         session.SessionName := session.UserName+' ('+session.SystemName+')';
-        session.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * 0.25;
+        session.expires := TFslDateTime.makeLocal.DateTime + DATETIME_SECOND_ONE * 0.25;
         session.providerCode := apInternal;
         session.providerName := 'Internal';
-        session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+        session.NextTokenCheck := TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
         session.scopes := TFHIRSecurityRights.allScopes;
         if (session.User.emails.Count > 0) then
           session.email := session.User.emails[0].value;
@@ -490,7 +490,7 @@ begin
     result := FSessions.ContainsKey(session.Cookie);
     if result then
     begin
-//      session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+//      session.NextTokenCheck := TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
       session.useCount := session.useCount + 1;
     end;
   finally
@@ -506,7 +506,7 @@ begin
   FLock.Lock('MarkSessionChecked');
   try
     if FSessions.TryGetValue(sCookie, session) then
-      session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+      session.NextTokenCheck := TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
   finally
     FLock.Unlock;
   end;
@@ -522,13 +522,13 @@ begin
     session.innerToken := innerToken;
     session.outerToken := outerToken;
     session.id := id;
-    session.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * StrToInt(expires);
+    session.expires := TFslDateTime.makeLocal.DateTime + DATETIME_SECOND_ONE * StrToInt(expires);
     session.Cookie := OAUTH_SESSION_PREFIX + NewGuidId;
     session.providerCode := provider;
     session.providerName := Names_TFHIRAuthProvider[provider];
     session.originalUrl := original;
     session.email := email;
-    session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+    session.NextTokenCheck := TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
     if provider = apInternal then
       session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(id, key)
     else
@@ -583,7 +583,7 @@ begin
     session.providerCode := TFHIRAuthProvider(provider);
     session.providerName := Names_TFHIRAuthProvider[session.providerCode];
     session.email := email;
-    session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+    session.NextTokenCheck := TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
     session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(UserKey);
     session.UserEvidence := userEvidence;
     session.UserKey := UserKey;
@@ -621,7 +621,7 @@ var
   d: TDateTime;
 begin
   key := 0;
-  d := TDateTimeEx.makeUTC.DateTime;
+  d := TFslDateTime.makeUTC.DateTime;
   FLock.Lock('sweep2');
   try
     for session in FSessions.Values do

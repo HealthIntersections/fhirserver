@@ -104,6 +104,17 @@ public class SearchParameterDefn {
     return this;
   }
     
+  public SearchParameterDefn loadR5(String code, String description, SearchParamType type, List<org.hl7.fhir.r5.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage, String expression) {
+    this.code = code;
+    this.description = description;
+    this.type = type;
+    this.xPathUsage = xPathUsage;
+    this.expression = expression;
+    for (org.hl7.fhir.r5.model.CodeType c : targets)
+      getWorkingTargets().add(c.getValue());
+    return this;
+  }
+    
   public List<String> getPaths() {
     return paths;
   }

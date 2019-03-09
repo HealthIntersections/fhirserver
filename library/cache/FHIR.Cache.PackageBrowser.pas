@@ -61,7 +61,6 @@ type
     procedure gridRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure gridAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
   private
-    FChanged: boolean;
     FLoaded : boolean;
     FList : TFslList<TPackageDefinition>;
     FFiltered : TFslList<TPackageDefinition>;
@@ -140,11 +139,6 @@ begin
 end;
 
 procedure TPackageFinderForm.loadPackages;
-var
-  j : TJsonObject;
-  a : TJsonArray;
-  i : TJsonNode;
-  p : TPackageDefinition;
 begin
   FList.clear;
   TPackageDefinition.AddStandardPackages(FList);

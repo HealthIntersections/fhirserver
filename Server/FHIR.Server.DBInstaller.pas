@@ -110,7 +110,7 @@ Type
     procedure CreateAsyncTasks;
     procedure CreateClientRegistrations;
     procedure CreatePseudoData;
-    procedure runScript(s : String);
+//    procedure runScript(s : String);
   public
     constructor Create(conn : TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
@@ -1033,29 +1033,29 @@ begin
   DoPostTransactionInstall;
 end;
 
-procedure TFHIRDatabaseInstaller.runScript(s: String);
-var
-  lines : TStringList;
-  sql, l : String;
-begin
-  lines := TStringList.create;
-  try
-    lines.Text := replaceColumnWrappingChars(FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI), FConn.Owner.Platform);
-    sql := '';
-    for l in lines do
-      if l.Trim = 'GO' then
-      begin
-        Fconn.ExecSQL(sql);
-        sql := '';
-      end
-      else
-        sql := sql + l+#13#10;
-    if (sql.trim <> '') then
-      Fconn.ExecSQL(sql);
-  finally
-    lines.free;
-  end;
-end;
+//procedure TFHIRDatabaseInstaller.runScript(s: String);
+//var
+//  lines : TStringList;
+//  sql, l : String;
+//begin
+//  lines := TStringList.create;
+//  try
+//    lines.Text := replaceColumnWrappingChars(FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI), FConn.Owner.Platform);
+//    sql := '';
+//    for l in lines do
+//      if l.Trim = 'GO' then
+//      begin
+//        Fconn.ExecSQL(sql);
+//        sql := '';
+//      end
+//      else
+//        sql := sql + l+#13#10;
+//    if (sql.trim <> '') then
+//      Fconn.ExecSQL(sql);
+//  finally
+//    lines.free;
+//  end;
+//end;
 
 procedure TFHIRDatabaseInstaller.Uninstall;
 var

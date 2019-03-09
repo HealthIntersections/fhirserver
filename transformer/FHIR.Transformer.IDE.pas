@@ -163,11 +163,6 @@ type
     mnuGoto: TMenuItem;
     FindNext2: TMenuItem;
     mnuClose: TMenuItem;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    cbxEventType: TComboBox;
-    cbxSource: TComboBox;
     Execute1: TMenuItem;
     mnuExecute: TMenuItem;
     btnExecute: TBitBtn;
@@ -180,8 +175,6 @@ type
     btnConsoleCopy: TButton;
     mConsole: TMemo;
     tbExecute: TToolButton;
-    cbxScript: TComboBox;
-    lblScript: TLabel;
     ools1: TMenuItem;
     mnuCompare: TMenuItem;
     ToolButton3: TToolButton;
@@ -213,8 +206,6 @@ type
     mnuSaveAll: TMenuItem;
     tbSaveAll: TToolButton;
     mnuChooseWorkspace: TMenuItem;
-    btnOpenScript: TBitBtn;
-    btnOpenSource: TBitBtn;
     btnMaximise: TBitBtn;
     btnNormalSize: TBitBtn;
     tbBreakpoints: TTabSheet;
@@ -254,10 +245,6 @@ type
     vtCallStack: TVirtualStringTree;
     Splitter4: TSplitter;
     Panel15: TPanel;
-    Label6: TLabel;
-    cbxOutcome: TComboBox;
-    cbxTarget: TComboBox;
-    btnOpenTarget: TBitBtn;
     Help1: TMenuItem;
     N11: TMenuItem;
     About1: TMenuItem;
@@ -273,6 +260,11 @@ type
     mnuCopyDirectory: TMenuItem;
     mnuCopyContents: TMenuItem;
     Panel17: TPanel;
+    vtConfig: TVirtualStringTree;
+    Label1: TLabel;
+    btnAddConfig: TBitBtn;
+    btnEditConfig: TBitBtn;
+    btnDeleteConfig: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnAddContentClick(Sender: TObject);
@@ -321,11 +313,8 @@ type
     procedure FindDialogFind(Sender: TObject);
     procedure ReplaceDialogReplace(Sender: TObject);
     procedure mnuGotoClick(Sender: TObject);
-    procedure cbxEventTypeChange(Sender: TObject);
-    procedure cbxSourceChange(Sender: TObject);
     procedure mnuPackageManagerClick(Sender: TObject);
     procedure btnExecuteClick(Sender: TObject);
-    procedure cbxScriptChange(Sender: TObject);
     procedure Rewrite1Click(Sender: TObject);
     procedure mnuCompareClick(Sender: TObject);
     procedure mnuSaveClick(Sender: TObject);
@@ -340,8 +329,6 @@ type
     procedure mnuCompileClick(Sender: TObject);
     procedure mnuSaveAllClick(Sender: TObject);
     procedure mnuChooseWorkspaceClick(Sender: TObject);
-    procedure btnOpenScriptClick(Sender: TObject);
-    procedure btnOpenSourceClick(Sender: TObject);
     procedure btnMaximiseClick(Sender: TObject);
     procedure btnNormalSizeClick(Sender: TObject);
     procedure btnPathGoClick(Sender: TObject);
@@ -371,8 +358,6 @@ type
     procedure vtVarDetailsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
     procedure pmEditorPopup(Sender: TObject);
-    procedure cbxOutcomeChange(Sender: TObject);
-    procedure btnOpenTargetClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure estException1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -381,6 +366,13 @@ type
     procedure mnuCopyFileNameClick(Sender: TObject);
     procedure mnuCopyDirectoryClick(Sender: TObject);
     procedure mnuCopyContentsClick(Sender: TObject);
+    procedure btnAddConfigClick(Sender: TObject);
+    procedure vtConfigGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vtConfigInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vtConfigAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vtConfigRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure btnEditConfigClick(Sender: TObject);
+    procedure btnDeleteConfigClick(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -402,6 +394,7 @@ type
     FSelected : PVirtualNode;
     FCallStackSelected : PVirtualNode;
     FVarsSelected : PVirtualNode;
+    FConfigSelected : PVirtualNode;
 
     FPathSelection : TFslList<TPathSelection>;
     FRunningState : boolean;
@@ -451,7 +444,6 @@ type
     procedure MemoLinesInserted(FirstLine, Count: integer);
     procedure ToggleBreakPoint(Line: Integer);
 
-    function loadEvent : TExecutionDetails;
     function canExecute : boolean;
     procedure runFHIRPath(debug: boolean);
     function GetFPDebuggerSetting(name : TFHIRPathDebuggerFormSetting) : Integer;
@@ -479,6 +471,7 @@ type
     procedure ExecutorStatusMessage(sender : TTransformEngine; color : TColor; msg: String; beep : UInt);
     function ExecutorOpenFile(sender : TTransformEngine; f : TWorkspaceFile) : TEditorInformation;
     procedure SaveInputs;
+    function loadEvent: TWorkspaceExecConfig;
   public
   end;
 
@@ -489,7 +482,8 @@ implementation
 
 {$R *.dfm}
 
-uses FHIR.Transformer.SettingsDialog, FHIR.Transformer.MarkdownPreview;
+uses FHIR.Transformer.SettingsDialog, FHIR.Transformer.MarkdownPreview,
+  FHIR.Transformer.ExecConfig;
 
 
 function makeXmlDense(src : String) : String;
@@ -553,9 +547,74 @@ begin
     mConsole.lines.SaveToFile(sdText.FileName);
 end;
 
+procedure TTransformerForm.btnDeleteConfigClick(Sender: TObject);
+var
+  p : PTreeDataPointer;
+  ec : TWorkspaceExecConfig;
+begin
+  if FEngine.Running then
+    exit;
+
+  if FConfigSelected <> nil then
+  begin
+    p := vtConfig.GetNodeData(FConfigSelected);
+    ec := p.obj as TWorkspaceExecConfig;
+    if MessageDlg('Delete Configuration '+ec.summary+'?', mtConfirmation, mbYesNo, 0) = mrYes then
+    begin
+      FWorkspace.configurations.Remove(ec);
+      FWorkspace.save;
+      vtConfig.RootNodeCount := 0;
+      vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+      checkExecutionState;
+    end;
+  end;
+end;
+
+procedure TTransformerForm.btnEditConfigClick(Sender: TObject);
+var
+  p : PTreeDataPointer;
+  ec : TWorkspaceExecConfig;
+begin
+  if FEngine.Running then
+    exit;
+
+  ec := nil;
+  if FConfigSelected <> nil then
+  begin
+    p := vtConfig.GetNodeData(FConfigSelected);
+    ec := p.obj as TWorkspaceExecConfig;
+  end
+  else if FWorkspace.configurations.Count = 0 then
+    btnAddConfigClick(self)
+  else
+    ec := FWorkspace.configurations[0];
+  if ec <> nil then
+  begin
+    TransformerExecConfigForm := TTransformerExecConfigForm.create(self);
+    try
+      TransformerExecConfigForm.Workspace := FWorkspace.link;
+      TransformerExecConfigForm.Config := ec.Link;
+      if TransformerExecConfigForm.ShowModal = mrOk then
+      begin
+        FWorkspace.save;
+        if FConfigSelected <> nil then
+          vtConfig.InvalidateNode(FConfigSelected)
+        else
+        begin
+          vtConfig.RootNodeCount := 0;
+          vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+        end;
+        checkExecutionState;
+      end;
+    finally
+      TransformerExecConfigForm.Free;
+    end;
+  end;
+end;
+
 procedure TTransformerForm.btnExecuteClick(Sender: TObject);
 var
-  ev : TExecutionDetails;
+  ev : TWorkspaceExecConfig;
 begin
   if FDebugInfo <> nil then
     FStepOutcome := DBG_EXECUTE
@@ -588,24 +647,6 @@ begin
   btnNormalSize.Visible := false;
 end;
 
-procedure TTransformerForm.btnOpenScriptClick(Sender: TObject);
-begin
-  if cbxScript.ItemIndex > -1 then
-    openWorkspaceFile(cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
-end;
-
-procedure TTransformerForm.btnOpenSourceClick(Sender: TObject);
-begin
-  if cbxSource.ItemIndex > -1 then
-    openWorkspaceFile(cbxSource.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile);
-end;
-
-procedure TTransformerForm.btnOpenTargetClick(Sender: TObject);
-begin
-  if cbxTarget.ItemIndex > -1 then
-    openWorkspaceFile(cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile);
-end;
-
 function tail(s : String) : String;
 begin
   if s.Contains('/') then
@@ -624,6 +665,41 @@ procedure TTransformerForm.btnPathGoClick(Sender: TObject);
 begin
   DoSave('execute-fp', 'Execute');
   runFHIRPath(false);
+end;
+
+procedure TTransformerForm.btnAddConfigClick(Sender: TObject);
+var
+  ec : TWorkspaceExecConfig;
+begin
+  if FEngine.Running then
+    exit;
+
+  ec := TWorkspaceExecConfig.create;
+  try
+    TransformerExecConfigForm := TTransformerExecConfigForm.create(self);
+    try
+      TransformerExecConfigForm.Workspace := FWorkspace.link;
+      TransformerExecConfigForm.Config := ec.Link;
+      if TransformerExecConfigForm.ShowModal = mrOk then
+      begin
+        FWorkspace.configurations.Add(ec.link);
+        if FWorkspace.scripts.Count > 0 then
+          ec.script := FWorkspace.scripts[0].filename;
+        if FWorkspace.documents.Count > 0 then
+          ec.focus := FWorkspace.documents[0].filename
+        else if FWorkspace.messages.Count > 0 then
+          ec.focus := FWorkspace.messages[0].filename;
+        FWorkspace.save;
+        vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+        vtConfig.Refresh;
+        checkExecutionState;
+      end;
+    finally
+      TransformerExecConfigForm.Free;
+    end;
+  finally
+    ec.Free;
+  end;
 end;
 
 procedure TTransformerForm.runFHIRPath(debug : boolean);
@@ -707,7 +783,7 @@ end;
 
 procedure TTransformerForm.mnuRunNoDebugClick(Sender: TObject);
 var
-  ev : TExecutionDetails;
+  ev : TWorkspaceExecConfig;
 begin
   ev := loadEvent;
   try
@@ -737,98 +813,35 @@ end;
 
 function TTransformerForm.canExecute: boolean;
 var
-  ev : TExecutionDetails;
+  ev : TWorkspaceExecConfig;
   msg : String;
 begin
   ev := loadEvent;
   try
+    result := false;
     lblExecutionError.Caption := '';
-    result := (ev <> nil) and FEngine.canRun(ev, msg);
-    if not result then
-      lblExecutionError.Caption := msg;
+    if ev = nil then
+      lblExecutionError.Caption := 'Cannot Execute: No Execution Configuration Defined'
+    else if FIni.ReadString('Workspace', 'TerminologyServer', '') = '' then
+      lblExecutionError.Caption := 'Cannot Execute: No Terminolgy Server Defined (Tools...Options)'
+    else if FEngine.canRun(ev, msg) then
+      result := true
+    else
+      lblExecutionError.Caption := 'Cannot Execute: '+msg;
   finally
     ev.Free;
   end;
 end;
 
-procedure TTransformerForm.cbxEventTypeChange(Sender: TObject);
-  procedure loadSource(srcList, scrList, dstList : TFslList<TWorkspaceFile>; caption : String);
-  var
-    f : TWorkspaceFile;
-  begin
-    lblScript.Caption := caption;
-    cbxScript.Items.Clear;
-    for f in scrlist do
-      cbxScript.Items.AddObject(f.title, f);
-    cbxScript.ItemIndex := cbxScript.Items.IndexOf(FWorkspace.Script);
-    if (cbxScript.ItemIndex = -1) and (cbxScript.Items.Count > 0) then
-      cbxScript.ItemIndex := 0;
-
-    cbxSource.Items.Clear;
-    for f in srclist do
-      cbxSource.Items.AddObject(f.title, f);
-    cbxSource.ItemIndex := cbxSource.Items.IndexOf(FWorkspace.Source);
-    if (cbxSource.ItemIndex = -1) and (cbxSource.Items.Count > 0) then
-      cbxSource.ItemIndex := 0;
-
-    cbxTarget.Items.Clear;
-    for f in dstlist do
-      cbxTarget.Items.AddObject(f.title, f);
-    cbxTarget.ItemIndex := cbxTarget.Items.IndexOf(FWorkspace.Target);
-    if (cbxTarget.ItemIndex = -1) and (cbxTarget.Items.Count > 0) then
-      cbxTarget.ItemIndex := 0;
-    checkExecutionState;
-  end;
-begin
-   case cbxEventType.ItemIndex of
-    0: LoadSource(FWorkspace.messages, FWorkspace.scripts, FWorkspace.resources, 'Scripts');
-    1: LoadSource(FWorkspace.documents, FWorkspace.maps, FWorkspace.resources, 'Maps');
-  end;
-  if not Floading then
-  begin
-    FWorkspace.EventType := cbxEventType.ItemIndex;
-    FWorkspace.Source := cbxSource.Text;
-    FWorkspace.Script := cbxScript.Text;
-    FWorkspace.Target := cbxTarget.Text;
-    FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-    FWorkspace.Save;
-  end;
-end;
-
-procedure TTransformerForm.cbxOutcomeChange(Sender: TObject);
-begin
-  cbxTarget.Enabled := cbxOutcome.ItemIndex > 0;
-  FWorkspace.Outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-end;
-
-procedure TTransformerForm.cbxScriptChange(Sender: TObject);
-begin
-  if not Floading then
-  begin
-    FWorkspace.Script := cbxScript.Text;
-    FWorkspace.Save;
-  end;
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-end;
-
-procedure TTransformerForm.cbxSourceChange(Sender: TObject);
-begin
-  if not Floading then
-  begin
-    FWorkspace.Source := cbxSource.Text;
-    FWorkspace.Save;
-  end;
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1);
-end;
-
 procedure TTransformerForm.checkExecutionState;
 begin
-  btnExecute.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  btnExecute.enabled := not FEngine.Running and canExecute;
   mnuExecute.Enabled := btnExecute.enabled;
-  btnRunNoDebug.enabled := not FEngine.Running and (cbxScript.ItemIndex > -1) and (cbxSource.ItemIndex > -1) and ((cbxOutcome.ItemIndex = 0) or (cbxTarget.ItemIndex > -1)) and canExecute;
+  btnRunNoDebug.enabled := not FEngine.Running and canExecute;
   mnuRunNoDebug.enabled := btnRunNoDebug.enabled;
+  btnAddConfig.Enabled := not FEngine.running;
+  btnEditConfig.Enabled := not FEngine.running;
+  btnDeleteConfig.Enabled := not FEngine.running;
 end;
 
 procedure TTransformerForm.pgTabsChange(Sender: TObject);
@@ -1435,7 +1448,7 @@ begin
   FPathSelection := TFslList<TPathSelection>.create;
 
   FCache := TResourceMemoryCache.create;
-  FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#0.0.1'];
+  FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#2.0'];
   FCache.ResourceTypes := [{'CodeSystem', 'ValueSet', }'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'];
   FCache.OnLog := cacheLog;
 
@@ -1545,25 +1558,19 @@ begin
   end;
 end;
 
-function TTransformerForm.loadEvent: TExecutionDetails;
+function TTransformerForm.loadEvent: TWorkspaceExecConfig;
+var
+  p : PTreeDataPointer;
 begin
-  result := TExecutionDetails.create;
-  try
-    result.kind := TExecutionKind(cbxEventType.ItemIndex);
-    if cbxSource.ItemIndex = -1 then
-      exit(nil);
-    result.focus := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
-    if cbxScript.ItemIndex = -1 then
-      exit(nil);
-    result.script := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
-    result.outcome := TTransformOutcomeMode(cbxOutcome.ItemIndex);
-    if cbxTarget.ItemIndex = -1 then
-      exit(nil);
-    result.target := (cbxTarget.Items.Objects[cbxTarget.ItemIndex] as TWorkspaceFile).link;
-    result.Link;
-  finally
-    result.Free;
-  end;
+  if FConfigSelected <> nil then
+  begin
+    p := vtConfig.GetNodeData(FConfigSelected);
+    result := (p.obj as TWorkspaceExecConfig).link;
+  end
+  else if FWorkspace.configurations.Count > 0 then
+    result := FWorkspace.configurations[0].link
+  else
+    result := nil;
 end;
 
 procedure TTransformerForm.LoadWorkspace(proj: TWorkspace);
@@ -1595,6 +1602,7 @@ begin
   FEngine.OnDebug := DebugTransform;
   FEngine.OnOpenFile := ExecutorOpenFile;
   FEngine.OnLog := eventLog;
+  FEngine.terminologyServer := FIni.ReadString('Workspace', 'TerminologyServer', '');
   FIni.DeleteKey('Workspaces', proj.folder);
   key := FIni.ReadInteger('Workspace', 'last', 0) + 1;
   FIni.WriteInteger('Workspace', 'last', key);
@@ -1606,12 +1614,12 @@ begin
     edtWorkspace.Hint := proj.folder;
     vtWorkspace.RootNodeCount := 0;
     vtWorkspace.RootNodeCount := 7;
-    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
-    if cbxOutcome.ItemIndex = -1 then
-      cbxOutcome.ItemIndex := 0;
-    cbxOutcomeChange(nil);
-    cbxEventType.ItemIndex := FWorkspace.EventType;
-    cbxEventTypeChange(nil);
+//    cbxOutcome.ItemIndex := ord(FWorkspace.Outcome);
+//    if cbxOutcome.ItemIndex = -1 then
+//      cbxOutcome.ItemIndex := 0;
+//    cbxOutcomeChange(nil);
+//    cbxEventType.ItemIndex := FWorkspace.EventType;
+//    cbxEventTypeChange(nil);
     files := FWorkspace.listOpenFiles;
     try
       for f in files do
@@ -1620,6 +1628,9 @@ begin
       files.Free;
     end;
     pgTabsChange(self);
+    vtConfig.RootNodeCount := 0;
+    vtConfig.RootNodeCount := FWorkspace.configurations.Count;
+    vtConfig.Refresh;
   finally
     FLoading := false;
   end;
@@ -1920,7 +1931,11 @@ begin
   TransformerOptionsForm := TTransformerOptionsForm.create(self);
   try
     TransformerOptionsForm.ini := FIni;
-    TransformerOptionsForm.ShowModal;
+    if TransformerOptionsForm.ShowModal = mrOk then
+    begin
+      FEngine.terminologyServer := FIni.ReadString('Workspace', 'TerminologyServer', '');
+      checkExecutionState;
+    end;
   finally
     TransformerOptionsForm.free;
   end;
@@ -2277,6 +2292,41 @@ end;
 procedure TTransformerForm.vtCallStackRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   FCallStackSelected := Nil;
+end;
+
+procedure TTransformerForm.vtConfigAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FConfigSelected := Node;
+  checkExecutionState;
+end;
+
+procedure TTransformerForm.vtConfigGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  ec : TWorkspaceExecConfig;
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+  ec := p.obj as TWorkspaceExecConfig;
+  case Column of
+    0: CellText := ec.script;
+    1: CellText := ec.focus;
+    2: CellText := ''; // for now
+  end;
+end;
+
+procedure TTransformerForm.vtConfigInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  p : PTreeDataPointer;
+begin
+  p := vtWorkspace.GetNodeData(Node);
+//  ParentNode = nil
+  p.obj := FWorkspace.configurations[Node.Index];
+end;
+
+procedure TTransformerForm.vtConfigRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  FConfigSelected := Nil;
+  checkExecutionState;
 end;
 
 procedure TTransformerForm.vtVarDetailsColumnResize(Sender: TVTHeader; Column: TColumnIndex);
@@ -2651,12 +2701,7 @@ begin
   FRunningState := true;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := true;
-  cbxEventType.Enabled := false;
-  cbxScript.Enabled := false;
-  cbxSource.Enabled := false;
-  cbxEventTypeChange(nil);
-  cbxScriptChange(nil);
-  cbxSourceChange(nil);
+  checkExecutionState;
   pgTabsChange(nil);
 end;
 
@@ -2667,12 +2712,7 @@ begin
   FRunningState := false;
   for i := 1 to pgTabs.PageCount - 1 do
     editorForTab(pgTabs.Pages[i]).readOnly := false;
-  cbxEventType.Enabled := true;
-  cbxScript.Enabled := true;
-  cbxSource.Enabled := true;
-  cbxEventTypeChange(nil);
-  cbxScriptChange(nil);
-  cbxSourceChange(nil);
+  checkExecutionState;
   pgTabsChange(nil);
 end;
 

@@ -54,6 +54,8 @@ const
 
 type
   // base wrappers.....
+  TFhirExtensionW = class;
+
   TFHIRXVersionElementWrapper = class (TFHIRObject)
   protected
     FElement : TFHIRObject;
@@ -81,7 +83,7 @@ type
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
     function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    procedure addExtension(url : String; value : TFHIRObject); overload; override;
   end;
   TFHIRXVersionElementWrapperClass = class of TFHIRXVersionElementWrapper;
 
@@ -119,18 +121,31 @@ type
     property units : String read GetUnit write SetUnit;
     property system : String read GetSystem write SetSystem;
     property code : String read GetCode write SetCode;
+    function asDuration : TDateTime; virtual; abstract;
+  end;
+
+  TFHIRPeriodW = class (TFHIRXVersionElementWrapper)
+  protected
+    function GetEnd: TFslDateTime; virtual; abstract;
+    function GetStart: TFslDateTime; virtual; abstract;
+    procedure SetEnd(const Value: TFslDateTime); virtual; abstract;
+    procedure SetStart(const Value: TFslDateTime); virtual; abstract;
+  public
+    function link : TFHIRPeriodW; overload;
+    property start : TFslDateTime read GetStart write SetStart;
+    property end_ : TFslDateTime read GetEnd write SetEnd;
   end;
 
   TFhirMetaW = class (TFHIRXVersionElementWrapper)
   protected
     function getVersionId: String; virtual; abstract;
     procedure setVersionId(Value: String); virtual; abstract;
-    function getLastUpdated: TDateTimeEx; virtual; abstract;
-    procedure setLastUpdated(Value: TDateTimeEx); virtual; abstract;
+    function getLastUpdated: TFslDateTime; virtual; abstract;
+    procedure setLastUpdated(Value: TFslDateTime); virtual; abstract;
   public
     function link : TFhirMetaW; overload;
     property versionid : String read GetVersionId write SetVersionId;
-    property lastUpdated : TDateTimeEx read GetLastUpdated write SetLastUpdated;
+    property lastUpdated : TFslDateTime read GetLastUpdated write SetLastUpdated;
     function tags : TFslList<TFHIRCodingW>; virtual; abstract;
     function labels : TFslList<TFHIRCodingW>; virtual; abstract;
     function profiles : TArray<String>; virtual; abstract;
@@ -201,6 +216,9 @@ type
   end;
 
   TFhirCodeableConceptW = class (TFHIRXVersionElementWrapper)
+  protected
+    function GetText: String; virtual; abstract;
+    procedure SetText(const Value: String); virtual; abstract;
   public
     function link : TFhirCodeableConceptW; overload;
     function codingCount : integer; virtual; abstract;
@@ -210,6 +228,7 @@ type
     function summary : String; virtual; abstract;
     function fromSystem(System : String; required : boolean = false) : String; overload; virtual; abstract;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; virtual; abstract;
+    property text : String read GetText write SetText;
   end;
 
   TFhirOperationOutcomeIssueW = class (TFHIRXVersionElementWrapper)
@@ -260,7 +279,7 @@ type
     function getRequestMethod: String; virtual; abstract;
     function getRequestUrl: String; virtual; abstract;
     function getResource: TFHIRResourceV; virtual; abstract;
-    function getResponseDate: TDateTimeEx; virtual; abstract;
+    function getResponseDate: TFslDateTime; virtual; abstract;
     function getResponseStatus: String; virtual; abstract;
     function getSearchMode: TFHIRBundleEntrySearchMode; virtual; abstract;
     function getSearchMpiMatch: String; virtual; abstract;
@@ -268,7 +287,7 @@ type
     procedure setRequestMethod(Value: String); virtual; abstract;
     procedure setRequestUrl(Value: String); virtual; abstract;
     procedure setResource(Value: TFHIRResourceV); virtual; abstract;
-    procedure setResponseDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setResponseDate(Value: TFslDateTime); virtual; abstract;
     procedure setResponseStatus(Value: String); virtual; abstract;
     procedure setSearchMode(Value: TFHIRBundleEntrySearchMode); virtual; abstract;
     procedure setSearchMpiMatch(Value: String); virtual; abstract;
@@ -285,8 +304,8 @@ type
     procedure setResponseETag(Value: string); virtual; abstract;
     function getResponseLocation: string; virtual; abstract;
     procedure setResponseLocation(Value: string); virtual; abstract;
-    function getrequestIfModifiedSince: TDateTimeEx; virtual; abstract;
-    procedure setrequestIfModifiedSince(Value: TDateTimeEx); virtual; abstract;
+    function getrequestIfModifiedSince: TFslDateTime; virtual; abstract;
+    procedure setrequestIfModifiedSince(Value: TFslDateTime); virtual; abstract;
   public
     function Link : TFhirBundleEntryW; overload;
     property links[rel : String] : String read GetLink write SetLink;
@@ -300,8 +319,8 @@ type
     property requestIfNoneExist : String read GetrequestIfNoneExist write SetrequestIfNoneExist;
     property requestIfMatch : String read GetrequestIfMatch write SetrequestIfMatch;
     property requestIfNoneMatch : String read GetrequestIfNoneMatch write SetrequestIfNoneMatch;
-    property requestIfModifiedSince : TDateTimeEx read GetrequestIfModifiedSince write SetrequestIfModifiedSince;
-    property responseDate : TDateTimeEx read GetResponseDate write SetResponseDate;
+    property requestIfModifiedSince : TFslDateTime read GetrequestIfModifiedSince write SetrequestIfModifiedSince;
+    property responseDate : TFslDateTime read GetResponseDate write SetResponseDate;
     property responseStatus : String read GetResponseStatus write SetResponseStatus;
     property responseETag : string read GetResponseETag write SetResponseETag;
     property responseLocation : string read GetResponseLocation write SetResponseLocation;
@@ -311,14 +330,14 @@ type
   protected
     function getLink(rel: String): String; virtual; abstract;
     procedure setLink(rel: String; const Value: String); virtual; abstract;
-    function getLastUpdated : TDateTimeEx; virtual; abstract;
-    procedure setLastUpdated(Value: TDateTimeEx); virtual; abstract;
+    function getLastUpdated : TFslDateTime; virtual; abstract;
+    procedure setLastUpdated(Value: TFslDateTime); virtual; abstract;
     function getTotal: integer; virtual; abstract;
     procedure setTotal(Value: integer); virtual; abstract;
     function getType: TBundleType; virtual; abstract;
     procedure setType(Value: TBundleType); virtual; abstract;
-    function getTimestamp: TDateTimeEx; virtual; abstract;
-    procedure setTimestamp(Value: TDateTimeEx); virtual; abstract;
+    function getTimestamp: TFslDateTime; virtual; abstract;
+    procedure setTimestamp(Value: TFslDateTime); virtual; abstract;
   public
     function link : TFHIRBundleW;
     function next : String; overload;
@@ -335,8 +354,8 @@ type
     property total : integer read GetTotal write SetTotal;
     function title : String; virtual; abstract;
     property type_ : TBundleType read GetType write SetType;
-    property timestamp : TDateTimeEx read GetTimestamp write SetTimestamp;
-    property lastUpdated : TDateTimeEx read GetLastUpdated write SetLastUpdated;
+    property timestamp : TFslDateTime read GetTimestamp write SetTimestamp;
+    property lastUpdated : TFslDateTime read GetLastUpdated write SetLastUpdated;
   end;
   TFHIRBundleWClass = class of TFHIRBundleW;
 
@@ -412,8 +431,8 @@ type
     procedure setDescription(value : String); virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
-    function getDate: TDateTimeEx; virtual; abstract;
-    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    function getDate: TFslDateTime; virtual; abstract;
+    procedure setDate(Value: TFslDateTime); virtual; abstract;
     function getFhirVersion: string; virtual; abstract;
     procedure setFhirVersion(Value: string); virtual; abstract;
   public
@@ -424,7 +443,7 @@ type
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
-    property date : TDateTimeEx read GetDate write SetDate;
+    property date : TFslDateTime read GetDate write SetDate;
     property fhirVersion : string read GetFhirVersion write SetFhirVersion;
 
     function hasRest : boolean; virtual; abstract;
@@ -566,10 +585,10 @@ type
     function getStatus: TPublicationStatus; virtual; abstract;
     function getVersion: String; virtual; abstract;
     function getDescription: String; virtual; abstract;
-    function getDate: TDateTimeEx; virtual; abstract;
+    function getDate: TFslDateTime; virtual; abstract;
     function getPublisher: String; virtual; abstract;
     procedure setPublisher(Value: String); virtual; abstract;
-    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setUrl(Value: String); virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
@@ -584,7 +603,7 @@ type
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
-    property date : TDateTimeEx read GetDate write SetDate;
+    property date : TFslDateTime read GetDate write SetDate;
     property context : String read getContext;
     property publisher : String read GetPublisher write SetPublisher;
   end;
@@ -894,12 +913,12 @@ type
 
   TFhirConceptMapW = class (TFHIRXVersionResourceWrapper)
   protected
-    function getDate: TDateTimeEx; virtual; abstract;
+    function getDate: TFslDateTime; virtual; abstract;
     function getDescription: String; virtual; abstract;
     function getName: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getURL: String; virtual; abstract;
-    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
@@ -918,7 +937,7 @@ type
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
-    property date : TDateTimeEx read GetDate write SetDate;
+    property date : TFslDateTime read GetDate write SetDate;
     property context : String read getContext;
     property publisher : String read GetPublisher write SetPublisher;
     function sourceDesc : String; virtual; abstract;
@@ -975,7 +994,7 @@ type
     procedure participantIp(ip : String); virtual; abstract;
     procedure participantId(system, value, alt, name : String); virtual; abstract;
 
-    function dateTime : TDateTimeEx; virtual; abstract;
+    function dateTime : TFslDateTime; virtual; abstract;
   end;
 
   TFHIRSubscriptionW = class (TFHIRXVersionResourceWrapper)
@@ -1025,23 +1044,60 @@ type
     function codings : TFslList<TFHIRCodingW>; virtual; abstract;
     property value : TFHIRObject read GetValue write SetValue;
     function valueW : TFHIRXVersionElementWrapper; virtual; abstract;
+    function valueString : String; virtual; abstract;
     function dataAbsentReason : TFhirCodeableConceptW; virtual; abstract;
   end;
 
   TFhirObservationW = class (TFHIRXVersionResourceWrapper)
+  private
   protected
-    function getStatus: TObservationStatus;  virtual; abstract;
-    procedure setStatus(Value: TObservationStatus);  virtual; abstract;
+    function GetDevice: String; virtual; abstract;
+    procedure SetDevice(const Value: String); virtual; abstract;
+    function GetDeviceName: String; virtual; abstract;
+    procedure SetDeviceName(const Value: String); virtual; abstract;
+    function GetSubject: String; virtual; abstract;
+    procedure SetSubject(const Value: String); virtual; abstract;
+    function getStatus: TObservationStatus; virtual; abstract;
+    procedure setStatus(Value: TObservationStatus); virtual; abstract;
+    function GetIssued: TFslDateTime; virtual; abstract;
+    procedure SetIssued(const Value: TFslDateTime); virtual; abstract;
     function getValue: TFHIRObject;  virtual; abstract;
     procedure setValue(Value: TFHIRObject); virtual; abstract;
+    function GetEffective: TFHIRObject; virtual; abstract;
+    function GetEffectiveDateTime: TFslDateTime; virtual; abstract;
+    function GetEffectivePeriod: TFHIRPeriodW; virtual; abstract;
+    procedure SetEffective(const Value: TFHIRObject); virtual; abstract;
+    procedure SetEffectiveDateTime(const Value: TFslDateTime); virtual; abstract;
+    procedure SetEffectivePeriod(const Value: TFHIRPeriodW); virtual; abstract;
+    function GetCodeText: String; virtual; abstract;
+    procedure SetCodeText(const Value: String); virtual; abstract;
+    function GetComment: String; virtual; abstract;
+    procedure SetComment(const Value: String); virtual; abstract;
   public
     function link : TFhirObservationW; overload;
     property status : TObservationStatus read GetStatus write SetStatus;
-    procedure addCode(c : TFHIRCodingW); virtual; abstract;
-    procedure setSubj(url : String); virtual; abstract;
+    procedure setCode(c : TFHIRCodingW); overload; virtual; abstract;
+    procedure setCode(system, code, display : String); overload; virtual; abstract;
+    procedure setCode(text : String); overload; virtual; abstract;
+    procedure addCategory(c : TFHIRCodingW); overload; virtual; abstract;
+    procedure addCategory(system, code, display : String); overload; virtual; abstract;
     procedure setPeriod(start, finish : TDateTime); virtual; abstract;
 
-    function subject : String; virtual; abstract;
+    function hasDevice : boolean; virtual; abstract;
+    function hasIssued : boolean; virtual; abstract;
+    function hasMethod : boolean; virtual; abstract;
+    function hasSubject : boolean; virtual; abstract;
+    function hasEffective : boolean; virtual; abstract;
+
+    property subject : String read GetSubject write SetSubject;
+    property device : String read GetDevice write SetDevice;
+    property deviceName : String read GetDeviceName write SetDeviceName;
+    property issued : TFslDateTime read GetIssued write SetIssued;
+    property effective : TFHIRObject read GetEffective write SetEffective;
+    property effectiveDateTime : TFslDateTime read GetEffectiveDateTime write SetEffectiveDateTime;
+    property effectivePeriod : TFHIRPeriodW read GetEffectivePeriod write SetEffectivePeriod;
+    property codeText : String read GetCodeText write SetCodeText;
+    function method(force : boolean) : TFhirCodeableConceptW; virtual; abstract;
     function categories : TFslList<TFHIRCodingW>; virtual; abstract;
     function codings : TFslList<TFHIRCodingW>; virtual; abstract;
     function hasTime : boolean;  virtual; abstract;
@@ -1049,8 +1105,11 @@ type
     property value : TFHIRObject read GetValue write SetValue;
     function valueW : TFHIRXVersionElementWrapper; virtual; abstract;
     function dataAbsentReason : TFhirCodeableConceptW; virtual; abstract;
+    property comment : String read GetComment write SetComment;
 
     function components : TFslList<TFhirObservationComponentW>; virtual; abstract;
+    function getComponent(system, code: String; var comp : TFhirObservationComponentW) : boolean; overload; virtual; abstract;
+    function getComponent(system : String; var comp : TFhirObservationComponentW) : boolean; overload; virtual; abstract;
     function addComp(system, code : String) : TFhirObservationComponentW; virtual; abstract;
   end;
 
@@ -1077,12 +1136,12 @@ type
 
   TFhirTerminologyCapabilitiesW = class (TFHIRXVersionResourceWrapper)
   protected
-    function getDate: TDateTimeEx; virtual; abstract;
+    function getDate: TFslDateTime; virtual; abstract;
     function getDescription: String; virtual; abstract;
     function getName: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getURL: String; virtual; abstract;
-    procedure setDate(Value: TDateTimeEx); virtual; abstract;
+    procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
@@ -1101,12 +1160,55 @@ type
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
-    property date : TDateTimeEx read GetDate write SetDate;
+    property date : TFslDateTime read GetDate write SetDate;
     property context : String read getContext write SetContext;
     property publisher : String read GetPublisher write SetPublisher;
 
     procedure contact(kind : TContactType; value : String); virtual; abstract;
     procedure system(url : String); virtual; abstract;
+  end;
+
+  TFhirConsentProvisionAction = (cpaRead, capStore, cpaChange);
+
+  TFhirConsentProvisionW = class abstract (TFHIRXVersionElementWrapper)
+  private
+    function GetAction: TFhirConsentProvisionAction; virtual; abstract;
+    function GetAuthor: String; virtual; abstract;
+    function GetDataPeriodEnd: TFslDateTime; virtual; abstract;
+    function GetDataPeriodStart: TFslDateTime; virtual; abstract;
+    function GetHasDataPeriod: boolean; virtual; abstract;
+    function GetHasProvisionPeriod: boolean; virtual; abstract;
+    function GetPermit: boolean; virtual; abstract;
+    function GetProvisionPeriodEnd: TFslDateTime; virtual; abstract;
+    function GetProvisionPeriodStart: TFslDateTime; virtual; abstract;
+    function GetRecipient: String; virtual; abstract;
+  public
+    function link : TFhirConsentProvisionW; overload;
+    property permit : boolean read GetPermit;
+    property hasProvisionPeriod : boolean read GetHasProvisionPeriod;
+    property provisionPeriodStart : TFslDateTime read GetProvisionPeriodStart;
+    property provisionPeriodEnd : TFslDateTime read GetProvisionPeriodEnd;
+    property author : String read GetAuthor;
+    property recipient : String read GetRecipient;
+    property action : TFhirConsentProvisionAction read GetAction;
+    property hasDataPeriod : boolean read GetHasDataPeriod;
+    property dataPeriodStart : TFslDateTime read GetDataPeriodStart;
+    property dataPeriodEnd : TFslDateTime read GetDataPeriodEnd;
+    function listProvisions : TFslList<TFhirConsentProvisionW>; virtual; abstract;
+  end;
+
+  TFhirConsentW = class abstract (TFHIRXVersionResourceWrapper)
+  protected
+    function GetActive: boolean; virtual; abstract;
+    function GetPatient: String; virtual; abstract;
+    function GetDateTime: TFslDateTime; virtual; abstract;
+  public
+    function link : TFhirConsentW; overload;
+
+    property active : boolean read GetActive;
+    property patient : String read GetPatient;
+    property dateTime : TFslDateTime read GetDateTime;
+    function listProvisions : TFslList<TFhirConsentProvisionW>; virtual; abstract;
   end;
 
 
@@ -1840,6 +1942,32 @@ end;
 function TFhirTerminologyCapabilitiesW.link: TFhirTerminologyCapabilitiesW;
 begin
   result := TFhirTerminologyCapabilitiesW(inherited link);
+end;
+
+{ TFHIRPeriodW }
+
+
+{ TFHIRPeriodW }
+
+function TFHIRPeriodW.link: TFHIRPeriodW;
+begin
+  result := TFHIRPeriodW(inherited link);
+end;
+
+{ TFhirConsentProvisionW }
+
+{ TFhirConsentW }
+
+function TFhirConsentW.link: TFhirConsentW;
+begin
+  result := TFhirConsentW(inherited link);
+end;
+
+{ TFhirConsentProvisionW }
+
+function TFhirConsentProvisionW.link: TFhirConsentProvisionW;
+begin
+  result := TFhirConsentProvisionW(inherited link);
 end;
 
 end.

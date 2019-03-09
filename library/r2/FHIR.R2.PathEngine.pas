@@ -257,7 +257,6 @@ var
   td : TFhirElementDefinitionType;
   t : String;
 begin
-  types := nil;
   if (xPathStartsWithValueRef and context.contains('.') and path.startsWith(context.substring(context.lastIndexOf('.')+1))) then
     types := TFHIRTypeDetails.Create(csSINGLETON, [context.substring(0, context.lastIndexOf('.'))])
   else if not context.contains('.') then
@@ -772,7 +771,6 @@ begin
       all := true;
       for item in focus do
       begin
-        v := false;
         if (item.value is TFHIRBoolean) then
           v := TFHIRBoolean(item.value).value
         else
@@ -872,7 +870,7 @@ var
   found : boolean;
 begin
   if (focus.count <= 1) then
-    result := focus.Link;
+    exit(focus.Link);
 
   result := TFHIRSelectionList.Create;
   try
@@ -1119,7 +1117,7 @@ end;
 
 function TFHIRPathEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TDateTimeEx.makeLocal));
+  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TFslDateTime.makeLocal));
 end;
 
 function TFHIRPathEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -1501,7 +1499,7 @@ end;
 
 function TFHIRPathEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday));
+  result := TFHIRSelectionList.Create(TFhirDate.Create(TFslDateTime.makeToday));
 end;
 
 function TFHIRPathEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -1605,7 +1603,6 @@ begin
       all := true;
       for item in focus do
       begin
-        v := false;
         if (item.value is TFHIRBoolean) then
           v := TFHIRBoolean(item.value).value
         else
@@ -1662,7 +1659,6 @@ begin
       any := false;
       for item in focus do
       begin
-        v := false;
         if (item.value is TFHIRBoolean) then
           v := TFHIRBoolean(item.value).value
         else
@@ -3141,9 +3137,9 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateTimeEx.fromXML(s))
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(s))
   else
-    result := TFHIRDate.create(TDateTimeEx.fromXML(s));
+    result := TFHIRDate.create(TFslDateTime.fromXML(s));
 end;
 
 function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;
@@ -3637,13 +3633,11 @@ end;
 
 function TFHIRPathParser.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRPathExpressionNode;
 var
-  c : Integer;
   focus, item : TFHIRPathExpressionNode;
 begin
   result := TFHIRPathExpressionNode.Create(lexer.nextId);
   try
     result.SourceLocationStart := lexer.CurrentStartLocation;
-    c := lexer.CurrentStart;
     lexer.checkArithmeticPrefixes;
     // special:
     if (lexer.Current = '-') then

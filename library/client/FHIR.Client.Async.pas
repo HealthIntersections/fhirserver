@@ -81,7 +81,7 @@ type
     FTypes: TFhirResourceTypeSet;
     FQuery: string;
     FFormat : TFHIRFormat;
-    FSince: TDateTimeEx;
+    FSince: TFslDateTime;
     FLog : String;
     FStart : TDateTime;
     FStatus : TFHIRClientAsyncContextState;
@@ -107,7 +107,7 @@ type
     property query : string read FQuery write FQuery;
     property format : TFHIRFormat read FFormat write FFormat;
     property folder : String read FFolder write FFolder;
-    property since : TDateTimeEx read FSince write FSince;
+    property since : TFslDateTime read FSince write FSince;
     property types : TFhirResourceTypeSet read FTypes write SetTypes;
 
     // operation

@@ -238,7 +238,6 @@ Type
   end;
 {$ENDIF}
 
-
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
   TFslList<T : class> = class (TFslEnumerable<T>)
   public

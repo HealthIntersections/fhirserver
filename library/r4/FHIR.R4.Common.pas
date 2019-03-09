@@ -95,6 +95,9 @@ type
   end;
 
   TFhirCodeableConcept4 = class (TFhirCodeableConceptW)
+  protected
+    function GetText: String; override;
+    procedure SetText(const Value: String); override;
   public
     function codingCount : integer; override;
     function codings : TFslList<TFhirCodingW>; override;
@@ -125,7 +128,7 @@ type
     function getRequestMethod: String; override;
     function getRequestUrl: String; override;
     function getResource: TFHIRResourceV; override;
-    function getResponseDate: TDateTimeEx; override;
+    function getResponseDate: TFslDateTime; override;
     function getResponseStatus: String; override;
     function getSearchMode: TFHIRBundleEntrySearchMode; override;
     function getSearchMpiMatch: String; override;
@@ -133,7 +136,7 @@ type
     procedure setRequestMethod(Value: String); override;
     procedure setRequestUrl(Value: String); override;
     procedure setResource(Value: TFHIRResourceV); override;
-    procedure setResponseDate(Value: TDateTimeEx); override;
+    procedure setResponseDate(Value: TFslDateTime); override;
     procedure setResponseStatus(Value: String); override;
     procedure setSearchMode(Value: TFHIRBundleEntrySearchMode); override;
     procedure setSearchMpiMatch(Value: String); override;
@@ -150,8 +153,8 @@ type
     procedure setResponseETag(Value: string); override;
     function getResponseLocation: string; override;
     procedure setResponseLocation(Value: string); override;
-    function getrequestIfModifiedSince: TDateTimeEx; override;
-    procedure setrequestIfModifiedSince(Value: TDateTimeEx); override;
+    function getrequestIfModifiedSince: TFslDateTime; override;
+    procedure setrequestIfModifiedSince(Value: TFslDateTime); override;
   public
     function getLink(rel: String): String; override;
     procedure setLink(rel: String; const Value: String); override;
@@ -184,10 +187,10 @@ type
     function title : String; override;
     function getType : TBundleType; override;
     procedure setType(value: TBundleType); override;
-    function getLastUpdated : TDateTimeEx; override;
-    procedure setLastUpdated(Value: TDateTimeEx); override;
-    function getTimestamp: TDateTimeEx; override;
-    procedure setTimestamp(Value: TDateTimeEx); override;
+    function getLastUpdated : TFslDateTime; override;
+    procedure setLastUpdated(Value: TFslDateTime); override;
+    function getTimestamp: TFslDateTime; override;
+    procedure setTimestamp(Value: TFslDateTime); override;
   end;
 
   TFHIROperationOutcomeIssue4 = class (TFHIROperationOutcomeIssueW)
@@ -250,8 +253,8 @@ type
     procedure setDescription(value : String); override;
     function getStatus: TPublicationStatus; override;
     procedure setStatus(Value: TPublicationStatus); override;
-    function getDate: TDateTimeEx; override;
-    procedure setDate(Value: TDateTimeEx); override;
+    function getDate: TFslDateTime; override;
+    procedure setDate(Value: TFslDateTime); override;
     function getFhirVersion: string; override;
     procedure setFhirVersion(Value: string); override;
 
@@ -420,8 +423,8 @@ type
 
     function getStatus: TPublicationStatus; override;
     procedure setStatus(Value: TPublicationStatus); override;
-    function getDate: TDateTimeEx; override;
-    procedure setDate(Value: TDateTimeEx); override;
+    function getDate: TFslDateTime; override;
+    procedure setDate(Value: TFslDateTime); override;
     function hasInlineCS : boolean; override;
     function addInclude : TFhirValueSetComposeIncludeW; override;
     function getContext: String; override;
@@ -521,7 +524,7 @@ type
     function getName : String; override;
     function getVersion : String; override;
     function getDescription : String; override;
-    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDate(Value: TFslDateTime); override;
     procedure setDescription(Value: String); override;
     procedure setName(Value: String); override;
     procedure setStatus(Value: TPublicationStatus); override;
@@ -549,7 +552,7 @@ type
     function getChildren(c : TFhirCodeSystemConceptW) : TFslList<TFhirCodeSystemConceptW>; override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
 
-    function getDate: TDateTimeEx; override;
+    function getDate: TFslDateTime; override;
     function getStatus: TPublicationStatus; override;
     function buildImplicitValueSet : TFHIRValueSetW; override;
     function getContext: String; override;
@@ -588,11 +591,11 @@ type
     procedure setVersion(Value: String); override;
   public
     function getURL: String; override;
-    function getDate: TDateTimeEx; override;
+    function getDate: TFslDateTime; override;
     function getDescription: String; override;
     function getName: String; override;
     function getStatus: TPublicationStatus; override;
-    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDate(Value: TFslDateTime); override;
     procedure setDescription(Value: String); override;
     procedure setName(Value: String); override;
     procedure setStatus(Value: TPublicationStatus); override;
@@ -621,8 +624,8 @@ type
     property Resource : TFHIRResource read FResource write SetResource;
     function getVersionId: String; override;
     procedure setVersionId(Value: String); override;
-    function getLastUpdated: TDateTimeEx; override;
-    procedure setLastUpdated(Value: TDateTimeEx); override;
+    function getLastUpdated: TFslDateTime; override;
+    procedure setLastUpdated(Value: TFslDateTime); override;
     function tags : TFslList<TFHIRCodingW>; override;
     function labels : TFslList<TFHIRCodingW>; override;
     function profiles : TArray<String>; override;
@@ -650,7 +653,7 @@ type
     procedure sourceType(system, code, display : String); override;
     procedure participantIp(ip : String); override;
     procedure participantId(system, value, alt, name : String); override;
-    function dateTime : TDateTimeEx; override;
+    function dateTime : TFslDateTime; override;
   end;
 
   TFHIRSubscription4 = class (TFHIRSubscriptionW)
@@ -684,6 +687,7 @@ type
     procedure setValue(Value: TFHIRObject); override;
     function codings : TFslList<TFHIRCodingW>; override;
     function valueW : TFHIRXVersionElementWrapper; override;
+    function valueString : String; override;
     function dataAbsentReason : TFhirCodeableConceptW; override;
   end;
 
@@ -693,11 +697,32 @@ type
   protected
     function getValue: TFHIRObject;  override;
     procedure setValue(Value: TFHIRObject); override;
+    function GetDevice: String; override;
+    procedure SetDevice(const Value: String); override;
+    function GetDeviceName: String; override;
+    procedure SetDeviceName(const Value: String); override;
+    function GetSubject: String; override;
+    procedure SetSubject(const Value: String); override;
+    function GetIssued: TFslDateTime; override;
+    procedure SetIssued(const Value: TFslDateTime); override;
+    function GetEffective: TFHIRObject; override;
+    function GetEffectiveDateTime: TFslDateTime; override;
+    function GetEffectivePeriod: TFHIRPeriodW; override;
+    procedure SetEffective(const Value: TFHIRObject); override;
+    procedure SetEffectiveDateTime(const Value: TFslDateTime); override;
+    procedure SetEffectivePeriod(const Value: TFHIRPeriodW); override;
+    function GetCodeText: String; override;
+    procedure SetCodeText(const Value: String); override;
+    function GetComment: String; override;
+    procedure SetComment(const Value: String); override;
   public
     function getStatus: TObservationStatus;  override;
     procedure setStatus(Value: TObservationStatus);  override;
-    procedure addCode(c : TFHIRCodingW); override;
-    procedure setSubj(url : String); override;
+    procedure setCode(c : TFHIRCodingW); overload; override;
+    procedure setCode(system, code, display : String); overload; override;
+    procedure setCode(text : String); overload; override;
+    procedure addCategory(c : TFHIRCodingW); overload; override;
+    procedure addCategory(system, code, display : String); overload; override;
     procedure setPeriod(start, finish : TDateTime); override;
     function addComp(system, code : String) : TFhirObservationComponentW; override;
     function codings : TFslList<TFHIRCodingW>; override;
@@ -705,9 +730,16 @@ type
     function components : TFslList<TFhirObservationComponentW>; override;
     function valueW : TFHIRXVersionElementWrapper; override;
     function dataAbsentReason : TFhirCodeableConceptW; override;
-    function subject : String; override;
     function categories : TFslList<TFHIRCodingW>; override;
     function hasTime : boolean; override;
+    function method(force : boolean) : TFhirCodeableConceptW; override;
+    function getComponent(system, code: String; var comp : TFhirObservationComponentW) : boolean; overload; override;
+    function getComponent(system : String; var comp : TFhirObservationComponentW) : boolean; overload; override;
+    function hasDevice : boolean; override;
+    function hasIssued : boolean; override;
+    function hasMethod : boolean; override;
+    function hasSubject : boolean; override;
+    function hasEffective : boolean; override;
   end;
 
   TFHIRQuantity4 = class (TFHIRQuantityW)
@@ -722,7 +754,20 @@ type
     procedure setSystem(Value: String); override;
     procedure setUnit(Value: String); override;
     procedure setValue(Value: String); override;
+  public
+    function asDuration : TDateTime; override;
   end;
+
+  TFHIRPeriod4 = class (TFHIRPeriodW)
+  private
+    function period : TFHIRPeriod;
+  protected
+    function GetEnd: TFslDateTime; override;
+    function GetStart: TFslDateTime; override;
+    procedure SetEnd(const Value: TFslDateTime); override;
+    procedure SetStart(const Value: TFslDateTime); override;
+  end;
+
 
   TFHIRSubsumesOpRequest4 = class (TFHIRSubsumesOpRequestW)
   public
@@ -786,6 +831,17 @@ type
     function url : String; override;
   end;
 
+  TFHIRConsent4 = class (TFHIRConsentW)
+  private
+    function consent : TFHIRConsent;
+  protected
+    function GetActive: boolean; override;
+    function GetPatient: String; override;
+    function GetDateTime: TFslDateTime; override;
+  public
+    function listProvisions : TFslList<TFhirConsentProvisionW>; override;
+  end;
+
   TFHIREventDefinition4 = class (TFHIREventDefinitionW)
   private
     function ed : TFHIREventDefinition;
@@ -801,12 +857,12 @@ type
   private
     function tc : TFhirTerminologyCapabilities;
   protected
-    function getDate: TDateTimeEx; override;
+    function getDate: TFslDateTime; override;
     function getDescription: String; override;
     function getName: String; override;
     function getStatus: TPublicationStatus; override;
     function getURL: String; override;
-    procedure setDate(Value: TDateTimeEx); override;
+    procedure setDate(Value: TFslDateTime); override;
     procedure setDescription(Value: String); override;
     procedure setName(Value: String); override;
     procedure setStatus(Value: TPublicationStatus); override;
@@ -945,10 +1001,7 @@ begin
 end;
 
 procedure TFHIRBundle4.clearLinks;
-var
-  b : TFHIRBundle;
 begin
-  b := resource as TFHIRBundle;
   bundle.link_List.Clear;
 end;
 
@@ -966,10 +1019,10 @@ begin
   end;
 end;
 
-function TFHIRBundle4.GetLastUpdated: TDateTimeEx;
+function TFHIRBundle4.GetLastUpdated: TFslDateTime;
 begin
   if bundle.meta <> nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := bundle.meta.lastUpdated;
 end;
@@ -1012,7 +1065,7 @@ begin
   result := b.Links['next'];
 end;
 
-procedure TFHIRBundle4.SetLastUpdated(Value: TDateTimeEx);
+procedure TFHIRBundle4.SetLastUpdated(Value: TFslDateTime);
 begin
   if bundle.meta = nil then
     bundle.meta := TFHIRMeta.Create;
@@ -1024,7 +1077,7 @@ begin
   bundle.Links[rel] := value;
 end;
 
-procedure TFHIRBundle4.SetTimestamp(Value: TDateTimeEx);
+procedure TFHIRBundle4.SetTimestamp(Value: TFslDateTime);
 begin
   bundle.timestamp := value;
 end;
@@ -1044,7 +1097,7 @@ begin
   result := BUNDLE_TYPE_TITLE[bundle.type_];
 end;
 
-function TFHIRBundle4.GetTimestamp: TDateTimeEx;
+function TFHIRBundle4.GetTimestamp: TFslDateTime;
 begin
   result := bundle.timestamp;
 end;
@@ -1192,7 +1245,6 @@ procedure TFHIRCapabilityStatement4.listSearchParams(name: String; list: TFslLis
 var
   r : TFhirCapabilityStatementRest;
   rr : TFhirCapabilityStatementRestResource;
-  int : TFhirCapabilityStatementRestResourceInteraction;
   sp : TFhirCapabilityStatementRestResourceSearchParam;
 begin
   for r in statement.restList do
@@ -1295,7 +1347,7 @@ begin
     statement.software := TFhirCapabilityStatementSoftware.Create;
   statement.software.name := name;
   statement.software.version := version;
-  statement.software.releaseDate := TDateTimeEx.fromXml(release);
+  statement.software.releaseDate := TFslDateTime.fromXml(release);
 end;
 
 function TFHIRCapabilityStatement4.getDescription : String;
@@ -1333,12 +1385,12 @@ begin
   statement.formatList.Append.value := mt;
 end;
 
-function TFHIRCapabilityStatement4.GetDate: TDateTimeEx;
+function TFHIRCapabilityStatement4.GetDate: TFslDateTime;
 begin
   result := statement.Date;
 end;
 
-procedure TFHIRCapabilityStatement4.SetDate(Value: TDateTimeEx);
+procedure TFHIRCapabilityStatement4.SetDate(Value: TFslDateTime);
 begin
   statement.Date := value;
 end;
@@ -1817,10 +1869,10 @@ begin
   result :=  entry.resource;
 end;
 
-function TFHIRBundleEntry4.GetResponseDate: TDateTimeEx;
+function TFHIRBundleEntry4.GetResponseDate: TFslDateTime;
 begin
   if entry.response = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := entry.response.lastModified;
 end;
@@ -1881,7 +1933,7 @@ begin
   entry.resource := value as TFHIRResource;
 end;
 
-procedure TFHIRBundleEntry4.SetResponseDate(Value: TDateTimeEx);
+procedure TFHIRBundleEntry4.SetResponseDate(Value: TFslDateTime);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
@@ -1954,10 +2006,10 @@ begin
     result := entry.request.IfMatch;
 end;
 
-function TFHIRBundleEntry4.GetrequestIfModifiedSince: TDateTimeEx;
+function TFHIRBundleEntry4.GetrequestIfModifiedSince: TFslDateTime;
 begin
   if entry.request = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := entry.request.ifModifiedSince;
 end;
@@ -1969,7 +2021,7 @@ begin
   entry.request.IfMatch := value;
 end;
 
-procedure TFHIRBundleEntry4.SetrequestIfModifiedSince(Value: TDateTimeEx);
+procedure TFHIRBundleEntry4.SetrequestIfModifiedSince(Value: TFslDateTime);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
@@ -2066,7 +2118,7 @@ end;
 function TFHIRValueSet4.forceExpansion: TFhirValueSetExpansionW;
 begin
   vs.expansion := TFhirValueSetExpansion.create;
-  vs.expansion.timestamp := TDateTimeEx.makeUTC;
+  vs.expansion.timestamp := TFslDateTime.makeUTC;
   vs.expansion.identifier := NewGuidURN;
   result := TFhirValueSetExpansion4.create(vs.expansion.Link);
 end;
@@ -2076,7 +2128,7 @@ begin
   result := vs.context;
 end;
 
-function TFHIRValueSet4.GetDate: TDateTimeEx;
+function TFHIRValueSet4.GetDate: TFslDateTime;
 begin
   result := vs.date;
 end;
@@ -2110,7 +2162,7 @@ begin
   result := nil;
 end;
 
-procedure TFHIRValueSet4.SetDate(Value: TDateTimeEx);
+procedure TFHIRValueSet4.SetDate(Value: TFslDateTime);
 begin
   vs.date := value;
 end;
@@ -2641,7 +2693,6 @@ end;
 
 function TFhirCodeSystemConcept4.getCode(code: String): TFhirCodeSystemConceptW;
 begin
-  result := nil;
   if (code = c.Code) then
     result := self.link
   else
@@ -2717,7 +2768,7 @@ begin
   result := StrToInt(cs.count);
 end;
 
-function TFhirCodeSystem4.GetDate: TDateTimeEx;
+function TFhirCodeSystem4.GetDate: TFslDateTime;
 begin
   result := cs.date;
 end;
@@ -2827,7 +2878,7 @@ begin
   cs.count := inttostr(value);
 end;
 
-procedure TFhirCodeSystem4.SetDate(Value: TDateTimeEx);
+procedure TFhirCodeSystem4.SetDate(Value: TFslDateTime);
 begin
   cs.date := value;
 end;
@@ -3076,7 +3127,7 @@ begin
   result := cm.url;
 end;
 
-function TFhirConceptMap4.GetDate: TDateTimeEx;
+function TFhirConceptMap4.GetDate: TFslDateTime;
 begin
   result := cm.Date;
 end;
@@ -3096,7 +3147,7 @@ begin
   result := MAP_TPublicationStatusR[cm.Status];
 end;
 
-procedure TFhirConceptMap4.SetDate(Value: TDateTimeEx);
+procedure TFhirConceptMap4.SetDate(Value: TFslDateTime);
 begin
   cm.Date := value;
 end;
@@ -3289,10 +3340,10 @@ begin
   end;
 end;
 
-function TFHIRMeta4.GetLastUpdated: TDateTimeEx;
+function TFHIRMeta4.GetLastUpdated: TFslDateTime;
 begin
   if Element = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := m.lastUpdated;
 end;
@@ -3379,7 +3430,7 @@ begin
     m.removeTag(system, code);
 end;
 
-procedure TFHIRMeta4.SetLastUpdated(Value: TDateTimeEx);
+procedure TFHIRMeta4.SetLastUpdated(Value: TFslDateTime);
 begin
   force;
   m.lastUpdated := value;
@@ -3415,7 +3466,7 @@ begin
   result := Resource as TFhirAuditEvent;
 end;
 
-function TFHIRAuditEvent4.dateTime: TDateTimeEx;
+function TFHIRAuditEvent4.dateTime: TFslDateTime;
 begin
   result := ae.event.dateTime;
 end;
@@ -3497,7 +3548,7 @@ begin
     ae.event := TFhirAuditEventEvent.Create;
   ae.event.action := AuditEventActionE;
   ae.event.outcome := AuditEventOutcome0;
-  ae.event.dateTime := TDateTimeEx.makeUTC;
+  ae.event.dateTime := TFslDateTime.makeUTC;
 end;
 
 { TFhirCapabilityStatementRestResource4 }
@@ -3711,6 +3762,14 @@ begin
   comp.value := value as TFHIRType;
 end;
 
+function TFhirObservationComponent4.valueString: String;
+begin
+  if (comp.value <> nil) and (comp.value.isPrimitive) then
+    result := comp.value.primitiveValue
+  else
+    result := '';
+end;
+
 function TFhirObservationComponent4.valueW: TFHIRXVersionElementWrapper;
 begin
   if comp.value is TFhirCodeableConcept then
@@ -3723,7 +3782,7 @@ end;
 
 { TFhirObservation4 }
 
-procedure TFhirObservation4.addCode(c: TFHIRCodingW);
+procedure TFhirObservation4.SetCode(c: TFHIRCodingW);
 begin
   if obs.code = nil then
     obs.code := TFhirCodeableConcept.Create;
@@ -3753,20 +3812,13 @@ end;
 procedure TFhirObservation4.setPeriod(start, finish: TDateTime);
 begin
   obs.effective := TFhirPeriod.Create;
-  TFhirPeriod(obs.effective).start := TDateTimeEx.makeUTC(start);
-  TFhirPeriod(obs.effective).end_ := TDateTimeEx.makeUTC(finish);
+  TFhirPeriod(obs.effective).start := TFslDateTime.makeUTC(start);
+  TFhirPeriod(obs.effective).end_ := TFslDateTime.makeUTC(finish);
 end;
 
 procedure TFhirObservation4.SetStatus(Value: TObservationStatus);
 begin
   obs.status := MAP_TObservationStatus[value];
-end;
-
-procedure TFhirObservation4.setSubj(url: String);
-begin
-  if obs.subject = nil then
-    obs.subject := TFhirReference.Create;
-  obs.subject.reference := url;
 end;
 
 function TFhirObservation4.codings: TFslList<TFHIRCodingW>;
@@ -3854,7 +3906,211 @@ begin
       result.Add(TFHIRCoding4.Create(c.Link));
 end;
 
-function TFhirObservation4.subject: String;
+procedure TFhirObservation4.setCode(system, code, display: String);
+begin
+  if obs.code = nil then
+    obs.code := TFhirCodeableConcept.Create;
+  obs.code.codingList.add(TFHIRCoding.Create(system, code, display));
+end;
+
+procedure TFhirObservation4.SetCodeText(const Value: String);
+begin
+  if value <> '' then
+  begin
+    if obs.code = nil then
+      obs.code := TFhirCodeableConcept.create;
+    obs.code.text := Value
+  end
+  else if (obs.code <> nil) and not obs.code.hasCoding then
+    obs.code := nil;
+end;
+
+procedure TFhirObservation4.SetComment(const Value: String);
+begin
+  obs.noteList.Append.text := value;
+end;
+
+procedure TFhirObservation4.SetDevice(const Value: String);
+begin
+  if (value = '') then
+  begin
+    if (obs.device <> nil) and (obs.device.display <> '') then
+      obs.device.reference := ''
+    else
+      obs.device := nil
+  end
+  else
+  begin
+    if obs.device = nil then
+      obs.device := TFhirReference.Create;
+    obs.device.reference := value;
+  end;
+end;
+
+procedure TFhirObservation4.SetDeviceName(const Value: String);
+begin
+  if (value = '') then
+  begin
+    if (obs.device <> nil) and (obs.device.reference <> '') then
+      obs.device.display := ''
+    else
+      obs.device := nil
+  end
+  else
+  begin
+    if obs.device = nil then
+      obs.device := TFhirReference.Create;
+    obs.device.display := value;
+  end;
+end;
+
+procedure TFhirObservation4.SetEffective(const Value: TFHIRObject);
+begin
+  obs.effective := Value as TFhirType;
+end;
+
+procedure TFhirObservation4.SetEffectiveDateTime(const Value: TFslDateTime);
+begin
+  SetEffective(TFhirDateTime.Create(value));
+end;
+
+procedure TFhirObservation4.SetEffectivePeriod(const Value: TFHIRPeriodW);
+begin
+  obs.effective := (value.Element as TFHIRType).Link;
+end;
+
+procedure TFhirObservation4.SetIssued(const Value: TFslDateTime);
+begin
+  obs.issued := Value;
+end;
+
+procedure TFhirObservation4.SetSubject(const Value: String);
+begin
+  if value = '' then
+    obs.subject := nil
+  else
+  begin
+    if obs.subject = nil then
+      obs.subject := TFhirReference.Create;
+    obs.subject.reference := value;
+  end;
+end;
+
+function TFhirObservation4.GetCodeText: String;
+begin
+  if obs.code = nil then
+    result := ''
+  else
+    result := obs.code.text;
+end;
+
+function TFhirObservation4.GetComment: String;
+begin
+  if obs.noteList.Count = 0 then
+    result := ''
+  else
+    result := obs.noteList[0].text;
+end;
+
+function TFhirObservation4.getComponent(system, code: String; var comp: TFhirObservationComponentW): boolean;
+var
+  c : TFHIRObservationComponent;
+begin
+  comp := nil;
+  result := obs.getComponent(system, code, c);
+  if result then
+    comp := TFHIRObservationComponent4.create(c.link);
+end;
+
+function TFhirObservation4.getComponent(system: String; var comp: TFhirObservationComponentW): boolean;
+var
+  c : TFHIRObservationComponent;
+begin
+  comp := nil;
+  result := obs.getComponent(system, c);
+  if result then
+    comp := TFHIRObservationComponent4.create(c.link);
+end;
+
+function TFhirObservation4.GetDevice: String;
+begin
+  if obs.device <> nil then
+    result := obs.device.reference
+  else
+    result := '';
+end;
+
+function TFhirObservation4.GetDeviceName: String;
+begin
+  if obs.device <> nil then
+    result := obs.device.display
+  else
+    result := '';
+end;
+
+function TFhirObservation4.GetEffective: TFHIRObject;
+begin
+  result := obs.effective;
+end;
+
+function TFhirObservation4.GetEffectiveDateTime: TFslDateTime;
+begin
+  if obs.effective is TFhirDateTime then
+    result := (obs.effective as TFhirDateTime).value
+  else
+    result := TFslDateTime.makeNull;
+end;
+
+function TFhirObservation4.GetEffectivePeriod: TFHIRPeriodW;
+begin
+  if obs.effective is TFhirPeriod then
+    result := TFHIRPeriod4.create(obs.effective.Link)
+  else
+    result := nil;
+end;
+
+function TFhirObservation4.GetIssued: TFslDateTime;
+begin
+  result := obs.issued;
+end;
+
+function TFhirObservation4.hasDevice: boolean;
+begin
+  result := obs.Device <> nil;
+end;
+
+function TFhirObservation4.hasEffective: boolean;
+begin
+  result := obs.Effective <> nil;
+end;
+
+function TFhirObservation4.hasIssued: boolean;
+begin
+  result := obs.IssuedElement <> nil;
+end;
+
+function TFhirObservation4.hasMethod: boolean;
+begin
+  result := obs.Method <> nil;
+end;
+
+function TFhirObservation4.hasSubject: boolean;
+begin
+  result := obs.Subject <> nil;
+end;
+
+function TFhirObservation4.method(force : boolean) : TFhirCodeableConceptW;
+begin
+  if (obs.method = nil) and force then
+    obs.method := TFhirCodeableConcept.Create;
+
+  if obs.method = nil then
+    result := nil
+  else
+    result := TFhirCodeableConcept4.Create(obs.method.link);
+end;
+
+function TFhirObservation4.GetSubject: String;
 begin
   if obs.subject <> nil then
     result := obs.subject.reference
@@ -3862,7 +4118,29 @@ begin
     result := '';
 end;
 
+procedure TFhirObservation4.addCategory(c: TFHIRCodingW);
+begin
+  obs.categoryList.Append.codingList.add((c.Element as TFHIRCoding).Link);
+end;
+
+procedure TFhirObservation4.addCategory(system, code, display: String);
+begin
+  obs.categoryList.Append.codingList.add(TFHIRCoding.Create(system, code, display));
+end;
+
+procedure TFhirObservation4.setCode(text: String);
+begin
+  if obs.code = nil then
+    obs.code := TFhirCodeableConcept.Create;
+  obs.code.text := text;
+end;
+
 { TFHIRQuantity4 }
+
+function TFHIRQuantity4.asDuration: TDateTime;
+begin
+  result := qty.asDuration;
+end;
 
 function TFHIRQuantity4.GetCode: String;
 begin
@@ -4081,6 +4359,16 @@ begin
   result := (Element as TFhirCodeableConcept).fromSystem(Systems, required);
 end;
 
+function TFhirCodeableConcept4.GetText: String;
+begin
+  result := (Element as TFhirCodeableConcept).text;
+end;
+
+procedure TFhirCodeableConcept4.SetText(const Value: String);
+begin
+  (Element as TFhirCodeableConcept).text := value;
+end;
+
 function TFhirCodeableConcept4.fromSystem(System: String; required: boolean): String;
 begin
   result := (Element as TFhirCodeableConcept).fromSystem(System, required);
@@ -4246,7 +4534,7 @@ begin
   result := tc.context;
 end;
 
-function TFhirTerminologyCapabilities4.getDate: TDateTimeEx;
+function TFhirTerminologyCapabilities4.getDate: TFslDateTime;
 begin
   result := tc.date;
 end;
@@ -4287,7 +4575,7 @@ begin
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setDate(Value: TDateTimeEx);
+procedure TFhirTerminologyCapabilities4.setDate(Value: TFslDateTime);
 begin
   tc.date := value;
 end;
@@ -4337,6 +4625,66 @@ end;
 function TFhirTerminologyCapabilities4.tc: TFhirTerminologyCapabilities;
 begin
   result := (Fres as TFhirTerminologyCapabilities);
+end;
+
+
+{ TFHIRPeriod4 }
+
+function TFHIRPeriod4.GetEnd: TFslDateTime;
+begin
+  result := period.end_;
+end;
+
+function TFHIRPeriod4.GetStart: TFslDateTime;
+begin
+  result := period.start;
+end;
+
+function TFHIRPeriod4.period: TFHIRPeriod;
+begin
+  result := Element as TFHIRPeriod;
+end;
+
+procedure TFHIRPeriod4.SetEnd(const Value: TFslDateTime);
+
+begin
+  period.end_ := value;
+end;
+
+procedure TFHIRPeriod4.SetStart(const Value: TFslDateTime);
+
+begin
+  period.start := value;
+end;
+
+{ TFHIRConsent4 }
+
+function TFHIRConsent4.consent: TFHIRConsent;
+begin
+  result := resource as TFHIRConsent;
+end;
+
+function TFHIRConsent4.GetActive: boolean;
+begin
+  result := consent.status = ConsentStateCodesActive;
+end;
+
+function TFHIRConsent4.GetDateTime: TFslDateTime;
+begin
+  result := consent.dateTime;
+end;
+
+function TFHIRConsent4.GetPatient: String;
+begin
+  if consent.patient <> nil then
+    result := consent.patient.reference
+  else
+    result := '';
+end;
+
+function TFHIRConsent4.listProvisions: TFslList<TFhirConsentProvisionW>;
+begin
+  result := nil; // for now
 end;
 
 end.

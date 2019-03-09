@@ -5,27 +5,27 @@
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
-  
-  Redistribution and use in source and binary forms, with or without modification, 
+
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
-  
-   * Redistributions of source code must retain the above copyright notice, this 
+
+   * Redistributions of source code must retain the above copyright notice, this
      list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above copyright notice, 
-     this list of conditions and the following disclaimer in the documentation 
+   * Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
      and/or other materials provided with the distribution.
-   * Neither the name of HL7 nor the names of its contributors may be used to 
-     endorse or promote products derived from this software without specific 
+   * Neither the name of HL7 nor the names of its contributors may be used to
+     endorse or promote products derived from this software without specific
      prior written permission.
-  
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 }
@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, System.NetEncoding,
-  FHIR.Support.Base, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.ElementModel,
   FHIR.Client.Base, FHIR.Client.Threaded;
@@ -79,6 +79,8 @@ type
     function makeDecimal(s : string) : TFHIRObject; override;
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
+    function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
+    function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
@@ -97,6 +99,7 @@ type
     function wrapMeta(r : TFHIRObject) : TFhirMetaW; overload; override;
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; override;
     function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; override;
+    function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
     function makeOpReqLookup : TFHIRLookupOpRequestW; override;
     function makeOpRespLookup : TFHIRLookupOpResponseW; override;
     function makeOpReqSubsumes : TFHIRSubsumesOpRequestW; override;
@@ -109,10 +112,12 @@ type
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; override;
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; override;
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
+    function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
+    function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR3;
 
@@ -271,6 +276,11 @@ begin
   result := TFHIRParsers3.composer(worker as TFHIRWorkerContext, format, lang, style);
 end;
 
+function TFHIRFactoryR3.makeDateTime(value: TFslDateTime): TFHIRObject;
+begin
+  result := TFhirDateTime.Create(value);
+end;
+
 function TFHIRFactoryR3.makeDecimal(s: string): TFHIRObject;
 begin
   result := TFhirDecimal.Create(s);
@@ -284,6 +294,11 @@ begin
     result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
   else
     raise EFHIRException.create('Unknown Supported Data Type '+type_);
+end;
+
+function TFHIRFactoryR3.makeDuration(dt: TDateTime): TFHIRObject;
+begin
+  result := TFhirQuantity.fromDuration(dt);
 end;
 
 function TFHIRFactoryR3.makeElementModelManager: TFHIRBaseMMManager;
@@ -373,13 +388,18 @@ begin
   result := TFHIRValidator3.Create(worker as TFHIRWorkerContext);
 end;
 
+function TFHIRFactoryR3.makeValueSetContains: TFhirValueSetExpansionContainsW;
+begin
+  result := TFhirValueSetExpansionContains3.Create(TFhirValueSetExpansionContains.create);
+end;
+
 function TFHIRFactoryR3.resCategory(name: String): TTokenCategory;
 var
   a : TFhirResourceType;
 begin
   for a in ALL_RESOURCE_TYPES do
     if CODES_TFhirResourceType[a] = name then
-      result := RESOURCE_CATEGORY[a];
+      exit(RESOURCE_CATEGORY[a]);
   result := tcOther;
 end;
 
@@ -518,6 +538,14 @@ begin
     result := TFhirConceptMap3.Create(r);
 end;
 
+function TFHIRFactoryR3.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFHIRConsent3.Create(o);
+end;
+
 function TFHIRFactoryR3.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;
 begin
   raise EFHIRException.Create('Not supported in R3');
@@ -593,6 +621,14 @@ begin
     result := nil
   else
     result := TFhirPatient3.Create(r);
+end;
+
+function TFHIRFactoryR3.wrapPeriod(r: TFHIRObject): TFhirPeriodW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirPeriod3.Create(r);
 end;
 
 function TFHIRFactoryR3.wrapQuantity(r: TFHIRObject): TFhirQuantityW;

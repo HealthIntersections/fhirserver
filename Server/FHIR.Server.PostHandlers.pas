@@ -108,9 +108,9 @@ begin
     result := TFhirPeriod.Create;
     try
       if (params.GetVar('startParam') <> '') then
-        result.start := TDateTimeEx.fromXML(params.GetVar('startParam'));
+        result.start := TFslDateTime.fromXML(params.GetVar('startParam'));
       if (params.GetVar('endParam') <> '') then
-        result.end_ := TDateTimeEx.fromXML(params.GetVar('endParam'));
+        result.end_ := TFslDateTime.fromXML(params.GetVar('endParam'));
       result.Link;
     finally
       result.Free;
@@ -320,7 +320,7 @@ begin
       for i := 1 to 12 do
         processExtension(inttostr(i));
 
-      prov.recorded := TDateTimeEx.makeLocal(dtpSec);
+      prov.recorded := TFslDateTime.makeLocal(dtpSec);
       p := TFhirPractitioner.Create;
       prov.containedList.Add(p);
       p.id := 'p1';

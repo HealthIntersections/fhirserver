@@ -50,12 +50,13 @@ type
     procedure registerOperations; override;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); override;
     function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList; override;
-    Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
     function readRef(ref : TFHIRObject) : string; override;
     function getOpException(op : TFHIRResourceV) : String; override;
     procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); override;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
+  public
+    procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
   end;
 
   TFhirNativeOperationR3 = class (TFhirNativeOperation)
@@ -665,8 +666,8 @@ begin
       se.event.outcome := AuditEventOutcome4
     else
       se.event.outcome := AuditEventOutcome8; // no way we are going down...
-    se.event.dateTime := TDateTimeEx.makeUTC;
-    se.Tag := TDateTimeExWrapper.Create(se.event.dateTime);
+    se.event.dateTime := TFslDateTime.makeUTC;
+    se.Tag := TFslDateTimeWrapper.Create(se.event.dateTime);
 
     se.source := TFhirAuditEventSource.create;
     se.source.site := ServerContext.Globals.OwnerName;
@@ -1176,7 +1177,6 @@ procedure TFhirValidationOperation.Execute(context : TOperationContext; manager:
 type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
   outcome : TFHIROperationOutcomeW;
-  i : integer;
   profileId : String;
   profile : TFHirStructureDefinition;
   profiles : TValidationProfileSet;
@@ -1376,7 +1376,7 @@ begin
 //            end;
 //          end;
 
-        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.setLastUpdated(TFslDateTime.makeUTC);
         bundle.setId(NewGuidId);
         response.HTTPCode := 200;
         response.Message := 'OK';
@@ -2444,7 +2444,6 @@ end;
 
 procedure TFhirVersionsOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  profile : TFHirStructureDefinition;
   p : TFhirParameters;
 begin
   try
@@ -2527,7 +2526,6 @@ end;
 procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRStatsOpRequest;
-  resp : TFHIRStatsOpResponseW;
   s : string;
   ose : TObservationStatsEvaluator;
   c : TFhirCoding;
@@ -2555,8 +2553,8 @@ begin
           raise EFHIRException.create('no code or coding found');
         if (req.duration <> '') then
         begin
-          ose.start := TDateTimeEx.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
-          ose.finish := TDateTimeEx.makeUTC.DateTime;
+          ose.start := TFslDateTime.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
+          ose.finish := TFslDateTime.makeUTC.DateTime;
         end
         else if (req.period <> nil) then
         begin
@@ -2673,7 +2671,7 @@ begin
       keys := TKeyList.Create;
       try
         bundle.setId(FhirGUIDToString(CreateGUID));
-        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.setLastUpdated(TFslDateTime.makeUTC);
         summaryStatus := request.Summary;
 
         base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/$lastn?';
@@ -2973,7 +2971,7 @@ begin
       end
       else
       begin
-        url := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        url := native(manager).ServerContext.FormalURLPlain+'/'+res.fhirType+'/'+res.id;
         exists := false;
         for entry in bundle.entryList do
           if entry.fullUrl = url then
@@ -2982,7 +2980,7 @@ begin
         begin
           entry := bundle.entryList.Append;
           entry.resource := res.Link as TFhirResource;
-          entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+          entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/'+res.fhirType+'/'+res.id;
         end;
       end
     end
@@ -3036,7 +3034,6 @@ var
   bundle : TFHIRBundle;
   resourceKey, versionKey : integer;
   entry : TFHIRBundleEntry;
-  i, j : integer;
   needSecure : boolean;
 begin
   try
@@ -3056,11 +3053,11 @@ begin
           try
             bundle.id := copy(GUIDToString(CreateGUID), 2, 36).ToLower;
             bundle.meta := TFHIRMeta.Create;
-            bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+            bundle.meta.lastUpdated := TFslDateTime.makeUTC;
 //            bundle.base := native(manager).ServerContext.FormalURLPlain;
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
-            entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/Composition/'+composition.id;
+            entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/Composition/'+composition.id;
 
             if request.Parameters.getvar('persist') = 'true' then
             begin
@@ -3122,7 +3119,6 @@ end;
 procedure TFHIRNativeStorageServiceR3.checkDefinitions;
 var
   s, sx : string;
-  c, t : integer;
   fpe : TFHIRPathEngine;
   sd : TFhirStructureDefinition;
   ed: TFhirElementDefinition;
@@ -3131,8 +3127,6 @@ var
   expr : TFHIRPathExpressionNode;
 begin
   s := '';
-  c := 0;
-  t := 0;
   fpe := TFHIRPathEngine.create(vc, TUcumServiceImplementation.Create(ServerContext.TerminologyServer.CommonTerminologies.Ucum.Link));
   try
     for sd in vc.Profiles.ProfilesByURL.Values do
@@ -3144,7 +3138,6 @@ begin
             sx := inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'); //inv.expression
             if (sx <> '') and not sx.contains('$parent') then
             begin
-              inc(t);
               try
                 expr := fpe.parse(sx);
                 try
@@ -3155,8 +3148,6 @@ begin
                   try
                     if (td.hasNoTypes) then
                       s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): no possible result from '+sx + #13#10
-                    else
-                      inc(c);
                   finally
                     td.free;
                   end;
@@ -3189,7 +3180,7 @@ begin
   if resource.ResourceType = frtValueSet then
   begin
     vs := TFHIRValueSet(resource);
-    ServerContext.TerminologyServer.checkTerminologyResource(resource)
+    ServerContext.TerminologyServer.checkTerminologyResource(vs)
   end
   else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
     ServerContext.TerminologyServer.checkTerminologyResource(resource)
@@ -3229,7 +3220,7 @@ begin
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := ServerContext.Globals.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
@@ -3275,10 +3266,10 @@ begin
         system := 'http://hl7.org/fhir/consentcategorycodes';
         code := 'smart-on-fhir';
       end;
-      pc.dateTime := TDateTimeEx.makeUTC;
+      pc.dateTime := TFslDateTime.makeUTC;
       pc.period := TFHIRPeriod.Create;
       pc.period.start := pc.dateTime;
-      pc.period.end_ := TDateTimeEx.makeUTC(session.expires);
+      pc.period.end_ := TFslDateTime.makeUTC(session.expires);
       pc.patient := TFHIRReference.Create;
       pc.patient.reference := Session.Compartments[0].ToString;
       // todo: do we have a reference for the consentor?

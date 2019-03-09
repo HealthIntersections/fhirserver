@@ -118,7 +118,7 @@ implementation
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Parser, FHIR.Version.Types, FHIR.Version.Resources;
+  FHIR.Base.Parser, FHIR.R4.Types, FHIR.R4.Resources;
 
 { TFHIRValidatorTests }
 

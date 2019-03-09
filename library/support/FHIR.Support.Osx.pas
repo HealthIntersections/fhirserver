@@ -40,8 +40,8 @@ other code to fix:
 
 uses
   Posix.Unistd, Posix.Pthread, Posix.Wctype,
-  MacApi.CoreServices, Macapi.Mach,
-  Math, SysUtils;
+  MacApi.CoreServices, Macapi.Mach, Macapi.Foundation,
+  Math, SysUtils, System.Character;
 
 const
   ERROR_SUCCESS = 0;
@@ -71,6 +71,8 @@ function GetCurrentThreadID : Cardinal;
 procedure QueryPerformanceFrequency(var freq : Int64);
 procedure QueryPerformanceCounter(var count : Int64);
 function GetTickCount : cardinal;
+
+function OSXRemoveAccents(s : String) : String;
 
 {$ENDIF}
 
@@ -138,6 +140,25 @@ end;
 function GetTickCount : cardinal;
 begin
   result := AbsoluteToNanoseconds(mach_absolute_time) div 1000000;
+end;
+
+function OSXRemoveAccents(s : String) : String;
+var
+  ns, nsD : NSString;
+  i : integer;
+  uc : unichar;
+  c : char;
+begin
+  ns := CocoaNSStringConst(libFoundation, s);
+  nsD := ns.decomposedStringWithCanonicalMapping;
+  result := '';
+  for i := 0 to nsD.length - 1 do
+  begin
+    uc := nsd.characterAtIndex(i);
+    c := char(uc);
+    if (c.GetUnicodeCategory <> TUnicodeCategory.ucNonSpacingMark) and (c.GetUnicodeCategory <> TUnicodeCategory.ucCombiningMark) then
+      result := result + c;
+  end;
 end;
 
 {$ENDIF}

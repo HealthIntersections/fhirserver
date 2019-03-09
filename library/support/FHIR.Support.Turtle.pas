@@ -892,8 +892,7 @@ begin
           if ((isUri and (uc < 33)) or (not isUri and (uc < 32))) or ((isUri) and ((uc = $3C) or (uc = $3E))) then
             raise EWebException.create('Illegal unicode character');
           b.append(char(uc));
-          i := i + l;
-          break;
+          inc(i);
         end;
         else
           raise EWebException.create('Unknown character escape \\'+s[i]);
@@ -1206,7 +1205,6 @@ begin
 				lexer.token('(');
 			end;
 
-      rpt := false;
 			repeat
 				if (lexer.peek(lttTOKEN, '[')) then
         begin
@@ -1298,7 +1296,8 @@ begin
 
 				if (inlist) then
 					rpt := not lexer.peek(lttTOKEN, ')')
-				else begin
+				else
+        begin
 					rpt := lexer.peek(lttTOKEN, ',');
 					if (rpt) then
             lexer.readNext(false);

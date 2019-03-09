@@ -3344,6 +3344,7 @@ Type
     procedure ComposeVisionPrescription(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescription);
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
+  public
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); override;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
@@ -3580,7 +3581,7 @@ begin
   result := TFhirDate.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
+    result.value := toTFslDateTime(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -3616,7 +3617,7 @@ begin
   result := TFhirDateTime.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
+    result.value := toTFslDateTime(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -3757,7 +3758,7 @@ begin
   result := TFhirInstant.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
+    result.value := toTFslDateTime(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin

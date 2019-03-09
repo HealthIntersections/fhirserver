@@ -366,6 +366,7 @@ type
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
     function fhirType : String; virtual; abstract;
+    function JSType : String; virtual; // same as fhirType, but with version number appended
     function getId : String; virtual; abstract;
     procedure setIdValue(id : String); virtual; abstract;
     function isPrimitive : boolean; virtual;
@@ -374,7 +375,7 @@ type
     function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
-    function dateValue : TDateTimeEx; virtual;
+    function dateValue : TFslDateTime; virtual;
     function isMetaDataBased : boolean; virtual;
 //    Function PerformQuery(path : String) : TFHIRObjectList;
     function hasType(t : String) : boolean; overload;
@@ -475,7 +476,7 @@ type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create(value : String); Overload;
-    constructor Create(value : TDateTimeEx); Overload;
+    constructor Create(value : TFslDateTime); Overload;
     constructor Create(value : boolean); Overload;
     constructor Create(value : TBytes); Overload;
 
@@ -721,9 +722,9 @@ begin
   FTags.AddOrSetValue(name, value);
 end;
 
-function TFHIRObject.dateValue: TDateTimeEx;
+function TFHIRObject.dateValue: TFslDateTime;
 begin
-  result := TDateTimeEx.makeNull;
+  result := TFslDateTime.makeNull;
 end;
 
 procedure TFHIRObject.deleteProperty(propName: string; propValue: TFHIRObject);
@@ -858,6 +859,11 @@ begin
   result := false;
 end;
 
+function TFHIRObject.JSType: String;
+begin
+  result := fhirType;
+end;
+
 function TFHIRObject.GetCommentsEnd: TFslStringList;
 begin
   if FCommentsEnd = nil then
@@ -914,7 +920,7 @@ begin
   self.value := lowercase(BooleanToString(value));
 end;
 
-constructor TFHIRObjectText.create(value: TDateTimeEx);
+constructor TFHIRObjectText.create(value: TFslDateTime);
 begin
   Create;
   self.value := value.toXML;

@@ -146,11 +146,11 @@ Type
     FFields : TStringList;
     DefaultLanguage : boolean;
     FMembers : TFslMap<TSnomedCombinedReferenceSetEntry>;
-    function getByItem(item : TSnomedCombinedItem; values : TStringList) : TSnomedCombinedReferenceSetEntry;
   public
     constructor Create; Override;
     destructor Destroy; Override;
     function abbrev : String;
+    function getByItem(item : TSnomedCombinedItem; values : TStringList) : TSnomedCombinedReferenceSetEntry;
   end;
 
   TSnomedCombinedDependency = class (TFslObject)
@@ -223,7 +223,6 @@ Type
     procedure forceRelationship(concept : TSnomedCombinedConcept; group : TSnomedCombinedRelationshipGroup; relationship : TSnomedCombinedRelationship);
     function exists(list  : TFslList<TSnomedCombinedRelationship>; relationship : TSnomedCombinedRelationship) : boolean;
 
-    procedure addToRefSet(rsId, conceptId : UInt64);
     procedure identify;
 
     procedure updateDependencies;
@@ -241,6 +240,7 @@ Type
 
     procedure Execute;
 
+    procedure addToRefSet(rsId, conceptId : UInt64);
     property international : TSnomedServices read FInternational write SetInternational;
     property others : TFslList<TSnomedServices> read FOthers;
     property callback : TInstallerCallback read FCallback write FCallback;
@@ -710,7 +710,6 @@ var
   rm : TSnomedCombinedReferenceSetEntry;
   j : integer;
   new : boolean;
-  item : TSnomedCombinedItem;
   guid  : TGuid;
 begin
   svc.RefSetIndex.GetReferenceSet(i, name, iFilename, definition, members, dummy, types, names);
@@ -844,7 +843,6 @@ var
   identity : UInt64;
   Source, Target, RelType, module, kind, modifier : Cardinal;
   date : TSnomedDate;
-  Flags : Byte;
   Group : Integer;
   active, defining : boolean;
   g : TSnomedCombinedRelationshipGroup;
@@ -1442,7 +1440,6 @@ procedure TSnomedCombiner.identify;
   var
     concept : TSnomedCombinedConcept;
     relationship : TSnomedCombinedRelationship;
-    desc : TSnomedCombinedDescription;
   begin
     concept := FConcepts[inttostr(source)];
 
@@ -1523,7 +1520,6 @@ begin
 
   st := inttostr(this.FId);
   so := inttostr(other.FId);
-  result := false;
   if international.Subsumes(st, so) then
     exit(true);
   for svc in others do

@@ -71,9 +71,9 @@ Type
     class function convertDiscriminatorType(src : FHIR.R3.Types.TFhirDiscriminatorTypeEnum) : FHIR.R4.Types.TFhirDiscriminatorTypeEnum; overload;
     class function convertDiscriminatorType(src : FHIR.R4.Types.TFhirDiscriminatorTypeEnum) : FHIR.R3.Types.TFhirDiscriminatorTypeEnum; overload;
     class function convertAggregationMode(src : FHIR.R3.Types.TFhirResourceAggregationModeEnum) : FHIR.R4.Types.TFhirResourceAggregationModeEnum; overload;
-    class function convertAggregationMode(src : FHIR.R4.Types.TFhirResourceAggregationModeEnum) : FHIR.R3.Types.TFhirResourceAggregationModeEnum; overload;
+//    class function convertAggregationMode(src : FHIR.R4.Types.TFhirResourceAggregationModeEnum) : FHIR.R3.Types.TFhirResourceAggregationModeEnum; overload;
     class function convertReferenceVersionRules(src : FHIR.R3.Types.TFhirReferenceVersionRulesEnum) : FHIR.R4.Types.TFhirReferenceVersionRulesEnum; overload;
-    class function convertReferenceVersionRules(src : FHIR.R4.Types.TFhirReferenceVersionRulesEnum) : FHIR.R3.Types.TFhirReferenceVersionRulesEnum; overload;
+//    class function convertReferenceVersionRules(src : FHIR.R4.Types.TFhirReferenceVersionRulesEnum) : FHIR.R3.Types.TFhirReferenceVersionRulesEnum; overload;
     class function convertConstraintSeverity(src : FHIR.R3.Types.TFhirConstraintSeverityEnum) : FHIR.R4.Types.TFhirConstraintSeverityEnum; overload;
     class function convertConstraintSeverity(src : FHIR.R4.Types.TFhirConstraintSeverityEnum) : FHIR.R3.Types.TFhirConstraintSeverityEnum; overload;
     class function convertBindingStrength(src : FHIR.R3.Types.TFhirBindingStrengthEnum) : FHIR.R4.Types.TFhirBindingStrengthEnum; overload;
@@ -160,10 +160,10 @@ Type
     class function convertDocumentMode(src : FHIR.R4.Types.TFhirDocumentModeEnum) : FHIR.R3.Types.TFhirDocumentModeEnum; overload;
     class function convertCareTeamStatus(src : FHIR.R3.Types.TFhirCareTeamStatusEnum) : FHIR.R4.Types.TFhirCareTeamStatusEnum; overload;
     class function convertCareTeamStatus(src : FHIR.R4.Types.TFhirCareTeamStatusEnum) : FHIR.R3.Types.TFhirCareTeamStatusEnum; overload;
-    class function convertChargeItemStatus(src : FHIR.R3.Types.TFhirChargeitemStatusEnum) : FHIR.R4.Types.TFhirChargeitemStatusEnum; overload;
-    class function convertChargeItemStatus(src : FHIR.R4.Types.TFhirChargeitemStatusEnum) : FHIR.R3.Types.TFhirChargeitemStatusEnum; overload;
-    class function convertUse(src : FHIR.R3.Types.TFhirClaimUseEnum) : FHIR.R4.Types.TFhirClaimUseEnum; overload;
-    class function convertUse(src : FHIR.R4.Types.TFhirClaimUseEnum) : FHIR.R3.Types.TFhirClaimUseEnum; overload;
+//    class function convertChargeItemStatus(src : FHIR.R3.Types.TFhirChargeitemStatusEnum) : FHIR.R4.Types.TFhirChargeitemStatusEnum; overload;
+//    class function convertChargeItemStatus(src : FHIR.R4.Types.TFhirChargeitemStatusEnum) : FHIR.R3.Types.TFhirChargeitemStatusEnum; overload;
+//    class function convertUse(src : FHIR.R3.Types.TFhirClaimUseEnum) : FHIR.R4.Types.TFhirClaimUseEnum; overload;
+//    class function convertUse(src : FHIR.R4.Types.TFhirClaimUseEnum) : FHIR.R3.Types.TFhirClaimUseEnum; overload;
     class function convertClinicalImpressionStatus(src : FHIR.R3.Types.TFhirClinicalImpressionStatusEnum) : FHIR.R4.Types.TFhirClinicalImpressionStatusEnum; overload;
     class function convertClinicalImpressionStatus(src : FHIR.R4.Types.TFhirClinicalImpressionStatusEnum) : FHIR.R3.Types.TFhirClinicalImpressionStatusEnum; overload;
     class function convertCodeSystemHierarchyMeaning(src : FHIR.R3.Types.TFhirCodesystemHierarchyMeaningEnum) : FHIR.R4.Types.TFhirCodesystemHierarchyMeaningEnum; overload;
@@ -196,16 +196,16 @@ Type
     class function convertConditionClinicalStatus(src : FHIR.R4.Types.TFhirCodeableConcept) : FHIR.R3.Types.TFhirConditionClinicalEnum; overload;
     class function convertConditionVerificationStatus(src : FHIR.R3.Types.TFhirConditionVerStatusEnum) : FHIR.R4.Types.TFhirCodeableConcept; overload;
     class function convertConditionVerificationStatus(src : FHIR.R4.Types.TFhirCodeableConcept) : FHIR.R3.Types.TFhirConditionVerStatusEnum; overload;
-    class function convertConsentDataMeaning(src : FHIR.R3.Types.TFhirConsentDataMeaningEnum) : FHIR.R4.Types.TFhirConsentDataMeaningEnum; overload;
-    class function convertConsentDataMeaning(src : FHIR.R4.Types.TFhirConsentDataMeaningEnum) : FHIR.R3.Types.TFhirConsentDataMeaningEnum; overload;
+//    class function convertConsentDataMeaning(src : FHIR.R3.Types.TFhirConsentDataMeaningEnum) : FHIR.R4.Types.TFhirConsentDataMeaningEnum; overload;
+//    class function convertConsentDataMeaning(src : FHIR.R4.Types.TFhirConsentDataMeaningEnum) : FHIR.R3.Types.TFhirConsentDataMeaningEnum; overload;
     class function convertDetectedIssueStatus(src : FHIR.R3.Types.TFhirObservationStatusEnum) : FHIR.R4.Types.TFhirObservationStatusEnum; overload;
     class function convertDetectedIssueStatus(src : FHIR.R4.Types.TFhirObservationStatusEnum) : FHIR.R3.Types.TFhirObservationStatusEnum; overload;
     class function convertDetectedIssueSeverity(src : FHIR.R3.Types.TFhirDetectedissueSeverityEnum) : FHIR.R4.Types.TFhirDetectedissueSeverityEnum; overload;
     class function convertDetectedIssueSeverity(src : FHIR.R4.Types.TFhirDetectedissueSeverityEnum) : FHIR.R3.Types.TFhirDetectedissueSeverityEnum; overload;
     class function convertFHIRDeviceStatus(src : FHIR.R3.Types.TFhirDeviceStatusEnum) : FHIR.R4.Types.TFhirDeviceStatusEnum; overload;
     class function convertFHIRDeviceStatus(src : FHIR.R4.Types.TFhirDeviceStatusEnum) : FHIR.R3.Types.TFhirDeviceStatusEnum; overload;
-    class function convertUDIEntryType(src : FHIR.R3.Types.TFhirUdiEntryTypeEnum) : FHIR.R4.Types.TFhirUdiEntryTypeEnum; overload;
-    class function convertUDIEntryType(src : FHIR.R4.Types.TFhirUdiEntryTypeEnum) : FHIR.R3.Types.TFhirUdiEntryTypeEnum; overload;
+//    class function convertUDIEntryType(src : FHIR.R3.Types.TFhirUdiEntryTypeEnum) : FHIR.R4.Types.TFhirUdiEntryTypeEnum; overload;
+//    class function convertUDIEntryType(src : FHIR.R4.Types.TFhirUdiEntryTypeEnum) : FHIR.R3.Types.TFhirUdiEntryTypeEnum; overload;
     class function convertDeviceMetricOperationalStatus(src : FHIR.R3.Types.TFhirMetricOperationalStatusEnum) : FHIR.R4.Types.TFhirMetricOperationalStatusEnum; overload;
     class function convertDeviceMetricOperationalStatus(src : FHIR.R4.Types.TFhirMetricOperationalStatusEnum) : FHIR.R3.Types.TFhirMetricOperationalStatusEnum; overload;
     class function convertDeviceMetricColor(src : FHIR.R3.Types.TFhirMetricColorEnum) : FHIR.R4.Types.TFhirMetricColorEnum; overload;
@@ -246,8 +246,8 @@ Type
     class function convertGraphCompartmentRule(src : FHIR.R4.Types.TFhirGraphCompartmentRuleEnum) : FHIR.R3.Types.TFhirGraphCompartmentRuleEnum; overload;
     class function convertGroupType(src : FHIR.R3.Types.TFhirGroupTypeEnum) : FHIR.R4.Types.TFhirGroupTypeEnum; overload;
     class function convertGroupType(src : FHIR.R4.Types.TFhirGroupTypeEnum) : FHIR.R3.Types.TFhirGroupTypeEnum; overload;
-    class function convertDaysOfWeek(src : FHIR.R3.Types.TFhirDaysOfWeekEnum) : FHIR.R4.Types.TFhirDaysOfWeekEnum; overload;
-    class function convertDaysOfWeek(src : FHIR.R4.Types.TFhirDaysOfWeekEnum) : FHIR.R3.Types.TFhirDaysOfWeekEnum; overload;
+//    class function convertDaysOfWeek(src : FHIR.R3.Types.TFhirDaysOfWeekEnum) : FHIR.R4.Types.TFhirDaysOfWeekEnum; overload;
+//    class function convertDaysOfWeek(src : FHIR.R4.Types.TFhirDaysOfWeekEnum) : FHIR.R3.Types.TFhirDaysOfWeekEnum; overload;
     class function convertImmunizationStatus(src : FHIR.R3.Types.TFhirImmunizationStatusEnum) : FHIR.R4.Types.TFhirImmunizationStatusEnum; overload;
     class function convertImmunizationStatus(src : FHIR.R4.Types.TFhirImmunizationStatusEnum) : FHIR.R3.Types.TFhirImmunizationStatusEnum; overload;
     class function findPackage(definition : FHIR.R3.Resources.TFhirImplementationGuidePackageList; id : String) : FHIR.R3.Resources.TFhirImplementationGuidePackage; overload;
@@ -311,10 +311,10 @@ Type
     class function convertRiskAssessmentStatus(src : FHIR.R4.Types.TFhirObservationStatusEnum) : FHIR.R3.Types.TFhirObservationStatusEnum; overload;
     class function convertXPathUsageType(src : FHIR.R3.Types.TFhirSearchXpathUsageEnum) : FHIR.R4.Types.TFhirSearchXpathUsageEnum; overload;
     class function convertXPathUsageType(src : FHIR.R4.Types.TFhirSearchXpathUsageEnum) : FHIR.R3.Types.TFhirSearchXpathUsageEnum; overload;
-    class function convertSearchComparator(src : FHIR.R3.Types.TFhirSearchComparatorEnum) : FHIR.R4.Types.TFhirSearchComparatorEnum; overload;
-    class function convertSearchComparator(src : FHIR.R4.Types.TFhirSearchComparatorEnum) : FHIR.R3.Types.TFhirSearchComparatorEnum; overload;
-    class function convertSearchModifierCode(src : FHIR.R3.Types.TFhirSearchModifierCodeEnum) : FHIR.R4.Types.TFhirSearchModifierCodeEnum; overload;
-    class function convertSearchModifierCode(src : FHIR.R4.Types.TFhirSearchModifierCodeEnum) : FHIR.R3.Types.TFhirSearchModifierCodeEnum; overload;
+//    class function convertSearchComparator(src : FHIR.R3.Types.TFhirSearchComparatorEnum) : FHIR.R4.Types.TFhirSearchComparatorEnum; overload;
+//    class function convertSearchComparator(src : FHIR.R4.Types.TFhirSearchComparatorEnum) : FHIR.R3.Types.TFhirSearchComparatorEnum; overload;
+//    class function convertSearchModifierCode(src : FHIR.R3.Types.TFhirSearchModifierCodeEnum) : FHIR.R4.Types.TFhirSearchModifierCodeEnum; overload;
+//    class function convertSearchModifierCode(src : FHIR.R4.Types.TFhirSearchModifierCodeEnum) : FHIR.R3.Types.TFhirSearchModifierCodeEnum; overload;
     class function convertQualityType(src : FHIR.R3.Types.TFhirQualityTypeEnum) : FHIR.R4.Types.TFhirQualityTypeEnum; overload;
     class function convertQualityType(src : FHIR.R4.Types.TFhirQualityTypeEnum) : FHIR.R3.Types.TFhirQualityTypeEnum; overload;
     class function convertRepositoryType(src : FHIR.R3.Types.TFhirRepositoryTypeEnum) : FHIR.R4.Types.TFhirRepositoryTypeEnum; overload;
@@ -351,7 +351,7 @@ Type
     class function convertFHIRSubstanceStatus(src : FHIR.R4.Types.TFhirSubstanceStatusEnum) : FHIR.R3.Types.TFhirSubstanceStatusEnum; overload;
     class function convertSupplyDeliveryStatus(src : FHIR.R3.Types.TFhirSupplydeliveryStatusEnum) : FHIR.R4.Types.TFhirSupplydeliveryStatusEnum; overload;
     class function convertSupplyDeliveryStatus(src : FHIR.R4.Types.TFhirSupplydeliveryStatusEnum) : FHIR.R3.Types.TFhirSupplydeliveryStatusEnum; overload;
-    class function convertContentType(src : FHIR.R3.Types.TFhirContentTypeEnum) : String; overload;
+//    class function convertContentType(src : FHIR.R3.Types.TFhirContentTypeEnum) : String; overload;
     class function convertActionGroupingBehavior(src : FHIR.R3.Types.TFhirActionGroupingBehaviorEnum) : FHIR.R4.Types.TFhirActionGroupingBehaviorEnum; overload;
     class function convertActionGroupingBehavior(src : FHIR.R4.Types.TFhirActionGroupingBehaviorEnum) : FHIR.R3.Types.TFhirActionGroupingBehaviorEnum; overload;
     class function convertActionSelectionBehavior(src : FHIR.R3.Types.TFhirActionSelectionBehaviorEnum) : FHIR.R4.Types.TFhirActionSelectionBehaviorEnum; overload;
@@ -1308,16 +1308,16 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertAggregationMode(src : FHIR.R4.Types.TFhirResourceAggregationModeEnum) : FHIR.R3.Types.TFhirResourceAggregationModeEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.ResourceAggregationModeContained: exit(FHIR.R3.Types.ResourceAggregationModeContained);
-    FHIR.R4.Types.ResourceAggregationModeReferenced: exit(FHIR.R3.Types.ResourceAggregationModeReferenced);
-    FHIR.R4.Types.ResourceAggregationModeBundled: exit(FHIR.R3.Types.ResourceAggregationModeBundled);
-    else exit(FHIR.R3.Types.ResourceAggregationModeNull);
-  end;
-end;
-
+//class function TVersionConvertor_30_40.convertAggregationMode(src : FHIR.R4.Types.TFhirResourceAggregationModeEnum) : FHIR.R3.Types.TFhirResourceAggregationModeEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.ResourceAggregationModeContained: exit(FHIR.R3.Types.ResourceAggregationModeContained);
+//    FHIR.R4.Types.ResourceAggregationModeReferenced: exit(FHIR.R3.Types.ResourceAggregationModeReferenced);
+//    FHIR.R4.Types.ResourceAggregationModeBundled: exit(FHIR.R3.Types.ResourceAggregationModeBundled);
+//    else exit(FHIR.R3.Types.ResourceAggregationModeNull);
+//  end;
+//end;
+//
 class function TVersionConvertor_30_40.convertReferenceVersionRules(src : FHIR.R3.Types.TFhirReferenceVersionRulesEnum) : FHIR.R4.Types.TFhirReferenceVersionRulesEnum;
 begin
   case (src) of
@@ -1328,16 +1328,16 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertReferenceVersionRules(src : FHIR.R4.Types.TFhirReferenceVersionRulesEnum) : FHIR.R3.Types.TFhirReferenceVersionRulesEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.ReferenceVersionRulesEither: exit(FHIR.R3.Types.ReferenceVersionRulesEither);
-    FHIR.R4.Types.ReferenceVersionRulesIndependent: exit(FHIR.R3.Types.ReferenceVersionRulesIndependent);
-    FHIR.R4.Types.ReferenceVersionRulesSpecific: exit(FHIR.R3.Types.ReferenceVersionRulesSpecific);
-    else exit(FHIR.R3.Types.ReferenceVersionRulesNull);
-  end;
-end;
-
+//class function TVersionConvertor_30_40.convertReferenceVersionRules(src : FHIR.R4.Types.TFhirReferenceVersionRulesEnum) : FHIR.R3.Types.TFhirReferenceVersionRulesEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.ReferenceVersionRulesEither: exit(FHIR.R3.Types.ReferenceVersionRulesEither);
+//    FHIR.R4.Types.ReferenceVersionRulesIndependent: exit(FHIR.R3.Types.ReferenceVersionRulesIndependent);
+//    FHIR.R4.Types.ReferenceVersionRulesSpecific: exit(FHIR.R3.Types.ReferenceVersionRulesSpecific);
+//    else exit(FHIR.R3.Types.ReferenceVersionRulesNull);
+//  end;
+//end;
+//
 class function TVersionConvertor_30_40.convertConstraintSeverity(src : FHIR.R3.Types.TFhirConstraintSeverityEnum) : FHIR.R4.Types.TFhirConstraintSeverityEnum;
 begin
   case (src) of
@@ -2600,54 +2600,54 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertChargeItemStatus(src : FHIR.R3.Types.TFhirChargeitemStatusEnum) : FHIR.R4.Types.TFhirChargeitemStatusEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.ChargeitemStatusPlanned: exit(FHIR.R4.Types.ChargeitemStatusPlanned);
-    FHIR.R3.Types.ChargeitemStatusBillable: exit(FHIR.R4.Types.ChargeitemStatusBillable);
-    FHIR.R3.Types.ChargeitemStatusNotBillable: exit(FHIR.R4.Types.ChargeitemStatusNotBillable);
-    FHIR.R3.Types.ChargeitemStatusAborted: exit(FHIR.R4.Types.ChargeitemStatusAborted);
-    FHIR.R3.Types.ChargeitemStatusBilled: exit(FHIR.R4.Types.ChargeitemStatusBilled);
-    FHIR.R3.Types.ChargeitemStatusEnteredInError: exit(FHIR.R4.Types.ChargeitemStatusEnteredInError);
-    FHIR.R3.Types.ChargeitemStatusUnknown: exit(FHIR.R4.Types.ChargeitemStatusUnknown);
-    else exit(FHIR.R4.Types.ChargeitemStatusNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertChargeItemStatus(src : FHIR.R4.Types.TFhirChargeitemStatusEnum) : FHIR.R3.Types.TFhirChargeitemStatusEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.ChargeitemStatusPlanned: exit(FHIR.R3.Types.ChargeitemStatusPlanned);
-    FHIR.R4.Types.ChargeitemStatusBillable: exit(FHIR.R3.Types.ChargeitemStatusBillable);
-    FHIR.R4.Types.ChargeitemStatusNotBillable: exit(FHIR.R3.Types.ChargeitemStatusNotBillable);
-    FHIR.R4.Types.ChargeitemStatusAborted: exit(FHIR.R3.Types.ChargeitemStatusAborted);
-    FHIR.R4.Types.ChargeitemStatusBilled: exit(FHIR.R3.Types.ChargeitemStatusBilled);
-    FHIR.R4.Types.ChargeitemStatusEnteredInError: exit(FHIR.R3.Types.ChargeitemStatusEnteredInError);
-    FHIR.R4.Types.ChargeitemStatusUnknown: exit(FHIR.R3.Types.ChargeitemStatusUnknown);
-    else exit(FHIR.R3.Types.ChargeitemStatusNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertUse(src : FHIR.R3.Types.TFhirClaimUseEnum) : FHIR.R4.Types.TFhirClaimUseEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.ClaimUseComplete: exit(FHIR.R4.Types.ClaimUseClaim);
-    FHIR.R3.Types.ClaimUseProposed: exit(FHIR.R4.Types.ClaimUsePreauthorization);
-    FHIR.R3.Types.ClaimUseExploratory: exit(FHIR.R4.Types.ClaimUsePredetermination);
-    FHIR.R3.Types.ClaimUseOther: exit(FHIR.R4.Types.ClaimUseNull);
-    else exit(FHIR.R4.Types.ClaimUseNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertUse(src : FHIR.R4.Types.TFhirClaimUseEnum) : FHIR.R3.Types.TFhirClaimUseEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.ClaimUseClaim: exit(FHIR.R3.Types.ClaimUseComplete);
-    FHIR.R4.Types.ClaimUsePreauthorization: exit(FHIR.R3.Types.ClaimUseProposed);
-    FHIR.R4.Types.ClaimUsePredetermination: exit(FHIR.R3.Types.ClaimUseExploratory);
-    else exit(FHIR.R3.Types.ClaimUseNull);
-  end;
-end;
+//class function TVersionConvertor_30_40.convertChargeItemStatus(src : FHIR.R3.Types.TFhirChargeitemStatusEnum) : FHIR.R4.Types.TFhirChargeitemStatusEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.ChargeitemStatusPlanned: exit(FHIR.R4.Types.ChargeitemStatusPlanned);
+//    FHIR.R3.Types.ChargeitemStatusBillable: exit(FHIR.R4.Types.ChargeitemStatusBillable);
+//    FHIR.R3.Types.ChargeitemStatusNotBillable: exit(FHIR.R4.Types.ChargeitemStatusNotBillable);
+//    FHIR.R3.Types.ChargeitemStatusAborted: exit(FHIR.R4.Types.ChargeitemStatusAborted);
+//    FHIR.R3.Types.ChargeitemStatusBilled: exit(FHIR.R4.Types.ChargeitemStatusBilled);
+//    FHIR.R3.Types.ChargeitemStatusEnteredInError: exit(FHIR.R4.Types.ChargeitemStatusEnteredInError);
+//    FHIR.R3.Types.ChargeitemStatusUnknown: exit(FHIR.R4.Types.ChargeitemStatusUnknown);
+//    else exit(FHIR.R4.Types.ChargeitemStatusNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertChargeItemStatus(src : FHIR.R4.Types.TFhirChargeitemStatusEnum) : FHIR.R3.Types.TFhirChargeitemStatusEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.ChargeitemStatusPlanned: exit(FHIR.R3.Types.ChargeitemStatusPlanned);
+//    FHIR.R4.Types.ChargeitemStatusBillable: exit(FHIR.R3.Types.ChargeitemStatusBillable);
+//    FHIR.R4.Types.ChargeitemStatusNotBillable: exit(FHIR.R3.Types.ChargeitemStatusNotBillable);
+//    FHIR.R4.Types.ChargeitemStatusAborted: exit(FHIR.R3.Types.ChargeitemStatusAborted);
+//    FHIR.R4.Types.ChargeitemStatusBilled: exit(FHIR.R3.Types.ChargeitemStatusBilled);
+//    FHIR.R4.Types.ChargeitemStatusEnteredInError: exit(FHIR.R3.Types.ChargeitemStatusEnteredInError);
+//    FHIR.R4.Types.ChargeitemStatusUnknown: exit(FHIR.R3.Types.ChargeitemStatusUnknown);
+//    else exit(FHIR.R3.Types.ChargeitemStatusNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertUse(src : FHIR.R3.Types.TFhirClaimUseEnum) : FHIR.R4.Types.TFhirClaimUseEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.ClaimUseComplete: exit(FHIR.R4.Types.ClaimUseClaim);
+//    FHIR.R3.Types.ClaimUseProposed: exit(FHIR.R4.Types.ClaimUsePreauthorization);
+//    FHIR.R3.Types.ClaimUseExploratory: exit(FHIR.R4.Types.ClaimUsePredetermination);
+//    FHIR.R3.Types.ClaimUseOther: exit(FHIR.R4.Types.ClaimUseNull);
+//    else exit(FHIR.R4.Types.ClaimUseNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertUse(src : FHIR.R4.Types.TFhirClaimUseEnum) : FHIR.R3.Types.TFhirClaimUseEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.ClaimUseClaim: exit(FHIR.R3.Types.ClaimUseComplete);
+//    FHIR.R4.Types.ClaimUsePreauthorization: exit(FHIR.R3.Types.ClaimUseProposed);
+//    FHIR.R4.Types.ClaimUsePredetermination: exit(FHIR.R3.Types.ClaimUseExploratory);
+//    else exit(FHIR.R3.Types.ClaimUseNull);
+//  end;
+//end;
 
 class function TVersionConvertor_30_40.convertClinicalImpressionStatus(src : FHIR.R3.Types.TFhirClinicalImpressionStatusEnum) : FHIR.R4.Types.TFhirClinicalImpressionStatusEnum;
 begin
@@ -3048,27 +3048,27 @@ begin
     exit(FHIR.R3.Types.ConditionVerStatusNull);
 end;
 
-class function TVersionConvertor_30_40.convertConsentDataMeaning(src : FHIR.R3.Types.TFhirConsentDataMeaningEnum) : FHIR.R4.Types.TFhirConsentDataMeaningEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.ConsentDataMeaningInstance: exit(FHIR.R4.Types.ConsentDataMeaningInstance);
-    FHIR.R3.Types.ConsentDataMeaningRelated: exit(FHIR.R4.Types.ConsentDataMeaningRelated);
-    FHIR.R3.Types.ConsentDataMeaningDependents: exit(FHIR.R4.Types.ConsentDataMeaningDependents);
-    FHIR.R3.Types.ConsentDataMeaningAuthoredby: exit(FHIR.R4.Types.ConsentDataMeaningAuthoredby);
-    else exit(FHIR.R4.Types.ConsentDataMeaningNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertConsentDataMeaning(src : FHIR.R4.Types.TFhirConsentDataMeaningEnum) : FHIR.R3.Types.TFhirConsentDataMeaningEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.ConsentDataMeaningInstance: exit(FHIR.R3.Types.ConsentDataMeaningInstance);
-    FHIR.R4.Types.ConsentDataMeaningRelated: exit(FHIR.R3.Types.ConsentDataMeaningRelated);
-    FHIR.R4.Types.ConsentDataMeaningDependents: exit(FHIR.R3.Types.ConsentDataMeaningDependents);
-    FHIR.R4.Types.ConsentDataMeaningAuthoredby: exit(FHIR.R3.Types.ConsentDataMeaningAuthoredby);
-    else exit(FHIR.R3.Types.ConsentDataMeaningNull);
-  end;
-end;
+//class function TVersionConvertor_30_40.convertConsentDataMeaning(src : FHIR.R3.Types.TFhirConsentDataMeaningEnum) : FHIR.R4.Types.TFhirConsentDataMeaningEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.ConsentDataMeaningInstance: exit(FHIR.R4.Types.ConsentDataMeaningInstance);
+//    FHIR.R3.Types.ConsentDataMeaningRelated: exit(FHIR.R4.Types.ConsentDataMeaningRelated);
+//    FHIR.R3.Types.ConsentDataMeaningDependents: exit(FHIR.R4.Types.ConsentDataMeaningDependents);
+//    FHIR.R3.Types.ConsentDataMeaningAuthoredby: exit(FHIR.R4.Types.ConsentDataMeaningAuthoredby);
+//    else exit(FHIR.R4.Types.ConsentDataMeaningNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertConsentDataMeaning(src : FHIR.R4.Types.TFhirConsentDataMeaningEnum) : FHIR.R3.Types.TFhirConsentDataMeaningEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.ConsentDataMeaningInstance: exit(FHIR.R3.Types.ConsentDataMeaningInstance);
+//    FHIR.R4.Types.ConsentDataMeaningRelated: exit(FHIR.R3.Types.ConsentDataMeaningRelated);
+//    FHIR.R4.Types.ConsentDataMeaningDependents: exit(FHIR.R3.Types.ConsentDataMeaningDependents);
+//    FHIR.R4.Types.ConsentDataMeaningAuthoredby: exit(FHIR.R3.Types.ConsentDataMeaningAuthoredby);
+//    else exit(FHIR.R3.Types.ConsentDataMeaningNull);
+//  end;
+//end;
 
 class function TVersionConvertor_30_40.convertDetectedIssueStatus(src : FHIR.R3.Types.TFhirObservationStatusEnum) : FHIR.R4.Types.TFhirObservationStatusEnum;
 begin
@@ -3141,32 +3141,32 @@ begin
     else exit(FHIR.R3.Types.DeviceStatusNull);
   end;
 end;
-
-class function TVersionConvertor_30_40.convertUDIEntryType(src : FHIR.R3.Types.TFhirUdiEntryTypeEnum) : FHIR.R4.Types.TFhirUdiEntryTypeEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.UdiEntryTypeBarcode: exit(FHIR.R4.Types.UdiEntryTypeBarcode);
-    FHIR.R3.Types.UdiEntryTypeRfid: exit(FHIR.R4.Types.UdiEntryTypeRfid);
-    FHIR.R3.Types.UdiEntryTypeManual: exit(FHIR.R4.Types.UdiEntryTypeManual);
-    FHIR.R3.Types.UdiEntryTypeCard: exit(FHIR.R4.Types.UdiEntryTypeCard);
-    FHIR.R3.Types.UdiEntryTypeSelfReported: exit(FHIR.R4.Types.UdiEntryTypeSelfReported);
-    FHIR.R3.Types.UdiEntryTypeUnknown: exit(FHIR.R4.Types.UdiEntryTypeUnknown);
-    else exit(FHIR.R4.Types.UdiEntryTypeNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertUDIEntryType(src : FHIR.R4.Types.TFhirUdiEntryTypeEnum) : FHIR.R3.Types.TFhirUdiEntryTypeEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.UdiEntryTypeBarcode: exit(FHIR.R3.Types.UdiEntryTypeBarcode);
-    FHIR.R4.Types.UdiEntryTypeRfid: exit(FHIR.R3.Types.UdiEntryTypeRfid);
-    FHIR.R4.Types.UdiEntryTypeManual: exit(FHIR.R3.Types.UdiEntryTypeManual);
-    FHIR.R4.Types.UdiEntryTypeCard: exit(FHIR.R3.Types.UdiEntryTypeCard);
-    FHIR.R4.Types.UdiEntryTypeSelfReported: exit(FHIR.R3.Types.UdiEntryTypeSelfReported);
-    FHIR.R4.Types.UdiEntryTypeUnknown: exit(FHIR.R3.Types.UdiEntryTypeUnknown);
-    else exit(FHIR.R3.Types.UdiEntryTypeNull);
-  end;
-end;
+//
+//class function TVersionConvertor_30_40.convertUDIEntryType(src : FHIR.R3.Types.TFhirUdiEntryTypeEnum) : FHIR.R4.Types.TFhirUdiEntryTypeEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.UdiEntryTypeBarcode: exit(FHIR.R4.Types.UdiEntryTypeBarcode);
+//    FHIR.R3.Types.UdiEntryTypeRfid: exit(FHIR.R4.Types.UdiEntryTypeRfid);
+//    FHIR.R3.Types.UdiEntryTypeManual: exit(FHIR.R4.Types.UdiEntryTypeManual);
+//    FHIR.R3.Types.UdiEntryTypeCard: exit(FHIR.R4.Types.UdiEntryTypeCard);
+//    FHIR.R3.Types.UdiEntryTypeSelfReported: exit(FHIR.R4.Types.UdiEntryTypeSelfReported);
+//    FHIR.R3.Types.UdiEntryTypeUnknown: exit(FHIR.R4.Types.UdiEntryTypeUnknown);
+//    else exit(FHIR.R4.Types.UdiEntryTypeNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertUDIEntryType(src : FHIR.R4.Types.TFhirUdiEntryTypeEnum) : FHIR.R3.Types.TFhirUdiEntryTypeEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.UdiEntryTypeBarcode: exit(FHIR.R3.Types.UdiEntryTypeBarcode);
+//    FHIR.R4.Types.UdiEntryTypeRfid: exit(FHIR.R3.Types.UdiEntryTypeRfid);
+//    FHIR.R4.Types.UdiEntryTypeManual: exit(FHIR.R3.Types.UdiEntryTypeManual);
+//    FHIR.R4.Types.UdiEntryTypeCard: exit(FHIR.R3.Types.UdiEntryTypeCard);
+//    FHIR.R4.Types.UdiEntryTypeSelfReported: exit(FHIR.R3.Types.UdiEntryTypeSelfReported);
+//    FHIR.R4.Types.UdiEntryTypeUnknown: exit(FHIR.R3.Types.UdiEntryTypeUnknown);
+//    else exit(FHIR.R3.Types.UdiEntryTypeNull);
+//  end;
+//end;
 
 class function TVersionConvertor_30_40.convertDeviceMetricOperationalStatus(src : FHIR.R3.Types.TFhirMetricOperationalStatusEnum) : FHIR.R4.Types.TFhirMetricOperationalStatusEnum;
 begin
@@ -3688,33 +3688,33 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertDaysOfWeek(src : FHIR.R3.Types.TFhirDaysOfWeekEnum) : FHIR.R4.Types.TFhirDaysOfWeekEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.DaysOfWeekMon: exit(FHIR.R4.Types.DaysOfWeekMon);
-    FHIR.R3.Types.DaysOfWeekTue: exit(FHIR.R4.Types.DaysOfWeekTue);
-    FHIR.R3.Types.DaysOfWeekWed: exit(FHIR.R4.Types.DaysOfWeekWed);
-    FHIR.R3.Types.DaysOfWeekThu: exit(FHIR.R4.Types.DaysOfWeekThu);
-    FHIR.R3.Types.DaysOfWeekFri: exit(FHIR.R4.Types.DaysOfWeekFri);
-    FHIR.R3.Types.DaysOfWeekSat: exit(FHIR.R4.Types.DaysOfWeekSat);
-    FHIR.R3.Types.DaysOfWeekSun: exit(FHIR.R4.Types.DaysOfWeekSun);
-    else exit(FHIR.R4.Types.DaysOfWeekNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDaysOfWeek(src : FHIR.R4.Types.TFhirDaysOfWeekEnum) : FHIR.R3.Types.TFhirDaysOfWeekEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.DaysOfWeekMon: exit(FHIR.R3.Types.DaysOfWeekMon);
-    FHIR.R4.Types.DaysOfWeekTue: exit(FHIR.R3.Types.DaysOfWeekTue);
-    FHIR.R4.Types.DaysOfWeekWed: exit(FHIR.R3.Types.DaysOfWeekWed);
-    FHIR.R4.Types.DaysOfWeekThu: exit(FHIR.R3.Types.DaysOfWeekThu);
-    FHIR.R4.Types.DaysOfWeekFri: exit(FHIR.R3.Types.DaysOfWeekFri);
-    FHIR.R4.Types.DaysOfWeekSat: exit(FHIR.R3.Types.DaysOfWeekSat);
-    FHIR.R4.Types.DaysOfWeekSun: exit(FHIR.R3.Types.DaysOfWeekSun);
-    else exit(FHIR.R3.Types.DaysOfWeekNull);
-  end;
-end;
+//class function TVersionConvertor_30_40.convertDaysOfWeek(src : FHIR.R3.Types.TFhirDaysOfWeekEnum) : FHIR.R4.Types.TFhirDaysOfWeekEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.DaysOfWeekMon: exit(FHIR.R4.Types.DaysOfWeekMon);
+//    FHIR.R3.Types.DaysOfWeekTue: exit(FHIR.R4.Types.DaysOfWeekTue);
+//    FHIR.R3.Types.DaysOfWeekWed: exit(FHIR.R4.Types.DaysOfWeekWed);
+//    FHIR.R3.Types.DaysOfWeekThu: exit(FHIR.R4.Types.DaysOfWeekThu);
+//    FHIR.R3.Types.DaysOfWeekFri: exit(FHIR.R4.Types.DaysOfWeekFri);
+//    FHIR.R3.Types.DaysOfWeekSat: exit(FHIR.R4.Types.DaysOfWeekSat);
+//    FHIR.R3.Types.DaysOfWeekSun: exit(FHIR.R4.Types.DaysOfWeekSun);
+//    else exit(FHIR.R4.Types.DaysOfWeekNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertDaysOfWeek(src : FHIR.R4.Types.TFhirDaysOfWeekEnum) : FHIR.R3.Types.TFhirDaysOfWeekEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.DaysOfWeekMon: exit(FHIR.R3.Types.DaysOfWeekMon);
+//    FHIR.R4.Types.DaysOfWeekTue: exit(FHIR.R3.Types.DaysOfWeekTue);
+//    FHIR.R4.Types.DaysOfWeekWed: exit(FHIR.R3.Types.DaysOfWeekWed);
+//    FHIR.R4.Types.DaysOfWeekThu: exit(FHIR.R3.Types.DaysOfWeekThu);
+//    FHIR.R4.Types.DaysOfWeekFri: exit(FHIR.R3.Types.DaysOfWeekFri);
+//    FHIR.R4.Types.DaysOfWeekSat: exit(FHIR.R3.Types.DaysOfWeekSat);
+//    FHIR.R4.Types.DaysOfWeekSun: exit(FHIR.R3.Types.DaysOfWeekSun);
+//    else exit(FHIR.R3.Types.DaysOfWeekNull);
+//  end;
+//end;
 
 class function TVersionConvertor_30_40.convertImmunizationStatus(src : FHIR.R3.Types.TFhirImmunizationStatusEnum) : FHIR.R4.Types.TFhirImmunizationStatusEnum;
 begin
@@ -4475,71 +4475,71 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertSearchComparator(src : FHIR.R3.Types.TFhirSearchComparatorEnum) : FHIR.R4.Types.TFhirSearchComparatorEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.SearchComparatorEq: exit(FHIR.R4.Types.SearchComparatorEq);
-    FHIR.R3.Types.SearchComparatorNe: exit(FHIR.R4.Types.SearchComparatorNe);
-    FHIR.R3.Types.SearchComparatorGt: exit(FHIR.R4.Types.SearchComparatorGt);
-    FHIR.R3.Types.SearchComparatorLt: exit(FHIR.R4.Types.SearchComparatorLt);
-    FHIR.R3.Types.SearchComparatorGe: exit(FHIR.R4.Types.SearchComparatorGe);
-    FHIR.R3.Types.SearchComparatorLe: exit(FHIR.R4.Types.SearchComparatorLe);
-    FHIR.R3.Types.SearchComparatorSa: exit(FHIR.R4.Types.SearchComparatorSa);
-    FHIR.R3.Types.SearchComparatorEb: exit(FHIR.R4.Types.SearchComparatorEb);
-    FHIR.R3.Types.SearchComparatorAp: exit(FHIR.R4.Types.SearchComparatorAp);
-    else exit(FHIR.R4.Types.SearchComparatorNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSearchComparator(src : FHIR.R4.Types.TFhirSearchComparatorEnum) : FHIR.R3.Types.TFhirSearchComparatorEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.SearchComparatorEq: exit(FHIR.R3.Types.SearchComparatorEq);
-    FHIR.R4.Types.SearchComparatorNe: exit(FHIR.R3.Types.SearchComparatorNe);
-    FHIR.R4.Types.SearchComparatorGt: exit(FHIR.R3.Types.SearchComparatorGt);
-    FHIR.R4.Types.SearchComparatorLt: exit(FHIR.R3.Types.SearchComparatorLt);
-    FHIR.R4.Types.SearchComparatorGe: exit(FHIR.R3.Types.SearchComparatorGe);
-    FHIR.R4.Types.SearchComparatorLe: exit(FHIR.R3.Types.SearchComparatorLe);
-    FHIR.R4.Types.SearchComparatorSa: exit(FHIR.R3.Types.SearchComparatorSa);
-    FHIR.R4.Types.SearchComparatorEb: exit(FHIR.R3.Types.SearchComparatorEb);
-    FHIR.R4.Types.SearchComparatorAp: exit(FHIR.R3.Types.SearchComparatorAp);
-    else exit(FHIR.R3.Types.SearchComparatorNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSearchModifierCode(src : FHIR.R3.Types.TFhirSearchModifierCodeEnum) : FHIR.R4.Types.TFhirSearchModifierCodeEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.SearchModifierCodeMissing: exit(FHIR.R4.Types.SearchModifierCodeMissing);
-    FHIR.R3.Types.SearchModifierCodeExact: exit(FHIR.R4.Types.SearchModifierCodeExact);
-    FHIR.R3.Types.SearchModifierCodeContains: exit(FHIR.R4.Types.SearchModifierCodeContains);
-    FHIR.R3.Types.SearchModifierCodeNot: exit(FHIR.R4.Types.SearchModifierCodeNot);
-    FHIR.R3.Types.SearchModifierCodeText: exit(FHIR.R4.Types.SearchModifierCodeText);
-    FHIR.R3.Types.SearchModifierCodeIn: exit(FHIR.R4.Types.SearchModifierCodeIn);
-    FHIR.R3.Types.SearchModifierCodeNotIn: exit(FHIR.R4.Types.SearchModifierCodeNotIn);
-    FHIR.R3.Types.SearchModifierCodeBelow: exit(FHIR.R4.Types.SearchModifierCodeBelow);
-    FHIR.R3.Types.SearchModifierCodeAbove: exit(FHIR.R4.Types.SearchModifierCodeAbove);
-    FHIR.R3.Types.SearchModifierCodeType: exit(FHIR.R4.Types.SearchModifierCodeType);
-    else exit(FHIR.R4.Types.SearchModifierCodeNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSearchModifierCode(src : FHIR.R4.Types.TFhirSearchModifierCodeEnum) : FHIR.R3.Types.TFhirSearchModifierCodeEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.SearchModifierCodeMissing: exit(FHIR.R3.Types.SearchModifierCodeMissing);
-    FHIR.R4.Types.SearchModifierCodeExact: exit(FHIR.R3.Types.SearchModifierCodeExact);
-    FHIR.R4.Types.SearchModifierCodeContains: exit(FHIR.R3.Types.SearchModifierCodeContains);
-    FHIR.R4.Types.SearchModifierCodeNot: exit(FHIR.R3.Types.SearchModifierCodeNot);
-    FHIR.R4.Types.SearchModifierCodeText: exit(FHIR.R3.Types.SearchModifierCodeText);
-    FHIR.R4.Types.SearchModifierCodeIn: exit(FHIR.R3.Types.SearchModifierCodeIn);
-    FHIR.R4.Types.SearchModifierCodeNotIn: exit(FHIR.R3.Types.SearchModifierCodeNotIn);
-    FHIR.R4.Types.SearchModifierCodeBelow: exit(FHIR.R3.Types.SearchModifierCodeBelow);
-    FHIR.R4.Types.SearchModifierCodeAbove: exit(FHIR.R3.Types.SearchModifierCodeAbove);
-    FHIR.R4.Types.SearchModifierCodeType: exit(FHIR.R3.Types.SearchModifierCodeType);
-    else exit(FHIR.R3.Types.SearchModifierCodeNull);
-  end;
-end;
+//class function TVersionConvertor_30_40.convertSearchComparator(src : FHIR.R3.Types.TFhirSearchComparatorEnum) : FHIR.R4.Types.TFhirSearchComparatorEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.SearchComparatorEq: exit(FHIR.R4.Types.SearchComparatorEq);
+//    FHIR.R3.Types.SearchComparatorNe: exit(FHIR.R4.Types.SearchComparatorNe);
+//    FHIR.R3.Types.SearchComparatorGt: exit(FHIR.R4.Types.SearchComparatorGt);
+//    FHIR.R3.Types.SearchComparatorLt: exit(FHIR.R4.Types.SearchComparatorLt);
+//    FHIR.R3.Types.SearchComparatorGe: exit(FHIR.R4.Types.SearchComparatorGe);
+//    FHIR.R3.Types.SearchComparatorLe: exit(FHIR.R4.Types.SearchComparatorLe);
+//    FHIR.R3.Types.SearchComparatorSa: exit(FHIR.R4.Types.SearchComparatorSa);
+//    FHIR.R3.Types.SearchComparatorEb: exit(FHIR.R4.Types.SearchComparatorEb);
+//    FHIR.R3.Types.SearchComparatorAp: exit(FHIR.R4.Types.SearchComparatorAp);
+//    else exit(FHIR.R4.Types.SearchComparatorNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertSearchComparator(src : FHIR.R4.Types.TFhirSearchComparatorEnum) : FHIR.R3.Types.TFhirSearchComparatorEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.SearchComparatorEq: exit(FHIR.R3.Types.SearchComparatorEq);
+//    FHIR.R4.Types.SearchComparatorNe: exit(FHIR.R3.Types.SearchComparatorNe);
+//    FHIR.R4.Types.SearchComparatorGt: exit(FHIR.R3.Types.SearchComparatorGt);
+//    FHIR.R4.Types.SearchComparatorLt: exit(FHIR.R3.Types.SearchComparatorLt);
+//    FHIR.R4.Types.SearchComparatorGe: exit(FHIR.R3.Types.SearchComparatorGe);
+//    FHIR.R4.Types.SearchComparatorLe: exit(FHIR.R3.Types.SearchComparatorLe);
+//    FHIR.R4.Types.SearchComparatorSa: exit(FHIR.R3.Types.SearchComparatorSa);
+//    FHIR.R4.Types.SearchComparatorEb: exit(FHIR.R3.Types.SearchComparatorEb);
+//    FHIR.R4.Types.SearchComparatorAp: exit(FHIR.R3.Types.SearchComparatorAp);
+//    else exit(FHIR.R3.Types.SearchComparatorNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertSearchModifierCode(src : FHIR.R3.Types.TFhirSearchModifierCodeEnum) : FHIR.R4.Types.TFhirSearchModifierCodeEnum;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.SearchModifierCodeMissing: exit(FHIR.R4.Types.SearchModifierCodeMissing);
+//    FHIR.R3.Types.SearchModifierCodeExact: exit(FHIR.R4.Types.SearchModifierCodeExact);
+//    FHIR.R3.Types.SearchModifierCodeContains: exit(FHIR.R4.Types.SearchModifierCodeContains);
+//    FHIR.R3.Types.SearchModifierCodeNot: exit(FHIR.R4.Types.SearchModifierCodeNot);
+//    FHIR.R3.Types.SearchModifierCodeText: exit(FHIR.R4.Types.SearchModifierCodeText);
+//    FHIR.R3.Types.SearchModifierCodeIn: exit(FHIR.R4.Types.SearchModifierCodeIn);
+//    FHIR.R3.Types.SearchModifierCodeNotIn: exit(FHIR.R4.Types.SearchModifierCodeNotIn);
+//    FHIR.R3.Types.SearchModifierCodeBelow: exit(FHIR.R4.Types.SearchModifierCodeBelow);
+//    FHIR.R3.Types.SearchModifierCodeAbove: exit(FHIR.R4.Types.SearchModifierCodeAbove);
+//    FHIR.R3.Types.SearchModifierCodeType: exit(FHIR.R4.Types.SearchModifierCodeType);
+//    else exit(FHIR.R4.Types.SearchModifierCodeNull);
+//  end;
+//end;
+//
+//class function TVersionConvertor_30_40.convertSearchModifierCode(src : FHIR.R4.Types.TFhirSearchModifierCodeEnum) : FHIR.R3.Types.TFhirSearchModifierCodeEnum;
+//begin
+//  case (src) of
+//    FHIR.R4.Types.SearchModifierCodeMissing: exit(FHIR.R3.Types.SearchModifierCodeMissing);
+//    FHIR.R4.Types.SearchModifierCodeExact: exit(FHIR.R3.Types.SearchModifierCodeExact);
+//    FHIR.R4.Types.SearchModifierCodeContains: exit(FHIR.R3.Types.SearchModifierCodeContains);
+//    FHIR.R4.Types.SearchModifierCodeNot: exit(FHIR.R3.Types.SearchModifierCodeNot);
+//    FHIR.R4.Types.SearchModifierCodeText: exit(FHIR.R3.Types.SearchModifierCodeText);
+//    FHIR.R4.Types.SearchModifierCodeIn: exit(FHIR.R3.Types.SearchModifierCodeIn);
+//    FHIR.R4.Types.SearchModifierCodeNotIn: exit(FHIR.R3.Types.SearchModifierCodeNotIn);
+//    FHIR.R4.Types.SearchModifierCodeBelow: exit(FHIR.R3.Types.SearchModifierCodeBelow);
+//    FHIR.R4.Types.SearchModifierCodeAbove: exit(FHIR.R3.Types.SearchModifierCodeAbove);
+//    FHIR.R4.Types.SearchModifierCodeType: exit(FHIR.R3.Types.SearchModifierCodeType);
+//    else exit(FHIR.R3.Types.SearchModifierCodeNull);
+//  end;
+//end;
 
 class function TVersionConvertor_30_40.convertQualityType(src : FHIR.R3.Types.TFhirQualityTypeEnum) : FHIR.R4.Types.TFhirQualityTypeEnum;
 begin
@@ -4951,16 +4951,16 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertContentType(src : FHIR.R3.Types.TFhirContentTypeEnum) : String;
-begin
-  case (src) of
-    FHIR.R3.Types.ContentTypeXml: exit('application/fhir+xml');
-    FHIR.R3.Types.ContentTypeJson: exit('application/fhir+json');
-    FHIR.R3.Types.ContentTypeTtl: exit('text/turtle');
-    FHIR.R3.Types.ContentTypeNone: exit('');
-    else exit('');
-  end;
-end;
+//class function TVersionConvertor_30_40.convertContentType(src : FHIR.R3.Types.TFhirContentTypeEnum) : String;
+//begin
+//  case (src) of
+//    FHIR.R3.Types.ContentTypeXml: exit('application/fhir+xml');
+//    FHIR.R3.Types.ContentTypeJson: exit('application/fhir+json');
+//    FHIR.R3.Types.ContentTypeTtl: exit('text/turtle');
+//    FHIR.R3.Types.ContentTypeNone: exit('');
+//    else exit('');
+//  end;
+//end;
 
 class function TVersionConvertor_30_40.convertActionGroupingBehavior(src : FHIR.R3.Types.TFhirActionGroupingBehaviorEnum) : FHIR.R4.Types.TFhirActionGroupingBehaviorEnum;
 begin
@@ -7541,7 +7541,6 @@ class function TVersionConvertor_30_40.convertElementDefinitionBindingComponent(
 var
   tgt : FHIR.R4.Types.TFhirElementDefinitionBinding;
   vs : FHIR.R4.Types.TFhirType;
-  vr : String;
 begin
   if (src = nil) then
     exit(nil);
@@ -22775,7 +22774,6 @@ end;
 class function TVersionConvertor_30_40.convertProvenanceEntityComponent(src : FHIR.R3.Resources.TFhirProvenanceEntity) : FHIR.R4.Resources.TFhirProvenanceEntity;
 var
   tgt : FHIR.R4.Resources.TFhirProvenanceEntity;
-  t : FHIR.R3.Types.TFhirCodeableConcept;
   t4 : FHIR.R3.Resources.TFhirProvenanceAgent;
 begin
   if (src = nil) then
@@ -22796,7 +22794,6 @@ end;
 class function TVersionConvertor_30_40.convertProvenanceEntityComponent(src : FHIR.R4.Resources.TFhirProvenanceEntity) : FHIR.R3.Resources.TFhirProvenanceEntity;
 var
   tgt : FHIR.R3.Resources.TFhirProvenanceEntity;
-  t : FHIR.R4.Types.TFhirCodeableConcept;
   t4 : FHIR.R4.Resources.TFhirProvenanceAgent;
 begin
   if (src = nil) then
@@ -23630,7 +23627,6 @@ var
   t1 : FHIR.R3.Types.TFhirContactDetail;
   t2 : FHIR.R3.Types.TFhirUsageContext;
   t3 : FHIR.R3.Types.TFhirCodeableConcept;
-  t5 : FHIR.R3.Types.TFhirCode;
   t6 : FHIR.R3.Types.TFhirSearchComparatorEnum;
   a1: FHIR.R4.Types.TFhirSearchComparatorEnumList;
   t7 : FHIR.R3.Types.TFhirSearchModifierCodeEnum;
@@ -25747,7 +25743,6 @@ class function TVersionConvertor_30_40.convertSubscription(src : FHIR.R3.Resourc
 var
   tgt : FHIR.R4.Resources.TFhirSubscription;
   t1 : FHIR.R3.Types.TFhirContactPoint;
-  t2 : FHIR.R3.Types.TFhirCoding;
 begin
   if (src = nil) then
     exit(nil);
@@ -25784,7 +25779,6 @@ class function TVersionConvertor_30_40.convertSubscription(src : FHIR.R4.Resourc
 var
   tgt : FHIR.R3.Resources.TFhirSubscription;
   t1 : FHIR.R4.Types.TFhirContactPoint;
-  t2 : FHIR.R4.Types.TFhirCoding;
 begin
   if (src = nil) then
     exit(nil);

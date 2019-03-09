@@ -960,7 +960,7 @@ begin
     vs.description := vs.name;
     vs.status := ConformanceResourceStatusActive;
     vs.expansion := TFhirValueSetExpansion.Create;
-    vs.expansion.timestamp := TDateTimeEx.makeUTC;
+    vs.expansion.timestamp := TFslDateTime.makeUTC;
     for t in types do
     begin
       cc := vs.expansion.containsList.Append;

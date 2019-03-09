@@ -140,12 +140,12 @@ type
     function execute(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
     function execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
     procedure debug(context : TFHIRPathExecutionContext; exp : TFHIRPathExpressionNode; op : boolean; input1, input2, outcome : TFHIRSelectionList);
-    function replaceFixedConstant(context : TFHIRPathExecutionContext; const s : String) : TFHIRObject;
+//    function replaceFixedConstant(context : TFHIRPathExecutionContext; const s : String) : TFHIRObject;
 
     function evaluateFunction(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
     function preOperate(left : TFHIRSelectionList; op : TFHIRPathOperation) : TFHIRSelectionList;
     function operate(left : TFHIRSelectionList; op : TFHIRPathOperation; right : TFHIRSelectionList) : TFHIRSelectionList;
-    function readConstant(context : TFHIRPathExecutionContext; constant : String) : TFHIRObject;
+//    function readConstant(context : TFHIRPathExecutionContext; constant : String) : TFHIRObject;
     procedure ListAllChildren(item: TFHIRObject; results: TFHIRSelectionList; recurse: boolean);
     procedure ListChildrenByName(focus: TFHIRObject; name : String; results: TFHIRSelectionList);
 
@@ -641,7 +641,6 @@ end;
 
 function TFHIRPathParser.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRPathExpressionNode;
 var
-  c : Integer;
   focus, item : TFHIRPathExpressionNode;
   isString : boolean;
   ucum, s : String;
@@ -650,7 +649,6 @@ begin
   result := TFHIRPathExpressionNode.Create(lexer.nextId);
   try
     result.SourceLocationStart := lexer.CurrentStartLocation;
-    c := lexer.CurrentStart;
     lexer.checkArithmeticPrefixes;
     // special:
     if (lexer.Current = '-') then
@@ -921,7 +919,6 @@ var
   td : TFhirElementDefinitionType;
   t : String;
 begin
-  types := nil;
   if (xPathStartsWithValueRef and context.contains('.') and path.startsWith(context.substring(context.lastIndexOf('.')+1))) then
     types := TFHIRTypeDetails.Create(csSINGLETON, [context.substring(0, context.lastIndexOf('.'))])
   else if not context.contains('.') then
@@ -1563,7 +1560,6 @@ begin
       all := true;
       for item in focus do
       begin
-        v := false;
         if (item.value is TFHIRBoolean) then
           v := TFHIRBoolean(item.value).value
         else
@@ -1663,7 +1659,7 @@ var
   found : boolean;
 begin
   if (focus.count <= 1) then
-    result := focus.Link;
+    exit(focus.Link);
 
   result := TFHIRSelectionList.Create;
   try
@@ -1959,7 +1955,7 @@ end;
 
 function TFHIRPathEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TDateTimeEx.makeLocal).noExtensions);
+  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TFslDateTime.makeLocal).noExtensions);
 end;
 
 function TFHIRPathEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -2346,7 +2342,7 @@ end;
 
 function TFHIRPathEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday).noExtensions);
+  result := TFHIRSelectionList.Create(TFhirDate.Create(TFslDateTime.makeToday).noExtensions);
 end;
 
 function TFHIRPathEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -2458,7 +2454,6 @@ begin
       all := true;
       for item in focus do
       begin
-        v := false;
         if (item.value is TFHIRBoolean) then
           v := TFHIRBoolean(item.value).value
         else
@@ -2515,7 +2510,6 @@ begin
       any := false;
       for item in focus do
       begin
-        v := false;
         if (item.value is TFHIRBoolean) then
           v := TFHIRBoolean(item.value).value
         else
@@ -4068,9 +4062,9 @@ begin
       v := v.substring(0, 10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateTimeEx.fromXML(value)).noExtensions()
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(value)).noExtensions()
   else
-    result := TFHIRDate.create(TDateTimeEx.fromXML(value)).noExtensions();
+    result := TFHIRDate.create(TFslDateTime.fromXML(value)).noExtensions();
 end;
 
 function TFHIRPathEngine.qtyEqual(left, right: TFHIRQuantity): boolean;
@@ -4425,9 +4419,7 @@ function TFHIRPathEngine.funcCustom(context : TFHIRPathExecutionContext; focus: 
 var
   ext : TFHIRPathEngineExtension;
   item : TFHIRSelection;
-  res, work : TFHIRSelectionList;
-  params : TFslList<TFHIRObject>;
-  i : integer;
+  work : TFHIRSelectionList;
   couldHaveBeen, done : boolean;
 begin
   result := TFHIRSelectionList.Create;
@@ -4882,59 +4874,59 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateTimeEx.fromXML(s)).noExtensions as TFhirType
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType
   else
-    result := TFHIRDate.create(TDateTimeEx.fromXML(s)).noExtensions as TFhirType;
+    result := TFHIRDate.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType;
 end;
 
-function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;
-begin
-  if (constant = 'true') then
-    result := TFhirBoolean.Create(true).noExtensions
-  else if (constant = 'false') then
-    result := TFhirBoolean.Create(false).noExtensions
-  else if (constant = '{}') then
-    result := nil
-  else if StringIsInteger32(constant) then
-    result := TFhirInteger.Create(constant).noExtensions
-  else if StringIsDecimal(constant) then
-    result := TFhirDecimal.Create(constant).noExtensions
-  else if constant.StartsWith('''') then
-    result := TFhirString.Create(TFHIRPathLexer.processConstant(constant)).noExtensions
-  else if constant.StartsWith('%') then
-    result := replaceFixedConstant(context, constant)
-  else if constant.StartsWith('@') then
-    result := processDateConstant(nil, constant.Substring(1))
-  else
-    result := TFhirString.Create(constant).noExtensions;
-end;
-
-function TFHIRPathEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;
-begin
-  if s = '%sct' then
-    result := TFhirString.Create('http://snomed.info/sct').noExtensions
-  else if s = '%loinc' then
-    result := TFhirString.Create('http://loinc.org').noExtensions
-  else if s = '%ucum' then
-    result := TFhirString.Create('http://unitsofmeasure.org').noExtensions
-  else if s = '%resource' then
-  begin
-    if (context.resource = nil) then
-      raise EFHIRPath.create('%resource cannot be used in this context');
-    result := context.resource.link;
-  end
-  else if s = '%us-zip' then
-    result := TFhirString.Create('[0-9]{5}(-[0-9]{4}){0,1}"').noExtensions
-  else if s.StartsWith('%"vs-') then
-    result := TFhirString.Create('http://hl7.org/fhir/ValueSet/'+s.Substring(5, s.length-6)).noExtensions
-  else if s.StartsWith('%"cs-') then
-    result := TFhirString.Create('http://hl7.org/fhir/'+s.Substring(5, s.length-6)).noExtensions
-  else if s.StartsWith('%"ext-') then
-    result := TFhirString.Create('http://hl7.org/fhir/StructureDefinition/'+s.Substring(6, s.length-7)).noExtensions
-  else
-    raise EFHIRPath.create('Unknown fixed constant '+s);
-end;
-
+//function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;
+//begin
+//  if (constant = 'true') then
+//    result := TFhirBoolean.Create(true).noExtensions
+//  else if (constant = 'false') then
+//    result := TFhirBoolean.Create(false).noExtensions
+//  else if (constant = '{}') then
+//    result := nil
+//  else if StringIsInteger32(constant) then
+//    result := TFhirInteger.Create(constant).noExtensions
+//  else if StringIsDecimal(constant) then
+//    result := TFhirDecimal.Create(constant).noExtensions
+//  else if constant.StartsWith('''') then
+//    result := TFhirString.Create(TFHIRPathLexer.processConstant(constant)).noExtensions
+//  else if constant.StartsWith('%') then
+//    result := replaceFixedConstant(context, constant)
+//  else if constant.StartsWith('@') then
+//    result := processDateConstant(nil, constant.Substring(1))
+//  else
+//    result := TFhirString.Create(constant).noExtensions;
+//end;
+//
+//function TFHIRPathEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;
+//begin
+//  if s = '%sct' then
+//    result := TFhirString.Create('http://snomed.info/sct').noExtensions
+//  else if s = '%loinc' then
+//    result := TFhirString.Create('http://loinc.org').noExtensions
+//  else if s = '%ucum' then
+//    result := TFhirString.Create('http://unitsofmeasure.org').noExtensions
+//  else if s = '%resource' then
+//  begin
+//    if (context.resource = nil) then
+//      raise EFHIRPath.create('%resource cannot be used in this context');
+//    result := context.resource.link;
+//  end
+//  else if s = '%us-zip' then
+//    result := TFhirString.Create('[0-9]{5}(-[0-9]{4}){0,1}"').noExtensions
+//  else if s.StartsWith('%"vs-') then
+//    result := TFhirString.Create('http://hl7.org/fhir/ValueSet/'+s.Substring(5, s.length-6)).noExtensions
+//  else if s.StartsWith('%"cs-') then
+//    result := TFhirString.Create('http://hl7.org/fhir/'+s.Substring(5, s.length-6)).noExtensions
+//  else if s.StartsWith('%"ext-') then
+//    result := TFhirString.Create('http://hl7.org/fhir/StructureDefinition/'+s.Substring(6, s.length-7)).noExtensions
+//  else
+//    raise EFHIRPath.create('Unknown fixed constant '+s);
+//end;
+//
 
 function TFHIRPathEngine.UseLog: String;
 begin

@@ -105,7 +105,6 @@ function TJWTServices.makeJWT(name : String) : String;
 var
   jwk : TJWK;
   jwt :  TJWT;
-  authurl : String;
 begin
   jwk := TJWTUtils.loadKeyFromRSACert(AnsiString(FCert));
   try

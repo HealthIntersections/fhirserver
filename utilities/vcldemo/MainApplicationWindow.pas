@@ -879,7 +879,7 @@ end;
 
 function TMedicationsComparer.Compare(const Left, Right: TFHIRResource): Integer;
 var
-  sl, sr, el, er: TDateTimeEx;
+  sl, sr, el, er: TFslDateTime;
   t : TFhirType;
   ssl, ssr : String;
 begin
@@ -899,12 +899,12 @@ begin
     else if t is TFhirDateTime then
     begin
       sl := TFhirDateTime(t).value;
-      el := TDateTimeEx.makeNull;
+      el := TFslDateTime.makeNull;
     end
     else
     begin
-      sl := TDateTimeEx.makeNull;
-      el := TDateTimeEx.makeNull;
+      sl := TFslDateTime.makeNull;
+      el := TFslDateTime.makeNull;
     end;
   end;
   if right is TFhirMedicationOrder then
@@ -922,8 +922,8 @@ begin
     end
     else
     begin
-      sr := TDateTimeEx.makeNull;
-      er := TDateTimeEx.makeNull;
+      sr := TFslDateTime.makeNull;
+      er := TFslDateTime.makeNull;
     end;
   end;
 

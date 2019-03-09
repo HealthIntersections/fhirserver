@@ -34,15 +34,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Javascript, FHIR.Support.Tests,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
-  {$IFDEF FHIR2}
-  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Profiles, FHIR.R2.Context, FHIR.R2.Common, FHIR.R2.Utilities, FHIR.R2.Javascript,
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Factory, FHIR.R3.Profiles, FHIR.R3.Context, FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.Javascript,
-  {$ENDIF}
-  {$IFDEF FHIR4}
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Profiles, FHIR.R4.Context, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.Javascript,
-  {$ENDIF}
   FHIR.Javascript.Base,
   DUnitX.TestFramework;
 
@@ -54,13 +46,15 @@ Type
     FLog : TStringList;
     FJs : TFHIRJavascript;
     procedure JSLog(sender : TJavascript; message : String);
-    function makeContext : TFHIRWorkerContextWithFactory;
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
     [TestCase] Procedure TestPatient;
+    [TestCase] Procedure TestPatientUnknownProperty;
     [TestCase] Procedure TestPatient2;
     [TestCase] Procedure TestObservation;
+    [TestCase] Procedure TestPatientMutation;
+    [TestCase] Procedure TestPatientImmutable;
   End;
 
 implementation
@@ -82,14 +76,11 @@ type
 
 { TJavascriptTests }
 
-function TFHIRJavascriptTests.makeContext: TFHIRWorkerContextWithFactory;
-begin
-  result := TTestWorkerContext.Create(TFHIRFactoryX.Create);
-end;
-
 procedure TFHIRJavascriptTests.Setup;
 begin
-  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll', makeContext, registerFHIRTypes);
+  FJs := TFHIRJavascript.Create;
+  FJs.registerFactory(registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.Create);
+  FJs.registerFactory(registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.Create);
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;
@@ -126,7 +117,7 @@ begin
       ' console.log(pat.identifier.length);'+#13#10+
       ' pat.text.status = "extensions";'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(pat.Link, 'Patient', true)]);
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
     Assert.IsTrue(Flog.Text =
       'example'#13#10+
       'null'#13#10+
@@ -157,7 +148,7 @@ begin
       ' console.log(pat.identifier[0].system);'+#13#10+
       ' pat.identifier.push({ "system" : "http://something", "value" : "v1"});'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(pat.Link, 'Patient', true)]);
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
     Assert.IsTrue(Flog.Text =
       'urn:oid:1.2.36.146.595.217.0.1'#13#10);
     Assert.IsTrue(pat.identifierList.count = 2);
@@ -165,9 +156,9 @@ begin
 
     FJs.execute(
       'function func(pat) {'+#13#10+
-      ' pat.identifier.push(new Identifier({ "system" : "http://something-else", "value" : "v1"}));'+#13#10+
+      ' pat.identifier.push(new Identifier4({ "system" : "http://something-else", "value" : "v1"}));'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(pat.Link, 'Patient', true)]);
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
     Assert.IsTrue(pat.identifierList.count = 3);
     Assert.IsTrue(pat.identifierList[2].system = 'http://something-else');
 
@@ -177,11 +168,100 @@ begin
       ' pat.identifier = [{ "system" : "http://something-else-again", "value" : "v1"}];'+#13#10+
       ' console.log(pat.identifier.length);'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(pat.Link, 'Patient', true)]);
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
     Assert.IsTrue(Flog.Text =
       '1'#13#10);
     Assert.IsTrue(pat.identifierList.count = 1);
     Assert.IsTrue(pat.identifierList[0].system = 'http://something-else-again');
+  finally
+    pat.Free;
+  end;
+end;
+
+procedure TFHIRJavascriptTests.TestPatientImmutable;
+var
+  pat : TFHIRPatient;
+begin
+  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  try
+    FJs.ObjectsImmutable := true;
+    FJs.Strict := true;
+
+    // first, check that reading works
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' console.log(pat.id);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      'example'#13#10);
+
+    Flog.Clear;
+    // now, check that writing to a new property fails
+    Assert.WillRaise(procedure begin
+      FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' pat.id1 = "23";'+#13#10+
+      ' console.log(pat.id1);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+     end, EJavascriptHost);
+
+    // now, check that writing to an existing property fails
+    Assert.WillRaise(procedure begin
+      FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' pat.id = "23";'+#13#10+
+      ' console.log(pat.id);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+     end, EJavascriptHost);
+  finally
+    pat.Free;
+  end;
+end;
+
+procedure TFHIRJavascriptTests.TestPatientMutation;
+var
+  pat : TFHIRPatient;
+begin
+  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  try
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' var p2 = { id: 23};'+#13#10+
+      ' console.log(p2.id);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      '23'#13#10);
+  finally
+    pat.Free;
+  end;
+end;
+
+procedure TFHIRJavascriptTests.TestPatientUnknownProperty;
+var
+  pat : TFHIRPatient;
+begin
+  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  try
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      ' console.log(pat.id1);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      'undefined'#13#10);
+    FLog.clear;
+    FJs.execute(
+      'function func(pat) {'+#13#10+
+      '  pat.id1 = "3120";'+#13#10+
+      '  console.log(pat.id1);'+#13#10+
+      '}'+#13#10,
+      'test.js', 'func', [FJs.wrap(pat.Link, true)]);
+    Assert.IsTrue(Flog.Text =
+      '3120'#13#10);
   finally
     pat.Free;
   end;
@@ -198,7 +278,7 @@ begin
       ' console.log(obs.valueQuantity.value);'+#13#10+
       ' obs.valueQuantity.value = 3.120;'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(obs.Link, obs.fhirType, true)]);
+      'test.js', 'func', [FJs.wrap(obs.Link, true)]);
     Assert.IsTrue(Flog.Text =
       '185'#13#10);
     Assert.IsTrue((obs.value as TFHIRQuantity).value = '3.12');
@@ -207,14 +287,14 @@ begin
       'function func(obs) {'+#13#10+
       ' obs.valueQuantity.value = "3.120";'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(obs.Link, obs.fhirType, true)]);
+      'test.js', 'func', [FJs.wrap(obs.Link, true)]);
     Assert.IsTrue((obs.value as TFHIRQuantity).value = '3.120');
 
     FJs.execute(
       'function func(obs) {'+#13#10+
       ' obs.valueInteger = 3;'+#13#10+
       '}'+#13#10,
-      'test.js', 'func', [FJs.wrap(obs.Link, obs.fhirType, true)]);
+      'test.js', 'func', [FJs.wrap(obs.Link, true)]);
     Assert.IsTrue((obs.value as TFHIRInteger).value = '3');
   finally
     obs.Free;

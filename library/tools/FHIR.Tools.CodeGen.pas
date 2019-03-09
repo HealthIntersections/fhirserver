@@ -652,7 +652,7 @@ begin
   else if StringArrayExistsSensitive(['date', 'dateTime', 'instant'], t) then
   begin
     units.add('FHIR.Support.Utilities');
-    line(indent, an+' := TDateTimeEx.fromXML('''+value.primitiveValue+''');')
+    line(indent, an+' := TFslDateTime.fromXML('''+value.primitiveValue+''');')
   end
   // we assume this is an object
   else

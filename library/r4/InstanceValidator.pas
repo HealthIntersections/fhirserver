@@ -554,11 +554,11 @@ begin
             else
             begin
               t := getTickCount;
+              atLeastOneSystemIsSupported := false;
               // Check whether the codes are appropriate for the type of binding we have
                bindingsOk := true;
                if (binding.strength <> BindingStrengthEXAMPLE) then
                begin
-                 atLeastOneSystemIsSupported := false;
                  for nextCoding in cc.CodingList do
                  begin
                     nextSystem := nextCoding.system;
@@ -783,13 +783,13 @@ var
   vs : TFhirResource;
 begin
   try
+    vs := context.fetchResource(frtValueSet, url);
     try
-      vs := context.fetchResource(frtValueSet, url);
       result := vs <> nil;
     finally
       vs.Free;
     end;
-  finally
+  except
     result := false;
   end;
 end;
@@ -825,7 +825,7 @@ begin
         p :=  stack.addToLiteralPath(['meta', 'profile', ':' + Integer.toString(i)]);
         if (rule(errors, itINVALID, element.LocationStart.line, element.LocationStart.col, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
-          t := getTickCount;
+          // t := getTickCount;
           // todo              resourceProfiles.addProfile(errors, ref, errorForUnknownProfiles, p, element);
           inc(i);
         end;
@@ -908,7 +908,7 @@ function TInstanceValidator.listExtensionTypes(ex : TFhirStructureDefinition) : 
 var
   vd : TFhirElementDefinition;
   ed : TFhirElementDefinition;
-  res : TFslStringSet;
+//  res : TFslStringSet;
   tr : TFhirElementDefinitionType;
 begin
   vd := nil;
@@ -922,7 +922,7 @@ begin
   try
     if (vd <> nil) and ('0' <> vd.max) then
       for tr in vd.type_List do
-        res.add(tr.code);
+        result.add(tr.code);
     result.Link;
   finally
     result.Free;
@@ -1157,7 +1157,7 @@ begin
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, matches(e.primitiveValue, '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?'), 'Not a valid date time');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, not hasTime(e.primitiveValue) or (hasTimeZone(e.primitiveValue)), 'if a date has a time, it must have a timezone');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, (context.maxLength = '') or (context.MaxLength = '0') or (e.primitiveValue.length <= StrToInt(context.MaxLength)), 'value is longer than permitted maximum length of ' + context.MaxLength);
-    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TDateTimeEx.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
+    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TFslDateTime.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
   end;
 
   if (type_= 'time') then
@@ -1170,7 +1170,7 @@ begin
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, yearIsValid(e.primitiveValue), 'The value ''' + e.primitiveValue + ''' does not have a valid year');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, matches(e.primitiveValue, '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?'), 'Not a valid date');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, (context.maxLength = '') or (context.MaxLength = '0') or (e.primitiveValue.length <= StrToInt(context.MaxLength)), 'value is longer than permitted maximum length of ' + context.MaxLength);
-    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TDateTimeEx.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
+    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TFslDateTime.isValidXmlDate(e.primitiveValue), 'Not a valid date/time');
   end;
 
   if (type_= 'base64Binary') then
@@ -1220,7 +1220,7 @@ begin
   begin
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, matches(e.primitiveValue, '-?[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))'), 'The instant ''' + e.primitiveValue + ''' is not valid (by regex)');
     rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, yearIsValid(e.primitiveValue), 'The value ''' + e.primitiveValue + ''' does not have a valid year');
-    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TDateTimeEx.isValidXmlDate(e.primitiveValue), 'Not a valid instant');
+    rule(errors, itINVALID, e.LocationStart.line, e.LocationStart.col, path, TFslDateTime.isValidXmlDate(e.primitiveValue), 'Not a valid instant');
   end;
 
   if (type_= 'code') and (e.primitiveValue <> '') then
@@ -1570,10 +1570,10 @@ end;
 
 
 procedure TInstanceValidator.doResourceProfile(hostContext : TFhirValidatorHostContext; resource : TFhirMMElement; profile : String; errors : TFslList<TFhirValidationMessage>; stack : TNodeStack; path : String; element : TFhirMMElement);
-var
-  resourceProfiles : TValidationProfileSet;
+//var
+//  resourceProfiles : TValidationProfileSet;
 begin
-  resourceProfiles :=  addResourceProfile(errors, resource, profile, path, element, stack);
+//  resourceProfiles :=  addResourceProfile(errors, resource, profile, path, element, stack);
 //  if (resourceProfiles.isProcessed()) then
 //    start(hostContext, errors, resource, resource, nil, stack);
 end;
@@ -1582,7 +1582,7 @@ function TInstanceValidator.getResourceProfiles(resource : TFhirMMElement; stack
 var
   resourceProfiles : TValidationProfileSet;
 begin
-//  resourceProfiles :=  resourceProfilesMap.get(resource);
+  resourceProfiles := nil;// resourceProfilesMap.get(resource);
 //  if (resourceProfiles = nil) then
 //      resourceProfiles := new ResourceProfiles(resource, stack);
 //       resourceProfilesMap.put(resource, resourceProfiles);
@@ -1594,7 +1594,7 @@ function TInstanceValidator.addResourceProfile(errors : TFslList<TFhirValidation
 var
   resourceProfiles : TValidationProfileSet;
 begin
-//  resourceProfiles :=  getResourceProfiles(resource, stack);
+ resourceProfiles := nil; // getResourceProfiles(resource, stack);
 //  resourceProfiles.addProfile(errors, profile, errorForUnknownProfiles, path, element);
   exit(resourceProfiles);
 end;
@@ -1876,7 +1876,9 @@ begin
     for we in entries do
     begin
       if (targetUrl.equals(we.getChildValue('fullUrl'))) then
-      r :=  we.getNamedChild('resource');
+        r := we.getNamedChild('resource')
+      else
+        r := nil;
       if (version.isEmpty()) then
       begin
         rule(errors, itFORBIDDEN, -1, -1, path, match = nil, 'Multiple matches in bundle for reference ' + ref);
@@ -4406,8 +4408,7 @@ var
   ok : boolean;
 begin
   n := inv.Tag as TFHIRPathExpressionNode;
-  if (n = nil) then
-    t := getTickCount;
+  t := getTickCount;
   try
     n := fpe.parse(inv.expression);
   except

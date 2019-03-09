@@ -90,7 +90,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\fhir-path-tests.xml', [xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\fhir-path-tests.xml', [xpDropWhitespace]);
   try
     test := tests.document.first;
     i := 0;
@@ -268,7 +268,7 @@ end;
 
 procedure TDifferenceEngineTest.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\fhir-path-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\fhir-path-tests.xml', [xpResolveNamespaces]);
 end;
 
 procedure TDifferenceEngineTest.teardown;

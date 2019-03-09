@@ -51,8 +51,6 @@ Type
 
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
-  protected
-    procedure SeeResource(r : TFhirResource); override;
   public
     constructor Create(factory : TFHIRFactory); Override;
     destructor Destroy; Override;
@@ -60,6 +58,7 @@ Type
     Function Link : TFHIRServerWorkerContextR2; overload;
 
     procedure checkResource(r : TFhirResource);
+    procedure SeeResource(r : TFhirResource); override;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
@@ -200,7 +199,6 @@ function TFHIRServerWorkerContextR2.getQuestionnaire(url: string): TFhirQuestion
 var
   q : TFhirQuestionnaire;
 begin
-  result := nil;
   if url.StartsWith('Questionnaire/') then
     url := url.Substring(12);
   FLock.lock;

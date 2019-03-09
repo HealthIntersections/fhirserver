@@ -81,7 +81,7 @@ end;
 procedure TResourceHistoryForm.btnOkClick(Sender: TObject);
 begin
   if edtDate.Enabled then
-    FExtension.setExtensionDate('date', TDateTimeEx.make(edtDate.Date, dttzUnknown).truncToDay.toXML);
+    FExtension.setExtensionDate('date', TFslDateTime.make(edtDate.Date, dttzUnknown).truncToDay.toXML);
   if edtId.Enabled then
     FExtension.setExtensionString('id', edtId.Text);
   if edtAuthor.enabled then

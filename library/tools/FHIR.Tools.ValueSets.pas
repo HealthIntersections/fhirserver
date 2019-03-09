@@ -1220,7 +1220,7 @@ begin
 
   if doDelete or not map.containsKey(s) then
   begin
-    n := expansion.makeContains;
+    n := FFactory.makeValueSetContains;
     try
       n.System := system;
       n.Code := code;

@@ -182,7 +182,7 @@ var
   stems, list : TStringList;
   qry : TKDBConnection;
   stemmer : TYuStemmer_8;
-  i, j, c, t : integer;
+  i, j, t : integer;
 begin
   stemmer := GetStemmer_8('english');
   stems := TStringList.Create;
@@ -193,7 +193,6 @@ begin
       qry.ExecSQL('delete from rxnstems');
 
       t := qry.CountSQL('Select count(*) from rxnconso where SAB = ''RXNORM''');
-      c := 0;
 
       qry.SQL := 'select RXCUI, STR from rxnconso where SAB = ''RXNORM'''; // allow SY
       qry.Prepare;
@@ -511,7 +510,6 @@ end;
 function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 var
   qry : TKDBConnection;
-  res : TUMLSConcept;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
@@ -629,8 +627,6 @@ var
   res : TUMLSFilter;
   ok : boolean;
 begin
-  result := nil;
-
   res := TUMLSFilter.Create;
   try
     ok := true;

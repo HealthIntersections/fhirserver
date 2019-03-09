@@ -206,9 +206,9 @@ Type
     procedure sendByEmail(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);  overload;
     procedure sendBySms(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
     procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
-    procedure processByScript(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
+//    procedure processByScript(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
 
-    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResourceV);
+//    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResourceV);
     procedure NotifySuccess(userkey, SubscriptionKey : integer);
     procedure NotifyFailure(userkey, SubscriptionKey : integer; message : string);
     procedure DoDropResource(key, vkey, pvkey : Integer; internal : boolean);
@@ -977,11 +977,11 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
-begin
-  raise EFHIRTodo.create('TSubscriptionManager.processByScript');
-end;
-
+//procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
+//begin
+//  raise EFHIRTodo.create('TSubscriptionManager.processByScript');
+//end;
+//
 procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytesStream);
 var
   p : TFHIRParser;
@@ -1252,20 +1252,20 @@ begin
   end;
 end;
 
-
-procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res: TFHIRResourceV);
-begin
-{  conn.SQL := 'Update Versions set content = :t where ResourceVersionKey = '+inttostr(ResourceKey);
-  conn.Prepare;
-  try
-    conn.BindBlobFromBytes('t', tags.Json);
-    conn.Execute;
-  finally
-    conn.Terminate;
-  end;
-  }
-end;
-
+//
+//procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res: TFHIRResourceV);
+//begin
+//{  conn.SQL := 'Update Versions set content = :t where ResourceVersionKey = '+inttostr(ResourceKey);
+//  conn.Prepare;
+//  try
+//    conn.BindBlobFromBytes('t', tags.Json);
+//    conn.Execute;
+//  finally
+//    conn.Terminate;
+//  end;
+//  }
+//end;
+//
 procedure TSubscriptionManager.loadQueue(conn: TKDBConnection);
 begin
   FLastSubscriptionKey := conn.CountSQL('select max(SubscriptionQueueKey) from SubscriptionQueue');
@@ -1277,7 +1277,6 @@ function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey
 var
   parser : TFHIRParser;
 begin
-  result := nil;
   conn.SQL := 'select ResourceName, Ids.Id, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
@@ -1305,7 +1304,6 @@ function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key:
 var
   parser : TFHIRParser;
 begin
-  result := nil;
   conn.SQL := 'select ResourceName, Ids.Id, UserKey, XmlContent From Versions, Ids, Types, Sessions '+
     'where IDs.ResourceKey = '+inttostr(key)+' and Versions.SessionKey = Sessions.SessionKey and '+
     'Versions.ResourceVersionKey = IDs.MostRecent and IDs.ResourceTypeKey = Types.ResourceTypeKey';

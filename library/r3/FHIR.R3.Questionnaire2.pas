@@ -140,7 +140,7 @@ end;
 
 procedure TQuestionnaireRenderer.header(html: THtmlPublisher);
 begin
-  html.AddTitle('Questionnaire rendered '+TDateTimeEx.makeLocal.toString('c'));
+  html.AddTitle('Questionnaire rendered '+TFslDateTime.makeLocal.toString('c'));
   html.StartForm('POST', '/');
 end;
 

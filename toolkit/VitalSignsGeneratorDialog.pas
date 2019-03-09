@@ -307,7 +307,7 @@ begin
   end;
   result.Subject := TFHIRReference.create('Patient/'+edtPatientId.Text);
   result.Status := ObservationStatusFinal;
-  result.Effective := TFhirDateTime.Create(TDateTimeEx.makeLocal(when));
+  result.Effective := TFhirDateTime.Create(TFslDateTime.makeLocal(when));
   with result.categoryList.Append do
   begin
     text := 'Vital Signs';

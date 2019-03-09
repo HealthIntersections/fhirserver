@@ -108,7 +108,6 @@ var
   end;
 var
   subscription: TFhirSubscription;
-  expr : TFHIRPathExpressionNode;
 begin
   subscription := sub.Resource as TFhirSubscription;
   ts := TStringList.Create;
@@ -209,7 +208,7 @@ begin
                 entry.response.status := inttostr(response.HTTPCode);
                 entry.response.location := response.Location;
                 entry.response.etag := 'W/'+response.versionId;
-                entry.response.lastModified := TDateTimeEx.makeUTC(response.lastModifiedDate);
+                entry.response.lastModified := TFslDateTime.makeUTC(response.lastModifiedDate);
                 entry.resource := response.resource.link as TFhirResource;
               end;
             except

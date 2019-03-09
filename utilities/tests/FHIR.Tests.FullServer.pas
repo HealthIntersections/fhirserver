@@ -146,7 +146,8 @@ end;
 
 procedure TFullServerTests.registerJs(sender : TObject; js : TJsHost);
 begin
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
+  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
 end;
 
 procedure TFullServerTests.checkDatabase(db: TKDBManager; factory: TFHIRFactory; serverFactory: TFHIRServerFactory);
@@ -485,7 +486,7 @@ end;
 procedure TFullServerTests.TestPatientUpdate;
 var
   rb, ra : TFhirPatient;
-  d : TDateTimeEx;
+  d : TFslDateTime;
 begin
   rb := FClientJson.readResource(frtPatient, 'example') as TFHIRPatient;
   try

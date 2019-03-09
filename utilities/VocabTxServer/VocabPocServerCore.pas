@@ -59,7 +59,7 @@ type
   private
     FServer : TTerminologyServer;
     FEngine : TFHIRPathEngine;
-    function compareDate(base, min, max : TDateTimeEx; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
+    function compareDate(base, min, max : TFslDateTime; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
 
     function matches(resource : TFhirResource; sp : TSearchParameter) : boolean;
     function matchesObject(obj : TFhirObject; sp : TSearchParameter) : boolean;
@@ -104,7 +104,7 @@ type
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
     procedure QueueResource(r: TFHIRResourceV); overload; override;
-    procedure QueueResource(r: TFHIRResourceV; dateTime: TDateTimeEx); overload; override;
+    procedure QueueResource(r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
     function ProfilesAsOptionList : String; override;
@@ -206,7 +206,7 @@ begin
   // nothing
 end;
 
-procedure TTerminologyServerStorage.QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx);
+procedure TTerminologyServerStorage.QueueResource(r: TFhirResourceV; dateTime: TFslDateTime);
 begin
   // nothing
 end;
@@ -314,11 +314,11 @@ begin
   // nothing
 end;
 
-function TTerminologyServerOperationEngine.compareDate(base, min, max: TDateTimeEx; value: String; prefix: TFHIRSearchParamPrefix): boolean;
+function TTerminologyServerOperationEngine.compareDate(base, min, max: TFslDateTime; value: String; prefix: TFHIRSearchParamPrefix): boolean;
 var
-  v, vmin, vmax : TDateTimeEx;
+  v, vmin, vmax : TFslDateTime;
 begin
-  v := TDateTimeEx.fromXML(value);
+  v := TFslDateTime.fromXML(value);
   vmin := v.Min;
   vmax := v.Max;
   case prefix of
@@ -393,7 +393,7 @@ begin
     if response.Format <> ffUnspecified then
       base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
     bundle.meta := TFHIRMeta.create;
-    bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+    bundle.meta.lastUpdated := TFslDateTime.makeUTC;
     bundle.link_List.AddRelRef('self', base);
     bundle.id := FhirGUIDToString(CreateGUID);
 
@@ -506,7 +506,7 @@ begin
       bundle := TFHIRBundle.Create(BundleTypeSearchset);
       try
         bundle.meta := TFHIRMeta.create;
-        bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+        bundle.meta.lastUpdated := TFslDateTime.makeUTC;
         bundle.link_List.AddRelRef('self', base);
         bundle.id := FhirGUIDToString(CreateGUID);
 
@@ -616,7 +616,7 @@ begin
 //        try
 ////          bundle.base := request.baseUrl;
 //          bundle.meta := TFhirMeta.Create;
-//          bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+//          bundle.meta.lastUpdated := TFslDateTime.makeUTC;
 //
 //          summaryStatus := request.Summary;
 //          if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then

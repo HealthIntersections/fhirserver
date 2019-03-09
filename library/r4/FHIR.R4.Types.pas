@@ -3083,7 +3083,7 @@ Type
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
     function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;
-    function toString : String; override;
+    function ToString : String; override;
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
   
@@ -3393,15 +3393,15 @@ Type
   //  Used where a FHIR element is a Date, and extensions
   TFhirDate = class (TFhirPrimitiveType)
   Private
-    FValue: TDateTimeEx;
-    procedure setValue(value: TDateTimeEx);
+    FValue: TFslDateTime;
+    procedure setValue(value: TFslDateTime);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
     procedure SetStringValue(value : String); Override;
   Public
-    constructor Create(value : TDateTimeEx); overload;
+    constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
     
     Function Link : TFhirDate; Overload;
@@ -3410,10 +3410,10 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TDateTimeEx; override;
+    function dateValue : TFslDateTime; override;
   Published
     // The actual value of the date
-    property value : TDateTimeEx read FValue write SetValue;
+    property value : TFslDateTime read FValue write SetValue;
   End;    
 
 
@@ -3453,7 +3453,7 @@ Type
 
     
     // Add an already existing FhirDate to the end of the list.
-    procedure AddItem(value : TDateTimeEx); overload;
+    procedure AddItem(value : TFslDateTime); overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3490,15 +3490,15 @@ Type
   //  Used where a FHIR element is a DateTime, and extensions
   TFhirDateTime = class (TFhirPrimitiveType)
   Private
-    FValue: TDateTimeEx;
-    procedure setValue(value: TDateTimeEx);
+    FValue: TFslDateTime;
+    procedure setValue(value: TFslDateTime);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
     procedure SetStringValue(value : String); Override;
   Public
-    constructor Create(value : TDateTimeEx); overload;
+    constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
     
     Function Link : TFhirDateTime; Overload;
@@ -3507,10 +3507,10 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TDateTimeEx; override;
+    function dateValue : TFslDateTime; override;
   Published
     // The actual value of the dateTime
-    property value : TDateTimeEx read FValue write SetValue;
+    property value : TFslDateTime read FValue write SetValue;
   End;    
 
 
@@ -3550,7 +3550,7 @@ Type
 
     
     // Add an already existing FhirDateTime to the end of the list.
-    procedure AddItem(value : TDateTimeEx); overload;
+    procedure AddItem(value : TFslDateTime); overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3875,15 +3875,15 @@ Type
   //  Used where a FHIR element is a Instant, and extensions
   TFhirInstant = class (TFhirPrimitiveType)
   Private
-    FValue: TDateTimeEx;
-    procedure setValue(value: TDateTimeEx);
+    FValue: TFslDateTime;
+    procedure setValue(value: TFslDateTime);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
     procedure SetStringValue(value : String); Override;
   Public
-    constructor Create(value : TDateTimeEx); overload;
+    constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
     
     Function Link : TFhirInstant; Overload;
@@ -3892,10 +3892,10 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TDateTimeEx; override;
+    function dateValue : TFslDateTime; override;
   Published
     // The actual value of the instant
-    property value : TDateTimeEx read FValue write SetValue;
+    property value : TFslDateTime read FValue write SetValue;
   End;    
 
 
@@ -3935,7 +3935,7 @@ Type
 
     
     // Add an already existing FhirInstant to the end of the list.
-    procedure AddItem(value : TDateTimeEx); overload;
+    procedure AddItem(value : TFslDateTime); overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5556,8 +5556,8 @@ Type
     Function GetTitleST : String;
     Procedure SetTitleST(value : String);
     Procedure SetCreation(value : TFhirDateTime);
-    Function GetCreationST : TDateTimeEx;
-    Procedure SetCreationST(value : TDateTimeEx);
+    Function GetCreationST : TFslDateTime;
+    Procedure SetCreationST(value : TFslDateTime);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -5614,7 +5614,7 @@ Type
     property titleElement : TFhirString read FTitle write SetTitle;
 
     // Typed access to The date that the attachment was first created.
-    property creation : TDateTimeEx read GetCreationST write SetCreationST;
+    property creation : TFslDateTime read GetCreationST write SetCreationST;
     // The date that the attachment was first created.
     property creationElement : TFhirDateTime read FCreation write SetCreation;
 
@@ -6607,8 +6607,8 @@ Type
     Procedure SetStatus(value : TFhirCodeableConcept);
     Procedure SetDateRange(value : TFhirPeriod);
     Procedure SetRestoreDate(value : TFhirDateTime);
-    Function GetRestoreDateST : TDateTimeEx;
-    Procedure SetRestoreDateST(value : TDateTimeEx);
+    Function GetRestoreDateST : TFslDateTime;
+    Procedure SetRestoreDateST(value : TFslDateTime);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -6650,7 +6650,7 @@ Type
     property dateRangeElement : TFhirPeriod read FDateRange write SetDateRange;
 
     // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ?Placed on the market? refers to the release of the Medicinal Product into the distribution chain.
-    property restoreDate : TDateTimeEx read GetRestoreDateST write SetRestoreDateST;
+    property restoreDate : TFslDateTime read GetRestoreDateST write SetRestoreDateST;
     // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ?Placed on the market? refers to the release of the Medicinal Product into the distribution chain.
     property restoreDateElement : TFhirDateTime read FRestoreDate write SetRestoreDate;
 
@@ -7858,11 +7858,11 @@ Type
     FStart : TFhirDateTime;
     FEnd_ : TFhirDateTime;
     Procedure SetStart(value : TFhirDateTime);
-    Function GetStartST : TDateTimeEx;
-    Procedure SetStartST(value : TDateTimeEx);
+    Function GetStartST : TFslDateTime;
+    Procedure SetStartST(value : TFslDateTime);
     Procedure SetEnd_(value : TFhirDateTime);
-    Function GetEnd_ST : TDateTimeEx;
-    Procedure SetEnd_ST(value : TDateTimeEx);
+    Function GetEnd_ST : TFslDateTime;
+    Procedure SetEnd_ST(value : TFslDateTime);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -7884,12 +7884,12 @@ Type
     function isEmpty : boolean; override;
   published
     // Typed access to The start of the period. The boundary is inclusive.
-    property start : TDateTimeEx read GetStartST write SetStartST;
+    property start : TFslDateTime read GetStartST write SetStartST;
     // The start of the period. The boundary is inclusive.
     property startElement : TFhirDateTime read FStart write SetStart;
 
     // Typed access to The end of the period. If the end of the period is missing, it means no end was known or planned at the time the instance was created. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
-    property end_ : TDateTimeEx read GetEnd_ST write SetEnd_ST;
+    property end_ : TFslDateTime read GetEnd_ST write SetEnd_ST;
     // The end of the period. If the end of the period is missing, it means no end was known or planned at the time the instance was created. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
     property end_Element : TFhirDateTime read FEnd_ write SetEnd_;
 
@@ -8360,8 +8360,8 @@ Type
     FText : TFhirMarkdown;
     Procedure SetAuthor(value : TFhirType);
     Procedure SetTime(value : TFhirDateTime);
-    Function GetTimeST : TDateTimeEx;
-    Procedure SetTimeST(value : TDateTimeEx);
+    Function GetTimeST : TFslDateTime;
+    Procedure SetTimeST(value : TFslDateTime);
     Procedure SetText(value : TFhirMarkdown);
     Function GetTextST : String;
     Procedure SetTextST(value : String);
@@ -8391,7 +8391,7 @@ Type
     property authorElement : TFhirType read FAuthor write SetAuthor;
 
     // Typed access to Indicates when this particular annotation was made.
-    property time : TDateTimeEx read GetTimeST write SetTimeST;
+    property time : TFslDateTime read GetTimeST write SetTimeST;
     // Indicates when this particular annotation was made.
     property timeElement : TFhirDateTime read FTime write SetTime;
 
@@ -8948,8 +8948,8 @@ Type
     function GetType_List : TFhirCodingList;
     function GetHasType_List : Boolean;
     Procedure SetWhen(value : TFhirInstant);
-    Function GetWhenST : TDateTimeEx;
-    Procedure SetWhenST(value : TDateTimeEx);
+    Function GetWhenST : TFslDateTime;
+    Procedure SetWhenST(value : TFslDateTime);
     Procedure SetWho(value : TFhirReference{TFhirPractitioner});
     Procedure SetOnBehalfOf(value : TFhirReference{TFhirPractitioner});
     Procedure SetTargetFormat(value : TFhirCode);
@@ -8986,7 +8986,7 @@ Type
     property hasType_List : boolean read GetHasType_List;
 
     // Typed access to When the digital signature was signed.
-    property when : TDateTimeEx read GetWhenST write SetWhenST;
+    property when : TFslDateTime read GetWhenST write SetWhenST;
     // When the digital signature was signed.
     property whenElement : TFhirInstant read FWhen write SetWhen;
 
@@ -9802,8 +9802,8 @@ Type
     Function GetVersionIdST : String;
     Procedure SetVersionIdST(value : String);
     Procedure SetLastUpdated(value : TFhirInstant);
-    Function GetLastUpdatedST : TDateTimeEx;
-    Procedure SetLastUpdatedST(value : TDateTimeEx);
+    Function GetLastUpdatedST : TFslDateTime;
+    Procedure SetLastUpdatedST(value : TFslDateTime);
     Procedure SetSource(value : TFhirUri);
     Function GetSourceST : String;
     Procedure SetSourceST(value : String);
@@ -9839,7 +9839,7 @@ Type
     property versionIdElement : TFhirId read FVersionId write SetVersionId;
 
     // Typed access to When the resource last changed - e.g. when the version changed.
-    property lastUpdated : TDateTimeEx read GetLastUpdatedST write SetLastUpdatedST;
+    property lastUpdated : TFslDateTime read GetLastUpdatedST write SetLastUpdatedST;
     // When the resource last changed - e.g. when the version changed.
     property lastUpdatedElement : TFhirInstant read FLastUpdated write SetLastUpdated;
 
@@ -14275,7 +14275,7 @@ end;
 
 { TFhirDate }
 
-Constructor TFhirDate.Create(value : TDateTimeEx);
+Constructor TFhirDate.Create(value : TFslDateTime);
 begin
   Create;
   FValue := value.fixPrecision(dtpDay);
@@ -14291,7 +14291,7 @@ begin
   result := 'date';
 end;
 
-function TFhirDate.dateValue : TDateTimeEx;
+function TFhirDate.dateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -14328,9 +14328,9 @@ end;
 procedure TFhirDate.SetStringValue(value : string);
 begin
   if (value = '') then
-    FValue := TDateTimeEx.makeNull
+    FValue := TFslDateTime.makeNull
   else
-    FValue := TDateTimeEx.fromXml(value);
+    FValue := TFslDateTime.fromXml(value);
 end;
 
 function TFhirDate.equals(other : TObject) : boolean; 
@@ -14363,7 +14363,7 @@ begin
   result := TFhirDate(inherited Clone);
 end;
 
-procedure TFhirDate.setValue(value : TDateTimeEx);
+procedure TFhirDate.setValue(value : TFslDateTime);
 begin
   FValue := value;
 end;
@@ -14404,7 +14404,7 @@ begin
 end;
 
 
-procedure TFhirDateList.AddItem(value: TDateTimeEx);
+procedure TFhirDateList.AddItem(value: TFslDateTime);
 begin
   add(TFhirDate.create(value));
 end;
@@ -14502,7 +14502,7 @@ end;
 
 { TFhirDateTime }
 
-Constructor TFhirDateTime.Create(value : TDateTimeEx);
+Constructor TFhirDateTime.Create(value : TFslDateTime);
 begin
   Create;
   FValue := value;
@@ -14518,7 +14518,7 @@ begin
   result := 'dateTime';
 end;
 
-function TFhirDateTime.dateValue : TDateTimeEx;
+function TFhirDateTime.dateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -14555,9 +14555,9 @@ end;
 procedure TFhirDateTime.SetStringValue(value : string);
 begin
   if (value = '') then
-    FValue := TDateTimeEx.makeNull
+    FValue := TFslDateTime.makeNull
   else
-    FValue := TDateTimeEx.fromXml(value);
+    FValue := TFslDateTime.fromXml(value);
 end;
 
 function TFhirDateTime.equals(other : TObject) : boolean; 
@@ -14590,7 +14590,7 @@ begin
   result := TFhirDateTime(inherited Clone);
 end;
 
-procedure TFhirDateTime.setValue(value : TDateTimeEx);
+procedure TFhirDateTime.setValue(value : TFslDateTime);
 begin
   FValue := value;
 end;
@@ -14631,7 +14631,7 @@ begin
 end;
 
 
-procedure TFhirDateTimeList.AddItem(value: TDateTimeEx);
+procedure TFhirDateTimeList.AddItem(value: TFslDateTime);
 begin
   add(TFhirDateTime.create(value));
 end;
@@ -15374,7 +15374,7 @@ end;
 
 { TFhirInstant }
 
-Constructor TFhirInstant.Create(value : TDateTimeEx);
+Constructor TFhirInstant.Create(value : TFslDateTime);
 begin
   Create;
   FValue := value;
@@ -15390,7 +15390,7 @@ begin
   result := 'instant';
 end;
 
-function TFhirInstant.dateValue : TDateTimeEx;
+function TFhirInstant.dateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -15427,9 +15427,9 @@ end;
 procedure TFhirInstant.SetStringValue(value : string);
 begin
   if (value = '') then
-    FValue := TDateTimeEx.makeNull
+    FValue := TFslDateTime.makeNull
   else
-    FValue := TDateTimeEx.fromXml(value);
+    FValue := TFslDateTime.fromXml(value);
 end;
 
 function TFhirInstant.equals(other : TObject) : boolean; 
@@ -15462,7 +15462,7 @@ begin
   result := TFhirInstant(inherited Clone);
 end;
 
-procedure TFhirInstant.setValue(value : TDateTimeEx);
+procedure TFhirInstant.setValue(value : TFslDateTime);
 begin
   FValue := value;
 end;
@@ -15503,7 +15503,7 @@ begin
 end;
 
 
-procedure TFhirInstantList.AddItem(value: TDateTimeEx);
+procedure TFhirInstantList.AddItem(value: TFslDateTime);
 begin
   add(TFhirInstant.create(value));
 end;
@@ -19510,15 +19510,15 @@ begin
   FCreation := value;
 end;
 
-Function TFhirAttachment.GetCreationST : TDateTimeEx;
+Function TFhirAttachment.GetCreationST : TFslDateTime;
 begin
   if FCreation = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FCreation.value;
 end;
 
-Procedure TFhirAttachment.SetCreationST(value : TDateTimeEx);
+Procedure TFhirAttachment.SetCreationST(value : TFslDateTime);
 begin
   if FCreation = nil then
     FCreation := TFhirDateTime.create;
@@ -22627,15 +22627,15 @@ begin
   FRestoreDate := value;
 end;
 
-Function TFhirMarketingStatus.GetRestoreDateST : TDateTimeEx;
+Function TFhirMarketingStatus.GetRestoreDateST : TFslDateTime;
 begin
   if FRestoreDate = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FRestoreDate.value;
 end;
 
-Procedure TFhirMarketingStatus.SetRestoreDateST(value : TDateTimeEx);
+Procedure TFhirMarketingStatus.SetRestoreDateST(value : TFslDateTime);
 begin
   if FRestoreDate = nil then
     FRestoreDate := TFhirDateTime.create;
@@ -26196,15 +26196,15 @@ begin
   FStart := value;
 end;
 
-Function TFhirPeriod.GetStartST : TDateTimeEx;
+Function TFhirPeriod.GetStartST : TFslDateTime;
 begin
   if FStart = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FStart.value;
 end;
 
-Procedure TFhirPeriod.SetStartST(value : TDateTimeEx);
+Procedure TFhirPeriod.SetStartST(value : TFslDateTime);
 begin
   if FStart = nil then
     FStart := TFhirDateTime.create;
@@ -26217,15 +26217,15 @@ begin
   FEnd_ := value;
 end;
 
-Function TFhirPeriod.GetEnd_ST : TDateTimeEx;
+Function TFhirPeriod.GetEnd_ST : TFslDateTime;
 begin
   if FEnd_ = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FEnd_.value;
 end;
 
-Procedure TFhirPeriod.SetEnd_ST(value : TDateTimeEx);
+Procedure TFhirPeriod.SetEnd_ST(value : TFslDateTime);
 begin
   if FEnd_ = nil then
     FEnd_ := TFhirDateTime.create;
@@ -27744,15 +27744,15 @@ begin
   FTime := value;
 end;
 
-Function TFhirAnnotation.GetTimeST : TDateTimeEx;
+Function TFhirAnnotation.GetTimeST : TFslDateTime;
 begin
   if FTime = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FTime.value;
 end;
 
-Procedure TFhirAnnotation.SetTimeST(value : TDateTimeEx);
+Procedure TFhirAnnotation.SetTimeST(value : TFslDateTime);
 begin
   if FTime = nil then
     FTime := TFhirDateTime.create;
@@ -29473,15 +29473,15 @@ begin
   FWhen := value;
 end;
 
-Function TFhirSignature.GetWhenST : TDateTimeEx;
+Function TFhirSignature.GetWhenST : TFslDateTime;
 begin
   if FWhen = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FWhen.value;
 end;
 
-Procedure TFhirSignature.SetWhenST(value : TDateTimeEx);
+Procedure TFhirSignature.SetWhenST(value : TFslDateTime);
 begin
   if FWhen = nil then
     FWhen := TFhirInstant.create;
@@ -32280,15 +32280,15 @@ begin
   FLastUpdated := value;
 end;
 
-Function TFhirMeta.GetLastUpdatedST : TDateTimeEx;
+Function TFhirMeta.GetLastUpdatedST : TFslDateTime;
 begin
   if FLastUpdated = nil then
-    result := TDateTimeEx.makeNull
+    result := TFslDateTime.makeNull
   else
     result := FLastUpdated.value;
 end;
 
-Procedure TFhirMeta.SetLastUpdatedST(value : TDateTimeEx);
+Procedure TFhirMeta.SetLastUpdatedST(value : TFslDateTime);
 begin
   if FLastUpdated = nil then
     FLastUpdated := TFhirInstant.create;
@@ -39044,18 +39044,13 @@ begin
 end;
 
 function TFhirCount.equals(other : TObject) : boolean; 
-var
-  o : TFhirCount;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirCount)) then
     result := false
   else
-  begin
-    o := TFhirCount(other);
     result := true;
-  end;
 end;
 
 function TFhirCount.Link : TFhirCount;
@@ -39269,18 +39264,13 @@ begin
 end;
 
 function TFhirAge.equals(other : TObject) : boolean; 
-var
-  o : TFhirAge;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirAge)) then
     result := false
   else
-  begin
-    o := TFhirAge(other);
     result := true;
-  end;
 end;
 
 function TFhirAge.Link : TFhirAge;
@@ -39494,18 +39484,13 @@ begin
 end;
 
 function TFhirDistance.equals(other : TObject) : boolean; 
-var
-  o : TFhirDistance;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirDistance)) then
     result := false
   else
-  begin
-    o := TFhirDistance(other);
     result := true;
-  end;
 end;
 
 function TFhirDistance.Link : TFhirDistance;
@@ -39719,18 +39704,13 @@ begin
 end;
 
 function TFhirDuration.equals(other : TObject) : boolean; 
-var
-  o : TFhirDuration;
 begin
   if (not inherited equals(other)) then
     result := false
   else if (not (other is TFhirDuration)) then
     result := false
   else
-  begin
-    o := TFhirDuration(other);
     result := true;
-  end;
 end;
 
 function TFhirDuration.Link : TFhirDuration;
@@ -44811,12 +44791,12 @@ begin
     result := obj as TFHIRDate
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else
@@ -44831,12 +44811,12 @@ begin
     result := obj as TFHIRDateTime
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else
@@ -44911,12 +44891,12 @@ begin
     result := obj as TFHIRInstant
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else

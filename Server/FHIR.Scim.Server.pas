@@ -86,15 +86,15 @@ Type
     Procedure processUserDelete(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure processUserRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 
-    Procedure processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
+    procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
+    procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
   public
     constructor Create(db : TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
     destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
-    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); override;
+    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession; prefix : String); override;
     Function loadUser(key : integer) : TSCIMUser; overload; override;
     Function loadUser(id : String; var key : integer) : TSCIMUser; overload; override;
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
@@ -104,6 +104,7 @@ Type
     // install
     Procedure DefineSystem(conn : TKDBConnection);
     Procedure DefineAdminUser(conn : TKDBConnection; un, pw, em : String);
+    Procedure UpdateAdminUser(conn : TKDBConnection; un, pw, em : String);
     Procedure DefineAnonymousUser(conn : TKDBConnection);
 
     property AnonymousRights : TStringList read FAnonymousRights;
@@ -216,13 +217,13 @@ end;
 
 procedure TSCIMServer.DefineAdminUser(conn : TKDBConnection; un, pw, em: String);
 var
-  now : TDateTimeEx;
+  now : TFslDateTime;
   user : TSCIMUser;
   key : integer;
   list : TStringList;
   s : String;
 begin
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := un;
@@ -268,13 +269,13 @@ end;
 
 procedure TSCIMServer.DefineSystem(conn : TKDBConnection);
 var
-  now : TDateTimeEx;
+  now : TFslDateTime;
   user : TSCIMUser;
   key : integer;
   list : TStringList;
   s : String;
 begin
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := SCIM_SYSTEM_USER;
@@ -315,12 +316,12 @@ end;
 
 procedure TSCIMServer.DefineAnonymousUser(conn : TKDBConnection);
 var
-  now : TDateTimeEx;
+  now : TFslDateTime;
   user : TSCIMUser;
   key : integer;
   s : String;
 begin
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := SCIM_ANONYMOUS_USER;
@@ -423,7 +424,7 @@ function TSCIMServer.loadOrCreateUser(id, name, email: String; var key : integer
 var
   conn : TKDBConnection;
   new, upd : boolean;
-  now : TDateTimeEx;
+  now : TFslDateTime;
   s : String;
 begin
   upd := false;
@@ -477,7 +478,7 @@ begin
 
       if new or upd then
       begin
-        now := TDateTimeEx.makeUTC;
+        now := TFslDateTime.makeUTC;
         if new then
         begin
           key := GetNextUserKey;
@@ -541,7 +542,6 @@ function TSCIMServer.loadUser(key: integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
-  result := nil;
   conn := db.GetConnection('scim.loadUser');
   try
     conn.SQL := 'Select Password, Content from Users where Status = 1 and UserKey = '''+inttostr(key)+'''';
@@ -570,7 +570,6 @@ function TSCIMServer.loadUser(id: String; var key : integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
-  result := nil;
   conn := db.GetConnection('scim.loadUser');
   try
     conn.SQL := 'Select UserKey, Password, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';
@@ -596,16 +595,16 @@ begin
   end;
 end;
 
-procedure TSCIMServer.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession);
+procedure TSCIMServer.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession; prefix : String);
 var
   path : String;
 begin
   try
     path := request.Document;
-    if (path.StartsWith('/scim/Users')) then
+    if (path.StartsWith(prefix +'/scim/Users')) then
       processUserRequest(context, request, response)
-    else if (path.StartsWith('/scim/web')) then
-      processWebRequest(context, session, request, response)
+    else if (path.StartsWith(prefix +'/scim/web')) then
+      processWebRequest(context, session, request, response, prefix)
     else
       raise ESCIMException.Create(501, 'NOT IMPLEMENTED', '', 'TSCIMServer.processRequest: Not done yet');
   except
@@ -690,12 +689,12 @@ var
   username : String;
   conn : TKDBConnection;
   key : integer;
-  now : TDateTimeEx;
+  now : TFslDateTime;
 begin
   if (request.Document <> '/scim/Users') then
     raise ESCIMException.Create(404, 'NOT FOUND', '', 'Path Error - must be /scim/Users');
 
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   user := TSCIMUser.Create(LoadIncoming(request));
   try
     user.check;
@@ -772,7 +771,7 @@ var
   nUser, eUser : TSCIMUser;
   password : String;
   conn : TKDBConnection;
-  now : TDateTimeEx;
+  now : TFslDateTime;
   id : String;
   b : TBytes;
 begin
@@ -780,7 +779,7 @@ begin
   if (id = '1') or (id = '2') then
     raise ESCIMException.Create(409, 'Forbidden', '', 'Server does not allow update to system defined users');
 
-  now := TDateTimeEx.makeUTC;
+  now := TFslDateTime.makeUTC;
   nUser := TSCIMUser.Create(LoadIncoming(request));
   try
     nUser.id := id;
@@ -991,17 +990,17 @@ begin
     result := '??';
 end;
 
-procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 begin
-  if (request.Document = '/scim/web') then
-    processWebUserList(context, session, request, response)
-  else if StringIsInteger16(request.Document.Substring(10)) or (request.Document.Substring(10) = '$new') then
-    processWebUserId(context, session, request, response)
+  if (request.Document = prefix+'/scim/web') then
+    processWebUserList(context, session, request, response, prefix)
+  else if StringIsInteger16(request.Document.Substring(10+prefix.length)) or (request.Document.Substring(10+prefix.length) = '$new') then
+    processWebUserId(context, session, request, response, prefix)
   else
     raise ESCIMException.Create(403, 'FORBIDDEN', '', 'URL not understood');
 end;
 
-procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   variables : TFslStringDictionary;
   conn : TKDBConnection;
@@ -1023,7 +1022,7 @@ begin
       if bnew then
         uk := 2 // anonymous
       else
-        uk := StrToInt(request.Document.Substring(10));
+        uk := StrToInt(request.Document.Substring(10+prefix.length));
       conn.SQL := 'Select Content from Users where status = 1 and UserKey = '+inttostr(uk);
       conn.Prepare;
       conn.Execute;
@@ -1051,9 +1050,9 @@ begin
             try
               if bNew then
               begin
-                user.created := TDateTimeEx.makeUTC;
+                user.created := TFslDateTime.makeUTC;
                 user.lastModified := user.created;
-                user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(uk);
+                user.location := 'https://'+request.Host+prefix+'/scim/Users/'+inttostr(uk);
                 user.version := '1';
                 user.resourceType := 'User';
                 user.username := p.GetVar('username');
@@ -1072,7 +1071,7 @@ begin
               conn.Execute;
               conn.Terminate;
               IndexUser(conn, user, uk);
-              response.Redirect('/scim/web');
+              response.Redirect(prefix+'/scim/web');
               bDone := true;
               conn.Commit;
             except
@@ -1092,6 +1091,7 @@ begin
           variables.Add('user.password', '<input type="text" name="password" value=""/>')
         else
           variables.Add('user.password', '<i>No Password for this user</i>');
+        variables.Add('prefix', prefix);
         variables.Add('user.external', user.ExternalId);
         if bnew then
         begin
@@ -1136,7 +1136,7 @@ begin
   end;
 end;
 
-procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   variables : TFslStringDictionary;
   conn : TKDBConnection;
@@ -1160,7 +1160,7 @@ begin
             b.Append('<td>');
             b.Append(user.id);
             b.Append('</td>');
-            b.Append('<td><a href="/scim/web/');
+            b.Append('<td><a href="'+prefix+'/scim/web/');
             b.Append(user.id);
             b.Append('">');
             b.Append(user.username);
@@ -1431,6 +1431,22 @@ begin
   else if path = 'entitlements' then result := 'entitlements'
   else
     result := '';
+end;
+
+procedure TSCIMServer.UpdateAdminUser(conn: TKDBConnection; un, pw, em: String);
+var
+  key : integer;
+begin
+  key := StrToInt(conn.Lookup('Users', 'UserName', un, 'UserKey', 'not found'));
+  conn.SQL := 'Update Users set Password = :pw where UserKey = :uk';
+  conn.Prepare;
+  try
+    conn.BindInteger('uk', key);
+    conn.BindString('pw', HashPassword(key, pw));
+    conn.Execute;
+  finally
+    conn.Terminate;
+  end;
 end;
 
 procedure TSCIMServer.WriteOutgoing(response: TIdHTTPResponseInfo; json: TJsonObject);

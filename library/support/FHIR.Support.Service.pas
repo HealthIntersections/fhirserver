@@ -210,9 +210,8 @@ const
   THREAD_GET_CONTEXT       = $0008;
   THREAD_QUERY_INFORMATION = $0040;
 var
-  Kernel32Lib, ThreadHandle: THandle;
+  Kernel32Lib: THandle;
 begin
-  Result := 0;
   if @OpenThreadFunc = nil then
   begin
     Kernel32Lib := GetModuleHandle(kernel32);
@@ -221,11 +220,11 @@ begin
   result := OpenThreadFunc(THREAD_QUERY_INFORMATION, False, id);
 end;
 
-
 function FileTimeZero : TDateTime;
 begin
   result := EncodeDate(1601, 1, 1);
 end;
+
 function TSystemService.ThreadStatus : String;
 var
   SnapProcHandle: THandle;

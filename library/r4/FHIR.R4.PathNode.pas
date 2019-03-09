@@ -518,9 +518,14 @@ begin
       b.append(presentConstant);
 		enkGroup:
       begin
-  			b.append('(');
-	  		b.append(group.toString());
-		  	b.append(')');
+        if group.ToString.Trim = '- 1' then // hack special case becuse of how negation works
+          b.Append('-1')
+        else
+        begin
+    			b.append('(');
+	    		b.append(group.toString());
+		    	b.append(')');
+        end;
 		  end;
     end;
 

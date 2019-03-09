@@ -304,7 +304,7 @@ begin
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome8;
     se.event.outcomeDesc := e.Message;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.event.id := logId;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := Server.name;
@@ -364,7 +364,7 @@ begin
     C.Display := 'Read';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.event.id := logId;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := Server.name;
@@ -424,7 +424,7 @@ begin
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome8;
     se.event.outcomeDesc := e.Message;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.event.id := logId;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := Server.name;
@@ -483,7 +483,7 @@ begin
     C.Display := 'Read';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.event.id := logId;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := Server.name;
@@ -542,7 +542,7 @@ begin
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := Server.name;
     se.source.identifier := TFhirIdentifier.Create;
@@ -588,7 +588,7 @@ begin
     C.Display := 'Logout';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.event.dateTime := TFslDateTime.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := Server.name;
     se.source.identifier := TFhirIdentifier.Create;

@@ -668,12 +668,12 @@ procedure TQuestionnaireEditorFrame.commitMetadata;
 var
   s : String;
   cc : TFHIRCodeableConcept;
-  function makeDT(ded : TDateEdit) : TDateTimeEx;
+  function makeDT(ded : TDateEdit) : TFslDateTime;
   begin
     if ded.Text = '' then
-      result := TDateTimeEx.makeNull
+      result := TFslDateTime.makeNull
     else
-      result := TDateTimeEx.makeLocal(ded.Date);
+      result := TFslDateTime.makeLocal(ded.Date);
   end;
 begin
   if Loading then

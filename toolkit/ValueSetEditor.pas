@@ -413,7 +413,7 @@ begin
   if ValueSet.expansion = nil then
   begin
     ValueSet.expansion := TFhirValueSetExpansion.Create;
-    ValueSet.expansion.timestamp := TDateTimeEx.makeLocal;
+    ValueSet.expansion.timestamp := TFslDateTime.makeLocal;
     tvExpansion := TTreeViewItem.Create(tvStructure);
     tvExpansion.text := 'Expansion';
     tvStructure.AddObject(tvExpansion);
@@ -449,7 +449,7 @@ begin
   ext := TFhirExtension.Create;
   try
     ext.url := 'http://hl7.org/fhir/StructureDefinition/resource-history';
-    ext.setExtensionDate('date', TDateTimeEx.makeToday.toXML);
+    ext.setExtensionDate('date', TFslDateTime.makeToday.toXML);
     frm := TResourceHistoryForm.create(self);
     try
        frm.Extension := ext.Link;
@@ -924,7 +924,7 @@ begin
   ValueSet.purpose := edtPurpose.Text;
   ValueSet.copyright := edtCopyright.Text;
   ValueSet.status := TFhirPublicationStatusEnum(cbxStatus.ItemIndex);
-  ValueSet.date := TDateTimeEx.make(dedDate.DateTime, dttzLocal);
+  ValueSet.date := TFslDateTime.make(dedDate.DateTime, dttzLocal);
   ValueSet.immutable := cbImmutable.IsChecked;
   ValueSet.jurisdictionList.Clear;
   {$IFDEF FHIR3}
@@ -958,7 +958,7 @@ begin
   if dedLockedDate.Text = '' then
     compose.lockedDateElement := nil
   else
-    compose.lockedDate := TDateTimeEx.make(dedLockedDate.DateTime, dttzLocal);
+    compose.lockedDate := TFslDateTime.make(dedLockedDate.DateTime, dttzLocal);
   compose.inactive := cbInactive.IsChecked;
 end;
 

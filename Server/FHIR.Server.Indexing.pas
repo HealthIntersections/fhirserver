@@ -91,7 +91,7 @@ type
   TFhirIndexEntryList = class (TFslList<TFhirIndexEntry>)
   private
     FKeyEvent : TFHIRGetNextKey;
-    procedure filter(indexes : TFhirIndexList; name : String; list : TFslList<TFhirIndexEntry>);
+//    procedure filter(indexes : TFhirIndexList; name : String; list : TFslList<TFhirIndexEntry>);
   public
     function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
     function add(key, parent : integer; index : TFhirComposite) : integer; overload;
@@ -319,15 +319,15 @@ begin
   end;
 end;
 
-procedure TFhirIndexEntryList.filter(indexes : TFhirIndexList;  name: String; list: TFslList<TFhirIndexEntry>);
-var
-  i : integer;
-begin
-  for i := 0 to Count - 1 do
-    if Items[i].FName = name then
-      list.Add(Items[i].Link as TFhirIndexEntry);
-end;
-
+//procedure TFhirIndexEntryList.filter(indexes : TFhirIndexList;  name: String; list: TFslList<TFhirIndexEntry>);
+//var
+//  i : integer;
+//begin
+//  for i := 0 to Count - 1 do
+//    if Items[i].FName = name then
+//      list.Add(Items[i].Link as TFhirIndexEntry);
+//end;
+//
 { TFhirIndexSpaces }
 
 constructor TFhirIndexSpaces.Create();

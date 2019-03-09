@@ -267,7 +267,7 @@ end;
 
 function TObservationDataProvider.queryString: String;
 begin
-  result := 'patient:patient='+patientId+'&code='+code+'&_sort=date&date=gt'+(TDateTimeEx.makeUTC-window-1).fixPrecision(dtpSec).toXML;
+  result := 'patient:patient='+patientId+'&code='+code+'&_sort=date&date=gt'+(TFslDateTime.makeUTC-window-1).fixPrecision(dtpSec).toXML;
 end;
 
 procedure TObservationDataProvider.load;

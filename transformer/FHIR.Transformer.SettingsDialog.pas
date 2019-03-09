@@ -12,6 +12,8 @@ type
     btnok: TButton;
     btnCancel: TButton;
     cbAutosave: TCheckBox;
+    Label1: TLabel;
+    cbxTerminologyServer: TComboBox;
     procedure FormShow(Sender: TObject);
     procedure btnokClick(Sender: TObject);
   private
@@ -31,11 +33,16 @@ implementation
 procedure TTransformerOptionsForm.btnokClick(Sender: TObject);
 begin
   FIni.WriteBool('Workspace', 'AutoSave', cbAutosave.Checked);
+  FIni.WriteString('Workspace', 'TerminologyServer', cbxTerminologyServer.Text);
 end;
 
 procedure TTransformerOptionsForm.FormShow(Sender: TObject);
 begin
   cbAutosave.Checked := FIni.ReadBool('Workspace', 'AutoSave', false);
+  FIni.ReadSection('TerminologyServers', cbxTerminologyServer.items);
+  if cbxTerminologyServer.items.Count = 0 then
+    cbxTerminologyServer.items.Add('http://tx.fhir.org/r4');
+  cbxTerminologyServer.Text := FIni.ReadString('Workspace', 'TerminologyServer', '');
 end;
 
 end.

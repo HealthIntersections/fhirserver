@@ -269,7 +269,7 @@ uses
   FHIR.Support.Utilities in '..\..\library\Support\FHIR.Support.Utilities.pas',
   FHIR.Support.Xml in '..\..\library\support\FHIR.Support.Xml.pas',
   FHIR.Tests.FullServer in 'FHIR.Tests.FullServer.pas',
-  FHIR.Tests.GraphDefinition in '..\FHIR.Tests.GraphDefinition.pas',
+  FHIR.Tests.GraphDefinition in 'FHIR.Tests.GraphDefinition.pas',
   FHIR.Tests.GraphQL in 'FHIR.Tests.GraphQL.pas',
   FHIR.Tests.IETFLang in '..\FHIR.Tests.IETFLang.pas',
   FHIR.Tests.IdUriParser in '..\FHIR.Tests.IdUriParser.pas',
@@ -359,7 +359,8 @@ uses
   MarkdownDaringFireballTests in '..\..\..\markdown\tests\MarkdownDaringFireballTests.pas',
   InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
   FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas',
-  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas';
+  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
+  FHIR.Server.SimpleConsentEngine in '..\..\Server\FHIR.Server.SimpleConsentEngine.pas';
 
 var
   runner : ITestRunner;

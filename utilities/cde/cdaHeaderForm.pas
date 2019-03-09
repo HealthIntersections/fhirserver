@@ -224,7 +224,7 @@ var
 begin
   if cda.effectiveTime = nil then
     cda.effectiveTime := Tv3TS.create;
-  cda.effectiveTime.value := TDateTimeEx.makeLocal(dtpSec).toHL7;
+  cda.effectiveTime.value := TFslDateTime.makeLocal(dtpSec).toHL7;
   if pos('-', cda.effectiveTime.value) > 0 then
     StringSplit(cda.effectiveTime.value, '-', l, r)
   else

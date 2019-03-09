@@ -1,56 +1,88 @@
 package org.fhir.delphi;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hl7.fhir.convertors.VersionConvertor_10_30;
+import org.hl7.fhir.convertors.VersionConvertor_10_40;
+import org.hl7.fhir.convertors.VersionConvertor_30_40;
+import org.hl7.fhir.dstu2.formats.JsonParser;
 import org.hl7.fhir.dstu2.formats.XmlParser;
 import org.hl7.fhir.dstu2.model.Bundle;
 import org.hl7.fhir.dstu2.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu2.model.Conformance;
 import org.hl7.fhir.dstu2.model.OperationDefinition;
+import org.hl7.fhir.dstu2.model.Resource;
 import org.hl7.fhir.dstu2.model.SearchParameter;
 import org.hl7.fhir.dstu2.model.StructureDefinition;
+import org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.dstu2.model.ValueSet;
 import org.hl7.fhir.dstu2.utils.ToolingExtensions;
+import org.hl7.fhir.r4.model.CompartmentDefinition;
 import org.hl7.fhir.utilities.Utilities;
+import org.hl7.fhir.utilities.cache.NpmPackage;
+import org.hl7.fhir.utilities.cache.PackageCacheManager;
+import org.hl7.fhir.utilities.cache.ToolsVersion;
 
 public class DefinitionsLoader2 {
 
-  public Definitions loadDefinitions(String src) throws Exception {
-    Bundle types = (Bundle) new XmlParser().parse(new FileInputStream(Utilities.path(src, "profiles-types.xml")));
-    Bundle resources = (Bundle) new XmlParser().parse(new FileInputStream(Utilities.path(src, "profiles-resources.xml")));
-    Bundle searchParams = (Bundle) new XmlParser().parse(new FileInputStream(Utilities.path(src, "search-parameters.xml")));
-    Bundle valuesets = (Bundle) new XmlParser().parse(new FileInputStream(Utilities.path(src, "expansions.xml")));
-    Map<String, ValueSet> vsmap = new HashMap<String, ValueSet>();
-    for (BundleEntryComponent entry : valuesets.getEntry()) {
-      vsmap.put(((ValueSet) entry.getResource()).getUrl(), (ValueSet) entry.getResource());
+  public Definitions loadDefinitions(String ver) throws Exception {
+    PackageCacheManager pcm = new PackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
+    NpmPackage npm = pcm.loadPackage("hl7.fhir.core.gen", ver);
+    
+    List<StructureDefinition> sdl = new ArrayList<>();
+    List<SearchParameter> spl = new ArrayList<>();
+    List<OperationDefinition> odl = new ArrayList<>();
+    Map<String, ValueSet> vsm = new HashMap<>();
+    
+    for (String name : npm.listResources("StructureDefinition", "SearchParameter", "ValueSet", "OperationDefinition", "CompartmentDefinition")) {
+      Resource res = new JsonParser().parse(npm.load("package", name));
+      
+      if (res.fhirType().equals("StructureDefinition")) {
+        StructureDefinition sd = (StructureDefinition) res;
+        sdl.add(sd);
+      }
+      if (res.fhirType().equals("SearchParameter")) {
+        SearchParameter sp = (SearchParameter) res;
+        spl.add(sp);
+      }
+      if (res.fhirType().equals("OperationDefinition")) {
+        OperationDefinition od = (OperationDefinition) res;
+        odl.add(od);
+      }
+      if (res.fhirType().equals("ValueSet")) {
+        ValueSet vs = (ValueSet) res;
+        vsm.put(vs.getUrl(), vs);
+      }        
     }
 
+
     Definitions def = new Definitions();
-    for (BundleEntryComponent entry : types.getEntry()) {
-      if (entry.getResource() instanceof StructureDefinition) 
-        processType(def, (StructureDefinition) entry.getResource(), vsmap);
-      else
-        System.out.println("unhandled entry in types: "+entry.getResource().fhirType());
+    def.setVersion(ver);
+    for (StructureDefinition sd : sdl) {
+      def.setGenDate(sd.getDateElement());
+      if (!sd.hasConstrainedType() && (sd.getKind() == StructureDefinitionKind.DATATYPE)) { 
+        System.out.println("dt: " +sd.getId());
+        processType(def, sd, vsm);
+      }
     }
-    for (BundleEntryComponent entry : resources.getEntry()) {
-      if (entry.getResource() instanceof StructureDefinition) 
-        processResource(def, (StructureDefinition) entry.getResource(), vsmap);
-      else if (entry.getResource() instanceof Conformance) 
-        processConformance(def, (Conformance) entry.getResource());
-      else if (entry.getResource() instanceof OperationDefinition)
-        def.getOperations().add(new VersionConvertor_10_30(null).convertOperationDefinition((OperationDefinition) entry.getResource())); 
-      else
-        System.out.println("unhandled entry in resources: "+entry.getResource().fhirType());
+    for (StructureDefinition sd : sdl) {
+      if (!sd.hasConstrainedType() && (sd.getKind() == StructureDefinitionKind.RESOURCE)) {
+        System.out.println("res: " +sd.getId());
+        processResource(def, sd, vsm);
+      }
     }
-    for (BundleEntryComponent entry : searchParams.getEntry()) {
-      if (entry.getResource() instanceof SearchParameter) 
-        processSearchParam(def, (SearchParameter) entry.getResource());
-      else 
-        System.out.println("unhandled entry in search parameters: "+entry.getResource().fhirType());
+    for (OperationDefinition od : odl) {
+      def.getOperations().add(new VersionConvertor_10_30(null).convertOperationDefinition(od));
     }
+    
+    for (SearchParameter sp : spl) {
+      processSearchParam(def, sp);
+    }
+
     return def;
   }
 
@@ -61,7 +93,8 @@ public class DefinitionsLoader2 {
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
     SearchParameterDefn spd = new SearchParameterDefn().loadR2(sp.getCode(), sp.getDescription(), sp.getType(), sp.getXpathUsage(), sp.getTarget(), null);
-    def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
+    if (sp.hasBase())
+      def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 
   private static void processResource(Definitions def, StructureDefinition sd, Map<String, ValueSet> vsmap) throws Exception {
