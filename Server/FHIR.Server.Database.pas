@@ -59,7 +59,7 @@ const
 
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
-  KEY_SAVE_SIZE = 20;
+  KEY_SAVE_SIZE = 200;
 
 
 type
@@ -3633,6 +3633,8 @@ begin
               be := bl[i];
               Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
               context.progress(0+trunc(100 * (i / (bl.count * 10))));
+              if be.resource.id.contains('7194') then
+                writeln('test');
               be.Tag := scanId(request, be, ids, i).Link;
             end;
 
@@ -6820,23 +6822,32 @@ begin
 end;
 
 function TFHIRNativeStorageService.NextResourceKeyGetId(aType: String; var id: string): integer;
+var
+  upd : boolean;
+  key : integer;
+  cfg : TFHIRResourceConfig;
 begin
+  key := 0;
   if aType = 'Composition' then
     writeln('test');
   FLock.Lock('NextResourceKey');
   try
     inc(FLastResourceKey);
     result := FLastResourceKey;
-    inc(ServerContext.ResConfig[aType].LastResourceId);
-    if ServerContext.ResConfig[aType].LastResourceId > ServerContext.ResConfig[aType].storedResourceId then
+    cfg := ServerContext.ResConfig[aType];
+    inc(cfg.LastResourceId);
+    upd := cfg.LastResourceId > cfg.storedResourceId;
+    if upd then
     begin
-      ServerContext.ResConfig[aType].storedResourceId := ServerContext.ResConfig[aType].LastResourceId + KEY_SAVE_SIZE;
-      DB.ExecSQL('Update Types set LastId = '+inttostr(ServerContext.ResConfig[aType].storedResourceId)+' where ResourceTypeKey = '+inttostr(ServerContext.ResConfig[aType].key), 'key-update');
+      cfg.storedResourceId := cfg.LastResourceId + KEY_SAVE_SIZE;
+      key := cfg.storedResourceId;
     end;
     id := inttostr(ServerContext.ResConfig[aType].LastResourceId);
   finally
     FLock.Unlock;
   end;
+  if upd then
+    DB.ExecSQL('Update Types set LastId = '+inttostr(key)+' where ResourceTypeKey = '+inttostr(cfg.key), 'key-update');
 end;
 
 function TFHIRNativeStorageService.NextResourceKeySetId(aType: String; id: string): integer;
