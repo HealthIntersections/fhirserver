@@ -3,11 +3,47 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.278 2019-03-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.278.exe</link>
+			<description>2019-03-13 (v1.0.278): fix loading package issue</description>
+		</item>
+<item><title>FHIRServer release 1.0.277 2019-03-04</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.277.exe</link>
+			<description>2019-03-04 (v1.0.277): fix problem expanding R2 value sets</description>
+		</item>
+		<item><title>FHIRServer release 1.0.276 2019-03-02</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.276.exe</link>
+			<description>2019-03-02 (v1.0.276): fix bug in String indexing</description>
+		</item>
+		<item><title>FHIRServer release 1.0.275 2019-02-21</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.275.exe</link>
+			<description>2019-02-21 (v1.0.275): fix scim editor</description>
+		</item>
+		<item><title>FHIRServer release 1.0.274 2019-02-21</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.274.exe</link>
+			<description>2019-02-21 (v1.0.274): allow password rescue on admin account</description>
+		</item>
+		<item><title>FHIRServer release 1.0.273 2019-02-21</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.273.exe</link>
+			<description>2019-02-21 (v1.0.273): Smart App Launch Compliance</description>
+		</item>
+		<item><title>FHIRServer release 1.0.272 2019-01-24</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.272.exe</link>
+			<description>2019-01-24 (v1.0.272): fix install problem</description>
+		</item>
+		<item><title>FHIRServer release 1.0.271 2019-01-24</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.271.exe</link>
+			<description>2019-01-24 (v1.0.271): fix problem with patch</description>
+		</item>
+		<item><title>FHIRServer release 1.0.270 2019-01-12</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.270.exe</link>
+			<description>2019-01-12 (v1.0.270): fix loading bugs</description>
+		</item>
 		<item><title>FHIRServer release 1.0.269 2018-12-31</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.269.exe</link>
 			<description>2018-12-31 (v1.0.269): fix SSL version</description>
 		</item>
-<item><title>FHIRServer release 1.0.238 2018-06-04</title>
+		<item><title>FHIRServer release 1.0.238 2018-06-04</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.238.exe</link>
 			<description>2018-06-04 (v1.0.238): fix another SSL related bug</description>
 		</item>

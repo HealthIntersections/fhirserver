@@ -65,7 +65,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "update markdown to use CommonMark"
+        as.returnvalue = "fix r4 install issue"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -98,6 +98,135 @@ begin
         sectionname = npp-settings
         variables = "BuildCount" +
                     ""
+      end
+      action.group
+      begin
+        description = "Compile Install Helper"
+        id = {A3DE6722-ED4D-4B80-8849-05402E32C643}
+        action.files.delete
+        begin
+          deletehidden = false
+          deletereadonly = false
+          failifnofile = true
+          filespec = C:\\work\\fhirserver\\Exec\\32\\installer.dll
+          id = {4EF74AFA-15F6-42DB-9458-CB0574AB865E}
+        end
+        action.delphi.build
+        begin
+          allowimplicitimport = true
+          alwaysuseconditionalsfromdof = false
+          autoincbuild = false
+          autoupdatefileversion = true
+          autoupdateproductversion = false
+          buildall = true
+          buildversion = 0
+          codepage = 1252
+          compileprojectresources = false
+          compileridl = true
+          configname = Release
+          debugversionnumbers = false
+          delphiversion = Delphi10Tokyo
+          eurekalogverboselogging = false
+          frameworktype = VCL
+          hintsaserror = false
+          id = {E070E6BD-1CA7-4F89-A17C-C7F2AFFEC321}
+          includecompiledate = false
+          includemanifest = false
+          includeverinfo = false
+          isdebug = false
+          isdll = false
+          isprerelease = false
+          isprivate = false
+          isspecial = false
+          keepcfg = false
+          linkproductversiontofileversion = true
+          locale = 1033
+          majorversion = 1
+          minorversion = 0
+          platform = Win32
+          platformsdktype = ProjectSDK
+          projectfile = C:\\work\\fhirserver\\install\\helper\\installer.dpr
+          regenerateresource = true
+          releaseversion = 0
+          resourcecompilertype = rcBorland
+          startingdir = C:\\work\\fhirserver\\install\\helper\\
+          updatedoffile = false
+          updatepackagesource = false
+          updateversioninfokeys = false
+          useeurekalogcompiler = false
+          useprojectsettings = []
+          usepropertyset = false
+          useversionfromdof = false
+          verboseoutput = false
+          versioninfokeys = "CompanyName\=" +
+                            "FileVersion\=1.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductVersion\=1.0.0.0" +
+                            "Comments\=" +
+                            "ProgramID\=com.embarcadero.$(ModuleName)" +
+                            "FileDescription\=$(ModuleName)" +
+                            "ProductName\=$(ModuleName)" +
+                            ""
+          warningsaserror = false
+          workaroundd5bug = false
+          delphi.compileroptions
+          begin
+            alwaysuseconditionalsfromdof = false
+            alwaysusedelphilibrarypath = false
+            alwaysusedofsearchpath = false
+            assertions = true
+            assignableconst = false
+            booleval = false
+            compilerwarnings = "-w^CONSTRUCTING_ABSTRACT\=2" +
+                               ""
+            conditionals = RELEASE
+            consoleapp = false
+            debuginfo = false
+            definitionsonly = false
+            emitruntimetypeinformation = false
+            exportallsymbols = false
+            extendedsyntax = true
+            externaltd32 = false
+            frameworktype = VCL
+            generatedocumentation = false
+            generatehpp = false
+            hugestrings = true
+            imagebase = 4194304
+            includenamespaces = false
+            includeremotesymbols = false
+            includetd32 = false
+            inlining = inOn
+            iochecking = true
+            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\temp\\jcl-master\\jcl\\lib\\d25\\win32;C:\\temp\\jcl-master\\jcl\\source\\include
+            linkeroutput = 0
+            localsymbols = false
+            mapfile = 0
+            maxstacksize = 1048576
+            minstacksize = 16384
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;DUnitX.MemoryLeakMonitor;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+            openstrings = true
+            optimisation = true
+            outputdir = C:\\work\\fhirserver\\Exec\\32
+            overflowchecking = false
+            rangechecking = false
+            recordfieldalign = fa8
+            referenceinfo = false
+            safedivide = false
+            showhints = true
+            showwarnings = true
+            stackframes = false
+            stringchecks = true
+            typedpointers = false
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
+            unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\32
+            usedebugdcu = false
+            usepackages = false
+            varstringchecks = true
+          end
+        end
       end
       action.group
       begin

@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIR Notepad++ Plug-in Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>Notepad++ Plugin release 1.0.39 1/24/2019 8:54:01 PM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.39.exe</link>
+			<description>1/24/2019 8:54:01 PM (v1.0.39): fix install problem</description>
+		</item>
+<item><title>Notepad++ Plugin release 1.0.38 1/17/2019 2:16:20 PM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.38.exe</link>
+			<description>1/17/2019 2:16:20 PM (v1.0.38): fix r4 install issue</description>
+		</item>
 		<item><title>Notepad++ Plugin release 1.0.37 1/7/2019 10:13:45 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.37.exe</link>
 			<description>1/7/2019 10:13:45 PM (v1.0.37): fix install issue</description>
 		</item>
-<item><title>Notepad++ Plugin release 1.0.37 1/7/2019 10:00:16 PM</title>
+		<item><title>Notepad++ Plugin release 1.0.37 1/7/2019 10:00:16 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.37.exe</link>
 			<description>1/7/2019 10:00:16 PM (v1.0.37): update markdown to use CommonMark</description>
 		</item>
