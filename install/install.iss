@@ -133,7 +133,7 @@ Source: "C:\ProgramData\.fhir\packages\packages.ini";               DestDir: "C:
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\Exec\lang.txt";                           DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc-2.65.cache";                  DestDir: "{commonappdata}\FHIRServer"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
 Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
@@ -1773,7 +1773,7 @@ function checkDatabaseR4 : boolean;
 var 
   s, c : String;
 begin
-  s := MyDllCheckDatabase(dbDriverR4.text, ConnectionPageR4.values[0], ConnectionPageR4.values[1], ConnectionPageR4.values[2], ConnectionPageR4.values[3], '3.5.0');
+  s := MyDllCheckDatabase(dbDriverR4.text, ConnectionPageR4.values[0], ConnectionPageR4.values[1], ConnectionPageR4.values[2], ConnectionPageR4.values[3], '4.0.0');
   c := s[1];
   s := copy(s, 2, length(s));
   result := true;
@@ -1972,7 +1972,7 @@ var
   pl, s, t, pi : String;
   i : integer;
 begin
-  pl := MyDllListPackages('system', '3.5.0');
+  pl := MyDllListPackages('system', '4.0.0');
   
   PackagesR4.Text := pl;
   for i := 0 to packagesR4.count - 1 do 
@@ -2093,7 +2093,7 @@ begin
   MyDllSetIniValue(iniName, 'web.certpword', certPWord.Text);
   MyDllSetIniValue(iniName, 'admin.email', AdminPage.Values[0]);
   MyDllSetIniValue(iniName, 'admin.username', AdminPage.Values[1]);
-  MyDllSetIniValue(iniName, 'tx.loinc', 'type: loinc; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\loinc-2.64.cache');
+  MyDllSetIniValue(iniName, 'tx.loinc', 'type: loinc; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\loinc-2.65.cache');
   MyDllSetIniValue(iniName, 'tx.ucum', 'type: ucum; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\ucum-essence.xml');
   MyDllSetIniValue(iniName, 'tx.lang', 'type: lang; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\lang.txt')
 
