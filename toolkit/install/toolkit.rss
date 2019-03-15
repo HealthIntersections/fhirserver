@@ -3,6 +3,27 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.53 2019-01-24</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.53.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.53.zip</mlink>
+			<description>2019-01-24 (v0.0.53): fix install problem</description>
+			<ptitle>0.0.53, 2019-01-24</ptitle>
+			<comment>fix install problem</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.52 2019-01-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.52.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.52.zip</mlink>
+			<description>2019-01-16 (v0.0.52): Work around form focus bug</description>
+			<ptitle>0.0.52, 2019-01-16</ptitle>
+			<comment>Work around form focus bug</comment>
+		</item>
+		<item><title>FHIR Toolkit release 0.0.51 2019-01-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.51.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.51.zip</mlink>
+			<description>2019-01-13 (v0.0.51): fix validation screen</description>
+			<ptitle>0.0.51, 2019-01-13</ptitle>
+			<comment>fix validation screen</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.50 2019-01-09</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.50.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.50.zip</mlink>
@@ -10,7 +31,7 @@
 			<ptitle>0.0.50, 2019-01-09</ptitle>
 			<comment>fix bug editing code systems with property type mismatches</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.48 2018-12-31</title>
+		<item><title>FHIR Toolkit release 0.0.48 2018-12-31</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.48.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.48.zip</mlink>
 			<description>2018-12-31 (v0.0.48): Fix minor bugs and work on SSL distribution</description>
