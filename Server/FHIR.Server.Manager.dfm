@@ -775,10 +775,6 @@ object ServerManagerForm: TServerManagerForm
     StyleElements = [seFont, seClient]
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 405
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -804,7 +800,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 364
         DesignSize = (
           670
           41)
@@ -930,7 +925,6 @@ object ServerManagerForm: TServerManagerForm
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 2
-        ExplicitTop = 313
         DesignSize = (
           670
           51)
@@ -968,7 +962,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 3
-        ExplicitHeight = 212
         DesignSize = (
           670
           220)
@@ -1106,8 +1099,8 @@ object ServerManagerForm: TServerManagerForm
           Width = 584
           Height = 21
           Anchors = [akLeft, akTop, akRight]
-          Date = 42643.695417002320000000
-          Time = 42643.695417002320000000
+          Date = 42643.000000000000000000
+          Time = 0.695417002316389700
           TabOrder = 2
         end
         object edtDestination: TEdit
@@ -1166,10 +1159,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet4: TTabSheet
       Caption = 'Snomed Combination'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 405
       object Panel20: TPanel
         Left = 0
         Top = 372
@@ -1178,7 +1167,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitTop = 364
         DesignSize = (
           670
           41)
@@ -1304,7 +1292,6 @@ object ServerManagerForm: TServerManagerForm
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 1
-        ExplicitTop = 313
         DesignSize = (
           670
           51)
@@ -1402,7 +1389,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
-        ExplicitHeight = 212
         DesignSize = (
           670
           220)
@@ -1652,10 +1638,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet2: TTabSheet
       Caption = 'LOINC Import'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 405
       object Panel8: TPanel
         Left = 0
         Top = 41
@@ -1727,7 +1709,6 @@ object ServerManagerForm: TServerManagerForm
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 2
-        ExplicitTop = 313
         DesignSize = (
           670
           51)
@@ -1765,7 +1746,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 3
-        ExplicitTop = 364
         DesignSize = (
           670
           41)
@@ -1889,7 +1869,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
-        ExplicitHeight = 193
         DesignSize = (
           670
           201)
@@ -2176,12 +2155,10 @@ object ServerManagerForm: TServerManagerForm
         end
         object cbUMLSType: TComboBox
           Left = 512
-          Top = 13
+          Top = 11
           Width = 153
           Height = 21
-          Enabled = False
           TabOrder = 5
-          OnChange = cbUMLSDriverChange
           Items.Strings = (
             'mssql'
             'mysql')
@@ -2189,10 +2166,19 @@ object ServerManagerForm: TServerManagerForm
         object cbUMLSDriver: TComboBox
           Left = 80
           Top = 13
-          Width = 585
+          Width = 380
           Height = 21
           TabOrder = 4
           OnChange = cbUMLSDriverChange
+        end
+        object btnNDC: TButton
+          Left = 12
+          Top = 189
+          Width = 75
+          Height = 25
+          Caption = 'Import NDC'
+          TabOrder = 6
+          OnClick = btnNDCClick
         end
       end
       object Panel18: TPanel
@@ -2361,10 +2347,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet5: TTabSheet
       Caption = 'Package Manager'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlPackageManager: TPanel
         Left = 0
         Top = 41
@@ -2432,5 +2414,12 @@ object ServerManagerForm: TServerManagerForm
     Title = 'Choose SNOMED CT RF2 Snapshot Folder'
     Left = 385
     Top = 3
+  end
+  object fd: TFileOpenDialog
+    FavoriteLinks = <>
+    FileTypes = <>
+    Options = [fdoPickFolders]
+    Left = 447
+    Top = 27
   end
 end

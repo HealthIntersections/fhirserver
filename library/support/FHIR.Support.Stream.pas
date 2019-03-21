@@ -57,6 +57,7 @@ type
 
       Function Readable : Int64; Virtual;
       Function Writeable : Int64; Virtual;
+      Function percent : Integer; Virtual;
   End;
 
   TFslStreamClass = Class Of TFslStream;
@@ -92,6 +93,7 @@ type
 
       Function Readable : Int64; Override;
       Function Writeable : Int64; Override;
+      Function percent : Integer; override;
 
       Function HasStream : Boolean; Virtual;
 
@@ -111,6 +113,7 @@ type
 
       Property Size : Int64 Read GetSize Write SetSize;
       Property Position : Int64 Read GetPosition Write SetPosition;
+      Function percent : Integer; override;
   End;
 
   TFslAccessStreamList = Class(TFslStreamList)
@@ -143,7 +146,7 @@ type
       Function Writeable : Int64; Override;
 
       Property Stream : TFslAccessStream Read GetStream Write SetStream;
-  End; 
+  End;
 
   TFslObjectClass = FHIR.Support.Base.TFslObjectClass;
 
@@ -850,6 +853,7 @@ Type
     property BaseStream: TFslStream read FStream;
     property CurrentEncoding: TEncoding read FEncoding;
     property EndOfStream: Boolean read GetEndOfStream;
+    function percent : integer;
   end;
 
   TFslFormatter = Class(TFslStreamAdapter)
@@ -981,6 +985,7 @@ Type
       FSeparator : Char;
       FQuote : Char;
       FHasQuote : Boolean;
+    FIgnoreWhitespace: boolean;
 
     Public
       constructor Create; Override;
@@ -993,6 +998,7 @@ Type
       Property Separator : Char Read FSeparator Write FSeparator;
       Property Quote : Char Read FQuote Write FQuote;
       Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
+      Property IgnoreWhitespace : boolean read FIgnoreWhitespace write FIgnoreWhitespace;
   End;
 
   TFslCSVFormatter = Class(TFslTextFormatter)
@@ -1503,6 +1509,11 @@ Begin
 End;
 
 
+function TFslStream.percent: Integer;
+begin
+  result := 0;
+end;
+
 Function TFslStream.ErrorClass : EFslExceptionClass;
 Begin
   Result := EIOException;
@@ -1595,6 +1606,11 @@ Begin
 End;
 
 
+function TFslStreamAdapter.percent: Integer;
+begin
+  result := Stream.percent;
+end;
+
 Procedure TFslStreamAdapter.Read(Var Buffer; iCount : Integer);
 Begin 
   Stream.Read(Buffer, iCount);
@@ -1624,6 +1640,11 @@ Begin
   Result := TFslAccessStream(Inherited Link);
 End;
 
+
+function TFslAccessStream.percent: Integer;
+begin
+  result := trunc(position / size * 100);
+end;
 
 Function TFslAccessStream.GetPosition : Int64;
 Begin 
@@ -3655,7 +3676,10 @@ Begin
     oEntries.Clear;
 
   // Consume all preceeding whitespace.
-  ConsumeWhileCharacterSet(setControls + setVertical + setHorizontal);
+  if IgnoreWhitespace then
+    ConsumeWhileCharacterSet(setControls + setVertical + setHorizontal)
+  else
+    ConsumeWhileCharacterSet(setVertical);
 
   While MoreEntries Do
   Begin
@@ -3672,7 +3696,8 @@ Var
   bMore : Boolean;
 Begin
   // strip all leading whitespace.
-  ConsumeWhileCharacterSet(setControls + setHorizontal);
+  if IgnoreWhitespace then
+    ConsumeWhileCharacterSet(setControls + setHorizontal);
 
   If More Then
   Begin
@@ -3717,7 +3742,8 @@ Begin
     If More Then
     Begin
       // strip trailing whitespace.
-      ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
+      if IgnoreWhitespace then
+        ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
 
       If More And (NextCharacter = FSeparator) Then
       Begin
@@ -3725,6 +3751,7 @@ Begin
         ConsumeCharacter(FSeparator);
 
         // strip trailing non-newline whitespace after separator.
+      if IgnoreWhitespace then
         ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
       End;
     End;
@@ -4433,6 +4460,11 @@ begin
       FillBuffer(FEncoding);
     Result := Integer(FBufferedData[FBufferStart]);
   end;
+end;
+
+function TFslStreamReader.percent: integer;
+begin
+  result := FStream.percent;
 end;
 
 function TFslStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
