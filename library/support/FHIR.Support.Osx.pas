@@ -40,7 +40,7 @@ other code to fix:
 
 uses
   Posix.Unistd, Posix.Pthread, Posix.Wctype,
-  MacApi.CoreServices, Macapi.Mach, Macapi.Foundation,
+  MacApi.CoreServices, Macapi.Mach, Macapi.Foundation, Macapi.Helpers,
   Math, SysUtils, System.Character;
 
 const
@@ -144,13 +144,10 @@ end;
 
 function OSXRemoveAccents(s : String) : String;
 var
-  ns, nsD : NSString;
-  i : integer;
-  uc : unichar;
-  c : char;
+  ns,ns2 : NSString;
 begin
-  ns := CocoaNSStringConst(libFoundation, s);
-  nsD := ns.decomposedStringWithCanonicalMapping;
+  ns := StrToNSStr(s);
+  ns2 := ns.decomposedStringWithCanonicalMapping;
   result := '';
   for i := 0 to nsD.length - 1 do
   begin

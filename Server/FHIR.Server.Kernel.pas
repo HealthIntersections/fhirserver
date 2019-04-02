@@ -166,7 +166,7 @@ var
   cmd : String;
   fn, fn2, name : String;
   svc : TFHIRService;
-  smode : String;
+  smode, plist : String;
   mode : TFHIRInstallerSecurityMode;
 begin
   //AllocConsole;
@@ -255,7 +255,11 @@ begin
             begin
               svc.DebugMode := true;
               svc.FNotServing := true;
-  //            svc.Load(fn);
+              if not FindCmdLineSwitch('endpoint', name, true, [clstValueNextParam]) then
+                raise Exception.Create('Must provide an endpoint for loading a package');
+              if not FindCmdLineSwitch('package', plist, true, [clstValueNextParam]) then
+                raise Exception.Create('Must specify a package');
+              svc.Load(name, plist, ismUnstated);
             end
             else if cmd = 'txdirect' then
             begin
@@ -635,20 +639,23 @@ begin
 
     pcm := TFHIRPackageManager.Create(false);
     try
-      pl := plist.substring(1).Split([',']);
+      pl := plist.Split([',']);
       for p in pl do
       begin
-        StringSplit(p, '#', pi, pv);
-        if not pcm.packageExists(pi, pv) then
-          raise EFHIRException.create('Package '+p+' not found');
-        ploader := TPackageLoader.create(factoryFactory(v));
-        try
-          loadList := getLoadResourceList(ploader.FFactory, mode);
-          logt('Load Package '+pi+'#'+pv+' - resources of type '+asString(loadList));
-          pcm.loadPackage(pi, pv, loadList, ploader.load);
-          FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
-        finally
-          ploader.Free;
+        if p <> '' then
+        begin
+          StringSplit(p, '#', pi, pv);
+          if not pcm.packageExists(pi, pv) then
+            raise EFHIRException.create('Package '+p+' not found');
+          ploader := TPackageLoader.create(factoryFactory(v));
+          try
+            loadList := getLoadResourceList(ploader.FFactory, mode);
+            logt('Load Package '+pi+'#'+pv+' - resources of type '+asString(loadList));
+            pcm.loadPackage(pi, pv, loadList, ploader.load);
+            FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
+          finally
+            ploader.Free;
+          end;
         end;
       end;
     finally

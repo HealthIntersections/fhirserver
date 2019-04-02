@@ -383,7 +383,8 @@ uses
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Server.ConsentEngine in 'FHIR.Server.ConsentEngine.pas';
+  FHIR.Server.ConsentEngine in 'FHIR.Server.ConsentEngine.pas',
+  FHIR.Tx.NDC in 'FHIR.Tx.NDC.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

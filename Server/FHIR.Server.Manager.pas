@@ -158,6 +158,8 @@ type
     TabSheet5: TTabSheet;
     pnlPackageManager: TPanel;
     Panel26: TPanel;
+    btnNDC: TButton;
+    fd: TFileOpenDialog;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -184,6 +186,7 @@ type
     function GetODBCDriversList: TStrings;
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure pnlPackageManagerLinkClick(Sender: TObject);
+    procedure btnNDCClick(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -208,7 +211,8 @@ implementation
 Uses
   FHIR.Database.Manager, FHIR.Database.ODBC,
   FHIR.Snomed.Importer, FHIR.Snomed.Combiner, FHIR.Snomed.Services,
-  FHIR.Loinc.Importer, FHIR.Tx.RxNorm;
+  FHIR.Loinc.Importer, FHIR.Tx.RxNorm,
+  FHIR.Tx.NDC;
 
 procedure TServerManagerForm.FormCreate(Sender: TObject);
 var
@@ -225,6 +229,8 @@ begin
   edtLoincDest.text := ini.ReadString('loinc-import', 'dest', '');
   edtLoincDate.Text := ini.ReadString('loinc-import', 'tdate', '');
 
+  cbUMLSDriver.text := ini.ReadString('umls-process', 'driver', '');
+  cbUMLSType.text := ini.ReadString('umls-process', 'type', '');
   edtUMLSServer.text := ini.ReadString('umls-process', 'server', '');
   edtUMLSDatabase.text := ini.ReadString('umls-process', 'database', '');
   edtUMLSUsername.text := ini.ReadString('umls-process', 'username', '');
@@ -606,6 +612,71 @@ begin
     edtLoincSource.text := dlgSource.filename;
 end;
 
+procedure TServerManagerForm.btnNDCClick(Sender: TObject);
+var
+  db : TKDBManager;
+  start : TDateTime;
+  ndc : TNdcImporter;
+begin
+  if fd.execute then
+  begin
+    start := now;
+    if cbUMLSDriver.Text = '' then
+      ShowMessage('No Database Driver specified') else
+    if not MatchText(cbUMLSType.Text, ['mssql', 'mysql']) then
+      ShowMessage('No valid Server Type specified') else
+    if edtUMLSServer.Text = '' then
+      ShowMessage('No Server specified')
+    else if edtUMLSDatabase.Text = '' then
+      ShowMessage('No Database specified')
+    else if (edtUMLSUsername.Text = '') xor (edtUMLSPassword.Text = '') then
+      ShowMessage('Plase specify both a username and password, or neither')
+    else
+    begin
+      ini.WriteString('umls-process', 'driver', cbUMLSDriver.text);
+      ini.WriteString('umls-process', 'type', cbUMLSType.text);
+      ini.WriteString('umls-process', 'server', edtUMLSServer.text);
+      ini.WriteString('umls-process', 'database', edtUMLSDatabase.text);
+      ini.WriteString('umls-process', 'username', edtUMLSUsername.text);
+      ini.WriteString('umls-process', 'password', strEncrypt(edtUMLSPassword.text, GetCryptKey('umls encryption key')));
+
+      ndc := TNDCImporter.create(fd.FileName);
+      try
+        ndc.Database := TKDBOdbcManager.create('ndc', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+        wantStop := false;
+        btnUMLSStop.Visible := true;
+        cursor := crHourGlass;
+        running := true;
+        edtUMLSServer.enabled := false;
+        edtUMLSDatabase.enabled := false;
+        edtUMLSUsername.enabled := false;
+        edtUMLSPassword.enabled := false;
+        btnProcessUMLS.enabled := false;
+        btnUMLSClose.enabled := false;
+        btnNDC.Enabled := false;
+        try
+          ndc.process(umlsCallback);
+        finally
+          cursor := crDefault;
+          btnNDC.Enabled := true;
+          btnUMLSStop.Visible := false;
+          running := false;
+          edtUMLSServer.enabled := true;
+          edtUMLSDatabase.enabled := true;
+          edtUMLSUsername.enabled := true;
+          edtUMLSPassword.enabled := true;
+          btnProcessUMLS.enabled := true;
+          btnUMLSClose.enabled := true;
+          umlsCallback(0, '');
+        end;
+      finally
+        ndc.Free;
+      end;
+      MessageDlg('Successfully Upload NDC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
+    end;
+  end;
+end;
+
 procedure TServerManagerForm.btnLoincDestClick(Sender: TObject);
 begin
   if (edtLoincDest.text <> '') then
@@ -751,11 +822,11 @@ end;
 
 procedure TServerManagerForm.cbUMLSDriverChange(Sender: TObject);
 begin
-//
-cbUMLSType.itemindex:=-1;
-if (pos('MySQL',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex:=1;
-if (pos('SQL Server',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex:=0;
-
+  cbUMLSType.itemindex := -1;
+  if (pos('MySQL',cbUMLSDriver.text) <> 0) then
+    cbUMLSType.itemIndex := 1;
+  if (pos('SQL Server',cbUMLSDriver.text) <> 0) then
+    cbUMLSType.itemIndex := 0;
 end;
 
 

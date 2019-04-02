@@ -779,7 +779,7 @@ begin
       )
     end
     else
-      raise EFHIRException.create('Unknown format');
+      raise EFHIRException.create('Unknown format for file "'+dlgExport.FileName+'"');
   end;
 
 end;

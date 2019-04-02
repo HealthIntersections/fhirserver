@@ -39,7 +39,7 @@ uses
   FHIR.Tools.CodeSystemProvider, FHIR.Tools.ValueSets,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR,
   FHIR.Tx.Uri, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState, FHIR.Tx.Iso4217,
-  FHIR.Tx.MimeTypes, FHIR.Tx.Lang, FHIR.Support.Logging,
+  FHIR.Tx.MimeTypes, FHIR.Tx.Lang, FHIR.Support.Logging, FHIR.Tx.NDC,
   FHIR.Server.Utilities, FHIR.Server.Ini,
   YuStemmer;
 
@@ -61,10 +61,12 @@ Type
     FACIR : TACIRServices;
     FProviderClasses : TFslMap<TCodeSystemProvider>;
     FNDFRT: TNDFRTServices;
+    FNDC : TNDCServices;
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
     procedure SetUcum(const Value: TUcumServices);
     procedure SetRxNorm(const Value: TRxNormServices);
+    procedure SetNDC(const Value: TNDCServices);
     procedure SetNciMeta(const Value: TNciMetaServices);
     procedure SetUnii(const Value: TUniiServices);
     procedure SetACIR(const Value: TACIRServices);
@@ -90,6 +92,7 @@ Type
     Property DefSnomed : TSnomedServices read FDefSnomed write SetDefSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
+    Property NDC : TNDCServices read FNDC write SetNDC;
     Property NDFRT : TNDFRTServices read FNDFRT write SetNDFRT;
     Property NciMeta : TNciMetaServices read FNciMeta write SetNciMeta;
     Property Unii : TUniiServices read FUnii write SetUnii;
@@ -1850,6 +1853,11 @@ begin
         logt('load '+s+' from '+details['database']);
         RxNorm := TRxNormServices.create(databases[details['database']].link)
       end
+      else if details['type'] = 'ndc' then
+      begin
+        logt('load '+s+' from '+details['database']);
+        NDC := TNDCServices.create(databases[details['database']].link, details['version'])
+      end
       else if details['type'] = 'ndfrt' then
       begin
         logt('load '+s+' from '+details['database']);
@@ -1895,6 +1903,22 @@ begin
   begin
     FProviderClasses.add(FRxNorm.system(nil), FRxNorm.Link);
     FProviderClasses.add(FRxNorm.system(nil)+URI_VERSION_BREAK+FRxNorm.version(nil), FRxNorm.Link);
+  end;
+end;
+
+procedure TCommonTerminologies.SetNDC(const Value: TNDCServices);
+begin
+  if FNDC <> nil then
+  begin
+    FProviderClasses.Remove(FNDC.system(nil));
+    FProviderClasses.Remove(FNDC.system(nil)+URI_VERSION_BREAK+FNDC.version(nil));
+  end;
+  FNDC.Free;
+  FNDC := Value;
+  if FNDC <> nil then
+  begin
+    FProviderClasses.add(FNDC.system(nil), FNDC.Link);
+    FProviderClasses.add(FNDC.system(nil)+URI_VERSION_BREAK+FNDC.version(nil), FNDC.Link);
   end;
 end;
 

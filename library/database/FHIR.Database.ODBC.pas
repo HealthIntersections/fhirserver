@@ -512,7 +512,10 @@ end;
 
 procedure TKDBOdbcConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
 begin
-  BindTimeStampV(AParamName, AParamValue.TimeStamp);
+  if AParamValue.null then
+    BindNull(AParamName)
+  else
+    BindTimeStampV(AParamName, AParamValue.TimeStamp);
 end;
 
 procedure TKDBOdbcConnection.BindDoubleV(AParamName: String; AParamValue: Double);

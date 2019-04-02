@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.37
+OutputBaseFilename=npp-install-1.0.39
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=FHIR Notepad++ Plugin 1.0.37
+AppVerName=FHIR Notepad++ Plugin 1.0.39
 
 [Components]
 Name: "n64"; Description: "64bit Notepad++"; Types: custom; Flags: exclusive
@@ -38,7 +38,7 @@ Name: "n32"; Description: "32bit Notepad++"; Types: custom; Flags: exclusive
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\work\fhirserver\install\installer.dll";               Flags: dontcopy;
+Source: "C:\work\fhirserver\exec\32\installer.dll";               Flags: dontcopy;
 
 ; 1st, the plug-in itself
 Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n32
