@@ -212,7 +212,6 @@ uses
   FHIR.Server.Factory in '..\..\Server\FHIR.Server.Factory.pas',
   FHIR.Server.GraphDefinition in '..\..\Server\FHIR.Server.GraphDefinition.pas',
   FHIR.Server.HackingHealth in '..\..\Server\Modules\FHIR.Server.HackingHealth.pas',
-  FHIR.Server.Indexing in '..\..\server\FHIR.Server.Indexing.pas',
   FHIR.Server.IndexingR4 in '..\..\Server\FHIR.Server.IndexingR4.pas',
   FHIR.Server.Ini in '..\..\Server\FHIR.Server.Ini.pas',
   FHIR.Server.Javascript in '..\..\Server\FHIR.Server.Javascript.pas',
@@ -360,7 +359,9 @@ uses
   InstanceValidator in '..\..\library\r4\InstanceValidator.pas',
   FHIR.R4.Adaptor in '..\..\library\r4\FHIR.R4.Adaptor.pas',
   FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
-  FHIR.Server.SimpleConsentEngine in '..\..\Server\FHIR.Server.SimpleConsentEngine.pas';
+  FHIR.Server.SimpleConsentEngine in '..\..\Server\FHIR.Server.SimpleConsentEngine.pas',
+  FHIR.Server.Indexing in '..\..\Server\FHIR.Server.Indexing.pas',
+  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas';
 
 var
   runner : ITestRunner;

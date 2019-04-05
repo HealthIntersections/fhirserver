@@ -3633,8 +3633,6 @@ begin
               be := bl[i];
               Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
               context.progress(0+trunc(100 * (i / (bl.count * 10))));
-              if be.resource.id.contains('7194') then
-                writeln('test');
               be.Tag := scanId(request, be, ids, i).Link;
             end;
 

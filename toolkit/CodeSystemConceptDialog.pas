@@ -34,9 +34,10 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox,
   FMX.Memo, FMX.Edit, FMX.DateTimeCtrls, System.ImageList, FMX.ImgList,
-  FHIR.Support.Utilities, FHIR.Ui.Fmx,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
   ResourceEditingSupport, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
-  ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog, FMX.TabControl, ResourceHistoryDialog;
+  ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog, FMX.TabControl, ResourceHistoryDialog,
+  FMX.ListBox;
 
 type
   TCodeSystemConceptForm = class(TForm)
@@ -78,6 +79,8 @@ type
     Label5: TLabel;
     CheckColumn1: TCheckColumn;
     CheckColumn2: TCheckColumn;
+    Label6: TLabel;
+    edtComments: TEdit;
     procedure FormShow(Sender: TObject);
     procedure edtCodeChangeTracking(Sender: TObject);
     procedure gridDesignationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -104,6 +107,7 @@ type
     procedure loadProperties;
     procedure loadProperty(Value: TFhirCodeSystemProperty; top : Double);
     procedure SetCodeSystem(const Value: TFhirCodeSystem);
+    function hasBindingExtension(value: TFhirCodeSystemProperty): boolean;
   public
     destructor Destroy; override;
 
@@ -247,6 +251,7 @@ var
   value : TFhirCodeSystemConceptProperty;
   s : String;
   d : TFHIRDateTime;
+  cbx : TCombobox;
 begin
   if not FLoading then
   begin
@@ -254,6 +259,11 @@ begin
     Concept.code := edtCode.Text;
     Concept.display := edtDIsplay.Text;
     Concept.definition := memDefinition.Text;
+    if edtComments.text <> '' then
+      Concept.setExtensionString('http://hl7.org/fhir/StructureDefinition/codesystem-comments', edtComments.Text)
+    else
+      Concept.removeExtension('http://hl7.org/fhir/StructureDefinition/codesystem-comments');
+
     for prop in FCodeSystem.property_List do
     begin
       value := concept.prop(prop.code);
@@ -266,6 +276,14 @@ begin
             if value = nil then
               value := concept.addProp(prop.code);
             value.value := TFhirString.Create(s);
+            cbx := TEdit(prop.TagObject).tagObject as TCombobox;
+            if cbx <> nil then
+            begin
+              if cbx.itemindex = 0 then
+                value.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-concept-binding-strength')
+              else
+                value.setExtensionCode('http://hl7.org/fhir/StructureDefinition/resource-concept-binding-strength', cbx.items[cbx.itemindex]);
+            end;
           end
           else if value <> nil then
             concept.deleteProp(prop.code);
@@ -309,11 +327,14 @@ var
   value : TFhirCodeSystemConceptProperty;
   ext : TFhirExtension;
   d : TDateTime;
+  cbx : TComboBox;
 begin
   FLoading := true;
   try
     edtCode.Text := Concept.code;
-    edtDIsplay.Text := Concept.display;
+    edtDisplay.Text := Concept.display;
+    edtComments.text := Concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/codesystem-comments');
+
     btnDisplay.ImageIndex := translationsImageIndex(Concept.displayElement);
     memDefinition.Text := Concept.definition;
     btnDefinition.ImageIndex := translationsImageIndex(Concept.definitionElement);
@@ -325,7 +346,14 @@ begin
       begin
         case prop.type_ of
           ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger:
+            begin
             TEdit(prop.TagObject).Text := value.value.primitiveValue;
+            if TEdit(prop.TagObject).TagObject <> nil then
+            begin
+              cbx := TComboBox(TEdit(prop.TagObject).TagObject);
+              cbx.ItemIndex := cbx.Items.IndexOf(value.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-concept-binding-strength'));
+            end;
+            end;
           ConceptPropertyTypeBoolean:
             TCheckBox(prop.TagObject).IsChecked := StrToBoolDef(value.value.primitiveValue, false);
           ConceptPropertyTypeDateTime:
@@ -448,6 +476,16 @@ begin
 
 end;
 
+function TCodeSystemConceptForm.hasBindingExtension(value : TFhirCodeSystemProperty) : boolean;
+var
+  ext : TFHIRExtension;
+begin
+  result := false;
+  for ext in value.listExtensions('http://hl7.org/fhir/StructureDefinition/codesystem-property-extension').forEnum do
+    if ext.value.primitiveValue = 'http://hl7.org/fhir/StructureDefinition/resource-concept-binding-strength' then
+      exit(true);
+end;
+
 procedure TCodeSystemConceptForm.loadProperty(Value: TFhirCodeSystemProperty; top : Double);
 var
   lbl : TLabel;
@@ -455,12 +493,16 @@ var
   cb : TCheckBox;
   ded : TDateEdit;
   ted : TTimeEdit;
+  cbx : TComboBox;
 begin
   lbl := TLabel.Create(tbGeneral);
   lbl.Parent := tbGeneral;
   lbl.Position.X := lblProperties.Position.X;
   lbl.Position.Y := top + 2;
   lbl.Text := value.code;
+  lbl.Hint := value.code;
+  lbl.ShowHint := true;
+  lbl.HitTest := true;
   lbl.Height := lblProperties.Height;
   lbl.Width := lblProperties.Width;
 
@@ -469,20 +511,39 @@ begin
       begin
       edt := TEdit.Create(tbGeneral);
       edt.Parent := tbGeneral;
-      edt.Position.X := edtCode.Position.X;
+      edt.Position.X := edtCode.Position.X+30;
       edt.Position.Y := top;
       value.TagObject := edt;
       edt.Height := edtCode.Height;
-      edt.Width := edtDIsplay.Position.X + edtDIsplay.Width - edt.Position.X;
+      if hasBindingExtension(value) then
+        edt.Width := edtDIsplay.Position.X + edtDIsplay.Width - edt.Position.X - 80
+      else
+        edt.Width := edtDIsplay.Position.X + edtDIsplay.Width - edt.Position.X;
       edt.Hint := value.description;
       edt.OnChangeTracking := edtCodeChangeTracking;
       edt.OnChange := edtCodeChangeTracking;
+      edt.Anchors := [TAnchorKind.akLeft, TAnchorKind.akTop, TAnchorKind.akRight];
+      if hasBindingExtension(value) then
+      begin
+        cbx := TCombobox.create(tbGeneral);
+        cbx.Parent := tbGeneral;
+        cbx.Position.X := edt.Position.X+edt.width+10;
+        cbx.Position.Y := top;
+        cbx.Height := edtCode.Height;
+        cbx.Width := 70;
+        cbx.items.Add('');
+        cbx.items.Add('CNE');
+        cbx.items.Add('CWE');
+        cbx.OnChange := edtCodeChangeTracking;
+        cbx.Anchors := [TAnchorKind.akTop, TAnchorKind.akRight];
+        edt.TagObject := cbx;
+      end;
       end;
     ConceptPropertyTypeBoolean :
       begin
       cb := TCheckBox.Create(tbGeneral);
       cb.Parent := tbGeneral;
-      cb.Position.X := edtCode.Position.X;
+      cb.Position.X := edtCode.Position.X+30;
       cb.Position.Y := top+2;
       value.TagObject := cb;
       cb.Height := edtCode.Height;
@@ -496,7 +557,7 @@ begin
       begin
       ded := TDateEdit.Create(tbGeneral);
       ded.Parent := tbGeneral;
-      ded.Position.X := edtCode.Position.X;
+      ded.Position.X := edtCode.Position.X+30;
       ded.Position.Y := top+2;
       value.TagObject := ded;
       ded.Height := edtCode.Height;
@@ -516,6 +577,7 @@ begin
       ted.OnChange := edtCodeChangeTracking;
       ted.OnClick := edtCodeChangeTracking;
       ted.Text := '';
+      ted.Anchors := [TAnchorKind.akLeft, TAnchorKind.akTop, TAnchorKind.akRight];
       end;
   end;
 end;

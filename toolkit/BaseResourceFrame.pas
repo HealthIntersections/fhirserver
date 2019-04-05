@@ -152,7 +152,7 @@ begin
       end;
     end
     else
-      resourceToFile(resource, FFilename, format);
+      resourceToFile(resource, FFilename, format, OutputStylePretty);
   ResourceIsDirty := false;
 end;
 

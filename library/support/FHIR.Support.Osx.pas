@@ -145,13 +145,16 @@ end;
 function OSXRemoveAccents(s : String) : String;
 var
   ns,ns2 : NSString;
+  i : integer;
+  uc : Word;
+  c : char;
 begin
   ns := StrToNSStr(s);
   ns2 := ns.decomposedStringWithCanonicalMapping;
   result := '';
-  for i := 0 to nsD.length - 1 do
+  for i := 0 to ns2.length - 1 do
   begin
-    uc := nsd.characterAtIndex(i);
+    uc := ns2.characterAtIndex(i);
     c := char(uc);
     if (c.GetUnicodeCategory <> TUnicodeCategory.ucNonSpacingMark) and (c.GetUnicodeCategory <> TUnicodeCategory.ucCombiningMark) then
       result := result + c;

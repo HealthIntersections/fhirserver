@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  System.UITypes,
+  SysUtils, System.UITypes,
   Generics.Collections,
   FMX.Forms;
 
@@ -39,6 +39,7 @@ uses
 
 function showModalHack(form : TForm) : TModalResult;
 procedure ModalHackUpdateStatus;
+function prepEdit(s : String): String;
 
 implementation
 
@@ -64,6 +65,11 @@ begin
   if Gstack <> nil then
     for frm in GStack do
       frm.bringToFront;
+end;
+
+function prepEdit(s : String): String;
+begin
+  result := s.replace(#10, ' ');
 end;
 
 initialization

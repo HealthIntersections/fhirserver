@@ -295,6 +295,7 @@ begin
   FConn.BindInteger('ProductKey', FCodes[fields[PACK_FIELD_ProductNDC]]);
   FConn.BindString('Code', checklength(fields[PACK_FIELD_NDCPackageCode], 'PACK_FIELD_NDCPackageCode', 12));
   FConn.BindString('Code11', genCode11(fields[PACK_FIELD_NDCPackageCode]));
+
   FConn.BindString('Description', checklength(fields[PACK_FIELD_PackageDescription], 'ProprietaryName', 255));
   if fields.Count > PACK_FIELD_NDC_Exclude_Flag then
     FConn.BindIntegerFromBoolean('Active', fields[PACK_FIELD_NDC_Exclude_Flag] = 'Y')
@@ -709,7 +710,7 @@ end;
 
 function TNDCServices.TotalCount: integer;
 var
-  count : integer;
+  count : cardinal;
 begin
   FDB.connection('ChildCount', procedure (conn : TKDBConnection) begin
     count := conn.CountSQL('select count(*) from NDCPackages');

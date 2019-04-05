@@ -109,7 +109,7 @@ begin
       if consent.active then
         FCache.seeConsent(consent)
       else
-        FCache.dropConsent(consent);
+        FCache.dropConsent(consent.id);
     finally
       consent.Free;
     end;

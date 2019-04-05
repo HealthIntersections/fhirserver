@@ -126,6 +126,7 @@ type
     FSoftwareVersion: String;
     FSoftwareId: String;
     FVersions: TFHIRVersionFactories;
+    FDefaultVersion: TFHIRVersion;
     procedure SetServer(const Value: TRegisteredFHIRServer);
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatementW);
     procedure loadCapabilityStatement;
@@ -137,6 +138,7 @@ type
     property SoftwareId : String read FSoftwareId write FSoftwareId;
     property SoftwareVersion : String read FSoftwareVersion write FSoftwareVersion;
     property Versions : TFHIRVersionFactories read FVersions write SetVersions;
+    property DefaultVersion : TFHIRVersion read FDefaultVersion write FDefaultVersion;
   end;
 
 var
@@ -192,6 +194,11 @@ begin
   server.name := edtName.Text;
   server.fhirEndpoint := edtURL.Text;
   server.format := TFHIRFormat(cbxFormat.ItemIndex);
+  if cbxVersion.ItemIndex = 0 then
+    server.version := DefaultVersion
+  else
+    server.version := (cbxVersion.ListItems[cbxVersion.ItemIndex].Data as TFHIRFactory).version;
+
   server.SmartAppLaunchMode := TSmartAppLaunchMode(cbxSmartType.ItemIndex);
   server.username := edtUsername.Text;
   server.password := edtPassword.Text;
