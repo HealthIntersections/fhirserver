@@ -198,7 +198,6 @@ type
     StringColumn13: TStringColumn;
     StringColumn15: TStringColumn;
     PopupColumn2: TPopupColumn;
-    cbGenerate: TCheckBox;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
@@ -928,10 +927,6 @@ begin
     CodeSystem.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy')
   else
     CodeSystem.setExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy', edtVersionPolicy.Text);
-  if cbGenerate.isChecked then
-    CodeSystem.setExtensionBool('http://hl7.org/fhir/StructureDefinition/valueset-generate', true)
-  else
-    CodeSystem.removeExtension('http://hl7.org/fhir/StructureDefinition/valueset-generate');
 
   CodeSystem.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-history');
   CodeSystem.extensionList.AddAll(FHistory);
@@ -1508,7 +1503,6 @@ begin
   edtLegalese.Text := prepEdit(CodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/codesystem-legalese'));
   edtVDeprecated.Text := prepEdit(CodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versionDeprecated'));
   edtVersionPolicy.Text := prepEdit(CodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy'));
-  cbGenerate.isChecked := CodeSystem.getExtensionBool('http://hl7.org/fhir/StructureDefinition/valueset-generate');
 
   if FContributors = nil then
     FContributors := TFhirExtensionList.Create

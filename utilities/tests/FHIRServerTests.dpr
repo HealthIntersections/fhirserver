@@ -361,7 +361,8 @@ uses
   FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
   FHIR.Server.SimpleConsentEngine in '..\..\Server\FHIR.Server.SimpleConsentEngine.pas',
   FHIR.Server.Indexing in '..\..\Server\FHIR.Server.Indexing.pas',
-  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas';
+  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
+  FHIR.R4.Tests.Objects in '..\..\library\r4\tests\FHIR.R4.Tests.Objects.pas';
 
 var
   runner : ITestRunner;
