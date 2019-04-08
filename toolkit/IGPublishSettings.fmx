@@ -1,0 +1,346 @@
+object IGSettingsForm: TIGSettingsForm
+  Left = 0
+  Top = 0
+  Caption = 'Implementation Guide Settings'
+  ClientHeight = 260
+  ClientWidth = 558
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object TabControl1: TTabControl
+    Align = Client
+    Size.Width = 558.000000000000000000
+    Size.Height = 260.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 2
+    TabOrder = 4
+    TabPosition = PlatformDefault
+    Sizes = (
+      558s
+      234s
+      558s
+      234s
+      558s
+      234s)
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 117.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'IG Content folders'
+      ExplicitSize.cx = 117.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object CheckBox1: TCheckBox
+        Position.X = 8.000000000000000000
+        Position.Y = 192.000000000000000000
+        Size.Width = 145.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        Text = 'Include Portable Jekyll'
+        Visible = False
+      end
+      object Button3: TButton
+        ModalResult = 1
+        Position.X = 400.000000000000000000
+        Position.Y = 200.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 49.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 10
+        Text = 'Save'
+        Visible = False
+      end
+      object Button4: TButton
+        ModalResult = 2
+        Position.X = 7.000000000000000000
+        Position.Y = 200.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 49.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 9
+        Text = 'Cancel'
+        Visible = False
+      end
+      object CheckBox2: TCheckBox
+        Enabled = False
+        Position.X = 8.000000000000000000
+        Position.Y = 136.000000000000000000
+        Size.Width = 145.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 13
+        Text = 'Use Base Template'
+      end
+      object Edit5: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Text = 'c:\temp\t1'
+        Position.X = 8.000000000000000000
+        Position.Y = 160.000000000000000000
+        Enabled = False
+        Size.Width = 305.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Button7: TButton
+        Enabled = False
+        Position.X = 320.000000000000000000
+        Position.Y = 160.000000000000000000
+        Size.Width = 41.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 6
+        Text = '...'
+        OnClick = Button7Click
+      end
+      object Button9: TButton
+        Enabled = False
+        Position.X = 456.000000000000000000
+        Position.Y = 160.000000000000000000
+        Size.Width = 73.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 14
+        Text = 'Download'
+        OnClick = Button9Click
+      end
+      object Button11: TButton
+        Position.X = 24.000000000000000000
+        Position.Y = 328.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 15
+        Text = 'Check folders'
+        Visible = False
+        OnClick = Button11Click
+      end
+    end
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 77.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Repository'
+      ExplicitSize.cx = 77.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Edit3x: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Text = 'c:\temp\t1'
+        Position.X = 27.000000000000000000
+        Position.Y = 240.000000000000000000
+        Size.Width = 338.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        Visible = False
+      end
+      object EditFileNamex: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 2
+        Text = 'localFileName.zip'
+        Position.X = 27.000000000000000000
+        Position.Y = 168.000000000000000000
+        Size.Width = 338.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        Visible = False
+      end
+      object EditURLx: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 3
+        Text = 'https://github.com/costateixeira/ihe_mma/archive/master.zip'
+        Position.X = 27.000000000000000000
+        Position.Y = 200.000000000000000000
+        Size.Width = 338.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        Visible = False
+      end
+      object Edit2: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 1
+        ReadOnly = True
+        Text = 'mma'
+        Position.X = 88.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 121.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label5: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 38.000000000000000000
+        Size.Width = 73.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Repository'
+        TabOrder = 4
+      end
+    end
+    object TabItem2: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 78.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Local Build'
+      ExplicitSize.cx = 78.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Button2: TButton
+        Enabled = False
+        Position.X = 376.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 97.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 15
+        Text = 'Extract...'
+        Visible = False
+      end
+      object Button12: TButton
+        Position.X = 312.000000000000000000
+        Position.Y = 88.000000000000000000
+        Size.Width = 41.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 8
+        Text = '...'
+        Visible = False
+        OnClick = Button12Click
+      end
+    end
+  end
+  object Panel2: TPanel
+    Align = Client
+    Size.Width = 558.000000000000000000
+    Size.Height = 260.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 21
+    object Button10: TButton
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 392.000000000000000000
+      Position.Y = 160.000000000000000000
+      Size.Width = 145.000000000000000000
+      Size.Height = 36.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 22
+      Text = 'Remote Build'
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      OnClick = Button10Click
+    end
+    object btnCheckDependencies: TButton
+      Position.X = 8.000000000000000000
+      Position.Y = 80.000000000000000000
+      Size.Width = 145.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Check Dependencies'
+      OnClick = btnCheckDependenciesClick
+    end
+    object lblJekyllAvailable: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 248.000000000000000000
+      Position.Y = 84.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Unknown'
+      TabOrder = 3
+      TabStop = False
+    end
+    object Label2: TLabel
+      Position.X = 168.000000000000000000
+      Position.Y = 84.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Jekyll present'
+      TabOrder = 4
+      TabStop = False
+    end
+    object Label1: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 12.000000000000000000
+      Size.Width = 129.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'IG Publisher location:'
+      TabOrder = 6
+      TabStop = False
+    end
+    object Button1: TButton
+      Position.X = 328.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 41.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 12
+      Text = '...'
+      OnClick = Button1Click
+    end
+    object btnDownloadIGPublisher: TButton
+      Position.X = 384.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 145.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 20
+      Text = 'Download'
+      OnClick = btnDownloadIGPublisherClick
+    end
+    object btnLocalBuild: TButton
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 8.000000000000000000
+      Position.Y = 160.000000000000000000
+      Size.Width = 145.000000000000000000
+      Size.Height = 36.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 21
+      Text = 'Local Build'
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      OnClick = Button10Click
+    end
+    object Edit1: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 23
+      Position.X = 8.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 321.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Memo1: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      Position.X = 72.000000000000000000
+      Position.Y = 147.000000000000000000
+      Size.Width = 165.000000000000000000
+      Size.Height = 105.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 24
+      Visible = False
+      Viewport.Width = 161.000000000000000000
+      Viewport.Height = 101.000000000000000000
+    end
+  end
+end

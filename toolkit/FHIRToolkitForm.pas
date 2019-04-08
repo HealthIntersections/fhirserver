@@ -1,31 +1,31 @@
 unit FHIRToolkitForm;
 
 {
-Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
-All rights reserved.
+  Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to
-   endorse or promote products derived from this software without specific
-   prior written permission.
+  * Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+  * Neither the name of HL7 nor the names of its contributors may be used to
+  endorse or promote products derived from this software without specific
+  prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$IFDEF FHIR4}
@@ -41,7 +41,7 @@ uses
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders,
-  FHIR.Support.Certs, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Ui.Fmx,
+  FHIR.Support.Certs, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Ui.FMX,
   FHIR.Support.Logging,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Web.Fetcher,
@@ -49,38 +49,38 @@ uses
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
-  {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
+{$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
-  {$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, {$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame;
 
 type
-  TToolkitLogger = class (TFHIRClientLogger)
+  TToolkitLogger = class(TFHIRClientLogger)
   private
-    FLog : TLogger;
-    function toChars(s : TStream) : string;
+    FLog: TLogger;
+    function toChars(s: TStream): string;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream); override;
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream); override;
   end;
 
-  TVersionCheckerOutcome = class (TFslObject)
+  TVersionCheckerOutcome = class(TFslObject)
   private
     FVer: String;
   public
-    constructor Create(ver : String);
+    constructor Create(ver: String);
 
-    property ver : String read FVer write FVer;
+    property ver: String read FVer write FVer;
   end;
 
-  TVersionChecker = class (TBackgroundTaskEngine)
+  TVersionChecker = class(TBackgroundTaskEngine)
   private
   public
-    function name : String; override;
+    function name: String; override;
     procedure execute; override;
   end;
 
@@ -163,6 +163,13 @@ type
     Button10: TButton;
     MenuItem7: TMenuItem;
     MenuItem10: TMenuItem;
+    btnExplorer: TButton;
+    Button11: TButton;
+    Button12: TButton;
+    Button13: TButton;
+    mnuProject: TMenuItem;
+    mnuRepository: TMenuItem;
+    mnuPublish: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -197,52 +204,56 @@ type
     procedure btnFromUrlClick(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem10Click(Sender: TObject);
+    procedure mnuRepositoryClick(Sender: TObject);
+    procedure mnuPublishClick(Sender: TObject);
   private
     { Private declarations }
-    FSettings : TFHIRToolkitSettings;
-    FShowHelp : boolean;
-    FFocus : TStyledControl;
-    FIndexes : TFhirIndexList;
-    FCache : TFHIRPackageManager;
-    FContext : TToolkitWorkerContext;
-    FLoadTaskId : integer;
-    FVerCheckTaskId : integer;
-    FIsStopped : boolean;
-    UpgradeOnClose : boolean;
-    FUpgradeChecked : boolean;
-    FRegistryTab : TTabItem;
-    FPackageMgrTab : TTabItem;
-    FValidationTab : TTabItem;
-    FTransformationTab : TTabItem;
-    FDiffEngineTab : TTabItem;
-    ToolkitLogger : TToolkitLogger;
-    FServers : TFslList<TRegisteredFHIRServer>;
-    FFactory : TFHIRFactory;
+    FSettings: TFHIRToolkitSettings;
+    FShowHelp: Boolean;
+    FFocus: TStyledControl;
+    FIndexes: TFhirIndexList;
+    FCache: TFHIRPackageManager;
+    FContext: TToolkitWorkerContext;
+    FLoadTaskId: integer;
+    FVerCheckTaskId: integer;
+    FIsStopped: Boolean;
+    UpgradeOnClose: Boolean;
+    FUpgradeChecked: Boolean;
+    FRegistryTab: TTabItem;
+    FPackageMgrTab: TTabItem;
+    FValidationTab: TTabItem;
+    FTransformationTab: TTabItem;
+    FDiffEngineTab: TTabItem;
+    ToolkitLogger: TToolkitLogger;
+    FServers: TFslList<TRegisteredFHIRServer>;
+    FFactory: TFHIRFactory;
+
+
 
     procedure saveFiles;
-    procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
-    procedure OpenResourcefromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
-    procedure newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
-    procedure addFileToList(filename : String);
-    function frameForResource(res : TFhirResource) : TBaseResourceFrameClass;
-    function doSave : boolean;
-    function doSaveAs : boolean;
+    procedure openResourceFromFile(filename: String; res: TFHIRResource; format: TFHIRFormat; frameClass: TBaseResourceFrameClass);
+    procedure OpenResourcefromClient(Sender: TObject; Client: TFHIRClient; format: TFHIRFormat; resource: TFHIRResource);
+    procedure newResource(rClass: TFhirResourceClass; frameClass: TBaseResourceFrameClass);
+    procedure addFileToList(filename: String);
+    function frameForResource(res: TFHIRResource): TBaseResourceFrameClass;
+    function doSave: Boolean;
+    function doSaveAs: Boolean;
     procedure updateHelpStatus;
     procedure updateHelpText;
-    function processHelpContext(helpContext : String) : String;
-    function searchDesc(s : String) : String;
-    procedure fhirDefn(s : String; b : TStringBuilder);
-    function GetStopped: boolean;
-    procedure DoIdle(out stop : boolean);
-    procedure DoOpenURL(url : String);
-    procedure CheckVersionUpgradeOutome(id : integer; outcome : TFslObject);
-    procedure checkVersion(reportIfCurrent: boolean);
-    procedure processVersionOoutcome(ver : String; reportIfCurrent : boolean);
+    function processHelpContext(helpContext: String): String;
+    function searchDesc(s: String): String;
+    procedure fhirDefn(s: String; b: TStringBuilder);
+    function GetStopped: Boolean;
+    procedure DoIdle(out stop: Boolean);
+    procedure DoOpenURL(url: String);
+    procedure CheckVersionUpgradeOutome(id: integer; outcome: TFslObject);
+    procedure checkVersion(reportIfCurrent: Boolean);
+    procedure processVersionOoutcome(ver: String; reportIfCurrent: Boolean);
     procedure loadServers;
     procedure loadedResource(frameClass: TBaseResourceFrameClass; url: string; res: TFHIRResource);
   public
-    procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
-    procedure threadMonitorProc(sender : TFhirClientV; var stop : boolean);
+    procedure dowork(Sender: TObject; opName: String; canCancel: Boolean; proc: TWorkProc);
+    procedure threadMonitorProc(Sender: TFhirClientV; var stop: Boolean);
   end;
 
 var
@@ -253,32 +264,32 @@ implementation
 {$R *.fmx}
 
 uses
-  {$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
-  {$IFDEF FHIR4} FHIR.R4.Factory; {$ENDIF}
+{$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
+{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, IGPublishSettings; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
-  i : integer;
+  i: integer;
 begin
   for i := lbFiles.Count - 1 downto 0 do
     if lbFiles.items[i] = filename then
-      lbFiles.Items.Delete(i);
-  lbFiles.Items.Insert(0, filename);
+      lbFiles.items.Delete(i);
+  lbFiles.items.Insert(0, filename);
   saveFiles;
   lbFilesClick(nil);
 end;
 
 procedure TMasterToolsForm.btnAddServerClick(Sender: TObject);
 var
-  form : TEditRegisteredServerForm;
+  form: TEditRegisteredServerForm;
 begin
-  form := TEditRegisteredServerForm.create(self);
+  form := TEditRegisteredServerForm.Create(self);
   try
     form.SoftwareId := 'FHIR Toolkit';
-    form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
+    form.SoftwareVersion := ToolKitVersionBase + inttostr(BuildCount);
     form.Versions := FSettings.Versions;
-    {$IFDEF FHIR3} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create; {$ENDIF}
-    {$IFDEF FHIR4} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create; {$ENDIF}
+{$IFDEF FHIR3} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create; {$ENDIF}
+{$IFDEF FHIR4} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create; {$ENDIF}
     form.Server := TRegisteredFHIRServer.Create;
     if ShowModalHack(form) = mrOk then
     begin
@@ -293,46 +304,46 @@ end;
 
 procedure TMasterToolsForm.btnConnectClick(Sender: TObject);
 var
-  http: TFhirClient;
-  client : TFhirClient;
-  tab : TTabItem;
-  serverForm : TServerFrame;
-  cs : TFhirCapabilityStatement;
-  server : TRegisteredFHIRServer;
-  smart : TSmartAppLaunchLogin;
-  ok : boolean;
+  http: TFHIRClient;
+  Client: TFHIRClient;
+  tab: TTabItem;
+  ServerForm: TServerFrame;
+  cs: TFhirCapabilityStatement;
+  Server: TRegisteredFHIRServer;
+  Smart: TSmartAppLaunchLogin;
+  ok: Boolean;
 begin
-  server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
-  http := TFhirClients.makeHTTP(FContext.link, server.fhirEndpoint, server.format, FSettings.Timeout * 1000, FSettings.proxy);
+  Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
+  http := TFhirClients.makeHTTP(FContext.link, Server.fhirEndpoint, Server.format, FSettings.Timeout * 1000, FSettings.proxy);
   try
-    (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
-    (http.Communicator as TFHIRHTTPCommunicator).password := server.password;
-    if server.isSSL then
+    (http.Communicator as TFHIRHTTPCommunicator).username := Server.username;
+    (http.Communicator as TFHIRHTTPCommunicator).password := Server.password;
+    if Server.isSSL then
     begin
-      (http.Communicator as TFHIRHTTPCommunicator).certFile := server.SSLPublicCert;
-      (http.Communicator as TFHIRHTTPCommunicator).certKey := server.SSLPrivateKey;
-      (http.Communicator as TFHIRHTTPCommunicator).certPWord := server.SSLPassphrase;
+      (http.Communicator as TFHIRHTTPCommunicator).certFile := Server.SSLPublicCert;
+      (http.Communicator as TFHIRHTTPCommunicator).certKey := Server.SSLPrivateKey;
+      (http.Communicator as TFHIRHTTPCommunicator).certPWord := Server.SSLPassphrase;
     end;
-    http.Logger := ToolkitLogger.Link;
+    http.Logger := ToolkitLogger.link;
     ok := false;
-    if server.SmartAppLaunchMode <> salmNone then
+    if Server.SmartAppLaunchMode <> salmNone then
     begin
       dowork(self, 'Logging in', true,
         procedure
         begin
-          smart := TSmartAppLaunchLogin.Create;
+          Smart := TSmartAppLaunchLogin.Create;
           try
-            smart.server := server.Link;
-            smart.scopes := ['user/*.*'];
-            smart.OnIdle := DoIdle;
-            smart.OnOpenURL := DoOpenURL;
-            smart.name := 'FHIR Toolkit';
-            smart.version := '0.0.'+inttostr(BuildCount);
-            ok := smart.login;
+            Smart.Server := Server.link;
+            Smart.scopes := ['user/*.*'];
+            Smart.OnIdle := DoIdle;
+            Smart.OnOpenURL := DoOpenURL;
+            Smart.name := 'FHIR Toolkit';
+            Smart.Version := '0.0.' + inttostr(BuildCount);
+            ok := Smart.Login;
             if ok then
-              http.smartToken := smart.token.link;
+              http.smartToken := Smart.token.link;
           finally
-            smart.Free;
+            Smart.Free;
           end;
         end);
     end
@@ -340,49 +351,47 @@ begin
       ok := true;
     if not ok then
       exit;
-    client := TFhirClients.makeThreaded(nil, http.link, threadMonitorProc);
+    Client := TFhirClients.makeThreaded(nil, http.link, threadMonitorProc);
     try
       cs := nil;
-      doWork(nil, 'Connect', true,
+      dowork(nil, 'Connect', true,
         procedure
         begin
-          cs := client.conformance(false);
+          cs := Client.conformance(false);
         end);
       try
         if (cs <> nil) then
         begin
           tab := tbMain.Add(TTabItem);
-          tab.Text := server.name;
+          tab.Text := Server.name;
           tbMain.ActiveTab := tab;
-          serverForm := TServerFrame.create(tab);
-          serverForm.Parent := tab;
-          tab.TagObject := serverForm;
-          serverForm.OnWork := dowork;
-          serverForm.TagObject := tab;
-          serverForm.tabs := tbMain;
-          serverForm.Settings := FSettings.Link;
-          serverForm.Tab := tab;
-          serverForm.Align := TAlignLayout.Client;
-          serverForm.Client := client.link;
-          serverForm.CapabilityStatement := cs.link;
-          serverForm.OnOpenResource := OpenResourcefromClient;
-          serverForm.OnWork :=  dowork;
-          serverForm.load;
+          ServerForm := TServerFrame.Create(tab);
+          ServerForm.Parent := tab;
+          tab.TagObject := ServerForm;
+          ServerForm.OnWork := dowork;
+          ServerForm.TagObject := tab;
+          ServerForm.tabs := tbMain;
+          ServerForm.Settings := FSettings.link;
+          ServerForm.tab := tab;
+          ServerForm.Align := TAlignLayout.Client;
+          ServerForm.Client := Client.link;
+          ServerForm.CapabilityStatement := cs.link;
+          ServerForm.OnOpenResource := OpenResourcefromClient;
+          ServerForm.OnWork := dowork;
+          ServerForm.load;
 
           if lbServers.ItemIndex > 0 then
           begin
-            lbServers.Items.Exchange(0, lbServers.ItemIndex);
-            FSettings.moveServerBefore('',
-              TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data),
-              TRegisteredFHIRServer(lbServers.ListItems[0].data));
+            lbServers.items.Exchange(0, lbServers.ItemIndex);
+            FSettings.moveServerBefore('', TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data), TRegisteredFHIRServer(lbServers.ListItems[0].data));
             lbServers.ItemIndex := 0;
           end;
         end;
       finally
-        cs.free;
+        cs.Free;
       end;
     finally
-      client.Free;
+      Client.Free;
     end;
   finally
     http.Free;
@@ -394,22 +403,22 @@ var
   Svc: IFMXClipboardService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService, Svc) then
-    Svc.SetClipboard(lbFiles.Items[lbFiles.ItemIndex])
+    Svc.SetClipboard(lbFiles.items[lbFiles.ItemIndex])
   else
     Beep;
 end;
 
 procedure TMasterToolsForm.btnEditServerClick(Sender: TObject);
 var
-  i : integer;
-  form : TEditRegisteredServerForm;
+  i: integer;
+  form: TEditRegisteredServerForm;
 begin
-  form := TEditRegisteredServerForm.create(self);
+  form := TEditRegisteredServerForm.Create(self);
   try
     form.SoftwareId := ToolkitIdentifier;
-    form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
+    form.SoftwareVersion := ToolKitVersionBase + inttostr(BuildCount);
     form.Versions := TFHIRVersionFactories.Create;
-    form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).Link;
+    form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).link;
     if ShowModalHack(form) = mrOk then
     begin
       FSettings.updateServerInfo('', form.Server);
@@ -423,50 +432,50 @@ end;
 
 procedure TMasterToolsForm.btnFromUrlClick(Sender: TObject);
 var
-  res : TFhirResource;
-  format : TFHIRFormat;
-  fetcher : TInternetFetcher;
+  res: TFHIRResource;
+  format: TFHIRFormat;
+  Fetcher: TInternetFetcher;
 begin
-  InputQuery( 'Open From URL', ['Address'], [''],
+  InputQuery('Open From URL', ['Address'], [''],
     procedure(const AResult: TModalResult; const AValues: array of string)
     begin
-      if aResult = mrOK then
+      if AResult = mrOk then
       begin
-        fetcher := TInternetFetcher.create;
+        Fetcher := TInternetFetcher.Create;
         try
-          fetcher.url := Avalues[0];
-          fetcher.Accept := 'application/fhir+xml, application/fhir+json, application/xml, application/json';
-          fetcher.fetch;
+          Fetcher.url := AValues[0];
+          Fetcher.Accept := 'application/fhir+xml, application/fhir+json, application/xml, application/json';
+          Fetcher.fetch;
 
           format := ffUnspecified;
-          res := bytesToResource(fetcher.buffer.asBytes, format);
+          res := bytesToResource(Fetcher.buffer.asBytes, format);
           try
             if res is TFhirCapabilityStatement then
-              loadedResource(TCapabilityStatementEditorFrame, fetcher.url, res)
+              loadedResource(TCapabilityStatementEditorFrame, Fetcher.url, res)
             else if res is TFhirValueSet then
-              loadedResource(TValueSetEditorFrame, fetcher.url, res)
+              loadedResource(TValueSetEditorFrame, Fetcher.url, res)
             else if res is TFhirCodeSystem then
-              loadedResource(TCodeSystemEditorFrame, fetcher.url, res)
+              loadedResource(TCodeSystemEditorFrame, Fetcher.url, res)
             else if res is TFhirQuestionnaire then
-              loadedResource(TQuestionnaireEditorFrame, fetcher.url, res)
+              loadedResource(TQuestionnaireEditorFrame, Fetcher.url, res)
             else if res is TFhirLibrary then
-              loadedResource(TLibraryEditorFrame, fetcher.url, res)
-    {$IFDEF EXAMPLESCENARIO}
+              loadedResource(TLibraryEditorFrame, Fetcher.url, res)
+{$IFDEF EXAMPLESCENARIO}
             else if res is TFHIRExampleScenario then
-              loadedResource(TExampleScenarioEditorFrame, fetcher.url, res)
-    {$ENDIF}
-    {$IFDEF IMPLEMENTATIONGUIDE}
+              loadedResource(TExampleScenarioEditorFrame, Fetcher.url, res)
+{$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE}
             else if res is TFHIRImplementationGuide then
-              loadedResource(TImplementationGuideEditorFrame, fetcher.url, res)
-    {$ENDIF}
-             else
-              MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+              loadedResource(TImplementationGuideEditorFrame, Fetcher.url, res)
+{$ENDIF}
+            else
+              MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
           finally
-            res.free;
+            res.Free;
           end;
 
         finally
-          fetcher.free;
+          Fetcher.Free;
         end;
       end;
     end);
@@ -474,9 +483,9 @@ end;
 
 procedure TMasterToolsForm.btnNewClick(Sender: TObject);
 var
-  form : TListSelectorForm;
+  form: TListSelectorForm;
 begin
-  form := TListSelectorForm.create(nil);
+  form := TListSelectorForm.Create(nil);
   try
     form.ListBox1.ShowCheckboxes := false;
     form.ListBox1.items.Add('CapabilityStatement');
@@ -490,22 +499,28 @@ begin
 {$IFDEF IMPLEMENTATIONGUIDE}
     form.ListBox1.items.Add('ImplementationGuide');
 {$ENDIF}
-
     form.caption := 'Create New File';
     if (ShowModalHack(form) = mrOk) then
       case form.ListBox1.ItemIndex of
-        0 : newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
-        1 : newResource(TFhirValueSet, TValueSetEditorFrame);
-        2 : newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
-        3 : newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
-        4 : newResource(TFhirLibrary, TLibraryEditorFrame);
+        0:
+          newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
+        1:
+          newResource(TFhirValueSet, TValueSetEditorFrame);
+        2:
+          newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
+        3:
+          newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
+        4:
+          newResource(TFhirLibrary, TLibraryEditorFrame);
 {$IFDEF EXAMPLESCENARIO}
-        5 : newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
+        5:
+          newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
 {$ENDIF}
 {$IFDEF IMPLEMENTATIONGUIDE}
-        6 : newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
+        6:
+          newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
 {$ENDIF}
-       end;
+      end;
   finally
     form.Free;
   end;
@@ -513,48 +528,48 @@ end;
 
 procedure TMasterToolsForm.btnOpenClick(Sender: TObject);
 var
-  res : TFhirResource;
-  format : TFHIRFormat;
+  res: TFHIRResource;
+  format: TFHIRFormat;
 begin
-  if odFile.Execute then
+  if odFile.execute then
   begin
     try
       format := ffUnspecified;
-      res := fileToResource(odFile.Filename, format);
+      res := fileToResource(odFile.filename, format);
       try
         if res is TFhirCapabilityStatement then
-          openResourceFromFile(odFile.Filename, res, format, TCapabilityStatementEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TCapabilityStatementEditorFrame)
         else if res is TFhirValueSet then
-          openResourceFromFile(odFile.Filename, res, format, TValueSetEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TValueSetEditorFrame)
         else if res is TFhirCodeSystem then
-          openResourceFromFile(odFile.Filename, res, format, TCodeSystemEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TCodeSystemEditorFrame)
         else if res is TFhirQuestionnaire then
-          openResourceFromFile(odFile.Filename, res, format, TQuestionnaireEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TQuestionnaireEditorFrame)
         else if res is TFhirLibrary then
-          openResourceFromFile(odFile.Filename, res, format, TLibraryEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TLibraryEditorFrame)
 {$IFDEF EXAMPLESCENARIO}
         else if res is TFHIRExampleScenario then
-          openResourceFromFile(odFile.Filename, res, format, TExampleScenarioEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TExampleScenarioEditorFrame)
 {$ENDIF}
 {$IFDEF IMPLEMENTATIONGUIDE}
         else if res is TFHIRImplementationGuide then
-          openResourceFromFile(odFile.Filename, res, format, TImplementationGuideEditorFrame)
+          openResourceFromFile(odFile.filename, res, format, TImplementationGuideEditorFrame)
 {$ENDIF}
-         else
-          MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+        else
+          MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
-        res.free;
+        res.Free;
       end;
     except
-      on e : Exception do
-        MessageDlg('Error reading Resource: '+e.Message, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+      on e: Exception do
+        MessageDlg('Error reading Resource: ' + e.Message, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
     end;
   end;
 end;
 
 procedure TMasterToolsForm.btnRemoveFileClick(Sender: TObject);
 var
-  i : integer;
+  i: integer;
 begin
   i := lbFiles.ItemIndex;
   lbFiles.items.Delete(i);
@@ -567,7 +582,7 @@ end;
 
 procedure TMasterToolsForm.btnRemoveServerClick(Sender: TObject);
 var
-  i : integer;
+  i: integer;
 begin
   i := lbServers.ItemIndex;
   FSettings.DeleteServer('', TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data));
@@ -580,40 +595,40 @@ end;
 
 procedure TMasterToolsForm.btnReopenClick(Sender: TObject);
 var
-  res : TFhirResource;
-  fn : String;
-  format : TFHIRFormat;
+  res: TFHIRResource;
+  fn: String;
+  format: TFHIRFormat;
 begin
-  fn := lbFiles.Items[lbFiles.ItemIndex];
+  fn := lbFiles.items[lbFiles.ItemIndex];
   try
     format := ffUnspecified;
     res := fileToResource(fn, format);
     try
       openResourceFromFile(fn, res, format, frameForResource(res));
     finally
-      res.free;
+      res.Free;
     end;
   except
-    on e : Exception do
-      MessageDlg('Error reading Resource: '+e.Message, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+    on e: Exception do
+      MessageDlg('Error reading Resource: ' + e.Message, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
   end;
 end;
 
 procedure TMasterToolsForm.btnSettingsClick(Sender: TObject);
 var
-  frame : TBaseFrame;
-  form : TSettingsForm;
-  i : integer;
+  frame: TBaseFrame;
+  form: TSettingsForm;
+  i: integer;
 begin
-  form := TSettingsForm.create(self);
+  form := TSettingsForm.Create(self);
   try
     form.Settings := FSettings.link;
-    if showmodalHack(form) = mrOk then
+    if ShowModalHack(form) = mrOk then
       for i := 0 to tbMain.TabCount - 1 do
-        if tbMain.Tabs[i].TagObject is TBaseFrame then
-          TBaseFrame(tbMain.Tabs[i].TagObject).SettingsChanged;
+        if tbMain.tabs[i].TagObject is TBaseFrame then
+          TBaseFrame(tbMain.tabs[i].TagObject).SettingsChanged;
   finally
-    form.free;
+    form.Free;
   end;
 end;
 
@@ -629,16 +644,16 @@ end;
 
 procedure TMasterToolsForm.tbnSourceClick(Sender: TObject);
 var
-  form : TSourceViewerForm;
-  frame : TBaseFrame;
+  form: TSourceViewerForm;
+  frame: TBaseFrame;
 begin
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
   if (frame <> nil) and frame.hasResource then
   begin
-    form := TSourceViewerForm.create(self);
+    form := TSourceViewerForm.Create(self);
     try
-      form.current := frame.currentResource.Link;
-      form.original := frame.originalResource.Link;
+      form.Current := frame.currentResource.link;
+      form.original := frame.originalResource.link;
       form.Factory := FFactory.link;
       ShowModalHack(form);
     finally
@@ -647,10 +662,10 @@ begin
   end;
 end;
 
-procedure TMasterToolsForm.threadMonitorProc(sender: TFhirClientV; var stop: boolean);
+procedure TMasterToolsForm.threadMonitorProc(Sender: TFhirClientV; var stop: Boolean);
 begin
   Application.ProcessMessages;
-  stop :=  FIsStopped;
+  stop := FIsStopped;
 end;
 
 procedure TMasterToolsForm.tbnSaveAsClick(Sender: TObject);
@@ -660,8 +675,8 @@ end;
 
 procedure TMasterToolsForm.tbnCloseClick(Sender: TObject);
 var
-  i : integer;
-  frame : TBaseFrame;
+  i: integer;
+  frame: TBaseFrame;
   procedure closeit;
   begin
     i := tbMain.TabIndex;
@@ -679,23 +694,26 @@ var
     else
       tbMain.TabIndex := 0;
   end;
+
 begin
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
   if (frame <> nil) then
   begin
     if frame.isDirty then
     begin
-      case MessageDlg(tbMain.ActiveTab.Text+' contains unsaved data. Save the data first?', TMsgDlgType.mtConfirmation, mbYesNoCancel, 0) of
-        mrYes :
+      case MessageDlg(tbMain.ActiveTab.Text + ' contains unsaved data. Save the data first?', TMsgDlgType.mtConfirmation, mbYesNoCancel, 0) of
+        mrYes:
           if doSave then
             closeit;
-        mrNo : closeit;
-        mrCancel : exit;
+        mrNo:
+          closeit;
+        mrCancel:
+          exit;
       end;
     end
     else
       closeit;
-    end;
+  end;
 end;
 
 procedure TMasterToolsForm.tbnHelpContextClick(Sender: TObject);
@@ -716,7 +734,7 @@ begin
   Close;
 end;
 
-procedure TMasterToolsForm.DoIdle(out stop: boolean);
+procedure TMasterToolsForm.DoIdle(out stop: Boolean);
 begin
   Application.ProcessMessages;
   stop := GetStopped;
@@ -727,16 +745,15 @@ begin
   openURL(url);
 end;
 
-function TMasterToolsForm.GetStopped: boolean;
+function TMasterToolsForm.GetStopped: Boolean;
 begin
   result := FIsStopped;
 end;
 
-
-function TMasterToolsForm.doSave: boolean;
+function TMasterToolsForm.doSave: Boolean;
 var
-  frame : TBaseFrame;
-  ok : boolean;
+  frame: TBaseFrame;
+  ok: Boolean;
 begin
   result := false;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
@@ -759,11 +776,11 @@ begin
   end;
 end;
 
-function TMasterToolsForm.doSaveAs: boolean;
+function TMasterToolsForm.doSaveAs: Boolean;
 var
-  frame : TBaseFrame;
-  ok : boolean;
-  fn, ext : String;
+  frame: TBaseFrame;
+  ok: Boolean;
+  fn, ext: String;
 begin
   result := false;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
@@ -778,7 +795,7 @@ begin
         frame.work('Save As', false,
           procedure
           begin
-            fn := sdFile.Filename;
+            fn := sdFile.filename;
             ext := ExtractFileExt(fn).ToLower;
             if (ext = '.xml') then
               ok := frame.saveAs(fn, ffXml)
@@ -793,21 +810,21 @@ begin
             else if sdFile.FilterIndex = 3 then
               ok := frame.saveAs(fn, ffTurtle)
             else
-              raise EFHIRException.create('Unknown format');
-            addFileToList(sdFile.FileName);
+              raise EFHIRException.Create('Unknown format');
+            addFileToList(sdFile.filename);
           end);
         result := ok;
       end
       else
-        raise EFHIRException.create('Unable to save file');
+        raise EFHIRException.Create('Unable to save file');
     end;
   end;
 end;
 
-procedure TMasterToolsForm.dowork(Sender: TObject; opName : String; canCancel : boolean; proc: TWorkProc);
+procedure TMasterToolsForm.dowork(Sender: TObject; opName: String; canCancel: Boolean; proc: TWorkProc);
 var
-  fcs : IFMXCursorService;
-  form : TProcessingForm;
+  fcs: IFMXCursorService;
+  form: TProcessingForm;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
     fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
@@ -820,11 +837,11 @@ begin
   end;
   try
     FIsStopped := false;
-    if assigned(sender) and (sender is TBaseFrame) then
-      TBaseFrame(sender).OnStopped := GetStopped;
+    if Assigned(Sender) and (Sender is TBaseFrame) then
+      TBaseFrame(Sender).OnStopped := GetStopped;
     form := TProcessingForm.Create(self);
     try
-      form.lblOperation.text := opName;
+      form.lblOperation.Text := opName;
       form.Button1.enabled := canCancel;
       form.Button1.OnClick := btnStopClick;
       form.proc := proc;
@@ -833,163 +850,163 @@ begin
       form.Free;
     end;
   finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
+    if Assigned(fcs) then
+      fcs.SetCursor(Cursor);
   end;
 end;
 
-procedure TMasterToolsForm.fhirDefn(s: String; b : TStringBuilder);
+procedure TMasterToolsForm.fhirDefn(s: String; b: TStringBuilder);
 var
-  n : string;
-  sd : TFhirStructureDefinition;
-  ed : TFhirElementDefinition;
+  n: string;
+  sd: TFhirStructureDefinition;
+  ed: TFhirElementDefinition;
 begin
   if s.Contains('.') then
     n := s.Substring(0, s.IndexOf('.'))
   else
     n := s;
-  sd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+n) as TFhirStructureDefinition;
+  sd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + n) as TFhirStructureDefinition;
   if sd = nil then
-    b.Append('<p>uUnknown path:' +s+'</p>')
+    b.Append('<p>uUnknown path:' + s + '</p>')
   else
   begin
     for ed in sd.snapshot.elementList do
     begin
       if ed.path = s then
       begin
-        b.Append('<p><b>'+s+'</b></p>');
-        b.Append('<p>Definition: '+ed.definition+'</p>');
+        b.Append('<p><b>' + s + '</b></p>');
+        b.Append('<p>Definition: ' + ed.definition + '</p>');
         if ed.comment <> '' then
-          b.Append('<p>Comments: '+ed.comment+'</p>');
+          b.Append('<p>Comments: ' + ed.comment + '</p>');
         exit;
       end;
     end;
-    b.Append('<p>Unknown path:' +s+'</p>')
+    b.Append('<p>Unknown path:' + s + '</p>')
   end;
 end;
 
 procedure TMasterToolsForm.FormActivate(Sender: TObject);
 var
-  factory : TFHIRFactory;
+  Factory: TFHIRFactory;
 begin
   if FContext = nil then
   begin
-    factory := {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
+    Factory := {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
     try
-      FCache := TFHIRPackageManager.create(true);
-      if not FCache.packageExists('hl7.fhir.core', factory.versionString) then
-        ShowMessage('The base FHIR package '+factory.versionString+' is not installed; you will need to install it using the package manager and restart');
-      FContext := TToolkitWorkerContext.Create(factory.link);
+      FCache := TFHIRPackageManager.Create(true);
+      if not FCache.packageExists('hl7.fhir.core', Factory.versionString) then
+        ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
+      FContext := TToolkitWorkerContext.Create(Factory.link);
       FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
-      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, factory.versionString, FContext.link));
-      if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
-        ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: '+WhichFailedToLoad+', '+WhichFailedToLoad2+')');
+      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.link, Factory.versionString, FContext.link));
+      if not(IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
+        ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: ' + WhichFailedToLoad + ', ' + WhichFailedToLoad2 + ')');
       checkSSL; // really, this is just to init internal structures in openSSL
 
       FVerCheckTaskId := GBackgroundTasks.registerTaskEngine(TVersionChecker.Create(CheckVersionUpgradeOutome));
       if FSettings.CheckForUpgradesOnStart then
-        GBackgroundTasks.queueTask(FVerCheckTaskId, TFslObject.create);
+        GBackgroundTasks.queueTask(FVerCheckTaskId, TFslObject.Create);
     finally
-      factory.Free;
+      Factory.Free;
     end
   end;
 end;
 
 procedure TMasterToolsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
-  dirty : boolean;
-  i : integer;
-  obj : TBaseFrame;
-  form : TListSelectorForm;
+  dirty: Boolean;
+  i: integer;
+  obj: TBaseFrame;
+  form: TListSelectorForm;
 begin
   dirty := false;
   form := TListSelectorForm.Create(self);
   try
-    form.Caption := 'Unsaved Content found. Which files do you want to save?';
+    form.caption := 'Unsaved Content found. Which files do you want to save?';
     form.okWithNoneSelected := true;
-    form.button1.Text := 'Close';
+    form.Button1.Text := 'Close';
     for i := 1 to tbMain.TabCount - 1 do
     begin
-      obj := tbMain.Tabs[i].TagObject as TBaseFrame;
+      obj := tbMain.tabs[i].TagObject as TBaseFrame;
       if (obj.isDirty) then
       begin
         dirty := true;
-        form.ListBox1.Items.AddObject(obj.nameForSaveDialog, obj)
+        form.ListBox1.items.AddObject(obj.nameForSaveDialog, obj)
       end;
     end;
     if not dirty then
       CanClose := true
     else
       CanClose := ShowModalHack(form) = mrOk;
-      for i := 0 to form.ListBox1.Items.Count - 1 do
-        if form.ListBox1.ListItems[i].IsChecked then
-          if not TBaseFrame(form.ListBox1.Items.Objects[i]).save then
-          begin
-            CanClose := false;
-            exit;
-          end;
+    for i := 0 to form.ListBox1.items.Count - 1 do
+      if form.ListBox1.ListItems[i].IsChecked then
+        if not TBaseFrame(form.ListBox1.items.Objects[i]).save then
+        begin
+          CanClose := false;
+          exit;
+        end;
   finally
     form.Free;
   end;
 end;
 
-function versionSettingsString : String;
+function versionSettingsString: String;
 begin
   result := '';
   if (FHIR_GENERATED_PUBLICATION <> '3') then
-    result := '-r'+ FHIR_GENERATED_PUBLICATION;
+    result := '-r' + FHIR_GENERATED_PUBLICATION;
 end;
 
 procedure TMasterToolsForm.FormCreate(Sender: TObject);
 begin
   FSettings := TFHIRToolkitSettings.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'fhir-toolkit-settings.json',
-    {$IFDEF FHIR3}
-     [fhirVersionRelease3]
-    {$ELSE}
-     [fhirVersionRelease4]
-    {$ENDIF}
+{$IFDEF FHIR3}
+  [fhirVersionRelease3]
+{$ELSE}
+  [fhirVersionRelease4]
+{$ENDIF}
     );
   FSettings.CacheManager := TFHIRPackageManager.Create(true);
   FSettings.Versions := TFHIRVersionFactories.Create;
-    {$IFDEF FHIR3}
-  FSettings.Versions.version[fhirVersionRelease3] := TFHIRFactoryR3.Create;
-    {$ELSE}
-  FSettings.Versions.version[fhirVersionRelease4] := TFHIRFactoryR4.Create;
-    {$ENDIF}
+{$IFDEF FHIR3}
+  FSettings.Versions.Version[fhirVersionRelease3] := TFHIRFactoryR3.Create;
+{$ELSE}
+  FSettings.Versions.Version[fhirVersionRelease4] := TFHIRFactoryR4.Create;
+{$ENDIF}
   loadServers;
   lbServers.ItemIndex := 0;
   lbServersClick(self);
-  FSettings.getValues('Files'+versionSettingsString, lbFiles.Items);
-  if lbFiles.Items.count > 0 then
+  FSettings.getValues('Files' + versionSettingsString, lbFiles.items);
+  if lbFiles.items.Count > 0 then
     lbFiles.ItemIndex := 0;
   lbFilesClick(self);
-  Left := FSettings.getValue('Window', 'left', left);
-  Top := FSettings.getValue('Window', 'top', top);
-  Width := FSettings.getValue('Window', 'width', width);
-  Height := FSettings.getValue('Window', 'height', height);
+  Left := FSettings.getValue('Window', 'left', Left);
+  Top := FSettings.getValue('Window', 'top', Top);
+  Width := FSettings.getValue('Window', 'width', Width);
+  Height := FSettings.getValue('Window', 'height', Height);
   FShowHelp := FSettings.ShowHelp;
   updateHelpStatus;
-  {$IFDEF MACOS}
+{$IFDEF MACOS}
   mnuFileExit.Text := '&Quit';
-  {$ENDIF}
-  Caption := 'FHIR Toolkit (R'+FHIR_GENERATED_PUBLICATION+')';
-  ToolkitLogger := TToolkitLogger.create;
-  {$IFDEF FHIR2} FFactory := TFHIRFactoryR2.Create; {$ENDIF}
-  {$IFDEF FHIR3} FFactory := TFHIRFactoryR3.Create; {$ENDIF}
-  {$IFDEF FHIR4} FFactory := TFHIRFactoryR4.Create; {$ENDIF}
+{$ENDIF}
+  caption := 'FHIR Toolkit (R' + FHIR_GENERATED_PUBLICATION + ')';
+  ToolkitLogger := TToolkitLogger.Create;
+{$IFDEF FHIR2} FFactory := TFHIRFactoryR2.Create; {$ENDIF}
+{$IFDEF FHIR3} FFactory := TFHIRFactoryR3.Create; {$ENDIF}
+{$IFDEF FHIR4} FFactory := TFHIRFactoryR4.Create; {$ENDIF}
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
 var
-  newVersion : String;
+  newVersion: String;
 begin
   saveFiles;
   try
-    FSettings.storeValue('Window', 'left', left);
-    FSettings.storeValue('Window', 'top', top);
-    FSettings.storeValue('Window', 'width', width);
-    FSettings.storeValue('Window', 'height', height);
-    FSettings.Save;
+    FSettings.storeValue('Window', 'left', Left);
+    FSettings.storeValue('Window', 'top', Top);
+    FSettings.storeValue('Window', 'width', Width);
+    FSettings.storeValue('Window', 'height', Height);
+    FSettings.save;
   except
   end;
   FSettings.Free;
@@ -1000,17 +1017,18 @@ begin
   ToolkitLogger.Free;
   if UpgradeOnClose then
   begin
-    doWork(self, 'Checking Version', true,
-    procedure
-    begin
-      newVersion := checkUpgrade;
-    end);
+    dowork(self, 'Checking Version', true,
+      procedure
+      begin
+        newVersion := checkUpgrade;
+      end);
     doUpgrade(newVersion);
   end;
-  if FFactory <> nil then ffactory.Destroy; //this seemed to leak
+  if FFactory <> nil then
+    FFactory.Destroy; // this seemed to leak
 end;
 
-function TMasterToolsForm.frameForResource(res: TFhirResource): TBaseResourceFrameClass;
+function TMasterToolsForm.frameForResource(res: TFHIRResource): TBaseResourceFrameClass;
 begin
   if res is TFhirCapabilityStatement then
     result := TCapabilityStatementEditorFrame
@@ -1023,56 +1041,56 @@ begin
   else if res is TFhirLibrary then
     result := TLibraryEditorFrame
 {$IFDEF EXAMPLESCENARIO}
-  else if res is TFhirExampleScenario then
+  else if res is TFHIRExampleScenario then
     result := TExampleScenarioEditorFrame
 {$ENDIF}
 {$IFDEF IMPLEMENTATIONGUIDE}
-  else if res is TFhirImplementationGuide then
+  else if res is TFHIRImplementationGuide then
     result := TImplementationGuideEditorFrame
 {$ENDIF}
-   else
-    MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+  else
+    MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;
 
 procedure TMasterToolsForm.lbFilesClick(Sender: TObject);
 begin
-  btnReopen.Enabled := lbFiles.ItemIndex >= 0;
-  btnRemoveFile.Enabled := lbFiles.ItemIndex >= 0;
-  btnCopy.Enabled := lbFiles.ItemIndex >= 0;
+  btnReopen.enabled := lbFiles.ItemIndex >= 0;
+  btnRemoveFile.enabled := lbFiles.ItemIndex >= 0;
+  btnCopy.enabled := lbFiles.ItemIndex >= 0;
 end;
 
 procedure TMasterToolsForm.lbServersClick(Sender: TObject);
 begin
-  btnConnect.Enabled := lbServers.ItemIndex >= 0;
-  btnRemoveServer.Enabled := lbServers.ItemIndex >= 0;
-  btnEditServer.Enabled := lbServers.ItemIndex >= 0;
+  btnConnect.enabled := lbServers.ItemIndex >= 0;
+  btnRemoveServer.enabled := lbServers.ItemIndex >= 0;
+  btnEditServer.enabled := lbServers.ItemIndex >= 0;
 end;
 
 procedure TMasterToolsForm.loadServers;
 var
-  i : integer;
+  i: integer;
 begin
   if FServers = nil then
-    FServers := TFslList<TRegisteredFHIRServer>.create
+    FServers := TFslList<TRegisteredFHIRServer>.Create
   else
     FServers.Clear;
-  lbServers.Items.Clear;
+  lbServers.items.Clear;
   FSettings.ListServers('', FServers);
   for i := 0 to FServers.Count - 1 do
   begin
-    lbServers.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
-    lbServers.ListItems[i].Data := FServers[i];
+    lbServers.items.Add(FServers[i].name + ': ' + FServers[i].fhirEndpoint);
+    lbServers.ListItems[i].data := FServers[i];
   end;
 end;
 
 procedure TMasterToolsForm.MenuItem10Click(Sender: TObject);
 begin
-  MessageDlg('test', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbok], 0);
+  MessageDlg('test', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbOK], 0);
 end;
 
 procedure TMasterToolsForm.MenuItem7Click(Sender: TObject);
 var
-  frame : TFrame;
+  frame: TFrame;
 begin
   if FDiffEngineTab <> nil then
     tbMain.ActiveTab := FDiffEngineTab
@@ -1081,15 +1099,15 @@ begin
     FDiffEngineTab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := FDiffEngineTab;
     FDiffEngineTab.Text := 'Diff Engine';
-    frame := TDiffEngineEngineFrame.create(FDiffEngineTab);
-    frame.Form := self;
+    frame := TDiffEngineEngineFrame.Create(FDiffEngineTab);
+    frame.form := self;
     FDiffEngineTab.TagObject := frame;
     frame.TagObject := FDiffEngineTab;
     frame.Parent := FDiffEngineTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := FDiffEngineTab;
+    frame.tab := FDiffEngineTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
   end;
@@ -1097,15 +1115,15 @@ end;
 
 procedure TMasterToolsForm.mnuResourceLanguageClick(Sender: TObject);
 var
-  ResourceLanguageForm : TResourceLanguageForm;
-  frame : TBaseFrame;
+  ResourceLanguageForm: TResourceLanguageForm;
+  frame: TBaseFrame;
 begin
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
   if (frame <> nil) and frame.hasResource then
   begin
     ResourceLanguageForm := TResourceLanguageForm.Create(self);
     try
-      ResourceLanguageForm.Resource := frame.currentResource.Link;
+      ResourceLanguageForm.resource := frame.currentResource.link;
       if ShowModalHack(ResourceLanguageForm) = mrOk then
         frame.reload;
     finally
@@ -1116,7 +1134,7 @@ end;
 
 procedure TMasterToolsForm.mnuTransformationClick(Sender: TObject);
 var
-  frame : TFrame;
+  frame: TFrame;
 begin
   if FTransformationTab <> nil then
     tbMain.ActiveTab := FTransformationTab
@@ -1125,15 +1143,15 @@ begin
     FTransformationTab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := FTransformationTab;
     FTransformationTab.Text := 'General Transformation';
-    frame := TTransformationEngineFrame.create(FTransformationTab);
-    frame.Form := self;
+    frame := TTransformationEngineFrame.Create(FTransformationTab);
+    frame.form := self;
     FTransformationTab.TagObject := frame;
     frame.TagObject := FTransformationTab;
     frame.Parent := FTransformationTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := FTransformationTab;
+    frame.tab := FTransformationTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
   end;
@@ -1141,7 +1159,7 @@ end;
 
 procedure TMasterToolsForm.mnuValidationClick(Sender: TObject);
 var
-  frame : TFrame;
+  frame: TFrame;
 begin
   if FValidationTab <> nil then
     tbMain.ActiveTab := FValidationTab
@@ -1150,15 +1168,15 @@ begin
     FValidationTab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := FValidationTab;
     FValidationTab.Text := 'General Validation';
-    frame := TValidationEngineFrame.create(FValidationTab);
-    frame.Form := self;
+    frame := TValidationEngineFrame.Create(FValidationTab);
+    frame.form := self;
     FValidationTab.TagObject := frame;
     frame.TagObject := FValidationTab;
     frame.Parent := FValidationTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := FValidationTab;
+    frame.tab := FValidationTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
   end;
@@ -1169,11 +1187,11 @@ begin
   checkVersion(true);
 end;
 
-procedure TMasterToolsForm.checkVersion(reportIfCurrent : boolean);
+procedure TMasterToolsForm.checkVersion(reportIfCurrent: Boolean);
 var
-  newVersion : String;
+  newVersion: String;
 begin
-  doWork(self, 'Checking Version', true,
+  dowork(self, 'Checking Version', true,
     procedure
     begin
       newVersion := checkUpgrade;
@@ -1181,23 +1199,24 @@ begin
   processVersionOoutcome(newVersion, reportIfCurrent);
 end;
 
-procedure TMasterToolsForm.processVersionOoutcome(ver : String; reportIfCurrent : boolean);
+procedure TMasterToolsForm.processVersionOoutcome(ver: String; reportIfCurrent: Boolean);
 var
-  upg : TUpgradeNeededForm;
+  upg: TUpgradeNeededForm;
 begin
-  if (ver <> '') and (ver <> '0.0.'+inttostr(buildCount)) then
+  if (ver <> '') and (ver <> '0.0.' + inttostr(BuildCount)) then
   begin
     upg := TUpgradeNeededForm.Create(self);
     try
       upg.Settings := FSettings.link;
-      upg.lblVersion.Text := 'The current version is '+ver+', you are running 0.0.'+inttostr(buildCount)+'. Upgrade?';
+      upg.lblVersion.Text := 'The current version is ' + ver + ', you are running 0.0.' + inttostr(BuildCount) + '. Upgrade?';
       case ShowModalHack(upg) of
-        mrContinue : UpgradeOnClose := true;
+        mrContinue:
+          UpgradeOnClose := true;
         mrYes:
 
           begin
-          doUpgrade(ver);
-          close;
+            doUpgrade(ver);
+            Close;
           end;
       end;
     finally
@@ -1210,7 +1229,7 @@ end;
 
 procedure TMasterToolsForm.mnuHelpAboutClick(Sender: TObject);
 var
-  form : TAboutForm;
+  form: TAboutForm;
 begin
   form := TAboutForm.Create(self);
   try
@@ -1222,7 +1241,7 @@ end;
 
 procedure TMasterToolsForm.mnuPackageManagerClick(Sender: TObject);
 var
-  frame : TFrame;
+  frame: TFrame;
 begin
   if FPackageMgrTab <> nil then
     tbMain.ActiveTab := FPackageMgrTab
@@ -1231,23 +1250,73 @@ begin
     FPackageMgrTab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := FPackageMgrTab;
     FPackageMgrTab.Text := 'Package Manager';
-    frame := TPackageManagerFrame.create(FPackageMgrTab);
-    frame.Form := self;
+    frame := TPackageManagerFrame.Create(FPackageMgrTab);
+    frame.form := self;
     FPackageMgrTab.TagObject := frame;
     frame.TagObject := FPackageMgrTab;
     frame.Parent := FPackageMgrTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := FPackageMgrTab;
+    frame.tab := FPackageMgrTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
   end;
 end;
 
+procedure TMasterToolsForm.mnuPublishClick(Sender: TObject);
+var
+  frame: TBaseResourceFrame;
+  res: TFHIRResource;
+  FSettings: TForm;
+  str:string;
+
+begin
+  frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
+  if (frame.resource is TFHIRImplementationGuide) then
+  begin
+    if frame.filename = '' then
+      ShowMessage('File is not saved. Please save the file first.')
+    else
+    with frame as TImplementationGuideEditorFrame do
+    begin
+
+      IGRootFolder := extractfiledir(frame.filename);
+      IGFileName := extractfilename(frame.filename);
+
+      IGSettingsForm := TIGSettingsForm.Create(self);
+      IGSettingsForm.Edit1.Text:=IGPublisherFolder;
+
+      IGSettingsForm.IGRootFolder := IGRootFolder;
+      IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
+      IGSettingsForm.IGFileName := IGFileName;
+      IGSettingsForm.checkContentFolders(IGRootFolder);
+
+      IGSettingsForm.ShowModal;
+
+//      if IGSettingsForm.ModalResult = mrOK then
+      begin
+        IGRootFolder := IGSettingsForm.IGRootFolder;
+        IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
+        str:=IGPublisherFolder ;
+
+        IGContentFolder := IGSettingsForm.IGContentFolder;
+        IGMediaFolder := IGSettingsForm.MediaFolder;
+        IGPageContentFolder := IGSettingsForm.PageContentFolder;
+        IGTempFolder := IGSettingsForm.tempFolder;
+        // pandocfolder := IGSettingsForm.pandocFolder;
+
+      end;
+      IGSettingsForm.Destroy;
+
+    end
+
+  end;
+end;
+
 procedure TMasterToolsForm.mnuRegistryClick(Sender: TObject);
 var
-  frame : TFrame;
+  frame: TFrame;
 begin
   if FRegistryTab <> nil then
     tbMain.ActiveTab := FRegistryTab
@@ -1256,7 +1325,7 @@ begin
     FRegistryTab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := FRegistryTab;
     FRegistryTab.Text := 'registry.fhir.org';
-    frame := TRegistryFrame.create(FRegistryTab);
+    frame := TRegistryFrame.Create(FRegistryTab);
     FRegistryTab.TagObject := frame;
     frame.TagObject := FRegistryTab;
     frame.Parent := FRegistryTab;
@@ -1264,17 +1333,35 @@ begin
     frame.OnWork := dowork;
     frame.OnOpenResource := OpenResourcefromClient;
     frame.Settings := FSettings.link;
-    frame.Tab := FRegistryTab;
+    frame.tab := FRegistryTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
   end;
 end;
 
-procedure TMasterToolsForm.loadedResource(frameClass : TBaseResourceFrameClass; url : string; res : TFHIRResource);
+procedure TMasterToolsForm.mnuRepositoryClick(Sender: TObject);
 var
-  tab : TTabItem;
-  frame : TBaseResourceFrame;
-  fcs : IFMXCursorService;
+  filename: string;
+  projectFolder: string;
+  ProjectFilesDialog: TprojectDialog;
+
+begin
+  { if filename = '' then
+    ShowMessage('File is not saved. Please save the file first.')
+    else
+    begin
+    projectFolder := extractfilepath(filename);
+    end;
+  } ProjectFilesDialog := TprojectDialog.Create(self);
+  ProjectFilesDialog.ShowModal;
+
+end;
+
+procedure TMasterToolsForm.loadedResource(frameClass: TBaseResourceFrameClass; url: string; res: TFHIRResource);
+var
+  tab: TTabItem;
+  frame: TBaseResourceFrame;
+  fcs: IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
     fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
@@ -1291,28 +1378,28 @@ begin
     tab.Text := url;
     tab.Hint := tab.Text;
     tab.ShowHint := true;
-    frame := frameClass.create(tab);
+    frame := frameClass.Create(tab);
     tab.TagObject := frame;
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := tab;
+    frame.tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.resource := res.link;
     frame.load;
   finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
+    if Assigned(fcs) then
+      fcs.SetCursor(Cursor);
   end;
 end;
 
-procedure TMasterToolsForm.newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
+procedure TMasterToolsForm.newResource(rClass: TFhirResourceClass; frameClass: TBaseResourceFrameClass);
 var
-  tab : TTabItem;
-  frame : TBaseResourceFrame;
-  fcs : IFMXCursorService;
+  tab: TTabItem;
+  frame: TBaseResourceFrame;
+  fcs: IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
     fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
@@ -1326,31 +1413,31 @@ begin
   try
     tab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := tab;
-    tab.Text := 'New '+rClass.ClassName.Substring(5);
+    tab.Text := 'New ' + rClass.ClassName.Substring(5);
     tab.Hint := tab.Text;
     tab.ShowHint := true;
-    frame := frameClass.create(tab);
+    frame := frameClass.Create(tab);
     tab.TagObject := frame;
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := tab;
+    frame.tab := tab;
     frame.Align := TAlignLayout.Client;
-    frame.resource := rClass.create;
+    frame.resource := rClass.Create;
     frame.load;
   finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
+    if Assigned(fcs) then
+      fcs.SetCursor(Cursor);
   end;
 end;
 
-procedure TMasterToolsForm.openResourceFromFile(filename: String; res: TFHIRResource; format : TFHIRFormat; frameClass: TBaseResourceFrameClass);
+procedure TMasterToolsForm.openResourceFromFile(filename: String; res: TFHIRResource; format: TFHIRFormat; frameClass: TBaseResourceFrameClass);
 var
-  tab : TTabItem;
-  frame : TBaseResourceFrame;
-  fcs : IFMXCursorService;
+  tab: TTabItem;
+  frame: TBaseResourceFrame;
+  fcs: IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
     fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
@@ -1364,34 +1451,34 @@ begin
   try
     tab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := tab;
-    tab.Text := ExtractFileName(filename);
+    tab.Text := extractfilename(filename);
     tab.Hint := filename;
     tab.ShowHint := true;
-    frame := frameClass.create(tab);
+    frame := frameClass.Create(tab);
     tab.TagObject := frame;
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := tab;
+    frame.tab := tab;
     frame.Align := TAlignLayout.Client;
-    frame.Filename := filename;
+    frame.filename := filename;
     frame.resource := res.link;
     frame.format := format;
     frame.load;
     addFileToList(filename);
   finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
+    if Assigned(fcs) then
+      fcs.SetCursor(Cursor);
   end;
 end;
 
-procedure TMasterToolsForm.OpenResourceFromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
+procedure TMasterToolsForm.OpenResourcefromClient(Sender: TObject; Client: TFHIRClient; format: TFHIRFormat; resource: TFHIRResource);
 var
-  tab : TTabItem;
-  frame : TBaseResourceFrame;
-  fcs : IFMXCursorService;
+  tab: TTabItem;
+  frame: TBaseResourceFrame;
+  fcs: IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
     fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
@@ -1405,48 +1492,47 @@ begin
   try
     tab := tbMain.Add(TTabItem);
     tbMain.ActiveTab := tab;
-    tab.Text := resource.fhirType+'/'+resource.id;
-    tab.Hint := client.address+'/'+resource.fhirType+'/'+resource.id;
+    tab.Text := resource.fhirType + '/' + resource.id;
+    tab.Hint := Client.address + '/' + resource.fhirType + '/' + resource.id;
     tab.ShowHint := true;
-    frame := frameForResource(resource).create(tab);
+    frame := frameForResource(resource).Create(tab);
     tab.TagObject := frame;
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.Settings := FSettings.link;
-    frame.Tab := tab;
+    frame.tab := tab;
     frame.Align := TAlignLayout.Client;
-    frame.Client := client.link;
-    frame.Filename := '$$';
+    frame.Client := Client.link;
+    frame.filename := '$$';
     frame.resource := resource.clone;
     frame.format := format;
     frame.load;
   finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
+    if Assigned(fcs) then
+      fcs.SetCursor(Cursor);
   end;
 end;
 
 procedure TMasterToolsForm.saveFiles;
 var
-  s : String;
+  s: String;
 begin
   try
-    FSettings.storeValues('Files'+versionSettingsString, lbFiles.Items);
+    FSettings.storeValues('Files' + versionSettingsString, lbFiles.items);
     FSettings.save;
   except
     // nothing we can do
   end;
 end;
 
-
 function TMasterToolsForm.searchDesc(s: String): String;
 var
-  builder : TFHIRIndexBuilder;
-  comps : TFHIRCompartmentList;
-  index : TFHIRIndex;
-  parts : TArray<string>;
+  builder: TFHIRIndexBuilder;
+  comps: TFHIRCompartmentList;
+  index: TFHIRIndex;
+  parts: TArray<string>;
 begin
   if FIndexes = nil then
   begin
@@ -1454,64 +1540,48 @@ begin
     comps := TFHIRCompartmentList.Create;
     builder := TFHIRIndexBuilderX.Create;
     try
-      builder.registerIndexes(Findexes, comps);
+      builder.registerIndexes(FIndexes, comps);
     finally
       builder.Free;
-      comps.free;
+      comps.Free;
     end;
   end;
   result := '';
   parts := s.Split(['.']);
   index := FIndexes.getByName(parts[0], parts[1]);
   if index <> nil then
-    result := '<p>'+FormatTextToHTML(index.Description)+'</p>'+'<p>'+index.Name+' : '+CODES_TFhirSearchParamType[index.SearchType]+'</p>';
+    result := '<p>' + FormatTextToHTML(index.Description) + '</p>' + '<p>' + index.name + ' : ' + CODES_TFhirSearchParamType[index.SearchType] + '</p>';
 end;
 
 procedure TMasterToolsForm.Timer1Timer(Sender: TObject);
 var
-  frame : TBaseFrame;
+  frame: TBaseFrame;
 begin
   ModalHackUPdateStatus;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
-  tbnSave.Enabled := false;
-  tbnSaveAs.Enabled := false;
-  tbnClose.Enabled := false;
-  tbnSource.Enabled := false;
-  mnuResourceLanguage.Enabled := false;
+  tbnSave.enabled := false;
+  tbnSaveAs.enabled := false;
+  tbnClose.enabled := false;
+  tbnSource.enabled := false;
+  mnuResourceLanguage.enabled := false;
 
   if (frame <> nil) then
   begin
-    tbnClose.Enabled := true;
-    tbnSave.Enabled := frame.canSave;
-    tbnSaveAs.Enabled := frame.canSaveAs;
-    tbnSource.Enabled := frame.hasResource;
-    mnuResourceLanguage.Enabled := frame.hasResource;
+    tbnClose.enabled := true;
+    tbnSave.enabled := frame.canSave;
+    tbnSaveAs.enabled := frame.canSaveAs;
+    tbnSource.enabled := frame.hasResource;
+    mnuResourceLanguage.enabled := frame.hasResource;
   end;
   updateHelpText;
   GBackgroundTasks.primaryThreadCheck;
 end;
 
-function template(fragment : String) : String;
+function template(fragment: String): String;
 begin
-result :=
-'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-'<head>'+#13#10+
-'  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
-' <style>'+#13#10+
-'  body { background-color: rgb(255, 254, 245);'+#13#10+
-'	margin: 0px;'+#13#10+
-'	padding: 0px;'+#13#10+
-'	height: 100%;'+#13#10+
-'	font-size: 10px;'+#13#10+
-'	font-family: verdana;'+#13#10+
-'}'+#13#10+
-' </style>'+#13#10+
-'</head>'+#13#10+
-fragment+#13#10+
-'<body>'+#13#10+
-''+#13#10+
-'</body>'+#13#10+
-'</html>'+#13#10;
+  result := '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">' + #13#10 + '<head>' + #13#10 + '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 +
+    ' <style>' + #13#10 + '  body { background-color: rgb(255, 254, 245);' + #13#10 + '	margin: 0px;' + #13#10 + '	padding: 0px;' + #13#10 + '	height: 100%;' + #13#10 + '	font-size: 10px;' + #13#10
+    + '	font-family: verdana;' + #13#10 + '}' + #13#10 + ' </style>' + #13#10 + '</head>' + #13#10 + fragment + #13#10 + '<body>' + #13#10 + '' + #13#10 + '</body>' + #13#10 + '</html>' + #13#10;
 end;
 
 procedure TMasterToolsForm.updateHelpStatus;
@@ -1533,9 +1603,9 @@ end;
 
 procedure TMasterToolsForm.updateHelpText;
 var
-  focus : IControl;
-  obj : TStyledControl;
-  s : String;
+  focus: IControl;
+  obj: TStyledControl;
+  s: String;
 begin
   if FShowHelp then
   begin
@@ -1549,11 +1619,11 @@ begin
     if obj <> FFocus then
     begin
       FFocus := obj;
-      if (obj = nil) or (obj.HelpContext = 0) then
+      if (obj = nil) or (obj.helpContext = 0) then
         webHelp.LoadFromStrings(template(''), 'my.html')
       else
       begin
-        s := Help_Strings[obj.HelpContext];
+        s := Help_Strings[obj.helpContext];
         if s <> '' then
           webHelp.LoadFromStrings(template(processHelpContext(s)), 'my.html')
         else
@@ -1565,28 +1635,27 @@ end;
 
 function TMasterToolsForm.processHelpContext(helpContext: String): String;
 var
-  b : TStringBuilder;
-  parts : TArray<String>;
-  s : String;
+  b: TStringBuilder;
+  parts: TArray<String>;
+  s: String;
 begin
   b := TStringBuilder.Create;
   try
     parts := helpContext.Split([',']);
     for s in parts do
       if s.StartsWith('ui:') then
-        b.Append('<p>'+FormatTextToHTML(s.Substring(3).trim)+'</p>')
+        b.Append('<p>' + FormatTextToHTML(s.Substring(3).trim) + '</p>')
       else if s.StartsWith('search:') then
         b.Append(searchDesc(s.Substring(7)))
       else if s.StartsWith('fhir:') then
         fhirDefn(s.Substring(5), b)
       else
-        b.Append('<p>Unknown context '+s+'</p>');
+        b.Append('<p>Unknown context ' + s + '</p>');
     result := b.ToString;
   finally
     b.Free;
   end;
 end;
-
 
 { TToolkitLogger }
 
@@ -1596,7 +1665,7 @@ begin
   if DirectoryExists('c:\temp') then
     FLog := TLogger.Create('c:\temp\toolkit.fhir.log')
   else
-    FLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+ 'toolkit.fhir.log')
+    FLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'toolkit.fhir.log')
 end;
 
 destructor TToolkitLogger.Destroy;
@@ -1605,23 +1674,23 @@ begin
   inherited;
 end;
 
-procedure TToolkitLogger.logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);
+procedure TToolkitLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
 begin
   FLog.WriteToLog('=================================='#13#10);
-  FLog.WriteToLog(verb+' '+url+' HTTP/1.0'#13#10);
-  FLog.WriteToLog(requestHeaders+#13#10);
+  FLog.WriteToLog(verb + ' ' + url + ' HTTP/1.0'#13#10);
+  FLog.WriteToLog(requestHeaders + #13#10);
   if request <> nil then
-    Flog.WriteToLog(toChars(request)+#13#10);
+    FLog.WriteToLog(toChars(request) + #13#10);
   FLog.WriteToLog('----------------------------------'#13#10);
-  FLog.WriteToLog(status+' HTTP/1.0'#13#10);
-  FLog.WriteToLog(responseHeaders+#13#10);
+  FLog.WriteToLog(status + ' HTTP/1.0'#13#10);
+  FLog.WriteToLog(responseHeaders + #13#10);
   if response <> nil then
-    Flog.WriteToLog(toChars(response)+#13#10);
+    FLog.WriteToLog(toChars(response) + #13#10);
 end;
 
 function TToolkitLogger.toChars(s: TStream): string;
 var
-  b : TBytes;
+  b: TBytes;
 begin
   s.Position := 0;
   setLength(b, s.Size);
@@ -1634,7 +1703,7 @@ end;
 
 procedure TVersionChecker.execute;
 begin
-  Response  := TVersionCheckerOutcome.create(checkUpgrade);
+  response := TVersionCheckerOutcome.Create(checkUpgrade);
 end;
 
 function TVersionChecker.name: String;
@@ -1644,12 +1713,10 @@ end;
 
 { TVersionCheckerOutcome }
 
-constructor TVersionCheckerOutcome.create(ver: String);
+constructor TVersionCheckerOutcome.Create(ver: String);
 begin
   inherited Create;
   FVer := ver;
 end;
 
 end.
-
-
