@@ -704,9 +704,6 @@ var
   f : TFileStream;
   l : TStringDynArray;
 begin
-  if (id = 'hl7.fhir.core') and (ver = '4.0.0') and packageExists(id, 'current') then
-    ver := 'current';
-
   if not packageExists(id, ver) then
     raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
   if assigned(progressEvent) then

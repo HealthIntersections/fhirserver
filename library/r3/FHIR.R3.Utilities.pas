@@ -183,6 +183,8 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
+    class function fromDateTimes(start, end_ : TDateTime) : TFhirPeriod; overload;
+    class function fromDates(start, end_ : TDateTime) : TFhirPeriod; overload;
     class function fromEdit(s : String) : TFhirPeriod;
     property editString : String read GetEditString write SetEditString;
     function point : TDateTime;
@@ -250,6 +252,7 @@ type
   TFHIRElementHelper = class helper for TFHIRElement
   public
     function addExtension(ext : TFHIRExtension) : TFHIRExtension; overload;
+    function forceExtension(url : String) : TFHIRExtension; overload;
     function addExtension(url : String) : TFHIRExtension; overload;
     procedure addExtension(url : String; t : TFhirType); overload;
     procedure addExtension(url : String; v : String); overload;
@@ -261,6 +264,7 @@ type
     function getExtensionDateAsString(url : String) : String; overload;
     function getExtensionBoolean(url : String) : boolean;
     function getExtensionString(url : String; index : integer) : String; overload;
+    function listExtensions(url : String) : TFslList<TFhirExtension>; overload;
     procedure removeExtension(url : String);
     procedure setExtension(url : String; t : TFHIRType);
     procedure setExtensionString(url, value : String);
@@ -332,14 +336,19 @@ type
     function getExtension(url : String) : Integer; overload;
     function getExtension(url : String; index : integer) : TFhirExtension; overload;
     function getExtensionValue(url : String) : TFHIRType;
+    function listExtensions(url : String) : TFslList<TFhirExtension>; overload;
     function forceExtension(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
+    function getExtensionBool(url : String) : boolean; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
     function getExtensionByUrl(url : String) : TFHIRExtension;
     procedure removeExtension(url : String); overload;
     procedure removeExtension(url : String; index : integer); overload;
     procedure setExtensionString(url, value : String);
+    procedure setExtensionBool(url : String; value : boolean);
+    procedure setExtensionCode(url, value : String);
+    procedure setExtension(url : String; t : TFHIRType);
     procedure checkNoModifiers(place, role : String; allowed : TArray<String> = nil);
   end;
 
@@ -436,7 +445,7 @@ type
   TFhirHumanNameHelper = class helper for TFhirHumanName
   public
     function given : string;
-    class function fromEdit(n : String) : TFhirHumanName;
+    class function fromEdit(n: String): TFhirHumanName; static;
   end;
 
   TFhirValueSetHelper = class helper for TFhirValueSet
@@ -2090,6 +2099,15 @@ begin
   addExtension(url, TFhirString.Create(v));
 end;
 
+function TFHIRElementHelper.forceExtension(url: String): TFHIRExtension;
+begin
+  result := getExtensionByUrl(url);
+  if result = nil then
+  begin
+    result := self.ExtensionList.Append;
+    result.url := url;
+  end;
+end;
 
 function TFHIRElementHelper.addExtension(url: String): TFHIRExtension;
 begin
@@ -2168,6 +2186,21 @@ begin
   result := getExtension(url) > -1;
 end;
 
+function TFHIRElementHelper.listExtensions(url: String): TFslList<TFhirExtension>;
+var
+  ext : TFHIRExtension;
+begin
+  result := TFslList<TFhirExtension>.create;
+  try
+    for ext in extensionList do
+      if ext.url = url then
+        result.Add(ext.Link);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 procedure TFHIRElementHelper.removeExtension(url: String);
 var
   ndx : integer;
@@ -2186,9 +2219,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := t.link;
+  if (t <> nil) then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := t.link;
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionBoolean(url: String; value: boolean);
@@ -2206,9 +2242,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirBoolean.Create(value = 'true');
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirBoolean.Create(value = 'true');
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionCode(url, value: String);
@@ -2216,9 +2255,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirCode.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirCode.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionDate(url, value: String);
@@ -2226,9 +2268,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirDate.Create(TFslDateTime.fromXML(value));
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirDate.Create(TFslDateTime.fromXML(value));
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionDateTime(url, value: String);
@@ -2236,9 +2281,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirDateTime.Create(TFslDateTime.fromXML(value));
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirDateTime.Create(TFslDateTime.fromXML(value));
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionDecimal(url, value: String);
@@ -2246,9 +2294,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirDecimal.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirDecimal.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionInteger(url, value: String);
@@ -2256,9 +2307,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirInteger.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirInteger.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionMarkdown(url, value: String);
@@ -2266,9 +2320,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirMarkdown.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirMarkdown.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionString(url, value: String);
@@ -2276,9 +2333,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirString.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirString.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionCanonical(url, value: String);
@@ -2286,9 +2346,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirCanonical.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirCanonical.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionTime(url, value: String);
@@ -2296,9 +2359,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirTime.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirTime.Create(value);
+  end;
 end;
 
 procedure TFHIRElementHelper.setExtensionURI(url, value: String);
@@ -2306,9 +2372,12 @@ var
   ext : TFhirExtension;
 begin
   removeExtension(url);
-  ext := self.ExtensionList.Append;
-  ext.url := url;
-  ext.value := TFhirUri.Create(value);
+  if (value <> '') then
+  begin
+    ext := self.ExtensionList.Append;
+    ext.url := url;
+    ext.value := TFhirUri.Create(value);
+  end;
 end;
 
 function TFHIRElementHelper.getExtensionCount(url: String): Integer;
@@ -2376,6 +2445,20 @@ begin
       else
         inc(t);
     end;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionBool(url: String): boolean;
+var
+  ndx : Integer;
+begin
+  ndx := getExtension(url);
+  if (ndx = -1) then
+    result := false
+  else if (self.ExtensionList.Item(ndx).value is TFHIRPrimitiveType) then
+    result := (TFHIRPrimitiveType(self.ExtensionList.Item(ndx).value).primitiveValue = 'true')
+      or (TFHIRPrimitiveType(self.ExtensionList.Item(ndx).value).primitiveValue = '1')
+  else
+    result := false;
 end;
 
 function TFHIRDomainResourceHelper.getExtensionByUrl( url: String): TFHIRExtension;
@@ -2453,6 +2536,21 @@ begin
   result := getExtension(url) > -1;
 end;
 
+function TFHIRDomainResourceHelper.listExtensions(url: String): TFslList<TFhirExtension>;
+var
+  ext : TFHIRExtension;
+begin
+  result := TFslList<TFhirExtension>.create;
+  try
+    for ext in extensionList do
+      if ext.url = url then
+        result.Add(ext.Link);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 procedure TFHIRDomainResourceHelper.removeExtension(url: String; index: integer);
 var
   i, t : integer;
@@ -2484,6 +2582,37 @@ begin
     ndx := getExtension(url);
   end;
 
+end;
+
+procedure TFHIRDomainResourceHelper.setExtension(url: String; t : TFHIRType);
+var
+  ext : TFHIRExtension;
+begin
+  ext := getExtensionByUrl(url);
+  if ext = nil then
+    addExtension(url, t)
+  else
+    ext.value := t;
+end;
+
+procedure TFHIRDomainResourceHelper.setExtensionBool(url: String; value : boolean);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirBoolean.Create(value);
+end;
+
+procedure TFHIRDomainResourceHelper.setExtensionCode(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirCode.Create(value);
 end;
 
 procedure TFHIRDomainResourceHelper.setExtensionString(url, value: String);
@@ -5260,6 +5389,7 @@ class function TFhirQuantityHelper.fromUcum(value, code: String): TFhirQuantity;
 begin
   result := TFHIRQuantity.create;
   result.value := value;
+  result.unit_ := code;
   result.system := 'http://unitsofmeasure.org';
   result.code := code;
 end;
@@ -5404,7 +5534,7 @@ begin
         if (contentList.Count = 1) and (contentList[0].attachment.title <> '') then
           filename := makeFileName(contentList[0].attachment.title)+'.zip'
         else
-        filename := makeFileName(description)+'.zip';
+          filename := makeFileName(description)+'.zip';
       finally
         zip.Free;
       end;
@@ -6001,6 +6131,20 @@ begin
 end;
 
 { TFhirPeriodHelper }
+
+class function TFhirPeriodHelper.fromDateTimes(start, end_: TDateTime) : TFHIRPeriod;
+begin
+  result := TFhirPeriod.create;
+  result.start := TFslDateTime.make(start, dttzUTC);
+  result.end_ := TFslDateTime.make(end_, dttzUTC);
+end;
+
+class function TFhirPeriodHelper.fromDates(start, end_: TDateTime) : TFHIRPeriod;
+begin
+  result := TFhirPeriod.create;
+  result.start := TFslDateTime.make(start, dttzUTC, dtpDay);
+  result.end_ := TFslDateTime.make(end_, dttzUTC, dtpDay);
+end;
 
 class function TFhirPeriodHelper.fromEdit(s: String): TFhirPeriod;
 begin

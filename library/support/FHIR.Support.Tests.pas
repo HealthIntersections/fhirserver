@@ -119,7 +119,6 @@ Type
   TDecimalTests = Class (TObject)
   Private
     procedure testString(s, st, std : String);
-    Procedure testTrunc(s1,s2 : String);
     procedure TestAdd(s1,s2,s3:String);
     procedure TestMultiply(s1,s2,s3:String);
     procedure TestSubtract(s1,s2,s3:String);
@@ -131,6 +130,7 @@ Type
     procedure TestInt64(i : int64);
     procedure TestRoundTrip(n1, n2, n3, t : String);
     procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
+    procedure TestTruncation(value : String; digits : integer; outcome : String; round : boolean);
   Published
     [TestCase] Procedure TestIsDecimal;
 
@@ -142,6 +142,7 @@ Type
     [TestCase] Procedure TestNormalisedDecimal;
     [TestCase] Procedure TestInfinity;
     [TestCase] Procedure TestOverloading;
+    [TestCase] Procedure TestTrunc;
   End;
 
 Type
@@ -1406,15 +1407,6 @@ begin
   testString('10000000000000.1', '10000000000000.1', '1.00000000000001e13');
   testString('100000000000000.1', '100000000000000.1', '1.000000000000001e14');
 //  testString('1e-3', '1e-3');   , '1e-3');  e0  }
-
-  testTrunc('1', '1');
-  testTrunc('1.01', '1');
-  testTrunc('-1.01', '-1');
-  testTrunc('0.01', '0');
-  testTrunc('-0.01', '0');
-  testTrunc('0.1', '0');
-  testTrunc('0.0001', '0');
-  testTrunc('100.000000000000000000000000000000000000000001', '100');
 end;
 
 procedure TDecimalTests.TestAddition;
@@ -1484,6 +1476,40 @@ begin
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Subtract(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
+end;
+
+procedure TDecimalTests.testTrunc;
+begin
+  testTruncation('1', 0, '1', false);
+  testTruncation('1.01', 0, '1', false);
+  testTruncation('-1.01', 0, '-1', false);
+  testTruncation('0.01', 0, '0', false);
+  testTruncation('-0.01', 0, '0', false);
+  testTruncation('0.1', 0, '0', false);
+  testTruncation('0.0001', 0, '0', false);
+  testTruncation('100.000000000000000000000000000000000000000001', 0, '100', false);
+
+  TestTruncation('1.2345678', 0, '1', true);
+  TestTruncation('1.2345678', 1, '1.2', true);
+  TestTruncation('1.2345678', 2, '1.23', true);
+  TestTruncation('1.2345678', 3, '1.234', true);
+  TestTruncation('1.2345678', 6, '1.234567', true);
+  TestTruncation('1.2345678', 10, '1.2345678', true);
+//  TestTruncation('1.2345678', 0, '1', false);
+//  TestTruncation('1.2345678', 1, '1.2', false);
+//  TestTruncation('1.2345678', 2, '1.23', false);
+//  TestTruncation('1.2345678', 3, '1.234', false);
+//  TestTruncation('1.2345678', 6, '1.234568', false);
+//  TestTruncation('1.2345678', 10, '1.2345678', false);
+end;
+
+procedure TDecimalTests.TestTruncation(value: String; digits: integer; outcome: String; round: boolean);
+var
+  o1, o2 : TFslDecimal;
+begin
+  o1 := TFslDecimal.valueOf(value);
+  o2 := o1.Trunc(digits);
+  Assert.IsTrue(o2.AsDecimal = outcome);
 end;
 
 procedure TDecimalTests.TestMultiplication;
@@ -1616,15 +1642,6 @@ begin
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Divide(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
-end;
-
-procedure TDecimalTests.testTrunc(s1, s2: String);
-var
-  o1, o2 : TFslDecimal;
-begin
-  o1 := TFslDecimal.valueOf(s1);
-  o2 := o1.Trunc;
-  Assert.IsTrue(o2.AsDecimal = s2);
 end;
 
 procedure TDecimalTests.TestDivInt(s1, s2, s3: String);
@@ -4605,3 +4622,6 @@ initialization
   TDUnitX.RegisterTestFixture(TDecimalTests);
 //  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
 end.
+
+
+

@@ -286,10 +286,15 @@ begin
   form := TEditRegisteredServerForm.Create(self);
   try
     form.SoftwareId := 'FHIR Toolkit';
-    form.SoftwareVersion := ToolKitVersionBase + inttostr(BuildCount);
-    form.Versions := FSettings.Versions;
-{$IFDEF FHIR3} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create; {$ENDIF}
-{$IFDEF FHIR4} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create; {$ENDIF}
+    form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
+    form.Versions := FSettings.Versions.Link;
+    {$IFDEF FHIR3}
+    form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create;
+    {$ENDIF}
+    {$IFDEF FHIR4}
+    form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create;
+    {$ENDIF}
+    form.DefaultVersion := CURRENT_FHIR_VERSION;
     form.Server := TRegisteredFHIRServer.Create;
     if ShowModalHack(form) = mrOk then
     begin

@@ -141,6 +141,7 @@ type
     Button3: TButton;
     btnBulkData: TButton;
     btnMatch: TButton;
+    Label27: TLabel;
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnConfSearchClick(Sender: TObject);

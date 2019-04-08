@@ -1103,7 +1103,8 @@ type
     class function makeLocal : TFslDateTime; overload; static; // now, in local timezone
     class function makeLocal(precision : TFslDateTimePrecision) : TFslDateTime; overload; static;
     class function makeLocal(value : TDateTime) : TFslDateTime; overload; static; // stated time, local timezone
-    class function make(value : TDateTime; tz : TFslDateTimeTimezone) : TFslDateTime; static; // stated time and timezone
+    class function make(value : TDateTime; tz : TFslDateTimeTimezone) : TFslDateTime; overload; static; // stated time and timezone
+    class function make(value : TDateTime; tz : TFslDateTimeTimezone; precision : TFslDateTimePrecision) : TFslDateTime; overload; static; // stated time and timezone
     class function fromHL7(value : String) : TFslDateTime; static; // load from a v2/cda date format
     class function fromXML(value : String) : TFslDateTime; static; // load from XML format
     class function fromTS(value : TTimestamp; tz : TFslDateTimeTimezone = dttzLocal) : TFslDateTime; overload; static; // load from classic SQL format
@@ -1760,7 +1761,7 @@ Type
     Function immediateLowerBound : TFslDecimal;  // the immediate lower bound given the face value. for example, if the value is 1,0, then the upper bound is 0.99999999999999999999999999999999.
 
     // operators
-    Function Trunc : TFslDecimal;
+    Function Trunc(digits : integer = 0) : TFslDecimal;
     Function Multiply(oOther : TFslDecimal) : TFslDecimal; Overload;
     Function Multiply(iOther : Integer) : TFslDecimal; Overload;
     Function Divide(oOther : TFslDecimal) : TFslDecimal; Overload;
@@ -9000,6 +9001,12 @@ begin
   result := TFslDateTime.makeLocal(now);
 end;
 
+class function TFslDateTime.make(value: TDateTime; tz: TFslDateTimeTimezone; precision: TFslDateTimePrecision): TFslDateTime;
+begin
+  result := make(value, tz);
+  result.FPrecision := precision;
+end;
+
 class function TFslDateTime.makeLocal(value: TDateTime) : TFslDateTime;
 begin
   result := make(value, dttzLocal);
@@ -12251,17 +12258,17 @@ Begin
   result := i;
 end;
 
-Function TFslDecimalHelper.Trunc: TFslDecimal;
+Function TFslDecimalHelper.Trunc(digits : integer = 0): TFslDecimal;
 begin
   if IsNull or IsUndefined or IsInfinite then
     exit(self)
-  else if FDecimal < 1 then
+  else if (FDecimal < 1) and (digits = 0) then
     result := makeZero
   Else
   begin
     result := self;
-    if Length(result.FDigits) >= FDecimal then
-      SetLength(result.FDigits, FDecimal-1);
+    if Length(result.FDigits) >= FDecimal + digits then
+      SetLength(result.FDigits, FDecimal + digits-1);
     if result.FDigits = '' then
     begin
       result.FDigits := '0';
