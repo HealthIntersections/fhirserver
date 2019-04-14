@@ -1308,7 +1308,6 @@ begin
           IGPageContentFolder := IGSettingsForm.PageContentFolder;
           IGTempFolder := IGSettingsForm.tempFolder;
           // pandocfolder := IGSettingsForm.pandocFolder;
-
         end;
         IGSettingsForm.Destroy;
 

@@ -198,6 +198,10 @@ type
     Label15: TLabel;
     edtDepOnVersion: TEdit;
     Label24: TLabel;
+    edtIGTitle: TEdit;
+    Label12: TLabel;
+    Label25: TLabel;
+    lbResourceVersions: TListBox;
 
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure packageUpClick(Sender: TObject);
@@ -1175,6 +1179,7 @@ var
   selIndex, i, lastSlashPos: integer;
   extracted_ID: string;
   ImplementationGuide: tfhirImplementationGuide;
+  ver:  TFHIRFHIRVersionEnum;
 
 begin
   selIndex := 0;
@@ -1190,6 +1195,7 @@ begin
     selIndex := 2;
     UpdateImplementationGuide.enabled := true;
     edtIGName.text := tfhirImplementationGuide(obj).Name;
+    edtIGTitle.text := tfhirImplementationGuide(obj).Title;
 
     edtIGURL.text := tfhirImplementationGuide(obj).url;
 
@@ -1280,6 +1286,11 @@ begin
     edtResourceReference.text := tfhirImplementationGuideDefinitionResource(obj).reference.reference;
     edtResourceName.text := tfhirImplementationGuideDefinitionResource(obj).Name;
     mmResourceDescription.text := tfhirImplementationGuideDefinitionResource(obj).Description;
+
+    if (tfhirImplementationGuideDefinitionResource(obj).fhirVersionList.Count>0) then
+      for ver in TFHIRFHIRVersionEnumList(tfhirImplementationGuideDefinitionResource(obj).fhirVersion) do begin
+          lbResourceVersions.ItemByIndex(lbResourceVersions.items.count-integer(ver)).IsChecked:=true;
+      end;
 
   end;
 
@@ -1403,6 +1414,7 @@ begin
   if obj = nil then
     exit;
   obj.Name := edtIGName.text;
+  obj.Title := edtIGTitle.text;
 
   if (edtIGURL.text <> '') and (copy(edtIGURL.text, length(edtIGURL.text), 1) <> '/') then
     edtIGURL.text := edtIGURL.text + '/';
@@ -1468,6 +1480,8 @@ end;
 procedure TImplementationGuideEditorFrame.UpdateResourceClick(Sender: TObject);
 var
   obj: tfhirImplementationGuideDefinitionResource;
+  i:integer;
+  ver: TFHIRFHIRVersionEnum;
 begin
   obj := tfhirImplementationGuideDefinitionResource(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
@@ -1475,6 +1489,16 @@ begin
   obj.reference.reference := edtResourceReference.text;
   obj.Name := edtResourceName.text;
   obj.Description := mmResourceDescription.text;
+
+  obj.fhirVersionList.ClearItems;
+  for I := 0 to lbResourceVersions.Items.Count-1 do begin
+    if lbResourceVersions.ItemByIndex(i).IsChecked then
+    obj.fhirVersion:=obj.fhirVersion+[TFHIRFHIRVersionEnum(lbResourceVersions.Items.Count-I)]; //subtract index because list is sorted in reverse order
+
+end;
+
+
+
   if cbResourcePackage.ItemIndex <> -1 then
     obj.groupingId := cbResourcePackage.Items[cbResourcePackage.ItemIndex];
   tvStructure.Selected.text := obj.Name;
