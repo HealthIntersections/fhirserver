@@ -228,8 +228,6 @@ type
     FServers: TFslList<TRegisteredFHIRServer>;
     FFactory: TFHIRFactory;
 
-
-
     procedure saveFiles;
     procedure openResourceFromFile(filename: String; res: TFHIRResource; format: TFHIRFormat; frameClass: TBaseResourceFrameClass);
     procedure OpenResourcefromClient(Sender: TObject; Client: TFHIRClient; format: TFHIRFormat; resource: TFHIRResource);
@@ -286,14 +284,14 @@ begin
   form := TEditRegisteredServerForm.Create(self);
   try
     form.SoftwareId := 'FHIR Toolkit';
-    form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
+    form.SoftwareVersion := ToolKitVersionBase + inttostr(BuildCount);
     form.Versions := FSettings.Versions.Link;
-    {$IFDEF FHIR3}
+{$IFDEF FHIR3}
     form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create;
-    {$ENDIF}
-    {$IFDEF FHIR4}
+{$ENDIF}
+{$IFDEF FHIR4}
     form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create;
-    {$ENDIF}
+{$ENDIF}
     form.DefaultVersion := CURRENT_FHIR_VERSION;
     form.Server := TRegisteredFHIRServer.Create;
     if ShowModalHack(form) = mrOk then
@@ -319,7 +317,7 @@ var
   ok: Boolean;
 begin
   Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
-  http := TFhirClients.makeHTTP(FContext.link, Server.fhirEndpoint, Server.format, FSettings.Timeout * 1000, FSettings.proxy);
+  http := TFhirClients.makeHTTP(FContext.Link, Server.fhirEndpoint, Server.format, FSettings.Timeout * 1000, FSettings.proxy);
   try
     (http.Communicator as TFHIRHTTPCommunicator).username := Server.username;
     (http.Communicator as TFHIRHTTPCommunicator).password := Server.password;
@@ -329,7 +327,7 @@ begin
       (http.Communicator as TFHIRHTTPCommunicator).certKey := Server.SSLPrivateKey;
       (http.Communicator as TFHIRHTTPCommunicator).certPWord := Server.SSLPassphrase;
     end;
-    http.Logger := ToolkitLogger.link;
+    http.Logger := ToolkitLogger.Link;
     ok := false;
     if Server.SmartAppLaunchMode <> salmNone then
     begin
@@ -338,7 +336,7 @@ begin
         begin
           Smart := TSmartAppLaunchLogin.Create;
           try
-            Smart.Server := Server.link;
+            Smart.Server := Server.Link;
             Smart.scopes := ['user/*.*'];
             Smart.OnIdle := DoIdle;
             Smart.OnOpenURL := DoOpenURL;
@@ -346,7 +344,7 @@ begin
             Smart.Version := '0.0.' + inttostr(BuildCount);
             ok := Smart.Login;
             if ok then
-              http.smartToken := Smart.token.link;
+              http.smartToken := Smart.token.Link;
           finally
             Smart.Free;
           end;
@@ -1274,7 +1272,7 @@ var
   frame: TBaseResourceFrame;
   res: TFHIRResource;
   FSettings: TForm;
-  str:string;
+  str: string;
 
 begin
   frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
@@ -1283,38 +1281,38 @@ begin
     if frame.filename = '' then
       ShowMessage('File is not saved. Please save the file first.')
     else
-    with frame as TImplementationGuideEditorFrame do
-    begin
-
-      IGRootFolder := extractfiledir(frame.filename);
-      IGFileName := extractfilename(frame.filename);
-
-      IGSettingsForm := TIGSettingsForm.Create(self);
-      IGSettingsForm.Edit1.Text:=IGPublisherFolder;
-
-      IGSettingsForm.IGRootFolder := IGRootFolder;
-      IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
-      IGSettingsForm.IGFileName := IGFileName;
-      IGSettingsForm.checkContentFolders(IGRootFolder);
-
-      IGSettingsForm.ShowModal;
-
-//      if IGSettingsForm.ModalResult = mrOK then
+      with frame as TImplementationGuideEditorFrame do
       begin
-        IGRootFolder := IGSettingsForm.IGRootFolder;
-        IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
-        str:=IGPublisherFolder ;
 
-        IGContentFolder := IGSettingsForm.IGContentFolder;
-        IGMediaFolder := IGSettingsForm.MediaFolder;
-        IGPageContentFolder := IGSettingsForm.PageContentFolder;
-        IGTempFolder := IGSettingsForm.tempFolder;
-        // pandocfolder := IGSettingsForm.pandocFolder;
+        IGRootFolder := extractfiledir(frame.filename);
+        IGFileName := extractfilename(frame.filename);
 
-      end;
-      IGSettingsForm.Destroy;
+        IGSettingsForm := TIGSettingsForm.Create(self);
+        IGSettingsForm.Edit1.Text := IGPublisherFolder;
 
-    end
+        IGSettingsForm.IGRootFolder := IGRootFolder;
+        IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
+        IGSettingsForm.IGFileName := IGFileName;
+        IGSettingsForm.checkContentFolders(IGRootFolder);
+
+        IGSettingsForm.ShowModal;
+
+        // if IGSettingsForm.ModalResult = mrOK then
+        begin
+          IGRootFolder := IGSettingsForm.IGRootFolder;
+          IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
+          str := IGPublisherFolder;
+
+          IGContentFolder := IGSettingsForm.IGContentFolder;
+          IGMediaFolder := IGSettingsForm.MediaFolder;
+          IGPageContentFolder := IGSettingsForm.PageContentFolder;
+          IGTempFolder := IGSettingsForm.tempFolder;
+          // pandocfolder := IGSettingsForm.pandocFolder;
+
+        end;
+        IGSettingsForm.Destroy;
+
+      end
 
   end;
 end;
@@ -1348,17 +1346,22 @@ procedure TMasterToolsForm.mnuRepositoryClick(Sender: TObject);
 var
   filename: string;
   projectFolder: string;
-  ProjectFilesDialog: TprojectDialog;
+  ProjectFilesDialog: TProjectDialog;
+  frame: TBaseResourceFrame;
 
 begin
-  { if filename = '' then
+
+  frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
+
+  if extractfiledir(frame.filename) = '' then
     ShowMessage('File is not saved. Please save the file first.')
-    else
-    begin
-    projectFolder := extractfilepath(filename);
-    end;
-  } ProjectFilesDialog := TprojectDialog.Create(self);
-  ProjectFilesDialog.ShowModal;
+  else
+  begin
+    ProjectFilesDialog := TProjectDialog.Create(self);
+    ProjectFilesDialog.Edit4.Text := extractfiledir(frame.filename);
+    ProjectFilesDialog.ShowModal;
+    ProjectFilesDialog.Destroy;
+  end;
 
 end;
 

@@ -4,7 +4,11 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, System.ImageList, FMX.ImgList;
+{$IF defined(MSWINDOWS)}
+  winapi.ShellApi, ShlObj, fmx.platform.win, winapi.windows,                 jclsysutils,
+{$ENDIF}
+  fmx.Types, fmx.Controls, fmx.Forms, fmx.Graphics, fmx.Dialogs, fmx.StdCtrls, fmx.Edit, fmx.Controls.Presentation, System.ImageList, fmx.ImgList,
+  FMX.ScrollBox, FMX.Memo;
 
 type
   TProjectDialog = class(TForm)
@@ -20,6 +24,14 @@ type
     ImageList1: TImageList;
     Button1: TButton;
     Button2: TButton;
+    Memo1: TMemo;
+    procedure Button1Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure runAndWait(Path, command, parameters: String);
+    procedure Button13Click(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
+    procedure HandleOutput( const Text: string );
   private
     { Private declarations }
   public
@@ -32,5 +44,113 @@ var
 implementation
 
 {$R *.fmx}
+
+procedure TProjectDialog.HandleOutput( const Text: string );
+begin
+  Memo1.Lines.Add( Text );
+end;
+
+
+procedure TProjectDialog.Button13Click(Sender: TObject);
+var str:string;
+
+
+begin
+str:='git pull';
+
+{$IF defined(MSWINDOWS)}
+//  runandwait(Edit4.text, 'cmd.exe', '/K '+str)
+Execute('cmd /c '+str, HandleOutput);
+
+{$ENDIF}
+
+end;
+
+procedure TProjectDialog.Button14Click(Sender: TObject);
+var str1, str2:string;
+begin
+str1:='git add --all';
+str2:='git commit';
+{$IF defined(MSWINDOWS)}
+  runandwait(Edit4.text, 'cmd.exe', '/K '+str1)
+{$ENDIF}  ;
+{$IF defined(MSWINDOWS)}
+  runandwait(Edit4.text, 'cmd.exe', '/K '+str2)
+{$ENDIF}
+
+
+end;
+
+procedure TProjectDialog.Button1Click(Sender: TObject);
+begin
+{$IF defined(MSWINDOWS)}
+  ShellExecute(0, nil, 'explorer.exe', PChar(Edit4.text), nil, SW_SHOWNORMAL);
+{$ENDIF}
+end;
+
+procedure TProjectDialog.Button2Click(Sender: TObject);
+begin
+  begin
+{$IF defined(MSWINDOWS)}
+    ShellExecute(0, nil, 'cmd.exe', PChar('/K cd /d ' + Edit4.text), nil, SW_SHOWNORMAL);
+{$ENDIF}
+  end;
+
+end;
+
+procedure TProjectDialog.Button8Click(Sender: TObject);
+var
+  str: string;
+begin
+
+  if SelectDirectory('Select folder', '', str) then
+  begin
+    Edit4.text := str;
+    // Edit1.Text := dir;
+  end;
+
+end;
+
+
+
+procedure TProjectDialog.runAndWait(Path, command, parameters: String);
+{$IFDEF OSX}
+begin
+  raise EFslException.Create('Not done yet for OSX');
+end;
+{$ELSE}
+
+var
+  folderstr, filestr: string;
+  SEInfo: TShellExecuteInfo;
+  ExitCode: DWORD;
+  sCmd, ExecuteFile, ParamString, StartInString: string;
+
+begin
+  folderstr := getcurrentdir;
+
+  begin
+    FillChar(SEInfo, SizeOf(SEInfo), 0);
+    SEInfo.cbSize := SizeOf(TShellExecuteInfo);
+    with SEInfo do
+    begin
+      fMask := SEE_MASK_NOCLOSEPROCESS;
+      // Wnd := FmxHandleToHWND(ImplementationGuideEditor.Handle);
+      lpFile := PChar(command);
+      lpDirectory := PChar(Path);
+      lpParameters := PChar(parameters);
+      nShow := SW_SHOWNORMAL;
+    end;
+    if ShellExecuteEx(@SEInfo) then
+    begin
+      repeat
+        // application.ProcessMessages;
+        GetExitCodeProcess(SEInfo.hProcess, ExitCode);
+      until (ExitCode <> STILL_ACTIVE) or application.Terminated;
+    end;
+  end;
+end;
+{$ENDIF}
+
 
 end.

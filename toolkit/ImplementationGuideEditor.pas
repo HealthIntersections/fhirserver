@@ -173,6 +173,18 @@ type
     edtIGContact: TEdit;
     edtIGJurisdiction: TEdit;
     Label9: TLabel;
+    tbGlobal: TTabItem;
+    Panel1: TPanel;
+    btnUpdateGlobal: TCornerButton;
+    btnDeleteGlobal: TCornerButton;
+    btnGlobalUp: TCornerButton;
+    btnGlobalDown: TCornerButton;
+    ScrollBox1: TScrollBox;
+    edtGlobalProfileName: TEdit;
+    Label10: TLabel;
+    Label13: TLabel;
+    Button2: TButton;
+    cbGlobalType: TComboBox;
 
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure packageUpClick(Sender: TObject);
@@ -211,6 +223,9 @@ type
     procedure btnDeletePageClick(Sender: TObject);
     procedure btnDeleteGroupingClick(Sender: TObject);
     procedure btnDependsOnClick(Sender: TObject);
+    procedure btAddGlobalClick(Sender: TObject);
+    procedure btnDeleteGlobalClick(Sender: TObject);
+    procedure btnUpdateGlobalClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -303,6 +318,8 @@ begin
     Item.ImageIndex := 15;
   if itemType = 'implementationguide' then
     Item.ImageIndex := 14;
+  if itemType = 'global' then
+    Item.ImageIndex := 18;
 
   Item.StylesData['attrType'] := itemType;
   Item.StylesData['sortOrder'] := 1;
@@ -322,8 +339,8 @@ begin
     for i := 0 to tfhirImplementationGuide(obj).dependsOnList.Count - 1 do
       addTVItem(TreeView, current_item, 'Depends On', tfhirImplementationGuide(obj).dependsOnList[i].version, tfhirImplementationGuide(obj).dependsOnList[i]);
     for i := 0 to tfhirImplementationGuide(obj).globalList.Count - 1 do
-      addTVItem(TreeView, current_item, 'Global', tfhirImplementationGuide(obj).globalList[i].profile, tfhirImplementationGuide(obj).globalList[i]);
     if tfhirImplementationGuide(obj).definition <> nil then
+      addTVItem(TreeView, current_item, 'global', 'Global', tfhirImplementationGuide(obj).globalList[i]);
     begin
       addTVItem(TreeView, current_item, 'definition', 'Definition', tfhirImplementationGuide(obj).definition);
     end;
@@ -360,6 +377,14 @@ begin
       addTVItem(TreeView, current_item, 'page', tfhirImplementationGuideDefinitionPage(obj).pageList[i].title, tfhirImplementationGuideDefinitionPage(obj).pageList[i]);
     end;
   end;
+
+
+  if obj is tfhirImplementationGuideGlobal then
+  begin
+    current_item := Item;
+  end;
+
+
 
   result := Item;
 
@@ -523,6 +548,29 @@ begin
 
 end;
 
+procedure TImplementationGuideEditorFrame.btnDeleteGlobalClick(Sender: TObject);
+var
+  idx: integer;
+  prt: TTreeViewItem;
+  prtObj, obj: TObject;
+
+begin
+
+  TDialogService.MessageDialog('Delete element?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure(const AResult: TModalResult)
+    begin
+      resourceIsDirty := true;
+      prt := tvStructure.Selected.ParentItem;
+      prtObj := prt.tagObject;
+      idx := tfhirImplementationGuide(prtObj).globalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
+      tfhirImplementationGuide(prtObj).globalList.Remove(idx);
+      ReloadTreeview(prt);
+    end);
+
+
+
+end;
+
 procedure TImplementationGuideEditorFrame.btnDeleteGroupingClick(Sender: TObject);
 var
   idx: integer;
@@ -674,6 +722,17 @@ begin
 
 end;
 
+procedure TImplementationGuideEditorFrame.btAddGlobalClick(Sender: TObject);
+var
+  global: tfhirImplementationGuideGlobal;
+begin
+  global := tfhirImplementationGuideGlobal.Create;
+  tfhirImplementationGuide(tvStructure.Selected.tagObject).globalList.AddItem(global);
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
+
+end;
+
 procedure TImplementationGuideEditorFrame.btnAddDefinitionClick(Sender: TObject);
 var
   definition: tfhirImplementationGuideDefinition;
@@ -818,6 +877,19 @@ begin
     // webbrowser1.Navigate( filestr );
 
   end;
+end;
+
+procedure TImplementationGuideEditorFrame.btnUpdateGlobalClick(Sender: TObject);
+var
+  obj: tfhirImplementationGuideGlobal;
+
+begin
+  obj := tfhirImplementationGuideGlobal(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.type_ := TFHIRResourceTypesEnum(cbGlobalType.ItemIndex);
+  obj.profile := edtGlobalProfileName.text;
+
 end;
 
 procedure TImplementationGuideEditorFrame.btnImportDocClick(Sender: TObject);
@@ -1048,6 +1120,18 @@ begin
     btnNewPage.Visible := true;
     if tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).page <> nil then
       btnNewPage.Visible := false;
+
+  end;
+
+
+
+  if obj is tfhirImplementationGuideGlobal then
+  begin
+    selIndex := 6;
+//    pageUp.Visible := true;
+//    pageDown.Visible := true;
+    cbGlobalType.ItemIndex := integer(tfhirImplementationGuideGlobal(obj).type_);
+    edtGlobalProfileName.text := tfhirImplementationGuideGlobal(obj).profile;
 
   end;
 
