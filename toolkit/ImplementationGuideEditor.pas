@@ -185,6 +185,19 @@ type
     Label13: TLabel;
     Button2: TButton;
     cbGlobalType: TComboBox;
+    tbDependsOn: TTabItem;
+    Panel5: TPanel;
+    btnDeleteDependsOn: TCornerButton;
+    btnDependsOnUp: TCornerButton;
+    btnDependsOnDown: TCornerButton;
+    ScrollBox7: TScrollBox;
+    edtDepOnPackage: TEdit;
+    Label11: TLabel;
+    btnUpdateDependsOn: TCornerButton;
+    edtDepOnURI: TEdit;
+    Label15: TLabel;
+    edtDepOnVersion: TEdit;
+    Label24: TLabel;
 
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure packageUpClick(Sender: TObject);
@@ -226,6 +239,12 @@ type
     procedure btAddGlobalClick(Sender: TObject);
     procedure btnDeleteGlobalClick(Sender: TObject);
     procedure btnUpdateGlobalClick(Sender: TObject);
+    procedure btnUpdateDependsOnClick(Sender: TObject);
+    procedure btnDeleteDependsOnClick(Sender: TObject);
+    procedure btnGlobalUpClick(Sender: TObject);
+    procedure btnDependsOnUpClick(Sender: TObject);
+    procedure btnGlobalDownClick(Sender: TObject);
+    procedure btnDependsOnDownClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -320,6 +339,8 @@ begin
     Item.ImageIndex := 14;
   if itemType = 'global' then
     Item.ImageIndex := 18;
+  if itemType = 'dependson' then
+    Item.ImageIndex := 19;
 
   Item.StylesData['attrType'] := itemType;
   Item.StylesData['sortOrder'] := 1;
@@ -337,7 +358,8 @@ begin
       tab.text := text;
     current_item := Item;
     for i := 0 to tfhirImplementationGuide(obj).dependsOnList.Count - 1 do
-      addTVItem(TreeView, current_item, 'Depends On', tfhirImplementationGuide(obj).dependsOnList[i].version, tfhirImplementationGuide(obj).dependsOnList[i]);
+//      addTVItem(TreeView, current_item, 'dependson', tfhirImplementationGuide(obj).dependsOnList[i].packageId, tfhirImplementationGuide(obj).dependsOnList[i]);
+      addTVItem(TreeView, current_item, 'dependson', 'DependsOn', tfhirImplementationGuide(obj).dependsOnList[i]);
     for i := 0 to tfhirImplementationGuide(obj).globalList.Count - 1 do
     if tfhirImplementationGuide(obj).definition <> nil then
       addTVItem(TreeView, current_item, 'global', 'Global', tfhirImplementationGuide(obj).globalList[i]);
@@ -380,6 +402,11 @@ begin
 
 
   if obj is tfhirImplementationGuideGlobal then
+  begin
+    current_item := Item;
+  end;
+
+  if obj is tfhirImplementationGuideDependsOn then
   begin
     current_item := Item;
   end;
@@ -541,6 +568,29 @@ begin
       prtObj := prt.tagObject;
       idx := tfhirImplementationGuideDefinition(prtObj).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject));
       tfhirImplementationGuideDefinition(prtObj).resourceList.Remove(idx);
+      ReloadTreeview(prt);
+    end);
+
+
+
+end;
+
+procedure TImplementationGuideEditorFrame.btnDeleteDependsOnClick(Sender: TObject);
+var
+  idx: integer;
+  prt: TTreeViewItem;
+  prtObj, obj: TObject;
+
+begin
+
+  TDialogService.MessageDialog('Delete element?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure(const AResult: TModalResult)
+    begin
+      resourceIsDirty := true;
+      prt := tvStructure.Selected.ParentItem;
+      prtObj := prt.tagObject;
+      idx := tfhirImplementationGuide(prtObj).dependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
+      tfhirImplementationGuide(prtObj).dependsOnList.Remove(idx);
       ReloadTreeview(prt);
     end);
 
@@ -769,10 +819,63 @@ begin
 end;
 
 procedure TImplementationGuideEditorFrame.btnDependsOnClick(Sender: TObject);
+var
+  dependsOn: tfhirImplementationGuideDependsOn;
 begin
+  dependsOn := tfhirImplementationGuideDependsOn.Create;
+  tfhirImplementationGuide(tvStructure.Selected.tagObject).DependsOnList.AddItem(dependsOn);
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
 
 end;
 
+
+procedure TImplementationGuideEditorFrame.btnDependsOnUpClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
+  if idx > 0 then
+  begin
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.Exchange(idx, idx - 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+    resourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+
+end;
+
+procedure TImplementationGuideEditorFrame.btnGlobalDownClick(Sender: TObject);
+var
+  idx: integer;
+begin
+
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
+
+  if idx < tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.Count - 1 then
+  begin
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.Exchange(idx, idx + 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+    resourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+
+end;
+
+procedure TImplementationGuideEditorFrame.btnGlobalUpClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
+  if idx > 0 then
+  begin
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.Exchange(idx, idx - 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+    resourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+
+end;
 // 2.5 Main process
 procedure TImplementationGuideEditorFrame.NewImplementationGuideClick(Sender: TObject);
 
@@ -877,6 +980,20 @@ begin
     // webbrowser1.Navigate( filestr );
 
   end;
+end;
+
+procedure TImplementationGuideEditorFrame.btnUpdateDependsOnClick(Sender: TObject);
+var
+  obj: tfhirImplementationGuideDependsOn;
+
+begin
+  obj := tfhirImplementationGuideDependsOn(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.uri := edtDepOnURI.text;
+  obj.packageId := edtDepOnPackage.text;
+  obj.version := edtDepOnVersion.text;
+
 end;
 
 procedure TImplementationGuideEditorFrame.btnUpdateGlobalClick(Sender: TObject);
@@ -1124,15 +1241,19 @@ begin
   end;
 
 
-
   if obj is tfhirImplementationGuideGlobal then
   begin
     selIndex := 6;
-//    pageUp.Visible := true;
-//    pageDown.Visible := true;
     cbGlobalType.ItemIndex := integer(tfhirImplementationGuideGlobal(obj).type_);
     edtGlobalProfileName.text := tfhirImplementationGuideGlobal(obj).profile;
+  end;
 
+  if obj is tfhirImplementationGuideDependsOn then
+  begin
+    selIndex := 7;
+    edtDepOnURI.text := tfhirImplementationGuideDependsOn(obj).uri;
+    edtDepOnPackage.text := tfhirImplementationGuideDependsOn(obj).packageId;
+    edtDepOnVersion.text := tfhirImplementationGuideDependsOn(obj).version;
   end;
 
   if obj is tfhirImplementationGuideDefinitionGrouping then
@@ -1379,6 +1500,22 @@ begin
   finally
     OutStream.Free;
   end;
+end;
+
+procedure TImplementationGuideEditorFrame.btnDependsOnDownClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
+
+  if idx < tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.Count - 1 then
+  begin
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.Exchange(idx, idx + 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+    resourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+
 end;
 
 procedure TImplementationGuideEditorFrame.resourceDownClick(Sender: TObject);
