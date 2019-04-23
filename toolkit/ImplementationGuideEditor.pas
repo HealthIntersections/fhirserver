@@ -254,13 +254,12 @@ type
   public
     { Public declarations }
     IGRootFolder: string;
-    IGFileName: String;   // Is this needed?
-    IGPublisherFolder:string;
+    IGFileName: String; // Is this needed?
+    IGPublisherFolder: string;
     IGContentFolder: String;
     IGMediaFolder: string;
     IGPageContentFolder: string;
     IGTempFolder: string;
-
 
     procedure ConcatenateFiles(const InFileNames: array of string; const OutFileName: string);
     destructor Destroy; override;
@@ -362,11 +361,10 @@ begin
       tab.text := text;
     current_item := Item;
     for i := 0 to tfhirImplementationGuide(obj).dependsOnList.Count - 1 do
-//      addTVItem(TreeView, current_item, 'dependson', tfhirImplementationGuide(obj).dependsOnList[i].packageId, tfhirImplementationGuide(obj).dependsOnList[i]);
       addTVItem(TreeView, current_item, 'dependson', 'DependsOn', tfhirImplementationGuide(obj).dependsOnList[i]);
     for i := 0 to tfhirImplementationGuide(obj).globalList.Count - 1 do
-    if tfhirImplementationGuide(obj).definition <> nil then
       addTVItem(TreeView, current_item, 'global', 'Global', tfhirImplementationGuide(obj).globalList[i]);
+    if tfhirImplementationGuide(obj).definition <> nil then
     begin
       addTVItem(TreeView, current_item, 'definition', 'Definition', tfhirImplementationGuide(obj).definition);
     end;
@@ -404,7 +402,6 @@ begin
     end;
   end;
 
-
   if obj is tfhirImplementationGuideGlobal then
   begin
     current_item := Item;
@@ -414,8 +411,6 @@ begin
   begin
     current_item := Item;
   end;
-
-
 
   result := Item;
 
@@ -521,7 +516,7 @@ end;
 
 procedure TImplementationGuideEditorFrame.load;
 var
-displayName:string;
+  displayName: string;
 
 begin
   inherited;
@@ -533,7 +528,9 @@ begin
   begin
     tvStructure.beginUpdate;
     try
-      if tfhirImplementationGuide(resource).Name ='' then displayName :='Implementation Guide' else
+      if tfhirImplementationGuide(resource).Name = '' then
+        displayName := 'Implementation Guide'
+      else
         displayName := tfhirImplementationGuide(resource).Name;
       addTVItem(tvStructure, nil, 'implementationguide', displayName, resource);
     finally
@@ -551,7 +548,7 @@ begin
   tvStructure.Selected := tvStructure.ItemByGlobalIndex(0);
 
   tvStructureChange(tvStructure.ItemByGlobalIndex(0));
-//  showTab(tFHIRObject(tFHIRObject(tvStructure.Selected.tagObject)));
+  // showTab(tFHIRObject(tFHIRObject(tvStructure.Selected.tagObject)));
   // application.ProcessMessages;
 
 end;
@@ -575,8 +572,6 @@ begin
       ReloadTreeview(prt);
     end);
 
-
-
 end;
 
 procedure TImplementationGuideEditorFrame.btnDeleteDependsOnClick(Sender: TObject);
@@ -598,8 +593,6 @@ begin
       ReloadTreeview(prt);
     end);
 
-
-
 end;
 
 procedure TImplementationGuideEditorFrame.btnDeleteGlobalClick(Sender: TObject);
@@ -620,8 +613,6 @@ begin
       tfhirImplementationGuide(prtObj).globalList.Remove(idx);
       ReloadTreeview(prt);
     end);
-
-
 
 end;
 
@@ -827,21 +818,20 @@ var
   dependsOn: tfhirImplementationGuideDependsOn;
 begin
   dependsOn := tfhirImplementationGuideDependsOn.Create;
-  tfhirImplementationGuide(tvStructure.Selected.tagObject).DependsOnList.AddItem(dependsOn);
+  tfhirImplementationGuide(tvStructure.Selected.tagObject).dependsOnList.AddItem(dependsOn);
   resourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
 end;
 
-
 procedure TImplementationGuideEditorFrame.btnDependsOnUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
   if idx > 0 then
   begin
-    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.Exchange(idx, idx - 1);
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dependsOnList.Exchange(idx, idx - 1);
     tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
     resourceIsDirty := true;
   end;
@@ -854,11 +844,11 @@ var
   idx: integer;
 begin
 
-  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).globalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
 
-  if idx < tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.Count - 1 then
+  if idx < tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).globalList.Count - 1 then
   begin
-    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.Exchange(idx, idx + 1);
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).globalList.Exchange(idx, idx + 1);
     tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
     resourceIsDirty := true;
   end;
@@ -870,16 +860,17 @@ procedure TImplementationGuideEditorFrame.btnGlobalUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).globalList.IndexOf(tfhirImplementationGuideGlobal(tvStructure.Selected.tagObject));
   if idx > 0 then
   begin
-    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).GlobalList.Exchange(idx, idx - 1);
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).globalList.Exchange(idx, idx - 1);
     tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
     resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
 
 end;
+
 // 2.5 Main process
 procedure TImplementationGuideEditorFrame.NewImplementationGuideClick(Sender: TObject);
 
@@ -991,7 +982,7 @@ var
   obj: tfhirImplementationGuideDependsOn;
 
 begin
-  obj := tfhirImplementationGuideDependsOn(TTreeViewItem(tvStructure.Selected).TagObject);
+  obj := tfhirImplementationGuideDependsOn(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
     exit;
   obj.uri := edtDepOnURI.text;
@@ -1005,7 +996,7 @@ var
   obj: tfhirImplementationGuideGlobal;
 
 begin
-  obj := tfhirImplementationGuideGlobal(TTreeViewItem(tvStructure.Selected).TagObject);
+  obj := tfhirImplementationGuideGlobal(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
     exit;
   obj.type_ := TFHIRResourceTypesEnum(cbGlobalType.ItemIndex);
@@ -1149,7 +1140,7 @@ var
   Instance: tfhirImplementationGuide;
   sel_index: integer;
   sel_text: string;
-  displayName:string;
+  displayName: string;
 
 begin
   sel_index := -1;
@@ -1159,9 +1150,11 @@ begin
 
   try
     tvStructure.Clear;
-      if tfhirImplementationGuide(resource).Name ='' then displayName :='Implementation Guide' else
+    if tfhirImplementationGuide(resource).Name = '' then
+      displayName := 'Implementation Guide'
+    else
       displayName := tfhirImplementationGuide(resource).Name;
-    current_item := addTVItem(tvStructure, nil, 'implementationguide',displayName, resource);
+    current_item := addTVItem(tvStructure, nil, 'implementationguide', displayName, resource);
   finally
     // tvStructure.EndUpdate;
     tvStructure.Repaint;
@@ -1170,7 +1163,7 @@ begin
   // application.ProcessMessages;
   if sel_index <> -1 then
     tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
-  showTab(TFHIRObject(TVStructure.Selected.TagObject));
+  showTab(tFHIRObject(tvStructure.Selected.tagObject));
 
 end;
 
@@ -1179,7 +1172,7 @@ var
   selIndex, i, lastSlashPos: integer;
   extracted_ID: string;
   ImplementationGuide: tfhirImplementationGuide;
-  ver:  TFHIRFHIRVersionEnum;
+  ver: TFHIRFHIRVersionEnum;
 
 begin
   selIndex := 0;
@@ -1195,7 +1188,7 @@ begin
     selIndex := 2;
     UpdateImplementationGuide.enabled := true;
     edtIGName.text := tfhirImplementationGuide(obj).Name;
-    edtIGTitle.text := tfhirImplementationGuide(obj).Title;
+    edtIGTitle.text := tfhirImplementationGuide(obj).title;
 
     edtIGURL.text := tfhirImplementationGuide(obj).url;
 
@@ -1223,7 +1216,7 @@ begin
     else
       chkExperimental.IsChecked := false;
     dtIGDate.text := tfhirImplementationGuide(obj).date.toString;
-    edtIGPackageId.text := tfhirImplementationGuide(obj).packageID;
+    edtIGPackageId.text := tfhirImplementationGuide(obj).packageId;
     edtIGPublisher.text := tfhirImplementationGuide(obj).publisher;
     mmIGPurpose.text := tfhirImplementationGuide(obj).Description;
     edtIGVersion.text := tfhirImplementationGuide(obj).version;
@@ -1245,7 +1238,6 @@ begin
       btnNewPage.Visible := false;
 
   end;
-
 
   if obj is tfhirImplementationGuideGlobal then
   begin
@@ -1287,9 +1279,10 @@ begin
     edtResourceName.text := tfhirImplementationGuideDefinitionResource(obj).Name;
     mmResourceDescription.text := tfhirImplementationGuideDefinitionResource(obj).Description;
 
-    if (tfhirImplementationGuideDefinitionResource(obj).fhirVersionList.Count>0) then
-      for ver in TFHIRFHIRVersionEnumList(tfhirImplementationGuideDefinitionResource(obj).fhirVersion) do begin
-          lbResourceVersions.ItemByIndex(lbResourceVersions.items.count-integer(ver)).IsChecked:=true;
+    if (tfhirImplementationGuideDefinitionResource(obj).fhirVersionList.Count > 0) then
+      for ver in TFHIRFHIRVersionEnumList(tfhirImplementationGuideDefinitionResource(obj).fhirVersion) do
+      begin
+        lbResourceVersions.ItemByIndex(lbResourceVersions.Items.Count - integer(ver)).IsChecked := true;
       end;
 
   end;
@@ -1369,7 +1362,6 @@ begin
 
       tfhirImplementationGuide(prtObj).deleteProperty('definition', tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject));
 
-
       ReloadTreeview(prt);
     end);
 
@@ -1414,7 +1406,7 @@ begin
   if obj = nil then
     exit;
   obj.Name := edtIGName.text;
-  obj.Title := edtIGTitle.text;
+  obj.title := edtIGTitle.text;
 
   if (edtIGURL.text <> '') and (copy(edtIGURL.text, length(edtIGURL.text), 1) <> '/') then
     edtIGURL.text := edtIGURL.text + '/';
@@ -1428,11 +1420,12 @@ begin
   obj.id := edtIGId.text;
   obj.date := TFslDateTime.makeLocal(dtIGDate.DateTime);
   obj.version := edtIGVersion.text;
-  obj.packageID := edtIGPackageId.text;
+  obj.packageId := edtIGPackageId.text;
   obj.publisher := edtIGPublisher.text;
   obj.Description := mmIGPurpose.text;
   obj.license := TFHIRspdxLicenseEnum(cbIGLicense.ItemIndex);
-  if obj.name<>'' then tvStructure.Selected.text := obj.Name;
+  if obj.Name <> '' then
+    tvStructure.Selected.text := obj.Name;
 
 
   // this must change - at this moment nly us is upported
@@ -1480,24 +1473,29 @@ end;
 procedure TImplementationGuideEditorFrame.UpdateResourceClick(Sender: TObject);
 var
   obj: tfhirImplementationGuideDefinitionResource;
-  i:integer;
+  i: integer;
   ver: TFHIRFHIRVersionEnum;
 begin
   obj := tfhirImplementationGuideDefinitionResource(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
     exit;
-  obj.reference.reference := edtResourceReference.text;
+  if edtResourceReference.text <> '' then
+  begin
+    if (obj.reference = nil) then
+      obj.reference := tfhirReference.Create;
+    obj.reference.reference := edtResourceReference.text;
+  end;
+
   obj.Name := edtResourceName.text;
   obj.Description := mmResourceDescription.text;
 
   obj.fhirVersionList.ClearItems;
-  for I := 0 to lbResourceVersions.Items.Count-1 do begin
+  for i := 0 to lbResourceVersions.Items.Count - 1 do
+  begin
     if lbResourceVersions.ItemByIndex(i).IsChecked then
-    obj.fhirVersion:=obj.fhirVersion+[TFHIRFHIRVersionEnum(lbResourceVersions.Items.Count-I)]; //subtract index because list is sorted in reverse order
+      obj.fhirVersion := obj.fhirVersion + [TFHIRFHIRVersionEnum(lbResourceVersions.Items.Count - i)]; // subtract index because list is sorted in reverse order
 
-end;
-
-
+  end;
 
   if cbResourcePackage.ItemIndex <> -1 then
     obj.groupingId := cbResourcePackage.Items[cbResourcePackage.ItemIndex];
@@ -1530,11 +1528,11 @@ procedure TImplementationGuideEditorFrame.btnDependsOnDownClick(Sender: TObject)
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
+  idx := tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dependsOnList.IndexOf(tfhirImplementationGuideDependsOn(tvStructure.Selected.tagObject));
 
-  if idx < tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.Count - 1 then
+  if idx < tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dependsOnList.Count - 1 then
   begin
-    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).DependsOnList.Exchange(idx, idx + 1);
+    tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dependsOnList.Exchange(idx, idx + 1);
     tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
     resourceIsDirty := true;
   end;
@@ -1583,7 +1581,7 @@ end;
   folderstr, filestr: string;
   SEInfo: TShellExecuteInfo;
   ExitCode: DWORD;
-//  sCmd, ExecuteFile, ParamString, StartInString: string;
+  // sCmd, ExecuteFile, ParamString, StartInString: string;
 
 begin
   folderstr := getCurrentDir;
