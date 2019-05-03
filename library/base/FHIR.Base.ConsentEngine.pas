@@ -3,7 +3,7 @@ unit FHIR.Base.ConsentEngine;
 interface
 
 uses
-  SysUtils;
+  SysUtils,
   FHIR.Support.Base,
   FHIR.Base.Objects;
 

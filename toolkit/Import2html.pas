@@ -83,19 +83,19 @@ var
   SL: TStringList;
   sa: TStringDynArray;
   i: integer;
+  imageFiles: TStringDynArray;
+  imgfile:string;
   currFolder: string;
 
 begin
-
   if igContentFolder = '' then
     exit;
   if igPublisherFolder = '' then
     exit;
 
-  tempfolder := igContentFolder + '\temp';
-  pagecontentfolder := igContentFolder + '\pagecontent';
+//  tempfolder := igContentFolder + '\temp';
+//  pagecontentfolder := igContentFolder + '\pagecontent';
   mediafolder := igContentFolder + '\images';
-
   pandocfolder := igPublisherFolder + '\framework\pandoc';
 
   if not(directoryexists(pwidechar(tempfolder))) then
@@ -128,6 +128,11 @@ begin
     ///
 
 
+    imagefiles:= TDirectory.GetFiles(pandocfolder + '\media');
+    for imgfile in imageFiles do
+      TFile.copy(imgfile, tempfolder + '\'+edit1.text+'-'+extractfilename(imgfile));
+
+
     // delete media folder
 
     // convert to tempfolder\tmp.html and preview
@@ -150,8 +155,9 @@ begin
     end;
 
     TFile.copy(tempfolder + '\tmp.html', tempfolder + '\tmp_display.html');
-    FileReplaceString(tempfolder + '\tmp.xml', './media/', './');
-    FileReplaceString(tempfolder + '\tmp.html', './media/', './');
+    FileReplaceString(tempfolder + '\tmp.xml',  './media/', './'+edit1.text+'-');
+    FileReplaceString(tempfolder + '\tmp.html', './media/', './'+edit1.text+'-');
+    FileReplaceString(tempfolder + '\tmp_display.html', './media/', './'+edit1.text+'-');
 
     filestr := tempfolder + '\tmp_display.html';
     filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
@@ -201,6 +207,7 @@ var
   srcfile, destfile: string;
 
 begin
+
   if pagefilename <> '' then
 begin
     try
@@ -232,7 +239,7 @@ end
 
   // TDirectory.Delete(mediafolder, True);
 
-  ///
+  // TO DO: need to copy images
 
   // TDirectory.Delete(tempfolder, True);
 

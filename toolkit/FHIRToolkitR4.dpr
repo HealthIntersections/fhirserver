@@ -155,7 +155,7 @@ uses
   FHIR.R4.OpBase in '..\library\r4\FHIR.R4.OpBase.pas',
   OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm},
   FHIR.R4.AuthMap in '..\library\r4\FHIR.R4.AuthMap.pas',
-  IGSettings in 'IGSettings.pas' {IGSettingsForm},
+  IGPublishSettings in 'IGPublishSettings.pas' {IGSettingsForm},
   FDownloadForm in 'FDownloadForm.pas' {IGSettingsForm},
   ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame},
   FHIR.Support.Lang in '..\library\support\FHIR.Support.Lang.pas',
@@ -174,7 +174,8 @@ uses
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   ResourceHistoryDialog in 'ResourceHistoryDialog.pas' {ResourceHistoryForm},
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas';
+  FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
+  ProjectFilesDialog in 'ProjectFilesDialog.pas' {ProjectDialog};
 
 {$R *.res}
 
@@ -185,5 +186,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.CreateForm(TResourceHistoryForm, ResourceHistoryForm);
+  Application.CreateForm(TProjectDialog, ProjectDialog);
   Application.Run;
 end.
