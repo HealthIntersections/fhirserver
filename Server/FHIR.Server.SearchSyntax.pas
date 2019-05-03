@@ -424,7 +424,7 @@ begin
     result := fsltEnded
   else
    case original[cursor] of
-     'a'..'z', 'A'..'Z' : result := fsltName;
+     'a'..'z', 'A'..'Z', '_' : result := fsltName;
      '0'..'9' : result := fsltNumber;
      '"' : result := fsltString;
      '.' : result := fsltDot;
