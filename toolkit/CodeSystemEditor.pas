@@ -1131,7 +1131,7 @@ begin
     3: value := polish(c.definition);
   else
   begin
-    p := CodeSystem.property_List[aCol - 4];
+    p := CodeSystem.property_List[aCol - 3];
     v := c.prop(p.code);
     if (v <> nil) and (v.value <> nil) then
       case p.type_ of
@@ -1187,7 +1187,7 @@ begin
     3: c.definition := value.AsString;
   else
   begin
-    p := CodeSystem.property_List[aCol - 4];
+    p := CodeSystem.property_List[aCol - 3];
     v := c.prop(p.code);
     if (p.type_ <> ConceptPropertyTypeBoolean) and (value.AsString = '') then
       c.deleteProp(p.code)
