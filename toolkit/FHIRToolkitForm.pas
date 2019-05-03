@@ -1278,6 +1278,7 @@ begin
   frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
   if (frame.resource is TFHIRImplementationGuide) then
   begin
+    {$IFDEF FHIR4}
     if frame.filename = '' then
       ShowMessage('File is not saved. Please save the file first.')
     else
@@ -1312,6 +1313,9 @@ begin
         IGSettingsForm.Destroy;
 
       end
+      {$ELSE}
+      raise Exception.Create('This is not supported in R3');
+      {$ENDIF}
 
   end;
 end;
@@ -1342,14 +1346,13 @@ begin
 end;
 
 procedure TMasterToolsForm.mnuRepositoryClick(Sender: TObject);
+{$IFDEF FHIR4}
 var
   filename: string;
   projectFolder: string;
   ProjectFilesDialog: TProjectDialog;
   frame: TBaseResourceFrame;
-
 begin
-
   frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
 
   if extractfiledir(frame.filename) = '' then
@@ -1361,8 +1364,12 @@ begin
     ProjectFilesDialog.ShowModal;
     ProjectFilesDialog.Destroy;
   end;
-
 end;
+{$ELSE}
+begin
+  raise Exception.Create('Not supported in R3');
+end;
+{$ENDIF}
 
 procedure TMasterToolsForm.loadedResource(frameClass: TBaseResourceFrameClass; url: string; res: TFHIRResource);
 var

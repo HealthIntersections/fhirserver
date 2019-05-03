@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
 {$IF defined(MSWINDOWS)}
-  winapi.ShellApi, ShlObj, fmx.platform.win, winapi.windows,                 jclsysutils,
+  winapi.ShellApi, ShlObj, fmx.platform.win, winapi.windows,
+  jclsysutils,
 {$ENDIF}
   fmx.Types, fmx.Controls, fmx.Forms, fmx.Graphics, fmx.Dialogs, fmx.StdCtrls, fmx.Edit, fmx.Controls.Presentation, System.ImageList, fmx.ImgList,
   FMX.ScrollBox, FMX.Memo;
