@@ -505,7 +505,7 @@ begin
           cs := TCodeSystemProvider(FOthers.matches[cc.system]);
           if (cs = nil) then
           begin
-            message := 'The code system "'+cc.system+'" is not known';
+            message := 'The code system "'+cc.system+'" in the include in "'+FValueSet.url+'" is not known';
             exit(false);
           end;
 
@@ -665,7 +665,7 @@ begin
           try
            if (prov = nil) then
            begin
-             msg('The code system "'+c.system+'" is not known');
+             msg('The code system "'+c.system+'" is not known for the code "'+c.code+'"');
              cause := itUnknown;
            end
            else
