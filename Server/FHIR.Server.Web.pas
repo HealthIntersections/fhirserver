@@ -726,7 +726,9 @@ begin
       HandleOWinToken(AContext, false, request, response);
 
     sp := FWebServer.FSourceProvider;
-    if sp.exists(sp.AltFile(request.Document, FPath)) then
+    if request.Document.StartsWith(FAuthServer.path) then
+      FAuthServer.HandleRequest(AContext, request, Session, response, false)
+    else if sp.exists(sp.AltFile(request.Document, FPath)) then
       ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, FPath), false)
     else if request.Document.EndsWith('.hts') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.html')) then
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), false)
@@ -804,7 +806,7 @@ begin
 
     sp := FWebServer.FSourceProvider;
     if request.Document.StartsWith(FAuthServer.path) then
-      FAuthServer.HandleRequest(AContext, request, Session, response)
+      FAuthServer.HandleRequest(AContext, request, Session, response, true)
     else if FWebServer.OWinSecuritySecure and (request.Document = URLPath([FPath, OWIN_TOKEN_PATH])) then
       HandleOWinToken(AContext, true, request, response)
     else if sp.exists(sp.AltFile(request.Document, FPath)) then

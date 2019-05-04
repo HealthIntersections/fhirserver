@@ -140,7 +140,7 @@ type
     constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
     destructor Destroy; override;
 
-    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
+    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
     Procedure HandleDiscovery(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 
     procedure setCookie(response: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
@@ -731,7 +731,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 var
   params : TParseMap;
 begin
@@ -754,27 +754,27 @@ begin
 
       params := TParseMap.create(request.UnparsedParams);
       try
-        if (request.Document = FPath+'/auth') then
+        if (secure and (request.Document = FPath+'/auth')) then
           HandleAuth(AContext, request, session, params, response)
-        else if (request.Document.startsWith(FPath+'/auth_dest')) then
+        else if (secure and (request.Document.startsWith(FPath+'/auth_dest'))) then
           HandleLogin(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/auth_choice') then
+        else if (secure and (request.Document = FPath+'/auth_choice')) then
           HandleChoice(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/token') then
+        else if (secure and (request.Document = FPath+'/token')) then
           HandleToken(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/token_data') then
+        else if (secure and (request.Document = FPath+'/token_data')) then
           HandleTokenData(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/auth_skype') then
+        else if (secure and (request.Document = FPath+'/auth_skype')) then
           HandleSkype(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/auth_key') then
+        else if (secure and (request.Document = FPath+'/auth_key')) then
           HandleKey(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/auth_jwt') then
+        else if (secure and (request.Document = FPath+'/auth_jwt')) then
           HandleKeyToken(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/discovery') then
+        else if (secure and (request.Document = FPath+'/discovery')) then
           HandleDiscovery(AContext, request, response)
         else if (request.Document = FPath+'/register') then
           HandleRegistration(AContext, request, session, response)
-        else if (request.Document = FPath+'/userdetails') then
+        else if (secure and (request.Document = FPath+'/userdetails')) then
           HandleUserDetails(AContext, request, session, params, response)
         else
           raise EAuthClientException.create('Invalid URL');
