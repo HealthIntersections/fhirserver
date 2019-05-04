@@ -644,6 +644,22 @@ var
     if json.str[name] <> value then
       raise EAuthClientException.create('The '+name+' field must have the value "'+value+'" but has the value "'+json.str[name]+'"');
   end;
+  function checkPresentA(name : String) : TJsonArray;
+  begin
+    result := json.arr[name];
+    if (result = nil) or (result.Count <> 1) then
+      raise EAuthClientException.create('A single '+name+' field is required in the json token');
+  end;
+  procedure checkValueA(name, value : String);
+  var
+    arr : TJsonArray;
+  begin
+    arr := json.arr[name];
+    if (arr = nil) or (arr.Count <> 1) then
+      raise EAuthClientException.create('The '+name+' field must have the single value "'+value+'" but has the value "'+arr.ToString+'"');
+    if (arr.Value[0] <> value) then
+      raise EAuthClientException.create('The '+name+' field must have the single value "'+value+'" but has the value "'+arr.ToString+'"');
+  end;
 begin
   try
     // parse the json
@@ -663,14 +679,14 @@ begin
           client.logo := json.str['logo_uri'];
           client.softwareId := json.str['software_id'];
           client.softwareVersion := json.str['software_version'];
-          checkPresent('grant_types');
-          checkPresent('response_types');
+          checkPresentA('grant_types');
+          checkPresentA('response_types');
           checkPresent('token_endpoint_auth_method');
           if (json.str['token_endpoint_auth_method'] = 'private_key_jwt') then // backend services
           begin
             client.mode := rcmBackendServices;
-            checkValue('grant_types', 'client_credentials');
-            checkValue('response_types', 'token');
+            checkValueA('grant_types', 'client_credentials');
+            checkValueA('response_types', 'token');
             if json.obj['jwks'] = nil then
               raise EAuthClientException.create('No jwks found');
             if json.obj['jwks'].arr['keys'] = nil then
@@ -682,16 +698,16 @@ begin
           end
           else if (json.str['token_endpoint_auth_method'] = 'client_secret_basic') then // confidential
           begin
-            checkValue('grant_types', 'authorization_code');
-            checkValue('response_types', 'code');
+            checkValueA('grant_types', 'authorization_code');
+            checkValueA('response_types', 'code');
             client.mode := rcmBackendServices;
             client.secret := newGuidId;
             resp.str['client_secret'] := client.secret;
           end
           else if (json.str['token_endpoint_auth_method'] = 'none') then // public
           begin
-            checkValue('grant_types', 'authorization_code');
-            checkValue('response_types', 'code');
+            checkValueA('grant_types', 'authorization_code');
+            checkValueA('response_types', 'code');
             client.mode := rcmBackendServices;
             // no secret
           end
