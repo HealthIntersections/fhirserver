@@ -118,7 +118,7 @@
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Manifest_File>(None)</Manifest_File>
-        <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\Program Files\Notepad++\plugins\FHIRNpp</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -344,6 +344,10 @@
         <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\library\client\FHIR.Client.ClientDialog.pas">
+            <Form>RegisterClientForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
@@ -398,7 +402,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\graha\AppData\Roaming\Notepad++\plugins\fhirnpp.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Program Files\Notepad++\plugins\FHIRNpp\fhirnpp.dll" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirnpp.dll</RemoteName>
                         <Overwrite>true</Overwrite>

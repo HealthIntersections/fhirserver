@@ -25,7 +25,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-library fhirnpp;
+library FHIRNpp;
 
 uses
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
@@ -201,7 +201,8 @@ uses
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
-  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
+  FHIR.Client.ClientDialog in '..\library\client\FHIR.Client.ClientDialog.pas' {RegisterClientForm};
 
 {$R *.res}
 

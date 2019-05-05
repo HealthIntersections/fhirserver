@@ -414,7 +414,7 @@ end;
 
 procedure TFHIRPlugin.configureSSL;
 begin
-  IdOpenSSLSetLibPath(IncludeTrailingPathDelimiter(ExtractFilePath(GetModuleName(HInstance)))+'fhir');
+  IdOpenSSLSetLibPath(ExtractFilePath(GetModuleName(HInstance)));
 end;
 
 procedure _FuncValidate; cdecl;

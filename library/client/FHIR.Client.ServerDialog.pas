@@ -94,6 +94,7 @@ type
     edtClientId1: TEdit;
     Label20: TLabel;
     cbxVersion: TComboBox;
+    Button4: TButton;
     procedure edtNameChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnFetchClick(Sender: TObject);
@@ -103,12 +104,17 @@ type
     procedure FormShow(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure cbxSmartModeChange(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     FIndex : integer;
     FCapabilityStatement : TFhirCapabilityStatementW;
     FServer: TRegisteredFHIRServer;
     FVersions: TFHIRVersionFactories;
     FAdding : boolean;
+    FSoftwareVersion: String;
+    FSoftwareId: String;
+    FRegister : String;
+
     procedure loadCapabilityStatement;
     function readServerVersion : TFHIRVersion;
 //    function hookIndex(c : TFslObject) : integer;
@@ -124,6 +130,8 @@ type
 
     property versions : TFHIRVersionFactories read FVersions write SetVersions;
     property server : TRegisteredFHIRServer read FServer write SetServer;
+    property SoftwareId : String read FSoftwareId write FSoftwareId;
+    property SoftwareVersion : String read FSoftwareVersion write FSoftwareVersion;
 
   end;
 
@@ -135,7 +143,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIR.Npp.Settings, FHIR.Client.Base;
+  FHIR.Npp.Settings, FHIR.Client.Base, FHIR.Client.ClientDialog;
 
 procedure TEditRegisteredServerForm.btnFetchClick(Sender: TObject);
 var
@@ -147,6 +155,7 @@ begin
   begin
     edtAuthorize.Text := authorize;
     edtToken.Text := token;
+    FRegister := register;
   end
   else
     ShowMessage('This end point doesn''t support SMART on FHIR');
@@ -278,6 +287,38 @@ begin
     cbxFormat.ItemIndex := 1
   else
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
+end;
+
+procedure TEditRegisteredServerForm.Button4Click(Sender: TObject);
+var
+  form : TRegisterClientForm;
+begin
+  if FRegister = '' then
+    btnFetchClick(nil);
+  form := TRegisterClientForm.Create(self);
+  try
+    form.Mode := TSmartAppLaunchMode(cbxSmartMode.ItemIndex);
+    form.Port := StrToIntDef(edtRedirect.Text, 0);
+    form.Server := FRegister;
+    form.SoftwareId := SoftwareId;
+    form.SoftwareVersion := SoftwareVersion;
+//    form.edtIssuer.Text := edtIssuerURL.Text;
+    if form.ShowModal = mrOk then
+    begin
+      if form.Mode = salmOAuthClient then
+      begin
+        edtClientId.Text := form.ClientId;
+        edtClientSecret.Text := form.ClientSecret;
+      end
+      else if form.Mode = salmBackendClient then
+      begin
+        edtClientId1.Text := form.ClientId;
+//        edtIssuerURL.Text := form.edtIssuer.Text;
+      end;
+    end;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TEditRegisteredServerForm.cbxSmartModeChange(Sender: TObject);

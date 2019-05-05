@@ -194,23 +194,12 @@ uses
   FHIR.Cda.Writer in '..\..\library\cda\FHIR.Cda.Writer.pas',
   FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
   FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
-  {$IFNDEF NO_JS}
-  FHIR.Support.Javascript in '..\..\library\support\FHIR.Support.Javascript.pas',
-  FHIR.Server.Javascript in '..\..\Server\FHIR.Server.Javascript.pas',
-  FHIR.Javascript in '..\..\library\javascript\FHIR.Javascript.pas',
-  ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
-  ChakraCoreVersion in '..\..\dependencies\chakracore-delphi\ChakraCoreVersion.pas',
-  ChakraCoreClasses in '..\..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
-  ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
-  ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',
-  Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
-  ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  FHIR.Javascript.Base in '..\..\library\javascript\FHIR.Javascript.Base.pas',
-  FHIR.Client.Javascript in '..\..\library\client\FHIR.Client.Javascript.pas',
-  FHIR.Support.Service in '..\..\library\support\FHIR.Support.Service.pas',
-  {$ENDIF }
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas';
+  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
+  {$IFDEF MSWINDOWS}
+  FHIR.Support.Service in '..\..\library\support\FHIR.Support.Service.pas',
+  {$ENDIF}
+  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas';
 
 {$R *.res}
 

@@ -256,6 +256,7 @@ type
     function addExtension(url : String) : TFHIRExtension; overload;
     procedure addExtension(url : String; t : TFhirType); overload;
     procedure addExtension(url : String; v : String); overload;
+    procedure addExtensionUri(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
     function getExtensionByUrl(url : String) : TFHIRExtension;
@@ -2097,6 +2098,11 @@ end;
 procedure TFHIRElementHelper.addExtension(url, v: String);
 begin
   addExtension(url, TFhirString.Create(v));
+end;
+
+procedure TFHIRElementHelper.addExtensionUri(url, v: String);
+begin
+  addExtension(url, TFhirUri.Create(v));
 end;
 
 function TFHIRElementHelper.forceExtension(url: String): TFHIRExtension;

@@ -1100,9 +1100,9 @@ begin
     ext.url := 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris';
     // ext.addExtension('dscovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FServerContext.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
     ext.addExtension('register', register);
-    ext.addExtension('authorize', authorize);
-    ext.addExtension('token', token);
-    ext.addExtension('manage', manage);
+    ext.addExtensionUri('authorize', authorize);
+    ext.addExtensionUri('token', token);
+    ext.addExtensionUri('manage', manage);
 
     for s in caps do
       statement.restList[0].security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities', s);

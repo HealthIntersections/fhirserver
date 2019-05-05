@@ -16,10 +16,10 @@ AppUpdatesURL=http://www.healthintersections.com.au/FhirServer
 DefaultDirName={pf}\Vocab PoC Terminology Server
 DefaultGroupName=FHIR Applications
 AllowNoIcons=yes
-LicenseFile=C:\work\fhirserver\utils\VocabTxServer\licence.txt
-OutputDir=C:\work\fhirserver\utils\VocabTxServer\install
+LicenseFile=C:\work\fhirserver\utilities\VocabTxServer\licence.txt
+OutputDir=C:\work\fhirserver\utilities\VocabTxServer\install
 OutputBaseFilename=vocabpoc-install-0.0.6
-SetupIconFile=C:\work\fhirserver\utils\VocabTxServer\VocabTxServer_Icon.ico
+SetupIconFile=C:\work\fhirserver\utilities\VocabTxServer\VocabTxServer_Icon.ico
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
@@ -29,11 +29,11 @@ ArchitecturesAllowed=x64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\work\fhirserver\utils\VocabTxServer\install\VocabTxServer.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\ucum-essence.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\web.zip"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\lang.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\loinc_263.cache"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utilities\VocabTxServer\install\VocabTxServer.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utilities\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\ucum-essence.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utilities\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\web.zip"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utilities\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\lang.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utilities\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\loinc-2.65.cache"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Vocab PoC Terminology Server"; Filename: "{app}\VocabTxServer.exe"

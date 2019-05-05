@@ -21,15 +21,11 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
     Top = 0
     Width = 449
     Height = 404
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Server Identity'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -137,10 +133,6 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
     object TabSheet2: TTabSheet
       Caption = 'Smart App Launch'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -245,6 +237,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
             Left = 0
             Top = 0
             Caption = 'oauth'
+            ExplicitWidth = 0
+            ExplicitHeight = 0
           end
           object TPage
             Left = 0
@@ -255,12 +249,14 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
               Top = 0
               Width = 423
               Height = 160
-              PageIndex = 2
+              PageIndex = 1
               TabOrder = 0
               object TPage
                 Left = 0
                 Top = 0
                 Caption = 'Default'
+                ExplicitWidth = 0
+                ExplicitHeight = 0
               end
               object TPage
                 Left = 0
@@ -414,15 +410,20 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
             'OAuth Client'
             'Backend Services Client')
         end
+        object Button4: TButton
+          Left = 120
+          Top = 344
+          Width = 75
+          Height = 25
+          Caption = 'Button4'
+          TabOrder = 5
+          OnClick = Button4Click
+        end
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'CDS-Hooks'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0

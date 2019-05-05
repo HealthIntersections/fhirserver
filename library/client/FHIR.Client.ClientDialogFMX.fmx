@@ -8,7 +8,7 @@ object RegisterClientForm: TRegisterClientForm
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnShow = FormShow
-  DesignerMasterStyle = 1
+  DesignerMasterStyle = 0
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 559.000000000000000000
@@ -131,8 +131,8 @@ object RegisterClientForm: TRegisterClientForm
     Size.Height = 137.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 14
-    Viewport.Width = 401.000000000000000000
-    Viewport.Height = 137.000000000000000000
+    Viewport.Width = 397.000000000000000000
+    Viewport.Height = 133.000000000000000000
   end
   object Label6: TLabel
     Position.X = 88.000000000000000000
@@ -148,7 +148,7 @@ object RegisterClientForm: TRegisterClientForm
   end
   object odPublicKey: TOpenDialog
     Title = 'Choose Public Key'
-    Left = 16
+    Left = 32
     Top = 336
   end
   object edtIssuer: TEdit
