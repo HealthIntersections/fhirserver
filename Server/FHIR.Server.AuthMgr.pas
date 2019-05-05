@@ -647,18 +647,27 @@ var
   function checkPresentA(name : String) : TJsonArray;
   begin
     result := json.arr[name];
-    if (result = nil) or (result.Count <> 1) then
-      raise EAuthClientException.create('A single '+name+' field is required in the json token');
+    if (result = nil) or (result.Count < 1) then
+      raise EAuthClientException.create('A value for '+name+' field is required in the json token');
   end;
-  procedure checkValueA(name, value : String);
+  procedure checkValueA(name, value, opt : String);
   var
     arr : TJsonArray;
+    e : TJsonNode;
+    s : String;
   begin
     arr := json.arr[name];
-    if (arr = nil) or (arr.Count <> 1) then
-      raise EAuthClientException.create('The '+name+' field must have the single value "'+value+'" but has the value "'+arr.ToString+'"');
-    if (arr.Value[0] <> value) then
-      raise EAuthClientException.create('The '+name+' field must have the single value "'+value+'" but has the value "'+arr.ToString+'"');
+    if (arr = nil) or (arr.Count < 1) then
+      raise EAuthClientException.create('The '+name+' field must have a value "'+value);
+    for e in arr do
+    begin
+      s := (e as TJsonString).value;
+      if (s = value) then
+        exit;
+      if (s <> opt) and (opt <> '') then
+        raise EAuthClientException.create('The '+name+' field has an unacceptable value "'+s+'"');
+    end;
+    raise EAuthClientException.create('The '+name+' field must have the value "'+value+'" but it was not found');
   end;
 begin
   try
@@ -675,18 +684,30 @@ begin
 //            raise EFHIRException.create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
           // check that it meets business rules
           client.name := checkPresent('client_name');
+          resp.str['client_name'] := client.name;
+
           client.url := json.str['client_uri'];
+          resp.str['client_uri'] := client.url;
+
           client.logo := json.str['logo_uri'];
+          resp.str['logo_uri'] := client.logo;
+
           client.softwareId := json.str['software_id'];
+          resp.str['software_id'] := client.softwareId;
+
           client.softwareVersion := json.str['software_version'];
+          resp.str['software_version'] := client.softwareVersion;
+
           checkPresentA('grant_types');
           checkPresentA('response_types');
           checkPresent('token_endpoint_auth_method');
           if (json.str['token_endpoint_auth_method'] = 'private_key_jwt') then // backend services
           begin
             client.mode := rcmBackendServices;
-            checkValueA('grant_types', 'client_credentials');
-            checkValueA('response_types', 'token');
+            checkValueA('grant_types', 'client_credentials', '');
+            resp.forceArr['grant_types'].add('client_credentials');
+            checkValueA('response_types', 'token', '');
+            resp.forceArr['response_types'].add('token');
             if json.obj['jwks'] = nil then
               raise EAuthClientException.create('No jwks found');
             if json.obj['jwks'].arr['keys'] = nil then
@@ -698,16 +719,20 @@ begin
           end
           else if (json.str['token_endpoint_auth_method'] = 'client_secret_basic') then // confidential
           begin
-            checkValueA('grant_types', 'authorization_code');
-            checkValueA('response_types', 'code');
+            checkValueA('grant_types', 'authorization_code', 'refresh_token');
+            resp.forceArr['grant_types'].add('authorization_code');
+            checkValueA('response_types', 'code', '');
+            resp.forceArr['response_types'].add('code');
             client.mode := rcmBackendServices;
             client.secret := newGuidId;
             resp.str['client_secret'] := client.secret;
           end
           else if (json.str['token_endpoint_auth_method'] = 'none') then // public
           begin
-            checkValueA('grant_types', 'authorization_code');
-            checkValueA('response_types', 'code');
+            checkValueA('grant_types', 'authorization_code', 'refresh_token');
+            resp.forceArr['grant_types'].add('authorization_code');
+            checkValueA('response_types', 'code', '');
+            resp.forceArr['response_types'].add('code');
             client.mode := rcmBackendServices;
             // no secret
           end
@@ -717,7 +742,7 @@ begin
           resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
           client.patientContext := json.bool['fhir_patient_context'];
           response.ContentText := TJSONWriter.writeObjectStr(resp);
-          response.ResponseNo := 200;
+          response.ResponseNo := 201;
           response.ResponseText := 'OK';
           response.ContentType := 'application/json';
         finally
