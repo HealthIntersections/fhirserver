@@ -1131,7 +1131,7 @@ begin
     3: value := polish(c.definition);
   else
   begin
-    p := CodeSystem.property_List[aCol - 3];
+    p := CodeSystem.property_List[aCol - 4];
     v := c.prop(p.code);
     if (v <> nil) and (v.value <> nil) then
       case p.type_ of
@@ -1187,7 +1187,7 @@ begin
     3: c.definition := value.AsString;
   else
   begin
-    p := CodeSystem.property_List[aCol - 3];
+    p := CodeSystem.property_List[aCol - 4];
     v := c.prop(p.code);
     if (p.type_ <> ConceptPropertyTypeBoolean) and (value.AsString = '') then
       c.deleteProp(p.code)
@@ -1465,22 +1465,20 @@ begin
 
   for prop in CodeSystem.property_List do
     case prop.type_ of
-      ConceptPropertyTypeCode, ConceptPropertyTypeString,  ConceptPropertyTypeInteger, ConceptPropertyTypeDateTime:
-        begin
-          col := TStringColumn.Create(self);
-          col.Header := prop.code;
-          grdConcepts.AddObject(col);
-        end;
       ConceptPropertyTypeBoolean :
         begin
           col := TCheckColumn.Create(self);
           col.Header := prop.code;
           grdConcepts.AddObject(col);
         end;
+      else // ConceptPropertyTypeCode, ConceptPropertyTypeString,  ConceptPropertyTypeInteger, ConceptPropertyTypeDateTime:
+        begin
+          col := TStringColumn.Create(self);
+          col.Header := prop.code;
+          grdConcepts.AddObject(col);
+        end;
 //      ConceptPropertyTypeCoding, {@enum.value ConceptPropertyTypeCoding  }
-
     end;
-
 end;
 
 procedure TCodeSystemEditorFrame.loadFilters;
