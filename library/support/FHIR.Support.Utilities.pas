@@ -804,6 +804,7 @@ Function PathExtension(Const sFilename : String) : String; Overload;
 Function FolderExists(Const sFolder : String) : Boolean;
 
 Function FileSize(Const sFileName : String) : Int64; Overload;
+function tempFile(name : String) : String;
 function Path(parts : array of String) : String;
 function URLPath(parts : array of String) : String;
 function makeRelativePath(path, base : String): String;
@@ -2948,6 +2949,11 @@ begin
     result := fn
   else
     result := path([base, fn]);
+end;
+
+function tempFile(name : String) : String;
+begin
+  result := Path([SystemTemp, name]);
 end;
 
 function Path(parts : array of String) : String;
