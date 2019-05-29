@@ -93,7 +93,7 @@ Uses
   FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Storage, FHIR.Server.Security, FHIR.Server.XhtmlComp, FHIR.Snomed.Services, FHIR.Snomed.Publisher, FHIR.Server.Ini,
   FHIR.Scim.Server,
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
-  FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt,
+  FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.UsageStats,
   {$IFNDEF NO_JS} FHIR.Server.Javascript, {$ENDIF}
   FHIR.Server.Subscriptions;
 
@@ -358,6 +358,7 @@ Type
     {$IFNDEF NO_JS}
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
+    FUsageServer : TUsageStatsServer;
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
@@ -3642,6 +3643,7 @@ Begin
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TFslStringDictionary.Create;
+  FUsageServer := TUsageStatsServer.Create(settings.web['stats-dir']);
 
   FGoogle := TGoogleAnalyticsProvider.Create;
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
@@ -3650,6 +3652,7 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  FUsageServer.Free;
   StopAsyncTasks;
   FEndPoints.Free;
   FSettings.Free;
@@ -4134,6 +4137,8 @@ begin
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
+    else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
+      FUsageServer.HandleRequest(AContext, request, Session, response, false)
     else
     begin
       ok := false;
