@@ -3,7 +3,7 @@ unit FHIR.Server.UsageStats;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   IdHTTPServer, IdCustomHTTPServer, IdContext,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json;
 
@@ -13,7 +13,7 @@ type
     FEnabled: boolean;
     FPath: String;
     FDirectory : String;
-    function zipDirectory : TStream;
+    function singleJson : String;
   public
     constructor create(directory : String);
 
@@ -43,9 +43,8 @@ var
 begin
   if request.CommandType = hcGET then
   begin
-    response.ContentStream := zipDirectory;
-    response.FreeContentStream := true;
-    response.ContentType := 'application/zip';
+    response.ContentText := singleJson;
+    response.ContentType := 'application/json';
     response.ResponseNo := 200;
   end
   else if request.RawHeaders.Values['Authorization'] <> 'Bearer 9D1C23C0-3915-4542-882E-2BCC55645DF8' then
@@ -93,9 +92,19 @@ begin
   //
 end;
 
-function TUsageStatsServer.zipDirectory: TStream;
+function TUsageStatsServer.singleJson: String;
+var
+  json : TJsonObject;
+  s : String;
 begin
-  result := nil;
+  json := TJsonObject.Create;
+  try
+    for s in TDirectory.GetFiles(FDirectory) do
+      json.obj[ExtractFileName(s)] := TJSONParser.ParseFile(s);
+    result := TJSONWriter.writeObjectStr(json);
+  finally
+    json.Free;
+  end;
 end;
 
 end.

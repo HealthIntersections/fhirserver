@@ -3643,7 +3643,6 @@ Begin
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TFslStringDictionary.Create;
-  FUsageServer := TUsageStatsServer.Create(settings.web['stats-dir']);
 
   FGoogle := TGoogleAnalyticsProvider.Create;
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
@@ -3738,6 +3737,7 @@ begin
   FServeUnknownCertificate := ini.web['unknown-cert'] = 'true';
   FServeMissingJWT := ini.web['no-jwt'] = 'true';
   FServeUnverifiedJWT := ini.web['unverified-jwt'] = 'true';
+  FUsageServer := TUsageStatsServer.Create(ini.web['stats-dir']);
 
 //  if ini.SectionExists(voVersioningNotApplicable, 'patient-view') then
 //  begin
@@ -4138,7 +4138,7 @@ begin
         response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
     else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
-      FUsageServer.HandleRequest(AContext, request, Session, response, false)
+      FUsageServer.HandleRequest(AContext, request, response)
     else
     begin
       ok := false;
