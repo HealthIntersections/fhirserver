@@ -4138,7 +4138,16 @@ begin
         response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
     else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
+    begin
+      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+      // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+      // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
+      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
       FUsageServer.HandleRequest(AContext, request, response)
+    end
     else
     begin
       ok := false;
