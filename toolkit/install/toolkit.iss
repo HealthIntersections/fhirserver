@@ -47,7 +47,8 @@ Name: "{group}\Transformer"; Filename: "{app}\FHIRTransformer.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,FHIR Toolkit}"; Filename: "http://www.healthintersections.com.au/FhirServer"
 
 [Run]
-Filename: "{app}\FHIRToolkitR3.exe"; Description: "{cm:LaunchProgram,FHIR Toolkit (R3)}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\FHIRToolkitR3.exe"; Description: "{cm:LaunchProgram,FHIR Toolkit (R3)}"; Flags: nowait postinstall skipifsilent unchecked
+Filename: "{app}\FHIRToolkitR4.exe"; Description: "{cm:LaunchProgram,FHIR Toolkit (R4)}"; Flags: nowait postinstall skipifsilent unchecked
 
 [Code]
 var
