@@ -768,7 +768,7 @@ object ServerManagerForm: TServerManagerForm
     Top = 0
     Width = 678
     Height = 444
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alClient
     Style = tsButtons
     TabOrder = 1
@@ -1339,18 +1339,16 @@ object ServerManagerForm: TServerManagerForm
           Height = 50
           Align = alClient
           BevelOuter = bvNone
+          BorderWidth = 4
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          DesignSize = (
-            660
-            50)
           object Label17: TLabel
             Left = 4
             Top = 4
-            Width = 678
-            Height = 45
-            Anchors = [akLeft, akTop, akRight]
+            Width = 652
+            Height = 42
+            Align = alClient
             AutoSize = False
             Caption = 
               'This pane allows for combining multiple SNOMED CT editions to a ' +
@@ -1361,6 +1359,7 @@ object ServerManagerForm: TServerManagerForm
               'me'
             WordWrap = True
             ExplicitWidth = 693
+            ExplicitHeight = 45
           end
         end
       end
@@ -1656,18 +1655,16 @@ object ServerManagerForm: TServerManagerForm
           Height = 69
           Align = alClient
           BevelOuter = bvNone
+          BorderWidth = 4
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          DesignSize = (
-            660
-            69)
           object Label7: TLabel
             Left = 4
             Top = 4
-            Width = 650
-            Height = 64
-            Anchors = [akLeft, akTop, akRight, akBottom]
+            Width = 652
+            Height = 61
+            Align = alClient
             AutoSize = False
             Caption = 
               'This pane allows you to import LOINC to a pre-processed file. Ch' +
@@ -1679,6 +1676,7 @@ object ServerManagerForm: TServerManagerForm
               'e'
             WordWrap = True
             ExplicitWidth = 581
+            ExplicitHeight = 64
           end
         end
       end
@@ -2044,27 +2042,32 @@ object ServerManagerForm: TServerManagerForm
           Top = 5
           Width = 660
           Height = 50
+          Margins.Left = 10
+          Margins.Top = 10
+          Margins.Right = 10
+          Margins.Bottom = 10
           Align = alClient
           BevelOuter = bvNone
+          BorderWidth = 6
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          DesignSize = (
-            660
-            50)
           object Label1: TLabel
-            Left = 4
-            Top = 4
-            Width = 678
-            Height = 45
-            Anchors = [akLeft, akTop, akRight]
+            Left = 6
+            Top = 6
+            Width = 648
+            Height = 38
+            Align = alClient
             AutoSize = False
             Caption = 
               'To use a terminology provided in UMLS format (e.g. RxNorm), firs' +
               't import it with the script in \sql (e.g. rxnorm_import.sql), an' +
               'd then choose the database below and process it '
             WordWrap = True
+            ExplicitLeft = 4
+            ExplicitTop = 4
             ExplicitWidth = 693
+            ExplicitHeight = 45
           end
         end
       end

@@ -558,15 +558,8 @@ Begin
 
       iTerm := StrToUInt64(ascopy(s, iStart, iConcept - iStart));
       oConcept := TConcept.Create;
-//      iEntry := FConcepts.Add(oConcept);
-  //      if TrackConceptDuplicates then
-  //        FConceptMap.Add(iTerm, iEntry);
+      FConcepts.Add(oConcept);
       oConcept.Identity := iTerm;
-  //    else
-  //    begin
-  //      oConcept := FConcepts[FConceptMap.Matches[iTerm]] as TConcept;
-  //      assert(oConcept.Identity = iTerm);
-  //    end;
 
       oConcept.FDate := readDate(ascopy(s, iConcept+1, iDate - iConcept -1));
       if ascopy(s, iDate+1, iStatus - iDate -1) <> '1' then
@@ -688,7 +681,7 @@ var
   iCursor : Integer;
   iStart, iId, iStatus, iConcept, iTerm, iCaps, iType, iLang, iDate, iModuleId, iConceptStart, iTermStart : Integer;
   oConcept : TConcept;
-  iDescId : UInt64;
+  iDescId, cid : UInt64;
   sDesc : String;
   i, j, iStem : integer;
   oList : TFslIntegerList;
@@ -736,9 +729,10 @@ begin
 
       iDescId := StrToUInt64(ascopy(s, iStart, (iId - iStart)));
 
-      oConcept := GetConcept(StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1)), iConceptIndex);
+      cid := StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1));
+      oConcept := GetConcept(cid, iConceptIndex);
       if oConcept = nil then
-        raise ETerminologySetup.create('unable to find Concept in desc ('+ascopy(s, iStatus+1, (iConcept - iStatus)-1)+')');
+        raise ETerminologySetup.create('unable to find Concept '+IntToStr(cid)+' in desc file (descid = '+inttostr(iDescId)+')');
 
       ascopy(s, iType+1, (iTerm - iType) - 1);
       if not FConcept.FindConcept(StrtoUInt64(ascopy(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
