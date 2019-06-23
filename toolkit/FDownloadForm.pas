@@ -136,6 +136,8 @@ unzip:=true;
     Stream.Free;
     linkedForm.busy:=false;
   end;
+  downloadform.modalresult:=mrOK;
+  downloadform.Close;
 end;
 
 procedure TDownload.UpdateProgressBar;
@@ -164,9 +166,13 @@ begin
     try
       TZipFile.ExtractZipFile(ZipFile, ExtractPath);
       DeleteFile(ZipFile);
+
       linkedForm.Caption := 'Done.';
       linkedForm.Button1.Enabled := true;
+      sleep(300);
+      linkedForm.modalResult:=mrOK;
       linkedForm.close;
+
     except
     end
   else
@@ -190,7 +196,7 @@ end;
 
 procedure TDownloadForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
- if busy then canClose:=false;
+ if busy then canClose:=false else canclose:=true;
  if assigned(DownloadThread) then fcancel:=true;
 end;
 

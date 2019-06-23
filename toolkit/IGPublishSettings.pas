@@ -37,7 +37,8 @@ uses
 {$ENDIF}
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.zip, System.IOUtils,
   FMX.Dialogs, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Types,
-  FMX.dialogservice, IdHTTP, IdComponent, System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent, FDownloadForm, FMX.TabControl;
+  FMX.dialogservice, IdHTTP, IdComponent, System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent, FDownloadForm, FMX.TabControl,
+  FMX.ListBox;
 
 type
   TIGSettingsForm = class(TForm)
@@ -71,10 +72,17 @@ type
     Button1: TButton;
     btnDownloadIGPublisher: TButton;
     btnLocalBuild: TButton;
+    Memo2: TMemo;
+    Label3: TLabel;
+    ComboBox1: TComboBox;
+    lblPubFolder: TLabel;
+    Label6: TLabel;
+    lblPubPresent: TLabel;
+    Label8: TLabel;
 
+    function CheckFolder(Sender: TObject):boolean;
     procedure Button1Click(Sender: TObject);
     procedure btnCheckDependenciesClick(Sender: TObject);
-    procedure OnZipProgressEvent(Sender: TObject; FileName: string; Header: TZipHeader; Position: Int64);
     procedure Button2Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnDownloadIGPublisherClick(Sender: TObject);
@@ -85,11 +93,13 @@ type
     procedure Button7Click(Sender: TObject);
     procedure SetupIGPublisherFiles;
     procedure Button11Click(Sender: TObject);
-    procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
-
+    procedure HandleOutput(const Text: string);
+    procedure RunInMemo(CommandLine: string; Work: string; parameters: string; Memo: TMemo);
+    // procedure CaptureConsoleOutput(const WorkDir, ACommand, AParameters: String; AMemo: TMemo);
+    procedure Edit1Exit(Sender: TObject);
     { //    procedure Download;
       procedure HttpWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
       procedure HttpWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
@@ -106,25 +116,26 @@ type
     FGlobalStart: Cardinal;
     FAsyncResult: IAsyncResult;
     FDownloadStream: TStream;
+    isBuilding: Boolean;
   public
     { Public declarations }
-    dependencies: boolean;
-    fwInstalled: boolean;
+    dependencies: Boolean;
+    fwInstalled: Boolean;
     igRootFolder, IGPublisherFolder, IGFileName: String;
     depJekyllVersion: string;
 
     resourcesFolder, pagecontentfolder, igcontentfolder, mediafolder, pandocfolder, tempfolder: string;
 
     function runAndWait(Path, command, parameters: String): integer;
-    function checkContentFolders(rootFolder: string): boolean;
-    function checkPublishFolders(publisherFolder: string): boolean;
+    function checkContentFolders(rootFolder: string): Boolean;
+//    function checkPublishFolders(publisherFolder: string): Boolean;
     procedure createFolders(rootFolder: string);
     { procedure DownloadFile; }
   end;
 
 var
   IGSettingsForm: TIGSettingsForm;
-  buildOK: boolean;
+  buildOK: Boolean;
   svc: string = 'git';
 
 implementation
@@ -134,6 +145,47 @@ implementation
 uses
   FHIR.Support.Base,
   ImplementationGuideEditor;
+
+
+
+
+function TIGSettingsForm.CheckFolder(Sender: TObject):boolean;
+var tempstr:string;
+begin
+  btnLocalBuild.enabled := false;
+  tempstr := IGPublisherFolder;
+  if tempstr = '' then
+  begin
+    TDialogService.MessageDialog('IG Publisher folder not defined.'#13#10'Set the location of the IG Publisher', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk],
+      System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+    lblPubFolder.TextSettings.FontColor:= TAlphaColorRec.Maroon;
+    lblPubFolder.Text:='Not found';
+    exit;
+  end else begin
+    lblPubFolder.TextSettings.FontColor:= TAlphaColorRec.Green;
+    lblPubFolder.Text:='Present';
+
+  end;
+
+
+  if not(fileexists(tempstr + '\BUILD.bat')) then
+  begin
+    TDialogService.MessageDialog('IG Publisher not found in folder.'#13#10'Please download the IG Publisher.', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk],
+      System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+    lblPubPresent.TextSettings.FontColor:= TAlphaColorRec.Maroon;
+    lblPubPresent.Text:='Not found';
+    exit;
+  end
+  else begin
+    lblPubPresent.TextSettings.FontColor:= TAlphaColorRec.Green;
+    lblPubPresent.Text:='Present';
+    btnLocalBuild.enabled := true;
+  end;
+
+
+end;
+
+
 
 procedure TIGSettingsForm.btnCheckDependenciesClick(Sender: TObject);
 {$IFDEF OSX}
@@ -146,6 +198,12 @@ var
   str: string;
 
 begin
+
+ checkfolder(self);
+
+
+
+
   Memo1.Lines.Clear;
   execute('cmd.exe /C jekyll -v', str, true);
   if copy(str, 1, 6) = 'jekyll' then
@@ -158,13 +216,18 @@ begin
 
   lblJekyllAvailable.Text := depJekyllVersion;
 
+
+
 end;
 {$ENDIF}
 
+
 procedure TIGSettingsForm.Button10Click(Sender: TObject);
 var
-  filestr, tempstr: string;
+  currDir, filestr, tempstr: string;
 begin
+  if isBuilding then
+    exit;
 
   tempstr := IGPublisherFolder;
   if tempstr = '' then
@@ -183,24 +246,36 @@ begin
 
   else
 
-    if fileexists(tempstr + '\BUILD.bat') then
-  begin
-    sleep(2000);
-    SetupIGPublisherFiles;
-    runAndWait(tempstr, 'BUILD', igRootFolder);
-    filestr := IGPublisherFolder + '\output\index.html';
-    filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-    if runAndWait(tempstr, filestr, '') = 0 then
-      buildOK := true
-    else
-      buildOK := False;
-    // filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-    // runAndWait(igRootFolder, 'open', filestr);
-    close;
-  end
-  else
-    TDialogService.MessageDialog('IG Publisher not found. '#13#10'Ensure the IG Publisher is in the same folder as the IG file.', System.UITypes.TMsgDlgType.mtInformation,
-      [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+    try
+      if fileexists(tempstr + '\BUILD.bat') then
+      begin
+        btnLocalBuild.enabled := false;
+        isBuilding := true;
+        sleep(1000);
+        SetupIGPublisherFiles;
+        // runAndWait(tempstr, 'BUILD', igRootFolder);
+        RunInMemo('cmd.exe /C BUILD', tempstr, igRootFolder, Memo2);
+        // CaptureConsoleOutput(tempstr, 'cmd.exe /C BUILD', igRootFolder, Memo2);
+        filestr := IGPublisherFolder + '\output\index.html';
+        filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
+        if runAndWait(tempstr, filestr, '') = 0 then
+          buildOK := true
+        else
+          buildOK := false;
+        // close;
+      end
+      else
+        TDialogService.MessageDialog('IG Publisher not found. '#13#10'Ensure the IG Publisher is in the same folder as the IG file.', System.UITypes.TMsgDlgType.mtInformation,
+          [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+    finally
+      btnLocalBuild.enabled := true;
+      isBuilding := false;
+    end;
+end;
+
+procedure TIGSettingsForm.HandleOutput(const Text: string);
+begin
+  Memo2.Lines.Add(Text);
 end;
 
 procedure TIGSettingsForm.Button11Click(Sender: TObject);
@@ -219,21 +294,6 @@ begin
       mediafolder := igcontentfolder + '\images';
   end;
 
-  { if (directoryexists(pwidechar(igRootFolder + '\publish'))) then  ssssssss
-    begin
-    IGPublisherFolder := igRootFolder + '\publish';  sssssssss
-    Edit1.Text := IGPublisherFolder;
-    if (directoryexists(pwidechar(IGPublisherFolder + '\framework\pandoc'))) then
-    pandocfolder := IGPublisherFolder + '\framework\pandoc';
-    end;
-  }
-
-end;
-
-procedure TIGSettingsForm.Button12Click(Sender: TObject);
-begin
-  // IGPublisherFolder := igRootfolder+'\publish';  ssssssssssss
-  // Edit1.Text := IGPublisherFolder;
 end;
 
 procedure TIGSettingsForm.Button13Click(Sender: TObject);
@@ -302,6 +362,7 @@ begin
     IGPublisherFolder := dir;
     Edit1.Text := dir;
   end;
+  checkfolder(self);
 
 end;
 
@@ -314,6 +375,68 @@ begin
   // url := 'https://github.com/madhur/PortableJekyll/archive/master.zip';
   // url := 'https://github.com/costateixeira/ihe_mma/archive/master.zip';
 
+end;
+
+procedure TIGSettingsForm.RunInMemo(CommandLine: string; Work: string; parameters: string; Memo: TMemo);
+var
+  SA: TSecurityAttributes;
+  SI: TStartupInfo;
+  PI: TProcessInformation;
+  StdOutPipeRead, StdOutPipeWrite: THandle;
+  WasOK: Boolean;
+  Buffer: array [0 .. 255] of AnsiChar;
+  BytesRead: Cardinal;
+  WorkDir: string;
+  Handle: Boolean;
+begin
+  Memo.Text := '';
+  with SA do
+  begin
+    nLength := SizeOf(SA);
+    bInheritHandle := true;
+    lpSecurityDescriptor := nil;
+  end;
+  CreatePipe(StdOutPipeRead, StdOutPipeWrite, @SA, 0);
+  try
+    with SI do
+    begin
+      FillChar(SI, SizeOf(SI), 0);
+      cb := SizeOf(SI);
+      dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
+      wShowWindow := SW_HIDE;
+      hStdInput := GetStdHandle(STD_INPUT_HANDLE); // don't redirect stdin
+      hStdOutput := StdOutPipeWrite;
+      hStdError := StdOutPipeWrite;
+    end;
+    WorkDir := Work;
+    Handle := CreateProcess(nil, PChar('cmd.exe /C ' + CommandLine + ' ' + parameters), nil, nil, true, 0, nil, PChar(WorkDir), SI, PI);
+    CloseHandle(StdOutPipeWrite);
+    if Handle then
+      try
+        repeat
+          WasOK := ReadFile(StdOutPipeRead, Buffer, 255, BytesRead, nil);
+          if BytesRead > 0 then
+          begin
+            Buffer[BytesRead] := #0;
+            memo.BeginUpdate;
+            Memo.Text := Memo.Text + Buffer;
+            Memo.SelLength := 0;
+            Memo.SelStart := Length(Memo.Text) - 1;
+            Memo.GoToTextEnd;
+            memo.EndUpdate;
+            Application.ProcessMessages();
+            Memo.GoToTextEnd;
+ //           memo.Dispatch();
+          end;
+        until not WasOK or (BytesRead = 0);
+        WaitForSingleObject(PI.hProcess, INFINITE);
+      finally
+        CloseHandle(PI.hThread);
+        CloseHandle(PI.hProcess);
+      end;
+  finally
+    CloseHandle(StdOutPipeRead);
+  end;
 end;
 
 procedure TIGSettingsForm.btnDownloadIGPublisherClick(Sender: TObject);
@@ -340,7 +463,7 @@ begin
     // how to check whether the publisher is already there. ???
 
     DownloadForm := TDownloadForm.Create(self);
-    DownloadForm.SourceURL := 'https://bitbucket.org/costateixeira/ig-builder/downloads/publish_2_flat.zip';
+    DownloadForm.SourceURL := combobox1.Selected.Text;;
     DownloadForm.localFileName := IGPublisherFolder + '\publish.zip';
     DownloadForm.UnzipLocation := IGPublisherFolder;
     DownloadForm.Unzip := true;
@@ -352,16 +475,11 @@ begin
     DownloadForm.Destroy;
 
     createFolders(igRootFolder);
+    edit1.Text:=IGPublisherFolder;
 
-    if checkPublishFolders(IGPublisherFolder) then
+    if checkFolder(self) then
     begin
-      btnDownloadIGPublisher.Text := 'Folders OK';
-      btnLocalBuild.Enabled := true
-    end
-    else
-    begin
-      btnDownloadIGPublisher.Text := 'Download';
-      btnLocalBuild.Enabled := False
+
     end
 
   end;
@@ -375,7 +493,7 @@ begin
 
 end;
 
-function TIGSettingsForm.checkContentFolders(rootFolder: string): boolean;
+function TIGSettingsForm.checkContentFolders(rootFolder: string): Boolean;
 begin
   igRootFolder := rootFolder;
   igcontentfolder := igRootFolder + '\content';
@@ -389,7 +507,7 @@ begin
       (directoryexists(pwidechar(resourcesFolder))) and (directoryexists(pwidechar(mediafolder)))) then
       result := true
     else
-      result := False;
+      result := false;
   end;
 
   if result then
@@ -405,31 +523,6 @@ begin
 
 end;
 
-function TIGSettingsForm.checkPublishFolders(publisherFolder: string): boolean;
-begin
-
-  if IGPublisherFolder = '' then
-  begin
-    result := False;
-  end
-  else
-  begin
-    // ForceDirectories(pwidechar(IGPublisherFolder));
-    if directoryexists(publisherFolder) then
-    begin
-      IGPublisherFolder := publisherFolder;
-
-      // pandoc checking should go somewhere else
-      pandocfolder := IGPublisherFolder + '\framework\pandoc';
-    end;
-
-    if ((directoryexists(pwidechar(IGPublisherFolder))) and (directoryexists(pwidechar(pandocfolder)))) then
-      result := true
-    else
-      result := False;
-
-  end;
-end;
 
 procedure TIGSettingsForm.createFolders(rootFolder: string);
 begin
@@ -440,7 +533,7 @@ begin
   resourcesFolder := igcontentfolder + '\resources';
   mediafolder := igcontentfolder + '\images';
 
-  IGPublisherFolder := igRootFolder + '\publish';
+  if IGPublisherFolder = '' then IGPublisherFolder := igRootFolder + '\publish';
   Edit1.Text := IGPublisherFolder;
   pandocfolder := IGPublisherFolder + '\framework\pandoc';
 
@@ -458,6 +551,14 @@ begin
   end;
   checkContentFolders(igRootFolder);
 
+
+
+end;
+
+procedure TIGSettingsForm.Edit1Exit(Sender: TObject);
+begin
+  IGPublisherFolder := Edit1.Text;
+  checkfolder(self);
 end;
 
 procedure TIGSettingsForm.Button7Click(Sender: TObject);
@@ -513,12 +614,6 @@ begin
   Button11Click(self);
 end;
 
-procedure TIGSettingsForm.OnZipProgressEvent(Sender: TObject; FileName: string; Header: TZipHeader; Position: Int64);
-begin
-  // ProgressBar1.Value := (Position * 100) div Header.UncompressedSize;
-  // application.ProcessMessages;
-end;
-
 function TIGSettingsForm.runAndWait(Path, command, parameters: String): integer;
 {$IFDEF OSX}
 begin
@@ -552,7 +647,7 @@ begin
       repeat
         // application.ProcessMessages;
         GetExitCodeProcess(SEInfo.hProcess, ExitCode);
-      until (ExitCode <> STILL_ACTIVE) or application.Terminated;
+      until (ExitCode <> STILL_ACTIVE) or Application.Terminated;
     end;
     result := ExitCode;
 
@@ -569,7 +664,7 @@ var
   parameter_line: integer;
   destFile: string;
 
-  sa: TStringDynArray;
+  SA: TStringDynArray;
 
 begin
 
@@ -603,40 +698,40 @@ begin
   tfile.copy(igRootFolder + '\' + IGFileName, IGPublisherFolder + '\src\' + extractFileName(IGFileName));
 
   begin
-    sa := TDirectory.GetFiles(igcontentfolder + '\resources');
-    for i := 0 to Length(sa) - 1 do
+    SA := TDirectory.GetFiles(igcontentfolder + '\resources');
+    for i := 0 to Length(SA) - 1 do
     begin
-      destFile := IGPublisherFolder + '\src\resources\' + extractFileName(sa[i]);
+      destFile := IGPublisherFolder + '\src\resources\' + extractFileName(SA[i]);
       try
-        tfile.delete(pwidechar(destFile));
+        if fileexists(pwidechar(destFile)) then tfile.delete(pwidechar(destFile));
       finally
-        tfile.copy(pwidechar(sa[i]), pwidechar(destFile));
+        if forcedirectories(pwidechar(ExtractFilePath(destFile))) then tfile.copy(pwidechar(SA[i]), pwidechar(destFile));
       end;
     end;
   end;
 
   begin
-    sa := TDirectory.GetFiles(igcontentfolder + '\pagecontent');
-    for i := 0 to Length(sa) - 1 do
+    SA := TDirectory.GetFiles(igcontentfolder + '\pagecontent');
+    for i := 0 to Length(SA) - 1 do
     begin
-      destFile := IGPublisherFolder + '\src\pagecontent\' + extractFileName(sa[i]);
+      destFile := IGPublisherFolder + '\src\pagecontent\' + extractFileName(SA[i]);
       try
-        tfile.delete(pwidechar(destFile));
+        if fileexists(pwidechar(destFile)) then tfile.delete(pwidechar(destFile));
       finally
-        tfile.copy(pwidechar(sa[i]), pwidechar(destFile));
+        if forcedirectories(pwidechar(ExtractFilePath(destFile))) then tfile.copy(pwidechar(SA[i]), pwidechar(destFile));
       end;
     end;
   end;
 
   begin
-    sa := TDirectory.GetFiles(igcontentfolder + '\images');
-    for i := 0 to Length(sa) - 1 do
+    SA := TDirectory.GetFiles(igcontentfolder + '\images');
+    for i := 0 to Length(SA) - 1 do
     begin
-      destFile := IGPublisherFolder + '\src\images\' + extractFileName(sa[i]);
+      destFile := IGPublisherFolder + '\src\images\' + extractFileName(SA[i]);
       try
-        tfile.delete(pwidechar(destFile));
+        if fileexists(pwidechar(destFile)) then tfile.delete(pwidechar(destFile));
       finally
-        tfile.copy(pwidechar(sa[i]), pwidechar(destFile));
+        if forcedirectories(pwidechar(ExtractFilePath(destFile))) then tfile.copy(pwidechar(SA[i]), pwidechar(destFile));
       end;
     end;
   end;
