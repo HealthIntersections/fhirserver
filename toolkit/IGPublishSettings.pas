@@ -79,6 +79,7 @@ type
     Label6: TLabel;
     lblPubPresent: TLabel;
     Label8: TLabel;
+    Button5: TButton;
 
     function CheckFolder(Sender: TObject):boolean;
     procedure Button1Click(Sender: TObject);
@@ -100,6 +101,7 @@ type
     procedure RunInMemo(CommandLine: string; Work: string; parameters: string; Memo: TMemo);
     // procedure CaptureConsoleOutput(const WorkDir, ACommand, AParameters: String; AMemo: TMemo);
     procedure Edit1Exit(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
     { //    procedure Download;
       procedure HttpWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
       procedure HttpWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
@@ -374,6 +376,16 @@ var
 begin
   // url := 'https://github.com/madhur/PortableJekyll/archive/master.zip';
   // url := 'https://github.com/costateixeira/ihe_mma/archive/master.zip';
+
+end;
+
+procedure TIGSettingsForm.Button5Click(Sender: TObject);
+begin
+memo2.SelectAll;
+memo2.CopyToClipboard;
+Memo2.SelLength := 0;
+Memo2.SelStart := Length(Memo2.Text) - 1;
+Memo2.GoToTextEnd;
 
 end;
 

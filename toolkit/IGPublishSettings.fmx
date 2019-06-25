@@ -1,7 +1,7 @@
 object IGSettingsForm: TIGSettingsForm
   Left = 0
   Top = 0
-  Caption = 'Implementation Guide Settings'
+  Caption = 'Implementation Guide Build'
   ClientHeight = 464
   ClientWidth = 893
   FormFactor.Width = 320
@@ -380,6 +380,16 @@ object IGSettingsForm: TIGSettingsForm
       Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 27
+    end
+    object Button5: TButton
+      Position.X = 760.000000000000000000
+      Position.Y = 200.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 28
+      Text = 'Copy console output'
+      OnClick = Button5Click
     end
   end
   object lblPubFolder: TLabel
