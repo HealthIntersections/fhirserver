@@ -1422,6 +1422,11 @@ begin
           end;
         end;
       end;
+      if (t = '') then
+      begin
+        t := 'string'; // compiler magic
+        url := 'http://hl7.org/fhir/StructureDefinition/string';
+      end;
       if (t <> 'xhtml') then
       begin
         for tr in ed.type_List do
