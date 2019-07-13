@@ -81,12 +81,7 @@ Type
   ELibraryException = Class(EFslException); // general library functionality
   EIOException = Class(EFslException); // problems reading/writing files
   EWebException = Class(EFslException); // error in web stack (client or server)
-  EJsonException = class (EFslException); // error reading or writing Json
   EER7Exception = class (EFslException); // error reading or writing Vertical Bar
-  EJsonTodo = Class(EJsonException)
-  public
-    Constructor Create(place : String);
-  End;
   EXmlException = class (EFslException); // error reading or writing Xml
   EXmlTodo = Class(EXmlException)
   public
@@ -120,6 +115,12 @@ Type
     Property Line : integer read FLine;
     Property Col : integer read FCol;
   end;
+  EJsonParserException = class (EParserException); // error reading or writing Json
+  EJsonException = class (EFslException); // error reading or writing Json
+  EJsonTodo = Class(EJsonException)
+  public
+    Constructor Create(place : String);
+  End;
 
 Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;

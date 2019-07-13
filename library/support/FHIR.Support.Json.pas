@@ -1359,7 +1359,7 @@ end;
 
 procedure TJSONLexer.JsonError(sMsg: String);
 begin
-  Raise EJsonException.Create('Error parsing JSON source: '+sMsg+' at Line '+inttostr(Line)+' (path=['+Path+'])');
+  Raise EJsonParserException.Create('Error parsing JSON source: '+sMsg+' at Line '+inttostr(Line)+' (path=['+Path+'])', FLocation.line, FLocation.col);
 end;
 
 function TJSONLexer.Path: String;
@@ -1717,7 +1717,7 @@ begin
         Next;
         readArray(child, false);
         end;
-      jpitEof : raise EJsonException.Create('Unexpected End of File');
+      jpitEof : raise EJsonParserException.Create('Unexpected End of File', FLex.FLocation.line, FLex.FLocation.col);
     end;
     arr.LocationEnd := FLex.FLocation;
     Next;
@@ -1728,7 +1728,7 @@ end;
 function TJSONParser.readNode: TJsonNode;
 begin
   case FLex.LexType of
-    jltOpen : 
+    jltOpen :
       begin
         FLex.Next;
         FLex.FStates.InsertObject(0, '', nil);
@@ -1741,8 +1741,8 @@ begin
           result.Free;
         end;
       end;
-    jltString : raise EJsonException.Create('Not implemented yet');
-    jltNumber : raise EJsonException.Create('Not implemented yet');
+    jltString : raise EJsonTodo.Create('Not implemented yet');
+    jltNumber : raise EJsonTodo.Create('Not implemented yet');
     jltOpenArray :
       begin
         FLex.Next;
@@ -1756,10 +1756,10 @@ begin
           result.Free;
         end;
       end;
-    jltNull : raise EJsonException.Create('Not implemented yet');
-    jltBoolean : raise EJsonException.Create('Not implemented yet');
+    jltNull : raise EJsonTodo.Create('Not implemented yet');
+    jltBoolean : raise EJsonTodo.Create('Not implemented yet');
   else
-    raise EJsonException.Create('Unexpected Token '+Codes_TJSONLexType[FLex.LexType]+' at start of Json Stream');
+    raise EJsonParserException.Create('Unexpected Token '+Codes_TJSONLexType[FLex.LexType]+' at start of Json Stream', FLex.FLocation.line, FLex.FLocation.col);
   end;
 end;
 
@@ -1775,7 +1775,7 @@ begin
   begin
     ns := FNameStart; // we rule that the value 'starts' in a location sense where the name starts, not where the value starts
     if obj.FProperties.ContainsKey(itemName) then
-      raise EJsonException.Create('DuplicateKey: '+itemName+' at '+obj.path);
+      raise EJsonParserException.Create('DuplicateKey: '+itemName+' at '+obj.path, FLex.FLocation.line, FLex.FLocation.col);
 
     case ItemType of
       jpitObject:
@@ -1802,7 +1802,7 @@ begin
         Next;
         readArray(arr, false);
         end;
-      jpitEof : raise EJsonException.Create('Unexpected End of File');
+      jpitEof : raise EJsonParserException.Create('Unexpected End of File', FLex.FLocation.line, FLex.FLocation.col);
     end;
     obj.LocationEnd := FLex.FLocation;
     next;
