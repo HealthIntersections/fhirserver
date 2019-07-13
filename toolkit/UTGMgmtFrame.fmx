@@ -1,0 +1,258 @@
+object UTGManagementFrame: TUTGManagementFrame
+  Size.Width = 884.000000000000000000
+  Size.Height = 614.000000000000000000
+  Size.PlatformDefault = False
+  object Panel1: TPanel
+    Align = Right
+    Position.X = 600.000000000000000000
+    Size.Width = 284.000000000000000000
+    Size.Height = 614.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Panel3: TPanel
+      Align = Top
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 7
+      object btnNewProposal: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'New Proposal'
+        OnClick = btnNewProposalClick
+      end
+      object Label1: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Start working on a new Proposal'
+        TabOrder = 1
+      end
+    end
+    object Panel4: TPanel
+      Align = Top
+      Position.Y = 57.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      object btnFetchProposal: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Fetch Proposal'
+        OnClick = btnFetchProposalClick
+      end
+      object Label2: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Fetch an existing proposal to work on it'
+        TabOrder = 2
+      end
+    end
+    object Panel5: TPanel
+      Align = Top
+      Position.Y = 114.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 5
+      object btnCommitProposal: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Commit Proposal'
+        OnClick = btnCommitProposalClick
+      end
+      object Label3: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Commit all the existing work to the server'
+        TabOrder = 2
+      end
+    end
+    object Panel6: TPanel
+      Align = Top
+      Position.Y = 171.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      object btnDeleteProposal: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Delete Proposal'
+        OnClick = btnDeleteProposalClick
+      end
+      object Label4: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Delete your local copy of the proposal'
+        TabOrder = 2
+      end
+    end
+    object Panel7: TPanel
+      Align = Top
+      Position.Y = 285.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      object btnMakeActive: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Make Active'
+        OnClick = btnMakeActiveClick
+      end
+      object Label5: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 281.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Use this proposal for internal Terminology services '
+        TabOrder = 2
+      end
+    end
+    object Panel8: TPanel
+      Align = Top
+      Position.Y = 342.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object btnPublish: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Publish'
+        OnClick = btnPublishClick
+      end
+      object Label6: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 281.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Generate local website for this proposal '
+        TabOrder = 2
+      end
+      object ProgressBar1: TProgressBar
+        Orientation = Horizontal
+        Position.X = 128.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 153.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object Panel9: TPanel
+      Align = Top
+      Position.Y = 399.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object btnOpen: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Open'
+        OnClick = btnOpenClick
+      end
+      object Label7: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 281.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'View generated web site for proposal'
+        TabOrder = 2
+      end
+    end
+    object Panel10: TPanel
+      Align = Top
+      Position.Y = 228.000000000000000000
+      Size.Width = 284.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object btnOpenFile: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Open File'
+        OnClick = btnOpenFileClick
+      end
+      object Label8: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Open one of the resources for editing'
+        TabOrder = 2
+      end
+    end
+  end
+  object Panel2: TPanel
+    Align = Client
+    Margins.Left = 6.000000000000000000
+    Margins.Top = 6.000000000000000000
+    Margins.Right = 6.000000000000000000
+    Margins.Bottom = 6.000000000000000000
+    Size.Width = 588.000000000000000000
+    Size.Height = 602.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object ListView1: TListView
+      ItemAppearanceClassName = 'TListItemAppearance'
+      ItemEditAppearanceClassName = 'TListItemShowCheckAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      Align = Client
+      Size.Width = 588.000000000000000000
+      Size.Height = 602.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+    end
+  end
+end
