@@ -66,6 +66,13 @@ implementation
 
 {$R *.fmx}
 
+uses
+  FHIR.Base.Utilities;
+
+function IsValidSearchParam(s : String) : boolean;
+begin
+  result := IsId(s);
+end;
 { TForm1 }
 
 procedure TSearchParameterEditorForm.Button1Click(Sender: TObject);
@@ -74,7 +81,7 @@ begin
   param.type_ := TFhirSearchParamTypeEnum(cbxType.ItemIndex);
   param.definition := edtDefinition.Text;
   param.documentation := mDocumentation.Text;
-  if not IsValidIdent(param.name) then
+  if not IsValidSearchParam(param.name) then
     raise EFHIRException.create('The parameter name "'+param.name+'" is not valid');
   if param.type_ = SearchParamTypeNull then
     raise EFHIRException.create('Please choose a parameter type');
