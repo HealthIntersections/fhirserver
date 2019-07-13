@@ -222,6 +222,7 @@ type
     procedure btnDocoDeleteClick(Sender: TObject);
     procedure btnDocoHistoryInstanceClick(Sender: TObject);
     procedure btnDocoHistoryTypeClick(Sender: TObject);
+    procedure gridSearchCellDblClick(const Column: TColumn; const Row: Integer);
   private
     function GetCapabilityStatement: TFHIRCapabilityStatement;
     function readJurisdiction : Integer;
@@ -1133,6 +1134,11 @@ begin
   end;
 end;
 
+procedure TCapabilityStatementEditorFrame.gridSearchCellDblClick(const Column: TColumn; const Row: Integer);
+begin
+  btnParamEditClick(self);
+end;
+
 procedure TCapabilityStatementEditorFrame.gridSearchGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
 var
   sp : TFhirCapabilityStatementRestResourceSearchParamList;
@@ -1270,7 +1276,9 @@ procedure TCapabilityStatementEditorFrame.loadResource(res: TFhirCapabilityState
     begin
       edt.Text := ri.documentation;
       edt.TagObject := ri;
-    end;
+    end
+    else
+      edt.Text := '';
   end;
 var
   search : TFhirCapabilityStatementRestResourceSearchParam;

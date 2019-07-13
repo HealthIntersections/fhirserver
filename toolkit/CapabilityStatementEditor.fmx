@@ -1,11 +1,11 @@
 object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
   Size.Width = 922.000000000000000000
-  Size.Height = 711.000000000000000000
+  Size.Height = 832.000000000000000000
   Size.PlatformDefault = False
   object Panel2: TPanel
     Align = Left
     Size.Width = 201.000000000000000000
-    Size.Height = 682.000000000000000000
+    Size.Height = 803.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     object Panel4: TPanel
@@ -27,12 +27,12 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
     object tvStructure: TTreeView
       Align = Client
       Size.Width = 201.000000000000000000
-      Size.Height = 657.000000000000000000
+      Size.Height = 778.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 657.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 774.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -48,36 +48,36 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
     MinSize = 20.000000000000000000
     Position.X = 201.000000000000000000
     Size.Width = 8.000000000000000000
-    Size.Height = 682.000000000000000000
+    Size.Height = 803.000000000000000000
     Size.PlatformDefault = False
   end
   object Panel3: TPanel
     Align = Client
     Size.Width = 713.000000000000000000
-    Size.Height = 682.000000000000000000
+    Size.Height = 803.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     object tbStructure: TTabControl
       Align = Client
       Anchors = [akLeft, akTop]
       Size.Width = 713.000000000000000000
-      Size.Height = 682.000000000000000000
+      Size.Height = 803.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 0
       TabPosition = None
       Sizes = (
         713s
-        682s
+        803s
         713s
-        682s
+        803s
         713s
-        682s)
+        803s)
       object tbMetadata: TTabItem
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -89,11 +89,11 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object VertScrollBox3: TVertScrollBox
           Align = Client
           Size.Width = 713.000000000000000000
-          Size.Height = 682.000000000000000000
+          Size.Height = 803.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           Viewport.Width = 713.000000000000000000
-          Viewport.Height = 682.000000000000000000
+          Viewport.Height = 803.000000000000000000
           object dedDate: TDateEdit
             Date = 42965.000000000000000000
             OnChange = inputChanged
@@ -539,11 +539,11 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object VertScrollBox1: TVertScrollBox
           Align = Client
           Size.Width = 713.000000000000000000
-          Size.Height = 682.000000000000000000
+          Size.Height = 803.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 17
           Viewport.Width = 713.000000000000000000
-          Viewport.Height = 682.000000000000000000
+          Viewport.Height = 803.000000000000000000
           object edtBatch: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             TabOrder = 28
@@ -826,7 +826,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -838,11 +838,11 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object VertScrollBox2: TVertScrollBox
           Align = Client
           Size.Width = 713.000000000000000000
-          Size.Height = 682.000000000000000000
+          Size.Height = 803.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 6
           Viewport.Width = 713.000000000000000000
-          Viewport.Height = 682.000000000000000000
+          Viewport.Height = 803.000000000000000000
           object edtDocoCreate: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             TabOrder = 0
@@ -965,8 +965,9 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             RowCount = 10
             OnGetValue = gridSearchGetValue
             OnSetValue = gridSearchSetValue
-            Viewport.Width = 513.000000000000000000
-            Viewport.Height = 217.000000000000000000
+            OnCellDblClick = gridSearchCellDblClick
+            Viewport.Width = 493.000000000000000000
+            Viewport.Height = 176.000000000000000000
             object Column1: TColumn
               Header = 'Name'
               Size.Width = 85.000000000000000000
@@ -1060,8 +1061,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 57.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 19
-            Viewport.Width = 569.000000000000000000
-            Viewport.Height = 57.000000000000000000
+            Viewport.Width = 565.000000000000000000
+            Viewport.Height = 53.000000000000000000
           end
           object btnParamAdd: TButton
             Position.X = 536.000000000000000000
@@ -1405,7 +1406,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
   end
   object Panel1: TPanel
     Align = Bottom
-    Position.Y = 682.000000000000000000
+    Position.Y = 803.000000000000000000
     Size.Width = 922.000000000000000000
     Size.Height = 29.000000000000000000
     Size.PlatformDefault = False
@@ -1460,32 +1461,32 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031749444154384F5D5359681351143D6F2649DB19B2B64DB7244D6D5D1A546C
-              DC155470F910AAA858ED87562B08A28888A23F0A2EA0821F2282208ADA16148A
-              B8820B8A2B88526948B5555B63536D8D36266DE2649964669C376AB13D7099C7
-              BDE7DC3BDC85600CF66FDB669D9C8EACE464D96B50643BF589847C4F286C5B47
-              8E7CEBC4B9D6618DF817A3121CD8B2A9B6618AE7943B913F8E7DD38FF0B798E6
-              2F2831213BDD81201F0E5CF677EE3A72E1D26D2DA082FDFBC5C12D9BD63654CD
-              6CAD7C1CC967FA55A1C302B278120C53CBA04F8960DE8660EB4E5B9DDEEA3A6B
-              7961D7D3765F27D56909B4CA54EC8BB2F1032B90F3B00BE9D31B712744D0CD99
-              51D93807BA6B6D881F5D85926B7EC6E5A95C6D76DBDB9FB5FB3EB2FBB6AE356F
-              9E5873B3EAC94F5BF2CC06E89F778175DBA09B37115C4700A5720A05352E6038
-              06128E41DCBE14F6332F18E77CE75CBEA2AA89B434ACDBB06EC2B226F1510FB8
-              222384500CBC3107E0551B4AD21F042C79809086104F832F3621F13D8E9C2555
-              B8DAF360B38E23D20C5DDB5708A7EA21983818B65E44FC643D18830EFCEDD79A
-              5EA89D0559CC22774733846375C8C612E00EDD006794BD8C41518A945406E649
-              2EF0A505C84A328CEE62F04E177AAD36CDE89BFA688C722817890CF4508A18AD
-              C47F20A3273B0A0C1913532031744948AE1EC3EFFB200C84C1B204F16008C297
-              3EB8A311CDE89BFA1886681CCA05A7478690F04813C9B3CF605D16648251E8AD
-              6AD34CB9C0A0F0A752210FC452C84493D0975B21F50D010B2BB426B2E3677B82
-              E31CB6F5F99FD29694DA3C702C74C54675B3D6A0170C863C0E58F62E077E4490
-              F59623D3B808FA3B3E043C4AEFFDA1D46E86EE7693FFDDCEC08212296FCF1588
-              D3CA817B5D10D5B15104590EE2AF3494BB9D5A8C723E2D2C93A8E6F8D9B3D191
-              AED055DE3861CE95CAA7FD2C58B5B71536607C21641D0BE65D48CD1401D429F4
-              2C28959ABB5FD51FBE70A995EA466E81EEB6B5C2EE73CE2D9B6D2E2EB1321F06
-              117ED98BA47F009C1ACFCE72E173B51468F9E06F3C7CFEE2F53FAA31D748F1EF
-              9CF3A4EC740321763A2A11CA8F84CCB4BFCDC38DD1E70CFC06756146757F48EC
-              0E0000000049454E44AE426082}
+              031749444154384F5D536B485361187EBE73B6A9E730DDE66553B7396D964945
+              5A68165DA0CB8FC0A2A2CC1F6A1904514444517F0ABA4005FD901084282A130A
+              24BA42178AD088200C6D95665E6765ABC69C5B6797B39D733ADFA9247DE0E57C
+              BCEFF3BCEFE1BD10CCC0D13D7BCCF3E2818D9C2C971B143987FA4442BE4714B6
+              EB5D8A7CEFDCC5F6498DF817D3121CDBB5A3BA617E69932B9259C4BEF90AFFB7
+              90E6CFCA4D4772911D5EDE3F7CCDD37BE0D4E5ABF7B5800AF6EF17C777EDD85A
+              3F6B71BBFB792093F9AA0AED2690D525302CC8873E268279EF8365206EB69795
+              6C33BBB2FB3ABA7B7AA94E4B402B6BE2B741367C6C03529EF6217EA11E0F7C04
+              035C0666352E81EE5617C2A73721F7968771CC2DDA6C72E5747776F77C628FEC
+              DE9AB1734ED95D7747C0126DAE83FE451F589705BAA573C0BD1B469E1C435699
+              13980C81F84310F7AE85B5F925E358E6A8E20BDDADA4ADA1A6AE66F6BA56F1D9
+              2038AB11822F04DE9802F0AA05A3F40701531A20C42184E3E06DE9887C0F2365
+              8D1B37079FECD471445AACEBFA02A1A916423A07C3EE2B089FAF0563D081BFFF
+              5AD30BD51590C52452F75D8770661B92A108B81377C019E572C6A02856259640
+              4689137C5E1692920CA3CB06DEE1C4A8D9A2197D531F8D510EE52292801E8A95
+              D14AFC07327DB2D3C09019310512439784A4EA31F9710CC2B81F2C4B10F6FA20
+              7C1E836B22A0197D531FC3108D43B9E0F44810E29F6A22E91C01EB3421E19D80
+              DEAC362D3D15F829FCA994CD03A118121351E80BCC90C682C0CA42AD896C7165
+              A9B7C86ED99E391437C5D4E68163A1B319D5CDDA8251300896DA613ABC1EF811
+              40B2BC0089C655D03FE8C170A932FA38183BC8D0DD6EF57CD83FB4DC26A51DBA
+              01716101F0A80FA23A360A2FCB41FC1587F2B0578B51CEE08A3C896ACEB6B44C
+              4C7585AE725D71E50D77E7380B56ED6DA10528CE86AC63C17CF0A99902803A85
+              81E5B952DBE0EBDA9397AFB653DDD42DD0DDB6145A7B1C55F99519B65C33D3FF
+              13FE57A3887AC6C1A9F16485132373A5E1B67E4FE3C94B576EFF51CDB8468A7F
+              E79C2625171908C9A1A312A1FC88C84CF7FB34DC997ECEC06F688C466FF78526
+              0C0000000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'
