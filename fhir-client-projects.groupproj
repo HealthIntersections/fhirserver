@@ -27,6 +27,9 @@
         <Projects Include="utilities\tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="utilities\publisher\IGPublisher.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -107,14 +110,23 @@
     <Target Name="FHIRServerTests:Make">
         <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
+    <Target Name="IGPublisher">
+        <MSBuild Projects="utilities\publisher\IGPublisher.dproj"/>
+    </Target>
+    <Target Name="IGPublisher:Clean">
+        <MSBuild Projects="utilities\publisher\IGPublisher.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IGPublisher:Make">
+        <MSBuild Projects="utilities\publisher\IGPublisher.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FHIRTransformer;FhirVclDemo;ClinicalDocumentEditor;formatUtils;fhirnpp;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FHIRTransformer;FhirVclDemo;ClinicalDocumentEditor;formatUtils;fhirnpp;FHIRServerTests;IGPublisher"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FHIRTransformer:Clean;FhirVclDemo:Clean;ClinicalDocumentEditor:Clean;formatUtils:Clean;fhirnpp:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FHIRTransformer:Clean;FhirVclDemo:Clean;ClinicalDocumentEditor:Clean;formatUtils:Clean;fhirnpp:Clean;FHIRServerTests:Clean;IGPublisher:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FHIRTransformer:Make;FhirVclDemo:Make;ClinicalDocumentEditor:Make;formatUtils:Make;fhirnpp:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FHIRTransformer:Make;FhirVclDemo:Make;ClinicalDocumentEditor:Make;formatUtils:Make;fhirnpp:Make;FHIRServerTests:Make;IGPublisher:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
