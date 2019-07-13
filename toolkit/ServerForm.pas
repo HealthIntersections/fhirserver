@@ -431,7 +431,7 @@ begin
 
       params := TStringList.create;
       try
-        params.AddPair('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
+        params.AddPair('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,NamingSystem');
         params.AddPair('_summary', 'true');
 
         if edtConfUrl.Text <> '' then

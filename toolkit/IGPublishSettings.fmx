@@ -1,9 +1,9 @@
 object IGSettingsForm: TIGSettingsForm
   Left = 0
   Top = 0
-  Caption = 'Implementation Guide Settings'
-  ClientHeight = 260
-  ClientWidth = 558
+  Caption = 'Implementation Guide Build'
+  ClientHeight = 464
+  ClientWidth = 893
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -11,19 +11,19 @@ object IGSettingsForm: TIGSettingsForm
   DesignerMasterStyle = 0
   object TabControl1: TTabControl
     Align = Client
-    Size.Width = 558.000000000000000000
-    Size.Height = 260.000000000000000000
+    Size.Width = 893.000000000000000000
+    Size.Height = 464.000000000000000000
     Size.PlatformDefault = False
     TabIndex = 2
-    TabOrder = 4
+    TabOrder = 7
     TabPosition = PlatformDefault
     Sizes = (
-      558s
-      234s
-      558s
-      234s
-      558s
-      234s)
+      893s
+      438s
+      893s
+      438s
+      893s
+      438s)
     object TabItem1: TTabItem
       CustomIcon = <
         item
@@ -224,24 +224,23 @@ object IGSettingsForm: TIGSettingsForm
         TabOrder = 8
         Text = '...'
         Visible = False
-        OnClick = Button12Click
       end
     end
   end
   object Panel2: TPanel
     Align = Client
-    Size.Width = 558.000000000000000000
-    Size.Height = 260.000000000000000000
+    Size.Width = 893.000000000000000000
+    Size.Height = 464.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 21
+    TabOrder = 24
     object Button10: TButton
       StyledSettings = [Family, Size, FontColor]
-      Position.X = 392.000000000000000000
-      Position.Y = 160.000000000000000000
+      Position.X = 216.000000000000000000
+      Position.Y = 184.000000000000000000
       Size.Width = 145.000000000000000000
       Size.Height = 36.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 22
+      TabOrder = 23
       Text = 'Remote Build'
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       OnClick = Button10Click
@@ -258,8 +257,8 @@ object IGSettingsForm: TIGSettingsForm
     end
     object lblJekyllAvailable: TLabel
       StyledSettings = [Family, Size, FontColor]
-      Position.X = 248.000000000000000000
-      Position.Y = 84.000000000000000000
+      Position.X = 280.000000000000000000
+      Position.Y = 132.000000000000000000
       Size.Width = 81.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
@@ -270,7 +269,7 @@ object IGSettingsForm: TIGSettingsForm
     end
     object Label2: TLabel
       Position.X = 168.000000000000000000
-      Position.Y = 84.000000000000000000
+      Position.Y = 132.000000000000000000
       Size.Width = 105.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
@@ -281,53 +280,54 @@ object IGSettingsForm: TIGSettingsForm
     object Label1: TLabel
       Position.X = 8.000000000000000000
       Position.Y = 12.000000000000000000
-      Size.Width = 129.000000000000000000
+      Size.Width = 185.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      Text = 'IG Publisher location:'
-      TabOrder = 6
+      Text = 'Local IG Publisher location:'
+      TabOrder = 7
       TabStop = False
     end
     object Button1: TButton
-      Position.X = 328.000000000000000000
-      Position.Y = 40.000000000000000000
+      Position.X = 312.000000000000000000
+      Position.Y = 32.000000000000000000
       Size.Width = 41.000000000000000000
       Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 12
+      TabOrder = 13
       Text = '...'
       OnClick = Button1Click
     end
     object btnDownloadIGPublisher: TButton
-      Position.X = 384.000000000000000000
-      Position.Y = 40.000000000000000000
-      Size.Width = 145.000000000000000000
+      Position.X = 392.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 73.000000000000000000
       Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 20
+      TabOrder = 21
       Text = 'Download'
       OnClick = btnDownloadIGPublisherClick
     end
     object btnLocalBuild: TButton
       StyledSettings = [Family, Size, FontColor]
       Position.X = 8.000000000000000000
-      Position.Y = 160.000000000000000000
+      Position.Y = 184.000000000000000000
       Size.Width = 145.000000000000000000
       Size.Height = 36.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 21
+      TabOrder = 22
       Text = 'Local Build'
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       OnClick = Button10Click
     end
     object Edit1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 23
+      TabOrder = 24
       Position.X = 8.000000000000000000
-      Position.Y = 40.000000000000000000
-      Size.Width = 321.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 305.000000000000000000
       Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
+      OnExit = Edit1Exit
     end
     object Memo1: TMemo
       Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -337,10 +337,103 @@ object IGSettingsForm: TIGSettingsForm
       Size.Width = 165.000000000000000000
       Size.Height = 105.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 24
+      TabOrder = 25
       Visible = False
       Viewport.Width = 161.000000000000000000
       Viewport.Height = 101.000000000000000000
     end
+    object Memo2: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      StyledSettings = [Size, Style, FontColor]
+      TextSettings.Font.Family = 'Courier New'
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      Position.X = 8.000000000000000000
+      Position.Y = 224.000000000000000000
+      Size.Width = 876.000000000000000000
+      Size.Height = 232.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 26
+      Viewport.Width = 872.000000000000000000
+      Viewport.Height = 228.000000000000000000
+    end
+    object Label3: TLabel
+      Position.X = 400.000000000000000000
+      Position.Y = 12.000000000000000000
+      Size.Width = 193.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Available IG Publisher templates'
+      TabOrder = 6
+      TabStop = False
+    end
+    object ComboBox1: TComboBox
+      Anchors = [akLeft, akTop, akRight]
+      Items.Strings = (
+        
+          'https://github.com/costateixeira/IGPublish/releases/download/0.1' +
+          '/publish.zip')
+      ItemIndex = 0
+      Position.X = 464.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 417.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 27
+    end
+    object Button5: TButton
+      Position.X = 760.000000000000000000
+      Position.Y = 200.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 28
+      Text = 'Copy console output'
+      OnClick = Button5Click
+    end
+  end
+  object lblPubFolder: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 280.000000000000000000
+    Position.Y = 84.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'Unknown'
+    TabOrder = 5
+    TabStop = False
+  end
+  object Label6: TLabel
+    Position.X = 168.000000000000000000
+    Position.Y = 84.000000000000000000
+    Size.Width = 105.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Publisher folder'
+    TabOrder = 6
+    TabStop = False
+  end
+  object lblPubPresent: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 280.000000000000000000
+    Position.Y = 108.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'Unknown'
+    TabOrder = 3
+    TabStop = False
+  end
+  object Label8: TLabel
+    Position.X = 168.000000000000000000
+    Position.Y = 108.000000000000000000
+    Size.Width = 105.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Publisher present'
+    TabOrder = 4
+    TabStop = False
   end
 end
