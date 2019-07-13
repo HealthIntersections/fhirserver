@@ -216,6 +216,8 @@ type
     edtObservationPeriod: TEdit;
     Label40: TLabel;
     cbeObservationUnits: TComboEdit;
+    Label43: TLabel;
+    edtRenderingStyle: TEdit;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -718,6 +720,11 @@ begin
   else
     item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-designNote');
 
+  if edtRenderingStyle.Text <> '' then
+    item.setExtensionString('http://hl7.org/fhir/StructureDefinition/rendering-style', edtRenderingStyle.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/rendering-style');
+
   if edtSupportLink.Text <> '' then
     item.setExtensionUri('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink', edtSupportLink.Text)
   else
@@ -893,6 +900,7 @@ begin
   (edtCalculatedValue.TagObject as TFSLObject).Free;
   (edtEnableWhen.TagObject as TFSLObject).Free;
   (edtContext.TagObject as TFSLObject).Free;
+  Settings.storeValue('Questionnaire.item', 'tab-visible', tabMode.TabIndex);
   inherited;
 end;
 
@@ -919,7 +927,7 @@ begin
   for a := Low(TFhirResourceType) to High(TFhirResourceType) do
     if not (a in [frtNull, frtCustom]) then
       lbXResources.items.add(CODES_TFhirResourceType[a]);
-
+  tabMode.TabIndex := Settings.getValue('Questionnaire.item', 'tab-visible', 0);
   Loading := true;
   try
     {$IFDEF FHIR4}
@@ -958,6 +966,10 @@ begin
       edtDesignNotes.Text := ex.value.primitiveValue
     else
       edtDesignNotes.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/rendering-style', ex) then
+      edtRenderingStyle.Text := ex.value.primitiveValue
+    else
+      edtRenderingStyle.Text := '';
     if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink', ex) then
       edtSupportLink.Text := ex.value.primitiveValue
     else

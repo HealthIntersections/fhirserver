@@ -304,8 +304,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
             RowCount = 0
             OnGetValue = grdOptionsGetValue
             OnSetValue = grdOptionsSetValue
-            Viewport.Width = 401.000000000000000000
-            Viewport.Height = 156.000000000000000000
+            Viewport.Width = 397.000000000000000000
+            Viewport.Height = 131.000000000000000000
             object StringColumn4: TStringColumn
             end
             object StringColumn5: TStringColumn
@@ -590,8 +590,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
             Size.Height = 65.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 0
-            Viewport.Width = 473.000000000000000000
-            Viewport.Height = 65.000000000000000000
+            Viewport.Width = 465.000000000000000000
+            Viewport.Height = 57.000000000000000000
           end
           object btnValueText: TButton
             Images = ToolbarImages
@@ -899,8 +899,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         TabOrder = 1
         OnGetValue = grdConditionsGetValue
         OnSetValue = grdConditionsSetValue
-        Viewport.Width = 549.000000000000000000
-        Viewport.Height = 559.000000000000000000
+        Viewport.Width = 537.000000000000000000
+        Viewport.Height = 534.000000000000000000
         object grdColQuestions: TPopupColumn
           Header = 'Question'
           Size.Width = 145.000000000000000000
@@ -1352,8 +1352,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
             RowCount = 0
             OnGetValue = grdXUnitGetValue
             OnSetValue = grdXUnitSetValue
-            Viewport.Width = 529.000000000000000000
-            Viewport.Height = 160.000000000000000000
+            Viewport.Width = 525.000000000000000000
+            Viewport.Height = 135.000000000000000000
             object StringColumn2: TStringColumn
               Header = 'System'
             end
@@ -1457,8 +1457,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
         DefaultItemStyles.GroupFooterStyle = ''
-        Viewport.Width = 257.000000000000000000
-        Viewport.Height = 81.000000000000000000
+        Viewport.Width = 253.000000000000000000
+        Viewport.Height = 77.000000000000000000
       end
       object mXProfiles: TMemo
         Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -1473,8 +1473,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Height = 83.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 28
-        Viewport.Width = 257.000000000000000000
-        Viewport.Height = 83.000000000000000000
+        Viewport.Width = 249.000000000000000000
+        Viewport.Height = 75.000000000000000000
       end
       object edtXLookup: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -1510,17 +1510,17 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Hint = 'http://hl7.org/fhir/StructureDefinition/questionnaire-width'
         HitTest = True
         Position.X = 16.000000000000000000
-        Position.Y = 174.000000000000000000
+        Position.Y = 200.000000000000000000
         Text = 'Width'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 14
+        TabOrder = 15
       end
       object edtWidth: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 16
+        TabOrder = 18
         Position.X = 136.000000000000000000
-        Position.Y = 174.000000000000000000
+        Position.Y = 200.000000000000000000
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -1535,7 +1535,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Text = 'UI Control Type:'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 4
+        TabOrder = 5
       end
       object cbxXUiControlType: TComboBox
         Hint = 
@@ -1570,7 +1570,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 31
+        TabOrder = 33
       end
       object Label17: TLabel
         Hint = 
@@ -1578,11 +1578,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'ntation'
         HitTest = True
         Position.X = 16.000000000000000000
-        Position.Y = 78.000000000000000000
+        Position.Y = 107.000000000000000000
         Text = 'Choice Orientation:'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 9
+        TabOrder = 10
       end
       object cbxXChoiceOrientation: TComboBox
         Hint = 
@@ -1593,24 +1593,24 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'horizontal'
           'vertical')
         Position.X = 136.000000000000000000
-        Position.Y = 78.000000000000000000
+        Position.Y = 107.000000000000000000
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 32
+        TabOrder = 34
       end
       object Label25: TLabel
         Hint = 'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden'
         HitTest = True
         Position.X = 16.000000000000000000
-        Position.Y = 142.000000000000000000
+        Position.Y = 169.000000000000000000
         Size.Width = 73.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Hidden'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 8
+        TabOrder = 9
       end
       object cbxXHidden: TComboBox
         Hint = 
@@ -1621,24 +1621,24 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'true'
           'false')
         Position.X = 136.000000000000000000
-        Position.Y = 142.000000000000000000
+        Position.Y = 169.000000000000000000
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 30
+        TabOrder = 32
       end
       object Label26: TLabel
         Hint = 'http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode'
         HitTest = True
         Position.X = 16.000000000000000000
-        Position.Y = 110.000000000000000000
+        Position.Y = 138.000000000000000000
         Size.Width = 73.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Usage Mode'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 5
+        TabOrder = 6
       end
       object cbxXUsageMode: TComboBox
         Hint = 
@@ -1652,11 +1652,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'display-non-empty'
           'capture-display-non-empty'#9)
         Position.X = 136.000000000000000000
-        Position.Y = 110.000000000000000000
+        Position.Y = 138.000000000000000000
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 29
+        TabOrder = 31
       end
       object Label28: TLabel
         Hint = 
@@ -1664,14 +1664,14 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'egory'
         HitTest = True
         Position.X = 16.000000000000000000
-        Position.Y = 206.000000000000000000
+        Position.Y = 231.000000000000000000
         Size.Width = 113.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Display Category'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 7
+        TabOrder = 8
       end
       object cbxXCategory: TComboBox
         Hint = 
@@ -1683,11 +1683,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'instructions'
           'security')
         Position.X = 136.000000000000000000
-        Position.Y = 206.000000000000000000
+        Position.Y = 231.000000000000000000
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 28
+        TabOrder = 30
       end
       object Label34: TLabel
         StyledSettings = [Family, Size, FontColor]
@@ -1695,7 +1695,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Position.Y = 14.000000000000000000
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         Text = 'Presentation'
-        TabOrder = 26
+        TabOrder = 28
       end
       object Label36: TLabel
         Hint = 
@@ -1703,20 +1703,20 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           'Value'
         HitTest = True
         Position.X = 16.000000000000000000
-        Position.Y = 238.000000000000000000
+        Position.Y = 262.000000000000000000
         Size.Width = 113.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Slider Step'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 6
+        TabOrder = 7
       end
       object edtSlider: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 15
+        TabOrder = 17
         Position.X = 136.000000000000000000
-        Position.Y = 238.000000000000000000
+        Position.Y = 262.000000000000000000
         Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -1730,7 +1730,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.PlatformDefault = False
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         Text = 'Active Questionnaire Control'
-        TabOrder = 25
+        TabOrder = 27
       end
       object Label38: TLabel
         Hint = 
@@ -1745,11 +1745,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Text = 'Initial Value:'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 41
+        TabOrder = 43
       end
       object edtInitialValue: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 42
+        TabOrder = 44
         ReadOnly = True
         Position.X = 104.000000000000000000
         Position.Y = 320.000000000000000000
@@ -1768,7 +1768,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Width = 25.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 43
+        TabOrder = 45
         Text = '...'
         OnClick = btnInitialValueClick
       end
@@ -1785,11 +1785,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Text = 'Calculated:'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 38
+        TabOrder = 40
       end
       object edtCalculatedValue: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 39
+        TabOrder = 41
         ReadOnly = True
         Position.X = 104.000000000000000000
         Position.Y = 350.000000000000000000
@@ -1808,7 +1808,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Width = 25.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 40
+        TabOrder = 42
         Text = '...'
         OnClick = btnCalculatedValueClick
       end
@@ -1825,11 +1825,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Text = 'Context'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 35
+        TabOrder = 37
       end
       object edtContext: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 36
+        TabOrder = 38
         ReadOnly = True
         Position.X = 104.000000000000000000
         Position.Y = 410.000000000000000000
@@ -1850,7 +1850,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Width = 25.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 37
+        TabOrder = 39
         Text = '...'
         OnClick = btnContextClick
       end
@@ -1867,11 +1867,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Text = 'Observation Period'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 34
+        TabOrder = 36
       end
       object edtObservationPeriod: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 44
+        TabOrder = 46
         Position.X = 136.000000000000000000
         Position.Y = 440.000000000000000000
         Hint = 
@@ -1895,11 +1895,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Text = 'Enable When'
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 33
+        TabOrder = 35
       end
       object edtEnableWhen: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 45
+        TabOrder = 47
         ReadOnly = True
         Position.X = 104.000000000000000000
         Position.Y = 380.000000000000000000
@@ -1918,13 +1918,13 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Width = 25.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 46
+        TabOrder = 48
         Text = '...'
         OnClick = btnEnableWhenClick
       end
       object cbeObservationUnits: TComboEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 47
+        TabOrder = 49
         ItemHeight = 19.000000000000000000
         Items.Strings = (
           'ms (milliseconds)'
@@ -1939,6 +1939,27 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Position.X = 304.000000000000000000
         Position.Y = 440.000000000000000000
         Size.Width = 209.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label43: TLabel
+        Hint = 
+          'http://hl7.org/fhir/StructureDefinition/questionnaire-itemContro' +
+          'l'
+        HitTest = True
+        Position.X = 16.000000000000000000
+        Position.Y = 76.000000000000000000
+        Text = 'Rendering Style'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+      end
+      object edtRenderingStyle: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 16
+        Position.X = 136.000000000000000000
+        Position.Y = 76.000000000000000000
+        Size.Width = 281.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
@@ -2033,32 +2054,32 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031749444154384F5D536B485361187EBE73B6A9E730DDE66553B7396D964945
-              5A68165DA0CB8FC0A2A2CC1F6A1904514444517F0ABA4005FD901084282A130A
-              24BA42178AD088200C6D95665E6765ABC69C5B6797B39D733ADFA9247DE0E57C
-              BCEFF3BCEFE1BD10CCC0D13D7BCCF3E2818D9C2C971B143987FA4442BE4714B6
-              EB5D8A7CEFDCC5F6498DF817D3121CDBB5A3BA617E69932B9259C4BEF90AFFB7
-              90E6CFCA4D4772911D5EDE3F7CCDD37BE0D4E5ABF7B5800AF6EF17C777EDD85A
-              3F6B71BBFB792093F9AA0AED2690D525302CC8873E268279EF8365206EB69795
-              6C33BBB2FB3ABA7B7AA94E4B402B6BE2B741367C6C03529EF6217EA11E0F7C04
-              035C0666352E81EE5617C2A73721F7968771CC2DDA6C72E5747776F77C628FEC
-              DE9AB1734ED95D7747C0126DAE83FE451F589705BAA573C0BD1B469E1C435699
-              13980C81F84310F7AE85B5F925E358E6A8E20BDDADA4ADA1A6AE66F6BA56F1D9
-              2038AB11822F04DE9802F0AA05A3F40701531A20C42184E3E06DE9887C0F2365
-              8D1B37079FECD471445AACEBFA02A1A916423A07C3EE2B089FAF0563D081BFFF
-              5AD30BD51590C52452F75D8770661B92A108B81377C019E572C6A02856259640
-              4689137C5E1692920CA3CB06DEE1C4A8D9A2197D531F8D510EE52292801E8A95
-              D14AFC07327DB2D3C09019310512439784A4EA31F9710CC2B81F2C4B10F6FA20
-              7C1E836B22A0197D531FC3108D43B9E0F44810E29F6A22E91C01EB3421E19D80
-              DEAC362D3D15F829FCA994CD03A118121351E80BCC90C682C0CA42AD896C7165
-              A9B7C86ED99E391437C5D4E68163A1B319D5CDDA8251300896DA613ABC1EF811
-              40B2BC0089C655D03FE8C170A932FA38183BC8D0DD6EF57CD83FB4DC26A51DBA
-              01716101F0A80FA23A360A2FCB41FC1587F2B0578B51CEE08A3C896ACEB6B44C
-              4C7585AE725D71E50D77E7380B56ED6DA10528CE86AC63C17CF0A99902803A85
-              81E5B952DBE0EBDA9397AFB653DDD42DD0DDB6145A7B1C55F99519B65C33D3FF
-              13FE57A3887AC6C1A9F16485132373A5E1B67E4FE3C94B576EFF51CDB8468A7F
-              E79C2625171908C9A1A312A1FC88C84CF7FB34DC997ECEC06F688C466FF78526
-              0C0000000049454E44AE426082}
+              030C49444154384F5D535B48146114FEFE99DD556758DD5DCD5D6FEBBAB85A52
+              E1250CCB28E8F2104444A9094A3710A48888A25E8AD2870A7AE8A11022D12C31
+              F021CBA20B0495445086A6A56566AE656A2DBBBADBACBBB33B33CD3F9AA41F9C
+              999F73BEEFFFE13BE7102CC1E9DA5AF3CAB0772727CB8506454EA6399190A9A0
+              C276F7C7C8F72F5D6F9FD188F35874C19943FB77EC5B9577C5114C74B2EFC6E1
+              99F06BF9A49478448BD2E1E63D2337FB068ED53736776A0515ECFC1F670FED2F
+              AB7616B5673FF72532E3AA30DD04B279390CABD3A00F89603E4CC2F2256C4ECB
+              CF2DB73892075FF4F40E501D433FF4E52A67519BAB6F860DD4EF02A232C2E7F6
+              E061A25D0B7AA6395ACB79EF6329976AA8963D5553967020B7E09EEB85D7327B
+              B51AFAAE41B00E0B74EB72C1F58F20550E21A9C00ECCF8413C7E8887B7C27AED
+              1593B13EA384CFCA6E21B7F7555457E46C6B119F0D83B31A214CFAC11B63005E
+              8DE959FA08608A038430844018BC2D1EC1A90062B664E3CEF0D3033A8E486B74
+              DD3F205CA98410CFC150D384C0E54A30061DF8CE379A5ED8510C598C22F6C82D
+              0817CA11F507C19DEF0067940B1983A25895500409CBEDE05393109564181D36
+              F019768C9A2D5AD033CDD11AE5502E8211E8A1583513FF0759DCD94560C8929A
+              0289A1434262F598F93406E1A7072C4B10704F42F83E0687CFAB053DD31CC310
+              8D43B9E0F48810E2593091BCFC06D66E42C4ED83DEAC9A161F0BFC16E65E5AC6
+              03FE1022BE59E833CD90C6A6818D599A89AC6B6D9EDB996ED99BF8356C0AA9E6
+              8163A1B319D5C9DA8D51754CA6F3D2613AB91DF8E545B4301391839BA07FD08B
+              913C65F4C974E8384367BBA5EFE3D1E152AB1477A20D627E26F07810A2DA360A
+              37CB41FC1386F26840AB51CE970D2912D55C6C68F02DB84247B92ABBB8CDD535
+              C18255BDCDB200AE6590752C988F93EA4D5E40EDC250A94D6AFDFAB6B2AEB1B9
+              9DEA167681CEB6C569EDCD28495B9B604B31339F7FC3F37A14B37D3FC1A9F568
+              B11DDF564823AD43FD07EB6E34DD9D532DD9468A7FEB1C27458B0C8424D35689
+              507E0565A6E7431C3A16AF33F01722A245A5BB13057E0000000049454E44AE42
+              6082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

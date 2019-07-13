@@ -172,6 +172,7 @@ type
     StringColumn7: TStringColumn;
     StringColumn8: TStringColumn;
     StringColumn9: TStringColumn;
+    btnClone: TButton;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnDescriptionClick(Sender: TObject);
@@ -203,6 +204,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure gridContextGetValue(Sender: TObject; const ACol, ARow: Integer;
       var Value: TValue);
+    procedure btnCloneClick(Sender: TObject);
   private
     flatItems : TFslList<TFhirQuestionnaireItem>;
     FLoading : boolean;
@@ -521,6 +523,26 @@ begin
   finally
     form.Free;
   end;
+end;
+
+procedure TQuestionnaireEditorFrame.btnCloneClick(Sender: TObject);
+var
+  c : TFhirQuestionnaireItem;
+begin
+  if grdItems.Row = -1 then
+    Abort;
+
+  grdItems.BeginUpdate;
+  c := Questionnaire.itemList[grdItems.Row].Clone;
+  Questionnaire.itemList.Add(c);
+  c.linkId := 'i'+inttostr(flatItems.Count + 1);
+  flatItems.Clear;
+  addToItems(0, Questionnaire.itemList);
+  grdItems.EndUpdate;
+  grdItems.RowCount := flatItems.Count;
+  ResourceIsDirty := true;
+  grdItems.SelectCell(1, flatItems.IndexOf(c));
+  btnEditItemClick(nil);
 end;
 
 procedure TQuestionnaireEditorFrame.btnCopyrightClick(Sender: TObject);
