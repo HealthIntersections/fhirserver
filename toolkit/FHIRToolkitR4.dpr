@@ -175,7 +175,10 @@ uses
   ResourceHistoryDialog in 'ResourceHistoryDialog.pas' {ResourceHistoryForm},
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
-  ProjectFilesDialog in 'ProjectFilesDialog.pas' {ProjectDialog};
+  ProjectFilesDialog in 'ProjectFilesDialog.pas' {ProjectDialog},
+  UTGMgmtFrame in 'UTGMgmtFrame.pas' {UTGManagementFrame: TFrame},
+  uGitForDelphi in '..\dependencies\git\uGitForDelphi.pas',
+  FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas';
 
 {$R *.res}
 

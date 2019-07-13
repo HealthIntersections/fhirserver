@@ -35,6 +35,7 @@ uses
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   IdComponent,
+  FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Resources, FHIR.Version.Client,
   ToolkitSettings;
@@ -45,6 +46,12 @@ type
   TOnOpenResourceEvent = procedure (sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource) of object;
   TIsStoppedEvent = reference to function : boolean;
 
+  TUTGRepositoryBase = class abstract (TFslObject)
+  private
+  public
+    procedure update(res : TFHIRResource); virtual; abstract;
+  end;
+
   TBaseFrame = class(TFrame)
   private
     FTabs : TTabControl;
@@ -54,7 +61,9 @@ type
     FOnWork : TWorkEvent;
     FOnStopped: TIsStoppedEvent;
     FForm : TForm;
+    FUTGRepo: TUTGRepositoryBase;
     procedure SetSettings(const Value: TFHIRToolkitSettings);
+    procedure SetUTGRepo(const Value: TUTGRepositoryBase);
   public
     destructor Destroy; override;
 
@@ -65,6 +74,7 @@ type
     property OnOpenResource : TOnOpenResourceEvent read FOnOpenResource write FOnOpenResource;
     property OnWork : TWorkEvent read FOnWork write FOnWork;
     property OnStopped : TIsStoppedEvent read FOnStopped write FOnStopped;
+    property UTGRepo : TUTGRepositoryBase read FUTGRepo write SetUTGRepo;
 
     procedure load; virtual;
     procedure Close;
@@ -124,6 +134,7 @@ end;
 
 destructor TBaseFrame.Destroy;
 begin
+  FUTGRepo.Free;
   FSettings.Free;
   inherited;
 end;
@@ -178,6 +189,12 @@ end;
 procedure TBaseFrame.SettingsChanged;
 begin
   // nothing
+end;
+
+procedure TBaseFrame.SetUTGRepo(const Value: TUTGRepositoryBase);
+begin
+  FUTGRepo.Free;
+  FUTGRepo := Value;
 end;
 
 procedure TBaseFrame.work(opName : String; canCancel : boolean; proc: TWorkProc);

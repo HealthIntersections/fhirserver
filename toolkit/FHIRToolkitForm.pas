@@ -54,7 +54,7 @@ uses
 {$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
-  PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame;
+  PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame;
 
 type
   TToolkitLogger = class(TFHIRClientLogger)
@@ -170,6 +170,7 @@ type
     mnuProject: TMenuItem;
     mnuRepository: TMenuItem;
     mnuPublish: TMenuItem;
+    MenuItem11: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -206,6 +207,7 @@ type
     procedure MenuItem10Click(Sender: TObject);
     procedure mnuRepositoryClick(Sender: TObject);
     procedure mnuPublishClick(Sender: TObject);
+    procedure MenuItem11Click(Sender: TObject);
   private
     { Private declarations }
     FSettings: TFHIRToolkitSettings;
@@ -224,6 +226,7 @@ type
     FValidationTab: TTabItem;
     FTransformationTab: TTabItem;
     FDiffEngineTab: TTabItem;
+    FUTGTab: TTabItem;
     ToolkitLogger: TToolkitLogger;
     FServers: TFslList<TRegisteredFHIRServer>;
     FFactory: TFHIRFactory;
@@ -1089,6 +1092,32 @@ end;
 procedure TMasterToolsForm.MenuItem10Click(Sender: TObject);
 begin
   MessageDlg('test', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbOK], 0);
+end;
+
+procedure TMasterToolsForm.MenuItem11Click(Sender: TObject);
+var
+  frame: TFrame;
+begin
+  if FUTGTab <> nil then
+    tbMain.ActiveTab := FUTGTab
+  else
+  begin
+    FUTGTab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := FUTGTab;
+    FUTGTab.Text := 'UTG Management';
+    frame := TUTGManagementFrame.Create(FDiffEngineTab);
+    frame.form := self;
+    FUTGTab.TagObject := frame;
+    frame.TagObject := FUTGTab;
+    frame.Parent := FUTGTab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.Settings := FSettings.link;
+    frame.tab := FDiffEngineTab;
+    frame.Align := TAlignLayout.Client;
+    frame.load;
+  end;
+
 end;
 
 procedure TMasterToolsForm.MenuItem7Click(Sender: TObject);
