@@ -48,10 +48,12 @@ type
     procedure FuncXmlCollapse;
     procedure FuncXmlEscape;
     procedure FuncXmlUnescape;
+    procedure FuncXmlCheck;
     procedure FuncJsonPrettyPrint;
     procedure FuncJsonCollapse;
     procedure FuncJsonEscape;
     procedure FuncJsonUnescape;
+    procedure FuncJsonCheck;
     procedure FuncHtmlLink;
     procedure FuncHtmlCode;
     procedure FuncHtmlMarkdown;
@@ -70,10 +72,12 @@ procedure _FuncPrettyPrintXml; cdecl;
 procedure _FuncCollapseXml; cdecl;
 procedure _FuncEscapeXml; cdecl;
 procedure _FuncUnescapeXml; cdecl;
+procedure _FuncCheckXml; cdecl;
 procedure _FuncPrettyPrintJson; cdecl;
 procedure _FuncCollapseJson; cdecl;
 procedure _FuncEscapeJson; cdecl;
 procedure _FuncUnescapeJson; cdecl;
+procedure _FuncCheckJson; cdecl;
 procedure _FuncHtmlLink; cdecl;
 procedure _FuncHtmlCode; cdecl;
 procedure _FuncHtmlWrap; cdecl;
@@ -106,11 +110,13 @@ begin
   self.AddFuncItem('&Collapse XML', _FuncCollapseXml);
   self.AddFuncItem('&Escape XML', _FuncEscapeXml);
   self.AddFuncItem('&Unescape XML', _FuncUnescapeXml);
+  self.AddFuncItem('&Validate XML', _FuncCheckXml);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('&Pretty Print Json', _FuncPrettyPrintJson);
   self.AddFuncItem('&Collapse Json', _FuncCollapseJson);
   self.AddFuncItem('&Escape Json', _FuncEscapeJson);
   self.AddFuncItem('&Unescape Json', _FuncUnescapeJson);
+  self.AddFuncItem('&Validate Json', _FuncCheckJson);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('HTML &Link', _FuncHtmlLink);
   self.AddFuncItem('HTML &Code', _FuncHtmlCode);
@@ -149,6 +155,11 @@ begin
   FNpp.FuncXmlUnescape;
 end;
 
+procedure _FuncCheckXml; cdecl;
+begin
+  FNpp.FuncXmlCheck;
+end;
+
 procedure _FuncPrettyPrintJson; cdecl;
 begin
   FNpp.FuncJsonPrettyPrint;
@@ -167,6 +178,11 @@ end;
 procedure _FuncUnescapeJson; cdecl;
 begin
   FNpp.FuncJsonUnescape;
+end;
+
+procedure _FuncCheckJson; cdecl;
+begin
+  FNpp.FuncJsonCheck;
 end;
 
 procedure _FuncHtmlLink;
@@ -229,6 +245,32 @@ begin
   FNpp.FuncPasteHtml;
 end;
 
+procedure TFormatUtilitiesPlugin.FuncXmlCheck;
+var
+  ok : boolean;
+  sp : integer;
+begin
+  ok := false;
+  try
+    TMXmlParser.parse(CurrentBytes, [xpDropWhitespace]).free;
+    ok := true;
+  except
+    on e : EParserException do
+    begin
+      // goto location....
+      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.Line-1, e.Col-1);
+      SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, sp);
+      ShowMessage('Parser Exception: '+e.Message);
+    end;
+    on e : Exception do
+    begin
+      ShowMessage('Exception: '+e.Message);
+    end;
+  end;
+  if ok then
+    MessageBeep(MB_ICONHAND);
+end;
+
 procedure TFormatUtilitiesPlugin.FuncXmlCollapse;
 var
   x : TMXmlDocument;
@@ -269,6 +311,32 @@ begin
   s := TEncoding.UTF8.getString(SelectedBytes);
   s := DecodeXML(s);
   SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFormatUtilitiesPlugin.FuncJsonCheck;
+var
+  ok : boolean;
+  sp : integer;
+begin
+  ok := false;
+  try
+    TJSONParser.Parse(CurrentBytes).Free;
+    ok := true;
+  except
+    on e : EParserException do
+    begin
+      // goto location....
+      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.Line-1, e.Col-1);
+      SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, sp);
+      ShowMessage('Parser Exception: '+e.Message);
+    end;
+    on e : Exception do
+    begin
+      ShowMessage('Exception: '+e.Message);
+    end;
+  end;
+  if ok then
+    MessageBeep(MB_ICONHAND);
 end;
 
 procedure TFormatUtilitiesPlugin.FuncJsonCollapse;
