@@ -17,15 +17,6 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Win64'">
-        <DeployFile Include="Win64\Debug\VocabTxServer.rsm" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>VocabTxServer\</RemoteDir>
-            <RemoteName>VocabTxServer.rsm</RemoteName>
-            <DeployClass>DebugSymbols</DeployClass>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="Win64\Debug\VocabTxServer.exe" Condition="'$(Config)'=='Debug'">
             <RemoteDir>VocabTxServer\</RemoteDir>
             <RemoteName>VocabTxServer.exe</RemoteName>
@@ -36,11 +27,20 @@
             <Overwrite>True</Overwrite>
             <Required>True</Required>
         </DeployFile>
+        <DeployFile Include="Win64\Debug\VocabTxServer.rsm" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer\</RemoteDir>
+            <RemoteName>VocabTxServer.rsm</RemoteName>
+            <DeployClass>DebugSymbols</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='OSX32'">
-        <DeployFile Include="Win64\Debug\ucum-essence.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="Win64\Debug\FHIR.Ucum.Base-essence.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>ucum-essence.xml</RemoteName>
+            <RemoteName>FHIR.Ucum.Base-essence.xml</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
@@ -74,6 +74,15 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgsqlite3.dylib">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="..\..\sql\lang.txt" Condition="'$(Config)'=='Debug'">
             <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
             <RemoteName>lang.txt</RemoteName>
@@ -87,15 +96,6 @@
             <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
             <RemoteName>VocabTxServer.rsm</RemoteName>
             <DeployClass>DebugSymbols</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="$(BDS)\Redist\osx32\libcgsqlite3.dylib">
-            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>libcgsqlite3.dylib</RemoteName>
-            <DeployClass>DependencyModule</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>

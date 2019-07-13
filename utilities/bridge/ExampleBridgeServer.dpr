@@ -197,7 +197,9 @@ uses
   ChakraCoreUtils in '..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
   ChakraDebug in '..\..\dependencies\chakracore-delphi\ChakraDebug.pas',
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas';
+  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
+  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
+  FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas';
 
 var
   gsrv : TExampleFhirServer;
