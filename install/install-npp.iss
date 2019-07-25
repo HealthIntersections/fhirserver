@@ -28,6 +28,7 @@ SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
+DisableDirPage=no
 AppVerName=FHIR Notepad++ Plugin 1.0.39
 
 [Components]
@@ -41,13 +42,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "C:\work\fhirserver\exec\32\installer.dll";               Flags: dontcopy;
 
 ; 1st, the plug-in itself
-Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\32\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\32\ssleay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n32
-Source: "C:\work\fhirserver\Exec\64\fhirnpp.dll";               DestDir: "{app}\plugins";       Flags: ignoreversion; Components: n64
-Source: "C:\work\fhirserver\Exec\64\libeay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64  
-Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";              DestDir: "{app}\plugins\fhir";  Flags: ignoreversion; Components: n64  
-Source: "C:\Program Files\Notepad++\allowAppDataPlugins.xml";   DestDir: "{app}";               Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\32\fhirnpp.dll";               DestDir: "{app}\plugins\FHIRNpp";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\32\libeay32.dll";              DestDir: "{app}\plugins\FHIRNpp";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\32\ssleay32.dll";              DestDir: "{app}\plugins\FHIRNpp";  Flags: ignoreversion; Components: n32
+Source: "C:\work\fhirserver\Exec\64\fhirnpp.dll";               DestDir: "{app}\plugins\FHIRNpp";  Flags: ignoreversion; Components: n64
+Source: "C:\work\fhirserver\Exec\64\libeay32.dll";              DestDir: "{app}\plugins\FHIRNpp";  Flags: ignoreversion; Components: n64  
+Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";              DestDir: "{app}\plugins\FHIRNpp";  Flags: ignoreversion; Components: n64  
+Source: "C:\Program Files\Notepad++\allowAppDataPlugins.xml";   DestDir: "{app}";                  Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"; ValueType: dword; ValueName: "notepad++.exe"; ValueData: "10000"; Flags: createvalueifdoesntexist 
