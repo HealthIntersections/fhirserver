@@ -4745,7 +4745,7 @@ begin
           request.lastModifiedDate := TFslDateTimeWrapper(TFHIRResourceV(list[i]).Tag).Value.DateTime;
         request.Session := nil;
         context.upload := true;
-        //!! Execute(context, request, response);
+        Execute(context, request, response);
       end;
     finally
       response.Free;
