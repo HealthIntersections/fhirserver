@@ -255,6 +255,7 @@ type
     procedure grdPropertiesDrawColumnBackground(Sender: TObject;
       const Canvas: TCanvas; const Column: TColumn; const Bounds: TRectF;
       const Row: Integer; const Value: TValue; const State: TGridDrawStates);
+    procedure Button1Click(Sender: TObject);
   private
     flatConcepts : TFslList<TFhirCodeSystemConcept>;
     selchanging : boolean;
@@ -535,7 +536,7 @@ procedure TCodeSystemEditorFrame.btnMemoCopyrightClick(Sender: TObject);
 begin
   if CodeSystem.copyrightElement = nil then
     CodeSystem.copyrightElement := TFhirMarkdown.Create;
-  editMarkdownDialog(self, 'ValueSet Copyright', btnMemoCopyright, edtCopyright, CodeSystem, CodeSystem.copyrightElement);
+  editMarkdownDialog(self, 'Code System Copyright', btnMemoCopyright, edtCopyright, CodeSystem, CodeSystem.copyrightElement);
 end;
 
 procedure TCodeSystemEditorFrame.btnMemoForDescClick(Sender: TObject);
@@ -561,6 +562,20 @@ begin
     flatConcepts.Add(c.link);
     buildFlatGrid(c.conceptList);
   end;
+end;
+
+function countConcepts(list : TFhirCodeSystemConceptList) : integer;
+var
+  c : TFhirCodeSystemConcept;
+begin
+  result := 0;
+  for c in list do
+    result := result + 1 + countConcepts(c.conceptList);
+end;
+
+procedure TCodeSystemEditorFrame.Button1Click(Sender: TObject);
+begin
+  edtConceptCount.Text := IntToStr(countConcepts(CodeSystem.conceptList));
 end;
 
 procedure TCodeSystemEditorFrame.btnNameClick(Sender: TObject);
@@ -1486,7 +1501,7 @@ begin
   grdFilters.RowCount := 0;
   grdFilters.RowCount := CodeSystem.filterList.Count;
   grdFiltersSelChanged(self);
-  grdFilters.Columns[4].Width := 26;
+  adjustLastColWidth(grdFilters, 60);
 end;
 
 procedure TCodeSystemEditorFrame.loadHL7Process;
@@ -1592,7 +1607,7 @@ procedure TCodeSystemEditorFrame.loadProperties;
 begin
   grdProperties.RowCount := 0;
   grdProperties.RowCount := CodeSystem.property_List.Count;
-  grdProperties.Columns[4].Width := 26;
+  adjustLastColWidth(grdProperties, 60);
   grdPropertiesSelChanged(self);
 end;
 

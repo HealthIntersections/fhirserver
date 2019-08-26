@@ -88,7 +88,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
       Size.Width = 1058.000000000000000000
       Size.Height = 816.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -106,7 +106,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -124,6 +124,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           Viewport.Width = 1058.000000000000000000
           Viewport.Height = 816.000000000000000000
           object dedDate: TDateEdit
+            Date = 43703.000000000000000000
             OnChange = inputChanged
             OnCheckChanged = inputChanged
             HelpContext = 24
@@ -488,7 +489,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.PlatformDefault = False
             TabOrder = 37
             Text = 'Update from Concepts'
-            OnClick = btnMemoCopyrightClick
+            OnClick = Button1Click
           end
           object cbCaseSensitive: TCheckBox
             Position.X = 16.000000000000000000
@@ -679,7 +680,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -701,8 +702,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           OnGetValue = grdPropertiesGetValue
           OnSetValue = grdPropertiesSetValue
           OnCellClick = grdPropertiesCellClick
-          Viewport.Width = 1038.000000000000000000
-          Viewport.Height = 758.000000000000000000
+          Viewport.Width = 1058.000000000000000000
+          Viewport.Height = 783.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'Code'
           end
@@ -937,15 +938,16 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           TabPosition = Top
           Sizes = (
             1058s
-            746s
+            725s
             1058s
-            746s)
+            725s)
           object TabItem1: TTabItem
             CustomIcon = <
               item
               end>
             IsSelected = False
-            Size.Height = 5.000000000000000000
+            Size.Width = 42.000000000000000000
+            Size.Height = 26.000000000000000000
             Size.PlatformDefault = False
             StyleLookup = ''
             TabOrder = 0
@@ -955,14 +957,14 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             object tvConceptTree: TTreeView
               Align = Client
               Size.Width = 1058.000000000000000000
-              Size.Height = 746.000000000000000000
+              Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 0
               OnClick = tvConceptTreeChange
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
               Viewport.Width = 1058.000000000000000000
-              Viewport.Height = 746.000000000000000000
+              Viewport.Height = 725.000000000000000000
             end
           end
           object TabItem2: TTabItem
@@ -970,7 +972,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               item
               end>
             IsSelected = True
-            Size.Height = 5.000000000000000000
+            Size.Width = 43.000000000000000000
+            Size.Height = 26.000000000000000000
             Size.PlatformDefault = False
             StyleLookup = ''
             TabOrder = 0
@@ -982,7 +985,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               CanFocus = True
               ClipChildren = True
               Size.Width = 1058.000000000000000000
-              Size.Height = 746.000000000000000000
+              Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TextSettings.VertAlign = Leading
               TabOrder = 0
@@ -992,7 +995,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnSetValue = grdConceptsSetValue
               OnCellDblClick = grdConceptsCellDblClick
               Viewport.Width = 1058.000000000000000000
-              Viewport.Height = 746.000000000000000000
+              Viewport.Height = 725.000000000000000000
               object IntegerColumn1: TIntegerColumn
                 Enabled = False
                 Header = 'Depth'
@@ -1442,31 +1445,32 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              030A49444154384F5D535B48146114FEFE99DDD59D61756FB66BE9BA9A662E96
-              6961590F055D1E0289286F0FD10D022922A2A897A2F2A1821E7C0884282A0B2C
-              7CE84E17E8217B10A250D4DD35B2CDB59BE9B2AEBBCD5E6677669A7F3269FDE0
-              CCFC9CF37DFF0FDF398760014EB7B75BAA53E11D9C2CD719147911CD8984FC8A
-              2BECFBE11CF9F1E56BBDB31A710E59179C39B8AF71EF0A4FA73B6E2B633F7C47
-              E86754CBDB0BF390595D84201F0ADC1EF21DEBB871EB895650C1CEFD71F6E0BE
-              A636574DEFB2BE591BF35D15169941362F8761E512E89322989149583FA52C8E
-              EAA5CDF632A7FFCDC0A08FEA18FAA12FB7BA6A7AAA7C021BEBD8096464A4CEED
-              C6339B4B0B7AA6395AF378632CE5520DD5B2A70E35E5EFAFAC7D54F936624D5C
-              DD03FD5B3F58B715BAF595E08603582C2761AF7501B351905014E2E1AD28ECEA
-              678A371437F0A5E5DDE4EEDE963D2DCBB6758BAFC7C0394C1026A3E04D3900AF
-              4624411F01CC4640484188A5C03BF310FF1543CE9672DC1B7BB55FC711698DEE
-              FD37089D6D10F238180EDD44EC4A1B18830EFC93779A5E68AC872C66907BE40E
-              848BCDC844E3E0CE3F046792EB1883A23894641AF9CB5DE017DB91916498DC4E
-              F0C52E8C5BAC5AD033CDD11AE5502EE269E8A1383413FF07C9EE6C1618B2A0A6
-              4062E890905C3D66472720FC0881650962C149085F27E09E096B41CF34C73044
-              E3502E383DD28484E64D247D5FC0BACC480767A0B7A8A6E5E502D3C2DF970A78
-              209A447A26017D8905D24404D858AA99C856ACF504CB8AACADB6CF297352350F
-              1C0B9DD3A44ED62E8CAB6312F114C17C723B301546A6AE04E9039BA07F3A8880
-              47197F19491E67E86C770F798F8EAEB349C6133D105795002FFC10D5B6510459
-              0EE2EF1494E73EAD4639FE8602896A2E7575CDCCBB4247B9D55DD753D53FCD82
-              55BD2DB502150590752C18EFA47A531850BBE05B6797EE0707DA2EDCB8D54B75
-              F3BB4067DB5E5E3858DCB0646DBEB3D0C27C9C46A87F1C89A11FE0D47AA6DE85
-              2F5552A067CC7BE0C2F59B0FFEAA166C23C5BF75364A99D5064216D1568950A6
-              E232333062C4C3EC7506FE000B324599274BB1F10000000049454E44AE426082}
+              030B49444154384F5D535B48146114FEFE99DD556758DD9BBAA9BB5EB2ACAD24
+              3534EBA1A0CB4320119597872815842822A2A897A2F2A1821E7A088448340B8C
+              7CC8B2E8023D6441128662BA5B64B66B655E16D7DD6DD6DDD99D99E69F4CD20F
+              CECCCF39DFF7FFF09D730896E1DCD1A3E6F5B1D9BD9C2C971A143983E64442A6
+              220ADBFF31497E7CED565750232E60C905E71B8F541DDEE0BA9117B116B01F7E
+              C2FF2BA4E56D2B529128CB818FF78FDD19729F6C6E6DEFD10A2AD8853F2E341E
+              3958EB28EE2AEA0D5A999FAA30C704B2630D0CC5D9D0474530C393B07C899933
+              D61554DB56DA3DAF0706DD54C7D00F7DB9C651DCE9F244D870F33E20212376F1
+              009E5A9D5AD033CDD1DA3AF76F9672A9866AD9B34D07D3EA8B4A1E15BD0D5AE6
+              6F1E82FE8D076C9E05BA2D45E03E8E214B8EC256E2048221107F08E2B15DC86A
+              E9631C5B1D957C7E6107B977B8E650CDEADD1DE2AB51709946089321F0C62480
+              57636E9E3E029852002106211C036F4F45642A8CA49D85B83FFAB25EC7116993
+              AEFF07841B75105239189ADA10BE5E07C6A003DFF35ED30B55E590C504928FDF
+              8570A51A895004DCA56E7046B99431284AA6128D236D8D137C960D09498631CF
+              0EDEE184D76CD1829E698ED62887721189430F255333F17F90A59D5D02862CAB
+              2990183A2424598FE0A77108137EB02C41D83709E1FB38F202B35AD033CD310C
+              D138940B4E8F3821FE451349EF37B04E13E2BE00F466D5B4D4646046F8FB523A
+              0F84A28807E6A1CF35431A9F03B6E56B26B2AB2A5CBE821C4BADF56BCC1455CD
+              03C7426737AA93B51F5E754CE65C39309DD9034CCF22519A8B78C376E89F0C62
+              CCA5785FCC454F3174B63B86464E782A2C52CAE94E881B7381E71E886ADB287C
+              2C07F1770CCA33B756A31CF7669B4435575B5A028BAED051AEC92DE974F5F959
+              B0AAB7F91660553A641D0B666452BD691650BB305261951E8C0FD65D6E6DEFA2
+              BAC55DA0B39D5E9835E8A8CCAE48B3AF30339F67E07FE7C5FCD00438B59E2877
+              E2DB5A69AC7374A4E1F2EDB6877F55CBB691E2DF3AA7488932032119B4552294
+              E988CC0C0CA7A07BE93A037F00049A45958AD3B35A0000000049454E44AE4260
+              82}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

@@ -45,7 +45,7 @@ implementation
 
 procedure TResourceContributorForm.btnOkClick(Sender: TObject);
 begin
-  FExtension.setExtensionDate('name', edtName.Text);
+  FExtension.setExtensionString('name', edtName.Text);
   FExtension.setExtensionString('role', edtRole.Text);
   FExtension.setExtensionString('notes', memNotes.Text);
 end;

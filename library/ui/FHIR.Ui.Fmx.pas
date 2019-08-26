@@ -31,15 +31,17 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, System.UITypes,
+  SysUtils, System.UITypes, Math,
   Generics.Collections,
-  FMX.Forms;
+  FMX.Forms, FMX.Grid;
 
 // work around for bug https://quality.embarcadero.com/browse/RSP-23312
 
 function showModalHack(form : TForm) : TModalResult;
 procedure ModalHackUpdateStatus;
 function prepEdit(s : String): String;
+
+procedure adjustLastColWidth(grid : TGrid; min : integer);
 
 implementation
 
@@ -70,6 +72,18 @@ end;
 function prepEdit(s : String): String;
 begin
   result := s.replace(#10, ' ');
+end;
+
+procedure adjustLastColWidth(grid : TGrid; min : integer);
+var
+  i : integer;
+  t : double;
+begin
+  t := 0;
+  for i := 0 to grid.ColumnCount - 2 do
+    t := t + grid.Columns[i].Width;
+  t := math.Max(min, grid.Width-(t - 20));
+  grid.Columns[grid.ColumnCount - 1].Width := t;
 end;
 
 initialization

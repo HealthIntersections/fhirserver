@@ -98,6 +98,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       TabOrder = 10
     end
     object dedDate: TDateEdit
+      Date = 43703.000000000000000000
       Position.X = 208.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 89.000000000000000000
@@ -249,7 +250,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       'XML Resource|*.csv|JSON Resource|*.json|Turtle Resource|*.ttl|CS' +
       'V Format|*.csv'
     Title = 'Export Expansion'
-    Left = 224
-    Top = 448
+    Left = 16
+    Top = 128
   end
 end
