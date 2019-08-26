@@ -105,7 +105,6 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Viewport.Width = 758.000000000000000000
           Viewport.Height = 712.000000000000000000
           object dedDate: TDateEdit
-            Date = 42965.000000000000000000
             OnChange = inputChanged
             OnCheckChanged = inputChanged
             HelpContext = 24
@@ -207,7 +206,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             Anchors = [akTop, akRight]
             TabOrder = 8
-            Position.X = 4121.000000000000000000
+            Position.X = 5537.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 19
             Size.Width = 100.000000000000000000
@@ -229,8 +228,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             OnSelChanged = gridIdentifiersSelChanged
             OnGetValue = gridIdentifiersGetValue
             OnSetValue = gridIdentifiersSetValue
-            Viewport.Width = 481.000000000000000000
-            Viewport.Height = 121.000000000000000000
+            Viewport.Width = 461.000000000000000000
+            Viewport.Height = 80.000000000000000000
             object StringColumn1: TStringColumn
               Header = 'System'
               Size.Width = 297.000000000000000000
@@ -281,7 +280,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object Label4: TLabel
             Anchors = [akTop, akRight]
-            Position.X = 4061.000000000000000000
+            Position.X = 5477.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 55.000000000000000000
             Size.Height = 17.000000000000000000
@@ -391,7 +390,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           object cbExperimental: TCheckBox
             Anchors = [akTop, akRight]
             HelpContext = 23
-            Position.X = 4099.000000000000000000
+            Position.X = 5515.000000000000000000
             Position.Y = 120.000000000000000000
             Size.Width = 122.000000000000000000
             Size.Height = 19.000000000000000000
@@ -540,7 +539,6 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnChange = inputChanged
         end
         object dedLockedDate: TDateEdit
-          Date = 42965.000000000000000000
           OnChange = inputChanged
           OnCheckChanged = inputChanged
           Anchors = [akLeft, akTop, akRight]
@@ -675,8 +673,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
           OnChange = lbImportsClick
-          Viewport.Width = 641.000000000000000000
-          Viewport.Height = 83.000000000000000000
+          Viewport.Width = 637.000000000000000000
+          Viewport.Height = 79.000000000000000000
         end
         object Label18: TLabel
           Position.X = 8.000000000000000000
@@ -744,8 +742,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               OnSelChanged = gridFiltersSelChanged
               OnGetValue = gridFiltersGetValue
               OnSetValue = gridFiltersSetValue
-              Viewport.Width = 632.000000000000000000
-              Viewport.Height = 459.000000000000000000
+              Viewport.Width = 612.000000000000000000
+              Viewport.Height = 434.000000000000000000
               object StringColumn3: TStringColumn
                 Header = 'Property'
                 Size.Width = 177.000000000000000000
@@ -1019,7 +1017,6 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnClick = btnDeleteContainsDesignationClick
         end
         object dedTimestamp: TDateEdit
-          Date = 42968.000000000000000000
           OnChange = inputChanged
           Anchors = [akLeft, akTop, akRight]
           HelpContext = 44
@@ -1083,8 +1080,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridContainsSelChanged
           OnGetValue = gridContainsGetValue
           OnSetValue = gridContainsSetValue
-          Viewport.Width = 741.000000000000000000
-          Viewport.Height = 457.000000000000000000
+          Viewport.Width = 721.000000000000000000
+          Viewport.Height = 432.000000000000000000
           object StringColumn10: TStringColumn
             Header = 'Code'
           end
@@ -1120,8 +1117,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridContainsDesignationsSelChanged
           OnGetValue = gridContainsDesignationsGetValue
           OnSetValue = gridContainsDesignationsSetValue
-          Viewport.Width = 633.000000000000000000
-          Viewport.Height = 73.000000000000000000
+          Viewport.Width = 613.000000000000000000
+          Viewport.Height = 48.000000000000000000
           object PopupColumn4: TPopupColumn
             Header = 'Language'
             Items.Strings = (
@@ -1211,7 +1208,6 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 30
         end
         object tmTimestamp: TTimeEdit
-          Time = 0.556830983796296300
           OnChange = inputChanged
           Anchors = [akTop, akRight]
           HelpContext = 44
@@ -1269,8 +1265,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridParametersSelChanged
           OnGetValue = gridParametersGetValue
           OnSetValue = gridParametersSetValue
-          Viewport.Width = 645.000000000000000000
-          Viewport.Height = 625.000000000000000000
+          Viewport.Width = 625.000000000000000000
+          Viewport.Height = 600.000000000000000000
           object StringColumn14: TStringColumn
             Header = 'Name'
           end
@@ -1329,7 +1325,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             TabOrder = 1
             Position.X = 136.000000000000000000
             Position.Y = 40.000000000000000000
-            Size.Width = 513.000000000000000000
+            Size.Width = 1929.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -1367,15 +1363,15 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             ClipChildren = True
             Position.X = 24.000000000000000000
             Position.Y = 200.000000000000000000
-            Size.Width = 625.000000000000000000
+            Size.Width = 2041.000000000000000000
             Size.Height = 169.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 10
             OnSelChanged = gridHistorySelChanged
             OnGetValue = gridHistoryGetValue
             OnSetValue = gridHistorySetValue
-            Viewport.Width = 625.000000000000000000
-            Viewport.Height = 169.000000000000000000
+            Viewport.Width = 2021.000000000000000000
+            Viewport.Height = 144.000000000000000000
             object DateColumn1: TDateColumn
               Header = 'Date'
               Size.Width = 80.000000000000000000
@@ -1453,12 +1449,12 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Anchors = [akLeft, akTop, akRight]
             Position.X = 24.000000000000000000
             Position.Y = 440.000000000000000000
-            Size.Width = 625.000000000000000000
+            Size.Width = 2041.000000000000000000
             Size.Height = 105.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 17
-            Viewport.Width = 625.000000000000000000
-            Viewport.Height = 105.000000000000000000
+            Viewport.Width = 2037.000000000000000000
+            Viewport.Height = 101.000000000000000000
           end
           object Label30: TLabel
             StyledSettings = [Family, Size, FontColor]
@@ -1486,7 +1482,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             TabOrder = 4
             Position.X = 136.000000000000000000
             Position.Y = 69.000000000000000000
-            Size.Width = 513.000000000000000000
+            Size.Width = 1929.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -1507,7 +1503,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             TabOrder = 2
             Position.X = 136.000000000000000000
             Position.Y = 98.000000000000000000
-            Size.Width = 513.000000000000000000
+            Size.Width = 1929.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -1519,7 +1515,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             TabOrder = 0
             Position.X = 136.000000000000000000
             Position.Y = 128.000000000000000000
-            Size.Width = 513.000000000000000000
+            Size.Width = 1929.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -1622,32 +1618,32 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031A49444154384F5D535B48146114FEFE99DD5567D875777573CBBD5A96D985
-              B2C8B4878C2E0F414545960FE50D822822A2A897822E50410F51411089658181
-              4557E84217AA87202C2F955ADABAAB65AB6D5E769B75777667A6F9A792F483C3
-              FC9CF37DE70CE74230010777ECB0CC8E0FAEE364B9C0A0C893A84F24A43FAAB0
-              8DEF53E4BBA72E368C68C4BF1897E05075C59AF239F9673CD18C1CF6ED3784BE
-              87357FE66413920B1C08F021DF95D6B63DC76A2EDFD3022AD8BF5F1CAEAED854
-              39BDB021E7D9CF0CE69B2A74984196E7C130371BFA9808E64310D6CEB8C5BD70
-              56A9D995D9FEA2A9B98DEAB404B432157BDFFD642387D622E5493BE267B7E17E
-              90A0934BC7D4AAC5D0DD6C44E4F87AD86FB4309ED9B91B4C6E5BD3CBA6E6CFEC
-              81ED9BD22B67CCBF33F579C83A7A7E2BF4AFDAC17AACD015CF00F7DE8729720C
-              99F35DC04818241486B873256CE75E31CE25CE22DE3BAD8E5C2BDFBC75F3F455
-              75E2D32E70594608C13078630AC0AB363C4A7F1030A701421C42240EDE6E42B4
-              3F829415D370BDEB71A58E23D2425DE3570867CA20983818B6D72272BA0C8C41
-              07FEDE1B4D2FAC5904594C2275D75508274A910C47C11DB90DCE2817300645C9
-              526209A4E7B9C04FC944529261F4D8C13B5DF05BAC9AD137F5D118E5502EA209
-              E8A164315A89FF40C64F761C183221A64062E89290543D463A7A20F485C0B204
-              914010426F0F3C43839AD137F5310CD138940B4E8F0421A1B1269297DD605D66
-              240243D05BD4A69952811FC29F4A361E08C790181A85DE6D81D4330C2CF56A4D
-              64730BF303390EEB968C2F71734C6D1E38163ABB51DDAC8DF083C170BE03E6FD
-              AB818141240BDC485495407FBF19BE7CC5FF6838B697A1BB5DD7FA71B7BF245B
-              4ADB570F719E1B78D80E511D1B4580E520FE8A4379D0A6C528A77B9953A29A93
-              172E0C8D7585AE72455E71BDF7792F0B56EDADD70AE4DA20EB58301F836AA641
-              409D82AFC4215DF9F4BAEC68CDE506AA1BBB05BADB668FADD959945D986E9F6C
-              613EFD40E8B51FA3AD7DE0D47872910BDD3325DFD58E96AAA3976A6FFD514DB8
-              468A7FE79C262517180899444725421988CA4CD38734DC1E7FCEC06F8131467B
-              4B680FF20000000049454E44AE426082}
+              031749444154384F5D5359681351143D6F2649DB19B2B64DB7244D6D5D1A546C
+              DC155470F910AAA858ED87562B08A28888A23F0A2EA0821F2282208ADA16148A
+              B8820B8A2B88526948B5555B63536D8D36266DE2649964669C376AB13D7099C7
+              BDE7DC3BDC85600CF66FDB669D9C8EACE464D96B50643BF589847C4F286C5B47
+              8E7CEBC4B9D6618DF817A3121CD8B2A9B6618AE7943B913F8E7DD38FF0B798E6
+              2F2831213BDD81201F0E5CF677EE3A72E1D26D2DA082FDFBC5C12D9BD63654CD
+              6CAD7C1CC967FA55A1C302B278120C53CBA04F8960DE8660EB4E5B9DDEEA3A6B
+              7961D7D3765F27D56909B4CA54EC8BB2F1032B90F3B00BE9D31B712744D0CD99
+              51D93807BA6B6D881F5D85926B7EC6E5A95C6D76DBDB9FB5FB3EB2FBB6AE356F
+              9E5873B3EAC94F5BF2CC06E89F778175DBA09B37115C4700A5720A05352E6038
+              06128E41DCBE14F6332F18E77CE75CBEA2AA89B434ACDBB06EC2B226F1510FB8
+              222384500CBC3107E0551B4AD21F042C79809086104F832F3621F13D8E9C2555
+              B8DAF360B38E23D20C5DDB5708A7EA21983818B65E44FC643D18830EFCEDD79A
+              5EA89D0559CC22774733846375C8C612E00EDD006794BD8C41518A945406E649
+              2EF0A505C84A328CEE62F04E177AAD36CDE89BFA688C722817890CF4508A18AD
+              C47F20A3273B0A0C1913532031744948AE1EC3EFFB200C84C1B204F16008C297
+              3EB8A311CDE89BFA1886681CCA05A7478690F04813C9B3CF605D16648251E8AD
+              6AD34CB9C0A0F0A752210FC452C84493D0975B21F50D010B2BB426B2E3677B82
+              E31CB6F5F99FD29694DA3C702C74C54675B3D6A0170C863C0E58F62E077E4490
+              F59623D3B808FA3B3E043C4AEFFDA1D46E86EE7693FFDDCEC08212296FCF1588
+              D3CA817B5D10D5B15104590EE2AF3494BB9D5A8C723E2D2C93A8E6F8D9B3D191
+              AED055DE3861CE95CAA7FD2C58B5B71536607C21641D0BE65D48CD1401D429F4
+              2C28959ABB5FD51FBE70A995EA466E81EEB6B5C2EE73CE2D9B6D2E2EB1321F06
+              117ED98BA47F009C1ACFCE72E173B51468F9E06F3C7CFEE2F53FAA31D748F1EF
+              9CF3A4EC740321763A2A11CA8F84CCB4BFCDC38DD1E70CFC06756146757F48EC
+              0E0000000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

@@ -10,7 +10,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
   FormFactor.Devices = [Desktop]
   OnClose = FormClose
   OnShow = FormShow
-  DesignerMasterStyle = 1
+  DesignerMasterStyle = 0
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 440.000000000000000000
@@ -98,7 +98,6 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       TabOrder = 10
     end
     object dedDate: TDateEdit
-      Date = 42968.000000000000000000
       Position.X = 208.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 89.000000000000000000

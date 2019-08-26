@@ -31,8 +31,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 973.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 969.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -63,7 +63,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
       Size.Width = 924.000000000000000000
       Size.Height = 998.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -77,7 +77,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -95,7 +95,6 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Viewport.Width = 924.000000000000000000
           Viewport.Height = 998.000000000000000000
           object dedDate: TDateEdit
-            Date = 42965.000000000000000000
             OnChange = inputChanged
             OnCheckChanged = inputChanged
             Position.X = 96.000000000000000000
@@ -300,8 +299,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 105.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 33
-            Viewport.Width = 681.000000000000000000
-            Viewport.Height = 105.000000000000000000
+            Viewport.Width = 677.000000000000000000
+            Viewport.Height = 101.000000000000000000
           end
           object btnAddClient: TButton
             Position.X = 16.000000000000000000
@@ -620,8 +619,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 81.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 36
-            Viewport.Width = 569.000000000000000000
-            Viewport.Height = 81.000000000000000000
+            Viewport.Width = 565.000000000000000000
+            Viewport.Height = 77.000000000000000000
           end
           object mSecurity: TMemo
             Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -634,8 +633,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 73.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 38
-            Viewport.Width = 569.000000000000000000
-            Viewport.Height = 73.000000000000000000
+            Viewport.Width = 565.000000000000000000
+            Viewport.Height = 69.000000000000000000
           end
           object btnAddResources: TButton
             Position.X = 16.000000000000000000
@@ -826,7 +825,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -863,8 +862,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 145.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 1
-            Viewport.Width = 569.000000000000000000
-            Viewport.Height = 145.000000000000000000
+            Viewport.Width = 565.000000000000000000
+            Viewport.Height = 141.000000000000000000
           end
           object btnDocoRes: TButton
             Images = ToolbarImages
@@ -1437,8 +1436,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
                 OnGetValue = gridSearchGetValue
                 OnSetValue = gridSearchSetValue
                 OnCellDblClick = gridSearchCellDblClick
-                Viewport.Width = 561.000000000000000000
-                Viewport.Height = 299.000000000000000000
+                Viewport.Width = 557.000000000000000000
+                Viewport.Height = 258.000000000000000000
                 object Column1: TColumn
                   Header = 'Name'
                   Size.Width = 85.000000000000000000
@@ -1496,8 +1495,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
                 TabOrder = 7
                 OnGetValue = gridSearchCombinationsGetValue
                 OnSetValue = gridSearchCombinationsSetValue
-                Viewport.Width = 561.000000000000000000
-                Viewport.Height = 227.000000000000000000
+                Viewport.Width = 541.000000000000000000
+                Viewport.Height = 202.000000000000000000
                 object PopupColumn2: TPopupColumn
                   Header = 'Conformance'
                   Items.Strings = (
@@ -1596,32 +1595,31 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              030B49444154384F5D535B48146114FEFE999D556758DD9BEE6AEBAE9A9A4A86
-              9728B61E0ABA3C041151591B84561044111145BD14650F15F4D0431444525964
-              E04377BA400F161444A5D8AA45A6BB76DB7471D75D67DD9DDD9969FEB124FDE0
-              CCFC9CF37DFF0FDF3987600E8EEDDD6B59981ADFC02B4A8351550A684E22E477
-              4265DF7DCC521E9CBBD239A113FF62D605C777B7AC6FAEADB95092B095B1EF7F
-              20FC2BA6E7ED85B9C834BA1014C243377AFB0F9E6EBBFE502F6860FFFE716277
-              CB96ED9EBACECAAEA88DF9A1095D66905555302E9A072E2981F18760FD92B238
-              6BCB9B6C658E81AEEE9E7EAA63E887BEECF3D47554F54DB2F1D31B818C82D4C9
-              CD786C73EB41CF34476BD5FE184BB95443B5ECD13D5BF2762EA8BF5FF92A6A9D
-              BAB803DCAB01B0255618962D00FF7108454A12F67A3730110309C720ED5B83C2
-              4B6F98E2E5C55EA1B4BC9DDC6ADEBA636BE5DA76E9C520788709622806C19405
-              085A44A7E823803907105310E32908CE5C247EC791B5BA1C77069FEF34F0445E
-              6C78F71DE2051FC45C1EC63DD7103FEF0363344078F856D78BEB97409132C8DE
-              7F13E29926646209F0A7EE8137290D8C51551D6A328DBC2A3784223B32B20253
-              891342B11B018B550F7AA6395AA31CCA45220D0EAA4337F17F90D99D9D0586CC
-              A9A990193A24249BC3C4A711883FC3605982783004F1DB084A22E37AD033CD31
-              0CD139940B9E439A90F08C89E4E53058B719E960049C45332D371B1813A75FCA
-              17805812E9C814388F05F248145851AA9BC8562CAD0996B9ACDB6C5F53E6A466
-              1E781606A7499BAC4D08686312AD71C17C641D303A8E4C8307E95D2BC13DEAC1
-              508D1A78164D1E62E86CB7F7F61DF8ECB5CB39873B20D57980A70390B4B65104
-              591ED2640AEA937EBD46399F9615C85473F6F2E5C88C2B74947DA58D1D55AF47
-              59B09AB7A556A0221F8A8105D317D26E1A07B42E0C78F3E53B810FBED6B6EB9D
-              5437B30B74B6EDF30B7B8ABDF396E6390B2DCCE73184DF0430D5FB13BC56CF2C
-              7163B85A1EBAFDC5BFABF5EAB5BBD3AA39DB48F16F9D73E44CA3919002DA2A09
-              EA684261BAFD39B8377B9D813F1052459B18EB10920000000049454E44AE4260
-              82}
+              030A49444154384F5D535B48146114FEFE99DDD59D61756FB66BE9BA9A662E96
+              6961590F055D1E0289286F0FD10D022922A2A897A2F2A1821E7C0884282A0B2C
+              7CE84E17E8217B10A250D4DD35B2CDB59BE9B2AEBBCD5E6677669A7F3269FDE0
+              CCFC9CF37DFF0FDF398760014EB7B75BAA53E11D9C2CD719147911CD8984FC8A
+              2BECFBE11CF9F1E56BBDB31A710E59179C39B8AF71EF0A4FA73B6E2B633F7C47
+              E86754CBDB0BF390595D84201F0ADC1EF21DEBB871EB895650C1CEFD71F6E0BE
+              A636574DEFB2BE591BF35D15169941362F8761E512E89322989149583FA52C8E
+              EAA5CDF632A7FFCDC0A08FEA18FAA12FB7BA6A7AAA7C021BEBD8096464A4CEED
+              C6339B4B0B7AA6395AF378632CE5520DD5B2A70E35E5EFAFAC7D54F936624D5C
+              DD03FD5B3F58B715BAF595E08603582C2761AF7501B351905014E2E1AD28ECEA
+              678A371437F0A5E5DDE4EEDE963D2DCBB6758BAFC7C0394C1026A3E04D3900AF
+              4624411F01CC4640484188A5C03BF310FF1543CE9672DC1B7BB55FC711698DEE
+              FD37089D6D10F238180EDD44EC4A1B18830EFC93779A5E68AC872C66907BE40E
+              848BCDC844E3E0CE3F046792EB1883A23894641AF9CB5DE017DB91916498DC4E
+              F0C52E8C5BAC5AD033CDD11AE5502EE269E8A1383413FF07C9EE6C1618B2A0A6
+              4062E890905C3D66472720FC0881650962C149085F27E09E096B41CF34C73044
+              E3502E383DD28484E64D247D5FC0BACC480767A0B7A8A6E5E502D3C2DF970A78
+              209A447A26017D8905D24404D858AA99C856ACF504CB8AACADB6CF297352350F
+              1C0B9DD3A44ED62E8CAB6312F114C17C723B301546A6AE04E9039BA07F3A8880
+              47197F19491E67E86C770F798F8EAEB349C6133D105795002FFC10D5B6510459
+              0EE2EF1494E73EAD4639FE8602896A2E7575CDCCBB4247B9D55DD753D53FCD82
+              55BD2DB502150590752C18EFA47A531850BBE05B6797EE0707DA2EDCB8D54B75
+              F3BB4067DB5E5E3858DCB0646DBEB3D0C27C9C46A87F1C89A11FE0D47AA6DE85
+              2F5552A067CC7BE0C2F59B0FFEAA166C23C5BF75364A99D5064216D1568950A6
+              E232333062C4C3EC7506FE000B324599274BB1F10000000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'
