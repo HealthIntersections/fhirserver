@@ -38,7 +38,7 @@ uses
   BaseResourceFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
+  SearchParameterEditor, SearchParameterCombinationEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -185,6 +185,19 @@ type
     btnSystemSearch: TButton;
     btnSystemHistory: TButton;
     cbxFHIRVersion: TComboBox;
+    Label27: TLabel;
+    cbxResourceConformance: TComboBox;
+    TabControl1: TTabControl;
+    TabItem1: TTabItem;
+    TabItem2: TTabItem;
+    Label28: TLabel;
+    gridSearchCombinations: TGrid;
+    PopupColumn2: TPopupColumn;
+    StringColumn3: TStringColumn;
+    btnAddSearchParamCombination: TButton;
+    btnEditSearchParamCombination: TButton;
+    btnDeleteSearchCombination: TButton;
+    PopupColumn3: TPopupColumn;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
@@ -223,6 +236,11 @@ type
     procedure btnDocoHistoryInstanceClick(Sender: TObject);
     procedure btnDocoHistoryTypeClick(Sender: TObject);
     procedure gridSearchCellDblClick(const Column: TColumn; const Row: Integer);
+    procedure gridSearchCombinationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure gridSearchCombinationsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+    procedure btnDeleteSearchCombinationClick(Sender: TObject);
+    procedure btnAddSearchParamCombinationClick(Sender: TObject);
+    procedure btnEditSearchParamCombinationClick(Sender: TObject);
   private
     function GetCapabilityStatement: TFHIRCapabilityStatement;
     function readJurisdiction : Integer;
@@ -535,6 +553,7 @@ begin
       if showModalHack(form) = mrOk then
       begin
         res.searchParamList.Add(p.link);
+        gridSearch.RowCount := 0;
         gridSearch.RowCount := res.searchParamList.Count;
         ResourceIsDirty := true;
       end;
@@ -631,6 +650,7 @@ begin
   sp.DeleteByReference(p);
   gridSearch.RowCount := 0;
   gridSearch.RowCount := sp.Count;
+  ResourceIsDirty := true;
 end;
 
 procedure TCapabilityStatementEditorFrame.btnParamEditClick(Sender: TObject);
@@ -769,6 +789,91 @@ begin
     if ri.documentationElement = nil then
       ri.documentationElement := makeMarkdownOrString;
     editStringOrMarkdownDialog(self, 'Transaction Documentation', btnTransaction, edtTransaction, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnEditSearchParamCombinationClick(Sender: TObject);
+var
+  p : TFhirCapabilityStatementRestResource;
+  exl : TFsLList<TFHIRExtension>;
+  ex : TFHIRExtension;
+  form : TSearchParameterCombinationEditorForm;
+begin
+  if gridSearchCombinations.Selected = -1 then
+    exit;
+
+  p := gridSearchCombinations.TagObject as TFhirCapabilityStatementRestResource;
+  exl := p.listExtensions('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
+  try
+    ex := exl[gridSearch.Selected];
+    form := TSearchParameterCombinationEditorForm.create(self);
+    try
+      form.Parameters := p.searchParamList.Link;
+      form.extension := ex.link;
+      if showModalHack(form) = mrOk then
+      begin
+        gridSearchCombinations.RowCount := 0;
+        gridSearchCombinations.RowCount := exl.Count;
+        ResourceIsDirty := true;
+      end;
+    finally
+      form.free;
+    end;
+  finally
+    exl.Free;
+  end;
+  lbSearchClick(nil);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnAddSearchParamCombinationClick(Sender: TObject);
+var
+  form : TSearchParameterCombinationEditorForm;
+  res : TFhirCapabilityStatementRestResource;
+  ex : TFHIRExtension;
+begin
+  res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
+  ex := TFhirExtension.Create;
+  try
+    ex.url := 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination';
+    form := TSearchParameterCombinationEditorForm.create(self);
+    try
+      form.extension := ex.link;
+      form.Parameters := res.searchParamList.Link;
+      if showModalHack(form) = mrOk then
+      begin
+        res.extensionList.Add(ex.link);
+        gridSearchCombinations.RowCount := 0;
+        gridSearchCombinations.RowCount := res.getExtensionCount('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
+        ResourceIsDirty := true;
+      end;
+    finally
+      form.free;
+    end;
+    lbSearchClick(nil);
+  finally
+    ex.Free;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDeleteSearchCombinationClick(Sender: TObject);
+var
+  sp : TFhirCapabilityStatementRestResource;
+  ex : TFHIRExtension;
+  form : TSearchParameterEditorForm;
+  exl : TFslList<TFHIRExtension>;
+begin
+  if gridSearchCombinations.Selected = -1 then
+    exit;
+  sp := gridSearchCombinations.TagObject as TFhirCapabilityStatementRestResource;
+  exl := sp.listExtensions('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
+  try
+    ex := exl[gridSearchCombinations.Selected];
+    sp.extensionList.DeleteByReference(ex);
+    gridSearchCombinations.RowCount := 0;
+    gridSearchCombinations.RowCount := exl.Count-1;
+    ResourceIsDirty := true;
+  finally
+    exl.Free;
   end;
 end;
 
@@ -1015,6 +1120,15 @@ begin
   end;
   {$ENDIF}
 
+  case cbxResourceConformance.ItemIndex of
+    1: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL');
+    2: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHOULD');
+    3: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'MAY');
+    4: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL NOT');
+  else
+    res.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
+  end;
+
   interaction(TypeRestfulInteractionread, cbRead, edtDocoRead);
   interaction(TypeRestfulInteractionVread, cbVRead, edtDocoVRead);
   interaction(TypeRestfulInteractionUpdate, cbUpdate, edtDocoUpdate);
@@ -1139,6 +1253,69 @@ begin
   btnParamEditClick(self);
 end;
 
+procedure TCapabilityStatementEditorFrame.gridSearchCombinationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  p : TFhirCapabilityStatementRestResource;
+  ex : TFHIRExtension;
+  exl : TFslList<TFHIRExtension>;
+  ts : TStringList;
+  i : integer;
+begin
+  p := gridSearchCombinations.TagObject as TFhirCapabilityStatementRestResource;
+  exl := p.listExtensions('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
+  try
+    ex := exl[ARow];
+    case aCol of
+      0: value := ex.getExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation');
+      1: begin
+         ts := TStringList.Create;
+         try
+           for i := 0 to ex.extensionList.Count -1  do
+             if ex.extensionList[i].url = 'required' then
+               ts.Add(ex.extensionList[i].value.primitiveValue);
+           value := ts.CommaText;
+         finally
+           ts.Free;
+         end;
+      end;
+    end;
+  finally
+    exl.Free;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.gridSearchCombinationsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+var
+  sp : TFhirCapabilityStatementRestResource;
+  ex : TFhirExtension;
+  exl : TFslList<TFHIRExtension>;
+  ts : TStringList;
+  i : integer;
+begin
+  sp := gridSearchCombinations.TagObject as TFhirCapabilityStatementRestResource;
+  exl := sp.listExtensions('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
+  try
+    ex := exl[ARow];
+    case aCol of
+      0: ex.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', value.AsString);
+      1: begin
+         ts := TStringList.Create;
+         try
+           ts.CommaText := value.AsString;
+           ex.removeExtension('required');
+           for i := 0 to ts.Count - 1 do
+             ex.addExtension('required', ts[i]);
+         finally
+           ts.Free;
+         end;
+      end;
+    end;
+  finally
+    exl.Free;
+  end;
+  ResourceIsDirty := true;
+end;
+
 procedure TCapabilityStatementEditorFrame.gridSearchGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
 var
   sp : TFhirCapabilityStatementRestResourceSearchParamList;
@@ -1149,8 +1326,9 @@ begin
   case aCol of
     0: value := p.name;
     1: value := CODES_TFhirSearchParamTypeEnum[p.type_];
-    2: value := p.definition;
-    3: value := p.documentation;
+    2: value := p.getExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation');
+    3: value := p.definition;
+    4: value := p.documentation;
   end;
 end;
 
@@ -1164,8 +1342,12 @@ begin
   case aCol of
     0: p.name := value.AsString;
     1: p.type_ := TFhirSearchParamTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirSearchParamTypeEnum, value.AsString));
-    2: p.definition := value.AsString;
-    3: p.documentation := value.AsString;
+    2: if value.AsString = '' then
+         p.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
+       else
+         p.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', value.AsString);
+    3: p.definition := value.AsString;
+    4: p.documentation := value.AsString;
   end;
   ResourceIsDirty := true;
 end;
@@ -1190,7 +1372,7 @@ var
   bClient, bServer : boolean;
 begin
   inherited;
-//  tvMetadata.DeleteChildren;
+
   tvMetadata.TagObject := CapabilityStatement;
   bClient := false;
   bServer := false;
@@ -1282,6 +1464,7 @@ procedure TCapabilityStatementEditorFrame.loadResource(res: TFhirCapabilityState
   end;
 var
   search : TFhirCapabilityStatementRestResourceSearchParam;
+  s : String;
 begin
   mDocoRes.Text := res.documentation;
   mDocoRes.TagObject := res;
@@ -1304,6 +1487,20 @@ begin
   interaction(TypeRestfulInteractioncreate, cbCreate, edtDocoCreate);
   interaction(TypeRestfulInteractionSearchType, cbSearch, edtDocoSearch);
 
+  cbxResourceConformance.ItemIndex := 0;
+  if res.hasExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation') then
+  begin
+    s := res.getExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation');
+    if s = 'SHALL' then
+      cbxResourceConformance.ItemIndex := 1;
+    if s = 'SHOULD' then
+      cbxResourceConformance.ItemIndex := 2;
+    if s = 'MAY' then
+      cbxResourceConformance.ItemIndex := 3;
+    if s = 'SHALL NOT' then
+      cbxResourceConformance.ItemIndex := 4;
+  end;
+
   cbxVersioning.ItemIndex := ord(res.versioning);
   cbUpdateCreate.IsChecked := res.updateCreate;
   cbCondCreate.IsChecked := res.conditionalCreate;
@@ -1317,8 +1514,12 @@ begin
   cbRefLocal.IsChecked := ReferenceHandlingPolicyLocal in res.referencePolicy;
 
   gridSearch.tagObject := res.searchParamList;
+  gridSearch.RowCount := 0;
   gridSearch.RowCount := res.searchParamList.Count;
   gridSearch.RealignContent;
+  gridSearchCombinations.tagObject := res;
+  gridSearchCombinations.RowCount := res.getExtensionCount('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
+  gridSearchCombinations.RealignContent;
   lbSearchClick(nil);
 end;
 

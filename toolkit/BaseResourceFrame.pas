@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Organiser,
   BaseServerFrame;
 
 type
@@ -67,6 +67,9 @@ type
     procedure commit; virtual;
     procedure cancel; virtual;
 
+    procedure organise; override;
+    function canOrganise : boolean; override;
+
     Property ResourceIsDirty : boolean read FResourceIsDirty write FResourceIsDirty;
     Property InputIsDirty : boolean read FInputIsDirty write FInputIsDirty;
     Property Loading : boolean read FLoading write FLoading;
@@ -80,6 +83,18 @@ implementation
 procedure TBaseResourceFrame.cancel;
 begin
   // nothing
+end;
+
+function TBaseResourceFrame.canOrganise: boolean;
+var
+  org : TFHIRResourceOrganiser;
+begin
+  org := TFHIRResourceOrganiser.create;
+  try
+    result := org.canOrganise(Fresource.ResourceType);
+  finally
+    org.free;
+  end;
 end;
 
 function TBaseResourceFrame.canSave: boolean;
@@ -125,6 +140,24 @@ begin
     result := filename
   else
     result := 'new '+resource.fhirType;
+end;
+
+procedure TBaseResourceFrame.organise;
+var
+  org : TFHIRResourceOrganiser;
+begin
+  org := TFHIRResourceOrganiser.create;
+  try
+    if org.canOrganise(Fresource.ResourceType) then
+    begin
+      org.organise(FResource);
+      reload;
+      ResourceIsDirty := true;
+    end;
+  finally
+    org.free;
+  end;
+
 end;
 
 function TBaseResourceFrame.originalResource: TFHIRResource;

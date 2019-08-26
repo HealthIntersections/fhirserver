@@ -31,10 +31,10 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
+  FMX.Memo, FMX.ListBox, FMX.Edit, FMX.StdCtrls, FMX.Controls.Presentation,
   FHIR.Base.Lang,
-  FHIR.Version.Types, FHIR.Version.Resources, FMX.ScrollBox, FMX.Memo, FMX.ListBox, FMX.Edit,
-  FMX.StdCtrls, FMX.Controls.Presentation;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
 
 type
   TSearchParameterEditorForm = class(TForm)
@@ -49,6 +49,8 @@ type
     edtDefinition: TEdit;
     cbxType: TComboBox;
     mDocumentation: TMemo;
+    Label27: TLabel;
+    cbxConformance: TComboBox;
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -81,6 +83,17 @@ begin
   param.type_ := TFhirSearchParamTypeEnum(cbxType.ItemIndex);
   param.definition := edtDefinition.Text;
   param.documentation := mDocumentation.Text;
+
+    case cbxConformance.ItemIndex of
+    1: param.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL');
+    2: param.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHOULD');
+    3: param.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'MAY');
+    4: param.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL NOT');
+  else
+    param.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
+  end;
+
+
   if not IsValidSearchParam(param.name) then
     raise EFHIRException.create('The parameter name "'+param.name+'" is not valid');
   if param.type_ = SearchParamTypeNull then
@@ -94,11 +107,26 @@ begin
 end;
 
 procedure TSearchParameterEditorForm.FormShow(Sender: TObject);
+var
+  s : String;
 begin
   edtName.text := param.name;
   cbxType.ItemIndex := ord(param.type_);
   edtDefinition.Text := param.definition;
   mDocumentation.Text := param.documentation;
+  cbxConformance.ItemIndex := 0;
+  if param.hasExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation') then
+  begin
+    s := param.getExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation');
+    if s = 'SHALL' then
+      cbxConformance.ItemIndex := 1;
+    if s = 'SHOULD' then
+      cbxConformance.ItemIndex := 2;
+    if s = 'MAY' then
+      cbxConformance.ItemIndex := 3;
+    if s = 'SHALL NOT' then
+      cbxConformance.ItemIndex := 4;
+  end;
 end;
 
 procedure TSearchParameterEditorForm.SetParam(const Value: TFhirCapabilityStatementRestResourceSearchParam);

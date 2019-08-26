@@ -129,7 +129,7 @@ uses
   MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm},
   ResourceLanguageDialog in 'ResourceLanguageDialog.pas' {ResourceLanguageForm},
   CodeSystemConceptDialog in 'CodeSystemConceptDialog.pas' {CodeSystemConceptForm},
-  SearchParameterEditor in 'SearchParameterEditor.pas' {SearchParameterEditorForm},
+  SearchParameterCombinationEditor in 'SearchParameterCombinationEditor.pas' {SearchParameterCombinationEditorForm},
   AddRestResourceDialog in 'AddRestResourceDialog.pas' {AddRestResourceForm},
   AddRestOperationDialog in 'AddRestOperationDialog.pas' {AddRestOperationForm},
   TranslationsEditorDialog in 'TranslationsEditorDialog.pas' {TranslationsEditorForm},
@@ -159,7 +159,8 @@ uses
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas';
+  FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
+  FHIR.R3.Organiser in '..\library\r3\FHIR.R3.Organiser.pas';
 
 {$R *.res}
 

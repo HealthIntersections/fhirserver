@@ -71,7 +71,7 @@ uses
   ServerForm in 'ServerForm.pas' {ServerFrameForm: TFrame},
   BaseFrame in 'BaseFrame.pas',
   ValueSetEditor in 'ValueSetEditor.pas' {ValueSetEditorFrame: TFrame},
-  SearchParameterEditor in 'SearchParameterEditor.pas' {SearchParameterEditorForm},
+  SearchParameterCombinationEditor in 'SearchParameterCombinationEditor.pas' {SearchParameterCombinationEditorForm},
   ListSelector in 'ListSelector.pas' {ListSelectorForm},
   FHIR.R4.IndexInfo in '..\library\r4\FHIR.R4.IndexInfo.pas',
   FHIR.Tools.Indexing in '..\library\tools\FHIR.Tools.Indexing.pas',
@@ -178,7 +178,8 @@ uses
   ProjectFilesDialog in 'ProjectFilesDialog.pas' {ProjectDialog},
   UTGMgmtFrame in 'UTGMgmtFrame.pas' {UTGManagementFrame: TFrame},
   uGitForDelphi in '..\dependencies\git\uGitForDelphi.pas',
-  FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas';
+  FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas',
+  FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas';
 
 {$R *.res}
 

@@ -171,6 +171,7 @@ type
     mnuRepository: TMenuItem;
     mnuPublish: TMenuItem;
     MenuItem11: TMenuItem;
+    mnuResourceOrganise: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -208,6 +209,7 @@ type
     procedure mnuRepositoryClick(Sender: TObject);
     procedure mnuPublishClick(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
+    procedure mnuResourceOrganiseClick(Sender: TObject);
   private
     { Private declarations }
     FSettings: TFHIRToolkitSettings;
@@ -1118,6 +1120,14 @@ begin
     frame.load;
   end;
 
+end;
+
+procedure TMasterToolsForm.mnuResourceOrganiseClick(Sender: TObject);
+var
+  frame: TBaseFrame;
+begin
+  frame := tbMain.ActiveTab.TagObject as TBaseFrame;
+  frame.organise;
 end;
 
 procedure TMasterToolsForm.MenuItem7Click(Sender: TObject);

@@ -1,11 +1,11 @@
 object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
-  Size.Width = 922.000000000000000000
-  Size.Height = 832.000000000000000000
+  Size.Width = 1133.000000000000000000
+  Size.Height = 1027.000000000000000000
   Size.PlatformDefault = False
   object Panel2: TPanel
     Align = Left
     Size.Width = 201.000000000000000000
-    Size.Height = 803.000000000000000000
+    Size.Height = 998.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     object Panel4: TPanel
@@ -27,12 +27,12 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
     object tvStructure: TTreeView
       Align = Client
       Size.Width = 201.000000000000000000
-      Size.Height = 778.000000000000000000
+      Size.Height = 973.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 197.000000000000000000
-      Viewport.Height = 774.000000000000000000
+      Viewport.Width = 201.000000000000000000
+      Viewport.Height = 973.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -48,31 +48,31 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
     MinSize = 20.000000000000000000
     Position.X = 201.000000000000000000
     Size.Width = 8.000000000000000000
-    Size.Height = 803.000000000000000000
+    Size.Height = 998.000000000000000000
     Size.PlatformDefault = False
   end
   object Panel3: TPanel
     Align = Client
-    Size.Width = 713.000000000000000000
-    Size.Height = 803.000000000000000000
+    Size.Width = 924.000000000000000000
+    Size.Height = 998.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     object tbStructure: TTabControl
       Align = Client
       Anchors = [akLeft, akTop]
-      Size.Width = 713.000000000000000000
-      Size.Height = 803.000000000000000000
+      Size.Width = 924.000000000000000000
+      Size.Height = 998.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 2
       TabOrder = 0
       TabPosition = None
       Sizes = (
-        713s
-        803s
-        713s
-        803s
-        713s
-        803s)
+        924s
+        998s
+        924s
+        998s
+        924s
+        998s)
       object tbMetadata: TTabItem
         CustomIcon = <
           item
@@ -88,12 +88,12 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object VertScrollBox3: TVertScrollBox
           Align = Client
-          Size.Width = 713.000000000000000000
-          Size.Height = 803.000000000000000000
+          Size.Width = 924.000000000000000000
+          Size.Height = 998.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
-          Viewport.Width = 713.000000000000000000
-          Viewport.Height = 803.000000000000000000
+          Viewport.Width = 924.000000000000000000
+          Viewport.Height = 998.000000000000000000
           object dedDate: TDateEdit
             Date = 42965.000000000000000000
             OnChange = inputChanged
@@ -538,12 +538,12 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object VertScrollBox1: TVertScrollBox
           Align = Client
-          Size.Width = 713.000000000000000000
-          Size.Height = 803.000000000000000000
+          Size.Width = 924.000000000000000000
+          Size.Height = 998.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 17
-          Viewport.Width = 713.000000000000000000
-          Viewport.Height = 803.000000000000000000
+          Viewport.Width = 924.000000000000000000
+          Viewport.Height = 998.000000000000000000
           object edtBatch: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             TabOrder = 28
@@ -837,162 +837,12 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object VertScrollBox2: TVertScrollBox
           Align = Client
-          Size.Width = 713.000000000000000000
-          Size.Height = 803.000000000000000000
+          Size.Width = 924.000000000000000000
+          Size.Height = 998.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 6
-          Viewport.Width = 713.000000000000000000
-          Viewport.Height = 803.000000000000000000
-          object edtDocoCreate: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 0
-            Position.X = 96.000000000000000000
-            Position.Y = 239.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoDelete: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 1
-            Position.X = 96.000000000000000000
-            Position.Y = 326.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoHistoryInstance: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 2
-            Position.X = 160.000000000000000000
-            Position.Y = 355.000000000000000000
-            Size.Width = 425.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoHistoryType: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 3
-            Position.X = 160.000000000000000000
-            Position.Y = 384.000000000000000000
-            Size.Width = 425.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoPatch: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 4
-            Position.X = 96.000000000000000000
-            Position.Y = 297.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoRead: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 5
-            Position.X = 96.000000000000000000
-            Position.Y = 152.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoSearch: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 6
-            Position.X = 96.000000000000000000
-            Position.Y = 210.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoUpdate: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 7
-            Position.X = 96.000000000000000000
-            Position.Y = 268.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtDocoVRead: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 8
-            Position.X = 96.000000000000000000
-            Position.Y = 181.000000000000000000
-            Size.Width = 489.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object edtProfile: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 9
-            Position.X = 88.000000000000000000
-            Position.Y = 104.000000000000000000
-            Size.Width = 529.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            OnChange = inputChanged
-            OnChangeTracking = inputChanged
-          end
-          object gridSearch: TGrid
-            CanFocus = True
-            ClipChildren = True
-            Position.X = 16.000000000000000000
-            Position.Y = 536.000000000000000000
-            Size.Width = 513.000000000000000000
-            Size.Height = 217.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 10
-            RowCount = 10
-            OnGetValue = gridSearchGetValue
-            OnSetValue = gridSearchSetValue
-            OnCellDblClick = gridSearchCellDblClick
-            Viewport.Width = 493.000000000000000000
-            Viewport.Height = 176.000000000000000000
-            object Column1: TColumn
-              Header = 'Name'
-              Size.Width = 85.000000000000000000
-            end
-            object PopupColumn1: TPopupColumn
-              Header = 'Type'
-              Items.Strings = (
-                'number'
-                'date'
-                'string'
-                'token'
-                'reference'
-                'composite'
-                'quantity'
-                'uri')
-            end
-            object StringColumn1: TStringColumn
-              Header = 'Definition (URL)'
-              Size.Width = 138.000000000000000000
-            end
-            object StringColumn2: TStringColumn
-              Header = 'Documentation'
-              Size.Width = 250.000000000000000000
-            end
-          end
+          Viewport.Width = 924.000000000000000000
+          Viewport.Height = 998.000000000000000000
           object Label18: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 16.000000000000000000
@@ -1000,55 +850,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'General Documentation'
-            TabOrder = 11
-          end
-          object Label19: TLabel
-            Position.X = 16.000000000000000000
-            Position.Y = 104.000000000000000000
-            Text = 'Profile'
-            TabOrder = 12
-          end
-          object Label20: TLabel
-            Position.X = 16.000000000000000000
-            Position.Y = 128.000000000000000000
-            Text = 'Interactions'
-            TabOrder = 13
-          end
-          object Label21: TLabel
-            Position.X = 16.000000000000000000
-            Position.Y = 445.000000000000000000
-            Size.Width = 89.000000000000000000
-            Size.Height = 17.000000000000000000
-            Size.PlatformDefault = False
-            Text = 'Conditional: '
-            TabOrder = 14
-          end
-          object Label22: TLabel
-            Position.X = 326.000000000000000000
-            Position.Y = 445.000000000000000000
-            Text = 'Read:'
-            TabOrder = 15
-          end
-          object Label23: TLabel
-            Position.X = 16.000000000000000000
-            Position.Y = 476.000000000000000000
-            Text = 'References:'
-            TabOrder = 16
-          end
-          object Label24: TLabel
-            Position.X = 200.000000000000000000
-            Position.Y = 417.000000000000000000
-            Size.Width = 81.000000000000000000
-            Size.Height = 17.000000000000000000
-            Size.PlatformDefault = False
-            Text = 'Versioning:'
-            TabOrder = 17
-          end
-          object Label25: TLabel
-            Position.X = 16.000000000000000000
-            Position.Y = 512.000000000000000000
-            Text = 'Search Parameters'
-            TabOrder = 18
+            TabOrder = 0
           end
           object mDocoRes: TMemo
             Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -1058,237 +860,11 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Position.X = 16.000000000000000000
             Position.Y = 40.000000000000000000
             Size.Width = 569.000000000000000000
-            Size.Height = 57.000000000000000000
+            Size.Height = 145.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 19
-            Viewport.Width = 565.000000000000000000
-            Viewport.Height = 53.000000000000000000
-          end
-          object btnParamAdd: TButton
-            Position.X = 536.000000000000000000
-            Position.Y = 536.000000000000000000
-            TabOrder = 20
-            Text = 'Add'
-            OnClick = btnParamAddClick
-          end
-          object btnParamAddStd: TButton
-            Position.X = 536.000000000000000000
-            Position.Y = 560.000000000000000000
-            TabOrder = 21
-            Text = 'Add Std.'
-            OnClick = btnParamAddStdClick
-          end
-          object btnParamDelete: TButton
-            Position.X = 536.000000000000000000
-            Position.Y = 609.000000000000000000
-            TabOrder = 22
-            Text = 'Delete'
-            OnClick = btnParamDeleteClick
-          end
-          object btnParamEdit: TButton
-            Position.X = 536.000000000000000000
-            Position.Y = 584.000000000000000000
-            TabOrder = 23
-            Text = 'Edit'
-            OnClick = btnParamEditClick
-          end
-          object cbCondCreate: TCheckBox
-            Position.X = 104.000000000000000000
-            Position.Y = 444.000000000000000000
-            Size.Width = 65.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 24
-            Text = 'Create'
-            OnChange = inputChanged
-          end
-          object cbCondDelete: TCheckBox
-            Position.X = 256.000000000000000000
-            Position.Y = 444.000000000000000000
-            TabOrder = 25
-            Text = 'Delete'
-            OnChange = inputChanged
-          end
-          object cbCondUpdate: TCheckBox
-            Position.X = 176.000000000000000000
-            Position.Y = 444.000000000000000000
-            Size.Width = 65.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 26
-            Text = 'Update'
-            OnChange = inputChanged
-          end
-          object cbCreate: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 238.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 27
-            Text = 'Create'
-            OnChange = inputChanged
-          end
-          object cbDelete: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 324.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 28
-            Text = 'Delete'
-            OnChange = inputChanged
-          end
-          object cbHistoryInstance: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 353.000000000000000000
-            Size.Width = 137.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 29
-            Text = 'History (Instance)'
-            OnChange = inputChanged
-          end
-          object cbHistoryType: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 382.000000000000000000
-            Size.Width = 129.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 30
-            Text = 'History (Type)'
-            OnChange = inputChanged
-          end
-          object cbPatch: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 295.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 31
-            Text = 'Patch'
-            OnChange = inputChanged
-          end
-          object cbRead: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 152.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 32
-            Text = 'Read'
-            OnChange = inputChanged
-          end
-          object cbRefEnforced: TCheckBox
-            Position.X = 408.000000000000000000
-            Position.Y = 476.000000000000000000
-            TabOrder = 33
-            Text = 'Enforced'
-            OnChange = inputChanged
-          end
-          object cbRefLiteral: TCheckBox
-            Position.X = 104.000000000000000000
-            Position.Y = 476.000000000000000000
-            TabOrder = 34
-            Text = 'Literal'
-            OnChange = inputChanged
-          end
-          object cbRefLocal: TCheckBox
-            Position.X = 488.000000000000000000
-            Position.Y = 476.000000000000000000
-            Size.Width = 89.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 35
-            Text = 'Local Only'
-            OnChange = inputChanged
-          end
-          object cbRefLogical: TCheckBox
-            Position.X = 176.000000000000000000
-            Position.Y = 476.000000000000000000
-            TabOrder = 36
-            Text = 'Logical'
-            OnChange = inputChanged
-          end
-          object cbRefResolve: TCheckBox
-            Position.X = 256.000000000000000000
-            Position.Y = 476.000000000000000000
-            Size.Width = 153.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 37
-            Text = 'Resolves Logical'
-            OnChange = inputChanged
-          end
-          object cbSearch: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 209.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 38
-            Text = 'Search'
-            OnChange = inputChanged
-          end
-          object cbUpdate: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 267.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 39
-            Text = 'Update'
-            OnChange = inputChanged
-          end
-          object cbUpdateCreate: TCheckBox
-            Position.X = 16.000000000000000000
-            Position.Y = 416.000000000000000000
-            Size.Width = 161.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 40
-            Text = 'Allow Update to Create'
-            OnChange = inputChanged
-          end
-          object cbVRead: TCheckBox
-            Position.X = 24.000000000000000000
-            Position.Y = 180.000000000000000000
-            Size.Width = 73.000000000000000000
-            Size.Height = 19.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 41
-            Text = 'VRead'
-            OnChange = inputChanged
-          end
-          object cbxReadCondition: TComboBox
-            Items.Strings = (
-              ''
-              'Not Supported'
-              'Supports Modified-Since Header'
-              'Supports Not-match Header '
-              'Fully supported')
-            Position.X = 368.000000000000000000
-            Position.Y = 444.000000000000000000
-            Size.Width = 249.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 42
-            OnChange = inputChanged
-          end
-          object cbxVersioning: TComboBox
-            Items.Strings = (
-              ''
-              'None'
-              'Versions Tracked'
-              'Versioned Update Required')
-            ItemIndex = 0
-            Position.X = 272.000000000000000000
-            Position.Y = 416.000000000000000000
-            Size.Width = 345.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 43
-            OnChange = inputChanged
+            TabOrder = 1
+            Viewport.Width = 569.000000000000000000
+            Viewport.Height = 145.000000000000000000
           end
           object btnDocoRes: TButton
             Images = ToolbarImages
@@ -1298,107 +874,666 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 54
+            TabOrder = 3
             OnClick = btnDocoResClick
           end
-          object btnDocoRead: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 152.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
+          object TabControl1: TTabControl
+            Position.X = 16.000000000000000000
+            Position.Y = 200.000000000000000000
+            Size.Width = 673.000000000000000000
+            Size.Height = 729.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 53
-            OnClick = btnDocoReadClick
-          end
-          object btnDocoVRead: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 181.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 52
-            OnClick = btnDocoVReadClick
-          end
-          object btnDocoSearch: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 210.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 51
-            OnClick = btnDocoSearchClick
-          end
-          object btnDocoCreate: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 239.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 50
-            OnClick = btnDocoCreateClick
-          end
-          object btnDocoUpdate: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 268.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 49
-            OnClick = btnDocoUpdateClick
-          end
-          object btnDocoPatch: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 297.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 48
-            OnClick = btnDocoPatchClick
-          end
-          object btnDocoDelete: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 326.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 47
-            OnClick = btnDocoDeleteClick
-          end
-          object btnDocoHistoryInstance: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 355.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 46
-            OnClick = btnDocoHistoryInstanceClick
-          end
-          object btnDocoHistoryType: TButton
-            Images = ToolbarImages
-            ImageIndex = 0
-            Position.X = 594.000000000000000000
-            Position.Y = 384.000000000000000000
-            Size.Width = 22.000000000000000000
-            Size.Height = 22.000000000000000000
-            Size.PlatformDefault = False
-            TabOrder = 45
-            OnClick = btnDocoHistoryTypeClick
+            TabIndex = 1
+            TabOrder = 4
+            TabPosition = PlatformDefault
+            Sizes = (
+              673s
+              703s
+              673s
+              703s)
+            object TabItem1: TTabItem
+              CustomIcon = <
+                item
+                end>
+              IsSelected = False
+              Size.Width = 61.000000000000000000
+              Size.Height = 26.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = ''
+              TabOrder = 0
+              Text = 'General'
+              ExplicitSize.cx = 61.000000000000000000
+              ExplicitSize.cy = 26.000000000000000000
+              object btnDocoCreate: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 175.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 0
+                OnClick = btnDocoCreateClick
+              end
+              object btnDocoDelete: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 262.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 1
+                OnClick = btnDocoDeleteClick
+              end
+              object btnDocoHistoryInstance: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 291.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 2
+                OnClick = btnDocoHistoryInstanceClick
+              end
+              object btnDocoHistoryType: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 320.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 3
+                OnClick = btnDocoHistoryTypeClick
+              end
+              object btnDocoPatch: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 233.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 4
+                OnClick = btnDocoPatchClick
+              end
+              object btnDocoRead: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 88.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 5
+                OnClick = btnDocoReadClick
+              end
+              object btnDocoSearch: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 146.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 6
+                OnClick = btnDocoSearchClick
+              end
+              object btnDocoUpdate: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 204.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 7
+                OnClick = btnDocoUpdateClick
+              end
+              object btnDocoVRead: TButton
+                Images = ToolbarImages
+                ImageIndex = 0
+                Position.X = 586.000000000000000000
+                Position.Y = 117.000000000000000000
+                Size.Width = 22.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 8
+                OnClick = btnDocoVReadClick
+              end
+              object cbCondCreate: TCheckBox
+                Position.X = 96.000000000000000000
+                Position.Y = 380.000000000000000000
+                Size.Width = 65.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 9
+                Text = 'Create'
+                OnChange = inputChanged
+              end
+              object cbCondDelete: TCheckBox
+                Position.X = 248.000000000000000000
+                Position.Y = 380.000000000000000000
+                Size.Width = 121.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 10
+                Text = 'Delete'
+                OnChange = inputChanged
+              end
+              object cbCondUpdate: TCheckBox
+                Position.X = 168.000000000000000000
+                Position.Y = 380.000000000000000000
+                Size.Width = 65.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 11
+                Text = 'Update'
+                OnChange = inputChanged
+              end
+              object cbCreate: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 174.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 12
+                Text = 'Create'
+                OnChange = inputChanged
+              end
+              object cbDelete: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 260.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 13
+                Text = 'Delete'
+                OnChange = inputChanged
+              end
+              object cbHistoryInstance: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 289.000000000000000000
+                Size.Width = 137.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 14
+                Text = 'History (Instance)'
+                OnChange = inputChanged
+              end
+              object cbHistoryType: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 318.000000000000000000
+                Size.Width = 129.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 15
+                Text = 'History (Type)'
+                OnChange = inputChanged
+              end
+              object cbPatch: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 231.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 16
+                Text = 'Patch'
+                OnChange = inputChanged
+              end
+              object cbRead: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 88.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 17
+                Text = 'Read'
+                OnChange = inputChanged
+              end
+              object cbRefEnforced: TCheckBox
+                Position.X = 400.000000000000000000
+                Position.Y = 412.000000000000000000
+                TabOrder = 18
+                Text = 'Enforced'
+                OnChange = inputChanged
+              end
+              object cbRefLiteral: TCheckBox
+                Position.X = 96.000000000000000000
+                Position.Y = 412.000000000000000000
+                TabOrder = 19
+                Text = 'Literal'
+                OnChange = inputChanged
+              end
+              object cbRefLocal: TCheckBox
+                Position.X = 480.000000000000000000
+                Position.Y = 412.000000000000000000
+                Size.Width = 89.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 20
+                Text = 'Local Only'
+                OnChange = inputChanged
+              end
+              object cbRefLogical: TCheckBox
+                Position.X = 168.000000000000000000
+                Position.Y = 412.000000000000000000
+                TabOrder = 21
+                Text = 'Logical'
+                OnChange = inputChanged
+              end
+              object cbRefResolve: TCheckBox
+                Position.X = 248.000000000000000000
+                Position.Y = 412.000000000000000000
+                Size.Width = 153.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 22
+                Text = 'Resolves Logical'
+                OnChange = inputChanged
+              end
+              object cbSearch: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 145.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 23
+                Text = 'Search'
+                OnChange = inputChanged
+              end
+              object cbUpdate: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 203.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 24
+                Text = 'Update'
+                OnChange = inputChanged
+              end
+              object cbUpdateCreate: TCheckBox
+                Position.X = 8.000000000000000000
+                Position.Y = 352.000000000000000000
+                Size.Width = 161.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 25
+                Text = 'Allow Update to Create'
+                OnChange = inputChanged
+              end
+              object cbVRead: TCheckBox
+                Position.X = 16.000000000000000000
+                Position.Y = 116.000000000000000000
+                Size.Width = 73.000000000000000000
+                Size.Height = 19.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 26
+                Text = 'VRead'
+                OnChange = inputChanged
+              end
+              object cbxReadCondition: TComboBox
+                Items.Strings = (
+                  ''
+                  'Not Supported'
+                  'Supports Modified-Since Header'
+                  'Supports Not-match Header '
+                  'Fully supported')
+                Position.X = 360.000000000000000000
+                Position.Y = 380.000000000000000000
+                Size.Width = 249.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 27
+                OnChange = inputChanged
+              end
+              object cbxResourceConformance: TComboBox
+                Items.Strings = (
+                  ''
+                  'SHALL Support'
+                  'SHOULD Support'
+                  'MAY Support '
+                  'SHALL NOT Support')
+                Position.X = 88.000000000000000000
+                Position.Y = 14.000000000000000000
+                Size.Width = 521.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 28
+              end
+              object cbxVersioning: TComboBox
+                Items.Strings = (
+                  ''
+                  'None'
+                  'Versions Tracked'
+                  'Versioned Update Required')
+                ItemIndex = 0
+                Position.X = 264.000000000000000000
+                Position.Y = 352.000000000000000000
+                Size.Width = 345.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 29
+                OnChange = inputChanged
+              end
+              object edtDocoCreate: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 30
+                Position.X = 88.000000000000000000
+                Position.Y = 175.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoDelete: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 31
+                Position.X = 88.000000000000000000
+                Position.Y = 262.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoHistoryInstance: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 32
+                Position.X = 152.000000000000000000
+                Position.Y = 291.000000000000000000
+                Size.Width = 425.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoHistoryType: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 33
+                Position.X = 152.000000000000000000
+                Position.Y = 320.000000000000000000
+                Size.Width = 425.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoPatch: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 34
+                Position.X = 88.000000000000000000
+                Position.Y = 233.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoRead: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 35
+                Position.X = 88.000000000000000000
+                Position.Y = 88.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoSearch: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 36
+                Position.X = 88.000000000000000000
+                Position.Y = 146.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoUpdate: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 37
+                Position.X = 88.000000000000000000
+                Position.Y = 204.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtDocoVRead: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 38
+                Position.X = 88.000000000000000000
+                Position.Y = 117.000000000000000000
+                Size.Width = 489.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object edtProfile: TEdit
+                Touch.InteractiveGestures = [LongTap, DoubleTap]
+                TabOrder = 39
+                Position.X = 88.000000000000000000
+                Position.Y = 40.000000000000000000
+                Size.Width = 521.000000000000000000
+                Size.Height = 22.000000000000000000
+                Size.PlatformDefault = False
+                OnChange = inputChanged
+                OnChangeTracking = inputChanged
+              end
+              object Label19: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 40.000000000000000000
+                Text = 'Profile'
+                TabOrder = 40
+              end
+              object Label21: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 381.000000000000000000
+                Size.Width = 89.000000000000000000
+                Size.Height = 17.000000000000000000
+                Size.PlatformDefault = False
+                Text = 'Conditional: '
+                TabOrder = 41
+              end
+              object Label23: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 412.000000000000000000
+                Text = 'References:'
+                TabOrder = 42
+              end
+              object Label24: TLabel
+                Position.X = 192.000000000000000000
+                Position.Y = 353.000000000000000000
+                Size.Width = 81.000000000000000000
+                Size.Height = 17.000000000000000000
+                Size.PlatformDefault = False
+                Text = 'Versioning:'
+                TabOrder = 43
+              end
+              object Label27: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 14.000000000000000000
+                Size.Width = 81.000000000000000000
+                Size.Height = 17.000000000000000000
+                Size.PlatformDefault = False
+                Text = 'Conformance:'
+                TabOrder = 44
+              end
+              object Label20: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 64.000000000000000000
+                Text = 'Interactions'
+                TabOrder = 45
+              end
+              object Label22: TLabel
+                Position.X = 328.000000000000000000
+                Position.Y = 381.000000000000000000
+                Size.Width = 118.000000000000000000
+                Size.Height = 20.000000000000000000
+                Size.PlatformDefault = False
+                Text = 'Read:'
+                TabOrder = 46
+              end
+            end
+            object TabItem2: TTabItem
+              CustomIcon = <
+                item
+                end>
+              IsSelected = True
+              Size.Width = 56.000000000000000000
+              Size.Height = 26.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = ''
+              TabOrder = 0
+              Text = 'Search'
+              ExplicitSize.cx = 56.000000000000000000
+              ExplicitSize.cy = 26.000000000000000000
+              object btnParamAdd: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 32.000000000000000000
+                TabOrder = 0
+                Text = 'Add'
+                OnClick = btnParamAddClick
+              end
+              object btnParamAddStd: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 56.000000000000000000
+                TabOrder = 1
+                Text = 'Add Std.'
+                OnClick = btnParamAddStdClick
+              end
+              object btnParamDelete: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 105.000000000000000000
+                TabOrder = 2
+                Text = 'Delete'
+                OnClick = btnParamDeleteClick
+              end
+              object btnParamEdit: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 80.000000000000000000
+                TabOrder = 3
+                Text = 'Edit'
+                OnClick = btnParamEditClick
+              end
+              object gridSearch: TGrid
+                CanFocus = True
+                ClipChildren = True
+                Position.X = 8.000000000000000000
+                Position.Y = 30.000000000000000000
+                Size.Width = 561.000000000000000000
+                Size.Height = 299.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 4
+                RowCount = 10
+                OnGetValue = gridSearchGetValue
+                OnSetValue = gridSearchSetValue
+                OnCellDblClick = gridSearchCellDblClick
+                Viewport.Width = 561.000000000000000000
+                Viewport.Height = 299.000000000000000000
+                object Column1: TColumn
+                  Header = 'Name'
+                  Size.Width = 85.000000000000000000
+                end
+                object PopupColumn1: TPopupColumn
+                  Header = 'Type'
+                  Items.Strings = (
+                    'number'
+                    'date'
+                    'string'
+                    'token'
+                    'reference'
+                    'composite'
+                    'quantity'
+                    'uri')
+                end
+                object PopupColumn3: TPopupColumn
+                  Header = 'Conformance'
+                  Items.Strings = (
+                    ''
+                    'SHALL'
+                    'SHOULD'
+                    'MAY'
+                    'SHALL NOT')
+                end
+                object StringColumn1: TStringColumn
+                  Header = 'Definition (URL)'
+                  Size.Width = 138.000000000000000000
+                end
+                object StringColumn2: TStringColumn
+                  Header = 'Documentation'
+                  Size.Width = 250.000000000000000000
+                end
+              end
+              object Label25: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 8.000000000000000000
+                Text = 'Parameters'
+                TabOrder = 5
+              end
+              object Label28: TLabel
+                Position.X = 8.000000000000000000
+                Position.Y = 342.000000000000000000
+                Text = 'Combinations'
+                TabOrder = 6
+              end
+              object gridSearchCombinations: TGrid
+                CanFocus = True
+                ClipChildren = True
+                Position.X = 8.000000000000000000
+                Position.Y = 366.000000000000000000
+                Size.Width = 561.000000000000000000
+                Size.Height = 227.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 7
+                OnGetValue = gridSearchCombinationsGetValue
+                OnSetValue = gridSearchCombinationsSetValue
+                Viewport.Width = 561.000000000000000000
+                Viewport.Height = 227.000000000000000000
+                object PopupColumn2: TPopupColumn
+                  Header = 'Conformance'
+                  Items.Strings = (
+                    ''
+                    'SHALL'
+                    'SHOULD'
+                    'MAY'
+                    'SHALL NOT')
+                end
+                object StringColumn3: TStringColumn
+                  Header = 'Parameters'
+                  Size.Width = 404.000000000000000000
+                end
+              end
+              object btnAddSearchParamCombination: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 366.000000000000000000
+                TabOrder = 8
+                Text = 'Add'
+                OnClick = btnAddSearchParamCombinationClick
+              end
+              object btnEditSearchParamCombination: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 390.000000000000000000
+                TabOrder = 9
+                Text = 'Edit'
+                OnClick = btnEditSearchParamCombinationClick
+              end
+              object btnDeleteSearchCombination: TButton
+                Position.X = 576.000000000000000000
+                Position.Y = 414.000000000000000000
+                TabOrder = 10
+                Text = 'Delete'
+                OnClick = btnDeleteSearchCombinationClick
+              end
+            end
           end
         end
       end
@@ -1406,8 +1541,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
   end
   object Panel1: TPanel
     Align = Bottom
-    Position.Y = 803.000000000000000000
-    Size.Width = 922.000000000000000000
+    Position.Y = 998.000000000000000000
+    Size.Width = 1133.000000000000000000
     Size.Height = 29.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 25
@@ -1461,32 +1596,32 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031749444154384F5D536B485361187EBE73B6A9E730DDE66553B7396D964945
-              5A68165DA0CB8FC0A2A2CC1F6A1904514444517F0ABA4005FD901084282A130A
-              24BA42178AD088200C6D95665E6765ABC69C5B6797B39D733ADFA9247DE0E57C
-              BCEFF3BCEFE1BD10CCC0D13D7BCCF3E2818D9C2C971B143987FA4442BE4714B6
-              EB5D8A7CEFDCC5F6498DF817D3121CDBB5A3BA617E69932B9259C4BEF90AFFB7
-              90E6CFCA4D4772911D5EDE3F7CCDD37BE0D4E5ABF7B5800AF6EF17C777EDD85A
-              3F6B71BBFB792093F9AA0AED2690D525302CC8873E268279EF8365206EB69795
-              6C33BBB2FB3ABA7B7AA94E4B402B6BE2B741367C6C03529EF6217EA11E0F7C04
-              035C0666352E81EE5617C2A73721F7968771CC2DDA6C72E5747776F77C628FEC
-              DE9AB1734ED95D7747C0126DAE83FE451F589705BAA573C0BD1B469E1C435699
-              13980C81F84310F7AE85B5F925E358E6A8E20BDDADA4ADA1A6AE66F6BA56F1D9
-              2038AB11822F04DE9802F0AA05A3F40701531A20C42184E3E06DE9887C0F2365
-              8D1B37079FECD471445AACEBFA02A1A916423A07C3EE2B089FAF0563D081BFFF
-              5AD30BD51590C52452F75D8770661B92A108B81377C019E572C6A02856259640
-              4689137C5E1692920CA3CB06DEE1C4A8D9A2197D531F8D510EE52292801E8A95
-              D14AFC07327DB2D3C09019310512439784A4EA31F9710CC2B81F2C4B10F6FA20
-              7C1E836B22A0197D531FC3108D43B9E0F44810E29F6A22E91C01EB3421E19D80
-              DEAC362D3D15F829FCA994CD03A118121351E80BCC90C682C0CA42AD896C7165
-              A9B7C86ED99E391437C5D4E68163A1B319D5CDDA8251300896DA613ABC1EF811
-              40B2BC0089C655D03FE8C170A932FA38183BC8D0DD6EF57CD83FB4DC26A51DBA
-              01716101F0A80FA23A360A2FCB41FC1587F2B0578B51CEE08A3C896ACEB6B44C
-              4C7585AE725D71E50D77E7380B56ED6DA10528CE86AC63C17CF0A99902803A85
-              81E5B952DBE0EBDA9397AFB653DDD42DD0DDB6145A7B1C55F99519B65C33D3FF
-              13FE57A3887AC6C1A9F16485132373A5E1B67E4FE3C94B576EFF51CDB8468A7F
-              E79C2625171908C9A1A312A1FC88C84CF7FB34DC997ECEC06F688C466FF78526
-              0C0000000049454E44AE426082}
+              030B49444154384F5D535B48146114FEFE999D556758DD9BEE6AEBAE9A9A4A86
+              9728B61E0ABA3C041151591B84561044111145BD14650F15F4D0431444525964
+              E04377BA400F161444A5D8AA45A6BB76DB7471D75D67DD9DDD9969FEB124FDE0
+              CCFC9CF37DFF0FDF3987600E8EEDDD6B59981ADFC02B4A8351550A684E22E477
+              4265DF7DCC521E9CBBD239A113FF62D605C777B7AC6FAEADB95092B095B1EF7F
+              20FC2BA6E7ED85B9C834BA1014C243377AFB0F9E6EBBFE502F6860FFFE716277
+              CB96ED9EBACECAAEA88DF9A1095D66905555302E9A072E2981F18760FD92B238
+              6BCB9B6C658E81AEEE9E7EAA63E887BEECF3D47554F54DB2F1D31B818C82D4C9
+              CD786C73EB41CF34476BD5FE184BB95443B5ECD13D5BF2762EA8BF5FF92A6A9D
+              BAB803DCAB01B0255618962D00FF7108454A12F67A3730110309C720ED5B83C2
+              4B6F98E2E5C55EA1B4BC9DDC6ADEBA636BE5DA76E9C520788709622806C19405
+              085A44A7E823803907105310E32908CE5C247EC791B5BA1C77069FEF34F0445E
+              6C78F71DE2051FC45C1EC63DD7103FEF0363344078F856D78BEB97409132C8DE
+              7F13E29926646209F0A7EE8137290D8C51551D6A328DBC2A3784223B32B20253
+              891342B11B018B550F7AA6395AA31CCA45220D0EAA4337F17F90D99D9D0586CC
+              A9A990193A24249BC3C4A711883FC3605982783004F1DB084A22E37AD033CD31
+              0CD139940B9E439A90F08C89E4E53058B719E960049C45332D371B1813A75FCA
+              17805812E9C814388F05F248145851AA9BC8562CAD0996B9ACDB6C5F53E6A466
+              1E781606A7499BAC4D08686312AD71C17C641D303A8E4C8307E95D2BC13DEAC1
+              508D1A78164D1E62E86CB7F7F61DF8ECB5CB39873B20D57980A70390B4B65104
+              591ED2640AEA937EBD46399F9615C85473F6F2E5C88C2B74947DA58D1D55AF47
+              59B09AB7A556A0221F8A8105D317D26E1A07B42E0C78F3E53B810FBED6B6EB9D
+              5437B30B74B6EDF30B7B8ABDF396E6390B2DCCE73184DF0430D5FB13BC56CF2C
+              7163B85A1EBAFDC5BFABF5EAB5BBD3AA39DB48F16F9D73E44CA3919002DA2A09
+              EA684261BAFD39B8377B9D813F1052459B18EB10920000000049454E44AE4260
+              82}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

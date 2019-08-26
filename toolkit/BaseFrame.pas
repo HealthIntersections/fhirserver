@@ -76,6 +76,7 @@ type
     property OnStopped : TIsStoppedEvent read FOnStopped write FOnStopped;
     property UTGRepo : TUTGRepositoryBase read FUTGRepo write SetUTGRepo;
 
+
     procedure load; virtual;
     procedure Close;
 
@@ -90,7 +91,8 @@ type
     function originalResource : TFHIRResource; virtual;
     procedure reload; virtual;
     procedure SettingsChanged; virtual;
-
+    procedure organise; virtual;
+    function canOrganise : boolean; virtual;
     procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure work(opName : String; canCancel : boolean; proc : TWorkProc);
   end;
@@ -98,6 +100,11 @@ type
 implementation
 
 { TBaseFrame }
+
+function TBaseFrame.canOrganise: boolean;
+begin
+  result := false;
+end;
 
 function TBaseFrame.canSave: boolean;
 begin
@@ -158,6 +165,11 @@ end;
 function TBaseFrame.nameForSaveDialog: String;
 begin
   result := '';
+end;
+
+procedure TBaseFrame.organise;
+begin
+  // nothing
 end;
 
 function TBaseFrame.originalResource: TFHIRResource;

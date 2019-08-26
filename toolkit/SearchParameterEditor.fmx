@@ -2,7 +2,7 @@ object SearchParameterEditorForm: TSearchParameterEditorForm
   Left = 0
   Top = 0
   Caption = 'Search Parameter Details'
-  ClientHeight = 264
+  ClientHeight = 307
   ClientWidth = 434
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -11,7 +11,7 @@ object SearchParameterEditorForm: TSearchParameterEditorForm
   DesignerMasterStyle = 0
   object Panel1: TPanel
     Align = Bottom
-    Position.Y = 224.000000000000000000
+    Position.Y = 267.000000000000000000
     Size.Width = 434.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
@@ -50,13 +50,13 @@ object SearchParameterEditorForm: TSearchParameterEditorForm
   end
   object Label3: TLabel
     Position.X = 16.000000000000000000
-    Position.Y = 74.000000000000000000
+    Position.Y = 106.000000000000000000
     Text = 'Definition:'
     TabOrder = 3
   end
   object Label4: TLabel
     Position.X = 16.000000000000000000
-    Position.Y = 104.000000000000000000
+    Position.Y = 136.000000000000000000
     Text = 'Documentation:'
     TabOrder = 4
   end
@@ -75,7 +75,7 @@ object SearchParameterEditorForm: TSearchParameterEditorForm
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 6
     Position.X = 80.000000000000000000
-    Position.Y = 72.000000000000000000
+    Position.Y = 104.000000000000000000
     Size.Width = 341.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
@@ -104,12 +104,35 @@ object SearchParameterEditorForm: TSearchParameterEditorForm
     DataDetectorTypes = []
     Anchors = [akLeft, akTop, akRight, akBottom]
     Position.X = 16.000000000000000000
-    Position.Y = 128.000000000000000000
+    Position.Y = 160.000000000000000000
     Size.Width = 405.000000000000000000
-    Size.Height = 82.000000000000000000
+    Size.Height = 93.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 8
-    Viewport.Width = 405.000000000000000000
-    Viewport.Height = 82.000000000000000000
+    Viewport.Width = 401.000000000000000000
+    Viewport.Height = 89.000000000000000000
+  end
+  object Label27: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 70.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Conformance:'
+    TabOrder = 43
+  end
+  object cbxConformance: TComboBox
+    Items.Strings = (
+      ''
+      'SHALL Support'
+      'SHOULD Support'
+      'MAY Support '
+      'SHALL NOT Support')
+    Position.X = 112.000000000000000000
+    Position.Y = 70.000000000000000000
+    Size.Width = 305.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 27
   end
 end
