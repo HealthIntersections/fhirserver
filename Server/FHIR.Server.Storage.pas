@@ -284,8 +284,8 @@ Type
     procedure Sweep; virtual; abstract;
     procedure RecordFhirSession(session: TFhirSession); virtual; abstract;
     procedure CloseFhirSession(key: integer); virtual; abstract;
-    procedure QueueResource(r: TFhirResourceV); overload; virtual; abstract;
-    procedure QueueResource(r: TFhirResourceV; dateTime: TFslDateTime); overload; virtual; abstract;
+    procedure QueueResource(session : TFHIRSession; r: TFhirResourceV); overload; virtual; abstract;
+    procedure QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime); overload; virtual; abstract;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); virtual; abstract;
     function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; virtual; abstract;
 

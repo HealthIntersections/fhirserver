@@ -730,7 +730,7 @@ begin
       else
         o.name := name;
     end;
-    Repository.queueResource(se);
+    Repository.queueResource(session, se);
   finally
     se.Free;
   end;
@@ -3246,7 +3246,7 @@ begin
       p.requestor := true;
     end;
 
-    QueueResource(se, se.event.dateTime);
+    QueueResource(session, se, se.event.dateTime);
   finally
     se.free;
   end;

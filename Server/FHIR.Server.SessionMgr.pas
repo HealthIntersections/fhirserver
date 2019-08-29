@@ -171,7 +171,7 @@ begin
         se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
         if clientIp <> '' then
           se.participantIp(clientIp);
-        TFHIRServerContext(serverContext).Storage.QueueResource(se.resource, se.dateTime);
+        TFHIRServerContext(serverContext).Storage.QueueResource(session, se.resource, se.dateTime);
       finally
         se.free;
       end;
@@ -202,7 +202,7 @@ begin
         se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
         if (ip <> '') then
           se.participantIp(ip);
-        TFHIRServerContext(serverContext).Storage.QueueResource(se.Resource, se.dateTime);
+        TFHIRServerContext(serverContext).Storage.QueueResource(session, se.Resource, se.dateTime);
       finally
         se.free;
       end;
@@ -392,7 +392,7 @@ begin
         if (ClientIp <> '') then
           se.participantIp(ClientIp);
 
-        TFHIRServerContext(serverContext).Storage.QueueResource(se.Resource, se.dateTime);
+        TFHIRServerContext(serverContext).Storage.QueueResource(result, se.Resource, se.dateTime);
       finally
         se.free;
       end;
@@ -473,7 +473,7 @@ begin
         se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
         if (clientInfo <> '') then
           se.participantIp(clientInfo);
-        TFHIRServerContext(ServerContext).Storage.QueueResource(se.Resource, se.dateTime);
+        TFHIRServerContext(ServerContext).Storage.QueueResource(session, se.Resource, se.dateTime);
       finally
         se.free;
       end;

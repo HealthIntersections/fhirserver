@@ -991,7 +991,7 @@ begin
     p.source := res;
     p.Parse;
     p.resource.Tags['process'] := 'true';
-    TFHIRServerContext(ServerContext).Storage.QueueResource(p.resource);
+    TFHIRServerContext(ServerContext).Storage.QueueResource(nil, p.resource);
   finally
     p.Free;
   end;

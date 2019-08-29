@@ -78,6 +78,18 @@ type
     function forAll: String;
   end;
 
+  TFHIRQueuedResource = class (TFslObject)
+  private
+    FSession : TFHIRSession;
+    FResource : TFHIRResourceV;
+  public
+    constructor Create(session : TFHIRSession; resource : TFHIRResourceV);
+    destructor Destroy; override;
+
+    property resource : TFHIRResourceV read FResource;
+    property session : TFHIRSession read FSession;
+  end;
+
   TFHIRTransactionEntryState = (tesIgnore, tesRead, tesCreate, tesUpdate, tesDelete);
 
   TFHIRTransactionEntry = class (TFslName)
@@ -250,7 +262,7 @@ type
 
     // index maintenance
     procedure clear(a : TArray<String>);
-    procedure storeResources(list: TFslList<TFHIRResourceV>; origin : TFHIRRequestOrigin; upload : boolean);
+    procedure storeResources(list: TFslList<TFHIRQueuedResource>; origin : TFHIRRequestOrigin; upload : boolean);
 
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String); overload; override;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); overload; override;
@@ -282,7 +294,7 @@ type
     FSpaces : TFHIRIndexSpaces;
     FRegisteredValueSets : TFslStringDictionary;
 
-    FQueue: TFslList<TFHIRResourceV>;
+    FQueue: TFslList<TFHIRQueuedResource>;
 
     procedure LoadExistingResources(conn: TKDBConnection);
     procedure LoadSpaces(conn: TKDBConnection);
@@ -350,8 +362,8 @@ type
 
     function ExpandVS(vs: TFHIRValueSetW; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; override;
     function LookupCode(system, version, code: String): String; override;
-    procedure QueueResource(r: TFHIRResourceV); overload; override;
-    procedure QueueResource(r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
+    procedure QueueResource(session : TFHIRSession; r: TFHIRResourceV); overload; override;
+    procedure QueueResource(session : TFHIRSession; r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
     procedure RunValidation; override;
 
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
@@ -443,11 +455,13 @@ end;
 procedure TFHIRNativeOperationEngine.DefineConformanceResources(base: String);
 
 var
-  list : TFslList<TFHIRResourceV>;
+  list : TFslList<TFHIRQueuedResource>;
+  q : TFHIRQueuedResource;
+  list2 : TFslList<TFHIRResourceV>;
   op : TFHIROperationDefinitionW;
   i : Integer;
 begin
-  list := TFslList<TFHIRResourceV>.create;
+  list := TFslList<TFHIRQueuedResource>.create;
   try
     for i := 0 to FOperations.Count - 1 do
     begin
@@ -456,16 +470,25 @@ begin
         if (op <> nil) then
         begin
           op.tag := TFslDateTimeWrapper.create(TFslDateTime.makeLocal);
-          list.Add(op.Resource.link);
+          list.Add(TFHIRQueuedResource.Create(nil, op.Resource.link));
         end;
       finally
         op.Free;
       end;
     end;
     for i := 0 to list.Count - 1 do
-      list[i].Tags['internal'] := '1';
+      list[i].Resource.Tags['internal'] := '1';
     if factory.version = fhirVersionRelease2 then
-      FRepository.ServerContext.TerminologyServer.declareCodeSystems(list);
+    begin
+      list2 := TFslList<TFHIRResourceV>.create;
+      try
+        for q in list do
+          list2.add(q.resource.link);
+        FRepository.ServerContext.TerminologyServer.declareCodeSystems(list2);
+      finally
+        list2.Free;
+      end;
+    end;
     storeResources(list, roConfig, true);
   finally
     list.Free;
@@ -3213,7 +3236,7 @@ procedure TFHIRNativeOperationEngine.SaveProvenance(session: TFhirSession; prv: 
 begin
   prv.id := '';
 
-  FRepository.QueueResource(prv);
+  FRepository.QueueResource(session, prv);
 end;
 
 function TFHIRNativeOperationEngine.scanId(request : TFHIRRequest; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
@@ -4710,7 +4733,7 @@ begin
   doAuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message);
 end;
 
-procedure TFHIRNativeOperationEngine.storeResources(list : TFslList<TFHIRResourceV>; origin : TFHIRRequestOrigin; upload : boolean);
+procedure TFHIRNativeOperationEngine.storeResources(list : TFslList<TFHIRQueuedResource>; origin : TFHIRRequestOrigin; upload : boolean);
 var
   i : integer;
   request: TFHIRRequest;
@@ -4727,23 +4750,23 @@ begin
     try
       for i := 0 to list.count - 1 do
       begin
-        request.ResourceName := list[i].FhirType;
-        request.Resource := list[i].link;
+        request.ResourceName := list[i].Resource.FhirType;
+        request.Resource := list[i].Resource.link;
         request.CommandType := fcmdCreate;
         request.internalRequestId := TFHIRServerContext(FServerContext).Globals.nextRequestId;
-        if (list[i].fhirType  = 'Bundle') and (list[i].Tags['process'] = 'true') then
+        if (list[i].Resource.fhirType  = 'Bundle') and (list[i].Resource.Tags['process'] = 'true') then
         begin
           request.CommandType := fcmdTransaction;
         end
-        else if (list[i].id <> '') then
+        else if (list[i].Resource.id <> '') then
         begin
-          request.id := list[i].id;
+          request.id := list[i].Resource.id;
           request.CommandType := fcmdUpdate;
         end;
 
-        if TFHIRResourceV(list[i]).Tag <> nil then
-          request.lastModifiedDate := TFslDateTimeWrapper(TFHIRResourceV(list[i]).Tag).Value.DateTime;
-        request.Session := nil;
+        if list[i].Resource.Tag <> nil then
+          request.lastModifiedDate := TFslDateTimeWrapper(list[i].Resource.Tag).Value.DateTime;
+        request.Session := list[i].Session.Link;
         context.upload := true;
         Execute(context, request, response);
       end;
@@ -5208,7 +5231,7 @@ begin
 //  FAppFolder := AppFolder;
   FDB := DB;
   FLock := TFslLock.Create('fhir-store');
-  FQueue := TFslList<TFHIRResourceV>.Create;
+  FQueue := TFslList<TFHIRQueuedResource>.Create;
   FSpaces := TFHIRIndexSpaces.create;
   FRegisteredValueSets := TFslStringDictionary.create;
 End;
@@ -6213,7 +6236,7 @@ end;
 procedure TFHIRNativeStorageService.Sweep;
 var
   d: TDateTime;
-  list: TFslList<TFHIRResourceV>;
+  list: TFslList<TFHIRQueuedResource>;
   storage: TFHIRNativeOperationEngine;
   conn: TKDBConnection;
 begin
@@ -6226,7 +6249,7 @@ begin
     if FQueue.Count > 0 then
     begin
       list := FQueue;
-      FQueue := TFslList<TFHIRResourceV>.Create;
+      FQueue := TFslList<TFHIRQueuedResource>.Create;
     end;
   finally
     FLock.Unlock;
@@ -6788,9 +6811,9 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.QueueResource(r: TFHIRResourceV; dateTime: TFslDateTime);
+procedure TFHIRNativeStorageService.QueueResource(session : TFHIRSession; r: TFHIRResourceV; dateTime: TFslDateTime);
 begin
-  QueueResource(r);
+  QueueResource(session, r);
 end;
 
 procedure TFHIRNativeStorageService.recordDownload(key: integer; name: String);
@@ -6798,11 +6821,11 @@ begin
   DB.ExecSQL('Update AsyncTasks set Downloads = Downloads + 1 where TaskKey = '+inttostr(key), 'async');
 end;
 
-procedure TFHIRNativeStorageService.QueueResource(r: TFHIRResourceV);
+procedure TFHIRNativeStorageService.QueueResource(session : TFHIRSession; r: TFHIRResourceV);
 begin
   FLock.Lock;
   try
-    FQueue.add(r.Link);
+    FQueue.add(TFHIRQueuedResource.Create(session.Link, r.Link));
   finally
     FLock.Unlock;
   end;
@@ -7231,6 +7254,22 @@ end;
 //    raise EFHIRException.createLang('UNKNOWN_FILTER_OPERATOR', lang, [s]);
 //end;
 //
+
+{ TFHIRQueuedResource }
+
+constructor TFHIRQueuedResource.Create(session: TFHIRSession; resource: TFHIRResourceV);
+begin
+  inherited Create;
+  FSession := session;
+  FResource := resource;
+end;
+
+destructor TFHIRQueuedResource.Destroy;
+begin
+  FSession.Free;;
+  FResource.Free;
+  inherited;
+end;
 
 end.
 

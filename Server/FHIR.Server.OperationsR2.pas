@@ -693,7 +693,7 @@ begin
       else
         o.name := name;
     end;
-    Repository.queueResource(se);
+    Repository.queueResource(session, se);
   finally
     se.Free;
   end;
@@ -2954,7 +2954,7 @@ begin
       p.requestor := true;
     end;
 
-    QueueResource(se, se.event.dateTime);
+    QueueResource(session, se, se.event.dateTime);
   finally
     se.free;
   end;
@@ -2997,7 +2997,7 @@ begin
         code := UriForScope(s);
         system := 'urn:ietf:rfc:3986';
       end;
-    QueueResource(ct, ct.issued);
+    QueueResource(session, ct, ct.issued);
   finally
     ct.free;
   end;
