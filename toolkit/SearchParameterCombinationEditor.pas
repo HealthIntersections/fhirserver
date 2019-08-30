@@ -97,10 +97,10 @@ begin
 
 
   case cbxConformance.ItemIndex of
-    1: FExtension.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL');
-    2: FExtension.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHOULD');
-    3: FExtension.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'MAY');
-    4: FExtension.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL NOT');
+    1: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL'));
+    2: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHOULD'));
+    3: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('MAY'));
+    4: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL NOT'));
   else
     FExtension.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
   end;

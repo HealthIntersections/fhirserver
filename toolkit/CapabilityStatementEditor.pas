@@ -1121,10 +1121,10 @@ begin
   {$ENDIF}
 
   case cbxResourceConformance.ItemIndex of
-    1: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL');
-    2: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHOULD');
-    3: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'MAY');
-    4: res.setExtensionString('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', 'SHALL NOT');
+    1: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL'));
+    2: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHOULD'));
+    3: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('MAY'));
+    4: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL NOT'));
   else
     res.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
   end;
