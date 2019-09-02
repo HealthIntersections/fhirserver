@@ -383,7 +383,11 @@ begin
               cacheId := vs.url;
             end
             else if params.has('valueSet') then
+            begin
+              if not (params.obj('valueSet') is TFHIRResourceV) then
+                raise ETerminologyError.create('Error with valueSet parameter');
               vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV)
+            end
             else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
               vs := FFactory.wrapValueSet(request.Resource.Link)
             else

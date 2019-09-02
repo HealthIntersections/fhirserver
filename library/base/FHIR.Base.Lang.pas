@@ -205,7 +205,7 @@ begin
   if GMessages = nil then
     exit(id);
   if not GMessages.ContainsKey(id) then
-    result := 'Unknown message '+id
+    result := id
   else
   begin
     msg := GMessages[id];

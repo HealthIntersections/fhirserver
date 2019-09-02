@@ -317,11 +317,15 @@ Type
   TLoincSubsets = Array [TLoincSubsetId] of Cardinal;
   TLoincPropertyIds = Array [TLoincPropertyType] of Cardinal;
 
-  THolder = class (TCodeSystemProviderFilterContext)
+  TLoincFilterHolderKind = (lfkConcept, lfkAnswer);
+
+  TLoincFilterHolder = class (TCodeSystemProviderFilterContext)
   private
-    ndx: integer;
-    Children : FHIR.Loinc.Services.TCardinalArray;
-    function HasChild(v : integer) : boolean;
+    FIndex: integer;
+    FKind : TLoincFilterHolderKind;
+    FChildren : FHIR.Loinc.Services.TCardinalArray;
+    procedure SetChildren(kind : TLoincFilterHolderKind; children : FHIR.Loinc.Services.TCardinalArray);
+    function HasChild(kind : TLoincFilterHolderKind; v : integer) : boolean;
   end;
 
   TLOINCServices = class (TCodeSystemProvider)
@@ -346,6 +350,7 @@ Type
     function FindStem(s: String; var index: Integer): Boolean;
     function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
     function FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+    function FilterByList(op: TFhirFilterOperator; list : String): TCodeSystemProviderFilterContext;
     function FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
     function FilterByIsA(value: String; this: boolean): TCodeSystemProviderFilterContext;
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
@@ -1178,8 +1183,8 @@ begin
   setLength(children, length(matches));
   for i := 0 to Length(matches) - 1 do
     children[i] := matches[i].index;
-  result := THolder.Create;
-  THolder(result).Children := children;
+  result := TLoincFilterHolder.Create;
+  TLoincFilterHolder(result).SetChildren(lfkConcept, children);
 end;
 
 function TLOINCServices.supportsLang(lang: String): boolean;
@@ -2097,25 +2102,12 @@ end;
 
 function TLoincServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  result := THolder(ctxt).HasChild(integer(concept)-1);
-end;
-
-function THolder.HasChild(v : integer) : boolean;
-var
-  i : integer;
-begin
-  result := false;
-  for i := 0 to Length(Children) - 1 do
-    if (Cardinal(v) = Children[i]) then
-    begin
-      result := true;
-      exit;
-    end;
+  result := TLoincFilterHolder(ctxt).HasChild(lfkConcept, integer(concept)-1);
 end;
 
 procedure TLoincServices.Close(ctxt: TCodeSystemProviderFilterContext);
 begin
-  THolder(ctxt).free;
+  TLoincFilterHolder(ctxt).free;
 end;
 
 function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
@@ -2167,8 +2159,8 @@ begin
       end;
     end;
     SetLength(aMatches, t);
-    result := THolder.create;
-    THolder(result).Children := aMatches;
+    result := TLoincFilterHolder.create;
+    TLoincFilterHolder(result).SetChildren(lfkConcept, aMatches);
   end
   else
   begin
@@ -2176,7 +2168,7 @@ begin
       p := value.Split([#1])
     else
       p := value.Split([',']);
-    result := THolder.create;
+    result := TLoincFilterHolder.create;
     try
       SetLength(aMatches, 0);
       for v in p do
@@ -2194,7 +2186,7 @@ begin
           end;
         end;
       end;
-      THolder(result).Children := aMatches;
+      TLoincFilterHolder(result).SetChildren(lfkConcept, aMatches);
       result.link;
     finally
       result.free;
@@ -2208,8 +2200,8 @@ begin
   if op <> foEqual then
     raise ETerminologyError.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
-  result := THolder.create;
-  THolder(result).Children := FRefs.GetCardinals(FSubsets[subset]);
+  result := TLoincFilterHolder.create;
+  TLoincFilterHolder(result).SetChildren(lfkConcept, FRefs.GetCardinals(FSubsets[subset]));
 end;
 
 Function SubSetForOrderObs(value : String): TLoincSubsetId;
@@ -2271,7 +2263,7 @@ var
   code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
   s : String;
 begin
-  result := THolder.create;
+  result := TLoincFilterHolder.create;
   try
     if (op = foEqual) and (value.Contains(',')) then
       raise ETerminologyError.create('Value is illegal - no commas');
@@ -2296,7 +2288,7 @@ begin
       end;
     end;
 
-    THolder(result).Children := aChildren;
+    TLoincFilterHolder(result).SetChildren(lfkConcept, aChildren);
     result.link;
   finally
     result.free;
@@ -2310,7 +2302,7 @@ var
   code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
   s : String;
 begin
-  result := THolder.create;
+  result := TLoincFilterHolder.create;
   try
     setLength(aChildren, 0);
 
@@ -2341,11 +2333,29 @@ begin
       end;
     end;
 
-    THolder(result).Children := aChildren;
+    TLoincFilterHolder(result).SetChildren(lfkConcept, aChildren);
     result.link;
   finally
     result.free;
   end;
+end;
+
+function TLOINCServices.FilterByList(op: TFhirFilterOperator; list: String): TCodeSystemProviderFilterContext;
+var
+  index : Cardinal;
+  desc : TLoincStrings;
+  text : Cardinal;
+  children : Cardinal;
+  code : Cardinal;
+begin
+  if FAnswerLists.FindCode(list, index, FDesc) then
+  begin
+    FAnswerLists.GetEntry(index, code, text, children);
+    result := TLoincFilterHolder.create;
+    TLoincFilterHolder(result).SetChildren(lfkAnswer, FRefs.GetCardinals(children));
+  end
+  else
+    result := nil;
 end;
 
 function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -2378,21 +2388,23 @@ begin
     result := FilterByHeirarchy(op, value, true)
   else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
     result := FilterByIsA(value, op = foIsA)
+  else if (prop = 'LIST') and (op = foEqual) then
+    result := FilterByList(op, value)
   else if prop = 'Type' then
-    result := THolder.create
+    result := TLoincFilterHolder.create
   else
     result := nil;
 end;
 
 function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TCodeSystemProviderContext(THolder(ctxt).children[THolder(ctxt).ndx-1]+1);
+  result := TCodeSystemProviderContext(TLoincFilterHolder(ctxt).FChildren[TLoincFilterHolder(ctxt).FIndex-1]+1);
 end;
 
 function TLoincServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  inc(THolder(ctxt).ndx);
-  result := THolder(ctxt).ndx <= length(THolder(ctxt).children);
+  inc(TLoincFilterHolder(ctxt).FIndex);
+  result := TLoincFilterHolder(ctxt).FIndex <= length(TLoincFilterHolder(ctxt).FChildren);
 end;
 
 function TLoincServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
@@ -2408,15 +2420,17 @@ end;
 function TLoincServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 var
   i : Cardinal;
-  holder : THolder;
+  holder : TLoincFilterHolder;
 begin
   if (ctxt = nil) then
     result := nil
   else
   begin
-    holder := THolder(ctxt);
-    if CodeList.FindCode(code, i) and holder.hasChild(i) then
+    holder := TLoincFilterHolder(ctxt);
+    if CodeList.FindCode(code, i) and holder.hasChild(lfkConcept, i) then
       result := TCodeSystemProviderContext(i+1)
+    else if AnswerLists.FindCode(code, i, FDesc) and holder.hasChild(lfkAnswer, i) then
+      result := TCodeSystemProviderContext(CodeList.Count + i+1)
     else
       result := nil;
   end;
@@ -2668,6 +2682,32 @@ function nolang : TLangArray;
 begin
   SetLength(result, 1);
   result[0] := 0;
+end;
+
+{ TLoincFilterHolder }
+
+procedure TLoincFilterHolder.SetChildren(kind: TLoincFilterHolderKind; children: FHIR.Loinc.Services.TCardinalArray);
+begin
+  FChildren := children;
+  FKind := kind;
+end;
+
+function TLoincFilterHolder.HasChild(kind : TLoincFilterHolderKind; v : integer) : boolean;
+var
+  i : integer;
+begin
+  if kind <> FKind then
+    result := false
+  else
+  begin
+    result := false;
+    for i := 0 to Length(FChildren) - 1 do
+      if (Cardinal(v) = FChildren[i]) then
+      begin
+        result := true;
+        exit;
+      end;
+  end;
 end;
 
 End.
