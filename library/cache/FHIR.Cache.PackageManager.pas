@@ -1104,7 +1104,7 @@ begin
     p.Date := Now;
     p.Description := 'FHIR R4';
     p.FHIRVersion := '4.0.0';
-    p.Url := 'http://build.fhir.org/';
+    p.Url := 'http://hl7.org/fhir/R4';
     list.Add(p.Link);
   finally
     p.Free;

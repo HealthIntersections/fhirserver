@@ -205,6 +205,7 @@ type
     // execution
     FSQL : string;
     FTerminated: Boolean;
+    FPrepared : boolean;
     FTransactionId: String;
     function GetTables : TStrings;
     function LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString: Boolean): String;
@@ -256,6 +257,7 @@ type
     Function TableSizeV(sName : String):int64; virtual; abstract;
     function SupportsSizingV : Boolean; virtual; abstract;
 
+    procedure CheckRelease;
   Public
     constructor Create(AOwner: TKDBManager);
     destructor Destroy; Override;
@@ -289,6 +291,7 @@ type
     property Holder: TObject Read FHolder Write FHolder;
     property Tag: Integer Read FTag Write FTag;
     property Owner: TKDBManager Read FOwner;
+    property Prepared : boolean read FPrepared;
 
     // when the application finishes with the connection, it should use one of these to free the connection
     procedure Release;
@@ -942,6 +945,7 @@ end;
 
 procedure TKDBConnection.Release;
 begin
+  CheckRelease;
   FOwner.Release(self);
 end;
 
@@ -1012,10 +1016,15 @@ end;
 
 procedure TKDBConnection.Prepare;
 begin
+  {$IFOPT C+}
+  if FPrepared then
+    raise EDBException.Create('Attempt to reuse ODBC connection "'+FUsage+'" while it is in use');
+  {$ENDIF}
   FTerminated := false;
   FBoundItems.Clear;
   inc(FPrepareCount);
   PrepareV;
+  FPrepared := true;
 end;
 
 function TKDBConnection.FetchNext: Boolean;
@@ -1026,6 +1035,7 @@ end;
 
 procedure TKDBConnection.Terminate;
 begin
+  FPrepared := false;
   FTerminated := true;
   TerminateV;
 end;
@@ -1110,6 +1120,14 @@ end;
 procedure TKDBConnection.BindTimeStamp(AParamName: String; AParamValue: TTimeStamp);
 begin
   BindTimeStampV(AParamName, AParamValue);
+end;
+
+procedure TKDBConnection.CheckRelease;
+begin
+  {$IFOPT C+}
+  if FPrepared then
+    raise EDBException.Create('Attempt to release ODBC connection "'+FUsage+'" before it is terminated');
+  {$ENDIF}
 end;
 
 procedure TKDBConnection.ClearDatabase;
