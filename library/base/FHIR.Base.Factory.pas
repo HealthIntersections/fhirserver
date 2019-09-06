@@ -251,7 +251,7 @@ type
     function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; virtual; abstract;
-    procedure LoadingFinished; virtual; abstract;
+    procedure LoadingFinished; virtual;
   end;
 
 
@@ -389,6 +389,11 @@ end;
 function TFHIRWorkerContextWithFactory.link: TFHIRWorkerContextWithFactory;
 begin
   result := TFHIRWorkerContextWithFactory(inherited link);
+end;
+
+procedure TFHIRWorkerContextWithFactory.LoadingFinished;
+begin
+  // nothing here
 end;
 
 procedure TFHIRWorkerContextWithFactory.loadResourceJson(rtype, id: String; json: TStream);

@@ -585,8 +585,8 @@ var
   path : TFHIRPathEngine;
   st : TStringList;
   matches : TFHIRSelectionList;
-  m : TFHIRSelection;
-  ref : String;
+//  m : TFHIRSelection;
+//  ref : String;
 begin
   CreateIndexer;
 

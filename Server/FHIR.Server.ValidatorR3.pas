@@ -128,6 +128,7 @@ end;
 
 procedure TFHIRServerWorkerContextR3.LoadingFinished;
 begin
+  inherited;
   loadPatientCompartment;
 end;
 

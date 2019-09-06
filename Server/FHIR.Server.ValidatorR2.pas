@@ -110,6 +110,7 @@ end;
 
 procedure TFHIRServerWorkerContextR2.LoadingFinished;
 begin
+  inherited;
   // nothing
 end;
 

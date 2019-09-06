@@ -68,6 +68,8 @@ Type
     property ProfileByURL[url : String] : TFHirStructureDefinition read GetProfileByUrl; default;
     property ProfileByType[aType : TFhirResourceType] : TFHirStructureDefinition read GetProfileByType;
     property ProfilesByURL : TFslMap<TFHIRStructureDefinition> read FProfilesByURL;
+
+    procedure generateSnapshots;
   end;
 
   {
@@ -140,6 +142,9 @@ Type
     function nonSecureResourceNames : TArray<String>; override;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; override;
     function oid2Uri(oid: String): String; override;
+
+    procedure LoadingFinished; override;
+
   end;
   TBaseWorkerContext = TBaseWorkerContextR4;
 
@@ -1838,39 +1843,20 @@ begin
   end;
 end;
 
+procedure TBaseWorkerContextR4.LoadingFinished;
+begin
+  inherited;
+  FProfiles.generateSnapshots;
+end;
+
 
 procedure TBaseWorkerContextR4.SeeResource(r: TFhirResource);
 var
   p : TFhirStructureDefinition;
-  pu : TProfileUtilities;
-  messages : TFhirOperationOutcomeIssueList;
-  message : TFhirOperationOutcomeIssue;
-  sd : TFhirStructureDefinition;
 begin
   if r is TFHirStructureDefinition then
   begin
-    p := r as TFHirStructureDefinition;
-    if (p.snapshot = nil) and (p.baseDefinition <> '') and (p.kind <> StructureDefinitionKindLogical) then
-    begin
-      sd := fetchStructureDefinition(p.baseDefinition);
-      if sd = nil then
-        raise EDefinitionException.create('Unknown base profile: "'+p.baseDefinition+'"');
-      try
-        messages := TFhirOperationOutcomeIssueList.create;
-        pu := TProfileUtilities.create(self.link, messages.link);
-        try
-//          pu.generateSnapshot(sd, p, p.url, p.Name);
-          for message in messages do
-            if (message.severity in [IssueSeverityFatal, IssueSeverityError]) then
-              raise EDefinitionException.create('Error generating snapshot: '+message.details.text);
-        finally
-          pu.Free;
-          messages.free;
-        end;
-      finally
-        sd.Free;
-      end;
-    end;
+    p := r as TFHIRStructureDefinition;
     FProfiles.SeeProfile(0, p);
   end
   else if (r.ResourceType = frtNamingSystem) then
@@ -1913,6 +1899,42 @@ begin
   FProfilesByURL.free;
   lock.Free;
   inherited;
+end;
+
+procedure TProfileManager.generateSnapshots;
+//var
+//  p, sd : TFhirStructureDefinition;
+//  messages : TFhirOperationOutcomeIssueList;
+//  pu : TProfileUtilities;
+//  pu : TProfileUtilities;
+//  messages : TFhirOperationOutcomeIssueList;
+//  message : TFhirOperationOutcomeIssue;
+//  sd : TFhirStructureDefinition;
+begin
+//  for p in FProfilesById.Values do
+//  begin
+//    if (p.snapshot = nil) and (p.baseDefinition <> '') and (p.kind <> StructureDefinitionKindLogical) then
+//    begin
+//      sd := ProfilesByURL[p.baseDefinition];
+//      if sd = nil then
+//        raise EDefinitionException.create('Unknown base profile: "'+p.baseDefinition+'" for '+p.url);
+//      try
+//        messages := TFhirOperationOutcomeIssueList.create;
+//        pu := TProfileUtilities.create(self.link, messages.link);
+//        try
+//          pu.generateSnapshot(sd, p, p.url, p.Name);
+//          for message in messages do
+//            if (message.severity in [IssueSeverityFatal, IssueSeverityError]) then
+//              raise EDefinitionException.create('Error generating snapshot: '+message.details.text);
+//        finally
+//          pu.Free;
+//          messages.free;
+//        end;
+//      finally
+//        sd.Free;
+//      end;
+//    end;
+//  end;
 end;
 
 function TProfileManager.getExtensionDefn(source: TFHirStructureDefinition; url: String; var profile: TFHirStructureDefinition; var extension : TFHirStructureDefinition): boolean;
