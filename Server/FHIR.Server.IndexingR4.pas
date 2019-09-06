@@ -48,7 +48,7 @@ combinations to enable:
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Xml,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.PathEngine,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.IndexInfo, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Context,
   FHIR.Tools.Indexing,
   FHIR.Ucum.Services,
@@ -61,7 +61,6 @@ Type
     FforTesting : boolean;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
-    function doResolve(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
     procedure recordSpace(space : string; key : integer);
@@ -139,14 +138,6 @@ begin
 end;
 
 { TFhirIndexManager4 }
-
-function TFhirIndexManager4.doResolve(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
-begin
-  // ok, we'll ask the host engine...
-  if not assigned(FOnResolveReference) then
-    raise Exception.Create('No resolve reference service provided');
-  result := FOnResolveReference(self, appInfo, url);
-end;
 
 function TFhirIndexManager4.EncodeXhtml(r: TFhirDomainResource): TBytes;
 var
@@ -350,117 +341,112 @@ var
   s : string;
   ie : TFhirIndexEntry;
 begin
-  path := TFHIRPathEngine.Create((FContext as TFHIRWorkerContext).link, TUcumServiceImplementation.Create(FUcum.link));
-  try
-    path.OnResolveReference := doResolve;
-    for i := 0 to FInfo.Indexes.Count - 1 do
-    begin
-      ndx := FInfo.Indexes[i];
+  path := engine as TFHIRPathEngine;
+  for i := 0 to FInfo.Indexes.Count - 1 do
+  begin
+    ndx := FInfo.Indexes[i];
 
-      if (ndx.Path <> '') and (ndx.ResourceType = resource.fhirType) then
-      begin
-        matches := path.evaluate(appInfo, resource, ndx.Path);
-        try
-          for match in matches do
-          begin
-            // custom resource support : do we need to do a transform?
-            if ndx.mapping = '' then
-              work := match.value.Link
-            else
-              work := transform(match.value, ndx.mapping);
-            try
-              if ndx.SearchType = sptComposite then
-                // ignore for now
-              else case ndx.Usage of
-                sxpNull: raise EFHIRException.create('Path is not defined properly');
-                sxpNormal:
-                  begin
-                  if work is TFhirString then
-                    index(resource.fhirType, key, 0, TFhirString(work), ndx.Name)
-                  else if work is TFhirUri then
-                    index(resource.fhirType, key, 0, TFhirUri(work), ndx.Name)
-                  else if work is TFhirEnum then
-                    index(resource.fhirType, key, 0, TFhirEnum(work), ndx.Name)
-                  else if work is TFhirInteger  then
-                    index(resource.fhirType, key, 0, TFhirInteger(work), ndx.Name)
-                  else if work is TFhirDecimal then
-                    index(resource.fhirType, key, 0, TFhirDecimal(work), ndx.Name)
-                  else if work is TFhirBoolean  then
-                    index(resource.fhirType, key, 0, TFhirBoolean(work), ndx.Name)
-                  else if work is TFhirInstant  then
-                    index(resource.fhirType, key, 0, TFhirInstant(work), ndx.Name)
-                  else if work is TFhirDateTime  then
-                    index(resource.fhirType, key, 0, TFhirDateTime(work), ndx.Name)
-                  else if work is TFhirDate  then
-                    index(resource.fhirType, key, 0, TFhirDate(work), ndx.Name)
-                  else if work is TFhirPeriod  then
-                    index(resource.fhirType, key, 0, TFhirPeriod(work), ndx.Name)
-                  else if work is TFhirTiming  then
-                    index(resource.fhirType, key, 0, TFhirTiming(work), ndx.Name)
-                  else if work is TFhirRatio  then
-                    index(resource.fhirType, key, 0, TFhirRatio(work), ndx.Name)
-                  else if work is TFhirQuantity  then
-                    index(resource.fhirType, key, 0, TFhirQuantity(work), ndx.Name)
-                  else if work is TFhirRange  then
-                    index(resource.fhirType, key, 0, TFhirRange(work), ndx.Name)
-                  else if work is TFhirSampledData  then
-                    index(resource.fhirType, key, 0, TFhirSampledData(work), ndx.Name)
-                  else if work is TFhirCoding  then
-                    index(resource.fhirType, key, 0, TFhirCoding(work), ndx.Name)
-                  else if work is TFhirCodeableConcept  then
-                    index(resource.fhirType, key, 0, TFhirCodeableConcept(work), ndx.Name)
-                  else if work is TFhirIdentifier  then
-                    index(resource.fhirType, key, 0, TFhirIdentifier(work), ndx.Name)
-                  else if work is TFhirHumanName  then
-                    index(resource.fhirType, key, 0, TFhirHumanName(work), ndx.Name, '')
-                  else if work is TFhirAddress  then
-                    index(resource.fhirType, key, 0, TFhirAddress(work), ndx.Name)
-                  else if work is TFhirContactPoint  then
-                    index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
-                  else if work is TFhirReference then
-                    index(appInfo, context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
-                  else if work is TFhirMoney then
-                    index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
-                  else if work is TFhirStructureDefinitionContext then
-                    index(resource.fhirType, key, 0, TFhirStructureDefinitionContext(work), ndx.Name)
-                  else if work is TFhirResource then
-                    // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
-                  else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
-                    raise EFHIRException.create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
-                  end;
-                sxpPhonetic:
-                  begin
-                  if work is TFhirString then
-                    index(resource.fhirType, key, 0, EncodeNYSIIS(TFhirString(work).value), ndx.Name)
-                  else if work is TFhirHumanName then
-                    index(resource.fhirType, key, 0, TFhirHumanName(work), '', ndx.Name)
-                  else
-                    raise EFHIRException.create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
-                  end;
-                sxpNearby:
-                  begin
-                    // todo when a chance arises
-                  end;
-                sxpDistance:
-                  begin
-                    // todo when a chance arises
-                  end;
-                sxpOther:
-                  begin
-                    // todo when a chance arises
-                  end;
-              end;
-            finally
-              work.Free;
+    if (ndx.Path <> '') and (ndx.ResourceType = resource.fhirType) then
+    begin
+      matches := path.evaluate(appInfo, resource, ndx.Path);
+      try
+        for match in matches do
+        begin
+          // custom resource support : do we need to do a transform?
+          if ndx.mapping = '' then
+            work := match.value.Link
+          else
+            work := transform(match.value, ndx.mapping);
+          try
+            if ndx.SearchType = sptComposite then
+              // ignore for now
+            else case ndx.Usage of
+              sxpNull: raise EFHIRException.create('Path is not defined properly');
+              sxpNormal:
+                begin
+                if work is TFhirString then
+                  index(resource.fhirType, key, 0, TFhirString(work), ndx.Name)
+                else if work is TFhirUri then
+                  index(resource.fhirType, key, 0, TFhirUri(work), ndx.Name)
+                else if work is TFhirEnum then
+                  index(resource.fhirType, key, 0, TFhirEnum(work), ndx.Name)
+                else if work is TFhirInteger  then
+                  index(resource.fhirType, key, 0, TFhirInteger(work), ndx.Name)
+                else if work is TFhirDecimal then
+                  index(resource.fhirType, key, 0, TFhirDecimal(work), ndx.Name)
+                else if work is TFhirBoolean  then
+                  index(resource.fhirType, key, 0, TFhirBoolean(work), ndx.Name)
+                else if work is TFhirInstant  then
+                  index(resource.fhirType, key, 0, TFhirInstant(work), ndx.Name)
+                else if work is TFhirDateTime  then
+                  index(resource.fhirType, key, 0, TFhirDateTime(work), ndx.Name)
+                else if work is TFhirDate  then
+                  index(resource.fhirType, key, 0, TFhirDate(work), ndx.Name)
+                else if work is TFhirPeriod  then
+                  index(resource.fhirType, key, 0, TFhirPeriod(work), ndx.Name)
+                else if work is TFhirTiming  then
+                  index(resource.fhirType, key, 0, TFhirTiming(work), ndx.Name)
+                else if work is TFhirRatio  then
+                  index(resource.fhirType, key, 0, TFhirRatio(work), ndx.Name)
+                else if work is TFhirQuantity  then
+                  index(resource.fhirType, key, 0, TFhirQuantity(work), ndx.Name)
+                else if work is TFhirRange  then
+                  index(resource.fhirType, key, 0, TFhirRange(work), ndx.Name)
+                else if work is TFhirSampledData  then
+                  index(resource.fhirType, key, 0, TFhirSampledData(work), ndx.Name)
+                else if work is TFhirCoding  then
+                  index(resource.fhirType, key, 0, TFhirCoding(work), ndx.Name)
+                else if work is TFhirCodeableConcept  then
+                  index(resource.fhirType, key, 0, TFhirCodeableConcept(work), ndx.Name)
+                else if work is TFhirIdentifier  then
+                  index(resource.fhirType, key, 0, TFhirIdentifier(work), ndx.Name)
+                else if work is TFhirHumanName  then
+                  index(resource.fhirType, key, 0, TFhirHumanName(work), ndx.Name, '')
+                else if work is TFhirAddress  then
+                  index(resource.fhirType, key, 0, TFhirAddress(work), ndx.Name)
+                else if work is TFhirContactPoint  then
+                  index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
+                else if work is TFhirReference then
+                  index(appInfo, context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
+                else if work is TFhirMoney then
+                  index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
+                else if work is TFhirStructureDefinitionContext then
+                  index(resource.fhirType, key, 0, TFhirStructureDefinitionContext(work), ndx.Name)
+                else if work is TFhirResource then
+                  // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
+                else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
+                  raise EFHIRException.create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
+                end;
+              sxpPhonetic:
+                begin
+                if work is TFhirString then
+                  index(resource.fhirType, key, 0, EncodeNYSIIS(TFhirString(work).value), ndx.Name)
+                else if work is TFhirHumanName then
+                  index(resource.fhirType, key, 0, TFhirHumanName(work), '', ndx.Name)
+                else
+                  raise EFHIRException.create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
+                end;
+              sxpNearby:
+                begin
+                  // todo when a chance arises
+                end;
+              sxpDistance:
+                begin
+                  // todo when a chance arises
+                end;
+              sxpOther:
+                begin
+                  // todo when a chance arises
+                end;
             end;
+          finally
+            work.Free;
           end;
-        finally
-          matches.free;
         end;
+      finally
+        matches.free;
       end;
     end;
-  finally
-    path.Free;
   end;
 
   // ok, now compartment information

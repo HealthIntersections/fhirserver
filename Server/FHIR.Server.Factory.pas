@@ -33,7 +33,8 @@ interface
 
 uses
   FHIR.Support.Base,
-  FHIR.Base.Factory,
+  FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.Ucum.Services,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 
 {
@@ -45,6 +46,7 @@ type
     function link : TFHIRServerFactory; overload;
     function makeValidator: TFHIRValidatorV; virtual; abstract;
     function makeIndexer : TFHIRIndexManager; virtual; abstract;
+    function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; virtual; abstract;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; virtual; abstract;
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); virtual; abstract;
   end;

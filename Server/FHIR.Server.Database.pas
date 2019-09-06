@@ -49,6 +49,7 @@ uses
 
 const
   MAXSQLDATE = 365 * 3000;
+  NO_AUDIT_ON_SEARCH = false; // if you set this to true, the patient audit log won't pick up search results that include data about a patient, but search will be faster
 
 const
   MAGIC_NUMBER = 941364592;
@@ -76,6 +77,16 @@ type
   public
     function forType(t_: String) : String;
     function forAll: String;
+  end;
+
+  TPatientIdTracker = class (TFslObject)
+  private
+    FIds : TStringList;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure seeIds(ids : TArray<String>);
+    function ids : TArray<String>;
   end;
 
   TFHIRQueuedResource = class (TFslObject)
@@ -176,6 +187,7 @@ type
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
     function resolveReferenceForIndexing(sender : TFhirIndexManager; appInfo : TFslObject; url : String) : TFHIRResourceV;
+    function getPatientCompartment(comps: TFslList<TFHIRCompartmentId>): String;
 
   protected
     function factory : TFHIRFactory;
@@ -204,7 +216,8 @@ type
     function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList; virtual; abstract;
     function readRef(ref : TFHIRObject) : string; virtual; abstract;
     function getOpException(op : TFHIRResourceV) : String; virtual; abstract;
-    procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); virtual; abstract;
+    procedure doAuditRestPat(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>);
+    procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patientId : String); virtual; abstract;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
   public
@@ -217,7 +230,7 @@ type
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
-    function AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; var type_ : String; first : boolean = false) : TFHIRBundleEntryW; overload;
+    function AddResourceTobundle(request : TFHIRRequest; bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; var type_ : String; patIds : TPatientIdTracker; first : boolean = false) : TFHIRBundleEntryW; overload;
     procedure DefineConformanceResources(base : String); // called after database is created
     function isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; system, code : String) : boolean;
     function GraphLookup(appInfo : TFslObject; requestType, id : String; var res : TFHIRResourceV) : boolean;
@@ -242,7 +255,7 @@ type
     procedure CreateIndexer;
     property Indexer : TFHIRIndexManager read FIndexer;
     function loadResources(keys : TList<integer>) : TFslList<TFHIRResourceV>;
-    procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; base, lang, field : String; fmt : TFHIRFormat);
+    procedure processIncludes(request : TFHIRRequest; session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; base, lang, field : String; fmt : TFHIRFormat; patIds : TPatientIdTracker);
 
     // called when kernel actually wants to process against the store
 //    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
@@ -250,6 +263,7 @@ type
     function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function  LookupReferenceS(context : TFslObject; id : String) : TResourceWithReference;
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
+    function FindResourceConn(conn : TKDBConnection; aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResourceV; override;
     function getResourcesByParam(aType : String; name, value : string; var needSecure : boolean): TFslList<TFHIRResourceV>; override;
     function ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; override;
@@ -264,8 +278,8 @@ type
     procedure clear(a : TArray<String>);
     procedure storeResources(list: TFslList<TFHIRQueuedResource>; origin : TFHIRRequestOrigin; upload : boolean);
 
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
 
     // custom resources
 //    function loadCustomResources(response : TFHIRResponse; id : String; startup : boolean; names : TStringList) : boolean; overload;
@@ -298,6 +312,7 @@ type
 
     procedure LoadExistingResources(conn: TKDBConnection);
     procedure LoadSpaces(conn: TKDBConnection);
+    procedure ProcessLoadedResources;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
     function DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: TParseMap; conn: TKDBConnection): String;
@@ -505,7 +520,18 @@ begin
   inherited;
 end;
 
-function TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; var type_ : String; first : boolean = false) : TFHIRBundleEntryW;
+procedure TFHIRNativeOperationEngine.doAuditRestPat(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; opName: String; httpCode: Integer; name, message: String; patients: TArray<String>);
+var
+  sid : String;
+begin
+  if length(patients) = 0 then
+    doAuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message, '')
+  else
+   for sid in patients do
+     doAuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message, sid);
+end;
+
+function TFHIRNativeOperationEngine.AddResourceTobundle(request : TFHIRRequest; bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; var type_ : String; patIds : TPatientIdTracker; first : boolean = false) : TFHIRBundleEntryW;
 var
   parser : TFhirParser;
   mem : TBytesStream;
@@ -577,6 +603,7 @@ begin
   begin
     if fmt = ffUnspecified then
     begin
+      // currently, we won't get here, because this will never be true - we need to audit each entry against it's patient.
       result := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
       try
         result.Element.Tag := TFslBuffer.create;
@@ -611,6 +638,7 @@ begin
           result := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
           try
             result.resource := parser.resource.Link as TFHIRResourceV;
+            patIds.seeIds(patientIds(request, result.resource));
             result.Url := AppendForwardSlash(base)+parser.resource.fhirType+'/'+parser.resource.id;
             if (purpose <> smUnknown) then
             begin
@@ -661,6 +689,16 @@ begin
   finally
     b.free;
   end;
+end;
+
+Function TFHIRNativeOperationEngine.getPatientCompartment(comps : TFslList<TFHIRCompartmentId>) : String;
+var
+  comp : TFHIRCompartmentId;
+begin
+  result := '';
+  for comp in comps do
+    if comp.ResourceType = 'Patient' then
+      exit(comp.Id);
 end;
 
 Function TFHIRNativeOperationEngine.ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
@@ -841,12 +879,12 @@ begin
       end;
     end;
     if request.ResourceName <> 'AuditEvent' then // else you never stop
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, request.Resource));
   except
     on e: exception do
     begin
       if request.ResourceName <> 'AuditEvent' then // else you never stop
-        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, sid, '1', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, sid, '1', 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, request.Resource));
       recordStack(e);
       raise;
     end;
@@ -863,7 +901,6 @@ var
   ok : boolean;
   meta : TFHIRMetaW;
   rp : TFhirParametersW;
-
 begin
   key := 0;
   nvid := 0;
@@ -983,11 +1020,11 @@ begin
         rp.Free;
       end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, request.Resource));
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, request.Resource));
       recordStack(e);
       raise;
     end;
@@ -1263,97 +1300,103 @@ var
   prsrFmt : TFhirFormat;
   needsObject : boolean;
   type_ : String;
+  patIds : TPatientIdTracker;
 begin
+  patIds := TPatientIdTracker.create;
   try
-    if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
-    begin
-      ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, reverse);
-      if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), itProcessing) then
-        link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
-    end
-    else
-      ok := BuildHistoryResultSet(request, response, id, link, sql, title, base, total);
+    try
+      if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
+      begin
+        ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, reverse);
+        if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), itProcessing) then
+          link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
+      end
+      else
+        ok := BuildHistoryResultSet(request, response, id, link, sql, title, base, total);
 
-    if ok then
-    begin
-      offset := 0;
-      count := 50;
-      for i := 0 to request.Parameters.getItemCount - 1 do
-        if request.Parameters.VarName(i) = SEARCH_PARAM_NAME_OFFSET then
-          offset := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0)
-        else if request.Parameters.VarName(i) = '_count' then
-          count := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0);
-      if (count < 2) then
-        count := SEARCH_PAGE_DEFAULT
-      else if (Count > SEARCH_PAGE_LIMIT) then
-        count := SEARCH_PAGE_LIMIT;
-      if offset < 0 then
+      if ok then
+      begin
         offset := 0;
+        count := 50;
+        for i := 0 to request.Parameters.getItemCount - 1 do
+          if request.Parameters.VarName(i) = SEARCH_PARAM_NAME_OFFSET then
+            offset := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0)
+          else if request.Parameters.VarName(i) = '_count' then
+            count := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0);
+        if (count < 2) then
+          count := SEARCH_PAGE_DEFAULT
+        else if (Count > SEARCH_PAGE_LIMIT) then
+          count := SEARCH_PAGE_LIMIT;
+        if offset < 0 then
+          offset := 0;
 
-      chooseField(response.Format, soFull, request.loadObjects, field, prsrFmt, needsObject);
-      if (not needsObject) then
-        prsrFmt := ffUnspecified;
+        chooseField(response.Format, soFull, request.loadObjects, field, prsrFmt, needsObject);
+        if (not needsObject) and NO_AUDIT_ON_SEARCH then
+          prsrFmt := ffUnspecified;
 
-      response.OnCreateBuilder(request, response, btHistory, bundle);
-      try
-        if response.Format <> ffUnspecified then
-          base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-        bundle.setTotal(total);
-        bundle.Tag('sql', sql);
-        bundle.setLastUpdated(TFslDateTime.makeUTC);
-        bundle.addLink('self', base+link);
-
-        if (offset > 0) or (Count < total) then
-        begin
-          bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-          if offset - count >= 0 then
-            bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-          if offset + count < total then
-            bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-          if count < total then
-            bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-        end;
-
-        FConnection.SQL :=
-          'Select '+
-          '  Ids.ResourceKey, ResourceName, Ids.Id, v.ResourceVersionKey, Audits.Id as AuditId, Ids.MostRecent, VersionId, Secure, StatedDate, Name, v.Status, Secure, Tags, '+field+' '+
-          'from '+
-          '  Ids, Sessions, SearchEntries, Types, Versions as v '+
-          'left outer join Ids as Audits on v.AuditKey = Audits.ResourceKey '+
-          'where '+
-          '  SearchEntries.ResourceVersionKey = v.ResourceVersionKey and '+
-          '  Types.ResourceTypeKey = Ids.ResourceTypeKey and '+
-          '  v.SessionKey = Sessions.SessionKey and '+
-          '  SearchEntries.ResourceKey = Ids.ResourceKey and '+
-          '  SearchEntries.SearchKey = '+id+'  order by SearchEntries.ResourceVersionKey DESC OFFSET '+inttostr(offset)+' ROWS FETCH NEXT '+IntToStr(count+1)+' ROWS ONLY';
-        FConnection.Prepare;
+        response.OnCreateBuilder(request, response, btHistory, bundle);
         try
-          FConnection.Execute;
-          while FConnection.FetchNext do
-            AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, true, type_);
+          if response.Format <> ffUnspecified then
+            base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
+          bundle.setTotal(total);
+          bundle.Tag('sql', sql);
+          bundle.setLastUpdated(TFslDateTime.makeUTC);
+          bundle.addLink('self', base+link);
+
+          if (offset > 0) or (Count < total) then
+          begin
+            bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            if offset - count >= 0 then
+              bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            if offset + count < total then
+              bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            if count < total then
+              bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+          end;
+
+          FConnection.SQL :=
+            'Select '+
+            '  Ids.ResourceKey, ResourceName, Ids.Id, v.ResourceVersionKey, Audits.Id as AuditId, Ids.MostRecent, VersionId, Secure, StatedDate, Name, v.Status, Secure, Tags, '+field+' '+
+            'from '+
+            '  Ids, Sessions, SearchEntries, Types, Versions as v '+
+            'left outer join Ids as Audits on v.AuditKey = Audits.ResourceKey '+
+            'where '+
+            '  SearchEntries.ResourceVersionKey = v.ResourceVersionKey and '+
+            '  Types.ResourceTypeKey = Ids.ResourceTypeKey and '+
+            '  v.SessionKey = Sessions.SessionKey and '+
+            '  SearchEntries.ResourceKey = Ids.ResourceKey and '+
+            '  SearchEntries.SearchKey = '+id+'  order by SearchEntries.ResourceVersionKey DESC OFFSET '+inttostr(offset)+' ROWS FETCH NEXT '+IntToStr(count+1)+' ROWS ONLY';
+            FConnection.Prepare;
+            try
+              FConnection.Execute;
+              while FConnection.FetchNext do
+                AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, true, type_, patIds);
+            finally
+              FConnection.Terminate;
+            end;
+
+            bundle.setId(FhirGUIDToString(CreateGUID));
+            bundle.tag('sql', sql);
+
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            response.Body := '';
+            response.resource := bundle.getBundle;
         finally
-          FConnection.Terminate;
+          bundle.Free;
         end;
-
-        bundle.setId(FhirGUIDToString(CreateGUID));
-        bundle.tag('sql', sql);
-
-        response.HTTPCode := 200;
-        response.Message := 'OK';
-        response.Body := '';
-        response.resource := bundle.getBundle;
-      finally
-        bundle.Free;
       end;
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, patIds.ids);
+    except
+      on e: exception do
+      begin
+        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message, patIds.ids);
+        recordStack(e);
+        raise;
+      end;
     end;
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
-      recordStack(e);
-      raise;
-    end;
+  finally
+    patIds.free;
   end;
 end;
 
@@ -1414,11 +1457,11 @@ begin
         end;
       end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, response.Resource));
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, request.Resource));
       recordStack(e);
       raise;
     end;
@@ -1722,7 +1765,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; base, lang, field: String; fmt : TFHIRFormat);
+procedure TFHIRNativeOperationEngine.processIncludes(request : TFHIRRequest; session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; base, lang, field: String; fmt : TFHIRFormat; patIds : TPatientIdTracker);
 var
   s, sql : String;
   sl, p : TArray<String>;
@@ -1788,7 +1831,7 @@ begin
       try
         FConnection.Execute;
         while FConnection.FetchNext do
-          AddResourceTobundle(bundle, secure, base, field, fmt, smInclude, false, type_);
+          AddResourceTobundle(request, bundle, secure, base, field, fmt, smInclude, false, type_, patIds);
       finally
         FConnection.Terminate;
       end;
@@ -1814,161 +1857,166 @@ var
   op : TFHIROperationOutcomeW;
   type_ : String;
   be : TFHIRBundleEntryW;
+  patIds : TPatientIdTracker;
 begin
+  patIds := TPatientIdTracker.create;
   try
-    ok := true;
-    { todo:
-     conformance
-     quantity searches
-    }
-    if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
-      // ok := false
-    else if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
-      BuildSearchForm(request, response)
-    else
-    begin
-      TypeNotFound(request, response);
-      if request.resourceName <> '' then
-      begin
-        key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+request.ResourceName+'''');
-        if not check(response, key > 0, 404, lang, 'Resource Type '+request.ResourceName+' not known', itNotSupported) then
-            ok := false;
-      end
+    try
+      ok := true;
+      { todo:
+       conformance
+       quantity searches
+      }
+      if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+        // ok := false
+      else if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
+        BuildSearchForm(request, response)
       else
-        key := 0;
-
-      if ok then
       begin
-        response.OnCreateBuilder(request, response, btSearchset, bundle);
-        op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
-        keys := TKeyList.Create;
-        try
-          bundle.setLastUpdated(TFslDateTime.makeUTC);
-//          bundle.base := request.baseUrl;
+        TypeNotFound(request, response);
+        if request.resourceName <> '' then
+        begin
+          key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+request.ResourceName+'''');
+          if not check(response, key > 0, 404, lang, 'Resource Type '+request.ResourceName+' not known', itNotSupported) then
+              ok := false;
+        end
+        else
+          key := 0;
 
-          summaryStatus := request.Summary;
-          if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
-            link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
-          else
-            id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
+        if ok then
+        begin
+          response.OnCreateBuilder(request, response, btSearchset, bundle);
+          op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+          keys := TKeyList.Create;
+          try
+            bundle.setLastUpdated(TFslDateTime.makeUTC);
+  //          bundle.base := request.baseUrl;
 
-          cok := false;
-          if (total = 0) and StringArrayExistsInsensitive(factory.CanonicalResources, request.ResourceName) and (request.Parameters.VarExists('url')) then
-            cok := processCanonicalSearch(request, bundle);
-
-          if not cok then
-          begin
-            bundle.setTotal(total);
-            bundle.Tag('sql', sql);
-
-            base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'?';
-            if response.Format <> ffUnspecified then
-              base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-            bundle.addLink('self', base+link);
-
-            offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
-            if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
-              count := SUMMARY_SEARCH_PAGE_LIMIT
+            summaryStatus := request.Summary;
+            if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
+              link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
             else
-              count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
-            if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
-              summaryStatus := soCount;
+              id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
+            cok := false;
+            if (total = 0) and StringArrayExistsInsensitive(factory.CanonicalResources, request.ResourceName) and (request.Parameters.VarExists('url')) then
+              cok := processCanonicalSearch(request, bundle);
 
-            if (summaryStatus <> soCount) then
+            if not cok then
             begin
-              if (count < 1) then
-                count := SEARCH_PAGE_DEFAULT
-              else if (summaryStatus = soSummary) and (Count > SUMMARY_SEARCH_PAGE_LIMIT) then
+              bundle.setTotal(total);
+              bundle.Tag('sql', sql);
+
+              base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'?';
+              if response.Format <> ffUnspecified then
+                base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
+              bundle.addLink('self', base+link);
+
+              offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
+              if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
                 count := SUMMARY_SEARCH_PAGE_LIMIT
-              else if (summaryStatus = soText) and (Count > SUMMARY_TEXT_SEARCH_PAGE_LIMIT) then
-                count := SUMMARY_TEXT_SEARCH_PAGE_LIMIT
-              else if (Count > SEARCH_PAGE_LIMIT) then
-                count := SEARCH_PAGE_LIMIT;
-
-              if (offset > 0) or (Count < total) then
-              begin
-                bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-                if offset - count >= 0 then
-                  bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-                if offset + count < total then
-                  bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-                if count < total then
-                  bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              end;
-
-              chooseField(response.Format, summaryStatus, request.loadObjects, field, prsrFmt, needsObject);
-              if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
-                prsrfmt := ffUnspecified;
-
-              FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
-                  'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
-              if reverse then
-                FConnection.SQL := FConnection.SQL + ' order by SortValue DESC'
               else
-                FConnection.SQL := FConnection.SQL + ' order by SortValue ASC';
-              FConnection.Prepare;
+                count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
+              if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
+                summaryStatus := soCount;
+
+
+              if (summaryStatus <> soCount) then
+              begin
+                if (count < 1) then
+                  count := SEARCH_PAGE_DEFAULT
+                else if (summaryStatus = soSummary) and (Count > SUMMARY_SEARCH_PAGE_LIMIT) then
+                  count := SUMMARY_SEARCH_PAGE_LIMIT
+                else if (summaryStatus = soText) and (Count > SUMMARY_TEXT_SEARCH_PAGE_LIMIT) then
+                  count := SUMMARY_TEXT_SEARCH_PAGE_LIMIT
+                else if (Count > SEARCH_PAGE_LIMIT) then
+                  count := SEARCH_PAGE_LIMIT;
+
+                if (offset > 0) or (Count < total) then
+                begin
+                  bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                  if offset - count >= 0 then
+                    bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                  if offset + count < total then
+                    bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                  if count < total then
+                    bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                end;
+
+                chooseField(response.Format, summaryStatus, request.loadObjects, field, prsrFmt, needsObject);
+                if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') and NO_AUDIT_ON_SEARCH then // param __wantObject is for internal use only
+                  prsrfmt := ffUnspecified;
+
+                FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+                    'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
+                if reverse then
+                  FConnection.SQL := FConnection.SQL + ' order by SortValue DESC'
+                else
+                  FConnection.SQL := FConnection.SQL + ' order by SortValue ASC';
+                FConnection.Prepare;
+                try
+                  FConnection.Execute;
+                  i := 0;
+                  t := 0;
+                  while FConnection.FetchNext do
+                  Begin
+                    inc(i);
+                    if (i > offset) then
+                    begin
+                      AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smMatch, false, type_, patIds);
+                      keys.Add(TKeyPair.Create(type_, FConnection.ColStringByName['ResourceKey']));
+                      inc(t);
+                    end;
+                    if (t = count) then
+                      break;
+                  End;
+                finally
+                  FConnection.Terminate;
+                end;
+              end;
+
+              processIncludes(request, request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.lang, field, prsrFmt, patIds);
+            end;
+
+            bundle.setId(FhirGUIDToString(CreateGUID));
+            if (op.issueCount > 0) then
+            begin
+              be := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
               try
-                FConnection.Execute;
-                i := 0;
-                t := 0;
-                while FConnection.FetchNext do
-                Begin
-                  inc(i);
-                  if (i > offset) then
-                  begin
-                    AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsrFmt, smMatch, false, type_);
-                    keys.Add(TKeyPair.Create(type_, FConnection.ColStringByName['ResourceKey']));
-                    inc(t);
-                  end;
-                  if (t = count) then
-                    break;
-                End;
+                be.resource := op.resource.Link;
+                be.searchMode := smOutcome;
+                bundle.addEntry(be.Link, false);
               finally
-                FConnection.Terminate;
+                be.Free;
               end;
             end;
 
-            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.lang, field, prsrFmt);
+            //bundle.link_List['self'] := request.url;
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            response.Body := '';
+            response.Resource := nil;
+            response.resource := bundle.getBundle;
+          finally
+            keys.Free;
+            bundle.Free;
+            op.Free;
           end;
-
-          bundle.setId(FhirGUIDToString(CreateGUID));
-          if (op.issueCount > 0) then
-          begin
-            be := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
-            try
-              be.resource := op.resource.Link;
-              be.searchMode := smOutcome;
-              bundle.addEntry(be.Link, false);
-            finally
-              be.Free;
-            end;
-          end;
-
-          //bundle.link_List['self'] := request.url;
-          response.HTTPCode := 200;
-          response.Message := 'OK';
-          response.Body := '';
-          response.Resource := nil;
-          response.resource := bundle.getBundle;
-        finally
-          keys.Free;
-          bundle.Free;
-          op.Free;
         end;
       end;
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message, patIds.ids);
+    except
+      on e: exception do
+      begin
+        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message, patIds.ids);
+        recordStack(e);
+        raise;
+      end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
-      recordStack(e);
-      raise;
-    end;
+  finally
+    patids.Free;
   end;
 end;
-
 
 function TFHIRNativeOperationEngine.ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
@@ -2160,11 +2208,11 @@ begin
       end;
     end;
     if request.ResourceName <> 'AuditEvent' then // else you never stop
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, request.Resource));
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, request.Resource));
       recordStack(e);
       raise;
     end;
@@ -2443,11 +2491,11 @@ begin
         end;
       end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message)
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, request.Resource))
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, request.Resource));
       recordStack(e);
       raise;
     end;
@@ -2522,12 +2570,12 @@ begin
       response.Resource := response.outcome.Resource.Link;
     end;
     if request.ResourceName <> 'AuditEvent' then
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, request.Resource));
   except
     on e: exception do
     begin
       if request.ResourceName <> 'AuditEvent' then
-        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, request.Resource));
       recordStack(e);
       raise;
     end;
@@ -2586,11 +2634,11 @@ begin
         end;
       end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, request.SubId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, request.SubId, 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, response.Resource));
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, request.SubId, 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, request.SubId, 0, request.CommandType, request.Provenance, 500, '', e.message, patientIds(request, response.Resource));
       recordStack(e);
       raise;
     end;
@@ -2603,6 +2651,11 @@ begin
 end;
 
 function TFHIRNativeOperationEngine.FindResource(aType : String; sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response : TFhirResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
+begin
+  result := FindResourceConn(FConnection, aType, sId, options, resourceKey, versionKey, request, response, sessionCompartments);
+end;
+
+function TFHIRNativeOperationEngine.FindResourceConn(conn : TKDBConnection; aType : String; sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response : TFhirResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 var
   cmp : String;
 begin
@@ -2611,18 +2664,18 @@ begin
   else
     cmp := buildCompartmentsSQL(ServerContext.ResConfig, nil, sessionCompartments);
 
-  FConnection.sql := 'select Ids.ResourceKey, Ids.MostRecent, Deleted from Ids, Types where Ids.id = :s '+cmp+' and Ids.ResourceTypeKey = Types.ResourceTypeKey and Supported = 1 and ResourceName = :n';
-  FConnection.Prepare;
-  FConnection.BindString('s', sId);
-  FConnection.BindString('n', aType);
-  FConnection.execute;
-  result := FConnection.FetchNext;
+  conn.sql := 'select Ids.ResourceKey, Ids.MostRecent, Deleted from Ids, Types where Ids.id = :s '+cmp+' and Ids.ResourceTypeKey = Types.ResourceTypeKey and Supported = 1 and ResourceName = :n';
+  conn.Prepare;
+  conn.BindString('s', sId);
+  conn.BindString('n', aType);
+  conn.execute;
+  result := conn.FetchNext;
   if result then
   begin
-    if (froFindDeletedResource in options) or (FConnection.ColIntegerByName['Deleted'] = 0) then
+    if (froFindDeletedResource in options) or (conn.ColIntegerByName['Deleted'] = 0) then
     begin
-      resourceKey := FConnection.ColIntegerByName['ResourceKey'];
-      versionKey := FConnection.ColIntegerByName['MostRecent'];
+      resourceKey := conn.ColIntegerByName['ResourceKey'];
+      versionKey := conn.ColIntegerByName['MostRecent'];
     end
     else
     begin
@@ -2636,13 +2689,13 @@ begin
     if froForCommit in options then
     begin
       // now we'll look again
-      FConnection.terminate;
-      FConnection.sql := 'select Ids.ResourceKey, Ids.MostRecent, Deleted from Ids, Types where Ids.id = :s and Ids.ResourceTypeKey = Types.ResourceTypeKey and Supported = 1 and ResourceName = :n';
-      FConnection.Prepare;
-      FConnection.BindString('s', sId);
-      FConnection.BindString('n', aType);
-      FConnection.execute;
-      if FConnection.FetchNext then
+      conn.terminate;
+      conn.sql := 'select Ids.ResourceKey, Ids.MostRecent, Deleted from Ids, Types where Ids.id = :s and Ids.ResourceTypeKey = Types.ResourceTypeKey and Supported = 1 and ResourceName = :n';
+      conn.Prepare;
+      conn.BindString('s', sId);
+      conn.BindString('n', aType);
+      conn.execute;
+      if conn.FetchNext then
       begin
         check(response, false, 403, lang, StringFormat(GetFhirMessage('MSG_NO_ACCESS', lang), [aType+'/'+sid]), itSecurity);
         abort;
@@ -2651,7 +2704,7 @@ begin
     if response <> nil then
       check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+sid]), itNotFound);
   end;
-  FConnection.terminate;
+  conn.terminate;
 end;
 
 function TFHIRNativeOperationEngine.AddNewResourceId(aType, id, lang : string; forTesting : boolean; var resourceKey : integer) : Boolean;
@@ -3043,7 +3096,9 @@ begin
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Globals.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
+    FIndexer.Engine := ServerContext.ServerFactory.makeEngine(ServerContext.ValidatorContext.Link, TUcumServiceImplementation.Create(FIndexer.Ucum.link));
     FIndexer.OnResolveReference := resolveReferenceForIndexing;
+    FIndexer.Engine.OnResolveReference := FIndexer.doResolve;
   end;
 end;
 
@@ -3129,11 +3184,11 @@ begin
     ''#13#10;
       response.ContentType:= 'text/html';
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message, []);
       recordStack(e);
       raise;
     end;
@@ -3746,12 +3801,12 @@ begin
       end;
     end;
     if request.Resource <> nil then // batch
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
   except
     on e: exception do
     begin
       if request.Resource <> nil then // batch
-        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message, []);
       recordStack(e);
       raise;
     end;
@@ -3843,11 +3898,11 @@ begin
       req.free;
       resp.free;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message, []);
       recordStack(e);
       raise;
     end;
@@ -4723,14 +4778,14 @@ end;
 //    result := nil;
 //end;
 //
-procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFHIRResourceV; httpCode: Integer; name, message: String);
+procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFHIRResourceV; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
-  AuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, '', httpCode, name, message);
+  AuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, '', httpCode, name, message, patients);
 end;
 
-procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode: Integer; name, message: String);
+procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
-  doAuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message);
+  doAuditRestPat(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message, patients);
 end;
 
 procedure TFHIRNativeOperationEngine.storeResources(list : TFslList<TFHIRQueuedResource>; origin : TFHIRRequestOrigin; upload : boolean);
@@ -4895,6 +4950,7 @@ var
   request : TFHIRRequest;
   bundle : TFHIRBundleW;
   be : TFhirBundleEntryW;
+  conn : TKDBConnection;
 begin
   request := appInfo as TFHIRRequest;
   if request.CommandType = fcmdTransaction then
@@ -4938,24 +4994,38 @@ begin
     exit(nil);
 
   result := nil;
-  if FindResource(p[0], p[1], [], resourceKey, versionKey, nil, nil, nil) then
-  begin
-    FConnection.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' and ResourceVersionKey = '+inttostr(versionKey);
-    FConnection.Prepare;
-    try
-      FConnection.Execute;
-      if FConnection.FetchNext then
-      begin
-        b := FConnection.ColBlobByName['JsonContent'];
-        parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
-        try
-          result := parser.parseResource(b);
-        finally
-          parser.free;
-        end;
-      end
-    finally
-      FConnection.Terminate;
+  conn := FConnection;
+  if conn.Prepared then
+    conn := FRepository.DB.GetConnection('Indexing Lookup');
+  try
+    if FindResourceConn(conn, p[0], p[1], [], resourceKey, versionKey, nil, nil, nil) then
+    begin
+      conn.SQL := 'Select * from Versions where ResourceKey = '+inttostr(resourceKey)+' and ResourceVersionKey = '+inttostr(versionKey);
+      conn.Prepare;
+      try
+        conn.Execute;
+        if conn.FetchNext then
+        begin
+          b := conn.ColBlobByName['JsonContent'];
+          parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+          try
+            result := parser.parseResource(b);
+          finally
+            parser.free;
+          end;
+        end
+      finally
+        conn.Terminate;
+      end;
+    end;
+    if conn <> FConnection then
+      conn.Release;
+  except
+    on e : Exception do
+    begin
+      if conn <> FConnection then
+        conn.Error(e);
+      raise;
     end;
   end;
 end;
@@ -5394,7 +5464,7 @@ begin
         logt('  .. Load Package hl7.fhir.org#' + ServerContext.Factory.versionString);
         pcm := TFHIRPackageManager.Create(false);
         try
-          res := TFslStringSet.Create(['StructureDefinition']); // we only load structure definitions; everything else is left to the database
+          res := TFslStringSet.Create(['StructureDefinition', 'SearchParameter', 'CompartmentDefinition']); // we only load a few things; everything else is left to the database
           try
             pcm.loadPackage('hl7.fhir.core', ServerContext.Factory.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
           finally
@@ -5415,6 +5485,9 @@ begin
             checkDefinitions();
           end;
         end;
+        logt('  .. Process Loaded Resources');
+        ProcessLoadedResources;
+
         logt('  .. Load Subscription Queue');
         ServerContext.SubscriptionManager.LoadQueue(conn);
       end;
@@ -6526,6 +6599,12 @@ begin
   FServerContext.SubscriptionManager.ProcessEmails;
 end;
 
+procedure TFHIRNativeStorageService.ProcessLoadedResources;
+begin
+  ServerContext.ValidatorContext.LoadingFinished;
+ // nothing
+end;
+
 procedure TFHIRNativeStorageService.ProcessObservationContent(conn: TKDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
 var
   cmp : TFhirObservationComponentW;
@@ -7269,6 +7348,39 @@ begin
   FSession.Free;;
   FResource.Free;
   inherited;
+end;
+
+{ TPatientIdTracker }
+
+constructor TPatientIdTracker.Create;
+begin
+  inherited;
+  FIds := TStringList.Create;
+  FIds.Sorted := true;
+  FIds.Duplicates := Classes.dupIgnore;
+end;
+
+destructor TPatientIdTracker.Destroy;
+begin
+  FIds.Free;
+  inherited;
+end;
+
+function TPatientIdTracker.ids: TArray<String>;
+var
+  i : integer;
+begin
+  SetLength(result, FIds.Count);
+  for i := 0 to FIds.Count - 1 do
+    result[i] := FIds[i];
+end;
+
+procedure TPatientIdTracker.seeIds(ids: TArray<String>);
+var
+  id : String;
+begin
+  for id in ids do
+    FIds.Add(id);
 end;
 
 end.

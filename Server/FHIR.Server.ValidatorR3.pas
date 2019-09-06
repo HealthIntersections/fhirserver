@@ -37,7 +37,8 @@ Uses
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Tx.Service,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client, FHIR.R3.Utilities,
+  FHIR.R3.PathNode, FHIR.R3.PathEngine,
   FHIR.Tools.ValueSets,
   FHIR.Tx.Server;
 
@@ -48,9 +49,13 @@ type
     FProfile : TFhirExpansionParams;
     FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
+    FSearchParameters : TFslMap<TFhirSearchParameter>;
+    FCompartments : TFslMap<TFhirCompartmentDefinition>;
+    FPatientIdExpressions : array [TFhirResourceType] of TFHIRPathExpressionNode;
 
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
+    procedure loadPatientCompartment;
   public
     constructor Create(factory : TFHIRFactory); Override;
     destructor Destroy; Override;
@@ -70,6 +75,9 @@ type
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
+    procedure LoadingFinished; override;
+
+    function PatientIdExpression(rt : TFhirResourceType) : TFHIRPathExpressionNode;
   end;
 
 
@@ -91,10 +99,20 @@ begin
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.create;
+  FSearchParameters := TFslMap<TFhirSearchParameter>.create;
+  FCompartments := TFslMap<TFhirCompartmentDefinition>.create;
+  FSearchParameters.defaultValue := nil;
+  FCompartments.defaultValue := nil;
 end;
 
 destructor TFHIRServerWorkerContextR3.Destroy;
+var
+  a : TFhirResourceType;
 begin
+  for a := low(TFhirResourceType) to High(TFhirResourceType) do
+     FPatientIdExpressions[a].Free;
+  FSearchParameters.Free;
+  FCompartments.Free;
   FQuestionnaires.Free;
   FProfile.Free;
   FTerminologyServer.Free;
@@ -108,11 +126,76 @@ begin
   result := TFHIRServerWorkerContextR3(inherited Link);
 end;
 
+procedure TFHIRServerWorkerContextR3.LoadingFinished;
+begin
+  loadPatientCompartment;
+end;
+
+procedure TFHIRServerWorkerContextR3.loadPatientCompartment;
+var
+  comp : TFhirCompartmentDefinition;
+  r : TFhirCompartmentDefinitionResource;
+  rt : TFhirResourceType;
+  first : boolean;
+  s : TFHIRString;
+  exp : String;
+  sp : TFhirSearchParameter;
+  fpe : TFHIRPathEngine;
+begin
+  fpe := TFHIRPathEngine.create(nil, nil);
+  try
+    comp := FCompartments['http://hl7.org/fhir/CompartmentDefinition/patient'];
+    if comp <> nil then
+    begin
+      for r in comp.resourceList do
+      begin
+        rt := ResourceTypeByName(CODES_TFhirResourceTypesEnum[r.code]);
+        first := true;
+        exp := '';
+        for s in r.paramList do
+        begin
+          sp := FSearchParameters[CODES_TFhirResourceTypesEnum[r.code]+'.'+s.value];
+          if (sp <> nil) and (sp.expression <> '') then
+          begin
+            if first then first := false else exp := exp + ' | ';
+            exp := exp + sp.expression;
+          end;
+        end;
+        if exp <> '' then
+          FPatientIdExpressions[rt] := fpe.parse(exp);
+      end;
+    end;
+  finally
+    fpe.Free;
+  end;
+end;
+
+function TFHIRServerWorkerContextR3.PatientIdExpression(rt: TFhirResourceType): TFHIRPathExpressionNode;
+begin
+  result := FPatientIdExpressions[rt];
+end;
+
 procedure TFHIRServerWorkerContextR3.SeeResource(r : TFhirResource);
+var
+  sp : TFhirSearchParameter;
+  b : TFhirEnum;
+  s : string;
 begin
   checkResource(r);
   if (r.ResourceType in [frtValueSet, frtConceptMap, frtCodeSystem]) then
     FTerminologyServer.SeeSpecificationResource(r)
+  else if r.resourceType = frtSearchParameter then
+  begin
+    sp := r as TFhirSearchParameter;
+    for b in sp.base do
+    begin
+      s := b.value+'.'+sp.code;
+      if not FSearchParameters.ContainsKey(s) then
+        FSearchParameters.Add(s, sp.link)
+    end;
+  end
+  else if r.resourceType = frtCompartmentDefinition then
+    FCompartments.Add(TFhirCompartmentDefinition(r).url, TFhirCompartmentDefinition(r).link)
   else if r.resourceType = frtQuestionnaire then
   begin
     FLock.lock;

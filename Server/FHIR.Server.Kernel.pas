@@ -41,11 +41,12 @@ Uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Service,
   FHIR.Web.Fetcher,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
-  FHIR.Loinc.Importer, FHIR.Loinc.Services,
+  FHIR.Loinc.Importer, FHIR.Loinc.Services, FHIR.Ucum.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Base.Common,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Base.Common, FHIR.Base.PathEngine,
 
   FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory,
+  FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context,
   FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo,
   FHIR.Server.IndexingR2, FHIR.Server.IndexingR3, FHIR.Server.IndexingR4,
   FHIR.Server.SubscriptionsR2, FHIR.Server.SubscriptionsR3, FHIR.Server.SubscriptionsR4,
@@ -53,6 +54,7 @@ Uses
   FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator,
   FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4,
   FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript,
+  FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine,
 
   FHIR.Tools.Indexing,
   FHIR.Tx.Manager, FHIR.Tx.Server,
@@ -72,6 +74,7 @@ Type
     function makeIndexes : TFHIRIndexBuilder; override;
     function makeValidator: TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
+    function makeEngine(context : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
 
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
@@ -332,6 +335,17 @@ begin
     fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
+  end;
+end;
+
+function TKernelServerFactory.makeEngine(context: TFHIRWorkerContextWithFactory; ucum: TUcumServiceImplementation): TFHIRPathEngineV;
+begin
+  case FVersion of
+    fhirVersionRelease2 : result := TFHIRPathEngine2.Create(context as TFHIRWorkerContext2, ucum);
+    fhirVersionRelease3 : result := TFHIRPathEngine3.Create(context as TFHIRWorkerContext3, ucum);
+    fhirVersionRelease4 : result := TFHIRPathEngine4.Create(context as TFHIRWorkerContext4, ucum);
+  else
+    raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating FHIRPathEngine');
   end;
 end;
 

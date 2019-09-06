@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging, FHIR.Support.Json,
   FHIR.Web.Parsers,
   FHIR.Database.Dialects, FHIR.Web.GraphQL,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities, FHIR.Base.PathEngine,
   FHIR.Client.Base, FHIR.CdsHooks.Utilities,
   FHIR.Server.Session,
   FHIR.Tools.Indexing, FHIR.Tools.GraphQL,
@@ -163,6 +163,7 @@ Type
   protected
     FServerContext : TFslObject;
     FOperations : TFslList<TFhirOperation>;
+    FEngine : TFHIRPathEngineV;
     procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); virtual; abstract;
 
     procedure StartTransaction; virtual; abstract;
@@ -209,8 +210,9 @@ Type
     function getResourceByUrl(aType : string; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; virtual; abstract;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResourceV; virtual;
     function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String); overload; virtual; abstract;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String); overload; virtual; abstract;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
+    function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
 
     function createClient(lang : String; session: TFHIRSession) : TFhirClientV; virtual;
   end;
@@ -802,11 +804,11 @@ begin
       oConf.free;
     end;
 
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message, []);
       recordStack(e);
       raise;
     end;
@@ -1039,11 +1041,11 @@ begin
       oConf.free;
     end;
 
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message, []);
       recordStack(e);
       raise;
     end;

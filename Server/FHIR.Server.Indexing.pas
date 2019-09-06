@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.PathEngine,
   FHIR.Tools.Indexing,
   FHIR.Ucum.Services, FHIR.Tx.Server,
   FHIR.Server.Constants, FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Utilities;
@@ -172,6 +172,7 @@ type
     procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
     procedure SetSpaces(const Value: TFhirIndexSpaces);
     procedure SetUcum(const Value: TUcumServices);
+    procedure SetEngine(const Value: TFHIRPathEngineV);
   protected
     FSpaces : TFhirIndexSpaces;
     FKeyEvent : TFHIRGetNextKey;
@@ -184,6 +185,8 @@ type
     FInfo : TFHIRIndexInformation;
     FEntries : TFhirIndexEntryList;
     FUcum : TUcumServices;
+    FEngine : TFHIRPathEngineV;
+
     FOnResolveReference: TFHIRResolveReferenceVEvent;
     procedure SetTerminologyServer(const Value: TTerminologyServer);
   public
@@ -199,9 +202,11 @@ type
     property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
     property ResConfig : TFslMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
     property Ucum : TUcumServices read FUcum write SetUcum;
+    property Engine : TFHIRPathEngineV read FEngine write SetEngine;
 
     function execute(key : integer; id: String; resource : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>; virtual; abstract;
     property OnResolveReference : TFHIRResolveReferenceVEvent read FOnResolveReference write FOnResolveReference;
+    function doResolve(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
   end;
 
 function findPrefix(var value : String; subst : String) : boolean;
@@ -619,6 +624,14 @@ begin
   inherited;
 end;
 
+function TFhirIndexManager.doResolve(source: TFHIRPathEngineV; appInfo: TFslObject; url: String): TFHIRObject;
+begin
+  // ok, we'll ask the host engine...
+  if not assigned(FOnResolveReference) then
+    raise Exception.Create('No resolve reference service provided');
+  result := FOnResolveReference(self, appInfo, url);
+end;
+
 procedure TFhirIndexManager.SetConnection(const Value: TKDBConnection);
 begin
   FConnection.Free;
@@ -629,6 +642,11 @@ procedure TFhirIndexManager.SetContext(const Value: TFHIRWorkerContextWithFactor
 begin
   FContext.Free;
   FContext := Value;
+end;
+
+procedure TFhirIndexManager.SetEngine(const Value: TFHIRPathEngineV);
+begin
+  FEngine := Value;
 end;
 
 procedure TFhirIndexManager.SetInfo(const Value: TFHIRIndexInformation);

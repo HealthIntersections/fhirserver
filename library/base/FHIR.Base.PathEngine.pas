@@ -201,6 +201,7 @@ type
   TFHIRPathEngineV = class;
 
   TFHIRPathDebugEvent = procedure (source : TFHIRPathEngineV; package : TFHIRPathDebugPackage) of object;
+  TFHIRResolveReferenceEvent = function (source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject of object;
 
   TFHIRPathEngineExtension = class abstract (TFslObject)
   public
@@ -215,6 +216,7 @@ type
     function findPath(path : String; loc : TSourceLocation; context : TArray<TFHIRObject>; base : TFHIRObject; var focus : TArray<TFHIRObject>) : String;
   protected
     FExtensions : TFslList<TFHIRPathEngineExtension>;
+    FOnResolveReference: TFHIRResolveReferenceEvent;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -236,6 +238,7 @@ type
 
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject) : String; overload;
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject; var pathObjects : TArray<TFHIRObject>) : String; overload;
+    property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
   end;
 
 const

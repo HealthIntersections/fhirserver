@@ -70,6 +70,7 @@ Type
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
+    procedure LoadingFinished; override;
   end;
 
 implementation
@@ -105,6 +106,11 @@ end;
 function TFHIRServerWorkerContextR2.Link: TFHIRServerWorkerContextR2;
 begin
   result := TFHIRServerWorkerContextR2(inherited Link);
+end;
+
+procedure TFHIRServerWorkerContextR2.LoadingFinished;
+begin
+  // nothing
 end;
 
 procedure TFHIRServerWorkerContextR2.SeeResource(r : TFhirResource);

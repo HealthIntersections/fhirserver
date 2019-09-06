@@ -159,6 +159,7 @@ begin
     conn.Execute;
     while conn.FetchNext do
       FClosures.Add(conn.ColStringByName['name'], TClosureManager.create(conn.ColStringByName['name'], conn.ColIntegerByName['ClosureKey'], conn.ColIntegerByName['Version'], self));
+    conn.terminate;
     conn.Release;
   except
     on e : exception do

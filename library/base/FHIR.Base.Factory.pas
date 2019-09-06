@@ -251,6 +251,7 @@ type
     function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; virtual; abstract;
+    procedure LoadingFinished; virtual; abstract;
   end;
 
 
