@@ -133,7 +133,6 @@ type
     worker : TFHIRWorkerContext;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
-    FOnResolveReference: TFHIRResolveReferenceEvent;
     FOnResolveConstant: TFHIRResolveConstantEvent;
     FUcum : TUcumServiceInterface;
 
@@ -292,7 +291,6 @@ type
     destructor Destroy; override;
     function link : TFHIRPathEngine; overload;
 
-    property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
     property OnResolveConstant : TFHIRResolveConstantEvent read FOnResolveConstant write FOnResolveConstant;
 
     // Parse a path for later use using execute
@@ -329,6 +327,7 @@ type
     property context : TFHIRWorkerContext read worker;
     function parseQuantityString(s: String): TFHIRQuantity;
   end;
+  TFHIRPathEngine4 = TFHIRPathEngine;
 
 
 implementation

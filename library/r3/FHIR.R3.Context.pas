@@ -76,6 +76,7 @@ type
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
   end;
+  TFHIRWorkerContext3 = TFHIRWorkerContext;
 
 implementation
 

@@ -36,7 +36,7 @@ Uses
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.PathEngine,
   FHIR.R4.PathNode, FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.PathEngine, FHIR.R4.ElementModel;
 
 
@@ -237,7 +237,7 @@ Type
     procedure validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
-    function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
+    function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
@@ -513,7 +513,7 @@ begin
   end;
 end;
 
-function TFHIRValidator4.FHIRPathResolveReference(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
+function TFHIRValidator4.FHIRPathResolveReference(source: TFHIRPathEngineV; appInfo: TFslObject; url: String): TFHIRObject;
 begin
   if not (appInfo is TFHIRObject) then
     exit(nil);

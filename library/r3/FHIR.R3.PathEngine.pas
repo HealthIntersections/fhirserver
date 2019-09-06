@@ -123,7 +123,6 @@ type
     function processConstant : TFHIRObject; overload; override;
   end;
 
-  TFHIRResolveReferenceEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject of object;
   TFHIRResolveConstantEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; name : String; beforeContext : boolean) : TFHIRObject of object;
 
   TFHIRPathEngine = class (TFHIRPathEngineV)
@@ -131,7 +130,6 @@ type
     worker : TFHIRWorkerContext;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
-    FOnResolveReference: TFHIRResolveReferenceEvent;
     FOnResolveConstant: TFHIRResolveConstantEvent;
     FUcum : TUcumServiceInterface;
 
@@ -284,7 +282,6 @@ type
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
 
-    property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
     property OnResolveConstant : TFHIRResolveConstantEvent read FOnResolveConstant write FOnResolveConstant;
 
     // Parse a path for later use using execute
@@ -321,7 +318,7 @@ type
     property context : TFHIRWorkerContext read worker;
     function parseQuantityString(s: String): TFHIRQuantity;
   end;
-
+  TFHIRPathEngine3 = TFHIRPathEngine;
 
 implementation
 

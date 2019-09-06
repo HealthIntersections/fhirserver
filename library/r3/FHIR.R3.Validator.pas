@@ -37,7 +37,7 @@ Uses
 
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.PathEngine,
   FHIR.R3.PathNode, FHIR.R3.Context, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.PathEngine, FHIR.R3.ElementModel;
 
 
@@ -200,7 +200,7 @@ Type
     procedure validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
-    function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
+    function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
@@ -470,7 +470,7 @@ begin
   end;
 end;
 
-function TFHIRValidator3.FHIRPathResolveReference(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
+function TFHIRValidator3.FHIRPathResolveReference(source: TFHIRPathEngineV; appInfo: TFslObject; url: String): TFHIRObject;
 begin
   if not (appInfo is TFHIRObject) then
     exit(nil);

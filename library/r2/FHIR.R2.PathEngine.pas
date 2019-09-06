@@ -86,7 +86,6 @@ type
     worker : TFHIRWorkerContext;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
-    FOnResolveReference: TFHIRResolveReferenceEvent;
     Fucum : TUcumServiceInterface;
 
     procedure log(name, value : String);
@@ -209,7 +208,6 @@ type
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
-    property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
 
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRPathExpressionNode; overload;
@@ -243,6 +241,7 @@ type
     function UseLog : String;
     property context : TFHIRWorkerContext read worker;
   end;
+  TFHIRPathEngine2 = TFHIRPathEngine;
 
 implementation
 
