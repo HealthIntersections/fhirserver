@@ -614,7 +614,6 @@ end;
 
 procedure TServerManagerForm.btnNDCClick(Sender: TObject);
 var
-  db : TKDBManager;
   start : TDateTime;
   ndc : TNdcImporter;
 begin

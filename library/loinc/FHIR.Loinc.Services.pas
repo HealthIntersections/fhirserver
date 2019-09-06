@@ -2343,7 +2343,6 @@ end;
 function TLOINCServices.FilterByList(op: TFhirFilterOperator; list: String): TCodeSystemProviderFilterContext;
 var
   index : Cardinal;
-  desc : TLoincStrings;
   text : Cardinal;
   children : Cardinal;
   code : Cardinal;

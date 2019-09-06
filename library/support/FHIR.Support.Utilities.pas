@@ -5766,7 +5766,6 @@ function RemoveAccents(const s: String): String;
 var
   nLength: integer;
   c: char;
-  i: integer;
   temp: string;
 begin
   nLength := NormalizeString(NormalizationD, PChar(s), Length(s), nil, 0);

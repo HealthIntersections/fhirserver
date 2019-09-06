@@ -187,8 +187,7 @@ type
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
     function resolveReferenceForIndexing(sender : TFhirIndexManager; appInfo : TFslObject; url : String) : TFHIRResourceV;
-    function getPatientCompartment(comps: TFslList<TFHIRCompartmentId>): String;
-
+    
   protected
     function factory : TFHIRFactory;
     function resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url : String) : String;
@@ -689,16 +688,6 @@ begin
   finally
     b.free;
   end;
-end;
-
-Function TFHIRNativeOperationEngine.getPatientCompartment(comps : TFslList<TFHIRCompartmentId>) : String;
-var
-  comp : TFHIRCompartmentId;
-begin
-  result := '';
-  for comp in comps do
-    if comp.ResourceType = 'Patient' then
-      exit(comp.Id);
 end;
 
 Function TFHIRNativeOperationEngine.ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;

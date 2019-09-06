@@ -1003,7 +1003,6 @@ var
   ok : bytebool;
   args : PJsValueRefArray;
   global, obj, func, res : JsValueRef;
-  vType : JsValueType;
 begin
   JsCheck(JsCreateExternalObject(o, nil, result));
   if owns then
