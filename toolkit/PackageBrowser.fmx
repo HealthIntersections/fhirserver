@@ -83,6 +83,16 @@ object PackageFinderForm: TPackageFinderForm
       Size.PlatformDefault = False
       TabOrder = 3
     end
+    object ProgressBar1: TProgressBar
+      Anchors = [akLeft, akTop, akRight]
+      Orientation = Horizontal
+      Position.X = 232.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 449.000000000000000000
+      Size.Height = 20.000000000000000000
+      Size.PlatformDefault = False
+      Visible = False
+    end
   end
   object Panel3: TPanel
     Align = Client
@@ -105,8 +115,8 @@ object PackageFinderForm: TPackageFinderForm
       Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
       OnGetValue = gridGetValue
       OnCellClick = gridCellClick
-      Viewport.Width = 830.000000000000000000
-      Viewport.Height = 365.000000000000000000
+      Viewport.Width = 850.000000000000000000
+      Viewport.Height = 390.000000000000000000
       object StringColumn1: TStringColumn
         Header = 'Package Id'
         Size.Width = 120.000000000000000000

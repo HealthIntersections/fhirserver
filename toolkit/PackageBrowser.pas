@@ -39,7 +39,7 @@ uses
   FHIR.Cache.PackageManager;
 
 type
-  TOnLoadUrlEvent = procedure (sender : TObject; url : String) of object;
+  TOnLoadUrlEvent = procedure (sender : TObject; url : String; pbar : TProgressBar) of object;
 
   TPackageFinderForm = class(TForm)
     Panel1: TPanel;
@@ -58,6 +58,7 @@ type
     StringColumn4: TStringColumn;
     StringColumn5: TStringColumn;
     DateColumn1: TDateColumn;
+    ProgressBar1: TProgressBar;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -103,7 +104,7 @@ end;
 
 procedure TPackageFinderForm.btnInstallClick(Sender: TObject);
 begin
-  FOnLoad(self, FFiltered[grid.Row].Url);
+  FOnLoad(self, FFiltered[grid.Row].Url, ProgressBar1);
 end;
 
 procedure TPackageFinderForm.edtFilterChange(Sender: TObject);

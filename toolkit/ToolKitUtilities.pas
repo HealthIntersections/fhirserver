@@ -94,6 +94,7 @@ type
 //    function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
 //    procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
     procedure loadStructures(id : integer; structures : TFslObject);
+    procedure LoadingFinished; override;
   end;
 
   TBackgroundContextLoadingInformation = class (TFslObject)
@@ -620,6 +621,12 @@ end;
 function TToolkitWorkerContext.Link: TToolkitWorkerContext;
 begin
   result := TToolkitWorkerContext(inherited link);
+end;
+
+procedure TToolkitWorkerContext.LoadingFinished;
+begin
+  inherited;
+
 end;
 
 procedure TToolkitWorkerContext.loadStructures(id: integer; structures: TFslObject);

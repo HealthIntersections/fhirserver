@@ -1226,20 +1226,20 @@ begin
 end;
 
 procedure TCodeSystemEditorFrame.grdFiltersCellClick(const Column: TColumn; const Row: Integer);
-var
-  f : TFhirCodeSystemFilter;
+//var
+//  f : TFhirCodeSystemFilter;
 begin
-  if Column = grdFilters.Columns[7] then
-  begin
-    f := CodeSystem.filterList[grdFilters.Row];
-    if f.descriptionElement = nil then
-      f.descriptionElement := TFhirString.Create;
-    if editStringDialog(self, 'Code System Filter', nil, nil, CodeSystem, f.descriptionElement) then
-    begin
-      grdFilters.BeginUpdate;
-      grdFilters.EndUpdate;
-    end;
-  end;
+//  if Column = grdFilters.Columns[7] then
+//  begin
+//    f := CodeSystem.filterList[grdFilters.Row];
+//    if f.descriptionElement = nil then
+//      f.descriptionElement := TFhirString.Create;
+//    if editStringDialog(self, 'Code System Filter', nil, nil, CodeSystem, f.descriptionElement) then
+//    begin
+//      grdFilters.BeginUpdate;
+//      grdFilters.EndUpdate;
+//    end;
+//  end;
 end;
 
 procedure TCodeSystemEditorFrame.grdFiltersGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -1278,8 +1278,9 @@ procedure TCodeSystemEditorFrame.grdFiltersSetValue(Sender: TObject; const ACol,
 var
   f : TFhirCodeSystemFilter;
   a : TArray<String>;
-  s : String;
+  s, l : String;
   e : TFhirFilterOperatorEnumList;
+  i : TFhirFilterOperatorEnum;
 begin
   f := CodeSystem.filterList[ARow];
   case aCol of
@@ -1292,8 +1293,13 @@ begin
         if StringArrayExistsSensitive(CODES_TFhirFilterOperatorEnum, s) then
           e := e + [TFhirFilterOperatorEnum(StringArrayIndexOfSensitive(CODES_TFhirFilterOperatorEnum, s))]
         else
-          raise EFHIRException.create('Unknown Operator '+s);
-      f.&operator := e;
+        begin
+          l := CODES_TFhirFilterOperatorEnum[FilterOperatorEqual];
+          for i := FilterOperatorIsA to high(TFhirFilterOperatorEnum) do
+            l := l +', '+ CODES_TFhirFilterOperatorEnum[i];
+          raise EFHIRException.create('Unknown Operator '+s+': use a space separated set from '+l);
+        end;
+      f.operator := e;
       end;
     2: f.value := value.AsString;
     3: f.description := value.AsString;

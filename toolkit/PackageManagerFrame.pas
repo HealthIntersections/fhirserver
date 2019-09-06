@@ -103,7 +103,7 @@ type
     procedure changePackageManagerMode(mode : boolean);
     procedure reloadPackages;
     procedure fetchProgress(sender : TObject; progress : integer);
-    procedure importUrl(sender : TObject; url : String);
+    procedure importUrl(sender : TObject; url : String; pbar : TProgressBar);
     function CheckImp(sender : TObject; msg : String) : boolean;
   public
     destructor Destroy; override;
@@ -211,7 +211,7 @@ var
 begin
   url := 'https://';
   if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
-    importUrl(nil, url);
+    importUrl(nil, url, pbDownload);
 end;
 
 procedure TPackageManagerFrame.btnRefreshClick(Sender: TObject);
@@ -256,14 +256,14 @@ end;
 
 procedure TPackageManagerFrame.fetchProgress(sender: TObject; progress: integer);
 begin
-  pbDownload.Value := progress;
-  pbDownload.Repaint;
+  TProgressBar(TFslObject(sender).TagObject).Value := progress;
+  TProgressBar(TFslObject(sender).TagObject).Repaint;
   Application.ProcessMessages;
   if FStop then
     abort;
 end;
 
-procedure TPackageManagerFrame.importUrl(sender : TObject; url: String);
+procedure TPackageManagerFrame.importUrl(sender : TObject; url: String; pbar : TProgressBar);
 var
   fetch : TInternetFetcher;
   ok : boolean;
@@ -271,14 +271,15 @@ var
   s : String;
 begin
   FStop := false;
-  pbDownload.Visible := true;
-  pbDownload.Value := 0;
+  pbar.Visible := true;
+  pbar.Value := 0;
   btnCancel.Enabled := true;
   try
     Application.ProcessMessages;
     fetch := TInternetFetcher.Create;
     try
       fetch.onProgress := fetchProgress;
+      fetch.TagObject := pbar;
       fetch.Buffer := TFslBuffer.create;
       aborted := false;
       s := '';
@@ -319,11 +320,10 @@ begin
       fetch.Free;
     end;
   finally
-    pbDownload.Visible := false;
+    pbar.Visible := false;
     btnCancel.Enabled := false;
     Cursor := crDefault;
   end;
-
 end;
 
 procedure TPackageManagerFrame.lblFolderClick(Sender: TObject);
@@ -350,27 +350,27 @@ end;
 
 procedure TPackageManagerFrame.MenuItem1Click(Sender: TObject);
 begin
-  importUrl(nil, 'http://build.fhir.org/validator.tgz');
+  importUrl(nil, 'http://build.fhir.org/validator.tgz', pbDownload);
 end;
 
 procedure TPackageManagerFrame.MenuItem2Click(Sender: TObject);
 begin
-  importUrl(nil, 'http://hl7.org/fhir/us/core');
+  importUrl(nil, 'http://hl7.org/fhir/us/core', pbDownload);
 end;
 
 procedure TPackageManagerFrame.MenuItem3Click(Sender: TObject);
 begin
-  importUrl(nil, 'http://hl7.org/fhir/DSTU2');
+  importUrl(nil, 'http://hl7.org/fhir/DSTU2', pbDownload);
 end;
 
 procedure TPackageManagerFrame.MenuItem4Click(Sender: TObject);
 begin
-  importUrl(nil, 'http://hl7.org/fhir/STU3');
+  importUrl(nil, 'http://hl7.org/fhir/STU3', pbDownload);
 end;
 
 procedure TPackageManagerFrame.MenuItem5Click(Sender: TObject);
 begin
-  importUrl(nil, 'http://build.fhir.org/');
+  importUrl(nil, 'http://hl7.org/fhir/R4', pbDownload);
 end;
 
 
