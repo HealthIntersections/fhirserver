@@ -113,7 +113,7 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";                Des
 ; Executable files
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 ;Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
+Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode64.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\64\sqlite3.dll";                            DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
@@ -205,6 +205,7 @@ var
   VCStatus, MYSQLStatus, MSSQLStatus,  ODBCStatus : TLabel;
   iniName : String;
 
+  VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
 
 // start up check: a jre is required   
 
@@ -279,12 +280,16 @@ var
 procedure InstallMySQL(Sender: TObject);
 var 
   ResultCode:Integer;
+  localfilename:string;
 begin
-  //to do: Make this function get the URL from the TEdit
-  idpDownloadFile('https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi', ExpandConstant('{tmp}\mysql.msi'));
+//  idpDownloadFile('https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi', ExpandConstant('{tmp}\mysql.msi'));
 
-  //if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql-installer-web-community-5.7.20.0.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
-  if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+  localfilename:= MySQLPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+  idpDownloadFile(MySQLPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
     MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
 end;
 
@@ -292,10 +297,15 @@ end;
 procedure InstallVCRedist(Sender: TObject);
 var 
   ResultCode:Integer;
+  localfilename:string;
 begin
-  //to do: Make this function get the URL from the TEdit
-  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\vcredist.exe'));
-  if not ShellExec('', ExpandConstant('{tmp}\vcredist.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+//  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\vcredist.exe'));
+  localfilename:= VCPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+  idpDownloadFile(VCPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
     MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
 end;
 
@@ -304,22 +314,31 @@ end;
 procedure InstallMSSQL(Sender: TObject);
 var 
   ResultCode:Integer;
+  localfilename:string;
 begin
-  //to do: Make this function get the URL from the TEdit
-  idpDownloadFile('http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe', ExpandConstant('{tmp}\mssql.exe'));
-  if not ShellExec('', ExpandConstant('{tmp}\mssql.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+//  idpDownloadFile('http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe', ExpandConstant('{tmp}\mssql.exe'));
+  localfilename:= MSSQLPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+  idpDownloadFile(MSSQLPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
     MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
 end;
 
 procedure InstallODBC(Sender: TObject);
 var 
   ResultCode:Integer;
+  localfilename:string;
 begin
-  //to do: Make this function get the URL from the TEdit
-  // Which ODBC Depends on which Database is setup os is being setup
-  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\odbc.exe'));
-
-  if not ShellExec('', ExpandConstant('{tmp}\odbc.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+// Which ODBC Depends on which Database is setup os is being setup
+//  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\odbc.exe'));
+  localfilename:= ODBCPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+  idpDownloadFile(ODBCPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
     MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
 end;
 
@@ -327,7 +346,6 @@ Procedure CreateDependenciesPage;
 var
   JRElbl, JREstatus, VClbl, MYSQLlbl,  MSSQLlbl, ODBClbl :Tlabel ;
   JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
-  VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
   ResultMsg : Boolean;
   Versions: TArrayOfString;
   I: Integer;
@@ -435,7 +453,10 @@ Begin
   ODBCpath := TEdit.Create(DependenciesPage);
   with ODBCpath do 
   begin
-    Text := mysqlodbc_url_x64;
+    if 
+      false // this should be changed to see if DB drivers are in x32 or x64- a radiobutton or something?
+    then Text := mysqlodbc_url else   
+    Text := mysqlodbc_url_x64;   
     Top := ScaleX(96);
     Left := ScaleX(70);
     Width:=Scalex(300);
@@ -2252,7 +2273,8 @@ begin
         begin
           s := dbPackagesR4.items[i];
           s := copy(s, 1, pos(':', s)-1);
-          pl2 := pl2+','+s;
+          if pl2='' then pl2 := s else
+            pl2 := pl2+','+s;
         end;
       LoadInstallPage.SetText('Initializing R4 Database...', '');
       LoadInstallPage.SetProgress(0, 100);
