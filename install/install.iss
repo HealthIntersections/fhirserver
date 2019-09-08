@@ -113,7 +113,7 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";                Des
 ; Executable files
 Source: "C:\work\fhirserver\Exec\64\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 ;Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
+Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode64.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\64\sqlite3.dll";                            DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "C:\work\fhirserver\Exec\32\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
