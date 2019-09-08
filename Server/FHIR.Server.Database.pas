@@ -5326,6 +5326,8 @@ begin
   ServerContext.SubscriptionManager.OnExecuteSearch := DoExecuteSearch;
   ServerContext.SubscriptionManager.OnGetSessionEvent := ServerContext.SessionManager.GetSessionByKey;
 
+  logt('  .. keys');
+
   implGuides := TFslStringSet.create;
   try
     conn := FDB.GetConnection('setup');
@@ -5347,6 +5349,7 @@ begin
       FLastClientKey := conn.CountSQL('select max(ClientKey) from ClientRegistrations');
       conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
+      logt('  .. valuesets');
       Conn.SQL := 'Select ValueSetKey, URL from ValueSets';
       Conn.Prepare;
       conn.Execute;
@@ -5355,6 +5358,7 @@ begin
           FRegisteredValueSets.Add(Conn.ColStringByName['URL'], Conn.ColStringByName['ValueSetKey']);
       conn.terminate;
 
+      logt('  .. tags');
       conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
       conn.Prepare;
       conn.Execute;
@@ -5363,6 +5367,8 @@ begin
         ServerContext.TagManager.add(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['Kind']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']).ConfirmedStored := true;
       end;
       conn.terminate;
+
+      logt('  .. spaces');
 
       LoadSpaces(conn);
       conn.SQL := 'Select * from Config';
@@ -5390,6 +5396,8 @@ begin
           raise EFHIRException.create('Unknown Configuration Item '+conn.ColStringByName['ConfigKey']);
 
       conn.terminate;
+      logt('  .. resources');
+
       conn.SQL := 'Select * from Types';
       conn.Prepare;
       conn.Execute;
@@ -5425,12 +5433,13 @@ begin
         cfg.storedResourceId := conn.ColIntegerByName['LastId'];
       end;
       conn.terminate;
+      logt('  .. rkeys');
       if conn.Owner.Platform = kdbMySQL then
         conn.SQL := 'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS SIGNED) ELSE 0 END) as MaxId from Ids group by ResourceTypeKey'
       else if conn.Owner.Platform = kdbSQLite then
         conn.SQL := 'select ResourceTypeKey, max(CASE WHEN typeof(RTRIM(Id) + ''.0e0'') = ''integer'' THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey'
       else
-        conn.SQL := 'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
+        conn.SQL := 'select ResourceTypeKey, max(CASE WHEN TRY_CAST(Id AS integer) is not null THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
       conn.Prepare;
       conn.Execute;
       While conn.FetchNext do
@@ -5444,6 +5453,7 @@ begin
       end;
       conn.terminate;
 
+      logt('  .. reconcile');
       ServerContext.TagManager.crosslink;
       ServerContext.Indexes.ReconcileIndexes(conn);
 
