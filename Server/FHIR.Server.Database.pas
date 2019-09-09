@@ -60,7 +60,7 @@ const
 
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
-  KEY_SAVE_SIZE = 200;
+  KEY_SAVE_SIZE = 1200;
 
 
 type
