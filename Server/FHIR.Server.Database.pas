@@ -348,7 +348,7 @@ type
     function ProfilesAsOptionList: String; override;
     function NextVersionKey: integer;
     function NextSearchKey: integer;
-    function NextResourceKeySetId(aType: String; id: string) : integer;
+    function NextResourceKeySetId(connection : TKDBConnection; aType: String; id: string) : integer;
     function NextResourceKeyGetId(connection : TKDBConnection; aType: String; var id: string): integer;
     function NextEntryKey: integer;
     function NextCompartmentKey: integer;
@@ -2705,7 +2705,7 @@ begin
   result := iType > 0;
   if result then
   begin
-    resourceKey := FRepository.NextResourceKeySetId(aType, id);
+    resourceKey := FRepository.NextResourceKeySetId(FConnection, aType, id);
 
     FConnection.SQL := 'Select ResourceKey from Ids where ResourceTypeKey = :r and Id = :i';
     FConnection.Prepare;
@@ -2754,7 +2754,7 @@ begin
     if guid then
     begin
       id := FhirGUIDToString(CreateGUID);
-      key := FRepository.NextResourceKeySetId(aType, id);
+      key := FRepository.NextResourceKeySetId(FConnection, aType, id);
     end
     else
     begin
@@ -6949,7 +6949,7 @@ begin
     connection.ExecSQL('Update Types set LastId = '+inttostr(key)+' where ResourceTypeKey = '+inttostr(cfg.key));
 end;
 
-function TFHIRNativeStorageService.NextResourceKeySetId(aType: String; id: string): integer;
+function TFHIRNativeStorageService.NextResourceKeySetId(connection : TKDBConnection; aType: String; id: string): integer;
 var
   i: integer;
 begin
@@ -6968,7 +6968,7 @@ begin
         if ServerContext.ResConfig[aType].LastResourceId > ServerContext.ResConfig[aType].storedResourceId then
         begin
           ServerContext.ResConfig[aType].storedResourceId := ServerContext.ResConfig[aType].LastResourceId + KEY_SAVE_SIZE;
-          DB.ExecSQL('Update Types set LastId = '+inttostr(ServerContext.ResConfig[aType].storedResourceId)+' where ResourceTypeKey = '+inttostr(ServerContext.ResConfig[aType].key), 'key-update');
+          connection.ExecSQL('Update Types set LastId = '+inttostr(ServerContext.ResConfig[aType].storedResourceId)+' where ResourceTypeKey = '+inttostr(ServerContext.ResConfig[aType].key));
         end;
       end;
     end;
