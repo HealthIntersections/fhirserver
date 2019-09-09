@@ -182,6 +182,7 @@ type
     function funcStartsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcSubString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcExtension(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcHasExtension(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcExists(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcSubsetOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcSupersetOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -588,6 +589,7 @@ begin
     pfNow: checkParamCount(lexer, location, exp, 0);
     pfResolve: checkParamCount(lexer, location, exp, 0);
     pfExtension: checkParamCount(lexer, location, exp, 1);
+    pfHasExtension: checkParamCount(lexer, location, exp, 1);
     pfAllFalse: checkParamCount(lexer, location, exp, 0);
     pfAnyFalse: checkParamCount(lexer, location, exp, 0);
     pfAllTrue: checkParamCount(lexer, location, exp, 0);
@@ -1810,6 +1812,48 @@ begin
   result := TFHIRSelectionList.Create;
   if focus.Count > 0 then
     result.Add(focus[0].Link);
+end;
+
+function TFHIRPathEngine.funcHasExtension(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
+var
+  item, ex : TFHIRSelection;
+  vl : TFHIRSelectionList;
+  url : String;
+  n1, ext : TFHIRSelectionList;
+begin
+  n1 := nil;
+  result := TFHIRSelectionList.Create;
+  try
+    n1 := execute(context, focus, exp.Parameters[0], true);
+    url := n1[0].value.primitiveValue;
+
+    for item in focus do
+    begin
+      ext := TFHIRSelectionList.Create;
+      try
+        ListChildrenByName(item.value, 'extension', ext);
+        ListChildrenByName(item.value, 'modifierExtension', ext);
+        for ex in ext do
+        begin
+          vl := TFHIRSelectionList.Create;
+          try
+            ListChildrenByName(ex.value, 'url', vl);
+            result.Add(TFhirBoolean.Create(convertToString(vl) = url).noExtensions);
+          finally
+            vl.Free;
+          end;
+        end;
+      finally
+        ext.Free;
+      end;
+    end;
+
+    result.Link;
+  finally
+    n1.free;
+    result.Free;
+  end;
+
 end;
 
 function TFHIRPathEngine.funcHasValue(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -4732,6 +4776,7 @@ begin
     pfNow : result := funcNow(context, focus, exp);
     pfResolve: result := funcResolve(context, focus, exp);
     pfExtension: result := funcExtension(context, focus, exp);
+    pfHasExtension: result := funcHasExtension(context, focus, exp);
     pfAllFalse: result := funcAllFalse(context, focus, exp);
     pfAnyFalse: result := funcAnyFalse(context, focus, exp);
     pfAllTrue: result := funcAllTrue(context, focus, exp);
@@ -5165,6 +5210,11 @@ begin
         begin
         checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
         result := TFHIRTypeDetails.create(csSINGLETON, ['Extension']);
+        end;
+      pfHasExtension :
+        begin
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
         end;
       pfAllFalse:
         result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);

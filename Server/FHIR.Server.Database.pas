@@ -831,10 +831,10 @@ begin
               FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
               unmarkSubsetted(mw);
               FConnection.Execute;
-              CommitTags(tags, key);
             finally
               FConnection.Terminate;
             end;
+            CommitTags(tags, key);
             FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
             if ((request.ResourceName = 'AuditEvent') and request.Resource.hasTag('verkey')) then
               FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
