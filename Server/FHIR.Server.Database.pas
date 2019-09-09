@@ -349,7 +349,7 @@ type
     function NextVersionKey: integer;
     function NextSearchKey: integer;
     function NextResourceKeySetId(aType: String; id: string) : integer;
-    function NextResourceKeyGetId(aType: String; var id: string): integer;
+    function NextResourceKeyGetId(connection : TKDBConnection; aType: String; var id: string): integer;
     function NextEntryKey: integer;
     function NextCompartmentKey: integer;
     function NextAsyncTaskKey: integer;
@@ -358,7 +358,7 @@ type
     function NextAuthorizationKey : integer;
     function NextConnectionKey : integer;
     function NextClientKey : integer;
-    Function GetNextKey(keytype: TKeyType; aType: String; var id: string): integer;
+    Function GetNextKey(connection : TKDBConnection; keytype: TKeyType; aType: String; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
@@ -2758,7 +2758,7 @@ begin
     end
     else
     begin
-      key := FRepository.NextResourceKeyGetId(aType, id);
+      key := FRepository.NextResourceKeyGetId(FConnection, aType, id);
       FConnection.ExecSQL('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(iType), 1);
     end;
     FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted, ForTesting) values (:k, :r, :i, null, 0, :ft)';
@@ -6920,7 +6920,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.NextResourceKeyGetId(aType: String; var id: string): integer;
+function TFHIRNativeStorageService.NextResourceKeyGetId(connection : TKDBConnection; aType: String; var id: string): integer;
 var
   upd : boolean;
   key : integer;
@@ -6946,7 +6946,7 @@ begin
     FLock.Unlock;
   end;
   if upd then
-    DB.ExecSQL('Update Types set LastId = '+inttostr(key)+' where ResourceTypeKey = '+inttostr(cfg.key), 'key-update');
+    connection.ExecSQL('Update Types set LastId = '+inttostr(key)+' where ResourceTypeKey = '+inttostr(cfg.key));
 end;
 
 function TFHIRNativeStorageService.NextResourceKeySetId(aType: String; id: string): integer;
@@ -7120,11 +7120,11 @@ begin
   result := s;
 end;
 
-function TFHIRNativeStorageService.GetNextKey(keytype: TKeyType; aType: string; var id: string): integer;
+function TFHIRNativeStorageService.GetNextKey(connection : TKDBConnection; keytype: TKeyType; aType: string; var id: string): integer;
 begin
   case keytype of
     ktResource:
-      result := NextResourceKeyGetId(aType, id);
+      result := NextResourceKeyGetId(connection, aType, id);
     ktEntries:
       result := NextEntryKey;
     ktCompartment:

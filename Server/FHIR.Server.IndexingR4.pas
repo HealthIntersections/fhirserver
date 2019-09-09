@@ -212,7 +212,7 @@ begin
     value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
 //  else if (length(value) > INDEX_ENTRY_LENGTH) then
 //     raise EFHIRException.create('string too long for indexing: '+value+ ' ('+inttostr(length(value))+' chars)');
-  FEntries.add(key, parent, ndx, 0, value, '', 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, 0, value, '', 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager4.index2(aType : String; key, parent : integer; value, name: String);
@@ -227,7 +227,7 @@ begin
   if not (ndx.SearchType in [sptToken, sptReference]) then //todo: fix up text
     raise EFHIRException.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
   value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
-  FEntries.add(key, parent, ndx, 0, '', value, 0, '', sptString);
+  FEntries.add(FConnection, key, parent, ndx, 0, '', value, 0, '', sptString);
 end;
 
 function TFhirIndexManager4.Link: TFhirIndexManager4;
@@ -257,7 +257,7 @@ begin
   else if (length(value2) > INDEX_ENTRY_LENGTH) then
     raise EFHIRException.create('string too long for indexing: '+value2+ ' ('+inttostr(length(value2))+' chars)');
 
-  FEntries.add(key, parent, ndx, 0, value1, value2, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, 0, value1, value2, 0, '', ndx.SearchType);
 end;
 
 
@@ -273,7 +273,7 @@ begin
     raise EFHIRException.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing enumeration on '+aType);
   concept := TerminologyServer.enterIntoClosure(FConnection, aType+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);
-  FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, '', ndx.SearchType, false, concept);
+  FEntries.add(FConnection, key, parent, ndx, 0, BooleanToString(value), '', 0, '', ndx.SearchType, false, concept);
 end;
 
 
@@ -304,7 +304,7 @@ begin
   else
     concept := 0;
 
-  FEntries.add(key, parent, ndx, 0, value.value, '', 0, '', ndx.SearchType, false, concept);
+  FEntries.add(FConnection, key, parent, ndx, 0, value.value, '', 0, '', ndx.SearchType, false, concept);
 end;
 
 
@@ -516,7 +516,7 @@ begin
   begin
     FConnection.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, SrcTesting, Flag, Extension, Xhtml) values (:k, :i, :r, :ft, 1, ''html'', :xb)';
     FConnection.prepare;
-    FConnection.BindInteger('k', FKeyEvent(ktEntries, '', dummy));
+    FConnection.BindInteger('k', FKeyEvent(FConnection, ktEntries, '', dummy));
     FConnection.BindInteger('i', FInfo.NarrativeIndex);
     FConnection.BindInteger('r', key);
     FConnection.BindIntegerFromBoolean('ft', FforTesting);
@@ -579,7 +579,7 @@ begin
       for i := 0 to FCompartments.Count - 1 Do
       begin
         comps.Add(TFhirCompartmentId.Create(FCompartments[i].Enum, FCompartments[i].Id));
-        FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
+        FConnection.BindInteger('pk', FKeyEvent(FConnection, ktCompartment, '', dummy));
         FConnection.BindInteger('r', FCompartments[i].key);
         FConnection.BindInteger('ct', FCompartments[i].typekey);
         FConnection.BindString('id', FCompartments[i].id);
@@ -627,9 +627,9 @@ begin
   if (length(value.code) > INDEX_ENTRY_LENGTH) then
     raise EFHIRException.create('code too long for indexing: '+value.code);
   if value.display <> '' then
-    FEntries.add(key, parent, ndx, ref, value.code, lowercase(RemoveAccents(copy(value.display, 1, INDEX_ENTRY_LENGTH))), 0, '', ndx.SearchType, false, concept)
+    FEntries.add(FConnection, key, parent, ndx, ref, value.code, lowercase(RemoveAccents(copy(value.display, 1, INDEX_ENTRY_LENGTH))), 0, '', ndx.SearchType, false, concept)
   else
-    FEntries.add(key, parent, ndx, ref, value.code, '', 0, '', ndx.SearchType, false, concept);
+    FEntries.add(FConnection, key, parent, ndx, ref, value.code, '', 0, '', ndx.SearchType, false, concept);
 end;
 
 Function ComparatorPrefix(v : String; c : TFhirQuantityComparatorEnum) : String;
@@ -712,12 +712,12 @@ begin
       raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if not FSpaces.ResolveSpace(value.low.unit_, ref) then
     recordSpace(value.low.unit_, ref);
-  FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
   if value.low.system <> '' then
   begin
     if not FSpaces.ResolveSpace(value.low.system+'#'+value.low.code, ref) then
       recordSpace(value.low.system, ref);
-    FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
+    FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
   end;
 
   // ok, if there's a ucum code:
@@ -736,7 +736,7 @@ begin
           raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
           recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
-        FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
+        FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
       finally
         canonical.free;
       end;
@@ -774,12 +774,12 @@ begin
       raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if not FSpaces.ResolveSpace(value.unit_, ref) then
     recordSpace(value.unit_, ref);
-  FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
   if value.system <> '' then
   begin
     if not FSpaces.ResolveSpace(value.system+'#'+value.code, ref) then
       recordSpace(value.system+'#'+value.code, ref);
-    FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
+    FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
   end;
 
   // ok, if there's a ucum code:
@@ -798,7 +798,7 @@ begin
           raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
           recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
-        FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
+        FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
       finally
         canonical.free;
       end;
@@ -837,7 +837,7 @@ begin
     raise EFHIRException.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType = sptDate) then
     raise EFHIRException.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing date');
-  FEntries.add(key, parent, ndx, 0, TFslDateTime.make(min, dttzUnknown).toHL7, TFslDateTime.make(max, dttzUnknown).toHL7, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, 0, TFslDateTime.make(min, dttzUnknown).toHL7, TFslDateTime.make(max, dttzUnknown).toHL7, 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager4.index(aType : String; key, parent : integer; value: TFhirIdentifier; name: String);
@@ -860,7 +860,7 @@ begin
       recordSpace(value.system, ref);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
     raise EFHIRException.create('id too long for indexing: '+value.value);
-  FEntries.add(key, parent, ndx, ref, value.value, '', 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, ref, value.value, '', 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager4.index(aType : String; key, parent : integer; value: TFhirAddress; name: String);
@@ -903,7 +903,7 @@ begin
       recordSpace(value.systemElement.value, ref);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
     raise EFHIRException.create('contact value too long for indexing: '+value.value);
-  FEntries.add(key, parent, ndx, ref, value.value, '', 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, ref, value.value, '', 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager4.index(aType: String; key, parent: integer; value: TFhirIdentifierList; name: String);
@@ -992,7 +992,7 @@ begin
     raise EFHIRException.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [sptString, sptToken]) then
     raise EFHIRException.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing decimal');
-  FEntries.add(key, ndx, 0, value.value, '', 0, ndx.SearchType);
+  FEntries.add(FConnection, key, ndx, 0, value.value, '', 0, ndx.SearchType);
 end;
 }
 
@@ -1082,7 +1082,7 @@ begin
       ttype := contained.ResourceType;
       if not FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType], ref) then
         recordSpace(CODES_TFHIRResourceType[contained.ResourceType], ref);
-      target := FKeyEvent(ktResource, contained.fhirType, id);
+      target := FKeyEvent(FConnection, ktResource, contained.fhirType, id);
       FConnection.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
       FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey, ForTesting) values (:k, :r, :i, null, '+inttostr(FMasterKey)+', :ft)';
       FConnection.Prepare;
@@ -1131,7 +1131,7 @@ begin
   end;
 
   if ok then
-    FEntries.add(key, parent, ndx, ref, id, '', target, CODES_TFhirResourceType[ttype], ndx.SearchType);
+    FEntries.add(FConnection, key, parent, ndx, ref, id, '', target, CODES_TFhirResourceType[ttype], ndx.SearchType);
 end;
 
 
@@ -1150,7 +1150,7 @@ begin
   if not (ndx.SearchType in [sptString, sptNumber, sptToken]) then
     raise EFHIRException.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
   GetBoundaries(value.value, QuantityComparatorNull, v1, v2);
-  FEntries.add(key, parent, ndx, 0, v1, v2, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, 0, v1, v2, 0, '', ndx.SearchType);
 end;
 
 
@@ -1242,7 +1242,7 @@ begin
     raise EFHIRException.create('Unknown composite index '+name+' on type '+aType);
   if (ndx.Key = 0) then
     raise EFHIRException.create('unknown composite index '+ndx.Name);
-  result := FEntries.add(key, parent, ndx);
+  result := FEntries.add(FConnection, key, parent, ndx);
 end;
 
 procedure TFhirIndexManager4.index(aType: String; key, parent: integer; value: TFhirMoney; name, units: string);
@@ -1272,7 +1272,7 @@ begin
       raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if not FSpaces.ResolveSpace('urn:iso:std:iso:4217#'+value.currency, ref) then
     recordSpace('urn:iso:std:iso:4217#'+value.currency, ref);
-  FEntries.add(key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager4.index(aType: String; key, parent: integer; value: TFhirStructureDefinitionContext; name: String);
@@ -1306,7 +1306,7 @@ begin
   if not (ndx.SearchType in [sptString, sptNumber, sptToken]) then
     raise EFHIRException.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
   GetBoundaries(value.value, QuantityComparatorNull, v1, v2);
-  FEntries.add(key, parent, ndx, 0, v1, v2, 0, '', ndx.SearchType);
+  FEntries.add(FConnection, key, parent, ndx, 0, v1, v2, 0, '', ndx.SearchType);
 end;
 
 procedure TFhirIndexManager4.index(appInfo : TFslObject; context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');

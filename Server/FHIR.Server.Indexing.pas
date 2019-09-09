@@ -54,7 +54,7 @@ type
     function makeIndexes : TFHIRIndexBuilder; virtual; abstract;
   end;
 
-  TFHIRGetNextKey = function (keytype : TKeyType; aType : String; var id : string) : Integer of Object;
+  TFHIRGetNextKey = function (connection : TKDBConnection; keytype : TKeyType; aType : String; var id : string) : Integer of Object;
 
   TFhirIndexEntry = class (TFslObject)
   private
@@ -93,8 +93,8 @@ type
     FKeyEvent : TFHIRGetNextKey;
 //    procedure filter(indexes : TFhirIndexList; name : String; list : TFslList<TFhirIndexEntry>);
   public
-    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
-    function add(key, parent : integer; index : TFhirComposite) : integer; overload;
+    function add(connection : TKDBConnection; key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
+    function add(connection : TKDBConnection; key, parent : integer; index : TFhirComposite) : integer; overload;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
   end;
 
@@ -236,7 +236,7 @@ end;
 
 { TFhirIndexEntryList }
 
-function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
+function TFhirIndexEntryList.add(connection : TKDBConnection; key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -283,7 +283,7 @@ begin
   entry := TFhirIndexEntry.create;
   try
     entry.FName := index.Name;
-    entry.EntryKey := KeyEvent(ktEntries, '', dummy);
+    entry.EntryKey := KeyEvent(connection, ktEntries, '', dummy);
     result := entry.EntryKey;
     entry.IndexKey := index.Key;
     entry.key := key;
@@ -303,7 +303,7 @@ begin
 end;
 
 
-function TFhirIndexEntryList.add(key, parent: integer; index: TFhirComposite): integer;
+function TFhirIndexEntryList.add(connection : TKDBConnection; key, parent: integer; index: TFhirComposite): integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -313,7 +313,7 @@ begin
 
   entry := TFhirIndexEntry.create;
   try
-    entry.EntryKey := KeyEvent(ktEntries, '', dummy);
+    entry.EntryKey := KeyEvent(connection, ktEntries, '', dummy);
     result := entry.EntryKey;
     entry.IndexKey := index.Key;
     entry.key := key;
