@@ -450,7 +450,7 @@ begin
           else if dm.FSourceIndex < cb then
           begin
             raise ETodo.create('TDifferenceEngine.makeListChanges (<)');
-            // actually, this can't happen; a move forwards will become a series of moves backwards?
+            // actually, this can't happen (https://xkcd.com/2200/); a move forwards will become a series of moves backwards?
           end
           else
           begin

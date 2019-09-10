@@ -721,7 +721,7 @@ begin
   end;
 
   // ok, if there's a ucum code:
-  if (value.low.code <> '') and (value.low.system = 'http://unitsofmeasure.org') then
+  if (value.low.code <> '') and (value.low.system = 'http://unitsofmeasure.org') and (FTerminologyServer.CommonTerminologies.Ucum <> nil) then
   begin
     specified := TUcumPair.create;
     try
