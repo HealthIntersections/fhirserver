@@ -48,8 +48,9 @@ Type
 
   TUcumServiceInterface = class (TFslObject)
   public
-    Function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
+    function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; virtual; abstract;
+    function isConfigured : boolean; virtual; abstract;
   end;
 
 implementation

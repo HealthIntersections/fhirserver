@@ -268,6 +268,7 @@ Type
     destructor Destroy; override;
     Function multiply(o1, o2 : TUcumPair) : TUcumPair; override;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; override;
+    Function isConfigured : boolean; override;
   end;
 
 Implementation
@@ -1127,6 +1128,11 @@ end;
 function TUcumServiceImplementation.getCanonicalForm(value: TUcumPair): TUcumPair;
 begin
   result := FSvc.getCanonicalForm(value);
+end;
+
+function TUcumServiceImplementation.isConfigured: boolean;
+begin
+  result :=  FSvc <> nil;
 end;
 
 function TUcumServiceImplementation.multiply(o1, o2: TUcumPair): TUcumPair;

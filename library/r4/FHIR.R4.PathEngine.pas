@@ -3553,7 +3553,7 @@ begin
 
     if (l.hasType('integer')) and (r.hasType('integer')) then
       result.add(TFHIRInteger.create(inttostr(strtoInt(l.primitiveValue()) div strtoInt(r.primitiveValue()))).noExtensions)
-    else if (l.hasType(['quantity'])) and (r.hasType(['quantity'])) and (FUcum <> nil) then
+    else if (l.hasType(['quantity'])) and (r.hasType(['quantity'])) and (FUcum <> nil) and FUcum.isConfigured then
     begin
       pl := qtyToPair(l as TFHIRQuantity);
       try
@@ -3622,7 +3622,7 @@ begin
       d3 := d1.divide(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
     end
-    else if (l.hasType(['quantity'])) and (r.hasType(['quantity'])) and (FUcum <> nil) then
+    else if (l.hasType(['quantity'])) and (r.hasType(['quantity'])) and (FUcum <> nil) and FUcum.isConfigured then
     begin
       pl := qtyToPair(l as TFHIRQuantity);
       try
@@ -3754,7 +3754,7 @@ begin
           ListChildrenByName(right[0].value, 'value', rUnit);
           result := opGreater(lUnit, rUnit);
         end
-        else if FUcum <> Nil then
+        else if (FUcum <> Nil) and FUcum.isConfigured then
         begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
@@ -3820,7 +3820,7 @@ begin
           ListChildrenByName(right[0].value, 'value', rUnit);
           result := opGreaterOrEqual(lUnit, rUnit);
         end
-        else if FUcum <> Nil then
+        else if (FUcum <> Nil) and FUcum.isConfigured then
         begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
@@ -3943,7 +3943,7 @@ begin
           ListChildrenByName(right[0].value, 'value', rUnit);
           result := opLessOrEqual(lUnit, rUnit);
         end
-        else if FUcum <> Nil then
+        else if (FUcum <> Nil) and FUcum.isConfigured then
         begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
@@ -4009,7 +4009,7 @@ begin
           ListChildrenByName(right[0].value, 'value', rUnit);
           result := opLessThan(lUnit, rUnit);
         end
-        else if FUcum <> Nil then
+        else if (FUcum <> Nil) and FUcum.isConfigured then
         begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
@@ -4295,7 +4295,7 @@ begin
 
     if (l.hasType('integer')) and (r.hasType('integer')) then
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) * strToInt(r.primitiveValue()))).noExtensions)
-    else if (l.hasType(['Quantity'])) and (r.hasType(['Quantity'])) and (FUcum <> nil) then
+    else if (l.hasType(['Quantity'])) and (r.hasType(['Quantity'])) and (FUcum <> nil) and FUcum.isConfigured then
     begin
       pl := qtyToPair(l as TFHIRQuantity);
       try
@@ -4453,7 +4453,7 @@ function TFHIRPathEngine.qtyEqual(left, right: TFHIRQuantity): boolean;
 var
   dl, dr : TFhirDecimal;
 begin
-  if (FUcum <> nil) then
+  if (FUcum <> nil) and FUcum.isConfigured then
   begin
     dl := qtyToCanonical(left);
     try
@@ -4475,7 +4475,7 @@ function TFHIRPathEngine.qtyToCanonical(q: TFHIRQuantity): TFhirDecimal;
 var
   p, c : TUcumPair;
 begin
-  if ('http://unitsofmeasure.org' <> q.system) then
+  if ('http://unitsofmeasure.org' <> q.system) or (FUcum = nil) or not (FUcum.isConfigured) then
     exit(nil);
   try
     p := TUcumPair.Create(TFslDecimal.ValueOf(q.value), q.code);
@@ -4527,7 +4527,7 @@ function TFHIRPathEngine.qtyEquivalent(left, right: TFHIRQuantity): boolean;
 var
   dl, dr : TFhirDecimal;
 begin
-  if (FUcum <> nil) then
+  if (FUcum <> nil) and FUcum.isConfigured then
   begin
     dl := qtyToCanonical(left);
     try
