@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{9FCB4960-2332-40E6-B083-4B1CEAF836F8}</ProjectGuid>
         <ProjectVersion>18.7</ProjectVersion>
@@ -444,8 +444,8 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\library\r4\FHIR.R4.AuthMap.pas"/>
-        <DCCReference Include="IGPublishSettings.pas">
-            <Form>IGSettingsForm</Form>
+        <DCCReference Include="IGPublisher.pas">
+            <Form>IGPublishForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="FDownloadForm.pas">
@@ -477,7 +477,7 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="ScenarioRendering.pas">
-            <Form>ESRender</Form>
+            <Form>ESPublishForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\cda\FHIR.Cda.Narrative.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Types.pas"/>

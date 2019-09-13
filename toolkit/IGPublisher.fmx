@@ -339,8 +339,8 @@ object IGPublishForm: TIGPublishForm
       Size.PlatformDefault = False
       TabOrder = 25
       Visible = False
-      Viewport.Width = 165.000000000000000000
-      Viewport.Height = 105.000000000000000000
+      Viewport.Width = 161.000000000000000000
+      Viewport.Height = 101.000000000000000000
     end
     object Memo2: TMemo
       Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -354,8 +354,8 @@ object IGPublishForm: TIGPublishForm
       Size.Height = 232.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 26
-      Viewport.Width = 876.000000000000000000
-      Viewport.Height = 232.000000000000000000
+      Viewport.Width = 872.000000000000000000
+      Viewport.Height = 228.000000000000000000
     end
     object Label3: TLabel
       Position.X = 400.000000000000000000

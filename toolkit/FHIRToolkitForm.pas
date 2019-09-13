@@ -268,7 +268,7 @@ implementation
 
 uses
 {$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
-{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, IGPublishSettings; {$ENDIF}
+{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, IGPublishSettings, FDownloadForm, ScenarioRendering; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
@@ -359,7 +359,7 @@ begin
       ok := true;
     if not ok then
       exit;
-    Client := TFhirClients.makeThreaded(nil, http.link, threadMonitorProc);
+    Client := TFhirClients.makeThreaded(nil, http.Link, threadMonitorProc);
     try
       cs := nil;
       dowork(nil, 'Connect', true,
@@ -379,11 +379,11 @@ begin
           ServerForm.OnWork := dowork;
           ServerForm.TagObject := tab;
           ServerForm.tabs := tbMain;
-          ServerForm.Settings := FSettings.link;
+          ServerForm.Settings := FSettings.Link;
           ServerForm.tab := tab;
           ServerForm.Align := TAlignLayout.Client;
-          ServerForm.Client := Client.link;
-          ServerForm.CapabilityStatement := cs.link;
+          ServerForm.Client := Client.Link;
+          ServerForm.CapabilityStatement := cs.Link;
           ServerForm.OnOpenResource := OpenResourcefromClient;
           ServerForm.OnWork := dowork;
           ServerForm.load;
@@ -426,7 +426,7 @@ begin
     form.SoftwareId := ToolkitIdentifier;
     form.SoftwareVersion := ToolKitVersionBase + inttostr(BuildCount);
     form.Versions := TFHIRVersionFactories.Create;
-    form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).link;
+    form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).Link;
     if ShowModalHack(form) = mrOk then
     begin
       FSettings.updateServerInfo('', form.Server);
@@ -630,7 +630,7 @@ var
 begin
   form := TSettingsForm.Create(self);
   try
-    form.Settings := FSettings.link;
+    form.Settings := FSettings.Link;
     if ShowModalHack(form) = mrOk then
       for i := 0 to tbMain.TabCount - 1 do
         if tbMain.tabs[i].TagObject is TBaseFrame then
@@ -660,9 +660,9 @@ begin
   begin
     form := TSourceViewerForm.Create(self);
     try
-      form.Current := frame.currentResource.link;
-      form.original := frame.originalResource.link;
-      form.Factory := FFactory.link;
+      form.Current := frame.currentResource.Link;
+      form.original := frame.originalResource.Link;
+      form.Factory := FFactory.Link;
       ShowModalHack(form);
     finally
       form.Free;
@@ -904,9 +904,9 @@ begin
       FCache := TFHIRPackageManager.Create(true);
       if not FCache.packageExists('hl7.fhir.core', Factory.versionString) then
         ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
-      FContext := TToolkitWorkerContext.Create(Factory.link);
+      FContext := TToolkitWorkerContext.Create(Factory.Link);
       FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
-      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.link, Factory.versionString, FContext.link));
+      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, Factory.versionString, FContext.Link));
       if not(IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
         ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: ' + WhichFailedToLoad + ', ' + WhichFailedToLoad2 + ')');
       checkSSL; // really, this is just to init internal structures in openSSL
@@ -1114,7 +1114,7 @@ begin
     frame.Parent := FUTGTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := FDiffEngineTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
@@ -1148,7 +1148,7 @@ begin
     frame.Parent := FDiffEngineTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := FDiffEngineTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
@@ -1165,7 +1165,7 @@ begin
   begin
     ResourceLanguageForm := TResourceLanguageForm.Create(self);
     try
-      ResourceLanguageForm.resource := frame.currentResource.link;
+      ResourceLanguageForm.resource := frame.currentResource.Link;
       if ShowModalHack(ResourceLanguageForm) = mrOk then
         frame.reload;
     finally
@@ -1192,7 +1192,7 @@ begin
     frame.Parent := FTransformationTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := FTransformationTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
@@ -1217,7 +1217,7 @@ begin
     frame.Parent := FValidationTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := FValidationTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
@@ -1249,7 +1249,7 @@ begin
   begin
     upg := TUpgradeNeededForm.Create(self);
     try
-      upg.Settings := FSettings.link;
+      upg.Settings := FSettings.Link;
       upg.lblVersion.Text := 'The current version is ' + ver + ', you are running 0.0.' + inttostr(BuildCount) + '. Upgrade?';
       case ShowModalHack(upg) of
         mrContinue:
@@ -1299,7 +1299,7 @@ begin
     frame.Parent := FPackageMgrTab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := FPackageMgrTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
@@ -1315,48 +1315,78 @@ var
 
 begin
   frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
-  if (frame.resource is TFHIRImplementationGuide) then
+  if ((frame.resource is TFHIRImplementationGuide) or (frame.resource is TFHIRExampleScenario)) then
   begin
-    {$IFDEF FHIR4}
+{$IFDEF FHIR4}
     if frame.filename = '' then
       ShowMessage('File is not saved. Please save the file first.')
     else
+
+      if (frame.resource is TFHIRImplementationGuide) then
+
       with frame as TImplementationGuideEditorFrame do
       begin
-
         IGRootFolder := extractfiledir(frame.filename);
         IGFileName := extractfilename(frame.filename);
 
-        IGSettingsForm := TIGSettingsForm.Create(self);
-        IGSettingsForm.Edit1.Text := IGPublisherFolder;
+        IGPublishForm := TIGPublishForm.Create(self);
+        IGPublishForm.Edit1.Text := IGPublisherFolder;
 
-        IGSettingsForm.IGRootFolder := IGRootFolder;
-        IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
-        IGSettingsForm.IGFileName := IGFileName;
-        IGSettingsForm.checkContentFolders(IGRootFolder);
+        IGPublishForm.IGRootFolder := IGRootFolder;
+        IGPublishForm.IGPublisherFolder := IGPublisherFolder;
+        IGPublishForm.IGFileName := IGFileName;
+        IGPublishForm.checkContentFolders(IGRootFolder);
 
-        IGSettingsForm.ShowModal;
+        IGPublishForm.ShowModal;
 
         // if IGSettingsForm.ModalResult = mrOK then
         begin
-          IGRootFolder := IGSettingsForm.IGRootFolder;
-          IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
+          IGRootFolder := IGPublishForm.IGRootFolder;
+          IGPublisherFolder := IGPublishform.IGPublisherFolder;
           str := IGPublisherFolder;
 
-          IGContentFolder := IGSettingsForm.IGContentFolder;
-          IGMediaFolder := IGSettingsForm.MediaFolder;
-          IGPageContentFolder := IGSettingsForm.PageContentFolder;
-          IGTempFolder := IGSettingsForm.tempFolder;
+          IGContentFolder := IGPublishForm.IGContentFolder;
+          IGMediaFolder := IGPublishForm.MediaFolder;
+          IGPageContentFolder := IGPublishForm.PageContentFolder;
+          IGTempFolder := IGPublishForm.tempFolder;
           // pandocfolder := IGSettingsForm.pandocFolder;
         end;
-        IGSettingsForm.Destroy;
+        IGPublishForm.Destroy;
 
       end
-      {$ELSE}
-      raise Exception.Create('This is not supported in R3');
-      {$ENDIF}
 
+    else if (frame.resource is TFHIRExampleScenario) then
+
+      with frame as TExampleScenarioEditorFrame do
+      begin
+        ESRootFolder := extractfiledir(frame.filename);
+        ESFileName := extractfilename(frame.filename);
+
+        ESPublishForm := TESPublishForm.Create(self);
+        ESPublishForm.Edit1.Text := ESPublisherFolder;
+
+        ESPublishForm.ESRootFolder := ESRootFolder;
+        ESPublishForm.ESPublisherFolder := ESPublisherFolder;
+        ESPublishForm.ESFileName := ESFileName;
+
+        ESPublishForm.ShowModal;
+
+        // if IGSettingsForm.ModalResult = mrOK then
+        begin
+          ESRootFolder := ESPublishForm.ESRootFolder;
+          ESPublisherFolder := ESPublishForm.ESPublisherFolder;
+          str := ESPublisherFolder;
+
+          // pandocfolder := IGSettingsForm.pandocFolder;
+        end;
+        ESPublishForm.Destroy;
+
+      end
+{$ELSE}
+    raise Exception.Create('This is not supported in R3');
+{$ENDIF}
   end;
+
 end;
 
 procedure TMasterToolsForm.mnuRegistryClick(Sender: TObject);
@@ -1377,7 +1407,7 @@ begin
     frame.tabs := tbMain;
     frame.OnWork := dowork;
     frame.OnOpenResource := OpenResourcefromClient;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := FRegistryTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
@@ -1405,6 +1435,7 @@ begin
   end;
 end;
 {$ELSE}
+
 begin
   raise Exception.Create('Not supported in R3');
 end;
@@ -1437,10 +1468,10 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := tab;
     frame.Align := TAlignLayout.Client;
-    frame.resource := res.link;
+    frame.resource := res.Link;
     frame.load;
   finally
     if Assigned(fcs) then
@@ -1475,7 +1506,7 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.resource := rClass.Create;
@@ -1513,11 +1544,11 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.filename := filename;
-    frame.resource := res.link;
+    frame.resource := res.Link;
     frame.format := format;
     frame.load;
     addFileToList(filename);
@@ -1554,10 +1585,10 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Settings := FSettings.link;
+    frame.Settings := FSettings.Link;
     frame.tab := tab;
     frame.Align := TAlignLayout.Client;
-    frame.Client := Client.link;
+    frame.Client := Client.Link;
     frame.filename := '$$';
     frame.resource := resource.clone;
     frame.format := format;
