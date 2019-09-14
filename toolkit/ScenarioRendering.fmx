@@ -62,7 +62,11 @@ object ESPublishForm: TESPublishForm
   object ComboBox1: TComboBox
     Anchors = [akLeft, akTop, akRight]
     Items.Strings = (
+      
+        'https://github.com/costateixeira/ESPublish/files/3612665/ESPubli' +
+        'sh.zip'
       'https://costateixeira.github.io/ESPublish/ESPublish.zip')
+    ItemIndex = 0
     Position.X = 400.000000000000000000
     Position.Y = 32.000000000000000000
     Size.Width = 385.000000000000000000

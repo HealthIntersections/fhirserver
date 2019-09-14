@@ -84,7 +84,7 @@ begin
   appDir:=GetCurrentDir;
 {$IFDEF MSWINDOWS}
 if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir;
-  SetCurrentDir(ESPublisherFolder+'\simpleRender');
+  SetCurrentDir(ESPublisherFolder+'');
   resource:=filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
   resourceToFile(resource, '.\current.xml', ffXml, OutputStylePretty);
   ExecuteFile := 'BUILD.bat';
