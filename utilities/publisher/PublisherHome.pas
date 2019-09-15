@@ -160,7 +160,7 @@ begin
   FQueue := TStringList.Create;
   FJarFile := FIni.ReadString('tools', 'jar', 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
   FCompare := FIni.ReadString('tools', 'compare', 'C:\Program Files (x86)\WinMerge\WinMergeU.exe');
-  for i := 0 to ParamCount - 1 do
+  for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
       addFolder(paramStr(i), true);
 end;
