@@ -181,33 +181,42 @@ end;
 procedure logtn(s : String);
 var
   today : integer;
+  delta : String;
 begin
   checklog;
+  if starttime = 0 then
+    starttime := now;
   today := trunc(now);
   if today <> lastday then
   begin
     if filelog then
       log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
     if consolelog then
+    begin
       try
-        System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+        System.Write(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
       except
         consolelog := false;
       end;
+    end;
     lastDay := today;
   end;
 
+  delta := '';
+  if log_as_starting then
+    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
   if filelog then
-    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+s+#13#10);
+    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s+#13#10);
   if consolelog then
     try
-      System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
+      System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s);
     except
       consolelog := false;
     end;
   if (assigned(logEvent)) then
     logEvent(s);
 end;
+
 
 
 

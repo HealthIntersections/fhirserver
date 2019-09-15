@@ -181,12 +181,14 @@ type
     procedure ListPackageVersions(id : String; list : TStrings);
     procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version : String; list : TStrings);
 
-    function packageExists(id, ver : String) : boolean;
+    function packageExists(id, ver : String) : boolean; overload;
+    function packageExists(id, ver : String; onProgress : TProgressEvent) : boolean; overload;
     procedure loadPackage(id, ver : String; resources : Array of String; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
     procedure loadPackage(idver : String; resources : Array of String; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
 
     procedure import(content : TBytes); overload;
+    function install(url : String; onProgress : TProgressEvent) : boolean;
 
     procedure remove(id : String); overload;
     procedure remove(id, ver: String); overload;
@@ -372,6 +374,55 @@ begin
     files.Free;
   end;
 end;
+function TFHIRPackageManager.install(url: String; onProgress: TProgressEvent) : boolean;
+var
+  fetch : TInternetFetcher;
+  aborted : boolean;
+  s : String;
+begin
+  fetch := TInternetFetcher.Create;
+  try
+    fetch.onProgress := onProgress;
+    fetch.Buffer := TFslBuffer.create;
+    aborted := false;
+    s := '';
+    result := false;
+    try
+      fetch.URL := URLPath([url, 'package.tgz']);
+      fetch.Fetch;
+      result := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
+    except
+      on e : exception do
+      begin
+        s := e.Message;
+        aborted := e is EAbort;
+      end;
+    end;
+    if not result then
+    begin
+      try
+        fetch.URL := url;
+        fetch.Fetch;
+        result := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
+      except
+        on e : exception do
+        begin
+          s := e.Message;
+          aborted := e is EAbort;
+        end;
+      end;
+    end;
+    if not result and not aborted then
+      raise EIOException.create('Unable to find package for '+url+': '+s);
+    if result then
+    begin
+      Import(fetch.Buffer.AsBytes);
+    end;
+  finally
+    fetch.Free;
+  end;
+end;
+
 (*
   // we need to unzip all the files before we can read the package that tells us everything we need to know
   // we're going to do this to a temporary directory
@@ -733,6 +784,29 @@ begin
   end;
   if assigned(progressEvent) then
     progressEvent(self, 100, true, 'Complete');
+end;
+
+function TFHIRPackageManager.packageExists(id, ver: String; onProgress : TProgressEvent): boolean;
+var
+  list : TFslList<TPackageDefinition>;
+  pd : TPackageDefinition;
+begin
+  result := packageExists(id, ver);
+  if (not result) then
+  begin
+    list := TFslList<TPackageDefinition>.create;
+    try
+      TPackageDefinition.addStandardPackages(list);
+      TPackageDefinition.addPackagesFromBuild(list);
+      TPackageDefinition.AddCustomPackages(list);
+      for pd in list do
+        if (pd.Id = id) and ((ver = '') or (pd.Version = ver)) then
+          self.install(pd.Url, onProgress);
+    finally
+      list.Free;
+    end;
+    result := packageExists(id, ver);
+  end;
 end;
 
 procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);

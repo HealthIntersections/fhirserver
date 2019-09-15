@@ -194,7 +194,6 @@ end;
 
 procedure TPackageCacheForm.importUrl(sender : TObject; url : String);
 var
-  fetch : TInternetFetcher;
   ok : boolean;
   aborted : boolean;
   s : String;
@@ -208,48 +207,8 @@ begin
   btnCancel.Visible := true;
   try
     Application.ProcessMessages;
-    fetch := TInternetFetcher.Create;
-    try
-      fetch.onProgress := fetchProgress;
-      fetch.Buffer := TFslBuffer.create;
-      aborted := false;
-      s := '';
-      ok := false;
-      try
-        fetch.URL := URLPath([url, 'package.tgz']);
-        fetch.Fetch;
-        ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
-      except
-        on e : exception do
-        begin
-          s := e.Message;
-          aborted := e is EAbort;
-        end;
-      end;
-      if not ok then
-      begin
-        try
-          fetch.URL := url;
-          fetch.Fetch;
-          ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
-        except
-          on e : exception do
-          begin
-            s := e.Message;
-            aborted := e is EAbort;
-          end;
-        end;
-      end;
-      if not ok  and not aborted then
-        raise EIOException.create('Unable to find package for '+url+': '+s);
-      if ok then
-      begin
-        FCache.Import(fetch.Buffer.AsBytes);
-        LoadPackages;
-      end;
-    finally
-      fetch.Free;
-    end;
+    if FCache.install(url, fetchProgress) then
+      LoadPackages;
   finally
     pbDownload.Visible := false;
     btnCancel.Visible := false;
@@ -331,7 +290,7 @@ end;
 
 procedure TPackageCacheForm.FHIRR41Click(Sender: TObject);
 begin
-  importUrl(nil, 'http://build.fhir.org/');
+  importUrl(nil, 'http://hl7.org/fhir/R4');
 end;
 
 procedure TPackageCacheForm.FormActivate(Sender: TObject);
