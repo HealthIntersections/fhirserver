@@ -1,4 +1,4 @@
-unit IGPublishSettings;
+unit IGPublisher;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -255,7 +255,6 @@ begin
         isBuilding := true;
         sleep(1000);
         SetupIGPublisherFiles;
-        // runAndWait(tempstr, 'BUILD', igRootFolder);
         RunInMemo('cmd.exe /C BUILD', tempstr, igRootFolder, Memo2);
         // CaptureConsoleOutput(tempstr, 'cmd.exe /C BUILD', igRootFolder, Memo2);
         filestr := IGPublisherFolder + '\output\index.html';

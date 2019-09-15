@@ -323,6 +323,10 @@ type
     CURRobjectlist:TFHIRObjectList;
 
   public
+    ESRootFolder: string;
+    ESFileName: String; // Is this needed?
+    ESPublisherFolder: string;
+
     constructor Create(owner : TComponent); override;
     destructor Destroy; override;
 
@@ -330,6 +334,8 @@ type
 
     procedure commit; override;
     procedure cancel; override;
+
+
 
   end;
 
@@ -496,17 +502,17 @@ end;
 
 
 procedure TExampleScenarioEditorFrame.CornerButton4Click(Sender: TObject);
-var esRender:TESRender;
+var esRender:TESPublishForm;
 begin
 
 
-  esRender:=TESRender.create(self);
+  esRender:=TESPublishForm.create(self);
   esRender.resource:=TFHIRExampleScenario(resource);
 
   if filename <> '' then
   begin
     esRender.ESRootFolder := extractfilepath(filename);
-    esRender.filename:=filename;
+    esRender.ESfilename:=filename;
   end;
 
   esRender.showModal;
@@ -569,24 +575,17 @@ begin
       addTVItem(tvStructure, nil, 'examplescenario', 'Example Scenario', resource);
     finally
       tvStructure.EndUpdate;
-      // tvStructure.Repaint;
     end;
-    // webbrowser1.Enabled:=false;
   end;
   tfhirExampleScenario(resource).id:=extractfilename(changefileext(filename,''));
   application.ProcessMessages;
-  tvStructure.ExpandAll;
-  tvStructure.Selected := tvStructure.ItemByGlobalIndex(0);
+  tvStructure.Selected := tvStructure.ItemByGlobalIndex(1);
 
-//  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
-
-EXIT;
-
-  tvStructure.Selected := tvMetadata;
+  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
 
 
-  tvstructure.Selected:=tvstructure.ItemByGlobalIndex(0);
-  ReloadTreeview(tvStructure.Selected);
+//EXIT;
+
 
 end;
 
@@ -703,13 +702,14 @@ end;
 
 procedure TExampleScenarioEditorFrame.btnOptionClick(Sender: TObject);
 var
-  Option: tfhirexamplescenarioProcessStepAlternative;
+  Option: tfhirexamplescenarioProcessStep;
 begin
-  Option := tfhirexamplescenarioProcessStepAlternative.Create;
+  Option := tfhirexamplescenarioProcessStep.Create;
 //Set properties for object
-  Option.description := 'Option ' + inttostr(tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).stepList.Count + 1);
+//  Option.description := 'Option ' + inttostr(tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).stepList.Count + 1);
 
-// GDG - needs fixing  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).OptionList.AddItem(Option);
+
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).StepList.AddItem(Option);
   ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
@@ -719,13 +719,13 @@ procedure TExampleScenarioEditorFrame.btnOptionDownClick(Sender: TObject);
 var
   idx: integer;
 begin
-//  GDG - needs fixing  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.IndexOf(tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject));
-//  if idx < tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Count - 1 then begin
-//  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Exchange(idx, idx + 1);
-//  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
-//  ResourceIsDirty := true;
-//  end;
-  // ReloadTreeview(tvStructure.Selected);
+  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.IndexOf(tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject));
+  if idx < tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.Count - 1 then begin
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.Exchange(idx, idx + 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
 end;
 
 
@@ -733,17 +733,14 @@ procedure TExampleScenarioEditorFrame.btnOptionUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-{
-  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).alternative:= alternative;
-}
-// GDG - needs fixing
-//  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.IndexOf(tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject));
-//  if idx > 0 then begin
-//  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Exchange(idx, idx - 1);
-//  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
-//  ResourceIsDirty := true;
-//  end;
-//  ReloadTreeview(tvStructure.Selected);
+
+  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.IndexOf(tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject));
+  if idx > 0 then begin
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).stepList.Exchange(idx, idx - 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
 end;
 
 procedure TExampleScenarioEditorFrame.btnOperationClick(Sender: TObject);
@@ -1020,7 +1017,7 @@ begin
   begin
     TabControl2.tabindex := 6;
     UpdateAlternative.enabled := true;
-//GDG - needs fixing      Edit12.text := tfhirexamplescenarioProcessStepAlternative(obj).name;
+    Edit12.text := tfhirexamplescenarioProcessStepAlternative(obj).title;
   end;
 // GDG - needs fixing   if obj is tfhirexamplescenarioProcessStepAlternativeOption then
 //  begin
@@ -1132,8 +1129,8 @@ begin
     tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).dropEmpty;
     if tvStructure.Selected.ParentItem.TagObject is tfhirexamplescenarioProcess then
       tfhirexamplescenarioProcess(tvStructure.Selected.ParentItem.TagObject).stepList.DeleteByReference(TFSLObject(TVStructure.Selected.TagObject));
-// GDG - needs fixing     if tvStructure.Selected.ParentItem.TagObject is tfhirexamplescenarioProcessStepAlternativeOption then
-//      tfhirexamplescenarioProcessStepAlternativeOption(tvStructure.Selected.ParentItem.TagObject).stepList.DeleteByReference(TFSLObject(TVStructure.Selected.TagObject));
+  if tvStructure.Selected.ParentItem.TagObject is tfhirexamplescenarioProcessStepAlternative then
+      tfhirexamplescenarioProcessStepAlternative(tvStructure.Selected.ParentItem.TagObject).stepList.DeleteByReference(TFSLObject(TVStructure.Selected.TagObject));
   end;
 
 
@@ -1268,7 +1265,7 @@ begin
   obj := tfhirexamplescenarioProcessStepAlternative(TTreeViewItem(tvStructure.Selected).TagObject);
   if obj = nil then
     exit;
- // GDG - needs fixing   obj.name := Edit12.text;
+    obj.title := Edit12.text;
 end;
 
 //6.6
