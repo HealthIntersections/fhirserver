@@ -105,7 +105,9 @@ Type
     FLoadStore : boolean;
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
-    FknownVersion : TFHIRVersion;
+    FKnownVersion : TFHIRVersion;
+    FProgress : integer;
+    FProgressName : string;
 
     function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
     Procedure checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
@@ -121,8 +123,10 @@ Type
     procedure identifyValueSets(db : TKDBManager);
 //    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
     procedure registerJs(sender: TObject; js: TJsHost);
-    function getLoadResourceList(factory: TFHIRFactory;
-      mode: TFHIRInstallerSecurityMode): TArray<String>;
+    function getLoadResourceList(factory: TFHIRFactory; mode: TFHIRInstallerSecurityMode): TArray<String>;
+    procedure resetProgress(name : String);
+    procedure finishProgress(status : String);
+    procedure fetchProgress(sender : TObject; progess : integer);
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -643,24 +647,31 @@ begin
   dbn := details['database'];
   if dbn = '' then
     raise EFslException.Create('No defined database '+name);
-  cb(1, 'Load: start kernel');
-  CanStart;
-
-  db := FDatabases[dbn].Link;
+  pcm := TFHIRPackageManager.Create(false);
   try
-    logt('Load: register value sets');
-    identifyValueSets(db);
+    resetProgress('Package hl7.fhir.core#4.0.0');
+    if not pcm.packageExists('hl7.fhir.core', '4.0.0', fetchProgress) then
+      raise EFHIRException.create('Package '+p+' not found');
+    finishProgress('ok');
 
-    pcm := TFHIRPackageManager.Create(false);
+    cb(1, 'Load: start kernel');
+    CanStart;
+
+    db := FDatabases[dbn].Link;
     try
+      logt('Load: register value sets');
+      identifyValueSets(db);
+
       pl := plist.Split([',']);
       for p in pl do
       begin
         if p <> '' then
         begin
           StringSplit(p, '#', pi, pv);
-          if not pcm.packageExists(pi, pv) then
+          resetProgress('Package '+p);
+          if not pcm.packageExists(pi, pv, fetchProgress) then
             raise EFHIRException.create('Package '+p+' not found');
+          finishProgress('ok');
           ploader := TPackageLoader.create(factoryFactory(v));
           try
             loadList := getLoadResourceList(ploader.FFactory, mode);
@@ -672,18 +683,18 @@ begin
           end;
         end;
       end;
+
+      logt('loaded');
+      cb(95, 'Building Terminology Closure Tables');
+      FWebServer.EndPoint(name).Context.TerminologyServer.BuildIndexes(not assigned(callback));
+      cb(100, 'Cleaning up');
+
+      DoStop;
     finally
-      pcm.Free;
+      db.free;
     end;
-
-    logt('loaded');
-    cb(95, 'Building Terminology Closure Tables');
-    FWebServer.EndPoint(name).Context.TerminologyServer.BuildIndexes(not assigned(callback));
-    cb(100, 'Cleaning up');
-
-    DoStop;
   finally
-    db.free;
+    pcm.Free;
   end;
 end;
 (*
@@ -1137,6 +1148,36 @@ begin
     p.Free;
   end;
 
+end;
+
+procedure TFHIRService.resetProgress(name: String);
+begin
+  if not FInstaller then
+  begin
+    FProgress := 0;
+    FProgressName := name;
+    logtn(name+' ');
+  end;
+end;
+
+procedure TFHIRService.fetchProgress(sender: TObject; progess: integer);
+begin
+  if FInstaller then
+    Fcallback(progess, FProgressName)
+  else
+  begin
+    if progess > FProgress then
+    begin
+      write('.');
+      FProgress := FProgress + 5;
+    end;
+  end;
+end;
+
+procedure TFHIRService.finishProgress(status: String);
+begin
+  if not FInstaller then
+    writeln(' '+status);
 end;
 
 end.
