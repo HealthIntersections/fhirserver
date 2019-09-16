@@ -649,6 +649,9 @@ begin
       oConf.name := 'FHIR Reference Server Conformance Statement';
       oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
+      oConf.kind := cskInstance;
+      oConf.acceptUnknown := csauBoth;
+
       oConf.date := TFslDateTime.makeUTC;
       oConf.software('Reference Server', SERVER_VERSION, SERVER_RELEASE_DATE);
       if ServerContext.FormalURLPlain <> '' then
@@ -766,7 +769,8 @@ begin
     //              html.append('</ul>');                                                                                                                               }
                 end;
                 html.append('</tr>'#13#10);
-
+                if (not res.hasInteraction) then
+                  raise Exception.Create('No interactions?');
 
                   //<th>Search/Updates Params</th>
                   // html.append('n : offset<br/>');

@@ -217,6 +217,7 @@ type
     function getCode: String; override;
     procedure setCode(Value: String); override;
     function getProfile: String; override;
+    function hasInteraction : boolean; override;
     procedure setProfile(Value: String); override;
     procedure addInteraction(code : String);  override;
     function getReadHistory: boolean; override;
@@ -257,6 +258,10 @@ type
     procedure setDate(Value: TFslDateTime); override;
     function getFhirVersion: string; override;
     procedure setFhirVersion(Value: string); override;
+    function getKind: TCapabilityStatementKind; override;
+    procedure setKind(Value: TCapabilityStatementKind); override;
+    function getAcceptUnknown: TCapabilityStatementAcceptUnknown; override;
+    procedure setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown); override;
 
     function supportsType(name : String; interaction : TFHIRInteraction) : boolean; override;
     procedure listTypes(interactions : TFHIRInteractions; names : TStrings); override;
@@ -1468,6 +1473,38 @@ begin
     end;
   end;
 end;
+
+function TFHIRCapabilityStatement4.getKind: TCapabilityStatementKind;
+begin
+  case statement.kind of
+    CapabilityStatementKindInstance : result := cskInstance;
+    CapabilityStatementKindCapability : result := cskCapability;
+    CapabilityStatementKindRequirements : result := cskRequirements;
+  else
+    result := cskNull;
+  end;
+end;
+
+procedure TFHIRCapabilityStatement4.setKind(Value: TCapabilityStatementKind);
+begin
+  case value of
+    cskInstance : statement.kind := CapabilityStatementKindInstance;
+    cskCapability : statement.kind := CapabilityStatementKindCapability;
+    cskRequirements : statement.kind := CapabilityStatementKindRequirements;
+  else
+    statement.kind := CapabilityStatementKindNull;
+  end;
+end;
+
+function TFHIRCapabilityStatement4.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
+begin
+  result := csauNull;
+end;
+
+procedure TFHIRCapabilityStatement4.setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown);
+begin
+end;
+
 
 { TFhirParametersParameter4 }
 
@@ -3598,6 +3635,11 @@ end;
 function TFhirCapabilityStatementRestResource4.GetReadHistory: boolean;
 begin
   result := (Element as TFhirCapabilityStatementRestResource).readHistory;
+end;
+
+function TFhirCapabilityStatementRestResource4.hasInteraction: boolean;
+begin
+  result := (Element as TFhirCapabilityStatementRestResource).interactionList.Count > 0;
 end;
 
 procedure TFhirCapabilityStatementRestResource4.SetReadHistory(Value: boolean);

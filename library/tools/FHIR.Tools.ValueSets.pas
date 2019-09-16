@@ -360,6 +360,8 @@ begin
   if not FOthers.ExistsByKey(cc.system) then
     FOthers.Add(cc.system, FOnGetCSProvider(self, cc.system, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+  if cs = nil then
+    raise ETerminologyError.Create('Unknown code system '+cc.system);
   for ccf in cc.filters.forEnum do
   begin
     FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');

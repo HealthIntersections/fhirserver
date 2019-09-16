@@ -212,6 +212,7 @@ type
     procedure addInteraction(code : String);  override;
     function getReadHistory: boolean; override;
     procedure setReadHistory(Value: boolean); override;
+    function hasInteraction : boolean; override;
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); override;
   end;
 
@@ -245,6 +246,10 @@ type
     procedure setDate(Value: TFslDateTime); override;
     function getFhirVersion: string; override;
     procedure setFhirVersion(Value: string); override;
+    function getKind: TCapabilityStatementKind; override;
+    procedure setKind(Value: TCapabilityStatementKind); override;
+    function getAcceptUnknown: TCapabilityStatementAcceptUnknown; override;
+    procedure setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown); override;
 
     procedure standardServer(ts, ws, pv, cv, iv : String); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
@@ -1381,6 +1386,52 @@ begin
         end;
       end;
     end;
+  end;
+end;
+
+function TFHIRCapabilityStatement2.getKind: TCapabilityStatementKind;
+begin
+  case statement.kind of
+    ConformanceStatementKindInstance : result := cskInstance;
+    ConformanceStatementKindCapability : result := cskCapability;
+    ConformanceStatementKindRequirements : result := cskRequirements;
+  else
+    result := cskNull;
+  end;
+end;
+
+procedure TFHIRCapabilityStatement2.setKind(Value: TCapabilityStatementKind);
+begin
+  case value of
+    cskInstance : statement.kind := ConformanceStatementKindInstance;
+    cskCapability : statement.kind := ConformanceStatementKindCapability;
+    cskRequirements : statement.kind := ConformanceStatementKindRequirements;
+  else
+    statement.kind := ConformanceStatementKindNull;
+  end;
+end;
+
+function TFHIRCapabilityStatement2.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
+begin
+  case statement.acceptUnknown of
+    UnknownContentCodeNo : result := csauNo;
+    UnknownContentCodeExtensions : result := csauExtensions;
+    UnknownContentCodeElements : result := csauElements;
+    UnknownContentCodeBoth : result := csauBoth;
+  else
+    result := csauNull;
+  end;
+end;
+
+procedure TFHIRCapabilityStatement2.setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown);
+begin
+  case value of
+    csauNo : statement.acceptUnknown := UnknownContentCodeNo;
+    csauExtensions : statement.acceptUnknown := UnknownContentCodeExtensions;
+    csauElements : statement.acceptUnknown := UnknownContentCodeElements;
+    csauBoth : statement.acceptUnknown := UnknownContentCodeBoth;
+  else
+    statement.acceptUnknown := UnknownContentCodeNull;
   end;
 end;
 
@@ -3478,11 +3529,15 @@ begin
   result := (Element as TFhirCapabilityStatementRestResource).readHistory;
 end;
 
+function TFhirCapabilityStatementRestResource2.hasInteraction: boolean;
+begin
+  result := (Element as TFhirCapabilityStatementRestResource).interactionList.Count > 0;
+end;
+
 procedure TFhirCapabilityStatementRestResource2.SetReadHistory(Value: boolean);
 begin
   (Element as TFhirCapabilityStatementRestResource).readHistory := Value;
 end;
-
 
 
 { TFHIRSubscription2 }

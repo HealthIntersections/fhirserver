@@ -415,9 +415,14 @@ type
     property code : String read GetCode write SetCode;
     property profile : String read GetProfile write SetProfile;
     property readHistory : boolean read GetReadHistory write SetReadHistory;
+    function hasInteraction : boolean; virtual; abstract;
     procedure addInteraction(code : String); virtual; abstract;
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); virtual; abstract;
   end;
+
+  TCapabilityStatementKind = (cskNull, cskInstance, cskCapability, cskRequirements);
+  TCapabilityStatementAcceptUnknown = (csauNull, csauNo, csauExtensions, csauElements, csauBoth);
+
 
   TFHIRCapabilityStatementW = class (TFHIRXVersionResourceWrapper)
   protected
@@ -431,6 +436,10 @@ type
     procedure setDescription(value : String); virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
+    function getKind: TCapabilityStatementKind; virtual; abstract;
+    procedure setKind(Value: TCapabilityStatementKind); virtual; abstract;
+    function getAcceptUnknown: TCapabilityStatementAcceptUnknown; virtual; abstract;
+    procedure setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown); virtual; abstract;
     function getDate: TFslDateTime; virtual; abstract;
     procedure setDate(Value: TFslDateTime); virtual; abstract;
     function getFhirVersion: string; virtual; abstract;
@@ -442,6 +451,8 @@ type
     property name : String read GetName write SetName;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
+    property kind : TCapabilityStatementKind read getKind write setKind;
+    property acceptUnknown : TCapabilityStatementAcceptUnknown read getAcceptUnknown write setAcceptUnknown;
     property description : String read GetDescription write SetDescription;
     property date : TFslDateTime read GetDate write SetDate;
     property fhirVersion : string read GetFhirVersion write SetFhirVersion;

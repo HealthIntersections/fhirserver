@@ -6174,6 +6174,7 @@ begin
     conn.Execute;
     if conn.FetchNext then
       result := conn.ColIntegerByName['ResourceKey'];
+    conn.Terminate;
   end;
 end;
 
@@ -6792,7 +6793,8 @@ var
   upS, upC : TUcumPair;
   vU, cU, ok : Integer;
 begin
-  if (value.value <> '') and (value.code <> '') and (value.system <> '') then
+  if (value.value <> '') and (value.code <> '') and (value.system <> '')
+    and (ServerContext.TerminologyServer.CommonTerminologies.Ucum <> nil) then
   begin
     val := TFslDecimal.ValueOf(value.value);
     vu := resolveConcept(conn, value.system, value.code);
