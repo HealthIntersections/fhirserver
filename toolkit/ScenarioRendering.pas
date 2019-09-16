@@ -33,7 +33,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, jclshell,
   {$IFDEF MSWINDOWS}
-  winapi.shellapi, fmx.platform.win, winapi.windows,
+  winapi.shellax, FMX.ScrollBox, FMX.Memo, FMX.ListBox, FMX.StdCtrls, FMX.Edit, FMX.Types, FMX.Controls, FMX.Controls.Presentation`pi, fmx.platform.win, winapi.windows,
   {$ENDIF}
   FHIR.Version.Utilities, FHIR.Base.Objects,FHIR.Version.Resources,
   FMX.dialogservice, FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FDownloadForm,
@@ -81,12 +81,14 @@ var
 
 {$ENDIF}
 begin
+
   appDir:=GetCurrentDir;
+//  if edit1.text='' then edit1.Text:=extractfilepath(appDir)+'\Rendering\ExampleScenario';
 {$IFDEF MSWINDOWS}
-if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir;
-  SetCurrentDir(ESPublisherFolder+'\simpleRender');
+if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
+  SetCurrentDir(ESPublisherFolder+'');
   resource:=filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
-  resourceToFile(resource, '.\current.xml', ffXml, OutputStylePretty);
+  resourceToFile(resource, ESPublisherFolder+'\current.xml', ffXml, OutputStylePretty);
   ExecuteFile := 'BUILD.bat';
 
 
