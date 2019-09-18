@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, IniFiles,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.ImageList,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.ImageList, System.AnsiStrings,
   Vcl.ImgList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls, Vcl.Clipbrd,
   JclSysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell;
@@ -35,6 +35,7 @@ type
   public
     constructor create(form : TPublisherForm; cmd : string);
   end;
+
 
   TPublisherForm = class(TForm)
     Panel1: TPanel;
@@ -67,6 +68,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton6Click(Sender: TObject);
     procedure ToolButton7Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FIni : TIniFile;
     FThread : TPublishThread;
@@ -76,6 +78,7 @@ type
     FQueue : TStringList;
     FJarFile : String;
     FCompare : String;
+    FirstShow:boolean;
     procedure addFolder(dir : String; run : boolean);
     procedure cmdOutput(const Text: string);
     procedure saveList;
@@ -86,6 +89,7 @@ type
     procedure WMCopyData(var Msg: TWMCopyData); message WM_COPYDATA;
     procedure UMEnsureRestored(var Msg: TMessage); message UM_ENSURERESTORED;
   public
+    IGtoPublish:string;
   end;
 
 var
@@ -158,11 +162,13 @@ begin
     FRuns.Add(s, TRunRecord.Create(FIni.ReadFloat('folders', s, 0)));
   FLock := TFslLock.Create('msg-queue');
   FQueue := TStringList.Create;
+
   FJarFile := FIni.ReadString('tools', 'jar', 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
   FCompare := FIni.ReadString('tools', 'compare', 'C:\Program Files (x86)\WinMerge\WinMergeU.exe');
   for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
       addFolder(paramStr(i), true);
+  FirstShow:=true;
 end;
 
 procedure TPublisherForm.FormDestroy(Sender: TObject);
@@ -178,6 +184,16 @@ begin
   FIni.Free;
   FQueue.Free;
   FLock.Free;
+end;
+
+procedure TPublisherForm.FormShow(Sender: TObject);
+begin
+if FirstShow then
+  if (IGtoPublish<>'') and (directoryexists(IGtoPublish)) then
+      addFolder(IGtoPublish, true);
+
+FirstShow:=False;
+
 end;
 
 procedure TPublisherForm.lbFoldersDblClick(Sender: TObject);
@@ -209,7 +225,9 @@ end;
 
 procedure TPublisherForm.Timer1Timer(Sender: TObject);
 begin
-  FLock.Lock;
+      Application.processmessages;
+  Application.BringToFront;
+    FLock.Lock;
   try
     if (FThread <> nil) and (FQueue.Count > 0) then
     begin
@@ -237,6 +255,7 @@ begin
   s := lbFolders.Items[lbFolders.ItemIndex];
   s := s.Substring(s.IndexOf(':')+1).trim;
   Clipboard.AsText := 'java -jar '+FJarFile+' -ig '+s;
+  IGtoPublish:=s;
 end;
 
 procedure TPublisherForm.ToolButton5Click(Sender: TObject);
@@ -273,11 +292,18 @@ end;
 procedure TPublisherForm.tbExecuteClick(Sender: TObject);
 var
   sl, sf : String;
+  jarPath:string;
 begin
   if FThread <> nil then
     FThread.Fabort := true
   else
   begin
+
+    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
+      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
+    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
+      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+
     sl := lbFolders.Items[lbFolders.ItemIndex];
     if not FRuns.ContainsKey(sl) then
       FRuns.Add(sl, TRunRecord.create(0));

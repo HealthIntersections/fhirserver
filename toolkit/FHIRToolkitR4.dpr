@@ -179,7 +179,9 @@ uses
   UTGMgmtFrame in 'UTGMgmtFrame.pas' {UTGManagementFrame: TFrame},
   uGitForDelphi in '..\dependencies\git\uGitForDelphi.pas',
   FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas',
-  FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas';
+  FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas',
+  PublisherHome in '..\utilities\publisher\PublisherHome.pas' {PublisherForm};
+
 
 {$R *.res}
 

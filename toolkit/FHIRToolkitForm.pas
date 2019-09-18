@@ -30,7 +30,7 @@ unit FHIRToolkitForm;
 
 {$IFDEF FHIR4}
 {$DEFINE EXAMPLESCENARIO}
-{$UNDEF IMPLEMENTATIONGUIDE}
+{$DEFINE IMPLEMENTATIONGUIDE}
 {$ENDIF}
 
 interface
@@ -51,7 +51,7 @@ uses
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
-{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, ImplementationGuideEditor, {$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, PublisherHome,{$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame,
@@ -269,7 +269,7 @@ implementation
 
 uses
 {$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
-{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE}! IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
+{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE} IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
@@ -1313,6 +1313,7 @@ var
   res: TFHIRResource;
   FSettings: TForm;
   str: string;
+
 begin
 {$IFDEF IMPLEMENTATIONGUIDE}
   frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
@@ -1326,20 +1327,15 @@ begin
 
       with frame as TImplementationGuideEditorFrame do
       begin
-        IGRootFolder := extractfiledir(frame.filename);
+        IGRootFolder := ExtractFileDir(ExcludeTrailingBackslash(ExtractFileDir(frame.filename)));
         IGFileName := extractfilename(frame.filename);
 
-        IGPublishForm := TIGPublishForm.Create(self);
-        IGPublishForm.Edit1.Text := IGPublisherFolder;
+        PublisherForm:=TPublisherForm.create(self);
+        PublisherForm.IGtoPublish:=IGRootFolder;
+        PublisherForm.ShowModal;
 
-        IGPublishForm.IGRootFolder := IGRootFolder;
-        IGPublishForm.IGPublisherFolder := IGPublisherFolder;
-        IGPublishForm.IGFileName := IGFileName;
-        IGPublishForm.checkContentFolders(IGRootFolder);
-
+{
         IGPublishForm.ShowModal;
-
-        // if IGSettingsForm.ModalResult = mrOK then
         begin
           IGRootFolder := IGPublishForm.IGRootFolder;
           IGPublisherFolder := IGPublishform.IGPublisherFolder;
@@ -1352,6 +1348,8 @@ begin
           // pandocfolder := IGSettingsForm.pandocFolder;
         end;
         IGPublishForm.Destroy;
+}
+        PublisherForm.destroy;
 
       end
 
