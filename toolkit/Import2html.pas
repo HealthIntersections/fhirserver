@@ -33,7 +33,7 @@ interface
 uses
 {$IFDEF OSX}
 {$ELSE}
-  Shellapi, Winapi.Windows, FMX.Platform.Win, JclSysUtils,
+  Winapi.Shellapi, Winapi.Windows, FMX.Platform.Win, //JclSysUtils,
 {$ENDIF}
   System.SysUtils, System.IOUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.DialogService,

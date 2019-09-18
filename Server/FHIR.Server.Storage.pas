@@ -677,7 +677,7 @@ begin
         html.append('<div><h2>'+ServerContext.Globals.OwnerName+' Conformance Statement</h2><p>FHIR v'+factory.versionString+' released '+SERVER_RELEASE_DATE+'. '+
          'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
         for a in ServerContext.ValidatorContext.allResourceNames do
-          if a <> 'Custom' then
+          if (a <> 'Custom') and (a <> 'Parameters') then
           begin
             if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
             begin
@@ -770,7 +770,7 @@ begin
                 end;
                 html.append('</tr>'#13#10);
                 if (not res.hasInteraction) then
-                  raise Exception.Create('No interactions?');
+                  raise Exception.Create('No interactions for '+res.code+'?');
 
                   //<th>Search/Updates Params</th>
                   // html.append('n : offset<br/>');

@@ -37,11 +37,12 @@ uses
   FHIR.Web.Fetcher,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
+  FHIR.Ucum.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base, FHIR.Base.PathEngine,
 
   FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
-  FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities,
+  FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities, FHIR.R4.PathEngine,
 
   FHIR.Tools.Indexing, FHIR.Version.Client,
   FHIR.Tx.Manager, FHIR.Tx.Server,
@@ -57,6 +58,7 @@ Type
     function makeIndexes : TFHIRIndexBuilder; override;
     function makeValidator: TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
+    function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
 
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
@@ -116,6 +118,11 @@ implementation
 function TFullTestServerFactory.makeValidator: TFHIRValidatorV;
 begin
   result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
+end;
+
+function TFullTestServerFactory.makeEngine(validatorContext: TFHIRWorkerContextWithFactory; ucum: TUcumServiceImplementation): TFHIRPathEngineV;
+begin
+  result := TFHIRPathEngine4.Create(validatorContext as TFHIRWorkerContext4, ucum);
 end;
 
 function TFullTestServerFactory.makeIndexer : TFHIRIndexManager;

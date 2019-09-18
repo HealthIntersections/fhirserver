@@ -195,11 +195,15 @@ uses
   FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
   FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
+  FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas' {,
+  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas';
+
+{$R *.res},
   {$IFDEF MSWINDOWS}
   FHIR.Support.Service in '..\..\library\support\FHIR.Support.Service.pas',
-  {$ENDIF}
-  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas';
+  {$ENDIF }
+  FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
+  FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas';
 
 {$R *.res}
 

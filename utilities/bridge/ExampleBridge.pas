@@ -71,8 +71,8 @@ Uses
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities,
   FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Stream,
 
-  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Scim,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory,
+  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Ucum.Services, FHIR.Base.PathEngine,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory, FHIR.R3.PathEngine,
   FHIR.Tools.Indexing,
   FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Server.WebSource,
   FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Ini;
@@ -101,6 +101,7 @@ Type
     function makeValidator: TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
+    function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
 
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
@@ -141,9 +142,9 @@ Type
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
     function getResourceByUrl(aType : string; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String); overload; override;
-
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; override;
   end;
 
   TExampleFhirServerStorage = class (TFHIRStorageService)
@@ -162,8 +163,8 @@ Type
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
-    procedure QueueResource(r: TFhirResourceV); overload; override;
-    procedure QueueResource(r: TFhirResourceV; dateTime: TFslDateTime); overload; override;
+    procedure QueueResource(session : TFHIRSession; r: TFhirResourceV); overload; override;
+    procedure QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime); overload; override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
     function ProfilesAsOptionList : String; override;
@@ -413,12 +414,12 @@ begin
   FData.FLock.Unlock;
 end;
 
-procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; httpCode: Integer; name, message: String);
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; opName: String; httpCode: Integer; name, message: String);
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -496,6 +497,11 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TExampleFHIROperationEngine.patientIds(request: TFHIRRequest; res: TFHIRResourceV): TArray<String>;
+begin
+  result := nil;
 end;
 
 function TExampleFHIROperationEngine.dataFromPatient(pat: TFHIRPatient): TFslStringList;
@@ -715,12 +721,12 @@ begin
   result := '';
 end;
 
-procedure TExampleFhirServerStorage.QueueResource(r: TFhirResourceV);
+procedure TExampleFhirServerStorage.QueueResource(session : TFHIRSession; r: TFhirResourceV);
 begin
   // nothing in this server
 end;
 
-procedure TExampleFhirServerStorage.QueueResource(r: TFhirResourceV; dateTime: TFslDateTime);
+procedure TExampleFhirServerStorage.QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime);
 begin
   // nothing in this server
 end;
@@ -802,6 +808,11 @@ end;
 
 
 { TExampleServerFactory }
+
+function TExampleServerFactory.makeEngine(validatorContext: TFHIRWorkerContextWithFactory; ucum: TUcumServiceImplementation): TFHIRPathEngineV;
+begin
+  raise EFslException.Create('Not supported in this server');
+end;
 
 function TExampleServerFactory.makeIndexer: TFHIRIndexManager;
 begin

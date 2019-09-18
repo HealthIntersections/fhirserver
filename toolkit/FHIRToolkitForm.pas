@@ -51,10 +51,11 @@ uses
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
-{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, {$ENDIF}
-  ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
+{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, ImplementationGuideEditor, {$ENDIF}
+  ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
-  PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame;
+  PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame,
+  BaseFrame;
 
 type
   TToolkitLogger = class(TFHIRClientLogger)
@@ -268,7 +269,7 @@ implementation
 
 uses
 {$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
-{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, IGPublishSettings, FDownloadForm, ScenarioRendering; {$ENDIF}
+{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE}! IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
@@ -1098,7 +1099,7 @@ end;
 
 procedure TMasterToolsForm.MenuItem11Click(Sender: TObject);
 var
-  frame: TFrame;
+  frame: TUTGManagementFrame;
 begin
   if FUTGTab <> nil then
     tbMain.ActiveTab := FUTGTab
@@ -1132,7 +1133,7 @@ end;
 
 procedure TMasterToolsForm.MenuItem7Click(Sender: TObject);
 var
-  frame: TFrame;
+  frame: TDiffEngineEngineFrame;
 begin
   if FDiffEngineTab <> nil then
     tbMain.ActiveTab := FDiffEngineTab
@@ -1176,7 +1177,7 @@ end;
 
 procedure TMasterToolsForm.mnuTransformationClick(Sender: TObject);
 var
-  frame: TFrame;
+  frame: TTransformationEngineFrame;
 begin
   if FTransformationTab <> nil then
     tbMain.ActiveTab := FTransformationTab
@@ -1201,7 +1202,7 @@ end;
 
 procedure TMasterToolsForm.mnuValidationClick(Sender: TObject);
 var
-  frame: TFrame;
+  frame: TValidationEngineFrame;
 begin
   if FValidationTab <> nil then
     tbMain.ActiveTab := FValidationTab
@@ -1283,7 +1284,7 @@ end;
 
 procedure TMasterToolsForm.mnuPackageManagerClick(Sender: TObject);
 var
-  frame: TFrame;
+  frame: TPackageManagerFrame;
 begin
   if FPackageMgrTab <> nil then
     tbMain.ActiveTab := FPackageMgrTab
@@ -1312,12 +1313,11 @@ var
   res: TFHIRResource;
   FSettings: TForm;
   str: string;
-
 begin
+{$IFDEF IMPLEMENTATIONGUIDE}
   frame := tbMain.ActiveTab.TagObject as TBaseResourceFrame;
   if ((frame.resource is TFHIRImplementationGuide) or (frame.resource is TFHIRExampleScenario)) then
   begin
-{$IFDEF FHIR4}
     if frame.filename = '' then
       ShowMessage('File is not saved. Please save the file first.')
     else
@@ -1382,16 +1382,15 @@ begin
         ESPublishForm.Destroy;
 
       end
+  end;
 {$ELSE}
     raise Exception.Create('This is not supported in R3');
 {$ENDIF}
-  end;
-
 end;
 
 procedure TMasterToolsForm.mnuRegistryClick(Sender: TObject);
 var
-  frame: TFrame;
+  frame: TRegistryFrame;
 begin
   if FRegistryTab <> nil then
     tbMain.ActiveTab := FRegistryTab

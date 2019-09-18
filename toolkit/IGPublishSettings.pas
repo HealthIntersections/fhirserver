@@ -33,7 +33,7 @@ interface
 uses
 {$IFDEF OSX}
 {$ELSE}
-  ShellApi, Winapi.Windows, FMX.Platform.Win, JclSysUtils,
+  ShellApi, Winapi.Windows, FMX.Platform.Win, //JclSysUtils,
 {$ENDIF}
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.zip, System.IOUtils,
   FMX.Dialogs, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Types,
@@ -207,7 +207,7 @@ begin
 
 
   Memo1.Lines.Clear;
-  execute('cmd.exe /C jekyll -v', str, true);
+// todo - doesn't compile...  execute('cmd.exe /C jekyll -v', str, true);
   if copy(str, 1, 6) = 'jekyll' then
   begin
     delete(str, 1, 7);

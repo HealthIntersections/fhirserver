@@ -82,8 +82,9 @@ type
     function getResourceByUrl(aType : String; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; override;
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; override;
   end;
 
   TTerminologyServerStorage = class (TFHIRStorageService)
@@ -103,8 +104,8 @@ type
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
-    procedure QueueResource(r: TFHIRResourceV); overload; override;
-    procedure QueueResource(r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
+    procedure QueueResource(session: TFhirSession; r: TFHIRResourceV); overload; override;
+    procedure QueueResource(session: TFhirSession; r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
     function ProfilesAsOptionList : String; override;
@@ -206,12 +207,12 @@ begin
   // nothing
 end;
 
-procedure TTerminologyServerStorage.QueueResource(r: TFhirResourceV; dateTime: TFslDateTime);
+procedure TTerminologyServerStorage.QueueResource(session: TFhirSession; r: TFhirResourceV; dateTime: TFslDateTime);
 begin
   // nothing
 end;
 
-procedure TTerminologyServerStorage.QueueResource(r: TFhirResourceV);
+procedure TTerminologyServerStorage.QueueResource(session: TFhirSession; r: TFhirResourceV);
 begin
   // nothing
 end;
@@ -299,12 +300,12 @@ end;
 
 { TTerminologyServerOperationEngine }
 
-procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; opName: String; httpCode: Integer; name, message: String);
+procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; httpCode: Integer; name, message: String);
+procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -888,6 +889,11 @@ begin
       else if sp.modifier = spmExact then
         raise EFHIRException.create('Modifier is not supported');
   end;
+end;
+
+function TTerminologyServerOperationEngine.patientIds(request: TFHIRRequest; res: TFHIRResourceV): TArray<String>;
+begin
+  result := nil;
 end;
 
 procedure TTerminologyServerOperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
