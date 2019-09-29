@@ -494,6 +494,7 @@ begin
           result.Version := inttostr(StrToInT(result.version)+1);
         result.lastModified := now;
 
+        conn.Terminate;
         conn.StartTransact;
         try
           if new then
@@ -520,12 +521,14 @@ begin
             raise;
           end;
         end;
-      end;
+      end
+      else
+        conn.Terminate;
+
 
       result.Link;
     finally
       result.Free;
-      conn.Terminate;
     end;
     conn.Release;
   except
