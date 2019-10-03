@@ -430,17 +430,17 @@ begin
   if (lang <> '') then
     for ccd in TFhirCodeSystemProviderContext(context).context.designations.forEnum do
       if languageMatches(lang, ccd.language) then
-        result := ccd.value;
+        result := ccd.value.Trim;
   for css in FCs.Supplements do
   begin
     cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).context.code);
     if (cc <> nil) then
     begin
       if languageMatches(lang, css.language) then
-        result := cc.display;
+        result := cc.display.Trim;
       for ccd in cc.designations.forEnum do
         if languageMatches(lang, ccd.language) then
-          result := ccd.value;
+          result := ccd.value.Trim;
     end;
   end;
 end;
@@ -462,17 +462,17 @@ begin
     list.Add(getDisplay(code, lang));
     for ccd in TFhirCodeSystemProviderContext(ctxt).context.designations.forEnum do
       if (lang = '') or languageMatches(lang, ccd.language) then
-        list.add(ccd.value);
+        list.add(ccd.value.Trim);
     for css in FCs.Supplements do
     begin
       cc := locCode(css.conceptList, code);
       if (cc <> nil) then
       begin
         if languageMatches(lang, css.language) then
-          list.add(cc.display);
+          list.add(cc.display.trim);
         for ccd in cc.designations.forEnum do
           if languageMatches(lang, ccd.language) then
-            list.add(ccd.value);
+            list.add(ccd.value.Trim);
       end;
     end;
   finally

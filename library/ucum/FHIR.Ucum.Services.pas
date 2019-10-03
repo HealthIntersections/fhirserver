@@ -802,7 +802,7 @@ end;
 
 procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  list.Add(Code(context));
+  list.Add(Code(context).Trim);
 end;
 
 procedure TUcumServices.Displays(code: String; list: TStringList; lang : String);
@@ -820,7 +820,7 @@ begin
     for inc in FCommonUnits.includes.forEnum do
       for cc in inc.concepts.forEnum do
         if (cc.code = code) and (cc.display <> '') then
-          result := cc.display;
+          result := cc.display.Trim;
 end;
 
 procedure TUcumServices.Import(sFilename: String);

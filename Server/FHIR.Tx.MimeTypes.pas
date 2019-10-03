@@ -122,7 +122,7 @@ end;
 
 function TMimeTypeCodeServices.getDisplay(code : String; lang : String):String;
 begin
-  result := code;
+  result := code.Trim;
 end;
 
 function TMimeTypeCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;

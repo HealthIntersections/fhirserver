@@ -1943,7 +1943,7 @@ begin
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
     if (active) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
-      list.add(Strings.GetEntry(iDesc));
+      list.add(Strings.GetEntry(iDesc).trim);
   End;
 end;
 
@@ -3388,7 +3388,7 @@ begin
       raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
     else if ctxt.isComplex then
       // there's only one display name - for now?
-      list.Add(displayExpression(ctxt.FExpression))
+      list.Add(displayExpression(ctxt.FExpression).Trim)
     else
       ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, FDefaultLanguage, $FF);
   finally

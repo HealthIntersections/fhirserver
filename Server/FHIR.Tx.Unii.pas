@@ -172,7 +172,7 @@ begin
     qry.BindString('code', code);
     qry.execute;
     qry.FetchNext;
-    result := qry.colString[1];
+    result := qry.colString[1].Trim;
     qry.Terminate;
     qry.Release;
   except
@@ -287,7 +287,7 @@ begin
         begin
           s := qry.ColStringByName['Display'];
           if res.FOthers.IndexOf(s) = -1 then
-            res.FOthers.Add(s);
+            res.FOthers.Add(s.trim);
         end;
         result := res.Link;
       finally
@@ -325,7 +325,7 @@ end;
 
 function TUniiServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := TUniiConcept(context).FDisplay;
+  result := TUniiConcept(context).FDisplay.trim;
 end;
 
 procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);

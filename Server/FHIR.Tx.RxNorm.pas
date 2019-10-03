@@ -325,7 +325,7 @@ begin
     qry.prepare;
     qry.execute;
     qry.FetchNext;
-    result := qry.colString[1];
+    result := qry.colString[1].Trim;
     qry.Terminate;
     qry.Release;
   except
@@ -404,9 +404,9 @@ begin
         res.FCode := code;
         repeat
           if qry.ColString[2] = 'SY' then
-            res.FOthers.Add(qry.ColString[1])
+            res.FOthers.Add(qry.ColString[1].trim)
           else
-            res.FDisplay := qry.ColString[1];
+            res.FDisplay := qry.ColString[1].trim;
         until (not qry.FetchNext);
         result := res.Link;
       finally
@@ -446,7 +446,7 @@ end;
 
 function TUMLSServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := TUMLSConcept(context).FDisplay;
+  result := TUMLSConcept(context).FDisplay.Trim;
 end;
 
 procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);

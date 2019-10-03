@@ -147,7 +147,7 @@ end;
 
 function TACIRServices.getDisplay(code : String; lang : String):String;
 begin
-  result := FMap[code].display;
+  result := FMap[code].display.Trim;
 end;
 
 function TACIRServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -267,7 +267,7 @@ end;
 
 function TACIRServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := TACIRConcept(context).Display;
+  result := TACIRConcept(context).Display.Trim;
 end;
 
 procedure TACIRServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);

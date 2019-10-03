@@ -134,7 +134,7 @@ end;
 
 function TUSStateServices.getDisplay(code : String; lang : String):String;
 begin
-  result := FMap[code].display;
+  result := FMap[code].display.Trim;
 end;
 
 function TUSStateServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -244,7 +244,7 @@ end;
 
 function TUSStateServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := TUSStateConcept(context).display;
+  result := TUSStateConcept(context).display.Trim;
 end;
 
 procedure TUSStateServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);

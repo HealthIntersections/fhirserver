@@ -899,7 +899,7 @@ begin
   Begin
     CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    list.Add(Desc.GetEntry(iDescription, ilang));
+    list.Add(Desc.GetEntry(iDescription, ilang).trim);
     if iOtherNames <> 0 then
     begin
       names := FRefs.GetCardinals(iOtherNames);
@@ -908,14 +908,14 @@ begin
         s := Desc.GetEntry(name, ilang);
         for l in langs do
           if l = ilang then
-            list.Add(s);
+            list.Add(s.trim);
       end;
     end;
   End
   else if AnswerLists.FindCode(sCode, iIndex, FDesc) then
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
-    list.Add(Desc.GetEntry(iDescription, ilang));
+    list.Add(Desc.GetEntry(iDescription, ilang).Trim);
   end;
 end;
 

@@ -547,7 +547,7 @@ begin
     else
       c := conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'Suffix', '');
   end);
-  list.Add(c);
+  list.Add(c.Trim);
 end;
 
 procedure TNDCServices.Displays(code: String; list: TStringList; lang: String);
@@ -559,7 +559,7 @@ begin
     if c = '' then
       c := conn.Lookup('NDCProducts', 'Code', code, 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'Code', code, 'Suffix', '');
   end);
-  list.Add(c);
+  list.Add(c.Trim);
 end;
 
 procedure TNDCServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; lang: String; props: TArray<String>; resp: TFHIRLookupOpResponseW);

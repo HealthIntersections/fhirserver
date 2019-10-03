@@ -289,7 +289,7 @@ begin
     c := FDefinitions.parse(code, msg);
     try
       if c <> nil then
-        result := FDefinitions.present(c)
+        result := FDefinitions.present(c).Trim
       else
         result := '??';
     finally

@@ -137,7 +137,7 @@ end;
 
 function TIso4217Services.getDisplay(code : String; lang : String):String;
 begin
-  result := FCurrencies.Map[code].display;
+  result := FCurrencies.Map[code].display.Trim;
 end;
 
 function TIso4217Services.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -174,7 +174,7 @@ end;
 
 function TIso4217Services.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := TIso4217Concept(context).display;
+  result := TIso4217Concept(context).display.Trim;
 end;
 
 procedure TIso4217Services.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);

@@ -134,7 +134,7 @@ end;
 
 function TCountryCodeServices.getDisplay(code : String; lang : String):String;
 begin
-  result := FMap[code].display;
+  result := FMap[code].display.Trim;
 end;
 
 function TCountryCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -941,7 +941,7 @@ end;
 
 function TCountryCodeServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := TCountryCodeConcept(context).display;
+  result := TCountryCodeConcept(context).display.Trim;
 end;
 
 procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
