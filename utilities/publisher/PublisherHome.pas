@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.ImageList, System.AnsiStrings,
   Vcl.ImgList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls, Vcl.Clipbrd,
   JclSysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell,
+  Vcl.Buttons;
 
 const
   UM_ENSURERESTORED = WM_USER + 1;
@@ -54,10 +55,12 @@ type
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ProgressBar1: TProgressBar;
-    ToolButton2: TToolButton;
     Timer1: TTimer;
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
+    lblFolder: TLabel;
+    SpeedButton1: TSpeedButton;
+    od: TFileOpenDialog;
     procedure ToolButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -69,6 +72,7 @@ type
     procedure ToolButton6Click(Sender: TObject);
     procedure ToolButton7Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     FIni : TIniFile;
     FThread : TPublishThread;
@@ -148,7 +152,7 @@ var
   s : String;
   i : integer;
 begin
-  FIni := TIniFile.Create(tempFile('fhir-publisher.ini'));
+  FIni := TIniFile.Create(Path([ExtractFilePath(ParamStr(0)), 'fhir-publisher.ini']));
   FIni.ReadSection('folders', lbFolders.Items);
   Left := FIni.ReadInteger('window', 'left', Left);
   Top := FIni.ReadInteger('window', 'top', Top);
@@ -163,7 +167,15 @@ begin
   FLock := TFslLock.Create('msg-queue');
   FQueue := TStringList.Create;
 
-  FJarFile := FIni.ReadString('tools', 'jar', 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
+  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
+  if (not FileExists(FJarFile)) then
+  begin
+    if not (od.Execute) then
+      exit;
+    FJarFile := od.FileName;
+    FIni.writeString('tools', 'jar', FJarFile);
+  end;
+
   FCompare := FIni.ReadString('tools', 'compare', 'C:\Program Files (x86)\WinMerge\WinMergeU.exe');
   for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
@@ -213,6 +225,11 @@ begin
       Fini.WriteFloat('folders', s, 0);
 end;
 
+procedure TPublisherForm.SpeedButton1Click(Sender: TObject);
+begin
+  Clipboard.AsText := lblFolder.Caption;
+end;
+
 procedure TPublisherForm.start(sf : String);
 begin
   memOutput.clear;
@@ -220,14 +237,14 @@ begin
   ProgressBar1.Visible := FRecord.FDuration > 0;
   FRecord.FStart := now;
   tbExecute.ImageIndex := 3;
-  pnlFolder.Caption := '  '+sf;
+  lblFolder.Caption := '  '+sf;
 end;
 
 procedure TPublisherForm.Timer1Timer(Sender: TObject);
 begin
-      Application.processmessages;
-  Application.BringToFront;
-    FLock.Lock;
+  Application.processmessages;
+//  Application.BringToFront;
+  FLock.Lock;
   try
     if (FThread <> nil) and (FQueue.Count > 0) then
     begin

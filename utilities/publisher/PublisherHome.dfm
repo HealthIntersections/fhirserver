@@ -3,7 +3,7 @@ object PublisherForm: TPublisherForm
   Top = 0
   Caption = 'FHIR IG Publisher'
   ClientHeight = 398
-  ClientWidth = 816
+  ClientWidth = 914
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,22 +27,24 @@ object PublisherForm: TPublisherForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 816
+    Width = 914
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     Caption = 'Panel1'
     TabOrder = 0
+    ExplicitWidth = 816
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 816
+      Width = 914
       Height = 35
       ButtonHeight = 38
       ButtonWidth = 39
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
+      ExplicitWidth = 816
       object ToolButton1: TToolButton
         Left = 0
         Top = 0
@@ -89,29 +91,21 @@ object PublisherForm: TPublisherForm
         ShowHint = True
         OnClick = ToolButton5Click
       end
-      object ToolButton2: TToolButton
+      object ToolButton7: TToolButton
         Left = 133
         Top = 0
-        Hint = 'Copy Command Line'
-        Caption = 'Copy Command Line'
-        ImageIndex = 4
+        Caption = 'View Generated IG'
+        ImageIndex = 6
         ParentShowHint = False
         ShowHint = True
-        OnClick = ToolButton2Click
+        OnClick = ToolButton7Click
       end
       object ToolButton6: TToolButton
         Left = 172
         Top = 0
-        Caption = 'ToolButton6'
+        Caption = 'Edit Configuration'
         ImageIndex = 5
         OnClick = ToolButton6Click
-      end
-      object ToolButton7: TToolButton
-        Left = 211
-        Top = 0
-        Caption = 'ToolButton7'
-        ImageIndex = 6
-        OnClick = ToolButton7Click
       end
     end
   end
@@ -140,7 +134,7 @@ object PublisherForm: TPublisherForm
   object Panel3: TPanel
     Left = 252
     Top = 41
-    Width = 564
+    Width = 662
     Height = 357
     Align = alClient
     BevelOuter = bvNone
@@ -148,36 +142,81 @@ object PublisherForm: TPublisherForm
     BorderWidth = 4
     Caption = 'Panel2'
     TabOrder = 2
+    ExplicitWidth = 564
     object memOutput: TMemo
       Left = 4
       Top = 33
-      Width = 556
+      Width = 654
       Height = 320
       Align = alClient
       TabOrder = 0
       WordWrap = False
+      ExplicitWidth = 556
     end
     object pnlFolder: TPanel
       Left = 4
       Top = 4
-      Width = 556
+      Width = 654
       Height = 29
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
-      Caption = '  Folder'
       TabOrder = 1
+      ExplicitLeft = 3
+      ExplicitTop = 6
       DesignSize = (
-        556
+        654
         29)
+      object lblFolder: TLabel
+        Left = 24
+        Top = 6
+        Width = 40
+        Height = 13
+        Caption = 'lblFolder'
+      end
+      object SpeedButton1: TSpeedButton
+        Left = -1
+        Top = 1
+        Width = 23
+        Height = 22
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFA47874A47874A47874A47874A47874A47874A47874A478
+          74A478748C5D5CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFA87C75FEE5CBFF
+          E2C4FFDFBEFFDCB8FFD9B1FED6ACFFD4A6FFD1A28C5D5CFF00FFFF00FFFF00FF
+          FF00FFFF00FFFF00FFAD8078FFEAD4E5A657E5A657E5A657E5A657E5A657E5A6
+          57FFD4A88C5D5CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB4867AFEEEDDFF
+          EBD6FFE8CFFFE4C9FEE1C2FEDDBBFFDBB5FFD8AF8C5D5CFF00FFA47874A47874
+          A47874A47874A47874BA8D7DFEF2E5E5A657E5A657E5A657E5A657E5A657E5A6
+          57FEDCB78C5D5CFF00FFA87C75FEE5CBFFE2C4FFDFBEFFDCB8C29581FEF6ECFE
+          F3E6FEEFE1FFEDDAFEE9D4FEE6CCFFE2C6FEDFBF8C5D5CFF00FFAD8078FFEAD4
+          E5A657E5A657E5A657CA9B83FFF9F3E5A657E5A657E5A657E5A657E5A657E5A6
+          57FEE3C88C5D5CFF00FFB4867AFEEEDDFFEBD6FFE8CFFFE4C9D1A286FEFBF9FE
+          F9F4FEF7EFFEF5EAFEF1E4FEEEDEFEEBD7FEE8D08C5D5CFF00FFBA8D7DFEF2E5
+          E5A657E5A657E5A657D8A98AFEFEFDFEFCFAFEFAF6FEF8F1FEF5ECEBDFDBD3C2
+          C0BAA9AA8C5D5CFF00FFC29581FEF6ECFEF3E6FEEFE1FFEDDADFB08DFEFEFEFE
+          FEFEFEFCFBFEFBF7FEF8F2B48176B48176B48176B17F74FF00FFCA9B83FFF9F3
+          E5A657E5A657E5A657E4B58EFEFEFEFEFEFEFEFEFEFEFDFCFEFBF8B48176EBB5
+          6FE49B42FF00FFFF00FFD1A286FEFBF9FEF9F4FEF7EFFEF5EAE8B890DCA887DC
+          A887DCA887DCA887DCA887B48176F0B25EFF00FFFF00FFFF00FFD8A98AFEFEFD
+          FEFCFAFEFAF6FEF8F1FEF5ECEBDFDBD3C2C0BAA9AA8C5D5CFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFDFB08DFEFEFEFEFEFEFEFCFBFEFBF7FEF8F2B48176B4
+          8176B48176B17F74FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFE4B58EFEFEFE
+          FEFEFEFEFEFEFEFDFCFEFBF8B48176EBB56FE49B42FF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFE8B890DCA887DCA887DCA887DCA887DCA887B48176F0
+          B25EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+        OnClick = SpeedButton1Click
+      end
       object ProgressBar1: TProgressBar
-        Left = 240
+        Left = 338
         Top = 6
         Width = 310
         Height = 17
         Anchors = [akTop, akRight]
         TabOrder = 0
         Visible = False
+        ExplicitLeft = 240
       end
     end
   end
@@ -187,7 +226,7 @@ object PublisherForm: TPublisherForm
     Left = 48
     Top = 112
     Bitmap = {
-      494C010107001800080020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010107001800040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000DFDFDF00CCCC
       CC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCC
@@ -1262,5 +1301,24 @@ object PublisherForm: TPublisherForm
     OnTimer = Timer1Timer
     Left = 48
     Top = 168
+  end
+  object od: TFileOpenDialog
+    ClientGuid = '{D807B1E2-67B6-473E-B17C-85636B9CA493}'
+    DefaultExtension = 'jar'
+    FavoriteLinks = <>
+    FileName = 'org.hl7.fhir.publisher.jar'
+    FileTypes = <
+      item
+        DisplayName = 'Jar Files (*.jar)'
+        FileMask = '*.jar'
+      end
+      item
+        DisplayName = 'All Files'
+        FileMask = '*.*'
+      end>
+    Options = [fdoFileMustExist]
+    Title = 'FIND IG Publisher Jar file'
+    Left = 56
+    Top = 233
   end
 end
