@@ -1018,7 +1018,7 @@ procedure TKDBConnection.Prepare;
 begin
   {$IFOPT C+}
   if FPrepared then
-    raise EDBException.Create('Attempt to reuse ODBC connection "'+FUsage+'" while it is in use');
+    raise EDBException.Create('Attempt to reuse ODBC connection "'+FUsage+'" while it is in use (sql = "'+FSQL+'")');
   {$ENDIF}
   FTerminated := false;
   FBoundItems.Clear;
