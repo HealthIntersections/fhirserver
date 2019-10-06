@@ -51,7 +51,7 @@ uses
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
-{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, PublisherHome,{$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, PublisherHome, ShellApi, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame,
@@ -1312,7 +1312,7 @@ var
   frame: TBaseResourceFrame;
   res: TFHIRResource;
   FSettings: TForm;
-  str: string;
+  errorstring, str: string;
 
 begin
 {$IFDEF IMPLEMENTATIONGUIDE}
@@ -1330,26 +1330,16 @@ begin
         IGRootFolder := ExtractFileDir(ExcludeTrailingBackslash(ExtractFileDir(frame.filename)));
         IGFileName := extractfilename(frame.filename);
 
+        ShellExecute(0, 'open', 'C:\HL7\server\fhirserver\utilities\publisher\Win32\Release\IGPublisher.exe ', PChar(IGRootFolder), nil, 1);
+
+{
+// Opening the publisher from code
         PublisherForm:=TPublisherForm.create(self);
         PublisherForm.IGtoPublish:=IGRootFolder;
         PublisherForm.ShowModal;
-
-{
-        IGPublishForm.ShowModal;
-        begin
-          IGRootFolder := IGPublishForm.IGRootFolder;
-          IGPublisherFolder := IGPublishform.IGPublisherFolder;
-          str := IGPublisherFolder;
-
-          IGContentFolder := IGPublishForm.IGContentFolder;
-          IGMediaFolder := IGPublishForm.MediaFolder;
-          IGPageContentFolder := IGPublishForm.PageContentFolder;
-          IGTempFolder := IGPublishForm.tempFolder;
-          // pandocfolder := IGSettingsForm.pandocFolder;
-        end;
-        IGPublishForm.Destroy;
+        PublisherForm.Destroy;
 }
-        PublisherForm.destroy;
+
 
       end
 

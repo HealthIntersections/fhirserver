@@ -33,7 +33,6 @@ object PublisherForm: TPublisherForm
     BevelOuter = bvNone
     Caption = 'Panel1'
     TabOrder = 0
-    ExplicitWidth = 816
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
@@ -44,7 +43,6 @@ object PublisherForm: TPublisherForm
       Caption = 'ToolBar1'
       Images = ImageList1
       TabOrder = 0
-      ExplicitWidth = 816
       object ToolButton1: TToolButton
         Left = 0
         Top = 0
@@ -142,7 +140,6 @@ object PublisherForm: TPublisherForm
     BorderWidth = 4
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitWidth = 564
     object memOutput: TMemo
       Left = 4
       Top = 33
@@ -151,7 +148,6 @@ object PublisherForm: TPublisherForm
       Align = alClient
       TabOrder = 0
       WordWrap = False
-      ExplicitWidth = 556
     end
     object pnlFolder: TPanel
       Left = 4
@@ -162,8 +158,6 @@ object PublisherForm: TPublisherForm
       Alignment = taLeftJustify
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 3
-      ExplicitTop = 6
       DesignSize = (
         654
         29)
@@ -216,7 +210,6 @@ object PublisherForm: TPublisherForm
         Anchors = [akTop, akRight]
         TabOrder = 0
         Visible = False
-        ExplicitLeft = 240
       end
     end
   end
@@ -226,7 +219,7 @@ object PublisherForm: TPublisherForm
     Left = 48
     Top = 112
     Bitmap = {
-      494C010107001800040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010107001800080020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000DFDFDF00CCCC
       CC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCCCC00CCCC
