@@ -199,8 +199,6 @@ FirstShow:=False;
       addFolder(IGtoPublish, true);
 
   FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
-  if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
-    then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
   if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
     then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
   if (not FileExists(FJarFile)) then
