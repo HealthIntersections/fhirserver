@@ -167,20 +167,13 @@ begin
   FLock := TFslLock.Create('msg-queue');
   FQueue := TStringList.Create;
 
-  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
-  if (not FileExists(FJarFile)) then
-  begin
-    if not (od.Execute) then
-      exit;
-    FJarFile := od.FileName;
-    FIni.writeString('tools', 'jar', FJarFile);
-  end;
 
   FCompare := FIni.ReadString('tools', 'compare', 'C:\Program Files (x86)\WinMerge\WinMergeU.exe');
   for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
       addFolder(paramStr(i), true);
-  FirstShow:=true;
+  firstShow:=true;
+
 end;
 
 procedure TPublisherForm.FormDestroy(Sender: TObject);
@@ -200,11 +193,24 @@ end;
 
 procedure TPublisherForm.FormShow(Sender: TObject);
 begin
-if FirstShow then
+if FirstShow then begin
+FirstShow:=False;
   if (IGtoPublish<>'') and (directoryexists(IGtoPublish)) then
       addFolder(IGtoPublish, true);
 
-FirstShow:=False;
+  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
+  if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
+    then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+  if (not FileExists(FJarFile)) then
+  begin
+    if not (od.Execute) then
+      exit;
+    FJarFile := od.FileName;
+    FIni.writeString('tools', 'jar', FJarFile);
+  end;
+
+
+end;
 
 end;
 
@@ -243,7 +249,6 @@ end;
 procedure TPublisherForm.Timer1Timer(Sender: TObject);
 begin
   Application.processmessages;
-//  Application.BringToFront;
   FLock.Lock;
   try
     if (FThread <> nil) and (FQueue.Count > 0) then
@@ -311,15 +316,13 @@ var
   sl, sf : String;
   jarPath:string;
 begin
+FormShow(self);
+
   if FThread <> nil then
     FThread.Fabort := true
   else
   begin
 
-    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
-      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
-    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
 
     sl := lbFolders.Items[lbFolders.ItemIndex];
     if not FRuns.ContainsKey(sl) then
@@ -327,6 +330,13 @@ begin
     FRecord := FRuns[sl];
     sf := sl.Substring(sl.IndexOf(':')+1).trim;
     addFolder(sf, false);
+
+    IGtoPublish:=sf;
+    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
+      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
+    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
+      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+
     FRecord.FPrevious := FRecord.FLast;
     start(sf);
     FThread := TPublishThread.create(self, 'java -jar '+FJarFile+' -ig '+sf);
