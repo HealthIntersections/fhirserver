@@ -1889,7 +1889,7 @@ Begin
 End;
 
 
-Function TVCLStream.Read(Var aBuffer; iCount: Integer): LongInt;
+Function TVCLStream.Read(Var aBuffer; iCount: LongInt): LongInt;
 Var
   iReadable : Integer;
 Begin
@@ -1902,7 +1902,7 @@ Begin
 End;
 
 
-Function TVCLStream.Seek(iOffset: Integer; iOrigin: Word): LongInt;
+Function TVCLStream.Seek(iOffset: LongInt; iOrigin: Word): LongInt;
 Var
   oAccess : TFslAccessStream;
 Begin
@@ -1923,7 +1923,7 @@ Begin
 End;
 
 
-Procedure TVCLStream.SetSize(NewSize: Integer);
+Procedure TVCLStream.SetSize(NewSize: LongInt);
 Var
   oAccess : TFslAccessStream;
 Begin
@@ -1949,7 +1949,7 @@ Begin
 End;
 
 
-Function TVCLStream.Write(Const aBuffer; iCount: Integer): LongInt;
+Function TVCLStream.Write(Const aBuffer; iCount: LongInt): LongInt;
 Begin
   FStream.Write(aBuffer, iCount);
   Result := iCount;
@@ -5240,7 +5240,7 @@ Begin
   SetPointer(pData, iSize);
 End;
 
-Function TPointerMemoryStream.Write(Const Buffer; Count: Integer): LongInt;
+Function TPointerMemoryStream.Write(Const Buffer; Count: LongInt): LongInt;
 Begin
   Raise EFslException.Create('Should never be called');
 End;
@@ -6071,7 +6071,7 @@ procedure TTarArchive.ReadFile (Buffer : pointer);
           // Reads file data for the last Directory Record. The entire file is read into the buffer.
           // The buffer must be large enough to take up the whole file.
 var
-  RestBytes : integer;
+  RestBytes : LongInt;
 begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
@@ -6086,7 +6086,7 @@ procedure TTarArchive.ReadFile (Stream : TStream);
           // The entire file is written out to the stream.
           // The stream is left at its current position prior to writing
 var
-  RestBytes : integer;
+  RestBytes : longint;
 begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
@@ -6115,7 +6115,7 @@ function  TTarArchive.ReadFile : TBytes;
           // Reads file data for the last Directory Record. The entire file is returned
           // as a large ANSI String.
 var
-  RestBytes : integer;
+  RestBytes : longint;
 begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
