@@ -102,7 +102,7 @@ Explore the resources available to this server:
   </ul>
   <div id="tabs-find">
   
-<form method="GET" action="/tx">
+<form method="GET" action="[%prefix%]/tx">
 <input type="hidden" name="op" value="find"/>
 <table> 
   <tr><td>System*</td><td><input type="text" name="system" value="[%param.system%]"></td></tr>
@@ -117,7 +117,7 @@ Explore the resources available to this server:
   
   <div id="tabs-validate">
   
-<form method="GET" action="/tx">
+<form method="GET" action="[%prefix%]/tx">
 <table> 
   <input type="hidden" name="op" value="validate"/>
   <tr><td>Value Set</td><td>[%valuesetlist%]</td></tr>
@@ -134,7 +134,7 @@ Explore the resources available to this server:
   </div>
   
   <div id="tabs-expand">
-<form method="GET" action="/tx">
+<form method="GET" action="[%prefix%]/tx">
 <table> 
   <input type="hidden" name="op" value="expand"/>
   <tr><td>Value Set</td><td colspan="2">[%valuesetlist%]</td></tr>
@@ -148,7 +148,7 @@ Explore the resources available to this server:
 
   </div>
   <div id="tabs-translate">
-<form method="GET" action="/tx">
+<form method="GET" action="[%prefix%]/tx">
 <table> 
   <input type="hidden" name="op" value="translate"/>
   <tr><td>System*</td><td><input type="text" name="system" value="[%param.system%]"></td></tr>
