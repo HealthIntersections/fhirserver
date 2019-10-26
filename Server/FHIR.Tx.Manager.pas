@@ -79,7 +79,8 @@ Type
     destructor Destroy; Override;
     function link: TCommonTerminologies; overload;
 
-    procedure add(p : TCodeSystemProvider);
+    function add(p : TCodeSystemProvider) : TCodeSystemProvider; overload;
+    procedure add(p : TCodeSystemProvider; defVer : boolean); overload;
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
 
@@ -1699,14 +1700,21 @@ end;
 
 { TCommonTerminologies }
 
-procedure TCommonTerminologies.add(p: TCodeSystemProvider);
+function TCommonTerminologies.add(p: TCodeSystemProvider) : TCodeSystemProvider;
 begin
   if p.version(nil) <> '' then
     FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
-  if FProviderClasses.ContainsKey(p.system(nil)) then
-    p.free
-  else
-    FProviderClasses.Add(p.system(nil), p);
+  if not FProviderClasses.ContainsKey(p.system(nil)) then
+    FProviderClasses.Add(p.system(nil), p.link);
+  result := p;
+end;
+
+procedure TCommonTerminologies.add(p: TCodeSystemProvider; defVer: boolean);
+begin
+  if p.version(nil) <> '' then
+    FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  if defVer and not FProviderClasses.ContainsKey(p.system(nil)) then
+    FProviderClasses.Add(p.system(nil), p.link);
 end;
 
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
@@ -1718,14 +1726,20 @@ begin
   FSnomed := TFslList<TSnomedServices>.create;
   FIcd10 := TFslList<TICD10Provider>.create;
   p := TUriServices.Create();
-  FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
-  FProviderClasses.Add(p.system(nil), p);
-  FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  try
+    FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
+    FProviderClasses.Add(p.system(nil), p.link);
+    FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  finally
+    p.free;
+  end;
 end;
 
 destructor TCommonTerminologies.Destroy;
 begin
+  FProviderClasses.Free;
   FNDFRT.Free;
+  FNDC.Free;
   FSettings.Free;
   FIcd10.Free;
   FLoinc.free;
@@ -1736,7 +1750,6 @@ begin
   FUcum.free;
   FRxNorm.Free;
   FNciMeta.Free;
-  FProviderClasses.Free;
   inherited;
 end;
 
@@ -1802,12 +1815,12 @@ var
 begin
   logt('Load Common Terminologies');
 
-  add(TACIRServices.Create);
-  add(TAreaCodeServices.Create);
-  add(TIso4217Services.Create);
-  add(TMimeTypeCodeServices.Create);
-  add(TCountryCodeServices.Create());
-  add(TUSStateServices.Create);
+  add(TACIRServices.Create).free;
+  add(TAreaCodeServices.Create).free;
+  add(TIso4217Services.Create).free;
+  add(TMimeTypeCodeServices.Create).free;
+  add(TCountryCodeServices.Create).free;
+  add(TUSStateServices.Create).free;
 
   for s in ini.terminologies.Keys do
   begin
@@ -1818,8 +1831,12 @@ begin
       begin
         logt('load '+s+' from '+details['source']);
         icdX := TICD10Provider.Create(true, details['source']);
-        add(icdX);
-        icd10.Add(icdX.Link);
+        try
+          add(icdX);
+          icd10.Add(icdX.link);
+        finally
+          icdX.free;
+        end;
       end
       else if details['type'] = 'snomed' then
       begin
@@ -1827,7 +1844,8 @@ begin
         sn := TSnomedServices.Create;
         try
           sn.Load(details['source']);
-          add(sn.Link);
+          add(sn, details['default'] = 'true');
+          FProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
           snomed.Add(sn.Link);
           if details['default'] = 'true' then
             DefSnomed := sn.Link;
@@ -1839,7 +1857,7 @@ begin
       begin
         logt('load '+s+' from '+details['source']);
         Loinc := TLoincServices.Create;
-        add(Loinc.link);
+        add(Loinc);
         Loinc.Load(details['source']);
       end
       else if details['type'] = 'ucum' then
@@ -1876,7 +1894,7 @@ begin
       else if details['type'] = 'lang' then
       begin
         logt('load '+s+' from '+details['source']);
-        add(TIETFLanguageCodeServices.Create(details['source']))
+        add(TIETFLanguageCodeServices.Create(details['source'])).free;
       end
       else
         raise EFslException.Create('Unknown type '+details['type']);

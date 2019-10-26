@@ -3085,8 +3085,8 @@ begin
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Globals.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
-    FIndexer.Engine := ServerContext.ServerFactory.makeEngine(ServerContext.ValidatorContext.Link, TUcumServiceImplementation.Create(FIndexer.Ucum.link));
     FIndexer.OnResolveReference := resolveReferenceForIndexing;
+    FIndexer.Engine := ServerContext.ServerFactory.makeEngine(ServerContext.ValidatorContext.Link, TUcumServiceImplementation.Create(FIndexer.Ucum.link));
     FIndexer.Engine.OnResolveReference := FIndexer.doResolve;
   end;
 end;
@@ -6327,38 +6327,38 @@ begin
   finally
     FLock.Unlock;
   end;
-  ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping Search';
-  if FNextSearchSweep < d then
-  begin
-    conn := FDB.GetConnection('Sweep.search');
-    try
-      conn.SQL :=
-        'Delete from SearchEntries where SearchKey in (select SearchKey from Searches where Date < :d)';
-      conn.Prepare;
-      conn.BindTimeStamp('d', DateTimeToTS(d - 0.3));
-      conn.Execute;
-      conn.terminate;
-
-      conn.SQL := 'Delete from Searches where Date < :d';
-      conn.Prepare;
-      conn.BindTimeStamp('d', DateTimeToTS(d - 0.3));
-      conn.Execute;
-      conn.terminate;
-
-      conn.Release;
-    except
-      on e: Exception do
-      begin
-        conn.Error(e);
-        recordStack(e);
-        raise;
-      end;
-    end;
-    FNextSearchSweep := d + 10 * DATETIME_MINUTE_ONE;
-  end;
-
-  ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping - Closing';
   try
+    ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping Search';
+    if FNextSearchSweep < d then
+    begin
+      conn := FDB.GetConnection('Sweep.search');
+      try
+        conn.SQL :=
+          'Delete from SearchEntries where SearchKey in (select SearchKey from Searches where Date < :d)';
+        conn.Prepare;
+        conn.BindTimeStamp('d', DateTimeToTS(d - 0.3));
+        conn.Execute;
+        conn.terminate;
+
+        conn.SQL := 'Delete from Searches where Date < :d';
+        conn.Prepare;
+        conn.BindTimeStamp('d', DateTimeToTS(d - 0.3));
+        conn.Execute;
+        conn.terminate;
+
+        conn.Release;
+      except
+        on e: Exception do
+        begin
+          conn.Error(e);
+          recordStack(e);
+          raise;
+        end;
+      end;
+      FNextSearchSweep := d + 10 * DATETIME_MINUTE_ONE;
+    end;
+
+    ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping - Closing';
     if list <> nil then
     begin
       ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping - audits';

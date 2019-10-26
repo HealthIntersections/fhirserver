@@ -613,6 +613,7 @@ end;
 destructor TFhirIndexManager.Destroy;
 begin
   FUcum.Free;
+  FEngine.Free;
   FContext.Free;
   FTerminologyServer.free;
   FCompartments.Free;

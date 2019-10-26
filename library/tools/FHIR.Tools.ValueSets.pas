@@ -65,6 +65,9 @@ Type
     Fversion : String;
     FMode : TFhirExpansionParamsFixedVersionMode;
   public
+    constructor Create(system, version : String); overload;
+    constructor Create(system, version : String; mode : TFhirExpansionParamsFixedVersionMode); overload;
+
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property mode : TFhirExpansionParamsFixedVersionMode read FMode write FMode;
@@ -177,6 +180,8 @@ Type
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
 
+const
+   CODES_TFhirExpansionParamsFixedVersionMode : array [TFhirExpansionParamsFixedVersionMode] of String = ('Check', 'Override');
 
 implementation
 
@@ -1440,15 +1445,19 @@ begin
                   While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
                   begin
                     c := cs.FilterConcept(filters[0]);
-                    ok := true;
-                    if inner then
-                      for i := 1 to length(filters) - 1 do
-                        ok := ok and cs.InFilter(filters[i], c);
-                    if ok then
-                    begin
-                      inc(count);
-                      if count > FOffset then
-                        processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, FParams.displayLanguage), cs.definition(c), expansion, params, hash);
+                    try
+                      ok := true;
+                      if inner then
+                        for i := 1 to length(filters) - 1 do
+                          ok := ok and cs.InFilter(filters[i], c);
+                      if ok then
+                      begin
+                        inc(count);
+                        if count > FOffset then
+                          processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, FParams.displayLanguage), cs.definition(c), expansion, params, hash);
+                      end;
+                    finally
+                      cs.close(c);
                     end;
                   end;
                 finally
@@ -1533,5 +1542,22 @@ begin
   result := TFHIRExpansionParams(inherited Link);
 end;
 
+
+{ TFhirExpansionParamsFixedVersion }
+
+constructor TFhirExpansionParamsFixedVersion.Create(system, version: String; mode: TFhirExpansionParamsFixedVersionMode);
+begin
+  inherited Create;
+  FSystem := system;
+  FVersion := version;
+  FMode := mode;
+end;
+
+constructor TFhirExpansionParamsFixedVersion.Create(system, version: String);
+begin
+  inherited Create;
+  FSystem := system;
+  FVersion := version;
+end;
 
 end.

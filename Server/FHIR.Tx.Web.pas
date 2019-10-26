@@ -201,6 +201,7 @@ begin
   try
     pm := TParseMap.create(request.UnparsedParams);
     try
+      vars.Add('prefix', FServer.WebBase);
 
       vars.Add('param.system', pm.GetVar('system'));
       vars.Add('param.version', pm.getVar('version'));

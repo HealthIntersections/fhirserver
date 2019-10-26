@@ -1068,9 +1068,10 @@ end;
 { TFhirTerminologyOperation }
 
 function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
-//var
+var
 //  needSecure : boolean;
-//  p : TFhirParametersParameterW;
+  p : TFhirParametersParameterW;
+  sl : TArray<String>;
 //  exp : TFhirExpansionParams;
 begin
   result := TFHIRExpansionParams.Create;
@@ -1132,6 +1133,19 @@ begin
       result.excludeNotForUI := StrToBoolDef(params.str('excludeNotForUI'), false);
     if (params.str('excludePostCoordinated') <> '') then
       result.excludePostCoordinated := StrToBoolDef(params.str('excludePostCoordinated'), false);
+    for p in params.parameterList do
+    begin
+      if (p.name = 'system-version') then
+      begin
+        sl := p.valueString.split(['|']);
+        if (Length(sl) = 2) then
+          result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1]))
+        else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
+          result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
+        else
+          raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"');
+      end;
+    end;
     result.link;
   finally
     result.free;
