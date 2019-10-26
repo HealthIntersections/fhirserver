@@ -302,6 +302,7 @@ type
     function name : String; override;
     function hasValue : boolean; override;
     property value : TFHIRObject read GetValue write SetValue;
+    function valueString : String; override;
     function getResource: TFHIRResourceV; override;
     procedure setResource(Value: TFHIRResourceV); override;
     function hasResource : boolean; override;
@@ -1544,6 +1545,11 @@ end;
 procedure TFhirParametersParameter2.SetValue(Value: TFHIRObject);
 begin
   parameter.value := value as TFHIRType;
+end;
+
+function TFhirParametersParameter2.valueString: String;
+begin
+  result := parameter.value.primitiveValue;
 end;
 
 { TFHIRParameters2 }

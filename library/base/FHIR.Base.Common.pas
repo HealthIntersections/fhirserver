@@ -494,6 +494,7 @@ type
     function name : String; virtual; abstract;
     function hasValue : boolean;  virtual; abstract;
     property value : TFHIRObject read GetValue write SetValue;
+    function valueString : String; virtual; abstract;
     function hasResource : boolean;  virtual; abstract;
     property resource : TFHIRResourceV read GetResource write SetResource;
 
