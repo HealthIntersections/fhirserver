@@ -60,7 +60,7 @@ Set the default options for FastMM here.
  not properly set the IsMultiThread variable. Also set this option if you are
  going to share this memory manager between a single threaded application and a
  multi-threaded DLL.}
-{$define AssumeMultiThreaded}
+{.$define AssumeMultiThreaded}
 
 {Enable this option to not call Sleep when a thread contention occurs. This
  option will improve performance if the ratio of the number of active threads
@@ -84,7 +84,7 @@ Set the default options for FastMM here.
 {Enable this option to suppress the generation of debug info for the
  FastMM4.pas unit. This will prevent the integrated debugger from stepping into
  the memory manager code.}
-{.$.define NoDebugInfo}
+{.$define NoDebugInfo}
 
 {Enable this option to suppress the display of all message dialogs. This is
  useful in service applications that should not be interrupted.}
@@ -123,7 +123,7 @@ Set the default options for FastMM here.
  Very important: If you enable this option your application will require the
  FastMM_FullDebugMode.dll library. If this library is not available you will
  get an error on startup.}
-{.$.define FullDebugMode}
+{.$define FullDebugMode}
 
   {Set this option to perform "raw" stack traces, i.e. check all entries on the
    stack for valid return addresses. Note that this is significantly slower
@@ -135,7 +135,7 @@ Set the default options for FastMM here.
    object. Note that this will disable the checking of blocks modified after
    being freed (the two are not compatible). This option has no effect if
    FullDebugMode is not also enabled.}
-  {$define CatchUseOfFreedInterfaces}
+  {.$define CatchUseOfFreedInterfaces}
 
   {Set this option to log all errors to a text file in the same folder as the
    application. Memory errors (with the FullDebugMode option set) will be
@@ -153,7 +153,7 @@ Set the default options for FastMM here.
 
   {Deletes the error log file on startup. No effect if LogErrorsToFile is not
    also set.}
-  {$define ClearLogFileOnStartup}
+  {.$define ClearLogFileOnStartup}
 
   {Loads the FASTMM_FullDebugMode.dll dynamically. If the DLL cannot be found
    then stack traces will not be available. Note that this may cause problems
@@ -165,6 +165,9 @@ Set the default options for FastMM here.
     {If the FastMM_FullDebugMode.dll file is not available then FastMM will not
      install itself. No effect unless FullDebugMode and LoadDebugDLLDynamically
      are also defined.}
+
+    {.$define RestrictDebugDLLLoadPath}
+    {Allow to load debug dll only from host module directory.}
 
   {FastMM usually allocates large blocks from the topmost available address and
    medium and small blocks from the lowest available address (This reduces
@@ -213,7 +216,7 @@ Set the default options for FastMM here.
 
   {Set this option to require the program to be run inside the IDE debugger to
    report memory leaks. This option has no effect if the option
-   "EnableMemoryLeakReporting" is not also set. Note that this option does not
+   "EnableMemoryLeakReporting" is not also set. Note that this option does not 
    work with libraries, only EXE projects.}
   {$define RequireDebuggerPresenceForLeakReporting}
 
@@ -233,6 +236,13 @@ Set the default options for FastMM here.
   {Set this option to disable the display of the hint below the memory leak
    message.}
   {.$define HideMemoryLeakHintMessage}
+
+  {Set this option to use QualifiedClassName equivalent instead of ClassName
+   equivalent during memory leak reporting.
+   This is useful for duplicate class names (like EConversionError, which is in
+   units Data.DBXJSONReflect, REST.JsonReflect and System.ConvUtils,
+   or TClipboard being in Vcl.Clibprd and WinAPI.ApplicationModel.DataTransfer }
+  {$define EnableMemoryLeakReportingUsesQualifiedClassName}
 
 {--------------------------Instruction Set Options----------------------------}
 
@@ -303,6 +313,18 @@ Set the default options for FastMM here.
  additional peace of mind when working with highly sensitive data. This option
  supersedes the ClearMemoryBeforeReturningToOS option.}
 {.$define AlwaysClearFreedMemory}
+
+{----------------------------Lock Contention Logging--------------------------}
+
+{Define this to lock stack traces for all occasions where GetMem/FreeMem
+ go to sleep because of lock contention (IOW, when memory manager is already
+ locked by another thread). At the end of the program execution top 10 sites
+ (locations with highest occurrence) will be logged to the _MemoryManager_EventLog.txt
+ file.
+ This options works with FullDebugMode or without it, but requires
+ FastMM_FullDebugMode.dll to be present in both cases.
+}
+{.$define LogLockContention}
 
 {--------------------------------Option Grouping------------------------------}
 
