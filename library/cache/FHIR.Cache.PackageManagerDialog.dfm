@@ -3,8 +3,8 @@ object PackageCacheForm: TPackageCacheForm
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'FHIR Package Cache Manager'
-  ClientHeight = 370
-  ClientWidth = 714
+  ClientHeight = 597
+  ClientWidth = 768
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,6 +12,7 @@ object PackageCacheForm: TPackageCacheForm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -20,15 +21,17 @@ object PackageCacheForm: TPackageCacheForm
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 322
-    Width = 714
+    Top = 549
+    Width = 768
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
+    ExplicitTop = 322
+    ExplicitWidth = 714
     DesignSize = (
-      714
+      768
       48)
     object lblFolder: TLabel
       Left = 16
@@ -54,7 +57,7 @@ object PackageCacheForm: TPackageCacheForm
       Visible = False
     end
     object Button1: TButton
-      Left = 633
+      Left = 687
       Top = 18
       Width = 74
       Height = 25
@@ -64,6 +67,7 @@ object PackageCacheForm: TPackageCacheForm
       ModalResult = 8
       TabOrder = 0
       OnClick = Button1Click
+      ExplicitLeft = 633
     end
     object pbDownload: TProgressBar
       Left = 16
@@ -87,11 +91,12 @@ object PackageCacheForm: TPackageCacheForm
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 714
+    Width = 768
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 714
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -119,16 +124,18 @@ object PackageCacheForm: TPackageCacheForm
     end
   end
   object Panel3: TPanel
-    Left = 602
+    Left = 656
     Top = 41
     Width = 112
-    Height = 281
+    Height = 508
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitLeft = 602
+    ExplicitHeight = 281
     DesignSize = (
       112
-      281)
+      508)
     object Button2: TButton
       Left = 6
       Top = 31
@@ -177,21 +184,22 @@ object PackageCacheForm: TPackageCacheForm
     end
     object btnReload: TButton
       Left = 6
-      Top = 224
+      Top = 451
       Width = 99
       Height = 26
       Anchors = [akLeft, akBottom]
       Caption = 'Reload'
       TabOrder = 5
       OnClick = btnReloadClick
+      ExplicitTop = 224
     end
     object Button7: TButton
       Left = 6
-      Top = 255
+      Top = 478
       Width = 99
       Height = 26
       Anchors = [akLeft, akBottom]
-      Caption = 'Debug'
+      Caption = 'Copy Report'
       TabOrder = 6
       OnClick = Button7Click
     end
@@ -199,29 +207,62 @@ object PackageCacheForm: TPackageCacheForm
   object vtPackages: TVirtualStringTree
     Left = 0
     Top = 41
-    Width = 602
-    Height = 281
+    Width = 656
+    Height = 508
     Align = alClient
-    Header.AutoSizeIndex = 0
+    Header.AutoSizeIndex = 5
     Header.Font.Charset = DEFAULT_CHARSET
     Header.Font.Color = clWindowText
     Header.Font.Height = -11
     Header.Font.Name = 'Tahoma'
     Header.Font.Style = []
-    Header.MainColumn = -1
+    Header.Height = 20
+    Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+    Header.SortColumn = 0
     Images = ImageList1
-    NodeDataSize = 4
     TabOrder = 3
-    TreeOptions.AutoOptions = [toAutoDropExpand, toAutoExpand, toAutoScrollOnExpand, toAutoSort, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
-    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
-    TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
     OnAddToSelection = vtPackagesAddToSelection
     OnGetText = vtPackagesGetText
     OnGetImageIndex = vtPackagesGetImageIndex
-    OnInitChildren = vtPackagesInitChildren
+    OnHeaderClick = vtPackagesHeaderClick
     OnInitNode = vtPackagesInitNode
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
-    Columns = <>
+    ExplicitLeft = 134
+    ExplicitTop = 69
+    ExplicitWidth = 464
+    ExplicitHeight = 296
+    Columns = <
+      item
+        Position = 0
+        Width = 220
+        WideText = 'ID'
+      end
+      item
+        Position = 1
+        Width = 100
+        WideText = 'Version'
+      end
+      item
+        Position = 2
+        Width = 100
+        WideText = 'FHIR V'
+      end
+      item
+        Position = 3
+        Width = 180
+        WideText = 'Age'
+      end
+      item
+        Position = 4
+        Width = 100
+        WideText = 'Size'
+      end
+      item
+        Position = 5
+        Width = 10
+        WideText = 'Dependencies'
+      end>
   end
   object ImageList1: TImageList
     Left = 120
@@ -642,10 +683,6 @@ object PackageCacheForm: TPackageCacheForm
   object pmImport: TPopupMenu
     Left = 192
     Top = 392
-    object CurrentValidator1: TMenuItem
-      Caption = 'Current Validator'
-      OnClick = CurrentValidator1Click
-    end
     object FHIRR21: TMenuItem
       Caption = 'FHIR R2'
       OnClick = FHIRR21Click

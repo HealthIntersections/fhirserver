@@ -49,7 +49,6 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
-    vtPackages: TVirtualStringTree;
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
@@ -65,7 +64,6 @@ type
     btnReload: TButton;
     Button7: TButton;
     pmImport: TPopupMenu;
-    CurrentValidator1: TMenuItem;
     FHIRR21: TMenuItem;
     FHIRR31: TMenuItem;
     FHIRR41: TMenuItem;
@@ -73,24 +71,16 @@ type
     pbDownload: TProgressBar;
     btnCancel: TButton;
     lblDownload: TLabel;
+    vtPackages: TVirtualStringTree;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure vtPackagesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vtPackagesInitNode(Sender: TBaseVirtualTree; ParentNode,
-      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-    procedure vtPackagesInitChildren(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; var ChildCount: Cardinal);
     procedure vtPackagesAddToSelection(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
     procedure vtPackagesRemoveFromSelection(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
     procedure btnDeleteClick(Sender: TObject);
-    procedure vtPackagesGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure lblFolderClick(Sender: TObject);
@@ -107,9 +97,19 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure vtPackagesInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vtPackagesGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: string);
+    procedure vtPackagesGetImageIndex(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+      var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure vtPackagesHeaderClick(Sender: TVTHeader;
+      HitInfo: TVTHeaderHitInfo);
   private
     FCache : TFHIRPackageManager;
-    FPackages : TFslList<TFHIRPackageInfo>;
+    FPackages : TFslList<TFHIRPackageVersionInfo>;
     FUserMode: boolean;
     FLoading : boolean;
     FStop : boolean;
@@ -122,6 +122,7 @@ type
     procedure fetchProgress(sender : TObject; progress : integer);
     function packageCheck(sender : TObject; msg : String) : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
+    procedure sortPackageVersions;
   public
     property UserMode : boolean read FUserMode write FUserMode;
     property GoUrl : String read FGoUrl write FGoUrl;
@@ -143,33 +144,17 @@ end;
 
 procedure TPackageCacheForm.btnDeleteClick(Sender: TObject);
 var
-  pp, pc : PTreeDataPointer;
   p, ps : PVirtualNode;
+  pck : TFHIRPackageVersionInfo;
 begin
   ps := nil;
   for p in vtPackages.SelectedNodes() do
     ps := p;
-  pp := vtPackages.GetNodeData(ps);
-  if pp.obj is TFHIRPackageInfo then
+  pck := PTreeDataPointer(vtPackages.GetNodeData(ps)).obj as TFHIRPackageVersionInfo;
+  if MessageDlg('Delete '+pck.id+'#'+pck.statedVersion+'?', mtConfirmation, mbYesNo, 0) = mrYes then
   begin
-    if (pp.obj as TFHIRPackageInfo).id = 'hl7.fhir.core' then
-      MessageDlg('You cannot delete all the versions of hl7.fhir.core', mtError, [mbyes], 0)
-    else if MessageDlg('Delete All versions of '+pp.obj.summary+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
-    begin
-      FCache.remove((pp.obj as TFHIRPackageInfo).id);
-      LoadPackages;
-    end;
-  end
-  else
-  begin
-    pc := vtPackages.GetNodeData(ps.Parent);
-    if ((pc.obj as TFHIRPackageInfo).id = 'hl7.fhir.core') and (pc.obj.childCount = 1) then
-      MessageDlg('You cannot delete all the versions of hl7.fhir.core', mtError, [mbyes], 0)
-    else if MessageDlg('Delete v'+(pp.obj as TFHIRPackageVersionInfo).StatedVersion+' of '+(pc.obj as TFHIRPackageInfo).id+'?', mtConfirmation, mbYesNo, 0) = mrYes then
-    begin
-      FCache.remove((pc.obj as TFHIRPackageInfo).id, (pp.obj as TFHIRPackageVersionInfo).StatedVersion);
-      LoadPackages;
-    end;
+    FCache.remove(pck.id, pck.StatedVersion);
+    LoadPackages;
   end;
 end;
 
@@ -344,9 +329,10 @@ end;
 procedure TPackageCacheForm.LoadPackages;
 begin
   if FPackages = nil then
-    FPackages := TFslList<TFHIRPackageInfo>.Create;
+    FPackages := TFslList<TFHIRPackageVersionInfo>.Create;
   FPackages.Clear;
-  FCache.ListPackages(All_Package_Kinds, FPackages);
+  FCache.ListPackageVersions(FPackages);
+  sortPackageVersions;
   vtPackages.RootNodeCount := 0;
   vtPackages.RootNodeCount := FPackages.Count;
   vtPackages.Invalidate;
@@ -411,6 +397,32 @@ begin
   btnDelete.Enabled := ok;
 end;
 
+procedure TPackageCacheForm.sortPackageVersions;
+begin
+  FPackages.Sort(function (const l, r: TFHIRPackageVersionInfo): Integer
+    begin
+      case vtPackages.Header.SortColumn of
+        0: result := CompareStr(l.id, r.id);
+        1: result := CompareStr(l.statedVersion, r.statedVersion);
+        2: result := CompareStr(l.fhirVersion, r.fhirVersion);
+        3: if r.installed > l.installed then
+             result := 1
+           else if r.installed < l.installed then
+             result := -1
+           else
+             result := 0;
+        4: result := l.size - r.size;
+        5: result := CompareStr(l.depString, r.depString);
+      end;
+      if vtPackages.Header.SortDirection = sdDescending then
+        result := - result;
+
+    end);
+  vtPackages.RootNodeCount := 0;
+  vtPackages.RootNodeCount := FPackages.Count;
+  vtPackages.Invalidate;
+end;
+
 procedure TPackageCacheForm.USCoreCurrentStable1Click(Sender: TObject);
 begin
   importUrl(nil, 'http://hl7.org/fhir/us/core');
@@ -418,72 +430,74 @@ end;
 
 procedure TPackageCacheForm.vtPackagesAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
-  if Node = nil then
-    FSelNode := Node
-  else
-    FSelNode := Node;
+  FSelNode := Node;
   selChanged;
-end;
-
-procedure TPackageCacheForm.vtPackagesGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;  var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  p : PTreeDataPointer;
-begin
-  if kind in [ikNormal, ikSelected] then
-  begin
-    p := vtPackages.GetNodeData(Node);
-    if (p.obj is TFHIRPackageDependencyInfo) then
-      ImageIndex := ord((p.obj as TFHIRPackageDependencyInfo).status)-1
-    else if (p.obj is TFHIRPackageVersionInfo) then
-      ImageIndex := 5
-    else if (p.obj as TFHIRPackageInfo).id = 'hl7.fhir.core' then
-      ImageIndex := 3
-    else
-      ImageIndex := 4;
-  end
-  else
-    ImageIndex := -1;
-end;
-
-procedure TPackageCacheForm.vtPackagesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-var
-  p : PTreeDataPointer;
-begin
-  p := vtPackages.GetNodeData(Node);
-  CellText := p.obj.summary;
-end;
-
-procedure TPackageCacheForm.vtPackagesInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
-var
-  p : PTreeDataPointer;
-begin
-  p := vtPackages.GetNodeData(Node);
-  ChildCount := p.obj.childCount;
-end;
-
-procedure TPackageCacheForm.vtPackagesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-var
-  p, pp : PTreeDataPointer;
-begin
-  p := vtPackages.GetNodeData(Node);
-  if ParentNode = nil then
-    p.obj := FPackages[Node.Index]
-  else
-  begin
-    pp := vtPackages.GetNodeData(parentNode);
-    if pp.obj is TFHIRPackageInfo then
-      p.obj := (pp.obj as TFHIRPackageInfo).versions[Node.Index]
-    else
-      p.obj := (pp.obj as TFHIRPackageVersionInfo).dependencies[Node.Index]
-  end;
-  if p.obj.childCount > 0 then
-    InitialStates := [ivsHasChildren, ivsExpanded];
 end;
 
 procedure TPackageCacheForm.vtPackagesRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   FSelNode := nil;
   selChanged;
+end;
+
+procedure TPackageCacheForm.vtPackagesGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  p : PTreeDataPointer;
+begin
+  if Column = 0 then
+  begin
+    if kind in [ikNormal, ikSelected] then
+    begin
+      p := vtPackages.GetNodeData(Node);
+      if (p.obj as TFHIRPackageVersionInfo).isCore then
+        ImageIndex := 4
+      else
+        ImageIndex := 3;
+    end
+    else
+      ImageIndex := -1;
+  end;
+end;
+
+procedure TPackageCacheForm.vtPackagesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  p : PTreeDataPointer;
+  v : TFHIRPackageVersionInfo;
+begin
+  p := vtPackages.GetNodeData(Node);
+  v := p.obj as TFHIRPackageVersionInfo;
+  case column of
+    0: CellText := v.id;
+    1: CellText := v.statedVersion;
+    2: CellText := v.fhirVersion;
+    3: if v.installed = 0 then CellText := '??' else CellText :=  DescribePeriod(now - v.installed);
+    4: CellText := DescribeBytes(v.size);
+    5: CellText := v.depString;
+  end;
+end;
+
+procedure TPackageCacheForm.vtPackagesHeaderClick(Sender: TVTHeader; HitInfo: TVTHeaderHitInfo);
+begin
+  if HitInfo.Column = vtPackages.Header.SortColumn then
+    if vtPackages.Header.SortDirection = sdDescending then
+      vtPackages.Header.SortDirection := sdAscending
+    else
+      vtPackages.Header.SortDirection := sdDescending
+  else
+  begin
+    vtPackages.Header.SortColumn := HitInfo.Column;
+    vtPackages.Header.SortDirection := sdAscending;
+  end;
+  sortPackageVersions;
+end;
+
+procedure TPackageCacheForm.vtPackagesInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  p : PTreeDataPointer;
+begin
+  p := vtPackages.GetNodeData(Node);
+  p.obj := FPackages[Node.Index];
+  InitialStates := [];
 end;
 
 end.

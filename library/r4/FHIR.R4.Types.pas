@@ -761,10 +761,12 @@ Type
     FHIRVersion160, 
     FHIRVersion180, 
     FHIRVersion300, 
-    FHIRVersion301, 
-    FHIRVersion330, 
-    FHIRVersion350, 
-    FHIRVersion400); 
+    FHIRVersion301,
+    FHIRVersion302,
+    FHIRVersion330,
+    FHIRVersion350,
+    FHIRVersion400,
+    FHIRVersion401);
   TFhirFHIRVersionEnumList = set of TFhirFHIRVersionEnum;
 
   // The mode of a RESTful capability statement. from http://hl7.org/fhir/ValueSet/restful-capability-mode
@@ -12259,8 +12261,8 @@ Const
   SYSTEMS_TFhirHttpVerbEnum : Array[TFhirHttpVerbEnum] of String = ('', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb');
   CODES_TFhirCapabilityStatementKindEnum : Array[TFhirCapabilityStatementKindEnum] of String = ('', 'instance', 'capability', 'requirements');
   SYSTEMS_TFhirCapabilityStatementKindEnum : Array[TFhirCapabilityStatementKindEnum] of String = ('', 'http://hl7.org/fhir/capability-statement-kind', 'http://hl7.org/fhir/capability-statement-kind', 'http://hl7.org/fhir/capability-statement-kind');
-  CODES_TFhirFHIRVersionEnum : Array[TFhirFHIRVersionEnum] of String = ('', '0.01', '0.05', '0.06', '0.11', '0.0.80', '0.0.81', '0.0.82', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.3.0', '3.5.0', '4.0.0');
-  SYSTEMS_TFhirFHIRVersionEnum : Array[TFhirFHIRVersionEnum] of String = ('', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version');
+  CODES_TFhirFHIRVersionEnum : Array[TFhirFHIRVersionEnum] of String = ('', '0.01', '0.05', '0.06', '0.11', '0.0.80', '0.0.81', '0.0.82', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.3.0', '3.5.0', '4.0.0', '4.0.1');
+  SYSTEMS_TFhirFHIRVersionEnum : Array[TFhirFHIRVersionEnum] of String = ('', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version', 'http://hl7.org/fhir/FHIR-version');
   CODES_TFhirRestfulCapabilityModeEnum : Array[TFhirRestfulCapabilityModeEnum] of String = ('', 'client', 'server');
   SYSTEMS_TFhirRestfulCapabilityModeEnum : Array[TFhirRestfulCapabilityModeEnum] of String = ('', 'http://hl7.org/fhir/restful-capability-mode', 'http://hl7.org/fhir/restful-capability-mode');
   CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BiologicallyDerivedProduct', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'CatalogEntry', 'ChargeItem', 'ChargeItemDefinition', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'CoverageEligibilityRequest', 'CoverageEligibilityResponse', 'DetectedIssue', 'Device', 'DeviceDefinition', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EffectEvidenceSynthesis', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'Evidence', 'EvidenceVariable', 'ExampleScenario', 
