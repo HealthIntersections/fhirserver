@@ -101,6 +101,7 @@ type
   TFHIRPackageObject = class abstract (TFslObject)
   public
     function summary : string; virtual;
+    function presentation : String; virtual;
     function childCount : integer; virtual;
   end;
 
@@ -124,18 +125,19 @@ type
 
   TFHIRPackageVersionInfo = class (TFHIRPackageObject)
   private
-    FUrl : String;
-    FStatedVersion : String;
-    FActualVersion : String;
-    FDependencies : TFslList<TFHIRPackageDependencyInfo>;
+    FFolder: String;
+    FId: String;
+    FVersion : String;
+    FOriginalId : String;
+    FOriginalVersion : String;
     FFhirVersion: string;
+    FCanonical: String;
+    FUrl : String;
+    FDependencies : TFslList<TFHIRPackageDependencyInfo>;
     FInstalled: TDateTime;
     FSize: integer;
     FProfiles: TFslStringDictionary;
     FCanonicals : TFslStringDictionary;
-    FFolder: String;
-    FId: String;
-    FCanonical: String;
     FKind: TFHIRPackageKind;
     FPackage : TNpmPackageInfo;
     function listDependencies : String;
@@ -146,11 +148,15 @@ type
     destructor Destroy; override;
     function Link : TFHIRPackageVersionInfo; overload;
     function summary : String; override;
+    function presentation : String; override;
     function childCount : integer; override;
 
-    property statedVersion : String read FStatedVersion write FStatedVersion;
-    property actualVersion : String read FActualVersion write FActualVersion;
+    property id : String read FId write FId;
+    property version : String read FVersion write FVersion;
+    property originalId : String read FOriginalId write FOriginalId;
+    property originalVersion : String read FOriginalVersion write FOriginalVersion;
     property fhirVersion : string read GetFhirVersion;
+    property Canonical : String read FCanonical write FCanonical;
     property url : String read FUrl write FUrl;
     property size : integer read FSize write FSize;
     property installed : TDateTime read FInstalled write FInstalled;
@@ -158,8 +164,6 @@ type
     property profiles : TFslStringDictionary read FProfiles;
     property canonicals : TFslStringDictionary read FCanonicals;
     property folder : String read FFolder write FFolder;
-    property id : String read FId write FId;
-    property Canonical : String read FCanonical write FCanonical;
     property kind : TFHIRPackageKind read FKind write FKind;
 
     function isCore : boolean;
@@ -547,7 +551,7 @@ end;
 procedure TFHIRPackageManager.ListPackages(kinds : TFHIRPackageKindSet; list: TFslList<TFHIRPackageInfo>);
 var
   s, s1 : String;
-  id, n : String;
+  id, n, ver : String;
   npm : TNpmPackageInfo;
   dep : TJsonObject;
   t, pck : TFHIRPackageInfo;
@@ -568,7 +572,23 @@ begin
       begin
         npm := loadPackageFromCache(s);
         try
-          id := npm.package.str['name'];
+          n := ExtractFileName(s);
+          id := n.Substring(0, n.IndexOf('#'));
+          ver := n.Substring(n.LastIndexOf('#')+1);
+          if (id <> npm.package.str['name']) or (ver <> npm.package.str['version']) then
+          begin
+            if (id <> npm.package.str['name']) then
+            begin
+              npm.package.str['original-name'] := npm.package.str['name'];
+              npm.package.str['name'] := id;
+            end;
+            if (ver <> npm.package.str['version']) then
+            begin
+              npm.package.str['original-version'] := npm.package.str['version'];
+              npm.package.str['version'] := ver;
+            end;
+            StringToFile(TJsonWriterDirect.writeObjectStr(npm.package, true), Path([s, 'package', 'package.json']), TEncoding.UTF8);
+          end;
           kind := readNpmKind(npm.package.str['type'], id);
           if (kind in kinds) then
           begin
@@ -597,8 +617,10 @@ begin
               v := TFHIRPackageVersionInfo.Create(npm.Link);
               try
                 v.folder := s;
-                v.StatedVersion := s.Substring(s.LastIndexOf('#')+1);
-                v.ActualVersion := npm.package.str['version'];
+                v.id := npm.package.str['name'];
+                v.version := npm.package.str['version'];
+                v.originalId := npm.package.str['original-name'];
+                v.originalVersion := npm.package.str['original-version'];
                 v.url := npm.package.str['homepage'];
                 if (v.url = '') then
                   v.url := npm.package.str['url'];
@@ -662,7 +684,7 @@ begin
       if core or (p.id <> 'hl7.fhir.core') then
         for v in p.versions do
           if v.fhirVersion = version then
-            list.Add(p.id+'#'+v.statedVersion);
+            list.Add(p.id+'#'+v.Version);
   finally
     l.Free;
   end;
@@ -671,10 +693,9 @@ end;
 procedure TFHIRPackageManager.ListPackageVersions(list: TFslList<TFHIRPackageVersionInfo>);
 var
   s, s1 : String;
-  n : String;
+  n, id, ver : String;
   npm : TNpmPackageInfo;
   dep : TJsonObject;
-  t, pck : TFHIRPackageInfo;
   v : TFHIRPackageVersionInfo;
   d : TFHIRPackageDependencyInfo;
   ts, ts1 : TStringList;
@@ -690,18 +711,38 @@ begin
     begin
       if s.Contains('#') and FileExists(Path([s, 'package', 'package.json'])) then
       begin
+        n := ExtractFileName(s);
+        id := n.Substring(0, n.IndexOf('#'));
+        ver := n.Substring(n.LastIndexOf('#')+1);
+
         npm := loadPackageFromCache(s);
         try
+          if (id <> npm.package.str['name']) or (ver <> npm.package.str['version']) then
+          begin
+            if (id <> npm.package.str['name']) then
+            begin
+              npm.package.str['original-name'] := npm.package.str['name'];
+              npm.package.str['name'] := id;
+            end;
+            if (ver <> npm.package.str['version']) then
+            begin
+              npm.package.str['original-version'] := npm.package.str['version'];
+              npm.package.str['version'] := ver;
+            end;
+            StringToFile(TJsonWriterDirect.writeObjectStr(npm.package, true), Path([s, 'package', 'package.json']), TEncoding.UTF8);
+          end;
+
           v := TFHIRPackageVersionInfo.Create(npm.Link);
           try
             v.id := npm.package.str['name'];
+            v.version := npm.package.str['version'];
+            v.originalId := npm.package.str['original-name'];
+            v.originalVersion := npm.package.str['original-version'];
             v.kind := readNpmKind(npm.package.str['type'], v.id);
             v.Canonical := npm.package.str['canonical'];
             if v.Canonical = '' then
-              v.Canonical := getUrl(pck.id);
+              v.Canonical := getUrl(v.id);
             v.folder := s;
-            v.StatedVersion := s.Substring(s.LastIndexOf('#')+1);
-            v.ActualVersion := npm.package.str['version'];
             v.url := npm.package.str['homepage'];
             if (v.url = '') then
               v.url := npm.package.str['url'];
@@ -1043,10 +1084,10 @@ begin
     if t.id = dep.id then
     begin
       for v in t.versions do
-        if v.actualVersion = dep.version then
+        if v.version = dep.version then
           exit(stOK);
       for v in t.versions do
-        if v.actualVersion > dep.version then
+        if v.version > dep.version then
           exit(stMoreRecentVersion);
     end;
 end;
@@ -1173,7 +1214,7 @@ var
 begin
   result := '';
   if isCoreName(id) then
-    result := FActualVersion
+    result := FVersion
   else if FPackage.FPackage.has('fhirVersions') then
     result := FPackage.FPackage.arr['fhirVersions'].Value[0]
   else if (FPackage.FPackage.has('dependencies')) then
@@ -1203,10 +1244,44 @@ begin
     result := result.Substring(2);
 end;
 
+function TFHIRPackageVersionInfo.presentation: String;
+var
+  ts : TStringList;
+  n : TNpmFileInfo;
+  i : integer;
+begin
+  result :=
+    'id: '+FId+'#'+FVersion+#13#10+
+    'canonical: '+FCanonical+#13#10+
+    'size: '+DescribeBytes(FSize)+#13#10+
+    'installed: '+FormatDateTime('c', FInstalled)+#13#10+
+    'dependencies: '+depString+#13#10+
+    'fhirVersion: '+FFhirVersion+#13#10+
+    'source: '+FFolder+#13#10+
+    ''+#13#10;
+  ts := TStringList.Create;
+  try
+    for n in FPackage.Files do
+    begin
+      i := ts.IndexOf(n.FType);
+      if (i = -1) then
+        i := ts.Add(n.FType);
+      ts.Objects[i] := TObject(integer(ts.Objects[i])+1);
+    end;
+    ts.Sort;
+    for i := 0 to ts.Count - 1 do
+      result := result + ts[i]+': '+inttostr(Integer(ts.Objects[i]))+#13#10;
+  finally
+    ts.Free;
+  end;
+end;
+
 procedure TFHIRPackageVersionInfo.report(b: TStringBuilder);
 begin
-  b.AppendLine('  '+statedVersion+'/'+actualVersion+' on '+FhirVersion+' from '+url+' in '+folder);
+  b.AppendLine('  '+Version+' on '+FhirVersion+' from '+url+' in '+folder);
   b.AppendLine('    dependencies: '+listDependencies);
+  if (originalId+originalVersion <> '') then
+    b.AppendLine('    original: '+originalId+'#'+originalVersion);
   if installed = 0 then
     b.AppendLine('    install: '+DescribeBytes(size)+' on (n/a)')
   else
@@ -1216,10 +1291,7 @@ end;
 
 function TFHIRPackageVersionInfo.summary: String;
 begin
-  if FActualVersion <> FStatedVersion then
-    result := FStatedVersion+' (v'+FActualVersion+') [FHIR v'+FFhirVersion+']'
-  else
-    result := 'v'+FActualVersion+' [FHIR v'+FFhirVersion+']';
+  result := 'v'+FVersion+' [FHIR v'+FFhirVersion+']';
   if installed > 0 then
     result := result +' ('+DescribeBytes(size)+', '+DescribePeriod(now - installed)+')'
   else
@@ -1249,6 +1321,11 @@ end;
 function TFHIRPackageObject.childCount: integer;
 begin
   result := 0;
+end;
+
+function TFHIRPackageObject.presentation: String;
+begin
+  result := '?';
 end;
 
 function TFHIRPackageObject.summary: string;

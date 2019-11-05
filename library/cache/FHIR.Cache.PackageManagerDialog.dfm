@@ -28,8 +28,6 @@ object PackageCacheForm: TPackageCacheForm
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
-    ExplicitTop = 322
-    ExplicitWidth = 714
     DesignSize = (
       768
       48)
@@ -67,7 +65,6 @@ object PackageCacheForm: TPackageCacheForm
       ModalResult = 8
       TabOrder = 0
       OnClick = Button1Click
-      ExplicitLeft = 633
     end
     object pbDownload: TProgressBar
       Left = 16
@@ -96,7 +93,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 714
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -131,8 +127,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 602
-    ExplicitHeight = 281
     DesignSize = (
       112
       508)
@@ -191,7 +185,6 @@ object PackageCacheForm: TPackageCacheForm
       Caption = 'Reload'
       TabOrder = 5
       OnClick = btnReloadClick
-      ExplicitTop = 224
     end
     object Button7: TButton
       Left = 6
@@ -223,15 +216,12 @@ object PackageCacheForm: TPackageCacheForm
     TabOrder = 3
     TreeOptions.SelectionOptions = [toFullRowSelect]
     OnAddToSelection = vtPackagesAddToSelection
+    OnDblClick = vtPackagesDblClick
     OnGetText = vtPackagesGetText
     OnGetImageIndex = vtPackagesGetImageIndex
     OnHeaderClick = vtPackagesHeaderClick
     OnInitNode = vtPackagesInitNode
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
-    ExplicitLeft = 134
-    ExplicitTop = 69
-    ExplicitWidth = 464
-    ExplicitHeight = 296
     Columns = <
       item
         Position = 0
