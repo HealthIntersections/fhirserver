@@ -202,7 +202,8 @@ uses
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Client.ClientDialog in '..\library\client\FHIR.Client.ClientDialog.pas' {RegisterClientForm};
+  FHIR.Client.ClientDialog in '..\library\client\FHIR.Client.ClientDialog.pas' {RegisterClientForm},
+  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog};
 
 {$R *.res}
 

@@ -180,8 +180,8 @@ uses
   uGitForDelphi in '..\dependencies\git\uGitForDelphi.pas',
   FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas',
   FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas',
-  PublisherHome in '..\utilities\publisher\PublisherHome.pas' {PublisherForm};
-
+  PublisherHome in '..\utilities\publisher\PublisherHome.pas' {PublisherForm},
+  FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas';
 
 {$R *.res}
 

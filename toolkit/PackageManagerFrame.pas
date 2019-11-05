@@ -166,9 +166,9 @@ begin
     end;
     if (p.id = 'hl7.fhir.core') and (p.versions.Count = 1) then
       MessageDlg('You cannot delete all the versions of hl7.fhir.core',TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0)
-    else if MessageDlg('Delete v'+v.StatedVersion+' of '+p.id+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
+    else if MessageDlg('Delete v'+v.Version+' of '+p.id+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
     begin
-      FPcm.remove(p.id, v.StatedVersion);
+      FPcm.remove(p.id, v.Version);
       reloadPackages;
     end;
   end;

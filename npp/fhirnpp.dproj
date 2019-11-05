@@ -348,6 +348,10 @@
             <Form>RegisterClientForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
+            <Form>TextPresentationDialog</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
@@ -566,6 +570,12 @@
                 <DeployClass Name="Android_SplashImage960">
                     <Platform Name="Android">
                         <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_Strings">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

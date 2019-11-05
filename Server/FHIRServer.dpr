@@ -384,7 +384,8 @@ uses
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Server.ConsentEngine in 'FHIR.Server.ConsentEngine.pas',
-  FHIR.Tx.NDC in 'FHIR.Tx.NDC.pas';
+  FHIR.Tx.NDC in 'FHIR.Tx.NDC.pas',
+  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog};
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
