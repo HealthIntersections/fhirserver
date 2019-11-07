@@ -55,6 +55,7 @@ function fullResourceUri(base: String; aType : string; id : String) : String; ov
 function fullResourceUri(base: String; url : String) : String; overload;
 
 function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
+function FHIRVersionMatches(v1, v2 : String) : boolean;
 
 type
   TResourceWithReference = class (TFslObject)
@@ -436,6 +437,13 @@ begin
   else
     result := ffJson;
 
+end;
+
+function FHIRVersionMatches(v1, v2 : String) : boolean;
+begin
+  v1 := copy(v1,1,3);
+  v2 := copy(v2,1,3);
+  result := v1 = v2;
 end;
 
 end.
