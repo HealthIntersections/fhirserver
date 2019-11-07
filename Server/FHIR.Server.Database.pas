@@ -5389,7 +5389,7 @@ begin
           ServerContext.ResConfig[''].cmdSearch := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 8 then
         begin
-          if conn.ColStringByName['Value'] <> factory.versionString then
+          if not FHIRVersionMatches(conn.ColStringByName['Value'], factory.versionString) then
             raise EFHIRException.create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+factory.versionString)
         end
         else if conn.ColIntegerByName['ConfigKey'] <> 5 then
@@ -5460,12 +5460,12 @@ begin
       if ServerContext.TerminologyServer <> nil then
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
-        logt('  .. Load Package hl7.fhir.org#' + ServerContext.Factory.versionString);
+        logt('  .. Load Package '+ServerContext.Factory.corePackage+'#' + ServerContext.Factory.versionString);
         pcm := TFHIRPackageManager.Create(false);
         try
           res := TFslStringSet.Create(['StructureDefinition', 'SearchParameter', 'CompartmentDefinition']); // we only load a few things; everything else is left to the database
           try
-            pcm.loadPackage('hl7.fhir.core', ServerContext.Factory.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
+            pcm.loadPackage(ServerContext.Factory.corePackage, ServerContext.Factory.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
           finally
             res.free;
           end;

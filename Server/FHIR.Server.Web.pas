@@ -3756,7 +3756,7 @@ begin
     FOwnerName := 'Health Intersections';
   FAdminEmail := ini.admin['email'];
   if FAdminEmail = '' then
-    raise EFHIRException.create('Ad admin email is required');
+    raise EFHIRException.create('An admin email is required');
 
   FHostSms := ini.admin['owner-sms'];
   if FActualPort = 80 then

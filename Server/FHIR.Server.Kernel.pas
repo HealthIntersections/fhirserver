@@ -649,9 +649,9 @@ begin
     raise EFslException.Create('No defined database '+name);
   pcm := TFHIRPackageManager.Create(false);
   try
-    resetProgress('Package hl7.fhir.core#4.0.0');
-    if not pcm.packageExists('hl7.fhir.core', '4.0.0', fetchProgress) then
-      raise EFHIRException.create('Package '+p+' not found');
+    resetProgress('Package hl7.fhir.r4.core#4.0.1');
+    if not pcm.packageExists('hl7.fhir.r4.core', '4.0.1', fetchProgress) then
+      raise EFHIRException.create('Package hl7.fhir.r4.core#4.0.1 not found');
     finishProgress('ok');
 
     cb(1, 'Load: start kernel');
