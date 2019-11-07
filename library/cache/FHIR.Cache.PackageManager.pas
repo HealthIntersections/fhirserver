@@ -33,11 +33,11 @@ interface
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, System.Types,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Support.Stream, FHIR.Web.Fetcher;
 
 type
-  TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen);
+  TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
   TFHIRPackageKindSet = set of TFHIRPackageKind;
 
 type
@@ -224,6 +224,8 @@ type
     procedure upgradeCacheFrom1To2;
     function loadPackageFromCache(folder : String) : TNpmPackageInfo;
     procedure buildPackageIndex(folder : String);
+    function latestPackageVersion(id: String): String;
+    function isIgnored(s : String): boolean;
   public
     constructor Create(user : boolean);
     destructor Destroy; override;
@@ -263,8 +265,8 @@ type
 
 const
   All_Package_Kinds = [fpkCore..fpkToolGen];
-  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool', 'GenPack');
-  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package');
+  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool', 'GenPack', 'Group', 'Examples');
+  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package', 'Group', 'Examples');
   NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
   ANALYSIS_VERSION = 2;
   CACHE_VERSION = 3;
@@ -406,7 +408,7 @@ var
   id, ver, dir, fn, fver : String;
   files : TDictionary<String, TBytes>;
   s, p : string;
-  size : integer;
+  size,c : integer;
   pl, cl : TFslStringDictionary;
   indexer : TNpmPackageIndexBuilder;
 begin
@@ -423,16 +425,20 @@ begin
     if packageExists(id, ver) then
       if not check('Replace existing copy of '+id+' version '+ver+'?') then
         exit;
+    work(0, false, 'Installing');
     dir := path([FFolder, id+'#'+ver]);
     if FolderExists(dir) then
       if not FolderDelete(dir) then
         raise EIOException.create('Unable to delete existing package');
     ForceFolder(dir);
     size := 0;
+    c := 0;
     indexer := TNpmPackageIndexBuilder.create;
     try
       for s in files.Keys do
       begin
+        inc(c);
+        work(trunc((c / files.Count) * 100), false, 'Installing');
         if length(files[s]) > 0 then
         begin
           fn := path([dir, s]);
@@ -448,13 +454,15 @@ begin
           end;
           BytesToFile(files[s], fn);
           inc(size, length(files[s]));
-          if (s.StartsWith('package/')) then
+          if (s.StartsWith('package\')) then
             indexer.seeFile(s.Substring(8), files[s]);
         end;
       end;
+      work(100, false, 'Installing');
       StringToFile(indexer.build, path([FFolder, '.index.json']), TEncoding.UTF8);
       Fini.WriteInteger('package-sizes', id+'#'+ver, size);
       Fini.WriteString('packages', id+'#'+ver, FormatDateTime('yyyymmddhhnnss', now));
+      work(100, true, 'Installing');
     finally
       indexer.free;
     end;
@@ -487,7 +495,7 @@ begin
         aborted := e is EAbort;
       end;
     end;
-    if not result then
+    if not result and not aborted then
     begin
       try
         fetch.URL := url;
@@ -510,6 +518,11 @@ begin
   finally
     fetch.Free;
   end;
+end;
+
+function TFHIRPackageManager.isIgnored(s: String): boolean;
+begin
+  result := StringArrayExists(['ig-r4.json'], s);
 end;
 
 procedure TFHIRPackageManager.ListPackageIds(list: TStrings);
@@ -540,9 +553,13 @@ begin
     result := fpkToolGen
   else if kind = 'fhir.template' then
     result := fpkIGTemplate
+  else if kind = 'fhir.examples' then
+    result := fpkExamples
+  else if (kind = 'fhir.group') or (id= 'hl7.fhir.core') then
+    result := fpkGroup
   else if kind <> '' then
     raise ELibraryException.create('Unknown Package Kind: '+kind)
-  else if id = 'hl7.fhir.core' then
+  else if StringArrayExistsSensitive(['hl7.fhir.r2.core', 'hl7.fhir.r3.core', 'hl7.fhir.r4.core'], id) then
     result := fpkCore
   else
     result := fpkIG;
@@ -681,7 +698,7 @@ begin
   try
     ListPackages(kinds, l);
     for p in l do
-      if core or (p.id <> 'hl7.fhir.core') then
+      if core or not StringArrayExistsSensitive(['hl7.fhir.core', 'hl7.fhir.r2.core', 'hl7.fhir.r3.core', 'hl7.fhir.r4.core'], p.id) then
         for v in p.versions do
           if v.fhirVersion = version then
             list.Add(p.id+'#'+v.Version);
@@ -884,7 +901,7 @@ end;
 
 procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
-  s, t, i : String;
+  s : String;
   c : integer;
   f : TFileStream;
   npm : TNpmPackageInfo;
@@ -892,6 +909,9 @@ var
 begin
   if not packageExists(id, ver) then
     raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
+  if (ver = '') then
+    ver := latestPackageVersion(id);
+
   if assigned(progressEvent) then
     progressEvent(self, 0, false, 'Scanning Package');
 
@@ -900,11 +920,19 @@ begin
     c := 0;
     for fi in npm.Files do
     begin
-      if (resources = nil) or resources.contains(fi.Typ) then
+      if not isIgnored(ExtractFileName(fi.Name)) and ((resources = nil) or resources.contains(fi.Typ)) then
       begin
         f := TFileStream.Create(path([FFolder, id+'#'+ver, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
-          loadEvent(t, i, f);
+          try
+            loadEvent(fi.typ, fi.id, f);
+          except
+            on e : Exception do
+            begin
+              raise EFHIRException.Create('Error Parsing '+fi.Name+' in package '+id+'#'+ver+': '+e.message);
+            end;
+
+          end;
         finally
           f.Free;
         end;
@@ -1006,8 +1034,31 @@ begin
 end;
 
 function TFHIRPackageManager.packageExists(id, ver: String): boolean;
+var
+  s : String;
 begin
-  result := FolderExists(Path([FFolder, id+'#'+ver])) and FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
+  if ver = '' then
+  begin
+    result := false;
+    for s in TDirectory.GetDirectories(FFolder) do
+      if ExtractFileName(s).StartsWith(id+'#') then
+        exit(true);
+  end
+  else
+    result := FolderExists(Path([FFolder, id+'#'+ver])) and FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
+end;
+
+function TFHIRPackageManager.latestPackageVersion(id: String): String;
+var
+  s, n : String;
+begin
+  result := '';
+  for s in TDirectory.GetDirectories(FFolder) do
+  begin
+    n := ExtractFileName(s);
+    if n.StartsWith(id+'#') then
+      exit(n.Substring(n.IndexOf('#')+1));
+  end;
 end;
 
 procedure TFHIRPackageManager.remove(id : String);
@@ -1394,9 +1445,12 @@ class procedure TPackageDefinition.AddStandardPackages;
     end;
   end;
 begin
-  addPackage('hl7.fhir.r4.core', '4.0.1', 'http://hl7.org/fhir', '4.0.0', 'http://hl7.org/fhir/R4', EncodeDate(2018, 12, 18), 'FHIR R4');
-  addPackage('hl7.fhir.r3.core', '3.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/STU3', EncodeDate(2017, 4, 19), 'FHIR R3');
-  addPackage('hl7.fhir.r2.core', '1.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/DSTU2', EncodeDate(2016, 5, 15), 'FHIR R2');
+  addPackage('hl7.fhir.r4.core', '4.0.1', 'http://hl7.org/fhir', '4.0.0', 'http://hl7.org/fhir/R4/hl7.fhir.r4.core.tgz', EncodeDate(2018, 12, 18), 'FHIR R4');
+  addPackage('hl7.fhir.r3.core', '3.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/STU3/hl7.fhir.r3.core.tgz', EncodeDate(2017, 4, 19), 'FHIR R3');
+  addPackage('hl7.fhir.r2.core', '1.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/DSTU2/hl7.fhir.r2.core.tgz', EncodeDate(2016, 5, 15), 'FHIR R2');
+  addPackage('hl7.fhir.r4.examples', '4.0.1', 'http://hl7.org/fhir', '4.0.0', 'http://hl7.org/fhir/R4/hl7.fhir.r4.examples.tgz', EncodeDate(2018, 12, 18), 'FHIR R4');
+  addPackage('hl7.fhir.r3.examples', '3.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/STU3/hl7.fhir.r3.examples.tgz', EncodeDate(2017, 4, 19), 'FHIR R3');
+  addPackage('hl7.fhir.r2.examples', '1.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/DSTU2/hl7.fhir.r2.examples.tgz', EncodeDate(2016, 5, 15), 'FHIR R2');
 end;
 
 class procedure TPackageDefinition.AddCustomPackages;
@@ -1430,6 +1484,8 @@ end;
 constructor TNpmPackageIndexBuilder.Create;
 begin
   Inherited Create;
+  index := TJsonObject.Create;
+  files := index.forceArr['files'];
 end;
 
 destructor TNpmPackageIndexBuilder.Destroy;
@@ -1443,13 +1499,7 @@ procedure TNpmPackageIndexBuilder.seeFile(name: String; bytes: TBytes);
 var
   json, fi : TJsonObject;
 begin
-  if index = nil then
-  begin
-    index := TJsonObject.Create;
-    files := index.forceArr['files'];
-  end;
-
-  if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json')) then
+  if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json') and not name.EndsWith('ig-r4.json')) then
   begin
     try
       json := TJSONParser.Parse(bytes);

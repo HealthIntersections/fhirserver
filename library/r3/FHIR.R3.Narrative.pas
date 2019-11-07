@@ -1141,7 +1141,7 @@ begin
   else if (e is TFHIRResource) then
   else if (e is TFHIRElementDefinition) then
     x.addText('todo-bundle')
-  else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then
+  else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta) or (e is TFHIRContactDetail)) then
     raise EFHIRNarrativeException.create('type ' + e.ClassName + ' not handled yet');
 end;
 

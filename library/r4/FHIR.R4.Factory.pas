@@ -47,6 +47,7 @@ type
     function link : TFHIRFactoryR4; overload;
     function version : TFHIRVersion; override;
     function versionString : String; override;
+    function corePackage : String; override;
     function specUrl : String; override;
     function description : String; override;
     function resourceNames : TArray<String>; override;
@@ -168,6 +169,11 @@ begin
     TFHIRDomainResource(res).checkNoModifiers(method, param)
   else if res is TFHIRBackboneElement then
     TFHIRBackboneElement(res).checkNoModifiers(method, param)
+end;
+
+function TFHIRFactoryR4.corePackage: String;
+begin
+  result := 'hl7.fhir.r4.core';
 end;
 
 function TFHIRFactoryR4.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;

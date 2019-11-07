@@ -116,6 +116,7 @@ type
     FLoading : boolean;
     FStop : boolean;
     FGoUrl: String;
+    FActionMessage : String;
     FSelNode : PVirtualNode;
     procedure LoadPackages;
     procedure selChanged;
@@ -186,21 +187,14 @@ var
   s : String;
 begin
   FStop := false;
-  pbDownload.Visible := true;
-  pbDownload.Position := 0;
-  lblDownload.Visible := true;
-  lblDownload.Caption := 'Installing '+url;
-  lblFolder.visible := false;
-  btnCancel.Visible := true;
+  FActionMessage := 'Downloading '+url;
+  packageWork(sender, 0, false, FActionMessage);
   try
     Application.ProcessMessages;
     if FCache.install(url, fetchProgress) then
       LoadPackages;
   finally
-    pbDownload.Visible := false;
-    btnCancel.Visible := false;
-    lblDownload.Visible := false;
-    lblFolder.visible := true;
+    packageWork(sender, 100, true, '');
   end;
 end;
 
@@ -258,11 +252,7 @@ end;
 
 procedure TPackageCacheForm.fetchProgress(sender: TObject; progress: integer);
 begin
-  pbDownload.Position := progress;
-  pbDownload.Invalidate;
-  Application.ProcessMessages;
-  if FStop then
-    abort;
+  packageWork(sender, progress, false, FActionMessage);
 end;
 
 procedure TPackageCacheForm.FHIRR21Click(Sender: TObject);
@@ -347,28 +337,35 @@ end;
 
 procedure TPackageCacheForm.packageWork(sender: TObject; pct: integer; done: boolean; msg: String);
 begin
-  if done then
+  if (PackageFinderForm <> nil) then
   begin
-    pbDownload.Visible := false;
-    btnCancel.Visible := false;
-    lblDownload.Visible := false;
-    lblFolder.visible := true;
+    PackageFinderForm.packageWork(sender, pct, done, msg);
   end
   else
   begin
-    if not pbDownload.Visible then
+    if done then
     begin
-      FStop := false;
-      pbDownload.Visible := true;
-      pbDownload.Position := 0;
-      lblDownload.Visible := true;
-      lblFolder.visible := false;
-      btnCancel.Visible := true;
+      pbDownload.Visible := false;
+      btnCancel.Visible := false;
+      lblDownload.Visible := false;
+      lblFolder.visible := true;
+    end
+    else
+    begin
+      if not pbDownload.Visible then
+      begin
+        FStop := false;
+        pbDownload.Visible := true;
+        pbDownload.Position := 0;
+        lblDownload.Visible := true;
+        lblFolder.visible := false;
+        btnCancel.Visible := true;
+      end;
+      lblDownload.caption := msg;
+      pbDownload.Position := pct;
+      if FStop then
+        abort;
     end;
-    lblDownload.caption := msg;
-    pbDownload.Position := pct;
-    if FStop then
-      abort;
   end;
   Application.ProcessMessages;
 end;

@@ -119,6 +119,7 @@ type
     function link : TFHIRFactory; overload;
     function version : TFHIRVersion; virtual;
     function versionString : String; virtual;
+    function corePackage : String; virtual; abstract;
     function specUrl : String; virtual; abstract;
     function description : String; virtual;
     function resourceNames : TArray<String>; virtual; abstract;

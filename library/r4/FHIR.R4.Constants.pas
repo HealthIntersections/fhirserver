@@ -5100,7 +5100,7 @@ Const
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_filter', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
-  FHIR_GENERATED_VERSION = '4.0.0';
+  FHIR_GENERATED_VERSION = '4.0.1';
 
   FHIR_GENERATED_VERSION_BASE = '4.0';
 

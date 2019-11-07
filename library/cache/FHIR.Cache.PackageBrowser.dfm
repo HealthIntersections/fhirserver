@@ -45,20 +45,28 @@ object PackageFinderForm: TPackageFinderForm
   end
   object Panel2: TPanel
     Left = 0
-    Top = 431
+    Top = 432
     Width = 860
-    Height = 41
+    Height = 40
     Align = alBottom
     TabOrder = 1
     DesignSize = (
       860
-      41)
+      40)
     object Label2: TLabel
       Left = 12
       Top = 10
       Width = 36
       Height = 13
       Caption = 'Server:'
+    end
+    object lblDownload: TLabel
+      Left = 215
+      Top = 2
+      Width = 57
+      Height = 13
+      Caption = 'lblDownload'
+      Visible = False
     end
     object ComboBox1: TComboBox
       Left = 64
@@ -92,12 +100,30 @@ object PackageFinderForm: TPackageFinderForm
       TabOrder = 2
       OnClick = btnInstallClick
     end
+    object pbDownload: TProgressBar
+      Left = 215
+      Top = 15
+      Width = 370
+      Height = 17
+      TabOrder = 3
+      Visible = False
+    end
+    object btnCancel: TButton
+      Left = 591
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = 'Cancel'
+      TabOrder = 4
+      Visible = False
+      OnClick = btnCancelClick
+    end
   end
   object Panel3: TPanel
     Left = 0
     Top = 41
     Width = 860
-    Height = 390
+    Height = 391
     Align = alClient
     Caption = 'Panel3'
     Padding.Left = 10
@@ -105,11 +131,12 @@ object PackageFinderForm: TPackageFinderForm
     Padding.Right = 10
     Padding.Bottom = 10
     TabOrder = 2
+    ExplicitHeight = 390
     object grid: TVirtualStringTree
       Left = 11
       Top = 11
       Width = 838
-      Height = 368
+      Height = 369
       Align = alClient
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET
@@ -124,6 +151,7 @@ object PackageFinderForm: TPackageFinderForm
       OnAddToSelection = gridAddToSelection
       OnGetText = gridGetText
       OnRemoveFromSelection = gridRemoveFromSelection
+      ExplicitHeight = 368
       Columns = <
         item
           Position = 0

@@ -36,7 +36,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   VirtualTrees,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Web.Fetcher, FHIR.Support.Utilities,
-  FHIR.Cache.PackageManager;
+  FHIR.Cache.PackageManager, Vcl.ComCtrls;
 
 type
   TOnLoadUrlEvent = procedure (sender : TObject; url : String) of object;
@@ -52,6 +52,9 @@ type
     btnInstall: TButton;
     Panel3: TPanel;
     grid: TVirtualStringTree;
+    lblDownload: TLabel;
+    pbDownload: TProgressBar;
+    btnCancel: TButton;
     procedure edtFilterChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -60,17 +63,20 @@ type
     procedure gridGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure gridRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure gridAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure btnCancelClick(Sender: TObject);
   private
     FLoaded : boolean;
     FList : TFslList<TPackageDefinition>;
     FFiltered : TFslList<TPackageDefinition>;
     FOnLoad : TOnLoadUrlEvent;
     FIndex : integer;
+    FStop : boolean;
     procedure loadPackages;
     procedure applyFilter;
     function matchesFilter(pck : TPackageDefinition) : boolean;
   public
     property OnLoadUrl : TOnLoadUrlEvent read FOnLoad write FOnLoad;
+    procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
   end;
 
 var
@@ -80,6 +86,11 @@ implementation
 
 {$R *.dfm}
 
+
+procedure TPackageFinderForm.btnCancelClick(Sender: TObject);
+begin
+  FStop := true;
+end;
 
 procedure TPackageFinderForm.btnInstallClick(Sender: TObject);
 begin
@@ -160,6 +171,35 @@ begin
     pck.FHIRVersion.Contains(edtFilter.Text) or
     pck.Canonical.Contains(edtFilter.Text) or
     formatDateTime('c', pck.Date).Contains(edtFilter.Text);
+end;
+
+procedure TPackageFinderForm.packageWork(sender: TObject; pct: integer; done: boolean; msg: String);
+begin
+  if done then
+  begin
+    pbDownload.Visible := false;
+    btnCancel.Visible := false;
+    lblDownload.Visible := false;
+    btnClose.Enabled := true;
+    btnInstall.Enabled := true;
+  end
+  else
+  begin
+    if not pbDownload.Visible then
+    begin
+      FStop := false;
+      pbDownload.Visible := true;
+      pbDownload.Position := 0;
+      lblDownload.Visible := true;
+      btnCancel.Visible := true;
+      btnClose.Enabled := false;
+      btnInstall.Enabled := false;
+    end;
+    lblDownload.caption := msg;
+    pbDownload.Position := pct;
+    if FStop then
+      abort;
+  end;
 end;
 
 procedure TPackageFinderForm.applyFilter;
