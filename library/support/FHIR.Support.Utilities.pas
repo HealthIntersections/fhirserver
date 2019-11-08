@@ -8479,7 +8479,7 @@ begin
   result.FractionPrecision := 0;
 
   if Length(value) >=4 then
-    result.Year := vs(Value, 1, 4, 1800, 2100, 'years');
+    result.Year := vs(Value, 1, 4, 1800, 2400, 'years');
   if Length(value) < 7 then
     result.FPrecision := dtpYear
   else
