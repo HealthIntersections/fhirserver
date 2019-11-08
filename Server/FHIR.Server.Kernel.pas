@@ -877,7 +877,6 @@ begin
         ctxt.Globals := FSettings.Link;
         store.ServerContext := ctxt;
         ctxt.TerminologyServer := TTerminologyServer.Create(store.DB.link, ctxt.factory.Link, FTerminologies.link);
-        ctxt.Validate := true; // move to database config FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
         logt('  .. load DB '+details['database']);
         store.Initialise();
         ctxt.userProvider := TSCIMServer.Create(store.db.link, FIni.admin['scim-salt'], FWebServer.host, FIni.admin['default-rights'], false);

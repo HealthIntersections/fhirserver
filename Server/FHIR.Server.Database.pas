@@ -5383,6 +5383,8 @@ begin
           ServerContext.SupportSystemHistory := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 4 then
           ServerContext.DoAudit := conn.ColStringByName['Value'] = '1'
+        else if conn.ColIntegerByName['ConfigKey'] = 9 then
+          ServerContext.Validate := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 6 then
           ServerContext.DatabaseId := conn.ColStringByName['Value']
         else if conn.ColIntegerByName['ConfigKey'] = 7 then

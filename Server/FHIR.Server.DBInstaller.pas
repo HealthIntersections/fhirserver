@@ -274,6 +274,7 @@ Begin
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FFactory.versionString+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (9, '''+BooleanToInt(true)+''')');
 End;
 
 procedure TFHIRDatabaseInstaller.CreateAuthorizations;
