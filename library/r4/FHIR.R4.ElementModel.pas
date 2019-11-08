@@ -519,7 +519,7 @@ function TFHIRMMProperty.isPrimitive(name : String): boolean;
 var
   sd : TFHIRStructureDefinition;
 begin
-  if name = '' then // one of the special case elements
+  if (name = '') or name.startsWith('http://hl7.org/fhirpath') then // one of the special case elements
     exit(true);
 
   sd := context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+name);
@@ -1422,7 +1422,7 @@ begin
           end;
         end;
       end;
-      if (t = '') then
+      if (t.startsWith('http://hl7.org/fhirpath')) then
       begin
         t := 'string'; // compiler magic
         url := 'http://hl7.org/fhir/StructureDefinition/string';

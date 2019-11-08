@@ -1381,7 +1381,7 @@ function isPrimitiveType(t: String): boolean;
 begin
   result := SameText(t, 'boolean') or SameText(t, 'integer') or SameText(t, 'string') or SameText(t, 'decimal') or SameText(t, 'uri') or SameText(t, 'base64Binary') or
     SameText(t, 'instant') or SameText(t, 'date') or SameText(t, 'uuid') or SameText(t, 'id') or SameText(t, 'xhtml') or SameText(t, 'markdown') or SameText(t, 'dateTime') or
-    SameText(t, 'time') or SameText(t, 'code') or SameText(t, 'oid') or SameText(t, 'id');
+    SameText(t, 'time') or SameText(t, 'code') or SameText(t, 'oid') or SameText(t, 'id') or t.startsWith('http://hl7.org/fhirpath');
 end;
 
 function describeTypes(types: TFhirElementDefinitionTypeList): String;
