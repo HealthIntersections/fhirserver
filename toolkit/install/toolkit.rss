@@ -3,6 +3,20 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.58 2019-09-06</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.58.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.58.zip</mlink>
+			<description>2019-09-06 (v0.0.58): fix R4 loading issue + code system editing issue</description>
+			<ptitle>0.0.58, 2019-09-06</ptitle>
+			<comment>fix R4 loading issue + code system editing issue</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.57 2019-08-30</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.57.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.57.zip</mlink>
+			<description>2019-08-30 (v0.0.57): bugs fixes for ValueSet and CapabilityStatement editors</description>
+			<ptitle>0.0.57, 2019-08-30</ptitle>
+			<comment>bugs fixes for ValueSet and CapabilityStatement editors</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.53 2019-01-24</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.53.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.53.zip</mlink>
@@ -10,7 +24,7 @@
 			<ptitle>0.0.53, 2019-01-24</ptitle>
 			<comment>fix install problem</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.52 2019-01-16</title>
+		<item><title>FHIR Toolkit release 0.0.52 2019-01-16</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.52.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.52.zip</mlink>
 			<description>2019-01-16 (v0.0.52): Work around form focus bug</description>

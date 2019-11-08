@@ -3,11 +3,31 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.291 2019-09-06</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.291.exe</link>
+			<description>2019-09-06 (v1.0.291): Improve Patient Audit Event tracking</description>
+		</item>
+<item><title>FHIRServer release 1.0.290 2019-09-02</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.290.exe</link>
+			<description>2019-09-02 (v1.0.290): Fix for loinc answer lists</description>
+		</item>
+		<item><title>FHIRServer release 1.0.289 2019-08-29</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.289.exe</link>
+			<description>2019-08-29 (v1.0.289): fix audit event generation</description>
+		</item>
+		<item><title>FHIRServer release 1.0.288 2019-08-25</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.288.exe</link>
+			<description>2019-08-25 (v1.0.288): Resotre audit event generation</description>
+		</item>
+		<item><title>FHIRServer release 1.0.287 2019-06-22</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.287.exe</link>
+			<description>2019-06-22 (v1.0.287): fix snomed importer</description>
+		</item>
 		<item><title>FHIRServer release 1.0.278 2019-03-13</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.278.exe</link>
 			<description>2019-03-13 (v1.0.278): fix loading package issue</description>
 		</item>
-<item><title>FHIRServer release 1.0.277 2019-03-04</title>
+		<item><title>FHIRServer release 1.0.277 2019-03-04</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.277.exe</link>
 			<description>2019-03-04 (v1.0.277): fix problem expanding R2 value sets</description>
 		</item>

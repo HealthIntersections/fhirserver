@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "allow password rescue on admin account"
+        as.returnvalue = "Updates for R3 and R4 technical corrections"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -335,10 +335,11 @@ begin
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
+          iconfile = $(BDS)\\bin\\delphi_PROJECTICON.ico
           id = {C634D3FF-408C-44E8-9F10-E6383607EA37}
           includecompiledate = false
           includemanifest = false
-          includeverinfo = false
+          includeverinfo = true
           isdebug = false
           isdll = false
           isprerelease = false
@@ -406,7 +407,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\temp\\jcl-master\\jcl\\lib\\d25\\win32;C:\\temp\\jcl-master\\jcl\\source\\include
+            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\work\\fhirserver\\dependencies\\jcl
             linkeroutput = 0
             localsymbols = false
             mapfile = 0
@@ -415,7 +416,6 @@ begin
             namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;DUnitX.MemoryLeakMonitor;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
             openstrings = true
             optimisation = true
-            outputdir = C:\\work\\fhirserver\\Exec\\32
             overflowchecking = false
             rangechecking = false
             recordfieldalign = fa8
@@ -427,7 +427,6 @@ begin
             stringchecks = true
             typedpointers = false
             unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
-            unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\32
             usedebugdcu = false
             usepackages = false
             varstringchecks = true
