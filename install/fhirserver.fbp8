@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Updates for R3 and R4 technical corrections"
+        as.returnvalue = test
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -177,6 +177,7 @@ begin
           delphiversion = Delphi10Tokyo
           description = "Compile the Server Tests"
           enabled = false
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -201,11 +202,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\tests\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -332,6 +336,7 @@ begin
           configname = Release
           debugversionnumbers = false
           delphiversion = Delphi10Tokyo
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -356,11 +361,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\install\\helper\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -373,9 +381,9 @@ begin
                             "OriginalFilename\=" +
                             "ProductVersion\=1.0.0.0" +
                             "Comments\=" +
-                            "ProgramID\=com.embarcadero.$(ModuleName)" +
-                            "FileDescription\=$(ModuleName)" +
-                            "ProductName\=$(ModuleName)" +
+                            "ProgramID\=com.embarcadero.InstallHelper" +
+                            "FileDescription\=InstallHelper" +
+                            "ProductName\=InstallHelper" +
                             ""
           warningsaserror = false
           workaroundd5bug = false
@@ -413,7 +421,7 @@ begin
             mapfile = 0
             maxstacksize = 1048576
             minstacksize = 16384
-            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;DUnitX.MemoryLeakMonitor;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
             openstrings = true
             optimisation = true
             overflowchecking = false
@@ -461,10 +469,11 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Tokyo
           description = "Compile the Debug Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
-          iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
+          iconfile = C:\\work\\fhirserver\\Server\\fhirserver_Icon.ico
           id = {E254426B-74E8-4A74-80A8-7DCF138AD9E1}
           includecompiledate = false
           includemanifest = false
@@ -485,11 +494,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -620,6 +632,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Tokyo
           description = "Compile the Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -644,11 +657,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -802,6 +818,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Tokyo
           description = "Compile the Debug Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -826,11 +843,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -961,6 +981,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Tokyo
           description = "Compile the Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -985,11 +1006,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -1186,22 +1210,28 @@ begin
         id = {10259440-4D8D-497E-8521-A9AF3BB6ADED}
         action.ftp.connect
         begin
+          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+          allowselfsignedcertificate = false
           connecttimeoutinsec = 0
           cookie = q3B4xMWDXfAo74OHdw\=\=
           detailedlogging = false
           enablekeepalives = false
+          encryptdatachannel = false
           ftpconnectionname = HealthIntersections2
           ftphost = 27.123.25.1
           ftpport = 21
           id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+          logsslnegotiation = false
           passive = true
           proxyport = 0
           proxytype = fpcmNone
+          tlsmode = ExplicitTLS
           transfertype = ftBinary
           useglobalopt = false
           usehost = true
           useproxy = false
           userid = healthi3
+          usessl = false
         end
         action.ftp.upload.file
         begin

@@ -51,7 +51,11 @@ uses
   FHIR.Support.Collections in '..\..\library\support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\..\library\support\FHIR.Support.Stream.pas',
   FHIR.Web.Fetcher in '..\..\library\web\FHIR.Web.Fetcher.pas',
-  FHIR.Server.Version in '..\..\Server\FHIR.Server.Version.pas';
+  FHIR.Server.Version in '..\..\Server\FHIR.Server.Version.pas',
+  FHIR.Base.Lang in '..\..\library\base\FHIR.Base.Lang.pas',
+  FHIR.Base.Objects in '..\..\library\base\FHIR.Base.Objects.pas',
+  FHIR.Support.MXml in '..\..\library\support\FHIR.Support.MXml.pas',
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin

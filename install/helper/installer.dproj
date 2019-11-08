@@ -98,6 +98,10 @@
         <DCCReference Include="..\..\library\support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\..\library\web\FHIR.Web.Fetcher.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Version.pas"/>
+        <DCCReference Include="..\..\library\base\FHIR.Base.Lang.pas"/>
+        <DCCReference Include="..\..\library\base\FHIR.Base.Objects.pas"/>
+        <DCCReference Include="..\..\library\support\FHIR.Support.MXml.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -359,6 +363,12 @@
                 <DeployClass Name="Android_SplashImage960">
                     <Platform Name="Android">
                         <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_Strings">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
