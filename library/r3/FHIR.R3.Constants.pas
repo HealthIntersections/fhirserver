@@ -40,6 +40,9 @@ uses
   FHIR.Support.Utilities, FHIR.Support.Stream, 
   FHIR.Base.Objects, FHIR.R3.Types, FHIR.R3.Resources;
 
+const
+  currentFHIRVersionRelease = fhirVersionRelease3;
+
 Type
 {$IFDEF FHIR_ACCOUNT}
   // Search Parameters for Account
