@@ -1,10 +1,12 @@
 program IGPublisher;
 
 uses
-  WinApi.Windows, Winapi.Messages,
+  WinApi.Windows,
+  Winapi.Messages,
   SysUtils,
   Vcl.Forms,
-  PublisherHome in 'PublisherHome.pas' {PublisherForm};
+  PublisherHome in 'PublisherHome.pas' {PublisherForm},
+  FHIR.Tools.IGPublisher in '..\..\library\tools\FHIR.Tools.IGPublisher.pas';
 
 {$R *.res}
 
@@ -76,6 +78,6 @@ begin
     Application.Initialize;
     Application.MainFormOnTaskbar := True;
     Application.CreateForm(TPublisherForm, PublisherForm);
-    Application.Run;
+  Application.Run;
   end;
 end.

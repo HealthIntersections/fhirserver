@@ -432,7 +432,7 @@ begin
   password := o.vStr['password'];
   if password.StartsWith('##') then
     password := strDecrypt(password.Substring(2), 35252);
-  if StringArrayExistsSensitive(['true', 'outh'], o.vStr['smart']) then
+  if StringArrayExistsSensitive(['true', 'oauth'], o.vStr['smart']) then
     FSmartAppLaunchMode := salmOAuthClient
   else if StringArrayExistsSensitive(['false', 'none'], o.vStr['smart']) then
     FSmartAppLaunchMode := salmNone

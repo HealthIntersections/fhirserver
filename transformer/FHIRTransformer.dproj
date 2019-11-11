@@ -271,6 +271,10 @@
         <DCCReference Include="..\library\r4\FHIR.R4.Javascript.pas"/>
         <DCCReference Include="..\library\v2\FHIR.v2.Javascript.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Javascript.pas"/>
+        <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
+            <Form>TextPresentationDialog</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -297,10 +301,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -310,10 +314,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -476,6 +480,12 @@
                 <DeployClass Name="Android_SplashImage960">
                     <Platform Name="Android">
                         <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_Strings">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

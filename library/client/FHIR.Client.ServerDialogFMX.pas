@@ -36,6 +36,7 @@ uses
   FMX.Controls.Presentation,
   FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.Version.Constants,
   FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Client.ClientDialogFMX;
 
 type
@@ -194,7 +195,9 @@ begin
   server.name := edtName.Text;
   server.fhirEndpoint := edtURL.Text;
   server.format := TFHIRFormat(cbxFormat.ItemIndex);
-  if cbxVersion.ItemIndex = 0 then
+  if cbxVersion.ItemIndex = -1 then
+    server.version := currentFHIRVersionRelease
+  else if cbxVersion.ItemIndex = 0 then
     server.version := DefaultVersion
   else
     server.version := (cbxVersion.ListItems[cbxVersion.ItemIndex].Data as TFHIRFactory).version;

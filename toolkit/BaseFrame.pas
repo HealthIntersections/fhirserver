@@ -95,11 +95,37 @@ type
     function canOrganise : boolean; virtual;
     procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure work(opName : String; canCancel : boolean; proc : TWorkProc);
+
+    function canOpenResourceType(t : TFHIRResourceType) : boolean;
   end;
 
 implementation
 
 { TBaseFrame }
+
+function TBaseFrame.canOpenResourceType(t: TFHIRResourceType): boolean;
+begin
+  if t = frtCapabilityStatement then
+    result := true
+  else if t = frtValueSet then
+    result := true
+  else if t = frtCodeSystem then
+    result := true
+  else if t = frtQuestionnaire then
+    result := true
+  else if t = frtLibrary then
+    result := true
+{$IFDEF EXAMPLESCENARIO}
+  else if t = frtExampleScenario then
+    result := true
+{$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE}
+  else if t = frtImplementationGuide then
+    result := true
+{$ENDIF}
+  else
+    result := false;
+end;
 
 function TBaseFrame.canOrganise: boolean;
 begin

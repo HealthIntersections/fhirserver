@@ -8,6 +8,7 @@ uses
   Vcl.ImgList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls, Vcl.Clipbrd,
   JclSysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell,
+ // FHIR.Tools.IGPublisher,
   Vcl.Buttons;
 
 const
@@ -25,17 +26,6 @@ type
   end;
 
   TPublisherForm = class;
-
-  TPublishThread = class (TFslThread)
-  private
-    form : TPublisherForm;
-    cmd : String;
-    FAbort : boolean;
-  protected
-    Procedure Execute; Override;
-  public
-    constructor create(form : TPublisherForm; cmd : string);
-  end;
 
 
   TPublisherForm = class(TForm)
@@ -75,14 +65,13 @@ type
     procedure SpeedButton1Click(Sender: TObject);
   private
     FIni : TIniFile;
-    FThread : TPublishThread;
     FRecord : TRunRecord;
     FLock : TFslLock;
     FRuns : TFslMap<TRunRecord>;
     FQueue : TStringList;
-    FJarFile : String;
     FCompare : String;
     FirstShow:boolean;
+//    FPublisher : TFHIRIGPublisher;
     procedure addFolder(dir : String; run : boolean);
     procedure cmdOutput(const Text: string);
     procedure saveList;
@@ -127,8 +116,6 @@ begin
   FRecord.FLast := memOutput.Text;
   ProgressBar1.Visible := false;
   tbExecute.ImageIndex := 1;
-  FThread.Free;
-  FThread := nil;
   FRecord := nil;
   saveList;
 end;
@@ -154,6 +141,8 @@ var
 begin
   FIni := TIniFile.Create(Path([ExtractFilePath(ParamStr(0)), 'fhir-publisher.ini']));
   FIni.ReadSection('folders', lbFolders.Items);
+//  FPublisher := TFHIRIGPublisher.Create(FIni);
+
   Left := FIni.ReadInteger('window', 'left', Left);
   Top := FIni.ReadInteger('window', 'top', Top);
   ClientHeight := FIni.ReadInteger('window', 'height', ClientHeight);
@@ -166,8 +155,6 @@ begin
     FRuns.Add(s, TRunRecord.Create(FIni.ReadFloat('folders', s, 0)));
   FLock := TFslLock.Create('msg-queue');
   FQueue := TStringList.Create;
-
-
   FCompare := FIni.ReadString('tools', 'compare', 'C:\Program Files (x86)\WinMerge\WinMergeU.exe');
   for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
@@ -193,25 +180,27 @@ end;
 
 procedure TPublisherForm.FormShow(Sender: TObject);
 begin
-if FirstShow then begin
-FirstShow:=False;
-  if (IGtoPublish<>'') and (directoryexists(IGtoPublish)) then
+  if FirstShow then
+  begin
+    FirstShow:=False;
+    if (IGtoPublish <>'') and (directoryexists(IGtoPublish)) then
       addFolder(IGtoPublish, true);
 
-  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
-  if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-    then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
-  if (not FileExists(FJarFile)) then
-  begin
-    if not (od.Execute) then
-      exit;
-    FJarFile := od.FileName;
-    FIni.writeString('tools', 'jar', FJarFile);
+//  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
+//  if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
+//    then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//  if (not FileExists(FJarFile)) then
+//  begin
+//    if not (od.Execute) then
+//      exit;
+//    FJarFile := od.FileName;
+//    FIni.writeString('tools', 'jar', FJarFile);
+//  end;
+//
+
+//  if not FPublisher.Configure(self) then
+// exit;
   end;
-
-
-end;
-
 end;
 
 procedure TPublisherForm.lbFoldersDblClick(Sender: TObject);
@@ -251,7 +240,7 @@ begin
   Application.processmessages;
   FLock.Lock;
   try
-    if (FThread <> nil) and (FQueue.Count > 0) then
+    if ({FThread <> nil) and (}FQueue.Count > 0) then
     begin
       memOutput.Lines.AddStrings(FQueue);
       FQueue.Clear;
@@ -276,7 +265,7 @@ var
 begin
   s := lbFolders.Items[lbFolders.ItemIndex];
   s := s.Substring(s.IndexOf(':')+1).trim;
-  Clipboard.AsText := 'java -jar '+FJarFile+' -ig '+s;
+//  Clipboard.AsText := 'java -jar '+FPublisher.Location+' -ig '+s;
   IGtoPublish:=s;
 end;
 
@@ -316,32 +305,35 @@ var
   sl, sf : String;
   jarPath:string;
 begin
-FormShow(self);
+  FormShow(self);
 
-  if FThread <> nil then
-    FThread.Fabort := true
-  else
-  begin
-
-
-    sl := lbFolders.Items[lbFolders.ItemIndex];
-    if not FRuns.ContainsKey(sl) then
-      FRuns.Add(sl, TRunRecord.create(0));
-    FRecord := FRuns[sl];
-    sf := sl.Substring(sl.IndexOf(':')+1).trim;
-    addFolder(sf, false);
-
-    IGtoPublish:=sf;
-    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
-      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
-    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
-
-    FRecord.FPrevious := FRecord.FLast;
-    start(sf);
-    FThread := TPublishThread.create(self, 'java -jar '+FJarFile+' -ig '+sf);
-    FThread.Open;
-  end;
+//  if FThread <> nil then
+//    FThread.Fabort := true
+//  else
+//  begin
+//<<<<<<< .mine
+//
+//
+//=======
+//
+//
+//>>>>>>> .theirs
+//    sl := lbFolders.Items[lbFolders.ItemIndex];
+//    if not FRuns.ContainsKey(sl) then
+//      FRuns.Add(sl, TRunRecord.create(0));
+//    FRecord := FRuns[sl];
+//    sf := sl.Substring(sl.IndexOf(':')+1).trim;
+//    addFolder(sf, false);
+//
+//    IGtoPublish:=sf;
+//    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
+//      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
+//    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
+//      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//
+//    FRecord.FPrevious := FRecord.FLast;
+//    start(sf);
+//  end;
 end;
 
 procedure TPublisherForm.UMEnsureRestored(var Msg: TMessage);
@@ -374,30 +366,6 @@ constructor TRunRecord.create(d: TDateTime);
 begin
   inherited Create;
   FDuration := d;
-end;
-
-{ TPublishThread }
-
-constructor TPublishThread.create(form: TPublisherForm; cmd: string);
-begin
-  inherited create;
-  self.form := form;
-  self.cmd := cmd;
-end;
-
-procedure TPublishThread.Execute;
-var
-  c : cardinal;
-begin
-  Fabort := false;
-  c := 0;
-  try
-    c := JclSysUtils.execute(cmd, form.cmdOutput, false, @Fabort);
-    if (c <> 0) and (c <> 1223) and (c <> 1) then
-      form.cmdOutput('Error running IG: '+SysErrorMessage(GetLastError));
-  finally
-    form.finish(c);
-  end;
 end;
 
 end.

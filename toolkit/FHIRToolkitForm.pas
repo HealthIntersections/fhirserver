@@ -903,11 +903,11 @@ begin
     Factory := {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
     try
       FCache := TFHIRPackageManager.Create(true);
-      if not FCache.packageExists('hl7.fhir.core', Factory.versionString) then
+      if not FCache.packageExists(Factory.corePackage, Factory.versionString) then
         ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
       FContext := TToolkitWorkerContext.Create(Factory.Link);
       FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
-      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, Factory.versionString, FContext.Link));
+      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, Factory.corePackage, Factory.versionString, FContext.Link));
       if not(IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
         ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: ' + WhichFailedToLoad + ', ' + WhichFailedToLoad2 + ')');
       checkSSL; // really, this is just to init internal structures in openSSL

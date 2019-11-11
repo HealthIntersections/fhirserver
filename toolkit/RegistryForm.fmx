@@ -117,6 +117,7 @@ object RegistryFrame: TRegistryFrame
           Size.PlatformDefault = False
         end
         object edtConfUpdated: TDateEdit
+          Date = 43753.000000000000000000
           Position.X = 320.000000000000000000
           Position.Y = 64.000000000000000000
           Size.Width = 169.000000000000000000
@@ -163,6 +164,9 @@ object RegistryFrame: TRegistryFrame
         object cbxType: TComboBox
           Items.Strings = (
             'Profiles'
+            'Extensions'
+            'Data Type Profiles'
+            'Logical Models'
             'Value Sets'
             'Code Systems'
             'Capability Statements'

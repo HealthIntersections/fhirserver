@@ -138,7 +138,8 @@ uses
   FHIR.Transformer.ExecConfig in 'FHIR.Transformer.ExecConfig.pas' {TransformerExecConfigForm},
   FHIR.R4.Javascript in '..\library\r4\FHIR.R4.Javascript.pas',
   FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas',
-  FHIR.Cda.Javascript in '..\library\cda\FHIR.Cda.Javascript.pas';
+  FHIR.Cda.Javascript in '..\library\cda\FHIR.Cda.Javascript.pas',
+  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog};
 
 {$R *.res}
 

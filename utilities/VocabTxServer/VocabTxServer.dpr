@@ -28,7 +28,10 @@ POSSIBILITY OF SUCH DAMAGE.
 program VocabTxServer;
 
 uses
+  {$IFDEF MSWINDOWS}
   FastMM4 in '..\..\dependencies\FMM\FastMM4.pas',
+  FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
+  {$ENDIF }
   System.StartUpCopy,
   FMX.Forms,
   TxServerFormUnit in 'TxServerFormUnit.pas' {TxServerForm},
@@ -135,7 +138,6 @@ uses
   FHIR.Server.OpenMHealth in '..\..\Server\FHIR.Server.OpenMHealth.pas',
   VocabPocServerCore in 'VocabPocServerCore.pas',
   FHIR.Server.SearchSyntax in '..\..\Server\FHIR.Server.SearchSyntax.pas',
-  FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
   FHIR.Tools.Search in '..\..\library\tools\FHIR.Tools.Search.pas',
   FHIR.Tx.Operations in '..\..\Server\FHIR.Tx.Operations.pas',
   FHIR.Server.WebSource in '..\..\Server\FHIR.Server.WebSource.pas',

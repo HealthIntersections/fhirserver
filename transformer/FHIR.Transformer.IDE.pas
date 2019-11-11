@@ -373,6 +373,7 @@ type
     procedure vtConfigRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure btnEditConfigClick(Sender: TObject);
     procedure btnDeleteConfigClick(Sender: TObject);
+    procedure PackageManager1Click(Sender: TObject);
   private
     FIni : TIniFile;
     FWorkspace : TWorkspace;
@@ -809,6 +810,7 @@ begin
     FProgress.Free;
     FProgress := nil;
   end;
+  Application.ProcessMessages;
 end;
 
 function TTransformerForm.canExecute: boolean;
@@ -1448,7 +1450,7 @@ begin
   FPathSelection := TFslList<TPathSelection>.create;
 
   FCache := TResourceMemoryCache.create;
-  FCache.Packages := ['hl7.fhir.core#4.0.0', 'hl7.fhir.cda#2.0'];
+  FCache.Packages := ['hl7.fhir.r4.core#4.0.1', 'hl7.fhir.cda#2.0'];
   FCache.ResourceTypes := [{'CodeSystem', 'ValueSet', }'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'];
   FCache.OnLog := cacheLog;
 
@@ -2674,6 +2676,18 @@ begin
   end;
   if result.id.compileStatus = csError then
     status(clMaroon, result.id.errorMsg);
+end;
+
+procedure TTransformerForm.PackageManager1Click(Sender: TObject);
+var
+  form : TPackageCacheForm;
+begin
+  form := TPackageCacheForm.create(self);
+  try
+    form.ShowModal;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TTransformerForm.saveWorkspaceFile(editor : TEditorInformation);

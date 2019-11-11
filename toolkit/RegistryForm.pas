@@ -191,7 +191,7 @@ begin
           params.addPair('_text', edtConfText.Text);
         if cbConfUseLastUpdated.IsChecked then
           params.addPair('_lastUpdated', edtConfUpdated.Text);
-        if edtConfJurisdiction.ItemIndex <> -1 then
+        if edtConfJurisdiction.ItemIndex > 0 then
           params.addPair('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
 
         start := now;
@@ -283,11 +283,14 @@ procedure TRegistryFrame.gridConfMatchesCellDblClick(const Column: TColumn; cons
 var
   res : TFhirResource;
 begin
+  if canOpenResourceType(FConfMatches[Row].ResourceType) then
+  begin
   res := Client.readResource(FConfMatches[Row].ResourceType, FConfMatches[Row].id);
-  try
-    OnOpenResource(self, client, client.format, res);
-  finally
-    res.Free;
+    try
+      OnOpenResource(self, client, client.format, res);
+    finally
+      res.Free;
+    end;
   end;
 end;
 
@@ -344,7 +347,7 @@ begin
   else
   begin
     res := FConfMatches[aRow];
-    memSource.Text := top200(resourceToString(res, ffXml));
+    memSource.Text := top200(resourceToString(res, ffXml, OutputStylePretty));
   end;
 end;
 

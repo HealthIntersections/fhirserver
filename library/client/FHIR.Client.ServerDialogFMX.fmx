@@ -3,7 +3,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = Single
-  Caption = 'Form1'
+  Caption = 'Edit Registered Server'
   ClientHeight = 480
   ClientWidth = 687
   FormFactor.Width = 320
@@ -414,7 +414,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 185.000000000000000000
         Size.PlatformDefault = False
         TabIndex = 1
-        TabOrder = 26
+        TabOrder = 27
         TabPosition = None
         Sizes = (
           665s
@@ -647,7 +647,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Smart on FHIR Mode:'
-        TabOrder = 33
+        TabOrder = 34
       end
       object Label14: TLabel
         Anchors = [akLeft, akTop, akRight]

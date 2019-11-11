@@ -415,6 +415,10 @@ object TransformerForm: TTransformerForm
         TabOrder = 0
         object tbConsole: TTabSheet
           Caption = 'Console'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel5: TPanel
             Left = 668
             Top = 0
@@ -469,6 +473,10 @@ object TransformerForm: TTransformerForm
         object tbBreakpoints: TTabSheet
           Caption = 'Breakpoints'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel8: TPanel
             Left = 0
             Top = 0
@@ -492,6 +500,10 @@ object TransformerForm: TTransformerForm
         object tbVariables: TTabSheet
           Caption = 'Debugger'
           ImageIndex = 3
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Splitter3: TSplitter
             Left = 353
             Top = 0
@@ -656,6 +668,10 @@ object TransformerForm: TTransformerForm
         object TabSheet3: TTabSheet
           Caption = 'FHIRPath Evaluator'
           ImageIndex = 4
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Panel2: TPanel
             Left = 0
             Top = 0
@@ -811,6 +827,10 @@ object TransformerForm: TTransformerForm
         object TabSheet1: TTabSheet
           Caption = 'Home'
           ImageIndex = 8
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           DesignSize = (
             757
             249)

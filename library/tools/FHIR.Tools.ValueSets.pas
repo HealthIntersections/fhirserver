@@ -174,6 +174,7 @@ Type
     function chooseDisplay(c: TFhirCodeSystemConceptW;  params : TFHIRExpansionParams): String; overload;
     function chooseDisplay(c: TFhirValueSetComposeIncludeConceptW;  params : TFHIRExpansionParams): String; overload;
     function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
+    function canonical(system, version: String): String;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getExpansion : TGetExpansionEvent); overload;
 
@@ -1205,6 +1206,14 @@ begin
     result := importHash.find(system+#1+code, i);
 end;
 
+function TFHIRValueSetExpander.canonical(system, version : String) : String;
+begin
+  if FFactory.version = fhirVersionRelease2 then
+    result := system + '?version='+version
+  else
+    result := system + '|'+version
+end;
+
 procedure TFHIRValueSetExpander.processCode(doDelete : boolean; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; system, version, code, display, definition: string; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
 var
   n : TFhirValueSetExpansionContainsW;
@@ -1218,7 +1227,7 @@ begin
 
   if (expansion <> nil) and (version <> '') then
   begin
-    s := system+'?version='+version;
+    s := canonical(system, version);
     if not expansion.hasParam('version', s) then
       expansion.addParam('version', s);
   end;
@@ -1487,12 +1496,15 @@ end;
 procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
 var
   i : integer;
+  vs : String;
 begin
   try
     if (cs.version(nil) <> '') and (expansion <> nil) then
-      if not expansion.hasParam('version', cs.system(nil)+'?version='+cs.version(nil)) then
-        expansion.addParam('version', cs.system(nil)+'?version='+cs.version(nil));
-
+    begin
+      vs := canonical(cs.system(nil), cs.version(nil));
+      if not expansion.hasParam('version', vs) then
+        expansion.addParam('version', vs);
+    end;
     if not FParams.excludeNotForUI or not cs.IsAbstract(context) then
       processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context, FParams.displayLanguage), cs.definition(context), expansion, params, importHash);
     for i := 0 to cs.ChildCount(context) - 1 do
