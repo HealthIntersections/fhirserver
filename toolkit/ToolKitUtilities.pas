@@ -99,13 +99,15 @@ type
 
   TBackgroundContextLoadingInformation = class (TFslObject)
   private
+    FPackage : String;
     Fversion: String;
     FPackageManager: TFHIRPackageManager;
     FContext: TToolkitWorkerContext;
   public
-    constructor Create(packageMgr : TFHIRPackageManager; version : string; context : TToolkitWorkerContext);
+    constructor Create(packageMgr : TFHIRPackageManager; package, version : string; context : TToolkitWorkerContext);
     destructor Destroy; override;
     property packageMgr : TFHIRPackageManager read FPackageManager;
+    property package : String read FPackage;
     property version : String read Fversion;
     property context : TToolkitWorkerContext read FContext;
   end;
@@ -649,10 +651,11 @@ end;
 
 { TBackgroundContextLoadingInformation }
 
-constructor TBackgroundContextLoadingInformation.Create(packageMgr: TFHIRPackageManager; version: string; context : TToolkitWorkerContext);
+constructor TBackgroundContextLoadingInformation.Create(packageMgr: TFHIRPackageManager; package, version: string; context : TToolkitWorkerContext);
 begin
   inherited create;
   FPackageManager := packageMgr;
+  FPackage := package;
   Fversion := version;
   FContext := context;
 end;
@@ -679,7 +682,7 @@ end;
 procedure TBackgroundContextLoader.execute;
 begin
   response := TFslList<TFHIRStructureDefinition>.create;
-  details.packageMgr.loadPackage('hl7.fhir.core',  details.version, ['StructureDefinition'], loadResourceJson);
+  details.packageMgr.loadPackage(details.package,  details.version, ['StructureDefinition'], loadResourceJson);
 end;
 
 procedure TBackgroundContextLoader.loadResourceJson(rType, id: String; json: TStream);
