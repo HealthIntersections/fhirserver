@@ -2508,7 +2508,8 @@ begin
   try
     p := TFhirParameters.Create;
     try
-      p.AddParameter('version', 'r'+FHIR_GENERATED_PUBLICATION);
+      p.AddParameter('version', FHIR_GENERATED_VERSION_BASE);
+      p.AddParameter('default', FHIR_GENERATED_VERSION_BASE);
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Body := '';
