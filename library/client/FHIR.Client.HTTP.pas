@@ -330,6 +330,7 @@ begin
       indy.OnWork := HTTPWork;
       indy.OnWorkBegin := HTTPWorkBegin;
       indy.OnWorkEnd := HTTPWorkEnd;
+      indy.ReadTimeout := 30000;
       indy.HandleRedirects := true;
       if (proxy <> '') then
       begin
