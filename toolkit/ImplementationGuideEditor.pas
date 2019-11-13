@@ -1023,9 +1023,9 @@ var
 
 begin
 
-  // IGPublisherFolder := igrootfolder + '\publish';   sssssss
 
-  If (IGContentFolder = '') or not(directoryExists(pwidechar(IGContentFolder)) and directoryExists(pwidechar(IGPageContentFolder)) and directoryExists(pwidechar(IGMediaFolder))) then
+
+  If (IGContentFolder = '') or not(directoryExists(pwidechar(IGContentFolder)) and directoryExists(pwidechar(IGContentFolder)+'\input\pagecontent') and directoryExists(pwidechar(IGMediaFolder))) then
   begin
     TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Select the top element (Implementation Guide) and Click "Publish", check for the folders, and Save',
       System.UITypes.TMsgDlgType.mtConfirmation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0,
