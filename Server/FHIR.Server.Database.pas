@@ -7184,7 +7184,7 @@ var
   p : TFHIRResourceV;
 begin
   conn.SQL :=
-    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, XmlContent from Ids, Types, Versions where '
+    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Types.ResourceName, Secure, XmlContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
     '(Types.ResourceName in (''ValueSet'', ''EventDefinition'', ''Organization'', ''Device'' , ''CodeSystem'', ''ConceptMap'', ''StructureDefinition'', ''Questionnaire'', ''StructureMap'', ''Subscription'')) and Versions.Status < 2';
@@ -7202,12 +7202,20 @@ begin
         try
           p := parser.parseResource(mem);
           try
-            SeeResource(conn.ColIntegerByName['ResourceKey'],
-              conn.ColIntegerByName['ResourceVersionKey'],
-              0,
-              conn.ColStringByName['Id'],
-              conn.ColIntegerByName['Secure'] = 1,
-              false, p, cback, true, nil, 'en', mem);
+            try
+              SeeResource(conn.ColIntegerByName['ResourceKey'],
+                conn.ColIntegerByName['ResourceVersionKey'],
+                0,
+                conn.ColStringByName['Id'],
+                conn.ColIntegerByName['Secure'] = 1,
+                false, p, cback, true, nil, 'en', mem);
+            except
+              on e : Exception do
+              begin
+                // log this, and keep trying
+                logt('Error loading '+conn.ColStringByName['ResourceKey']+' ('+conn.ColStringByName['ResourceName']+'/'+conn.ColStringByName['Id']+': '+e.Message);
+              end;
+            end;
           finally
             p.Free;
           end;
