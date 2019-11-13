@@ -376,7 +376,7 @@ begin
             end
             else if params.has('url') then
             begin
-              vs := FServer.getValueSetByUrl(url);
+              vs := FServer.getValueSetByUrl(params.str('url'));
               if vs = nil then
                 if not FServer.isKnownValueSet(params.str('url'), vs) then
                   vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', params.str('url'), params.str('version'), false, needSecure));
