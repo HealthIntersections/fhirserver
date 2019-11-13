@@ -275,6 +275,18 @@ type
     btnOptionDown: TCornerButton;
     btnOptionUp: TCornerButton;
     CornerButton4: TCornerButton;
+    TabItem1: TTabItem;
+    Panel14: TPanel;
+    CornerButton8: TCornerButton;
+    versionUp: TCornerButton;
+    versionDown: TCornerButton;
+    ScrollBox7: TScrollBox;
+    Button3: TButton;
+    Edit1: TEdit;
+    Label53: TLabel;
+    Label55: TLabel;
+    Memo10: TMemo;
+    updateVersion: TButton;
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure btnActorClick(Sender: TObject);
     procedure btnOptionClick(Sender: TObject);
@@ -317,6 +329,9 @@ type
     procedure btnOptionUpClick(Sender: TObject);
     procedure btnOptionDownClick(Sender: TObject);
     procedure CornerButton4Click(Sender: TObject);
+    procedure versionUpClick(Sender: TObject);
+    procedure versionDownClick(Sender: TObject);
+    procedure updateVersionClick(Sender: TObject);
 
   private
     selchanging: boolean;
@@ -959,6 +974,14 @@ begin
     Memo4.text := tfhirexamplescenarioinstance(obj).description;
 
   end;
+  if obj is tfhirexamplescenarioinstanceversion then
+  begin
+    TabControl2.tabindex := 9;
+//    UpdateInstance.enabled := true;
+    Edit1.text := tfhirexamplescenarioinstanceversion(obj).versionId;
+    Memo10.text := tfhirexamplescenarioinstanceversion(obj).description;
+
+  end;
   if obj is tfhirexamplescenarioProcess then
   begin
     TabControl2.tabindex := 4;
@@ -1052,6 +1075,40 @@ begin
   tfhirexamplescenarioinstance(tvStructure.Selected.tagObject).versionList.AddItem(Version);
   ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
+end;
+
+procedure TExampleScenarioEditorFrame.versionDownClick(Sender: TObject);
+var
+  idx: integer;
+begin
+// To Do
+
+//  idx := tfhirexamplescenario(resource).instanceList.IndexOf(tfhirexamplescenarioinstance(tvStructure.Selected.tagObject));
+//  if idx < tfhirexamplescenario(resource).instanceList.Count - 1 then
+//  begin
+//    tfhirexamplescenario(resource).instanceList.Exchange(idx, idx + 1);
+//    tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+//    ResourceIsDirty := true;
+//  end;
+  ReloadTreeview(tvStructure.Selected);
+
+end;
+
+procedure TExampleScenarioEditorFrame.versionUpClick(Sender: TObject);
+var
+  idx: integer;
+begin
+// To Do
+
+//  idx := tfhirexamplescenario(resource).instanceList.IndexOf(tfhirexamplescenarioinstance(tvStructure.Selected.tagObject));
+//  if idx > 0 then
+//  begin
+//    tfhirexamplescenario(resource).instanceList.Exchange(idx, idx - 1);
+//    tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+//    ResourceIsDirty := true;
+//  end;
+  ReloadTreeview(tvStructure.Selected);
+
 end;
 
 procedure TExampleScenarioEditorFrame.DeleteItemClick(Sender: TObject);
@@ -1174,6 +1231,19 @@ begin
   obj.description := Memo2.text;
   obj.preConditions := Memo6.text;
   obj.postConditions := Memo7.text;
+
+end;
+
+procedure TExampleScenarioEditorFrame.updateVersionClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioInstanceVersion;
+
+begin
+  obj := tfhirexamplescenarioInstanceVersion(TTreeViewItem(tvStructure.Selected).tagObject);
+  if obj = nil then
+    exit;
+  obj.versionId := Edit1.text;
+  obj.description := Memo10.text;
 
 end;
 
