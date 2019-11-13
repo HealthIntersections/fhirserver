@@ -236,12 +236,12 @@ begin
               vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9+request.baseURL.Length), request.baseUrl, needSecure))
             else
             begin
-              vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
+              vs := FServer.getValueSetByUrl(url);
+              if vs = nil then
+                vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
               if vs = nil then
                 if not FServer.isKnownValueSet(url, vs) then
                   vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters.getvar('version'), false, needSecure));
-              if vs = nil then
-
             end;
             cacheId := vs.url;
             if vs.version <> '' then
@@ -376,10 +376,12 @@ begin
             end
             else if params.has('url') then
             begin
-              if not FServer.isKnownValueSet(params.str('url'), vs) then
-                vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', params.str('url'), params.str('version'), false, needSecure));
+              vs := FServer.getValueSetByUrl(url);
               if vs = nil then
-                raise ETerminologySetup.Create('Error Message');
+                if not FServer.isKnownValueSet(params.str('url'), vs) then
+                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', params.str('url'), params.str('version'), false, needSecure));
+              if vs = nil then
+                raise ETerminologySetup.Create('Unable to resolve value set');
               cacheId := vs.url;
             end
             else if params.has('valueSet') then

@@ -5391,7 +5391,7 @@ begin
           ServerContext.ResConfig[''].cmdSearch := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 8 then
         begin
-          if not FHIRVersionMatches(conn.ColStringByName['Value'], factory.versionString) then
+          if not TFHIRVersions.matches(conn.ColStringByName['Value'], factory.versionString) then
             raise EFHIRException.create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+factory.versionString)
         end
         else if conn.ColIntegerByName['ConfigKey'] <> 5 then

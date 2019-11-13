@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, 
+  FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R2.Types, FHIR.R2.Resources;
 
@@ -51,6 +51,30 @@ type
     property SearchParameters : TFslList<TFHIRSearchParameter> read FSearchParameters;
   end;
 
+ TFHIRMetadataResourceManager<T : TFHIRMetadataResource> = class (TFslObject)
+  private
+    FMap : TFslMap<T>;
+    FList : TFslList<T>;
+    procedure updateList(url, version: String);
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+
+    function link : TFHIRMetadataResourceManager<T>; overload;
+    function clone : TFHIRMetadataResourceManager<T>; overload;
+    procedure Assign(oSource : TFslObject); override;
+
+    procedure see(r: T);
+    procedure drop(id : String);
+    function get(url: String): T; overload;
+    function has(url: String): boolean; overload;
+    function get(url, version: String): T; overload;
+    function has(url, version: String): boolean; overload;
+    function count: integer;
+    procedure clear;
+    procedure listAll(list: TFslList<T>);
+    procedure listAllM(list: TFslList<TFHIRMetadataResource>);
+  end;
 
   TFHIRWorkerContext = class abstract (TFHIRWorkerContextWithFactory)
   protected
@@ -81,7 +105,7 @@ type
 implementation
 
 uses
-  FHIR.R2.Utilities;
+  FHIR.R2.Utilities, FHIR.Support.Utilities, FHIR.Base.Utilities;
 
 { TFHIRWorkerContext }
 
@@ -153,5 +177,213 @@ begin
   result := TFHIRCustomResourceInformation(inherited Link);
 end;
 
+
+{ TFHIRMetadataResourceManager<T> }
+
+constructor TFHIRMetadataResourceManager<T>.Create;
+begin
+  inherited;
+  FMap := TFslMap<T>.create;
+  FMap.defaultValue := nil;
+  FList := TFslList<T>.create;
+end;
+
+destructor TFHIRMetadataResourceManager<T>.Destroy;
+begin
+  FMap.Free;
+  FList.Free;
+  inherited;
+end;
+
+procedure TFHIRMetadataResourceManager<T>.Assign(oSource: TFslObject);
+var
+  src : TFHIRMetadataResourceManager<T>;
+begin
+  inherited;
+  src := oSource as TFHIRMetadataResourceManager<T>;
+  FMap.Clear;
+  FList.Clear;
+  FMap.addAll(src.FMap);
+  Flist.addAll(src.FList);
+end;
+
+function TFHIRMetadataResourceManager<T>.clone: TFHIRMetadataResourceManager<T>;
+begin
+  result := TFHIRMetadataResourceManager<T>(inherited clone);
+end;
+
+function TFHIRMetadataResourceManager<T>.link: TFHIRMetadataResourceManager<T>;
+begin
+  result := TFHIRMetadataResourceManager<T>(inherited link);
+end;
+
+procedure TFHIRMetadataResourceManager<T>.see(r : T);
+begin
+  if (r.id = '') then
+    r.id := newGUIDId;
+  if (FMap.containsKey(r.id)) then
+    drop(r.id);
+
+  FList.add(r.link);
+  FMap.add(r.id, r.link); // we do this so we can drop by id
+
+  if (r.url <> '') then
+  begin
+    // first, this is the correct resource for this version (if it has a version)
+    if (r.version <> '') then
+    begin
+      FMap.add(r.url+'|'+r.version, r.link);
+      updateList(r.url, r.version);
+    end;
+  end;
+end;
+
+procedure TFHIRMetadataResourceManager<T>.updateList(url, version : String);
+var
+  rl : TFslList<T>;
+  tt, latest : T;
+begin
+  rl := TFslList<T>.create;
+  try
+    for tt in FList do
+    begin
+     if (url = tt.url) and not rl.contains(tt) then
+       rl.add(tt.link);
+    end;
+
+    if (rl.count > 0) then
+    begin
+      // sort by version as much as we are able
+      rl.sort(function (const L, R: T): Integer
+        var v1, v2, mm1, mm2 : string;
+        begin
+          v1 := l.version;
+          v2 := r.version;
+          if (v1 = '') and (v2 = '') then
+            result := FList.indexOf(l) - FList.indexOf(r)
+          else if (v1 = '') then
+            result := -1
+          else if (v2 = '') then
+            result := 1
+          else
+          begin
+            mm1 := TFHIRVersions.getMajMin(v1);
+            mm2 := TFHIRVersions.getMajMin(v2);
+            if (mm1 = '') or (mm2 = '') then
+              result := v1.compareTo(v2)
+            else
+              result := CompareText(mm1, mm2);
+          end;
+        end);
+
+      // the current is the latest
+      FMap.add(url, rl[rl.count-1].link);
+      // now, also, the latest for major/minor
+      if (version <> '') then
+      begin
+        latest := nil;
+        for tt in rl do
+        begin
+          if (TFHIRVersions.matches(tt.version, version)) then
+            latest := tt;
+        end;
+        if (latest <> nil) then // might be null if it's not using semver
+        begin
+          FMap.add(url+'|'+TFHIRVersions.getMajMin(latest.version), rl[rl.count-1].link);
+        end;
+      end;
+    end;
+  finally
+   rl.free;
+  end;
+end;
+
+function TFHIRMetadataResourceManager<T>.get(url : String) : T;
+begin
+  result := FMap[url];
+end;
+
+function TFHIRMetadataResourceManager<T>.has(url : String) : boolean;
+begin
+  result := FMap.containsKey(url);
+end;
+
+function TFHIRMetadataResourceManager<T>.get(url, version : string) : T;
+var
+  mm : String;
+begin
+  if (FMap.containsKey(url+'|'+version)) then
+    result := FMap[url+'|'+version]
+  else
+  begin
+    mm := TFHIRVersions.getMajMin(version);
+    if (mm <> '') then
+      result := FMap[url+'|'+mm]
+    else
+      result := nil;
+  end;
+end;
+
+function TFHIRMetadataResourceManager<T>.has(url, version : string) : boolean;
+var
+  mm : String;
+begin
+  if (FMap.containsKey(url+'|'+version)) then
+    result := true
+  else
+  begin
+    mm := TFHIRVersions.getMajMin(version);
+    if (mm <> '') then
+      result := FMap.containsKey(url+'|'+mm)
+    else
+     result := false;
+  end;
+end;
+
+function TFHIRMetadataResourceManager<T>.count : integer;
+begin
+  result := FList.count;
+end;
+
+procedure TFHIRMetadataResourceManager<T>.drop(id : String);
+var
+  res : T;
+  mm : String;
+begin
+  res := FMap[id];
+  if (res <> nil) then
+  begin
+    FList.remove(res);
+    FMap.remove(id);
+    FMap.remove(res.url);
+    if (res.version <> '') then
+    begin
+      FMap.remove(res.url+'|'+res.version);
+      mm := TFHIRVersions.getMajMin(res.version);
+      if (mm <> '') then
+        FMap.remove(res.url+'|'+mm);
+    end;
+    updateList(res.url, res.version);
+  end;
+end;
+
+procedure TFHIRMetadataResourceManager<T>.listAll(list : TFslList<T>);
+begin
+  list.addAll(Flist);
+end;
+
+procedure TFHIRMetadataResourceManager<T>.listAllM(list : TFslList<TFHIRMetadataResource>);
+var
+  tt : T;
+begin
+  for tt in FList do
+    list.add(tt.link);
+end;
+
+procedure TFHIRMetadataResourceManager<T>.clear();
+begin
+  FList.clear();
+  FMap.clear();
+end;
 
 end.

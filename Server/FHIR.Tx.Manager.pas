@@ -150,10 +150,8 @@ Type
     // by their local url
     // by their canonical url
     // if they're a value set, by their code system url
-    FValueSetsById : TFslMap<TFHIRValueSetW>; // by local system's id
-    FValueSetsByURL : TFslMap<TFHIRValueSetW>; // by canonical url
-    FCodeSystemsById : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
-    FCodeSystemsByUrl : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FValueSets : TFHIRMetadataResourceManagerW<TFHIRValueSetW>; // by local system's id
+    FCodeSystems : TFHIRCodeSystemManager; // all current value sets that define systems, by their url
     FCodeSystemsByVsUrl : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
     FSupplementsById : TFslMap<TFHIRCodeSystemW>; // All supplements
 
@@ -747,7 +745,7 @@ function TTerminologyServerStore.CodeSystemCount: integer;
 begin
   FLock.Lock('CodeSystemCount');
   try
-    result := FCodeSystemsById.Count;
+    result := FCodeSystems.Count;
   finally
     FLock.Unlock;
   end;
@@ -764,10 +762,8 @@ begin
 
   FDB := db;
 
-  FValueSetsById := TFslMap<TFhirValueSetW>.create;
-  FValueSetsByURL := TFslMap<TFhirValueSetW>.create;
-  FCodeSystemsById := TFslMap<TFhirCodeSystemEntry>.create;
-  FCodeSystemsByUrl := TFslMap<TFhirCodeSystemEntry>.create;
+  FValueSets := TFHIRMetadataResourceManagerW<TFhirValueSetW>.create;
+  FCodeSystems := TFHIRCodeSystemManager.create;
   FCodeSystemsByVsUrl := TFslMap<TFhirCodeSystemEntry>.create;
   FBaseValueSets := TFslMap<TFhirValueSetW>.create;
   FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.create;
@@ -858,10 +854,8 @@ destructor TTerminologyServerStore.Destroy;
 begin
   FCommonTerminologies.Free;
   FStem.Free;
-  FValueSetsById.Free;
-  FValueSetsByURL.Free;
-  FCodeSystemsById.Free;
-  FCodeSystemsByUrl.Free;
+  FValueSets.Free;
+  FCodeSystems.Free;
   FCodeSystemsByVsUrl.Free;
   FBaseValueSets.Free;
   FBaseCodeSystems.Free;
@@ -933,16 +927,15 @@ begin
       FSupplementsById.AddOrSetValue(cs.id, cs.Link);
       if cs.supplements.StartsWith('CodeSystem/') then
       begin
-        if FCodeSystemsById.TryGetValue(cs.supplements.Substring(11), ct) then
+        if FCodeSystems.has(cs.supplements.Substring(11), ct) then
           ct.Supplements.Add(cs.Link);
       end
-      else if FCodeSystemsByUrl.TryGetValue(cs.supplements, ct) then
+      else if FCodeSystems.has(cs.supplements, ct) then
         ct.Supplements.Add(cs.Link);
     end
     else
     begin
-      FCodeSystemsById.AddOrSetValue(cs.id, cse.Link);
-      FCodeSystemsByUrl.AddOrSetValue(cs.url, cse.Link);
+      FCodeSystems.see(cse.Link);
       if cs.valueSet <> '' then
         FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cse.Link);
       if (FDB <> nil) then // don't build stems in this case
@@ -961,17 +954,16 @@ var
   cse, cs1 : TFHIRCodeSystemEntry;
   cs : TFhirCodeSystemW;
 begin
-  if (FCodeSystemsById.TryGetValue(id, cse)) then
+  if (FCodeSystems.has(id, cse)) then
   begin
     cs1 := FBaseCodeSystems[cse.CodeSystem.url].Link;
     try
-      FCodeSystemsByUrl.Remove(cse.codeSystem.url);
-      FCodeSystemsByid.Remove(cse.codeSystem.id);
       if cs1 <> nil then
         AddCodeSystemToCache(cs1.codeSystem, false);
     finally
       cs1.free;
     end;
+    FCodeSystems.drop(id);
   end
   else if FSupplementsById.TryGetValue(id, cs) then
   begin
@@ -979,10 +971,10 @@ begin
     try
       if cs.supplements.StartsWith('CodeSystem/') then
       begin
-        if FCodeSystemsById.TryGetValue(cs.supplements.Substring(11), cse) then
+        if FCodeSystems.has(cs.supplements.Substring(11), cse) then
           cse.Supplements.Remove(cs);
       end
-      else if FCodeSystemsByUrl.TryGetValue(cs.supplements, cse) then
+      else if FCodeSystems.has(cs.supplements, cse) then
         cse.Supplements.remove(cs);
       if cs1 <> nil then
         AddCodeSystemToCache(cs1.codeSystem, false);
@@ -1010,8 +1002,7 @@ begin
           FCommonTerminologies.FUcum.SetCommonUnits(factory.wrapValueSet(resource.Link));
 
         FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
-        FValueSetsById.AddOrSetValue(vs.id, vs.Link);
-        FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
+        FValueSets.see(vs);
         if (vs.fhirObjectVersion = fhirVersionRelease2) then
         begin
           if vs.hasInlineCS then
@@ -1076,8 +1067,7 @@ begin
         if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
           FCommonTerminologies.FUcum.SetCommonUnits(vs.link);
 
-        FValueSetsById.AddOrSetValue(vs.id, vs.Link);
-        FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
+        FValueSets.see(vs);
         invalidateVS(vs.url);
         if vs.hasInlineCS then
         begin
@@ -1130,20 +1120,19 @@ begin
   try
     if (aType = 'ValueSet') then
     begin
-      vs := FValueSetsById[id];
+      vs := FValueSets.get(id);
       if vs <> nil then
       begin
         vs1 := FBaseValueSets[vs.url];
-        FValueSetsByURL.Remove(vs.url);
         if (vs.hasInlineCS) then
           removeCodeSystemFromCache(vs.id);
-        FValueSetsById.Remove(vs.id); // vs is no longer valid
+        FValueSets.drop(id);
 
         // add the base one back if we are dropping a value set that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
         if vs1 <> nil then
         begin
-          FValueSetsById.AddOrSetValue(vs.url, vs1.Link);
+          FValueSets.see(vs1.Link);
           cs := FFactory.wrapCodeSystem(vs.Resource.link);
           try
             AddCodeSystemToCache(cs, false);
@@ -1209,7 +1198,7 @@ function TTerminologyServerStore.ValueSetCount: integer;
 begin
   FLock.Lock('ValueSetCount');
   try
-    result := FValueSetsById.Count;
+    result := FValueSets.Count;
   finally
     FLock.Unlock;
   end;
@@ -1221,8 +1210,8 @@ function TTerminologyServerStore.getCodeSystem(url: String): TFhirCodeSystemW;
 begin
   FLock.Lock('getValueSetByUrl');
   try
-    if FCodeSystemsByUrl.ContainsKey(url) then
-      result := FCodeSystemsByUrl[url].CodeSystem.Link
+    if FCodeSystems.has(url) then
+      result := FCodeSystems.get(url).CodeSystem.Link
     else
       result := nil;
   finally
@@ -1234,8 +1223,8 @@ function TTerminologyServerStore.getCodeSystemById(id: String): TFhirCodeSystemW
 begin
   FLock.Lock('getValueSetByUrl');
   try
-    if FCodeSystemsById.ContainsKey(id) then
-      result := FCodeSystemsById[id].CodeSystem.Link
+    if FCodeSystems.has(id) then
+      result := FCodeSystems.get(id).CodeSystem.Link
     else
       result := nil;
   finally
@@ -1259,26 +1248,20 @@ begin
 end;
 
 procedure TTerminologyServerStore.GetCodeSystemList(list: TFslList<TFHIRMetadataResourceW>);
-var
-  vs : TFHIRCodeSystemEntry;
 begin
   FLock.Lock('GetCodeSystemList');
   try
-    for vs in FCodeSystemsByUrl.values do
-      list.add(vs.CodeSystem.link);
+    FCodeSystems.listAllM(list);
   finally
     FLock.Unlock;
   end;
 end;
 
 procedure TTerminologyServerStore.GetCodeSystemList(list : TFslList<TFHIRCodeSystemW>);
-var
-  vs : TFHIRCodeSystemEntry;
 begin
   FLock.Lock('GetCodeSystemList');
   try
-    for vs in FCodeSystemsByUrl.values do
-      list.add(vs.CodeSystem.link);
+    FCodeSystems.listAll(list);
   finally
     FLock.Unlock;
   end;
@@ -1337,13 +1320,10 @@ begin
 end;
 
 procedure TTerminologyServerStore.GetValueSetList(list : TFslList<TFhirValueSetW>);
-var
-  vs : TFhirValueSetW;
 begin
   FLock.Lock('GetValueSetList');
   try
-    for vs in FValueSetsById.values do
-      list.Add(vs.Link);
+    FValueSets.listAll(list);
   finally
     FLock.Unlock;
   end;
@@ -1406,8 +1386,8 @@ begin
     FLock.Lock('getProvider');
     try
       // todo; version specific....
-      if FCodeSystemsByUrl.ContainsKey(system) then
-        result := TFhirCodeSystemProvider.create(ffactory.link, FCodeSystemsByUrl[system].link);
+      if FCodeSystems.has(system) then
+        result := TFhirCodeSystemProvider.create(ffactory.link, FCodeSystems.get(system).link);
     finally
       FLock.Unlock;
     end;
@@ -1443,8 +1423,8 @@ procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
 begin
   FCommonTerminologies.getSummary(b);
 
-  b.append('<li>ValueSets : '+inttostr(FValueSetsById.Count)+'</li>');
-  b.append('<li>Code Systems : '+inttostr(FCodeSystemsByUrl.Count)+'</li>');
+  b.append('<li>ValueSets : '+inttostr(FValueSets.Count)+'</li>');
+  b.append('<li>Code Systems : '+inttostr(FCodeSystems.Count)+'</li>');
   b.append('<li>Concept Maps : '+inttostr(FBaseConceptMaps.Count)+'</li>');
 end;
 
@@ -1452,8 +1432,8 @@ function TTerminologyServerStore.getValueSetById(id: String): TFHIRValueSetW;
 begin
   FLock.Lock('getValueSetByUrl');
   try
-    if FValueSetsById.ContainsKey(id) then
-      result := FValueSetsById[id].Link
+    if FValueSets.has(id) then
+      result := FValueSets.get(id).Link
     else
       result := nil;
   finally
@@ -1462,33 +1442,43 @@ begin
 end;
 
 function TTerminologyServerStore.getValueSetByUrl(url : String) : TFHIRValueSetW;
+var
+  p :  TArray<String>;
 begin
   FLock.Lock('getValueSetByUrl');
   try
     if url.StartsWith('ValueSet/') then
     begin
-      if FValueSetsById.TryGetValue(url.Substring(9), result) then
+      if FValueSets.has(url.Substring(9), result) then
         result.Link
       else
         result := nil;
     end
-    else if FValueSetsByUrl.TryGetValue(url, result) then
-      result.Link
+    else if (url.CountChar('|') = 1) then
+    begin
+      p := url.split(['|']);
+      if FValueSets.has(p[0], p[1], result) then
+        result.Link
+      else
+        result := nil;
+    end
     else
-      result := nil;
+    begin
+      if FValueSets.has(url, result) then
+        result.Link
+      else
+        result := nil;
+    end;
   finally
     FLock.Unlock;
   end;
 end;
 
 procedure TTerminologyServerStore.GetValueSetList(list: TFslList<TFHIRMetadataResourceW>);
-var
-  vs : TFhirValueSetW;
 begin
   FLock.Lock('GetValueSetList');
   try
-    for vs in FValueSetsById.values do
-      list.Add(vs.Link);
+    FValueSets.listAllM(list);
   finally
     FLock.Unlock;
   end;
@@ -1498,7 +1488,7 @@ function TTerminologyServerStore.hasCodeSystem(url: String): Boolean;
 begin
   FLock.Lock('getValueSetByUrl');
   try
-    result := FCodeSystemsByUrl.ContainsKey(url);
+    result := FCodeSystems.has(url);
   finally
     FLock.Unlock;
   end;
@@ -1519,17 +1509,18 @@ var
   p : TCodeSystemProvider;
   s : String;
   i : integer;
+  cs : TFHIRCodeSystemEntry;
 begin
   ts := TStringList.Create;
   try
     ts.Sorted := true;
     ts.Duplicates := TDuplicates.dupIgnore;
-    FLock.Lock('CodeSystemCount');
+    FLock.Lock('listSystems');
     try
       for p in ProviderClasses.Values do
         ts.Add(p.system(nil));
-      for s in FCodeSystemsByUrl.Keys do
-        ts.Add(s);
+      for cs in FCodeSystems.list do
+        ts.Add(cs.url);
     finally
       FLock.Unlock;
     end;

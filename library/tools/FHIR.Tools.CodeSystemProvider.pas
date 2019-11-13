@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang, FHIR.Base.Utilities,
   FHIR.Tx.Service;
 
 type
@@ -77,15 +77,52 @@ type
     function GetHasSupplements: boolean;
     function GetSupplements: TFslList<TFHIRCodeSystemW>;
     procedure SetCodeSystem(const Value: TFHIRCodeSystemW);
+    function GetUrl: String;
+
+    function GetVersion: String;
+    function GetId: String;
+    procedure SetId(const Value: String);
   public
     constructor Create(cs : TFhirCodeSystemW);
     destructor Destroy; override;
 
     function Link : TFHIRCodeSystemEntry; overload;
+    property id : String read GetId write SetId;
+    property url : String read GetUrl;
+    property version : String read GetVersion;
 
     property CodeSystem : TFHIRCodeSystemW read FCodeSystem write SetCodeSystem;
     Property hasSupplements : boolean read GetHasSupplements;
     property Supplements : TFslList<TFHIRCodeSystemW> read GetSupplements;
+  end;
+
+ TFHIRCodeSystemManager = class (TFslObject)
+  private
+    FMap : TFslMap<TFHIRCodeSystemEntry>;
+    FList : TFslList<TFHIRCodeSystemEntry>;
+    procedure updateList(url, version: String);
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+
+    function link : TFHIRCodeSystemManager; overload;
+    function clone : TFHIRCodeSystemManager; overload;
+    procedure Assign(oSource : TFslObject); override;
+
+    Property list : TFslList<TFHIRCodeSystemEntry> read FList;
+
+    procedure see(r: TFHIRCodeSystemEntry);
+    procedure drop(id : String);
+    function get(url: String): TFHIRCodeSystemEntry; overload;
+    function get(url, version: String): TFHIRCodeSystemEntry; overload;
+    function has(url: String): boolean; overload;
+    function has(url, version: String): boolean; overload;
+    function has(url: String; var res : TFHIRCodeSystemEntry): boolean; overload;
+    function has(url, version: String; var res : TFHIRCodeSystemEntry): boolean; overload;
+    function count: integer;
+    procedure clear;
+    procedure listAll(list: TFslList<TFHIRCodeSystemW>);
+    procedure listAllM(list: TFslList<TFHIRMetadataResourceW>);
   end;
 
   TFhirCodeSystemProviderFilterContext = class (TCodeSystemProviderFilterContext, IComparer<TFhirCodeSystemConceptMatch>)
@@ -204,11 +241,26 @@ begin
   result := (FSupplements <> nil) and (FSupplements.Count > 0);
 end;
 
+function TFHIRCodeSystemEntry.GetId: String;
+begin
+  result := FCodeSystem.id;
+end;
+
 function TFHIRCodeSystemEntry.GetSupplements: TFslList<TFHIRCodeSystemW>;
 begin
   if FSupplements = nil then
     FSupplements := TFslList<TFHIRCodeSystemW>.create;
   result := FSupplements;
+end;
+
+function TFHIRCodeSystemEntry.GetUrl: String;
+begin
+  result := FCodeSystem.url;
+end;
+
+function TFHIRCodeSystemEntry.GetVersion: String;
+begin
+  result := FCodeSystem.version;
 end;
 
 function TFHIRCodeSystemEntry.Link: TFHIRCodeSystemEntry;
@@ -220,6 +272,11 @@ procedure TFHIRCodeSystemEntry.SetCodeSystem(const Value: TFHIRCodeSystemW);
 begin
   FCodeSystem.Free;
   FCodeSystem := Value;
+end;
+
+procedure TFHIRCodeSystemEntry.SetId(const Value: String);
+begin
+  FCodeSystem.id := value;
 end;
 
 { TFhirCodeSystemProviderFilterContext }
@@ -538,15 +595,15 @@ end;
 function TFhirCodeSystemProvider.getParent(ctxt: TFhirCodeSystemConceptW): TFhirCodeSystemConceptW;
   function getMyParent(list: TFslList<TFhirCodeSystemConceptW>): TFhirCodeSystemConceptW;
   var
-    c, t : TFhirCodeSystemConceptW;
+    c, TFHIRCodeSystemEntry : TFhirCodeSystemConceptW;
   begin
     for c in list do
     begin
       if c.hasConcept(ctxt) then
         exit(c);
-      t := getMyParent(c.conceptList);
-      if (t <> nil) then
-        exit(t);
+      TFHIRCodeSystemEntry := getMyParent(c.conceptList);
+      if (TFHIRCodeSystemEntry <> nil) then
+        exit(TFHIRCodeSystemEntry);
     end;
     exit(nil);
   end;
@@ -742,7 +799,7 @@ end;
 
 function TFhirCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 var
-  t, cA, cB : TFhirCodeSystemConceptW;
+  TFHIRCodeSystemEntry, cA, cB : TFhirCodeSystemConceptW;
 begin
   cA := LocateCode(codeA);
   if (cA = nil) then
@@ -751,20 +808,20 @@ begin
   if (cB = nil) then
     raise ETerminologyError.create('Unknown Code "'+codeB+'"');
 
-  t := CB;
-  while t <> nil do
+  TFHIRCodeSystemEntry := CB;
+  while TFHIRCodeSystemEntry <> nil do
   begin
-    if (t = cA) then
+    if (TFHIRCodeSystemEntry = cA) then
       exit('subsumes');
-    t := getParent(t);
+    TFHIRCodeSystemEntry := getParent(TFHIRCodeSystemEntry);
   end;
 
-  t := CA;
-  while t <> nil do
+  TFHIRCodeSystemEntry := CA;
+  while TFHIRCodeSystemEntry <> nil do
   begin
-    if (t = cB) then
+    if (TFHIRCodeSystemEntry = cB) then
       exit('subsumed-by');
-    t := getParent(t);
+    TFHIRCodeSystemEntry := getParent(TFHIRCodeSystemEntry);
   end;
   exit('not-subsumed');
 end;
@@ -1049,6 +1106,244 @@ end;
 function TFhirCodeSystemProvider.name(context: TCodeSystemProviderContext): String;
 begin
    result := FCs.CodeSystem.name;
+end;
+
+
+{ TFHIRCodeSystemManager }
+
+constructor TFHIRCodeSystemManager.Create;
+begin
+  inherited;
+  FMap := TFslMap<TFHIRCodeSystemEntry>.create;
+  FMap.defaultValue := nil;
+  FList := TFslList<TFHIRCodeSystemEntry>.create;
+end;
+
+destructor TFHIRCodeSystemManager.Destroy;
+begin
+  FMap.Free;
+  FList.Free;
+  inherited;
+end;
+
+procedure TFHIRCodeSystemManager.Assign(oSource: TFslObject);
+var
+  src : TFHIRCodeSystemManager;
+begin
+  inherited;
+  src := oSource as TFHIRCodeSystemManager;
+  FMap.Clear;
+  FList.Clear;
+  FMap.addAll(src.FMap);
+  Flist.addAll(src.FList);
+end;
+
+function TFHIRCodeSystemManager.clone: TFHIRCodeSystemManager;
+begin
+  result := TFHIRCodeSystemManager(inherited clone);
+end;
+
+function TFHIRCodeSystemManager.link: TFHIRCodeSystemManager;
+begin
+  result := TFHIRCodeSystemManager(inherited link);
+end;
+
+procedure TFHIRCodeSystemManager.see(r : TFHIRCodeSystemEntry);
+begin
+  if (r.id = '') then
+    r.id := newGUIDId;
+  if (FMap.containsKey(r.id)) then
+    drop(r.id);
+
+  FList.add(r.link);
+  FMap.add(r.id, r.link); // we do this so we can drop by id
+
+  if (r.url <> '') then
+  begin
+    // first, this is the correct resource for this version (if it has a version)
+    if (r.version <> '') then
+    begin
+      FMap.add(r.url+'|'+r.version, r.link);
+      updateList(r.url, r.version);
+    end;
+  end;
+end;
+
+procedure TFHIRCodeSystemManager.updateList(url, version : String);
+var
+  rl : TFslList<TFHIRCodeSystemEntry>;
+  tt, latest : TFHIRCodeSystemEntry;
+begin
+  rl := TFslList<TFHIRCodeSystemEntry>.create;
+  try
+    for tt in FList do
+    begin
+     if (url = tt.url) and not rl.contains(tt) then
+       rl.add(tt.link);
+    end;
+
+    if (rl.count > 0) then
+    begin
+      // sort by version as much as we are able
+      rl.sort(function (const L, R: TFHIRCodeSystemEntry): Integer
+        var v1, v2, mm1, mm2 : string;
+        begin
+          v1 := l.version;
+          v2 := r.version;
+          if (v1 = '') and (v2 = '') then
+            result := FList.indexOf(l) - FList.indexOf(r)
+          else if (v1 = '') then
+            result := -1
+          else if (v2 = '') then
+            result := 1
+          else
+          begin
+            mm1 := TFHIRVersions.getMajMin(v1);
+            mm2 := TFHIRVersions.getMajMin(v2);
+            if (mm1 = '') or (mm2 = '') then
+              result := v1.compareTo(v2)
+            else
+              result := CompareText(mm1, mm2);
+          end;
+        end);
+
+      // the current is the latest
+      FMap.add(url, rl[rl.count-1].link);
+      // now, also, the latest for major/minor
+      if (version <> '') then
+      begin
+        latest := nil;
+        for tt in rl do
+        begin
+          if (TFHIRVersions.matches(tt.version, version)) then
+            latest := tt;
+        end;
+        if (latest <> nil) then // might be null if it's not using semver
+        begin
+          FMap.add(url+'|'+TFHIRVersions.getMajMin(latest.version), rl[rl.count-1].link);
+        end;
+      end;
+    end;
+  finally
+   rl.free;
+  end;
+end;
+
+function TFHIRCodeSystemManager.get(url : String) : TFHIRCodeSystemEntry;
+begin
+  result := FMap[url];
+end;
+
+function TFHIRCodeSystemManager.get(url, version : string) : TFHIRCodeSystemEntry;
+var
+  mm : String;
+begin
+  if (FMap.containsKey(url+'|'+version)) then
+    result := FMap[url+'|'+version]
+  else
+  begin
+    mm := TFHIRVersions.getMajMin(version);
+    if (mm <> '') then
+      result := FMap[url+'|'+mm]
+    else
+      result := nil;
+  end;
+end;
+
+function TFHIRCodeSystemManager.has(url : String) : boolean;
+begin
+  result := FMap.containsKey(url);
+end;
+
+function TFHIRCodeSystemManager.has(url, version : string) : boolean;
+var
+  mm : String;
+begin
+  if (FMap.containsKey(url+'|'+version)) then
+    result := true
+  else
+  begin
+    mm := TFHIRVersions.getMajMin(version);
+    if (mm <> '') then
+      result := FMap.containsKey(url+'|'+mm)
+    else
+     result := false;
+  end;
+end;
+
+function TFHIRCodeSystemManager.has(url : String; var res : TFHIRCodeSystemEntry) : boolean;
+begin
+  result := FMap.TryGetValue(url, res);
+  if res = nil then
+    result := false;
+end;
+
+function TFHIRCodeSystemManager.has(url, version : string; var res : TFHIRCodeSystemEntry) : boolean;
+var
+  mm : String;
+begin
+  res := nil;
+  if (FMap.TryGetValue(url+'|'+version, res)) then
+    result := true
+  else
+  begin
+    mm := TFHIRVersions.getMajMin(version);
+    if (mm <> '') then
+      result := FMap.TryGetValue(url+'|'+mm, res)
+    else
+     result := false;
+  end;
+  if res = nil then
+    result := false;
+end;
+
+function TFHIRCodeSystemManager.count : integer;
+begin
+  result := FList.count;
+end;
+
+procedure TFHIRCodeSystemManager.drop(id : String);
+var
+  res : TFHIRCodeSystemEntry;
+  mm : String;
+begin
+  res := FMap[id];
+  if (res <> nil) then
+  begin
+    FList.remove(res);
+    FMap.remove(id);
+    FMap.remove(res.url);
+    if (res.version <> '') then
+    begin
+      FMap.remove(res.url+'|'+res.version);
+      mm := TFHIRVersions.getMajMin(res.version);
+      if (mm <> '') then
+        FMap.remove(res.url+'|'+mm);
+    end;
+    updateList(res.url, res.version);
+  end;
+end;
+
+procedure TFHIRCodeSystemManager.listAll(list : TFslList<TFHIRCodeSystemW>);
+var
+  tt : TFHIRCodeSystemEntry;
+begin
+  for tt in FList do
+    list.add(tt.CodeSystem.link);
+end;
+
+procedure TFHIRCodeSystemManager.listAllM(list : TFslList<TFHIRMetadataResourceW>);
+var
+  tt : TFHIRCodeSystemEntry;
+begin
+  for tt in FList do
+    list.add(tt.CodeSystem.link);
+end;
+
+procedure TFHIRCodeSystemManager.clear();
+begin
+  FList.clear();
+  FMap.clear();
 end;
 
 
