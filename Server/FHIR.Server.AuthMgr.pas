@@ -445,7 +445,14 @@ begin
 
       session.scopes := scopes.CommaText.Replace(',', ' ');
       ServerContext.Storage.RegisterConsentRecord(session);
-      response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
+      if redirect = 'urn:ietf:wg:oauth:2.0:oob' then
+      begin
+        response.ResponseNo := 200;
+        response.ResponseText := 'OK';
+        response.ContentText := 'Redirect Code is not valid redirect? ('+redirect+') - Authorization code: '+session.OuterToken;
+      end
+      else
+        response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
     finally
       scopes.Free;
     end;
@@ -825,7 +832,7 @@ begin
     except
       on e : EAuthClientException do
       begin
-        if e.FLocation = '' then
+        if (e.FLocation = '') or (e.FLocation = 'urn:ietf:wg:oauth:2.0:oob') then
         begin
           response.ResponseNo := 400;
           response.ResponseText := 'Bad Request';
@@ -1165,6 +1172,11 @@ begin
             // client id and client secret must be in the basic header. Check them
             clientId := request.AuthUsername;
             clientSecret := request.AuthPassword;
+            if (clientId = '') and (clientSecret = '') then // R support
+            begin
+              clientId := params.getVar('client_id');
+              clientSecret := params.getVar('client_secret');
+            end;
             if clientId <> pclientid then
               raise EAuthClientException.create('Client Id is wrong ("'+clientId+'") in Authorization Header');
             if clientSecret <> client.secret then
