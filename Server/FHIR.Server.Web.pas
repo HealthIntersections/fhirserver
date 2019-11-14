@@ -2510,7 +2510,7 @@ begin
   if (sCookie <> '') and request.Document.StartsWith('/scim/logout') then
   begin
     FContext.SessionManager.EndSession(sCookie, request.RemoteIP);
-    response.redirect('/closed');
+    response.redirect(FPath+'/logout');
   end
   else if (FContext.SessionManager.GetSession(sCookie, Session, check)) then
   begin
@@ -3372,7 +3372,7 @@ begin
   if (Session = nil) then
     s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll])
   else
-    s := s.Replace('[%logout%]', '|&nbsp;User: ' + Session.SessionName + '&nbsp; <a href="/closed/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;',
+    s := s.Replace('[%logout%]', '|&nbsp;User: ' + Session.SessionName + '&nbsp; <a href="'+FPath+'/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;',
       [rfReplaceAll]);
   if FWebServer.FActualPort = 80 then
     s := s.Replace('[%host%]', FWebServer.FHost, [rfReplaceAll])
@@ -3391,7 +3391,7 @@ begin
 //    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
 //      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
 //      NewGuidId, // nonce
-//      'https://local.healthintersections.com.au:961/closed/_web/fitbit.html')
+//      'https://local.healthintersections.com.au:961/_web/fitbit.html')
 //      // callback
 //      , [rfReplaceAll]);
 
@@ -4660,7 +4660,7 @@ begin
 //    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
 //      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
 //      NewGuidId, // nonce
-//      'https://local.healthintersections.com.au:961/closed/_web/fitbit.html')
+//      'https://local.healthintersections.com.au:961/_web/fitbit.html')
 //      // callback
 //      , [rfReplaceAll]);
 

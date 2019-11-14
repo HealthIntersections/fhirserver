@@ -1021,8 +1021,8 @@ begin
   try
     conn := db.GetConnection('scim.user.search');
     try
-      bnew := request.Document.Substring(10) = '$new';
-      if bnew then
+      bNew := request.Document.endsWith('$new');
+      if bNew then
         uk := 2 // anonymous
       else
         uk := StrToInt(request.Document.Substring(10+prefix.length));
@@ -1211,6 +1211,7 @@ begin
     variables := TFslStringDictionary.create;
     try
       variables.Add('usertable', b.ToString);
+      variables.Add('prefix', prefix);
       OnProcessFile(request, response, session, '/scimusers.html', true, variables);
     finally
       variables.free;
