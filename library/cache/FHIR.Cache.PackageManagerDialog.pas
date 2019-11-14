@@ -181,10 +181,6 @@ begin
 end;
 
 procedure TPackageCacheForm.importUrl(sender : TObject; url : String);
-var
-  ok : boolean;
-  aborted : boolean;
-  s : String;
 begin
   FStop := false;
   FActionMessage := 'Downloading '+url;

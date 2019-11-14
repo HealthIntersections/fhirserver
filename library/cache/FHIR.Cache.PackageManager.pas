@@ -221,7 +221,6 @@ type
     function checkPackageSize(dir : String) : integer;
     procedure work(pct : integer; done : boolean; desc : String);
     function check(desc : String) : boolean;
-    procedure upgradeCacheFrom1To2;
     function loadPackageFromCache(folder : String) : TNpmPackageInfo;
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
@@ -405,11 +404,9 @@ end;
 procedure TFHIRPackageManager.import(content : TBytes);
 var
   npm : TJsonObject;
-  id, ver, dir, fn, fver : String;
+  id, ver, dir, fn, fver, s : String;
   files : TDictionary<String, TBytes>;
-  s, p : string;
   size,c : integer;
-  pl, cl : TFslStringDictionary;
   indexer : TNpmPackageIndexBuilder;
 begin
   files := loadArchive(content);
@@ -567,16 +564,15 @@ end;
 
 procedure TFHIRPackageManager.ListPackages(kinds : TFHIRPackageKindSet; list: TFslList<TFHIRPackageInfo>);
 var
-  s, s1 : String;
+  s : String;
   id, n, ver : String;
   npm : TNpmPackageInfo;
   dep : TJsonObject;
   t, pck : TFHIRPackageInfo;
   v : TFHIRPackageVersionInfo;
   d : TFHIRPackageDependencyInfo;
-  ts, ts1 : TStringList;
+  ts : TStringList;
   kind : TFHIRPackageKind;
-  ini : TIniFile;
 begin
   ts := TStringList.Create;
   try
@@ -709,15 +705,13 @@ end;
 
 procedure TFHIRPackageManager.ListPackageVersions(list: TFslList<TFHIRPackageVersionInfo>);
 var
-  s, s1 : String;
+  s : String;
   n, id, ver : String;
   npm : TNpmPackageInfo;
   dep : TJsonObject;
   v : TFHIRPackageVersionInfo;
   d : TFHIRPackageDependencyInfo;
-  ts, ts1 : TStringList;
-  kind : TFHIRPackageKind;
-  ini : TIniFile;
+  ts : TStringList;
 begin
   ts := TStringList.Create;
   try
@@ -901,7 +895,6 @@ end;
 
 procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
-  s : String;
   c : integer;
   f : TFileStream;
   npm : TNpmPackageInfo;
@@ -996,7 +989,6 @@ procedure TFHIRPackageManager.buildPackageIndex(folder : String);
 var
   s{, bd} : String;
   l : TStringDynArray;
-  j : TJsonObject;
   i : integer;
   indexer : TNpmPackageIndexBuilder;
 begin
@@ -1143,31 +1135,6 @@ begin
     end;
 end;
 
-procedure TFHIRPackageManager.upgradeCacheFrom1To2;
-var
-  st : TStringList;
-  s, n : String;
-  i : integer;
-begin
-  st := TStringList.Create;
-  try
-    for s in TDirectory.GetDirectories(FFolder) do
-      st.Add(s);
-    for s in st do
-    begin
-      i := s.IndexOf('#');
-      if i > 0 then
-      begin
-        n := s.Substring(0, i) + '#' + s.Substring(i+1);
-        if not RenameFile(s, n) then
-          raise EFslException.Create('Unable to rename package from '+s+' to'+n);
-      end;
-    end;
-  finally
-    st.Free;
-  end;
-end;
-
 procedure TFHIRPackageManager.work(pct: integer; done: boolean; desc: String);
 begin
   if assigned(FOnWork) then
@@ -1260,7 +1227,6 @@ end;
 
 function TFHIRPackageVersionInfo.GetFhirVersion: string;
 var
-  deps : TJsonObject;
   n : String;
 begin
   result := '';
