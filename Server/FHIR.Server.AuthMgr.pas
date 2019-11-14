@@ -1221,6 +1221,7 @@ begin
     except
       on e : Exception do
       begin
+        logt('Error in OAuth Token call: '+e.Message);
         response.ResponseNo := 400;
         json := TJsonWriterDirect.create;
         try

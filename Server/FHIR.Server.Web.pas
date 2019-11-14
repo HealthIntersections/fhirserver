@@ -2790,8 +2790,8 @@ begin
             '(or you can browse <a href="'+FPath+'/snomed/doco/">SNOMED-CT</a> or <a href="'+FPath+'/loinc/doco/">LOINC</a> directly)' + #13#10);
         if Session.canGetUser and (Session.User <> nil) and not Session.isAnonymous then
         begin
-          b.Append('. You can also <a href="registerclient.html">Register a client</a>.'+#13#10);
-          b.Append(' or <a href="token.hts">get your bearer token</a> (use this to get access to the secure API without needing OAuth login).</p>');
+          b.Append('. You can also <a href="'+FPath+'/registerclient.html">Register a client</a>.'+#13#10);
+          b.Append(' or <a href="'+FPath+'/token.hts">get your bearer token</a> (use this to get access to the secure API without needing OAuth login).</p>');
         end
         else
         begin
