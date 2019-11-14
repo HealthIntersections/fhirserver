@@ -156,7 +156,7 @@ type
     FSSLPublicCert: String;
     FSSLPrivateKey: String;
     FId: integer;
-    FHost: string;
+    FThisHost: string;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -205,7 +205,7 @@ type
 
     // the port for redirecting to this server
     property redirectport : integer read Fredirectport write Fredirectport;
-    property host : string read FHost write FHost;
+    property thisHost : string read FThisHost write FThisHost;
 
     // backend services
     property issuerUrl : String read FissuerUrl write FissuerUrl;
@@ -242,7 +242,7 @@ implementation
 
 function buildAuthUrl(server : TRegisteredFHIRServer; scopes, state : String) : String;
 begin
-  result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://'+server.host+':'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
+  result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://'+server.thisHost+':'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
 end;
 
 function usesSmartOnFHIR(conf : TFhirCapabilityStatementW; var authorize, token, register: String): Boolean;
@@ -340,9 +340,9 @@ end;
 function getSmartOnFhirAuthToken(server : TRegisteredFHIRServer; authcode : String) : TClientAccessToken;
 begin
   if server.clientsecret = '' then
-    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&client_id='+server.clientid+'&redirect_uri='+EncodeMime('http://'+server.host+':'+inttostr(server.redirectport)+'/done'))
+    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&client_id='+server.clientid+'&redirect_uri='+EncodeMime('http://'+server.thisHost+':'+inttostr(server.redirectport)+'/done'))
   else
-    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&redirect_uri='+EncodeMime('http://'+server.host+':'+inttostr(server.redirectport)+'/done'));
+    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&redirect_uri='+EncodeMime('http://'+server.thisHost+':'+inttostr(server.redirectport)+'/done'));
 end;
 
 { TRegisteredFHIRServer }

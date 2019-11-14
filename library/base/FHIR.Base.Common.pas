@@ -2073,13 +2073,14 @@ procedure TFHIRMetadataResourceManagerW<T>.updateList(url, version : String);
 var
   rl : TFslList<T>;
   tt, latest : T;
+  lv : String;
 begin
   rl := TFslList<T>.create;
   try
     for tt in FList do
     begin
-     if (url = tt.url) and not rl.contains(tt) then
-       rl.add(tt.link);
+      if (url = tt.url) and not rl.contains(tt) then
+        rl.add(tt.link);
     end;
 
     if (rl.count > 0) then
@@ -2120,7 +2121,9 @@ begin
         end;
         if (latest <> nil) then // might be null if it's not using semver
         begin
-          FMap.add(url+'|'+TFHIRVersions.getMajMin(latest.version), rl[rl.count-1].link);
+          lv := TFHIRVersions.getMajMin(latest.version);
+          if (lv <> version) then
+            FMap.add(url+'|'+lv, rl[rl.count-1].link);
         end;
       end;
     end;
