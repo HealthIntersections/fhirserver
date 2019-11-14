@@ -334,6 +334,7 @@ begin
       (http.Communicator as TFHIRHTTPCommunicator).certPWord := Server.SSLPassphrase;
     end;
     http.Logger := ToolkitLogger.Link;
+    server.thisHost := 'localhost';
     ok := false;
     if Server.SmartAppLaunchMode <> salmNone then
     begin
