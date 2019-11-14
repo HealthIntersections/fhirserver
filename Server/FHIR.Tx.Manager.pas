@@ -1507,7 +1507,6 @@ function TTerminologyServerStore.listSystems: TArray<String>;
 var
   ts : TStringList;
   p : TCodeSystemProvider;
-  s : String;
   i : integer;
   cs : TFHIRCodeSystemEntry;
 begin

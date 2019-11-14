@@ -223,7 +223,7 @@ Type
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
     procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
     function EndPointDesc(secure: boolean): String;
-//    function loadFromRsaDer(cert : string) : TJWKList;
+    function loadFromRsaDer(cert : string) : TJWKList;
 
     function parseFile(fmt: TFHIRFormat; name: String): TFHIRResourceV;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
@@ -277,6 +277,7 @@ Type
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     procedure OnCDSResponse(manager: TCDSHooksManager; server: TRegisteredFHIRServer; Context: TObject; response: TCDSHookResponse; error: String);
     function DoSearch(Session: TFHIRSession; rtype: string; lang, params: String): TFHIRBundleW;
+    function processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
 
     Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 
@@ -2337,79 +2338,80 @@ begin
   end;
 end;
 
-//function TFhirWebServerEndpoint.processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
-//var
-//  pm : TParseMap;
-//  client : TRegisteredClientInformation;
-//  s : String;
-//  jwks : TJWKList;
-//  json : TJsonObject;
-//begin
-//  if session = nil then
-//    raise EFHIRException.Createlang('MSG_AUTH_REQUIRED', request.AcceptLanguage);
-//
-//  pm := TParseMap.create(request.UnparsedParams);
-//  try
-//    client := TRegisteredClientInformation.Create;
-//    try
-//      client.name := pm.GetVar('client_name').Trim;
-//      if client.name = '' then
-//        raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['client_name']);
-//      client.url := pm.GetVar('client_uri').Trim;
-//      client.logo := pm.GetVar('logo_uri').Trim;
-//      client.softwareId := pm.GetVar('software_id').Trim;
-//      client.softwareVersion := pm.GetVar('software_version').Trim;
-//      client.PatientContext := pm.getVar('ctxt-patient') <> '';
-//      case StrToIntDef(pm.GetVar('mode'), 0) of
-//        1: begin
-//           client.mode := rcmOAuthClient;
-//           client.secret := NewGuidId;
-//           client.redirects.Text := pm.GetVar('redirect_uris');
-//           end;
-//        2: begin
-//           client.mode := rcmOAuthClient;
-//           client.redirects.Text := pm.GetVar('redirect_uris');
-//           end;
-//        3: begin
-//           client.mode := rcmBackendServices;
-//           client.issuer := pm.GetVar('issuer').Trim;
-//           if (client.issuer = '') then
-//            raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['issuer']);
-//           s := pm.GetVar('public_key').Trim;
-//           if s = '' then
-//             raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['A public key is required']);
-//           if s.StartsWith('-----BEGIN CERTIFICATE-----') then
-//             jwks := loadFromRsaDer(s)
-//           else
-//             jwks := TJWKList.create(s);
-//           try
-//             json := TJsonObject.Create;
-//             try
-//               jwks.writeToJson(json);
-//               client.publicKey := TJSONWriter.writeObjectStr(json);
-//             finally
-//               json.free;
-//             end;
-//           finally
-//             jwks.free;
-//           end;
-//           end;
-//      else
-//        raise EFHIRException.Createlang('MSG_UNKNOWN_CONTENT', request.AcceptLanguage, ['Mode', 'Processing Registration']);
-//      end;
-//
-//      if client.secret <> ''  then
-//        result := '<p><b>Success</b><br/>Your client has been Registered and assigned a client_id of "'+FContext.Storage.storeClient(client, session.Key)+'". Use "'+client.secret+'" as your client secret</p>'
-//      else
-//        result := '<p><b>Success</b><br/>Your client has been Registered and assigned a client_id of "'+FContext.Storage.storeClient(client, session.Key)+'"</p>'
-//    finally
-//      client.Free;
-//    end;
-//  finally
-//    pm.free;
-//  end;
-//end;
-//
+function TFhirWebServerEndpoint.processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
+var
+  pm : TParseMap;
+  client : TRegisteredClientInformation;
+  s : String;
+  jwks : TJWKList;
+  json : TJsonObject;
+begin
+  if session = nil then
+    raise EFHIRException.Createlang('MSG_AUTH_REQUIRED', request.AcceptLanguage);
+
+  pm := TParseMap.create(request.UnparsedParams);
+  try
+    client := TRegisteredClientInformation.Create;
+    try
+      client.name := pm.GetVar('client_name').Trim;
+      if client.name = '' then
+        raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['client_name']);
+      client.url := pm.GetVar('client_uri').Trim;
+      client.logo := pm.GetVar('logo_uri').Trim;
+      client.softwareId := pm.GetVar('software_id').Trim;
+      client.softwareVersion := pm.GetVar('software_version').Trim;
+      client.PatientContext := pm.getVar('ctxt-patient') <> '';
+      case StrToIntDef(pm.GetVar('mode'), 0) of
+        1: begin
+           client.mode := rcmOAuthClient;
+           client.secret := NewGuidId;
+           client.redirects.Text := pm.GetVar('redirect_uris');
+           end;
+        2: begin
+           client.mode := rcmOAuthClient;
+           client.redirects.Text := pm.GetVar('redirect_uris');
+           end;
+        3: begin
+           client.mode := rcmBackendServices;
+           client.issuer := pm.GetVar('issuer').Trim;
+           if (client.issuer = '') then
+            raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['issuer']);
+           s := pm.GetVar('public_key').Trim;
+           if s = '' then
+             raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['A public key is required']);
+           if s.StartsWith('-----BEGIN CERTIFICATE-----') then
+             jwks := loadFromRsaDer(s)
+           else
+             jwks := TJWKList.create(s);
+           try
+             json := TJsonObject.Create;
+             try
+               jwks.writeToJson(json);
+               client.publicKey := TJSONWriter.writeObjectStr(json);
+             finally
+               json.free;
+             end;
+           finally
+             jwks.free;
+           end;
+           end;
+      else
+        raise EFHIRException.Createlang('MSG_UNKNOWN_CONTENT', request.AcceptLanguage, ['Mode', 'Processing Registration']);
+      end;
+
+      if client.secret <> ''  then
+        result := '<p><b>Success</b><br/>Your client has been Registered and assigned a client_id of "'+FContext.Storage.storeClient(client, session.Key)+'". Use "'+client.secret+'" as your client secret</p>'
+      else
+        result := '<p><b>Success</b><br/>Your client has been Registered and assigned a client_id of "'+FContext.Storage.storeClient(client, session.Key)+'"</p>'
+    finally
+      client.Free;
+    end;
+  finally
+    pm.free;
+  end;
+end;
+
+
 procedure TFhirWebServerEndpoint.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   thread : TAsyncTaskThread;
@@ -3357,10 +3359,10 @@ begin
 
   s := FWebServer.FSourceProvider.getSource(actual);
   // actions....
-//  if s.Contains('<!--[%clientregistration%]-->') then
-//  begin
-//    s := s.Replace('<!--[%clientregistration%]-->', processRegistration(request, session), [rfReplaceAll]);
-//  end;
+  if s.Contains('<!--[%clientregistration%]-->') then
+  begin
+    s := s.Replace('<!--[%clientregistration%]-->', processRegistration(request, session), [rfReplaceAll]);
+  end;
 
   s := s.Replace('[%id%]', FWebServer.FName, [rfReplaceAll]);
   s := s.Replace('[%specurl%]', factory.specUrl, [rfReplaceAll]);
@@ -3520,24 +3522,24 @@ begin
 end;
 {$ENDIF}
 
-//function TFhirWebServerEndPoint.loadFromRsaDer(cert: string): TJWKList;
-//var
-//  fn : String;
-//begin
-//  fn := FHIR.Support.Utilities.Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
-//  StringToFile(cert, fn, TEncoding.UTF8);
-//  try
-//    result := TJWKList.create;
-//    try
-//      result.Add(TJWTUtils.loadKeyFromRSACert(ansiString(fn)));
-//      result.Link;
-//    finally
-//      result.Free;
-//    end;
-//  finally
-//    DeleteFile(fn);
-//  end;
-//end;
+function TFhirWebServerEndPoint.loadFromRsaDer(cert: string): TJWKList;
+var
+  fn : String;
+begin
+  fn := FHIR.Support.Utilities.Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
+  StringToFile(cert, fn, TEncoding.UTF8);
+  try
+    result := TJWKList.create;
+    try
+      result.Add(TJWTUtils.loadKeyFromRSACert(ansiString(fn)));
+      result.Link;
+    finally
+      result.Free;
+    end;
+  finally
+    DeleteFile(fn);
+  end;
+end;
 
 procedure TFhirWebServerEndPoint.checkRequestByJs(context: TOperationContext; request: TFHIRRequest);
 begin
