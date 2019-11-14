@@ -281,7 +281,7 @@ begin
             Memo.SelStart := Length(Memo.Text) - 1;
             Memo.GoToTextEnd;
             memo.EndUpdate;
-            Application.ProcessMessages();
+//            Application.ProcessMessages();
             Memo.GoToTextEnd;
  //           memo.Dispatch();
           end;
