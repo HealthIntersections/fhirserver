@@ -1,0 +1,279 @@
+object PackageEditorFrame: TPackageEditorFrame
+  Size.Width = 930.000000000000000000
+  Size.Height = 651.000000000000000000
+  Size.PlatformDefault = False
+  object Panel1: TPanel
+    Align = Top
+    Size.Width = 930.000000000000000000
+    Size.Height = 204.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 23
+    OnResize = Panel1Resize
+    object Label1: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 10.000000000000000000
+      Text = 'Package Id'
+      TabOrder = 11
+    end
+    object lblVersion: TLabel
+      Position.X = 320.000000000000000000
+      Position.Y = 8.000000000000000000
+      Text = 'Version'
+      TabOrder = 10
+    end
+    object lblType: TLabel
+      Position.X = 320.000000000000000000
+      Position.Y = 34.000000000000000000
+      Text = 'Type'
+      TabOrder = 9
+    end
+    object lblLicense: TLabel
+      Position.X = 320.000000000000000000
+      Position.Y = 64.000000000000000000
+      Text = 'License'
+      TabOrder = 8
+    end
+    object Label5: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 64.000000000000000000
+      Text = 'Canonical'
+      TabOrder = 1
+    end
+    object Label6: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 91.000000000000000000
+      Text = 'Home Page'
+      TabOrder = 0
+    end
+    object lblUrl: TLabel
+      Position.X = 320.000000000000000000
+      Position.Y = 88.000000000000000000
+      Text = 'Url'
+      TabOrder = 5
+    end
+    object Label8: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 118.000000000000000000
+      Text = 'Title'
+      TabOrder = 4
+    end
+    object Label9: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 146.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Description'
+      TabOrder = 3
+    end
+    object lblAuthor: TLabel
+      Position.X = 320.000000000000000000
+      Position.Y = 116.000000000000000000
+      Text = 'Author'
+      TabOrder = 2
+    end
+    object Label11: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 37.000000000000000000
+      Text = 'FHIR Versions'
+      TabOrder = 7
+    end
+    object Label12: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 175.000000000000000000
+      Text = 'Dependencies'
+      TabOrder = 6
+    end
+    object edtPackageId: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 18
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 217.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtFHIRVersions: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 17
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 35.000000000000000000
+      Size.Width = 217.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtCanonical: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 16
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 62.000000000000000000
+      Size.Width = 217.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtHomePage: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 15
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 89.000000000000000000
+      Size.Width = 217.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtDescription: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 14
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 144.000000000000000000
+      Size.Width = 513.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtTitle: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 12
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 116.000000000000000000
+      Size.Width = 217.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtDependencies: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 13
+      ReadOnly = True
+      Position.X = 88.000000000000000000
+      Position.Y = 172.000000000000000000
+      Size.Width = 513.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object Panel2: TPanel
+    Align = Client
+    Size.Width = 930.000000000000000000
+    Size.Height = 447.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 24
+    object grid: TStringGrid
+      Align = Client
+      CanFocus = True
+      ClipChildren = True
+      Size.Width = 930.000000000000000000
+      Size.Height = 414.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Viewport.Width = 910.000000000000000000
+      Viewport.Height = 389.000000000000000000
+      object StringColumn2: TStringColumn
+        Header = 'Name'
+      end
+      object StringColumn3: TStringColumn
+        Header = 'Type'
+      end
+      object StringColumn4: TStringColumn
+        Header = 'Id'
+      end
+      object StringColumn5: TStringColumn
+        Header = 'Size'
+      end
+      object StringColumn6: TStringColumn
+        Header = 'URL'
+      end
+      object StringColumn7: TStringColumn
+        Header = 'Version'
+      end
+      object StringColumn8: TStringColumn
+        Header = 'Kind'
+      end
+      object StringColumn9: TStringColumn
+        Header = 'Type'
+      end
+    end
+    object Panel4: TPanel
+      Align = Top
+      Size.Width = 930.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object Label2: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'File Contents'
+        TabOrder = 0
+      end
+      object Label3: TLabel
+        Position.X = 152.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'Filter:'
+        TabOrder = 1
+      end
+      object edtFilter: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 2
+        Position.X = 192.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 289.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        OnChangeTracking = edtFilterChangeTracking
+      end
+    end
+  end
+  object edtVersion: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 18
+    ReadOnly = True
+    Position.X = 384.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtType: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 17
+    ReadOnly = True
+    Position.X = 384.000000000000000000
+    Position.Y = 35.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtLicense: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 16
+    ReadOnly = True
+    Position.X = 384.000000000000000000
+    Position.Y = 62.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtUrl: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 15
+    ReadOnly = True
+    Position.X = 384.000000000000000000
+    Position.Y = 89.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtAuthor: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 13
+    ReadOnly = True
+    Position.X = 384.000000000000000000
+    Position.Y = 116.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+end

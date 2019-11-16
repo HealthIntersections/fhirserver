@@ -54,7 +54,7 @@ uses
 {$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, PublisherHome, ShellApi, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
-  PackageManagerFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame,
+  PackageManagerFrame, PackageEditorFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame,
   BaseFrame;
 
 type
@@ -540,36 +540,61 @@ procedure TMasterToolsForm.btnOpenClick(Sender: TObject);
 var
   res: TFHIRResource;
   format: TFHIRFormat;
+  s : String;
+  frame: TPackageEditorFrame;
+  tab : TTabItem;
 begin
   if odFile.execute then
   begin
     try
-      format := ffUnspecified;
-      res := fileToResource(odFile.filename, format);
-      try
-        if res is TFhirCapabilityStatement then
-          openResourceFromFile(odFile.filename, res, format, TCapabilityStatementEditorFrame)
-        else if res is TFhirValueSet then
-          openResourceFromFile(odFile.filename, res, format, TValueSetEditorFrame)
-        else if res is TFhirCodeSystem then
-          openResourceFromFile(odFile.filename, res, format, TCodeSystemEditorFrame)
-        else if res is TFhirQuestionnaire then
-          openResourceFromFile(odFile.filename, res, format, TQuestionnaireEditorFrame)
-        else if res is TFhirLibrary then
-          openResourceFromFile(odFile.filename, res, format, TLibraryEditorFrame)
-{$IFDEF EXAMPLESCENARIO}
-        else if res is TFHIRExampleScenario then
-          openResourceFromFile(odFile.filename, res, format, TExampleScenarioEditorFrame)
-{$ENDIF}
-{$IFDEF IMPLEMENTATIONGUIDE}
-        else if res is TFHIRImplementationGuide then
-          openResourceFromFile(odFile.filename, res, format, TImplementationGuideEditorFrame)
-{$ENDIF}
-        else
-          MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
-      finally
-        res.Free;
-      end;
+      s := odFile.fileName;
+      if (s.endsWith('.tgz')) then
+      begin
+        tab := tbMain.Add(TTabItem);
+        tbMain.ActiveTab := tab;
+        tab.Text := odFile.fileName;
+        frame := TPackageEditorFrame.Create(tab);
+        frame.form := self;
+        tab.TagObject := frame;
+        frame.TagObject := tab;
+        frame.Parent := tab;
+        frame.tabs := tbMain;
+        frame.OnWork := dowork;
+        frame.Settings := FSettings.Link;
+        frame.tab := tab;
+        frame.Align := TAlignLayout.Client;
+        frame.Source := s;
+        frame.load;
+      end
+      else
+      begin
+        format := ffUnspecified;
+        res := fileToResource(odFile.filename, format);
+        try
+          if res is TFhirCapabilityStatement then
+            openResourceFromFile(odFile.filename, res, format, TCapabilityStatementEditorFrame)
+          else if res is TFhirValueSet then
+            openResourceFromFile(odFile.filename, res, format, TValueSetEditorFrame)
+          else if res is TFhirCodeSystem then
+            openResourceFromFile(odFile.filename, res, format, TCodeSystemEditorFrame)
+          else if res is TFhirQuestionnaire then
+            openResourceFromFile(odFile.filename, res, format, TQuestionnaireEditorFrame)
+          else if res is TFhirLibrary then
+            openResourceFromFile(odFile.filename, res, format, TLibraryEditorFrame)
+  {$IFDEF EXAMPLESCENARIO}
+          else if res is TFHIRExampleScenario then
+            openResourceFromFile(odFile.filename, res, format, TExampleScenarioEditorFrame)
+  {$ENDIF}
+  {$IFDEF IMPLEMENTATIONGUIDE}
+          else if res is TFHIRImplementationGuide then
+            openResourceFromFile(odFile.filename, res, format, TImplementationGuideEditorFrame)
+  {$ENDIF}
+          else
+            MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+        finally
+          res.Free;
+        end;
+      end;  
     except
       on e: Exception do
         MessageDlg('Error reading Resource: ' + e.Message, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);

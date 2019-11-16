@@ -38,7 +38,7 @@ uses
   FMX.Memo, FMX.TreeView,
   BaseFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx, FHIR.Ui.Fmx,
-  FHIR.Cache.PackageManager;
+  FHIR.Cache.PackageManager, PackageEditorFrame;
 
 const
   PCMode_User = true;
@@ -377,9 +377,25 @@ end;
 procedure TPackageManagerFrame.mnuOpenClick(Sender: TObject);
 var
   vi : TFHIRPackageVersionInfo;
+  frame: TPackageEditorFrame;
+  tab : TTabItem;
 begin
   vi := (tvPackages.Selected.TagObject as TFHIRPackageVersionInfo);
-  TFileLauncher.Open(vi.folder);
+  tab := Tabs.Add(TTabItem);
+  tabs.ActiveTab := tab;
+  tab.Text := ExtractFileName(vi.folder);
+  frame := TPackageEditorFrame.Create(tab);
+  frame.form := form;
+  tab.TagObject := frame;
+  frame.TagObject := tab;
+  frame.Parent := tab;
+  frame.tabs := tabs;
+  frame.OnWork := OnWork;
+  frame.Settings := Settings.Link;
+  frame.tab := tab;
+  frame.Align := TAlignLayout.Client;
+  frame.Source := vi.folder;
+  frame.load;
 end;
 
 procedure TPackageManagerFrame.pmPackagePopup(Sender: TObject);

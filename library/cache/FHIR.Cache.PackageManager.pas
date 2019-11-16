@@ -48,29 +48,67 @@ type
     FId : String;
     FURL : String;
     FVersion : String;
+    FSize: Integer;
+    FKind: String;
+    FResourceType: String;
   public
     function Link : TNpmFileInfo;
 
     property Name : String read FName write FName;
-    property Typ : String read FType write FType;
+    property ResourceType : String read FResourceType write FResourceType;
     property Id : String read FId write FId;
+    property TypeV : String read FType write FType;
+    property Kind : String read FKind write FKind;
     property URL : String read FURL write FURL;
     property Version : String read FVersion write FVersion;
+    property size : Integer read FSize write FSize;
+
+    function matches(text : String) : boolean;
   end;
 
   TNpmPackageInfo = class (TFslObject)
   private
     FFiles : TFslList<TNpmFileInfo>;
     FPackage: TJsonObject;
-    procedure load(folder : String);
+    FIndex: TJsonObject;
+    class function loadArchive(content: TBytes): TDictionary<String, TBytes>;
+    function GetAuthor: string;
+    function GetCanonical: string;
+    function GetDependencies: string;
+    function GetDescription: string;
+    function GetFhirVersions: string;
+    function GetHomePage: string;
+    function GetLicense: string;
+    function GetPackageId: string;
+    function GetTitle: string;
+    function GetType: string;
+    function GetUrl: string;
+    function GetVersion: string;
   public
-    constructor Create(folder : String);
+    constructor Create;
     destructor Destroy; override;
 
     function Link : TNpmPackageInfo;
 
     property Files : TFslList<TNpmFileInfo> read FFiles;
     property package : TJsonObject read FPackage write FPackage;
+
+    property packageId : string read GetPackageId;
+    property fhirVersions : string read GetFhirVersions;
+    property canonical : string read GetCanonical;
+    property homePage : string read GetHomePage;
+    property title : string read GetTitle;
+    property version : string read GetVersion;
+    property typeV : string read GetType;
+    property license : string read GetLicense;
+    property url : string read GetUrl;
+    property author : string read GetAuthor;
+    property description : string read GetDescription;
+    property dependencies : string read GetDependencies;
+
+    class function fromFolder(folder : String; size : boolean) : TNpmPackageInfo;
+    class function fromPackage(bytes : TBytes) : TNpmPackageInfo;
+    class function fromSource(source : String; size : boolean) : TNpmPackageInfo;
   end;
 
   TPackageDefinition = class (TFslObject)
@@ -638,6 +676,17 @@ begin
                 if (v.url = '') then
                   v.url := npm.package.str['url'];
 
+                if Fini.ReadString('packages', ExtractFileName(s), '') <> '' then
+                  v.installed := TFslDateTime.fromFormat('yyyymmddhhnnss', Fini.ReadString('packages', ExtractFileName(s), '')).DateTime
+                else
+                  v.installed := 0;
+                v.size := Fini.ReadInteger('package-sizes', ExtractFileName(s), 0);
+                if (v.size = 0) then
+                begin
+                  v.size := checkPackageSize(s);
+                  Fini.WriteInteger('package-sizes', ExtractFileName(s), v.size);
+                end;
+
 //                if npm.str['name'] = 'hl7.fhir.core' then
 //                  v.fhirVersion := npm.str['version']
 //                else
@@ -913,12 +962,12 @@ begin
     c := 0;
     for fi in npm.Files do
     begin
-      if not isIgnored(ExtractFileName(fi.Name)) and ((resources = nil) or resources.contains(fi.Typ)) then
+      if not isIgnored(ExtractFileName(fi.Name)) and ((resources = nil) or resources.contains(fi.ResourceType)) then
       begin
         f := TFileStream.Create(path([FFolder, id+'#'+ver, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
           try
-            loadEvent(fi.typ, fi.id, f);
+            loadEvent(fi.ResourceType, fi.id, f);
           except
             on e : Exception do
             begin
@@ -949,7 +998,7 @@ begin
   begin
     if not FileExists(Path([folder, 'package', '.index.json'])) then
       buildPackageIndex(folder);
-    result := TNpmPackageInfo.Create(Path([folder]));
+    result := TNpmPackageInfo.fromFolder(Path([folder]), false);
     FCache.add(folder, result.Link);
   end;
 end;
@@ -1506,19 +1555,171 @@ end;
 
 { TNpmPackageInfo }
 
-constructor TNpmPackageInfo.Create(folder: String);
+constructor TNpmPackageInfo.Create;
 begin
   inherited create;
   FFiles := TFslList<TNpmFileInfo>.create;
   FPackage := nil;
-  load(Folder);
 end;
 
 destructor TNpmPackageInfo.Destroy;
 begin
   FFiles.Free;
   FPackage.Free;
+  FIndex.Free;
   inherited;
+end;
+
+class function TNpmPackageInfo.fromPackage(bytes : TBytes): TNpmPackageInfo;
+var
+  files : TDictionary<String, TBytes>;
+  npm, index : TJsonObject;
+  indexer : TNpmPackageIndexBuilder;
+  s : String;
+  fi : TJsonObject;
+  i : TJsonNode;
+  nfi : TNpmFileInfo;
+begin
+  result := TNpmPackageInfo.Create;
+  try
+    files := loadArchive(bytes);
+    try
+      result.FPackage := TJSONParser.Parse(files['package\package.json']);
+      if not files.ContainsKey('package\.index.json') then
+      begin
+        indexer := TNpmPackageIndexBuilder.create;
+        try
+          for s in files.Keys do
+          begin
+            if (length(files[s]) > 0) and (s.StartsWith('package\')) then
+              indexer.seeFile(s.Substring(8), files[s]);
+          end;
+          result.FIndex := TJSONParser.Parse(indexer.build);
+        finally
+          indexer.free;
+        end;
+      end
+      else
+       result.FIndex := TJSONParser.Parse(files['package\.index.json']);
+    for i in result.FIndex.forceArr['files'] do
+    begin
+      fi := i as TJsonObject;
+      nfi := TNpmFileInfo.Create;
+      try
+        nfi.Name := fi.str['filename'];
+        nfi.ResourceType := fi.str['resourceType'];
+        nfi.Id := fi.str['id'];
+        nfi.URL := fi.str['url'];
+        nfi.Version := fi.str['version'];
+        nfi.Kind := fi.str['kind'];
+        nfi.TypeV := fi.str['type'];
+        nfi.size := length(files['package\'+nfi.Name]);
+
+        result.FFiles.Add(nfi.Link);
+      finally
+        nfi.Free;
+      end;
+    end;
+    finally
+      files.Free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+class function TNpmPackageInfo.fromSource(source: String; size : boolean): TNpmPackageInfo;
+begin
+  if FolderExists(source) then
+    result := fromFolder(source, size)
+  else
+    result := fromPackage(FileToBytes(source));
+end;
+
+function TNpmPackageInfo.GetAuthor: string;
+begin
+  result := FPackage.vStr['author'];
+end;
+
+function TNpmPackageInfo.GetCanonical: string;
+begin
+  result := FPackage.vStr['canonical'];
+end;
+
+function TNpmPackageInfo.GetDependencies: string;
+var
+  dep : TJsonObject;
+  o : TJsonObject;
+  s : String;
+begin
+  result := '';
+  dep := FPackage.obj['dependencies'];
+  if dep <> nil then
+  begin
+    for s in dep.properties.Keys do
+    begin
+      result := result + ', '+s+'#'+dep.str[s];
+    end;
+    result := result.Substring(2);
+  end;
+end;
+
+function TNpmPackageInfo.GetDescription: string;
+begin
+  result := FPackage.vStr['description'];
+end;
+
+function TNpmPackageInfo.GetFhirVersions: string;
+var
+  arr : TJsonArray;
+  i : integer;
+begin
+  result := '';
+  arr := FPackage.arr['fhir-version-list'];
+  if arr <> nil then
+  begin
+    for i := 0 to arr.Count - 1 do
+    begin
+      result := result + ', '+arr.Value[i];
+    end;
+    result := result.Substring(2);
+  end;
+end;
+
+function TNpmPackageInfo.GetHomePage: string;
+begin
+  result := FPackage.vStr['homePage'];
+end;
+
+function TNpmPackageInfo.GetLicense: string;
+begin
+  result := FPackage.vStr['license'];
+end;
+
+function TNpmPackageInfo.GetPackageId: string;
+begin
+  result := FPackage.vStr['name'];
+end;
+
+function TNpmPackageInfo.GetTitle: string;
+begin
+  result := FPackage.vStr['title'];
+end;
+
+function TNpmPackageInfo.GetType: string;
+begin
+  result := FPackage.vStr['type'];
+end;
+
+function TNpmPackageInfo.GetUrl: string;
+begin
+  result := FPackage.vStr['url'];
+end;
+
+function TNpmPackageInfo.GetVersion: string;
+begin
+  result := FPackage.vStr['version'];
 end;
 
 function TNpmPackageInfo.Link: TNpmPackageInfo;
@@ -1526,33 +1727,90 @@ begin
   result := TNpmPackageInfo(inherited link);
 end;
 
-procedure TNpmPackageInfo.load(folder : String);
+class function TNpmPackageInfo.loadArchive(content: TBytes): TDictionary<String, TBytes>;
 var
-  json, fi : TJsonObject;
+  bo, bi : TBytesStream;
+  tar : TTarArchive;
+  DirRec : TTarDirRec;
+  z : TZDecompressionStream;
+  fn : String;
+  b : TBytes;
+begin
+  result := TDictionary<String, TBytes>.create;
+  try
+    bo := TBytesStream.Create(content);
+    try
+      z := TZDecompressionStream.Create(bo, 15+16);
+      try
+        tar := TTarArchive.Create(z);
+        try
+          tar.Reset;
+          while tar.FindNext(DirRec) do
+          begin
+            fn := String(DirRec.Name);
+            fn := fn.replace('/', '\');
+            if not fn.contains('@') then
+            begin
+              bi := TBytesStream.Create;
+              try
+                tar.ReadFile(bi);
+                b := bi.Bytes;
+                if result.ContainsKey(fn) then
+                  raise EFSLException.Create('Duplicate Entry: '+fn);
+                result.Add(fn, copy(b, 0, bi.Size));
+              finally
+                bi.free;
+              end;
+            end;
+          end;
+        finally
+          tar.Free;
+        end;
+      finally
+        z.Free;
+      end;
+    finally
+      bo.free;
+    end;
+  except
+    result.Free;
+    raise;
+  end;
+end;
+
+class function TNpmPackageInfo.fromFolder(folder : String; size : boolean) : TNpmPackageInfo;
+var
+  fi : TJsonObject;
   i : TJsonNode;
   nfi : TNpmFileInfo;
 begin
-  FPackage := TJSONParser.ParseFile(Path([folder, 'package', 'package.json']));
-  json := TJSONParser.ParseFile(Path([folder, 'package', '.index.json']));
+  result := TNpmPackageInfo.Create;
   try
-    for i in json.forceArr['files'] do
+    result.FPackage := TJSONParser.ParseFile(Path([folder, 'package', 'package.json']));
+    result.FIndex := TJSONParser.ParseFile(Path([folder, 'package', '.index.json']));
+    for i in result.FIndex.forceArr['files'] do
     begin
       fi := i as TJsonObject;
       nfi := TNpmFileInfo.Create;
       try
         nfi.Name := fi.str['filename'];
-        nfi.Typ := fi.str['resourceType'];
+        nfi.ResourceType := fi.str['resourceType'];
         nfi.Id := fi.str['id'];
         nfi.URL := fi.str['url'];
         nfi.Version := fi.str['version'];
+        nfi.Kind := fi.str['kind'];
+        nfi.TypeV := fi.str['type'];
+        if (size) then
+          nfi.size := FileSize(path([folder, 'package', nfi.Name]));
 
-        FFiles.Add(nfi.Link);
+        result.FFiles.Add(nfi.Link);
       finally
         nfi.Free;
       end;
     end;
+    result.link;
   finally
-    json.Free;
+    result.Free;
   end;
 end;
 
@@ -1561,6 +1819,18 @@ end;
 function TNpmFileInfo.Link: TNpmFileInfo;
 begin
   result := TNpmFileInfo(inherited link);
+end;
+
+function TNpmFileInfo.matches(text: String): boolean;
+begin
+  text := text.ToLower;
+  result := FName.ToLower.Contains(text) or
+    FType.ToLower.Contains(text) or
+    FId.ToLower.Contains(text) or
+    FURL.ToLower.Contains(text) or
+    FVersion.ToLower.Contains(text) or
+    FKind.ToLower.Contains(text) or
+    FResourceType.ToLower.Contains(text);
 end;
 
 end.

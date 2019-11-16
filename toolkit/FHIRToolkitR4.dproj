@@ -171,7 +171,7 @@
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_Build>1</VerInfo_Build>
         <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=FHIR Toolkit;CFBundleIdentifier=org.fhir.tools.toolkit;CFBundleVersion=0.0.1;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities;NSLocationAlwaysUsageDescription=The reason for accessing the location information of the user;NSLocationWhenInUseUsageDescription=The reason for accessing the location information of the user;NSContactsUsageDescription=The reason for accessing the contacts;CFBundleShortVersionString=1.0.0;NSLocationAlwaysAndWhenInUseUsageDescription=The reason for accessing the location information of the user</VerInfo_Keys>
-        <DCC_UnitAlias>FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.Tags=FHIR.R4.Tags;FHIR.Version.TestCases=FHIR.R4.TestCases;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Base=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Factory=FHIR.R4.Factory;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.ParserBase=FHIR.R4.ParserBase;FHIR.Version.Patch=FHIR.R4.Patch;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.PathNode=FHIR.R4.PathNode;$(DCC_UnitAlias);$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.Tags=FHIR.R4.Tags;FHIR.Version.TestCases=FHIR.R4.TestCases;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Base=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Factory=FHIR.R4.Factory;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.ParserBase=FHIR.R4.ParserBase;FHIR.Version.Patch=FHIR.R4.Patch;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Organiser=FHIR.R4.Organiser;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r4osx</DCC_DcuOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
@@ -262,7 +262,6 @@
         <DCCReference Include="BaseFrame.pas"/>
         <DCCReference Include="ValueSetEditor.pas">
             <Form>ValueSetEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="SearchParameterCombinationEditor.pas">
@@ -294,20 +293,16 @@
         </DCCReference>
         <DCCReference Include="SettingsDialog.pas">
             <Form>FHIR.Npp.Settings</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="AboutDialog.pas">
             <Form>AboutForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.OSX.pas"/>
         <DCCReference Include="ValuesetSelectDialog.pas">
             <Form>ValuesetSelectForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="MemoEditorDialog.pas">
             <Form>MemoEditorForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\library\client\FHIR.Client.Registry.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.ServerDialogFMX.pas">
@@ -316,28 +311,23 @@
         <DCCReference Include="ToolkitSettings.pas"/>
         <DCCReference Include="CodeSystemEditor.pas">
             <Form>CodeSystemEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="CodeSystemConceptDialog.pas">
             <Form>CodeSystemConceptForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="ResourceEditingSupport.pas"/>
         <DCCReference Include="ToolKitUtilities.pas"/>
         <DCCReference Include="UpgradeNeededDialog.pas">
             <Form>UpgradeNeededForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="QuestionnaireEditor.pas">
             <Form>QuestionnaireEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\web\FHIR.Web.HtmlGen.pas"/>
         <DCCReference Include="QuestionnaireItemDialog.pas">
             <Form>QuestionnaireItemForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="ProviderDirectoryForm.pas">
             <Form>ProviderDirectoryFrame</Form>
@@ -361,23 +351,19 @@
         </DCCReference>
         <DCCReference Include="RegistryForm.pas">
             <Form>RegistryFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.ComboFMX.pas"/>
         <DCCReference Include="PatientHomeForm.pas">
             <Form>PatientHomeFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="DocumentGenerationForm.pas">
             <Form>DocumentGeneratorForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="LibraryEditor.pas">
             <Form>LibraryEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\ucum\FHIR.Ucum.IFace.pas"/>
@@ -415,23 +401,19 @@
         <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="TransformationFrame.pas">
             <Form>TransformationEngineFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="ValidationFrame.pas">
             <Form>ValidationEngineFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="PackageManagerFrame.pas">
             <Form>PackageManagerFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\tools\FHIR.Tools.ValidationWrapper.pas"/>
         <DCCReference Include="PackageBrowser.pas">
             <Form>PackageFinderForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\library\support\fhir.support.fpc.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Utilities.pas"/>
@@ -441,31 +423,26 @@
         <DCCReference Include="..\library\r4\FHIR.R4.OpBase.pas"/>
         <DCCReference Include="OsxPopupmenuWorkaround.pas">
             <Form>PopupMenuWorkaroundForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\library\r4\FHIR.R4.AuthMap.pas"/>
         <DCCReference Include="IGPublisher.pas">
             <Form>IGPublishForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="FDownloadForm.pas">
             <Form>IGSettingsForm</Form>
         </DCCReference>
         <DCCReference Include="ImplementationGuideEditor.pas">
             <Form>ImplementationGuideEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\support\FHIR.Support.Lang.pas"/>
         <DCCReference Include="QuestionnaireContextDialog.pas">
             <Form>QuestionnaireContextForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.Graph.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.ObsGraph.pas"/>
         <DCCReference Include="DiffEngineFrame.pas">
             <Form>DiffEngineEngineFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\library\tools\FHIR.Tools.DiffEngine.pas"/>
@@ -486,7 +463,6 @@
         <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
         <DCCReference Include="ResourceHistoryDialog.pas">
             <Form>ResourceHistoryForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.Fmx.pas"/>
@@ -495,7 +471,6 @@
         </DCCReference>
         <DCCReference Include="UTGMgmtFrame.pas">
             <Form>UTGManagementFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\dependencies\git\uGitForDelphi.pas"/>
@@ -505,6 +480,12 @@
             <Form>PublisherForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\support\FHIR.Support.Shell.pas"/>
+        <DCCReference Include="BaseFileFrame.pas"/>
+        <DCCReference Include="PackageEditorFrame.pas">
+            <Form>PackageEditorFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -532,6 +513,79 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX64\Debug\FHIRToolkitR4.dSYM" Configuration="Debug" Class="ProjectOSXDebug">
+                    <Platform Name="OSX64">
+                        <RemoteName>FHIRToolkitR4</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-150.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="OSX64">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkitR4.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX64\Debug\FHIRToolkitR4.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
+                    <Platform Name="OSX64">
+                        <RemoteName>Info.plist</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX64\Debug\FHIRToolkitR4.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
+                    <Platform Name="OSX64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="OSX32">
+                        <RemoteName>FHIRToolkitR4</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
                     <Platform Name="OSX32">
                         <RemoteName>Info.plist</RemoteName>
@@ -545,17 +599,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
                     <Platform Name="OSX32">
-                        <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>FHIRToolkit.icns</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -569,22 +615,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
-                    <Platform Name="OSX32">
-                        <RemoteName>FHIRToolkit.icns</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\Exec\64\FHIRToolkitR4.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRToolkitR4.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-150.png" Configuration="Debug" Class="UWP_DelphiLogo150">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -593,21 +626,8 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>FHIRToolkitR4.rsm</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\Exec\64\FHIRToolkitR4.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRToolkitR4.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -631,19 +651,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win64">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
+                <DeployFile LocalName="OSX64\Debug\FHIRToolkitR4" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="OSX64">
+                        <RemoteName>FHIRToolkitR4</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -652,21 +667,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR4" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="OSX32">
-                        <RemoteName>FHIRToolkitR4</RemoteName>
+                <DeployFile LocalName="fhr.icns" Configuration="Debug" Class="ProjectOSXResource">
+                    <Platform Name="OSX64">
+                        <RemoteName>FHIRToolkitR4.icns</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="C:\work\fhirserver\Exec\64\FHIRToolkitR4.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>FHIRToolkitR4.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

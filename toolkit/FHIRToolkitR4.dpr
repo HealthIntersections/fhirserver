@@ -28,7 +28,9 @@ POSSIBILITY OF SUCH DAMAGE.
 program FHIRToolkitR4;
 
 uses
+  {$IFNDEF MACOS}
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
+  {$ENDIF }
   SysUtils,
   IdSSLOpenSSLHeaders,
   FMX.Forms,
@@ -181,7 +183,9 @@ uses
   FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas',
   FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas',
   PublisherHome in '..\utilities\publisher\PublisherHome.pas' {PublisherForm},
-  FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas';
+  FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas',
+  BaseFileFrame in 'BaseFileFrame.pas',
+  PackageEditorFrame in 'PackageEditorFrame.pas' {PackageEditorFrame: TFrame};
 
 {$R *.res}
 
