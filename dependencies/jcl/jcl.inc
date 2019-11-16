@@ -375,7 +375,7 @@ ALERT_jedi_inc_incompatible
       // This file should be located in directory jcl/source/include
       // It is automatically created by the JCL installer
       // For manual installations, copy and adjust jcl/source/include/jcl.template.inc
-      {$I jclfpc.inc}
+      {$I jclfpc.inc}   8
       {$DEFINE JCL_CONFIGURED}
     {$ENDIF FPC}
     {----------------------------}

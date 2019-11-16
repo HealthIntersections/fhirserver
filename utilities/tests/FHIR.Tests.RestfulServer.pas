@@ -1130,7 +1130,7 @@ begin
   tester := TSmartOnFhirTestingLogin.create;
   try
     tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-    tester.server.host := 'localhost';
+    tester.server.thishost := 'localhost';
     tester.server.authorizeEndpoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.path + FEndpoint.AuthServer.AuthPath;
     tester.server.tokenEndPoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.path + FEndpoint.AuthServer.TokenPath;
     tester.scopes := 'openid profile user/*.*';
@@ -1226,7 +1226,7 @@ begin
     tester := TSmartOnFhirTestingLogin.create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-      tester.server.host := 'localhost';
+      tester.server.thishost := 'localhost';
       tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
       tester.server.tokenEndPoint := json.str['token_endpoint'];
       tester.scopes := 'openid profile user/*.*';
@@ -1261,7 +1261,7 @@ begin
     tester := TSmartOnFhirTestingLogin.create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-      tester.server.host := 'localhost';
+      tester.server.thishost := 'localhost';
       tester.server.authorizeEndpoint := cs.restList[0].security.getExtensionByUrl('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris').getExtensionString('authorize');
       tester.server.tokenEndPoint := cs.restList[0].security.getExtensionByUrl('http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris').getExtensionString('token');
       tester.scopes := 'openid fhirUser user/*.*';
@@ -1304,7 +1304,7 @@ begin
     tester := TSmartOnFhirTestingLogin.create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-      tester.server.host := 'localhost';
+      tester.server.thishost := 'localhost';
       tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
       tester.server.tokenEndPoint := json.str['token_endpoint'];
       tester.scopes := 'openid profile user/*.*';
@@ -1340,7 +1340,7 @@ begin
     tester := TSmartOnFhirTestingLogin.create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-      tester.server.host := 'localhost';
+      tester.server.thishost := 'localhost';
       tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
       tester.server.tokenEndPoint := json.str['token_endpoint'];
       tester.scopes := 'user/*.*';
@@ -1383,7 +1383,7 @@ begin
     tester := TSmartOnFhirTestingLogin.create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
-      tester.server.host := 'localhost';
+      tester.server.thishost := 'localhost';
       tester.server.authorizeEndpoint := json.str['authorization_endpoint'];
       tester.server.tokenEndPoint := json.str['token_endpoint'];
       tester.scopes := 'openid profile user/*.*';

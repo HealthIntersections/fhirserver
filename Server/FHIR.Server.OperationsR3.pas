@@ -555,6 +555,7 @@ begin
   expression := ctxt.PatientIdExpression(r.ResourceType);
   if expression <> nil then
   begin
+    CreateIndexer;
     path := Indexer.Engine as TFHIRPathEngine;
     matches := path.evaluate(request, r, r, expression);
     st := TStringList.Create;
