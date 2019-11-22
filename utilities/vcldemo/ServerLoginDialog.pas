@@ -267,7 +267,7 @@ begin
       server.clientsecret := CLIENT_SECRET;
     end;
     server.redirectport := StrToInt(edtRedirectPort.Text);
-    server.host := edtHost.Text;
+    server.thishost := edtHost.Text;
 
     FProgressForm.Message := 'Logging in';
     FProgressForm.Show;

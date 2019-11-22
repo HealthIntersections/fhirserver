@@ -251,6 +251,7 @@
         <DCCReference Include="..\..\Server\FHIR.Server.ConsentEngine.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.NDC.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.UsageStats.pas"/>
+        <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageManager.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -522,6 +523,12 @@
                 <DeployClass Name="Android_SplashImage960">
                     <Platform Name="Android">
                         <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_Strings">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

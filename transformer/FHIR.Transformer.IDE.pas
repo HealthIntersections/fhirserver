@@ -1450,7 +1450,7 @@ begin
   FPathSelection := TFslList<TPathSelection>.create;
 
   FCache := TResourceMemoryCache.create;
-  FCache.Packages := ['hl7.fhir.r4.core#4.0.1', 'hl7.fhir.cda#2.0'];
+  FCache.Packages := ['hl7.fhir.r4.core#4.0.1', 'hl7.fhir.cda#0.0.1'];
   FCache.ResourceTypes := [{'CodeSystem', 'ValueSet', }'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'];
   FCache.OnLog := cacheLog;
 

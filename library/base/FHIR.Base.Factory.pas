@@ -34,6 +34,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
+  FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.ElementModel,
   FHIR.Client.Base;
 
@@ -228,6 +229,7 @@ type
   TFHIRWorkerContextWithFactory = class (TFHIRWorkerContextV)
   private
     FFactory : TFHIRFactory;
+    FLoadInfo : TPackageLoadingInformation;
   public
     constructor Create(factory : TFHIRFactory); overload; virtual;
     destructor Destroy; override;
@@ -235,6 +237,7 @@ type
     function link : TFHIRWorkerContextWithFactory;
 
     property Factory : TFHIRFactory read FFactory;
+    property LoadInfo : TPackageLoadingInformation read FLoadInfo;
 
     procedure loadResourceJson(rType, id : String; json : TStream); override;
     procedure seeResource(res : TFHIRResourceV); overload; virtual; abstract;
@@ -379,10 +382,13 @@ constructor TFHIRWorkerContextWithFactory.Create(factory: TFHIRFactory);
 begin
   inherited Create;
   FFactory := factory;
+  FLoadInfo := TPackageLoadingInformation.Create(FFactory.versionString);
+  FLoadInfo.OnLoadEvent := loadResourceJson;
 end;
 
 destructor TFHIRWorkerContextWithFactory.Destroy;
 begin
+  FLoadInfo.Free;
   FFactory.free;
   inherited;
 end;

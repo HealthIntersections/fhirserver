@@ -1533,7 +1533,9 @@ function TFhirOperation.HandlesRequest(request: TFHIRRequest): boolean;
 var
   t : string;
 begin
-  result := (request.OperationName = Name) and StringArrayExistsSensitive(Types, request.ResourceName) and ((request.version <> fhirVersionRelease4) or (request.subId = ''));
+  result := (request.OperationName = Name) and
+    (((length(types) = 0) and (request.ResourceName = '')) or StringArrayExistsSensitive(Types, request.ResourceName)) and
+    ((request.version <> fhirVersionRelease4) or (request.subId = ''));
   if result then
   begin
     t := owningResource;

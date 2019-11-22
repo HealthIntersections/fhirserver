@@ -60,7 +60,8 @@ type
   TFHIRVersions = class (TFslObject)
   public
     class function matches(v1, v2 : String) : boolean;
-    class function getMajMin(v : String) : String;
+    class function getMajMin(v : String) : String; overload;
+    class function getMajMin(v : TFHIRVersion) : String; overload;
   end;
 
   TResourceWithReference = class (TFslObject)
@@ -458,6 +459,11 @@ begin
   end
   else
     result := '';
+end;
+
+class function TFHIRVersions.getMajMin(v: TFHIRVersion): String;
+begin
+  result := getMajMin(FHIR_VERSIONS[v])
 end;
 
 class function TFHIRVersions.matches(v1, v2 : String) : boolean;

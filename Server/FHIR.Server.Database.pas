@@ -3934,7 +3934,10 @@ begin
     fcmdCreate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdCreate;
     fcmdMetadata : result := true;
     fcmdUpload, fcmdTransaction : result := ServerContext.SupportTransaction;
-    fcmdOperation : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdOperation;
+    fcmdOperation : if resource = '' then
+        result := true
+      else
+        result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdOperation;
   else
     result := false;
   end;
@@ -5317,6 +5320,7 @@ var
   implGuides : TFslStringSet;
   cfg : TFHIRResourceConfig;
   pcm : TFHIRPackageManager;
+  li : TPackageLoadingInformation;
   res : TFslStringSet;
 begin
   ServerContext.SubscriptionManager := ServerContext.ServerFactory.makeSubscriptionManager(ServerContext);
@@ -5464,12 +5468,18 @@ begin
         // the order here is important: specification resources must be loaded prior to stored resources
         logt('  .. Load Package '+ServerContext.Factory.corePackage+'#' + ServerContext.Factory.versionString);
         pcm := TFHIRPackageManager.Create(false);
+        li := TPackageLoadingInformation.create(ServerContext.Factory.versionString);
         try
-          res := TFslStringSet.Create(['StructureDefinition', 'SearchParameter', 'CompartmentDefinition']); // we only load a few things; everything else is left to the database
+          li.OnLoadEvent := ServerContext.ValidatorContext.loadResourceJson;
           try
-            pcm.loadPackage(ServerContext.Factory.corePackage, ServerContext.Factory.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
+            res := TFslStringSet.Create(['StructureDefinition', 'SearchParameter', 'CompartmentDefinition']); // we only load a few things; everything else is left to the database
+            try
+              pcm.loadPackage(ServerContext.Factory.corePackage, ServerContext.Factory.versionString, res, li);
+            finally
+              res.free;
+            end;
           finally
-            res.free;
+            li.Free;
           end;
         finally
           pcm.Free;

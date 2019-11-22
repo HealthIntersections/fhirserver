@@ -127,6 +127,7 @@ Type
     procedure resetProgress(name : String);
     procedure finishProgress(status : String);
     procedure fetchProgress(sender : TObject; progess : integer);
+    procedure fetchProgress2(sender : TObject; pct : integer; done : boolean; desc : String);
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -619,6 +620,7 @@ var
   pl : TArray<String>;
   ploader : TPackageLoader;
   pcm : TFHIRPackageManager;
+  li : TPackageLoadingInformation;
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
   dbn : String;
@@ -649,8 +651,9 @@ begin
     raise EFslException.Create('No defined database '+name);
   pcm := TFHIRPackageManager.Create(false);
   try
+    pcm.OnWork := fetchProgress2;
     resetProgress('Package hl7.fhir.r4.core#4.0.1');
-    if not pcm.packageExists('hl7.fhir.r4.core', '4.0.1', fetchProgress) then
+    if not pcm.autoInstallPackage('hl7.fhir.r4.core', '4.0.1') then
       raise EFHIRException.create('Package hl7.fhir.r4.core#4.0.1 not found');
     finishProgress('ok');
 
@@ -661,27 +664,32 @@ begin
     try
       logt('Load: register value sets');
       identifyValueSets(db);
-
-      pl := plist.Split([',']);
-      for p in pl do
-      begin
-        if p <> '' then
+      li := TPackageLoadingInformation.Create('4.0.1');
+      try
+        pl := plist.Split([',']);
+        for p in pl do
         begin
-          StringSplit(p, '#', pi, pv);
-          resetProgress('Package '+p);
-          if not pcm.packageExists(pi, pv, fetchProgress) then
-            raise EFHIRException.create('Package '+p+' not found');
-          finishProgress('ok');
-          ploader := TPackageLoader.create(factoryFactory(v));
-          try
-            loadList := getLoadResourceList(ploader.FFactory, mode);
-            logt('Load Package '+pi+'#'+pv+' - resources of type '+asString(loadList));
-            pcm.loadPackage(pi, pv, loadList, ploader.load);
-            FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
-          finally
-            ploader.Free;
+          if p <> '' then
+          begin
+            StringSplit(p, '#', pi, pv);
+            resetProgress('Package '+p);
+            if not pcm.autoInstallPackage(pi, pv) then
+              raise EFHIRException.create('Package '+p+' not found');
+            finishProgress('ok');
+            ploader := TPackageLoader.create(factoryFactory(v));
+            try
+              li.OnLoadEvent := ploader.load;
+              loadList := getLoadResourceList(ploader.FFactory, mode);
+              logt('Load Package '+pi+'#'+pv+' - resources of type '+asString(loadList));
+              pcm.loadPackage(pi, pv, loadList, li);
+              FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
+            finally
+              ploader.Free;
+            end;
           end;
         end;
+      finally
+        li.Free;
       end;
 
       logt('loaded');
@@ -1166,6 +1174,20 @@ begin
   else
   begin
     if progess > FProgress then
+    begin
+      write('.');
+      FProgress := FProgress + 5;
+    end;
+  end;
+end;
+
+procedure TFHIRService.fetchProgress2(sender: TObject; pct: integer; done: boolean; desc: String);
+begin
+  if FInstaller then
+    Fcallback(pct, FProgressName)
+  else
+  begin
+    if pct > FProgress then
     begin
       write('.');
       FProgress := FProgress + 5;

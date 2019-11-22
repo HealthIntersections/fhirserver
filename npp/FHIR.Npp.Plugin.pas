@@ -2261,7 +2261,7 @@ begin
         // limit the amount of resource types loaded for convenience...
         rset := TFslStringSet.Create(['StructureDefinition', 'CodeSystem', 'ValueSet']);
         try
-          input.Plugin.Context.Cache.loadPackage('hl7.fhir.core', input.Factory.versionString, rset, ctxt.loadResourceJson);
+          input.Plugin.Context.Cache.loadPackage('hl7.fhir.core', input.Factory.versionString, rset, ctxt.loadInfo);
         finally
           rset.Free;
         end;

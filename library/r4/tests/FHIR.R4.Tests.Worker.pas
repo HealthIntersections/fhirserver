@@ -114,15 +114,19 @@ end;
 class function TTestingWorkerContext.Use: TFHIRWorkerContext;
 var
   pcm : TFHIRPackageManager;
+  li : TPackageLoadingInformation;
 begin
   if GWorkerContext = nil then
   begin
     GWorkerContext := TTestingWorkerContext.create(TFHIRFactoryR4.create);
     pcm := TFHIRPackageManager.Create(false);
+    li := TPackageLoadingInformation.create(FHIR.R4.Constants.FHIR_GENERATED_VERSION);
     try
+      li.OnLoadEvent := GWorkerContext.loadResourceJson;
       pcm.loadPackage('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
-        GWorkerContext.loadResourceJson);
+        li);
     finally
+      li.Free;
       pcm.Free;
     end;
   end;

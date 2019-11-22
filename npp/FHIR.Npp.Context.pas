@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Base, 
+  FHIR.Support.Base,
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative,
+  FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Utilities,
   FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Client.Base, FHIR.Base.Common;
 
 type
@@ -90,6 +90,7 @@ type
   private
     FVersionList : Array[TFHIRVersion] of TFHIRNppVersionFactory;
     FVersionStatus : Array[TFHIRVersion] of TFHIRVersionLoadingStatus;
+    FLoadInfoList : Array[TFHIRVersion] of TPackageLoadingInformation;
     FVersions: TFHIRVersionFactories;
     FCache : TFHIRPackageManager;
     FConnections: TFslMap<TFHIRNppServerConnection>;
@@ -98,12 +99,14 @@ type
     procedure SetVersion(a: TFHIRVersion; const Value: TFHIRNppVersionFactory);
     function GetVersionLoading(a: TFHIRVersion): TFHIRVersionLoadingStatus;
     procedure SetVersionLoading(a: TFHIRVersion; const Value: TFHIRVersionLoadingStatus);
+    function GetLoadInfo(a: TFHIRVersion): TPackageLoadingInformation;
   public
     constructor Create; override;
     destructor Destroy; override;
     function Link : TFHIRNppContext;
 
     property Version[a : TFHIRVersion] : TFHIRNppVersionFactory read GetVersion write SetVersion;
+    property LoadInfo[a : TFHIRVersion] : TPackageLoadingInformation read GetLoadInfo;
     property VersionLoading[a : TFHIRVersion] : TFHIRVersionLoadingStatus read GetVersionLoading write SetVersionLoading;
 
     property versions : TFHIRVersionFactories read FVersions;
@@ -143,10 +146,20 @@ var
 begin
   FCache.Free;
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
+  begin
     FVersionList[v].Free;
+    FLoadInfoList[v].free;
+  end;
   FVersions.Free;
   FConnections.Free;
   inherited;
+end;
+
+function TFHIRNppContext.GetLoadInfo(a: TFHIRVersion): TPackageLoadingInformation;
+begin
+  if FLoadInfoList[a] = nil then
+    FLoadInfoList[a] := TPackageLoadingInformation.Create(TFHIRVersions.getMajMin(a));
+  result := FLoadInfoList[a];
 end;
 
 function TFHIRNppContext.GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;

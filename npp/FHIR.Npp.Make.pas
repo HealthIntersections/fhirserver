@@ -186,6 +186,7 @@ end;
 procedure TResourceNewForm.cbxPackageChange(Sender: TObject);
 var
   sd : TFhirStructureDefinitionW;
+  li : TPackageLoadingInformation;
 begin
   if FList = nil then
     FList := TFslList<TFhirStructureDefinitionW>.create;
@@ -197,7 +198,11 @@ begin
     if cbxPackage.Items[cbxPackage.ItemIndex].startsWith('hl7.fhir.core-') then
       Context.Version[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])].Worker.listStructures(FList)
     else
-      FContext.Cache.loadPackage(cbxPackage.Items[cbxPackage.ItemIndex], ['StructureDefinition'], loadItem);
+    begin
+      li := FContext.LoadInfo[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])];
+      li.OnLoadEvent := loadItem;
+      FContext.Cache.loadPackage(cbxPackage.Items[cbxPackage.ItemIndex], ['StructureDefinition'], li);
+    end;
     for sd in FList do
       if sd.kind = sdkResource then
         lbProfiles.Items.AddObject(sd.name+' ('+sd.url+')', sd);

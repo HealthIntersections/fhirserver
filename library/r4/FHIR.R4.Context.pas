@@ -121,6 +121,7 @@ type
   TResourceMemoryCache = class (TFslObject)
   private
     Flist : TFslList<TFHIRResource>;
+    FLoadInfo : TPackageLoadingInformation;
     FResourceTypes: TArray<String>;
     FPackages: TArray<String>;
     FOnLog: TWorkProgressEvent;
@@ -266,11 +267,12 @@ begin
   begin
     cache := TFHIRPackageManager.Create(true);
     try
+      cache.onWork := FOnLog;
       for s in FPackages do
       begin
         FLoadPackage := s;
         StringSplit(s, '#', l, r);
-        cache.loadPackage(l, r, FResourceTypes, load, FOnLog);
+        cache.loadPackage(l, r, FResourceTypes, FLoadInfo);
       end;
     finally
       cache.Free;
@@ -281,11 +283,14 @@ end;
 constructor TResourceMemoryCache.Create;
 begin
   inherited;
-  Flist := TFslList<TFhirResource>.create
+  Flist := TFslList<TFhirResource>.create;
+  FLoadInfo := TPackageLoadingInformation.Create('4.0');
+  FLoadInfo.OnLoadEvent := load;
 end;
 
 destructor TResourceMemoryCache.Destroy;
 begin
+  FLoadInfo.Free;
   FList.Free;
   inherited;
 end;

@@ -187,7 +187,7 @@ begin
   packageWork(sender, 0, false, FActionMessage);
   try
     Application.ProcessMessages;
-    if FCache.install(url, fetchProgress) then
+    if FCache.install(url) then
       LoadPackages;
   finally
     packageWork(sender, 100, true, '');

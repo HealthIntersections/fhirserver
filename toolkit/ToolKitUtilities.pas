@@ -34,9 +34,9 @@ uses
   IdHTTP, IdSSLOpenSSL, IdComponent,
   FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
-  FHIR.Support.Base, FHIR.Support.Threads, 
+  FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Cache.PackageManager,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 
 function checkSSL : boolean;
@@ -114,10 +114,12 @@ type
 
   TBackgroundContextLoader = class (TBackgroundTaskEngine)
   private
+    FLoadInfo : TPackageLoadingInformation;
     function details : TBackgroundContextLoadingInformation;
     function collection : TFslList<TFHIRStructureDefinition>;
     procedure loadResourceJson(rType, id : String; json : TStream);
   public
+    destructor Destroy; override;
     function name : String; override;
     procedure execute; override;
   end;
@@ -674,6 +676,12 @@ begin
   result := Response as TFslList<TFHIRStructureDefinition>;
 end;
 
+destructor TBackgroundContextLoader.Destroy;
+begin
+  FLoadInfo.Free;
+  inherited;
+end;
+
 function TBackgroundContextLoader.details: TBackgroundContextLoadingInformation;
 begin
   result := request as TBackgroundContextLoadingInformation;
@@ -682,7 +690,12 @@ end;
 procedure TBackgroundContextLoader.execute;
 begin
   response := TFslList<TFHIRStructureDefinition>.create;
-  details.packageMgr.loadPackage(details.package,  details.version, ['StructureDefinition'], loadResourceJson);
+  if FLoadInfo = nil then
+  begin
+    FLoadInfo := TPackageLoadingInformation.Create(details.version);
+    FLoadInfo.OnLoadEvent := loadResourceJson;
+  end;
+  details.packageMgr.loadPackage(details.package,  details.version, ['StructureDefinition'], FLoadInfo);
 end;
 
 procedure TBackgroundContextLoader.loadResourceJson(rType, id: String; json: TStream);
