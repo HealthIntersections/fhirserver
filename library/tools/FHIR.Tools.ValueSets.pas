@@ -673,7 +673,7 @@ begin
           try
            if (prov = nil) then
            begin
-             msg('The code system "'+c.system+'" is not known for the code "'+c.code+'"');
+             msg('The code system "'+c.system+'" is not known (encountered paired with code = "'+c.code+'")');
              cause := itUnknown;
            end
            else

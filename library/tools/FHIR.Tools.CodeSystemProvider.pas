@@ -1160,12 +1160,8 @@ begin
 
   if (r.url <> '') then
   begin
-    // first, this is the correct resource for this version (if it has a version)
-    if (r.version <> '') then
-    begin
-      FMap.add(r.url+'|'+r.version, r.link);
-      updateList(r.url, r.version);
-    end;
+    FMap.add(r.url+'|'+r.version, r.link);
+    updateList(r.url, r.version);
   end;
 end;
 
