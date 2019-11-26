@@ -1089,6 +1089,7 @@ object ServerManagerForm: TServerManagerForm
             'International'
             'US'
             'Australia'
+            'Belgium'
             'Canada'
             'Spanish'
             'Denmark'
