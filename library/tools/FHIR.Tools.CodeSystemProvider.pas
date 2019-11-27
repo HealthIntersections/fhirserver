@@ -1160,7 +1160,10 @@ begin
 
   if (r.url <> '') then
   begin
-    FMap.add(r.url+'|'+r.version, r.link);
+    if (r.version <> '') then
+    begin
+      FMap.add(r.url+'|'+r.version, r.link);
+    end;
     updateList(r.url, r.version);
   end;
 end;

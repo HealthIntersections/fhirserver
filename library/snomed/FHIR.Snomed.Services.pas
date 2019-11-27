@@ -3471,7 +3471,7 @@ begin
   else if Concept.FindConcept(iId, index) Then
     result := TSnomedExpressionContext.create(code, index)
   else
-    raise ETerminologyError.create('unable to find code '+code+' in '+system(nil));
+    raise ETerminologyError.create('unable to find code '+code+' in '+system(nil)+' (version '+version(nil)+')');
 end;
 
 function TSnomedServices.system(context : TCodeSystemProviderContext): String;

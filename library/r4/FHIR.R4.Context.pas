@@ -370,8 +370,8 @@ begin
     if (r.version <> '') then
     begin
       FMap.add(r.url+'|'+r.version, r.link);
-      updateList(r.url, r.version);
     end;
+    updateList(r.url, r.version);
   end;
 end;
 

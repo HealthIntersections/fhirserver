@@ -72,7 +72,8 @@ uses
   FHIR.Support.Logging in '..\..\library\support\FHIR.Support.Logging.pas',
   FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
-  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
+  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas';
 
 {$R *.res}
 
