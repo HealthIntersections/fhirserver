@@ -34,8 +34,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, System.Types,
   FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Support.Stream, FHIR.Web.Fetcher,
-  FHIR.Base.Utilities;
+  FHIR.Support.Stream, FHIR.Web.Fetcher;
 
 type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
@@ -85,7 +84,6 @@ type
     function GetType: string;
     function GetUrl: string;
     function GetVersion: string;
-    function GetFHIRVersion: String;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -97,7 +95,6 @@ type
 
     property packageId : string read GetPackageId;
     property fhirVersions : string read GetFhirVersions;
-    property fhirVersion : String read GetFHIRVersion;
     property canonical : string read GetCanonical;
     property homePage : string read GetHomePage;
     property title : string read GetTitle;
@@ -247,22 +244,6 @@ type
     function build : String;
   end;
 
-  TPackageLoadingInformation = class (TFslObject)
-  private
-    FVersion: String;
-    FLoaded: TStringList;
-    FOnLoadEvent: TPackageLoadingEvent;
-  public
-    constructor Create(ver : string);
-    destructor Destroy; override;
-
-    property OnLoadEvent : TPackageLoadingEvent read FOnLoadEvent write FOnLoadEvent;
-
-    procedure checkVersion(ver : String);
-    function isLoaded(id, ver: String) : boolean;
-    procedure load(id, ver: String);
-  end;
-
   TFHIRPackageManager = class (TFslObject)
   private
     FUser : boolean;
@@ -271,14 +252,12 @@ type
     FOnWork : TWorkProgressEvent;
     FOnCheck : TCheckEvent;
     FCache : TFslMap<TNpmPackageInfo>;
-    FTaskDesc : String;
     function resolve(list : TFslList<TFHIRPackageInfo>; dep : TFHIRPackageDependencyInfo) : TFHIRPackageDependencyStatus;
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
     procedure clearCache;
     function readNpmKind(kind, id: String): TFHIRPackageKind;
     function checkPackageSize(dir : String) : integer;
     procedure work(pct : integer; done : boolean; desc : String);
-    procedure progress(sender : TObject; pct : integer);
     function check(desc : String) : boolean;
     function loadPackageFromCache(folder : String) : TNpmPackageInfo;
     procedure buildPackageIndex(folder : String);
@@ -304,14 +283,13 @@ type
     procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version : String; list : TStrings);
 
     function packageExists(id, ver : String) : boolean; overload;
-    function autoInstallPackage(id, ver : String) : boolean; overload;
-
-    procedure loadPackage(id, ver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
-    procedure loadPackage(idver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
-    procedure loadPackage(id, ver : String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation); overload;
+    function packageExists(id, ver : String; onProgress : TProgressEvent) : boolean; overload;
+    procedure loadPackage(id, ver : String; resources : Array of String; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
+    procedure loadPackage(idver : String; resources : Array of String; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
+    procedure loadPackage(id, ver : String; resources : TFslStringSet; loadEvent : TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil); overload;
 
     procedure import(content : TBytes); overload;
-    function install(url : String) : boolean;
+    function install(url : String; onProgress : TProgressEvent) : boolean;
 
     procedure remove(id : String); overload;
     procedure remove(id, ver: String); overload;
@@ -476,9 +454,6 @@ begin
       id := npm.str['name'];
       ver := npm.str['version'];
       fver := getVersFromDeps(npm);
-      if npm.has('dependencies') then
-        for s in npm.obj['dependencies'].properties.Keys do
-          autoInstallPackage(s, npm.obj['dependencies'].str[s]);
     finally
       npm.Free;
     end;
@@ -531,7 +506,7 @@ begin
   end;
 end;
 
-function TFHIRPackageManager.install(url: String) : boolean;
+function TFHIRPackageManager.install(url: String; onProgress: TProgressEvent) : boolean;
 var
   fetch : TInternetFetcher;
   aborted : boolean;
@@ -539,8 +514,7 @@ var
 begin
   fetch := TInternetFetcher.Create;
   try
-    fetch.onProgress := progress;
-    FTaskDesc := 'Downloading';
+    fetch.onProgress := onProgress;
     fetch.Buffer := TFslBuffer.create;
     aborted := false;
     s := '';
@@ -956,49 +930,35 @@ begin
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(id, ver: String; resources: Array of String; loadInfo : TPackageLoadingInformation);
+procedure TFHIRPackageManager.loadPackage(id, ver: String; resources: Array of String; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
   fsl : TFslStringSet;
 begin
   fsl := TFslStringSet.Create(resources);
   try
-    loadPackage(id, ver, fsl, loadInfo);
+    loadPackage(id, ver, fsl, loadEvent, progressEvent);
   finally
     fsl.Free;
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation);
+procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
   c : integer;
-  s : String;
   f : TFileStream;
   npm : TNpmPackageInfo;
   fi : TNpmFileInfo;
 begin
-  if loadInfo.isLoaded(id, ver) then
-    exit;
-
-  loadInfo.load(id, ver);
-  autoInstallPackage(id, ver);
   if not packageExists(id, ver) then
-    raise EIOException.create('Unable to load package '+id+'#'+ver+' as it doesn''t exist');
+    raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
   if (ver = '') then
     ver := latestPackageVersion(id);
 
-  work(0, false, 'Scanning Package');
+  if assigned(progressEvent) then
+    progressEvent(self, 0, false, 'Scanning Package');
 
   npm := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
   try
-    if npm.package.has('dependencies') then
-    begin
-      for s in npm.package.obj['dependencies'].properties.Keys do
-      begin
-        loadPackage(s, npm.package.obj['dependencies'].str[s], resources, loadInfo);
-      end;
-    end;
-    loadInfo.checkVersion(npm.fhirVersion);
-
     c := 0;
     for fi in npm.Files do
     begin
@@ -1007,7 +967,7 @@ begin
         f := TFileStream.Create(path([FFolder, id+'#'+ver, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
           try
-            loadInfo.OnLoadEvent(fi.ResourceType, fi.id, f);
+            loadEvent(fi.ResourceType, fi.id, f);
           except
             on e : Exception do
             begin
@@ -1019,15 +979,16 @@ begin
           f.Free;
         end;
       end;
-      work(trunc((c / npm.files.count) * 100), false, 'Package '+id+'#'+ver+': Load '+fi.Name);
+      if assigned(progressEvent) then
+        progressEvent(self, trunc((c / npm.files.count) * 100), false, 'Package '+id+'#'+ver+': Load '+fi.Name);
       inc(c);
     end;
-    work(100, true, 'Complete');
+    if assigned(progressEvent) then
+      progressEvent(self, 100, true, 'Complete');
   finally
     npm.Free;
   end;
 end;
-
 
 function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackageInfo;
 begin
@@ -1042,7 +1003,7 @@ begin
   end;
 end;
 
-function TFHIRPackageManager.autoInstallPackage(id, ver: String): boolean;
+function TFHIRPackageManager.packageExists(id, ver: String; onProgress : TProgressEvent): boolean;
 var
   list : TFslList<TPackageDefinition>;
   pd : TPackageDefinition;
@@ -1057,7 +1018,7 @@ begin
       TPackageDefinition.AddCustomPackages(list);
       for pd in list do
         if (pd.Id = id) and ((ver = '') or (pd.Version = ver)) then
-          self.install(pd.Url);
+          self.install(pd.Url, onProgress);
     finally
       list.Free;
     end;
@@ -1065,12 +1026,12 @@ begin
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadInfo : TPackageLoadingInformation);
+procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadEvent: TPackageLoadingEvent; progressEvent : TWorkProgressEvent = nil);
 var
   id, ver : String;
 begin
   StringSplit(idver, '#', id, ver);
-  loadPackage(id, ver, resources, loadInfo);
+  loadPackage(id, ver, resources, loadEvent, progressEvent);
 end;
 
 procedure TFHIRPackageManager.buildPackageIndex(folder : String);
@@ -1126,11 +1087,6 @@ begin
   end
   else
     result := FolderExists(Path([FFolder, id+'#'+ver])) and FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
-end;
-
-procedure TFHIRPackageManager.progress(sender: TObject; pct: integer);
-begin
-  work(pct, false, FTaskDesc);
 end;
 
 function TFHIRPackageManager.latestPackageVersion(id: String): String;
@@ -1617,6 +1573,7 @@ end;
 class function TNpmPackageInfo.fromPackage(bytes : TBytes): TNpmPackageInfo;
 var
   files : TDictionary<String, TBytes>;
+  npm, index : TJsonObject;
   indexer : TNpmPackageIndexBuilder;
   s : String;
   fi : TJsonObject;
@@ -1693,6 +1650,7 @@ end;
 function TNpmPackageInfo.GetDependencies: string;
 var
   dep : TJsonObject;
+  o : TJsonObject;
   s : String;
 begin
   result := '';
@@ -1710,18 +1668,6 @@ end;
 function TNpmPackageInfo.GetDescription: string;
 begin
   result := FPackage.vStr['description'];
-end;
-
-function TNpmPackageInfo.GetFHIRVersion: String;
-var
-  arr : TJsonArray;
-begin
-  arr := FPackage.arr['fhir-version-list'];
-  if arr = nil then
-    raise Exception.Create('Unable to process package '+packageId+'#'+version+': size(fhir-version-list) == '+inttostr(arr.Count))
-  else if arr.Count <> 1 then
-    raise Exception.Create('Unable to process package '+packageId+'#'+version+': size(fhir-version-list) == '+inttostr(arr.Count));
-  result := arr.Value[0];
 end;
 
 function TNpmPackageInfo.GetFhirVersions: string;
@@ -1885,40 +1831,6 @@ begin
     FVersion.ToLower.Contains(text) or
     FKind.ToLower.Contains(text) or
     FResourceType.ToLower.Contains(text);
-end;
-
-{ TPackageLoadingInformation }
-
-constructor TPackageLoadingInformation.Create;
-begin
-  inherited Create;
-  FLoaded := TStringList.Create;
-  FVersion := TFHIRVersions.getMajMin(ver);
-end;
-
-destructor TPackageLoadingInformation.Destroy;
-begin
-  FLoaded.Free;
-  inherited;
-end;
-
-procedure TPackageLoadingInformation.checkVersion(ver: String);
-begin
-  ver := TFHIRVersions.getMajMin(ver);
-  if FVersion = '' then
-    FVersion := ver
-  else if FVersion <> ver then
-    raise Exception.Create('FHIR Loading Version mismatch: loading '+ver+' but already loaded '+FVersion);
-end;
-
-function TPackageLoadingInformation.isLoaded(id, ver: String): boolean;
-begin
-  result := FLoaded.IndexOf(id+'#'+ver) > -1;
-end;
-
-procedure TPackageLoadingInformation.load(id, ver: String);
-begin
-  FLoaded.Add(id+'#'+ver);
 end;
 
 end.

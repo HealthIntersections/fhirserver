@@ -348,13 +348,14 @@ begin
     0 { International } : result := '900000000000207008';
     1 { US } :  result := '731000124108';
     2 { Australia } : result := '32506021000036107';
-    3 { Canada } : result := '20611000087101';
-    4 { Spanish } : result := '449081005';
-    5 { Denmark } : result := '554471000005108';
-    6 { Netherlands } : result := '11000146104';
-    7 { Sweden } : result := '45991000052106';
-    8 { UK } : result := '999000041000000102';
-    9 { } : result := inttostr(COMBINED_MODULE_ID);
+    3 { Belgium } : result := '11000172109';
+    4 { Canada } : result := '20611000087101';
+    5 { Spanish } : result := '449081005';
+    6 { Denmark } : result := '554471000005108';
+    7 { Netherlands } : result := '11000146104';
+    8 { Sweden } : result := '45991000052106';
+    9 { UK } : result := '999000041000000102';
+    10 { } : result := inttostr(COMBINED_MODULE_ID);
   end;
 end;
 
