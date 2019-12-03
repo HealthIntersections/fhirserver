@@ -42,6 +42,7 @@ type
   TFhirTerminologyOperation = class (TFhirOperation)
   protected
     FServer : TTerminologyServer;
+    procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
   public
@@ -1069,15 +1070,68 @@ end;
 
 { TFhirTerminologyOperation }
 
-function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
+procedure TFhirTerminologyOperation.processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW; result : TFHIRExpansionParams);
 var
-//  needSecure : boolean;
   p : TFhirParametersParameterW;
   sl : TArray<String>;
+  obj : TFHIRObject;
+  pp : TFHIRParametersW;
+begin
+  if (params.str('no-cache') = 'true') then
+    result.uid := NewGuidId;
+  if (params.str('_incomplete') <> '') then
+    result.limitedExpansion := StrToBoolDef(params.str('_incomplete'), false);
+  if (params.str('limitedExpansion') <> '') then
+    result.limitedExpansion := StrToBoolDef(params.str('limitedExpansion'), false);
+  if (params.str('displayLanguage') <> '') then
+    result.displayLanguage := params.str('displayLanguage');
+  if (params.str('includeDesignations') <> '') then
+    result.includeDesignations := StrToBoolDef(params.str('includeDesignations'), false);
+  if (params.str('includeDefinition') <> '') then
+    result.includeDefinition := StrToBoolDef(params.str('includeDefinition'), false);
+  if (params.str('activeOnly') <> '') then
+    result.activeOnly := StrToBoolDef(params.str('activeOnly'), false);
+  if (params.str('excludeNested') <> '') then
+    result.excludeNested := StrToBoolDef(params.str('excludeNested'), false);
+  if (params.str('excludeNotForUI') <> '') then
+    result.excludeNotForUI := StrToBoolDef(params.str('excludeNotForUI'), false);
+  if (params.str('excludePostCoordinated') <> '') then
+    result.excludePostCoordinated := StrToBoolDef(params.str('excludePostCoordinated'), false);
+  for p in params.parameterList do
+  begin
+    if (p.name = 'system-version') then
+    begin
+      sl := p.valueString.split(['|']);
+      if (Length(sl) = 2) then
+        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1]))
+      else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
+        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
+      else
+        raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"');
+    end;
+  end;
+  if params.has('profile') then
+  begin
+    obj := params.obj('profile');
+    if obj.fhirType = 'Parameters' then
+    begin
+      pp := FFactory.wrapParams(obj.link as TFHIRResourceV);
+      try
+        processExpansionParams(request, manager, pp, result);
+      finally
+        pp.Free;
+      end;
+    end;
+  end;
+end;
+
+function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
+//  needSecure : boolean;
 //  exp : TFhirExpansionParams;
 begin
   result := TFHIRExpansionParams.Create;
   try
+    processExpansionParams(request, manager, params, result);
 //    if FFactory.version = fhirVersionRelease3 then
 //    begin
 //      exp := nil;
@@ -1115,39 +1169,6 @@ begin
 //        exp.Free;
 //      end;
 //    end;
-    if (params.str('no-cache') = 'true') then
-      result.uid := NewGuidId;
-    if (params.str('_incomplete') <> '') then
-      result.limitedExpansion := StrToBoolDef(params.str('_incomplete'), false);
-    if (params.str('limitedExpansion') <> '') then
-      result.limitedExpansion := StrToBoolDef(params.str('limitedExpansion'), false);
-    if (params.str('displayLanguage') <> '') then
-      result.displayLanguage := params.str('displayLanguage');
-    if (params.str('includeDesignations') <> '') then
-      result.includeDesignations := StrToBoolDef(params.str('includeDesignations'), false);
-    if (params.str('includeDefinition') <> '') then
-      result.includeDefinition := StrToBoolDef(params.str('includeDefinition'), false);
-    if (params.str('activeOnly') <> '') then
-      result.activeOnly := StrToBoolDef(params.str('activeOnly'), false);
-    if (params.str('excludeNested') <> '') then
-      result.excludeNested := StrToBoolDef(params.str('excludeNested'), false);
-    if (params.str('excludeNotForUI') <> '') then
-      result.excludeNotForUI := StrToBoolDef(params.str('excludeNotForUI'), false);
-    if (params.str('excludePostCoordinated') <> '') then
-      result.excludePostCoordinated := StrToBoolDef(params.str('excludePostCoordinated'), false);
-    for p in params.parameterList do
-    begin
-      if (p.name = 'system-version') then
-      begin
-        sl := p.valueString.split(['|']);
-        if (Length(sl) = 2) then
-          result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1]))
-        else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
-          result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
-        else
-          raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"');
-      end;
-    end;
     result.link;
   finally
     result.free;
