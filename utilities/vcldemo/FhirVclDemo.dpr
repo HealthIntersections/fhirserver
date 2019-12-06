@@ -73,7 +73,8 @@ uses
   FHIR.Base.OIDs in '..\..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\..\library\base\FHIR.Base.ElementModel.pas',
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
-  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas';
+  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 {$R *.res}
 

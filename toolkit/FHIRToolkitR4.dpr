@@ -157,7 +157,9 @@ uses
   FHIR.R4.OpBase in '..\library\r4\FHIR.R4.OpBase.pas',
   OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm},
   FHIR.R4.AuthMap in '..\library\r4\FHIR.R4.AuthMap.pas',
+  {$IFNDEF OSX}
   IGPublisher in 'IGPublisher.pas' {IGPublishForm},
+  {$ENDIF}
   FDownloadForm in 'FDownloadForm.pas' {IGSettingsForm},
   ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame},
   FHIR.Support.Lang in '..\library\support\FHIR.Support.Lang.pas',
@@ -179,13 +181,15 @@ uses
   FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
   ProjectFilesDialog in 'ProjectFilesDialog.pas' {ProjectDialog},
   UTGMgmtFrame in 'UTGMgmtFrame.pas' {UTGManagementFrame: TFrame},
+  {$IFNDEF OSX}
   uGitForDelphi in '..\dependencies\git\uGitForDelphi.pas',
   FHIR.Web.Git in '..\library\web\FHIR.Web.Git.pas',
-  FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas',
-  PublisherHome in '..\utilities\publisher\PublisherHome.pas' {PublisherForm},
   FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas',
+  {$ENDIF}
+  FHIR.R4.Organiser in '..\library\r4\FHIR.R4.Organiser.pas',
   BaseFileFrame in 'BaseFileFrame.pas',
-  PackageEditorFrame in 'PackageEditorFrame.pas' {PackageEditorFrame: TFrame};
+  PackageEditorFrame in 'PackageEditorFrame.pas' {PackageEditorFrame: TFrame},
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 {$R *.res}
 

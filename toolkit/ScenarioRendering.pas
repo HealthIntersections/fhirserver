@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, jclshell,
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   {$IFDEF MSWINDOWS}
-  winapi.shellapi, fmx.platform.win, winapi.windows,
+  winapi.shellapi, fmx.platform.win, winapi.windows, jclshell,
   {$ENDIF}
   FHIR.Version.Utilities, FHIR.Base.Objects,FHIR.Version.Resources,
   FMX.dialogservice, FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FDownloadForm,
@@ -82,9 +82,9 @@ var
 {$ENDIF}
 begin
 
-  appDir:=GetCurrentDir;
 //  if edit1.text='' then edit1.Text:=extractfilepath(appDir)+'\Rendering\ExampleScenario';
 {$IFDEF MSWINDOWS}
+  appDir:=GetCurrentDir;
 if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
   SetCurrentDir(ESPublisherFolder+'');
   resource:=filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
@@ -235,6 +235,7 @@ end;
 
 
 procedure TESPublishForm.RunInMemo(CommandLine: string; Work: string; parameters: string; Memo: TMemo);
+{$IFDEF MSWINDOWS}
 var
   SA: TSecurityAttributes;
   SI: TStartupInfo;
@@ -294,6 +295,9 @@ begin
   finally
     CloseHandle(StdOutPipeRead);
   end;
+{$ELSE}
+begin
+{$ENDIF}
 end;
 
 

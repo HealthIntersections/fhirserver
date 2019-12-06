@@ -38,7 +38,7 @@ uses
   FMX.Memo, FMX.TreeView,
   BaseFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx, FHIR.Ui.Fmx,
-  FHIR.Cache.PackageManager, PackageEditorFrame;
+  FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager, PackageEditorFrame;
 
 const
   PCMode_User = true;
@@ -61,7 +61,6 @@ type
     btnCancel: TButton;
     lblFolder: TLabel;
     pbDownload: TProgressBar;
-    tvPackages: TTreeView;
     imgPackages: TImageList;
     dlgOpenPackage: TOpenDialog;
     pmImport: TPopupMenu;
@@ -76,9 +75,15 @@ type
     btnFind: TButton;
     btnDebug: TButton;
     btnRefresh: TButton;
+    grid: TStringGrid;
+    StringColumn1: TStringColumn;
+    StringColumn2: TStringColumn;
+    StringColumn3: TStringColumn;
+    StringColumn4: TStringColumn;
+    StringColumn5: TStringColumn;
+    StringColumn6: TStringColumn;
     procedure rbUserChange(Sender: TObject);
     procedure rbSystemChange(Sender: TObject);
-    procedure tvPackagesClick(Sender: TObject);
     procedure btnImportPackageFileClick(Sender: TObject);
     procedure btnImportPackageUrlClick(Sender: TObject);
     procedure Button5Click(Sender: TObject);
@@ -99,7 +104,7 @@ type
     FLoading : boolean;
     FStop : boolean;
     FPcm : TFHIRPackageManager;
-    FPackages : TFslList<TFHIRPackageInfo>;
+    FPackages : TFslList<TNpmPackage>;
     procedure changePackageManagerMode(mode : boolean);
     procedure reloadPackages;
     procedure fetchProgress(sender : TObject; progress : integer);
@@ -138,37 +143,14 @@ end;
 
 procedure TPackageManagerFrame.btnDeletePackageClick(Sender: TObject);
 var
-  p : TFHIRPackageInfo;
-  v : TFHIRPackageVersionInfo;
+  p : TNpmPackage;
 begin
-  if tvPackages.Selected.TagObject is TFHIRPackageInfo then
+  if grid.row > -1 then
   begin
-    p := tvPackages.Selected.TagObject as TFHIRPackageInfo;
-    if (p.id = 'hl7.fhir.core') then
-      MessageDlg('You cannot delete all the versions of hl7.fhir.core',TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0)
-    else if MessageDlg('Delete All versions of '+p.summary+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
+    p := FPackages[grid.row];
+    if MessageDlg('Delete '+p.name+'#'+p.version+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
     begin
-      FPcm.remove(p.id);
-      reloadPackages;
-    end;
-  end
-  else
-  begin
-    if tvPackages.Selected.TagObject is TFHIRPackageVersionInfo then
-    begin
-      v := tvPackages.Selected.TagObject as TFHIRPackageVersionInfo;
-      p := tvPackages.Selected.ParentItem.TagObject as TFHIRPackageInfo;
-    end
-    else
-    begin
-      v := tvPackages.Selected.ParentItem.TagObject as TFHIRPackageVersionInfo;
-      p := tvPackages.Selected.ParentItem.ParentItem.TagObject as TFHIRPackageInfo;
-    end;
-    if (p.id = 'hl7.fhir.core') and (p.versions.Count = 1) then
-      MessageDlg('You cannot delete all the versions of hl7.fhir.core',TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0)
-    else if MessageDlg('Delete v'+v.Version+' of '+p.id+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
-    begin
-      FPcm.remove(p.id, v.Version);
+      FPcm.remove(p.name, p.Version);
       reloadPackages;
     end;
   end;
@@ -342,7 +324,7 @@ begin
   finally
     FLoading := false;
   end;
-  FPackages := TFslList<TFHIRPackageInfo>.create;
+  FPackages := TFslList<TNpmPackage>.create;
   if (FPcm = nil) or (rbUser.IsChecked <> FPcm.UserMode) then
     changePackageManagerMode(rbUser.IsChecked);
 end;
@@ -376,14 +358,14 @@ end;
 
 procedure TPackageManagerFrame.mnuOpenClick(Sender: TObject);
 var
-  vi : TFHIRPackageVersionInfo;
+  vi : TNpmPackage;
   frame: TPackageEditorFrame;
   tab : TTabItem;
 begin
-  vi := (tvPackages.Selected.TagObject as TFHIRPackageVersionInfo);
+  vi := FPackages[grid.row];
   tab := Tabs.Add(TTabItem);
   tabs.ActiveTab := tab;
-  tab.Text := ExtractFileName(vi.folder);
+  tab.Text := ExtractFileName(vi.name+'#'+vi.version);
   frame := TPackageEditorFrame.Create(tab);
   frame.form := form;
   tab.TagObject := frame;
@@ -394,14 +376,14 @@ begin
   frame.Settings := Settings.Link;
   frame.tab := tab;
   frame.Align := TAlignLayout.Client;
-  frame.Source := vi.folder;
+  frame.Source := vi.loadPath;
   frame.load;
 end;
 
 procedure TPackageManagerFrame.pmPackagePopup(Sender: TObject);
 begin
-  mnuDelete.Enabled := (tvPackages.Selected <> nil) and (tvPackages.Selected.TagObject <> nil);
-  mnuOpen.Enabled := mnuDelete.Enabled and (tvPackages.Selected.TagObject is TFHIRPackageVersionInfo);
+  mnuDelete.Enabled := (grid.row > -1);
+  mnuOpen.Enabled := mnuDelete.Enabled;
 end;
 
 procedure TPackageManagerFrame.rbSystemChange(Sender: TObject);
@@ -418,76 +400,27 @@ end;
 
 procedure TPackageManagerFrame.reloadPackages;
 var
-  roots : Array [TFHIRPackageKind] of TTreeViewItem;
-  function root(k : TFHIRPackageKind) : TTreeViewItem;
-  begin
-    if roots[k] = nil then
-    begin
-      roots[k] := TTreeViewItem.Create(Self);
-      roots[k].Text := NAMES_TFHIRPackageKind[k];
-      roots[k].ImageIndex := -1;
-      roots[k].Parent := tvPackages;
-      roots[k].TagObject := nil;
-    end;
-    result := roots[k];
-  end;
-
-  function addItem(text : String; parent : TFmxObject; img : integer; data : TObject) : TTreeViewItem;
-  begin
-    result := TTreeViewItem.Create(Self);
-    result.Text := Text;
-    result.ImageIndex := img;
-    result.Parent := parent;
-    result.TagObject := data;
-  end;
-
-  function imgIndexForKind(k : TFHIRPackageKind) : integer;
-  begin
-    case k of
-      fpkNull: result := -1;
-      fpkCore: result := 3;
-      fpkIG: result := 4;
-      fpkIGTemplate: result := 7;
-      fpkTool: result := 6;
-    else
-      result := -1;
-    end;
-  end;
-var
-  p : TFHIRPackageInfo;
-  v : TFHIRPackageVersionInfo;
-  d : TFHIRPackageDependencyInfo;
-  pi, vi : TTreeViewItem;
-  a : TFHIRPackageKind;
+  p : TNpmPackage;
+  row : integer;
+//  v : TFHIRPackageVersionInfo;
+//  d : TFHIRPackageDependencyInfo;
+//  pi, vi : TTreeViewItem;
+//  a : TFHIRPackageKind;
 begin
   FPackages.Clear;
-  tvPackages.Clear;
-  btnDeletePackage.Enabled := false;
+  grid.rowCount := 0;
   FPcm.ListPackages(All_Package_Kinds, FPackages);
-
-  for a := low(TFHIRPackageKind) to high(TFHIRPackageKind) do
-    roots[a] := nil;
-  for p in FPackages do
+  grid.RowCount := FPackages.count;
+  for row := 0 to FPackages.count - 1 do
   begin
-    pi := addItem(p.summary, root(p.kind), imgIndexForKind(p.kind), p);
-    for v in p.versions do
-    begin
-      vi := addItem(v.summary, pi, 5, v);
-      for d in v.dependencies do
-        case d.status of
-          stUnknown: addItem(d.summary, vi, -1, d);
-          stOK: addItem(d.summary, vi, 0, d);
-          stMoreRecentVersion: addItem(d.summary, vi, 1, d);
-          stNotResolved: addItem(d.summary, vi, 2, d);
-        end;
-    end;
+    grid.cells[0, row] := FPackages[row].name;
+    grid.cells[1, row] := FPackages[row].version;
+    grid.cells[2, row] := FPackages[row].FhirVersionList;
+    grid.cells[3, row] := DescribePeriod(now - FPackages[row].installed);
+    grid.cells[4, row] := DescribeBytes(FPackages[row].size);
+    grid.cells[5, row] := FPackages[row].dependencySummary;
   end;
-  tvPackages.ExpandAll;
-end;
 
-procedure TPackageManagerFrame.tvPackagesClick(Sender: TObject);
-begin
-  btnDeletePackage.Enabled := (tvPackages.Selected <> nil) and (tvPackages.Selected.TagObject <> nil);
 end;
 
 end.

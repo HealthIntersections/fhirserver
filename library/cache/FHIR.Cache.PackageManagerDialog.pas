@@ -36,13 +36,14 @@ uses
   {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Shell,
   FHIR.Web.Fetcher,
-  FHIR.Cache.PackageManager, System.ImageList, Vcl.ImgList, Vcl.Menus,
+  System.ImageList, Vcl.ImgList, Vcl.Menus,
   FHIR.Ui.TextPresentation,
+  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage,
   Vcl.ComCtrls;
 
 type
   TTreeDataPointer = record
-    obj : TFHIRPackageObject;
+    obj : TNpmPackageObject;
   end;
   PTreeDataPointer = ^TTreeDataPointer;
 
@@ -109,9 +110,11 @@ type
     procedure vtPackagesHeaderClick(Sender: TVTHeader;
       HitInfo: TVTHeaderHitInfo);
     procedure vtPackagesDblClick(Sender: TObject);
+    procedure vtPackagesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FCache : TFHIRPackageManager;
-    FPackages : TFslList<TFHIRPackageVersionInfo>;
+    FPackages : TFslList<TNpmPackage>;
     FUserMode: boolean;
     FLoading : boolean;
     FStop : boolean;
@@ -148,15 +151,15 @@ end;
 procedure TPackageCacheForm.btnDeleteClick(Sender: TObject);
 var
   p, ps : PVirtualNode;
-  pck : TFHIRPackageVersionInfo;
+  pck : TNpmPackage;
 begin
   ps := nil;
   for p in vtPackages.SelectedNodes() do
     ps := p;
-  pck := PTreeDataPointer(vtPackages.GetNodeData(ps)).obj as TFHIRPackageVersionInfo;
-  if MessageDlg('Delete '+pck.id+'#'+pck.Version+'?', mtConfirmation, mbYesNo, 0) = mrYes then
+  pck := PTreeDataPointer(vtPackages.GetNodeData(ps)).obj as TNpmPackage;
+  if MessageDlg('Delete '+pck.name+'#'+pck.Version+'?', mtConfirmation, mbYesNo, 0) = mrYes then
   begin
-    FCache.remove(pck.id, pck.Version);
+    FCache.remove(pck.name, pck.Version);
     LoadPackages;
   end;
 end;
@@ -317,9 +320,9 @@ end;
 procedure TPackageCacheForm.LoadPackages;
 begin
   if FPackages = nil then
-    FPackages := TFslList<TFHIRPackageVersionInfo>.Create;
+    FPackages := TFslList<TNpmPackage>.Create;
   FPackages.Clear;
-  FCache.ListPackageVersions(FPackages);
+  FCache.ListPackages(All_Package_Kinds, FPackages);
   sortPackageVersions;
   vtPackages.RootNodeCount := 0;
   vtPackages.RootNodeCount := FPackages.Count;
@@ -386,7 +389,7 @@ begin
   if FSelNode <> nil then
   begin
     pp := vtPackages.GetNodeData(FSelNode);
-    if (pp.obj is TFHIRPackageObject) then
+    if (pp.obj is TNpmPackage) then
       ok := true;
   end;
   btnDelete.Enabled := ok;
@@ -394,10 +397,10 @@ end;
 
 procedure TPackageCacheForm.sortPackageVersions;
 begin
-  FPackages.Sort(function (const l, r: TFHIRPackageVersionInfo): Integer
+  FPackages.Sort(function (const l, r: TNpmPackage): Integer
     begin
       case vtPackages.Header.SortColumn of
-        0: result := CompareStr(l.id, r.id);
+        0: result := CompareStr(l.name, r.name);
         1: result := CompareStr(l.Version, r.Version);
         2: result := CompareStr(l.fhirVersion, r.fhirVersion);
         3: if r.installed > l.installed then
@@ -407,7 +410,7 @@ begin
            else
              result := 0;
         4: result := l.size - r.size;
-        5: result := CompareStr(l.depString, r.depString);
+        5: result := CompareStr(l.dependencySummary, r.dependencySummary);
       else
         result := 0;
       end;
@@ -434,12 +437,12 @@ end;
 procedure TPackageCacheForm.vtPackagesDblClick(Sender: TObject);
 var
   p, ps : PVirtualNode;
-  pck : TFHIRPackageVersionInfo;
+  pck : TNpmPackage;
 begin
   ps := nil;
   for p in vtPackages.SelectedNodes() do
     ps := p;
-  pck := PTreeDataPointer(vtPackages.GetNodeData(ps)).obj as TFHIRPackageVersionInfo;
+  pck := PTreeDataPointer(vtPackages.GetNodeData(ps)).obj as TNpmPackage;
   showTextPresentation(self, 'Package Information', pck.presentation);
 end;
 
@@ -458,7 +461,7 @@ begin
     if kind in [ikNormal, ikSelected] then
     begin
       p := vtPackages.GetNodeData(Node);
-      if (p.obj as TFHIRPackageVersionInfo).isCore then
+      if (p.obj as TNpmPackage).isCore then
         ImageIndex := 4
       else
         ImageIndex := 3;
@@ -471,17 +474,17 @@ end;
 procedure TPackageCacheForm.vtPackagesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   p : PTreeDataPointer;
-  v : TFHIRPackageVersionInfo;
+  v : TNpmPackage;
 begin
   p := vtPackages.GetNodeData(Node);
-  v := p.obj as TFHIRPackageVersionInfo;
+  v := p.obj as TNpmPackage;
   case column of
-    0: CellText := v.id;
+    0: CellText := v.name;
     1: CellText := v.Version;
     2: CellText := v.fhirVersion;
     3: if v.installed = 0 then CellText := '??' else CellText :=  DescribePeriod(now - v.installed);
     4: CellText := DescribeBytes(v.size);
-    5: CellText := v.depString;
+    5: CellText := v.dependencySummary;
   end;
 end;
 
@@ -507,6 +510,12 @@ begin
   p := vtPackages.GetNodeData(Node);
   p.obj := FPackages[Node.Index];
   InitialStates := [];
+end;
+
+procedure TPackageCacheForm.vtPackagesKeyDown(Sender: TObject; var Key: Word;Shift: TShiftState);
+begin
+  if Key = VK_DELETE then
+    btnDeleteClick(self);
 end;
 
 end.

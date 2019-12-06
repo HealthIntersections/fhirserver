@@ -126,7 +126,6 @@
             <Form>PackageFinderForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\library\cache\FHIR.Cache.PackageManagerDialog.pas">
             <Form>PackageCacheForm</Form>
             <FormType>dfm</FormType>
@@ -277,6 +276,8 @@
             <Form>TextPresentationDialog</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -270,7 +270,7 @@ type
     procedure updateStatus(sel : TFhirCodeSystemConcept);
     procedure buildFlatGrid(list : TFhirCodeSystemConceptList);
     function matchesSearch(concept : TFhirCodeSystemConcept) : boolean;
-
+    
     procedure loadMetadata;
     procedure loadHL7Process;
     procedure loadProperties;
@@ -895,6 +895,7 @@ end;
 procedure TCodeSystemEditorFrame.cancel;
 begin
 end;
+
 
 procedure TCodeSystemEditorFrame.commit;
 begin

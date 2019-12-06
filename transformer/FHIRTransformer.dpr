@@ -17,7 +17,6 @@ uses
   FHIR.Base.Validator in '..\library\base\FHIR.Base.Validator.pas',
   FHIR.Base.Xhtml in '..\library\base\FHIR.Base.Xhtml.pas',
   FHIR.Cache.PackageBrowser in '..\library\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm},
-  FHIR.Cache.PackageManager in '..\library\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Cache.PackageManagerDialog in '..\library\cache\FHIR.Cache.PackageManagerDialog.pas' {PackageCacheForm},
   FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
   FHIR.Cda.Documents in '..\library\cda\FHIR.Cda.Documents.pas',
@@ -139,7 +138,9 @@ uses
   FHIR.R4.Javascript in '..\library\r4\FHIR.R4.Javascript.pas',
   FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas',
   FHIR.Cda.Javascript in '..\library\cda\FHIR.Cda.Javascript.pas',
-  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog};
+  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog},
+  FHIR.Cache.PackageManager in '..\library\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 {$R *.res}
 

@@ -184,3 +184,8 @@ System
 /Exec/64/fhir-vcl-demo.log
 /library/r2gen
 /library/r3gen
+/toolkit/OSX64/Debug/FHIRToolkitR3
+/toolkit/OSX64/Debug/FHIRToolkitR3.dSYM
+/toolkit/OSX64/Debug/FHIRToolkitR4
+/toolkit/OSX64/Debug/FHIRToolkitR4.dSYM
+/utilities/publisher/Win32/Debug/fhir-publisher.ini

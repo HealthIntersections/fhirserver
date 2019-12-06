@@ -32,8 +32,12 @@ unit FHIRToolkitForm;
 {$DEFINE EXAMPLESCENARIO}
 {$DEFINE IMPLEMENTATIONGUIDE}
 {$ENDIF}
+{$IFDEF OSX}
+{$UNDEF IMPLEMENTATIONGUIDE}
+{$ENDIF}
 
 interface
+
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
@@ -51,7 +55,7 @@ uses
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
-{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, PublisherHome, ShellApi, {$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, ShellApi, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, PackageEditorFrame, ValidationFrame, TransformationFrame, DiffEngineFrame, UTGMgmtFrame,

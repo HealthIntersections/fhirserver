@@ -237,6 +237,7 @@ type
     function GetHasFormat: boolean;
     Public
       constructor Create; Override;
+      constructor Create(bytes : TBytes); Overload;
 {$IFNDEF UT}
       constructor Create(sText : String); Overload;
 {$ENDIF}
@@ -2371,7 +2372,14 @@ begin
   Create;
   AsText := stext;
 end;
+
 {$ENDIF}
+
+constructor TFslBuffer.Create(bytes: TBytes);
+begin
+  Create;
+  Asbytes := bytes;
+end;
 
 function TFslBuffer.GetAsBytes: TBytes;
 begin

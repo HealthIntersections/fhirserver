@@ -36,7 +36,7 @@ uses
   BaseFrame, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.ComboEdit, FMX.Layouts,
   FMX.ListBox, FMX.Controls.Presentation, FMX.Platform,
   FHIR.Support.Utilities, FHIR.Tools.ValidationWrapper,
-  FHIR.Cache.PackageManager, FMX.Menus, FHIR.Base.Lang;
+  FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager, FMX.Menus, FHIR.Base.Lang;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -222,9 +222,9 @@ begin
 
   s := cbxVersion.Items[cbxVersion.ItemIndex];
   s := s.Substring(0, s.IndexOf(' '));
-  Settings.CacheManager.ListPackagesForFhirVersion([fpkIG], true, s, lbPackages.Items);
-  for i := 0 to lbPackages.Items.Count - 1 do
-    lbPackages.ListItems[i].IsChecked := Settings.getValue('Packages', lbPackages.Items[i], false);
+//  Settings.CacheManager.ListPackagesForFhirVersion([fpkIG], true, s, lbPackages.Items);
+//  for i := 0 to lbPackages.Items.Count - 1 do
+//    lbPackages.ListItems[i].IsChecked := Settings.getValue('Packages', lbPackages.Items[i], false);
   FDirty := true;
   updateParams;
 end;

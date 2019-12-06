@@ -352,6 +352,7 @@
             <Form>TextPresentationDialog</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>

@@ -200,7 +200,8 @@ uses
   FHIR.Server.ConsentEngine in '..\..\Server\FHIR.Server.ConsentEngine.pas',
   FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
   FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas',
-  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas';
+  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 var
   gsrv : TExampleFhirServer;

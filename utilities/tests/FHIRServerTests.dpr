@@ -364,7 +364,8 @@ uses
   FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
   FHIR.R4.Tests.Objects in '..\..\library\r4\tests\FHIR.R4.Tests.Objects.pas',
   FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas',
-  FHIR.R4.Tests.Context in '..\..\library\r4\tests\FHIR.R4.Tests.Context.pas';
+  FHIR.R4.Tests.Context in '..\..\library\r4\tests\FHIR.R4.Tests.Context.pas',
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 var
   runner : ITestRunner;

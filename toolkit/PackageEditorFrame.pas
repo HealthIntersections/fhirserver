@@ -38,7 +38,7 @@ uses
   BaseFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
-  FHIR.Cache.PackageManager;
+  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -87,7 +87,7 @@ type
     procedure edtFilterChangeTracking(Sender: TObject);
   private
     FSource: String;
-    FPackage : TNpmPackageInfo;
+    FPackage : TNpmPackage;
     procedure filter;
   public
     destructor Destroy; override;
@@ -112,13 +112,13 @@ end;
 
 procedure TPackageEditorFrame.filter;
 var
-  fl : TFslList<TNpmFileInfo>;
-  fi : TNpmFileInfo;
+  fl : TFslList<TNpmPackageResource>;
+  fi : TNpmPackageResource;
   i : integer;
 begin
-  fl := TFslList<TNpmFileInfo>.create;
+  fl := TFslList<TNpmPackageResource>.create;
   try
-    for fi in FPackage.Files do
+    for fi in FPackage.Folders['package'].Resources do
       if (edtFilter.Text = '') or fi.matches(edtFilter.Text) then
         fl.Add(fi.Link);
     grid.RowCount := 0;
@@ -142,20 +142,20 @@ end;
 
 procedure TPackageEditorFrame.load;
 begin
-  FPackage := TNpmPackageInfo.fromSource(FSource, true);
+  FPackage := TNpmPackage.fromSource(FSource);
 
-  edtPackageId.Text := FPackage.packageId;
-  edtFHIRVersions.Text := FPackage.fhirVersions;
+  edtPackageId.Text := FPackage.name;
+  edtFHIRVersions.Text := FPackage.fhirVersionList;
   edtCanonical.Text := FPackage.canonical;
   edtHomePage.Text := FPackage.homePage;
   edtTitle.Text := FPackage.title;
   edtVersion.Text := FPackage.version;
-  edtType.Text := FPackage.typeV;
+  edtType.Text := NAMES_TFHIRPackageKind[FPackage.kind];
   edtLicense.Text := FPackage.license;
   edtUrl.Text := FPackage.url;
   edtAuthor.Text := FPackage.author;
   edtDescription.Text := FPackage.description;
-  edtDependencies.Text := FPackage.dependencies;
+  edtDependencies.Text := FPackage.dependencySummary;
 
   filter;
 end;

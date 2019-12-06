@@ -385,7 +385,8 @@ uses
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Server.ConsentEngine in 'FHIR.Server.ConsentEngine.pas',
   FHIR.Tx.NDC in 'FHIR.Tx.NDC.pas',
-  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog};
+  FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog},
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

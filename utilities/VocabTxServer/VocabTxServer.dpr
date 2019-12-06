@@ -205,7 +205,8 @@ uses
   FHIR.Support.Service in '..\..\library\support\FHIR.Support.Service.pas',
   {$ENDIF }
   FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
-  FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas';
+  FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas',
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 {$R *.res}
 

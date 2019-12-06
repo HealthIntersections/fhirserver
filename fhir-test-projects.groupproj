@@ -3,22 +3,7 @@
         <ProjectGuid>{09AF4F3A-3C40-46E9-AB64-2E0AA7A9EEFF}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="tests\FHIRServerTests.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="tests\UITester.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="tests\UITesterFMX.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="reference-platform\r4\fhirtests4.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="reference-platform\dstu3\fhirtests3.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="reference-platform\dstu2\fhirtests2.dproj">
+        <Projects Include="utilities\fnr\fnr.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -29,68 +14,23 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="FHIRServerTests">
-        <MSBuild Projects="tests\FHIRServerTests.dproj"/>
+    <Target Name="fnr">
+        <MSBuild Projects="utilities\fnr\fnr.dproj"/>
     </Target>
-    <Target Name="FHIRServerTests:Clean">
-        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Clean"/>
+    <Target Name="fnr:Clean">
+        <MSBuild Projects="utilities\fnr\fnr.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="FHIRServerTests:Make">
-        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="UITester">
-        <MSBuild Projects="tests\UITester.dproj"/>
-    </Target>
-    <Target Name="UITester:Clean">
-        <MSBuild Projects="tests\UITester.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="UITester:Make">
-        <MSBuild Projects="tests\UITester.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="UITesterFMX">
-        <MSBuild Projects="tests\UITesterFMX.dproj"/>
-    </Target>
-    <Target Name="UITesterFMX:Clean">
-        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="UITesterFMX:Make">
-        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="fhirtests4">
-        <MSBuild Projects="reference-platform\r4\fhirtests4.dproj"/>
-    </Target>
-    <Target Name="fhirtests4:Clean">
-        <MSBuild Projects="reference-platform\r4\fhirtests4.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirtests4:Make">
-        <MSBuild Projects="reference-platform\r4\fhirtests4.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="fhirtests3">
-        <MSBuild Projects="reference-platform\dstu3\fhirtests3.dproj"/>
-    </Target>
-    <Target Name="fhirtests3:Clean">
-        <MSBuild Projects="reference-platform\dstu3\fhirtests3.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirtests3:Make">
-        <MSBuild Projects="reference-platform\dstu3\fhirtests3.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="fhirtests2">
-        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj"/>
-    </Target>
-    <Target Name="fhirtests2:Clean">
-        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirtests2:Make">
-        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
+    <Target Name="fnr:Make">
+        <MSBuild Projects="utilities\fnr\fnr.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRServerTests;UITester;UITesterFMX;fhirtests4;fhirtests3;fhirtests2"/>
+        <CallTarget Targets="fnr"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRServerTests:Clean;UITester:Clean;UITesterFMX:Clean;fhirtests4:Clean;fhirtests3:Clean;fhirtests2:Clean"/>
+        <CallTarget Targets="fnr:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRServerTests:Make;UITester:Make;UITesterFMX:Make;fhirtests4:Make;fhirtests3:Make;fhirtests2:Make"/>
+        <CallTarget Targets="fnr:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

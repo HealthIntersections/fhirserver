@@ -390,6 +390,11 @@ Memo2.GoToTextEnd;
 end;
 
 procedure TIGPublishForm.RunInMemo(CommandLine: string; Work: string; parameters: string; Memo: TMemo);
+{$IFDEF OSX}
+begin
+  raise EFslException.Create('Not done yet for OSX');
+end;
+{$ELSE}
 var
   SA: TSecurityAttributes;
   SI: TStartupInfo;
@@ -450,6 +455,7 @@ begin
     CloseHandle(StdOutPipeRead);
   end;
 end;
+{$ENDIF}
 
 procedure TIGPublishForm.btnDownloadIGPublisherClick(Sender: TObject);
 var
@@ -669,6 +675,11 @@ end;
 {$ENDIF}
 
 procedure TIGPublishForm.SetupIGPublisherFiles;
+{$IFDEF OSX}
+begin
+  raise EFslException.Create('Not done yet for OSX');
+end;
+{$ELSE}
 var
   str: string;
   i: integer;
@@ -747,7 +758,7 @@ begin
       end;
     end;
   end;
-
 end;
+{$ENDIF}
 
 end.

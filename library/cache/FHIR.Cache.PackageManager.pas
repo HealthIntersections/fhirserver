@@ -35,37 +35,14 @@ uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, System.Types,
   FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Support.Stream, FHIR.Web.Fetcher,
+  FHIR.Cache.NpmPackage,
   FHIR.Base.Utilities;
 
 type
-  TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
-  TFHIRPackageKindSet = set of TFHIRPackageKind;
+  TCheckEvent = function(sender : TObject; msg : String):boolean of object;
+  TPackageLoadingEvent = procedure (rType, id : String; stream : TStream) of object;
 
-type
-  TNpmFileInfo = class (TFslObject)
-  private
-    FName : String;
-    FType : String;
-    FId : String;
-    FURL : String;
-    FVersion : String;
-    FSize: Integer;
-    FKind: String;
-    FResourceType: String;
-  public
-    function Link : TNpmFileInfo;
-
-    property Name : String read FName write FName;
-    property ResourceType : String read FResourceType write FResourceType;
-    property Id : String read FId write FId;
-    property TypeV : String read FType write FType;
-    property Kind : String read FKind write FKind;
-    property URL : String read FURL write FURL;
-    property Version : String read FVersion write FVersion;
-    property size : Integer read FSize write FSize;
-
-    function matches(text : String) : boolean;
-  end;
+(*
 
   TNpmPackageInfo = class (TFslObject)
   private
@@ -113,6 +90,7 @@ type
     class function fromPackage(bytes : TBytes) : TNpmPackageInfo;
     class function fromSource(source : String; size : boolean) : TNpmPackageInfo;
   end;
+*)
 
   TPackageDefinition = class (TFslObject)
   private
@@ -139,7 +117,7 @@ type
     class procedure AddCustomPackages(list : TFslList<TPackageDefinition>);
   end;
 
-  TFHIRPackageObject = class abstract (TFslObject)
+(*  TFHIRPackageObject = class abstract (TFslObject)
   public
     function summary : string; virtual;
     function presentation : String; virtual;
@@ -230,22 +208,7 @@ type
     property versions : TFslList<TFHIRPackageVersionInfo> read FVersions;
     property kind : TFHIRPackageKind read FKind write FKind;
   end;
-
-  TCheckEvent = function(sender : TObject; msg : String):boolean of object;
-  TPackageLoadingEvent = procedure (rType, id : String; stream : TStream) of object;
-  TWorkProgressEvent = procedure (sender : TObject; pct : integer; done : boolean; desc : String) of object;
-
-  TNpmPackageIndexBuilder = class (TFslObject)
-  private
-    index : TJsonObject;
-    files : TJsonArray;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-
-    procedure seeFile(name : String; bytes : TBytes);
-    function build : String;
-  end;
+*)
 
   TPackageLoadingInformation = class (TFslObject)
   private
@@ -270,17 +233,16 @@ type
     FIni : TIniFile;
     FOnWork : TWorkProgressEvent;
     FOnCheck : TCheckEvent;
-    FCache : TFslMap<TNpmPackageInfo>;
+    FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
-    function resolve(list : TFslList<TFHIRPackageInfo>; dep : TFHIRPackageDependencyInfo) : TFHIRPackageDependencyStatus;
+//    function resolve(list : TFslList<TFHIRPackage>; dep : TFHIRPackageDependencyInfo) : TFHIRPackageDependencyStatus;
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
     procedure clearCache;
-    function readNpmKind(kind, id: String): TFHIRPackageKind;
     function checkPackageSize(dir : String) : integer;
     procedure work(pct : integer; done : boolean; desc : String);
     procedure progress(sender : TObject; pct : integer);
     function check(desc : String) : boolean;
-    function loadPackageFromCache(folder : String) : TNpmPackageInfo;
+    function loadPackageFromCache(folder : String) : TNpmPackage;
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
@@ -296,12 +258,12 @@ type
     property UserMode : boolean read FUser;
     function description : String;
 
-    procedure ListPackages(list : TStrings); overload;
-    procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TFHIRPackageInfo>); overload;
     procedure ListPackageIds(list : TStrings);
-    procedure ListPackageVersions(id : String; list : TStrings); overload;
-    procedure ListPackageVersions(list : TFslList<TFHIRPackageVersionInfo>); overload;
-    procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version : String; list : TStrings);
+    procedure ListPackages(list : TStrings); overload;
+    procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TNpmPackage>); overload;
+//    procedure ListPackageVersions(id : String; list : TStrings); overload;
+//    procedure ListPackageVersions(list : TFslList<TFHIRPackageVersionInfo>); overload;
+//    procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version : String; list : TStrings);
 
     function packageExists(id, ver : String) : boolean; overload;
     function autoInstallPackage(id, ver : String) : boolean; overload;
@@ -323,10 +285,7 @@ type
   end;
 
 const
-  All_Package_Kinds = [fpkCore..fpkToolGen];
-  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool', 'GenPack', 'Group', 'Examples');
-  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package', 'Group', 'Examples');
-  NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
+//  NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
   ANALYSIS_VERSION = 2;
   CACHE_VERSION = 3;
 
@@ -372,7 +331,7 @@ end;
 constructor TFHIRPackageManager.Create(user : boolean);
 begin
   inherited Create;
-  FCache := TFslMap<TNpmPackageInfo>.create;
+  FCache := TFslMap<TNpmPackage>.create;
   FUser := user;
   if user then
     FFolder := path([UserFolder, '.fhir', 'packages'])
@@ -602,41 +561,12 @@ begin
   end;
 end;
 
-function TFHIRPackageManager.readNpmKind(kind, id : String) : TFHIRPackageKind;
-begin
-  if kind = 'fhir.core' then
-    result := fpkCore
-  else if kind = 'fhir.ig' then
-    result := fpkIG
-  else if kind = 'fhir.tool' then
-    result := fpkTool
-  else if kind = 'fhir.core.gen' then
-    result := fpkToolGen
-  else if kind = 'fhir.template' then
-    result := fpkIGTemplate
-  else if kind = 'fhir.examples' then
-    result := fpkExamples
-  else if (kind = 'fhir.group') or (id= 'hl7.fhir.core') then
-    result := fpkGroup
-  else if kind <> '' then
-    raise ELibraryException.create('Unknown Package Kind: '+kind)
-  else if StringArrayExistsSensitive(['hl7.fhir.r2.core', 'hl7.fhir.r3.core', 'hl7.fhir.r4.core'], id) then
-    result := fpkCore
-  else
-    result := fpkIG;
-end;
-
-procedure TFHIRPackageManager.ListPackages(kinds : TFHIRPackageKindSet; list: TFslList<TFHIRPackageInfo>);
+procedure TFHIRPackageManager.ListPackages(kinds : TFHIRPackageKindSet; list: TFslList<TNpmPackage>);
 var
+  ts : TStringList;
   s : String;
   id, n, ver : String;
-  npm : TNpmPackageInfo;
-  dep : TJsonObject;
-  t, pck : TFHIRPackageInfo;
-  v : TFHIRPackageVersionInfo;
-  d : TFHIRPackageDependencyInfo;
-  ts : TStringList;
-  kind : TFHIRPackageKind;
+  npm : TNpmPackage;
 begin
   ts := TStringList.Create;
   try
@@ -652,112 +582,34 @@ begin
           n := ExtractFileName(s);
           id := n.Substring(0, n.IndexOf('#'));
           ver := n.Substring(n.LastIndexOf('#')+1);
-          if (id <> npm.package.str['name']) or (ver <> npm.package.str['version']) then
+          if (npm.kind in kinds) then
           begin
-            if (id <> npm.package.str['name']) then
+            if (id = 'hl7.fhir.core') then
+              list.Insert(0, npm.link)
+             else
+               list.add(npm.link);
+            if Fini.ReadString('packages', ExtractFileName(s), '') <> '' then
+              npm.installed := TFslDateTime.fromFormat('yyyymmddhhnnss', Fini.ReadString('packages', ExtractFileName(s), '')).DateTime
+            else
+              npm.installed := 0;
+            npm.size := Fini.ReadInteger('package-sizes', ExtractFileName(s), 0);
+            if (npm.size = 0) then
             begin
-              npm.package.str['original-name'] := npm.package.str['name'];
-              npm.package.str['name'] := id;
-            end;
-            if (ver <> npm.package.str['version']) then
-            begin
-              npm.package.str['original-version'] := npm.package.str['version'];
-              npm.package.str['version'] := ver;
-            end;
-            StringToFile(TJsonWriterDirect.writeObjectStr(npm.package, true), Path([s, 'package', 'package.json']), TEncoding.UTF8);
-          end;
-          kind := readNpmKind(npm.package.str['type'], id);
-          if (kind in kinds) then
-          begin
-            pck := nil;
-            try
-              for t in list do
-                if t.id = id then
-                  pck := t.Link;
-              if pck = nil then
-              begin
-                pck := TFHIRPackageInfo.create;
-                pck.id := id;
-                pck.kind := kind;
-                if (id = 'hl7.fhir.core') then
-                  list.Insert(0, pck.link)
-                else
-                  list.add(pck.link);
-              end
-              else if (pck.kind <> kind) then
-                raise ELibraryException.create('Package kind mismatch beteen versions for Package '+id+': '+CODES_TFHIRPackageKind[kind]+'/'+CODES_TFHIRPackageKind[pck.kind]);
-
-              if pck.Canonical = '' then
-                pck.Canonical := npm.package.str['canonical'];
-              if pck.Canonical = '' then
-                pck.Canonical := getUrl(pck.id);
-              v := TFHIRPackageVersionInfo.Create(npm.Link);
-              try
-                v.folder := s;
-                v.id := npm.package.str['name'];
-                v.version := npm.package.str['version'];
-                v.originalId := npm.package.str['original-name'];
-                v.originalVersion := npm.package.str['original-version'];
-                v.url := npm.package.str['homepage'];
-                if (v.url = '') then
-                  v.url := npm.package.str['url'];
-
-                if Fini.ReadString('packages', ExtractFileName(s), '') <> '' then
-                  v.installed := TFslDateTime.fromFormat('yyyymmddhhnnss', Fini.ReadString('packages', ExtractFileName(s), '')).DateTime
-                else
-                  v.installed := 0;
-                v.size := Fini.ReadInteger('package-sizes', ExtractFileName(s), 0);
-                if (v.size = 0) then
-                begin
-                  v.size := checkPackageSize(s);
-                  Fini.WriteInteger('package-sizes', ExtractFileName(s), v.size);
-                end;
-
-//                if npm.str['name'] = 'hl7.fhir.core' then
-//                  v.fhirVersion := npm.str['version']
-//                else
-//                begin
-                  dep := npm.package.obj['dependencies'];
-                  if dep <> nil then
-                  begin
-                    for n in dep.properties.Keys do
-                    begin
-                      if not isCoreName(n) then
-                      begin
-                        d := TFHIRPackageDependencyInfo.Create;
-                        try
-                          d.id := n;
-                          d.version := dep.str[n];
-                          v.dependencies.add(d.Link);
-                        finally
-                          d.Free;
-                        end;
-                      end
-                    end;
-                  end;
-//                end;
-                pck.versions.Add(v.link);
-              finally
-                v.Free;
-              end;
-            finally
-              pck.Free;
+              npm.size := checkPackageSize(s);
+              Fini.WriteInteger('package-sizes', ExtractFileName(s), npm.size);
             end;
           end;
         finally
           npm.free;
         end;
       end;
-    for pck in list do
-      for v in pck.versions do
-        for d in v.dependencies do
-          d.status := resolve(list, d);
     end;
   finally
     ts.Free;
   end;
 end;
 
+(*
 procedure TFHIRPackageManager.ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version: String; list: TStrings);
 var
   l : TFslList<TFHIRPackageInfo>;
@@ -873,6 +725,7 @@ begin
     ts.Free;
   end;
 end;
+*)
 
 procedure TFHIRPackageManager.ListPackages(list: TStrings);
 var
@@ -883,27 +736,27 @@ begin
       list.Add(s);
 end;
 
-procedure TFHIRPackageManager.ListPackageVersions(id: String; list: TStrings);
-var
-  s, f : String;
-  ts : TStringList;
-begin
-  ts := TStringList.Create;
-  try
-    for s in TDirectory.GetDirectories(FFolder) do
-      ts.Add(s);
-    ts.Sort;
-    for s in TDirectory.GetDirectories(FFolder) do
-    begin
-      f := s.subString(FFolder.length+1);
-      if (f.StartsWith(id+'#')) then
-        list.Add(f.Substring(id.Length+1));
-    end;
-  finally
-    ts.free;
-  end;
-end;
-
+//procedure TFHIRPackageManager.ListPackageVersions(id: String; list: TStrings);
+//var
+//  s, f : String;
+//  ts : TStringList;
+//begin
+//  ts := TStringList.Create;
+//  try
+//    for s in TDirectory.GetDirectories(FFolder) do
+//      ts.Add(s);
+//    ts.Sort;
+//    for s in TDirectory.GetDirectories(FFolder) do
+//    begin
+//      f := s.subString(FFolder.length+1);
+//      if (f.StartsWith(id+'#')) then
+//        list.Add(f.Substring(id.Length+1));
+//    end;
+//  finally
+//    ts.free;
+//  end;
+//end;
+//
 function TFHIRPackageManager.loadArchive(content: TBytes): TDictionary<String, TBytes>;
 var
   bo, bi : TBytesStream;
@@ -973,8 +826,8 @@ var
   c : integer;
   s : String;
   f : TFileStream;
-  npm : TNpmPackageInfo;
-  fi : TNpmFileInfo;
+  npm : TNpmPackage;
+  fi : TNpmPackageResource;
 begin
   if loadInfo.isLoaded(id, ver) then
     exit;
@@ -990,17 +843,17 @@ begin
 
   npm := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
   try
-    if npm.package.has('dependencies') then
+    if npm.info.has('dependencies') then
     begin
-      for s in npm.package.obj['dependencies'].properties.Keys do
+      for s in npm.info.obj['dependencies'].properties.Keys do
       begin
-        loadPackage(s, npm.package.obj['dependencies'].str[s], resources, loadInfo);
+        loadPackage(s, npm.info.obj['dependencies'].str[s], resources, loadInfo);
       end;
     end;
     loadInfo.checkVersion(npm.fhirVersion);
 
     c := 0;
-    for fi in npm.Files do
+    for fi in npm.Folders['package'].resources do
     begin
       if not isIgnored(ExtractFileName(fi.Name)) and ((resources = nil) or resources.contains(fi.ResourceType)) then
       begin
@@ -1019,7 +872,7 @@ begin
           f.Free;
         end;
       end;
-      work(trunc((c / npm.files.count) * 100), false, 'Package '+id+'#'+ver+': Load '+fi.Name);
+      work(trunc((c / npm.Folders['package'].resources.count) * 100), false, 'Package '+id+'#'+ver+': Load '+fi.Name);
       inc(c);
     end;
     work(100, true, 'Complete');
@@ -1029,7 +882,7 @@ begin
 end;
 
 
-function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackageInfo;
+function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackage;
 begin
   if FCache.TryGetValue(folder, result) then
     result.Link
@@ -1037,7 +890,7 @@ begin
   begin
     if not FileExists(Path([folder, 'package', '.index.json'])) then
       buildPackageIndex(folder);
-    result := TNpmPackageInfo.fromFolder(Path([folder]), false);
+    result := TNpmPackage.fromFolder(folder);
     FCache.add(folder, result.Link);
   end;
 end;
@@ -1175,8 +1028,8 @@ end;
 function TFHIRPackageManager.report: String;
 var
   b : TStringBuilder;
-  list : TFslList<TFHIRPackageInfo>;
-  p : TFHIRPackageInfo;
+  list : TFslList<TNpmPackage>;
+  p : TNpmPackage;
   ts : TStringList;
   s : String;
 begin
@@ -1185,7 +1038,7 @@ begin
     b.AppendLine('Packages in '+Folder);
     b.AppendLine;
 
-    list := TFslList<TFHIRPackageInfo>.create;
+    list := TFslList<TNpmPackage>.create;
     try
       ListPackages(All_Package_Kinds, list);
       for p in list do
@@ -1210,30 +1063,31 @@ begin
   end;
 end;
 
-function TFHIRPackageManager.resolve(list: TFslList<TFHIRPackageInfo>; dep: TFHIRPackageDependencyInfo): TFHIRPackageDependencyStatus;
-var
-  t : TFHIRPackageInfo;
-  v : TFHIRPackageVersionInfo;
-begin
-  result := stNotResolved;
-  for t in list do
-    if t.id = dep.id then
-    begin
-      for v in t.versions do
-        if v.version = dep.version then
-          exit(stOK);
-      for v in t.versions do
-        if v.version > dep.version then
-          exit(stMoreRecentVersion);
-    end;
-end;
-
+//function TFHIRPackageManager.resolve(list: TFslList<TFHIRPackageInfo>; dep: TFHIRPackageDependencyInfo): TFHIRPackageDependencyStatus;
+//var
+//  t : TFHIRPackageInfo;
+//  v : TFHIRPackageVersionInfo;
+//begin
+//  result := stNotResolved;
+//  for t in list do
+//    if t.id = dep.id then
+//    begin
+//      for v in t.versions do
+//        if v.version = dep.version then
+//          exit(stOK);
+//      for v in t.versions do
+//        if v.version > dep.version then
+//          exit(stMoreRecentVersion);
+//    end;
+//end;
+//
 procedure TFHIRPackageManager.work(pct: integer; done: boolean; desc: String);
 begin
   if assigned(FOnWork) then
     FOnWork(self, pct, done, desc);
 end;
 
+(*
 { TFHIRPackageInfo }
 
 function TFHIRPackageInfo.childCount: integer;
@@ -1442,6 +1296,7 @@ function TFHIRPackageObject.summary: string;
 begin
   result := '?';
 end;
+*)
 
 { TPackageDefinition }
 
@@ -1538,65 +1393,7 @@ begin
   add('fhir.argonaut.ehr', '1.0.0', 'http://fhir.org/guides/argonaut', 'Argonaut EHR Query', '1.0.2', 'http://www.fhir.org/guides/argonaut/r2');
 end;
 
-{ TNpmPackageIndexBuilder }
-
-constructor TNpmPackageIndexBuilder.Create;
-begin
-  Inherited Create;
-  index := TJsonObject.Create;
-  files := index.forceArr['files'];
-end;
-
-destructor TNpmPackageIndexBuilder.Destroy;
-begin
-  index := nil;
-  files := nil;
-  inherited Destroy;
-end;
-
-procedure TNpmPackageIndexBuilder.seeFile(name: String; bytes: TBytes);
-var
-  json, fi : TJsonObject;
-begin
-  if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json') and not name.EndsWith('ig-r4.json')) then
-  begin
-    try
-      json := TJSONParser.Parse(bytes);
-      try
-        if (json.has('resourceType')) then
-        begin
-          fi := files.addObject;
-          fi.str['filename'] := name;
-          fi.str['resourceType'] := json.str['resourceType'];
-          if (json.has('id') and (json.node['id'].kind = jnkString)) then
-            fi.str['id'] := json.str['id'];
-          if (json.has('url') and (json.node['url'].kind = jnkString)) then
-            fi.str['url'] := json.str['url'];
-          if (json.has('version') and (json.node['version'].kind = jnkString)) then
-            fi.str['version'] := json.str['version'];
-          if (json.has('kind') and (json.node['kind'].kind = jnkString)) then
-            fi.str['kind'] := json.str['kind'];
-          if (json.has('type') and (json.node['type'].kind = jnkString)) then
-            fi.str['type'] := json.str['type'];
-        end;
-      finally
-        json.free;
-      end;
-    except
-      // ignore....
-    end;
-  end;
-end;
-
-function TNpmPackageIndexBuilder.build: String;
-begin
-  result := TJsonWriterDirect.writeObjectStr(index, true);
-  index.Free;
-  index := nil;
-  files := nil;
-end;
-
-
+(*
 { TNpmPackageInfo }
 
 constructor TNpmPackageInfo.Create;
@@ -1886,6 +1683,7 @@ begin
     FKind.ToLower.Contains(text) or
     FResourceType.ToLower.Contains(text);
 end;
+*)
 
 { TPackageLoadingInformation }
 

@@ -9,7 +9,8 @@ uses
   jclsysutils,
 {$ENDIF}
   fmx.Types, fmx.Controls, fmx.Forms, fmx.Graphics, fmx.Dialogs, fmx.StdCtrls, fmx.Edit, fmx.Controls.Presentation, System.ImageList, fmx.ImgList,
-  FMX.ScrollBox, FMX.Memo;
+  FMX.ScrollBox, FMX.Memo,
+  FHIR.Support.Base;
 
 type
   TProjectDialog = class(TForm)

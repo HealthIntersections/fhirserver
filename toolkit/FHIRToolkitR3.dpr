@@ -29,8 +29,10 @@ POSSIBILITY OF SUCH DAMAGE.
 program FHIRToolkitR3;
 
 uses
+  {$IFNDEF MACOS}
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
+  {$ENDIF}
   SysUtils,
   IdSSLOpenSSLHeaders,
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
@@ -160,7 +162,8 @@ uses
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
-  FHIR.R3.Organiser in '..\library\r3\FHIR.R3.Organiser.pas';
+  FHIR.R3.Organiser in '..\library\r3\FHIR.R3.Organiser.pas',
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 {$R *.res}
 

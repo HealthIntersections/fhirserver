@@ -4,7 +4,7 @@ object PackageCacheForm: TPackageCacheForm
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'FHIR Package Cache Manager'
   ClientHeight = 597
-  ClientWidth = 768
+  ClientWidth = 916
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,14 +22,15 @@ object PackageCacheForm: TPackageCacheForm
   object Panel1: TPanel
     Left = 0
     Top = 549
-    Width = 768
+    Width = 916
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
+    ExplicitTop = 551
     DesignSize = (
-      768
+      916
       48)
     object lblFolder: TLabel
       Left = 16
@@ -55,7 +56,7 @@ object PackageCacheForm: TPackageCacheForm
       Visible = False
     end
     object Button1: TButton
-      Left = 687
+      Left = 835
       Top = 18
       Width = 74
       Height = 25
@@ -65,6 +66,7 @@ object PackageCacheForm: TPackageCacheForm
       ModalResult = 8
       TabOrder = 0
       OnClick = Button1Click
+      ExplicitLeft = 687
     end
     object pbDownload: TProgressBar
       Left = 16
@@ -88,11 +90,12 @@ object PackageCacheForm: TPackageCacheForm
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 768
+    Width = 916
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 768
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -120,13 +123,14 @@ object PackageCacheForm: TPackageCacheForm
     end
   end
   object Panel3: TPanel
-    Left = 656
+    Left = 804
     Top = 41
     Width = 112
     Height = 508
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitLeft = 656
     DesignSize = (
       112
       508)
@@ -200,7 +204,7 @@ object PackageCacheForm: TPackageCacheForm
   object vtPackages: TVirtualStringTree
     Left = 0
     Top = 41
-    Width = 656
+    Width = 804
     Height = 508
     Align = alClient
     Header.AutoSizeIndex = 5
@@ -221,7 +225,9 @@ object PackageCacheForm: TPackageCacheForm
     OnGetImageIndex = vtPackagesGetImageIndex
     OnHeaderClick = vtPackagesHeaderClick
     OnInitNode = vtPackagesInitNode
+    OnKeyDown = vtPackagesKeyDown
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
+    ExplicitWidth = 656
     Columns = <
       item
         Position = 0
@@ -250,7 +256,7 @@ object PackageCacheForm: TPackageCacheForm
       end
       item
         Position = 5
-        Width = 10
+        Width = 100
         WideText = 'Dependencies'
       end>
   end
