@@ -4726,6 +4726,10 @@ begin
     result := 1
   else if (s = 'fr') then
     result := 2
+  else if (s = 'nl') then
+    result := 3
+  else if (s = 'es') then
+    result := 4
   else
     raise ETerminologyError.create('Unknown SCT Lang "'+s+'"');
 end;
@@ -4735,6 +4739,8 @@ begin
   case lang of
     1 : result := 'en';
     2 : result := 'fr';
+    3 : result := 'nl';
+    4 : result := 'es';
   else
     result := '??';
   end;
