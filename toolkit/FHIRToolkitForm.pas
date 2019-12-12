@@ -52,7 +52,7 @@ uses
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
+  ValueSetEditor, NamingSystemEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
 {$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, ShellApi, {$ENDIF}
@@ -468,6 +468,8 @@ begin
               loadedResource(TCapabilityStatementEditorFrame, Fetcher.url, res)
             else if res is TFhirValueSet then
               loadedResource(TValueSetEditorFrame, Fetcher.url, res)
+            else if res is TFhirNamingSystem then
+              loadedResource(TNamingSystemEditorFrame, Fetcher.url, res)
             else if res is TFhirCodeSystem then
               loadedResource(TCodeSystemEditorFrame, Fetcher.url, res)
             else if res is TFhirQuestionnaire then
@@ -504,6 +506,7 @@ begin
     form.ListBox1.ShowCheckboxes := false;
     form.ListBox1.items.Add('CapabilityStatement');
     form.ListBox1.items.Add('ValueSet');
+    form.ListBox1.items.Add('NamingSystem');
     form.ListBox1.items.Add('CodeSystem');
     form.ListBox1.items.Add('Questionnaire');
     form.ListBox1.items.Add('Library');
@@ -516,23 +519,21 @@ begin
     form.caption := 'Create New File';
     if (ShowModalHack(form) = mrOk) then
       case form.ListBox1.ItemIndex of
-        0:
-          newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
-        1:
-          newResource(TFhirValueSet, TValueSetEditorFrame);
-        2:
-          newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
-        3:
-          newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
-        4:
-          newResource(TFhirLibrary, TLibraryEditorFrame);
+        0: newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
+        1: newResource(TFhirValueSet, TValueSetEditorFrame);
+        2: newResource(TFhirNamingSystem, TNamingSystemEditorFrame);
+        3: newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
+        4: newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
+        5: newResource(TFhirLibrary, TLibraryEditorFrame);
 {$IFDEF EXAMPLESCENARIO}
-        5:
-          newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
-{$ENDIF}
+        6: newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
 {$IFDEF IMPLEMENTATIONGUIDE}
-        6:
-          newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
+        7: newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
+{$ENDIF}
+{$ELSE}
+{$IFDEF IMPLEMENTATIONGUIDE}
+        6: newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
+{$ENDIF}
 {$ENDIF}
       end;
   finally
@@ -579,6 +580,8 @@ begin
             openResourceFromFile(odFile.filename, res, format, TCapabilityStatementEditorFrame)
           else if res is TFhirValueSet then
             openResourceFromFile(odFile.filename, res, format, TValueSetEditorFrame)
+          else if res is TFhirNamingSystem then
+            openResourceFromFile(odFile.filename, res, format, TNamingSystemEditorFrame)
           else if res is TFhirCodeSystem then
             openResourceFromFile(odFile.filename, res, format, TCodeSystemEditorFrame)
           else if res is TFhirQuestionnaire then
@@ -1073,6 +1076,8 @@ begin
     result := TCapabilityStatementEditorFrame
   else if res is TFhirValueSet then
     result := TValueSetEditorFrame
+  else if res is TFhirNamingSystem then
+    result := TNamingSystemEditorFrame
   else if res is TFhirCodeSystem then
     result := TCodeSystemEditorFrame
   else if res is TFhirQuestionnaire then

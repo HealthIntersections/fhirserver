@@ -1,0 +1,461 @@
+object NamingSystemEditorFrame: TNamingSystemEditorFrame
+  Size.Width = 719.000000000000000000
+  Size.Height = 540.000000000000000000
+  Size.PlatformDefault = False
+  object btnMemoForDesc: TButton
+    Anchors = [akTop, akRight]
+    Images = ToolbarImages
+    ImageIndex = 0
+    Position.X = 677.000000000000000000
+    Position.Y = 184.000000000000000000
+    Size.Width = 24.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 22
+    OnClick = btnMemoForDescClick
+  end
+  object btnMemoPurpose: TButton
+    Anchors = [akTop, akRight]
+    Images = ToolbarImages
+    ImageIndex = 0
+    Position.X = 677.000000000000000000
+    Position.Y = 218.000000000000000000
+    Size.Width = 24.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 23
+    OnClick = btnMemoPurposeClick
+  end
+  object btnNameTranslations: TButton
+    Anchors = [akTop, akRight]
+    Images = ToolbarImages
+    ImageIndex = 0
+    Position.X = 677.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 24.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 24
+    OnClick = btnNameTranslationsClick
+  end
+  object cbExperimental: TCheckBox
+    Anchors = [akTop, akRight]
+    HelpContext = 23
+    Position.X = 7600.000000000000000000
+    Position.Y = 120.000000000000000000
+    Size.Width = 122.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 25
+    Text = 'Experimental'
+    OnChange = inputChanged
+  end
+  object cbxJurisdiction: TComboBox
+    Anchors = [akLeft, akTop, akRight]
+    HelpContext = 29
+    Items.Strings = (
+      ''
+      'Austria (AT)'
+      'Australia (AU)'
+      'Brazil (BR)'
+      'Canada (CA)'
+      'Switzerland (CH)'
+      'Chile (CL)'
+      'China (CN)'
+      'Germany (DE)'
+      'Denmark (DK)'
+      'Estonia (EE)'
+      'Spain (ES)'
+      'Finland (FI)'
+      'France (FR)'
+      'United Kingdom (GB)'
+      'Netherlands (the) (NL)'
+      'Norway (NO)'
+      'New Zealand (NZ)'
+      'Russian Federation (the) (RU)'
+      'United States (US)'
+      'Viet Nam (VN)'
+      '--'
+      'World '
+      'Africa'
+      'Americas '
+      'Asia '
+      'Europe '
+      'Australia and New Zealand')
+    Position.X = 84.000000000000000000
+    Position.Y = 248.000000000000000000
+    Size.Width = 621.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 26
+    OnChange = inputChanged
+  end
+  object cbxStatus: TComboBox
+    Anchors = [akLeft, akTop, akRight]
+    HelpContext = 22
+    Items.Strings = (
+      ''
+      'draft'
+      'active'
+      'retired'
+      'unknown')
+    Position.X = 84.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 621.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 27
+    OnChange = inputChanged
+  end
+  object cbxKind: TComboBox
+    Anchors = [akLeft, akTop, akRight]
+    HelpContext = 22
+    Items.Strings = (
+      ''
+      'codesystem'
+      'identifier'
+      'root')
+    Position.X = 84.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 621.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 28
+    OnChange = inputChanged
+  end
+  object dedDate: TDateEdit
+    Date = 43703.000000000000000000
+    OnChange = inputChanged
+    OnCheckChanged = inputChanged
+    Anchors = [akLeft, akTop, akRight]
+    HelpContext = 24
+    Position.X = 84.000000000000000000
+    Position.Y = 114.000000000000000000
+    Size.Width = 621.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 29
+  end
+  object edtDescription: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 30
+    TextSettings.VertAlign = Leading
+    Position.X = 84.000000000000000000
+    Position.Y = 184.000000000000000000
+    HelpContext = 27
+    Size.Width = 587.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = inputChanged
+    OnChangeTracking = inputChanged
+  end
+  object edtName: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 31
+    Position.X = 84.000000000000000000
+    Position.Y = 10.000000000000000000
+    HelpContext = 20
+    Size.Width = 582.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = inputChanged
+    OnChangeTracking = inputChanged
+  end
+  object edtPublisher: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 32
+    Position.X = 84.000000000000000000
+    Position.Y = 149.000000000000000000
+    HelpContext = 25
+    Size.Width = 621.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = inputChanged
+    OnChangeTracking = inputChanged
+  end
+  object edtPurpose: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 33
+    TextSettings.VertAlign = Leading
+    Position.X = 84.000000000000000000
+    Position.Y = 218.000000000000000000
+    HelpContext = 31
+    Size.Width = 587.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = inputChanged
+    OnChangeTracking = inputChanged
+  end
+  object edtVersion: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akTop, akRight]
+    TabOrder = 34
+    Position.X = 7622.000000000000000000
+    Position.Y = 50.000000000000000000
+    HelpContext = 19
+    Size.Width = 100.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = inputChanged
+    OnChangeTracking = inputChanged
+  end
+  object Label10: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 218.000000000000000000
+    Text = 'Usage'
+    TabOrder = 35
+  end
+  object Label13: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 248.000000000000000000
+    Size.Width = 128.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Jurisdiction:'
+    TabOrder = 36
+  end
+  object Label2: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 48.000000000000000000
+    Text = 'Kind'
+    TabOrder = 37
+  end
+  object Label3: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 10.000000000000000000
+    Text = 'Name:'
+    TabOrder = 38
+  end
+  object Label4: TLabel
+    Anchors = [akTop, akRight]
+    Position.X = 7562.000000000000000000
+    Position.Y = 50.000000000000000000
+    Size.Width = 55.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Version:'
+    TabOrder = 39
+  end
+  object Label6: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 80.000000000000000000
+    Text = 'Status'
+    TabOrder = 40
+  end
+  object Label7: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 114.000000000000000000
+    Text = 'Date:'
+    TabOrder = 41
+  end
+  object Label8: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 149.000000000000000000
+    Text = 'Publisher'
+    TabOrder = 42
+  end
+  object Label9: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 184.000000000000000000
+    Text = 'Description:'
+    TabOrder = 43
+  end
+  object Panel1: TPanel
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 280.000000000000000000
+    Size.Width = 697.000000000000000000
+    Size.Height = 249.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 45
+    object Panel2: TPanel
+      Align = Top
+      Size.Width = 697.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label1: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'Identifiers'
+        TabOrder = 0
+      end
+      object btnAdd: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 344.000000000000000000
+        Position.Y = 6.000000000000000000
+        TabOrder = 4
+        Text = '&Add'
+        OnClick = btnAddClick
+      end
+      object btnUp: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 432.000000000000000000
+        Position.Y = 6.000000000000000000
+        TabOrder = 3
+        Text = '&Up'
+        OnClick = btnUpClick
+      end
+      object btnDown: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 520.000000000000000000
+        Position.Y = 6.000000000000000000
+        TabOrder = 2
+        Text = '&Down'
+        OnClick = btnDownClick
+      end
+      object Button4: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 608.000000000000000000
+        Position.Y = 6.000000000000000000
+        TabOrder = 1
+        Text = 'De&lete'
+        OnClick = Button4Click
+      end
+    end
+    object grid: TGrid
+      Align = Client
+      CanFocus = True
+      ClipChildren = True
+      Size.Width = 697.000000000000000000
+      Size.Height = 216.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      OnGetValue = gridGetValue
+      OnSetValue = gridSetValue
+      OnResize = gridResize
+      Viewport.Width = 677.000000000000000000
+      Viewport.Height = 191.000000000000000000
+      object colType: TPopupColumn
+        Header = 'Type'
+        Items.Strings = (
+          ''
+          'oid'
+          'uuid'
+          'uri'
+          'other')
+        Size.Width = 50.000000000000000000
+      end
+      object colValue: TStringColumn
+        Header = 'Value'
+        Size.Width = 150.000000000000000000
+      end
+      object colPreferred: TCheckColumn
+        Header = 'Pref.'
+        Size.Width = 35.000000000000000000
+      end
+      object colPeriodStart: TDateColumn
+        Header = 'Period Start'
+        Format = 'c'
+        Size.Width = 80.000000000000000000
+      end
+      object colPeriodEnd: TDateColumn
+        Header = 'Period End'
+        Format = 'c'
+        Size.Width = 80.000000000000000000
+      end
+      object coLComment: TStringColumn
+        Header = 'Comments'
+      end
+    end
+  end
+  object ToolbarImages: TImageList
+    Source = <
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              02EE49444154384F7D535B489361187EFEFDCE796873EA96A9790871735A6A4E
+              12344B6B4A4BD0282808225B4CA51BE94A826EC208BA10EAA63CC48C24BA08BD
+              D032B1C252EAC253041E4A130F6953E7DCDA9A3AE7BFF57D5F22AEA0075EBEF7
+              7F4FDFF73FEFFB72F80B15151561E4C8F6F97C2A8EE322FF58B142BEBF0A8230
+              6832999CDB3606BF0246A351A7D11EAFFA619695F64C3BC4336607B32746CB90
+              A38DDD544B163A4686DED7373535BD610E027EFBA4C925AA63E52D8FBA2CD953
+              AB6E3E69BF1CE74FAA90971E03D7860743234B7CFF94905A54ACD3272A4463C3
+              C3C393344FB49DAC4BC92D7FDCDA33AB6CB9A5C7D69617A69BC590860632A13A
+              B5515F6BCF8C925CD44C73682E6F3018A407B34EDC69E85ED6BEBA7F169D1FA6
+              A1498C40714E0206C697680CF2336361FFE586D9EA426D551EAAEBFA424B8E26
+              49E363145D1CA954284EBBD8D5F1F65B605C9414738B0EC8A512C84225B0DAD7
+              59814879301C2E37EC4E37E2F7C9F07DC9890B59511E87F9853E8030ADFE3838
+              1FD85157867069100AAF3D47DBDD5248C43C5A5E8DB10297F4A9707B049CAA6E
+              C3B3DAD3B0393760B8DD2DD64A7C2ACA81628D909491AC24D5A5D812BC488E93
+              333D5C16C484EAD4467D54A7B1AE350FADAD6024EE06E7DF593F88387F1F79BD
+              400BAC840489F179D242FEDF099EE730356F67BACDB1C184EAD42612714CA7B1
+              7B42C420C365DB21B1BB773A50152FC797591BF6860723823C7DC1E26237C52A
+              43B14A0A2DDBD69192108E89393BCE1C523012F9CCCC4CAB26419936342D685A
+              097961847DCA74C30D1DBC3E1FB49A28DCBB5E8045EB1A0AB2E25073F9089E74
+              8E429721B45BCCB30F4574B6C786DE3D3096A92DE76ADA919B1E8DA75DE370AE
+              6DB2DB291CAE4DD611EAA331C6B214CB08C9696C6CFCB9C30A1DE534328DF59D
+              130A9E1721F54004635B1CC0A37F7491FCDA2A04D285ABA56ACB446FF315B20F
+              2F699E1FAD95959545EAC3F995FF5BA6B14F7D0D04AF9983E09F9EED5A673539
+              2369AB886E2532E9F57A07FCD719F80DFC85509CE636CC1E0000000049454E44
+              AE426082}
+            FileName = 'C:\temp\flag-un.png'
+          end>
+        Name = 'lang-translations'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              030B49444154384F5D535B48146114FEFE999D556758DD9BEE6AEBAE9A9A4A86
+              9728B61E0ABA3C041151591B84561044111145BD14650F15F4D0431444525964
+              E04377BA400F161444A5D8AA45A6BB76DB7471D75D67DD9DDD9969FEB124FDE0
+              CCFC9CF37DFF0FDF3987600E8EEDDD6B59981ADFC02B4A8351550A684E22E477
+              4265DF7DCC521E9CBBD239A113FF62D605C777B7AC6FAEADB95092B095B1EF7F
+              20FC2BA6E7ED85B9C834BA1014C243377AFB0F9E6EBBFE502F6860FFFE716277
+              CB96ED9EBACECAAEA88DF9A1095D66905555302E9A072E2981F18760FD92B238
+              6BCB9B6C658E81AEEE9E7EAA63E887BEECF3D47554F54DB2F1D31B818C82D4C9
+              CD786C73EB41CF34476BD5FE184BB95443B5ECD13D5BF2762EA8BF5FF92A6A9D
+              BAB803DCAB01B0255618962D00FF7108454A12F67A3730110309C720ED5B83C2
+              4B6F98E2E5C55EA1B4BC9DDC6ADEBA636BE5DA76E9C520788709622806C19405
+              085A44A7E823803907105310E32908CE5C247EC791B5BA1C77069FEF34F0445E
+              6C78F71DE2051FC45C1EC63DD7103FEF0363344078F856D78BEB97409132C8DE
+              7F13E29926646209F0A7EE8137290D8C51551D6A328DBC2A3784223B32B20253
+              891342B11B018B550F7AA6395AA31CCA45220D0EAA4337F17F90D99D9D0586CC
+              A9A990193A24249BC3C4A711883FC3605982783004F1DB084A22E37AD033CD31
+              0CD139940B9E439A90F08C89E4E53058B719E960049C45332D371B1813A75FCA
+              17805812E9C814388F05F248145851AA9BC8562CAD0996B9ACDB6C5F53E6A466
+              1E781606A7499BAC4D08686312AD71C17C641D303A8E4C8307E95D2BC13DEAC1
+              508D1A78164D1E62E86CB7F7F61DF8ECB5CB39873B20D57980A70390B4B65104
+              591ED2640AEA937EBD46399F9615C85473F6F2E5C88C2B74947DA58D1D55AF47
+              59B09AB7A556A0221F8A8105D317D26E1A07B42E0C78F3E53B810FBED6B6EB9D
+              5437B30B74B6EDF30B7B8ABDF396E6390B2DCCE73184DF0430D5FB13BC56CF2C
+              7163B85A1EBAFDC5BFABF5EAB5BBD3AA39DB48F16F9D73E44CA3919002DA2A09
+              EA684261BAFD39B8377B9D813F1052459B18EB10920000000049454E44AE4260
+              82}
+            FileName = 'C:\temp\flag-un.png'
+          end>
+        Name = 'flag-2'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = 'lang-translations'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'flag-2'
+          end>
+      end>
+    Left = 128
+    Top = 14
+  end
+end
