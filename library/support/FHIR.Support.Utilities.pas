@@ -7939,6 +7939,9 @@ end;
 
 function TFslDateTime.DateTime: TDateTime;
 begin
+  if null then
+    exit(0);
+
   check;
   case FPrecision of
     dtpYear : Result := EncodeDate(Year, 1, 1);
