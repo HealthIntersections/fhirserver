@@ -70,7 +70,7 @@ Type
     property name : String read FName;
     property content : TFslMap<TFslBuffer> read FContent;
     property resources : TFslList<TNpmPackageResource> read FResources;
-    function listFiles : TArray<System.string>;
+    function listFiles : TArray<String>;
     function fetchFile(name : String) : TBytes;
     function hasFile(name : String) : boolean;
   end;
@@ -82,14 +82,14 @@ Type
     FFolders : TFslMap<TNpmPackageFolder>;
     FInstalled: TDateTime;
     FSize: integer;
-    procedure loadFiles(path : String; exemptions : TStringDynArray);
+    procedure loadFiles(path : String; exemptions : TArray<String>);
     procedure loadSubFolders(path, dir : String);
     procedure readStream(tgz : TStream; desc : String; progress : TWorkProgressEvent);
     procedure loadFile(n : String; data : TBytes);
     procedure checkIndexed(desc : String);
     function GetCanonical: String;
     function GetDate: String;
-    function GetDependencies: TStringDynArray;
+    function GetDependencies: TArray<String>;
     function GetDependencySummary: String;
     function GetDescription: String;
     function GetFhirVersion: String;
@@ -118,8 +118,8 @@ Type
     class function fromSource(source: String): TNpmPackage; static;
 //    procedure save(stream : TStream);
 
-    function list(folder : String) : TStringDynArray;
-    function listResources(types : TStringDynArray) : TStringDynArray;
+    function list(folder : String) : TArray<String>;
+    function listResources(types : TArray<String>) : TArray<String>;
     function load(folder, name : String) : TStream;
     function loadResource(resType, id : String) : TStream;
     function loadExampleResource(resType, id : String) : TStream;
@@ -138,7 +138,7 @@ Type
     property summary : String read GetSummary;
     property description : String read GetDescription;
     property kind : TFHIRPackageKind read GetKind;
-    property dependencies : TStringDynArray read GetDependencies;
+    property dependencies : TArray<String> read GetDependencies;
     property dependencySummary : String read GetDependencySummary;
     property homepage : String read GetHomepage;
     property url : String read GetUrl;
@@ -279,7 +279,7 @@ begin
   end;
 end;
 
-function TNpmPackageFolder.listFiles: TArray<System.string>;
+function TNpmPackageFolder.listFiles: TArray<String>;
 var
   sl : TStringList;
   f, fl : String;
@@ -438,7 +438,7 @@ begin
   result := info.str['date'];
 end;
 
-function TNpmPackage.GetDependencies: TStringDynArray;
+function TNpmPackage.GetDependencies: TArray<String>;
 var
   sl : TStringList;
   n : String;
@@ -648,7 +648,7 @@ begin
   end;
 end;
 
-function TNpmPackage.list(folder: String): TStringDynArray;
+function TNpmPackage.list(folder: String): TArray<String>;
 var
   f : TNpmPackageFolder;
 begin
@@ -659,7 +659,7 @@ begin
     result := [];
 end;
 
-function TNpmPackage.listResources(types: TStringDynArray): TStringDynArray;
+function TNpmPackage.listResources(types: TArray<String>): TArray<String>;
 var
   sl : TStringList;
   t, s : String;
@@ -726,7 +726,7 @@ begin
   folder.FContent.add(n, TFslBuffer.create(data));
 end;
 
-procedure TNpmPackage.loadFiles(path: String; exemptions: TStringDynArray);
+procedure TNpmPackage.loadFiles(path: String; exemptions: TArray<String>);
 var
   f, d, ij : String;
   folder : TNpmPackageFolder;
