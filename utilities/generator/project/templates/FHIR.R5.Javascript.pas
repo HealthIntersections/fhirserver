@@ -51,6 +51,10 @@ begin
     result := '4';
 end;
 
+procedure defineBasePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition; xv : boolean);
+begin
+end;
+
 {{js.register.routines}}
 
 procedure registerFHIRTypesInt(js : TFHIRJavascript; vs : boolean);

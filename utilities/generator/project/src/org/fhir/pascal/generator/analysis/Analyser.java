@@ -1,8 +1,11 @@
 package org.fhir.pascal.generator.analysis;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.fhir.pascal.generator.analysis.Analyser.SearchParameterSorter;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.conformance.ProfileUtilities;
@@ -19,6 +22,16 @@ import org.hl7.fhir.r5.model.ValueSet.ConceptSetComponent;
 import org.hl7.fhir.utilities.Utilities;
 
 public class Analyser {
+
+  public class SearchParameterSorter implements Comparator<SearchParameter> {
+
+    @Override
+    public int compare(SearchParameter arg0, SearchParameter arg1) {
+      return arg0.getCode().compareTo(arg1.getCode());
+    }
+
+  }
+
 
   private Definitions definitions;
   private Configuration config;
@@ -52,7 +65,8 @@ public class Analyser {
     }
     
     if (sd.getKind() == StructureDefinitionKind.RESOURCE) {
-      res.setSearchParams(getSearchParams(sd.getName()));
+      res.setSearchParams(getSearchParams(sd.getName(), false));
+      res.setAllSearchParams(getSearchParams(sd.getName(), true));
     }
 
     for (ElementDefinition e : type.getChildren()) {
@@ -275,13 +289,13 @@ public class Analyser {
   }
 
 
-  private List<SearchParameter> getSearchParams(String name) {
+  private List<SearchParameter> getSearchParams(String name, boolean incRes) {
     List<SearchParameter> res = new ArrayList<>();
-    if (!Utilities.existsInList(name, "Resource")) {
-      for (SearchParameter sp : definitions.getSearchParams().getList()) {
+    for (SearchParameter sp : definitions.getSearchParams().getList()) {
+      if (!sp.getUrl().contains("example")) {
         boolean relevant = false;
         for (CodeType c : sp.getBase()) {
-          if (c.getValue().equals(name)) {
+          if (c.getValue().equals(name) || (incRes && c.getValue().equals("Resource"))) {
             relevant = true;
             break;
           }
@@ -291,6 +305,7 @@ public class Analyser {
         }
       }
     }
+    Collections.sort(res, new SearchParameterSorter());
     return res;
   }
 

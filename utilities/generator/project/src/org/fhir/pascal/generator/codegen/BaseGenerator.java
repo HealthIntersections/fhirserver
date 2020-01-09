@@ -611,5 +611,33 @@ public class BaseGenerator {
     }
   }
 
+  protected String removeEoln(String s) {
+    return s.replace("\r", " ").replace("\n", " ").replace("\t", "  ");
+  }
+
+  public String escape(String v) {
+    if (Utilities.noString(v))
+      return "";
+
+    StringBuilder s = new StringBuilder();
+    for (char c : v.toCharArray())
+      if (c == '\'')
+        s.append("''");
+      else
+        s.append(c);
+    String r = s.toString();
+    int i = 250;
+    while (i < r.length()) {
+      r = r.substring(0, i)+"'\r\n      +'"+r.substring(i);
+      i = i + 253;
+    }
+    return r;
+  }
+
+  protected boolean isResource(String name) {
+    StructureDefinition type = definitions.getType(name);
+    return type != null && type.getKind() == StructureDefinitionKind.RESOURCE;
+  }
+
 
 }

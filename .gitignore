@@ -189,3 +189,6 @@ System
 /toolkit/OSX64/Debug/FHIRToolkitR4
 /toolkit/OSX64/Debug/FHIRToolkitR4.dSYM
 /utilities/publisher/Win32/Debug/fhir-publisher.ini
+/library/r5/r5gen/*.pas
+/library/r5/r5gen
+/library/r5gen

@@ -25,6 +25,7 @@ public class Analysis {
   private Map<String, TypeInfo> types = new HashMap<>();
   private Map<String, EnumInfo> enums =  new HashMap<>();
   private List<SearchParameter> searchParams = new ArrayList<>();
+  private List<SearchParameter> allSearchParams = new ArrayList<>();
   
 //  private Map<ElementDefinition, String> typeNames = new HashMap<ElementDefinition, String>();
 //  private List<String> typeNameStrings = new ArrayList<String>();
@@ -114,6 +115,14 @@ public class Analysis {
 
   public String getDefineName() {
     return "FHIR_"+structure.getType().toUpperCase();
+  }
+
+  public List<SearchParameter> getAllSearchParams() {
+    return allSearchParams;
+  }
+
+  public void setAllSearchParams(List<SearchParameter> allSearchParams) {
+    this.allSearchParams = allSearchParams;
   }
 
   

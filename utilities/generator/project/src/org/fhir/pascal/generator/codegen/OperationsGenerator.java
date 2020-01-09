@@ -25,7 +25,7 @@ import org.hl7.fhir.utilities.Utilities;
 
 public class OperationsGenerator extends BaseGenerator {
 
-  
+
   private StringBuilder o1 = new StringBuilder();
   private StringBuilder o2 = new StringBuilder();
   private Set<String> opNames = new HashSet<String>();
@@ -299,11 +299,6 @@ public class OperationsGenerator extends BaseGenerator {
 
   private boolean isPrimitive(FHIRAllTypes type) {
     return type == null ? false : simpleTypes.containsKey(type.toCode());
-  }
-
-  private boolean isResource(String name) {
-    StructureDefinition type = definitions.getType(name);
-    return type != null && type.getKind() == StructureDefinitionKind.RESOURCE;
   }
 
   private String getPascalName(String code) {

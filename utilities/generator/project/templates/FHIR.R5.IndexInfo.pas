@@ -39,17 +39,17 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Common,
-  FHIR.R5.Resources, FHIR.R5.Types, FHIR.R5.Constants, FHIR.Tools.Indexing;
+  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.Tools.Indexing;
 
 Type
 
-  TFHIRIndexBuilderR4 = class (TFHIRIndexBuilder)
+  TFHIRIndexBuilderR5 = class (TFHIRIndexBuilder)
   private
 {{index-intf}}
   public
     procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList); override;
  end;
- TFHIRIndexBuilderX = TFHIRIndexBuilderR4;
+ TFHIRIndexBuilderX = TFHIRIndexBuilderR5;
 
 implementation
 
