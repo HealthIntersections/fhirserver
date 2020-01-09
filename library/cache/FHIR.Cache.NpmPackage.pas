@@ -70,7 +70,7 @@ Type
     property name : String read FName;
     property content : TFslMap<TFslBuffer> read FContent;
     property resources : TFslList<TNpmPackageResource> read FResources;
-    function listFiles : TStringDynArray;
+    function listFiles : TArray<System.string>;
     function fetchFile(name : String) : TBytes;
     function hasFile(name : String) : boolean;
   end;
@@ -279,7 +279,7 @@ begin
   end;
 end;
 
-function TNpmPackageFolder.listFiles: TStringDynArray;
+function TNpmPackageFolder.listFiles: TArray<System.string>;
 var
   sl : TStringList;
   f, fl : String;
