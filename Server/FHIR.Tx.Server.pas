@@ -598,7 +598,7 @@ begin
     begin
       cs := getCodeSystem(system);
       try
-        if op.warning('InstanceValidator', itInvalid, path, cs <> nil, 'Unknown Code System '+system) then
+        if op.warning('InstanceValidator', itInvalid, path, cs <> nil, 'Unknown Code System uri "'+system+'"') then
         begin
           def := cs.getCode(code);
           if (op.error('InstanceValidator', itInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then

@@ -1123,6 +1123,14 @@ begin
       end;
     end;
   end;
+  result.valueSetMode := vsvmAllChecks;
+  if (params.has('valueSetMode')) then
+  begin
+    if (params.str('valueSetMode') = 'CHECK_MEMERSHIP_ONLY') then
+      result.valueSetMode := vsvmMembershipOnly
+    else if (params.str('valueSetMode') = 'NO_MEMBERSHIP_CHECK') then
+      result.valueSetMode := vsvmNoMembership
+  end;
 end;
 
 function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
