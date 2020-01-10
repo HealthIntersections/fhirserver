@@ -119,7 +119,7 @@ begin
 end;
 
 const
-  VER_DIGIT : Array [TFHIRVersion] of String = ('', '1', '2', '3', '4');
+  VER_DIGIT : Array [TFHIRVersion] of String = ('', '1', '2', '3', '4', '5');
 
 function TFHIRJavascript.createObj(name: string): TFHIRObject;
 var
