@@ -57,7 +57,8 @@ uses
   FHIR.Support.MXml in '..\..\library\support\FHIR.Support.MXml.pas',
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Base.Utilities in '..\..\library\base\FHIR.Base.Utilities.pas',
-  FHIR.Web.Parsers in '..\..\library\web\FHIR.Web.Parsers.pas';
+  FHIR.Web.Parsers in '..\..\library\web\FHIR.Web.Parsers.pas',
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
