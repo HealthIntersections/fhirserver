@@ -476,9 +476,29 @@ begin
       cs.Free;
     end;
   end
-  else if FNoValueSetExpansion then
+  else if FNoValueSetExpansion or (FParams.valueSetMode = vsvmNoMembership) then // first can only be true if second is?
   begin
-    result := true;
+    // anyhow, we ignore the value set (at least for now)
+    cs := FOnGetCSProvider(self, system, version, FParams, true);
+    try
+      if cs = nil then
+        result := false
+      else
+      begin
+        ctxt := cs.locate(code);
+        if (ctxt = nil) then
+          result := false
+        else
+          try
+            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
+            cs.Displays(ctxt, displays, FParams.displayLanguage);
+          finally
+            cs.Close(ctxt);
+          end;
+      end;
+    finally
+      cs.Free;
+    end;
   end
   else
   begin
@@ -509,76 +529,73 @@ begin
       end;
     end;
 
-    if (FParams.valueSetMode <> vsvmNoMembership) then
+    if (FValueSet.checkCompose('ValueSetChecker.prepare', 'ValueSet.compose')) then
     begin
-      if (FValueSet.checkCompose('ValueSetChecker.prepare', 'ValueSet.compose')) then
+      result := false;
+      for s in FValueSet.imports do
       begin
-        result := false;
-        for s in FValueSet.imports do
+        if not result then
         begin
-          if not result then
-          begin
-            checker := TValueSetChecker(FOthers.matches[s]);
-            result := checker.check(system, version, code, abstractOk, implySystem, displays, message);
-          end;
+          checker := TValueSetChecker(FOthers.matches[s]);
+          result := checker.check(system, version, code, abstractOk, implySystem, displays, message);
         end;
-        for cc in FValueSet.includes.forEnum do
+      end;
+      for cc in FValueSet.includes.forEnum do
+      begin
+        if cc.system = '' then
+          result := true
+        else if (cc.system = system) or (system = SYSTEM_NOT_APPLICABLE) then
+        begin
+          cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+          if (cs = nil) then
+          begin
+            message := 'The code system "'+cc.system+'" in the include in "'+FValueSet.url+'" is not known';
+            exit(false);
+          end;
+
+          if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+          begin
+            s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+            if not cs.hasSupplement(s) then
+              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+          end;
+
+          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
+        end
+        else
+          result := false;
+        for s in cc.valueSets do
+        begin
+          checker := TValueSetChecker(FOthers.matches[s]);
+          result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message);
+        end;
+        if result then
+          break;
+      end;
+      if result then
+        for cc in FValueSet.excludes.forEnum do
         begin
           if cc.system = '' then
-            result := true
-          else if (cc.system = system) or (system = SYSTEM_NOT_APPLICABLE) then
+            excluded := true
+          else
           begin
             cs := TCodeSystemProvider(FOthers.matches[cc.system]);
-            if (cs = nil) then
-            begin
-              message := 'The code system "'+cc.system+'" in the include in "'+FValueSet.url+'" is not known';
-              exit(false);
-            end;
-
             if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
             begin
               s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
               if not cs.hasSupplement(s) then
                 raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
             end;
-
-            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
-          end
-          else
-            result := false;
+            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
+          end;
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message);
+            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message);
           end;
-          if result then
-            break;
+          if excluded then
+            exit(false);
         end;
-        if result then
-          for cc in FValueSet.excludes.forEnum do
-          begin
-            if cc.system = '' then
-              excluded := true
-            else
-            begin
-              cs := TCodeSystemProvider(FOthers.matches[cc.system]);
-              if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
-              begin
-                s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-                if not cs.hasSupplement(s) then
-                  raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
-              end;
-              excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
-            end;
-            for s in cc.valueSets do
-            begin
-              checker := TValueSetChecker(FOthers.matches[s]);
-              excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message);
-            end;
-            if excluded then
-              exit(false);
-          end;
-      end;
     end
     else
       result := true;
