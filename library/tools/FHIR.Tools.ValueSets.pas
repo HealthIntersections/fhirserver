@@ -59,6 +59,8 @@ const
 
 Type
   TFhirExpansionParamsFixedVersionMode = (fvmCheck, fvmOverride);
+  TValueSetValidationMode = (vsvmAllChecks, vsvmMembershipOnly, vsvmNoMembership);
+
   TFhirExpansionParamsFixedVersion = class (TFslObject)
   private
     Fsystem : String;
@@ -85,6 +87,7 @@ Type
     FincludeDesignations: boolean;
     FincludeDefinition: boolean;
     FUid: String;
+    FValueSetMode: TValueSetValidationMode;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -100,6 +103,7 @@ Type
     property excludeNested : boolean read FexcludeNested write FexcludeNested;
     property excludeNotForUI : boolean read FexcludeNotForUI write FexcludeNotForUI;
     property excludePostCoordinated : boolean read FexcludePostCoordinated write FexcludePostCoordinated;
+    property valueSetMode : TValueSetValidationMode read FValueSetMode write FValueSetMode;
     property uid : String read FUid write FUid;
 
     function hash : String;
@@ -126,6 +130,7 @@ Type
     FOthers : TFslStringObjectMatch; // checkers or code system providers
     FValueSet : TFHIRValueSetW;
     FId: String;
+    FNoValueSetExpansion : boolean;
 
     function determineSystem(code : String) : String;
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String) : boolean; overload;
@@ -330,10 +335,13 @@ begin
         end;
       end;
 
-      for cc in FValueSet.includes.forEnum do
-        prepareConceptSet('include', cc, cs);
-      for cc in FValueSet.excludes.forEnum do
-        prepareConceptSet('exclude', cc, cs);
+      if (cs <> nil) then
+      begin
+        for cc in FValueSet.includes.forEnum do
+          prepareConceptSet('include', cc, cs);
+        for cc in FValueSet.excludes.forEnum do
+          prepareConceptSet('exclude', cc, cs);
+      end;
     end;
   end;
 end;
@@ -366,14 +374,18 @@ begin
   if not FOthers.ExistsByKey(cc.system) then
     FOthers.Add(cc.system, FOnGetCSProvider(self, cc.system, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
-  if cs = nil then
-    raise ETerminologyError.Create('Unknown code system '+cc.system);
-  for ccf in cc.filters.forEnum do
+  if (cs = nil) and (FParams.valueSetMode <> vsvmNoMembership) then
+    raise ETerminologyError.Create('Unknown code system uri '''+cc.system+'''');
+  FNoValueSetExpansion := cs = nil;
+  if cs <> nil then
   begin
-    FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
-    if not (('concept' = ccf.prop) and (ccf.Op = foIsA)) then
-      if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
-        raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.system(nil));
+    for ccf in cc.filters.forEnum do
+    begin
+      FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
+      if not (('concept' = ccf.prop) and (ccf.Op = foIsA)) then
+        if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
+          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.system(nil));
+    end;
   end;
 end;
 
@@ -464,6 +476,10 @@ begin
       cs.Free;
     end;
   end
+  else if FNoValueSetExpansion then
+  begin
+    result := true;
+  end
   else
   begin
     if (system = '') and implySystem then
@@ -493,74 +509,79 @@ begin
       end;
     end;
 
-    if (FValueSet.checkCompose('ValueSetChecker.prepare', 'ValueSet.compose')) then
+    if (FParams.valueSetMode <> vsvmNoMembership) then
     begin
-      result := false;
-      for s in FValueSet.imports do
+      if (FValueSet.checkCompose('ValueSetChecker.prepare', 'ValueSet.compose')) then
       begin
-        if not result then
+        result := false;
+        for s in FValueSet.imports do
         begin
-          checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(system, version, code, abstractOk, implySystem, displays, message);
-        end;
-      end;
-      for cc in FValueSet.includes.forEnum do
-      begin
-        if cc.system = '' then
-          result := true
-        else if (cc.system = system) or (system = SYSTEM_NOT_APPLICABLE) then
-        begin
-          cs := TCodeSystemProvider(FOthers.matches[cc.system]);
-          if (cs = nil) then
+          if not result then
           begin
-            message := 'The code system "'+cc.system+'" in the include in "'+FValueSet.url+'" is not known';
-            exit(false);
+            checker := TValueSetChecker(FOthers.matches[s]);
+            result := checker.check(system, version, code, abstractOk, implySystem, displays, message);
           end;
-
-          if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
-          begin
-            s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-            if not cs.hasSupplement(s) then
-              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
-          end;
-
-          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
-        end
-        else
-          result := false;
-        for s in cc.valueSets do
-        begin
-          checker := TValueSetChecker(FOthers.matches[s]);
-          result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message);
         end;
-        if result then
-          break;
-      end;
-      if result then
-        for cc in FValueSet.excludes.forEnum do
+        for cc in FValueSet.includes.forEnum do
         begin
           if cc.system = '' then
-            excluded := true
-          else
+            result := true
+          else if (cc.system = system) or (system = SYSTEM_NOT_APPLICABLE) then
           begin
             cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+            if (cs = nil) then
+            begin
+              message := 'The code system "'+cc.system+'" in the include in "'+FValueSet.url+'" is not known';
+              exit(false);
+            end;
+
             if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
             begin
               s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
               if not cs.hasSupplement(s) then
                 raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
             end;
-            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
-          end;
+
+            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
+          end
+          else
+            result := false;
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message);
+            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message);
           end;
-          if excluded then
-            exit(false);
+          if result then
+            break;
         end;
-    end;
+        if result then
+          for cc in FValueSet.excludes.forEnum do
+          begin
+            if cc.system = '' then
+              excluded := true
+            else
+            begin
+              cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+              if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+              begin
+                s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+                if not cs.hasSupplement(s) then
+                  raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              end;
+              excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
+            end;
+            for s in cc.valueSets do
+            begin
+              checker := TValueSetChecker(FOthers.matches[s]);
+              excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message);
+            end;
+            if excluded then
+              exit(false);
+          end;
+      end;
+    end
+    else
+      result := true;
   end;
 end;
 
@@ -1545,7 +1566,7 @@ var
   end;
 begin
   s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+displayLanguage+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
-    b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid;
+    b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid+'|'+inttostr(ord(FValueSetMode));
   result := inttostr(HashStringToCode32(s));
 end;
 

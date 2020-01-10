@@ -402,6 +402,7 @@ Type
     FCount: Integer;
     FGrowThreshold: Integer;
     FSortedKeys : TStringList;
+    FAsAddedKeys : TStringList;
     FDefault : T;
     FHasDefault : boolean;
 
@@ -531,6 +532,7 @@ Type
     function GetEnumerator: TFslPairEnumerator; reintroduce;
     property Keys: TKeyCollection read GetKeys;
     property SortedKeys : TStringList read GetSortedKeys;
+    property AsAddedKeys : TStringList read FAsAddedKeys;
     property Values: TValueCollection read GetValues;
     property OnKeyNotify: TCollectionNotifyEvent<String> read FOnKeyNotify write FOnKeyNotify;
     property OnValueNotify: TCollectionNotifyEvent<T> read FOnValueNotify write FOnValueNotify;
@@ -1914,6 +1916,7 @@ begin
   FItems[index].HashCode := HashCode;
   FItems[index].Key := Key;
   FItems[index].Value := Value;
+  FAsAddedKeys.add(Key);
 end;
 
 procedure TFslMap<T>.KeyNotify(const Key: String; Action: TCollectionNotification);
@@ -1942,6 +1945,7 @@ begin
   if ACapacity < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
   SetCapacity(ACapacity);
+  FAsAddedKeys := TStringList.create;
 end;
 
 constructor TFslMap<T>.Create(const Collection: TEnumerable<TFslPair<T>>);
@@ -1960,6 +1964,7 @@ begin
   FKeyCollection.Free;
   FValueCollection.Free;
   FSortedKeys.Free;
+  FAsAddedKeys.Free;
   inherited;
 end;
 
@@ -2039,6 +2044,7 @@ begin
   Dec(FCount);
 
   FreeAndNil(FSortedKeys);
+  FAsAddedKeys.delete(FAsAddedKeys.indexOf(Key));
   KeyNotify(Key, Notification);
   ValueNotify(Result, Notification);
 end;
@@ -2106,6 +2112,7 @@ begin
   Inc(FCount);
 
   FreeAndNil(FSortedKeys);
+  FAsAddedKeys.add(Key);
   KeyNotify(Key, cnAdded);
   ValueNotify(Value, cnAdded);
 end;

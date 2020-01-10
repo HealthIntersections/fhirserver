@@ -824,35 +824,26 @@ end;
 
 procedure TJSONWriter.WriteObjectInner(obj: TJsonObject);
 var
-  names : TStringList;
   n : String;
   v : TJsonNode;
 begin
-  names := TStringList.Create;
-  try
-    for n in obj.properties.Keys do
-      names.add(n);
-    names.sort;
-    for n in names do
-    begin
-      v := obj.properties[n] as TJsonNode;
-      if v is TJsonArray then
-        WriteArray(n, v as TJsonArray)
-      else if v is TJsonNull then
-        ValueNull(n)
-      else if v is TJsonBoolean then
-        Value(n, TJsonBoolean(v).FValue)
-      else if v is TJsonString then
-        Value(n, (v as TJsonString).FValue)
-      else if v is TJsonNumber then
-        ValueNumber(n, (v as TJsonNumber).FValue)
-      else if v is  TJsonObject then
-        WriteObject(n, v as TJsonObject)
-      else
-        raise EJsonException.Create('Unexpected object type '+v.nodeType);
-    end;
-  finally
-    names.free;
+  for n in obj.properties.AsAddedKeys do
+  begin
+    v := obj.properties[n] as TJsonNode;
+    if v is TJsonArray then
+      WriteArray(n, v as TJsonArray)
+    else if v is TJsonNull then
+      ValueNull(n)
+    else if v is TJsonBoolean then
+      Value(n, TJsonBoolean(v).FValue)
+    else if v is TJsonString then
+      Value(n, (v as TJsonString).FValue)
+    else if v is TJsonNumber then
+      ValueNumber(n, (v as TJsonNumber).FValue)
+    else if v is  TJsonObject then
+      WriteObject(n, v as TJsonObject)
+    else
+      raise EJsonException.Create('Unexpected object type '+v.nodeType);
   end;
 end;
 
