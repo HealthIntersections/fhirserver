@@ -52,7 +52,7 @@ Const
 
 
 Type
-  TFHIRVersion = (fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4);
+  TFHIRVersion = (fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4, fhirVersionRelease5);
   TFHIRVersionSet = set of TFHIRVersion;
 
 Const
@@ -76,13 +76,13 @@ Const
   // not defined, so that compiles fail if $define is not defined anywhere. COMPILED_FHIR_VERSION = fhirVersionUnknown;
   {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
 
-  CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
-  CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
-  PF_CONST : array [TFHIRVersion] of string = ('', '0.0', '1.0', '3.0', '4.0');
+  CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4', 'r5');
+  CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4', '5');
+  PF_CONST : array [TFHIRVersion] of string = ('', '0.0', '1.0', '3.0', '4.0', '4.2');
 
 
-  FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
-  FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.2', '4.0.1');
+  FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4, fhirVersionRelease5];
+  FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.2', '4.0.1', '4.2.0');
   SUPPORTED_VERSIONS = [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type
@@ -183,13 +183,13 @@ Const
   EXT_WEB_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.ndjson', '.xml');
   MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'application/fhir+xml', 'application/fhir+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'application/x-ndjson', 'text/xhtml');
   MIMETYPES_TFHIRFormat_Version : Array [TFHIRFormat, TFHIRVersion] of String = (
-    ('', '', '', '', ''),
-    ('', 'application/xml+fhir', 'application/xml+fhir', 'application/fhir+xml', 'application/fhir+xml'),
-    ('', 'application/json+fhir', 'application/json+fhir', 'application/fhir+json', 'application/fhir+json'),
-    ('','','','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir'),
-    ('','','','text/fhir','text/fhir'),
-    ('','','','','application/x-ndjson'),
-    ('', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml')
+    ('', '', '', '', '', ''),
+    ('', 'application/xml+fhir', 'application/xml+fhir', 'application/fhir+xml', 'application/fhir+xml', 'application/fhir+xml'),
+    ('', 'application/json+fhir', 'application/json+fhir', 'application/fhir+json', 'application/fhir+json', 'application/fhir+json'),
+    ('','','','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir'),
+    ('','','','text/fhir','text/fhir','text/fhir'),
+    ('','','','','application/x-ndjson', 'application/x-ndjson'),
+    ('', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml')
     );
 
   Names_TFHIRAuthProvider : Array [TFHIRAuthProvider] of String = ('', 'Custom', 'Facebook', 'Google', 'HL7');
