@@ -160,6 +160,9 @@ type
     Panel26: TPanel;
     btnNDC: TButton;
     fd: TFileOpenDialog;
+    Label23: TLabel;
+    edtBase: TEdit;
+    btnBase: TSpeedButton;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -187,6 +190,8 @@ type
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure pnlPackageManagerLinkClick(Sender: TObject);
     procedure btnNDCClick(Sender: TObject);
+    procedure cbxEditionChange(Sender: TObject);
+    procedure btnBaseClick(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -220,6 +225,7 @@ var
 begin
   ini := TIniFile.Create(Path([SystemTemp, 'FhirServerUtils.ini']));
   edtSource.text := ini.ReadString('snomed-import', 'source', '');
+  edtBase.text := ini.ReadString('snomed-import', 'base', '');
   cbxEdition.ItemIndex := ini.ReadInteger('snomed-import', 'edition', -1);
   edtDate.Date := ini.ReadInteger('snomed-import', 'date', trunc(now));
   edtDestination.text := ini.ReadString('snomed-import', 'dest', '');
@@ -269,6 +275,18 @@ begin
 end;
 
 
+
+procedure TServerManagerForm.btnBaseClick(Sender: TObject);
+begin
+  if (edtSource.text <> '') then
+  begin
+    dlgSource.filename := edtBase.text;
+    dlgSource.DefaultFolder := ExtractFilePath(dlgSource.filename);
+  end;
+  dlgSource.Title := 'Choose SNOMED CT RF2 International Snapshot Folder';
+  if dlgSource.Execute then
+    edtBase.text := dlgSource.filename;
+end;
 
 procedure TServerManagerForm.btnCloseClick(Sender: TObject);
 begin
@@ -388,6 +406,7 @@ procedure TServerManagerForm.btnImportSnomedClick(Sender: TObject);
 var
   module, version : String;
   start : TDateTime;
+  nb : boolean;
 begin
   if not FolderExists(edtSource.Text) then
     ShowMessage('Folder "'+edtSource.Text+'" not found')
@@ -398,43 +417,53 @@ begin
   else if not FileExists(edtDestination.Text) or (MessageDlg('Overwrite "'+edtDestination.Text+'"?', mtConfirmation, mbYesNo, 0) = mrYes) then
   begin
     ini.WriteString('snomed-import', 'source', edtSource.text);
+    ini.WriteString('snomed-import', 'base', edtBase.text);
     ini.WriteInteger('snomed-import', 'edition', cbxEdition.ItemIndex);
     ini.WriteInteger('snomed-import', 'date', trunc(edtDate.Date));
     ini.WriteString('snomed-import', 'dest', edtDestination.text);
     module := getSnomedModule;
-    version := FormatDateTime('yyyymmdd', edtDate.Date);
-    wantStop := false;
-    btnSnomedImportStop.Visible := true;
-    cursor := crHourGlass;
-    running := true;
-    edtSource.enabled := false;
-    cbxEdition.enabled := false;
-    edtDate.enabled := false;
-    edtDestination.enabled := false;
-    btnImportSnomed.enabled := false;
-    btnSnomedImportClose.enabled := false;
-    btnSource.enabled := false;
-    btnDestination.enabled := false;
-    try
-      start := now;
-      importSnomedRF2(edtSource.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback);
-    finally
-      cursor := crDefault;
-      btnSnomedImportStop.Visible := false;
-      running := false;
-      edtSource.enabled := true;
-      cbxEdition.enabled := true;
-      edtDate.enabled := true;
-      edtDestination.enabled := true;
-      btnImportSnomed.enabled := true;
-      btnSnomedImportClose.enabled := true;
-      btnSource.enabled := true;
-      btnDestination.enabled := true;
-      sctCallback(0, '');
-    end;
-    if MessageDlg('Successfully Imported SNOMED CT in '+DescribePeriod(now - start)+'. Do you want to Zip it?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+    nb := needsBaseForImport(module);
+    if nb and not FolderExists(edtBase.Text) then
+      ShowMessage('Base Folder "'+edtSource.Text+'" not found')
+    else
     begin
-      ExecuteLaunch('open', 'c:\program files\7-zip\7z.exe', 'a -mx9 '+changeFileExt(edtDestination.text, '.zip')+' '+edtDestination.text, true, false);
+      version := FormatDateTime('yyyymmdd', edtDate.Date);
+      wantStop := false;
+      btnSnomedImportStop.Visible := true;
+      cursor := crHourGlass;
+      running := true;
+      edtSource.enabled := false;
+      cbxEdition.enabled := false;
+      edtDate.enabled := false;
+      edtDestination.enabled := false;
+      btnImportSnomed.enabled := false;
+      btnSnomedImportClose.enabled := false;
+      btnSource.enabled := false;
+      btnDestination.enabled := false;
+      try
+        start := now;
+        if nb then
+          importSnomedRF2(edtSource.text, edtBase.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback)
+        else
+          importSnomedRF2(edtSource.text, '', edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback);
+      finally
+        cursor := crDefault;
+        btnSnomedImportStop.Visible := false;
+        running := false;
+        edtSource.enabled := true;
+        cbxEdition.enabled := true;
+        edtDate.enabled := true;
+        edtDestination.enabled := true;
+        btnImportSnomed.enabled := true;
+        btnSnomedImportClose.enabled := true;
+        btnSource.enabled := true;
+        btnDestination.enabled := true;
+        sctCallback(0, '');
+      end;
+      if MessageDlg('Successfully Imported SNOMED CT in '+DescribePeriod(now - start)+'. Do you want to Zip it?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        ExecuteLaunch('open', 'c:\program files\7-zip\7z.exe', 'a -mx9 '+changeFileExt(edtDestination.text, '.zip')+' '+edtDestination.text, true, false);
+      end;
     end;
   end;
 end;
@@ -830,9 +859,20 @@ begin
 end;
 
 
+procedure TServerManagerForm.cbxEditionChange(Sender: TObject);
+var
+  module : string;
+  b : boolean;
+begin
+  module := getSnomedModule;
+  b := needsBaseForImport(module);
+  edtBase.Enabled := b;
+  btnBase.Enabled := b;
+end;
+
 procedure TServerManagerForm.FormShow(Sender: TObject);
 begin
-cbUMLSDriver.items.Assign(GetODBCDriversList);
+  cbUMLSDriver.items.Assign(GetODBCDriversList);
 end;
 
 

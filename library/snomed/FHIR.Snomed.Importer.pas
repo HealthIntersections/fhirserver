@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  SysUtils, Classes, Inifiles, Generics.Collections,
+  Windows, SysUtils, Classes, Inifiles, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects,
@@ -131,8 +131,10 @@ Type
   private
     callback : TInstallerCallback;
     lastmessage : String;
+    FUsingBase : boolean;
 
     FSvc : TSnomedServices;
+    FRefSetTypes : TDictionary<String, System.cardinal>;
 
     FConceptFiles : TStringList;
     FRelationshipFiles : TStringList;
@@ -155,6 +157,7 @@ Type
     FDescRef : TSnomedDescriptionIndex;
     FRefsets : TRefSetList;
     FRels : TDictionary<UInt64, Cardinal>;
+    FDuplicateRelationships : TStringList;
 
     FVersionUri : String;
     FVersionDate : String;
@@ -165,7 +168,7 @@ Type
 
     FStatus: Integer;
     FKey: Integer;
-    FDirectoryReferenceSets: String;
+    FDirectoryReferenceSets: TStringList;
     FStart : TDateTime;
     FoutputFile : String;
 
@@ -205,17 +208,18 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     procedure Go;
+    Property usingBase : boolean read FUsingBase write FUsingBase;
     Property ConceptFiles : TStringList read FConceptFiles;
     Property RelationshipFiles : TStringList read FRelationshipFiles;
     Property DescriptionFiles : TStringList read FDescriptionFiles;
-    Property DirectoryReferenceSets : String read FDirectoryReferenceSets write FDirectoryReferenceSets;
+    Property DirectoryReferenceSets : TStringList read FDirectoryReferenceSets;
     Property Status : Integer read FStatus Write FStatus;
     Property Key : Integer read FKey write FKey;
     Property OutputFile : String read FOutputFile write FOutputFile;
   end;
 
-
-function importSnomedRF2(dir : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
+function needsBaseForImport(moduleId : String): boolean;
+function importSnomedRF2(dir, base : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
 
 Implementation
 
@@ -248,7 +252,7 @@ begin
       if (sr.Attr = faDirectory) then
       begin
         if SameText(sr.Name, 'Reference Sets') then
-          imp.DirectoryReferenceSets := IncludeTrailingPathDelimiter(dir) + sr.Name
+          imp.DirectoryReferenceSets.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else if not (StringstartsWith(sr.Name, '.'))  then
           AnalyseDirectory(IncludeTrailingPathDelimiter(dir) + sr.Name, imp);
       end
@@ -282,7 +286,7 @@ begin
       if (sr.Attr = faDirectory) then
       begin
         if SameText(sr.Name, 'Reference Sets') or SameText(sr.Name, 'RefSet') then
-          imp.DirectoryReferenceSets := IncludeTrailingPathDelimiter(dir) + sr.Name
+          imp.DirectoryReferenceSets.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
         else if not (StringstartsWith(sr.Name, '.'))  then
           AnalyseDirectoryRF2(IncludeTrailingPathDelimiter(dir) + sr.Name, imp);
       end
@@ -305,7 +309,7 @@ begin
   end;
 end;
 
-function importSnomedRF2(dir : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
+function importSnomedRF2(dir, base : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
 var
   imp : TSnomedImporter;
 begin
@@ -314,7 +318,12 @@ begin
     imp.callback := callback;
     imp.progress(STEP_START, 0, 'Import Snomed (RF2) from '+dir);
     imp.setVersion(uri);
+    imp.usingBase := base <> '';
     imp.OutputFile := dest;
+    if (base <> '') then
+    begin
+      analyseDirectoryRF2(base, imp);
+    end;
     analyseDirectoryRF2(dir, imp);
     imp.Go;
     result := imp.outputFile;
@@ -370,11 +379,17 @@ begin
   FConceptFiles := TStringList.create;
   FRelationshipFiles := TStringList.create;
   FDescriptionFiles := TStringList.create;
+  FDirectoryReferenceSets := TStringList.create;
   FRels := TDictionary<UInt64,cardinal>.create;
+  FDuplicateRelationships := TStringList.create;
+  FRefSetTypes := TDictionary<String, cardinal>.create;
 end;
 
 destructor TSnomedImporter.Destroy;
 begin
+  FRefSetTypes.free;
+  FDuplicateRelationships.Free;
+  FDirectoryReferenceSets.free;
   FRels.Free;
   FConceptFiles.Free;
   FRelationshipFiles.Free;
@@ -538,7 +553,7 @@ var
     result := iCursor;
   End;
 Begin
-  Progress(STEP_READ_CONCEPT, 0, 'Read Concept File');
+  Progress(STEP_READ_CONCEPT, 0, 'Read Concept Files');
   for fi := 0 to ConceptFiles.Count - 1 do
   begin
     s := LoadFile(ConceptFiles[fi]);
@@ -704,7 +719,7 @@ var
     result := iCursor;
   End;
 begin
-  Progress(STEP_READ_DESC, 0, 'Read Description File');
+  Progress(STEP_READ_DESC, 0, 'Read Description Files');
   SetLength(aIndex, 10000);
   aIndexLength := 0;
   for fi := 0 to DescriptionFiles.Count - 1 do
@@ -880,7 +895,8 @@ var
       raise ETerminologySetup.create('Unable to resolve the term reference '+sId+' in the relationships file at position '+inttostr(iStart)+' on line '+inttostr(line));
   End;
 Begin
-  Progress(STEP_READ_REL, 0, 'Read Relationship File');
+  FDuplicateRelationships.Clear;
+  Progress(STEP_READ_REL, 0, 'Read Relationship Files');
   if not FConcept.FindConcept(IS_A_MAGIC, Findex_is_a) Then
     raise ETerminologySetup.create('is-a concept not found ('+inttostr(IS_A_MAGIC)+')');
   for fi := 0 to RelationshipFiles.Count - 1 do
@@ -918,40 +934,54 @@ Begin
       defining := (kind.Identity = RF2_MAGIC_RELN_DEFINING) or (kind.Identity = RF2_MAGIC_RELN_STATED) or (kind.Identity = RF2_MAGIC_RELN_INFERRED);
 
       if FRels.containsKey(iRel) then
-        raise ETerminologySetup.create('Duplicate relationship id '+inttostr(iRel)+' at line '+inttostr(line));
-      iIndex := FRel.AddRelationship(iRel, oSource.Index, oTarget.Index, oRelType.Index, module, kind.Index, modifier, date, active, defining, group);
-      FRels.Add(iRel, iIndex);
-      if (oRelType.Index = Findex_is_a) and (defining) Then
-      Begin
-        if (active) then
-        begin
-          SetLength(oSource.FActiveParents, Length(oSource.FActiveParents)+1);
-          oSource.FActiveParents[Length(oSource.FActiveParents)-1] := oTarget.Index;
-        end
+      begin
+        if FUsingBase then
+          FDuplicateRelationships.add(inttostr(iRel))
         else
-        begin
-          SetLength(oSource.FInActiveParents, Length(oSource.FInActiveParents)+1);
-          oSource.FInActiveParents[Length(oSource.FInActiveParents)-1] := oTarget.Index;
+          raise ETerminologySetup.create('Duplicate relationship id '+inttostr(iRel)+' at line '+inttostr(line));
+      end
+      else
+      begin
+        iIndex := FRel.AddRelationship(iRel, oSource.Index, oTarget.Index, oRelType.Index, module, kind.Index, modifier, date, active, defining, group);
+        FRels.Add(iRel, iIndex);
+        if (oRelType.Index = Findex_is_a) and (defining) Then
+        Begin
+          if (active) then
+          begin
+            SetLength(oSource.FActiveParents, Length(oSource.FActiveParents)+1);
+            oSource.FActiveParents[Length(oSource.FActiveParents)-1] := oTarget.Index;
+          end
+          else
+          begin
+            SetLength(oSource.FInActiveParents, Length(oSource.FInActiveParents)+1);
+            oSource.FInActiveParents[Length(oSource.FInActiveParents)-1] := oTarget.Index;
+          end;
         end;
+        i_c := 0; // todo
+        i_r := 0; // todo
+        SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
+        oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
+        oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c; // for sorting
+        oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r; // for sorting
+        oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := group;
+        SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
+        oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
+        oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
+        oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
+        oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := group;
       End;
-      i_c := 0; // todo
-      i_r := 0; // todo
-      SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
-      oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
-      oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c; // for sorting
-      oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r; // for sorting
-      oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := group;
-      SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
-      oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
-      oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
-      oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
-      oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := group;
       inc(iCursor, 2);
       inc(OverallCount);
       if OverallCount mod UPDATE_FREQ_D = 0 then
         Progress(STEP_READ_REL, fi / RelationshipFiles.Count, '');
     End;
   End;
+  if FDuplicateRelationships.Count > 0 then
+  begin
+    // todo: what should be done about these?
+    // see https://confluence.ihtsdotools.org/display/DOCTSG/3.1+Generating+Dynamic+Snapshot+Views
+    FDuplicateRelationships.add('more');
+  end;
 End;
 
 
@@ -1484,11 +1514,17 @@ var
   ndx : Cardinal;
   values : Cardinal;
   count : integer;
+  dir : String;
 begin
   count := 0;
   Progress(STEP_IMPORT_REFSET, 0, 'Importing Reference Sets');
-  if FDirectoryReferenceSets <> '' Then
-    LoadReferenceSets(FDirectoryReferenceSets.Length+1, FDirectoryReferenceSets, count);
+  if FDirectoryReferenceSets.Count > 0 Then
+  begin
+    for dir in FDirectoryReferenceSets do
+    begin
+      LoadReferenceSets(dir.Length+1, dir, count);
+    end;
+  end;
   FStrings.DoneBuild;
   CloseReferenceSets;
   Progress(STEP_SORT_REFSET, 0, 'Sorting Reference Sets');
@@ -1725,6 +1761,17 @@ Begin
     QuickSort(0, length(a) - 1);
 End;
 
+function caToString(a : TCardinalArray) : string;
+var
+  i : integer;
+begin
+  if (length(a) = 0) then
+    exit('');
+
+  result := inttostr(a[0]);
+  for i := 1 to high(a) do
+    result := result + ',' + inttostr(a[i]);
+end;
 
 procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String; isLangRefset : boolean);
 var
@@ -1769,8 +1816,16 @@ begin
         raise ETerminologySetup.create('Unknown refset type '+name[i+1]);
       types[i] := ord(name[i+1]);
     end;
-    ti := FRefs.AddReferences(types);
+    if FRefSetTypes.ContainsKey(name) then
+      ti := FRefSetTypes[name]
+    else
+    begin
+      ti := FRefs.AddReferences(types);
+      FRefSetTypes.Add(name, ti);
+    end;
   end;
+
+  writeln('refset: '+sFile+': '+name+'+'+caToString(types));
 
   s := LoadFile(sFile);
   iCursor := 0;
@@ -1822,7 +1877,7 @@ begin
 
 
       if not FConcept.FindConcept(StrToUInt64(sModule), iMod) then
-          raise ETerminologySetup.create('Module '+sModule+' not found');
+        raise ETerminologySetup.create('Module '+sModule+' not found');
       for I := 0 to length(types) - 1 do
       begin
         if (i = 0) then
@@ -1868,7 +1923,7 @@ begin
       Begin
         refSet := Frefsets.GetRefset(sRefSetId);
         if (refset.fieldTypes <> 0) and (refset.fieldTypes <> ti) then
-          raise ETerminologySetup.create('field types mismatch');
+          raise ETerminologySetup.create('field types mismatch - '+inttostr(refset.fieldTypes)+' / '+inttostr(ti)+' in refset '+sRefSetId+' processing '+sFile);
         refset.title := sname;
         refset.isLangRefset := isLangRefset;
         refset.filename := FStrings.AddString(sFile.Substring(pfxLen));
@@ -2035,6 +2090,11 @@ begin
       end;
     end;
   end;
+end;
+
+function needsBaseForImport(moduleId : String): boolean;
+begin
+  result := moduleId = '11000172109';
 end;
 
 End.

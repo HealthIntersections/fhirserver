@@ -455,7 +455,7 @@ object ServerManagerForm: TServerManagerForm
       OnClick = pnlSnomedImportClick
       object Image4: TImage
         Left = 30
-        Top = 10
+        Top = 17
         Width = 48
         Height = 48
         AutoSize = True
@@ -775,10 +775,6 @@ object ServerManagerForm: TServerManagerForm
     StyleElements = [seFont, seClient]
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -804,6 +800,7 @@ object ServerManagerForm: TServerManagerForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitLeft = -1
         DesignSize = (
           670
           41)
@@ -966,6 +963,7 @@ object ServerManagerForm: TServerManagerForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 3
+        ExplicitLeft = -1
         DesignSize = (
           670
           220)
@@ -978,21 +976,21 @@ object ServerManagerForm: TServerManagerForm
         end
         object Label3: TLabel
           Left = 10
-          Top = 39
+          Top = 38
           Width = 32
           Height = 13
           Caption = 'Edition'
         end
         object Label4: TLabel
           Left = 10
-          Top = 73
+          Top = 102
           Width = 35
           Height = 13
           Caption = 'Version'
         end
         object Label5: TLabel
           Left = 10
-          Top = 107
+          Top = 134
           Width = 54
           Height = 13
           Caption = 'Destination'
@@ -1034,8 +1032,8 @@ object ServerManagerForm: TServerManagerForm
           ExplicitLeft = 498
         end
         object btnDestination: TSpeedButton
-          Left = 637
-          Top = 100
+          Left = 638
+          Top = 128
           Width = 27
           Height = 28
           Anchors = [akTop, akRight]
@@ -1067,10 +1065,52 @@ object ServerManagerForm: TServerManagerForm
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnDestinationClick
-          ExplicitLeft = 498
+        end
+        object Label23: TLabel
+          Left = 10
+          Top = 70
+          Width = 62
+          Height = 13
+          Caption = 'International'
+        end
+        object btnBase: TSpeedButton
+          Left = 637
+          Top = 66
+          Width = 27
+          Height = 28
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+            FF00FF0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274
+            AC0274AC097BB2FF00FFFF00FFFF00FF0274AC2EA7E10274AC7ED4FC46BCF449
+            BFF449BFF64ABFF44ABFF64BC0F643BAF036A6D772C9E30274ACFF00FFFF00FF
+            0274AC35AFE50274AC8ADEFF53C9F856CAFA56CAF857CAFA57CAFA58CBFB4FC5
+            F43DADD87ACFE50274ACFF00FF0274AC0274AC3BB4E50274AC92E6FF5DD3FA62
+            D4FA62D4FA62D4FA63D4FA63D5FA59CFF643B4D87FD3E50274AC0274AC2EA7E1
+            0274AC41BBE70274AC96EEFF65DDFA69DEFB68DEFB69DEFB68DEFB69E0FC5FD9
+            F741B6D880D7E50274AC0274AC35AFE50274AC45C1E60274ACEAFFFFA6F8FFAB
+            FAFFACFAFFABFAFFABFAFFADFBFFA1F3FF82D1E6A7E5EF0274AC0274AC3BB4E5
+            0274AC52CCEA0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274
+            AC0274AC0274AC0274AC0274AC41BBE70274AC74E9F874E9F874E9F874E9F874
+            E9F874E9F874E9F874E9F874E9F874E9F80274ACFF00FFFF00FF0274AC45C1E6
+            0274ACD4FEFF96FFFF97FFFF97FFFF99FFFF99FFFF9AFFFF9AFFFF9EFFFF8EFC
+            FF0274ACFF00FFFF00FF0274AC52CCEA0274AC0274ACD4FCFE88FBFE99FCFE47
+            C0DC0274AC0274AC0274AC0274AC0274AC0274ACFF00FFFF00FF0274AC74E9F8
+            74E9F874E9F80274AC0274AC0274AC0274AC74E9F874E9F874E9F80274ACFF00
+            FFFF00FFFF00FFFF00FF0274ACD4FEFF96FFFF97FFFF97FFFF99FFFF99FFFF9A
+            FFFF9AFFFF9EFFFF8EFCFF0274ACFF00FFFF00FFFF00FFFF00FFFF00FF0274AC
+            D4FCFE88FBFE99FCFE47C0DC0274AC0274AC0274AC0274AC0274ACFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FF0274AC0274AC0274AC0274ACFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = btnBaseClick
         end
         object edtSource: TEdit
-          Left = 80
+          Left = 77
           Top = 6
           Width = 555
           Height = 21
@@ -1078,13 +1118,14 @@ object ServerManagerForm: TServerManagerForm
           TabOrder = 0
         end
         object cbxEdition: TComboBox
-          Left = 80
-          Top = 38
+          Left = 77
+          Top = 37
           Width = 584
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
+          OnChange = cbxEditionChange
           Items.Strings = (
             'International'
             'US'
@@ -1099,8 +1140,8 @@ object ServerManagerForm: TServerManagerForm
             'Custom Combined')
         end
         object edtDate: TDateTimePicker
-          Left = 80
-          Top = 71
+          Left = 77
+          Top = 100
           Width = 584
           Height = 21
           Anchors = [akLeft, akTop, akRight]
@@ -1109,12 +1150,21 @@ object ServerManagerForm: TServerManagerForm
           TabOrder = 2
         end
         object edtDestination: TEdit
-          Left = 80
-          Top = 104
+          Left = 77
+          Top = 132
           Width = 555
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
+        end
+        object edtBase: TEdit
+          Left = 76
+          Top = 67
+          Width = 555
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          Enabled = False
+          TabOrder = 4
         end
       end
       object Panel6: TPanel
@@ -1164,10 +1214,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet4: TTabSheet
       Caption = 'Snomed Combination'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel20: TPanel
         Left = 0
         Top = 372
@@ -1646,10 +1692,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet2: TTabSheet
       Caption = 'LOINC Import'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 41
@@ -2022,10 +2064,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet3: TTabSheet
       Caption = 'Process UMLS'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel14: TPanel
         Left = 0
         Top = 0
@@ -2367,10 +2405,6 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet5: TTabSheet
       Caption = 'Package Manager'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlPackageManager: TPanel
         Left = 0
         Top = 41
