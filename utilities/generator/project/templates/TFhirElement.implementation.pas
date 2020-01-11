@@ -11,7 +11,7 @@ var
 begin
   ex := extensionList.Append;
   ex.url := url;
-  ex.value := value as TFhirType;
+  ex.value := value as TFhirDataType;
 end;
 
 function TFhirElement.extensionCount(url: String): integer;

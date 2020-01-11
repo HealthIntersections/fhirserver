@@ -33,7 +33,7 @@ unit FHIR.R5.Xml;
 
 interface
 
-// Generated on Thu, Jan 9, 2020 07:56+1100 for FHIR v4.2.0
+// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
 
 
 
@@ -5258,7 +5258,7 @@ function TFHIRXmlParser.ParseDataRequirementChild(value : TFhirDataRequirement; 
 begin
   result := true;
       if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'profile') then
         value.profileList.Add(ParseCanonical(child, path+'/profile')) {629}
       else if (child.localName = 'subjectCodeableConcept') then
@@ -5295,7 +5295,7 @@ var
   i : integer;
 begin
   composeDataTypeChildren(xml, value);
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirAllTypesEnum); {733}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.profileList.Count - 1 do
       ComposeCanonical(xml, 'profile', value.profileList[i]);
@@ -5921,7 +5921,7 @@ begin
       else if (child.localName = 'documentation') then
         value.documentationElement := ParseString(child, path+'/documentation') {735}
       else if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'profile') then
         value.profileElement := ParseCanonical(child, path+'/profile') {735}
       else if Not ParseElementChild(value, path, child) then
@@ -5951,7 +5951,7 @@ begin
     ComposeString(xml, 'max', value.maxElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'documentation', value.documentationElement); {736}
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirAllTypesEnum); {733}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(xml, 'profile', value.profileElement); {736}
 end;
@@ -13393,7 +13393,7 @@ function TFHIRXmlParser.ParseCapabilityStatementRestResourceChild(value : TFhirC
 begin
   result := true;
       if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'profile') then
         value.profileElement := ParseCanonical(child, path+'/profile') {735}
       else if (child.localName = 'supportedProfile') then
@@ -13446,7 +13446,7 @@ var
   i : integer;
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(xml, 'profile', value.profileElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -14304,7 +14304,7 @@ function TFHIRXmlParser.ParseCapabilityStatement2RestResourceChild(value : TFhir
 begin
   result := true;
       if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'profile') then
         value.profileElement := ParseCanonical(child, path+'/profile') {735}
       else if (child.localName = 'supportedProfile') then
@@ -14337,7 +14337,7 @@ var
   i : integer;
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(xml, 'profile', value.profileElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -18747,7 +18747,7 @@ begin
       else if (child.localName = 'description') then
         value.descriptionElement := ParseString(child, path+'/description') {735}
       else if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirPropertyTypeEnum, SYSTEMS_TFhirPropertyTypeEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirConceptPropertyTypeEnum, SYSTEMS_TFhirConceptPropertyTypeEnum, child, path+'/type') {732}
       else if Not ParseBackboneElementChild(value, path, child) then
     result := false;
 end;
@@ -18771,7 +18771,7 @@ begin
     ComposeUri(xml, 'uri', value.uriElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'description', value.descriptionElement); {736}
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirPropertyTypeEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirConceptPropertyTypeEnum); {733}
 end;
 
 function TFHIRXmlParser.ParseCodeSystemConcept(element : TMXmlElement; path : string) : TFhirCodeSystemConcept;
@@ -19573,7 +19573,7 @@ function TFHIRXmlParser.ParseCompartmentDefinitionResourceChild(value : TFhirCom
 begin
   result := true;
       if (child.localName = 'code') then
-        value.codeElement := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/code') {732}
+        value.codeElement := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/code') {732}
       else if (child.localName = 'param') then
         value.paramList.Add(ParseString(child, path+'/param')) {629}
       else if (child.localName = 'documentation') then
@@ -19598,7 +19598,7 @@ var
   i : integer;
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'code', value.codeElement, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'code', value.codeElement, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.paramList.Count - 1 do
       ComposeString(xml, 'param', value.paramList[i]);
@@ -28316,7 +28316,7 @@ begin
       if (child.localName = 'resourceId') then
         value.resourceIdElement := ParseString(child, path+'/resourceId') {735}
       else if (child.localName = 'resourceType') then
-        value.resourceTypeElement := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/resourceType') {732}
+        value.resourceTypeElement := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/resourceType') {732}
       else if (child.localName = 'name') then
         value.nameElement := ParseString(child, path+'/name') {735}
       else if (child.localName = 'description') then
@@ -28346,7 +28346,7 @@ var
 begin
   composeBackboneElementChildren(xml, value);
   ComposeString(xml, 'resourceId', value.resourceIdElement); {736}
-  ComposeEnum(xml, 'resourceType', value.resourceTypeElement, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'resourceType', value.resourceTypeElement, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'name', value.nameElement); {736}
   if (SummaryOption in [soFull, soData]) then
@@ -31377,7 +31377,7 @@ function TFHIRXmlParser.ParseGraphDefinitionLinkTargetChild(value : TFhirGraphDe
 begin
   result := true;
       if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'params') then
         value.paramsElement := ParseString(child, path+'/params') {735}
       else if (child.localName = 'profile') then
@@ -31406,7 +31406,7 @@ var
   i : integer;
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'params', value.paramsElement); {736}
   if (SummaryOption in [soFull, soData]) then
@@ -31531,7 +31531,7 @@ begin
       else if (child.localName = 'purpose') then
         value.purposeElement := ParseMarkdown(child, path+'/purpose') {735}
       else if (child.localName = 'start') then
-        value.startElement := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/start') {732}
+        value.startElement := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/start') {732}
       else if (child.localName = 'profile') then
         value.profileElement := ParseCanonical(child, path+'/profile') {735}
       else if (child.localName = 'link') then
@@ -31581,7 +31581,7 @@ begin
       ComposeCodeableConcept(xml, 'jurisdiction', value.jurisdictionList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(xml, 'purpose', value.purposeElement); {736}
-  ComposeEnum(xml, 'start', value.startElement, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'start', value.startElement, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     ComposeCanonical(xml, 'profile', value.profileElement); {736}
   if (SummaryOption in [soFull, soData]) then
@@ -33481,7 +33481,7 @@ function TFHIRXmlParser.ParseImplementationGuideGlobalChild(value : TFhirImpleme
 begin
   result := true;
       if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'profile') then
         value.profileElement := ParseCanonical(child, path+'/profile') {735}
       else if Not ParseBackboneElementChild(value, path, child) then
@@ -33502,7 +33502,7 @@ end;
 procedure TFHIRXmlComposer.ComposeImplementationGuideGlobalChildren(xml : TXmlBuilder; value : TFhirImplementationGuideGlobal);
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirResourceTypesEnum); {733}
   ComposeCanonical(xml, 'profile', value.profileElement); {736}
 end;
 
@@ -40184,7 +40184,7 @@ function TFHIRXmlParser.ParseMessageDefinitionFocusChild(value : TFhirMessageDef
 begin
   result := true;
       if (child.localName = 'code') then
-        value.codeElement := ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/code') {732}
+        value.codeElement := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/code') {732}
       else if (child.localName = 'profile') then
         value.profileElement := ParseCanonical(child, path+'/profile') {735}
       else if (child.localName = 'min') then
@@ -40209,7 +40209,7 @@ end;
 procedure TFHIRXmlComposer.ComposeMessageDefinitionFocusChildren(xml : TXmlBuilder; value : TFhirMessageDefinitionFocus);
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'code', value.codeElement, CODES_TFhirResourceTypeEnum); {733}
+  ComposeEnum(xml, 'code', value.codeElement, CODES_TFhirResourceTypesEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     ComposeCanonical(xml, 'profile', value.profileElement); {736}
   ComposeUnsignedInt(xml, 'min', value.minElement); {736}
@@ -43178,7 +43178,7 @@ begin
       else if (child.localName = 'documentation') then
         value.documentationElement := ParseString(child, path+'/documentation') {735}
       else if (child.localName = 'type') then
-        value.type_Element := ParseEnum(CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum, child, path+'/type') {732}
+        value.type_Element := ParseEnum(CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, child, path+'/type') {732}
       else if (child.localName = 'targetProfile') then
         value.targetProfileList.Add(ParseCanonical(child, path+'/targetProfile')) {629}
       else if (child.localName = 'searchType') then
@@ -43216,7 +43216,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'documentation', value.documentationElement); {736}
   if (SummaryOption in [soFull, soData]) then
-    ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum); {733}
+    ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirAllTypesEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.targetProfileList.Count - 1 do
       ComposeCanonical(xml, 'targetProfile', value.targetProfileList[i]);
@@ -43453,7 +43453,7 @@ begin
       else if (child.localName = 'base') then
         value.baseElement := ParseCanonical(child, path+'/base') {735}
       else if (child.localName = 'resource') then
-        value.resource.Add(ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/resource')){y.1}
+        value.resource.Add(ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/resource')){y.1}
       else if (child.localName = 'system') then
         value.systemElement := ParseBoolean(child, path+'/system') {735}
       else if (child.localName = 'type') then
@@ -43525,7 +43525,7 @@ begin
     ComposeCanonical(xml, 'base', value.baseElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.resource.Count - 1 do
-      ComposeEnum(xml, 'resource', value.resource[i], CODES_TFhirResourceTypeEnum);
+      ComposeEnum(xml, 'resource', value.resource[i], CODES_TFhirResourceTypesEnum);
   ComposeBoolean(xml, 'system', value.systemElement); {736}
   ComposeBoolean(xml, 'type', value.type_Element); {736}
   ComposeBoolean(xml, 'instance', value.instanceElement); {736}
@@ -47481,7 +47481,7 @@ begin
       else if (child.localName = 'experimental') then
         value.experimentalElement := ParseBoolean(child, path+'/experimental') {735}
       else if (child.localName = 'subjectType') then
-        value.subjectType.Add(ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/subjectType')){y.1}
+        value.subjectType.Add(ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/subjectType')){y.1}
       else if (child.localName = 'date') then
         value.dateElement := ParseDateTime(child, path+'/date') {735}
       else if (child.localName = 'publisher') then
@@ -47547,7 +47547,7 @@ begin
     ComposeBoolean(xml, 'experimental', value.experimentalElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.subjectType.Count - 1 do
-      ComposeEnum(xml, 'subjectType', value.subjectType[i], CODES_TFhirResourceTypeEnum);
+      ComposeEnum(xml, 'subjectType', value.subjectType[i], CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(xml, 'date', value.dateElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -49425,7 +49425,7 @@ begin
       else if (child.localName = 'code') then
         value.codeElement := ParseCode(child, path+'/code') {735}
       else if (child.localName = 'base') then
-        value.base.Add(ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/base')){y.1}
+        value.base.Add(ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/base')){y.1}
       else if (child.localName = 'type') then
         value.type_Element := ParseEnum(CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum, child, path+'/type') {732}
       else if (child.localName = 'expression') then
@@ -49435,7 +49435,7 @@ begin
       else if (child.localName = 'xpathUsage') then
         value.xpathUsageElement := ParseEnum(CODES_TFhirXPathUsageTypeEnum, SYSTEMS_TFhirXPathUsageTypeEnum, child, path+'/xpathUsage') {732}
       else if (child.localName = 'target') then
-        value.target.Add(ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/target')){y.1}
+        value.target.Add(ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/target')){y.1}
       else if (child.localName = 'multipleOr') then
         value.multipleOrElement := ParseBoolean(child, path+'/multipleOr') {735}
       else if (child.localName = 'multipleAnd') then
@@ -49495,7 +49495,7 @@ begin
     ComposeMarkdown(xml, 'purpose', value.purposeElement); {736}
   ComposeCode(xml, 'code', value.codeElement); {736}
   for i := 0 to value.base.Count - 1 do
-      ComposeEnum(xml, 'base', value.base[i], CODES_TFhirResourceTypeEnum);
+      ComposeEnum(xml, 'base', value.base[i], CODES_TFhirResourceTypesEnum);
   ComposeEnum(xml, 'type', value.type_Element, CODES_TFhirSearchParamTypeEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'expression', value.expressionElement); {736}
@@ -49505,7 +49505,7 @@ begin
     ComposeEnum(xml, 'xpathUsage', value.xpathUsageElement, CODES_TFhirXPathUsageTypeEnum); {733}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.target.Count - 1 do
-      ComposeEnum(xml, 'target', value.target[i], CODES_TFhirResourceTypeEnum);
+      ComposeEnum(xml, 'target', value.target[i], CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(xml, 'multipleOr', value.multipleOrElement); {736}
   if (SummaryOption in [soFull, soData]) then
@@ -58452,7 +58452,7 @@ begin
       if (child.localName = 'description') then
         value.descriptionElement := ParseString(child, path+'/description') {735}
       else if (child.localName = 'resourceType') then
-        value.resourceType.Add(ParseEnum(CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, child, path+'/resourceType')){y.1}
+        value.resourceType.Add(ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, child, path+'/resourceType')){y.1}
       else if (child.localName = 'methodCriteria') then
         value.methodCriteriaList.Add(ParseEnum(CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum, child, path+'/methodCriteria')){y.1}
       else if (child.localName = 'queryCriteria') then
@@ -58483,7 +58483,7 @@ begin
     ComposeString(xml, 'description', value.descriptionElement); {736}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.resourceType.Count - 1 do
-      ComposeEnum(xml, 'resourceType', value.resourceType[i], CODES_TFhirResourceTypeEnum);
+      ComposeEnum(xml, 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.methodCriteriaList.Count - 1 do
       ComposeEnum(xml, 'methodCriteria', value.methodCriteriaList[i], CODES_TFhirInteractionTriggerEnum);

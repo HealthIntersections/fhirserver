@@ -68,7 +68,7 @@ public class EnumsGenerator extends BaseGenerator {
   }
 
   private void seeEnum(EnumInfo enumInfo) {
-    String n = enumInfo.getName();
+    String n = enumInfo.abbreviation();
     String tn = "TFhir"+n+(n.endsWith("Enum") ? "" : "Enum");
     ValueSet vse = (ValueSet) enumInfo.getValueSet().getUserData("expansion");
     

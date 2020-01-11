@@ -33,7 +33,7 @@ unit FHIR.R5.Json;
 
 interface
 
-// Generated on Thu, Jan 9, 2020 07:56+1100 for FHIR v4.2.0
+// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
 
 
 
@@ -5561,7 +5561,7 @@ procedure TFHIRJsonParser.ParseDataRequirementProperties(jsn : TJsonObject; valu
 begin
     ParseDataTypeProperties(jsn, value); {1060}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum); {743}
       if jsn.has('profile') or jsn.has('_profile') then
       iteratePrimitiveArray(jsn.vArr['profile'], jsn.vArr['_profile'], value.profileList, parseCanonical);
     if jsn.has('subjectCodeableConcept') {a4} then
@@ -5590,7 +5590,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeDataTypeProperties(json, value); {1103}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirAllTypesEnum, false); {765}
   if (SummaryOption in [soFull, soSummary, soData]) and (value.profileList.Count > 0) then
   begin
     ext := false;
@@ -6325,7 +6325,7 @@ begin
     if jsn.has('documentation') or jsn.has('_documentation') then
         value.documentationElement := parseString(jsn.node['documentation'], jsn.vObj['_documentation']); {747}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum); {743}
     if jsn.has('profile') or jsn.has('_profile') then
         value.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']); {747}
 end;
@@ -6353,7 +6353,7 @@ begin
     ComposeStringValue(json, 'documentation', value.documentationElement, false); {767}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'documentation', value.documentationElement, false); {768}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirAllTypesEnum, false); {765}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonicalValue(json, 'profile', value.profileElement, false); {767}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -13933,7 +13933,7 @@ procedure TFHIRJsonParser.ParseCapabilityStatementRestResourceProperties(jsn : T
 begin
     ParseBackboneElementProperties(jsn, value); {1060}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('profile') or jsn.has('_profile') then
         value.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']); {747}
       if jsn.has('supportedProfile') or jsn.has('_supportedProfile') then
@@ -13978,7 +13978,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, value); {1103}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonicalValue(json, 'profile', value.profileElement, false); {767}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -14987,7 +14987,7 @@ procedure TFHIRJsonParser.ParseCapabilityStatement2RestResourceProperties(jsn : 
 begin
     ParseBackboneElementProperties(jsn, value); {1060}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('profile') or jsn.has('_profile') then
         value.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']); {747}
       if jsn.has('supportedProfile') or jsn.has('_supportedProfile') then
@@ -15012,7 +15012,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, value); {1103}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonicalValue(json, 'profile', value.profileElement, false); {767}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -19954,7 +19954,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         value.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']); {747}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirPropertyTypeEnum, SYSTEMS_TFhirPropertyTypeEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirConceptPropertyTypeEnum, SYSTEMS_TFhirConceptPropertyTypeEnum); {743}
 end;
 
 procedure TFHIRJsonComposer.ComposeCodeSystemProperty(json : TJSONWriter; name : string; value : TFhirCodeSystemProperty; noObj : boolean = false);
@@ -19973,7 +19973,7 @@ begin
     ComposeStringValue(json, 'description', value.descriptionElement, false); {767}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', value.descriptionElement, false); {768}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirPropertyTypeEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirConceptPropertyTypeEnum, false); {765}
   if not noObj then json.finishObject;
 end;
 
@@ -20886,7 +20886,7 @@ procedure TFHIRJsonParser.ParseCompartmentDefinitionResourceProperties(jsn : TJs
 begin
     ParseBackboneElementProperties(jsn, value); {1060}
     if jsn.has('code') or jsn.has('_code') then
-        value.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
       if jsn.has('param') or jsn.has('_param') then
       iteratePrimitiveArray(jsn.vArr['param'], jsn.vArr['_param'], value.paramList, parseString);
     if jsn.has('documentation') or jsn.has('_documentation') then
@@ -20903,7 +20903,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, value); {1103}
-  ComposeEnumValue(json, 'code', value.codeElement, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'code', value.codeElement, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soSummary, soData]) and (value.paramList.Count > 0) then
   begin
     ext := false;
@@ -30023,7 +30023,7 @@ begin
     if jsn.has('resourceId') or jsn.has('_resourceId') then
         value.resourceIdElement := parseString(jsn.node['resourceId'], jsn.vObj['_resourceId']); {747}
     if jsn.has('resourceType') or jsn.has('_resourceType') then
-        value.resourceTypeElement := parseEnum(jsn.path+'/resourceType', jsn.node['resourceType'], jsn.vObj['_resourceType'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.resourceTypeElement := parseEnum(jsn.path+'/resourceType', jsn.node['resourceType'], jsn.vObj['_resourceType'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('name') or jsn.has('_name') then
         value.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']); {747}
     if jsn.has('description') or jsn.has('_description') then
@@ -30044,7 +30044,7 @@ begin
   ComposeBackboneElementProperties(json, value); {1103}
   ComposeStringValue(json, 'resourceId', value.resourceIdElement, false); {767}
   ComposeStringProps(json, 'resourceId', value.resourceIdElement, false); {768}
-  ComposeEnumValue(json, 'resourceType', value.resourceTypeElement, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'resourceType', value.resourceTypeElement, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'name', value.nameElement, false); {767}
   if (SummaryOption in [soFull, soData]) then
@@ -33419,7 +33419,7 @@ procedure TFHIRJsonParser.ParseGraphDefinitionLinkTargetProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, value); {1060}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('params') or jsn.has('_params') then
         value.paramsElement := parseString(jsn.node['params'], jsn.vObj['_params']); {747}
     if jsn.has('profile') or jsn.has('_profile') then
@@ -33438,7 +33438,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, value); {1103}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'params', value.paramsElement, false); {767}
   if (SummaryOption in [soFull, soData]) then
@@ -33559,7 +33559,7 @@ begin
     if jsn.has('purpose') or jsn.has('_purpose') then
         value.purposeElement := parseMarkdown(jsn.node['purpose'], jsn.vObj['_purpose']); {747}
     if jsn.has('start') or jsn.has('_start') then
-        value.startElement := parseEnum(jsn.path+'/start', jsn.node['start'], jsn.vObj['_start'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.startElement := parseEnum(jsn.path+'/start', jsn.node['start'], jsn.vObj['_start'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('profile') or jsn.has('_profile') then
         value.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']); {747}
     if jsn.has('link') then
@@ -33625,7 +33625,7 @@ begin
     ComposeMarkdownValue(json, 'purpose', value.purposeElement, false); {767}
   if (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', value.purposeElement, false); {768}
-  ComposeEnumValue(json, 'start', value.startElement, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'start', value.startElement, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soData]) then
     ComposeCanonicalValue(json, 'profile', value.profileElement, false); {767}
   if (SummaryOption in [soFull, soData]) then
@@ -35569,7 +35569,7 @@ procedure TFHIRJsonParser.ParseImplementationGuideGlobalProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, value); {1060}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('profile') or jsn.has('_profile') then
         value.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']); {747}
 end;
@@ -35580,7 +35580,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, value); {1103}
-  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirResourceTypesEnum, false); {765}
   ComposeCanonicalValue(json, 'profile', value.profileElement, false); {767}
   ComposeCanonicalProps(json, 'profile', value.profileElement, false); {768}
   if not noObj then json.finishObject;
@@ -42251,7 +42251,7 @@ procedure TFHIRJsonParser.ParseMessageDefinitionFocusProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, value); {1060}
     if jsn.has('code') or jsn.has('_code') then
-        value.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {743}
+        value.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {743}
     if jsn.has('profile') or jsn.has('_profile') then
         value.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']); {747}
     if jsn.has('min') or jsn.has('_min') then
@@ -42266,7 +42266,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, value); {1103}
-  ComposeEnumValue(json, 'code', value.codeElement, CODES_TFhirResourceTypeEnum, false); {765}
+  ComposeEnumValue(json, 'code', value.codeElement, CODES_TFhirResourceTypesEnum, false); {765}
   if (SummaryOption in [soFull, soData]) then
     ComposeCanonicalValue(json, 'profile', value.profileElement, false); {767}
   if (SummaryOption in [soFull, soData]) then
@@ -45555,7 +45555,7 @@ begin
     if jsn.has('documentation') or jsn.has('_documentation') then
         value.documentationElement := parseString(jsn.node['documentation'], jsn.vObj['_documentation']); {747}
     if jsn.has('type') or jsn.has('_type') then
-        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum); {743}
+        value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum); {743}
       if jsn.has('targetProfile') or jsn.has('_targetProfile') then
       iteratePrimitiveArray(jsn.vArr['targetProfile'], jsn.vArr['_targetProfile'], value.targetProfileList, parseCanonical);
     if jsn.has('searchType') or jsn.has('_searchType') then
@@ -45590,7 +45590,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', value.documentationElement, false); {768}
   if (SummaryOption in [soFull, soData]) then
-    ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum, false); {765}
+    ComposeEnumValue(json, 'type', value.type_Element, CODES_TFhirAllTypesEnum, false); {765}
   if (SummaryOption in [soFull, soData]) and (value.targetProfileList.Count > 0) then
   begin
     ext := false;
@@ -45835,7 +45835,7 @@ begin
     if jsn.has('base') or jsn.has('_base') then
         value.baseElement := parseCanonical(jsn.node['base'], jsn.vObj['_base']); {747}
     if jsn.has('resource') or jsn.has('_resource') then
-      iterateEnumArray(jsn.vArr['resource'], jsn.vArr['_resource'], jsn.path+'/resource', value.resource, parseEnum, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum);
+      iterateEnumArray(jsn.vArr['resource'], jsn.vArr['_resource'], jsn.path+'/resource', value.resource, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('system') or jsn.has('_system') then
         value.systemElement := parseBoolean(jsn.node['system'], jsn.vObj['_system']); {747}
     if jsn.has('type') or jsn.has('_type') then
@@ -45945,14 +45945,14 @@ begin
     begin
       json.valueArray('resource');
       for i := 0 to value.resource.Count - 1 do
-        ComposeEnumValue(json, '', value.resource[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumValue(json, '', value.resource[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
     if ext then
     begin
       json.valueArray('_resource');
       for i := 0 to value.resource.Count - 1 do
-        ComposeEnumProps(json, '', value.resource[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumProps(json, '', value.resource[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -50186,7 +50186,7 @@ begin
     if jsn.has('experimental') or jsn.has('_experimental') then
         value.experimentalElement := parseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']); {747}
     if jsn.has('subjectType') or jsn.has('_subjectType') then
-      iterateEnumArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], jsn.path+'/subjectType', value.subjectType, parseEnum, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum);
+      iterateEnumArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], jsn.path+'/subjectType', value.subjectType, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('date') or jsn.has('_date') then
         value.dateElement := parseDateTime(jsn.node['date'], jsn.vObj['_date']); {747}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -50289,14 +50289,14 @@ begin
     begin
       json.valueArray('subjectType');
       for i := 0 to value.subjectType.Count - 1 do
-        ComposeEnumValue(json, '', value.subjectType[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumValue(json, '', value.subjectType[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
     if ext then
     begin
       json.valueArray('_subjectType');
       for i := 0 to value.subjectType.Count - 1 do
-        ComposeEnumProps(json, '', value.subjectType[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumProps(json, '', value.subjectType[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -52246,7 +52246,7 @@ begin
     if jsn.has('code') or jsn.has('_code') then
         value.codeElement := parseCode(jsn.node['code'], jsn.vObj['_code']); {747}
     if jsn.has('base') or jsn.has('_base') then
-      iterateEnumArray(jsn.vArr['base'], jsn.vArr['_base'], jsn.path+'/base', value.base, parseEnum, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum);
+      iterateEnumArray(jsn.vArr['base'], jsn.vArr['_base'], jsn.path+'/base', value.base, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('type') or jsn.has('_type') then
         value.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum); {743}
     if jsn.has('expression') or jsn.has('_expression') then
@@ -52256,7 +52256,7 @@ begin
     if jsn.has('xpathUsage') or jsn.has('_xpathUsage') then
         value.xpathUsageElement := parseEnum(jsn.path+'/xpathUsage', jsn.node['xpathUsage'], jsn.vObj['_xpathUsage'], CODES_TFhirXPathUsageTypeEnum, SYSTEMS_TFhirXPathUsageTypeEnum); {743}
     if jsn.has('target') or jsn.has('_target') then
-      iterateEnumArray(jsn.vArr['target'], jsn.vArr['_target'], jsn.path+'/target', value.target, parseEnum, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum);
+      iterateEnumArray(jsn.vArr['target'], jsn.vArr['_target'], jsn.path+'/target', value.target, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('multipleOr') or jsn.has('_multipleOr') then
         value.multipleOrElement := parseBoolean(jsn.node['multipleOr'], jsn.vObj['_multipleOr']); {747}
     if jsn.has('multipleAnd') or jsn.has('_multipleAnd') then
@@ -52347,14 +52347,14 @@ begin
     begin
       json.valueArray('base');
       for i := 0 to value.base.Count - 1 do
-        ComposeEnumValue(json, '', value.base[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumValue(json, '', value.base[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
     if ext then
     begin
       json.valueArray('_base');
       for i := 0 to value.base.Count - 1 do
-        ComposeEnumProps(json, '', value.base[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumProps(json, '', value.base[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -52382,14 +52382,14 @@ begin
     begin
       json.valueArray('target');
       for i := 0 to value.target.Count - 1 do
-        ComposeEnumValue(json, '', value.target[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumValue(json, '', value.target[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
     if ext then
     begin
       json.valueArray('_target');
       for i := 0 to value.target.Count - 1 do
-        ComposeEnumProps(json, '', value.target[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumProps(json, '', value.target[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;
@@ -61402,7 +61402,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         value.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']); {747}
     if jsn.has('resourceType') or jsn.has('_resourceType') then
-      iterateEnumArray(jsn.vArr['resourceType'], jsn.vArr['_resourceType'], jsn.path+'/resourceType', value.resourceType, parseEnum, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum);
+      iterateEnumArray(jsn.vArr['resourceType'], jsn.vArr['_resourceType'], jsn.path+'/resourceType', value.resourceType, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('methodCriteria') or jsn.has('_methodCriteria') then
       iterateEnumArray(jsn.vArr['methodCriteria'], jsn.vArr['_methodCriteria'], jsn.path+'/methodCriteria', value.methodCriteriaList, parseEnum, CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum);
     if jsn.has('queryCriteria') then
@@ -61438,14 +61438,14 @@ begin
     begin
       json.valueArray('resourceType');
       for i := 0 to value.resourceType.Count - 1 do
-        ComposeEnumValue(json, '', value.resourceType[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumValue(json, '', value.resourceType[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
     if ext then
     begin
       json.valueArray('_resourceType');
       for i := 0 to value.resourceType.Count - 1 do
-        ComposeEnumProps(json, '', value.resourceType[i], CODES_TFhirResourceTypeEnum, true);
+        ComposeEnumProps(json, '', value.resourceType[i], CODES_TFhirResourceTypesEnum, true);
       json.FinishArray;
     end;
   end;

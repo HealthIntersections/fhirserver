@@ -7,6 +7,7 @@ public class EnumInfo {
   private String name;
   private ValueSet valueSet;
   private boolean shared;
+  private String abbrev;
   
   public EnumInfo(String name) {
     this.name = name;
@@ -28,6 +29,15 @@ public class EnumInfo {
   }
   public void setShared(boolean shared) {
     this.shared = shared;
+  }
+  public String getAbbrev() {
+    return abbrev;
+  }
+  public void setAbbrev(String abbrev) {
+    this.abbrev = abbrev;
+  }
+  public String abbreviation() {
+    return abbrev != null ? abbrev : name;
   }
   
   

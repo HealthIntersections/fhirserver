@@ -33,7 +33,7 @@ unit FHIR.R5.Constants;
 
 interface
 
-// Generated on Thu, Jan 9, 2020 07:56+1100 for FHIR v4.2.0
+// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
 
 
 
@@ -47,7 +47,7 @@ const
   FHIR_GENERATED_VERSION = '4.2.0';
   FHIR_GENERATED_VERSION_BASE = '4.2';
   FHIR_GENERATED_PUBLICATION = '5';
-  FHIR_GENERATED_DATE = 'Thu, Jan 9, 2020 07:56+1100';
+  FHIR_GENERATED_DATE = 'Sat, Jan 11, 2020 07:30+1100';
 
 const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = (

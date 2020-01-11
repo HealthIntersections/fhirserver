@@ -650,7 +650,7 @@ type
     procedure AddParameter(p :  TFhirParametersParameter); overload;
   end;
 
-  TFhirStrutureMapHelper = class helper for TFhirStructureMap
+  TFhirStructureMapHelper = class helper for TFhirStructureMap
   private
   public
     function targetType : String;
@@ -5282,15 +5282,15 @@ begin
       exit(true);
 end;
 
-{ TFhirStrutureMapHelper }
+{ TFhirStructureMapHelper }
 
-function TFhirStrutureMapHelper.targetType: String;
+function TFhirStructureMapHelper.targetType: String;
 var
   input : TFhirStructureMapGroupInput;
 begin
   result := '';
   for input in groupList[0].inputList do
-    if input.mode = MapInputModeTarget then
+    if input.mode = StructureMapInputModeTarget then
       if result = '' then
         result := input.type_
       else

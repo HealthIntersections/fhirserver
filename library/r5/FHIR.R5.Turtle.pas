@@ -33,7 +33,7 @@ unit FHIR.R5.Turtle;
 
 interface
 
-// Generated on Thu, Jan 9, 2020 07:56+1100 for FHIR v4.2.0
+// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
 
 
 
@@ -4151,7 +4151,7 @@ var
   item : TTurtleComplex;
 begin
     ParseDataTypeProperties(obj, value);
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/DataRequirement.type'), CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/DataRequirement.type'), CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum); {744}
     for item in obj.complexes('http://hl7.org/fhir/DataRequirement.profile') do
       value.profileList.Add(parseCanonical(item));
     if obj.has('subjectCodeableConcept', item) then
@@ -4185,7 +4185,7 @@ begin
       this.addPredicate('a', 'fhir:DataRequirement'); {1141}
   end;
   composeElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'DataRequirement', 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum, false, -1); {745}
+  ComposeEnum(this, 'DataRequirement', 'type', value.type_Element, CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.profileList.Count - 1 do
       ComposeCanonical(this, 'DataRequirement', 'profile', value.profileList[i], false, i); {637}
@@ -4720,7 +4720,7 @@ begin
     value.minElement := ParseInteger(obj.complex('http://hl7.org/fhir/ParameterDefinition.min')); {748}
     value.maxElement := ParseString(obj.complex('http://hl7.org/fhir/ParameterDefinition.max')); {748}
     value.documentationElement := ParseString(obj.complex('http://hl7.org/fhir/ParameterDefinition.documentation')); {748}
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ParameterDefinition.type'), CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ParameterDefinition.type'), CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum); {744}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/ParameterDefinition.profile')); {748}
 end;
 
@@ -4748,7 +4748,7 @@ begin
     ComposeString(this, 'ParameterDefinition', 'max', value.maxElement, false, -1); {749}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ParameterDefinition', 'documentation', value.documentationElement, false, -1); {749}
-  ComposeEnum(this, 'ParameterDefinition', 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum, false, -1); {745}
+  ComposeEnum(this, 'ParameterDefinition', 'type', value.type_Element, CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(this, 'ParameterDefinition', 'profile', value.profileElement, false, -1); {749}
 end;
@@ -10960,7 +10960,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/CapabilityStatement.rest.resource.type'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/CapabilityStatement.rest.resource.type'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/CapabilityStatement.rest.resource.profile')); {748}
     for item in obj.complexes('http://hl7.org/fhir/CapabilityStatement.rest.resource.supportedProfile') do
       value.supportedProfileList.Add(parseCanonical(item));
@@ -11002,7 +11002,7 @@ begin
       this.addPredicate('a', 'fhir:CapabilityStatementRestResource'); {1141}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'CapabilityStatement.rest.resource', 'type', value.type_Element, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'CapabilityStatement.rest.resource', 'type', value.type_Element, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(this, 'CapabilityStatement.rest.resource', 'profile', value.profileElement, false, -1); {749}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -11694,7 +11694,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.resource.type'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.resource.type'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.resource.profile')); {748}
     for item in obj.complexes('http://hl7.org/fhir/CapabilityStatement2.rest.resource.supportedProfile') do
       value.supportedProfileList.Add(parseCanonical(item));
@@ -11723,7 +11723,7 @@ begin
       this.addPredicate('a', 'fhir:CapabilityStatement2RestResource'); {1141}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'CapabilityStatement2.rest.resource', 'type', value.type_Element, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'CapabilityStatement2.rest.resource', 'type', value.type_Element, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(this, 'CapabilityStatement2.rest.resource', 'profile', value.profileElement, false, -1); {749}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -15361,7 +15361,7 @@ begin
     value.codeElement := ParseCode(obj.complex('http://hl7.org/fhir/CodeSystem.property.code')); {748}
     value.uriElement := ParseUri(obj.complex('http://hl7.org/fhir/CodeSystem.property.uri')); {748}
     value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/CodeSystem.property.description')); {748}
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/CodeSystem.property.type'), CODES_TFhirPropertyTypeEnum, SYSTEMS_TFhirPropertyTypeEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/CodeSystem.property.type'), CODES_TFhirConceptPropertyTypeEnum, SYSTEMS_TFhirConceptPropertyTypeEnum); {744}
 end;
 
 procedure TFHIRTurtleComposer.ComposeCodeSystemProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirCodeSystemProperty; useType : boolean; index : integer);
@@ -15384,7 +15384,7 @@ begin
     ComposeUri(this, 'CodeSystem.property', 'uri', value.uriElement, false, -1); {749}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CodeSystem.property', 'description', value.descriptionElement, false, -1); {749}
-  ComposeEnum(this, 'CodeSystem.property', 'type', value.type_Element, CODES_TFhirPropertyTypeEnum, SYSTEMS_TFhirPropertyTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'CodeSystem.property', 'type', value.type_Element, CODES_TFhirConceptPropertyTypeEnum, SYSTEMS_TFhirConceptPropertyTypeEnum, false, -1); {745}
 end;
 
 function TFHIRTurtleParser.ParseCodeSystemConcept(obj : TTurtleComplex) : TFhirCodeSystemConcept;
@@ -16064,7 +16064,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/CompartmentDefinition.resource.code'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/CompartmentDefinition.resource.code'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     for item in obj.complexes('http://hl7.org/fhir/CompartmentDefinition.resource.param') do
       value.paramList.Add(parseString(item));
     value.documentationElement := ParseString(obj.complex('http://hl7.org/fhir/CompartmentDefinition.resource.documentation')); {748}
@@ -16086,7 +16086,7 @@ begin
       this.addPredicate('a', 'fhir:CompartmentDefinitionResource'); {1141}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'CompartmentDefinition.resource', 'code', value.codeElement, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'CompartmentDefinition.resource', 'code', value.codeElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.paramList.Count - 1 do
       ComposeString(this, 'CompartmentDefinition.resource', 'param', value.paramList[i], false, i); {637}
@@ -23302,7 +23302,7 @@ var
 begin
     ParseBackboneElementProperties(obj, value);
     value.resourceIdElement := ParseString(obj.complex('http://hl7.org/fhir/ExampleScenario.instance.resourceId')); {748}
-    value.resourceTypeElement := ParseEnum(obj.complex('http://hl7.org/fhir/ExampleScenario.instance.resourceType'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.resourceTypeElement := ParseEnum(obj.complex('http://hl7.org/fhir/ExampleScenario.instance.resourceType'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/ExampleScenario.instance.name')); {748}
     value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/ExampleScenario.instance.description')); {748}
     for item in obj.complexes('http://hl7.org/fhir/ExampleScenario.instance.version') do
@@ -23328,7 +23328,7 @@ begin
   end;
   composeBackboneElement(this, '', name, value, false, index);
   ComposeString(this, 'ExampleScenario.instance', 'resourceId', value.resourceIdElement, false, -1); {749}
-  ComposeEnum(this, 'ExampleScenario.instance', 'resourceType', value.resourceTypeElement, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'ExampleScenario.instance', 'resourceType', value.resourceTypeElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ExampleScenario.instance', 'name', value.nameElement, false, -1); {749}
   if (SummaryOption in [soFull, soData]) then
@@ -25848,7 +25848,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/GraphDefinition.link.target.type'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/GraphDefinition.link.target.type'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.paramsElement := ParseString(obj.complex('http://hl7.org/fhir/GraphDefinition.link.target.params')); {748}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/GraphDefinition.link.target.profile')); {748}
     for item in obj.complexes('http://hl7.org/fhir/GraphDefinition.link.target.compartment') do
@@ -25873,7 +25873,7 @@ begin
       this.addPredicate('a', 'fhir:GraphDefinitionLinkTarget'); {1141}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'GraphDefinition.link.target', 'type', value.type_Element, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'GraphDefinition.link.target', 'type', value.type_Element, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'GraphDefinition.link.target', 'params', value.paramsElement, false, -1); {749}
   if (SummaryOption in [soFull, soData]) then
@@ -25966,7 +25966,7 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/GraphDefinition.jurisdiction') do
       value.jurisdictionList.Add(parseCodeableConcept(item));
     value.purposeElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/GraphDefinition.purpose')); {748}
-    value.startElement := ParseEnum(obj.complex('http://hl7.org/fhir/GraphDefinition.start'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.startElement := ParseEnum(obj.complex('http://hl7.org/fhir/GraphDefinition.start'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/GraphDefinition.profile')); {748}
     for item in obj.complexes('http://hl7.org/fhir/GraphDefinition.link') do
       value.link_List.Add(parseGraphDefinitionLink(item));
@@ -26013,7 +26013,7 @@ begin
       ComposeCodeableConcept(this, 'GraphDefinition', 'jurisdiction', value.jurisdictionList[i], false, i); {637}
   if (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'GraphDefinition', 'purpose', value.purposeElement, false, -1); {749}
-  ComposeEnum(this, 'GraphDefinition', 'start', value.startElement, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'GraphDefinition', 'start', value.startElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soData]) then
     ComposeCanonical(this, 'GraphDefinition', 'profile', value.profileElement, false, -1); {749}
   if (SummaryOption in [soFull, soData]) then
@@ -27584,7 +27584,7 @@ end;
 procedure TFHIRTurtleParser.ParseImplementationGuideGlobalProperties(obj : TTurtleComplex; value : TFhirImplementationGuideGlobal);
 begin
     ParseBackboneElementProperties(obj, value);
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.global.type'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.global.type'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/ImplementationGuide.global.profile')); {748}
 end;
 
@@ -27603,7 +27603,7 @@ begin
       this.addPredicate('a', 'fhir:ImplementationGuideGlobal'); {1141}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'ImplementationGuide.global', 'type', value.type_Element, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'ImplementationGuide.global', 'type', value.type_Element, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   ComposeCanonical(this, 'ImplementationGuide.global', 'profile', value.profileElement, false, -1); {749}
 end;
 
@@ -33130,7 +33130,7 @@ end;
 procedure TFHIRTurtleParser.ParseMessageDefinitionFocusProperties(obj : TTurtleComplex; value : TFhirMessageDefinitionFocus);
 begin
     ParseBackboneElementProperties(obj, value);
-    value.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/MessageDefinition.focus.code'), CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum); {744}
+    value.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/MessageDefinition.focus.code'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum); {744}
     value.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/MessageDefinition.focus.profile')); {748}
     value.minElement := ParseUnsignedInt(obj.complex('http://hl7.org/fhir/MessageDefinition.focus.min')); {748}
     value.maxElement := ParseString(obj.complex('http://hl7.org/fhir/MessageDefinition.focus.max')); {748}
@@ -33151,7 +33151,7 @@ begin
       this.addPredicate('a', 'fhir:MessageDefinitionFocus'); {1141}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'MessageDefinition.focus', 'code', value.codeElement, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, -1); {745}
+  ComposeEnum(this, 'MessageDefinition.focus', 'code', value.codeElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soData]) then
     ComposeCanonical(this, 'MessageDefinition.focus', 'profile', value.profileElement, false, -1); {749}
   ComposeUnsignedInt(this, 'MessageDefinition.focus', 'min', value.minElement, false, -1); {749}
@@ -35584,7 +35584,7 @@ begin
     value.minElement := ParseInteger(obj.complex('http://hl7.org/fhir/OperationDefinition.parameter.min')); {748}
     value.maxElement := ParseString(obj.complex('http://hl7.org/fhir/OperationDefinition.parameter.max')); {748}
     value.documentationElement := ParseString(obj.complex('http://hl7.org/fhir/OperationDefinition.parameter.documentation')); {748}
-    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/OperationDefinition.parameter.type'), CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum); {744}
+    value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/OperationDefinition.parameter.type'), CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum); {744}
     for item in obj.complexes('http://hl7.org/fhir/OperationDefinition.parameter.targetProfile') do
       value.targetProfileList.Add(parseCanonical(item));
     value.searchTypeElement := ParseEnum(obj.complex('http://hl7.org/fhir/OperationDefinition.parameter.searchType'), CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum); {744}
@@ -35618,7 +35618,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'OperationDefinition.parameter', 'documentation', value.documentationElement, false, -1); {749}
   if (SummaryOption in [soFull, soData]) then
-    ComposeEnum(this, 'OperationDefinition.parameter', 'type', value.type_Element, CODES_TFhirFHIRAllTypesEnum, SYSTEMS_TFhirFHIRAllTypesEnum, false, -1); {745}
+    ComposeEnum(this, 'OperationDefinition.parameter', 'type', value.type_Element, CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, false, -1); {745}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.targetProfileList.Count - 1 do
       ComposeCanonical(this, 'OperationDefinition.parameter', 'targetProfile', value.targetProfileList[i], false, i); {637}
@@ -35799,7 +35799,7 @@ begin
     value.commentElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/OperationDefinition.comment')); {748}
     value.baseElement := ParseCanonical(obj.complex('http://hl7.org/fhir/OperationDefinition.base')); {748}
     for item in obj.complexes('http://hl7.org/fhir/OperationDefinition.resource') do
-      value.resource.Add(parseEnum(item, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum));
+      value.resource.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
     value.systemElement := ParseBoolean(obj.complex('http://hl7.org/fhir/OperationDefinition.system')); {748}
     value.type_Element := ParseBoolean(obj.complex('http://hl7.org/fhir/OperationDefinition.type')); {748}
     value.instanceElement := ParseBoolean(obj.complex('http://hl7.org/fhir/OperationDefinition.instance')); {748}
@@ -35863,10 +35863,10 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(this, 'OperationDefinition', 'base', value.baseElement, false, -1); {749}
   for i := 0 to value.resource.Count - 1 do
-      ComposeEnum(this, 'OperationDefinition', 'resource', value.resource[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {x.d1}
+      ComposeEnum(this, 'OperationDefinition', 'resource', value.resource[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.resource.Count - 1 do
-      ComposeEnum(this, 'OperationDefinition', 'resource', value.resource[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {608}
+      ComposeEnum(this, 'OperationDefinition', 'resource', value.resource[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {608}
   ComposeBoolean(this, 'OperationDefinition', 'system', value.systemElement, false, -1); {749}
   ComposeBoolean(this, 'OperationDefinition', 'type', value.type_Element, false, -1); {749}
   ComposeBoolean(this, 'OperationDefinition', 'instance', value.instanceElement, false, -1); {749}
@@ -39224,7 +39224,7 @@ begin
     value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Questionnaire.status'), CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum); {744}
     value.experimentalElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Questionnaire.experimental')); {748}
     for item in obj.complexes('http://hl7.org/fhir/Questionnaire.subjectType') do
-      value.subjectType.Add(parseEnum(item, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum));
+      value.subjectType.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
     value.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/Questionnaire.date')); {748}
     value.publisherElement := ParseString(obj.complex('http://hl7.org/fhir/Questionnaire.publisher')); {748}
     for item in obj.complexes('http://hl7.org/fhir/Questionnaire.contact') do
@@ -39279,10 +39279,10 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Questionnaire', 'experimental', value.experimentalElement, false, -1); {749}
   for i := 0 to value.subjectType.Count - 1 do
-      ComposeEnum(this, 'Questionnaire', 'subjectType', value.subjectType[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {x.d1}
+      ComposeEnum(this, 'Questionnaire', 'subjectType', value.subjectType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.subjectType.Count - 1 do
-      ComposeEnum(this, 'Questionnaire', 'subjectType', value.subjectType[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {608}
+      ComposeEnum(this, 'Questionnaire', 'subjectType', value.subjectType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {608}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Questionnaire', 'date', value.dateElement, false, -1); {749}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -40849,13 +40849,13 @@ begin
     value.purposeElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/SearchParameter.purpose')); {748}
     value.codeElement := ParseCode(obj.complex('http://hl7.org/fhir/SearchParameter.code')); {748}
     for item in obj.complexes('http://hl7.org/fhir/SearchParameter.base') do
-      value.base.Add(parseEnum(item, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum));
+      value.base.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
     value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/SearchParameter.type'), CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum); {744}
     value.expressionElement := ParseString(obj.complex('http://hl7.org/fhir/SearchParameter.expression')); {748}
     value.xpathElement := ParseString(obj.complex('http://hl7.org/fhir/SearchParameter.xpath')); {748}
     value.xpathUsageElement := ParseEnum(obj.complex('http://hl7.org/fhir/SearchParameter.xpathUsage'), CODES_TFhirXPathUsageTypeEnum, SYSTEMS_TFhirXPathUsageTypeEnum); {744}
     for item in obj.complexes('http://hl7.org/fhir/SearchParameter.target') do
-      value.target.Add(parseEnum(item, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum));
+      value.target.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
     value.multipleOrElement := ParseBoolean(obj.complex('http://hl7.org/fhir/SearchParameter.multipleOr')); {748}
     value.multipleAndElement := ParseBoolean(obj.complex('http://hl7.org/fhir/SearchParameter.multipleAnd')); {748}
     for item in obj.complexes('http://hl7.org/fhir/SearchParameter.comparator') do
@@ -40911,9 +40911,9 @@ begin
     ComposeMarkdown(this, 'SearchParameter', 'purpose', value.purposeElement, false, -1); {749}
   ComposeCode(this, 'SearchParameter', 'code', value.codeElement, false, -1); {749}
   for i := 0 to value.base.Count - 1 do
-      ComposeEnum(this, 'SearchParameter', 'base', value.base[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {x.d1}
+      ComposeEnum(this, 'SearchParameter', 'base', value.base[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
   for i := 0 to value.base.Count - 1 do
-      ComposeEnum(this, 'SearchParameter', 'base', value.base[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {608}
+      ComposeEnum(this, 'SearchParameter', 'base', value.base[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {608}
   ComposeEnum(this, 'SearchParameter', 'type', value.type_Element, CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum, false, -1); {745}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'SearchParameter', 'expression', value.expressionElement, false, -1); {749}
@@ -40922,10 +40922,10 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeEnum(this, 'SearchParameter', 'xpathUsage', value.xpathUsageElement, CODES_TFhirXPathUsageTypeEnum, SYSTEMS_TFhirXPathUsageTypeEnum, false, -1); {745}
   for i := 0 to value.target.Count - 1 do
-      ComposeEnum(this, 'SearchParameter', 'target', value.target[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {x.d1}
+      ComposeEnum(this, 'SearchParameter', 'target', value.target[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.target.Count - 1 do
-      ComposeEnum(this, 'SearchParameter', 'target', value.target[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {608}
+      ComposeEnum(this, 'SearchParameter', 'target', value.target[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {608}
   if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'SearchParameter', 'multipleOr', value.multipleOrElement, false, -1); {749}
   if (SummaryOption in [soFull, soData]) then
@@ -48319,7 +48319,7 @@ begin
     ParseBackboneElementProperties(obj, value);
     value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.description')); {748}
     for item in obj.complexes('http://hl7.org/fhir/Topic.resourceTrigger.resourceType') do
-      value.resourceType.Add(parseEnum(item, CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum));
+      value.resourceType.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
     for item in obj.complexes('http://hl7.org/fhir/Topic.resourceTrigger.methodCriteria') do
       value.methodCriteriaList.Add(parseEnum(item, CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum));
     value.queryCriteria := ParseTopicResourceTriggerQueryCriteria(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.queryCriteria')); {760}
@@ -48345,10 +48345,10 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Topic.resourceTrigger', 'description', value.descriptionElement, false, -1); {749}
   for i := 0 to value.resourceType.Count - 1 do
-      ComposeEnum(this, 'Topic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {x.d1}
+      ComposeEnum(this, 'Topic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.resourceType.Count - 1 do
-      ComposeEnum(this, 'Topic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypeEnum, SYSTEMS_TFhirResourceTypeEnum, false, i); {608}
+      ComposeEnum(this, 'Topic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {608}
   for i := 0 to value.methodCriteriaList.Count - 1 do
       ComposeEnum(this, 'Topic.resourceTrigger', 'methodCriteria', value.methodCriteriaList[i], CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum, false, i); {x.d1}
   if (SummaryOption in [soFull, soSummary, soData]) then

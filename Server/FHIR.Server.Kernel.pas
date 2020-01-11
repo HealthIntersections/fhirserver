@@ -45,16 +45,16 @@ Uses
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
   FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Base.Common, FHIR.Base.PathEngine,
 
-  FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory,
-  FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context,
-  FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo,
-  FHIR.Server.IndexingR2, FHIR.Server.IndexingR3, FHIR.Server.IndexingR4,
-  FHIR.Server.SubscriptionsR2, FHIR.Server.SubscriptionsR3, FHIR.Server.SubscriptionsR4,
-  FHIR.Server.OperationsR2, FHIR.Server.OperationsR3, FHIR.Server.OperationsR4,
-  FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator,
-  FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4,
-  FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript,
-  FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine,
+  FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory, FHIR.R5.Factory,
+  FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context, FHIR.R5.Context,
+  FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo, FHIR.R5.IndexInfo,
+  FHIR.Server.IndexingR2, FHIR.Server.IndexingR3, FHIR.Server.IndexingR4, FHIR.Server.IndexingR5,
+  FHIR.Server.SubscriptionsR2, FHIR.Server.SubscriptionsR3, FHIR.Server.SubscriptionsR4, FHIR.Server.SubscriptionsR5,
+  FHIR.Server.OperationsR2, FHIR.Server.OperationsR3, FHIR.Server.OperationsR4, FHIR.Server.OperationsR5,
+  FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator, FHIR.R5.Validator,
+  FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4, FHIR.Server.ValidatorR5,
+  FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript, FHIR.R5.Javascript,
+  FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine, FHIR.R5.PathEngine,
 
   FHIR.Tools.Indexing,
   FHIR.Tx.Manager, FHIR.Tx.Server,
@@ -338,6 +338,7 @@ begin
     fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create));
     fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create));
     fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
+    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
   end;
@@ -349,6 +350,7 @@ begin
     fhirVersionRelease2 : result := TFHIRPathEngine2.Create(context as TFHIRWorkerContext2, ucum);
     fhirVersionRelease3 : result := TFHIRPathEngine3.Create(context as TFHIRWorkerContext3, ucum);
     fhirVersionRelease4 : result := TFHIRPathEngine4.Create(context as TFHIRWorkerContext4, ucum);
+    fhirVersionRelease5 : result := TFHIRPathEngine5.Create(context as TFHIRWorkerContext5, ucum);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating FHIRPathEngine');
   end;
@@ -360,6 +362,7 @@ begin
     fhirVersionRelease2 : result := TFhirIndexManager2.Create;
     fhirVersionRelease3 : result := TFhirIndexManager3.Create;
     fhirVersionRelease4 : result := TFhirIndexManager4.Create;
+    fhirVersionRelease5 : result := TFhirIndexManager5.Create;
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Indexes');
   end;
@@ -371,6 +374,7 @@ begin
     fhirVersionRelease2 : result := TFHIRIndexBuilderR2.create;
     fhirVersionRelease3 : result := TFHIRIndexBuilderR3.create;
     fhirVersionRelease4 : result := TFHIRIndexBuilderR4.create;
+    fhirVersionRelease5 : result := TFHIRIndexBuilderR5.create;
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating index information');
   end;
@@ -382,6 +386,7 @@ begin
     fhirVersionRelease2 : result := TSubscriptionManagerR2.Create(ServerContext);
     fhirVersionRelease3 : result := TSubscriptionManagerR3.Create(ServerContext);
     fhirVersionRelease4 : result := TSubscriptionManagerR4.Create(ServerContext);
+    fhirVersionRelease5 : result := TSubscriptionManagerR5.Create(ServerContext);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating subcription manager');
   end;
@@ -393,6 +398,7 @@ begin
     fhirVersionRelease2 : TFHIRServerWorkerContextR2(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease3 : TFHIRServerWorkerContextR3(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease4 : TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
+    fhirVersionRelease5 : TFHIRServerWorkerContextR5(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Setting Terminology Server');
   end;
@@ -404,6 +410,7 @@ begin
     fhirVersionRelease2: result := TFHIRFactoryR2.create;
     fhirVersionRelease3: result := TFHIRFactoryR3.create;
     fhirVersionRelease4: result := TFHIRFactoryR4.create;
+    fhirVersionRelease5: result := TFHIRFactoryR5.create;
   else
     raise EFHIRUnsupportedVersion.Create(v, 'creating factory');
   end;
@@ -438,6 +445,7 @@ begin
   js.engine.registerFactory(FHIR.R3.Javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
   js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
   js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
+  js.engine.registerFactory(FHIR.R5.Javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
 end;
 
 function TFHIRService.CanStart: boolean;
@@ -641,6 +649,8 @@ begin
     v := fhirVersionRelease3
   else if details['version'] = 'r4' then
     v := fhirVersionRelease4
+  else if details['version'] = 'r5' then
+    v := fhirVersionRelease5
   else
     raise EFslException.Create('unknown version '+details['version']);
 
@@ -852,8 +862,11 @@ begin
       fhirVersionRelease2: if details['version'] <> 'r2' then continue;
       fhirVersionRelease3: if details['version'] <> 'r3' then continue;
       fhirVersionRelease4: if details['version'] <> 'r4' then continue;
+      fhirVersionRelease5: if details['version'] <> 'r5' then continue;
     end;
 
+    if FindCmdLineSwitch('r5') and (details['version'] <> 'r5') then
+      continue;
     if FindCmdLineSwitch('r4') and (details['version'] <> 'r4') then
       continue;
     if FindCmdLineSwitch('r3') and (details['version'] <> 'r3') then
@@ -872,6 +885,10 @@ begin
     else if details['version'] = 'r4' then
     begin
       store := TFHIRNativeStorageServiceR4.create(FDatabases[details['database']].Link, TFHIRFactoryR4.Create);
+    end
+    else if details['version'] = 'r5' then
+    begin
+      store := TFHIRNativeStorageServiceR5.create(FDatabases[details['database']].Link, TFHIRFactoryR5.Create);
     end
     else
       raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
@@ -955,6 +972,8 @@ begin
     v := fhirVersionRelease3
   else if details['version'] = 'r4' then
     v := fhirVersionRelease4
+  else if details['version'] = 'r5' then
+    v := fhirVersionRelease5
   else
     raise EFslException.Create('unknown version '+details['version']);
 
@@ -1025,6 +1044,8 @@ begin
     v := fhirVersionRelease3
   else if details['version'] = 'r4' then
     v := fhirVersionRelease4
+  else if details['version'] = 'r5' then
+    v := fhirVersionRelease5
   else
     raise EFslException.Create('unknown version '+details['version']);
 

@@ -55,7 +55,7 @@ implementation
 
 {{index-impl}}
 
-procedure TFHIRIndexBuilderR4.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR5.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
 {{index.reg}}
 end;

@@ -93,23 +93,24 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -remount -tests -xindex -xloinc &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\mafile.CSV&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-cmd manager</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
-        <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_Define>INDY_V10;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\32\</DCC_DcuOutput>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -ini C:\work\fhirserver\Exec\fhir.dev.local.ini</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -remount -tests -xindex -xloinc &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\mafile.CSV&quot;</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -475,6 +476,41 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
+        <DCCReference Include="FHIR.Server.IndexingR5.pas"/>
+        <DCCReference Include="FHIR.Server.OperationsR5.pas"/>
+        <DCCReference Include="FHIR.Server.SubscriptionsR5.pas"/>
+        <DCCReference Include="FHIR.Server.ValidatorR5.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Base.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Constants.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Enums.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Factory.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.IndexInfo.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Javascript.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Json.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.PathEngine.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.PathNode.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Profiles.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Resources.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Tags.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Turtle.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Types.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Utilities.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Validator.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Xml.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Context.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.ParserBase.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Parser.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.ElementModel.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Common.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.OpBase.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Operations.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.AuthMap.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Client.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Narrative.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Questionnaire.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Narrative2.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.GraphDefinition.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.MapUtilities.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

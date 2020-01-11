@@ -113,14 +113,25 @@ public class Analyser {
     if (e.typeSummary().equals("code") && e.hasBinding()) {
       ElementDefinitionBindingComponent cd = e.getBinding();
       if (isEnum(cd)) {
-        ValueSet vs = definitions.getValuesets().get(cd.getValueSet());   
+        ValueSet vs = definitions.getValuesets().get(cd.getValueSet());
+        String abbrev = null;        
         if (vs != null) {
           tn = getCodeListType(vs.getName());
+          String sn = config.getIni().getStringProperty("enum.names", vs.getUrl());
+          if (sn != null) {
+            if (sn.contains(";")) {
+              tn = sn.substring(0, sn.indexOf(";"));
+              abbrev = sn.substring(sn.indexOf(";")+1);
+            } else {
+              tn = sn;
+            }
+          }
           EnumInfo ei = analysis.getEnums().get(tn);
           if (ei == null) {
             ei = new EnumInfo(tn);
             analysis.getEnums().put(tn,  ei);
             ei.setValueSet(vs);
+            ei.setAbbrev(abbrev);
           }
           e.setUserData("pascal.type", "TFhir"+tn+(tn.endsWith("Enum") ? "" : "Enum"));
           e.setUserData("pascal.enum", ei);

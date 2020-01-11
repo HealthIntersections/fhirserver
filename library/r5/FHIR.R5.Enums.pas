@@ -33,7 +33,7 @@ unit FHIR.R5.Enums;
 
 interface
 
-// Generated on Thu, Jan 9, 2020 07:56+1100 for FHIR v4.2.0
+// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
 
 
 
@@ -191,6 +191,229 @@ type
     AggregationModeReferenced,
     AggregationModeBundled);
   TFhirAggregationModeEnumList = set of TFhirAggregationModeEnum;
+
+
+  // A list of all the concrete types defined in this version of the FHIR specification - Abstract Types, Data Types and Resource Types. (from http://hl7.org/fhir/ValueSet/all-types)
+  TFhirAllTypesEnum = (
+    AllTypesNull, // Value is missing from Instance
+    AllTypesAddress,
+    AllTypesAge,
+    AllTypesAnnotation,
+    AllTypesAttachment,
+    AllTypesBackboneElement,
+    AllTypesBackboneType,
+    AllTypesBase,
+    AllTypesCodeableConcept,
+    AllTypesCodeableReference,
+    AllTypesCoding,
+    AllTypesContactDetail,
+    AllTypesContactPoint,
+    AllTypesContributor,
+    AllTypesCount,
+    AllTypesDataRequirement,
+    AllTypesDataType,
+    AllTypesDistance,
+    AllTypesDosage,
+    AllTypesDuration,
+    AllTypesElement,
+    AllTypesElementDefinition,
+    AllTypesExpression,
+    AllTypesExtension,
+    AllTypesHumanName,
+    AllTypesIdentifier,
+    AllTypesMarketingStatus,
+    AllTypesMeta,
+    AllTypesMoney,
+    AllTypesMoneyQuantity,
+    AllTypesNarrative,
+    AllTypesOrderedDistribution,
+    AllTypesParameterDefinition,
+    AllTypesPeriod,
+    AllTypesPopulation,
+    AllTypesPrimitiveType,
+    AllTypesProdCharacteristic,
+    AllTypesProductShelfLife,
+    AllTypesQuantity,
+    AllTypesRange,
+    AllTypesRatio,
+    AllTypesReference,
+    AllTypesRelatedArtifact,
+    AllTypesSampledData,
+    AllTypesSignature,
+    AllTypesSimpleQuantity,
+    AllTypesStatistic,
+    AllTypesSubstanceAmount,
+    AllTypesTiming,
+    AllTypesTriggerDefinition,
+    AllTypesUsageContext,
+    AllTypesBase64Binary,
+    AllTypesBoolean,
+    AllTypesCanonical,
+    AllTypesCode,
+    AllTypesDate,
+    AllTypesDateTime,
+    AllTypesDecimal,
+    AllTypesId,
+    AllTypesInstant,
+    AllTypesInteger,
+    AllTypesInteger64,
+    AllTypesMarkdown,
+    AllTypesOid,
+    AllTypesPositiveInt,
+    AllTypesString,
+    AllTypesTime,
+    AllTypesUnsignedInt,
+    AllTypesUri,
+    AllTypesUrl,
+    AllTypesUuid,
+    AllTypesXhtml,
+    AllTypesAccount,
+    AllTypesActivityDefinition,
+    AllTypesAdministrableProductDefinition,
+    AllTypesAdverseEvent,
+    AllTypesAllergyIntolerance,
+    AllTypesAppointment,
+    AllTypesAppointmentResponse,
+    AllTypesAuditEvent,
+    AllTypesBasic,
+    AllTypesBinary,
+    AllTypesBiologicallyDerivedProduct,
+    AllTypesBodyStructure,
+    AllTypesBundle,
+    AllTypesCapabilityStatement,
+    AllTypesCapabilityStatement2,
+    AllTypesCarePlan,
+    AllTypesCareTeam,
+    AllTypesCatalogEntry,
+    AllTypesChargeItem,
+    AllTypesChargeItemDefinition,
+    AllTypesClaim,
+    AllTypesClaimResponse,
+    AllTypesClinicalImpression,
+    AllTypesClinicalUseIssue,
+    AllTypesCodeSystem,
+    AllTypesCommunication,
+    AllTypesCommunicationRequest,
+    AllTypesCompartmentDefinition,
+    AllTypesComposition,
+    AllTypesConceptMap,
+    AllTypesCondition,
+    AllTypesConditionDefinition,
+    AllTypesConsent,
+    AllTypesContract,
+    AllTypesCoverage,
+    AllTypesCoverageEligibilityRequest,
+    AllTypesCoverageEligibilityResponse,
+    AllTypesDetectedIssue,
+    AllTypesDevice,
+    AllTypesDeviceDefinition,
+    AllTypesDeviceMetric,
+    AllTypesDeviceRequest,
+    AllTypesDeviceUseStatement,
+    AllTypesDiagnosticReport,
+    AllTypesDocumentManifest,
+    AllTypesDocumentReference,
+    AllTypesDomainResource,
+    AllTypesEncounter,
+    AllTypesEndpoint,
+    AllTypesEnrollmentRequest,
+    AllTypesEnrollmentResponse,
+    AllTypesEpisodeOfCare,
+    AllTypesEventDefinition,
+    AllTypesEvidence,
+    AllTypesEvidenceVariable,
+    AllTypesExampleScenario,
+    AllTypesExplanationOfBenefit,
+    AllTypesFamilyMemberHistory,
+    AllTypesFlag,
+    AllTypesGoal,
+    AllTypesGraphDefinition,
+    AllTypesGroup,
+    AllTypesGuidanceResponse,
+    AllTypesHealthcareService,
+    AllTypesImagingStudy,
+    AllTypesImmunization,
+    AllTypesImmunizationEvaluation,
+    AllTypesImmunizationRecommendation,
+    AllTypesImplementationGuide,
+    AllTypesIngredient,
+    AllTypesInsurancePlan,
+    AllTypesInvoice,
+    AllTypesLibrary,
+    AllTypesLinkage,
+    AllTypesList,
+    AllTypesLocation,
+    AllTypesManufacturedItemDefinition,
+    AllTypesMeasure,
+    AllTypesMeasureReport,
+    AllTypesMedication,
+    AllTypesMedicationAdministration,
+    AllTypesMedicationDispense,
+    AllTypesMedicationKnowledge,
+    AllTypesMedicationRequest,
+    AllTypesMedicationUsage,
+    AllTypesMedicinalProductDefinition,
+    AllTypesMessageDefinition,
+    AllTypesMessageHeader,
+    AllTypesMolecularSequence,
+    AllTypesNamingSystem,
+    AllTypesNutritionIntake,
+    AllTypesNutritionOrder,
+    AllTypesObservation,
+    AllTypesObservationDefinition,
+    AllTypesOperationDefinition,
+    AllTypesOperationOutcome,
+    AllTypesOrganization,
+    AllTypesOrganizationAffiliation,
+    AllTypesPackagedProductDefinition,
+    AllTypesParameters,
+    AllTypesPatient,
+    AllTypesPaymentNotice,
+    AllTypesPaymentReconciliation,
+    AllTypesPerson,
+    AllTypesPlanDefinition,
+    AllTypesPractitioner,
+    AllTypesPractitionerRole,
+    AllTypesProcedure,
+    AllTypesProvenance,
+    AllTypesQuestionnaire,
+    AllTypesQuestionnaireResponse,
+    AllTypesRegulatedAuthorization,
+    AllTypesRelatedPerson,
+    AllTypesRequestGroup,
+    AllTypesResearchStudy,
+    AllTypesResearchSubject,
+    AllTypesResource,
+    AllTypesRiskAssessment,
+    AllTypesSchedule,
+    AllTypesSearchParameter,
+    AllTypesServiceRequest,
+    AllTypesSlot,
+    AllTypesSpecimen,
+    AllTypesSpecimenDefinition,
+    AllTypesStructureDefinition,
+    AllTypesStructureMap,
+    AllTypesSubscription,
+    AllTypesSubstance,
+    AllTypesSubstanceDefinition,
+    AllTypesSubstanceNucleicAcid,
+    AllTypesSubstancePolymer,
+    AllTypesSubstanceProtein,
+    AllTypesSubstanceReferenceInformation,
+    AllTypesSubstanceSourceMaterial,
+    AllTypesSupplyDelivery,
+    AllTypesSupplyRequest,
+    AllTypesTask,
+    AllTypesTerminologyCapabilities,
+    AllTypesTestReport,
+    AllTypesTestScript,
+    AllTypesTopic,
+    AllTypesValueSet,
+    AllTypesVerificationResult,
+    AllTypesVisionPrescription,
+    AllTypesType,
+    AllTypesAny);
+  TFhirAllTypesEnumList = set of TFhirAllTypesEnum;
 
 
   // Category of an identified substance associated with allergies or intolerances. (from http://hl7.org/fhir/ValueSet/allergy-intolerance-category)
@@ -597,6 +820,19 @@ type
     ConceptMapRelationshipNarrower,
     ConceptMapRelationshipNotRelatedTo);
   TFhirConceptMapRelationshipEnumList = set of TFhirConceptMapRelationshipEnum;
+
+
+  // The type of a property value. (from http://hl7.org/fhir/ValueSet/concept-property-type)
+  TFhirConceptPropertyTypeEnum = (
+    ConceptPropertyTypeNull, // Value is missing from Instance
+    ConceptPropertyTypeCode,
+    ConceptPropertyTypeCoding,
+    ConceptPropertyTypeString,
+    ConceptPropertyTypeInteger,
+    ConceptPropertyTypeBoolean,
+    ConceptPropertyTypeDateTime,
+    ConceptPropertyTypeDecimal);
+  TFhirConceptPropertyTypeEnumList = set of TFhirConceptPropertyTypeEnum;
 
 
   // Kind of precondition for the condition. (from http://hl7.org/fhir/ValueSet/condition-precondition-type)
@@ -1066,229 +1302,6 @@ type
     ExtensionContextTypeElement,
     ExtensionContextTypeExtension);
   TFhirExtensionContextTypeEnumList = set of TFhirExtensionContextTypeEnum;
-
-
-  // A list of all the concrete types defined in this version of the FHIR specification - Abstract Types, Data Types and Resource Types. (from http://hl7.org/fhir/ValueSet/all-types)
-  TFhirFHIRAllTypesEnum = (
-    FHIRAllTypesNull, // Value is missing from Instance
-    FHIRAllTypesAddress,
-    FHIRAllTypesAge,
-    FHIRAllTypesAnnotation,
-    FHIRAllTypesAttachment,
-    FHIRAllTypesBackboneElement,
-    FHIRAllTypesBackboneType,
-    FHIRAllTypesBase,
-    FHIRAllTypesCodeableConcept,
-    FHIRAllTypesCodeableReference,
-    FHIRAllTypesCoding,
-    FHIRAllTypesContactDetail,
-    FHIRAllTypesContactPoint,
-    FHIRAllTypesContributor,
-    FHIRAllTypesCount,
-    FHIRAllTypesDataRequirement,
-    FHIRAllTypesDataType,
-    FHIRAllTypesDistance,
-    FHIRAllTypesDosage,
-    FHIRAllTypesDuration,
-    FHIRAllTypesElement,
-    FHIRAllTypesElementDefinition,
-    FHIRAllTypesExpression,
-    FHIRAllTypesExtension,
-    FHIRAllTypesHumanName,
-    FHIRAllTypesIdentifier,
-    FHIRAllTypesMarketingStatus,
-    FHIRAllTypesMeta,
-    FHIRAllTypesMoney,
-    FHIRAllTypesMoneyQuantity,
-    FHIRAllTypesNarrative,
-    FHIRAllTypesOrderedDistribution,
-    FHIRAllTypesParameterDefinition,
-    FHIRAllTypesPeriod,
-    FHIRAllTypesPopulation,
-    FHIRAllTypesPrimitiveType,
-    FHIRAllTypesProdCharacteristic,
-    FHIRAllTypesProductShelfLife,
-    FHIRAllTypesQuantity,
-    FHIRAllTypesRange,
-    FHIRAllTypesRatio,
-    FHIRAllTypesReference,
-    FHIRAllTypesRelatedArtifact,
-    FHIRAllTypesSampledData,
-    FHIRAllTypesSignature,
-    FHIRAllTypesSimpleQuantity,
-    FHIRAllTypesStatistic,
-    FHIRAllTypesSubstanceAmount,
-    FHIRAllTypesTiming,
-    FHIRAllTypesTriggerDefinition,
-    FHIRAllTypesUsageContext,
-    FHIRAllTypesBase64Binary,
-    FHIRAllTypesBoolean,
-    FHIRAllTypesCanonical,
-    FHIRAllTypesCode,
-    FHIRAllTypesDate,
-    FHIRAllTypesDateTime,
-    FHIRAllTypesDecimal,
-    FHIRAllTypesId,
-    FHIRAllTypesInstant,
-    FHIRAllTypesInteger,
-    FHIRAllTypesInteger64,
-    FHIRAllTypesMarkdown,
-    FHIRAllTypesOid,
-    FHIRAllTypesPositiveInt,
-    FHIRAllTypesString,
-    FHIRAllTypesTime,
-    FHIRAllTypesUnsignedInt,
-    FHIRAllTypesUri,
-    FHIRAllTypesUrl,
-    FHIRAllTypesUuid,
-    FHIRAllTypesXhtml,
-    FHIRAllTypesAccount,
-    FHIRAllTypesActivityDefinition,
-    FHIRAllTypesAdministrableProductDefinition,
-    FHIRAllTypesAdverseEvent,
-    FHIRAllTypesAllergyIntolerance,
-    FHIRAllTypesAppointment,
-    FHIRAllTypesAppointmentResponse,
-    FHIRAllTypesAuditEvent,
-    FHIRAllTypesBasic,
-    FHIRAllTypesBinary,
-    FHIRAllTypesBiologicallyDerivedProduct,
-    FHIRAllTypesBodyStructure,
-    FHIRAllTypesBundle,
-    FHIRAllTypesCapabilityStatement,
-    FHIRAllTypesCapabilityStatement2,
-    FHIRAllTypesCarePlan,
-    FHIRAllTypesCareTeam,
-    FHIRAllTypesCatalogEntry,
-    FHIRAllTypesChargeItem,
-    FHIRAllTypesChargeItemDefinition,
-    FHIRAllTypesClaim,
-    FHIRAllTypesClaimResponse,
-    FHIRAllTypesClinicalImpression,
-    FHIRAllTypesClinicalUseIssue,
-    FHIRAllTypesCodeSystem,
-    FHIRAllTypesCommunication,
-    FHIRAllTypesCommunicationRequest,
-    FHIRAllTypesCompartmentDefinition,
-    FHIRAllTypesComposition,
-    FHIRAllTypesConceptMap,
-    FHIRAllTypesCondition,
-    FHIRAllTypesConditionDefinition,
-    FHIRAllTypesConsent,
-    FHIRAllTypesContract,
-    FHIRAllTypesCoverage,
-    FHIRAllTypesCoverageEligibilityRequest,
-    FHIRAllTypesCoverageEligibilityResponse,
-    FHIRAllTypesDetectedIssue,
-    FHIRAllTypesDevice,
-    FHIRAllTypesDeviceDefinition,
-    FHIRAllTypesDeviceMetric,
-    FHIRAllTypesDeviceRequest,
-    FHIRAllTypesDeviceUseStatement,
-    FHIRAllTypesDiagnosticReport,
-    FHIRAllTypesDocumentManifest,
-    FHIRAllTypesDocumentReference,
-    FHIRAllTypesDomainResource,
-    FHIRAllTypesEncounter,
-    FHIRAllTypesEndpoint,
-    FHIRAllTypesEnrollmentRequest,
-    FHIRAllTypesEnrollmentResponse,
-    FHIRAllTypesEpisodeOfCare,
-    FHIRAllTypesEventDefinition,
-    FHIRAllTypesEvidence,
-    FHIRAllTypesEvidenceVariable,
-    FHIRAllTypesExampleScenario,
-    FHIRAllTypesExplanationOfBenefit,
-    FHIRAllTypesFamilyMemberHistory,
-    FHIRAllTypesFlag,
-    FHIRAllTypesGoal,
-    FHIRAllTypesGraphDefinition,
-    FHIRAllTypesGroup,
-    FHIRAllTypesGuidanceResponse,
-    FHIRAllTypesHealthcareService,
-    FHIRAllTypesImagingStudy,
-    FHIRAllTypesImmunization,
-    FHIRAllTypesImmunizationEvaluation,
-    FHIRAllTypesImmunizationRecommendation,
-    FHIRAllTypesImplementationGuide,
-    FHIRAllTypesIngredient,
-    FHIRAllTypesInsurancePlan,
-    FHIRAllTypesInvoice,
-    FHIRAllTypesLibrary,
-    FHIRAllTypesLinkage,
-    FHIRAllTypesList,
-    FHIRAllTypesLocation,
-    FHIRAllTypesManufacturedItemDefinition,
-    FHIRAllTypesMeasure,
-    FHIRAllTypesMeasureReport,
-    FHIRAllTypesMedication,
-    FHIRAllTypesMedicationAdministration,
-    FHIRAllTypesMedicationDispense,
-    FHIRAllTypesMedicationKnowledge,
-    FHIRAllTypesMedicationRequest,
-    FHIRAllTypesMedicationUsage,
-    FHIRAllTypesMedicinalProductDefinition,
-    FHIRAllTypesMessageDefinition,
-    FHIRAllTypesMessageHeader,
-    FHIRAllTypesMolecularSequence,
-    FHIRAllTypesNamingSystem,
-    FHIRAllTypesNutritionIntake,
-    FHIRAllTypesNutritionOrder,
-    FHIRAllTypesObservation,
-    FHIRAllTypesObservationDefinition,
-    FHIRAllTypesOperationDefinition,
-    FHIRAllTypesOperationOutcome,
-    FHIRAllTypesOrganization,
-    FHIRAllTypesOrganizationAffiliation,
-    FHIRAllTypesPackagedProductDefinition,
-    FHIRAllTypesParameters,
-    FHIRAllTypesPatient,
-    FHIRAllTypesPaymentNotice,
-    FHIRAllTypesPaymentReconciliation,
-    FHIRAllTypesPerson,
-    FHIRAllTypesPlanDefinition,
-    FHIRAllTypesPractitioner,
-    FHIRAllTypesPractitionerRole,
-    FHIRAllTypesProcedure,
-    FHIRAllTypesProvenance,
-    FHIRAllTypesQuestionnaire,
-    FHIRAllTypesQuestionnaireResponse,
-    FHIRAllTypesRegulatedAuthorization,
-    FHIRAllTypesRelatedPerson,
-    FHIRAllTypesRequestGroup,
-    FHIRAllTypesResearchStudy,
-    FHIRAllTypesResearchSubject,
-    FHIRAllTypesResource,
-    FHIRAllTypesRiskAssessment,
-    FHIRAllTypesSchedule,
-    FHIRAllTypesSearchParameter,
-    FHIRAllTypesServiceRequest,
-    FHIRAllTypesSlot,
-    FHIRAllTypesSpecimen,
-    FHIRAllTypesSpecimenDefinition,
-    FHIRAllTypesStructureDefinition,
-    FHIRAllTypesStructureMap,
-    FHIRAllTypesSubscription,
-    FHIRAllTypesSubstance,
-    FHIRAllTypesSubstanceDefinition,
-    FHIRAllTypesSubstanceNucleicAcid,
-    FHIRAllTypesSubstancePolymer,
-    FHIRAllTypesSubstanceProtein,
-    FHIRAllTypesSubstanceReferenceInformation,
-    FHIRAllTypesSubstanceSourceMaterial,
-    FHIRAllTypesSupplyDelivery,
-    FHIRAllTypesSupplyRequest,
-    FHIRAllTypesTask,
-    FHIRAllTypesTerminologyCapabilities,
-    FHIRAllTypesTestReport,
-    FHIRAllTypesTestScript,
-    FHIRAllTypesTopic,
-    FHIRAllTypesValueSet,
-    FHIRAllTypesVerificationResult,
-    FHIRAllTypesVisionPrescription,
-    FHIRAllTypesType,
-    FHIRAllTypesAny);
-  TFhirFHIRAllTypesEnumList = set of TFhirFHIRAllTypesEnum;
 
 
   // A list of all the concrete types defined in this version of the FHIR specification - Data Types and Resource Types. (from http://hl7.org/fhir/ValueSet/defined-types)
@@ -2164,19 +2177,6 @@ type
   TFhirPropertyRepresentationEnumList = set of TFhirPropertyRepresentationEnum;
 
 
-  // The type of a property value. (from http://hl7.org/fhir/ValueSet/concept-property-type)
-  TFhirPropertyTypeEnum = (
-    PropertyTypeNull, // Value is missing from Instance
-    PropertyTypeCode,
-    PropertyTypeCoding,
-    PropertyTypeString,
-    PropertyTypeInteger,
-    PropertyTypeBoolean,
-    PropertyTypeDateTime,
-    PropertyTypeDecimal);
-  TFhirPropertyTypeEnumList = set of TFhirPropertyTypeEnum;
-
-
   // How an entity was used in an activity. (from http://hl7.org/fhir/ValueSet/provenance-entity-role)
   TFhirProvenanceEntityRoleEnum = (
     ProvenanceEntityRoleNull, // Value is missing from Instance
@@ -2404,153 +2404,153 @@ type
 
 
   // One of the resource types defined as part of this version of FHIR. (from http://hl7.org/fhir/ValueSet/resource-types)
-  TFhirResourceTypeEnum = (
-    ResourceTypeEnumNull, // Value is missing from Instance
-    ResourceTypeEnumAccount,
-    ResourceTypeEnumActivityDefinition,
-    ResourceTypeEnumAdministrableProductDefinition,
-    ResourceTypeEnumAdverseEvent,
-    ResourceTypeEnumAllergyIntolerance,
-    ResourceTypeEnumAppointment,
-    ResourceTypeEnumAppointmentResponse,
-    ResourceTypeEnumAuditEvent,
-    ResourceTypeEnumBasic,
-    ResourceTypeEnumBinary,
-    ResourceTypeEnumBiologicallyDerivedProduct,
-    ResourceTypeEnumBodyStructure,
-    ResourceTypeEnumBundle,
-    ResourceTypeEnumCapabilityStatement,
-    ResourceTypeEnumCapabilityStatement2,
-    ResourceTypeEnumCarePlan,
-    ResourceTypeEnumCareTeam,
-    ResourceTypeEnumCatalogEntry,
-    ResourceTypeEnumChargeItem,
-    ResourceTypeEnumChargeItemDefinition,
-    ResourceTypeEnumClaim,
-    ResourceTypeEnumClaimResponse,
-    ResourceTypeEnumClinicalImpression,
-    ResourceTypeEnumClinicalUseIssue,
-    ResourceTypeEnumCodeSystem,
-    ResourceTypeEnumCommunication,
-    ResourceTypeEnumCommunicationRequest,
-    ResourceTypeEnumCompartmentDefinition,
-    ResourceTypeEnumComposition,
-    ResourceTypeEnumConceptMap,
-    ResourceTypeEnumCondition,
-    ResourceTypeEnumConditionDefinition,
-    ResourceTypeEnumConsent,
-    ResourceTypeEnumContract,
-    ResourceTypeEnumCoverage,
-    ResourceTypeEnumCoverageEligibilityRequest,
-    ResourceTypeEnumCoverageEligibilityResponse,
-    ResourceTypeEnumDetectedIssue,
-    ResourceTypeEnumDevice,
-    ResourceTypeEnumDeviceDefinition,
-    ResourceTypeEnumDeviceMetric,
-    ResourceTypeEnumDeviceRequest,
-    ResourceTypeEnumDeviceUseStatement,
-    ResourceTypeEnumDiagnosticReport,
-    ResourceTypeEnumDocumentManifest,
-    ResourceTypeEnumDocumentReference,
-    ResourceTypeEnumDomainResource,
-    ResourceTypeEnumEncounter,
-    ResourceTypeEnumEndpoint,
-    ResourceTypeEnumEnrollmentRequest,
-    ResourceTypeEnumEnrollmentResponse,
-    ResourceTypeEnumEpisodeOfCare,
-    ResourceTypeEnumEventDefinition,
-    ResourceTypeEnumEvidence,
-    ResourceTypeEnumEvidenceVariable,
-    ResourceTypeEnumExampleScenario,
-    ResourceTypeEnumExplanationOfBenefit,
-    ResourceTypeEnumFamilyMemberHistory,
-    ResourceTypeEnumFlag,
-    ResourceTypeEnumGoal,
-    ResourceTypeEnumGraphDefinition,
-    ResourceTypeEnumGroup,
-    ResourceTypeEnumGuidanceResponse,
-    ResourceTypeEnumHealthcareService,
-    ResourceTypeEnumImagingStudy,
-    ResourceTypeEnumImmunization,
-    ResourceTypeEnumImmunizationEvaluation,
-    ResourceTypeEnumImmunizationRecommendation,
-    ResourceTypeEnumImplementationGuide,
-    ResourceTypeEnumIngredient,
-    ResourceTypeEnumInsurancePlan,
-    ResourceTypeEnumInvoice,
-    ResourceTypeEnumLibrary,
-    ResourceTypeEnumLinkage,
-    ResourceTypeEnumList,
-    ResourceTypeEnumLocation,
-    ResourceTypeEnumManufacturedItemDefinition,
-    ResourceTypeEnumMeasure,
-    ResourceTypeEnumMeasureReport,
-    ResourceTypeEnumMedication,
-    ResourceTypeEnumMedicationAdministration,
-    ResourceTypeEnumMedicationDispense,
-    ResourceTypeEnumMedicationKnowledge,
-    ResourceTypeEnumMedicationRequest,
-    ResourceTypeEnumMedicationUsage,
-    ResourceTypeEnumMedicinalProductDefinition,
-    ResourceTypeEnumMessageDefinition,
-    ResourceTypeEnumMessageHeader,
-    ResourceTypeEnumMolecularSequence,
-    ResourceTypeEnumNamingSystem,
-    ResourceTypeEnumNutritionIntake,
-    ResourceTypeEnumNutritionOrder,
-    ResourceTypeEnumObservation,
-    ResourceTypeEnumObservationDefinition,
-    ResourceTypeEnumOperationDefinition,
-    ResourceTypeEnumOperationOutcome,
-    ResourceTypeEnumOrganization,
-    ResourceTypeEnumOrganizationAffiliation,
-    ResourceTypeEnumPackagedProductDefinition,
-    ResourceTypeEnumParameters,
-    ResourceTypeEnumPatient,
-    ResourceTypeEnumPaymentNotice,
-    ResourceTypeEnumPaymentReconciliation,
-    ResourceTypeEnumPerson,
-    ResourceTypeEnumPlanDefinition,
-    ResourceTypeEnumPractitioner,
-    ResourceTypeEnumPractitionerRole,
-    ResourceTypeEnumProcedure,
-    ResourceTypeEnumProvenance,
-    ResourceTypeEnumQuestionnaire,
-    ResourceTypeEnumQuestionnaireResponse,
-    ResourceTypeEnumRegulatedAuthorization,
-    ResourceTypeEnumRelatedPerson,
-    ResourceTypeEnumRequestGroup,
-    ResourceTypeEnumResearchStudy,
-    ResourceTypeEnumResearchSubject,
-    ResourceTypeEnumResource,
-    ResourceTypeEnumRiskAssessment,
-    ResourceTypeEnumSchedule,
-    ResourceTypeEnumSearchParameter,
-    ResourceTypeEnumServiceRequest,
-    ResourceTypeEnumSlot,
-    ResourceTypeEnumSpecimen,
-    ResourceTypeEnumSpecimenDefinition,
-    ResourceTypeEnumStructureDefinition,
-    ResourceTypeEnumStructureMap,
-    ResourceTypeEnumSubscription,
-    ResourceTypeEnumSubstance,
-    ResourceTypeEnumSubstanceDefinition,
-    ResourceTypeEnumSubstanceNucleicAcid,
-    ResourceTypeEnumSubstancePolymer,
-    ResourceTypeEnumSubstanceProtein,
-    ResourceTypeEnumSubstanceReferenceInformation,
-    ResourceTypeEnumSubstanceSourceMaterial,
-    ResourceTypeEnumSupplyDelivery,
-    ResourceTypeEnumSupplyRequest,
-    ResourceTypeEnumTask,
-    ResourceTypeEnumTerminologyCapabilities,
-    ResourceTypeEnumTestReport,
-    ResourceTypeEnumTestScript,
-    ResourceTypeEnumTopic,
-    ResourceTypeEnumValueSet,
-    ResourceTypeEnumVerificationResult,
-    ResourceTypeEnumVisionPrescription);
-  TFhirResourceTypeEnumList = set of TFhirResourceTypeEnum;
+  TFhirResourceTypesEnum = (
+    ResourceTypesNull, // Value is missing from Instance
+    ResourceTypesAccount,
+    ResourceTypesActivityDefinition,
+    ResourceTypesAdministrableProductDefinition,
+    ResourceTypesAdverseEvent,
+    ResourceTypesAllergyIntolerance,
+    ResourceTypesAppointment,
+    ResourceTypesAppointmentResponse,
+    ResourceTypesAuditEvent,
+    ResourceTypesBasic,
+    ResourceTypesBinary,
+    ResourceTypesBiologicallyDerivedProduct,
+    ResourceTypesBodyStructure,
+    ResourceTypesBundle,
+    ResourceTypesCapabilityStatement,
+    ResourceTypesCapabilityStatement2,
+    ResourceTypesCarePlan,
+    ResourceTypesCareTeam,
+    ResourceTypesCatalogEntry,
+    ResourceTypesChargeItem,
+    ResourceTypesChargeItemDefinition,
+    ResourceTypesClaim,
+    ResourceTypesClaimResponse,
+    ResourceTypesClinicalImpression,
+    ResourceTypesClinicalUseIssue,
+    ResourceTypesCodeSystem,
+    ResourceTypesCommunication,
+    ResourceTypesCommunicationRequest,
+    ResourceTypesCompartmentDefinition,
+    ResourceTypesComposition,
+    ResourceTypesConceptMap,
+    ResourceTypesCondition,
+    ResourceTypesConditionDefinition,
+    ResourceTypesConsent,
+    ResourceTypesContract,
+    ResourceTypesCoverage,
+    ResourceTypesCoverageEligibilityRequest,
+    ResourceTypesCoverageEligibilityResponse,
+    ResourceTypesDetectedIssue,
+    ResourceTypesDevice,
+    ResourceTypesDeviceDefinition,
+    ResourceTypesDeviceMetric,
+    ResourceTypesDeviceRequest,
+    ResourceTypesDeviceUseStatement,
+    ResourceTypesDiagnosticReport,
+    ResourceTypesDocumentManifest,
+    ResourceTypesDocumentReference,
+    ResourceTypesDomainResource,
+    ResourceTypesEncounter,
+    ResourceTypesEndpoint,
+    ResourceTypesEnrollmentRequest,
+    ResourceTypesEnrollmentResponse,
+    ResourceTypesEpisodeOfCare,
+    ResourceTypesEventDefinition,
+    ResourceTypesEvidence,
+    ResourceTypesEvidenceVariable,
+    ResourceTypesExampleScenario,
+    ResourceTypesExplanationOfBenefit,
+    ResourceTypesFamilyMemberHistory,
+    ResourceTypesFlag,
+    ResourceTypesGoal,
+    ResourceTypesGraphDefinition,
+    ResourceTypesGroup,
+    ResourceTypesGuidanceResponse,
+    ResourceTypesHealthcareService,
+    ResourceTypesImagingStudy,
+    ResourceTypesImmunization,
+    ResourceTypesImmunizationEvaluation,
+    ResourceTypesImmunizationRecommendation,
+    ResourceTypesImplementationGuide,
+    ResourceTypesIngredient,
+    ResourceTypesInsurancePlan,
+    ResourceTypesInvoice,
+    ResourceTypesLibrary,
+    ResourceTypesLinkage,
+    ResourceTypesList,
+    ResourceTypesLocation,
+    ResourceTypesManufacturedItemDefinition,
+    ResourceTypesMeasure,
+    ResourceTypesMeasureReport,
+    ResourceTypesMedication,
+    ResourceTypesMedicationAdministration,
+    ResourceTypesMedicationDispense,
+    ResourceTypesMedicationKnowledge,
+    ResourceTypesMedicationRequest,
+    ResourceTypesMedicationUsage,
+    ResourceTypesMedicinalProductDefinition,
+    ResourceTypesMessageDefinition,
+    ResourceTypesMessageHeader,
+    ResourceTypesMolecularSequence,
+    ResourceTypesNamingSystem,
+    ResourceTypesNutritionIntake,
+    ResourceTypesNutritionOrder,
+    ResourceTypesObservation,
+    ResourceTypesObservationDefinition,
+    ResourceTypesOperationDefinition,
+    ResourceTypesOperationOutcome,
+    ResourceTypesOrganization,
+    ResourceTypesOrganizationAffiliation,
+    ResourceTypesPackagedProductDefinition,
+    ResourceTypesParameters,
+    ResourceTypesPatient,
+    ResourceTypesPaymentNotice,
+    ResourceTypesPaymentReconciliation,
+    ResourceTypesPerson,
+    ResourceTypesPlanDefinition,
+    ResourceTypesPractitioner,
+    ResourceTypesPractitionerRole,
+    ResourceTypesProcedure,
+    ResourceTypesProvenance,
+    ResourceTypesQuestionnaire,
+    ResourceTypesQuestionnaireResponse,
+    ResourceTypesRegulatedAuthorization,
+    ResourceTypesRelatedPerson,
+    ResourceTypesRequestGroup,
+    ResourceTypesResearchStudy,
+    ResourceTypesResearchSubject,
+    ResourceTypesResource,
+    ResourceTypesRiskAssessment,
+    ResourceTypesSchedule,
+    ResourceTypesSearchParameter,
+    ResourceTypesServiceRequest,
+    ResourceTypesSlot,
+    ResourceTypesSpecimen,
+    ResourceTypesSpecimenDefinition,
+    ResourceTypesStructureDefinition,
+    ResourceTypesStructureMap,
+    ResourceTypesSubscription,
+    ResourceTypesSubstance,
+    ResourceTypesSubstanceDefinition,
+    ResourceTypesSubstanceNucleicAcid,
+    ResourceTypesSubstancePolymer,
+    ResourceTypesSubstanceProtein,
+    ResourceTypesSubstanceReferenceInformation,
+    ResourceTypesSubstanceSourceMaterial,
+    ResourceTypesSupplyDelivery,
+    ResourceTypesSupplyRequest,
+    ResourceTypesTask,
+    ResourceTypesTerminologyCapabilities,
+    ResourceTypesTestReport,
+    ResourceTypesTestScript,
+    ResourceTypesTopic,
+    ResourceTypesValueSet,
+    ResourceTypesVerificationResult,
+    ResourceTypesVisionPrescription);
+  TFhirResourceTypesEnumList = set of TFhirResourceTypesEnum;
 
 
   // How the system supports versioning for a resource. (from http://hl7.org/fhir/ValueSet/versioning-policy)
@@ -3454,6 +3454,19 @@ const
   SYSTEMS_TFhirAdverseEventStatusEnum : Array[TFhirAdverseEventStatusEnum] of String = ('', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status');
   CODES_TFhirAggregationModeEnum : Array[TFhirAggregationModeEnum] of String = ('', 'contained', 'referenced', 'bundled');
   SYSTEMS_TFhirAggregationModeEnum : Array[TFhirAggregationModeEnum] of String = ('', 'http://hl7.org/fhir/resource-aggregation-mode', 'http://hl7.org/fhir/resource-aggregation-mode', 'http://hl7.org/fhir/resource-aggregation-mode');
+  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'BackboneType', 'Base', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'DataType', 'Distance', 'Dosage', 'Duration', 'Element', 'ElementDefinition', 'Expression', 'Extension', 'HumanName', 'Identifier', 'MarketingStatus', 'Meta', 'Money', 'MoneyQuantity', 'Narrative', 'OrderedDistribution', 'ParameterDefinition', 'Period', 'Population', 'PrimitiveType', 'ProdCharacteristic', 'ProductShelfLife', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Statistic', 'SubstanceAmount', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'integer64', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid', 'xhtml',
+       'Account', 'ActivityDefinition', 'AdministrableProductDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BiologicallyDerivedProduct', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CapabilityStatement2', 'CarePlan', 'CareTeam', 'CatalogEntry', 'ChargeItem', 'ChargeItemDefinition', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'ClinicalUseIssue', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'ConditionDefinition', 'Consent', 'Contract', 'Coverage', 'CoverageEligibilityRequest', 'CoverageEligibilityResponse', 'DetectedIssue', 'Device', 'DeviceDefinition', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'Evidence', 'EvidenceVariable', 'ExampleScenario',
+       'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingStudy', 'Immunization', 'ImmunizationEvaluation', 'ImmunizationRecommendation', 'ImplementationGuide', 'Ingredient', 'InsurancePlan', 'Invoice', 'Library', 'Linkage', 'List', 'Location', 'ManufacturedItemDefinition', 'Measure', 'MeasureReport', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationKnowledge', 'MedicationRequest', 'MedicationUsage', 'MedicinalProductDefinition', 'MessageDefinition', 'MessageHeader', 'MolecularSequence', 'NamingSystem', 'NutritionIntake', 'NutritionOrder', 'Observation', 'ObservationDefinition', 'OperationDefinition', 'OperationOutcome', 'Organization', 'OrganizationAffiliation', 'PackagedProductDefinition', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'Provenance', 'Questionnaire', 'QuestionnaireResponse',
+       'RegulatedAuthorization', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'ServiceRequest', 'Slot', 'Specimen', 'SpecimenDefinition', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SubstanceDefinition', 'SubstanceNucleicAcid', 'SubstancePolymer', 'SubstanceProtein', 'SubstanceReferenceInformation', 'SubstanceSourceMaterial', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TerminologyCapabilities', 'TestReport', 'TestScript', 'Topic', 'ValueSet', 'VerificationResult', 'VisionPrescription', 'Type', 'Any');
+  SYSTEMS_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types',
+       'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types',
+       'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
   CODES_TFhirAllergyIntoleranceCategoryEnum : Array[TFhirAllergyIntoleranceCategoryEnum] of String = ('', 'food', 'medication', 'environment', 'biologic');
   SYSTEMS_TFhirAllergyIntoleranceCategoryEnum : Array[TFhirAllergyIntoleranceCategoryEnum] of String = ('', 'http://hl7.org/fhir/allergy-intolerance-category', 'http://hl7.org/fhir/allergy-intolerance-category', 'http://hl7.org/fhir/allergy-intolerance-category', 'http://hl7.org/fhir/allergy-intolerance-category');
   CODES_TFhirAllergyIntoleranceCriticalityEnum : Array[TFhirAllergyIntoleranceCriticalityEnum] of String = ('', 'low', 'high', 'unable-to-assess');
@@ -3526,6 +3539,8 @@ const
   SYSTEMS_TFhirConceptMapGroupUnmappedModeEnum : Array[TFhirConceptMapGroupUnmappedModeEnum] of String = ('', 'http://hl7.org/fhir/conceptmap-unmapped-mode', 'http://hl7.org/fhir/conceptmap-unmapped-mode', 'http://hl7.org/fhir/conceptmap-unmapped-mode');
   CODES_TFhirConceptMapRelationshipEnum : Array[TFhirConceptMapRelationshipEnum] of String = ('', 'related-to', 'equivalent', 'broader', 'narrower', 'not-related-to');
   SYSTEMS_TFhirConceptMapRelationshipEnum : Array[TFhirConceptMapRelationshipEnum] of String = ('', 'http://hl7.org/fhir/concept-map-relationship', 'http://hl7.org/fhir/concept-map-relationship', 'http://hl7.org/fhir/concept-map-relationship', 'http://hl7.org/fhir/concept-map-relationship', 'http://hl7.org/fhir/concept-map-relationship');
+  CODES_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'code', 'Coding', 'string', 'integer', 'boolean', 'dateTime', 'decimal');
+  SYSTEMS_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type');
   CODES_TFhirConditionPreconditionTypeEnum : Array[TFhirConditionPreconditionTypeEnum] of String = ('', 'sensitive', 'specific');
   SYSTEMS_TFhirConditionPreconditionTypeEnum : Array[TFhirConditionPreconditionTypeEnum] of String = ('', 'http://hl7.org/fhir/condition-precondition-type', 'http://hl7.org/fhir/condition-precondition-type');
   CODES_TFhirConditionQuestionnairePurposeEnum : Array[TFhirConditionQuestionnairePurposeEnum] of String = ('', 'preadmit', 'diff-diagnosis', 'outcome');
@@ -3609,19 +3624,6 @@ const
   SYSTEMS_TFhirExplanationOfBenefitStatusEnum : Array[TFhirExplanationOfBenefitStatusEnum] of String = ('', 'http://hl7.org/fhir/explanationofbenefit-status', 'http://hl7.org/fhir/explanationofbenefit-status', 'http://hl7.org/fhir/explanationofbenefit-status', 'http://hl7.org/fhir/explanationofbenefit-status');
   CODES_TFhirExtensionContextTypeEnum : Array[TFhirExtensionContextTypeEnum] of String = ('', 'fhirpath', 'element', 'extension');
   SYSTEMS_TFhirExtensionContextTypeEnum : Array[TFhirExtensionContextTypeEnum] of String = ('', 'http://hl7.org/fhir/extension-context-type', 'http://hl7.org/fhir/extension-context-type', 'http://hl7.org/fhir/extension-context-type');
-  CODES_TFhirFHIRAllTypesEnum : Array[TFhirFHIRAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'BackboneType', 'Base', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'DataType', 'Distance', 'Dosage', 'Duration', 'Element', 'ElementDefinition', 'Expression', 'Extension', 'HumanName', 'Identifier', 'MarketingStatus', 'Meta', 'Money', 'MoneyQuantity', 'Narrative', 'OrderedDistribution', 'ParameterDefinition', 'Period', 'Population', 'PrimitiveType', 'ProdCharacteristic', 'ProductShelfLife', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Statistic', 'SubstanceAmount', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'integer64', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid',
-       'xhtml', 'Account', 'ActivityDefinition', 'AdministrableProductDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BiologicallyDerivedProduct', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CapabilityStatement2', 'CarePlan', 'CareTeam', 'CatalogEntry', 'ChargeItem', 'ChargeItemDefinition', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'ClinicalUseIssue', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'ConditionDefinition', 'Consent', 'Contract', 'Coverage', 'CoverageEligibilityRequest', 'CoverageEligibilityResponse', 'DetectedIssue', 'Device', 'DeviceDefinition', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'Evidence', 'EvidenceVariable', 'ExampleScenario',
-       'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingStudy', 'Immunization', 'ImmunizationEvaluation', 'ImmunizationRecommendation', 'ImplementationGuide', 'Ingredient', 'InsurancePlan', 'Invoice', 'Library', 'Linkage', 'List', 'Location', 'ManufacturedItemDefinition', 'Measure', 'MeasureReport', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationKnowledge', 'MedicationRequest', 'MedicationUsage', 'MedicinalProductDefinition', 'MessageDefinition', 'MessageHeader', 'MolecularSequence', 'NamingSystem', 'NutritionIntake', 'NutritionOrder', 'Observation', 'ObservationDefinition', 'OperationDefinition', 'OperationOutcome', 'Organization', 'OrganizationAffiliation', 'PackagedProductDefinition', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'Provenance', 'Questionnaire', 'QuestionnaireResponse',
-       'RegulatedAuthorization', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'ServiceRequest', 'Slot', 'Specimen', 'SpecimenDefinition', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SubstanceDefinition', 'SubstanceNucleicAcid', 'SubstancePolymer', 'SubstanceProtein', 'SubstanceReferenceInformation', 'SubstanceSourceMaterial', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TerminologyCapabilities', 'TestReport', 'TestScript', 'Topic', 'ValueSet', 'VerificationResult', 'VisionPrescription', 'Type', 'Any');
-  SYSTEMS_TFhirFHIRAllTypesEnum : Array[TFhirFHIRAllTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types',
-       'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types',
-       'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
-       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
-       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
-       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
-       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
-       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
-       'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
   CODES_TFhirFHIRDefinedTypeEnum : Array[TFhirFHIRDefinedTypeEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'BackboneType', 'Base', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'DataType', 'Distance', 'Dosage', 'Duration', 'Element', 'ElementDefinition', 'Expression', 'Extension', 'HumanName', 'Identifier', 'MarketingStatus', 'Meta', 'Money', 'MoneyQuantity', 'Narrative', 'OrderedDistribution', 'ParameterDefinition', 'Period', 'Population', 'PrimitiveType', 'ProdCharacteristic', 'ProductShelfLife', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Statistic', 'SubstanceAmount', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'integer64', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url',
        'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'AdministrableProductDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BiologicallyDerivedProduct', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CapabilityStatement2', 'CarePlan', 'CareTeam', 'CatalogEntry', 'ChargeItem', 'ChargeItemDefinition', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'ClinicalUseIssue', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'ConditionDefinition', 'Consent', 'Contract', 'Coverage', 'CoverageEligibilityRequest', 'CoverageEligibilityResponse', 'DetectedIssue', 'Device', 'DeviceDefinition', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'Evidence', 'EvidenceVariable',
        'ExampleScenario', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingStudy', 'Immunization', 'ImmunizationEvaluation', 'ImmunizationRecommendation', 'ImplementationGuide', 'Ingredient', 'InsurancePlan', 'Invoice', 'Library', 'Linkage', 'List', 'Location', 'ManufacturedItemDefinition', 'Measure', 'MeasureReport', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationKnowledge', 'MedicationRequest', 'MedicationUsage', 'MedicinalProductDefinition', 'MessageDefinition', 'MessageHeader', 'MolecularSequence', 'NamingSystem', 'NutritionIntake', 'NutritionOrder', 'Observation', 'ObservationDefinition', 'OperationDefinition', 'OperationOutcome', 'Organization', 'OrganizationAffiliation', 'PackagedProductDefinition', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'Provenance', 'Questionnaire',
@@ -3750,8 +3752,6 @@ const
   SYSTEMS_TFhirParticipationStatusEnum : Array[TFhirParticipationStatusEnum] of String = ('', 'http://hl7.org/fhir/participationstatus', 'http://hl7.org/fhir/participationstatus', 'http://hl7.org/fhir/participationstatus', 'http://hl7.org/fhir/participationstatus');
   CODES_TFhirPropertyRepresentationEnum : Array[TFhirPropertyRepresentationEnum] of String = ('', 'xmlAttr', 'xmlText', 'typeAttr', 'cdaText', 'xhtml');
   SYSTEMS_TFhirPropertyRepresentationEnum : Array[TFhirPropertyRepresentationEnum] of String = ('', 'http://hl7.org/fhir/property-representation', 'http://hl7.org/fhir/property-representation', 'http://hl7.org/fhir/property-representation', 'http://hl7.org/fhir/property-representation', 'http://hl7.org/fhir/property-representation');
-  CODES_TFhirPropertyTypeEnum : Array[TFhirPropertyTypeEnum] of String = ('', 'code', 'Coding', 'string', 'integer', 'boolean', 'dateTime', 'decimal');
-  SYSTEMS_TFhirPropertyTypeEnum : Array[TFhirPropertyTypeEnum] of String = ('', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type');
   CODES_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'derivation', 'revision', 'quotation', 'source', 'removal');
   SYSTEMS_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role');
   CODES_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'draft', 'active', 'retired', 'unknown');
@@ -3786,10 +3786,10 @@ const
   SYSTEMS_TFhirResearchStudyStatusEnum : Array[TFhirResearchStudyStatusEnum] of String = ('', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status', 'http://hl7.org/fhir/research-study-status');
   CODES_TFhirResearchSubjectStatusEnum : Array[TFhirResearchSubjectStatusEnum] of String = ('', 'candidate', 'eligible', 'follow-up', 'ineligible', 'not-registered', 'off-study', 'on-study', 'on-study-intervention', 'on-study-observation', 'pending-on-study', 'potential-candidate', 'screening', 'withdrawn');
   SYSTEMS_TFhirResearchSubjectStatusEnum : Array[TFhirResearchSubjectStatusEnum] of String = ('', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status', 'http://hl7.org/fhir/research-subject-status');
-  CODES_TFhirResourceTypeEnum : Array[TFhirResourceTypeEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdministrableProductDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BiologicallyDerivedProduct', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CapabilityStatement2', 'CarePlan', 'CareTeam', 'CatalogEntry', 'ChargeItem', 'ChargeItemDefinition', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'ClinicalUseIssue', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'ConditionDefinition', 'Consent', 'Contract', 'Coverage', 'CoverageEligibilityRequest', 'CoverageEligibilityResponse', 'DetectedIssue', 'Device', 'DeviceDefinition', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare',
+  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdministrableProductDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BiologicallyDerivedProduct', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CapabilityStatement2', 'CarePlan', 'CareTeam', 'CatalogEntry', 'ChargeItem', 'ChargeItemDefinition', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'ClinicalUseIssue', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'ConditionDefinition', 'Consent', 'Contract', 'Coverage', 'CoverageEligibilityRequest', 'CoverageEligibilityResponse', 'DetectedIssue', 'Device', 'DeviceDefinition', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare',
        'EventDefinition', 'Evidence', 'EvidenceVariable', 'ExampleScenario', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingStudy', 'Immunization', 'ImmunizationEvaluation', 'ImmunizationRecommendation', 'ImplementationGuide', 'Ingredient', 'InsurancePlan', 'Invoice', 'Library', 'Linkage', 'List', 'Location', 'ManufacturedItemDefinition', 'Measure', 'MeasureReport', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationKnowledge', 'MedicationRequest', 'MedicationUsage', 'MedicinalProductDefinition', 'MessageDefinition', 'MessageHeader', 'MolecularSequence', 'NamingSystem', 'NutritionIntake', 'NutritionOrder', 'Observation', 'ObservationDefinition', 'OperationDefinition', 'OperationOutcome', 'Organization', 'OrganizationAffiliation', 'PackagedProductDefinition', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole',
        'Procedure', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RegulatedAuthorization', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'ServiceRequest', 'Slot', 'Specimen', 'SpecimenDefinition', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SubstanceDefinition', 'SubstanceNucleicAcid', 'SubstancePolymer', 'SubstanceProtein', 'SubstanceReferenceInformation', 'SubstanceSourceMaterial', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TerminologyCapabilities', 'TestReport', 'TestScript', 'Topic', 'ValueSet', 'VerificationResult', 'VisionPrescription');
-  SYSTEMS_TFhirResourceTypeEnum : Array[TFhirResourceTypeEnum] of String = ('', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
+  SYSTEMS_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
        'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
        'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
        'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types',
@@ -3939,6 +3939,8 @@ function TFhirAdverseEventStatusEnumListAsInteger(aSet : TFhirAdverseEventStatus
 function IntegerAsTFhirAdverseEventStatusEnumList(i : integer) : TFhirAdverseEventStatusEnumList; overload;
 function TFhirAggregationModeEnumListAsInteger(aSet : TFhirAggregationModeEnumList) : Integer; overload;
 function IntegerAsTFhirAggregationModeEnumList(i : integer) : TFhirAggregationModeEnumList; overload;
+function TFhirAllTypesEnumListAsInteger(aSet : TFhirAllTypesEnumList) : Integer; overload;
+function IntegerAsTFhirAllTypesEnumList(i : integer) : TFhirAllTypesEnumList; overload;
 function TFhirAllergyIntoleranceCategoryEnumListAsInteger(aSet : TFhirAllergyIntoleranceCategoryEnumList) : Integer; overload;
 function IntegerAsTFhirAllergyIntoleranceCategoryEnumList(i : integer) : TFhirAllergyIntoleranceCategoryEnumList; overload;
 function TFhirAllergyIntoleranceCriticalityEnumListAsInteger(aSet : TFhirAllergyIntoleranceCriticalityEnumList) : Integer; overload;
@@ -4011,6 +4013,8 @@ function TFhirConceptMapGroupUnmappedModeEnumListAsInteger(aSet : TFhirConceptMa
 function IntegerAsTFhirConceptMapGroupUnmappedModeEnumList(i : integer) : TFhirConceptMapGroupUnmappedModeEnumList; overload;
 function TFhirConceptMapRelationshipEnumListAsInteger(aSet : TFhirConceptMapRelationshipEnumList) : Integer; overload;
 function IntegerAsTFhirConceptMapRelationshipEnumList(i : integer) : TFhirConceptMapRelationshipEnumList; overload;
+function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTypeEnumList) : Integer; overload;
+function IntegerAsTFhirConceptPropertyTypeEnumList(i : integer) : TFhirConceptPropertyTypeEnumList; overload;
 function TFhirConditionPreconditionTypeEnumListAsInteger(aSet : TFhirConditionPreconditionTypeEnumList) : Integer; overload;
 function IntegerAsTFhirConditionPreconditionTypeEnumList(i : integer) : TFhirConditionPreconditionTypeEnumList; overload;
 function TFhirConditionQuestionnairePurposeEnumListAsInteger(aSet : TFhirConditionQuestionnairePurposeEnumList) : Integer; overload;
@@ -4093,8 +4097,6 @@ function TFhirExplanationOfBenefitStatusEnumListAsInteger(aSet : TFhirExplanatio
 function IntegerAsTFhirExplanationOfBenefitStatusEnumList(i : integer) : TFhirExplanationOfBenefitStatusEnumList; overload;
 function TFhirExtensionContextTypeEnumListAsInteger(aSet : TFhirExtensionContextTypeEnumList) : Integer; overload;
 function IntegerAsTFhirExtensionContextTypeEnumList(i : integer) : TFhirExtensionContextTypeEnumList; overload;
-function TFhirFHIRAllTypesEnumListAsInteger(aSet : TFhirFHIRAllTypesEnumList) : Integer; overload;
-function IntegerAsTFhirFHIRAllTypesEnumList(i : integer) : TFhirFHIRAllTypesEnumList; overload;
 function TFhirFHIRDefinedTypeEnumListAsInteger(aSet : TFhirFHIRDefinedTypeEnumList) : Integer; overload;
 function IntegerAsTFhirFHIRDefinedTypeEnumList(i : integer) : TFhirFHIRDefinedTypeEnumList; overload;
 function TFhirFHIRDeviceStatusEnumListAsInteger(aSet : TFhirFHIRDeviceStatusEnumList) : Integer; overload;
@@ -4211,8 +4213,6 @@ function TFhirParticipationStatusEnumListAsInteger(aSet : TFhirParticipationStat
 function IntegerAsTFhirParticipationStatusEnumList(i : integer) : TFhirParticipationStatusEnumList; overload;
 function TFhirPropertyRepresentationEnumListAsInteger(aSet : TFhirPropertyRepresentationEnumList) : Integer; overload;
 function IntegerAsTFhirPropertyRepresentationEnumList(i : integer) : TFhirPropertyRepresentationEnumList; overload;
-function TFhirPropertyTypeEnumListAsInteger(aSet : TFhirPropertyTypeEnumList) : Integer; overload;
-function IntegerAsTFhirPropertyTypeEnumList(i : integer) : TFhirPropertyTypeEnumList; overload;
 function TFhirProvenanceEntityRoleEnumListAsInteger(aSet : TFhirProvenanceEntityRoleEnumList) : Integer; overload;
 function IntegerAsTFhirProvenanceEntityRoleEnumList(i : integer) : TFhirProvenanceEntityRoleEnumList; overload;
 function TFhirPublicationStatusEnumListAsInteger(aSet : TFhirPublicationStatusEnumList) : Integer; overload;
@@ -4247,8 +4247,8 @@ function TFhirResearchStudyStatusEnumListAsInteger(aSet : TFhirResearchStudyStat
 function IntegerAsTFhirResearchStudyStatusEnumList(i : integer) : TFhirResearchStudyStatusEnumList; overload;
 function TFhirResearchSubjectStatusEnumListAsInteger(aSet : TFhirResearchSubjectStatusEnumList) : Integer; overload;
 function IntegerAsTFhirResearchSubjectStatusEnumList(i : integer) : TFhirResearchSubjectStatusEnumList; overload;
-function TFhirResourceTypeEnumListAsInteger(aSet : TFhirResourceTypeEnumList) : Integer; overload;
-function IntegerAsTFhirResourceTypeEnumList(i : integer) : TFhirResourceTypeEnumList; overload;
+function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) : Integer; overload;
+function IntegerAsTFhirResourceTypesEnumList(i : integer) : TFhirResourceTypesEnumList; overload;
 function TFhirResourceVersionPolicyEnumListAsInteger(aSet : TFhirResourceVersionPolicyEnumList) : Integer; overload;
 function IntegerAsTFhirResourceVersionPolicyEnumList(i : integer) : TFhirResourceVersionPolicyEnumList; overload;
 function TFhirResponseTypeEnumListAsInteger(aSet : TFhirResponseTypeEnumList) : Integer; overload;
@@ -4731,6 +4731,32 @@ var
 begin
   result := [];
   for aLoop := low(TFhirAggregationModeEnum) to high(TFhirAggregationModeEnum) do
+  begin
+    assert(ord(aLoop) < 32);
+    if (i and (1 shl (ord(aLoop))) > 0) then
+      result := result + [aLoop];
+  end;
+end;
+
+function TFhirAllTypesEnumListAsInteger(aSet : TFhirAllTypesEnumList) : Integer;
+var
+  a : TFhirAllTypesEnum;
+begin
+  result := 0;
+  for a := low(TFhirAllTypesEnum) to high(TFhirAllTypesEnum) do
+  begin
+    assert(ord(a) < 32);
+    if (a in aSet) then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirAllTypesEnumList(i : Integer) : TFhirAllTypesEnumList;
+var
+  aLoop : TFhirAllTypesEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirAllTypesEnum) to high(TFhirAllTypesEnum) do
   begin
     assert(ord(aLoop) < 32);
     if (i and (1 shl (ord(aLoop))) > 0) then
@@ -5667,6 +5693,32 @@ var
 begin
   result := [];
   for aLoop := low(TFhirConceptMapRelationshipEnum) to high(TFhirConceptMapRelationshipEnum) do
+  begin
+    assert(ord(aLoop) < 32);
+    if (i and (1 shl (ord(aLoop))) > 0) then
+      result := result + [aLoop];
+  end;
+end;
+
+function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTypeEnumList) : Integer;
+var
+  a : TFhirConceptPropertyTypeEnum;
+begin
+  result := 0;
+  for a := low(TFhirConceptPropertyTypeEnum) to high(TFhirConceptPropertyTypeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if (a in aSet) then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConceptPropertyTypeEnumList(i : Integer) : TFhirConceptPropertyTypeEnumList;
+var
+  aLoop : TFhirConceptPropertyTypeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConceptPropertyTypeEnum) to high(TFhirConceptPropertyTypeEnum) do
   begin
     assert(ord(aLoop) < 32);
     if (i and (1 shl (ord(aLoop))) > 0) then
@@ -6733,32 +6785,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirExtensionContextTypeEnum) to high(TFhirExtensionContextTypeEnum) do
-  begin
-    assert(ord(aLoop) < 32);
-    if (i and (1 shl (ord(aLoop))) > 0) then
-      result := result + [aLoop];
-  end;
-end;
-
-function TFhirFHIRAllTypesEnumListAsInteger(aSet : TFhirFHIRAllTypesEnumList) : Integer;
-var
-  a : TFhirFHIRAllTypesEnum;
-begin
-  result := 0;
-  for a := low(TFhirFHIRAllTypesEnum) to high(TFhirFHIRAllTypesEnum) do
-  begin
-    assert(ord(a) < 32);
-    if (a in aSet) then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirFHIRAllTypesEnumList(i : Integer) : TFhirFHIRAllTypesEnumList;
-var
-  aLoop : TFhirFHIRAllTypesEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirFHIRAllTypesEnum) to high(TFhirFHIRAllTypesEnum) do
   begin
     assert(ord(aLoop) < 32);
     if (i and (1 shl (ord(aLoop))) > 0) then
@@ -8274,32 +8300,6 @@ begin
   end;
 end;
 
-function TFhirPropertyTypeEnumListAsInteger(aSet : TFhirPropertyTypeEnumList) : Integer;
-var
-  a : TFhirPropertyTypeEnum;
-begin
-  result := 0;
-  for a := low(TFhirPropertyTypeEnum) to high(TFhirPropertyTypeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if (a in aSet) then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirPropertyTypeEnumList(i : Integer) : TFhirPropertyTypeEnumList;
-var
-  aLoop : TFhirPropertyTypeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirPropertyTypeEnum) to high(TFhirPropertyTypeEnum) do
-  begin
-    assert(ord(aLoop) < 32);
-    if (i and (1 shl (ord(aLoop))) > 0) then
-      result := result + [aLoop];
-  end;
-end;
-
 function TFhirProvenanceEntityRoleEnumListAsInteger(aSet : TFhirProvenanceEntityRoleEnumList) : Integer;
 var
   a : TFhirProvenanceEntityRoleEnum;
@@ -8742,12 +8742,12 @@ begin
   end;
 end;
 
-function TFhirResourceTypeEnumListAsInteger(aSet : TFhirResourceTypeEnumList) : Integer;
+function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) : Integer;
 var
-  a : TFhirResourceTypeEnum;
+  a : TFhirResourceTypesEnum;
 begin
   result := 0;
-  for a := low(TFhirResourceTypeEnum) to high(TFhirResourceTypeEnum) do
+  for a := low(TFhirResourceTypesEnum) to high(TFhirResourceTypesEnum) do
   begin
     assert(ord(a) < 32);
     if (a in aSet) then
@@ -8755,12 +8755,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirResourceTypeEnumList(i : Integer) : TFhirResourceTypeEnumList;
+function IntegerAsTFhirResourceTypesEnumList(i : Integer) : TFhirResourceTypesEnumList;
 var
-  aLoop : TFhirResourceTypeEnum;
+  aLoop : TFhirResourceTypesEnum;
 begin
   result := [];
-  for aLoop := low(TFhirResourceTypeEnum) to high(TFhirResourceTypeEnum) do
+  for aLoop := low(TFhirResourceTypesEnum) to high(TFhirResourceTypesEnum) do
   begin
     assert(ord(aLoop) < 32);
     if (i and (1 shl (ord(aLoop))) > 0) then

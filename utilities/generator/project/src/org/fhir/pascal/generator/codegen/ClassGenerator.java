@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.fhir.pascal.generator.analysis.Analysis;
+import org.fhir.pascal.generator.analysis.EnumInfo;
 import org.fhir.pascal.generator.analysis.TypeInfo;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
@@ -43,7 +44,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     StringBuilder create = new StringBuilder();
     StringBuilder destroy = new StringBuilder();
     StringBuilder assign = new StringBuilder();
-    StringBuilder empty = new StringBuilder();
+    LineLimitedStringBuilder empty = new LineLimitedStringBuilder(36, 6);
     StringBuilder getkids = new StringBuilder();
     StringBuilder getkidsvars = new StringBuilder();
     StringBuilder getprops = new StringBuilder();
@@ -65,6 +66,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     }
 
     if (config.hasTemplate(tn+".private")) {
+      def.append("  private\r\n");
       def.append(config.getTemplate(tn+".private"));
     } 
     def.append("  protected\r\n");
@@ -230,12 +232,12 @@ public abstract class ClassGenerator extends BaseGenerator {
     impl2.append("end;\r\n\r\n");
     if (ti.hasChildren()) {
       generateEquals(analysis, ti, tn, impl2);
-    }
 
-    impl2.append("function "+tn+".isEmpty : boolean;\r\n");
-    impl2.append("begin\r\n");
-    impl2.append("  result := inherited isEmpty "+empty.toString()+";\r\n");
-    impl2.append("end;\r\n\r\n");
+      impl2.append("function "+tn+".isEmpty : boolean;\r\n");
+      impl2.append("begin\r\n");
+      impl2.append("  result := inherited isEmpty "+empty.toString()+";\r\n");
+      impl2.append("end;\r\n\r\n");
+    }
 
     intf.append(def.toString());
     impl.append(impl2.toString() + impli.toString());
@@ -257,7 +259,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     StringBuilder create = new StringBuilder();
     StringBuilder destroy = new StringBuilder();
     StringBuilder assign = new StringBuilder();
-    StringBuilder empty = new StringBuilder();
+    LineLimitedStringBuilder empty = new LineLimitedStringBuilder(36, 6);
     StringBuilder getkids = new StringBuilder();
     StringBuilder getkidsvars = new StringBuilder();
     StringBuilder getprops = new StringBuilder();
@@ -281,6 +283,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     def.append("  // "+makeDocoSafe(analysis.getStructure().getDescription(), "// ")+"\r\n");
     def.append("  "+tn+" = class abstract (TFhir"+(tn.equals("TFhirResource") ? "Resource5" :  analysis.getAncestor().getName())+")\r\n");
     if (config.hasTemplate(tn+".private")) {
+      def.append("  private\r\n");
       def.append(config.getTemplate(tn+".private"));
     }
     if (ti.hasChildren() || config.hasTemplate(tn+".protected")) {
@@ -441,7 +444,7 @@ public abstract class ClassGenerator extends BaseGenerator {
       impl2.append("begin\r\n");
       impl2.append("  ex := extensionList.Append;\r\n");
       impl2.append("  ex.url := url;\r\n");
-      impl2.append("  ex.value := value as TFhirType;\r\n");
+      impl2.append("  ex.value := value as TFhirDataType;\r\n");
       impl2.append("end;\r\n");
       impl2.append("\r\n");
       impl2.append("function TFhirDomainResource.extensionCount(url: String): integer;\r\n");
@@ -907,7 +910,7 @@ public abstract class ClassGenerator extends BaseGenerator {
   }
 
   private void generateField(Analysis analysis, TypeInfo ti, ElementDefinition e, StringBuilder defPriv1, StringBuilder defPriv2, StringBuilder defPub, StringBuilder impli, StringBuilder create, StringBuilder destroy, 
-        StringBuilder assign, StringBuilder empty, StringBuilder getkids, StringBuilder getkidsvars, StringBuilder getprops, StringBuilder getpropsvars, StringBuilder setprops, StringBuilder insprops, StringBuilder makeprops,
+        StringBuilder assign, LineLimitedStringBuilder empty, StringBuilder getkids, StringBuilder getkidsvars, StringBuilder getprops, StringBuilder getpropsvars, StringBuilder setprops, StringBuilder insprops, StringBuilder makeprops,
         StringBuilder propTypes, StringBuilder delprops, StringBuilder replprops, StringBuilder reorderprops, String cn, String pt, ClassGeneratorCategory category, boolean isExtension, String tj) throws Exception {
 
     String tn = e.getUserString("pascal.type");
@@ -970,13 +973,13 @@ public abstract class ClassGenerator extends BaseGenerator {
           getkids.append("  if StringStartsWith(child_name, '"+getPropertyName(e.getName())+"') Then\r\n    list.addAll(self, '"+e.getName()+"', F"+getTitle(s)+");\r\n");
         else
           getkids.append("  if (child_name = '"+e.getName()+"') Then\r\n     list.addAll(self, '"+e.getName()+"', F"+getTitle(s)+");\r\n");
-        getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', true, TFhirEnum, F"+getTitle(s)+".Link)){3};\r\n");
+        getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', true, TFhirEnum, F"+getTitle(s)+".Link))"+marker()+";\r\n");
         propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeSummaryVB())+"'\r\n");
         if (e.getName().endsWith("[x]"))
           throw new Exception("Not done yet");
-        setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+"List.add(asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)); {1}\r\n    result := propValue;\r\n  end\r\n");
-        insprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".insertItem(index, asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
-        reorderprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".move(source, destination) {1}\r\n");
+        setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+"List.add(asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue));"+marker()+"\r\n    result := propValue;\r\n  end\r\n");
+        insprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".insertItem(index, asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue))"+marker()+"\r\n");
+        reorderprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".move(source, destination)"+marker()+"\r\n");
         String obj = "";
         if (getEnumSize(e) < 32) {
           impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+listForm(tn)+";\r\n  var i : integer;\r\nbegin\r\n  result := [];\r\n  if F"+s+" <> nil then\r\n    for i := 0 to F"+s+".count - 1 do\r\n      result := result + ["+tn+"(StringArrayIndexOfSensitive(CODES_"+tn+", F"+s+"[i].value))];\r\nend;\r\n\r\n");
@@ -1013,23 +1016,23 @@ public abstract class ClassGenerator extends BaseGenerator {
         assign.append("    F"+getTitle(s)+".Assign("+cn+"(oSource).F"+getTitle(s)+");\r\n");
         assign.append("  end;\r\n");
         getkids.append("  if (child_name = '"+e.getName()+"') Then\r\n    list.addAll(self, '"+e.getName()+"', F"+getTitle(s)+");\r\n");
-        getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', true, "+tn+", F"+getTitle(s)+".Link)){3};\r\n");
+        getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', true, "+tn+", F"+getTitle(s)+".Link))"+marker()+";\r\n");
         propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeSummaryVB())+"'\r\n");
         if (e.getName().endsWith("[x]"))
           throw new Exception("Not done yet");
         if (typeIsPrimitive(e.typeSummary())) {
           setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+".add(as"+tn.substring(5)+"(propValue)){2};     result := propValue;\r\n\r\n  end\r\n");
-          insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, as"+tn.substring(5)+"(propValue)){2}\r\n");
-          reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2}\r\n");
+          insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, as"+tn.substring(5)+"(propValue))"+marker()+"\r\n");
+          reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination)"+marker()+"\r\n");
         } else {
-          setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+".add(propValue as "+tn+"){2a};\r\n    result := propValue;\r\n  end\r\n");
-          insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, propValue as "+tn+"){2a}\r\n");
-          reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2a}\r\n");
+          setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+getTitle(s)+".add(propValue as "+tn+")"+marker()+";\r\n    result := propValue;\r\n  end\r\n");
+          insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, propValue as "+tn+")"+marker()+"\r\n");
+          reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination)"+marker()+"\r\n");
         }
         if (!e.typeSummary().equals("Resource")) 
-          makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+getTitle(s)+".new(){2}\r\n");
-        delprops.append("  else if (propName = '"+e.getName()+"') then deletePropertyValue('"+e.getName()+"', "+getTitle(s)+", value) {2}\r\n");
-        replprops.append("  else if (propName = '"+e.getName()+"') then replacePropertyValue('"+e.getName()+"', "+getTitle(s)+", existing, new) {2}\r\n");
+          makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+getTitle(s)+".new()"+marker()+"\r\n");
+        delprops.append("  else if (propName = '"+e.getName()+"') then deletePropertyValue('"+e.getName()+"', "+getTitle(s)+", value)"+marker()+"\r\n");
+        replprops.append("  else if (propName = '"+e.getName()+"') then replacePropertyValue('"+e.getName()+"', "+getTitle(s)+", existing, new)"+marker()+"\r\n");
       }
     } else {
       if (e.hasUserData("pascal.enum")) {
@@ -1067,18 +1070,18 @@ public abstract class ClassGenerator extends BaseGenerator {
           impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+tn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := "+tn+"(0)\r\n  else\r\n    result := "+tn+"(StringArrayIndexOfSensitive(CODES_"+tn+", F"+getTitle(s)+".value));\r\nend;\r\n\r\n");
           impli.append("procedure "+cn+".Set"+getTitle(s)+"ST(value : "+tn+");\r\nbegin\r\n  if ord(value) = 0 then\r\n    "+getTitle(s)+"Element := nil\r\n  else\r\n    "+getTitle(s)+"Element := TFhirEnum.create(SYSTEMS_"+tn+"[value], CODES_"+tn+"[value]);\r\nend;\r\n\r\n");
           setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue);\r\n    result := propValue\r\n  end\r\n");
-          replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", new){4}\r\n");          
+          replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", new)"+marker()+"\r\n");          
           delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
         } else {
           impli.append("procedure "+cn+".Set"+getTitle(s)+"(value : TFhirEnum);\r\nbegin\r\n  F"+getTitle(s)+".free;\r\n  F"+getTitle(s)+" := value;\r\nend;\r\n\r\n");
-          impli.append("procedure "+cn+".Set"+getTitle(s)+"ST(value : "+tn+");\r\nbegin\r\n  if ord(value) = 0 then\r\n    "+getTitle(s)+" := nil\r\n  else\r\n    "+getTitle(s)+" := TFhirEnum.create(SYSTEMS_"+tn+rId+"[value], CODES_"+tn+rId+"[value]);\r\nend;\r\n\r\n");
+          impli.append("procedure "+cn+".Set"+getTitle(s)+"ST(value : "+tn+");\r\nbegin\r\n  if ord(value) = 0 then\r\n    "+getTitle(s)+" := nil"+marker()+"\r\n  else\r\n    "+getTitle(s)+" := TFhirEnum.create(SYSTEMS_"+tn+rId+"[value], CODES_"+tn+rId+"[value]);\r\nend;\r\n\r\n");
           setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)\r\n    result := propValue;\r\n  end\r\n");
-          replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{4}\r\n");          
+          replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+""+marker()+"\r\n");          
           delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
         }
         assign.append("  F"+getTitle(s)+" := "+cn+"(oSource).F"+getTitle(s)+".Link;\r\n");
         getkids.append("  if (child_name = '"+e.getName()+"') Then\r\n     list.add(self.link, '"+e.getName()+"', F"+getTitle(s)+".Link);\r\n");
-        getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', false, TFhirEnum, "+propV+".Link));{1}\r\n");
+        getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', false, TFhirEnum, "+propV+".Link));"+marker()+"\r\n");
         propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeSummaryVB())+"'\r\n");
         if (e.getName().endsWith("[x]"))
           throw new Exception("Not done yet");
@@ -1099,11 +1102,11 @@ public abstract class ClassGenerator extends BaseGenerator {
           } else if (sn.equals("Boolean")) {
             impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := false\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
             impli.append("procedure "+cn+".Set"+getTitle(s)+"ST(value : "+sn+");\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    F"+getTitle(s)+" := "+tn+".create;\r\n  F"+getTitle(s)+".value := value\r\nend;\r\n\r\n");
-          } else if (sn.equals("TDateTimeEx")) {
-            impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := TDateTimeEx.makeNull\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
+          } else if (sn.equals("TFslDateTime")) {
+            impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := TFslDateTime.makeNull\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
             impli.append("procedure "+cn+".Set"+getTitle(s)+"ST(value : "+sn+");\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    F"+getTitle(s)+" := "+tn+".create;\r\n  F"+getTitle(s)+".value := value\r\nend;\r\n\r\n");
           } else {
-            impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := nil\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
+            impli.append("function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := nil"+marker()+"\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
             impli.append("procedure "+cn+".Set"+getTitle(s)+"ST(value : "+sn+");\r\nbegin\r\n  if value <> nil then\r\n  begin\r\n    if F"+getTitle(s)+" = nil then\r\n      F"+getTitle(s)+" := "+tn+".create;\r\n    F"+getTitle(s)+".value := value\r\n  end\r\n  else if F"+getTitle(s)+" <> nil then\r\n    F"+getTitle(s)+".value := nil;\r\nend;\r\n\r\n");
           }
           assign.append("  "+s+"Element := "+cn+"(oSource)."+s+"Element.Clone;\r\n");
@@ -1118,9 +1121,9 @@ public abstract class ClassGenerator extends BaseGenerator {
         else
           getkids.append("  if (child_name = '"+e.getName()+"') Then\r\n     list.add(self.link, '"+e.getName()+"', F"+getTitle(s)+".Link);\r\n");
         if (e.hasUserData("pascal.enum")) {
-          getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', false, TFhirEnum, "+propV+".Link));{2}\r\n");
+          getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', false, TFhirEnum, "+propV+".Link));"+marker()+"\r\n");
         } else {
-          getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', false, "+tn+", "+propV+".Link));{2}\r\n");          
+          getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeSummaryVB())+"', false, "+tn+", "+propV+".Link));"+marker()+"\r\n");          
         }
         propTypes.append("  else if (propName = '"+e.getName()+"') then result := '"+breakConstant(e.typeSummaryVB())+"'\r\n");
         if (e.getName().endsWith("[x]")) {
@@ -1133,44 +1136,45 @@ public abstract class ClassGenerator extends BaseGenerator {
           }
           types.append("]");              
           if (!typeIsPrimitive(e.typeSummary())) {
-            setprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{4};\r\n    result := propValue;\r\n  end\r\n");
+            setprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+""+marker()+";\r\n    result := propValue;\r\n  end\r\n");
           } else { 
-            setprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{5};\r\n   result := propValue;\r\n  end\r\n");
+            setprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+""+marker()+";\r\n   result := propValue;\r\n  end\r\n");
           }
-          delprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then "+propV.substring(1)+"Element := nil{4x}\r\n");
-          replprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then "+propV.substring(1)+"Element := new as "+tn+"{4x}\r\n");          
-          makeprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then raise EFHIRException.create('Cannot make property "+propV.substring(1)+"'){4x}\r\n");
+          delprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then "+propV.substring(1)+"Element := nil"+marker()+"\r\n");
+          replprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then "+propV.substring(1)+"Element := new as "+tn+""+marker()+"\r\n");          
+          makeprops.append("  else if (isMatchingName(propName, '"+ename+"', "+types+")) then raise EFHIRException.create('Cannot make property "+propV.substring(1)+"')"+marker()+"\r\n");
         } else {
           delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
           if (!typeIsPrimitive(e.typeSummary()) && !e.typeSummary().equals("xhtml")) {
-            replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{4}\r\n");          
+            replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+""+marker()+"\r\n");          
             if (simpleTypes.containsKey(tn))
-              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := propValue as "+tn+"{4a};\r\n    result := propValue;\r\n  end\r\n");
+              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := propValue as "+tn+""+marker()+";\r\n    result := propValue;\r\n  end\r\n");
             else {
-              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{4b};\r\n    result := propValue;\r\n  end\r\n");
-              if (typeIsAbstract(e.typeSummary())) {
+              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+""+marker()+";\r\n    result := propValue;\r\n  end\r\n");
+              if (typeIsAbstract(e.typeSummary()) && !Utilities.existsInList(e.typeSummary(), "Element", "BackboneElement")) {
                 makeprops.append("  else if (propName = '"+e.getName()+"') then raise EFHIRException.create('Cannot make property "+propV.substring(1)+"')\r\n");
               } else {
-                makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create(){4b}\r\n");
+                makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create()"+marker()+"\r\n");
               }
             }
           } else {
             if (e.hasUserData("pascal.enum")) {
-              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue){5d};\r\n    result := propValue;\r\n  end\r\n");          
-              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", new){5b}\r\n");          
-              makeprops.append("  else if (propName = '"+e.getName()+"') then result := TFhirEnum.create(SYSTEMS_"+tn+"[0], CODES_"+tn+"[0]) {5b}\r\n");
+              EnumInfo ei = (EnumInfo) e.getUserData("pascal.enum");
+              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)"+marker()+";\r\n    result := propValue;\r\n  end\r\n");          
+              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asEnum(SYSTEMS_"+tn+", CODES_"+tn+", new)"+marker()+"\r\n");          
+              makeprops.append("  else if (propName = '"+e.getName()+"') then result := TFhirEnum.create(SYSTEMS_"+tn+"["+ei.abbreviation()+"Null], CODES_"+tn+"["+ei.abbreviation()+"Null]) "+marker()+"\r\n");
             } else if (!simpleTypes.containsKey(tn) && !tn.equals("TFhirXHtmlNode")) {
-              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+"{5b};\r\n    result := propValue;\r\n  end\r\n");          
-              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{5b}\r\n");          
-              makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
+              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+" := propValue as "+tn+""+marker()+";\r\n    result := propValue;\r\n  end\r\n");          
+              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+""+marker()+"\r\n");          
+              makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() "+marker()+"\r\n");
             } else if (tn.equals("TFhirCode"+rId)) {
               setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := asCode"+rId+"(propValue);\r\n    result := propValue;\r\n  end\r\n");
-              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asCode"+rId+"(new){5b}\r\n");          
-              makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
+              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := asCode"+rId+"(new)"+marker()+"\r\n");          
+              makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create()"+marker()+"\r\n");
             } else {
-              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := as"+tn.substring(5)+"(propValue){5a};\r\n    result := propValue;\r\n  end\r\n");          
-              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := as"+tn.substring(5)+"(new){5b}\r\n");          
-              makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
+              setprops.append("  else if (propName = '"+e.getName()+"') then\r\n  begin\r\n    "+propV.substring(1)+"Element := as"+tn.substring(5)+"(propValue)"+marker()+";\r\n    result := propValue;\r\n  end\r\n");          
+              replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := as"+tn.substring(5)+"(new)"+marker()+"\r\n");          
+              makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create()"+marker()+"\r\n");
             }
           }
         }
@@ -1179,7 +1183,7 @@ public abstract class ClassGenerator extends BaseGenerator {
   }
 
   private boolean typeIsAbstract(String t) {
-    org.hl7.fhir.r5.model.StructureDefinition sd = definitions.getStructures().get("http:hl7.org/fhir/StructureDefinition/"+t);
+    org.hl7.fhir.r5.model.StructureDefinition sd = definitions.getStructures().get("http://hl7.org/fhir/StructureDefinition/"+t);
     return sd != null && sd.getAbstract();
   }
 

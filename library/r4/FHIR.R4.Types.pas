@@ -1178,7 +1178,7 @@ Type
     FilterOperatorExists); 
   TFhirFilterOperatorEnumList = set of TFhirFilterOperatorEnum;
 
-  // The type of a property value. from http://hl7.org/fhir/ValueSet/concept-property-type
+  // The type of a propertTFhirResourceTypeEnumy value. from http://hl7.org/fhir/ValueSet/concept-property-type
   TFhirConceptPropertyTypeEnum = (
     ConceptPropertyTypeNull, // Value is missing from Instance 
     ConceptPropertyTypeCode, 

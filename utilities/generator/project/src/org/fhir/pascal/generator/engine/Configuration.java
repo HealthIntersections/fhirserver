@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.hl7.fhir.utilities.IniFile;
 import org.hl7.fhir.utilities.TextFile;
+import org.hl7.fhir.utilities.Utilities;
 
 public class Configuration {
 
@@ -19,6 +21,7 @@ public class Configuration {
   private Map<String, String> templates = new HashMap<>();
   private String source;
   private String dest;
+  private IniFile ini;
   
   public Configuration(String templatePath, String source, String dest) throws FileNotFoundException, IOException {
     this.source = source;
@@ -28,6 +31,7 @@ public class Configuration {
       System.out.println(" .. "+jfn.getName());
       templates.put(jfn.getName(), TextFile.fileToString(jfn));
     }
+    ini = new IniFile(Utilities.path(templatePath, "configuration.ini"));
   }
   
   public String getTemplate(String name) {
@@ -53,4 +57,10 @@ public class Configuration {
       return true;
     return false;
   }
+
+  public IniFile getIni() {
+    return ini;
+  }
+  
+  
 }
