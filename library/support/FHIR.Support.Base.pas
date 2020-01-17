@@ -433,6 +433,7 @@ Type
     destructor Destroy; override;
     function Link : TFslMap<T>; overload;
     Procedure Free; Overload;
+    procedure trackOrder;
 
     procedure Add(const Key: String; const Value: T);
     procedure Remove(const Key: String);
@@ -528,11 +529,12 @@ Type
     function GetKeys: TKeyCollection;
     function GetValues: TValueCollection;
     function GetSortedKeys: TStringList;
+    function GetAsAddedKeys: TStringList;
   public
     function GetEnumerator: TFslPairEnumerator; reintroduce;
     property Keys: TKeyCollection read GetKeys;
     property SortedKeys : TStringList read GetSortedKeys;
-    property AsAddedKeys : TStringList read FAsAddedKeys;
+    property AsAddedKeys : TStringList read GetAsAddedKeys;
     property Values: TValueCollection read GetValues;
     property OnKeyNotify: TCollectionNotifyEvent<String> read FOnKeyNotify write FOnKeyNotify;
     property OnValueNotify: TCollectionNotifyEvent<T> read FOnValueNotify write FOnValueNotify;
@@ -1849,6 +1851,14 @@ begin
   Rehash(newCap);
 end;
 
+function TFslMap<T>.GetAsAddedKeys: TStringList;
+begin
+  if FAsAddedKeys <> nil then
+    result := FAsAddedKeys
+  else
+    raise EFSLException.Create('This Map is not tracking order of addition');
+end;
+
 function TFslMap<T>.GetBucketIndex(const Key: String; HashCode: Integer): Integer;
 var
   start, hc: Integer;
@@ -1916,7 +1926,6 @@ begin
   FItems[index].HashCode := HashCode;
   FItems[index].Key := Key;
   FItems[index].Value := Value;
-  FAsAddedKeys.add(Key);
 end;
 
 procedure TFslMap<T>.KeyNotify(const Key: String; Action: TCollectionNotification);
@@ -1945,7 +1954,6 @@ begin
   if ACapacity < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
   SetCapacity(ACapacity);
-  FAsAddedKeys := TStringList.create;
 end;
 
 constructor TFslMap<T>.Create(const Collection: TEnumerable<TFslPair<T>>);
@@ -2044,7 +2052,8 @@ begin
   Dec(FCount);
 
   FreeAndNil(FSortedKeys);
-  FAsAddedKeys.delete(FAsAddedKeys.indexOf(Key));
+  if FAsAddedKeys <> nil then
+    FAsAddedKeys.delete(FAsAddedKeys.indexOf(Key));
   KeyNotify(Key, Notification);
   ValueNotify(Result, Notification);
 end;
@@ -2081,6 +2090,15 @@ begin
 //  result := ToArrayImpl(Count);
 end;
 
+procedure TFslMap<T>.trackOrder;
+begin
+  if FAsAddedKeys <> nil then
+    raise EFSLException.Create('Map is already tracking order');
+  if Count > 0 then
+    raise EFSLException.Create('Map already contains content');
+  FAsAddedKeys := TStringList.create;
+end;
+
 procedure TFslMap<T>.TrimExcess;
 begin
   // Ensure at least one empty slot for GetBucketIndex to terminate.
@@ -2105,6 +2123,8 @@ begin
 end;
 
 procedure TFslMap<T>.DoAdd(HashCode, Index: Integer; const Key: String; const Value: T);
+var
+  i : integer;
 begin
   FItems[Index].HashCode := HashCode;
   FItems[Index].Key := Key;
@@ -2112,7 +2132,13 @@ begin
   Inc(FCount);
 
   FreeAndNil(FSortedKeys);
-  FAsAddedKeys.add(Key);
+  if (FAsAddedKeys <> nil) then
+  begin
+    i := FAsAddedKeys.indexOf(Key);
+    if (i > -1) then
+      FAsAddedKeys.delete(i);
+    FAsAddedKeys.add(Key);
+  end;
   KeyNotify(Key, cnAdded);
   ValueNotify(Value, cnAdded);
 end;

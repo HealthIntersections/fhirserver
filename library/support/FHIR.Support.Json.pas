@@ -1766,7 +1766,12 @@ begin
   begin
     ns := FNameStart; // we rule that the value 'starts' in a location sense where the name starts, not where the value starts
     if obj.FProperties.ContainsKey(itemName) then
-      raise EJsonParserException.Create('DuplicateKey: '+itemName+' at '+obj.path, FLex.FLocation.line, FLex.FLocation.col);
+    begin
+      if FLex.FLoose then
+        obj.FProperties.remove(itemName)
+      else
+        raise EJsonParserException.Create('DuplicateKey: '+itemName+' at '+obj.path, FLex.FLocation.line, FLex.FLocation.col);
+    end;
 
     case ItemType of
       jpitObject:
@@ -2156,6 +2161,7 @@ constructor TJsonObject.create;
 begin
   inherited Create;
   FProperties := TFslMap<TJsonNode>.Create;
+  FProperties.trackOrder;
 end;
 
 destructor TJsonObject.destroy;
