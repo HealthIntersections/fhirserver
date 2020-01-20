@@ -1342,8 +1342,8 @@ begin
     begin
       if (version = '') or (t.mode = fvmOverride) then
         version := t.version
-      else if t.mode = fvmCheck then
-        raise ETerminologyError.Create('Expansion Profile Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile');
+      else if (version <> t.version) and (t.mode = fvmCheck) then
+        raise ETerminologyError.Create('Expansion Parameters Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile');
     end;
   exit(version);
 end;
