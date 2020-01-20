@@ -1,6 +1,4 @@
 unit FHIR.R3.Common;
-
-
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -339,6 +337,48 @@ type
     function has(name : String) : boolean; override;
     function obj(name : String) : TFHIRObject; override;
     function getParameter(name: String): TFhirParametersParameterW;  override;
+  end;
+
+  TFHIRExpansionProfile3 = class (TFHIRParametersW)
+  private
+    function profile : TFhirExpansionProfile;
+  protected
+    procedure populateList; override;
+  public
+    procedure addParamBool(name : String; value : boolean); override;
+    procedure addParamStr(name : String; value : string); override;
+    procedure addParam(name : String; value : TFHIRObject); override;
+    procedure addParamCode(name : String; value : string); override;
+    function addParam(name : String) : TFhirParametersParameterW; override;
+    function bool(name : String) : boolean; override;
+    function str(name : String) : String; override;
+    function has(name : String) : boolean; override;
+    function obj(name : String) : TFHIRObject; override;
+    function getParameter(name: String): TFhirParametersParameterW;  override;
+  end;
+
+  TFhirExpansionProfileFixedVersion3 = class (TFhirParametersParameterW)
+  private
+    function entry : TFhirExpansionProfileFixedVersion;
+  protected
+    function getValue: TFHIRObject; override;
+    procedure setValue(Value: TFHIRObject); override;
+    procedure populateList; override;
+    function getParameterParameter(name: String): TFhirParametersParameterW; override;
+    function getResourceParameter(name: String): TFHIRResourceV; override;
+    function getStringParameter(name: String): String; override;
+  public
+    function name : String; override;
+    function hasValue : boolean; override;
+    function valueString : String; override;
+    function getResource: TFHIRResourceV; override;
+    procedure setResource(Value: TFHIRResourceV); override;
+    function hasResource : boolean; override;
+    procedure addParamBool(name : String; value : boolean); override;
+    procedure addParamStr(name : String; value : string); override;
+    procedure addParamCode(name : String; value : string); override;
+    procedure addParam(name : String; value : TFHIRObject); override;
+    function addParam(name : String) : TFhirParametersParameterW; override;
   end;
 
   TFhirValueSetExpansionContains3 = class (TFhirValueSetExpansionContainsW)
@@ -1709,6 +1749,245 @@ function TFHIRParameters3.str(name: String): String;
 begin
   result := parameter.str[name];
 end;
+
+{ TFHIRExpansionProfile3 }
+
+function TFHIRExpansionProfile3.addParam(name: String): TFhirParametersParameterW;
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFHIRExpansionProfile3.addParam(name: String; value: TFHIRObject);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFHIRExpansionProfile3.addParamBool(name: String; value: boolean);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFHIRExpansionProfile3.addParamCode(name, value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFHIRExpansionProfile3.addParamStr(name, value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+function TFHIRExpansionProfile3.bool(name: String): boolean;
+begin
+  if name = '_incomplete' then
+    result := profile.limitedExpansion
+  else if name = 'limitedExpansion' then
+    result := profile.limitedExpansion
+  else if name = 'includeDesignations' then
+    result := profile.includeDesignations
+  else if name = 'includeDefinition' then
+    result := profile.includeDefinition
+  else if name = 'activeOnly' then
+    result := profile.activeOnly
+  else if name = 'excludeNested' then
+    result := profile.excludeNested
+  else if name = 'excludeNotForUI' then
+    result := profile.excludeNotForUI
+  else if name = 'excludePostCoordinated' then
+    result := profile.excludePostCoordinated
+  else
+    result := false;
+end;
+
+function TFHIRExpansionProfile3.str(name: String): String;
+begin
+  if name = '_incomplete' then
+    result := BoolToStr(profile.limitedExpansion)
+  else if name = 'limitedExpansion' then
+    result := BoolToStr(profile.limitedExpansion)
+  else if name = 'includeDesignations' then
+    result := BoolToStr(profile.includeDesignations)
+  else if name = 'includeDefinition' then
+    result := BoolToStr(profile.includeDefinition)
+  else if name = 'activeOnly' then
+    result := BoolToStr(profile.activeOnly)
+  else if name = 'excludeNested' then
+    result := BoolToStr(profile.excludeNested)
+  else if name = 'excludeNotForUI' then
+    result := BoolToStr(profile.excludeNotForUI)
+  else if name = 'excludePostCoordinated' then
+    result := BoolToStr(profile.excludePostCoordinated)
+  else if name = 'displayLanguage' then
+    result := profile.displayLanguage
+  else
+    result := '';
+end;
+
+
+function TFHIRExpansionProfile3.GetParameter(name: String): TFhirParametersParameterW;
+begin
+  raise EFHIRException.create('Not supported for Expansion Profile');
+end;
+
+function TFHIRExpansionProfile3.has(name: String): boolean;
+begin
+ if name = '_incomplete' then
+    result := profile.LimitedExpansionElement <> nil
+  else if name = 'limitedExpansion' then
+    result := profile.limitedExpansionElement <> nil
+  else if name = 'includeDesignations' then
+    result := profile.includeDesignationsElement <> nil
+  else if name = 'includeDefinition' then
+    result := profile.includeDefinitionElement <> nil
+  else if name = 'activeOnly' then
+    result := profile.activeOnlyElement <> nil
+  else if name = 'excludeNested' then
+    result := profile.excludeNestedElement <> nil
+  else if name = 'excludeNotForUI' then
+    result := profile.excludeNotForUIElement <> nil
+  else if name = 'excludePostCoordinated' then
+    result := profile.excludePostCoordinatedElement <> nil
+  else if name = 'displayLanguage' then
+    result := profile.displayLanguageElement <> nil
+  else
+    result := false;
+end;
+
+function TFHIRExpansionProfile3.obj(name: String): TFHIRObject;
+begin
+//  if has(name) then
+//  begin
+//    p := parameter.param[name];
+//    if p.resource <> nil then
+//      result := p.resource
+//    else
+//      result := p.value;
+//  end
+//  else
+//    result := nil;
+//  for p in params.parameterList do
+//  begin
+//    if (p.name = 'system-version') then
+//    begin
+//      sl := p.valueString.split(['|']);
+//      if (Length(sl) = 2) then
+//        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1]))
+//      else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
+//        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
+//      else
+//        raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"');
+//    end;
+//  end;
+  result := nil;
+end;
+
+function TFHIRExpansionProfile3.profile: TFhirExpansionProfile;
+begin
+  result := Resource as TFhirExpansionProfile;
+end;
+
+procedure TFHIRExpansionProfile3.populateList;
+var
+  t : TFhirExpansionProfileFixedVersion;
+begin
+  inherited;
+  for t in profile.fixedVersionList do
+    if t.mode <> SystemVersionProcessingModeOverride then
+      FList.Add(TFhirExpansionProfileFixedVersion3.Create(t.Link));
+end;
+
+
+{ TFhirExpansionProfileFixedVersion3 }
+
+function TFhirExpansionProfileFixedVersion3.addParam(name: String): TFhirParametersParameterW;
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.addParam(name: String; value: TFHIRObject);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.addParamBool(name: String; value: boolean);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.addParamCode(name, value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.addParamStr(name, value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+function TFhirExpansionProfileFixedVersion3.GetParameterParameter(name: String): TFhirParametersParameterW;
+begin
+  result := nil;
+end;
+
+function TFhirExpansionProfileFixedVersion3.GetResource: TFHIRResourceV;
+begin
+  result := nil;
+end;
+
+function TFhirExpansionProfileFixedVersion3.GetResourceParameter(name: String): TFHIRResourceV;
+begin
+  result := nil;
+end;
+
+function TFhirExpansionProfileFixedVersion3.GetStringParameter(name: String): String;
+begin
+  result := '';
+end;
+
+function TFhirExpansionProfileFixedVersion3.GetValue: TFHIRObject;
+begin
+  result := entry;
+end;
+
+function TFhirExpansionProfileFixedVersion3.hasResource: boolean;
+begin
+  result := false;
+end;
+
+function TFhirExpansionProfileFixedVersion3.hasValue: boolean;
+begin
+  result := true;
+end;
+
+function TFhirExpansionProfileFixedVersion3.name: String;
+begin
+  result := 'system-version';
+end;
+
+function TFhirExpansionProfileFixedVersion3.entry : TFhirExpansionProfileFixedVersion;
+begin
+  result := FElement as TFhirExpansionProfileFixedVersion;
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.populateList;
+begin
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.SetResource(Value: TFHIRResourceV);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.SetValue(Value: TFHIRObject);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+function TFhirExpansionProfileFixedVersion3.valueString: String;
+begin
+  result := entry.system+'|'+entry.version;
+end;
+
 
 { TFHIRStructureDefinition3 }
 

@@ -1113,7 +1113,7 @@ begin
   if params.has('profile') then
   begin
     obj := params.obj('profile');
-    if obj.fhirType = 'Parameters' then
+    if (obj.fhirType = 'Parameters') or (obj.fhirType = 'ExpansionProfile') then
     begin
       pp := FFactory.wrapParams(obj.link as TFHIRResourceV);
       try
@@ -1121,7 +1121,7 @@ begin
       finally
         pp.Free;
       end;
-    end;
+    end
   end;
   result.valueSetMode := vsvmAllChecks;
   if (params.has('valueSetMode')) then
@@ -1133,50 +1133,10 @@ begin
   end;
 end;
 
-function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
-//  needSecure : boolean;
-//  exp : TFhirExpansionParams;
-begin
+function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;begin
   result := TFHIRExpansionParams.Create;
   try
     processExpansionParams(request, manager, params, result);
-//    if FFactory.version = fhirVersionRelease3 then
-//    begin
-//      exp := nil;
-//      try
-//        if params.has('profile') then
-//        begin
-//          p := params.param['profile'];
-//          if p.hasResource then
-//            exp := p.resource.link as FHIR.R3.Resources.TFhirExpansionProfile
-//          else if params.str('profile').StartsWith('http:') or params.str('profile').StartsWith('https:') then
-//           exp := manager.getResourceByUrl('ExpansionProfile', params.str('profile'), '', true, needSecure) as FHIR.R3.Resources.TFhirExpansionProfile
-//         else if params.str('profile') <> '' then
-//           exp := manager.GetResourceById(request, 'ExpansionProfile', params.str('profile'), request.baseUrl, needSecure) as FHIR.R3.Resources.TFhirExpansionProfile
-//        end;
-//        if (exp <> nil) then
-//        begin
-//          if (exp.limitedExpansionElement <> nil) then
-//            result.limitedExpansion := exp.limitedExpansion;
-//          if (exp.displayLanguageElement <> nil) then
-//            result.displayLanguage := exp.displayLanguage;
-//          if (exp.includeDesignationsElement <> nil) then
-//            result.includeDesignations := exp.includeDesignations;
-//          if (exp.includeDefinitionElement <> nil) then
-//            result.includeDefinition := exp.includeDefinition;
-//          if (exp.activeOnlyElement <> nil) then
-//            result.activeOnly := exp.activeOnly;
-//          if (exp.excludeNestedElement <> nil) then
-//            result.excludeNested := exp.excludeNested;
-//          if (exp.excludeNotForUIElement <> nil) then
-//            result.excludeNotForUI := exp.excludeNotForUI;
-//          if (exp.excludePostCoordinatedElement <> nil) then
-//            result.excludePostCoordinated := exp.excludePostCoordinated;
-//        end;
-//      finally
-//        exp.Free;
-//      end;
-//    end;
     result.link;
   finally
     result.free;

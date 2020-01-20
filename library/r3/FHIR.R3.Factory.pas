@@ -617,6 +617,8 @@ function TFHIRFactoryR3.wrapParams(r: TFHIRResourceV): TFHIRParametersW;
 begin
   if r = nil then
     result := nil
+  else if r is TFHIRExpansionProfile then
+    result := TFHIRExpansionProfile3.create(r)
   else
     result := TFhirParameters3.Create(r);
 end;
