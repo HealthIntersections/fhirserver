@@ -8,7 +8,7 @@
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectGuid>{37029A1E-09A8-4395-955A-B32DAC0A619E}</ProjectGuid>
         <ProjectVersion>18.8</ProjectVersion>
-        <TargetedPlatforms>4103</TargetedPlatforms>
+        <TargetedPlatforms>4098</TargetedPlatforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -1397,9 +1397,9 @@
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
-                <Platform value="OSX32">True</Platform>
+                <Platform value="OSX32">False</Platform>
                 <Platform value="OSX64">True</Platform>
-                <Platform value="Win32">True</Platform>
+                <Platform value="Win32">False</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>

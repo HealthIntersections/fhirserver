@@ -111,7 +111,7 @@ Constructor TUSStateServices.create();
 begin
   inherited Create;
   FCodes := TFslList<TUSStateConcept>.create;
-  FMap := TFslMap<TUSStateConcept>.create;
+  FMap := TFslMap<TUSStateConcept>.create('tx.usstate');
   Load;
 end;
 

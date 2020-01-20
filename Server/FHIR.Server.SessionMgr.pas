@@ -82,7 +82,7 @@ constructor TFHIRSessionManager.Create;
 begin
   inherited Create(ServerContext);
   FLock := TFslLock.Create('session-manager');
-  FSessions := TFslMap<TFHIRSession>.Create;
+  FSessions := TFslMap<TFHIRSession>.Create('session');
 end;
 
 destructor TFHIRSessionManager.Destroy;

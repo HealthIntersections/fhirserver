@@ -524,8 +524,8 @@ begin
   oScale := TConceptManager.Create;
   oMethod := TConceptManager.Create;
   oClass := TConceptManager.Create;
-  FAnswerLists := TFslMap<TAnswerList>.Create;
-  FAnswerMap := TFslMap<TAnswer>.create;
+  FAnswerLists := TFslMap<TAnswerList>.Create('loinc.answers');
+  FAnswerMap := TFslMap<TAnswer>.create('loinc.answers2');
   oHeirarchy := THeirarchyEntryList.Create;
   Try
     oComps.SortedByName;
@@ -1723,7 +1723,7 @@ end;
 constructor TLoincLanguage.Create;
 begin
   inherited;
-  FCodes := TFslMap<TLoincLanguageCodes>.create;
+  FCodes := TFslMap<TLoincLanguageCodes>.create('loinc.lang');
 end;
 
 constructor TLoincLanguage.Create(lang, country: String);

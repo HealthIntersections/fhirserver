@@ -111,7 +111,7 @@ Constructor TCountryCodeServices.create;
 begin
   inherited Create;
   FCodes := TFslList<TCountryCodeConcept>.create;
-  FMap := TFslMap<TCountryCodeConcept>.create;
+  FMap := TFslMap<TCountryCodeConcept>.create('tx.countrycode');
   Load;
 end;
 

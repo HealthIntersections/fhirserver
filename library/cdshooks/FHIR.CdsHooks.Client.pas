@@ -405,7 +405,7 @@ begin
   FServers := TFslList<TCDSHooksManagerServerInfo>.create;
   FLock := TFslLock.Create('TCDSHooksManager');
   FThreads := TFslList<TCDSHooksManagerWorkThread>.create;
-  FCache := TFslMap<TCDSHooksManagerCachedResponse>.create;
+  FCache := TFslMap<TCDSHooksManagerCachedResponse>.create('CDS Hooks Cache');
 end;
 
 destructor TCDSHooksManager.Destroy;

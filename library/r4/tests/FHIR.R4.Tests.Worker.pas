@@ -38,12 +38,13 @@ uses
   FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Version.Parser,
+  FHIR.Support.Tests,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine,
   FHIR.Cache.PackageManager,
   FHIR.Support.Json, DUnitX.TestFramework;
 
 Type
-  FHIRFolderBasedTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  FHIRFolderBasedTestCase4Attribute = class (CustomTestCaseSourceAttribute)
   private
     FFolder : String;
     FFilter : String;
@@ -54,7 +55,7 @@ Type
     constructor Create(folder, filter : String; count : integer);
   end;
 
-  TTestingWorkerContext = class (TBaseWorkerContext)
+  TTestingWorkerContext4 = class (TBaseWorkerContext)
   public
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -68,7 +69,7 @@ Type
   end;
 
 
-  TTestObjectThread = class (TThread)
+  TTestObjectThread4 = class (TThread)
   private
     FProc : TThreadProcedure;
   protected
@@ -76,7 +77,8 @@ Type
   public
     constructor Create(proc : TThreadProcedure);
   end;
-  TTestObject = class (TObject)
+
+  TTestObject4 = class (TObject)
   private
   protected
     procedure thread(proc : TThreadProcedure);
@@ -90,40 +92,40 @@ uses
 
 
 
-{ TTestingWorkerContext }
+{ TTestingWorkerContext4 }
 var
   GWorkerContext : TBaseWorkerContext;
 
-class procedure TTestingWorkerContext.closeUp;
+class procedure TTestingWorkerContext4.closeUp;
 begin
   GWorkerContext.Free;
   GWorkerContext := nil;
 end;
 
-function TTestingWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
+function TTestingWorkerContext4.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.expand');
+  raise EFHIRPathTodo.create('TTestingWorkerContext4.expand');
 end;
 
-function TTestingWorkerContext.supportsSystem(system, version: string): boolean;
+function TTestingWorkerContext4.supportsSystem(system, version: string): boolean;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.supportsSystem');
+  raise EFHIRPathTodo.create('TTestingWorkerContext4.supportsSystem');
 end;
 
 
-class function TTestingWorkerContext.Use: TFHIRWorkerContext;
+class function TTestingWorkerContext4.Use: TFHIRWorkerContext;
 var
   pcm : TFHIRPackageManager;
   li : TPackageLoadingInformation;
 begin
   if GWorkerContext = nil then
   begin
-    GWorkerContext := TTestingWorkerContext.create(TFHIRFactoryR4.create);
+    GWorkerContext := TTestingWorkerContext4.create(TFHIRFactoryR4.create);
     pcm := TFHIRPackageManager.Create(false);
     li := TPackageLoadingInformation.create(FHIR.R4.Constants.FHIR_GENERATED_VERSION);
     try
       li.OnLoadEvent := GWorkerContext.loadResourceJson;
-      pcm.loadPackage('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
+      pcm.loadPackage('hl7.fhir.r4.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
         li);
     finally
       li.Free;
@@ -133,29 +135,29 @@ begin
   result := GWorkerContext.link;
 end;
 
-function TTestingWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
+function TTestingWorkerContext4.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
 end;
 
-function TTestingWorkerContext.validateCode(system, version, code, display: String): TValidationResult;
+function TTestingWorkerContext4.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
 end;
 
-function TTestingWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+function TTestingWorkerContext4.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
 end;
 
-function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+function TTestingWorkerContext4.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
 end;
 
-{ FHIRFolderBasedTestCaseAttribute }
+{ FHIRFolderBasedTestCase4Attribute }
 
-constructor FHIRFolderBasedTestCaseAttribute.Create(folder, filter: String; count : integer);
+constructor FHIRFolderBasedTestCase4Attribute.Create(folder, filter: String; count : integer);
 begin
   inherited Create;
   FFolder := folder;
@@ -163,7 +165,7 @@ begin
   FCount := count;
 end;
 
-function FHIRFolderBasedTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+function FHIRFolderBasedTestCase4Attribute.GetCaseInfoArray: TestCaseInfoArray;
 var
   sl : TStringlist;
   sr : TSearchRec;
@@ -172,7 +174,7 @@ var
 begin
   sl := TStringList.create;
   try
-    if FindFirst(FFolder+'\*.*', faAnyFile, SR) = 0 then
+    if FindFirst(FHIR_TESTING_FILE(FFolder, '\*.*'), faAnyFile, SR) = 0 then
     repeat
       s := sr.Name;
       if ((FFilter = '') or s.endsWith(FFilter)) and ((FCount = 0) or (sl.count < FCount)) then
@@ -190,29 +192,29 @@ begin
   end;
 end;
 
-{ TTestObjectThread }
+{ TTestObjectThread4 }
 
-constructor TTestObjectThread.Create(proc: TThreadProcedure);
+constructor TTestObjectThread4.Create(proc: TThreadProcedure);
 begin
   FProc := proc;
   FreeOnTerminate := true;
   inherited Create(false);
 end;
 
-procedure TTestObjectThread.execute;
+procedure TTestObjectThread4.execute;
 begin
   Fproc;
 end;
 
-{ TTestObject }
+{ TTestObject4 }
 
-procedure TTestObject.thread(proc: TThreadProcedure);
+procedure TTestObject4.thread(proc: TThreadProcedure);
 begin
-  TTestObjectThread.Create(proc);
+  TTestObjectThread4.Create(proc);
 end;
 
 initialization
 finalization
-  TTestingWorkerContext.closeUp;
+  TTestingWorkerContext4.closeUp;
 end.
 

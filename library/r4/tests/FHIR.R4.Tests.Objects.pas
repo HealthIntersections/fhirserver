@@ -11,7 +11,7 @@ uses
 
 type
   [TextFixture]
-  TFHIRObjectTests = Class (TObject)
+  TFHIRObjectTests4 = Class (TObject)
   private
     function json(o : TFHIRResource) : String;
   public
@@ -21,9 +21,9 @@ type
 
 implementation
 
-{ TFHIRObjectTests }
+{ TFHIRObjectTests4 }
 
-function TFHIRObjectTests.json(o: TFHIRResource): String;
+function TFHIRObjectTests4.json(o: TFHIRResource): String;
 var
   c : TFHIRJsonComposer;
 begin
@@ -35,7 +35,7 @@ begin
   end;
 end;
 
-procedure TFHIRObjectTests.TestDropEmptySimple;
+procedure TFHIRObjectTests4.TestDropEmptySimple;
 var
   o : TFHIRPatient;
 begin
@@ -58,7 +58,7 @@ begin
   Assert.IsTrue(true);
 end;
 
-procedure TFHIRObjectTests.TestDropEmptyComplex;
+procedure TFHIRObjectTests4.TestDropEmptyComplex;
 var
   o : TFHIRPatient;
 begin
@@ -82,5 +82,5 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFHIRObjectTests);
+  TDUnitX.RegisterTestFixture(TFHIRObjectTests4);
 end.

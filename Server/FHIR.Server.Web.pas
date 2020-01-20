@@ -491,8 +491,8 @@ begin
   FCode := code;
   FWebServer := server;
   FContext := context;
-  FPatientHooks := TFslMap<TFHIRWebServerPatientViewContext>.Create;
-  FAdaptors := TFslMap<TFHIRFormatAdaptor>.Create;
+  FPatientHooks := TFslMap<TFHIRWebServerPatientViewContext>.Create('patient.hooks');
+  FAdaptors := TFslMap<TFHIRFormatAdaptor>.Create('adaptors');
 //  FAdaptors.Add('dataPoints', TOpenMHealthAdaptor.Create);
   // FAuthServer: TAuth2Server;
   //  FCDSHooksServer: TCDSHooksServer;
@@ -5085,7 +5085,7 @@ begin
   FBundle.type_ := aType;
   if context.Format = ffNDJson then
   begin
-    files := TFslMap<TFslFile>.create;
+    files := TFslMap<TFslFile>.create('async.files');
     builder := TFHIRBundleBuilderNDJson.Create(FServer.factory.link, FBundle.link, IncludeTrailingPathDelimiter(FServer.Context.TaskFolder)+'task-'+inttostr(FKey), files.link)
   end
   else

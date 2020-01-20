@@ -3264,7 +3264,7 @@ end;
 constructor TXPathVariables.Create;
 begin
   inherited;
-  FMap := TFslMap<TMXmlNode>.create;
+  FMap := TFslMap<TMXmlNode>.create('xpath vars');
 end;
 
 constructor TXPathVariables.Create(name: String; value: TMXmlNode);

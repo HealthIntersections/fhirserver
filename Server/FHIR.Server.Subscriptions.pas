@@ -268,10 +268,10 @@ begin
   FLock := TFslLock.Create('Subscriptions');
   FSubscriptions := TFHIRSubscriptionEntryList.Create;
   FSubscriptionTrackers := TFHIRSubscriptionTrackerList.Create;
-  FSemaphores := TFslMap<TWebSocketQueueInfo>.Create;
+  FSemaphores := TFslMap<TWebSocketQueueInfo>.Create('subscr.semaphore');
   FCloseAll := false;
   FLastPopCheck := 0;
-  FEventDefinitions := TFslMap<TEventDefinition>.create;
+  FEventDefinitions := TFslMap<TEventDefinition>.create('subscr.event');
 end;
 
 destructor TSubscriptionManager.Destroy;

@@ -427,7 +427,7 @@ begin
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not FindCmdLineSwitch('noload');
   FSettings.load(FIni);
-  FDatabases := TFslMap<TKDBManager>.create;
+  FDatabases := TFslMap<TKDBManager>.create('fhir.svc');
 end;
 
 destructor TFHIRService.Destroy;

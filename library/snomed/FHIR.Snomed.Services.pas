@@ -3749,7 +3749,7 @@ begin
       createDefinedExpr(c, exp, true);
     if not ancestor or not ASSUME_CLASSIFIED then
     begin
-      groups := TFslMap<TSnomedRefinementGroup>.create;
+      groups := TFslMap<TSnomedRefinementGroup>.create('Snomed.refinements');
       try
         for r in GetDefiningRelationships(reference) do
         begin

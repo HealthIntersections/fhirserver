@@ -183,7 +183,7 @@ end;
 constructor TFHIRMetadataResourceManager<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create;
+  FMap := TFslMap<T>.create('metadata resource manager '+t.className);
   FMap.defaultValue := nil;
   FList := TFslList<T>.create;
 end;

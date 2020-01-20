@@ -90,7 +90,7 @@ begin
   FProfile := TFhirExpansionParams.create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create;
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('questionnaires');
 end;
 
 destructor TFHIRServerWorkerContextR2.Destroy;

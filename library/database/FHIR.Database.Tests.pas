@@ -42,7 +42,7 @@ Uses
 Type
 
   [TextFixture]
-  TKDBTests = Class(TTestObject)
+  TKDBTests = Class (TTestObject4)
   private
     procedure test(manager: TKDBManager);
   Published

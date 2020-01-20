@@ -287,11 +287,11 @@ constructor TUcumModel.Create;
 begin
   inherited;
   Fprefixes := TFslList<TUcumPrefix>.Create;
-  FbaseUnits := TFslMap<TUcumBaseUnit>.Create;
+  FbaseUnits := TFslMap<TUcumBaseUnit>.Create('Ucum.base');
   FbaseUnits.defaultValue := nil;
-  FdefinedUnits := TFslMap<TUcumDefinedUnit>.Create;
+  FdefinedUnits := TFslMap<TUcumDefinedUnit>.Create('Ucum.defined');
   FdefinedUnits.defaultValue := nil;
-  FProperties := TFslMap<TUcumProperty>.Create;
+  FProperties := TFslMap<TUcumProperty>.Create('Ucum.properties');
 end;
 
 destructor TUcumModel.Destroy;

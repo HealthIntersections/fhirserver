@@ -103,7 +103,7 @@ implementation
 constructor TCDSHooksServer.Create(ServerContext : TFslObject);
 begin
   inherited Create(ServerContext);
-  FServices := TFslMap<TCDSHooksService>.create;
+  FServices := TFslMap<TCDSHooksService>.create('cds.hooks.event');
 end;
 
 destructor TCDSHooksServer.Destroy;

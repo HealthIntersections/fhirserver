@@ -494,11 +494,11 @@ end;
 constructor TIETFLanguageDefinitions.Create;
 begin
   inherited Create;
-  FLanguages := TFslMap<TIETFLanguageLanguage>.create;
-  FExtLanguages := TFslMap<TIETFLanguageExtLang>.create;
-  FScripts := TFslMap<TIETFLanguageScript>.create;
-  FRegions := TFslMap<TIETFLanguageRegion>.create;
-  FVariants := TFslMap<TIETFLanguageVariant>.create;
+  FLanguages := TFslMap<TIETFLanguageLanguage>.create('tx.lang');
+  FExtLanguages := TFslMap<TIETFLanguageExtLang>.create('tx.lang.ext');
+  FScripts := TFslMap<TIETFLanguageScript>.create('tx.lang.scripts');
+  FRegions := TFslMap<TIETFLanguageRegion>.create('tx.lang.reg');
+  FVariants := TFslMap<TIETFLanguageVariant>.create('tx.lang.var');
   Load(source);
 end;
 

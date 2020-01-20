@@ -175,7 +175,7 @@ begin
 
   source := TMXmlParser.parse(LoadSource, [xpDropWhitespace, xpDropComments]);
   try
-    GMessages := TFslMap<TFHIRMessage>.create;
+    GMessages := TFslMap<TFHIRMessage>.create('MXml Parser');
     child := source.document.firstElement;
     while child <> nil do
     begin

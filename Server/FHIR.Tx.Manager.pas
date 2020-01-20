@@ -698,7 +698,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
 var
   map : TFslMap<TFhirCodeSystemConceptW>;
 begin
-  map := TFslMap<TFhirCodeSystemConceptW>.create;
+  map := TFslMap<TFhirCodeSystemConceptW>.create('stems');
   try
     cs.Tag := TCodeSystemAdornment.create(map.link);
     processConcepts(nil, cs.conceptList, map);
@@ -764,15 +764,15 @@ begin
 
   FValueSets := TFHIRMetadataResourceManagerW<TFhirValueSetW>.create;
   FCodeSystems := TFHIRCodeSystemManager.create;
-  FCodeSystemsByVsUrl := TFslMap<TFhirCodeSystemEntry>.create;
-  FBaseValueSets := TFslMap<TFhirValueSetW>.create;
-  FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.create;
-  FSupplementsById := TFslMap<TFhirCodeSystemW>.create;
+  FCodeSystemsByVsUrl := TFslMap<TFhirCodeSystemEntry>.create('tx.cs.url');
+  FBaseValueSets := TFslMap<TFhirValueSetW>.create('tx.vs.base');
+  FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.create('tx.cs.base');
+  FSupplementsById := TFslMap<TFhirCodeSystemW>.create('tx.cs.suppl');
 
 
-  FBaseConceptMaps := TFslMap<TLoadedConceptMap>.create;
-  FConceptMapsById := TFslMap<TLoadedConceptMap>.create;
-  FConceptMapsByURL := TFslMap<TLoadedConceptMap>.create;
+  FBaseConceptMaps := TFslMap<TLoadedConceptMap>.create('tx.cm.base');
+  FConceptMapsById := TFslMap<TLoadedConceptMap>.create('tx.cm.id');
+  FConceptMapsByURL := TFslMap<TLoadedConceptMap>.create('tx.cm.url');
 
   FStem := GetStemmer_8('english');
 
@@ -1717,7 +1717,7 @@ begin
   FIcd10 := TFslList<TICD10Provider>.create;
   p := TUriServices.Create();
   try
-    FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
+    FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
     FProviderClasses.Add(p.system(nil), p.link);
     FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   finally

@@ -226,7 +226,7 @@ constructor TFHIRGraphQLEngine.Create;
 begin
   inherited Create;
   FFactory := Factory.link;
-  FWorkingVariables := TFslMap<TGraphQLArgument>.create;
+  FWorkingVariables := TFslMap<TGraphQLArgument>.create('graphql');
   FPathEngine := factory.makePathEngine(nil, nil);
   FMagicExpression := FPathEngine.parseV('0');
 end;

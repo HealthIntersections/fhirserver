@@ -40,12 +40,12 @@ uses
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
 
 type
-  StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
+  StructureMapTestCase4Attribute = class (FHIRFolderBasedTestCase4Attribute)
   public
     constructor Create;
   end;
 
-  TTestTransformerServices = class(TTransformerServices)
+  TTestTransformerServices4 = class(TTransformerServices)
   public
     function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
@@ -55,15 +55,15 @@ type
   end;
 
   [TextFixture]
-  TMapParserTests = class (TObject)
+  TMapParserTests4 = class (TObject)
   private
   public
-    [StructureMapTestCase]
+    [StructureMapTestCase4]
     procedure MapParserTest(Filename: String);
   end;
 
   [TextFixture]
-  TMapTransformTests = class (TObject)
+  TMapTransformTests4 = class (TObject)
   private
     ctxt : TFHIRWorkerContext;
     utils : TFHIRStructureMapUtilities;
@@ -76,13 +76,13 @@ type
     [TestCase] procedure testCD;
   end;
 
-  MapParserTest2CaseAttribute = class (CustomTestCaseSourceAttribute)
+  MapParserTest2Case4Attribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
   [TextFixture]
-  TMapParserTests2 = Class (TObject)
+  TMapParserTests24 = Class (TObject)
   private
     ctxt : TFHIRWorkerContext;
     utils : TFHIRStructureMapUtilities;
@@ -90,7 +90,7 @@ type
     [SetupFixture] procedure setup;
     [TearDownFixture] procedure teardown;
 
-    [MapParserTest2Case]
+    [MapParserTest2Case4]
     procedure Test(filename : String);
   End;
 
@@ -104,16 +104,16 @@ begin
     result := result.Replace('  ', ' ');
 end;
 
-{ TMapParserTests }
+{ TMapParserTests4 }
 
-procedure TMapParserTests.MapParserTest(filename: String);
+procedure TMapParserTests4.MapParserTest(filename: String);
 var
   ctxt : TFHIRWorkerContext;
   utils : TFHIRStructureMapUtilities;
   map : TFHIRStructureMap;
   source, output : String;
 begin
-  ctxt := TTestingWorkerContext.Use;
+  ctxt := TTestingWorkerContext4.Use;
   try
     utils := TFHIRStructureMapUtilities.Create(ctxt.link, nil, nil, nil);
     try
@@ -135,16 +135,16 @@ begin
   end;
 end;
 
-{ StructureMapTestCaseAttribute }
+{ StructureMapTestCase4Attribute }
 
-constructor StructureMapTestCaseAttribute.Create;
+constructor StructureMapTestCase4Attribute.Create;
 begin
   inherited Create('guides\ccda\maps', '.map', 0);
 end;
 
-{ TMapTransformTests }
+{ TMapTransformTests4 }
 
-procedure TMapTransformTests.loadMap(filename: String);
+procedure TMapTransformTests4.loadMap(filename: String);
 var
   map : TFHIRStructureMap;
 begin
@@ -152,7 +152,7 @@ begin
   utils.lib.AddOrSetValue(map.url, map);
 end;
 
-procedure TMapTransformTests.loadMaps(folder: String);
+procedure TMapTransformTests4.loadMaps(folder: String);
 var
   sr : TSearchRec;
 begin
@@ -162,21 +162,21 @@ begin
     until FindNext(SR) <> 0;
 end;
 
-procedure TMapTransformTests.setup;
+procedure TMapTransformTests4.setup;
 begin
-  ctxt := TTestingWorkerContext.Use;
-  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
-  loadMaps(FHIR_SRC_FILE(['guides', 'ccda', 'maps']));
+  ctxt := TTestingWorkerContext4.Use;
+  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_TESTING_FILE('cda', 'cda.zip'));
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices4.Create, nil);
+  loadMaps(FHIR_TESTING_FILE('ccda', 'maps'));
 end;
 
-procedure TMapTransformTests.teardown;
+procedure TMapTransformTests4.teardown;
 begin
   utils.Free;
   ctxt.free;
 end;
 
-procedure TMapTransformTests.testCD;
+procedure TMapTransformTests4.testCD;
 var
   x : TFHIRXmlParser;
   s : TStringStream;
@@ -205,36 +205,36 @@ begin
   end;
 end;
 
-{ TTestTransformerServices }
+{ TTestTransformerServices4 }
 
-procedure TTestTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
+procedure TTestTransformerServices4.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
 begin
   raise EFslException.Create('Not done yet');
 end;
 
-function TTestTransformerServices.createType(appInfo: TFslObject; tn: String): TFHIRObject;
+function TTestTransformerServices4.createType(appInfo: TFslObject; tn: String): TFHIRObject;
 begin
   raise EFslException.Create('Not done yet');
 end;
 
-procedure TTestTransformerServices.log(s: String);
+procedure TTestTransformerServices4.log(s: String);
 begin
   writeln(s);
 end;
 
-function TTestTransformerServices.performSearch(appInfo: TFslObject; url: String): TFslList<TFHIRObject>;
+function TTestTransformerServices4.performSearch(appInfo: TFslObject; url: String): TFslList<TFHIRObject>;
 begin
   raise EFslException.Create('Not done yet');
 end;
 
-function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
+function TTestTransformerServices4.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise EFHIRTodo.create('TTestTransformerServices.translate');
+  raise EFHIRTodo.create('TTestTransformerServices4.translate');
 end;
 
-{ MapParserTest2CaseAttribute }
+{ MapParserTest2Case4Attribute }
 
-function MapParserTest2CaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+function MapParserTest2Case4Attribute.GetCaseInfoArray: TestCaseInfoArray;
 var
   st : TStringList;
   s : String;
@@ -260,9 +260,9 @@ begin
   end;
 end;
 
-{ TMapParserTests2 }
+{ TMapParserTests24 }
 
-procedure TMapParserTests2.Test(filename: String);
+procedure TMapParserTests24.Test(filename: String);
 var
   source, output, s : String;
   ok : boolean;
@@ -282,21 +282,21 @@ begin
   end;
 end;
 
-procedure TMapParserTests2.setup;
+procedure TMapParserTests24.setup;
 begin
-  ctxt := TTestingWorkerContext.Use;
+  ctxt := TTestingWorkerContext4.Use;
 //  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices4.Create, nil);
 end;
 
-procedure TMapParserTests2.teardown;
+procedure TMapParserTests24.teardown;
 begin
   // todo
 
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TMapParserTests);
-  TDUnitX.RegisterTestFixture(TMapParserTests2);
-//  TDUnitX.RegisterTestFixture(TMapTransformTests);
+  TDUnitX.RegisterTestFixture(TMapParserTests4);
+  TDUnitX.RegisterTestFixture(TMapParserTests24);
+//  TDUnitX.RegisterTestFixture(TMapTransformTests4);
 end.

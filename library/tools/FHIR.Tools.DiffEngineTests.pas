@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, SysUtils, classes,
-  FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Version.Parser,
   {$IFDEF FHIR2}
@@ -90,7 +90,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\fhir-path-tests.xml', [xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'fhir-path-tests.xml'), [xpDropWhitespace]);
   try
     test := tests.document.first;
     i := 0;
@@ -208,7 +208,7 @@ var
 begin
   if (mode = 'both') or (mode = 'reverse') then
   begin
-    engine := TDifferenceEngine.Create(TTestingWorkerContext.Use, makeFactory);
+    engine := TDifferenceEngine.Create(TTestingWorkerContext4.Use, makeFactory);
     try
       delta := engine.generateDifference(input, output, html);
       try
@@ -223,7 +223,7 @@ begin
 
   if (mode = 'both') or (mode = 'forwards') then
   begin
-    engine := TDifferenceEngine.Create(TTestingWorkerContext.Use, makeFactory);
+    engine := TDifferenceEngine.Create(TTestingWorkerContext4.Use, makeFactory);
     try
       {$IFDEF FHIR2}
       w := TFhirParameters2.create(diff.link);
@@ -268,7 +268,7 @@ end;
 
 procedure TDifferenceEngineTest.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\fhir-path-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'fhir-path-tests.xml'), [xpResolveNamespaces]);
 end;
 
 procedure TDifferenceEngineTest.teardown;

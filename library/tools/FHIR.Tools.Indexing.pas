@@ -411,11 +411,11 @@ end;
 constructor TFHIRCompartmentList.Create;
 begin
   inherited;
-  FPatientCompartment := TFslMap<TFslStringSet>.create;
-  FPractitionerCompartment := TFslMap<TFslStringSet>.create;
-  FEncounterCompartment := TFslMap<TFslStringSet>.create;
-  FRelatedPersonCompartment := TFslMap<TFslStringSet>.create;
-  FDeviceCompartment := TFslMap<TFslStringSet>.create;
+  FPatientCompartment := TFslMap<TFslStringSet>.create('Patient Compartment');
+  FPractitionerCompartment := TFslMap<TFslStringSet>.create('Practitioner Compartment');
+  FEncounterCompartment := TFslMap<TFslStringSet>.create('Encounter Compartment');
+  FRelatedPersonCompartment := TFslMap<TFslStringSet>.create('RelatedPerson Compartment');
+  FDeviceCompartment := TFslMap<TFslStringSet>.create('Device Compartment');
 end;
 
 destructor TFHIRCompartmentList.Destroy;

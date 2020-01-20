@@ -9,13 +9,13 @@ uses
   DUnitX.TestFramework, FHIR.Support.Tests, FHIR.R4.Tests.Worker;
 
 type
-  LiquidTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  LiquidTestCase4Attribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
   [TextFixture]
-  TLiquidEngineTest = Class (TObject)
+  TLiquidEngineTest4 = Class (TObject)
   private
     engine : TFHIRLiquidEngine;
     test : TJsonObject;
@@ -26,7 +26,7 @@ type
     [SetupFixture] procedure setup;
     [TearDownFixture] procedure teardown;
 
-    [LiquidTestCase]
+    [LiquidTestCase4]
     procedure FHIRPathTest(Name : String);
   End;
 
@@ -36,9 +36,9 @@ var
   gTestDoc : TJsonObject;
   gResources : TFslMap<TFHIRResource>;
 
-{ LiquidTestCaseAttribute }
+{ LiquidTestCase4Attribute }
 
-function LiquidTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+function LiquidTestCase4Attribute.GetCaseInfoArray: TestCaseInfoArray;
 var
   tests : TJsonArray;
   test : TJsonObject;
@@ -47,7 +47,7 @@ begin
   if gResources = nil then
     gResources := TFslMap<TFHIRResource>.create;
   if gTestDoc = nil then
-    gTestDoc := TJSONParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\liquid\liquid-tests.json');
+    gTestDoc := TJSONParser.ParseFile(FHIR_TESTING_FILE(4, 'liquid', 'liquid-tests.json'));
   tests := gTestDoc.arr['tests'];
   SetLength(result, tests.Count);
   for i := 0 to tests.Count - 1 do
@@ -60,14 +60,14 @@ begin
 end;
 
 
-function TLiquidEngineTest.FetchInclude(sender : TFHIRLiquidEngine; name: String; var content: String): boolean;
+function TLiquidEngineTest4.FetchInclude(sender : TFHIRLiquidEngine; name: String; var content: String): boolean;
 begin
   result := test.has('includes') and test.obj['includes'].has(name);
   if result then
     content := test.obj['includes'].str[name];
 end;
 
-function TLiquidEngineTest.findTest(name: String): TJsonObject;
+function TLiquidEngineTest4.findTest(name: String): TJsonObject;
 var
   tests : TJsonArray;
   test : TJsonObject;
@@ -83,7 +83,7 @@ begin
   end;
 end;
 
-function TLiquidEngineTest.loadResource : TFhirResource;
+function TLiquidEngineTest4.loadResource : TFhirResource;
 var
   fn : String;
   p : TFHIRXmlParser;
@@ -91,8 +91,8 @@ var
 begin
   if not gResources.ContainsKey(test.str['focus']) then
   begin
-    fn := FHIR_PUB_FILE(test.str['focus'].replace('/', '-')+'.xml');
-    p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
+    fn := FHIR_TESTING_FILE(4, 'examples', test.str['focus'].replace('/', '-')+'.xml');
+    p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, 'en');
     try
       f := TFileStream.Create(fn, fmOpenRead);
       try
@@ -110,18 +110,18 @@ begin
 end;
 
 
-procedure TLiquidEngineTest.Setup;
+procedure TLiquidEngineTest4.Setup;
 begin
-  engine := TFHIRLiquidEngine.Create(TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil));
+  engine := TFHIRLiquidEngine.Create(TFHIRPathEngine.Create(TTestingWorkerContext4.Use, nil));
   engine.OnFetchInclude := FetchInclude;
 end;
 
-procedure TLiquidEngineTest.TearDown;
+procedure TLiquidEngineTest4.TearDown;
 begin
   engine.Free;
 end;
 
-procedure TLiquidEngineTest.FHIRPathTest(Name: String);
+procedure TLiquidEngineTest4.FHIRPathTest(Name: String);
 var
   doc : TFHIRLiquidDocument;
   output : String;
@@ -137,7 +137,7 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TLiquidEngineTest);
+  TDUnitX.RegisterTestFixture(TLiquidEngineTest4);
 finalization
   gTestDoc.Free;
   gResources.Free;

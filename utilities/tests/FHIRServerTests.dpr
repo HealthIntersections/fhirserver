@@ -410,13 +410,6 @@ var
   nunitLogger : ITestLogger;
   s : String;
 begin
-  s := paramstr(1);
-  if s <> '' then
-    FHIR_PUB_HOME_1 := s;
-  s := paramstr(2);
-  if s <> '' then
-    FHIR_SRC_HOME_1 := s;
-
 {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX.RunRegisteredTests;
   exit;

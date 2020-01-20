@@ -157,7 +157,7 @@ constructor TQuestionnaireCache.Create;
 begin
   inherited;
   FLock := TFslLock.Create('TQuestionnaireCache');
-  FQuestionnaires := TFslMap<TFhirQuestionnaireW>.Create;
+  FQuestionnaires := TFslMap<TFhirQuestionnaireW>.Create('questionnaires');
   FForms := TFslStringMatch.Create;
   FForms.Forced := true;
   FValueSetDependencies := TDictionary < String, TList < string >>.Create;
@@ -308,7 +308,7 @@ begin
   FStorage := storage;
   FServerFactory := serverFactory;
   FQuestionnaireCache := TQuestionnaireCache.Create;
-  FResConfig := TFslMap<TFHIRResourceConfig>.create;
+  FResConfig := TFslMap<TFHIRResourceConfig>.create('res.config');
   for a in Factory.ResourceNames do
   begin
     cfg := TFHIRResourceConfig.Create;
@@ -325,13 +325,13 @@ begin
   FIndexes := TFHIRIndexInformation.create(FValidatorContext.factory.link, ServerFactory.link);
   FSessionManager := TFHIRSessionManager.Create(Globals.link, self);
   FTagManager := TFHIRTagManager.create(storage.Factory.link);
-  FNamingSystems := TFslMap<TFHIRNamingSystemW>.create;
+  FNamingSystems := TFslMap<TFHIRNamingSystemW>.create('naming');
   {$IFNDEF NO_JS}
   FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
   {$ENDIF}
   FConsentEngine := TFHIRNullConsentEngine.Create(storage.Factory.link);
 
-  FMaps := TFslMap<TFHIRStructureMapW>.create;
+  FMaps := TFslMap<TFHIRStructureMapW>.create('tx.maps');
   if DirectoryExists('c:\temp') then
     FTaskFolder := 'c:\temp\fhir-server-tasks'
   else
@@ -442,7 +442,7 @@ var
 begin
   FLock.Lock;
   try
-    result := TFslMap<TFHIRStructureMapW>.create;
+    result := TFslMap<TFHIRStructureMapW>.create('maps');
     for s in FMaps.Keys do
       result.Add(s, FMaps[s].Link);
   finally

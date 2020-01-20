@@ -331,7 +331,7 @@ end;
 constructor TFHIRPackageManager.Create(user : boolean);
 begin
   inherited Create;
-  FCache := TFslMap<TNpmPackage>.create;
+  FCache := TFslMap<TNpmPackage>.create('Npm Package manager');
   FUser := user;
   if user then
     FFolder := path([UserFolder, '.fhir', 'packages'])

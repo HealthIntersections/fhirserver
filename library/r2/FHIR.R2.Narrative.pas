@@ -799,7 +799,7 @@ var
 begin
   results := TFslList<TPropertyWrapper>.create;
   try
-    map := TFslMap<TPropertyWrapper>.create;
+    map := TFslMap<TPropertyWrapper>.create('ngen');
     try
       for p in children do
         if (p.getName() = 'extension') or (p.getName() = 'modifierExtension') then

@@ -135,7 +135,7 @@ begin
   FExpansions.PreventDuplicates;
   FDependencies := TFslStringObjectMatch.create;
   FDependencies.PreventDuplicates;
-  FClosures := TFslMap<TClosureManager>.create;
+  FClosures := TFslMap<TClosureManager>.create('tx.closure');
   if (DB <> nil) then
     LoadClosures;
 end;

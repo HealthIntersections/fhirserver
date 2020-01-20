@@ -100,7 +100,7 @@ procedure TFHIRJavascriptTests.TestPatient;
 var
   pat : TFHIRPatient;
 begin
-  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  pat := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')) as TFhirPatient;
   try
     FJs.execute(
       'function func(pat) {'+#13#10+
@@ -141,7 +141,7 @@ procedure TFHIRJavascriptTests.TestPatient2;
 var
   pat : TFHIRPatient;
 begin
-  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  pat := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')) as TFhirPatient;
   try
     FJs.execute(
       'function func(pat) {'+#13#10+
@@ -182,7 +182,7 @@ procedure TFHIRJavascriptTests.TestPatientImmutable;
 var
   pat : TFHIRPatient;
 begin
-  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  pat := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')) as TFhirPatient;
   try
     FJs.ObjectsImmutable := true;
     FJs.Strict := true;
@@ -225,7 +225,7 @@ procedure TFHIRJavascriptTests.TestPatientMutation;
 var
   pat : TFHIRPatient;
 begin
-  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  pat := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')) as TFhirPatient;
   try
     FJs.execute(
       'function func(pat) {'+#13#10+
@@ -244,7 +244,7 @@ procedure TFHIRJavascriptTests.TestPatientUnknownProperty;
 var
   pat : TFHIRPatient;
 begin
-  pat := fileToResource(FHIR_PUB_FILE('patient-example.xml')) as TFhirPatient;
+  pat := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')) as TFhirPatient;
   try
     FJs.execute(
       'function func(pat) {'+#13#10+
@@ -271,7 +271,7 @@ procedure TFHIRJavascriptTests.TestObservation;
 var
   obs : TFhirObservation;
 begin
-  obs := fileToResource(FHIR_PUB_FILE('observation-example.xml')) as TFhirObservation;
+  obs := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'observation-example.xml')) as TFhirObservation;
   try
     FJs.execute(
       'function func(obs) {'+#13#10+

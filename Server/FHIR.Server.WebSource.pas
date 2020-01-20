@@ -131,7 +131,7 @@ var
   i : integer;
 begin
   inherited Create;
-  FZip := TFslMap<TFslBuffer>.create;
+  FZip := TFslMap<TFslBuffer>.create('web.source');
   zip := TFslZipReader.Create;
   try
     zip.Stream := TFslFile.Create(path, fmOpenRead);

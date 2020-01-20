@@ -226,7 +226,7 @@ end;
 constructor TNpmPackageFolder.Create;
 begin
   inherited create;
-  FContent := TFslMap<TFslBuffer>.create;
+  FContent := TFslMap<TFslBuffer>.create('Npm Packages');
 end;
 
 constructor TNpmPackageFolder.Create(name: String);
@@ -341,7 +341,7 @@ end;
 constructor TNpmPackage.Create;
 begin
   inherited;
-  FFolders := TFslMap<TNpmPackageFolder>.create;
+  FFolders := TFslMap<TNpmPackageFolder>.create('Npm Folders');
 end;
 
 destructor TNpmPackage.Destroy;

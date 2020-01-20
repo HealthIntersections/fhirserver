@@ -40,7 +40,7 @@ uses
 
 Type
   [TextFixture]
-  TFhirHTTPMetadataResourceManagerTests = class (TObject)
+  TFhirHTTPMetadataResourceManagerTests4 = class (TObject)
   private
 
   public
@@ -53,22 +53,22 @@ Type
 implementation
 
 
-{ TFhirHTTPMetadataResourceManagerTests }
+{ TFhirHTTPMetadataResourceManagerTests4 }
 
-procedure TFhirHTTPMetadataResourceManagerTests.setup;
+procedure TFhirHTTPMetadataResourceManagerTests4.setup;
 begin
 end;
 
-procedure TFhirHTTPMetadataResourceManagerTests.teardown;
+procedure TFhirHTTPMetadataResourceManagerTests4.teardown;
 begin
 end;
 
-procedure TFhirHTTPMetadataResourceManagerTests.testSingleNoVersion;
+procedure TFhirHTTPMetadataResourceManagerTests4.testSingleNoVersion;
 begin
 
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFhirHTTPMetadataResourceManagerTests);
+  TDUnitX.RegisterTestFixture(TFhirHTTPMetadataResourceManagerTests4);
 end.
 

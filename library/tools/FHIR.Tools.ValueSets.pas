@@ -375,7 +375,7 @@ begin
     FOthers.Add(cc.system, FOnGetCSProvider(self, cc.system, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
   if (cs = nil) and (FParams.valueSetMode <> vsvmNoMembership) then
-    raise ETerminologyError.Create('Unknown code system uri '''+cc.system+'''');
+    raise ETerminologyError.Create('CodeSystem uri '''+cc.system+''' is unknown');
   FNoValueSetExpansion := cs = nil;
   if cs <> nil then
   begin
@@ -721,8 +721,15 @@ begin
                if ctxt = nil then
                begin
                  msg(message);
-                 msg('The code "'+c.code+'" is not valid in the system '+c.system);
-                 cause := itInvalid;
+                 if (c.system = 'http://ncimeta.nci.nih.gov') then
+                 begin
+                   // cause := itInvali;
+                 end
+                 else
+                 begin
+                   msg('The code "'+c.code+'" is not valid in the system '+c.system);
+                   cause := itInvalid;
+                 end;
                end
                else
                begin
@@ -985,7 +992,7 @@ begin
     dependencies.Add(source.url);
 
   filter := TSearchFilterText.create(textFilter);
-  map := TFslMap<TFhirValueSetExpansionContainsW>.create;
+  map := TFslMap<TFhirValueSetExpansionContainsW>.create('VS.Expander.map');
   list := TFslList<TFhirValueSetExpansionContainsW>.create;
   try
     if filter.null then

@@ -93,11 +93,11 @@ constructor TFHIRServerIniFile.Create(const FileName: string);
 begin
   inherited create;
   FIni := TIniFile.Create(filename);
-  FTerminologies := TFslMap<TFHIRServerIniComplex>.create;
-  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create;
-  FDatabases := TFslMap<TFHIRServerIniComplex>.create;
-  FEndPoints := TFslMap<TFHIRServerIniComplex>.create;
-  FDestinations := TFslMap<TFHIRServerIniComplex>.create;
+  FTerminologies := TFslMap<TFHIRServerIniComplex>.create('Ini.Terminologies');
+  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create('Ini.IDProviders');
+  FDatabases := TFslMap<TFHIRServerIniComplex>.create('Ini.Databases');
+  FEndPoints := TFslMap<TFHIRServerIniComplex>.create('Ini.EndPoints');
+  FDestinations := TFslMap<TFHIRServerIniComplex>.create('Ini.Destinations');
   readSection('terminologies', FTerminologies);
   readSection('identity-providers', FIdentityProviders);
   readSection('endpoints', FEndPoints);

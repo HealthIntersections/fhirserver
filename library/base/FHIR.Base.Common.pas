@@ -2014,7 +2014,7 @@ end;
 constructor TFHIRMetadataResourceManagerW<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create;
+  FMap := TFslMap<T>.create('Metadata Resource Manager ('+T.className+')');
   FMap.defaultValue := nil;
   FList := TFslList<T>.create;
 end;

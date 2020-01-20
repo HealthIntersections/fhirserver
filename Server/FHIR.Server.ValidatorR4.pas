@@ -97,9 +97,9 @@ begin
   FProfile := TFhirExpansionParams.create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create;
-  FSearchParameters := TFslMap<TFhirSearchParameter>.create;
-  FCompartments := TFslMap<TFhirCompartmentDefinition>.create;
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('ctxt.q');
+  FSearchParameters := TFslMap<TFhirSearchParameter>.create('ctxt.sp');
+  FCompartments := TFslMap<TFhirCompartmentDefinition>.create('ctxt.comp');
   FSearchParameters.defaultValue := nil;
   FCompartments.defaultValue := nil;
 end;

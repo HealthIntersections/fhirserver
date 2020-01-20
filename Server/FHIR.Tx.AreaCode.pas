@@ -113,7 +113,7 @@ Constructor TAreaCodeServices.create();
 begin
   inherited Create;
   FCodes := TFslList<TAreaCodeConcept>.create;
-  FMap := TFslMap<TAreaCodeConcept>.create;
+  FMap := TFslMap<TAreaCodeConcept>.create('tx.areacode');
   Load;
 end;
 

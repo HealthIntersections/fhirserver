@@ -41,7 +41,7 @@ uses
   FHIR.Support.Tests, FHIR.Support.Comparisons;
 
 type
-  FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
+  FHIRParserTestCase4Attribute = class (FHIRFolderBasedTestCase4Attribute)
   public
     constructor Create;
   end;
@@ -49,7 +49,7 @@ type
   [TextFixture]
   TFHIRParserTests = class (TObject)
   public
-    [FHIRParserTestCase] procedure RoundTripTest(Filename: String);
+    [FHIRParserTestCase4] procedure RoundTripTest(Filename: String);
   end;
 
   [TextFixture]
@@ -76,7 +76,7 @@ begin
   json2 := 'C:\temp\json2.json';
   if FileExists(src) then  
     TFIle.Delete(src);
-  TFile.Copy(FHIR_PUB_FILE('observation-decimal.xml'), src, false);
+  TFile.Copy(FHIR_TESTING_FILE(4, 'examples', 'observation-decimal.xml'), src, false);
   obs := TFHIRParsers.ParseFile(nil, ffXml, 'en', src) as TFhirObservation;
   try
     TFHIRParsers.composeFile(nil, ffJson, obs, 'en', json, OutputStylePretty);
@@ -120,7 +120,7 @@ begin
     r.Free;
   end;
 
-  ctxt := TTestingWorkerContext.Use;
+  ctxt := TTestingWorkerContext4.Use;
   try
     re := TFHIRMMManager.parseFile(ctxt, filename, ffXml);
     try
@@ -164,7 +164,7 @@ begin
     r.Free;
   end;
 
-  ctxt := TTestingWorkerContext.Use;
+  ctxt := TTestingWorkerContext4.Use;
   try
     re := TFHIRMMManager.parseFile(ctxt, j1, ffJson);
     try
@@ -213,11 +213,11 @@ begin
   assert.IsTrue(b, msg);*)
 end;
 
-{ FHIRParserTestCaseAttribute }
+{ FHIRParserTestCase4Attribute }
 
-constructor FHIRParserTestCaseAttribute.Create;
+constructor FHIRParserTestCase4Attribute.Create;
 begin
-  inherited Create(FHIR_PUB_FILE('examples'), '.xml', 20);
+  inherited Create('examples', '.xml', 20);
 end;
 
 initialization

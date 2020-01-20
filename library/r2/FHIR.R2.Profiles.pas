@@ -1514,10 +1514,10 @@ end;
 constructor TBaseWorkerContextR2.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FNamingSystems := TFslMap<TFhirNamingSystem>.create;
+  FNamingSystems := TFslMap<TFhirNamingSystem>.create('ns.profiles');
   FLock := TFslLock.Create('worker-context');
   FProfiles := TProfileManager.Create;
-  FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
+  FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create('profiles.custom');
 end;
 
 destructor TBaseWorkerContextR2.Destroy;
@@ -1861,8 +1861,8 @@ constructor TProfileManager.Create;
 begin
   inherited;
   lock := TFslLock.Create('profiles');
-  FProfilesById := TFslMap<TFhirStructureDefinition>.create;
-  FProfilesByURL := TFslMap<TFhirStructureDefinition>.create;
+  FProfilesById := TFslMap<TFhirStructureDefinition>.create('profiles.id');
+  FProfilesByURL := TFslMap<TFhirStructureDefinition>.create('profiles.url');
 end;
 
 destructor TProfileManager.Destroy;

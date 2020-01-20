@@ -1114,7 +1114,7 @@ end;
 constructor TFHIRCodeSystemManager.Create;
 begin
   inherited;
-  FMap := TFslMap<TFHIRCodeSystemEntry>.create;
+  FMap := TFslMap<TFHIRCodeSystemEntry>.create('CS.Manager');
   FMap.defaultValue := nil;
   FList := TFslList<TFHIRCodeSystemEntry>.create;
 end;

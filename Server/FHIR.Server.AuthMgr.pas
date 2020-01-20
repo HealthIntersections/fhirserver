@@ -189,7 +189,7 @@ begin
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TFslLock.Create('auth-server');
-  FLoginTokens := TFslMap<TFhirLoginToken>.create;
+  FLoginTokens := TFslMap<TFhirLoginToken>.create('auth.server.login');
   FNonceList := TStringList.create;
   FNonceList.Sorted := true;
 

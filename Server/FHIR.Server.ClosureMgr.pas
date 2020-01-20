@@ -268,7 +268,7 @@ var
   elements : TFslMap<TFhirConceptMapGroupElementW>;
   element : TFhirConceptMapGroupElementW;
 begin
-  elements := TFslMap<TFhirConceptMapGroupElementW>.create;
+  elements := TFslMap<TFhirConceptMapGroupElementW>.create('tx.closure.run');
   try
     conn.SQL := 'Select ClosureEntryKey, src.URL as UrlSrc, src.Code as CodeSrc, tgt.URL as UrlTgt, tgt.Code as CodeTgt '+
        'from ClosureEntries, Concepts as src, Concepts as tgt '+

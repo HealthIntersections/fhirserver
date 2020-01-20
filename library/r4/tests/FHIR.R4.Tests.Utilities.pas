@@ -38,7 +38,7 @@ uses
 
 type
   [TextFixture]
-  TFHIRUtilityTests = Class (TObject)
+  TFHIRUtilityTests4 = Class (TObject)
   public
     [SetUp] procedure Setup;
 
@@ -52,13 +52,13 @@ type
 
 implementation
 
-{ TFHIRUtilityTests }
+{ TFHIRUtilityTests4 }
 
-procedure TFHIRUtilityTests.TestBundleSigningXml;
+procedure TFHIRUtilityTests4.TestBundleSigningXml;
 var
   bnd : TFhirBundle;
 begin
-  bnd := fileToResource(FHIR_PUB_FILE('document-example-dischargesummary.xml')) as TFHIRBundle;
+  bnd := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'document-example-dischargesummary.xml')) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffXml, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
     ResourceToFile(bnd, 'c:\temp\signed.xml', ffXml, OutputStylePretty);
@@ -68,17 +68,17 @@ begin
   end;
 end;
 
-procedure TFHIRUtilityTests.Setup;
+procedure TFHIRUtilityTests4.Setup;
 begin
   IdSSLOpenSSLHeaders.Load;
   LoadEAYExtensions;
 end;
 
-procedure TFHIRUtilityTests.TestBundleSigningJson;
+procedure TFHIRUtilityTests4.TestBundleSigningJson;
 var
   bnd : TFhirBundle;
 begin
-  bnd := fileToResource(FHIR_PUB_FILE('document-example-dischargesummary.xml')) as TFHIRBundle;
+  bnd := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'document-example-dischargesummary.xml')) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffJson, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
     ResourceToFile(bnd, 'c:\temp\signed.json', ffJson, OutputStylePretty);
@@ -88,7 +88,7 @@ begin
   end;
 end;
 
-procedure TFHIRUtilityTests.TestReferenceAnalysis;
+procedure TFHIRUtilityTests4.TestReferenceAnalysis;
 var
   ref : TFhirReference;
 begin
@@ -121,7 +121,7 @@ begin
   end;
 end;
 
-procedure TFHIRUtilityTests.TestZipGeneration;
+procedure TFHIRUtilityTests4.TestZipGeneration;
 var
   dr : TFHIRDocumentReference;
   fn : String;
@@ -148,7 +148,7 @@ begin
   end;
 end;
 
-procedure TFHIRUtilityTests.TestZipPartCreation;
+procedure TFHIRUtilityTests4.TestZipPartCreation;
 var
   att : TFhirAttachment;
   p : TFslZipPart;
@@ -172,5 +172,5 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFHIRUtilityTests);
+  TDUnitX.RegisterTestFixture(TFHIRUtilityTests4);
 end.

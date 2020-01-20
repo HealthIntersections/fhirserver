@@ -2160,7 +2160,7 @@ end;
 constructor TJsonObject.create;
 begin
   inherited Create;
-  FProperties := TFslMap<TJsonNode>.Create;
+  FProperties := TFslMap<TJsonNode>.Create('Json Properties');
   FProperties.trackOrder;
 end;
 

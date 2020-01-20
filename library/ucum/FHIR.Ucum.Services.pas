@@ -477,7 +477,7 @@ var
 begin
   if Code = '' then
     RaiseError('Convert', 'A unit is required');
-  result := TFslMap<TUcumDefinedUnit>.Create;
+  result := TFslMap<TUcumDefinedUnit>.Create('Ucum.res');
   Try
     base := FModel.baseUnits[code];
     if assigned(base) then

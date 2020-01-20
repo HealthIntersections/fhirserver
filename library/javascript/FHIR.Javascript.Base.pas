@@ -105,8 +105,8 @@ uses
 constructor TFHIRJavascript.Create;
 begin
   inherited create;
-  FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create;
-  FFactories := TFslMap<TFHIRFactory>.create;
+  FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create('Defined Elements');
+  FFactories := TFslMap<TFHIRFactory>.create('Javascript factories');
 //  TFHIRClientJSHelper.registerFHIRClient(self, worker);
 //  TFHIRServerJsHelper.registerFHIRServerEvent(self);
 end;

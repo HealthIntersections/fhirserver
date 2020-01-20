@@ -472,7 +472,7 @@ end;
 constructor TTurtleComplex.Create(start : TSourceLocation);
 begin
   inherited;
-  FPredicates := TFslMap<TTurtleObject>.create;
+  FPredicates := TFslMap<TTurtleObject>.create('Turtle Complex');
   FNames := TStringList.Create;
   Fnames.Duplicates := dupIgnore;
 end;

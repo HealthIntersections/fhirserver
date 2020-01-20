@@ -391,13 +391,13 @@ end;
 constructor TSnomedCombiner.Create;
 begin
   inherited;
-  FStore := TFslMap<TSnomedCombinedStoreEntry>.create;
+  FStore := TFslMap<TSnomedCombinedStoreEntry>.create('sn.comb.store');
   FOthers := TFslList<TSnomedServices>.create;
-  FConcepts := TFslMap<TSnomedCombinedConcept>.create(500000);
-  FDependencies := TFslMap<TSnomedCombinedDependency>.Create;
-  FDescriptions := TFslMap<TSnomedCombinedDescription>.create(1500000);
-  FRelationships := TFslMap<TSnomedCombinedRelationship>.create(3000000);
-  FRefSets := TFslMap<TSnomedCombinedReferenceSet>.create(1000);
+  FConcepts := TFslMap<TSnomedCombinedConcept>.create('sn.comb.conc', 500000);
+  FDependencies := TFslMap<TSnomedCombinedDependency>.Create('sn.comb.dep');
+  FDescriptions := TFslMap<TSnomedCombinedDescription>.create('sn.comb.desc', 1500000);
+  FRelationships := TFslMap<TSnomedCombinedRelationship>.create('sn.comb.rel', 3000000);
+  FRefSets := TFslMap<TSnomedCombinedReferenceSet>.create('sn.comb.refset', 1000);
   FSummary := TStringList.create;
   FIssues := TStringList.create;
 end;
@@ -1566,7 +1566,7 @@ begin
   inherited;
   FTypes := TStringList.create;
   FFields := TStringList.create;
-  FMembers := TFslMap<TSnomedCombinedReferenceSetEntry>.create;
+  FMembers := TFslMap<TSnomedCombinedReferenceSetEntry>.create('sn.comb.refset');
 end;
 
 destructor TSnomedCombinedReferenceSet.Destroy;

@@ -40,7 +40,7 @@ uses
 
 Type
   [TextFixture]
-  TFhirHTTPClientTests = class (TObject)
+  TFhirHTTPClientTests4 = class (TObject)
   private
     FWorker : TFHIRWorkerContext;
 
@@ -53,9 +53,9 @@ Type
 implementation
 
 
-{ TFhirHTTPClientTests }
+{ TFhirHTTPClientTests4 }
 (*
-class function TFhirHTTPClientTests.LoadResource(filename: String): TFHIRResource;
+class function TFhirHTTPClientTests4.LoadResource(filename: String): TFHIRResource;
 var
   f : TFileStream;
   prsr : TFHIRJsonParser;
@@ -75,7 +75,7 @@ begin
   end;
 end;
 
-class procedure TFhirHTTPClientTests.testClient(client: TFhirHTTPClient);
+class procedure TFhirHTTPClientTests4.testClient(client: TFhirHTTPClient);
 var
   conf : TFHIRConformance;
   patient : TFhirPatient;
@@ -108,7 +108,7 @@ begin
     raise ETestCase.create('test failed');
 end;
 
-class procedure TFhirHTTPClientTests.tests(url: String);
+class procedure TFhirHTTPClientTests4.tests(url: String);
 var
   client : TFhirHTTPClient;
 begin
@@ -144,19 +144,19 @@ end;
 
  *)
 
-{ TFhirHTTPClientTests }
+{ TFhirHTTPClientTests4 }
 
-procedure TFhirHTTPClientTests.setup;
+procedure TFhirHTTPClientTests4.setup;
 begin
-  FWorker := TTestingWorkerContext.Use;
+  FWorker := TTestingWorkerContext4.Use;
 end;
 
-procedure TFhirHTTPClientTests.teardown;
+procedure TFhirHTTPClientTests4.teardown;
 begin
   FWorker.Free;
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFhirHTTPClientTests);
+  TDUnitX.RegisterTestFixture(TFhirHTTPClientTests4);
 end.
 

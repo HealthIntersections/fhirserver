@@ -544,7 +544,7 @@ var
 begin
   result := false;
   NotFound(request, response);
-  filename := FHIR_PUB_FILE('patient-'+request.Id+'.xml');
+  filename := FHIR_TESTING_FILE(4, 'examples', 'patient-'+request.Id+'.xml');
   if check(response, FIsReadAllowed and (request.ResourceName = 'Patient') and FileExists(filename), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
   begin
     result := true;

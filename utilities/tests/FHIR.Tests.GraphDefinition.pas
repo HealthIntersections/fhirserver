@@ -70,7 +70,7 @@ var
   i: integer;
 begin
   if tests = nil then
-    tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition\manifest.xml', [xpDropWhitespace]);
+    tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'graphdefinition', 'manifest.xml'), [xpDropWhitespace]);
 
   test := tests.document.first;
   i := 0;
@@ -97,11 +97,11 @@ end;
 procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('condition-example.xml')))
+    list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'condition-example.xml')))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('patient-example.xml')));
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_PUB_FILE('patient-example-xds.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml')));
   end;
 end;
 
@@ -114,7 +114,7 @@ begin
   p := context.Split(['/']);
   if p[length(p)-1] <> '$graph' then
     raise ELibraryException.Create('not understood');
-  f := TFileStream.Create(FHIR_PUB_FILE(p[0]+'-'+p[1]+'.xml'), fmOpenRead + fmShareDenyWrite);
+  f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', p[0]+'-'+p[1]+'.xml'), fmOpenRead + fmShareDenyWrite);
   try
     x := TFHIRXmlParser.Create(nil, 'en');
     try
@@ -153,13 +153,13 @@ begin
   else
   begin
     parts := (reference as TFHIRReference).reference.Split(['/']);
-    filename := FHIR_PUB_FILE(parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
+    filename := FHIR_TESTING_FILE(4, 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
     result := FileExists(filename);
     if result then
       target := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename)
     else
     begin
-      for filename in TDirectory.GetFiles(FHIR_PUB_HOME_1, parts[0].ToLower+'-*.xml', TSearchOption.soTopDirectoryOnly) do
+      for filename in TDirectory.GetFiles(FHIR_TESTING_FILE(4, 'examples', ''), parts[0].ToLower+'-*.xml', TSearchOption.soTopDirectoryOnly) do
       begin
         if FileExists(ChangeFileExt(filename, '.json')) then
         begin
@@ -180,7 +180,7 @@ var
   test : TMXmlElement;
 begin
   if tests = nil then
-    tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition\manifest.xml', [xpDropWhitespace]);
+    tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'graphdefinition', 'manifest.xml'), [xpDropWhitespace]);
 
   result := nil;
   test := tests.document.first;
@@ -204,7 +204,7 @@ var
 begin
   Assert.IsTrue(name <> '');
   test := findTest(name);
-  src := FileToString(path(['C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition', test.attribute['source']]), TEncoding.UTF8);
+  src := FileToString(FHIR_TESTING_FILE(4, 'graphdefinition', test.attribute['source']), TEncoding.UTF8);
   gd := nil;
   try
     parser := TFHIRGraphDefinitionParser4.create;
@@ -213,8 +213,8 @@ begin
     finally
       parser.free;
     end;
-//    StringToFile(TFHIRGraphDefinitionParser4.asString(gd, false), path(['C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition', test.attribute['source']+'.out']), TEncoding.UTF8);
-    engine := TFHIRGraphDefinitionEngine4.Create(TTestingWorkerContext.Use);
+//    StringToFile(TFHIRGraphDefinitionParser4.asString(gd, false), path([FHIR_TESTING_FILE(4, 'examples', 'graphdefinition'), test.attribute['source']+'.out']), TEncoding.UTF8);
+    engine := TFHIRGraphDefinitionEngine4.Create(TTestingWorkerContext4.Use);
     try
       engine.OnListResources := ListResources;
       engine.OnFollowReference := ResolveReference;
@@ -228,7 +228,7 @@ begin
 
       engine.execute;
 
-      f := TFileStream.Create(path(['C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\graphdefinition', test.attribute['source']+'.bundle']), fmCreate);
+      f := TFileStream.Create(FHIR_TESTING_FILE(4, 'graphdefinition', test.attribute['source']+'.bundle'), fmCreate);
       try
         x := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en');
         try

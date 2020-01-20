@@ -801,7 +801,7 @@ var
 begin
   results := TFslList<TPropertyWrapper>.create;
   try
-    map := TFslMap<TPropertyWrapper>.create;
+    map := TFslMap<TPropertyWrapper>.create('ngen');
     try
       map.defaultValue := nil;
       for p in children do

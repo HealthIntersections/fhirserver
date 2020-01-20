@@ -3443,7 +3443,7 @@ begin
             params.content := request.Resource.Link as TFhirResource;
         end;
 
-        lib := TFslMap<TFHIRStructureMap>.create;
+        lib := TFslMap<TFHIRStructureMap>.create('op.transform');
         try
           libw := native(manager).ServerContext.getMaps;
           try

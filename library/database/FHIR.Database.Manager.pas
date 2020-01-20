@@ -783,7 +783,7 @@ begin
   FSQL := '';
   FTerminated := true;
   FInTransaction := false;
-  FBoundItems := TFslMap<TKDBBoundParam>.create;
+  FBoundItems := TFslMap<TKDBBoundParam>.create('KDB.Parameters');
   FTables := TStringList.create;
 end;
 

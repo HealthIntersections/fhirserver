@@ -78,7 +78,7 @@ begin
   inherited create;
   FLock := TFslLock.Create('session-manager');
   FTags := TFHIRTagList.Create(factory.link);
-  FTagsByKey := TFslMap<TFHIRTag>.Create;
+  FTagsByKey := TFslMap<TFHIRTag>.Create('tags');
   FFactory := factory;
 end;
 

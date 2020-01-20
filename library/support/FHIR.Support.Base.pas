@@ -405,6 +405,7 @@ Type
     FAsAddedKeys : TStringList;
     FDefault : T;
     FHasDefault : boolean;
+    FName : String;
 
     procedure SetCapacity(ACapacity: Integer);
     procedure Rehash(NewCapPow2: Integer);
@@ -428,8 +429,8 @@ Type
     procedure KeyNotify(const Key: String; Action: TCollectionNotification); virtual;
     procedure ValueNotify(const Value: T; Action: TCollectionNotification); virtual;
   public
-    constructor Create(ACapacity: Integer = 0); overload;
-    constructor Create(const Collection: TEnumerable<TFslPair<T>>); overload;
+    constructor Create(name : String; ACapacity: Integer = 0);
+    constructor CreateCollection(name : String; const Collection: TEnumerable<TFslPair<T>>); overload;
     destructor Destroy; override;
     function Link : TFslMap<T>; overload;
     Procedure Free; Overload;
@@ -1816,7 +1817,7 @@ var
   newCap: Integer;
 begin
   if ACapacity < Count then
-    raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
+    raise EArgumentOutOfRangeException.Create('Attempt to set capacity to less than count for map '+FName);
 
   if ACapacity = 0 then
     Rehash(0)
@@ -1856,7 +1857,7 @@ begin
   if FAsAddedKeys <> nil then
     result := FAsAddedKeys
   else
-    raise EFSLException.Create('This Map is not tracking order of addition');
+    raise EFSLException.Create('This map "'+Fname+'" is not tracking order of addition');
 end;
 
 function TFslMap<T>.GetBucketIndex(const Key: String; HashCode: Integer): Integer;
@@ -1896,7 +1897,7 @@ begin
   else if hasDefault then
     result := FDefault
   else
-    raise EListError.CreateRes(@SGenericItemNotFound);
+    raise EListError.Create('Attempt to access unknown value "'+key+'" from map ' + Fname);
 end;
 
 procedure TFslMap<T>.SetItem(const Key: String; const Value: T);
@@ -1906,7 +1907,7 @@ var
 begin
   index := GetBucketIndex(Key, Hash(Key));
   if index < 0 then
-    raise EListError.CreateRes(@SGenericItemNotFound);
+    raise EListError.Create('Attempt to set unknown value "'+key+'" in map ' + Fname);
 
   oldValue := FItems[index].Value;
   FItems[index].Value := Value;
@@ -1948,19 +1949,20 @@ begin
     FOnValueNotify(Self, Value, Action);
 end;
 
-constructor TFslMap<T>.Create(ACapacity: Integer = 0);
+constructor TFslMap<T>.Create(name : String; ACapacity: Integer = 0);
 begin
   inherited Create;
+  FName := name;
   if ACapacity < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
   SetCapacity(ACapacity);
 end;
 
-constructor TFslMap<T>.Create(const Collection: TEnumerable<TFslPair<T>>);
+constructor TFslMap<T>.CreateCollection(name : String; const Collection: TEnumerable<TFslPair<T>>);
 var
   item: TFslPair<T>;
 begin
-  Create(0);
+  Create(name, 0);
   for item in Collection do
     AddOrSetValue(item.Key, item.Value);
 end;
@@ -1986,7 +1988,7 @@ begin
   hc := Hash(Key);
   index := GetBucketIndex(Key, hc);
   if index >= 0 then
-    raise EListError.CreateRes(@SGenericDuplicateItem);
+    raise EListError.Create('Attempt to add duplicate value "'+key+'" to map ' + FName);
 
   DoAdd(hc, not index, Key, Value);
 end;
@@ -2093,9 +2095,9 @@ end;
 procedure TFslMap<T>.trackOrder;
 begin
   if FAsAddedKeys <> nil then
-    raise EFSLException.Create('Map is already tracking order');
+    raise EFSLException.Create('Map '+FName+' is already tracking order');
   if Count > 0 then
-    raise EFSLException.Create('Map already contains content');
+    raise EFSLException.Create('Map '+FName+' already contains content');
   FAsAddedKeys := TStringList.create;
 end;
 

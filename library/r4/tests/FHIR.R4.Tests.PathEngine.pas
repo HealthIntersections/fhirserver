@@ -44,13 +44,13 @@ uses
   DUnitX.TestFramework;
 
 Type
-  FHIRPathTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  FHIRPathTestCase4Attribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
   [TextFixture]
-  TFHIRPathTests = Class (TObject)
+  TFHIRPathTests4 = Class (TObject)
   private
     engine : TFHIRPathEngine;
     resources : TFslMap<TFHIRResource>;
@@ -62,7 +62,7 @@ Type
     [SetupFixture] procedure setup;
     [TearDownFixture] procedure teardown;
 
-    [FHIRPathTestCase]
+    [FHIRPathTestCase4]
     procedure FHIRPathTest(Name : String);
   End;
 
@@ -71,16 +71,16 @@ implementation
 var
   gtests : TMXmlElement;
 
-{ FHIRPathTestCaseAttribute }
+{ FHIRPathTestCase4Attribute }
 
-function FHIRPathTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+function FHIRPathTestCase4Attribute.GetCaseInfoArray: TestCaseInfoArray;
 var
   group, test : TMXmlElement;
   i, g, t : integer;
   gn, s : String;
 begin
   if gTests = nil then
-    gTests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\fhirpath\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
+    gTests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'fhirpath', 'tests-fhir-r4.xml'), [xpDropWhitespace, xpDropComments]);
   group := gtests.document.first;
   i := 0;
   g := 0;
@@ -111,9 +111,9 @@ begin
 end;
 
 
-{ TFHIRPathTests }
+{ TFHIRPathTests4 }
 
-function TFHIRPathTests.findTest(path: String): TMXmlElement;
+function TFHIRPathTests4.findTest(path: String): TMXmlElement;
 var
   l, r : String;
   gs, ts, g, t : integer;
@@ -148,7 +148,7 @@ begin
   end;
 end;
 
-procedure TFHIRPathTests.FHIRPathTest(Name: String);
+procedure TFHIRPathTests4.FHIRPathTest(Name: String);
 var
   test : TMXmlElement;
   input, expression, s, tn : String;
@@ -179,9 +179,9 @@ begin
         begin
           if not resources.TryGetValue(input, res) then
           begin
-            p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
+            p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, 'en');
             try
-              f := TFileStream.Create(FHIR_PUB_FILE(input), fmOpenRead);
+              f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', input), fmOpenRead);
               try
                 p.source := f;
                 p.parse;
@@ -274,21 +274,21 @@ begin
   end;
 end;
 
-procedure TFHIRPathTests.setup;
+procedure TFHIRPathTests4.setup;
 begin
   resources := TFslMap<TFHIRResource>.create;
   if gTests = nil then
-    gTests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\fhirpath\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
+    gTests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'fhirpath', 'tests-fhir-r4.xml'), [xpDropWhitespace, xpDropComments]);
   {$IFNDEF SIMPLETEST}
   ucum := TUcumServices.Create;
   ucum.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum-essence.xml');
-  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, TUcumServiceImplementation.Create(ucum.link));
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext4.Use, TUcumServiceImplementation.Create(ucum.link));
   {$ELSE}
   engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil);
   {$ENDIF}
 end;
 
-procedure TFHIRPathTests.teardown;
+procedure TFHIRPathTests4.teardown;
 begin
   {$IFNDEF SIMPLETEST}
   ucum.free;
@@ -298,8 +298,7 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFHIRPathTests);
-  TDUnitX.RegisterTestFixture(TFHIRPathTests);
+  TDUnitX.RegisterTestFixture(TFHIRPathTests4);
 finalization
   gTests.Free;
 end.

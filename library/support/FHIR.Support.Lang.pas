@@ -101,7 +101,7 @@ constructor TIso4217CurrencySet.Create;
 begin
   inherited;
   FCodes := TFslList<TIso4217Currency>.create;
-  FMap := TFslMap<TIso4217Currency>.create;
+  FMap := TFslMap<TIso4217Currency>.create('tx.currency');
   Load;
 end;
 

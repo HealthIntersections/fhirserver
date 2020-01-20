@@ -3000,7 +3000,7 @@ var
 begin
   result := TFslList<TFhirConceptMapGroupW>.create;
   try
-    map := TFslMap<TFhirConceptMapGroupW>.create;
+    map := TFslMap<TFhirConceptMapGroupW>.create('cm2.group');
     try
       for e in cm.elementList do
         for t in e.targetList do

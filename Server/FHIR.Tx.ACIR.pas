@@ -118,7 +118,7 @@ Constructor TACIRServices.create();
 begin
   inherited Create;
   FList := TFslList<TACIRConcept>.create;
-  FMap := TFslMap<TACIRConcept>.create;
+  FMap := TFslMap<TACIRConcept>.create('tx.acir');
 
   Load;
 end;

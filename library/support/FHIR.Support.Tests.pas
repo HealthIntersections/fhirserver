@@ -42,13 +42,10 @@ Uses
   DUnitX.TestFramework;
 
 var
-  FHIR_PUB_HOME_1 : String = 'c:\work\org.hl7.fhir.old\org.hl7.fhir.r4\build\publish';  // lots of the tests depend on content found in the FHIR publication
-  FHIR_SRC_HOME_1 : String = 'c:\work\org.hl7.fhir.old\org.hl7.fhir.r4\build'; // or in the source
+  FHIR_TEST_CASE_ROOT : String = 'C:\work\org.hl7.fhir\fhir-test-cases';  // lots of the tests depend on content found in the FHIR publication
 
-function FHIR_PUB_FILE(fn : String) : String; overload;
-function FHIR_PUB_FILE(parts : Array of String) : String; overload;
-function FHIR_SRC_FILE(fn : String) : String; overload;
-function FHIR_SRC_FILE(parts : Array of String) : String; overload;
+function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String; overload;
+function FHIR_TESTING_FILE(folder, filename : String) : String; overload;
 
 Type
   TFslString = class (TFslObject)
@@ -835,7 +832,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\xml-patch-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'xml-patch-tests.xml'), [xpResolveNamespaces]);
   try
     test := tests.document.first;
     i := 0;
@@ -895,7 +892,7 @@ end;
 
 procedure TXmlPatchTests.setup;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\patch\xml-patch-tests.xml', [xpResolveNamespaces, xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'xml-patch-tests.xml'), [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
@@ -1860,7 +1857,7 @@ var
   s : String;
   ttl : TTurtleDocument;
 begin
-  s := fileToString('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\turtle\'+filename, TEncoding.UTF8);
+  s := fileToString(FHIR_TESTING_FILE('turtle', filename), TEncoding.UTF8);
   try
     ttl := TTurtleParser.parse(s);
     try
@@ -4231,7 +4228,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(FHIR_PUB_FILE('observation-decimal.json'), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', 'observation-decimal.json'), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4293,7 +4290,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(FHIR_PUB_FILE('account-example.json'), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', 'account-example.json'), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4511,58 +4508,15 @@ end;
 //end;
   *)
 
-function FHIR_PUB_FILE(fn : String) : String;
+function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String;
 begin
-  result := IncludeTrailingPathDelimiter(FHIR_PUB_HOME_1)+fn;
+  result := Path([FHIR_TEST_CASE_ROOT, 'r'+inttostr(ver), folder, filename]);
 end;
 
-const psc = {$IFDEF MSWINDOWS} '\' {$ELSE} '/' {$ENDIF};
-
-function FHIR_PUB_FILE(parts : array of String) : String;
-var
-  part : String;
-  s : String;
+function FHIR_TESTING_FILE(folder, filename : String) : String;
 begin
-  result := FHIR_PUB_HOME_1;
-  for part in parts do
-  begin
-    s := part.Replace('/', psc).Replace('\', psc);
-    if result = '' then
-      result := s
-    else if not result.EndsWith(psc) and not s.startsWith(psc) then
-      result := result + psc + s
-    else if not result.EndsWith(psc) or not s.startsWith(psc) then
-      result := result + s
-    else
-      result := result + s.substring(1);
-  end;
+  result := Path([FHIR_TEST_CASE_ROOT, folder, filename]);
 end;
-
-function FHIR_SRC_FILE(fn : String) : String;
-begin
-  result := IncludeTrailingPathDelimiter(FHIR_SRC_HOME_1)+fn;
-end;
-
-function FHIR_SRC_FILE(parts : array of String) : String;
-var
-  part : String;
-  s : String;
-begin
-  result := FHIR_SRC_HOME_1;
-  for part in parts do
-  begin
-    s := part.Replace('/', psc).Replace('\', psc);
-    if result = '' then
-      result := s
-    else if not result.EndsWith(psc) and not s.startsWith(psc) then
-      result := result + psc + s
-    else if not result.EndsWith(psc) or not s.startsWith(psc) then
-      result := result + s
-    else
-      result := result + s.substring(1);
-  end;
-end;
-
 
 { TFslTestObjectList }
 

@@ -143,7 +143,7 @@ end;
 constructor TFHIRTuple5.Create;
 begin
   inherited;
-  FProperties := TFslMap<TFHIRSelectionList>.create;
+  FProperties := TFslMap<TFHIRSelectionList>.create('tuple');
 end;
 
 destructor TFHIRTuple5.Destroy;
