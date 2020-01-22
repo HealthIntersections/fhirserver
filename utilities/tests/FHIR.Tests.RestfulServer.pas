@@ -237,7 +237,7 @@ end;
 constructor TTestStorageService.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FOAuths := TFslMap<TTestOAuthLogin>.create;
+  FOAuths := TFslMap<TTestOAuthLogin>.create('oauths');
 end;
 
 function TTestStorageService.createOperationContext(lang: String): TFHIROperationEngine;

@@ -175,7 +175,7 @@ begin
   FEngine := existing.FEngine;
   FDocument := existing.FDocument;
   FExternalContext := existing.FExternalContext.Link;
-  FVars := TFslMap<TFHIRObject>.create;
+  FVars := TFslMap<TFHIRObject>.create('liquid.context');
   FVars.addAll(existing.Fvars);
 end;
 
@@ -185,7 +185,7 @@ begin
   FEngine := engine;
   FDocument := document;
   FexternalContext := externalContext;
-  FVars := TFslMap<TFHIRObject>.create;
+  FVars := TFslMap<TFHIRObject>.create('Liquid.vars');
 end;
 
 destructor TFHIRLiquidEngineContext.Destroy;
@@ -669,7 +669,7 @@ end;
 constructor TFHIRLiquidInclude.Create;
 begin
   inherited;
-  FParams := TFslMap<TFHIRPathExpressionNode>.create;
+  FParams := TFslMap<TFHIRPathExpressionNode>.create('liquid.includes');
 end;
 
 destructor TFHIRLiquidInclude.Destroy;

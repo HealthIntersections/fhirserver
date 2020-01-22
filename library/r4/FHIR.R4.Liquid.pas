@@ -240,7 +240,7 @@ implementation
 constructor TFHIRLiquidEngineContext.Create(parent : TFHIRLiquidEngineContext; node : TFHIRLiquidNode);
 begin
   inherited create;
-  FVars := TFslMap<TFHIRObject>.create;
+  FVars := TFslMap<TFHIRObject>.create('Liquid.vars');
 
   FParent := parent.link;
   FNode := node.Link;
@@ -895,7 +895,7 @@ end;
 constructor TFHIRLiquidInclude.Create;
 begin
   inherited;
-  FParams := TFslMap<TFHIRPathExpressionNode>.create;
+  FParams := TFslMap<TFHIRPathExpressionNode>.create('Liquid.include');
 end;
 
 destructor TFHIRLiquidInclude.Destroy;

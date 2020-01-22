@@ -1253,7 +1253,6 @@ var
   ic : UInt64;
 begin
   ic := FConcept.getConceptId(iConcept);
- // writeln('Close '+inttostr(ic));
   SetLength(aChildren, 0);
   iDesc := FConcept.GetAllDesc(iConcept);
   if iDesc = MAGIC_IN_PROGRESS Then
@@ -1675,7 +1674,7 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
       begin
         FRel.GetRelationship(r.Ref, identity, dummy, dummy, kind, dummy, dummy, dummy, date, active, defining, i);
         if not FRels.TryGetValue(identity, dummy) or (dummy <> r.Ref) then
-         writeln('broken');
+          raise ETerminologySetup.create('SNOMED is broken: there''s a relationship '+inttostr(identity)+' in a ref set that does''t exist in the base specification');
       end
       else
         kind := r.ref;
@@ -1706,7 +1705,7 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
     try
       result := FStrings.GetEntry(id);
     except
-      writeln('problem: '+inttostr(r.kind));
+      // writeln('problem: '+inttostr(r.kind));
     end;
   End;
 
@@ -1825,7 +1824,7 @@ begin
     end;
   end;
 
-  writeln('refset: '+sFile+': '+name+'+'+caToString(types));
+  // writeln('refset: '+sFile+': '+name+'+'+caToString(types));
 
   s := LoadFile(sFile);
   iCursor := 0;

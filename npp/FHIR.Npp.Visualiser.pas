@@ -248,7 +248,7 @@ begin
   FFocusObjects := TFslList<TFHIRObject>.create;
 
   FLock := TFslLock.Create('vis.web');
-  FWebCache := TFslMap<TWebBuffer>.create;
+  FWebCache := TFslMap<TWebBuffer>.create('web.cache');
   FWebserver := TIdHTTPServer.Create(nil);
   SHandle := FWebserver.Bindings.Add;
   SHandle.IP := '127.0.0.1';

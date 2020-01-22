@@ -128,7 +128,7 @@ constructor TConsentCache.Create;
 begin
   inherited;
   FLock := TFslLock.Create('consentStore');
-  FCache := TFslMap<TFslList<TFhirConsentW>>.create;;
+  FCache := TFslMap<TFslList<TFhirConsentW>>.create('cache');
 end;
 
 destructor TConsentCache.Destroy;

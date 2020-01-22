@@ -21,8 +21,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Plugin (32)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -47,7 +48,9 @@ begin
         regenerateresource = true
         releaseversion = 47
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\npp\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -116,7 +119,7 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\work\\fhirserver\\dependencies\\jcl
           showhints = true
           showwarnings = true
           stackframes = false
@@ -143,8 +146,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Plugin (64)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -169,7 +173,9 @@ begin
         regenerateresource = true
         releaseversion = 47
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\npp\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -265,8 +271,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Toolkit R4 (win64)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -291,7 +298,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -360,13 +369,13 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\work\\fhirserver\\dependencies\\jcl
           showhints = true
           showwarnings = true
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R4.Questionnaire2;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+          unitaliases = FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R4.Questionnaire2;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory;FHIR.Version.DiffEngine\=FHIR.R4.DiffEngine;FHIR.Version.Organiser\=FHIR.R4.Organiser
           unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\r464
           usedebugdcu = false
           usepackages = false
@@ -387,8 +396,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Toolkit R3 (win64)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -413,7 +423,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -482,13 +494,13 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\work\\fhirserver\\dependencies\\jcl
           showhints = true
           showwarnings = true
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R3.Questionnaire2;FHIR.Version.Factory\=FHIR.R3.Factory;FHIR.Version.Common\=FHIR.R3.Common
+          unitaliases = FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R3.Questionnaire2;FHIR.Version.Factory\=FHIR.R3.Factory;FHIR.Version.Common\=FHIR.R3.Common;FHIR.Version.Organiser\=FHIR.R3.Organiser
           unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\r364
           usedebugdcu = false
           usepackages = false
@@ -509,8 +521,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Transformer (32bit)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -535,7 +548,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -631,8 +646,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Toolkit R3 (osx)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -651,13 +667,15 @@ begin
         locale = 1033
         majorversion = 1
         minorversion = 0
-        platform = OSX32
+        platform = OSX64
         platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\toolkit\\FHIRToolkitR3.dpr
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -732,7 +750,7 @@ begin
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R3.Questionnaire2;FHIR.Version.Factory\=FHIR.R3.Factory;FHIR.Version.Common\=FHIR.R3.Common
+          unitaliases = FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R3.Questionnaire2;FHIR.Version.Factory\=FHIR.R3.Factory;FHIR.Version.Common\=FHIR.R3.Common;FHIR.Version.Organiser\=FHIR.R3.Organiser
           unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\r4osx
           usedebugdcu = false
           usepackages = false
@@ -753,8 +771,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Debug Server (DSTU4)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -779,7 +798,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\Server\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -873,8 +894,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Debug Server (DSTU4)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -899,7 +921,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\Server\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -993,7 +1017,8 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1018,7 +1043,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\install\\helper\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1076,7 +1103,7 @@ begin
           mapfile = 0
           maxstacksize = 1048576
           minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;DUnitX.MemoryLeakMonitor;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
           openstrings = true
           optimisation = true
           outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -1112,14 +1139,15 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
         iconfile = $(BDS)\\bin\\delphi_PROJECTICON.ico
         id = {572CBF26-BF54-4883-93CC-9AAEB199FB2E}
         includecompiledate = false
-        includemanifest = true
+        includemanifest = false
         includeverinfo = false
         isdebug = false
         isdll = false
@@ -1138,7 +1166,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\vcldemo\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1233,7 +1263,8 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1258,7 +1289,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\transformer\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1352,7 +1385,8 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1377,7 +1411,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\nppformats\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1472,7 +1508,8 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1497,7 +1534,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\nppformats\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1555,7 +1594,7 @@ begin
           mapfile = 0
           maxstacksize = 1048576
           minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
           openstrings = true
           optimisation = true
           outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -1592,7 +1631,8 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1617,7 +1657,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\bridge\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1714,134 +1756,15 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
-        eurekalogverboselogging = false
-        frameworktype = VCL
-        hintsaserror = false
-        iconfile = $(BDS)\\bin\\delphi_PROJECTICON.ico
-        id = {1D05E797-13B8-43BE-8B24-F0773A0ED2CD}
-        includecompiledate = false
-        includemanifest = true
-        includeverinfo = true
-        isdebug = false
-        isdll = false
-        isprerelease = false
-        isprivate = false
-        isspecial = false
-        keepcfg = false
-        linkproductversiontofileversion = true
-        locale = 1033
-        majorversion = 1
-        manifestfile = C:\\work\\fhirserver\\utilities\\VocabTxServer\\VocabTxServerManifest.xml
-        minorversion = 0
-        platform = Win64
-        platformsdktype = ProjectSDK
-        projectfile = C:\\work\\fhirserver\\utilities\\VocabTxServer\\VocabTxServer.dpr
-        regenerateresource = true
-        releaseversion = 0
-        resourcecompilertype = rcBorland
-        startingdir = C:\\work\\fhirserver\\utilities\\VocabTxServer\\
-        updatedoffile = false
-        updatepackagesource = false
-        updateversioninfokeys = false
-        useeurekalogcompiler = false
-        usefastdcccompiler = false
-        useprojectsettings = []
-        usepropertyset = false
-        useversionfromdof = false
-        verboseoutput = false
-        versioninfokeys = "CompanyName\=" +
-                          "FileDescription\=" +
-                          "FileVersion\=1.0.0.0" +
-                          "InternalName\=" +
-                          "LegalCopyright\=" +
-                          "LegalTrademarks\=" +
-                          "OriginalFilename\=" +
-                          "ProductName\=" +
-                          "ProductVersion\=1.0.0.0" +
-                          "Comments\=" +
-                          ""
-        warningsaserror = false
-        workaroundd5bug = false
-        delphi.compileroptions
-        begin
-          alwaysuseconditionalsfromdof = false
-          alwaysusedelphilibrarypath = false
-          alwaysusedofsearchpath = false
-          assertions = true
-          assignableconst = false
-          booleval = false
-          compilerwarnings = "-w^CONSTRUCTING_ABSTRACT\=2" +
-                             ""
-          conditionals = RELEASE;FHIR4;NO_CONVERSION
-          consoleapp = false
-          debuginfo = false
-          definitionsonly = false
-          emitruntimetypeinformation = false
-          exportallsymbols = false
-          extendedsyntax = true
-          externaltd32 = false
-          frameworktype = VCL
-          generatedocumentation = false
-          generatehpp = false
-          hugestrings = true
-          imagebase = 4194304
-          includenamespaces = false
-          includeremotesymbols = false
-          includetd32 = false
-          inlining = inOn
-          iochecking = true
-          librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\work\\Components\\jcl-master\\jcl\\source\\common;C:\\work\\Components\\jcl-master\\jcl\\source\\include;C:\\work\\Components\\jcl-master\\jcl\\source\\windows;C:\\work\\Components\\jcl-master\\jcl\\source\\vcl;C:\\tools\\testinsite\\Source
-          linkeroutput = 0
-          localsymbols = false
-          mapfile = 0
-          maxstacksize = 1048576
-          minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
-          openstrings = true
-          optimisation = true
-          outputdir = C:\\work\\fhirserver\\Exec\\64
-          overflowchecking = false
-          packages = dbxsqlitedriver;indyipcommon;restcomponents;bindcompdbx;dbxinterbasedriver;vcl;indyipserver;vclactnband;vclfiredac;indysystem;tethering;svnui;dsnapcon;firedacadsdriver;virtualtreesr;firedacmsaccdriver;fmxfiredac;vclimg;firedac;vcltouch;vcldb;bindcompfmx;svn;firedacsqlitedriver;firedacpgdriver;inetdb;soaprtl;dbxcommondriver;firedacibdriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;vclwinx;rtl;dbxclientdriver;customiptransport;vcldsnap;dbexpress;indycore;vclx;bindcomp;appanalytics;dsnap;firedaccommon;indyipclient;bindcompvcl;restbackendcomponents;vclrestcomponents;soapserver;dbxcds;vclsmp;adortl;vclie;bindengine;dbxmysqldriver;cloudservice;dsnapxml;firedacmysqldriver;dbrtl;indyprotocols;inetdbxpress;firedaccommonodbc;firedaccommondriver;inet;fmxase
-          rangechecking = false
-          recordfieldalign = fa8
-          referenceinfo = false
-          safedivide = false
-          searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl
-          showhints = true
-          showwarnings = true
-          stackframes = false
-          stringchecks = true
-          typedpointers = false
-          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common
-          unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\r464
-          usedebugdcu = false
-          usepackages = false
-          varstringchecks = true
-        end
-      end
-      action.delphi.build
-      begin
-        allowimplicitimport = true
-        alwaysuseconditionalsfromdof = false
-        autoincbuild = false
-        autoupdatefileversion = true
-        autoupdateproductversion = false
-        buildall = true
-        buildversion = 0
-        codepage = 1252
-        compileprojectresources = false
-        compileridl = true
-        configname = Release
-        debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
         iconfile = $(BDS)\\bin\\delphi_PROJECTICON.ico
         id = {A141E557-FE76-4BB4-8291-DD1ED3079597}
         includecompiledate = false
-        includemanifest = true
+        includemanifest = false
         includeverinfo = true
         isdebug = false
         isdll = false
@@ -1860,7 +1783,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\VocabTxServer\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -1954,8 +1879,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Server Tests"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -1980,7 +1906,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\tests\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -2075,7 +2003,8 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -2100,7 +2029,9 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\utilities\\cde\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -2157,7 +2088,7 @@ begin
           mapfile = 0
           maxstacksize = 1048576
           minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
           openstrings = true
           optimisation = false
           outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -2175,6 +2106,129 @@ begin
           typedpointers = false
           unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
           unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\32
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = false
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 0
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10_3
+        enabletimeout = false
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = $(BDS)\\bin\\delphi_PROJECTICON.ico
+        id = {1D05E797-13B8-43BE-8B24-F0773A0ED2CD}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = true
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 1033
+        majorversion = 1
+        manifestfile = C:\\work\\fhirserver\\utilities\\VocabTxServer\\VocabTxServerManifest.xml
+        minorversion = 0
+        platform = Win64
+        platformsdktype = ProjectSDK
+        projectfile = C:\\work\\fhirserver\\utilities\\VocabTxServer\\VocabTxServer.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
+        startingdir = C:\\work\\fhirserver\\utilities\\VocabTxServer\\
+        timeoutlength = 1
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        usefastdcccompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        verboseoutput = false
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.0" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = false
+          alwaysusedofsearchpath = false
+          assertions = true
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w^CONSTRUCTING_ABSTRACT\=2" +
+                             ""
+          conditionals = RELEASE;FHIR4;NO_CONVERSION
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = false
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = false
+          frameworktype = VCL
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\work\\Components\\jcl-master\\jcl\\source\\common;C:\\work\\Components\\jcl-master\\jcl\\source\\include;C:\\work\\Components\\jcl-master\\jcl\\source\\windows;C:\\work\\Components\\jcl-master\\jcl\\source\\vcl;C:\\tools\\testinsite\\Source
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
+          openstrings = true
+          optimisation = true
+          outputdir = C:\\work\\fhirserver\\Exec\\64
+          overflowchecking = false
+          packages = dbxsqlitedriver;indyipcommon;restcomponents;bindcompdbx;dbxinterbasedriver;vcl;indyipserver;vclactnband;vclfiredac;indysystem;tethering;svnui;dsnapcon;firedacadsdriver;virtualtreesr;firedacmsaccdriver;fmxfiredac;vclimg;firedac;vcltouch;vcldb;bindcompfmx;svn;firedacsqlitedriver;firedacpgdriver;inetdb;soaprtl;dbxcommondriver;firedacibdriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;vclwinx;rtl;dbxclientdriver;customiptransport;vcldsnap;dbexpress;indycore;vclx;bindcomp;appanalytics;dsnap;firedaccommon;indyipclient;bindcompvcl;restbackendcomponents;vclrestcomponents;soapserver;dbxcds;vclsmp;adortl;vclie;bindengine;dbxmysqldriver;cloudservice;dsnapxml;firedacmysqldriver;dbrtl;indyprotocols;inetdbxpress;firedaccommonodbc;firedaccommondriver;inet;fmxase
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common
+          unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\r464
           usedebugdcu = false
           usepackages = false
           varstringchecks = true

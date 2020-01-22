@@ -129,7 +129,7 @@ var
   v : TFHIRVersion;
 begin
   inherited;
-  FConnections := TFslMap<TFHIRNppServerConnection>.create;
+  FConnections := TFslMap<TFHIRNppServerConnection>.create('Connections');
   FVersions := TFHIRVersionFactories.Create;
 
   for v := low(TFHIRVersion) to High(TFHIRVersion) do

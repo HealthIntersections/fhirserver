@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "bugs fixes for ValueSet and CapabilityStatement editors"
+        as.returnvalue = test
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -76,21 +76,6 @@ begin
         sectionname = toolkit-settings
         variables = "npp-purpose" +
                     ""
-      end
-      action.variables.loadfromini
-      begin
-        createvarininiifnotexists = false
-        description = "Read FHIR Version"
-        failifvariablenotdefined = true
-        failifvariablenotininifile = true
-        id = {25828604-726F-4115-89FB-03799A67707B}
-        ignorefilenotfound = false
-        inifile = C:\\work\\org.hl7.fhir.old\\org.hl7.fhir.stu3\\build\\publish\\version.info
-        sectionname = FHIR
-        variables = "FhirVersion" +
-                    ""
-        variabletypes = "String" +
-                        ""
       end
       action.variables.logvalues
       begin
@@ -140,7 +125,8 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -164,11 +150,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\install\\helper\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -215,13 +204,13 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\temp\\jcl-master\\jcl\\lib\\d25\\win32;C:\\temp\\jcl-master\\jcl\\source\\include
+            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\tools\\testinsite\\Source
             linkeroutput = 0
             localsymbols = false
             mapfile = 0
             maxstacksize = 1048576
             minstacksize = 16384
-            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;DUnitX.MemoryLeakMonitor;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
             openstrings = true
             optimisation = true
             outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -230,6 +219,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
+            searchpath = C:\\work\\fhirserver\\dependencies\\jcl
             showhints = true
             showwarnings = true
             stackframes = false
@@ -265,8 +255,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Toolkit R4 (win64)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -291,11 +282,14 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -359,7 +353,7 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\work\\fhirserver\\dependencies\\jcl
           showhints = true
           showwarnings = true
           stackframes = false
@@ -386,8 +380,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Toolkit R3 (win64)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -412,11 +407,14 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -507,8 +505,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Transformer (32bit)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -533,11 +532,14 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -678,8 +680,9 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
+        delphiversion = Delphi10_3
         description = "Compile the Toolkit R3 (osx)"
+        enabletimeout = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -704,11 +707,14 @@ begin
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
+        ridloutputsamefolder = true
         startingdir = C:\\work\\fhirserver\\toolkit\\
+        timeoutlength = 1
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
         useeurekalogcompiler = false
+        usefastdcccompiler = false
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
@@ -841,9 +847,12 @@ begin
         archivename = C:\\work\\fhirserver\\toolkit\\install\\fhir-toolkit-osx-0.0.%BuildCount%.zip
         archivetype = zZip
         compressionlevel = clUltra
+        compressionmethod = Deflate
         createsfxarchive = false
+        deleteaftercompression = false
         description = "Build OSX installer"
         enabletimeout = false
+        encryptfilenames = false
         expandimpersonationtoken = false
         fileslist = "C:\\work\\fhirserver\\toolkit\\install\\osx\\*.*" +
                     ""
@@ -858,6 +867,7 @@ begin
         solidmode = true
         terminateontimeout = false
         timeoutlength = 2
+        useaes256 = false
         useerrordialogmonitor = false
         usevolumesize = false
         volumesize = 4000
@@ -890,22 +900,28 @@ begin
       end
       action.ftp.connect
       begin
+        allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+        allowselfsignedcertificate = false
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
+        encryptdatachannel = false
         ftpconnectionname = HealthIntersections
         ftphost = 27.123.25.1
         ftpport = 21
         id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+        logsslnegotiation = false
         passive = true
         proxyport = 0
         proxytype = fpcmNone
+        tlsmode = ExplicitTLS
         transfertype = ftBinary
         useglobalopt = false
         usehost = true
         useproxy = false
         userid = healthi3
+        usessl = false
       end
       action.ftp.upload.file
       begin

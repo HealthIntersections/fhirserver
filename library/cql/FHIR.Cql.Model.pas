@@ -605,7 +605,7 @@ constructor TCqlTypeSpecifier.Create;
 begin
   inherited;
   FParameters := TFslList<TCqlTypeSpecifier>.create;
-  FElements := TFslMap<TCqlTypeSpecifier>.create;
+  FElements := TFslMap<TCqlTypeSpecifier>.create('Elements');
 end;
 
 destructor TCqlTypeSpecifier.Destroy;
@@ -700,7 +700,7 @@ end;
 function TCqlExpressionNode.getElements: TFslMap<TCqlExpressionNode>;
 begin
   if FElements = nil then
-    FElements := TFslMap<TCqlExpressionNode>.create;
+    FElements := TFslMap<TCqlExpressionNode>.create('Elements');
   result := FElements;
 end;
 

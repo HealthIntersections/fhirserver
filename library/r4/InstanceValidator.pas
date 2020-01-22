@@ -3916,7 +3916,7 @@ begin
             else
             begin
               elementValidated := true;
-              goodProfiles := TFslMap<TFslList<TFHIRValidationMessage>>.Create();
+              goodProfiles := TFslMap<TFslList<TFHIRValidationMessage>>.Create('good.profiles');
               badProfiles := TFslList<TFslList<TFHIRValidationMessage>>.Create();
               try
                 for typeProfile in profiles do

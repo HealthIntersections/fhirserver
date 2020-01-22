@@ -49,10 +49,10 @@ end;
 constructor TFHIRTransformerContext.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create;
-  FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create;
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create;
-  FConceptMaps := TFslMap<FHIR.R4.Resources.TFHIRConceptMap>.create;
+  FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create('Value Sets');
+  FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create('Code Systems');
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('Questionnaires');
+  FConceptMaps := TFslMap<FHIR.R4.Resources.TFHIRConceptMap>.create('Concept Maps');
 end;
 
 destructor TFHIRTransformerContext.Destroy;

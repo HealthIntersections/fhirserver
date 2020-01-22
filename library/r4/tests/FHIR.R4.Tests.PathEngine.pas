@@ -276,7 +276,7 @@ end;
 
 procedure TFHIRPathTests4.setup;
 begin
-  resources := TFslMap<TFHIRResource>.create;
+  resources := TFslMap<TFHIRResource>.create('resources');
   if gTests = nil then
     gTests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'fhirpath', 'tests-fhir-r4.xml'), [xpDropWhitespace, xpDropComments]);
   {$IFNDEF SIMPLETEST}

@@ -110,7 +110,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -remount -tests -xindex -xloinc &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\mafile.CSV&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-cmd manager</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>

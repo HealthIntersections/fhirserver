@@ -1130,7 +1130,7 @@ end;
 constructor TCqlFunctionRegistry.Create;
 begin
   inherited;
-  FMap := TFslMap<TCqlFunction>.create;
+  FMap := TFslMap<TCqlFunction>.create('Functions');
   FList := TFslList<TCqlFunction>.create;
   Populate;
 end;

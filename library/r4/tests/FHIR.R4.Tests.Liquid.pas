@@ -45,7 +45,7 @@ var
   i : integer;
 begin
   if gResources = nil then
-    gResources := TFslMap<TFHIRResource>.create;
+    gResources := TFslMap<TFHIRResource>.create('resources');
   if gTestDoc = nil then
     gTestDoc := TJSONParser.ParseFile(FHIR_TESTING_FILE(4, 'liquid', 'liquid-tests.json'));
   tests := gTestDoc.arr['tests'];

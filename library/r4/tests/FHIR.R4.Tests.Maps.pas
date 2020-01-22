@@ -166,7 +166,7 @@ procedure TMapTransformTests4.setup;
 begin
   ctxt := TTestingWorkerContext4.Use;
   (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_TESTING_FILE('cda', 'cda.zip'));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices4.Create, nil);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create('utils'), TTestTransformerServices4.Create, nil);
   loadMaps(FHIR_TESTING_FILE('ccda', 'maps'));
 end;
 
@@ -286,7 +286,7 @@ procedure TMapParserTests24.setup;
 begin
   ctxt := TTestingWorkerContext4.Use;
 //  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices4.Create, nil);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create('utils'), TTestTransformerServices4.Create, nil);
 end;
 
 procedure TMapParserTests24.teardown;

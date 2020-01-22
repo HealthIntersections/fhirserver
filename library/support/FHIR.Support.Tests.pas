@@ -791,7 +791,7 @@ procedure TFslGenericsTests.testMap;
 var
   map : TFslMap<TFslString>;
 begin
-  map := TFslMap<TFslString>.create;
+  map := TFslMap<TFslString>.create('tests');
   try
     map.Add('test1', TFslString.create('test1'));
     map.Add('test2', TFslString.create('test2'));

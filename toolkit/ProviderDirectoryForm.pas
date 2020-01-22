@@ -1036,7 +1036,7 @@ begin
   btnFetchMore.Visible := false;
   FHSMatches := TFslList<TFhirHealthcareService>.create;
   FPrMatches := TFslList<TFhirPractitionerRole>.create;
-  FOtherResources := TFslMap<TFHIRResource>.create;
+  FOtherResources := TFslMap<TFHIRResource>.create('other resources');
   FRows := TStringList.Create;
 end;
 

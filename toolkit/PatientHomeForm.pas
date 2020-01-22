@@ -345,7 +345,7 @@ begin
   grdName.RowCount := patient.nameList.count;
 
   if FResources = nil then
-    FResources := TFslMap<TFhirResource>.create;
+    FResources := TFslMap<TFhirResource>.create('resources');
 
   work('Loading Patient Data', true,
     procedure

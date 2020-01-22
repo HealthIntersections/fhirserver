@@ -169,6 +169,9 @@ begin
 end;
 
 procedure TResourceNewForm.cbxVersionChange(Sender: TObject);
+var
+  pl : TFslList<TNpmPackage>;
+  p : TNpmPackage;
 begin
   if cbxVersion.ItemIndex = -1 then
   begin
@@ -177,7 +180,15 @@ begin
   end
   else
   begin
-    FContext.Cache.ListPackagesForFhirVersion([fpkCore, fpkIG], true, FHIR_VERSIONS[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])], cbxPackage.Items);
+    pl := TFslList<TNpmPackage>.create;
+    try
+      FContext.Cache.ListPackages([fpkCore, fpkIG], pl);
+      for p in pl do
+        if p.version = FHIR_VERSIONS[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])] then
+          cbxPackage.Items.AddObject(p.summary, p);
+    finally
+      pl.Free;
+    end;
     cbxPackage.ItemIndex := 0;
   end;
   cbxPackageChange(nil);

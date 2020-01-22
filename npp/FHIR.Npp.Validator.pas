@@ -163,8 +163,8 @@ end;
 constructor TFHIRPluginValidatorContextR2.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create;
-  FCodeSystems := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create;
+  FValueSets := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create('ValueSets');
+  FCodeSystems := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create('CodeSystems');
   FUrl := TerminologyServer;
 end;
 
@@ -450,8 +450,8 @@ end;
 constructor TFHIRPluginValidatorContextR3.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<FHIR.R3.Resources.TFHIRValueSet>.create;
-  FCodeSystems := TFslMap<FHIR.R3.Resources.TFHIRCodeSystem>.create;
+  FValueSets := TFslMap<FHIR.R3.Resources.TFHIRValueSet>.create('Value Sets');
+  FCodeSystems := TFslMap<FHIR.R3.Resources.TFHIRCodeSystem>.create('Code Systems');
   FUrl := TerminologyServer;
 end;
 
@@ -738,8 +738,8 @@ end;
 constructor TFHIRPluginValidatorContextR4.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create;
-  FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create;
+  FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create('R4.ValueSets');
+  FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create('R4.CodeSystems');
   FUrl := TerminologyServer;
 end;
 

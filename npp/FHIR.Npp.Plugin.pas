@@ -342,7 +342,7 @@ var
 begin
   inherited;
   FContext := TFHIRNppContext.Create;
-  FFileInfo := TFslMap<TFHIRPluginFileInformation>.create;
+  FFileInfo := TFslMap<TFHIRPluginFileInformation>.create('FileInfo');
   FValidatorTask := GBackgroundTasks.registerTaskEngine(TBackgroundValidatorEngine.Create(processValidatorResults));
   FLoader2Task := GBackgroundTasks.registerTaskEngine(TContextLoadingEngine.Create(processLoadingResults));
   FLoader3Task := GBackgroundTasks.registerTaskEngine(TContextLoadingEngine.Create(processLoadingResults));
