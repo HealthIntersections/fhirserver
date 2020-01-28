@@ -150,7 +150,7 @@ begin
   panel2.Width := FIni.ReadInteger('window', 'split', panel2.Width);
   Fini.WriteDateTime('status', 'last-start', now);
   lbFolders.ItemIndex := 0;
-  FRuns := TFslMap<TRunRecord>.create;
+  FRuns := TFslMap<TRunRecord>.create('Publisher');
   for s in lbFolders.Items do
     FRuns.Add(s, TRunRecord.Create(FIni.ReadFloat('folders', s, 0)));
   FLock := TFslLock.Create('msg-queue');
