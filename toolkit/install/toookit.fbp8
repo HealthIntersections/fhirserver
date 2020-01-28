@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = test
+        as.returnvalue = "OSX 64bit release testing"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -701,7 +701,7 @@ begin
         locale = 1033
         majorversion = 1
         minorversion = 0
-        platform = OSX32
+        platform = OSX64
         platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\toolkit\\FHIRToolkitR3.dpr
         regenerateresource = true
@@ -917,6 +917,7 @@ begin
         proxytype = fpcmNone
         tlsmode = ExplicitTLS
         transfertype = ftBinary
+        useepsv = false
         useglobalopt = false
         usehost = true
         useproxy = false
