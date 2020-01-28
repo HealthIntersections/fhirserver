@@ -109,7 +109,6 @@ uses
   FHIR.Server.Adaptations in '..\..\Server\FHIR.Server.Adaptations.pas',
   FHIR.R4.IndexInfo in '..\..\library\r4\FHIR.R4.IndexInfo.pas',
   FHIR.R4.Validator in '..\..\library\r4\FHIR.R4.Validator.pas',
-  FHIR.Server.Subscriptions in '..\..\Server\FHIR.Server.Subscriptions.pas',
   FHIR.Web.Socket in '..\..\library\web\FHIR.Web.Socket.pas',
   FHIR.Server.Ini in '..\..\Server\FHIR.Server.Ini.pas',
   FHIR.Server.SessionMgr in '..\..\Server\FHIR.Server.SessionMgr.pas',
@@ -206,7 +205,10 @@ uses
   {$ENDIF }
   FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
   FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas',
-  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
+  FHIR.Server.Subscriptions in '..\..\Server\FHIR.Server.Subscriptions.pas',
+  FHIR.Server.IndexingR4 in '..\..\Server\FHIR.Server.IndexingR4.pas',
+  FHIR.Server.ValidatorR4 in '..\..\Server\FHIR.Server.ValidatorR4.pas';
 
 {$R *.res}
 

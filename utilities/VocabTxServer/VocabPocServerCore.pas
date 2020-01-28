@@ -32,11 +32,12 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Scim,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Factory, FHIR.R4.Context,
-  FHIR.Tools.Search,
-  FHIR.Server.Session, FHIR.Server.Security,
-  FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Tx.Server, FHIR.Server.Context,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Scim, FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Factory, FHIR.R4.Context, FHIR.R4.IndexInfo, FHIR.R4.Validator,
+  FHIR.Tools.Search, FHIR.Tools.Indexing,
+  FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.Factory, FHIR.Server.Indexing,
+  FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Tx.Server, FHIR.Server.Context, FHIR.Server.Subscriptions,
+  FHIR.Server.IndexingR4, FHIR.Server.ValidatorR4,
   FHIR.Ucum.Services, FHIR.Tx.Operations;
 
 const
@@ -130,6 +131,16 @@ type
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
   end;
 
+  TVocabServerFactory = class (TFHIRServerFactory)
+  public
+    function makeIndexes : TFHIRIndexBuilder; override;
+    function makeValidator: TFHIRValidatorV; override;
+    function makeIndexer : TFHIRIndexManager; override;
+    function makeEngine(context : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
+    function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
+    procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
+  end;
+
 implementation
 
 { TTerminologyServerStorage }
@@ -189,7 +200,7 @@ end;
 
 procedure TTerminologyServerStorage.ProcessEmails;
 begin
-  raise EFslException.Create('Not Implemented');
+  // nothing.
 end;
 
 procedure TTerminologyServerStorage.ProcessObservations;
@@ -244,7 +255,7 @@ end;
 
 procedure TTerminologyServerStorage.Sweep;
 begin
-  raise EFslException.Create('Not Implemented');
+  // nothing to do ... raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyServerStorage.Yield(op: TFHIROperationEngine; exception: Exception);
@@ -909,6 +920,39 @@ end;
 procedure TTerminologyServerOperationEngine.StartTransaction;
 begin
   // nothing
+end;
+
+{ TVocabServerFactory }
+
+function TVocabServerFactory.makeEngine(context: TFHIRWorkerContextWithFactory; ucum: TUcumServiceImplementation): TFHIRPathEngineV;
+begin
+  result := TFHIRPathEngine4.Create(context as TFHIRWorkerContext, ucum);
+end;
+
+function TVocabServerFactory.makeIndexer: TFHIRIndexManager;
+begin
+  result := TFhirIndexManager4.create;
+end;
+
+function TVocabServerFactory.makeIndexes: TFHIRIndexBuilder;
+begin
+  result := TFHIRIndexBuilderR4.create;
+end;
+
+function TVocabServerFactory.makeSubscriptionManager(ServerContext: TFslObject): TSubscriptionManager;
+begin
+  raise Exception.Create('No subscriptions in VocabServer');
+end;
+
+
+function TVocabServerFactory.makeValidator: TFHIRValidatorV;
+begin
+  result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
+end;
+
+
+procedure TVocabServerFactory.setTerminologyServer(validatorContext: TFHIRWorkerContextWithFactory; server: TFslObject);
+begin
 end;
 
 end.

@@ -40,7 +40,8 @@ uses
   FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Factory,
   FHIR.Tx.Manager,
   FHIR.Server.Security, FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Support.Logging,
-  VocabPocServerCore, FHIR.Tx.Server, FHIR.Server.WebSource, FHIR.Server.Ini;
+  VocabPocServerCore, vpocversion,
+  FHIR.Tx.Server, FHIR.Server.WebSource, FHIR.Server.Ini;
 
 const
   MIN_WIDTH = 400;
@@ -118,6 +119,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure webDidFinishLoad(ASender: TObject);
     procedure btnBrowserClick(Sender: TObject);
+    procedure mnuAboutClick(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
@@ -165,15 +167,16 @@ begin
       raise EFHIRException.create('Port must be a Positive Integer between 0 and 65535');
 
     FServer.FSource := edtFolder.Text;
-//    FServer.FIni.WriteString('web', 'http', edtPort.Text);
-//    FServer.FIni.WriteString('web', 'host', 'localhost');
-//    FServer.FIni.WriteString('web', 'base', '/vocab');
+    FServer.FIni.Web['http'] := edtPort.Text;
+    FServer.FIni.Web['host'] := 'localhost';
+    FServer.FIni.Web['base'] := '/vocab';
 //    FServer.FIni.WriteString('web', 'clients', IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini');
 //    FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
 //    FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']));
 //    FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_263.cache']));
 //    FServer.FIni.WriteString('lang', 'source', path([ExtractFilePath(paramstr(0)), 'lang.txt']));
 //    FServer.FIni.WriteString('snomed', 'cache', edtSnomed.text);
+
     FServer.start;
   end
   else
@@ -187,8 +190,8 @@ begin
   s := '';
   if not FileExists(path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])) then
     s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])+' not found'+#13#10;
-  if not FileExists(path([ExtractFilePath(paramstr(0)), 'loinc_263.cache'])) then
-    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'loinc_263.cache'])+' not found'+#13#10;
+  if not FileExists(path([ExtractFilePath(paramstr(0)), 'loinc-2.65.cache'])) then
+    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'loinc-2.65.cache'])+' not found'+#13#10;
   if not FileExists(path([ExtractFilePath(paramstr(0)), 'web.zip'])) then
     s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'web.zip'])+' not found'+#13#10;
   if s <> '' then
@@ -255,6 +258,14 @@ begin
   if not mnuViewSettings.IsChecked then
     pnlSettings.size.height := 0;
   checkPreRequisites;
+end;
+
+procedure TTxServerForm.mnuAboutClick(Sender: TObject);
+var
+  v : String;
+begin
+  v := 'v1.01-'+StringPadLeft(inttostr(BuildCount), '0', 3);
+  Showmessage('HL7 UTG Server '+v);
 end;
 
 procedure TTxServerForm.mnuExitClick(Sender: TObject);
@@ -379,10 +390,12 @@ constructor TServerControl.Create;
 begin
   inherited Create;
   FLock := TFslLock.Create('Control Thread');
+  FSettings := TFHIRServerSettings.Create;
 end;
 
 destructor TServerControl.Destroy;
 begin
+  FSettings.free;
   FLock.Free;
   inherited;
 end;
@@ -414,21 +427,25 @@ begin
     ct.load(FIni, nil, false);
     store := TTerminologyServerStorage.create(TTerminologyServer.create(nil, TFHIRFactoryR4.Create, ct.link));
     try
-      ctxt := TFHIRServerContext.Create(store.Link, nil);
+      ctxt := TFHIRServerContext.Create(store.Link, TVocabServerFactory.create);
       try
         ctxt.TerminologyServer := store.Server.Link;
+        ctxt.Globals := FSettings.Link;
         store.ServerContext := ctxt;
         setAccess(ctxt.ResConfig['CodeSystem']);
         setAccess(ctxt.ResConfig['ValueSet']);
         setAccess(ctxt.ResConfig['ConceptMap']);
         loadPoC(ctxt.TerminologyServer);
         FWebServer := TFhirWebServer.create(FSettings.Link, FSettings.ownername);
+        FWebServer.loadConfiguration(FIni);
         FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(path([ExtractFilePath(paramstr(0)), 'web.zip']));
         ctxt.UserProvider := TTerminologyServerUserProvider.Create;
 //        ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
 //        FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
         FWebServer.IsTerminologyServerOnly := true;
+        FWebServer.registerEndPoint('R4', '/R4', ctxt.Link, FIni);
         FWebServer.Start(true);
+
       finally
         ctxt.free;
       end;
@@ -492,7 +509,9 @@ end;
 procedure TServerControl.init;
 begin
   FMsgs := TStringList.create;
-  FIni := TFHIRServerIniFile.Create('');
+  FIni := TFHIRServerIniFile.Create(path([ExtractFilePath(paramstr(0)), 'vocab-poc.ini']));
+  FIni.admin['ownername'] := SystemName;
+  FSettings.load(FIni);
   logevent := log;
 end;
 
@@ -502,7 +521,6 @@ begin
   loadVocab(server, 'fhir');
   loadVocab(server, 'v2');
   loadVocab(server, 'v3');
-  loadVocab(server, 'cda');
   loadVocab(server, 'cimi');
 end;
 

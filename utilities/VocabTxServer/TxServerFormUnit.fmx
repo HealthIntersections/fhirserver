@@ -167,6 +167,7 @@ object TxServerForm: TTxServerForm
       object mnuAbout: TMenuItem
         Locked = True
         Text = '&About'
+        OnClick = mnuAboutClick
       end
     end
   end
