@@ -83,6 +83,9 @@ type
     property destinations : TFslMap<TFHIRServerIniComplex> read FDestinations;
 
     property runNumber : integer read GetRunNumber write SetRunNumber;
+
+    // internal support
+    procedure writeString(section, name, value : String);
   end;
 
 implementation
@@ -204,6 +207,11 @@ begin
   FIni.writeString('web',name, value);
 end;
 
+
+procedure TFHIRServerIniFile.writeString(section, name, value: String);
+begin
+  FIni.WriteString(section, name, value);
+end;
 
 { TFHIRServerIniComplex }
 

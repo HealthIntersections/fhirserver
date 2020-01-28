@@ -3913,6 +3913,7 @@ Procedure TFhirWebServer.Stop;
 Begin
   if FActive then
     smsStatus('The server ' + FHost + ' for ' + FSettings.OwnerName + ' is stopping');
+  FActive := false;
   if FSubscriptionThread <> nil then
     FSubscriptionThread.Terminate;
   if FMaintenanceThread <> nil then
