@@ -1316,7 +1316,7 @@ begin
   indexes.add('Communication', 'topic', 'Description of the purpose/content', sptTOKEN, [], 'Communication.topic', sxpNormal);
   compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Encounter', 'Communication', ['encounter']);
-  compartments.register('Device', 'Communication', ['sender', 'recipient']);
+//  compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Patient', 'Communication', ['subject', 'sender', 'recipient']);
   compartments.register('Practitioner', 'Communication', ['sender', 'recipient']);
   compartments.register('RelatedPerson', 'Communication', ['sender', 'recipient']);
@@ -1353,7 +1353,7 @@ begin
   indexes.add('CommunicationRequest', 'subject', 'Focus of message', sptREFERENCE, ['Group', 'Patient'], 'CommunicationRequest.subject', sxpNormal);
   compartments.register('Device', 'CommunicationRequest', ['information-provider', 'recipient']);
   compartments.register('Encounter', 'CommunicationRequest', ['encounter']);
-  compartments.register('Device', 'CommunicationRequest', ['sender', 'recipient']);
+//  compartments.register('Device', 'CommunicationRequest', ['sender', 'recipient']);
   compartments.register('Patient', 'CommunicationRequest', ['subject', 'information-provider', 'recipient', 'requester']);
   compartments.register('Practitioner', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
   compartments.register('RelatedPerson', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
