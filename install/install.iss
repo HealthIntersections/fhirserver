@@ -99,6 +99,7 @@ Name: firewall;  Description: "Allow FHIR Server through the Firewall"
 Name: r2; Description: "Configure R2"
 Name: r3; Description: "Configure R3"
 Name: r4; Description: "Configure R4"
+Name: r5; Description: "Configure R5"
 
 [Files]
 ; installer support
@@ -168,10 +169,15 @@ var
   dbStatusR4 : TLabel;
   dbInstallR4 : TCheckbox;
   dbPackagesR4 : TNewCheckListBox;
+  DBInstallPageR5 : TWizardPage;
+  dbStatusR5 : TLabel;
+  dbInstallR5 : TCheckbox;
+  dbPackagesR5 : TNewCheckListBox;
 
   PackagesR2 : TStringList;
   PackagesR3 : TStringList;
   PackagesR4 : TStringList;
+  PackagesR5 : TStringList;
 
   DependenciesPage : TWizardPage;
   ServicePage : TInputQueryWizardPage;
@@ -186,6 +192,9 @@ var
   ConnectionPageR4 : TInputQueryWizardPage;
   dbDriverR4 : TNewComboBox;
   dbTypeR4 : TNewComboBox;
+  ConnectionPageR5 : TInputQueryWizardPage;
+  dbDriverR5 : TNewComboBox;
+  dbTypeR5 : TNewComboBox;
 
   WebPage : TWizardPage;
   webHostName : TNewEdit;
@@ -215,6 +224,8 @@ begin
   PackagesR2 := TStringList.create;
   PackagesR3 := TStringList.create;
   PackagesR4 := TStringList.create;
+  PackagesR5 := TStringList.create;
+
 end;
 
 // ------ Dll Interface ---------------------------------------------------------------------------------
@@ -1513,6 +1524,14 @@ begin
     dbtypeR4.itemIndex:=0;
 end;
 
+procedure dbDriverR5_OnChange(Sender: TObject);
+begin
+  if (pos('MySQL',dbdriverR5.text)<>0) then 
+    dbtypeR5.itemIndex:=1;
+  if (pos('SQL Server',dbdriverR5.text)<>0) then 
+    dbtypeR5.itemIndex:=0;
+end;
+
 // ----- Database -----------------------------------------------------------------------------
 
 Procedure CreateConnectionPageR2;
@@ -1679,6 +1698,63 @@ Begin
   dbtypeR4.top:= ConnectionPageR4.PromptLabels[3].Top + ConnectionPageR4.PromptLabels[3].Top - ConnectionPageR4.PromptLabels[2].Top;
 end;
 
+Procedure CreateConnectionPageR5;
+var
+  lbl : TLabel;
+  btn : TButton;
+  s : string;
+  sl : TStringList;
+  i : integer;
+  shrinkspace: integer;
+  index:integer;
+  Names: TArrayOfString;
+  Ii: Integer;
+  Ss: String;
+Begin
+
+  shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
+  ConnectionPageR5 := CreateInputQueryPage(DBInstallPageR5.id, 'R5 Database Location', 'Select the location of the R5 database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPageR5.add('Server', false);
+  ConnectionPageR5.add('Database', false);
+  ConnectionPageR5.add('UserName', false);
+  ConnectionPageR5.add('Password', true);
+//  ConnectionPageR4.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
+
+  dbDriverR5 := TNewComboBox.Create(ConnectionPageR5);
+  dbDriverR5.Width := ConnectionPageR5.SurfaceWidth;
+  dbDriverR5.Parent := ConnectionPageR5.Surface;
+  dbDriverR5.Style := csDropDownList;
+  dbDriverR5.OnChange := @dbDriverR5_OnChange;
+
+  dbTypeR5 := TNewComboBox.Create(ConnectionPageR5);
+  dbTypeR5.Width := ConnectionPageR5.SurfaceWidth;
+  dbTypeR5.Parent := ConnectionPageR5.Surface;
+  dbTypeR5.Style := csDropDownList;
+  dbtypeR5.enabled:=false;
+
+  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
+  begin
+    for iI := 0 to GetArrayLength(Names)-1 do
+       dbDriverR5.Items.Add(Names[Ii]);
+  end 
+  else
+  begin
+    // add any code to handle failure here
+  end;
+
+  dbTypeR5.Items.Add('mssql');
+  dbTypeR5.Items.Add('mysql');
+
+  for index:=0 to 3 do 
+  begin
+    ConnectionPageR5.Edits[Index].Top := ConnectionPageR5.Edits[Index].Top - ShrinkSpace*(index);
+    ConnectionPageR5.PromptLabels[Index].Top := ConnectionPageR5.PromptLabels[Index].Top - ShrinkSpace*(index) +2;
+  end;
+
+  dbtypeR5.top:= ConnectionPageR5.PromptLabels[3].Top + ConnectionPageR5.PromptLabels[3].Top - ConnectionPageR5.PromptLabels[2].Top;
+end;
+
+
 procedure loadConnectionPageR2;
 var
   s : String;
@@ -1729,6 +1805,25 @@ begin
   else
     dbTypeR4.itemindex := dbTypeR4.items.indexof(MyDllGetIniValue(iniName, 'db.r4.type'));
 end;
+
+
+procedure loadConnectionPageR5;
+var
+  s : String;
+begin
+  ConnectionPageR5.values[0] := MyDllGetIniValue(iniName, 'db.r5.server');
+  ConnectionPageR5.values[1] := MyDllGetIniValue(iniName, 'db.r5.database');
+  ConnectionPageR5.values[2] := MyDllGetIniValue(iniName, 'db.r5.username');
+  ConnectionPageR5.values[3] := MyDllGetIniValue(iniName, 'db.r5.password');
+  dbDriverR5.itemindex := dbDriverR5.items.indexof(MyDllGetIniValue(iniName, 'db.r5.driver'));
+
+  s := MyDllGetIniValue(iniName, 'db.r5.type');
+  if s = '' then 
+    dbDriverR5_OnChange(dbDriverR5)
+  else
+    dbTypeR5.itemindex := dbTypeR5.items.indexof(MyDllGetIniValue(iniName, 'db.r5.type'));
+end;
+
 
 function checkDatabaseR2 : boolean;
 var 
@@ -1794,7 +1889,7 @@ function checkDatabaseR4 : boolean;
 var 
   s, c : String;
 begin
-  s := MyDllCheckDatabase(dbDriverR4.text, ConnectionPageR4.values[0], ConnectionPageR4.values[1], ConnectionPageR4.values[2], ConnectionPageR4.values[3], '4.0.0');
+  s := MyDllCheckDatabase(dbDriverR4.text, ConnectionPageR4.values[0], ConnectionPageR4.values[1], ConnectionPageR4.values[2], ConnectionPageR4.values[3], '4.0.1');
   c := s[1];
   s := copy(s, 2, length(s));
   result := true;
@@ -1817,6 +1912,37 @@ begin
     end 
     else
       dbStatusR4.caption := 'Database is ready for use, but can be re-initialized';
+  end;    
+end;
+
+
+function checkDatabaseR5 : boolean;
+var 
+  s, c : String;
+begin
+  s := MyDllCheckDatabase(dbDriverR5.text, ConnectionPageR5.values[0], ConnectionPageR5.values[1], ConnectionPageR5.values[2], ConnectionPageR5.values[3], '4.2.0');
+  c := s[1];
+  s := copy(s, 2, length(s));
+  result := true;
+  if c = '1' then // couldn't connect
+  begin 
+    result := false;
+    MsgBox(s, mbError, MB_OK)
+  end
+  else 
+  begin 
+    if c = '2' then
+    begin
+      dbStatusR5.caption := 'Database is not initialized ('+s+')'
+      dbInstallR5.checked := true;
+    end 
+    else if c = '3' then
+    begin
+      dbStatusR5.caption := 'Database is initialized, but needs re-initialized ('+s+')'
+      dbInstallR5.checked := true;
+    end 
+    else
+      dbStatusR5.caption := 'Database is ready for use, but can be re-initialized';
   end;    
 end;
 
@@ -1942,6 +2068,46 @@ begin
   lbl.Parent := DBInstallPageR4.Surface;
  end;
 
+Procedure CreatePackagesPageR5;
+var
+  lbl : TLabel; 
+begin
+  DBInstallPageR5 := CreateCustomPage(ConnectionPageR5.id, 'R5 Database Initialization', 'Choose R5 Initialization Options');
+  // a status label
+  dbStatusR5 := TLabel.Create(DBInstallPageR5);
+  dbStatusR5.Caption := '(DB Status)'
+  dbStatusR5.Top := ScaleX(5);
+  dbStatusR5.Left := 5;
+  dbStatusR5.Width := DBInstallPageR4.Surface.Width;
+  dbStatusR5.Autosize := false;
+  dbStatusR5.WordWrap := true;
+  dbStatusR5.Height := ScaleX(30);
+  dbStatusR5.Parent := DBInstallPageR5.Surface;
+
+  dbInstallR5 := TCheckBox.create(DBInstallPageR5);
+  dbInstallR5.Caption := 'Initialize the database, with the following optional packages:';
+  dbInstallR5.Top := ScaleX(25);
+  dbInstallR5.Left := 5;
+  dbInstallR5.Width := DBInstallPageR5.Surface.Width;
+  dbInstallR5.Parent := DBInstallPageR5.Surface;
+
+  dbPackagesR5 := TNewCheckListBox.create(DBInstallPageR5);
+  dbPackagesR5.Top := ScaleX(45);
+  dbPackagesR5.Left := 5;
+  dbPackagesR5.Width := DBInstallPageR5.Surface.Width-ScaleX(10);
+  dbPackagesR5.Parent := DBInstallPageR5.Surface;
+  dbPackagesR5.Height := DBInstallPageR5.Surface.height - (dbPackagesR5.Top + 20);
+
+  lbl := TLabel.Create(DBInstallPageR5);
+  lbl.Caption := 'Packages will be downloaded as needed'
+  lbl.Top := DBInstallPageR5.Surface.height - 15;
+  lbl.Left := 5;
+  lbl.Width := DBInstallPageR5.Surface.Width;
+  lbl.Autosize := false;
+  lbl.WordWrap := true;
+  lbl.Parent := DBInstallPageR5.Surface;
+ end;
+
 procedure loadR2Packages;
 var
   pl, s, t, pi : String;
@@ -2011,6 +2177,30 @@ begin
   end;
 end;
 
+
+procedure loadR5Packages;
+var
+  pl, s, t, pi : String;
+  i : integer;
+begin
+  pl := MyDllListPackages('system', '4.2.0');
+  
+  PackagesR5.Text := pl;
+  for i := 0 to packagesR5.count - 1 do 
+  begin
+    s := packagesR5[i];
+    s := copy(s, pos('|', s)+1, length(s));
+    t := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    pi := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    if (t = '1') then
+      dbPackagesR5.AddCheckBox(pi+': '+s+' (Already installed)', '', 0, True, True, False, True, nil)
+    else
+      dbPackagesR5.AddCheckBox(pi+': '+s, '', 0, False, True, False, True, nil);
+  end;
+end;
+
 // ------ Wizard Events -------------------------------------------------------------------------------------
             
 function ShouldSkipPage(PageID: Integer): Boolean;
@@ -2025,6 +2215,8 @@ begin
     result := not (IsTaskSelected('r3'))
   else if (PageID = DBInstallPageR4.Id) or (PageID = ConnectionPageR4.Id) Then
     result := not (IsTaskSelected('r4'))
+  else if (PageID = DBInstallPageR5.Id) or (PageID = ConnectionPageR5.Id) Then
+    result := not (IsTaskSelected('r5'))
   else
     result := false;
 end;
@@ -2043,6 +2235,8 @@ begin
     loadR3Packages;
     loadConnectionPageR4;
     loadR4Packages;
+    loadConnectionPageR5;
+    loadR5Packages;
     webpop := true;
     Result := True;
   End
@@ -2074,6 +2268,10 @@ begin
   begin
     result := checkDatabaseR4;
   end
+  Else if (CurPageID = ConnectionPageR5.ID) then
+  begin
+    result := checkDatabaseR5;
+  end
   Else
     Result := True;
 end;
@@ -2097,6 +2295,8 @@ Begin
   CreatePackagesPageR3;
   CreateConnectionPageR4;
   CreatePackagesPageR4;
+  CreateConnectionPageR5;
+  CreatePackagesPageR5;
   CreatePostInstallPage;
 End;
 
@@ -2160,6 +2360,20 @@ begin
     MyDllSetIniValue(iniName, 'endpoint.r4', 'path: /r4; version: r4; database: dbr4; validate: true');
    end;
 
+  if IsTaskSelected('r5') Then
+  begin
+    MyDllSetIniValue(iniName, 'db.r5.server', ConnectionPageR5.values[0]);
+    MyDllSetIniValue(iniName, 'db.r5.database', ConnectionPageR5.values[1]);
+    MyDllSetIniValue(iniName, 'db.r5.username', ConnectionPageR5.values[2]);
+    MyDllSetIniValue(iniName, 'db.r5.password', ConnectionPageR5.values[3]);
+    MyDllSetIniValue(iniName, 'db.r5.driver', dbDriverR5.text);
+    if dbTypeR5.ItemIndex=0 then 
+      MyDllSetIniValue(iniName, 'db.r5.type', 'mssql');
+    if dbTypeR5.ItemIndex=1 then 
+      MyDllSetIniValue(iniName, 'db.r5.type', 'mysql');
+    MyDllSetIniValue(iniName, 'endpoint.r5', 'path: /r5; version: r5; database: dbr5; validate: true');
+   end;
+
    MyDllSetIniValue(iniName, 'scim.salt', '');
 end;
 
@@ -2210,6 +2424,15 @@ begin
      if dbPackagesR4.checked[i] then
      begin
        s := dbPackagesR4.items[i];
+        s := copy(s, 1, pos(':', s)-1);
+//        if pl2='' then pl2 := s else
+       pl2 := pl2+','+s;
+     end;
+  if IsTaskSelected('r5') and dbInstallR5.checked Then 
+    for i := 0 to dbPackagesR5.items.count - 1 do 
+     if dbPackagesR5.checked[i] then
+     begin
+       s := dbPackagesR5.items[i];
         s := copy(s, 1, pos(':', s)-1);
 //        if pl2='' then pl2 := s else
        pl2 := pl2+','+s;
@@ -2287,6 +2510,29 @@ begin
           done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
       until done;
     end;
+
+    if IsTaskSelected('r5') and dbInstallR5.checked Then
+    begin
+      pl2 := '';
+      for i := 0 to dbPackagesR5.items.count - 1 do 
+        if dbPackagesR5.checked[i] then
+        begin
+          s := dbPackagesR5.items[i];
+          s := copy(s, 1, pos(':', s)-1);
+          if pl2='' then pl2 := s else
+            pl2 := pl2+','+s;
+        end;
+      LoadInstallPage.SetText('Initializing R5 Database...', '');
+      LoadInstallPage.SetProgress(0, 100);
+      repeat
+        done := true;
+        pw := ConnectionPageR5.values[3];
+          msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, 'r5', pl2, mode, @InitCallback)
+        if msg <> '' then
+          done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+      until done;
+    end;
+
 
   finally
     LoadInstallPage.Hide;
