@@ -1713,7 +1713,7 @@ var
 Begin
 
   shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
-  ConnectionPageR5 := CreateInputQueryPage(DBInstallPageR5.id, 'R5 Database Location', 'Select the location of the R5 database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPageR5 := CreateInputQueryPage(DBInstallPageR4.id, 'R5 Database Location', 'Select the location of the R5 database', 'Leave Username and Password blank to use Windows Authentication');
   ConnectionPageR5.add('Server', false);
   ConnectionPageR5.add('Database', false);
   ConnectionPageR5.add('UserName', false);
