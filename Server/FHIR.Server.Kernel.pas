@@ -674,7 +674,7 @@ begin
     try
       logt('Load: register value sets');
       identifyValueSets(db);
-      li := TPackageLoadingInformation.Create('4.0.1');
+      li := TPackageLoadingInformation.Create(PF_CONST[v]);
       try
         pl := plist.Split([',']);
         for p in pl do

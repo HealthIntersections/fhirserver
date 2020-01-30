@@ -284,7 +284,7 @@ constructor TResourceMemoryCache.Create;
 begin
   inherited;
   Flist := TFslList<TFhirResource>.create;
-  FLoadInfo := TPackageLoadingInformation.Create('5.0');
+  FLoadInfo := TPackageLoadingInformation.Create('4.2');
   FLoadInfo.OnLoadEvent := load;
 end;
 
