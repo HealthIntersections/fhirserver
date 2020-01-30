@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.analysis.EnumInfo;
+import org.fhir.pascal.generator.analysis.TypeInfo;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.model.CodeSystem;
@@ -605,7 +607,7 @@ public class BaseGenerator {
 
   protected String marker() {
     if (MARKERS) {
-      return " {"+Integer.toString(new Exception().getStackTrace()[1].getLineNumber())+"}";
+      return " {L"+Integer.toString(new Exception().getStackTrace()[1].getLineNumber())+"}";
     } else {
       return "";
     }
@@ -637,6 +639,35 @@ public class BaseGenerator {
   protected boolean isResource(String name) {
     StructureDefinition type = definitions.getType(name);
     return type != null && type.getKind() == StructureDefinitionKind.RESOURCE;
+  }
+
+  protected ElementDefinition getInheritedElement(Analysis analysis, TypeInfo ti, ElementDefinition c) {
+    if (analysis.getAncestor().hasExtension("http://hl7.org/fhir/StructureDefinition/structuredefinition-interface")
+        && ti == analysis.getRootType()) {
+      String name = tail(c.getPath());
+      StructureDefinition sd = analysis.getAncestor();
+      while (sd != null) {
+        ElementDefinition ed = getElement(sd, sd.getType()+"."+name);
+        if (ed != null) {
+          return ed;
+        }
+        sd = definitions.getStructures().get(sd.getBaseDefinition());
+      }      
+    }
+    return null;
+  }
+
+  private ElementDefinition getElement(StructureDefinition sd, String path) {
+    for (ElementDefinition ed : sd.getSnapshot().getElement()) {
+      if (ed.getPath().equals(path)) {
+        return ed;
+      }
+    }
+    return null;
+  }
+
+  protected String tail(String path) {
+    return path.contains(".") ? path.substring(path.lastIndexOf(".")+1) : "";
   }
 
 

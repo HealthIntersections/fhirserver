@@ -33,7 +33,7 @@ unit FHIR.R5.IndexInfo;
 
 interface
 
-// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
+// Generated on Fri, Jan 31, 2020 06:37+1100 for FHIR v4.2.0
 
 
 
@@ -501,6 +501,7 @@ begin
   indexes.add('Account', 'status', 'active | inactive | entered-in-error | on-hold | unknown', sptTOKEN, [], 'Account.status', sxpNormal);
   indexes.add('Account', 'subject', 'The entity that caused the expenses', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'Location'], 'Account.subject', sxpNormal);
   indexes.add('Account', 'type', 'E.g. patient, expense, depreciation', sptTOKEN, [], 'Account.type', sxpNormal);
+  indexes.add('Account', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Account', ['subject']);
   compartments.register('Patient', 'Account', ['subject']);
   compartments.register('Practitioner', 'Account', ['subject']);
@@ -541,6 +542,7 @@ begin
   indexes.add('ActivityDefinition', 'topic', 'Topics associated with the module', sptTOKEN, [], 'ActivityDefinition.topic', sxpNormal);
   indexes.add('ActivityDefinition', 'url', 'The uri that identifies the activity definition', sptURI, [], 'ActivityDefinition.url', sxpNormal);
   indexes.add('ActivityDefinition', 'version', 'The business version of the activity definition', sptTOKEN, [], 'ActivityDefinition.version', sxpNormal);
+  indexes.add('ActivityDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 
@@ -561,6 +563,7 @@ begin
   indexes.add('AdministrableProductDefinition', 'route', 'Coded expression for the route', sptTOKEN, [], 'AdministrableProductDefinition.routeOfAdministration.code', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'subject', 'The product that this is a pharmaceutical product of', sptREFERENCE, ['MedicinalProductDefinition'], 'AdministrableProductDefinition.subject', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'target-species', 'Coded expression for the species', sptTOKEN, [], 'AdministrableProductDefinition.routeOfAdministration.targetSpecies.code', sxpNormal);
+  indexes.add('AdministrableProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
 
@@ -591,6 +594,7 @@ begin
   indexes.add('AdverseEvent', 'study', 'Research study that the subject is enrolled in', sptREFERENCE, ['ResearchStudy'], 'AdverseEvent.study', sxpNormal);
   indexes.add('AdverseEvent', 'subject', 'Subject impacted by event', sptREFERENCE, ['Practitioner', 'Group', 'Patient', 'RelatedPerson'], 'AdverseEvent.subject', sxpNormal);
   indexes.add('AdverseEvent', 'substance', 'Refers to the specific entity that caused the adverse event', sptREFERENCE, ['Immunization', 'Device', 'Medication', 'Procedure', 'Substance', 'MedicationAdministration', 'MedicationUsage'], '(AdverseEvent.suspectEntity.instance as Reference)', sxpNormal);
+  indexes.add('AdverseEvent', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'AdverseEvent', ['subject']);
   compartments.register('Practitioner', 'AdverseEvent', ['recorder']);
   compartments.register('RelatedPerson', 'AdverseEvent', ['recorder']);
@@ -636,6 +640,7 @@ begin
   indexes.add('AllergyIntolerance', 'severity', 'mild | moderate | severe (of event as a whole)', sptTOKEN, [], 'AllergyIntolerance.reaction.severity', sxpNormal);
   indexes.add('AllergyIntolerance', 'type', '): allergy | intolerance - Underlying mechanism (if known)', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
   indexes.add('AllergyIntolerance', 'verification-status', 'unconfirmed | presumed | confirmed | refuted | entered-in-error', sptTOKEN, [], 'AllergyIntolerance.verificationStatus', sxpNormal);
+  indexes.add('AllergyIntolerance', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'AllergyIntolerance', ['patient', 'recorder', 'asserter']);
   compartments.register('Practitioner', 'AllergyIntolerance', ['recorder', 'asserter']);
   compartments.register('RelatedPerson', 'AllergyIntolerance', ['asserter']);
@@ -671,6 +676,7 @@ begin
   indexes.add('Appointment', 'specialty', 'The specialty of a practitioner that would be required to perform the service requested in this appointment', sptTOKEN, [], 'Appointment.specialty', sxpNormal);
   indexes.add('Appointment', 'status', 'The overall status of the appointment', sptTOKEN, [], 'Appointment.status', sxpNormal);
   indexes.add('Appointment', 'supporting-info', 'Additional information to support the appointment', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Appointment.supportingInformation', sxpNormal);
+  indexes.add('Appointment', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Appointment', ['actor']);
   compartments.register('Patient', 'Appointment', ['actor']);
   compartments.register('Practitioner', 'Appointment', ['actor']);
@@ -697,6 +703,7 @@ begin
   indexes.add('AppointmentResponse', 'part-status', 'The participants acceptance status for this appointment', sptTOKEN, [], 'AppointmentResponse.participantStatus', sxpNormal);
   indexes.add('AppointmentResponse', 'patient', 'This Response is for this Patient', sptREFERENCE, ['Patient'], 'AppointmentResponse.actor.where(resolve() is Patient)', sxpNormal);
   indexes.add('AppointmentResponse', 'practitioner', 'This Response is for this Practitioner', sptREFERENCE, ['Practitioner'], 'AppointmentResponse.actor.where(resolve() is Practitioner)', sxpNormal);
+  indexes.add('AppointmentResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'AppointmentResponse', ['actor']);
   compartments.register('Patient', 'AppointmentResponse', ['actor']);
   compartments.register('Practitioner', 'AppointmentResponse', ['actor']);
@@ -735,6 +742,7 @@ begin
   indexes.add('AuditEvent', 'source', 'The identity of source detecting the event', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AuditEvent.source.observer', sxpNormal);
   indexes.add('AuditEvent', 'subtype', 'More specific type/id for the event', sptTOKEN, [], 'AuditEvent.subtype', sxpNormal);
   indexes.add('AuditEvent', 'type', 'Type/identifier of event', sptTOKEN, [], 'AuditEvent.type', sxpNormal);
+  indexes.add('AuditEvent', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'AuditEvent', ['agent']);
   compartments.register('Patient', 'AuditEvent', ['patient']);
   compartments.register('Practitioner', 'AuditEvent', ['agent']);
@@ -759,6 +767,7 @@ begin
   indexes.add('Basic', 'identifier', 'Business identifier', sptTOKEN, [], 'Basic.identifier', sxpNormal);
   indexes.add('Basic', 'patient', 'Identifies the focus of this resource', sptREFERENCE, ['Patient'], 'Basic.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('Basic', 'subject', 'Identifies the focus of this resource', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Basic.subject', sxpNormal);
+  indexes.add('Basic', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Basic', ['patient', 'author']);
   compartments.register('Practitioner', 'Basic', ['author']);
   compartments.register('RelatedPerson', 'Basic', ['author']);
@@ -777,6 +786,7 @@ begin
   indexes.add('Binary', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Binary', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Binary', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Binary', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_BINARY}
 
@@ -792,6 +802,7 @@ begin
   indexes.add('BiologicallyDerivedProduct', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('BiologicallyDerivedProduct', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
 
@@ -811,6 +822,7 @@ begin
   indexes.add('BodyStructure', 'location', 'Body site', sptTOKEN, [], 'BodyStructure.location', sxpNormal);
   indexes.add('BodyStructure', 'morphology', 'Kind of Structure', sptTOKEN, [], 'BodyStructure.morphology', sxpNormal);
   indexes.add('BodyStructure', 'patient', 'Who this is about', sptREFERENCE, ['Patient'], 'BodyStructure.patient', sxpNormal);
+  indexes.add('BodyStructure', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'BodyStructure', ['patient']);
 end;
 {$ENDIF FHIR_BODYSTRUCTURE}
@@ -832,6 +844,7 @@ begin
   indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', sptREFERENCE, ['MessageHeader'], 'Bundle.entry[0].resource', sxpNormal);
   indexes.add('Bundle', 'timestamp', 'When the bundle was assembled', sptDATE, [], 'Bundle.timestamp', sxpNormal);
   indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection', sptTOKEN, [], 'Bundle.type', sxpNormal);
+  indexes.add('Bundle', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_BUNDLE}
 
@@ -890,6 +903,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('CapabilityStatement', 'version', '): The business version of the capability statement', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('CapabilityStatement', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CAPABILITYSTATEMENT}
 
@@ -927,6 +941,7 @@ begin
   indexes.add('CapabilityStatement2', 'title', 'The human-friendly name of the capability statement2', sptSTRING, [], 'CapabilityStatement2.title', sxpNormal);
   indexes.add('CapabilityStatement2', 'url', 'The uri that identifies the capability statement2', sptURI, [], 'CapabilityStatement2.url', sxpNormal);
   indexes.add('CapabilityStatement2', 'version', 'The business version of the capability statement2', sptTOKEN, [], 'CapabilityStatement2.version', sxpNormal);
+  indexes.add('CapabilityStatement2', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CAPABILITYSTATEMENT2}
 
@@ -973,6 +988,7 @@ begin
   indexes.add('CarePlan', 'replaces', 'CarePlan replaced by this CarePlan', sptREFERENCE, ['CarePlan'], 'CarePlan.replaces', sxpNormal);
   indexes.add('CarePlan', 'status', 'draft | active | on-hold | revoked | completed | entered-in-error | unknown', sptTOKEN, [], 'CarePlan.status', sxpNormal);
   indexes.add('CarePlan', 'subject', 'Who the care plan is for', sptREFERENCE, ['Group', 'Patient'], 'CarePlan.subject', sxpNormal);
+  indexes.add('CarePlan', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'CarePlan', ['encounter']);
   compartments.register('Patient', 'CarePlan', ['patient', 'performer']);
   compartments.register('Practitioner', 'CarePlan', ['performer']);
@@ -1011,6 +1027,7 @@ begin
       +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('CareTeam', 'status', 'proposed | active | suspended | inactive | entered-in-error', sptTOKEN, [], 'CareTeam.status', sxpNormal);
   indexes.add('CareTeam', 'subject', 'Who care team is for', sptREFERENCE, ['Group', 'Patient'], 'CareTeam.subject', sxpNormal);
+  indexes.add('CareTeam', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'CareTeam', ['patient', 'participant']);
   compartments.register('Practitioner', 'CareTeam', ['participant']);
   compartments.register('RelatedPerson', 'CareTeam', ['participant']);
@@ -1036,6 +1053,7 @@ begin
   indexes.add('CatalogEntry', 'related-entry', 'The reference to the related entry', sptREFERENCE, ['CatalogEntry'], 'CatalogEntry.relatedEntry.target', sxpNormal);
   indexes.add('CatalogEntry', 'status', 'Usability status of this entry in the catalog', sptTOKEN, [], 'CatalogEntry.status', sxpNormal);
   indexes.add('CatalogEntry', 'type', 'ActivityDefinition | PlanDefinition | SpecimenDefinition | ObservationDefinition | DeviceDefinition | Organization | Practitioner | PractitionerRole | HealthcareService | MedicationKnowledge | Medication | Substance | Location', sptTOKEN, [], 'CatalogEntry.type', sxpNormal);
+  indexes.add('CatalogEntry', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CATALOGENTRY}
 
@@ -1068,6 +1086,7 @@ begin
   indexes.add('ChargeItem', 'requesting-organization', 'Organization requesting the charged service', sptREFERENCE, ['Organization'], 'ChargeItem.requestingOrganization', sxpNormal);
   indexes.add('ChargeItem', 'service', 'Which rendered service is being charged?', sptREFERENCE, ['Immunization', 'MedicationDispense', 'SupplyDelivery', 'Observation', 'DiagnosticReport', 'ImagingStudy', 'MedicationAdministration', 'Procedure'], 'ChargeItem.service', sxpNormal);
   indexes.add('ChargeItem', 'subject', 'Individual service was done for/to', sptREFERENCE, ['Group', 'Patient'], 'ChargeItem.subject', sxpNormal);
+  indexes.add('ChargeItem', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'ChargeItem', ['enterer', 'performer-actor']);
   compartments.register('Encounter', 'ChargeItem', ['context']);
   compartments.register('Patient', 'ChargeItem', ['subject']);
@@ -1103,6 +1122,7 @@ begin
   indexes.add('ChargeItemDefinition', 'title', 'The human-friendly name of the charge item definition', sptSTRING, [], 'ChargeItemDefinition.title', sxpNormal);
   indexes.add('ChargeItemDefinition', 'url', 'The uri that identifies the charge item definition', sptURI, [], 'ChargeItemDefinition.url', sxpNormal);
   indexes.add('ChargeItemDefinition', 'version', 'The business version of the charge item definition', sptTOKEN, [], 'ChargeItemDefinition.version', sxpNormal);
+  indexes.add('ChargeItemDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 
@@ -1135,6 +1155,7 @@ begin
   indexes.add('Claim', 'status', 'The status of the Claim instance.', sptTOKEN, [], 'Claim.status', sxpNormal);
   indexes.add('Claim', 'subdetail-udi', 'UDI associated with a line item, detail, subdetail product or service', sptREFERENCE, ['Device'], 'Claim.item.detail.subDetail.udi', sxpNormal);
   indexes.add('Claim', 'use', 'The kind of financial resource', sptTOKEN, [], 'Claim.use', sxpNormal);
+  indexes.add('Claim', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Claim', ['procedure-udi', 'item-udi', 'detail-udi', 'subdetail-udi']);
   compartments.register('Encounter', 'Claim', ['encounter']);
   compartments.register('Patient', 'Claim', ['patient', 'payee']);
@@ -1166,6 +1187,7 @@ begin
   indexes.add('ClaimResponse', 'requestor', 'The Provider of the claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ClaimResponse.requestor', sxpNormal);
   indexes.add('ClaimResponse', 'status', 'The status of the ClaimResponse', sptTOKEN, [], 'ClaimResponse.status', sxpNormal);
   indexes.add('ClaimResponse', 'use', 'The type of claim', sptTOKEN, [], 'ClaimResponse.use', sxpNormal);
+  indexes.add('ClaimResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'ClaimResponse', ['patient']);
   compartments.register('Practitioner', 'ClaimResponse', ['requestor']);
 end;
@@ -1202,6 +1224,7 @@ begin
   indexes.add('ClinicalImpression', 'status', 'preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown', sptTOKEN, [], 'ClinicalImpression.status', sxpNormal);
   indexes.add('ClinicalImpression', 'subject', 'Patient or group assessed', sptREFERENCE, ['Group', 'Patient'], 'ClinicalImpression.subject', sxpNormal);
   indexes.add('ClinicalImpression', 'supporting-info', 'Information supporting the clinical impression', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ClinicalImpression.supportingInfo', sxpNormal);
+  indexes.add('ClinicalImpression', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'ClinicalImpression', ['encounter']);
   compartments.register('Patient', 'ClinicalImpression', ['subject']);
   compartments.register('Practitioner', 'ClinicalImpression', ['performer']);
@@ -1228,6 +1251,7 @@ begin
   indexes.add('ClinicalUseIssue', 'product', 'The medicinal product for which this is a clinical usage issue', sptREFERENCE, ['MedicinalProductDefinition'], 'ClinicalUseIssue.subject.where(resolve() is MedicinalProductDefinition)', sxpNormal);
   indexes.add('ClinicalUseIssue', 'subject', 'The resource for which this is a clinical usage issue', sptREFERENCE, ['MedicinalProductDefinition', 'Device', 'Medication', 'DeviceDefinition', 'PlanDefinition', 'Substance', 'ActivityDefinition'], 'ClinicalUseIssue.subject', sxpNormal);
   indexes.add('ClinicalUseIssue', 'type', 'indication | contraindication | interaction | undesirable-effect | other', sptTOKEN, [], 'ClinicalUseIssue.type', sxpNormal);
+  indexes.add('ClinicalUseIssue', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CLINICALUSEISSUE}
 
@@ -1283,6 +1307,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('CodeSystem', 'version', '): The business version of the code system', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('CodeSystem', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CODESYSTEM}
 
@@ -1314,9 +1339,9 @@ begin
   indexes.add('Communication', 'status', 'preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown', sptTOKEN, [], 'Communication.status', sxpNormal);
   indexes.add('Communication', 'subject', 'Focus of message', sptREFERENCE, ['Group', 'Patient'], 'Communication.subject', sxpNormal);
   indexes.add('Communication', 'topic', 'Description of the purpose/content', sptTOKEN, [], 'Communication.topic', sxpNormal);
+  indexes.add('Communication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Encounter', 'Communication', ['encounter']);
-//  compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Patient', 'Communication', ['subject', 'sender', 'recipient']);
   compartments.register('Practitioner', 'Communication', ['sender', 'recipient']);
   compartments.register('RelatedPerson', 'Communication', ['sender', 'recipient']);
@@ -1351,9 +1376,9 @@ begin
   indexes.add('CommunicationRequest', 'requester', 'Who asks for the information to be shared', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'CommunicationRequest.requester', sxpNormal);
   indexes.add('CommunicationRequest', 'status', 'draft | active | on-hold | revoked | completed | entered-in-error | unknown', sptTOKEN, [], 'CommunicationRequest.status', sxpNormal);
   indexes.add('CommunicationRequest', 'subject', 'Focus of message', sptREFERENCE, ['Group', 'Patient'], 'CommunicationRequest.subject', sxpNormal);
+  indexes.add('CommunicationRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'CommunicationRequest', ['information-provider', 'recipient']);
   compartments.register('Encounter', 'CommunicationRequest', ['encounter']);
-//  compartments.register('Device', 'CommunicationRequest', ['sender', 'recipient']);
   compartments.register('Patient', 'CommunicationRequest', ['subject', 'information-provider', 'recipient', 'requester']);
   compartments.register('Practitioner', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
   compartments.register('RelatedPerson', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
@@ -1405,6 +1430,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('CompartmentDefinition', 'version', '): The business version of the compartment definition', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('CompartmentDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_COMPARTMENTDEFINITION}
 
@@ -1450,6 +1476,7 @@ begin
   indexes.add('Composition', 'subject', 'Who and/or what the composition is about', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.subject', sxpNormal);
   indexes.add('Composition', 'title', 'Human Readable name/title', sptSTRING, [], 'Composition.title', sxpNormal);
   indexes.add('Composition', 'type', '): Kind of composition (LOINC if possible)', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
+  indexes.add('Composition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Composition', ['author']);
   compartments.register('Encounter', 'Composition', ['encounter']);
   compartments.register('Patient', 'Composition', ['subject', 'author', 'attester']);
@@ -1516,6 +1543,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('ConceptMap', 'version', '): The business version of the concept map', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('ConceptMap', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CONCEPTMAP}
 
@@ -1563,6 +1591,7 @@ begin
   indexes.add('Condition', 'stage', 'Simple summary (disease specific)', sptTOKEN, [], 'Condition.stage.summary', sxpNormal);
   indexes.add('Condition', 'subject', 'Who has the condition?', sptREFERENCE, ['Group', 'Patient'], 'Condition.subject', sxpNormal);
   indexes.add('Condition', 'verification-status', 'unconfirmed | provisional | differential | confirmed | refuted | entered-in-error', sptTOKEN, [], 'Condition.verificationStatus', sxpNormal);
+  indexes.add('Condition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'Condition', ['encounter']);
   compartments.register('Patient', 'Condition', ['patient', 'asserter']);
   compartments.register('Practitioner', 'Condition', ['asserter']);
@@ -1597,6 +1626,7 @@ begin
   indexes.add('ConditionDefinition', 'title', 'The human-friendly name of the condition definition', sptSTRING, [], 'ConditionDefinition.title', sxpNormal);
   indexes.add('ConditionDefinition', 'url', 'The uri that identifies the condition definition', sptURI, [], 'ConditionDefinition.url', sxpNormal);
   indexes.add('ConditionDefinition', 'version', 'The business version of the condition definition', sptTOKEN, [], 'ConditionDefinition.version', sxpNormal);
+  indexes.add('ConditionDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CONDITIONDEFINITION}
 
@@ -1641,6 +1671,7 @@ begin
   indexes.add('Consent', 'status', 'draft | active | inactive | entered-in-error | unknown', sptTOKEN, [], 'Consent.status', sxpNormal);
   indexes.add('Consent', 'verified', 'Has been verified', sptTOKEN, [], 'Consent.verification.verified', sxpNormal);
   indexes.add('Consent', 'verified-date', 'When consent verified', sptDATE, [], 'Consent.verification.verificationDate', sxpNormal);
+  indexes.add('Consent', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Consent', ['patient']);
 end;
 {$ENDIF FHIR_CONSENT}
@@ -1667,6 +1698,7 @@ begin
   indexes.add('Contract', 'status', 'The status of the contract', sptTOKEN, [], 'Contract.status', sxpNormal);
   indexes.add('Contract', 'subject', 'The identity of the subject of the contract', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Contract.subject', sxpNormal);
   indexes.add('Contract', 'url', 'The basal contract definition', sptURI, [], 'Contract.url', sxpNormal);
+  indexes.add('Contract', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CONTRACT}
 
@@ -1693,6 +1725,7 @@ begin
   indexes.add('Coverage', 'status', 'The status of the Coverage', sptTOKEN, [], 'Coverage.status', sxpNormal);
   indexes.add('Coverage', 'subscriber', 'Reference to the subscriber', sptREFERENCE, ['Patient', 'RelatedPerson'], 'Coverage.subscriber', sxpNormal);
   indexes.add('Coverage', 'type', 'The kind of coverage (health plan, auto, Workers Compensation)', sptTOKEN, [], 'Coverage.type', sxpNormal);
+  indexes.add('Coverage', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Coverage', ['policy-holder', 'subscriber', 'beneficiary', 'payor']);
   compartments.register('RelatedPerson', 'Coverage', ['policy-holder', 'subscriber', 'payor']);
 end;
@@ -1717,6 +1750,7 @@ begin
   indexes.add('CoverageEligibilityRequest', 'patient', 'The reference to the patient', sptREFERENCE, ['Patient'], 'CoverageEligibilityRequest.patient', sxpNormal);
   indexes.add('CoverageEligibilityRequest', 'provider', 'The reference to the provider', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'CoverageEligibilityRequest.provider', sxpNormal);
   indexes.add('CoverageEligibilityRequest', 'status', 'The status of the EligibilityRequest', sptTOKEN, [], 'CoverageEligibilityRequest.status', sxpNormal);
+  indexes.add('CoverageEligibilityRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'CoverageEligibilityRequest', ['patient']);
   compartments.register('Practitioner', 'CoverageEligibilityRequest', ['enterer', 'provider']);
 end;
@@ -1743,6 +1777,7 @@ begin
   indexes.add('CoverageEligibilityResponse', 'request', 'The EligibilityRequest reference', sptREFERENCE, ['CoverageEligibilityRequest'], 'CoverageEligibilityResponse.request', sxpNormal);
   indexes.add('CoverageEligibilityResponse', 'requestor', 'The EligibilityRequest provider', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'CoverageEligibilityResponse.requestor', sxpNormal);
   indexes.add('CoverageEligibilityResponse', 'status', 'The EligibilityRequest status', sptTOKEN, [], 'CoverageEligibilityResponse.status', sxpNormal);
+  indexes.add('CoverageEligibilityResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'CoverageEligibilityResponse', ['patient']);
   compartments.register('Practitioner', 'CoverageEligibilityResponse', ['requestor']);
 end;
@@ -1776,6 +1811,7 @@ begin
    'tient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
       +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
       +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+  indexes.add('DetectedIssue', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DetectedIssue', ['author']);
   compartments.register('Patient', 'DetectedIssue', ['patient']);
   compartments.register('Practitioner', 'DetectedIssue', ['author']);
@@ -1807,6 +1843,7 @@ begin
   indexes.add('Device', 'udi-carrier', 'UDI Barcode (RFID or other technology) string in *HRF* format.', sptSTRING, [], 'Device.udiCarrier.carrierHRF', sxpNormal);
   indexes.add('Device', 'udi-di', 'The udi Device Identifier (DI)', sptSTRING, [], 'Device.udiCarrier.deviceIdentifier', sxpNormal);
   indexes.add('Device', 'url', 'Network address to contact device', sptURI, [], 'Device.url', sxpNormal);
+  indexes.add('Device', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_DEVICE}
 
@@ -1825,6 +1862,7 @@ begin
   indexes.add('DeviceDefinition', 'identifier', 'The identifier of the component', sptTOKEN, [], 'DeviceDefinition.identifier', sxpNormal);
   indexes.add('DeviceDefinition', 'parent', 'The parent DeviceDefinition resource', sptREFERENCE, ['DeviceDefinition'], 'DeviceDefinition.parentDevice', sxpNormal);
   indexes.add('DeviceDefinition', 'type', 'The device component type', sptTOKEN, [], 'DeviceDefinition.type', sxpNormal);
+  indexes.add('DeviceDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_DEVICEDEFINITION}
 
@@ -1845,6 +1883,7 @@ begin
   indexes.add('DeviceMetric', 'parent', 'The parent DeviceMetric resource', sptREFERENCE, ['Device'], 'DeviceMetric.parent', sxpNormal);
   indexes.add('DeviceMetric', 'source', 'The device resource', sptREFERENCE, ['Device'], 'DeviceMetric.source', sxpNormal);
   indexes.add('DeviceMetric', 'type', 'The component type', sptTOKEN, [], 'DeviceMetric.type', sxpNormal);
+  indexes.add('DeviceMetric', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_DEVICEMETRIC}
 
@@ -1890,6 +1929,7 @@ begin
   indexes.add('DeviceRequest', 'requester', 'Who/what is requesting service', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'PractitionerRole'], 'DeviceRequest.requester', sxpNormal);
   indexes.add('DeviceRequest', 'status', 'entered-in-error | draft | active |suspended | completed', sptTOKEN, [], 'DeviceRequest.status', sxpNormal);
   indexes.add('DeviceRequest', 'subject', 'Individual the service is ordered for', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'DeviceRequest.subject', sxpNormal);
+  indexes.add('DeviceRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DeviceRequest', ['device', 'subject', 'requester', 'performer']);
   compartments.register('Encounter', 'DeviceRequest', ['encounter']);
   compartments.register('Patient', 'DeviceRequest', ['subject', 'performer']);
@@ -1919,6 +1959,7 @@ begin
       +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
       +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DeviceUseStatement', 'subject', 'Search by subject', sptREFERENCE, ['Group', 'Patient'], 'DeviceUseStatement.subject', sxpNormal);
+  indexes.add('DeviceUseStatement', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DeviceUseStatement', ['device']);
   compartments.register('Patient', 'DeviceUseStatement', ['subject']);
 end;
@@ -1966,6 +2007,7 @@ begin
   indexes.add('DiagnosticReport', 'specimen', 'The specimen details', sptREFERENCE, ['Specimen'], 'DiagnosticReport.specimen', sxpNormal);
   indexes.add('DiagnosticReport', 'status', 'The status of the report', sptTOKEN, [], 'DiagnosticReport.status', sxpNormal);
   indexes.add('DiagnosticReport', 'subject', 'The subject of the report', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'DiagnosticReport.subject', sxpNormal);
+  indexes.add('DiagnosticReport', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DiagnosticReport', ['subject']);
   compartments.register('Encounter', 'DiagnosticReport', ['encounter']);
   compartments.register('Patient', 'DiagnosticReport', ['subject']);
@@ -2008,6 +2050,7 @@ begin
   indexes.add('DocumentManifest', 'status', 'current | superseded | entered-in-error', sptTOKEN, [], 'DocumentManifest.status', sxpNormal);
   indexes.add('DocumentManifest', 'subject', 'The subject of the set of documents', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient'], 'DocumentManifest.subject', sxpNormal);
   indexes.add('DocumentManifest', 'type', '): Kind of document set', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
+  indexes.add('DocumentManifest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DocumentManifest', ['subject', 'author']);
   compartments.register('Encounter', 'DocumentManifest', ['related-ref']);
   compartments.register('Patient', 'DocumentManifest', ['subject', 'author', 'recipient']);
@@ -2067,6 +2110,7 @@ begin
   indexes.add('DocumentReference', 'status', 'current | superseded | entered-in-error', sptTOKEN, [], 'DocumentReference.status', sxpNormal);
   indexes.add('DocumentReference', 'subject', 'Who/what is the subject of the document', sptREFERENCE, ['Practitioner', 'Group', 'Specimen', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'Location'], 'DocumentReference.subject', sxpNormal);
   indexes.add('DocumentReference', 'type', '): Kind of document (LOINC if possible)', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
+  indexes.add('DocumentReference', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DocumentReference', ['subject', 'author']);
   compartments.register('Encounter', 'DocumentReference', ['encounter']);
   compartments.register('Patient', 'DocumentReference', ['subject', 'author']);
@@ -2122,6 +2166,7 @@ begin
   indexes.add('Encounter', 'subject', 'The patient or group present at the encounter', sptREFERENCE, ['Group', 'Patient'], 'Encounter.subject', sxpNormal);
   indexes.add('Encounter', 'subject-status', 'The current status of the subject in relation to the Encounter', sptTOKEN, [], 'Encounter.subjectStatus', sxpNormal);
   indexes.add('Encounter', 'type', '): Specific type of encounter', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
+  indexes.add('Encounter', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'Encounter', ['{def}']);
   compartments.register('Patient', 'Encounter', ['patient']);
   compartments.register('Practitioner', 'Encounter', ['practitioner', 'participant']);
@@ -2147,6 +2192,7 @@ begin
   indexes.add('Endpoint', 'organization', 'The organization that is managing the endpoint', sptREFERENCE, ['Organization'], 'Endpoint.managingOrganization', sxpNormal);
   indexes.add('Endpoint', 'payload-type', 'The type of content that may be used at this endpoint (e.g. XDS Discharge summaries)', sptTOKEN, [], 'Endpoint.payloadType', sxpNormal);
   indexes.add('Endpoint', 'status', 'The current status of the Endpoint (usually expected to be active)', sptTOKEN, [], 'Endpoint.status', sxpNormal);
+  indexes.add('Endpoint', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_ENDPOINT}
 
@@ -2166,6 +2212,7 @@ begin
   indexes.add('EnrollmentRequest', 'patient', 'The party to be enrolled', sptREFERENCE, ['Patient'], 'EnrollmentRequest.candidate', sxpNormal);
   indexes.add('EnrollmentRequest', 'status', 'The status of the enrollment', sptTOKEN, [], 'EnrollmentRequest.status', sxpNormal);
   indexes.add('EnrollmentRequest', 'subject', 'The party to be enrolled', sptREFERENCE, ['Patient'], 'EnrollmentRequest.candidate', sxpNormal);
+  indexes.add('EnrollmentRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'EnrollmentRequest', ['subject']);
 end;
 {$ENDIF FHIR_ENROLLMENTREQUEST}
@@ -2185,6 +2232,7 @@ begin
   indexes.add('EnrollmentResponse', 'identifier', 'The business identifier of the EnrollmentResponse', sptTOKEN, [], 'EnrollmentResponse.identifier', sxpNormal);
   indexes.add('EnrollmentResponse', 'request', 'The reference to the claim', sptREFERENCE, ['EnrollmentRequest'], 'EnrollmentResponse.request', sxpNormal);
   indexes.add('EnrollmentResponse', 'status', 'The status of the enrollment response', sptTOKEN, [], 'EnrollmentResponse.status', sxpNormal);
+  indexes.add('EnrollmentResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_ENROLLMENTRESPONSE}
 
@@ -2220,6 +2268,7 @@ begin
       +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('EpisodeOfCare', 'status', 'The current status of the Episode of Care as provided (does not check the status history collection)', sptTOKEN, [], 'EpisodeOfCare.status', sxpNormal);
   indexes.add('EpisodeOfCare', 'type', '): Type/class  - e.g. specialist referral, disease management', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
+  indexes.add('EpisodeOfCare', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'EpisodeOfCare', ['patient']);
   compartments.register('Practitioner', 'EpisodeOfCare', ['care-manager']);
 end;
@@ -2259,6 +2308,7 @@ begin
   indexes.add('EventDefinition', 'topic', 'Topics associated with the module', sptTOKEN, [], 'EventDefinition.topic', sxpNormal);
   indexes.add('EventDefinition', 'url', 'The uri that identifies the event definition', sptURI, [], 'EventDefinition.url', sxpNormal);
   indexes.add('EventDefinition', 'version', 'The business version of the event definition', sptTOKEN, [], 'EventDefinition.version', sxpNormal);
+  indexes.add('EventDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_EVENTDEFINITION}
 
@@ -2286,6 +2336,7 @@ begin
   indexes.add('Evidence', 'title', 'The human-friendly name of the evidence', sptSTRING, [], 'Evidence.title', sxpNormal);
   indexes.add('Evidence', 'url', 'The uri that identifies the evidence', sptURI, [], 'Evidence.url', sxpNormal);
   indexes.add('Evidence', 'version', 'The business version of the evidence', sptTOKEN, [], 'Evidence.version', sxpNormal);
+  indexes.add('Evidence', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_EVIDENCE}
 
@@ -2323,6 +2374,7 @@ begin
   indexes.add('EvidenceVariable', 'topic', 'Topics associated with the EvidenceVariable', sptTOKEN, [], 'EvidenceVariable.topic', sxpNormal);
   indexes.add('EvidenceVariable', 'url', 'The uri that identifies the evidence variable', sptURI, [], 'EvidenceVariable.url', sxpNormal);
   indexes.add('EvidenceVariable', 'version', 'The business version of the evidence variable', sptTOKEN, [], 'EvidenceVariable.version', sxpNormal);
+  indexes.add('EvidenceVariable', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_EVIDENCEVARIABLE}
 
@@ -2351,6 +2403,7 @@ begin
   indexes.add('ExampleScenario', 'status', 'The current status of the example scenario', sptTOKEN, [], 'ExampleScenario.status', sxpNormal);
   indexes.add('ExampleScenario', 'url', 'The uri that identifies the example scenario', sptURI, [], 'ExampleScenario.url', sxpNormal);
   indexes.add('ExampleScenario', 'version', 'The business version of the example scenario', sptTOKEN, [], 'ExampleScenario.version', sxpNormal);
+  indexes.add('ExampleScenario', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_EXAMPLESCENARIO}
 
@@ -2383,6 +2436,7 @@ begin
   indexes.add('ExplanationOfBenefit', 'provider', 'The reference to the provider', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'ExplanationOfBenefit.provider', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'status', 'Status of the instance', sptTOKEN, [], 'ExplanationOfBenefit.status', sxpNormal);
   indexes.add('ExplanationOfBenefit', 'subdetail-udi', 'UDI associated with a line item detail subdetail product or service', sptREFERENCE, ['Device'], 'ExplanationOfBenefit.item.detail.subDetail.udi', sxpNormal);
+  indexes.add('ExplanationOfBenefit', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'ExplanationOfBenefit', ['procedure-udi', 'item-udi', 'detail-udi', 'subdetail-udi']);
   compartments.register('Encounter', 'ExplanationOfBenefit', ['encounter']);
   compartments.register('Patient', 'ExplanationOfBenefit', ['patient', 'payee']);
@@ -2424,6 +2478,7 @@ begin
   indexes.add('FamilyMemberHistory', 'relationship', 'A search by a relationship type', sptTOKEN, [], 'FamilyMemberHistory.relationship', sxpNormal);
   indexes.add('FamilyMemberHistory', 'sex', 'A search by a sex code of a family member', sptTOKEN, [], 'FamilyMemberHistory.sex', sxpNormal);
   indexes.add('FamilyMemberHistory', 'status', 'partial | completed | entered-in-error | health-unknown', sptTOKEN, [], 'FamilyMemberHistory.status', sxpNormal);
+  indexes.add('FamilyMemberHistory', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'FamilyMemberHistory', ['patient']);
 end;
 {$ENDIF FHIR_FAMILYMEMBERHISTORY}
@@ -2455,6 +2510,7 @@ begin
       +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Flag', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'Flag.status', sxpNormal);
   indexes.add('Flag', 'subject', 'The identity of a subject to list flags for', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'Medication', 'Patient', 'PlanDefinition', 'Procedure', 'PractitionerRole', 'Location'], 'Flag.subject', sxpNormal);
+  indexes.add('Flag', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Flag', ['author']);
   compartments.register('Patient', 'Flag', ['patient']);
   compartments.register('Practitioner', 'Flag', ['author']);
@@ -2490,6 +2546,7 @@ begin
   indexes.add('Goal', 'start-date', 'When goal pursuit begins', sptDATE, [], '(Goal.start as date)', sxpNormal);
   indexes.add('Goal', 'subject', 'Who this goal is intended for', sptREFERENCE, ['Group', 'Organization', 'Patient'], 'Goal.subject', sxpNormal);
   indexes.add('Goal', 'target-date', 'Reach goal on or before', sptDATE, [], '(Goal.target.due as date)', sxpNormal);
+  indexes.add('Goal', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Goal', ['patient']);
 end;
 {$ENDIF FHIR_GOAL}
@@ -2540,6 +2597,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('GraphDefinition', 'version', '): The business version of the graph definition', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('GraphDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_GRAPHDEFINITION}
 
@@ -2565,6 +2623,7 @@ begin
   indexes.add('Group', 'member', 'Reference to the group member', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Medication', 'Patient', 'Substance', 'PractitionerRole'], 'Group.member.entity', sxpNormal);
   indexes.add('Group', 'type', 'The type of resources the group contains', sptTOKEN, [], 'Group.type', sxpNormal);
   indexes.add('Group', 'value', 'Value held by characteristic', sptTOKEN, [], '(Group.characteristic.value as CodeableConcept) | (Group.characteristic.value as boolean)', sxpNormal);
+  indexes.add('Group', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Group', ['member']);
   compartments.register('Patient', 'Group', ['member']);
   compartments.register('Practitioner', 'Group', ['member']);
@@ -2587,6 +2646,7 @@ begin
   indexes.add('GuidanceResponse', 'patient', 'The identity of a patient to search for guidance response results', sptREFERENCE, ['Patient'], 'GuidanceResponse.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('GuidanceResponse', 'request', 'The identifier of the request associated with the response', sptTOKEN, [], 'GuidanceResponse.requestIdentifier', sxpNormal);
   indexes.add('GuidanceResponse', 'subject', 'The subject that the guidance response is about', sptREFERENCE, ['Group', 'Patient'], 'GuidanceResponse.subject', sxpNormal);
+  indexes.add('GuidanceResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_GUIDANCERESPONSE}
 
@@ -2614,6 +2674,7 @@ begin
   indexes.add('HealthcareService', 'service-category', 'Service Category of the Healthcare Service', sptTOKEN, [], 'HealthcareService.category', sxpNormal);
   indexes.add('HealthcareService', 'service-type', 'The type of service provided by this healthcare service', sptTOKEN, [], 'HealthcareService.type', sxpNormal);
   indexes.add('HealthcareService', 'specialty', 'The specialty of the service provided by this healthcare service', sptTOKEN, [], 'HealthcareService.specialty', sxpNormal);
+  indexes.add('HealthcareService', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_HEALTHCARESERVICE}
 
@@ -2656,6 +2717,7 @@ begin
   indexes.add('ImagingStudy', 'started', 'When the study was started', sptDATE, [], 'ImagingStudy.started', sxpNormal);
   indexes.add('ImagingStudy', 'status', 'The status of the study', sptTOKEN, [], 'ImagingStudy.status', sxpNormal);
   indexes.add('ImagingStudy', 'subject', 'Who the study is about', sptREFERENCE, ['Group', 'Device', 'Patient'], 'ImagingStudy.subject', sxpNormal);
+  indexes.add('ImagingStudy', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'ImagingStudy', ['patient']);
 end;
 {$ENDIF FHIR_IMAGINGSTUDY}
@@ -2698,6 +2760,7 @@ begin
   indexes.add('Immunization', 'status-reason', 'Reason why the vaccine was not administered', sptTOKEN, [], 'Immunization.statusReason', sxpNormal);
   indexes.add('Immunization', 'target-disease', 'The target disease the dose is being administered against', sptTOKEN, [], 'Immunization.protocolApplied.targetDisease', sxpNormal);
   indexes.add('Immunization', 'vaccine-code', 'Vaccine Product Administered', sptTOKEN, [], 'Immunization.vaccineCode', sxpNormal);
+  indexes.add('Immunization', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Immunization', ['patient']);
   compartments.register('Practitioner', 'Immunization', ['performer']);
 end;
@@ -2722,6 +2785,7 @@ begin
   indexes.add('ImmunizationEvaluation', 'patient', 'The patient being evaluated', sptREFERENCE, ['Patient'], 'ImmunizationEvaluation.patient', sxpNormal);
   indexes.add('ImmunizationEvaluation', 'status', 'Immunization evaluation status', sptTOKEN, [], 'ImmunizationEvaluation.status', sxpNormal);
   indexes.add('ImmunizationEvaluation', 'target-disease', 'The vaccine preventable disease being evaluated against', sptTOKEN, [], 'ImmunizationEvaluation.targetDisease', sxpNormal);
+  indexes.add('ImmunizationEvaluation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'ImmunizationEvaluation', ['patient']);
 end;
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
@@ -2746,6 +2810,7 @@ begin
   indexes.add('ImmunizationRecommendation', 'support', 'Past immunizations supporting recommendation', sptREFERENCE, ['Immunization', 'ImmunizationEvaluation'], 'ImmunizationRecommendation.recommendation.supportingImmunization', sxpNormal);
   indexes.add('ImmunizationRecommendation', 'target-disease', 'Disease to be immunized against', sptTOKEN, [], 'ImmunizationRecommendation.recommendation.targetDisease', sxpNormal);
   indexes.add('ImmunizationRecommendation', 'vaccine-type', 'Vaccine  or vaccine group recommendation applies to', sptTOKEN, [], 'ImmunizationRecommendation.recommendation.vaccineCode', sxpNormal);
+  indexes.add('ImmunizationRecommendation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'ImmunizationRecommendation', ['patient']);
 end;
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
@@ -2800,6 +2865,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('ImplementationGuide', 'version', '): The business version of the implementation guide', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('ImplementationGuide', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
 
@@ -2818,6 +2884,7 @@ begin
   indexes.add('Ingredient', 'identifier', 'An identifier or code by which the ingredient can be referenced', sptTOKEN, [], 'Ingredient.identifier', sxpNormal);
   indexes.add('Ingredient', 'specified-substance', 'Substance as a ''specified substance'', implying extra substance related characteristics', sptTOKEN, [], '(Ingredient.specifiedSubstance.code as CodeableConcept)', sxpNormal);
   indexes.add('Ingredient', 'substance', 'A code that represents the ingredient substance', sptTOKEN, [], '(Ingredient.substance.code as CodeableConcept)', sxpNormal);
+  indexes.add('Ingredient', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_INGREDIENT}
 
@@ -2847,6 +2914,7 @@ begin
   indexes.add('InsurancePlan', 'phonetic', 'A portion of the organization''s name using some kind of phonetic matching algorithm', sptSTRING, [], 'InsurancePlan.name', sxpPhonetic);
   indexes.add('InsurancePlan', 'status', 'Is the Organization record active', sptTOKEN, [], 'InsurancePlan.status', sxpNormal);
   indexes.add('InsurancePlan', 'type', 'A code for the type of organization', sptTOKEN, [], 'InsurancePlan.type', sxpNormal);
+  indexes.add('InsurancePlan', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_INSURANCEPLAN}
 
@@ -2875,6 +2943,7 @@ begin
   indexes.add('Invoice', 'totalgross', 'Gross total of this Invoice', sptQUANTITY, [], 'Invoice.totalGross', sxpNormal);
   indexes.add('Invoice', 'totalnet', 'Net total of this Invoice', sptQUANTITY, [], 'Invoice.totalNet', sxpNormal);
   indexes.add('Invoice', 'type', 'Type of Invoice', sptTOKEN, [], 'Invoice.type', sxpNormal);
+  indexes.add('Invoice', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Invoice', ['participant']);
   compartments.register('Patient', 'Invoice', ['subject', 'patient', 'recipient']);
   compartments.register('Practitioner', 'Invoice', ['participant']);
@@ -2918,6 +2987,7 @@ begin
   indexes.add('Library', 'type', 'The type of the library (e.g. logic-library, model-definition, asset-collection, module-definition)', sptTOKEN, [], 'Library.type', sxpNormal);
   indexes.add('Library', 'url', 'The uri that identifies the library', sptURI, [], 'Library.url', sxpNormal);
   indexes.add('Library', 'version', 'The business version of the library', sptTOKEN, [], 'Library.version', sxpNormal);
+  indexes.add('Library', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_LIBRARY}
 
@@ -2936,6 +3006,7 @@ begin
   indexes.add('Linkage', 'author', 'Author of the Linkage', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'Linkage.author', sxpNormal);
   indexes.add('Linkage', 'item', 'Matches on any item in the Linkage', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Linkage.item.resource', sxpNormal);
   indexes.add('Linkage', 'source', 'Matches on any item in the Linkage with a type of ''source''', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Linkage.item.resource', sxpNormal);
+  indexes.add('Linkage', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Practitioner', 'Linkage', ['author']);
 end;
 {$ENDIF FHIR_LINKAGE}
@@ -2976,6 +3047,7 @@ begin
   indexes.add('List', 'status', 'current | retired | entered-in-error', sptTOKEN, [], 'List.status', sxpNormal);
   indexes.add('List', 'subject', 'If all resources have the same subject', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'List.subject', sxpNormal);
   indexes.add('List', 'title', 'Descriptive name for the list', sptSTRING, [], 'List.title', sxpNormal);
+  indexes.add('List', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'List', ['subject', 'source']);
   compartments.register('Patient', 'List', ['subject', 'source']);
   compartments.register('Practitioner', 'List', ['source']);
@@ -3011,6 +3083,7 @@ begin
   indexes.add('Location', 'partof', 'A location of which this location is a part', sptREFERENCE, ['Location'], 'Location.partOf', sxpNormal);
   indexes.add('Location', 'status', 'Searches for locations with a specific kind of status', sptTOKEN, [], 'Location.status', sxpNormal);
   indexes.add('Location', 'type', 'A code for the type of location', sptTOKEN, [], 'Location.type', sxpNormal);
+  indexes.add('Location', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_LOCATION}
 
@@ -3028,6 +3101,7 @@ begin
   indexes.add('ManufacturedItemDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('ManufacturedItemDefinition', 'dose-form', 'Dose form as manufactured and before any transformation into the pharmaceutical product', sptTOKEN, [], 'ManufacturedItemDefinition.manufacturedDoseForm', sxpNormal);
   indexes.add('ManufacturedItemDefinition', 'identifier', 'Unique identifier', sptTOKEN, [], 'ManufacturedItemDefinition.identifier', sxpNormal);
+  indexes.add('ManufacturedItemDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
 
@@ -3065,6 +3139,7 @@ begin
   indexes.add('Measure', 'topic', 'Topics associated with the measure', sptTOKEN, [], 'Measure.topic', sxpNormal);
   indexes.add('Measure', 'url', 'The uri that identifies the measure', sptURI, [], 'Measure.url', sxpNormal);
   indexes.add('Measure', 'version', 'The business version of the measure', sptTOKEN, [], 'Measure.version', sxpNormal);
+  indexes.add('Measure', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MEASURE}
 
@@ -3089,6 +3164,7 @@ begin
   indexes.add('MeasureReport', 'reporter', 'The reporter to return measure report results for', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole', 'Location'], 'MeasureReport.reporter', sxpNormal);
   indexes.add('MeasureReport', 'status', 'The status of the measure report', sptTOKEN, [], 'MeasureReport.status', sxpNormal);
   indexes.add('MeasureReport', 'subject', 'The identity of a subject to search for individual measure report results for', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson', 'Location'], 'MeasureReport.subject', sxpNormal);
+  indexes.add('MeasureReport', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'MeasureReport', ['patient']);
 end;
 {$ENDIF FHIR_MEASUREREPORT}
@@ -3115,6 +3191,7 @@ begin
   indexes.add('Medication', 'lot-number', 'Returns medications in a batch with this lot number', sptTOKEN, [], 'Medication.batch.lotNumber', sxpNormal);
   indexes.add('Medication', 'manufacturer', 'Returns medications made or sold for this manufacturer', sptREFERENCE, ['Organization'], 'Medication.manufacturer', sxpNormal);
   indexes.add('Medication', 'status', 'Returns medications for this status', sptTOKEN, [], 'Medication.status', sxpNormal);
+  indexes.add('Medication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MEDICATION}
 
@@ -3154,6 +3231,7 @@ begin
   indexes.add('MedicationAdministration', 'request', 'The identity of a request to list administrations from', sptREFERENCE, ['MedicationRequest'], 'MedicationAdministration.request', sxpNormal);
   indexes.add('MedicationAdministration', 'status', '): MedicationAdministration event status (for example one of active/paused/completed/nullified)', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
   indexes.add('MedicationAdministration', 'subject', 'The identity of the individual or group to list administrations for', sptREFERENCE, ['Group', 'Patient'], 'MedicationAdministration.subject', sxpNormal);
+  indexes.add('MedicationAdministration', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'MedicationAdministration', ['device']);
   compartments.register('Encounter', 'MedicationAdministration', ['encounter']);
   compartments.register('Patient', 'MedicationAdministration', ['patient', 'performer', 'subject']);
@@ -3200,6 +3278,7 @@ begin
   indexes.add('MedicationDispense', 'type', 'Returns dispenses of a specific type', sptTOKEN, [], 'MedicationDispense.type', sxpNormal);
   indexes.add('MedicationDispense', 'whenhandedover', 'Returns dispenses handed over on this date', sptDATE, [], 'MedicationDispense.whenHandedOver', sxpNormal);
   indexes.add('MedicationDispense', 'whenprepared', 'Returns dispenses prepared on this date', sptDATE, [], 'MedicationDispense.whenPrepared', sxpNormal);
+  indexes.add('MedicationDispense', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'MedicationDispense', ['encounter']);
   compartments.register('Patient', 'MedicationDispense', ['subject', 'patient', 'receiver']);
   compartments.register('Practitioner', 'MedicationDispense', ['performer', 'receiver']);
@@ -3233,6 +3312,7 @@ begin
   indexes.add('MedicationKnowledge', 'product-type', 'Category of the medication or product', sptTOKEN, [], 'MedicationKnowledge.productType', sxpNormal);
   indexes.add('MedicationKnowledge', 'source-cost', 'The source or owner for the price information', sptTOKEN, [], 'MedicationKnowledge.cost.source', sxpNormal);
   indexes.add('MedicationKnowledge', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'MedicationKnowledge.status', sxpNormal);
+  indexes.add('MedicationKnowledge', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 
@@ -3275,6 +3355,7 @@ begin
   indexes.add('MedicationRequest', 'requester', 'Returns prescriptions prescribed by this prescriber', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationRequest.requester', sxpNormal);
   indexes.add('MedicationRequest', 'status', '): Status of the prescription', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
   indexes.add('MedicationRequest', 'subject', 'The identity of a patient to list orders  for', sptREFERENCE, ['Group', 'Patient'], 'MedicationRequest.subject', sxpNormal);
+  indexes.add('MedicationRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'MedicationRequest', ['encounter']);
   compartments.register('Patient', 'MedicationRequest', ['subject']);
   compartments.register('Practitioner', 'MedicationRequest', ['requester']);
@@ -3316,6 +3397,7 @@ begin
   indexes.add('MedicationUsage', 'source', 'Who or where the information in the statement came from', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationUsage.informationSource', sxpNormal);
   indexes.add('MedicationUsage', 'status', '): Return statements that match the given status', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
   indexes.add('MedicationUsage', 'subject', 'The identity of a patient, animal or group to list statements for', sptREFERENCE, ['Group', 'Patient'], 'MedicationUsage.subject', sxpNormal);
+  indexes.add('MedicationUsage', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'MedicationUsage', ['encounter']);
   compartments.register('Patient', 'MedicationUsage', ['subject']);
   compartments.register('Practitioner', 'MedicationUsage', ['source']);
@@ -3341,6 +3423,7 @@ begin
   indexes.add('MedicinalProductDefinition', 'name', 'The full product name', sptSTRING, [], 'MedicinalProductDefinition.name.productName', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'name-language', 'Language code for this name', sptTOKEN, [], 'MedicinalProductDefinition.name.countryLanguage.language', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'product-classification', 'Allows the product to be classified by various systems', sptTOKEN, [], 'MedicinalProductDefinition.productClassification', sxpNormal);
+  indexes.add('MedicinalProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MEDICINALPRODUCTDEFINITION}
 
@@ -3395,6 +3478,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('MessageDefinition', 'version', '): The business version of the message definition', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('MessageDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MESSAGEDEFINITION}
 
@@ -3424,6 +3508,7 @@ begin
   indexes.add('MessageHeader', 'source', 'Name of system', sptSTRING, [], 'MessageHeader.source.name', sxpNormal);
   indexes.add('MessageHeader', 'source-uri', 'Actual message source address or id', sptURI, [], 'MessageHeader.source.endpoint', sxpNormal);
   indexes.add('MessageHeader', 'target', 'Particular delivery destination within the destination', sptREFERENCE, ['Device'], 'MessageHeader.destination.target', sxpNormal);
+  indexes.add('MessageHeader', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'MessageHeader', ['target']);
   compartments.register('Practitioner', 'MessageHeader', ['receiver', 'author', 'responsible', 'enterer']);
 end;
@@ -3466,6 +3551,7 @@ begin
   indexes.add('MolecularSequence', 'variant-start', 'Start position (0-based inclusive, 1-based inclusive, that means the nucleic acid or amino acid at this position will be included) of the variant.', sptNUMBER, [], 'MolecularSequence.variant.start', sxpNormal);
   indexes.add('MolecularSequence', 'window-end', 'End position (0-based exclusive, which menas the acid at this position will not be included, 1-based inclusive, which means the acid at this position will be included) of the reference sequence.', sptNUMBER, [], 'MolecularSequence.referenceSeq.windowEnd', sxpNormal);
   indexes.add('MolecularSequence', 'window-start', 'Start position (0-based inclusive, 1-based inclusive, that means the nucleic acid or amino acid at this position will be included) of the reference sequence.', sptNUMBER, [], 'MolecularSequence.referenceSeq.windowStart', sxpNormal);
+  indexes.add('MolecularSequence', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'MolecularSequence', ['patient']);
 end;
 {$ENDIF FHIR_MOLECULARSEQUENCE}
@@ -3523,6 +3609,7 @@ begin
   indexes.add('NamingSystem', 'value', 'The unique identifier', sptSTRING, [], 'NamingSystem.uniqueId.value', sxpNormal);
   indexes.add('NamingSystem', 'version', '): The business version of the naming system', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('NamingSystem', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_NAMINGSYSTEM}
 
@@ -3548,6 +3635,7 @@ begin
   indexes.add('NutritionIntake', 'source', 'Who or where the information in the statement came from', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'NutritionIntake.informationSource', sxpNormal);
   indexes.add('NutritionIntake', 'status', 'Return statements that match the given status', sptTOKEN, [], 'NutritionIntake.status', sxpNormal);
   indexes.add('NutritionIntake', 'subject', 'The identity of a patient, animal or group to list statements for', sptREFERENCE, ['Group', 'Patient'], 'NutritionIntake.subject', sxpNormal);
+  indexes.add('NutritionIntake', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'NutritionIntake', ['encounter']);
   compartments.register('Patient', 'NutritionIntake', ['subject', 'source']);
   compartments.register('Practitioner', 'NutritionIntake', ['source']);
@@ -3590,6 +3678,7 @@ begin
   indexes.add('NutritionOrder', 'provider', 'The identity of the provider who placed the nutrition order', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'NutritionOrder.orderer', sxpNormal);
   indexes.add('NutritionOrder', 'status', 'Status of the nutrition order.', sptTOKEN, [], 'NutritionOrder.status', sxpNormal);
   indexes.add('NutritionOrder', 'supplement', 'Type of supplement product requested', sptTOKEN, [], 'NutritionOrder.supplement.type', sxpNormal);
+  indexes.add('NutritionOrder', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'NutritionOrder', ['encounter']);
   compartments.register('Patient', 'NutritionOrder', ['patient']);
   compartments.register('Practitioner', 'NutritionOrder', ['provider']);
@@ -3664,6 +3753,7 @@ begin
   indexes.add('Observation', 'value-date', 'The value of the observation, if the value is a date or period of time', sptDATE, [], '(Observation.value as dateTime) | (Observation.value as Period)', sxpNormal);
   indexes.add('Observation', 'value-quantity', 'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.value as Quantity) | (Observation.value as SampledData)', sxpNormal);
   indexes.add('Observation', 'value-string', 'The value of the observation, if the value is a string, and also searches in CodeableConcept.text', sptSTRING, [], '(Observation.value as string) | (Observation.value as CodeableConcept).text', sxpNormal);
+  indexes.add('Observation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Observation', ['subject', 'device']);
   compartments.register('Encounter', 'Observation', ['encounter']);
   compartments.register('Patient', 'Observation', ['subject', 'performer']);
@@ -3691,6 +3781,7 @@ begin
   indexes.add('ObservationDefinition', 'method', 'Method of observation', sptTOKEN, [], 'ObservationDefinition.method', sxpNormal);
   indexes.add('ObservationDefinition', 'status', 'Publication status of the ObservationDefinition: draft, active, retired, unknown', sptTOKEN, [], 'ObservationDefinition.status', sxpNormal);
   indexes.add('ObservationDefinition', 'title', 'Human-friendly name of the ObservationDefinition', sptSTRING, [], 'ObservationDefinition.title', sxpNormal);
+  indexes.add('ObservationDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_OBSERVATIONDEFINITION}
 
@@ -3748,6 +3839,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('OperationDefinition', 'version', '): The business version of the operation definition', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('OperationDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_OPERATIONDEFINITION}
 
@@ -3763,6 +3855,7 @@ begin
   indexes.add('OperationOutcome', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('OperationOutcome', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('OperationOutcome', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('OperationOutcome', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_OPERATIONOUTCOME}
 
@@ -3791,6 +3884,7 @@ begin
   indexes.add('Organization', 'partof', 'An organization of which this organization forms a part', sptREFERENCE, ['Organization'], 'Organization.partOf', sxpNormal);
   indexes.add('Organization', 'phonetic', 'A portion of the organization''s name using some kind of phonetic matching algorithm', sptSTRING, [], 'Organization.name', sxpPhonetic);
   indexes.add('Organization', 'type', 'A code for the type of organization', sptTOKEN, [], 'Organization.type', sxpNormal);
+  indexes.add('Organization', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_ORGANIZATION}
 
@@ -3820,6 +3914,7 @@ begin
   indexes.add('OrganizationAffiliation', 'service', 'Healthcare services provided through the role', sptREFERENCE, ['HealthcareService'], 'OrganizationAffiliation.healthcareService', sxpNormal);
   indexes.add('OrganizationAffiliation', 'specialty', 'Specific specialty of the participatingOrganization in the context of the role', sptTOKEN, [], 'OrganizationAffiliation.specialty', sxpNormal);
   indexes.add('OrganizationAffiliation', 'telecom', 'The value in any kind of contact', sptTOKEN, [], 'OrganizationAffiliation.telecom', sxpNormal);
+  indexes.add('OrganizationAffiliation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 
@@ -3839,6 +3934,7 @@ begin
   indexes.add('PackagedProductDefinition', 'identifier', 'Unique identifier', sptTOKEN, [], 'PackagedProductDefinition.identifier', sxpNormal);
   indexes.add('PackagedProductDefinition', 'manufactured-item', 'A manufactured item of medication within this packaged product', sptREFERENCE, ['ManufacturedItemDefinition'], '', sxpNormal);
   indexes.add('PackagedProductDefinition', 'subject', 'The product that this is a pack for', sptREFERENCE, ['MedicinalProductDefinition'], 'PackagedProductDefinition.subject', sxpNormal);
+  indexes.add('PackagedProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_PACKAGEDPRODUCTDEFINITION}
 
@@ -3854,6 +3950,7 @@ begin
   indexes.add('Parameters', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Parameters', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Parameters', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Parameters', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_PARAMETERS}
 
@@ -3895,6 +3992,7 @@ begin
   indexes.add('Patient', 'phone', '): A value in a phone contact', sptTOKEN, [], 'Patient.telecom.where(system=''phone'') | Person.telecom.where(system=''phone'') | Practitioner.telecom.where(system=''phone'') | PractitionerRole.telecom.where(system=''phone'') | RelatedPerson.telecom.where(system=''phone'')', sxpNormal);
   indexes.add('Patient', 'phonetic', '): A portion of either family or given name using some kind of phonetic matching algorithm', sptSTRING, [], 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name', sxpPhonetic);
   indexes.add('Patient', 'telecom', '): The value in any kind of telecom details of the patient', sptTOKEN, [], 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom', sxpNormal);
+  indexes.add('Patient', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Patient', ['link']);
   compartments.register('Practitioner', 'Patient', ['general-practitioner']);
   compartments.register('RelatedPerson', 'Patient', ['link']);
@@ -3920,6 +4018,7 @@ begin
   indexes.add('PaymentNotice', 'request', 'The Claim', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.request', sxpNormal);
   indexes.add('PaymentNotice', 'response', 'The ClaimResponse', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.response', sxpNormal);
   indexes.add('PaymentNotice', 'status', 'The status of the payment notice', sptTOKEN, [], 'PaymentNotice.status', sxpNormal);
+  indexes.add('PaymentNotice', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Practitioner', 'PaymentNotice', ['provider']);
 end;
 {$ENDIF FHIR_PAYMENTNOTICE}
@@ -3944,6 +4043,7 @@ begin
   indexes.add('PaymentReconciliation', 'request', 'The reference to the claim', sptREFERENCE, ['Task'], 'PaymentReconciliation.request', sxpNormal);
   indexes.add('PaymentReconciliation', 'requestor', 'The reference to the provider who submitted the claim', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'PaymentReconciliation.requestor', sxpNormal);
   indexes.add('PaymentReconciliation', 'status', 'The status of the payment reconciliation', sptTOKEN, [], 'PaymentReconciliation.status', sxpNormal);
+  indexes.add('PaymentReconciliation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Practitioner', 'PaymentReconciliation', ['requestor']);
 end;
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
@@ -3979,6 +4079,7 @@ begin
   indexes.add('Person', 'practitioner', 'The Person links to this Practitioner', sptREFERENCE, ['Practitioner'], 'Person.link.target.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('Person', 'relatedperson', 'The Person links to this RelatedPerson', sptREFERENCE, ['RelatedPerson'], 'Person.link.target.where(resolve() is RelatedPerson)', sxpNormal);
   indexes.add('Person', 'telecom', '): The value in any kind of contact', sptTOKEN, [], 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom', sxpNormal);
+  indexes.add('Person', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'Person', ['patient']);
   compartments.register('Practitioner', 'Person', ['practitioner']);
   compartments.register('RelatedPerson', 'Person', ['link']);
@@ -4021,6 +4122,7 @@ begin
   indexes.add('PlanDefinition', 'type', 'The type of artifact the plan (e.g. order-set, eca-rule, protocol)', sptTOKEN, [], 'PlanDefinition.type', sxpNormal);
   indexes.add('PlanDefinition', 'url', 'The uri that identifies the plan definition', sptURI, [], 'PlanDefinition.url', sxpNormal);
   indexes.add('PlanDefinition', 'version', 'The business version of the plan definition', sptTOKEN, [], 'PlanDefinition.version', sxpNormal);
+  indexes.add('PlanDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_PLANDEFINITION}
 
@@ -4053,6 +4155,7 @@ begin
   indexes.add('Practitioner', 'phone', '): A value in a phone contact', sptTOKEN, [], 'Patient.telecom.where(system=''phone'') | Person.telecom.where(system=''phone'') | Practitioner.telecom.where(system=''phone'') | PractitionerRole.telecom.where(system=''phone'') | RelatedPerson.telecom.where(system=''phone'')', sxpNormal);
   indexes.add('Practitioner', 'phonetic', '): A portion of either family or given name using some kind of phonetic matching algorithm', sptSTRING, [], 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name', sxpPhonetic);
   indexes.add('Practitioner', 'telecom', '): The value in any kind of contact', sptTOKEN, [], 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom', sxpNormal);
+  indexes.add('Practitioner', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Practitioner', 'Practitioner', ['{def}']);
 end;
 {$ENDIF FHIR_PRACTITIONER}
@@ -4082,6 +4185,7 @@ begin
   indexes.add('PractitionerRole', 'service', 'The list of healthcare services that this worker provides for this role''s Organization/Location(s)', sptREFERENCE, ['HealthcareService'], 'PractitionerRole.healthcareService', sxpNormal);
   indexes.add('PractitionerRole', 'specialty', 'The practitioner has this specialty at an organization', sptTOKEN, [], 'PractitionerRole.specialty', sxpNormal);
   indexes.add('PractitionerRole', 'telecom', '): The value in any kind of contact', sptTOKEN, [], 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom', sxpNormal);
+  indexes.add('PractitionerRole', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Practitioner', 'PractitionerRole', ['practitioner']);
 end;
 {$ENDIF FHIR_PRACTITIONERROLE}
@@ -4127,6 +4231,7 @@ begin
   indexes.add('Procedure', 'reason-reference', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Procedure.reason.reference', sxpNormal);
   indexes.add('Procedure', 'status', 'preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown', sptTOKEN, [], 'Procedure.status', sxpNormal);
   indexes.add('Procedure', 'subject', 'Search by subject', sptREFERENCE, ['Group', 'Patient'], 'Procedure.subject', sxpNormal);
+  indexes.add('Procedure', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'Procedure', ['encounter']);
   compartments.register('Patient', 'Procedure', ['patient', 'performer']);
   compartments.register('Practitioner', 'Procedure', ['performer']);
@@ -4157,6 +4262,7 @@ begin
   indexes.add('Provenance', 'signature-type', 'Indication of the reason the entity signed the object(s)', sptTOKEN, [], 'Provenance.signature.type', sxpNormal);
   indexes.add('Provenance', 'target', 'Target Reference(s) (usually version specific)', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Provenance.target', sxpNormal);
   indexes.add('Provenance', 'when', 'When the activity occurred', sptDATE, [], '(Provenance.occurred as dateTime)', sxpNormal);
+  indexes.add('Provenance', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Provenance', ['agent']);
   compartments.register('Patient', 'Provenance', ['patient']);
   compartments.register('Practitioner', 'Provenance', ['agent']);
@@ -4195,6 +4301,7 @@ begin
   indexes.add('Questionnaire', 'title', 'The human-friendly name of the questionnaire', sptSTRING, [], 'Questionnaire.title', sxpNormal);
   indexes.add('Questionnaire', 'url', 'The uri that identifies the questionnaire', sptURI, [], 'Questionnaire.url', sxpNormal);
   indexes.add('Questionnaire', 'version', 'The business version of the questionnaire', sptTOKEN, [], 'Questionnaire.version', sxpNormal);
+  indexes.add('Questionnaire', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_QUESTIONNAIRE}
 
@@ -4222,6 +4329,7 @@ begin
   indexes.add('QuestionnaireResponse', 'source', 'The individual providing the information reflected in the questionnaire respose', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'QuestionnaireResponse.source', sxpNormal);
   indexes.add('QuestionnaireResponse', 'status', 'The status of the questionnaire response', sptTOKEN, [], 'QuestionnaireResponse.status', sxpNormal);
   indexes.add('QuestionnaireResponse', 'subject', 'The subject of the questionnaire response', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'QuestionnaireResponse.subject', sxpNormal);
+  indexes.add('QuestionnaireResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'QuestionnaireResponse', ['author']);
   compartments.register('Encounter', 'QuestionnaireResponse', ['encounter']);
   compartments.register('Patient', 'QuestionnaireResponse', ['subject', 'author']);
@@ -4249,6 +4357,7 @@ begin
   indexes.add('RegulatedAuthorization', 'region', 'The region (country, jurisdiction etc.) in which the marketing authorization has been granted', sptTOKEN, [], 'RegulatedAuthorization.region', sxpNormal);
   indexes.add('RegulatedAuthorization', 'status', 'The status of the marketing authorization', sptTOKEN, [], 'RegulatedAuthorization.status', sxpNormal);
   indexes.add('RegulatedAuthorization', 'subject', 'The product that is being authorized', sptREFERENCE, ['MedicinalProductDefinition', 'DeviceDefinition', 'ObservationDefinition', 'PlanDefinition', 'PackagedProductDefinition', 'ResearchStudy', 'ActivityDefinition'], 'RegulatedAuthorization.subject', sxpNormal);
+  indexes.add('RegulatedAuthorization', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_REGULATEDAUTHORIZATION}
 
@@ -4281,6 +4390,7 @@ begin
   indexes.add('RelatedPerson', 'phonetic', '): A portion of name using some kind of phonetic matching algorithm', sptSTRING, [], 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name', sxpPhonetic);
   indexes.add('RelatedPerson', 'relationship', 'The relationship between the patient and the relatedperson', sptTOKEN, [], 'RelatedPerson.relationship', sxpNormal);
   indexes.add('RelatedPerson', 'telecom', '): The value in any kind of contact', sptTOKEN, [], 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom', sxpNormal);
+  indexes.add('RelatedPerson', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'RelatedPerson', ['patient']);
   compartments.register('RelatedPerson', 'RelatedPerson', ['{def}']);
 end;
@@ -4312,6 +4422,7 @@ begin
   indexes.add('RequestGroup', 'priority', 'The priority of the request group', sptTOKEN, [], 'RequestGroup.priority', sxpNormal);
   indexes.add('RequestGroup', 'status', 'The status of the request group', sptTOKEN, [], 'RequestGroup.status', sxpNormal);
   indexes.add('RequestGroup', 'subject', 'The subject that the request group is about', sptREFERENCE, ['Group', 'Patient'], 'RequestGroup.subject', sxpNormal);
+  indexes.add('RequestGroup', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'RequestGroup', ['author']);
   compartments.register('Encounter', 'RequestGroup', ['encounter']);
   compartments.register('Patient', 'RequestGroup', ['subject', 'participant']);
@@ -4345,6 +4456,7 @@ begin
   indexes.add('ResearchStudy', 'sponsor', 'Organization that initiates and is legally responsible for the study', sptREFERENCE, ['Organization'], 'ResearchStudy.sponsor', sxpNormal);
   indexes.add('ResearchStudy', 'status', 'active | administratively-completed | approved | closed-to-accrual | closed-to-accrual-and-intervention | completed | disapproved | in-review | temporarily-closed-to-accrual | temporarily-closed-to-accrual-and-intervention | withdrawn', sptTOKEN, [], 'ResearchStudy.status', sxpNormal);
   indexes.add('ResearchStudy', 'title', 'Name for this study', sptSTRING, [], 'ResearchStudy.title', sxpNormal);
+  indexes.add('ResearchStudy', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Practitioner', 'ResearchStudy', ['principalinvestigator']);
 end;
 {$ENDIF FHIR_RESEARCHSTUDY}
@@ -4368,6 +4480,7 @@ begin
   indexes.add('ResearchSubject', 'state', 'candidate | eligible | follow-up | ineligible | not-registered | off-study | on-study | on-study-intervention | on-study-observation | pending-on-study | potential-candidate | screening | withdrawn', sptTOKEN, [], 'ResearchSubject.progress.state', sxpNormal);
   indexes.add('ResearchSubject', 'status', 'candidate | eligible | follow-up | ineligible | not-registered | off-study | on-study | on-study-intervention | on-study-observation | pending-on-study | potential-candidate | screening | withdrawn', sptTOKEN, [], 'ResearchSubject.status', sxpNormal);
   indexes.add('ResearchSubject', 'study', 'Study subject is part of', sptREFERENCE, ['ResearchStudy'], 'ResearchSubject.study', sxpNormal);
+  indexes.add('ResearchSubject', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'ResearchSubject', ['individual']);
 end;
 {$ENDIF FHIR_RESEARCHSUBJECT}
@@ -4406,6 +4519,7 @@ begin
   indexes.add('RiskAssessment', 'probability', 'Likelihood of specified outcome', sptNUMBER, [], 'RiskAssessment.prediction.probability', sxpNormal);
   indexes.add('RiskAssessment', 'risk', 'Likelihood of specified outcome as a qualitative value', sptTOKEN, [], 'RiskAssessment.prediction.qualitativeRisk', sxpNormal);
   indexes.add('RiskAssessment', 'subject', 'Who/what does assessment apply to?', sptREFERENCE, ['Group', 'Patient'], 'RiskAssessment.subject', sxpNormal);
+  indexes.add('RiskAssessment', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'RiskAssessment', ['performer']);
   compartments.register('Patient', 'RiskAssessment', ['subject']);
   compartments.register('Practitioner', 'RiskAssessment', ['performer']);
@@ -4431,6 +4545,7 @@ begin
   indexes.add('Schedule', 'service-category', 'High-level category', sptTOKEN, [], 'Schedule.serviceCategory', sxpNormal);
   indexes.add('Schedule', 'service-type', 'The type of appointments that can be booked into associated slot(s)', sptTOKEN, [], 'Schedule.serviceType', sxpNormal);
   indexes.add('Schedule', 'specialty', 'Type of specialty needed', sptTOKEN, [], 'Schedule.specialty', sxpNormal);
+  indexes.add('Schedule', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Schedule', ['actor']);
   compartments.register('Patient', 'Schedule', ['actor']);
   compartments.register('Practitioner', 'Schedule', ['actor']);
@@ -4489,6 +4604,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('SearchParameter', 'version', '): The business version of the search parameter', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('SearchParameter', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SEARCHPARAMETER}
 
@@ -4537,6 +4653,7 @@ begin
   indexes.add('ServiceRequest', 'specimen', 'Specimen to be tested', sptREFERENCE, ['Specimen'], 'ServiceRequest.specimen', sxpNormal);
   indexes.add('ServiceRequest', 'status', 'draft | active | on-hold | revoked | completed | entered-in-error | unknown', sptTOKEN, [], 'ServiceRequest.status', sxpNormal);
   indexes.add('ServiceRequest', 'subject', 'Search by subject', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'ServiceRequest.subject', sxpNormal);
+  indexes.add('ServiceRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'ServiceRequest', ['performer', 'requester']);
   compartments.register('Encounter', 'ServiceRequest', ['encounter']);
   compartments.register('Patient', 'ServiceRequest', ['subject', 'performer']);
@@ -4565,6 +4682,7 @@ begin
   indexes.add('Slot', 'specialty', 'The specialty of a practitioner that would be required to perform the service requested in this appointment', sptTOKEN, [], 'Slot.specialty', sxpNormal);
   indexes.add('Slot', 'start', 'Appointment date/time.', sptDATE, [], 'Slot.start', sxpNormal);
   indexes.add('Slot', 'status', 'The free/busy status of the appointment', sptTOKEN, [], 'Slot.status', sxpNormal);
+  indexes.add('Slot', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SLOT}
 
@@ -4592,6 +4710,7 @@ begin
   indexes.add('Specimen', 'status', 'available | unavailable | unsatisfactory | entered-in-error', sptTOKEN, [], 'Specimen.status', sxpNormal);
   indexes.add('Specimen', 'subject', 'The subject of the specimen', sptREFERENCE, ['Group', 'Device', 'Patient', 'Substance', 'Location'], 'Specimen.subject', sxpNormal);
   indexes.add('Specimen', 'type', 'The specimen type', sptTOKEN, [], 'Specimen.type', sxpNormal);
+  indexes.add('Specimen', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Specimen', ['subject']);
   compartments.register('Patient', 'Specimen', ['subject']);
   compartments.register('Practitioner', 'Specimen', ['collector']);
@@ -4618,6 +4737,7 @@ begin
   indexes.add('SpecimenDefinition', 'title', 'Human-friendly name of the SpecimenDefinition', sptSTRING, [], 'SpecimenDefinition.title', sxpNormal);
   indexes.add('SpecimenDefinition', 'type', 'The type of collected specimen', sptTOKEN, [], 'SpecimenDefinition.typeCollected', sxpNormal);
   indexes.add('SpecimenDefinition', 'type-tested', 'The type of specimen conditioned for testing', sptTOKEN, [], 'SpecimenDefinition.typeTested.type', sxpNormal);
+  indexes.add('SpecimenDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SPECIMENDEFINITION}
 
@@ -4679,6 +4799,7 @@ begin
   indexes.add('StructureDefinition', 'valueset', 'A vocabulary binding reference', sptREFERENCE, ['ValueSet'], 'StructureDefinition.snapshot.element.binding.valueSet', sxpNormal);
   indexes.add('StructureDefinition', 'version', '): The business version of the structure definition', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('StructureDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_STRUCTUREDEFINITION}
 
@@ -4729,6 +4850,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('StructureMap', 'version', '): The business version of the structure map', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('StructureMap', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_STRUCTUREMAP}
 
@@ -4749,6 +4871,7 @@ begin
   indexes.add('Subscription', 'status', 'The current state of the subscription', sptTOKEN, [], 'Subscription.status', sxpNormal);
   indexes.add('Subscription', 'type', 'The type of channel for the sent notifications', sptTOKEN, [], 'Subscription.channel.type', sxpNormal);
   indexes.add('Subscription', 'url', 'The uri that will receive the notifications', sptURI, [], 'Subscription.channel.endpoint', sxpNormal);
+  indexes.add('Subscription', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSCRIPTION}
 
@@ -4772,6 +4895,7 @@ begin
   indexes.add('Substance', 'quantity', 'Amount of substance in the package', sptQUANTITY, [], 'Substance.instance.quantity', sxpNormal);
   indexes.add('Substance', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'Substance.status', sxpNormal);
   indexes.add('Substance', 'substance-reference', 'A component of the substance', sptREFERENCE, ['Substance'], '(Substance.ingredient.substance as Reference)', sxpNormal);
+  indexes.add('Substance', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCE}
 
@@ -4789,6 +4913,7 @@ begin
   indexes.add('SubstanceDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SubstanceDefinition', 'code', 'The specific code', sptTOKEN, [], 'SubstanceDefinition.code.code', sxpNormal);
   indexes.add('SubstanceDefinition', 'identifier', 'Identifier by which this substance is known', sptTOKEN, [], 'SubstanceDefinition.identifier', sxpNormal);
+  indexes.add('SubstanceDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCEDEFINITION}
 
@@ -4804,6 +4929,7 @@ begin
   indexes.add('SubstanceNucleicAcid', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCENUCLEICACID}
 
@@ -4819,6 +4945,7 @@ begin
   indexes.add('SubstancePolymer', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstancePolymer', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstancePolymer', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstancePolymer', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCEPOLYMER}
 
@@ -4834,6 +4961,7 @@ begin
   indexes.add('SubstanceProtein', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceProtein', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceProtein', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceProtein', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCEPROTEIN}
 
@@ -4849,6 +4977,7 @@ begin
   indexes.add('SubstanceReferenceInformation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceReferenceInformation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCEREFERENCEINFORMATION}
 
@@ -4864,6 +4993,7 @@ begin
   indexes.add('SubstanceSourceMaterial', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCESOURCEMATERIAL}
 
@@ -4893,6 +5023,7 @@ begin
   indexes.add('SupplyDelivery', 'receiver', 'Who collected the Supply', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'SupplyDelivery.receiver', sxpNormal);
   indexes.add('SupplyDelivery', 'status', 'in-progress | completed | abandoned | entered-in-error', sptTOKEN, [], 'SupplyDelivery.status', sxpNormal);
   indexes.add('SupplyDelivery', 'supplier', 'Dispenser', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'SupplyDelivery.supplier', sxpNormal);
+  indexes.add('SupplyDelivery', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Patient', 'SupplyDelivery', ['patient']);
   compartments.register('Practitioner', 'SupplyDelivery', ['supplier', 'receiver']);
 end;
@@ -4922,6 +5053,7 @@ begin
   indexes.add('SupplyRequest', 'status', 'draft | active | suspended +', sptTOKEN, [], 'SupplyRequest.status', sxpNormal);
   indexes.add('SupplyRequest', 'subject', 'The destination of the supply', sptREFERENCE, ['Organization', 'Patient', 'Location'], 'SupplyRequest.deliverTo', sxpNormal);
   indexes.add('SupplyRequest', 'supplier', 'Who is intended to fulfill the request', sptREFERENCE, ['Organization', 'HealthcareService'], 'SupplyRequest.supplier', sxpNormal);
+  indexes.add('SupplyRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'SupplyRequest', ['requester']);
   compartments.register('Patient', 'SupplyRequest', ['subject']);
   compartments.register('Practitioner', 'SupplyRequest', ['requester']);
@@ -4960,6 +5092,7 @@ begin
   indexes.add('Task', 'requester', 'Search by task requester', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Task.requester', sxpNormal);
   indexes.add('Task', 'status', 'Search by task status', sptTOKEN, [], 'Task.status', sxpNormal);
   indexes.add('Task', 'subject', 'Search by subject', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Task.for', sxpNormal);
+  indexes.add('Task', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_TASK}
 
@@ -5009,6 +5142,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('TerminologyCapabilities', 'version', '): The business version of the terminology capabilities', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('TerminologyCapabilities', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_TERMINOLOGYCAPABILITIES}
 
@@ -5030,6 +5164,7 @@ begin
   indexes.add('TestReport', 'result', 'The result disposition of the test execution', sptTOKEN, [], 'TestReport.result', sxpNormal);
   indexes.add('TestReport', 'tester', 'The name of the testing organization', sptSTRING, [], 'TestReport.tester', sxpNormal);
   indexes.add('TestReport', 'testscript', 'The test script executed to produce this report', sptREFERENCE, ['TestScript'], 'TestReport.testScript', sxpNormal);
+  indexes.add('TestReport', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_TESTREPORT}
 
@@ -5061,6 +5196,7 @@ begin
   indexes.add('TestScript', 'title', 'The human-friendly name of the test script', sptSTRING, [], 'TestScript.title', sxpNormal);
   indexes.add('TestScript', 'url', 'The uri that identifies the test script', sptURI, [], 'TestScript.url', sxpNormal);
   indexes.add('TestScript', 'version', 'The business version of the test script', sptTOKEN, [], 'TestScript.version', sxpNormal);
+  indexes.add('TestScript', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_TESTSCRIPT}
 
@@ -5085,6 +5221,7 @@ begin
   indexes.add('Topic', 'trigger-description', 'Text representation of the trigger', sptSTRING, [], 'Topic.resourceTrigger.description', sxpNormal);
   indexes.add('Topic', 'url', 'Logical canonical URL to reference this Topic (globally unique)', sptURI, [], 'Topic.url', sxpNormal);
   indexes.add('Topic', 'version', 'Business version of the Topic', sptTOKEN, [], 'Topic.version', sxpNormal);
+  indexes.add('Topic', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_TOPIC}
 
@@ -5138,6 +5275,7 @@ begin
       +' | StructureMap.url | TerminologyCapabilities.url | ValueSet.url', sxpNormal);
   indexes.add('ValueSet', 'version', '): The business version of the value set', sptTOKEN, [], 'CapabilityStatement.version | CodeSystem.version | CompartmentDefinition.version | ConceptMap.version | GraphDefinition.version | ImplementationGuide.version | MessageDefinition.version | NamingSystem.version | OperationDefinition.version | SearchPar'
       +'ameter.version | StructureDefinition.version | StructureMap.version | TerminologyCapabilities.version | ValueSet.version', sxpNormal);
+  indexes.add('ValueSet', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_VALUESET}
 
@@ -5154,6 +5292,7 @@ begin
   indexes.add('VerificationResult', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('VerificationResult', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('VerificationResult', 'target', 'A resource that was validated', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'VerificationResult.target', sxpNormal);
+  indexes.add('VerificationResult', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_VERIFICATIONRESULT}
 
@@ -5186,6 +5325,7 @@ begin
       +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('VisionPrescription', 'prescriber', 'Who authorized the vision prescription', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'VisionPrescription.prescriber', sxpNormal);
   indexes.add('VisionPrescription', 'status', 'The status of the vision prescription', sptTOKEN, [], 'VisionPrescription.status', sxpNormal);
+  indexes.add('VisionPrescription', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Encounter', 'VisionPrescription', ['encounter']);
   compartments.register('Patient', 'VisionPrescription', ['patient']);
   compartments.register('Practitioner', 'VisionPrescription', ['prescriber']);

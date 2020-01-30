@@ -9,6 +9,7 @@ import java.util.Map;
 import org.hl7.fhir.convertors.VersionConvertor_10_30;
 import org.hl7.fhir.convertors.VersionConvertor_10_40;
 import org.hl7.fhir.convertors.VersionConvertor_30_40;
+import org.hl7.fhir.convertors.conv10_30.OperationDefinition10_30;
 import org.hl7.fhir.dstu2.formats.JsonParser;
 import org.hl7.fhir.dstu2.formats.XmlParser;
 import org.hl7.fhir.dstu2.model.Bundle;
@@ -76,7 +77,7 @@ public class DefinitionsLoader2 {
       }
     }
     for (OperationDefinition od : odl) {
-      def.getOperations().add(new VersionConvertor_10_30(null).convertOperationDefinition(od));
+      def.getOperations().add(OperationDefinition10_30.convertOperationDefinition(od));
     }
     
     for (SearchParameter sp : spl) {

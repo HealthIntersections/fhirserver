@@ -69,6 +69,7 @@ public class IndexInfoGenerator extends BaseGenerator {
 	      b.append(breakStringConstIntoLines(escape(sp.getExpression()), llen));
 	      b.append("', sxp"+(sp.getXpathUsage() == null ? "Null" : Utilities.capitalize(sp.getXpathUsage().toCode()))+");\r\n");
 	    }
+	    b.append("  indexes.add('"+analysis.getName()+"', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);\r\n");
 
 
 	    for (CompartmentDefinition c : definitions.getCompartments().getSortedList()) {

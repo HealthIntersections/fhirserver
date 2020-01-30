@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.hl7.fhir.convertors.VersionConvertor_10_40;
 import org.hl7.fhir.convertors.VersionConvertor_30_40;
+import org.hl7.fhir.convertors.conv30_40.OperationDefinition30_40;
 import org.hl7.fhir.r4.formats.JsonParser;
 import org.hl7.fhir.r4.formats.XmlParser;
 import org.hl7.fhir.r4.model.Bundle;
@@ -30,6 +31,7 @@ import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.cache.NpmPackage;
 import org.hl7.fhir.utilities.cache.PackageCacheManager;
 import org.hl7.fhir.utilities.cache.ToolsVersion;
+import org.hl7.fhir.convertors.conv10_40.SearchParameter10_40;
 
 public class DefinitionsLoader4 {
   
@@ -74,7 +76,7 @@ public class DefinitionsLoader4 {
     Definitions def = new Definitions();
     def.setVersion(ver);
     for (StructureDefinition sd : sdl) {
-      def.setGenDate(new VersionConvertor_10_40(null).convertDateTime(sd.getDateElement()));
+      def.setGenDate(VersionConvertor_10_40.convertDateTime(sd.getDateElement()));
       if (sd.getDerivation() != TypeDerivationRule.CONSTRAINT && (sd.getKind() == StructureDefinitionKind.PRIMITIVETYPE || sd.getKind() == StructureDefinitionKind.COMPLEXTYPE)) 
         processType(def, sd, vsm);
     }
@@ -84,7 +86,7 @@ public class DefinitionsLoader4 {
       }
     }
     for (OperationDefinition od : odl) {
-      def.getOperations().add(VersionConvertor_30_40.convertOperationDefinition(od));
+      def.getOperations().add(OperationDefinition30_40.convertOperationDefinition(od));
     }
     
     for (CompartmentDefinition cd : cdl) {
@@ -130,8 +132,8 @@ public class DefinitionsLoader4 {
    
   private void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
     for (CodeType ct : sp.getBase()) {
-      SearchParameterDefn spd = new SearchParameterDefn().loadR4(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), new VersionConvertor_10_40(null).convertSearchParamType(sp.getType()), 
-          sp.getTarget(), new VersionConvertor_10_40(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+      SearchParameterDefn spd = new SearchParameterDefn().loadR4(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), VersionConvertor_10_40.convertSearchParamType(sp.getType()), 
+          sp.getTarget(), SearchParameter10_40.convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
       def.getResourceByName(ct.asStringValue()).getSearchParams().put(spd.getCode(), spd);
     }
   }

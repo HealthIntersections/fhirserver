@@ -337,8 +337,10 @@ public class FormatsGenerator extends BaseGenerator {
     workingParserT = new StringBuilder();
     workingComposerR = new StringBuilder();
 
-    for (ElementDefinition c : ti.getChildren()) {
-      generateField(analysis, ti, c, category);
+    if (!analysis.isInterface()) {
+      for (ElementDefinition c : ti.getChildren()) {
+        generateField(analysis, ti, c, category);
+      }
     }
 
 

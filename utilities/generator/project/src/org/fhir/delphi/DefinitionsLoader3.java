@@ -31,6 +31,7 @@ import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.cache.NpmPackage;
 import org.hl7.fhir.utilities.cache.PackageCacheManager;
 import org.hl7.fhir.utilities.cache.ToolsVersion;
+import org.hl7.fhir.convertors.conv10_30.SearchParameter10_30;
 
 public class DefinitionsLoader3 {
   
@@ -75,7 +76,7 @@ public class DefinitionsLoader3 {
     Definitions def = new Definitions();
     def.setVersion(ver);
     for (StructureDefinition sd : sdl) {
-      def.setGenDate(new VersionConvertor_10_30(null).convertDateTime(sd.getDateElement()));
+      def.setGenDate(VersionConvertor_10_30.convertDateTime(sd.getDateElement()));
       if (sd.getDerivation() != TypeDerivationRule.CONSTRAINT && (sd.getKind() == StructureDefinitionKind.PRIMITIVETYPE || sd.getKind() == StructureDefinitionKind.COMPLEXTYPE)) 
         processType(def, sd, vsm);
     }
@@ -132,13 +133,13 @@ public class DefinitionsLoader3 {
    
   private void processCapabilityStatement(Definitions def, CapabilityStatement resource) throws FHIRException {
     def.setVersion(resource.getFhirVersion());
-    def.setGenDate(new VersionConvertor_10_30(null).convertDateTime(resource.getDateElement()));
+    def.setGenDate(VersionConvertor_10_30.convertDateTime(resource.getDateElement()));
   }
 
   private void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
     for (CodeType ct : sp.getBase()) {
-      SearchParameterDefn spd = new SearchParameterDefn().loadR3(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), new VersionConvertor_10_30(null).convertSearchParamType(sp.getType()), 
-          sp.getTarget(), new VersionConvertor_10_30(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+      SearchParameterDefn spd = new SearchParameterDefn().loadR3(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), VersionConvertor_10_30.convertSearchParamType(sp.getType()), 
+          sp.getTarget(), SearchParameter10_30.convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
       def.getResourceByName(ct.asStringValue()).getSearchParams().put(spd.getCode(), spd);
     }
   }
