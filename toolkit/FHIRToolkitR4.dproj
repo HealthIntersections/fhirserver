@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkitR4.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX64</Platform>
         <TargetedPlatforms>4098</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -475,8 +475,6 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\dependencies\git\uGitForDelphi.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.Git.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Organiser.pas"/>
         <DCCReference Include="BaseFileFrame.pas"/>
         <DCCReference Include="PackageEditorFrame.pas">

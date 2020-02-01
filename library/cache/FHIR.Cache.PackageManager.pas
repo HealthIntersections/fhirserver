@@ -978,7 +978,11 @@ begin
         exit(true);
   end
   else
-    result := FolderExists(Path([FFolder, id+'#'+ver])) and FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
+  begin
+    result := FolderExists(Path([FFolder, id+'#'+ver]));
+    if result then
+      result := FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
+  end;
 end;
 
 procedure TFHIRPackageManager.progress(sender: TObject; pct: integer);

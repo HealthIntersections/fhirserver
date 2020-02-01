@@ -177,6 +177,7 @@ type
     mnuPublish: TMenuItem;
     MenuItem11: TMenuItem;
     mnuResourceOrganise: TMenuItem;
+    ProgressBar1: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -261,6 +262,7 @@ type
     procedure loadedResource(frameClass: TBaseResourceFrameClass; url: string; res: TFHIRResource);
   public
     procedure dowork(Sender: TObject; opName: String; canCancel: Boolean; proc: TWorkProc);
+    procedure dowork2(sender : TObject; pct : integer; done : boolean; desc : String);
     procedure threadMonitorProc(Sender: TFhirClientV; var stop: Boolean);
   end;
 
@@ -897,6 +899,19 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.dowork2(sender: TObject; pct: integer; done: boolean; desc: String);
+begin
+//  if done then
+//  begin
+//    ProgressBar1.Visible := false
+//  end
+//  else
+//  begin
+//    ProgressBar1.Visible := true;
+//    ProgressBar1.Value := pct;
+//  end;
+end;
+
 procedure TMasterToolsForm.fhirDefn(s: String; b: TStringBuilder);
 var
   n: string;
@@ -936,8 +951,12 @@ begin
     Factory := {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
     try
       FCache := TFHIRPackageManager.Create(true);
+      FCache.OnWork := doWork2;
       if not FCache.packageExists(Factory.corePackage, Factory.versionString) then
-        ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
+      begin
+        FCache.autoInstallPackage(Factory.corePackage, Factory.versionString);
+        // ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
+      end;
       FContext := TToolkitWorkerContext.Create(Factory.Link);
       FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
       GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, Factory.corePackage, Factory.versionString, FContext.Link));
