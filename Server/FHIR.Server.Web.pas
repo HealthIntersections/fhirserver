@@ -4031,7 +4031,7 @@ Begin
     FSSLServer.OnDisconnect := DoDisconnect;
     FSSLServer.OnParseAuthentication := ParseAuthenticationHeader;
     FSSLServer.active := active;
-    LoadEAYExtensions;
+    LoadEAYExtensions(true);
   end;
 end;
 

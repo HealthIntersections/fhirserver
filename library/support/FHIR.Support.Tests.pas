@@ -4077,7 +4077,7 @@ var
 procedure TJWTTests.Setup;
 begin
   IdSSLOpenSSLHeaders.Load;
-  LoadEAYExtensions;
+  LoadEAYExtensions(true);
 end;
 
 procedure TJWTTests.TestCert;

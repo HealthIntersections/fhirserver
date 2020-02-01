@@ -71,7 +71,7 @@ end;
 procedure TFHIRUtilityTests4.Setup;
 begin
   IdSSLOpenSSLHeaders.Load;
-  LoadEAYExtensions;
+  LoadEAYExtensions(true);
 end;
 
 procedure TFHIRUtilityTests4.TestBundleSigningJson;
