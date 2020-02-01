@@ -60,7 +60,7 @@ var
   DSA_new: function: PDSA cdecl = nil;
   DSA_free : procedure(rsa: PDSA) cdecl = nil;
 
-function LoadEAYExtensions : boolean;
+function LoadEAYExtensions(critical : boolean)  : boolean;
 procedure UnloadEAYExtensions;
 function WhichFailedToLoad2 : String;
 
@@ -1198,27 +1198,27 @@ begin
     result := GLoadInfo.commaText;
 end;
 
-function LoadEAYExtensions : boolean;
+function LoadEAYExtensions(critical : boolean) : boolean;
 begin
   inc(gLoadCount);
   if gLoadCount = 1 then
   begin
     GLoadInfo := TStringList.create;
-    @BN_num_bits := LoadFunctionCLib('BN_num_bits');
-    @BN_bn2bin := LoadFunctionCLib('BN_bn2bin');
-    @BN_bin2bn := LoadFunctionCLib('BN_bin2bn');
-    @X509_get_pubkey := LoadFunctionCLib('X509_get_pubkey');
-    @EVP_PKEY_get1_RSA := LoadFunctionCLib('EVP_PKEY_get1_RSA');
-    @EVP_PKEY_set1_RSA := LoadFunctionCLib('EVP_PKEY_set1_RSA');
-    @EVP_PKEY_get1_DSA := LoadFunctionCLib('EVP_PKEY_get1_DSA');
-    @EVP_PKEY_set1_DSA := LoadFunctionCLib('EVP_PKEY_set1_DSA');
-    @EVP_PKEY_size := LoadFunctionCLib('EVP_PKEY_size');
-    @EVP_DigestInit := LoadFunctionCLib('EVP_DigestInit');
-    @EVP_DigestUpdate := LoadFunctionCLib('EVP_DigestUpdate');
-    @EVP_SignFinal := LoadFunctionCLib('EVP_SignFinal');
-    @EVP_VerifyFinal := LoadFunctionCLib('EVP_VerifyFinal');
-    @DSA_new := LoadFunctionCLib('DSA_new');
-    @DSA_free := LoadFunctionCLib('DSA_free');
+    @BN_num_bits := LoadFunctionCLib('BN_num_bits', critical);
+    @BN_bn2bin := LoadFunctionCLib('BN_bn2bin', critical);
+    @BN_bin2bn := LoadFunctionCLib('BN_bin2bn', critical);
+    @X509_get_pubkey := LoadFunctionCLib('X509_get_pubkey', critical);
+    @EVP_PKEY_get1_RSA := LoadFunctionCLib('EVP_PKEY_get1_RSA', critical);
+    @EVP_PKEY_set1_RSA := LoadFunctionCLib('EVP_PKEY_set1_RSA', critical);
+    @EVP_PKEY_get1_DSA := LoadFunctionCLib('EVP_PKEY_get1_DSA', critical);
+    @EVP_PKEY_set1_DSA := LoadFunctionCLib('EVP_PKEY_set1_DSA', critical);
+    @EVP_PKEY_size := LoadFunctionCLib('EVP_PKEY_size', critical);
+    @EVP_DigestInit := LoadFunctionCLib('EVP_DigestInit', critical);
+    @EVP_DigestUpdate := LoadFunctionCLib('EVP_DigestUpdate', critical);
+    @EVP_SignFinal := LoadFunctionCLib('EVP_SignFinal', critical);
+    @EVP_VerifyFinal := LoadFunctionCLib('EVP_VerifyFinal', critical);
+    @DSA_new := LoadFunctionCLib('DSA_new', critical);
+    @DSA_free := LoadFunctionCLib('DSA_free', critical);
   end;
   result := @BN_num_bits <> nil;
 end;

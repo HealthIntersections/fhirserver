@@ -241,14 +241,24 @@ end;
 
 function Path(const parts : array of String) : String;
 var
-  i : integer;
+  i, j : integer;
+  p : TArray<String>;
 begin
   if length(parts) = 0 then
     result := ''
   else
     result := parts[0];
   for i := 1 to high(parts) do
-    result := IncludeTrailingPathDelimiter(result) + parts[i];
+  begin
+    if parts[i].contains('/') or parts[i].contains('\') then
+    begin
+      p := parts[i].split(['\', '/']);
+      for j := 0 to high(p) do
+        result := IncludeTrailingPathDelimiter(result) + p[j];
+    end
+    else
+      result := IncludeTrailingPathDelimiter(result) + parts[i];
+  end;
 end;
 
 function IsSlash(const S: string; Index: Integer): Boolean;

@@ -381,7 +381,7 @@ end;
 constructor TDigitalSigner.create;
 begin
   inherited;
-  LoadEAYExtensions;
+  LoadEAYExtensions(true);
   ERR_load_crypto_strings;
   OpenSSL_add_all_algorithms;
 end;

@@ -946,30 +946,35 @@ procedure TMasterToolsForm.FormActivate(Sender: TObject);
 var
   Factory: TFHIRFactory;
 begin
-  if FContext = nil then
-  begin
-    Factory := {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
-    try
-      FCache := TFHIRPackageManager.Create(true);
-      FCache.OnWork := doWork2;
-      if not FCache.packageExists(Factory.corePackage, Factory.versionString) then
-      begin
-        FCache.autoInstallPackage(Factory.corePackage, Factory.versionString);
-        // ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
-      end;
-      FContext := TToolkitWorkerContext.Create(Factory.Link);
-      FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
-      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, Factory.corePackage, Factory.versionString, FContext.Link));
-      if not(IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
-        ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: ' + WhichFailedToLoad + ', ' + WhichFailedToLoad2 + ')');
-      checkSSL; // really, this is just to init internal structures in openSSL
+  try
+    if FContext = nil then
+    begin
+      Factory := {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
+      try
+        FCache := TFHIRPackageManager.Create(true);
+        FCache.OnWork := doWork2;
+        if not FCache.packageExists(Factory.corePackage, Factory.versionString) then
+        begin
+          FCache.autoInstallPackage(Factory.corePackage, Factory.versionString);
+          // ShowMessage('The base FHIR package ' + Factory.versionString + ' is not installed; you will need to install it using the package manager and restart');
+        end;
+        FContext := TToolkitWorkerContext.Create(Factory.Link);
+        FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
+        GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, Factory.corePackage, Factory.versionString, FContext.Link));
+        if not(IdSSLOpenSSLHeaders.load and LoadEAYExtensions(false)) then
+          ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail (technical details: ' + WhichFailedToLoad + ', ' + WhichFailedToLoad2 + ')');
+        checkSSL; // really, this is just to init internal structures in openSSL
 
-      FVerCheckTaskId := GBackgroundTasks.registerTaskEngine(TVersionChecker.Create(CheckVersionUpgradeOutome));
-      if FSettings.CheckForUpgradesOnStart then
-        GBackgroundTasks.queueTask(FVerCheckTaskId, TFslObject.Create);
-    finally
-      Factory.Free;
-    end
+        FVerCheckTaskId := GBackgroundTasks.registerTaskEngine(TVersionChecker.Create(CheckVersionUpgradeOutome));
+        if FSettings.CheckForUpgradesOnStart then
+          GBackgroundTasks.queueTask(FVerCheckTaskId, TFslObject.Create);
+      finally
+        Factory.Free;
+      end
+    end;
+  except
+    on e : exception do
+      showmessage(e.message);
   end;
 end;
 
