@@ -364,6 +364,9 @@ begin
               sxpNull: raise EFHIRException.create('Path is not defined properly');
               sxpNormal:
                 begin
+                if work is TFHIRExtension then
+                  work := (work as TFHIRExtension).value;
+
                 if work is TFhirString then
                   index(resource.fhirType, key, 0, TFhirString(work), ndx.Name)
                 else if work is TFhirUri then
