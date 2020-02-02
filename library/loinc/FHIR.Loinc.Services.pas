@@ -33,7 +33,8 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
-  RegularExpressions, YuStemmer,
+  RegularExpressions,
+  YuStemmer,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
