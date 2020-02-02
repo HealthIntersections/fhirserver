@@ -3,6 +3,27 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.64 2020-02-02</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.64.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.64.zip</mlink>
+			<description>2020-02-02 (v0.0.64): Try signed release OSX</description>
+			<ptitle>0.0.64, 2020-02-02</ptitle>
+			<comment>Try signed release OSX</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.63 2020-02-01</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.63.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.63.zip</mlink>
+			<description>2020-02-01 (v0.0.63): More OSX 64bit release testing Again</description>
+			<ptitle>0.0.63, 2020-02-01</ptitle>
+			<comment>More OSX 64bit release testing Again</comment>
+		</item>
+		<item><title>FHIR Toolkit release 0.0.62 2020-01-29</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.62.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.62.zip</mlink>
+			<description>2020-01-29 (v0.0.62): More OSX 64bit release testing</description>
+			<ptitle>0.0.62, 2020-01-29</ptitle>
+			<comment>More OSX 64bit release testing</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.61 2020-01-28</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.61.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.61.zip</mlink>
@@ -10,7 +31,7 @@
 			<ptitle>0.0.61, 2020-01-28</ptitle>
 			<comment>OSX 64bit release testing</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.60 2020-01-22</title>
+		<item><title>FHIR Toolkit release 0.0.60 2020-01-22</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.60.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.60.zip</mlink>
 			<description>2020-01-22 (v0.0.60): fix loading issue and bug in server editing</description>
