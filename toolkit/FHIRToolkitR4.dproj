@@ -174,6 +174,10 @@
         <DCC_UnitAlias>FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.Tags=FHIR.R4.Tags;FHIR.Version.TestCases=FHIR.R4.TestCases;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Base=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Factory=FHIR.R4.Factory;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.ParserBase=FHIR.R4.ParserBase;FHIR.Version.Patch=FHIR.R4.Patch;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Organiser=FHIR.R4.Organiser;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r4osx</DCC_DcuOutput>
         <DCC_UnitSearchPath>$(DCC_UnitSearchPath);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <PF_AppleID>phase.of.matter@gmail.com</PF_AppleID>
+        <PF_AppSpecificPassword>852A47C85F930785CF3CE525A4567BA5E44E080C7EB9ECB097E40FA78E273CF6DB5EA3DEE3551C63C1A4572EFACFC36ABAB3361C046522D316204584E58822A2C958F35CD507FA8FBFBAAF0007301D44921D3E131DF90939EB0F6E7C124EECEA1B7D6453BE81</PF_AppSpecificPassword>
+        <PF_DeveloperIDCert>Developer ID Application: Pascal Pfiffner (BEMCDL5LRF)</PF_DeveloperIDCert>
+        <PF_StapleTicket>true</PF_StapleTicket>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>

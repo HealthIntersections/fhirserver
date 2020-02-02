@@ -74,6 +74,8 @@ function GetTickCount : cardinal;
 
 function OSXRemoveAccents(s : String) : String;
 
+function SystemName : String;
+
 {$ENDIF}
 
 implementation
@@ -161,6 +163,10 @@ begin
   end;
 end;
 
+function SystemName : String;
+begin
+  result := 'TODO';
+end;
 {$ENDIF}
 
 

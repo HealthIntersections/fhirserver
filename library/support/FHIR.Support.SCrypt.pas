@@ -2376,7 +2376,7 @@ function TSHA1.HashFinal: TBytes;
 {	This method finalizes any partial computation and returns the correct hash
 	value for the data stream.}
 type
-	TLongWordBuffer = array[0..15] of LongWord;
+	TLongWordBuffer = array[0..15] of FixedUInt;
 begin
 	{The final act is to tack on the size of the message}
 
@@ -2651,7 +2651,7 @@ function TSHA256.HashFinal: TBytes;
 {	This method finalizes any partial computation and returns the correct hash
 	value for the data stream.}
 type
-	TLongWordBuffer = array[0..15] of LongWord;
+	TLongWordBuffer = array[0..15] of FixedUInt;
 begin
 	{The final act is to tack on the size of the message}
 

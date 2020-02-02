@@ -1,5 +1,5 @@
 {-------------------------------------------------------------------------------
- 
+
  Copyright (c) 1999-2016 Ralf Junker, Yunqa
  Internet: http://www.yunqa.de
  E-Mail:   delphi@yunqa.de
@@ -12,6 +12,32 @@ unit YuStemmer;
 {$A+}
 {$Z+}
 
+
+{$IFDEF OSX}
+interface
+
+type
+  TYuStemmer_8 = class
+  private
+  public
+    function calc(s : String) : String;
+  end;
+
+function GetStemmer_8(s : String) : TYuStemmer_8;
+
+implementation
+
+function TYuStemmer_8.calc(s : String) : String;
+begin
+  result := s;
+end;
+
+function GetStemmer_8(s : String) : TYuStemmer_8;
+begin
+  result := TYuStemmer_8.Create;
+end;
+
+{$ELSE}
 interface
 
 uses
@@ -1926,6 +1952,8 @@ end;
 
 {$IFDEF CPUX64}{$L stemmer_win64\api16}{$ELSE}{$L stemmer_win32\api16}{$ENDIF}
 {$IFDEF CPUX64}{$L stemmer_win64\utilities16}{$ELSE}{$L stemmer_win32\utilities16}{$ENDIF}
+
+{$ENDIF}
 
 end.
 

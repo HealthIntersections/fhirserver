@@ -17,7 +17,7 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Win64'">
-        <DeployFile Include="Win64\Debug\VocabTxServer.exe" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="..\..\Exec\64\VocabTxServer.exe" Condition="'$(Config)'=='Debug'">
             <RemoteDir>VocabTxServer\</RemoteDir>
             <RemoteName>VocabTxServer.exe</RemoteName>
             <DeployClass>ProjectOutput</DeployClass>
@@ -26,15 +26,6 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
             <Required>True</Required>
-        </DeployFile>
-        <DeployFile Include="Win64\Debug\VocabTxServer.rsm" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>VocabTxServer\</RemoteDir>
-            <RemoteName>VocabTxServer.rsm</RemoteName>
-            <DeployClass>DebugSymbols</DeployClass>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='OSX32'">
@@ -74,15 +65,6 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\Redist\osx32\libcgsqlite3.dylib">
-            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>libcgsqlite3.dylib</RemoteName>
-            <DeployClass>DependencyModule</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="..\..\sql\lang.txt" Condition="'$(Config)'=='Debug'">
             <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
             <RemoteName>lang.txt</RemoteName>
@@ -92,10 +74,10 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="OSX32\Debug\VocabTxServer.rsm" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgsqlite3.dylib">
             <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>VocabTxServer.rsm</RemoteName>
-            <DeployClass>DebugSymbols</DeployClass>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -146,6 +128,63 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
             <Required>True</Required>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='OSX64'">
+        <DeployFile Include="OSX64\Debug\VocabTxServer" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>VocabTxServer</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+        <DeployFile Include="OSX64\Debug\VocabTxServer.info.plist" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\</RemoteDir>
+            <RemoteName>Info.plist</RemoteName>
+            <DeployClass>ProjectOSXInfoPList</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX64\Debug\VocabTxServer.dSYM" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF\</RemoteDir>
+            <RemoteName>VocabTxServer</RemoteName>
+            <DeployClass>ProjectOSXDebug</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX64\Debug\VocabTxServer.entitlements" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\..\</RemoteDir>
+            <RemoteName>VocabTxServer.entitlements</RemoteName>
+            <DeployClass>ProjectOSXEntitlements</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\delphi_PROJECTICNS.icns" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>VocabTxServer.app\Contents\Resources\</RemoteDir>
+            <RemoteName>VocabTxServer.icns</RemoteName>
+            <DeployClass>ProjectOSXResource</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx64\libcgsqlite3.dylib">
+            <RemoteDir>VocabTxServer.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
         </DeployFile>
     </ItemGroup>
 </Project>
