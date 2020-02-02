@@ -126,6 +126,7 @@
         <PF_AppSpecificPassword>852A47C85F930785CF3CE525A4567BA5E44E080C7EB9ECB09F050FFA8E613CC1DB2AA38CE3111C2FC1E2573AFACFC36BBAE83658042922D216784587E5FC22A2C924F30FD545FA8FBFBBAF5307131D6A921D3E581DAE0939E3EC6E7C124EECEA1B7D6453BE81</PF_AppSpecificPassword>
         <PF_DeveloperIDCert>Developer ID Application: Pascal Pfiffner (BEMCDL5LRF)</PF_DeveloperIDCert>
         <PF_StapleTicket>true</PF_StapleTicket>
+        <BT_BuildType>DeveloperID</BT_BuildType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
@@ -459,15 +460,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="OSX32">
-                        <RemoteName>FHIRToolkitR3</RemoteName>
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="OSX32">
-                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <RemoteName>FHIRToolkitR3</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -477,9 +478,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
+                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

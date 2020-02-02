@@ -178,6 +178,7 @@
         <PF_AppSpecificPassword>852A47C85F930785CF3CE525A4567BA5E44E080C7EB9ECB097E40FA78E273CF6DB5EA3DEE3551C63C1A4572EFACFC36ABAB3361C046522D316204584E58822A2C958F35CD507FA8FBFBAAF0007301D44921D3E131DF90939EB0F6E7C124EECEA1B7D6453BE81</PF_AppSpecificPassword>
         <PF_DeveloperIDCert>Developer ID Application: Pascal Pfiffner (BEMCDL5LRF)</PF_DeveloperIDCert>
         <PF_StapleTicket>true</PF_StapleTicket>
+        <BT_BuildType>DeveloperID</BT_BuildType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
