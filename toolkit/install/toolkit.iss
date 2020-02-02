@@ -75,7 +75,7 @@ begin
   LoadInstallPage.SetProgress(0, 100);
   LoadInstallPage.Show;
   try
-    s := ',hl7.fhir.core#3.0.1,hl7.fhir.core#4.0.0,hl7.fhir.cda#0.0.1';
+    s := ',hl7.fhir.r3.core#3.0.1,hl7.fhir.r4.core#4.0.0,hl7.fhir.cda#0.0.1';
     repeat
       done := true;
       msg := MyDllDownloadPackages('user', s, @InitCallback);
