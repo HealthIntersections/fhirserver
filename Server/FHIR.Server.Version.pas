@@ -54,7 +54,7 @@ const
 //  ServerDBVersion = 20; // add PseudoData
 //  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
 //  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
-  ServerDBVersion = 23; // add AsyncTasks.Secure
+  ServerDBVersion = 24; // add AsyncTasks.Secure
 
 implementation
 end.

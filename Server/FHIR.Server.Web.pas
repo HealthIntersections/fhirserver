@@ -86,6 +86,7 @@ Uses
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
+  FHIR.Cache.PackageUpdater,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Tools.GraphQL, FHIR.Tools.NDJsonParser,
   {$IFNDEF NO_CONVERSION} FHIR.XVersion.Convertors,{$ENDIF}
@@ -95,7 +96,7 @@ Uses
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
   FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.UsageStats,
   {$IFNDEF NO_JS} FHIR.Server.Javascript, {$ENDIF}
-  FHIR.Server.Subscriptions;
+  FHIR.Server.Subscriptions, FHIR.Server.Packages;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -138,6 +139,18 @@ Type
     procedure Execute; override;
   public
     constructor Create(server: TFhirWebServer);
+  end;
+
+  TPackageUpdaterThread  = class(TThread)
+  private
+    FDB : TFslDBManager;
+    FNextRun : TDateTime;
+    procedure RunUpdater;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(db : TFslDBManager);
+    destructor Destroy; override;
   end;
 
   TAsyncTaskThread = class(TThread)
@@ -360,6 +373,7 @@ Type
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
     FUsageServer : TUsageStatsServer;
+    FPackageServer : TFHIRPackageServer;
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
@@ -421,6 +435,7 @@ Type
     property ServeUnverifiedJWT: boolean read FServeUnverifiedJWT write FServeUnverifiedJWT;
     property JWTAuthorities: TFslStringDictionary read FJWTAuthorities;
     property settings : TFHIRServerSettings read FSettings;
+    property PackageServer : TFHIRPackageServer read FPackageServer;
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
     function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
@@ -3647,12 +3662,14 @@ Begin
   FPatientViewServers := TFslStringDictionary.Create;
 
   FGoogle := TGoogleAnalyticsProvider.Create;
+  FPackageServer := TFHIRPackageServer.create;
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
   // FAppSecrets := ini.ReadString('fhir', 'oauth-secrets', '');
 End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  FPackageServer.Free;
   FUsageServer.Free;
   StopAsyncTasks;
   FEndPoints.Free;
@@ -3719,11 +3736,11 @@ begin
     FOutLog.Policy.AllowExceptions := false;
   end;
 
-
   // web identity / configuration
   FHomePage := 'homepage.html';
   FFacebookLike := ini.identityProviders['facebook.com']['like'] = 'true';
   FHost := ini.web['host'];
+  FPackageServer.path := 'https://'+host+'/packages';
 
   // web server configuration
   FActualPort := StrToIntDef(ini.web['http'], 0);
@@ -4165,6 +4182,8 @@ begin
         sp := FSourceProvider;
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
+          FPackageServer.serve(request, response)
         else if sp.exists(sp.AltFile(request.Document, '/')) then
           ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
         else if request.Document = '/' then
@@ -5236,6 +5255,57 @@ end;
 procedure TAsyncTaskThread.status(status: TAsyncTaskStatus; message: String);
 begin
   FServer.Context.Storage.updateAsyncTaskStatus(key, status, message);
+end;
+
+{ TPackageUpdaterThread }
+
+constructor TPackageUpdaterThread.Create(db: TFslDBManager);
+begin
+  inherited create;
+  FDB := db;
+  FNextRun := now + 1/(24 * 60);
+end;
+
+destructor TPackageUpdaterThread.Destroy;
+begin
+  FDB.Free;
+  inherited;
+end;
+
+procedure TPackageUpdaterThread.Execute;
+begin
+  repeat
+    sleep(50);
+    if not Terminated and (now > FNextRun) and (FNextRun > 0) then
+    begin
+      RunUpdater;
+      FNextRun := now + 1/24;
+    end;
+  until (Terminated);
+end;
+
+procedure TPackageUpdaterThread.RunUpdater;
+begin
+  FDB.connection('server.packages.update',
+    Procedure (conn : TFslDBConnection)
+    var
+      upd : TPackageUpdater;
+    begin
+      upd := TPackageUpdater.create;
+      try
+        try
+          upd.update(conn);
+        except
+          on e : exception do
+          begin
+            logt('Exception updating packages: '+e.Message);
+          end;
+        end;
+      finally
+        upd.free;
+      end;
+    end
+  );
 end;
 
 Initialization

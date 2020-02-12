@@ -671,7 +671,7 @@ begin
 
       ndc := TNDCImporter.create(fd.FileName);
       try
-        ndc.Database := TKDBOdbcManager.create('ndc', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+        ndc.Database := TFslDBOdbcManager.create('ndc', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
         wantStop := false;
         btnUMLSStop.Visible := true;
         cursor := crHourGlass;
@@ -784,7 +784,7 @@ end;
 
 procedure TServerManagerForm.btnProcessUMLSClick(Sender: TObject);
 var
-  db : TKDBManager;
+  db : TFslDBManager;
   start : TDateTime;
 begin
   start := now;
@@ -817,7 +817,7 @@ begin
     btnUMLSClose.enabled := false;
     try
 
-      db := TKDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TFslDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;

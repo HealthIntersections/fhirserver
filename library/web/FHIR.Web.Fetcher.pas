@@ -125,34 +125,7 @@ begin
   Begin
     oUri := TIdURI.Create(url);
     Try
-      if oUri.Protocol = 'http' Then
-      Begin
-        oHTTP := TIdHTTP.Create(nil);
-        Try
-          oHTTP.HandleRedirects := true;
-          oHTTP.Request.Accept := FAccept;
-          oHTTP.URL.URI := url;
-          oHTTP.OnWork := HTTPWork;
-          oHTTP.OnWorkBegin := HTTPWorkBegin;
-          oHTTP.OnWorkEnd := HTTPWorkEnd;
-          oMem := TMemoryStream.Create;
-          try
-            if FMethod = imfPost then
-              oHTTP.Post(url, oMem)
-            else
-              oHTTP.Get(url, oMem);
-            oMem.position := 0;
-            FBuffer.Capacity := oMem.Size;
-            oMem.read(Fbuffer.Data^, oMem.Size);
-            FContentType := oHTTP.Response.ContentType;
-          Finally
-            oMem.Free;
-          End;
-        Finally
-          oHTTP.Free;
-        End;
-      End
-      Else if oUri.Protocol = 'https' Then
+      if (oUri.Protocol = 'http') or (oUri.Protocol = 'https') Then
       Begin
         oHTTP := TIdHTTP.Create(nil);
         Try
@@ -164,7 +137,12 @@ begin
             oHTTP.OnWorkEnd := HTTPWorkEnd;
             oSSL.SSLOptions.Mode := sslmClient;
             oSSL.SSLOptions.Method := sslvTLSv1_2;
+            oHTTP.HandleRedirects := true;
+            oHTTP.Request.Accept := FAccept;
             oHTTP.URL.URI := url;
+            oHTTP.OnWork := HTTPWork;
+            oHTTP.OnWorkBegin := HTTPWorkBegin;
+            oHTTP.OnWorkEnd := HTTPWorkEnd;
             oMem := TMemoryStream.Create;
             try
               if FMethod = imfPost then

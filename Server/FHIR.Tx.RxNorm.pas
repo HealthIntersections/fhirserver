@@ -55,7 +55,7 @@ type
   private
     sql : String;
     text : boolean;
-    qry : TKDBConnection;
+    qry : TFslDBConnection;
   public
     destructor Destroy; Override;
     function Link : TUMLSFilter; overload;
@@ -73,7 +73,7 @@ type
   private
     nci : boolean;
     dbprefix : string;
-    db : TKDBManager;
+    db : TFslDBManager;
     rels : TStringList;
     reltypes : TStringList;
 
@@ -82,7 +82,7 @@ type
     function getSAB : String; virtual;
     function getCodeField : String; virtual;
   public
-    constructor Create(nci : boolean; db : TKDBManager);
+    constructor Create(nci : boolean; db : TFslDBManager);
     destructor Destroy; Override;
     Function Link : TUMLSServices; overload;
 
@@ -122,7 +122,7 @@ type
 
   TRxNormServices = class (TUMLSServices)
   public
-    constructor Create(db : TKDBManager);
+    constructor Create(db : TFslDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -133,7 +133,7 @@ type
     function getSAB : String; override;
     function getCodeField : String; override;
   public
-    constructor Create(db : TKDBManager);
+    constructor Create(db : TFslDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -141,13 +141,13 @@ type
 
   TNciMetaServices = class (TUMLSServices)
   public
-    constructor Create(db : TKDBManager);
+    constructor Create(db : TFslDBManager);
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
   end;
 
-procedure generateRxStems(db : TKDBManager; callback : TInstallerCallback = nil);
+procedure generateRxStems(db : TFslDBManager; callback : TInstallerCallback = nil);
 
 implementation
 
@@ -177,10 +177,10 @@ begin
   end;
 end;
 
-procedure generateRxStems(db : TKDBManager; callback : TInstallerCallback = nil);
+procedure generateRxStems(db : TFslDBManager; callback : TInstallerCallback = nil);
 var
   stems, list : TStringList;
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
   stemmer : TYuStemmer_8;
   i, j, t : integer;
 begin
@@ -265,7 +265,7 @@ end;
 
 { TUMLSServices }
 
-Constructor TUMLSServices.create(nci : boolean; db : TKDBManager);
+Constructor TUMLSServices.create(nci : boolean; db : TFslDBManager);
 begin
   inherited Create;
 
@@ -288,7 +288,7 @@ end;
 
 function TUMLSServices.TotalCount : integer;
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
 begin
   qry := db.GetConnection(dbprefix+'.Count');
   try
@@ -317,7 +317,7 @@ end;
 
 function TUMLSServices.getDisplay(code : String; lang : String):String;
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
@@ -363,7 +363,7 @@ end;
 
 procedure TUMLSServices.load(list: TStringList; sql: String);
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
@@ -386,7 +386,7 @@ end;
 
 function TUMLSServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
   res : TUMLSConcept;
 begin
   qry := db.GetConnection(dbprefix+'.display');
@@ -457,7 +457,7 @@ end;
 
 procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
   b : boolean;
   p : TFHIRLookupOpRespPropertyW;
 begin
@@ -509,7 +509,7 @@ end;
 
 function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
@@ -670,7 +670,7 @@ end;
 
 function TUMLSServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 var
-  qry : TKDBConnection;
+  qry : TFslDBConnection;
   res : TUMLSConcept;
 begin
   qry := db.GetConnection(dbprefix+'.locate');
@@ -814,7 +814,7 @@ end;
 
 { TRxNormServices }
 
-constructor TRxNormServices.Create(db: TKDBManager);
+constructor TRxNormServices.Create(db: TFslDBManager);
 begin
   inherited create(false, db);
 end;
@@ -836,7 +836,7 @@ end;
 
 { TNciMetaServices }
 
-constructor TNciMetaServices.Create(db: TKDBManager);
+constructor TNciMetaServices.Create(db: TFslDBManager);
 begin
   inherited create(true, db);
 end;
@@ -858,7 +858,7 @@ end;
 
 { TNDFRTServices }
 
-constructor TNDFRTServices.Create(db: TKDBManager);
+constructor TNDFRTServices.Create(db: TFslDBManager);
 begin
   inherited create(false, db);
 end;

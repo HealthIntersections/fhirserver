@@ -47,7 +47,7 @@ Type
   private
     // inputs
     Fparams: TParseMap;
-    FConnection: TKDBConnection;
+    FConnection: TFslDBConnection;
     FbaseURL: string;
     Ftypekey: integer;
     Findexes: TFHIRIndexInformation;
@@ -66,7 +66,7 @@ Type
     FCompartment: TFHIRCompartmentId;
 
 
-    procedure SetConnection(const Value: TKDBConnection);
+    procedure SetConnection(const Value: TFslDBConnection);
     procedure Setindexes(const Value: TFHIRIndexInformation);
     procedure Setparams(const Value: TParseMap);
     procedure Setsession(const Value: TFHIRSession);
@@ -93,7 +93,7 @@ Type
     property params : TParseMap read Fparams write Setparams;
     property indexes : TFHIRIndexInformation read Findexes write Setindexes;
     property session : TFHIRSession read Fsession write Setsession;
-    property Connection : TKDBConnection read FConnection write SetConnection;
+    property Connection : TFslDBConnection read FConnection write SetConnection;
     property key : String read FKey write FKey;
     property link_ : string read Flink_;
 
@@ -266,7 +266,7 @@ begin
   FCompartment := Value;
 end;
 
-procedure TMPISearchProcessor.SetConnection(const Value: TKDBConnection);
+procedure TMPISearchProcessor.SetConnection(const Value: TFslDBConnection);
 begin
   FConnection.Free;
   FConnection := Value;

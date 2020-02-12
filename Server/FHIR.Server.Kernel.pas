@@ -97,9 +97,10 @@ Type
     FStartTime : cardinal;
     FIni : TFHIRServerIniFile;
     FSettings : TFHIRServerSettings;
-    FDatabases : TFslMap<TKDBManager>;
+    FDatabases : TFslMap<TFslDBManager>;
     FTerminologies : TCommonTerminologies;
     FWebServer : TFhirWebServer;
+    FPackageUpdater : TPackageUpdaterThread;
 
     FNotServing : boolean;
     FLoadStore : boolean;
@@ -109,8 +110,8 @@ Type
     FProgress : integer;
     FProgressName : string;
 
-    function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
-    Procedure checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
+    Procedure checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     procedure ConnectToDatabases();
     procedure LoadTerminologies;
     procedure InitialiseRestServer(version : TFHIRVersion);
@@ -120,8 +121,8 @@ Type
     procedure validate;
     procedure InstallerCallBack(i : integer; s : String);
     procedure cb(i : integer; s : WideString);
-    procedure identifyValueSets(db : TKDBManager);
-//    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
+    procedure identifyValueSets(db : TFslDBManager);
+//    function RegisterValueSet(id: String; conn: TFslDBConnection): integer;
     procedure registerJs(sender: TObject; js: TJsHost);
     function getLoadResourceList(factory: TFHIRFactory; mode: TFHIRInstallerSecurityMode): TArray<String>;
     procedure resetProgress(name : String);
@@ -427,11 +428,12 @@ begin
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not FindCmdLineSwitch('noload');
   FSettings.load(FIni);
-  FDatabases := TFslMap<TKDBManager>.create('fhir.svc');
+  FDatabases := TFslMap<TFslDBManager>.create('fhir.svc');
 end;
 
 destructor TFHIRService.Destroy;
 begin
+  FPackageUpdater.Free;
   CloseDatabase;
   FDatabases.Free;
   FIni.Free;
@@ -496,7 +498,7 @@ begin
   logt(KDBManagers.Dump);
 end;
 
-function TFHIRService.connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
+function TFHIRService.connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
 var
   dbn, ddr : String;
 begin
@@ -507,17 +509,17 @@ begin
     logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TKDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'mysql' then
   begin
     logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
-    result := TKDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'SQLite' then
   begin
     logt('Connect to '+s+' ('+details['type']+':'+dbn+')');
-    result := TKDBSQLiteManager.create(s, dbn, false);
+    result := TFslDBSQLiteManager.create(s, dbn, false);
   end
   else
     raise ELibraryException.Create('Unknown database type '+s);
@@ -537,12 +539,12 @@ begin
   logt('Databases Loaded');
 end;
 
-Procedure TFHIRService.checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+Procedure TFHIRService.checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 var
   ver : integer;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   dbi : TFHIRDatabaseInstaller;
-  meta : TKDBMetaData;
+  meta : TFslDBMetaData;
 begin
   conn := Db.GetConnection('check version');
   try
@@ -632,7 +634,7 @@ var
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
   dbn : String;
-  db : TKDBManager;
+  db : TFslDBManager;
   loadList : TArray<String>;
 begin
   FNotServing := true;
@@ -783,10 +785,10 @@ end;
 
 procedure TFHIRService.updateAdminPassword(name: String);
 var
-  db : TKDBManager;
+  db : TFslDBManager;
   scim : TSCIMServer;
   salt, un, pw, em, result : String;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   details : TFHIRServerIniComplex;
 begin
   // check that user account details are provided
@@ -847,6 +849,8 @@ var
   s : String;
   details : TFHIRServerIniComplex;
 begin
+  store := nil;
+
   FWebServer := TFhirWebServer.create(FSettings.Link, DisplayName);
   FWebServer.OnRegisterJs := registerJs;
   FWebServer.loadConfiguration(FIni);
@@ -918,16 +922,22 @@ begin
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
 //      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
+  if FIni.web['package-server'] <> '' then
+  begin
+    FWebServer.PackageServer.DB := FDatabases[FIni.web['package-server']].Link;
+    logt('Starting TPackageUpdaterThread (db = '+FIni.web['package-server']+')');
+    FPackageUpdater := TPackageUpdaterThread.Create(FWebServer.PackageServer.DB.Link);
+  end;
   FWebServer.Start(not FNotServing);
 end;
 
 function TFHIRService.InstallDatabase(name : String; securityMode : TFHIRInstallerSecurityMode) : String;
 var
-  db : TKDBManager;
+  db : TFslDBManager;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   salt, un, pw, em, sql, dr : String;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
 begin
@@ -1027,9 +1037,9 @@ end;
 
 procedure TFHIRService.UnInstallDatabase;
 var
-  db : TKDBManager;
+  db : TFslDBManager;
   dbi : TFHIRDatabaseInstaller;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   n : String;
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
@@ -1085,14 +1095,15 @@ end;
 
 procedure TFHIRService.StopRestServer;
 begin
+  FPackageUpdater.Terminate;
   FWebServer.Stop;
   FWebServer.free;
 end;
 
-procedure TFHIRService.identifyValueSets(db : TKDBManager);
+procedure TFHIRService.identifyValueSets(db : TFslDBManager);
 begin
 (*
-function TFHIRService.RegisterValueSet(id: String; conn : TKDBConnection): integer;
+function TFHIRService.RegisterValueSet(id: String; conn : TFslDBConnection): integer;
 begin
   result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
   if result = 0 then
@@ -1106,7 +1117,7 @@ end;
 
  logt('Register ValueSets');
   Db.Connection('register value sets',
-    procedure (conn : TKDBConnection)
+    procedure (conn : TFslDBConnection)
     var
       vs : TFhirValueSetW;
       vsl : TFslList TFHIRValueSetList;

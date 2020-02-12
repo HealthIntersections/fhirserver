@@ -396,7 +396,7 @@ type
     procedure RegisterConsentRecord(session: TFhirSession); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; res : TFHIRResourceV; tags : TFHIRTagList); override;
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res : TFHIRResourceV; conn: TKDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : TBytes); override;
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res : TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : TBytes); override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; e : Exception); override;
     function engineFactory(lang : String; usage : String) : TFHIRNativeOperationEngine; override;
@@ -1398,7 +1398,7 @@ var
   needsObject : boolean;
   sId, type_ : String;
   first : boolean;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   patIds : TPatientIdTracker;
 begin
   patIds := TPatientIdTracker.Create;
@@ -1935,7 +1935,7 @@ var
   coding : TFhirCoding;
   uri : TFhirUri;
   params : TFhirParameters;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
 begin
   conn := native(manager).Connection;
   try
@@ -2743,7 +2743,7 @@ end;
 procedure TFhirObservationLastNOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   sp : TSearchProcessor;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   base, field, type_ : String;
   bundle : TFHIRBundleBuilder;
   op : TFHIROperationOutcome;
@@ -3776,7 +3776,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageServiceR4.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TKDBConnection; reload: Boolean; session: TFhirSession; lang: string; src: TBytes);
+procedure TFHIRNativeStorageServiceR4.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; lang: string; src: TBytes);
 var
   vs : TFHIRValueSet;
   resource : TFHIRResource;

@@ -63,7 +63,7 @@ Type
   TFHIRDatabaseInstaller = class (TFslObject)
   private
     Fcallback : TInstallerCallback;
-    FConn : TKDBConnection;
+    FConn : TFslDBConnection;
     FDoAudit: boolean;
     FTransactions: boolean;
     FBases: TStringList;
@@ -110,9 +110,10 @@ Type
     procedure CreateAsyncTasks;
     procedure CreateClientRegistrations;
     procedure CreatePseudoData;
+    procedure CreatePackagesTables;
 //    procedure runScript(s : String);
   public
-    constructor Create(conn : TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    constructor Create(conn : TFslDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
@@ -126,7 +127,7 @@ Type
 
 implementation
 
-Function ForeignKeySql(Conn: TKDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
+Function ForeignKeySql(Conn: TFslDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
 Begin
   if conn.Owner.Platform = kdbSQLite then
     result := ''
@@ -134,7 +135,7 @@ Begin
     Result := 'ALTER TABLE '+sSlaveTable+' ADD CONSTRAINT '+sIndexName+' '+ 'FOREIGN KEY ( '+sSlaveField+' ) REFERENCES '+sMasterTable+' ( '+sMasterField+' )';
 End;
 
-Function InlineForeignKeySql(Conn: TKDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
+Function InlineForeignKeySql(Conn: TFslDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
 Begin
   if conn.Owner.Platform <> kdbSQLite then
     result := ''
@@ -143,7 +144,7 @@ Begin
 End;
 
 
-constructor TFHIRDatabaseInstaller.create(conn: TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+constructor TFHIRDatabaseInstaller.create(conn: TFslDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 begin
   inherited Create;
   FFactory := factory;
@@ -339,6 +340,49 @@ begin
        PrimaryKeyType(FConn.owner.Platform, 'PK_ClientRegistrations', 'ClientKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey'));
   FConn.ExecSQL('Insert into ClientRegistrations (ClientKey, DateRegistered, Name, Mode, PatientContext) values (1, '+DBGetDate(FConn.Owner.Platform)+', ''Web Interface'', 0, 0)');
+end;
+
+procedure TFHIRDatabaseInstaller.CreatePackagesTables;
+begin
+  FConn.ExecSQL('CREATE TABLE Packages ( '+#13#10+
+       ' PackageKey      '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Id              nchar(64)                            '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Canonical       nchar(128)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' CurrentVersion  '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Packages', 'PackageKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_Packages_Id ON Packages (Id, PackageKey)');
+  FConn.ExecSQL('Create INDEX SK_Packages_Canonical ON Packages (Canonical, PackageKey)');
+
+  FConn.ExecSQL('CREATE TABLE PackageVersions ( '+#13#10+
+       ' PackageVersionKey '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' GUID              nchar(128)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' PubDate           '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Indexed           '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Id                nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Version           nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Kind              int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Canonical         nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' FhirVersions      nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Description       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
+       ' Content           '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_PackageVersions', 'PackageVersionKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_PackageVersions_Id ON PackageVersions (Id, Version, PackageVersionKey)');
+  FConn.ExecSQL('Create INDEX SK_PackageVersions_Canonical ON PackageVersions (Canonical, PackageVersionKey)');
+  FConn.ExecSQL('Create INDEX SK_PackageVersions_PubDate ON PackageVersions (Id, PubDate, PackageVersionKey)');
+  FConn.ExecSQL('Create INDEX SK_PackageVersions_Indexed ON PackageVersions (Indexed, PackageVersionKey)');
+  FConn.ExecSQL('Create INDEX SK_PackageVersions_GUID ON PackageVersions (GUID)');
+
+  FConn.ExecSQL('CREATE TABLE PackageFHIRVersions ( '+#13#10+
+       ' PackageVersionKey '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Version            nchar(128)                               '+ColCanBeNull(FConn.owner.platform, False)+')'+#13#10);
+  FConn.ExecSQL('Create INDEX SK_PackageFHIRVersions ON PackageFHIRVersions (PackageVersionKey)');
+
+
+  FConn.ExecSQL('CREATE TABLE PackageDependencies ( '+#13#10+
+       ' PackageVersionKey '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Dependency            nchar(128)                               '+ColCanBeNull(FConn.owner.platform, False)+')'+#13#10);
+  FConn.ExecSQL('Create INDEX SK_PackageDependencies ON PackageDependencies (PackageVersionKey)');
+
 end;
 
 procedure TFHIRDatabaseInstaller.CreatePseudoData;
@@ -1019,7 +1063,9 @@ begin
     CreateClientRegistrations;
     if assigned(CallBack) then Callback(75, 'Create PseudoData');
     CreatePseudoData;
-    if assigned(CallBack) then Callback(76, 'Commit');
+    if assigned(CallBack) then Callback(76, 'Create Package Tables');
+    CreatePackagesTables;
+    if assigned(CallBack) then Callback(77, 'Commit');
 
     FConn.Commit;
   except
@@ -1060,7 +1106,7 @@ end;
 
 procedure TFHIRDatabaseInstaller.Uninstall;
 var
-  meta : TKDBMetaData;
+  meta : TFslDBMetaData;
   step : integer;
   procedure drop(name : String);
   begin
@@ -1099,6 +1145,11 @@ begin
       drop('IndexEntries');
       drop('Indexes');
       drop('Spaces');
+
+      drop('PackagesFHIRVersions');
+      drop('PackagesDependencies');
+      drop('PackagesVersions');
+      drop('Packages');
 
       drop('VersionTags');
       drop('Versions');
@@ -1194,6 +1245,8 @@ begin
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.AsyncTasks ADD Secure int NULL');
     end;
+    if (version < 24) then
+      CreatePackagesTables;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

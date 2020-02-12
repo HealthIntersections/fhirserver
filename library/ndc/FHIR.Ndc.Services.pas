@@ -10,13 +10,13 @@ type
   TNdcImporter = class (TFslObject)
   private
     FSource: String;
-    FDatabase: TKDBManager;
-    procedure SetDatabase(const Value: TKDBManager);
+    FDatabase: TFslDBManager;
+    procedure SetDatabase(const Value: TFslDBManager);
   public
     constructor Create(source : String);
     destructor Destroy; override;
 
-    property Database : TKDBManager read FDatabase write SetDatabase;
+    property Database : TFslDBManager read FDatabase write SetDatabase;
     property source : String read FSource write FSource;
   end;
 
@@ -36,7 +36,7 @@ begin
   inherited;
 end;
 
-procedure TNdcImporter.SetDatabase(const Value: TKDBManager);
+procedure TNdcImporter.SetDatabase(const Value: TFslDBManager);
 begin
   FDatabase := Value;
 end;

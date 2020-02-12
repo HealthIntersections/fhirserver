@@ -39,47 +39,47 @@ uses
 Type
   // never insert into this - order is important
 
-  TKDBPlatform = (kdbUnknown, kdbSQLServer, kdbSybase11, kdbCtree,
+  TFslDBPlatform = (kdbUnknown, kdbSQLServer, kdbSybase11, kdbCtree,
                   kdbAccess,  kdbDBIsam,    kdbInterbase, kdbDB2,  kdbGenericODBC,
                   kdbOracle8, kdbMySQL,     kdbASA,       kdbSybase12, kdbSQLite);
 
-  TKDBPlatforms = set of TKDBPlatform;
+  TFslDBPlatforms = set of TFslDBPlatform;
   TSQLSet = array of String;
 
 const
-  KDB_ALL_PLATFORMS = [Low(TKDBPlatform) .. High(TKDBPlatform)];
+  KDB_ALL_PLATFORMS = [Low(TFslDBPlatform) .. High(TFslDBPlatform)];
   EOL_WINDOWS = #13#10;
   EOL_PLATFORM = EOL_WINDOWS;
 
 // platform Recognition
-function RecogniseDriver(ADriverDesc: String): TKDBPlatform;
+function RecogniseDriver(ADriverDesc: String): TFslDBPlatform;
 function ShortDriverDesc(ADriverDesc: String): String;
-function DescribePlatform(ADBPlatform: TKDBPlatform): String;
-function ShowPlatformDescription(ADBPlatform: TKDBPlatform): String;
-function DriverDescription(ADBPlatform: TKDBPlatform): String;
-function ODBCDriverNameEx(ADBPlatform: TKDBPlatform): String;
-function ODBCDriverRegExp(ADBPlatform: TKDBPlatform): String;
+function DescribePlatform(ADBPlatform: TFslDBPlatform): String;
+function ShowPlatformDescription(ADBPlatform: TFslDBPlatform): String;
+function DriverDescription(ADBPlatform: TFslDBPlatform): String;
+function ODBCDriverNameEx(ADBPlatform: TFslDBPlatform): String;
+function ODBCDriverRegExp(ADBPlatform: TFslDBPlatform): String;
 
 // platform specific SQL
-function PlatformAutoIncrementSQL(ADBPlatform: TKDBPlatform): String;
-function GetPlatformOtherAutoIncSQL(ADBPlatform: TKDBPlatform; ATableName, AFieldName: String; var ASQL1, ASQL2: String): Boolean;
-function PrimaryKeyType(ADbasePlatform: TKDBPlatform; AConstraintName: String; APrimaryKeyName: String): String;
-function ColCanBeNull(ADBPlatform: TKDBPlatform; ABeNull: Boolean): String;
-function DBKeyType(ADBPlatform: TKDBPlatform): String;
-function DBUnicodeType(ADBPlatform: TKDBPlatform; ASize : Integer): String;
-function DBFloatType(ADBPlatform: TKDBPlatform): String;
-function DBBlobType(ADBPlatform: TKDBPlatform): String;
-function DBTextBlobType(ADBPlatform: TKDBPlatform): String;
-function DBBlobStorageType(ADBPlatform: TKDBPlatform; ADBColumnName: String): String;
-function DBDateTimeType(ADBPlatform: TKDBPlatform): String;
-function DBGetDate(ADBPlatform: TKDBPlatform): String;
-function DBBooleanType(ADBPlatform: TKDBPlatform): String;
-function DBCharType(ADBPlatform: TKDBPlatform): String;
-function DBInt64Type(ADBPlatform: TKDBPlatform): String;
-function RestrictToNRows(ADBPlatform: TKDBPlatform; ASQL: String; AValue: Integer): String; // MSSQL Versions 2000, ? only
-function CreateTableInfo(ADBPlatform: TKDBPlatform):String;
-function DBIntType(ADBPlatform: TKDBPlatform):String;
-function replaceColumnWrappingChars(const sql : String; ADBPlatform: TKDBPlatform): String;
+function PlatformAutoIncrementSQL(ADBPlatform: TFslDBPlatform): String;
+function GetPlatformOtherAutoIncSQL(ADBPlatform: TFslDBPlatform; ATableName, AFieldName: String; var ASQL1, ASQL2: String): Boolean;
+function PrimaryKeyType(ADbasePlatform: TFslDBPlatform; AConstraintName: String; APrimaryKeyName: String): String;
+function ColCanBeNull(ADBPlatform: TFslDBPlatform; ABeNull: Boolean): String;
+function DBKeyType(ADBPlatform: TFslDBPlatform): String;
+function DBUnicodeType(ADBPlatform: TFslDBPlatform; ASize : Integer): String;
+function DBFloatType(ADBPlatform: TFslDBPlatform): String;
+function DBBlobType(ADBPlatform: TFslDBPlatform): String;
+function DBTextBlobType(ADBPlatform: TFslDBPlatform): String;
+function DBBlobStorageType(ADBPlatform: TFslDBPlatform; ADBColumnName: String): String;
+function DBDateTimeType(ADBPlatform: TFslDBPlatform): String;
+function DBGetDate(ADBPlatform: TFslDBPlatform): String;
+function DBBooleanType(ADBPlatform: TFslDBPlatform): String;
+function DBCharType(ADBPlatform: TFslDBPlatform): String;
+function DBInt64Type(ADBPlatform: TFslDBPlatform): String;
+function RestrictToNRows(ADBPlatform: TFslDBPlatform; ASQL: String; AValue: Integer): String; // MSSQL Versions 2000, ? only
+function CreateTableInfo(ADBPlatform: TFslDBPlatform):String;
+function DBIntType(ADBPlatform: TFslDBPlatform):String;
+function replaceColumnWrappingChars(const sql : String; ADBPlatform: TFslDBPlatform): String;
 
 // utilities
 procedure ConvertCharacter(ATableName, AVersion: String; var VSQLValue: String);
@@ -92,7 +92,7 @@ uses
   FHIR.Support.Utilities,
   SysUtils;
 
-function RecogniseDriver(ADriverDesc: String): TKDBPlatform;
+function RecogniseDriver(ADriverDesc: String): TFslDBPlatform;
 var
   i: Integer;
 begin
@@ -262,7 +262,7 @@ begin
   end;
 end;
 
-function ShowPlatformDescription(ADBPlatform: TKDBPlatform): String;
+function ShowPlatformDescription(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbSQLServer: Result := 'Microsoft SQLServer';
@@ -284,7 +284,7 @@ begin
   end;
 end;
 
-function DescribePlatform(ADBPlatform: TKDBPlatform): String;
+function DescribePlatform(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbSQLServer: Result := 'MSSQLServer';
@@ -306,7 +306,7 @@ begin
   end;
 end;
 
-function ODBCDriverNameEx(ADBPlatform: TKDBPlatform): String;
+function ODBCDriverNameEx(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: Result := '';
@@ -331,7 +331,7 @@ end;
 // these regular expressions are used by the database wizard
 // to determine which drivers on the system service a particular
 // platform. See RegExpe.hlp for regular expression sysntax
-function ODBCDriverRegExp(ADBPlatform: TKDBPlatform): String;
+function ODBCDriverRegExp(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown, kdbGenericODBC: Result := '^.*$';
@@ -354,8 +354,8 @@ begin
 end;
 
 
-function DriverDescription(ADBPlatform: TKDBPlatform): String;
-// show driver description from TKDBPlatform database platform
+function DriverDescription(ADBPlatform: TFslDBPlatform): String;
+// show driver description from TFslDBPlatform database platform
 begin
   // not sure quite what this is supposed to be. GDG 17/8/2003
   case ADBPlatform of
@@ -378,7 +378,7 @@ begin
   end;
 end;
 
-function PlatformAutoIncrementSQL(ADBPlatform: TKDBPlatform): String;
+function PlatformAutoIncrementSQL(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -398,7 +398,7 @@ begin
   end;
 end;
 
-function GetPlatformOtherAutoIncSQL(ADBPlatform: TKDBPlatform; ATableName, AFieldName: String; var ASQL1, ASQL2: String): Boolean;
+function GetPlatformOtherAutoIncSQL(ADBPlatform: TFslDBPlatform; ATableName, AFieldName: String; var ASQL1, ASQL2: String): Boolean;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -439,7 +439,7 @@ begin
   end;
 end;
 
-function PrimaryKeyType(ADbasePlatform: TKDBPlatform; AConstraintName: String; APrimaryKeyName: String): String;
+function PrimaryKeyType(ADbasePlatform: TFslDBPlatform; AConstraintName: String; APrimaryKeyName: String): String;
 begin
   case ADbasePlatform of
     kdbUnknown: raise EDBException.create('Unknown Database Platform!');
@@ -465,7 +465,7 @@ begin
   Result := 'CREATE ' + ADBIndexType + ' INDEX ' + ADBIndexName + ' ON ' + ADBTableName + '(' + ADBIndexField + ')'
 end;
 
-function DBUnicodeType(ADBPlatform: TKDBPlatform; ASize : Integer): String;
+function DBUnicodeType(ADBPlatform: TFslDBPlatform; ASize : Integer): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -488,7 +488,7 @@ begin
   end;
 end;
 
-function DBFloatType(ADBPlatform: TKDBPlatform): String;
+function DBFloatType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -510,7 +510,7 @@ begin
   end;
 end;
 
-function DBKeyType(ADBPlatform: TKDBPlatform): String;
+function DBKeyType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -531,7 +531,7 @@ begin
   end;
 end;
 
-function DBBlobType(ADBPlatform: TKDBPlatform): String;
+function DBBlobType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -553,7 +553,7 @@ begin
 end;
 
 
-function DBTextBlobType(ADBPlatform: TKDBPlatform): String;
+function DBTextBlobType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -577,7 +577,7 @@ end;
 
 
 
-function DBBlobStorageType(ADBPlatform: TKDBPlatform; ADBColumnName: String): String;
+function DBBlobStorageType(ADBPlatform: TFslDBPlatform; ADBColumnName: String): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -603,7 +603,7 @@ begin
   end;
 end;
 
-function DBDateTimeType(ADBPlatform: TKDBPlatform): String;
+function DBDateTimeType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -624,7 +624,7 @@ begin
   end;
 end;
 
-function DBGetDate(ADBPlatform: TKDBPlatform): String;
+function DBGetDate(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -646,7 +646,7 @@ begin
 end;
 
 
-function ColCanBeNull(ADBPlatform: TKDBPlatform; ABeNull: Boolean): String;
+function ColCanBeNull(ADBPlatform: TFslDBPlatform; ABeNull: Boolean): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -747,7 +747,7 @@ begin
   end;
 end;
 
-function DBBooleanType(ADBPlatform: TKDBPlatform): String;
+function DBBooleanType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -768,7 +768,7 @@ begin
   end;
 end;
 
-function DBCharType(ADBPlatform: TKDBPlatform): String;
+function DBCharType(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -789,7 +789,7 @@ begin
   end;
 end;
 
-function DBInt64Type(ADBPlatform: TKDBPlatform): String;
+function DBInt64Type(ADBPlatform: TFslDBPlatform): String;
 begin
   case ADBPlatform of
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
@@ -812,7 +812,7 @@ begin
   end;
 end;
 
-function RestrictToNRows(ADBPlatform: TKDBPlatform; ASQL: String; AValue: Integer): String;
+function RestrictToNRows(ADBPlatform: TFslDBPlatform; ASQL: String; AValue: Integer): String;
 var
   LIndex: Integer;
   LSelectSQLPrefix : String;
@@ -859,7 +859,7 @@ begin
   End;
 end;
 
-function DBIntType(ADBPlatform: TKDBPlatform):String;
+function DBIntType(ADBPlatform: TFslDBPlatform):String;
 begin
   case ADBPlatform of
     kdbSQLServer : result := 'int';
@@ -869,7 +869,7 @@ begin
   end;
 end;
 
-function CreateTableInfo(ADBPlatform: TKDBPlatform):String;
+function CreateTableInfo(ADBPlatform: TFslDBPlatform):String;
 begin
   if ADBPlatform = kdbMySQL then
     begin
@@ -963,7 +963,7 @@ begin
   Result := SameText('SELECT', Copy(AStr, 1, 6)) or SameText('SHOW ', Copy(AStr, 1, 5));
 end;
 
-function replaceColumnWrappingChars(const sql : String; ADBPlatform: TKDBPlatform): String;
+function replaceColumnWrappingChars(const sql : String; ADBPlatform: TFslDBPlatform): String;
 begin
   if ADBPlatform = kdbMySQL then
     result := sql.Replace('[', '`').Replace(']', '`')

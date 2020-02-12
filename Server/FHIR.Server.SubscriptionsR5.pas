@@ -44,12 +44,12 @@ Type
     fpp : TFHIRPathParser;
     fpe : TFHIRPathEngine;
     function getEventDefinition(subscription: TFhirSubscription): TFhirEventDefinition;
-    function MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TKDBConnection): boolean;
+    function MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
   protected
     procedure checkAcceptable(sub : TFHIRSubscriptionW; session : TFHIRSession); override;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function preparePackage(userkey : integer; created : boolean; sub : TFHIRSubscriptionW; res : TFHIRResourceV) : TFHIRResourceV; override;
-    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TKDBConnection) : boolean; override;
+    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TFslDBConnection) : boolean; override;
     function checkSubscription(sub: TFHIRResourceV) : TFHIRSubscriptionW; override;
     function loadEventDefinition(res : TFHIRResourceV) : TEventDefinition; override;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; override;
@@ -103,7 +103,7 @@ begin
   end;
 end;
 
-function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TKDBConnection): boolean;
+function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
 var
   old : TFhirResource;
   new : TFhirResource;
@@ -414,7 +414,7 @@ begin
   result := url;
 end;
 
-function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TKDBConnection): boolean;
+function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
 var
   subscription : TFhirSubscription;
   evd : TFHIREventDefinition;

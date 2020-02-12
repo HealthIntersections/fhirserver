@@ -30,7 +30,6 @@ program VocabTxServer;
 uses
   {$IFDEF MSWINDOWS}
   FastMM4 in '..\..\dependencies\FMM\FastMM4.pas',
-  FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
   {$ENDIF }
   System.StartUpCopy,
   FMX.Forms,
@@ -208,7 +207,8 @@ uses
   FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
   FHIR.Server.Subscriptions in '..\..\Server\FHIR.Server.Subscriptions.pas',
   FHIR.Server.IndexingR4 in '..\..\Server\FHIR.Server.IndexingR4.pas',
-  FHIR.Server.ValidatorR4 in '..\..\Server\FHIR.Server.ValidatorR4.pas';
+  FHIR.Server.ValidatorR4 in '..\..\Server\FHIR.Server.ValidatorR4.pas',
+  FHIR.Cache.PackageUpdater in '..\..\library\FHIR.Cache.PackageUpdater.pas';
 
 {$R *.res}
 

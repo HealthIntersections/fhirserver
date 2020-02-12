@@ -73,7 +73,7 @@ Type
   TObservationStatsEvaluator = class (TFslObject, IComparer<TObservation>)
   private
     FFactory : TFHIRFactory;
-    FConn : TKDBConnection;
+    FConn : TFslDBConnection;
     FSubject: String;
     FConcepts : TFslList<TFHIRCodingW>;
     FFinish: TDateTime;
@@ -138,7 +138,7 @@ Type
     function Compare(const Left, Right: TObservation): Integer;
 
   public
-    constructor Create(factory : TFHIRFactory; conn : TKDBConnection; resp : TFHIRStatsOpResponseW);
+    constructor Create(factory : TFHIRFactory; conn : TFslDBConnection; resp : TFHIRStatsOpResponseW);
     destructor Destroy; override;
 
     property subject : String read FSubject write FSubject;
@@ -157,7 +157,7 @@ Type
 
   TObservationLastNEvaluator = class (TFslObject)
   private
-    FConn : TKDBConnection;
+    FConn : TFslDBConnection;
 
     FCount: integer;
     FObservations : TStringList;
@@ -171,7 +171,7 @@ Type
     procedure addMostRecentObservations(ck : integer);
     function lookupConcept(c : TFHIRCodingW) : integer;
   public
-    constructor Create(conn : TKDBConnection);
+    constructor Create(conn : TFslDBConnection);
     destructor Destroy; override;
 
     // in
@@ -203,7 +203,7 @@ begin
     result := 1;
 end;
 
-constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TKDBConnection; resp : TFHIRStatsOpResponseW);
+constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TFslDBConnection; resp : TFHIRStatsOpResponseW);
 begin
   inherited create;
   FFactory := factory;
@@ -779,7 +779,7 @@ end;
 
 { TObservationLastNEvaluator }
 
-constructor TObservationLastNEvaluator.Create(conn: TKDBConnection);
+constructor TObservationLastNEvaluator.Create(conn: TFslDBConnection);
 begin
   inherited create;
   FConn := conn;

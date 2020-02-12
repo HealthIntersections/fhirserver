@@ -41,10 +41,10 @@ type
 
 procedure KDBConvertSettings(ASettings : TSettingsAdapter);
 
-function KDBDescribeDB(ASettings : TSettingsAdapter; APlatforms : TKDBPlatforms; var VDescription : String) : Boolean;
-function KDBManagerFactory(AProvider : TKDBProvider) : TKDBManagerClass; overload;
-function KDBManagerFactory(AProvider : String) : TKDBManagerClass; overload;
-function KDBManagerFactory(AName : String; ASettings : TSettingsAdapter; AIdent : String = '') : TKDBManager; overload;
+function KDBDescribeDB(ASettings : TSettingsAdapter; APlatforms : TFslDBPlatforms; var VDescription : String) : Boolean;
+function KDBManagerFactory(AProvider : TFslDBProvider) : TFslDBManagerClass; overload;
+function KDBManagerFactory(AProvider : String) : TFslDBManagerClass; overload;
+function KDBManagerFactory(AName : String; ASettings : TSettingsAdapter; AIdent : String = '') : TFslDBManager; overload;
 function DecryptPassword(sPassword : String) : String;
 
 implementation
@@ -68,7 +68,7 @@ const
 
 procedure KDBConvertSettings(ASettings : TSettingsAdapter);
 var
-  LPlatform : TKDBPlatform;
+  LPlatform : TFslDBPlatform;
   s : String;
 begin
 // convert from old style format to new style format
@@ -77,7 +77,7 @@ begin
     ASettings.WriteString('Name', ASettings.ReadString('SymbolicName'));
     if ASettings.ReadInteger('Platform', -1) <> -1 then
       begin
-      LPlatForm := TKDBPlatform(ASettings.ReadInteger('Platform'));
+      LPlatForm := TFslDBPlatform(ASettings.ReadInteger('Platform'));
       end
     else
       begin
@@ -85,28 +85,28 @@ begin
       if StringStartsWith(s, 'kdbSQLServer', true) then
         LPlatForm := kdbSQLServer
       else
-        LPlatForm := TKDBPlatform(IdStringToEnum(TypeInfo(TKDBPlatform), s));
+        LPlatForm := TFslDBPlatform(IdStringToEnum(TypeInfo(TFslDBPlatform), s));
       end;
     case LPlatForm of
       kdbDBIsam :
          begin
-         ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TKDBProvider), ord(kdbpDBIsam)));
+         ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TFslDBProvider), ord(kdbpDBIsam)));
          ASettings.WriteString('Directory', ASettings.ReadString('DatabaseDirectory'));
          end;
       kdbInterbase :
          begin
-         ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TKDBProvider), ord(kdbpFirebird)));
+         ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TFslDBProvider), ord(kdbpFirebird)));
          // other settings OK
          end;
     else
       // odbc
       if ASettings.ReadString('DSN') <> '' then
         begin
-        ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TKDBProvider), ord(kdbpDSN)));
+        ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TFslDBProvider), ord(kdbpDSN)));
         end
       else
         begin
-        ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TKDBProvider), ord(kdbpODBC)));
+        ASettings.WriteString('Provider', IdEnumToString(TypeInfo(TFslDBProvider), ord(kdbpODBC)));
         ASettings.WriteString('ODBCDriver', ASettings.ReadString('Driver'));
         end;
     end;
@@ -114,10 +114,10 @@ begin
     end;
 end;
 
-function KDBDescribeDB(ASettings : TSettingsAdapter; APlatforms : TKDBPlatforms; var VDescription : String) : Boolean;
+function KDBDescribeDB(ASettings : TSettingsAdapter; APlatforms : TFslDBPlatforms; var VDescription : String) : Boolean;
 var
-  LProv : TKDBProvider;
-  LPlat : TKDBPlatform;
+  LProv : TFslDBProvider;
+  LPlat : TFslDBPlatform;
   s : string;
 begin
   try
@@ -125,10 +125,10 @@ begin
       begin
       raise EKDBFactoryException.create('Database access not configured');
       end;
-    LProv := TKDBProvider(IdStringToEnum(TypeInfo(TKDBProvider), ASettings.ReadString('Provider', '')));
+    LProv := TFslDBProvider(IdStringToEnum(TypeInfo(TFslDBProvider), ASettings.ReadString('Provider', '')));
     if ASettings.ReadInteger('Platform', -1) <> -1 then
       begin
-      LPlat := TKDBPlatform(ASettings.ReadInteger('Platform', 0));
+      LPlat := TFslDBPlatform(ASettings.ReadInteger('Platform', 0));
       end
     else
       begin
@@ -136,7 +136,7 @@ begin
       if StringStartsWith(s, 'kdbSQLServer', true) then
         LPlat := kdbSQLServer
       else
-        LPlat := TKDBPlatform(IdStringToEnum(TypeInfo(TKDBPlatform), s));
+        LPlat := TFslDBPlatform(IdStringToEnum(TypeInfo(TFslDBPlatform), s));
       end;
     if not (LPlat in APlatforms) then
       begin
@@ -166,16 +166,16 @@ begin
   end;
 end;
 
-function KDBManagerFactory(AProvider : TKDBProvider) : TKDBManagerClass;
+function KDBManagerFactory(AProvider : TFslDBProvider) : TFslDBManagerClass;
 const ASSERT_LOCATION = ASSERT_UNIT+'.KDBManagerFactory1';
 begin
   case AProvider of
   {$IFNDEF LINUX}
-    kdbpDSN : result := TKDBOdbcDSN;
-    kdbpODBC : result := TKDBOdbcDirect;
+    kdbpDSN : result := TFslDBOdbcDSN;
+    kdbpODBC : result := TFslDBOdbcDirect;
     kdbpFirebird : result := TFireBirdConnMan;
-    kdbpSoapClient : result := TKDBSoapConnMan;
-    kdbpAccess : result := TKDBOdbcDirect;
+    kdbpSoapClient : result := TFslDBSoapConnMan;
+    kdbpAccess : result := TFslDBOdbcDirect;
     kdbpMySQL : result := TMySQLConnMan;
   {$ENDIF}
   {$IFDEF VER140}
@@ -183,17 +183,17 @@ begin
   {$ENDIF}
   else
     // kdbpUnknown,
-    raise EKDBFactoryException.create(ASSERT_LOCATION+': the provider '+IdEnumToString(TypeInfo(TKDBProvider), ord(AProvider))+' is not known or not supported by this system');
+    raise EKDBFactoryException.create(ASSERT_LOCATION+': the provider '+IdEnumToString(TypeInfo(TFslDBProvider), ord(AProvider))+' is not known or not supported by this system');
   end;
 end;
 
-function KDBManagerFactory(AProvider : String) : TKDBManagerClass;
+function KDBManagerFactory(AProvider : String) : TFslDBManagerClass;
 const ASSERT_LOCATION = ASSERT_UNIT+'.KDBManagerFactory2';
 begin
-  result := KDBManagerFactory(TKDBProvider(IdStringToEnum(TypeInfo(TKDBProvider), AProvider)));
+  result := KDBManagerFactory(TFslDBProvider(IdStringToEnum(TypeInfo(TFslDBProvider), AProvider)));
 end;
 
-function KDBManagerFactory(AName : String; ASettings : TSettingsAdapter; AIdent : String = '') : TKDBManager;
+function KDBManagerFactory(AName : String; ASettings : TSettingsAdapter; AIdent : String = '') : TFslDBManager;
 const ASSERT_LOCATION = ASSERT_UNIT+'.KDBManagerFactory3';
 begin
   if AName = '' then

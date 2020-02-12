@@ -75,15 +75,15 @@ type
   private
     FPractitioners: boolean;
     FPersist: boolean;
-    FDatabase : TKDBManager;
+    FDatabase : TFslDBManager;
     FMakeFakeData: boolean;
     FDataCache : TFslMap<TPseudoData>;
     FLock : TFslLock;
     NextKey : integer;
 
-    function loadPseudoData(conn : TKDBConnection; aType : TFhirResourceType; id : String) : TPseudoData;
+    function loadPseudoData(conn : TFslDBConnection; aType : TFhirResourceType; id : String) : TPseudoData;
     function makePseudoData(gender : TFhirAdministrativeGenderEnum) : TPseudoData;
-    procedure SavePseudoData(conn : TKDBConnection; aType : TFhirResourceType; id : String; pd : TPseudoData);
+    procedure SavePseudoData(conn : TFslDBConnection; aType : TFhirResourceType; id : String; pd : TPseudoData);
     function fetchData(aType : TFhirResourceType; id : String; gender : TFhirAdministrativeGenderEnum) : TPseudoData;
 
     function fuzzify(date : TFslDateTime) : TFslDateTime;
@@ -92,7 +92,7 @@ type
     procedure processPractitioner(res : TFhirPractitioner);
     procedure processPractitionerRole(res : TFhirPractitionerRole);
     procedure processRelatedPerson(res : TFhirRelatedPerson);
-    procedure SetDatabase(const Value: TKDBManager);
+    procedure SetDatabase(const Value: TFslDBManager);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -101,7 +101,7 @@ type
 
     procedure DeIdentify(res : TFHIRResource);
 
-    property database : TKDBManager read FDatabase write SetDatabase;
+    property database : TFslDBManager read FDatabase write SetDatabase;
     property persist : boolean read FPersist write FPersist;
     property practitioners : boolean read FPractitioners write FPractitioners;
     property makeFakeData : boolean read FMakeFakeData write FMakeFakeData;
@@ -156,7 +156,7 @@ begin
   pd := nil;
   try
     FDatabase.connection('DeIdentification',
-      procedure (conn : TKDBConnection)
+      procedure (conn : TFslDBConnection)
       begin
         pd := loadPseudoData(conn, aType, id);
         if pd = nil then
@@ -198,7 +198,7 @@ begin
 
 end;
 
-function TFHIRDeIdentifier.loadPseudoData(conn: TKDBConnection; aType: TFhirResourceType; id: String): TPseudoData;
+function TFHIRDeIdentifier.loadPseudoData(conn: TFslDBConnection; aType: TFhirResourceType; id: String): TPseudoData;
 begin
   result := nil;
   conn.SQL := 'select * from PsuedoData where Type = '+inttostr(ord(aType))+' and id = '''+SQLWrapString(id);
@@ -404,7 +404,7 @@ begin
 end;
 
 
-procedure TFHIRDeIdentifier.SavePseudoData(conn: TKDBConnection; aType: TFhirResourceType; id: String; pd: TPseudoData);
+procedure TFHIRDeIdentifier.SavePseudoData(conn: TFslDBConnection; aType: TFhirResourceType; id: String; pd: TPseudoData);
 begin
   FLock.exec(
     procedure
@@ -434,7 +434,7 @@ begin
   conn.Terminate;
 end;
 
-procedure TFHIRDeIdentifier.SetDatabase(const Value: TKDBManager);
+procedure TFHIRDeIdentifier.SetDatabase(const Value: TFslDBManager);
 begin
   FDatabase := Value;
 end;

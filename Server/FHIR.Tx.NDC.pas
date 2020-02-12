@@ -14,15 +14,15 @@ type
   TNdcImporter = class (TFslObject)
   private
     FSource: String;
-    FDatabase: TKDBManager;
-    FConn : TKDBConnection;
+    FDatabase: TFslDBManager;
+    FConn : TFslDBConnection;
     FCodes : TDictionary<String, integer>;
     FTypes : TDictionary<String, integer>;
     FOrgs : TDictionary<String, integer>;
     FRoutes : TDictionary<String, integer>;
     FDoseforms : TDictionary<String, integer>;
     FKey : integer;
-    procedure SetDatabase(const Value: TKDBManager);
+    procedure SetDatabase(const Value: TFslDBManager);
     procedure importProducts(callback: TInstallerCallback);
     procedure importPackages(callback: TInstallerCallback);
     procedure processProduct(fields: TFslStringList);
@@ -33,7 +33,7 @@ type
     constructor Create(source : String);
     destructor Destroy; override;
 
-    property Database : TKDBManager read FDatabase write SetDatabase;
+    property Database : TFslDBManager read FDatabase write SetDatabase;
     property source : String read FSource write FSource;
 
     procedure process(callback : TInstallerCallback);
@@ -51,7 +51,7 @@ type
 
   TNDCServices = class (TCodeSystemProvider)
   private
-    FDb : TKDBManager;
+    FDb : TFslDBManager;
     FVersion : string;
 
     FTypes : TDictionary<integer, String>;
@@ -59,9 +59,9 @@ type
     FRoutes : TDictionary<integer, String>;
     FDoseforms : TDictionary<integer, String>;
     procedure load;
-    procedure loadDict(conn: TKDBConnection; dict: TDictionary<integer, String>; sql: String);
+    procedure loadDict(conn: TFslDBConnection; dict: TDictionary<integer, String>; sql: String);
   public
-    constructor Create(db : TKDBManager; version : String);
+    constructor Create(db : TFslDBManager; version : String);
     destructor Destroy; Override;
     Function Link : TNDCServices; overload;
 
@@ -206,7 +206,7 @@ end;
 
 procedure TNdcImporter.prepareDatabase;
 var
-  md : TKDBMetaData;
+  md : TFslDBMetaData;
 begin
   md := FConn.FetchMetaData;
   try
@@ -401,14 +401,14 @@ begin
   FConn.Terminate;
 end;
 
-procedure TNdcImporter.SetDatabase(const Value: TKDBManager);
+procedure TNdcImporter.SetDatabase(const Value: TFslDBManager);
 begin
   FDatabase := Value;
 end;
 
 { TNDCServices }
 
-constructor TNDCServices.Create(db: TKDBManager; version : String);
+constructor TNDCServices.Create(db: TFslDBManager; version : String);
 begin
   inherited Create;
 
@@ -451,7 +451,7 @@ begin
   ctxt.Free;
 end;
 
-procedure TNDCServices.loadDict(conn : TKDBConnection; dict : TDictionary<integer, String>; sql : String);
+procedure TNDCServices.loadDict(conn : TFslDBConnection; dict : TDictionary<integer, String>; sql : String);
 begin
   conn.SQL := sql;
   conn.Prepare;
@@ -463,7 +463,7 @@ end;
 
 procedure TNDCServices.load;
 begin
-  FDB.connection('load', procedure (conn : TKDBConnection) begin
+  FDB.connection('load', procedure (conn : TFslDBConnection) begin
     loadDict(conn, FTypes, 'select NDCKey, Name from NDCProductTypes');
     loadDict(conn, FOrgs, 'select NDCKey, Name from NDCOrganizations');
     loadDict(conn, FRoutes, 'select NDCKey, Name from NDCRoutes');
@@ -477,7 +477,7 @@ var
   code : TNDCProviderContext;
 begin
   code := context as TNDCProviderContext;
-  FDB.connection('Code', procedure (conn : TKDBConnection) begin
+  FDB.connection('Code', procedure (conn : TFslDBConnection) begin
     if code.package then
       c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Code', '')
     else
@@ -494,7 +494,7 @@ begin
   code := context as TNDCProviderContext;
   if code.package then
     exit(0);
-  FDB.connection('ChildCount', procedure (conn : TKDBConnection) begin
+  FDB.connection('ChildCount', procedure (conn : TFslDBConnection) begin
     count := conn.CountSQL('select count(*) from NDCPackages where ProductKey = '+inttostr(code.key));
   end);
   result := count;
@@ -512,7 +512,7 @@ var
 begin
   code := context as TNDCProviderContext;
   c := '';
-  FDB.connection('Display', procedure (conn : TKDBConnection) begin
+  FDB.connection('Display', procedure (conn : TFslDBConnection) begin
     if code.package then
     begin
       conn.sql := 'Select TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key);
@@ -541,7 +541,7 @@ var
   code : TNDCProviderContext;
 begin
   code := context as TNDCProviderContext;
-  FDB.connection('Displays', procedure (conn : TKDBConnection) begin
+  FDB.connection('Displays', procedure (conn : TFslDBConnection) begin
     if code.package then
       c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Description', '')
     else
@@ -554,7 +554,7 @@ procedure TNDCServices.Displays(code: String; list: TStringList; lang: String);
 var
   c : string;
 begin
-  FDB.connection('Displays', procedure (conn : TKDBConnection) begin
+  FDB.connection('Displays', procedure (conn : TFslDBConnection) begin
     c := conn.Lookup('NDCPackages', 'Code', code, 'Description', '');
     if c = '' then
       c := conn.Lookup('NDCProducts', 'Code', code, 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'Code', code, 'Suffix', '');
@@ -567,7 +567,7 @@ var
   code : TNDCProviderContext;
 begin
   code := ctxt as TNDCProviderContext;
-  FDB.connection('Display', procedure (conn : TKDBConnection) begin
+  FDB.connection('Display', procedure (conn : TFslDBConnection) begin
     if code.package then
       conn.sql := 'Select Type, TradeName, DoseForm, Route, Company, Category, Generics from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key)
     else
@@ -628,7 +628,7 @@ var
   c : string;
 begin
   c := '';
-  FDB.connection('getDisplay', procedure (conn : TKDBConnection) begin
+  FDB.connection('getDisplay', procedure (conn : TFslDBConnection) begin
     conn.sql := 'Select TradeName, Suffix from NDCProducts where Code = '''+SQLWrapString(code)+'''';
     conn.prepare;
     conn.execute;
@@ -674,7 +674,7 @@ var
   k : integer;
 begin
   c := nil;
-  FDB.connection('getDisplay', procedure (conn : TKDBConnection) begin
+  FDB.connection('getDisplay', procedure (conn : TFslDBConnection) begin
     k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+''' or code11 = '''+SQLWrapString(code)+'''');
     if k <> 0 then
       c := TNDCProviderContext.create(true, k)
@@ -712,7 +712,7 @@ function TNDCServices.TotalCount: integer;
 var
   count : cardinal;
 begin
-  FDB.connection('ChildCount', procedure (conn : TKDBConnection) begin
+  FDB.connection('ChildCount', procedure (conn : TFslDBConnection) begin
     count := conn.CountSQL('select count(*) from NDCPackages');
     count := count + conn.CountSQL('select count(*) from NDCProducts');
   end);

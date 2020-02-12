@@ -115,6 +115,7 @@ Type
     class function fromPackage(tgz : TStream) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream; desc : String) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream; desc : String; progress : TWorkProgressEvent) : TNpmPackage; overload;
+    class function fromPackage(tgz : TBytes; desc : String; progress : TWorkProgressEvent) : TNpmPackage; overload;
     class function fromSource(source: String): TNpmPackage; static;
 //    procedure save(stream : TStream);
 
@@ -208,7 +209,6 @@ begin
         json.free;
       end;
     except
-      // ignore....
     end;
   end;
 end;
@@ -332,7 +332,8 @@ begin
     r.Kind := f.str['kind'];
     r.URL := f.str['url'];
     r.Version := f.str['version'];
-    r.size := FileSize(FilePath([FFolder, r.name]));
+    if FFolder <> '' then
+      r.size := FileSize(FilePath([FFolder, r.name]));
   end;
 end;
 
@@ -342,6 +343,7 @@ constructor TNpmPackage.Create;
 begin
   inherited;
   FFolders := TFslMap<TNpmPackageFolder>.create('Npm Folders');
+  FFolders.defaultValue := nil;
 end;
 
 destructor TNpmPackage.Destroy;
@@ -851,7 +853,7 @@ begin
         bi := TBytesStream.Create;
         try
           tar.ReadFile(bi);
-          b := bi.Bytes;
+          b := copy(bi.Bytes, 0, bi.size);
         finally
           bi.free;
         end;
@@ -866,7 +868,7 @@ begin
     z.free;
   end;
   try 
-   FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'));
+    FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'));
   except 
     on e : Exception do
       raise EFHIRException.create('Error parsing '+desc+'#'+'package/package.json: '+e.Message);
@@ -888,6 +890,18 @@ begin
     result := fromPackage(TFileStream.create(source, fmOpenRead + fmShareDenyWrite));
 end;
 
+
+class function TNpmPackage.fromPackage(tgz: TBytes; desc: String; progress: TWorkProgressEvent): TNpmPackage;
+var
+  s : TBytesStream;
+begin
+  s := TBytesStream.Create(tgz);
+  try
+    result := fromPackage(s, desc, progress);
+  finally
+    s.Free;
+  end;
+end;
 
 { TNpmPackageResource }
 

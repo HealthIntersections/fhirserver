@@ -421,7 +421,9 @@ uses
   FHIR.R5.Questionnaire in '..\library\r5\FHIR.R5.Questionnaire.pas',
   FHIR.R5.Narrative2 in '..\library\r5\FHIR.R5.Narrative2.pas',
   FHIR.R5.GraphDefinition in '..\library\r5\FHIR.R5.GraphDefinition.pas',
-  FHIR.R5.MapUtilities in '..\library\r5\FHIR.R5.MapUtilities.pas';
+  FHIR.R5.MapUtilities in '..\library\r5\FHIR.R5.MapUtilities.pas',
+  FHIR.Cache.PackageUpdater in '..\library\FHIR.Cache.PackageUpdater.pas',
+  FHIR.Server.Packages in 'FHIR.Server.Packages.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

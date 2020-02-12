@@ -332,7 +332,7 @@ type
     procedure RegisterConsentRecord(session: TFhirSession); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; res : TFHIRResourceV; tags : TFHIRTagList); override;
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res: TFHIRResourceV; conn: TKDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : TBytes); override;
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : TBytes); override;
 
     function engineFactory(lang : String; usage : String) : TFHIRNativeOperationEngine; override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
@@ -1284,7 +1284,7 @@ var
   needsObject : boolean;
   sId, type_ : String;
   first : boolean;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   patIds : TPatientIdTracker;
 begin
   patIds := TPatientIdTracker.Create;
@@ -3036,7 +3036,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageServiceR2.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TKDBConnection; reload: Boolean; session: TFhirSession; lang: string; src: TBytes);
+procedure TFHIRNativeStorageServiceR2.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; lang: string; src: TBytes);
 var
   vs : TFHIRValueSet;
   resource : TFHIRResource;

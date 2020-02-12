@@ -155,14 +155,14 @@ Type
 
   TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
-  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : TParseMap; conn : TKDBConnection): String of object;
+  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : TParseMap; conn : TFslDBConnection): String of object;
 
   TSubscriptionManager = class abstract (TFHIRServerWorker)
   private
     FSubscriptions : TFHIRSubscriptionEntryList;
     FSubscriptionTrackers  : TFHIRSubscriptionTrackerList;
     FLastSubscriptionKey, FLastNotificationQueueKey, FLastWebSocketKey : integer;
-    FDatabase: TKDBManager;
+    FDatabase: TFslDBManager;
     EmptyQueue : boolean;
     FOnExecuteOperation : TExecuteOperationEvent;
     FOnExecuteSearch : TExecuteSearchEvent;
@@ -188,12 +188,12 @@ Type
     function chooseSMTPSender(direct : boolean): String;
     function chooseSMTPUsername(direct : boolean): String;
 
-    function determineResourceTypeKey(criteria : String; conn : TKDBConnection) : integer;
-    procedure SeeNewSubscription(key : Integer; id : String; subscription : TFHIRResourceV; session : TFHIRSession; conn : TKDBConnection);
-    function ProcessSubscription(conn : TKDBConnection): Boolean;
-    function ProcessNotification(conn : TKDBConnection): Boolean;
-    procedure createNotification(vkey, skey : integer; created : boolean; conn : TKDBConnection);
-    function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer; var userkey : integer) : TFhirResourceV;
+    function determineResourceTypeKey(criteria : String; conn : TFslDBConnection) : integer;
+    procedure SeeNewSubscription(key : Integer; id : String; subscription : TFHIRResourceV; session : TFHIRSession; conn : TFslDBConnection);
+    function ProcessSubscription(conn : TFslDBConnection): Boolean;
+    function ProcessNotification(conn : TFslDBConnection): Boolean;
+    procedure createNotification(vkey, skey : integer; created : boolean; conn : TFslDBConnection);
+    function LoadResourceFromDBByKey(conn : TFslDBConnection; key: integer; var userkey : integer) : TFhirResourceV;
 
     procedure doSendEmail(subst : TFHIRSubscriptionW; resource : TFHIRResourceV; dest : String; direct : boolean);  overload;
     procedure sendDirectResponse(id, address, message: String; ok: boolean);
@@ -205,10 +205,10 @@ Type
     procedure sendByRest(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
     procedure sendByEmail(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);  overload;
     procedure sendBySms(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
-    procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
-//    procedure processByScript(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
+    procedure sendByWebSocket(conn : TFslDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
+//    procedure processByScript(conn : TFslDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
 
-//    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResourceV);
+//    procedure saveTags(conn : TFslDBConnection; ResourceKey : integer; res : TFHIRResourceV);
     procedure NotifySuccess(userkey, SubscriptionKey : integer);
     procedure NotifyFailure(userkey, SubscriptionKey : integer; message : string);
     procedure DoDropResource(key, vkey, pvkey : Integer; internal : boolean);
@@ -216,17 +216,17 @@ Type
     procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
     function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
     procedure ApplyUpdateToResource(userkey : integer; id : String; resource : TFhirResourceV);
-    procedure checkSaveTags(subst : TFHIRSubscriptionW; conn : TKDBConnection; key : integer; res : TFHIRResourceV);
+    procedure checkSaveTags(subst : TFHIRSubscriptionW; conn : TFslDBConnection; key : integer; res : TFHIRResourceV);
   protected
     FLock : TFslLock;
     FEventDefinitions : TFslMap<TEventDefinition>;
-    function MeetsCriteriaSearch(criteria : String; typekey, key : integer; conn : TKDBConnection) : boolean;
-    function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String) : TFhirResourceV;
+    function MeetsCriteriaSearch(criteria : String; typekey, key : integer; conn : TFslDBConnection) : boolean;
+    function LoadResourceFromDBByVer(conn : TFslDBConnection; vkey: integer; var id : String) : TFhirResourceV;
 
     procedure checkAcceptable(subscription : TFHIRSubscriptionW; session : TFHIRSession); virtual; abstract;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
     function preparePackage(userkey : integer; created : boolean; subscription : TFHIRSubscriptionW; resource : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
-    function MeetsCriteria(subscription : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TKDBConnection) : boolean; virtual; abstract;
+    function MeetsCriteria(subscription : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TFslDBConnection) : boolean; virtual; abstract;
     function checkSubscription(subscription: TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
     function loadEventDefinition(res : TFHIRResourceV) : TEventDefinition; virtual; abstract;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
@@ -237,8 +237,8 @@ Type
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
 
-    procedure loadQueue(conn : TKDBConnection);
-    procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TFHIRSubscriptionWOperation; resource : TFHIRResourceV; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
+    procedure loadQueue(conn : TFslDBConnection);
+    procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TFHIRSubscriptionWOperation; resource : TFHIRResourceV; conn : TFslDBConnection; reload : boolean; session : TFHIRSession);
     procedure DropResource(key, vkey, pvkey : Integer);
     procedure Process; // spend up to 30 seconds working on subscriptions
     procedure ProcessEmails; // on a separate thread to Process
@@ -246,7 +246,7 @@ Type
 
     procedure sendByEmail(resource : TFHIRResourceV; dest : String; direct : boolean); overload;
 
-    Property Database : TKDBManager read FDatabase write FDatabase;
+    Property Database : TFslDBManager read FDatabase write FDatabase;
 
     Property Base : String read FBase write FBase;
     Property OnExecuteOperation : TExecuteOperationEvent read FOnExecuteOperation write FOnExecuteOperation;
@@ -425,7 +425,7 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.checkSaveTags(subst: TFHIRSubscriptionW; conn: TKDBConnection; key: integer; res: TFHIRResourceV);
+procedure TSubscriptionManager.checkSaveTags(subst: TFHIRSubscriptionW; conn: TFslDBConnection; key: integer; res: TFHIRResourceV);
 begin
   // todo....
 end;
@@ -455,7 +455,7 @@ end;
 
 procedure TSubscriptionManager.HandleWebSocketBind(id : String; connection: TIdWebSocket);
 var
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
   key : integer;
   cnt : String;
 begin
@@ -542,7 +542,7 @@ procedure TSubscriptionManager.DoDropResource(key, vkey, pvkey: Integer; interna
 var
   i : integer;
   dodelete : boolean;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
 begin
   dodelete := false;
   FLock.Enter('DropResource');
@@ -578,7 +578,7 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFHIRResourceV; session: TFHIRSession; conn : TKDBConnection);
+procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFHIRResourceV; session: TFHIRSession; conn : TFslDBConnection);
 var
   s : TFHIRSubscriptionW;
 begin
@@ -591,7 +591,7 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.SeeResource(key, vkey, pvkey: Integer; id : String; op : TFHIRSubscriptionWOperation; resource: TFHIRResourceV; conn : TKDBConnection; reload: boolean; session : TFHIRSession);
+procedure TSubscriptionManager.SeeResource(key, vkey, pvkey: Integer; id : String; op : TFHIRSubscriptionWOperation; resource: TFHIRResourceV; conn : TFslDBConnection; reload: boolean; session : TFHIRSession);
 var
   evd : TEventDefinition;
 begin
@@ -792,7 +792,7 @@ begin
 end;
 
 
-procedure TSubscriptionManager.sendByWebSocket(conn : TKDBConnection; id: String; subst: TFHIRSubscriptionW; package : TFHIRResourceV);
+procedure TSubscriptionManager.sendByWebSocket(conn : TFslDBConnection; id: String; subst: TFHIRSubscriptionW; package : TFHIRResourceV);
 var
   key : integer;
   comp : TFHIRComposer;
@@ -933,7 +933,7 @@ procedure TSubscriptionManager.Process;
 var
   finish : TDateTime;
   found : boolean;
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
 begin
   if EmptyQueue then
     exit;
@@ -977,7 +977,7 @@ begin
   end;
 end;
 
-//procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
+//procedure TSubscriptionManager.processByScript(conn: TFslDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
 //begin
 //  raise EFHIRTodo.create('TSubscriptionManager.processByScript');
 //end;
@@ -1096,7 +1096,7 @@ begin
     logt('email from '+msg.Sender.Text+' could not be understood');
 end;
 
-function TSubscriptionManager.ProcessNotification(conn : TKDBConnection): Boolean;
+function TSubscriptionManager.ProcessNotification(conn : TFslDBConnection): Boolean;
 var
   NotificationnQueueKey, ResourceKey, SubscriptionKey : integer;
   res : TFhirResourceV;
@@ -1191,7 +1191,7 @@ begin
   logt('Direct Message '+id+' notice: '+details.Values['Disposition'].Trim);
 end;
 
-function TSubscriptionManager.ProcessSubscription(conn: TKDBConnection): Boolean;
+function TSubscriptionManager.ProcessSubscription(conn: TFslDBConnection): Boolean;
 var
   SubscriptionQueueKey, ResourceKey, ResourceVersionKey, ResourcePreviousKey, ResourceTypeKey : integer;
   i : integer;
@@ -1253,7 +1253,7 @@ begin
 end;
 
 //
-//procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res: TFHIRResourceV);
+//procedure TSubscriptionManager.saveTags(conn: TFslDBConnection; ResourceKey: integer; res: TFHIRResourceV);
 //begin
 //{  conn.SQL := 'Update Versions set content = :t where ResourceVersionKey = '+inttostr(ResourceKey);
 //  conn.Prepare;
@@ -1266,14 +1266,14 @@ end;
 //  }
 //end;
 //
-procedure TSubscriptionManager.loadQueue(conn: TKDBConnection);
+procedure TSubscriptionManager.loadQueue(conn: TFslDBConnection);
 begin
   FLastSubscriptionKey := conn.CountSQL('select max(SubscriptionQueueKey) from SubscriptionQueue');
   FLastNotificationQueueKey := conn.CountSQL('select max(NotificationQueueKey) from NotificationQueue');
   FLastWebSocketKey := conn.CountSQL('select max(WebSocketsQueueKey) from WebSocketsQueue');
 end;
 
-function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey: integer; var id : String): TFhirResourceV;
+function TSubscriptionManager.LoadResourceFromDBByVer(conn: TFslDBConnection; vkey: integer; var id : String): TFhirResourceV;
 var
   parser : TFHIRParser;
 begin
@@ -1300,7 +1300,7 @@ begin
   end;
 end;
 
-function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key: integer; var userkey : integer): TFhirResourceV;
+function TSubscriptionManager.LoadResourceFromDBByKey(conn: TFslDBConnection; key: integer; var userkey : integer): TFhirResourceV;
 var
   parser : TFHIRParser;
 begin
@@ -1329,7 +1329,7 @@ begin
   end;
 end;
 
-function TSubscriptionManager.determineResourceTypeKey(criteria: String; conn: TKDBConnection): integer;
+function TSubscriptionManager.determineResourceTypeKey(criteria: String; conn: TFslDBConnection): integer;
 var
   t : string;
 begin
@@ -1345,7 +1345,7 @@ begin
   end;
 end;
 
-function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey, key : integer; conn: TKDBConnection): boolean;
+function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey, key : integer; conn: TFslDBConnection): boolean;
 var
   l, r, sql : String;
   p : TParseMap;
@@ -1437,7 +1437,7 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.createNotification(vkey, skey: integer; created : boolean; conn : TKDBConnection);
+procedure TSubscriptionManager.createNotification(vkey, skey: integer; created : boolean; conn : TFslDBConnection);
 var
   k : integer;
   c : String;

@@ -37,7 +37,7 @@ uses
 
 const
   {$IFDEF VER170}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}     ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}     ctBoolean,
@@ -62,7 +62,7 @@ const
   {$ENDIF}
 
   {$IFDEF VER150}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}     ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}     ctBoolean,
@@ -87,7 +87,7 @@ const
   {$ENDIF}
 
   {$IFDEF VER140}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}     ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}     ctBoolean,
@@ -112,7 +112,7 @@ const
   {$ENDIF}
 
   {$IFDEF VER130}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}     ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}     ctBoolean,
@@ -135,7 +135,7 @@ const
   {$ENDIF}
 
   {$IFDEF VER240}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -166,7 +166,7 @@ const
   {$ENDIF}
 
   {$IFDEF VER260}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -197,7 +197,7 @@ const
   {$ENDIF}
 
   {$IFDEF VER280}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -228,7 +228,7 @@ const
   {$ENDIF}
 
  {$IFDEF VER290}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -259,7 +259,7 @@ const
   {$ENDIF}
 
  {$IFDEF VER300}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -290,7 +290,7 @@ const
   {$ENDIF}
 
  {$IFDEF VER310}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -321,7 +321,7 @@ const
   {$ENDIF}
 
  {$IFDEF VER320}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -352,7 +352,7 @@ const
   {$ENDIF}
 
  {$IFDEF VER330}
-  ColTypeMap: array[TFieldType] of TKDBColumnType =
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,
     {ftWord}        ctInteger,    {ftBoolean}      ctBoolean,
@@ -383,8 +383,8 @@ const
   {$ENDIF}
 
 
-procedure PopulateDBTableMetaData(ADB : TDataSet; ATable : TKDBTable);
-function FetchIndexMetaData(AIndexDef : TIndexDef) : TKDBIndex;
+procedure PopulateDBTableMetaData(ADB : TDataSet; ATable : TFslDBTable);
+function FetchIndexMetaData(AIndexDef : TIndexDef) : TFslDBIndex;
 
 implementation
 
@@ -393,9 +393,9 @@ uses
   FHIR.Support.Utilities;
 
 
-function FetchColumnMetaData(AField : TField):TKDBColumn;
+function FetchColumnMetaData(AField : TField):TFslDBColumn;
 begin
-  result := TKDBColumn.create;
+  result := TFslDBColumn.create;
   try
     result.Name := AField.FieldName;
     result.DataType := ColTypeMap[AField.DataType];
@@ -411,7 +411,7 @@ begin
   end;
 end;
 
-procedure PopulateDBTableMetaData(ADB : TDataset; ATable : TKDBTable);
+procedure PopulateDBTableMetaData(ADB : TDataset; ATable : TFslDBTable);
 var
    i : integer;
 begin
@@ -421,11 +421,11 @@ begin
     end;
 end;
 
-function FetchIndexMetaData(AIndexDef : TIndexDef) : TKDBIndex;
+function FetchIndexMetaData(AIndexDef : TIndexDef) : TFslDBIndex;
 var
   s, t : String;
 begin
-  result := TKDBindex.create;
+  result := TFslDBindex.create;
   try
     result.Name := AIndexDef.Name;
     result.Unique := ixUnique in AIndexDef.Options;
@@ -433,7 +433,7 @@ begin
     while s <> '' do
       begin
       StringSplit(s, ';', t, s);
-      result.Columns.Add(TKDBColumn.create(t));
+      result.Columns.Add(TFslDBColumn.create(t));
       end;
   except
     on e:exception do

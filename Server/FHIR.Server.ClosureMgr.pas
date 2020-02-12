@@ -65,8 +65,8 @@ Type
     FKey : integer;
     FLock : TFslLock;
     FVersion : integer;
-    function GetConceptKey(conn : TKDBConnection; uri, code : String) : integer;
-    procedure processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
+    function GetConceptKey(conn : TFslDBConnection; uri, code : String) : integer;
+    procedure processEntryInternal(conn: TFslDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
     function getGroup(map: TFHIRConceptMapW; source, target: String): TFHIRConceptMapGroupW;
   public
     constructor Create(name : String; key, version : integer; store : TTerminologyServerStore);
@@ -76,16 +76,16 @@ Type
 
     Property Version : Integer read FVersion;
 
-    procedure Init(conn : TKDBConnection);
+    procedure Init(conn : TFslDBConnection);
 
     // this is a split mode implementation, for performance - the subsumption is calculated in the background
-    function enterCode(conn: TKDBConnection; uri, code: String): integer;
-    procedure processEntry(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code: String);
+    function enterCode(conn: TFslDBConnection; uri, code: String): integer;
+    procedure processEntry(conn: TFslDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code: String);
 
     // this is the inline variant; subsumption is determined immediately
-    procedure processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCodingW>; map : TFHIRConceptMapW);
+    procedure processConcepts(conn: TFslDBConnection; codings : TFslList<TFHIRCodingW>; map : TFHIRConceptMapW);
 
-    procedure reRun(conn: TKDBConnection; map : TFHIRConceptMapW; version : integer);
+    procedure reRun(conn: TFslDBConnection; map : TFHIRConceptMapW; version : integer);
   end;
 
 implementation
@@ -102,7 +102,7 @@ begin
   FStore := store;
 end;
 
-procedure TClosureManager.Init(conn: TKDBConnection);
+procedure TClosureManager.Init(conn: TFslDBConnection);
 begin
   if FKey = 0 then
   begin
@@ -119,7 +119,7 @@ begin
   result := TClosureManager(inherited Link);
 end;
 
-function TClosureManager.GetConceptKey(conn: TKDBConnection; uri, code: String): integer;
+function TClosureManager.GetConceptKey(conn: TFslDBConnection; uri, code: String): integer;
 begin
   result := conn.CountSQL('select ConceptKey from Concepts where URL = '''+SQLWrapString(uri)+''' and Code = '''+SQLWrapString(code)+'''');
   if result = 0 then
@@ -135,7 +135,7 @@ begin
   inherited;
 end;
 
-function TClosureManager.enterCode(conn: TKDBConnection; uri, code: String): integer;
+function TClosureManager.enterCode(conn: TFslDBConnection; uri, code: String): integer;
 begin
   result := GetConceptKey(conn, uri, code);
   // now, check that it is in the closure
@@ -146,7 +146,7 @@ begin
   end;
 end;
 
-procedure TClosureManager.processEntry(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String);
+procedure TClosureManager.processEntry(conn: TFslDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String);
 begin
   FLock.Lock;
   try
@@ -159,7 +159,7 @@ begin
   end;
 end;
 
-procedure TClosureManager.processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCodingW>; map : TFHIRConceptMapW);
+procedure TClosureManager.processConcepts(conn: TFslDBConnection; codings : TFslList<TFHIRCodingW>; map : TFHIRConceptMapW);
 var
   coding : TFHIRCodingW;
   ck, cek : integer;
@@ -187,7 +187,7 @@ begin
   end;
 end;
 
-procedure TClosureManager.processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
+procedure TClosureManager.processEntryInternal(conn: TFslDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
 var
   matches : TFslList<TSubsumptionMatch>;
   match : TSubsumptionMatch;
@@ -262,7 +262,7 @@ begin
   result := map.addGroup(source, target);
 end;
 
-procedure TClosureManager.reRun(conn: TKDBConnection; map: TFHIRConceptMapW; version: integer);
+procedure TClosureManager.reRun(conn: TFslDBConnection; map: TFHIRConceptMapW; version: integer);
 var
   key : String;
   elements : TFslMap<TFhirConceptMapGroupElementW>;

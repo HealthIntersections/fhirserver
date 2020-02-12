@@ -85,7 +85,7 @@ Type
     property Settings : TFHIRServerSettings read FSettings;
 
     // load external terminology resources (snomed, Loinc, etc)
-    procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TKDBManager>; testing : boolean);
+    procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TFslDBManager>; testing : boolean);
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
@@ -173,16 +173,16 @@ Type
     function getProviderClasses: TFslMap<TCodeSystemProvider>;
   protected
     FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
-    FDB : TKDBManager;
+    FDB : TFslDBManager;
     procedure invalidateVS(id : String); virtual;
     procedure getSummary(b : TStringBuilder);
   public
-    constructor Create(db : TKDBManager; factory : TFHIRFactory; common : TCommonTerminologies); virtual;
+    constructor Create(db : TFslDBManager; factory : TFHIRFactory; common : TCommonTerminologies); virtual;
     destructor Destroy; Override;
     Function Link : TTerminologyServerStore; overload;
 
     Property Factory : TFHIRFactory read FFactory;
-    Property DB : TKDBManager read FDB;
+    Property DB : TFslDBManager read FDB;
     property CommonTerminologies : TCommonTerminologies read FCommonTerminologies;
 
     // maintenance procedures
@@ -751,9 +751,9 @@ begin
   end;
 end;
 
-constructor TTerminologyServerStore.Create(db : TKDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
+constructor TTerminologyServerStore.Create(db : TFslDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
 var
-  conn : TKDBConnection;
+  conn : TFslDBConnection;
 begin
   inherited Create;
   FFactory := factory;
@@ -1795,7 +1795,7 @@ begin
 end;
 
 
-procedure TCommonTerminologies.load(ini: TFHIRServerIniFile; databases: TFslMap<TKDBManager>; testing : boolean);
+procedure TCommonTerminologies.load(ini: TFHIRServerIniFile; databases: TFslMap<TFslDBManager>; testing : boolean);
 var
   details : TFHIRServerIniComplex;
   s : string;

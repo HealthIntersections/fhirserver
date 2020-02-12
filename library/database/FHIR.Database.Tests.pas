@@ -42,9 +42,9 @@ Uses
 Type
 
   [TextFixture]
-  TKDBTests = Class (TTestObject4)
+  TFslDBTests = Class (TTestObject4)
   private
-    procedure test(manager: TKDBManager);
+    procedure test(manager: TFslDBManager);
   Published
     [TestCase] procedure TestSemaphore;
     [TestCase] procedure TestMSSQL;
@@ -81,15 +81,15 @@ begin
   result := d < 0.00001;
 end;
 
-{ TKDBTests }
+{ TFslDBTests }
 
-procedure TKDBTests.test(manager: TKDBManager);
+procedure TFslDBTests.test(manager: TFslDBManager);
 var
-  conn: TKDBConnection;
+  conn: TFslDBConnection;
   d, od: TFslDateTime;
   b: TBytes;
   i64: Int64;
-  md: TKDBMetaData;
+  md: TFslDBMetaData;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
 {$IFDEF MACOS}
@@ -241,11 +241,11 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMSSQL;
+procedure TFslDBTests.TestMSSQL;
 var
-  db: TKDBManager;
+  db: TFslDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', '(local)', 'test', '', '');
+  db := TFslDBOdbcManager.create('test', 8, 200, 'SQL Server', '(local)', 'test', '', '');
   try
     test(db);
   finally
@@ -253,11 +253,11 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMySQL;
+procedure TFslDBTests.TestMySQL;
 var
-  db: TKDBManager;
+  db: TFslDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'utest', 'test', 'test');
+  db := TFslDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'utest', 'test', 'test');
   try
     test(db);
   finally
@@ -265,7 +265,7 @@ begin
   end;
 end;
 
-// procedure TKDBTests.testSQLite;
+// procedure TFslDBTests.testSQLite;
 // var
 // DB: TSQLite3Database;
 // Stmt: TSQLite3Statement;
@@ -409,17 +409,17 @@ end;
 
 // end;
 //
-procedure TKDBTests.TestSemaphore;
+procedure TFslDBTests.TestSemaphore;
 var
-  db: TKDBManager;
-  conn1: TKDBConnection;
-  conn2: TKDBConnection;
-  conn3: TKDBConnection;
-  conn4: TKDBConnection;
-  conn5: TKDBConnection;
+  db: TFslDBManager;
+  conn1: TFslDBConnection;
+  conn2: TFslDBConnection;
+  conn3: TFslDBConnection;
+  conn4: TFslDBConnection;
+  conn5: TFslDBConnection;
 begin
   DeleteFile('c:\temp\sql.db');
-  db := TKDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  db := TFslDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
   try
     Assert.IsTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -492,12 +492,12 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestSQLite;
+procedure TFslDBTests.TestSQLite;
 var
-  db: TKDBManager;
+  db: TFslDBManager;
 begin
   DeleteFile('c:\temp\sql.db');
-  db := TKDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  db := TFslDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
   try
     test(db);
   finally
@@ -506,11 +506,11 @@ begin
 end;
 
 
-// procedure TKDBTests.TestMySQLMaria;
+// procedure TFslDBTests.TestMySQLMaria;
 // var
-// db : TKDBManager;
+// db : TFslDBManager;
 // begin
-// db := TKDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+// db := TFslDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
 // try
 // test(db);
 // finally
@@ -521,6 +521,6 @@ end;
 
 initialization
 
-TDUnitX.RegisterTestFixture(TKDBTests);
+TDUnitX.RegisterTestFixture(TFslDBTests);
 
 end.

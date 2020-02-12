@@ -302,7 +302,7 @@ Type
     FTracing: Boolean;
     FCore: Boolean;
     FDrivers: TList;
-    FPlatform : TKDBPlatform;
+    FPlatform : TFslDBPlatform;
 
     { Published Events }
     FBeforeConnect, FAfterConnect: TNotifyEvent;

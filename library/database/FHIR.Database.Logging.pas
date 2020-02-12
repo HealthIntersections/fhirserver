@@ -38,9 +38,9 @@ uses
   SysUtils;
 
 type
-  TKDBReportFormat = (krfText, krfHTML, krfXML);
+  TFslDBReportFormat = (krfText, krfHTML, krfXML);
 
-  TKDBLogEntry = {private} class (TFslObject)
+  TFslDBLogEntry = {private} class (TFslObject)
   private
     FUsage : String;
     FTotalCount : integer;
@@ -54,27 +54,27 @@ type
     FExceptions : TStringList;
     procedure RecordUsage(AWhenStarted : TDateTime; ARowCount, APrepareCount : integer; AException : Exception; AErrMsg : string);
     class function HTMLDoco : String;
-    class function Header(AFormat : TKDBReportFormat) : String; Overload;
-    class function Footer(AFormat : TKDBReportFormat) : String; Overload;
-    function Report(AExceptions : Boolean; AFormat : TKDBReportFormat; APrefix : String = '') : String; Overload;
+    class function Header(AFormat : TFslDBReportFormat) : String; Overload;
+    class function Footer(AFormat : TFslDBReportFormat) : String; Overload;
+    function Report(AExceptions : Boolean; AFormat : TFslDBReportFormat; APrefix : String = '') : String; Overload;
   public
     constructor Create(AUsage : String);
     destructor Destroy; override;
   end;
 
-  TKDBLogger = class (TFslObject)
+  TFslDBLogger = class (TFslObject)
   private
     FList : TStringList;
     FTotal : Integer;
     FLock : TFslLock;
-    function GetLogEntry(AUsage : String) : TKDBLogEntry;
+    function GetLogEntry(AUsage : String) : TFslDBLogEntry;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure RecordUsage(AUsage : String; AWhenStarted : TDateTime; ARowCount, APrepareCount : integer; AException : Exception; AErrMsg : string);
-    function Report(AFormat : TKDBReportFormat) : String; Overload;
+    function Report(AFormat : TFslDBReportFormat) : String; Overload;
     function InteractiveReport(AParam : String; APrefix : String) : string;
-    function ErrorReport(AUsage : String; AFormat : TKDBReportFormat) : String;
+    function ErrorReport(AUsage : String; AFormat : TFslDBReportFormat) : String;
 
     property Total : Integer read FTotal;
   end;
@@ -93,9 +93,9 @@ const
   EOL_WINDOWS = CR + LF;
   EOL_PLATFORM = EOL_WINDOWS;
 
-{ TKDBLogger }
+{ TFslDBLogger }
 
-constructor TKDBLogger.create;
+constructor TFslDBLogger.create;
 begin
   inherited;
   FLock := TFslLock.Create;
@@ -105,16 +105,16 @@ begin
   FList.Duplicates := dupError;
 end;
 
-destructor TKDBLogger.destroy;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogger.destroy';
+destructor TFslDBLogger.destroy;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogger.destroy';
 begin
   FList.free;
   FLock.Free;
   inherited;
 end;
 
-procedure TKDBLogger.RecordUsage(AUsage: String; AWhenStarted: TDateTime; ARowCount, APrepareCount : integer; AException: Exception; AErrMsg : string);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogger.RecordUsage';
+procedure TFslDBLogger.RecordUsage(AUsage: String; AWhenStarted: TDateTime; ARowCount, APrepareCount : integer; AException: Exception; AErrMsg : string);
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogger.RecordUsage';
 begin
   assert(AUsage <> '', ASSERT_LOCATION+': Usage is not valid');
   assert(AWhenStarted > 0, ASSERT_LOCATION+': WhenStarted is not valid');
@@ -129,8 +129,8 @@ begin
   end;
 end;
 
-function TKDBLogger.ErrorReport(AUsage: String; AFormat : TKDBReportFormat): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogger.ErrorReport';
+function TFslDBLogger.ErrorReport(AUsage: String; AFormat : TFslDBReportFormat): String;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogger.ErrorReport';
 begin
   assert(AUsage <> '', ASSERT_LOCATION+': Usage is not valid');
 
@@ -143,26 +143,26 @@ begin
   end;
 end;
 
-function TKDBLogger.Report(AFormat: TKDBReportFormat): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogger.Report';
+function TFslDBLogger.Report(AFormat: TFslDBReportFormat): String;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogger.Report';
 var
   i : integer;
 begin
   FLock.Lock;
   try
-    result := TKDBLogEntry.Header(AFormat);
+    result := TFslDBLogEntry.Header(AFormat);
     for i := 0 to FList.Count - 1 do
       begin
-      result := result + (FList.Objects[i] as TKDBLogEntry).Report(false, AFormat);
+      result := result + (FList.Objects[i] as TFslDBLogEntry).Report(false, AFormat);
       end;
-    result := result + TKDBLogEntry.Footer(AFormat);
+    result := result + TFslDBLogEntry.Footer(AFormat);
   finally
     FLock.UnLock;
   end;
 end;
 
-function TKDBLogger.GetLogEntry(AUsage: String): TKDBLogEntry;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogger.GetLogEntry';
+function TFslDBLogger.GetLogEntry(AUsage: String): TFslDBLogEntry;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogger.GetLogEntry';
 var
   LIndex : integer;
 begin
@@ -171,18 +171,18 @@ begin
 
   if FList.Find(AUsage, LIndex) then
     begin
-    result := FList.Objects[LIndex] as TKDBLogEntry;
+    result := FList.Objects[LIndex] as TFslDBLogEntry;
     assert(SameText(result.FUsage, AUsage), ASSERT_LOCATION+': Usage mismatch "'+Result.FUsage+'"/"'+AUsage+'"');
     end
   else
     begin
-    result := TKDBLogEntry.create(AUsage);
+    result := TFslDBLogEntry.create(AUsage);
     FList.AddObject(AUsage, result);
     end;
 end;
 
-function TKDBLogger.InteractiveReport(AParam, APrefix: String): string;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogger.InteractiveReport';
+function TFslDBLogger.InteractiveReport(AParam, APrefix: String): string;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogger.InteractiveReport';
 var
   i : integer;
 begin
@@ -194,21 +194,21 @@ begin
       end
     else
       begin
-      result := TKDBLogEntry.Header(krfHTML);
+      result := TFslDBLogEntry.Header(krfHTML);
       for i := 0 to FList.Count - 1 do
         begin
-        result := result + (FList.Objects[i] as TKDBLogEntry).Report(false, krfHTML, APrefix);
+        result := result + (FList.Objects[i] as TFslDBLogEntry).Report(false, krfHTML, APrefix);
         end;
-      result := result + TKDBLogEntry.Footer(krfHTML);
+      result := result + TFslDBLogEntry.Footer(krfHTML);
       end;
   finally
     FLock.UnLock;
   end;
 end;
 
-{ TKDBLogEntry }
+{ TFslDBLogEntry }
 
-constructor TKDBLogEntry.create(AUsage : String);
+constructor TFslDBLogEntry.create(AUsage : String);
 begin
   inherited create;
   FUsage := AUsage;
@@ -223,15 +223,15 @@ begin
   FExceptions := TStringList.create(false);
 end;
 
-destructor TKDBLogEntry.destroy;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogEntry.destroy';
+destructor TFslDBLogEntry.destroy;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogEntry.destroy';
 begin
   FExceptions.free;
   inherited;
 end;
 
-procedure TKDBLogEntry.RecordUsage(AWhenStarted: TDateTime; ARowCount, APrepareCount : integer; AException: Exception; AErrMsg : string);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogEntry.RecordUsage';
+procedure TFslDBLogEntry.RecordUsage(AWhenStarted: TDateTime; ARowCount, APrepareCount : integer; AException: Exception; AErrMsg : string);
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogEntry.RecordUsage';
 var
   LLen : TDateTime;
   LNow : TDateTime;
@@ -274,7 +274,7 @@ begin
   inc(FTotalCount);
 end;
 
-class function TKDBLogEntry.HTMLDoco : String;
+class function TFslDBLogEntry.HTMLDoco : String;
 begin
   result :=
   '<p><b>In use</b></p>'+#13#10+
@@ -302,8 +302,8 @@ begin
   'common usages with high utilisation counts are important. The last 4 columns give a sense of actual performance</p>'+#13#10;
 end;
 
-class function TKDBLogEntry.Footer(AFormat: TKDBReportFormat): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogEntry.TKDBLogEntry';
+class function TFslDBLogEntry.Footer(AFormat: TFslDBReportFormat): String;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogEntry.TFslDBLogEntry';
 begin
   case AFormat of
     krfText :result := '';
@@ -324,8 +324,8 @@ begin
   result := StringPadRight(AStr, ' ', ALen)+' ';
 end;
 
-class function TKDBLogEntry.Header(AFormat: TKDBReportFormat): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogEntry.Header';
+class function TFslDBLogEntry.Header(AFormat: TFslDBReportFormat): String;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogEntry.Header';
 begin
   case AFormat of
     krfText :
@@ -347,8 +347,8 @@ begin
 
 end;
 
-function TKDBLogEntry.Report(AExceptions: Boolean; AFormat: TKDBReportFormat; APrefix : String = ''): String;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBLogEntry.Report';
+function TFslDBLogEntry.Report(AExceptions: Boolean; AFormat: TFslDBReportFormat; APrefix : String = ''): String;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TFslDBLogEntry.Report';
 var
   i : integer;
   s, l, r : String;

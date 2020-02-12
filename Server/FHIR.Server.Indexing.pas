@@ -54,7 +54,7 @@ type
     function makeIndexes : TFHIRIndexBuilder; virtual; abstract;
   end;
 
-  TFHIRGetNextKey = function (connection : TKDBConnection; keytype : TKeyType; aType : String; var id : string) : Integer of Object;
+  TFHIRGetNextKey = function (connection : TFslDBConnection; keytype : TKeyType; aType : String; var id : string) : Integer of Object;
 
   TFhirIndexEntry = class (TFslObject)
   private
@@ -93,8 +93,8 @@ type
     FKeyEvent : TFHIRGetNextKey;
 //    procedure filter(indexes : TFhirIndexList; name : String; list : TFslList<TFhirIndexEntry>);
   public
-    function add(connection : TKDBConnection; key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
-    function add(connection : TKDBConnection; key, parent : integer; index : TFhirComposite) : integer; overload;
+    function add(connection : TFslDBConnection; key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
+    function add(connection : TFslDBConnection; key, parent : integer; index : TFhirComposite) : integer; overload;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
   end;
 
@@ -147,7 +147,7 @@ type
     destructor Destroy; override;
     function Link : TFHIRIndexInformation; overload;
     function factory : TFHIRFactory;
-    procedure ReconcileIndexes(connection : TKDBConnection);
+    procedure ReconcileIndexes(connection : TFslDBConnection);
 
     Function GetTargetsByName(types : TArray<String>; name : String) : TArray<String>;
     Function GetKeyByName(name : String) : integer;
@@ -166,7 +166,7 @@ type
   TFHIRResolveReferenceVEvent = function(indexer : TFhirIndexManager; appInfo : TFslObject; sUrl : String) : TFHIRResourceV of Object;
   TFhirIndexManager = class (TFslObject)
   private
-    procedure SetConnection(const Value: TKDBConnection);
+    procedure SetConnection(const Value: TFslDBConnection);
     procedure SetContext(const Value: TFHIRWorkerContextWithFactory);
     procedure SetInfo(const Value: TFHIRIndexInformation);
     procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
@@ -180,7 +180,7 @@ type
     FContext : TFHIRWorkerContextWithFactory;
     FTerminologyServer : TTerminologyServer;
     FResConfig: TFslMap<TFHIRResourceConfig>;
-    FConnection : TKDBConnection;
+    FConnection : TFslDBConnection;
     FCompartments : TFhirCompartmentEntryList;
     FInfo : TFHIRIndexInformation;
     FEntries : TFhirIndexEntryList;
@@ -198,7 +198,7 @@ type
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
     property Definitions : TFHIRIndexInformation read FInfo write SetInfo;
     property Spaces : TFhirIndexSpaces read FSpaces write SetSpaces;
-    property Connection : TKDBConnection read FConnection write SetConnection;
+    property Connection : TFslDBConnection read FConnection write SetConnection;
     property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
     property ResConfig : TFslMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
     property Ucum : TUcumServices read FUcum write SetUcum;
@@ -236,7 +236,7 @@ end;
 
 { TFhirIndexEntryList }
 
-function TFhirIndexEntryList.add(connection : TKDBConnection; key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
+function TFhirIndexEntryList.add(connection : TFslDBConnection; key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : String; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -303,7 +303,7 @@ begin
 end;
 
 
-function TFhirIndexEntryList.add(connection : TKDBConnection; key, parent: integer; index: TFhirComposite): integer;
+function TFhirIndexEntryList.add(connection : TFslDBConnection; key, parent: integer; index: TFhirComposite): integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -482,7 +482,7 @@ begin
   result := TFHIRIndexInformation(inherited Link);
 end;
 
-procedure TFHIRIndexInformation.ReconcileIndexes(connection: TKDBConnection);
+procedure TFHIRIndexInformation.ReconcileIndexes(connection: TFslDBConnection);
 var
   i : integer;
 begin
@@ -633,7 +633,7 @@ begin
   result := FOnResolveReference(self, appInfo, url);
 end;
 
-procedure TFhirIndexManager.SetConnection(const Value: TKDBConnection);
+procedure TFhirIndexManager.SetConnection(const Value: TFslDBConnection);
 begin
   FConnection.Free;
   FConnection := Value;
