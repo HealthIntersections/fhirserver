@@ -267,15 +267,15 @@ end;
 Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
 var
   state : integer;
-  conn : TKDBManager;
-  db : TKDBConnection;
-  meta : TKDBMetaData;
+  conn : TFslDBManager;
+  db : TFslDBConnection;
+  meta : TFslDBMetaData;
   fver : String;
   dver : integer;
 begin
   state := 1;
   try
-    conn := TKDBOdbcManager.Create('config', 1, 0, dbDriver, server, database, username, password);
+    conn := TFslDBOdbcManager.Create('config', 1, 0, dbDriver, server, database, username, password);
     try
       db := conn.GetConnection('test');
       try
