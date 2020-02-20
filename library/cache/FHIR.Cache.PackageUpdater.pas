@@ -6,28 +6,38 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Logging,
   FHIR.Web.Fetcher,
-  FHIR.Database.Manager, FHIR.Database.ODBC,
+  FHIR.Database.Manager,
   FHIR.Cache.NpmPackage;
 
 const
-  MASTER_URL = 'https://cdn.jsdelivr.net/gh/FHIR/ig-registry/fhir-ig-list.json';
-  // 'https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json';
+  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json';
 
 Type
+  TPackageRestrictions = class (TFslObject)
+  private
+    FJson : TJsonArray;
+    function matches(package, mask : String) : boolean;
+  public
+    constructor Create(json : TJsonArray);
+    destructor Destroy; override;
+
+    function isOk(package, feed : String) : boolean;
+  end;
+
   TPackageUpdater = class (TFslObject)
   private
     FDB : TFslDBConnection;
     procedure log(msg : String);
 
-    function fetchUrl(url : string) : TBytes;
+    function fetchUrl(url, mimetype : string) : TBytes;
     function fetchJson(url : string) : TJsonObject;
     function fetchXml(url : string) : TMXmlElement;
 
     function hasStored(guid : String) : boolean;
-    procedure store(source, guid : String; date : TFslDateTime; package : Tbytes);
+    procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
-    procedure updateItem(source : String; item : TMXmlElement);
-    procedure updateTheFeed(url : String);
+    procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
+    procedure updateTheFeed(url : String; pr : TPackageRestrictions);
   public
     procedure update(DB : TFslDBConnection);
 
@@ -40,16 +50,18 @@ implementation
 
 function TPackageUpdater.fetchJson(url: string): TJsonObject;
 begin
-  result := TJSONParser.Parse(fetchUrl(url));
+  result := TJSONParser.Parse(fetchUrl(url, 'application/json'));
 end;
 
-function TPackageUpdater.fetchUrl(url: string): TBytes;
+function TPackageUpdater.fetchUrl(url, mimetype: string): TBytes;
 var
   fetcher : TInternetFetcher;
 begin
   fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := url+'?'+TFslDateTime.makeLocal().toHL7;
+    fetcher.Accept := mimetype;
+    fetcher.userAgent := 'HealthIntersections/FhirServer';
     fetcher.Fetch;
     result := fetcher.Buffer.AsBytes;
   finally
@@ -59,7 +71,7 @@ end;
 
 function TPackageUpdater.fetchXml(url: string): TMXmlElement;
 begin
-  result := TMXmlParser.Parse(fetchUrl(url), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
+  result := TMXmlParser.Parse(fetchUrl(url, 'application/xml'), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
 end;
 
 function TPackageUpdater.hasStored(guid: String): boolean;
@@ -76,7 +88,7 @@ begin
   logt(msg);
 end;
 
-procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes);
+procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
   pkey, vkey, cvkey : integer;
@@ -89,6 +101,12 @@ begin
   try
     id := npm.name;
     version := npm.version;
+    if (id+'#'+version <> idver) then
+    begin
+      log('Error processing '+idver+': actually found '+id+'#'+version+' in the package');
+      exit;
+    end;
+
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
@@ -153,15 +171,21 @@ var
   json : TJsonObject;
   arr : TJsonArray;
   i : integer;
+  pr : TPackageRestrictions;
 begin
   FDB := DB;
   try
     log('Fetch '+MASTER_URL);
     json := fetchJson(MASTER_URL);
     try
-      arr := json.arr['feeds'];
-      for i := 0 to arr.Count - 1 do
-        updateTheFeed(arr.Obj[i].str['url']);
+      pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
+      try
+        arr := json.arr['feeds'];
+        for i := 0 to arr.Count - 1 do
+          updateTheFeed(arr.Obj[i].str['url'], pr);
+      finally
+        pr.Free;
+      end;
     finally
       json.free;
     end;
@@ -173,7 +197,7 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.updateTheFeed(url: String);
+procedure TPackageUpdater.updateTheFeed(url: String; pr : TPackageRestrictions);
 var
   xml : TMXmlElement;
   channel : TMXmlElement;
@@ -191,7 +215,7 @@ begin
           begin
             if (item.Name = 'item') then
             begin
-              updateItem(url, item);
+              updateItem(url, item, pr);
             end;
           end;
         end;
@@ -207,27 +231,80 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement);
+procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; pr : TPackageRestrictions);
 var
   guid : String;
   content : TBytes;
   date : TFslDateTime;
+  id : String;
 begin
   guid := item.element('guid').Text;
   try
-    if (not hasStored(guid)) then
+    id := item.element('title').Text;
+    if pr.isOk(id, source) then
     begin
-      date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', item.element('pubDate').Text.Substring(5));
-      log('Fetch '+item.element('link').Text);
-      content := fetchUrl(item.element('link').Text);
-      store(source, guid, date, content);
-    end;
+      if (not hasStored(guid)) then
+      begin
+        date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', item.element('pubDate').Text.Substring(5));
+        log('Fetch '+item.element('link').Text);
+        content := fetchUrl(item.element('link').Text, 'application/tar+gzip');
+        store(source, guid, date, content, id);
+      end;
+    end
+    else
+      log('The package '+id+' is not allowed to come from '+source);
   except
     on e : Exception do
     begin
       log('Exception processing item: '+guid+': '+e.Message);
     end;
   end;
+end;
+
+{ TPackageRestrictions }
+
+constructor TPackageRestrictions.Create(json: TJsonArray);
+begin
+  inherited Create;
+  FJson := json;
+end;
+
+destructor TPackageRestrictions.Destroy;
+begin
+  FJson.Free;
+  inherited;
+end;
+
+function TPackageRestrictions.isOk(package, feed: String): boolean;
+var
+  e, f : TJsonNode;
+  eo : TJsonObject;
+begin
+  result := true;
+  if FJson <> nil then
+  begin
+    for e in FJson do
+    begin
+      eo := e as TJsonObject;
+      if matches(package, eo.str['mask']) then
+      begin
+        result := false;
+        for f in eo.arr['feeds'] do
+          result := result or (feed = TJsonString(f).value);
+        exit(result);
+      end;
+    end;
+  end
+end;
+
+function TPackageRestrictions.matches(package, mask: String): boolean;
+var
+  i : integer;
+begin
+  i := mask.IndexOf('*');
+  package := package.Substring(0, i);
+  mask := mask.Substring(0, i);
+  result := package = mask;
 end;
 
 end.

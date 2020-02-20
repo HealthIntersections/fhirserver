@@ -208,7 +208,8 @@ uses
   FHIR.Server.Subscriptions in '..\..\Server\FHIR.Server.Subscriptions.pas',
   FHIR.Server.IndexingR4 in '..\..\Server\FHIR.Server.IndexingR4.pas',
   FHIR.Server.ValidatorR4 in '..\..\Server\FHIR.Server.ValidatorR4.pas',
-  FHIR.Cache.PackageUpdater in '..\..\library\FHIR.Cache.PackageUpdater.pas';
+  FHIR.Cache.PackageUpdater in '..\..\library\cache\FHIR.Cache.PackageUpdater.pas',
+  FHIR.Server.Packages in '..\..\Server\FHIR.Server.Packages.pas';
 
 {$R *.res}
 

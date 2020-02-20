@@ -48,6 +48,7 @@ Type
     FPassword: String;
     FMethod: TInternetFetcherMethod;
     FContentType: String;
+    FUserAgent : String;
     FBytesToTransfer: Int64;
     FOnProgress: TProgressEvent;
     FAccept: String;
@@ -67,6 +68,7 @@ Type
     Property URL : String read FURL write FURL;
     property Accept : String read FAccept write FAccept;
     Property Buffer : TFslBuffer read FBuffer write SetBuffer;
+    Property UserAgent : String read FUserAgent write FUserAgent;
 
     Function CanFetch : Boolean;
     Procedure Fetch; overload;
@@ -139,6 +141,8 @@ begin
             oSSL.SSLOptions.Method := sslvTLSv1_2;
             oHTTP.HandleRedirects := true;
             oHTTP.Request.Accept := FAccept;
+            if (UserAgent <> '') then
+              oHTTP.Request.UserAgent := UserAgent;
             oHTTP.URL.URI := url;
             oHTTP.OnWork := HTTPWork;
             oHTTP.OnWorkBegin := HTTPWorkBegin;

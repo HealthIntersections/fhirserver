@@ -601,6 +601,8 @@
         <DCCReference Include="..\..\library\r5\FHIR.R5.Utilities.pas"/>
         <DCCReference Include="..\..\library\r5\FHIR.R5.Validator.pas"/>
         <DCCReference Include="..\..\library\r5\FHIR.R5.Xml.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Server.Packages.pas"/>
+        <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageUpdater.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

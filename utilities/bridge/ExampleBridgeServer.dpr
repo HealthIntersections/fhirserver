@@ -201,7 +201,9 @@ uses
   FHIR.Tx.NDC in '..\..\Server\FHIR.Tx.NDC.pas',
   FHIR.Server.UsageStats in '..\..\Server\FHIR.Server.UsageStats.pas',
   FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
-  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
+  FHIR.Cache.PackageUpdater in '..\..\library\cache\FHIR.Cache.PackageUpdater.pas',
+  FHIR.Server.Packages in '..\..\Server\FHIR.Server.Packages.pas';
 
 var
   gsrv : TExampleFhirServer;

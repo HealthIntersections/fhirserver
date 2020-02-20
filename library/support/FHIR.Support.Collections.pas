@@ -5550,16 +5550,8 @@ begin
 
   oObject := ObjectByIndex[iSource].Link;
   try
-    if iSource < iTarget then
-    begin
-      Insert(iTarget, oObject.Link);
-      DeleteByIndex(iSource);
-    end
-    else
-    begin
-      DeleteByIndex(iSource);
-      Insert(iTarget, oObject.Link);
-    end;
+    DeleteByIndex(iSource);
+    Insert(iTarget, oObject.Link);
   finally
     oObject.Free;
   end;

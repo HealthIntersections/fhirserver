@@ -57,7 +57,7 @@ public class PascalGenerator {
     Configuration config = new Configuration(tp, sp, dest);
     
     PackageCacheManager pcm = new PackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
-    System.out.println("Cache: "+pcm.userDir());
+    System.out.println("Cache: "+pcm.getFolder());
     System.out.println("Load hl7.fhir.r5.core");
     NpmPackage npm = pcm.loadPackage("hl7.fhir.r5.core", version);
     Definitions master = DefinitionsLoader.load(npm); 
