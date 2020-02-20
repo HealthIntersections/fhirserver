@@ -139,7 +139,7 @@ begin
       json, v: TJsonObject;
       src : String;
     begin
-      conn.sql := 'Select Version, PubDate, FhirVersions, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
+      conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
       conn.prepare;
       conn.Execute;
       json := TJsonObject.Create;
@@ -154,6 +154,7 @@ begin
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
+          v['canonical'] := interpretVersion(conn.ColStringByName['Canonical']);
           if not conn.ColNullByName['Description'] then
           begin
             json['description'] := conn.ColBlobAsStringByName['Description'];
@@ -192,7 +193,7 @@ begin
       if FHIRVersion <> '' then
         filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+getVersion(FHIRVersion)+'%'')';
 
-      conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Description from Packages, PackageVersions '+
+      conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Canonical, Description from Packages, PackageVersions '+
         'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
       conn.prepare;
       conn.Execute;
@@ -206,6 +207,7 @@ begin
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
+          v['canonical'] := interpretVersion(conn.ColStringByName['Canonical']);
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
           v['url'] := URLPath([path, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
@@ -234,7 +236,7 @@ begin
       v : TJsonObject;
       src : String;
     begin
-      conn.sql := 'select Id, Version, PubDate, FhirVersions, Description from PackageVersions where Indexed >= :d order by Indexed';
+      conn.sql := 'select Id, Version, PubDate, FhirVersions, Canonical, Description from PackageVersions where Indexed >= :d order by Indexed';
       conn.prepare;
       conn.BindDateTimeEx('d', date);
       conn.Execute;
@@ -247,6 +249,7 @@ begin
           v['name'] := conn.ColStringByName['Id'];
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
+          v['canonical'] := interpretVersion(conn.ColStringByName['Canonical']);
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
