@@ -193,7 +193,7 @@ begin
       if FHIRVersion <> '' then
         filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+getVersion(FHIRVersion)+'%'')';
 
-      conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Canonical, Description from Packages, PackageVersions '+
+      conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, PackageVersions.Canonical, Description from Packages, PackageVersions '+
         'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
       conn.prepare;
       conn.Execute;
