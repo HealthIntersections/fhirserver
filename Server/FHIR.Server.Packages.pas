@@ -154,7 +154,7 @@ begin
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
-          v['canonical'] := interpretVersion(conn.ColStringByName['Canonical']);
+          v['canonical'] := conn.ColStringByName['Canonical'];
           if not conn.ColNullByName['Description'] then
           begin
             json['description'] := conn.ColBlobAsStringByName['Description'];
@@ -207,7 +207,7 @@ begin
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
-          v['canonical'] := interpretVersion(conn.ColStringByName['Canonical']);
+          v['canonical'] := conn.ColStringByName['Canonical'];
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
           v['url'] := URLPath([path, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
@@ -249,7 +249,7 @@ begin
           v['name'] := conn.ColStringByName['Id'];
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
-          v['canonical'] := interpretVersion(conn.ColStringByName['Canonical']);
+          v['canonical'] := conn.ColStringByName['Canonical'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
