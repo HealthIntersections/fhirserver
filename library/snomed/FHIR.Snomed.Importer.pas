@@ -1800,7 +1800,7 @@ var
     result := iCursor;
   End;
 begin
-  parts := sFile.Split(['_']);
+  parts := ExtractFileName(sFile).Split(['_']);
   name := parts[1];
   sname := parts[2];
   ti := 0;
