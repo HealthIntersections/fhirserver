@@ -58,7 +58,7 @@ const
 
 
 Type
-  TFhirExpansionParamsFixedVersionMode = (fvmCheck, fvmOverride);
+  TFhirExpansionParamsFixedVersionMode = (fvmDefault, fvmCheck, fvmOverride);
   TValueSetValidationMode = (vsvmAllChecks, vsvmMembershipOnly, vsvmNoMembership);
 
   TFhirExpansionParamsFixedVersion = class (TFslObject)
@@ -187,7 +187,7 @@ Type
   end;
 
 const
-   CODES_TFhirExpansionParamsFixedVersionMode : array [TFhirExpansionParamsFixedVersionMode] of String = ('Check', 'Override');
+   CODES_TFhirExpansionParamsFixedVersionMode : array [TFhirExpansionParamsFixedVersionMode] of String = ('Default', 'Check', 'Override');
 
 implementation
 

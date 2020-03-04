@@ -1103,7 +1103,7 @@ begin
     begin
       sl := p.valueString.split(['|']);
       if (Length(sl) = 2) then
-        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1]))
+        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], fvmDefault))
       else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
         result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
       else
