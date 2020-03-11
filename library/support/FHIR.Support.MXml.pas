@@ -1815,6 +1815,9 @@ function TMXmlParser.resolveNamespace(element: TMXmlElement; abbrev: String): St
 var
   a : TMXmlAttribute;
 begin
+  if abbrev = 'xml' then
+    exit('http://www.w3.org/XML/1998/namespace');
+
   if element.hasAttributes then
     for a in element.Attributes do
       if (a.Name = 'xmlns:'+abbrev) then
