@@ -1142,6 +1142,7 @@ begin
   end
   else if (e is TFHIRResource) then
   else if (e is TFHIRContactDetail) then
+  else if (e is TFHIRUsageContext) then
   else if (e is TFHIRElementDefinition) then
     x.addText('todo-bundle')
   else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then

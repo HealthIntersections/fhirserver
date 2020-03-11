@@ -42,7 +42,7 @@ uses
   FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants;
 
 Type
-  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslStringDictionary) of Object;
+  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) of Object;
 
   TSorterType = (byUrl, byVer, byName, byContext, byPub, bySource);
 
@@ -195,42 +195,42 @@ procedure TTerminologyWebServer.ProcessHome(AContext: TIdContext; request: TIdHT
 var
   pm: TParseMap;
 var
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     pm := TParseMap.create(request.UnparsedParams);
     try
-      vars.Add('prefix', FServer.WebBase);
+      vars.Add('prefix', FWorker.Factory.makeString(FServer.WebBase));
 
-      vars.Add('param.system', pm.GetVar('system'));
-      vars.Add('param.version', pm.getVar('version'));
-      vars.Add('param.code', pm.getVar('code'));
-      vars.Add('param.display', pm.getVar('display'));
-      vars.Add('param.filter', pm.getVar('filter'));
-      vars.Add('valuesetlist', vsSelect(pm.getVar('valueset')));
+      vars.Add('param.system', FWorker.Factory.makeString(pm.GetVar('system')));
+      vars.Add('param.version', FWorker.Factory.makeString(pm.getVar('version')));
+      vars.Add('param.code', FWorker.Factory.makeString(pm.getVar('code')));
+      vars.Add('param.display', FWorker.Factory.makeString(pm.getVar('display')));
+      vars.Add('param.filter', FWorker.Factory.makeString(pm.getVar('filter')));
+      vars.Add('valuesetlist', FWorker.Factory.makeString(vsSelect(pm.getVar('valueset'))));
       if pm.getVar('nodetails') = '1' then
-        vars.Add('param.nodetails', ' checked')
+        vars.Add('param.nodetails', FWorker.Factory.makeString(' checked'))
       else
-        vars.Add('param.nodetails', '');
+        vars.Add('param.nodetails', FWorker.Factory.makeString(''));
       if pm.getVar('abstract') = '1' then
-        vars.Add('param.abstract', ' checked')
+        vars.Add('param.abstract', FWorker.Factory.makeString(' checked'))
       else
-        vars.Add('param.abstract', '');
+        vars.Add('param.abstract', FWorker.Factory.makeString(''));
 
-      vars.Add('find.results', '');
-      vars.Add('validate.results', '');
-      vars.Add('expand.results', '');
-      vars.Add('translate.results', '');
+      vars.Add('find.results', FWorker.Factory.makeString(''));
+      vars.Add('validate.results', FWorker.Factory.makeString(''));
+      vars.Add('expand.results', FWorker.Factory.makeString(''));
+      vars.Add('translate.results', FWorker.Factory.makeString(''));
 
       if pm.getVar('op') = 'find' then
-        vars['find.results'] := processFind(pm)
+        vars['find.results'] := FWorker.Factory.makeString(processFind(pm))
       else if pm.getVar('op') = 'validate' then
-        vars['validate.results'] := processValidate(pm)
+        vars['validate.results'] := FWorker.Factory.makeString(processValidate(pm))
       else if pm.getVar('op') = 'expand' then
-        vars['expand.results'] := processExpand(pm, request.AcceptLanguage)
+        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, request.AcceptLanguage))
       else if pm.getVar('op') = 'translate' then
-        vars['translate.results'] := processTranslate(pm);
+        vars['translate.results'] := FWorker.Factory.makeString(processTranslate(pm));
 
       FReturnProcessFileEvent(request, response, session, request.Document, 'txhome.html', false, vars);
     finally
@@ -244,17 +244,17 @@ end;
 procedure TTerminologyWebServer.ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   cm: TLoadedConceptMap;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     cm := FServer.getConceptMapById(request.Document.Substring(9));
     try
-      vars.Add('url', cm.resource.url);
-      vars.Add('name', cm.resource.name);
-      vars.Add('html', ashtml(cm.resource.Resource));
-      vars.Add('json', asJson(cm.resource.Resource));
-      vars.Add('xml', asXml(cm.resource.Resource));
+      vars.Add('url', FWorker.Factory.makeString(cm.resource.url));
+      vars.Add('name', FWorker.Factory.makeString(cm.resource.name));
+      vars.Add('html', FWorker.Factory.makeString(ashtml(cm.resource.Resource)));
+      vars.Add('json', FWorker.Factory.makeString(asJson(cm.resource.Resource)));
+      vars.Add('xml', FWorker.Factory.makeString(asXml(cm.resource.Resource)));
     finally
       cm.Free;
     end;
@@ -267,17 +267,17 @@ end;
 procedure TTerminologyWebServer.ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   vs: TFhirValueSetW;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     vs := FServer.getValueSetById(request.Document.Substring(14));
     try
-      vars.Add('url', vs.url);
-      vars.Add('name', vs.name);
-      vars.Add('html', ashtml(vs.Resource));
-      vars.Add('json', asJson(vs.Resource));
-      vars.Add('xml', asXml(vs.Resource));
+      vars.Add('url', FWorker.Factory.makeString(vs.url));
+      vars.Add('name', FWorker.Factory.makeString(vs.name));
+      vars.Add('html', FWorker.Factory.makeString(ashtml(vs.Resource)));
+      vars.Add('json', FWorker.Factory.makeString(asJson(vs.Resource)));
+      vars.Add('xml', FWorker.Factory.makeString(asXml(vs.Resource)));
     finally
       vs.Free;
     end;
@@ -290,17 +290,17 @@ end;
 procedure TTerminologyWebServer.ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   cs: TFhirCodeSystemW;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     cs := FServer.getCodeSystemById(request.Document.Substring(16));
     try
-      vars.Add('url', cs.url);
-      vars.Add('name', cs.name);
-      vars.Add('html', ashtml(cs.Resource));
-      vars.Add('json', asJson(cs.Resource));
-      vars.Add('xml', asXml(cs.Resource));
+      vars.Add('url', FWorker.Factory.makeString(cs.url));
+      vars.Add('name', FWorker.Factory.makeString(cs.name));
+      vars.Add('html', FWorker.Factory.makeString(ashtml(cs.Resource)));
+      vars.Add('json', FWorker.Factory.makeString(asJson(cs.Resource)));
+      vars.Add('xml', FWorker.Factory.makeString(asXml(cs.Resource)));
     finally
       cs.Free;
     end;
@@ -316,9 +316,9 @@ var
   cs: TCodeSystemProvider;
   c: Integer;
 var
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     html := THtmlPublisher.Create(FWorker.Factory.link);
     try
@@ -344,8 +344,8 @@ begin
         html.EndTableRow;
       end;
       html.EndTable;
-      vars.Add('table', html.output);
-      vars.add('kind', 'Implicit Code System');
+      vars.Add('table', FWorker.Factory.makeString(html.output));
+      vars.add('kind', FWorker.Factory.makeString('Implicit Code System'));
     finally
       html.Free;
     end;
@@ -359,10 +359,10 @@ procedure TTerminologyWebServer.ProcessCodeSystemList(AContext: TIdContext; requ
 var
   list: TFslList<TFHIRCodeSystemW>;
   vs: TFhirCodeSystemW;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
   html : THtmlPublisher;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     list := TFslList<TFHIRCodeSystemW>.create;
     try
@@ -401,8 +401,8 @@ begin
           html.EndTableRow;
         end;
         html.EndTable;
-        vars.Add('table', html.output);
-        vars.add('kind', 'Code System');
+        vars.Add('table', FWorker.Factory.makeString(html.output));
+        vars.add('kind', FWorker.Factory.makeString('Code System'));
       finally
         html.Free;
       end;
@@ -419,11 +419,11 @@ procedure TTerminologyWebServer.ProcessConceptMapList(AContext: TIdContext; requ
 var
   mlist: TLoadedConceptMapList;
   i: Integer;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
   html : THtmlPublisher;
   cm : TLoadedConceptMap;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     mlist := FServer.GetConceptMapList;
     try
@@ -476,8 +476,8 @@ begin
           html.EndTableRow;
         end;
         html.EndTable;
-        vars.add('kind', 'Concept Map');
-        vars.Add('table', html.output);
+        vars.add('kind', FWorker.Factory.makeString('Concept Map'));
+        vars.Add('table', FWorker.Factory.makeString(html.output));
       finally
         html.Free;
       end;
@@ -561,11 +561,11 @@ end;
 procedure TTerminologyWebServer.ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   vs: TFhirValueSetW;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
   list : TFslList<TFhirValueSetW>;
   html : THtmlPublisher;
 begin
-  vars := TFslStringDictionary.create;
+  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     list := TFslList<TFhirValueSetW>.create;
     try
@@ -610,8 +610,8 @@ begin
           html.EndTableRow;
         end;
         html.EndTable;
-        vars.add('kind', 'Value Set');
-        vars.Add('table', html.output);
+        vars.add('kind', FWorker.Factory.makeString('Value Set'));
+        vars.Add('table', FWorker.Factory.makeString(html.output));
       finally
         html.Free;
       end;
@@ -637,13 +637,13 @@ end;
 procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 {var
   vs : String;
-  vars : TFslStringDictionary;
+  vars : TFslMap<TFHIRObject>;
   list : TFslStringMatch;
   ts : TStringList;
   i : integer;
   }
 begin
-{  vars := TFslStringDictionary.create;
+{  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     vs := '';
 

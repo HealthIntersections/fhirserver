@@ -37,6 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream,
   FHIR.Support.SCrypt, FHIR.Web.Parsers,
   FHIR.Database.Manager,
+  FHIR.Base.Objects,
   FHIR.Server.Session,
   FHIR.Server.Utilities,
   FHIR.Server.UserMgr, FHIR.Scim.Search, FHIR.Base.Scim, FHIR.Base.Lang;
@@ -59,7 +60,6 @@ Type
     salt : String;
     host : String;
     FAnonymousRights : TStringList;
-
 
     function GetNextUserKey : Integer;
     function GetNextUserIndexKey : Integer;
@@ -1005,7 +1005,7 @@ end;
 
 procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
-  variables : TFslStringDictionary;
+  variables : TFslMap<TFHIRObject>;
   conn : TFslDBConnection;
   user : TSCIMUser;
   bnew : boolean;
@@ -1017,7 +1017,7 @@ var
   uk : integer;
 begin
   bDone := false;
-  variables := TFslStringDictionary.create;
+  variables := TFslMap<TFHIRObject>.create('scim.vars');
   try
     conn := db.GetConnection('scim.user.search');
     try
@@ -1091,34 +1091,34 @@ begin
           end;
         end;
         if user.ExternalId = '' then
-          variables.Add('user.password', '<input type="text" name="password" value=""/>')
+          variables.Add('user.password', TFHIRSystemString.create('<input type="text" name="password" value=""/>'))
         else
-          variables.Add('user.password', '<i>No Password for this user</i>');
-        variables.Add('prefix', prefix);
-        variables.Add('user.external', user.ExternalId);
+          variables.Add('user.password', TFHIRSystemString.create('<i>No Password for this user</i>'));
+        variables.Add('prefix', TFHIRSystemString.create(prefix));
+        variables.Add('user.external', TFHIRSystemString.create(user.ExternalId));
         if bnew then
         begin
-          variables.Add('user.fname', '(new user)');
-          variables.Add('user.name', '<input type="text" name="username" value=""/>');
-          variables.Add('user.id', '$new');
-          variables.Add('user.display', '<input type="text" name="display" value=""/>');
+          variables.Add('user.fname', TFHIRSystemString.create('(new user)'));
+          variables.Add('user.name', TFHIRSystemString.create('<input type="text" name="username" value=""/>'));
+          variables.Add('user.id', TFHIRSystemString.create('$new'));
+          variables.Add('user.display', TFHIRSystemString.create('<input type="text" name="display" value=""/>'));
         end
         else
         begin
-          variables.Add('user.fname', user.username);
-          variables.Add('user.name', user.username);
-          variables.Add('user.id', user.id);
-          variables.Add('user.display', '<input type="text" name="display" value="'+user.DisplayName+'"/>');
+          variables.Add('user.fname', TFHIRSystemString.create(user.username));
+          variables.Add('user.name', TFHIRSystemString.create(user.username));
+          variables.Add('user.id', TFHIRSystemString.create(user.id));
+          variables.Add('user.display', TFHIRSystemString.create('<input type="text" name="display" value="'+user.DisplayName+'"/>'));
         end;
 
         s := '';
         for i := 0 to user.emails.Count - 1 do
           s := s + user.emails[i].Value+#13#10;
-        variables.Add('user.email', s);
+        variables.Add('user.email', TFHIRSystemString.create(s));
         s := '';
         for i := 0 to user.entitlementCount - 1 do
           s := s + user.entitlement[i]+#13#10;
-        variables.Add('user.rights', s);
+        variables.Add('user.rights', TFHIRSystemString.create(s));
       finally
         user.Free;
       end;
@@ -1141,7 +1141,7 @@ end;
 
 procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
-  variables : TFslStringDictionary;
+  variables : TFslMap<TFHIRObject>;
   conn : TFslDBConnection;
   b : TStringBuilder;
   user : TSCIMUser;
@@ -1208,10 +1208,10 @@ begin
       end;
     end;
 
-    variables := TFslStringDictionary.create;
+    variables := TFslMap<TFHIRObject>.create('scim.vars');
     try
-      variables.Add('usertable', b.ToString);
-      variables.Add('prefix', prefix);
+      variables.Add('usertable', TFHIRSystemString.create(b.ToString));
+      variables.Add('prefix', TFHIRSystemString.create(prefix));
       OnProcessFile(request, response, session, '/scimusers.html', true, variables);
     finally
       variables.free;

@@ -39,7 +39,7 @@ uses
   FHIR.Tools.Indexing, FHIR.Server.Security, FHIR.Server.Tags, FHIR.Server.BundleBuilder;
 
 Type
-  TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
+  TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload, roRestInternal);
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew, idCheckNew);
   TFHIRCacheControl = (cacheNotAtAll, cacheAsException, cacheNormal, cacheLong);
   TFHIRUserIdEvidence = (userNoInformation, userAnonymous, userInternal, userLogin, userExternalOAuth, userBearerJWT);

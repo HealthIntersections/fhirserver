@@ -1,0 +1,20 @@
+<input type="hidden" name="id" value="{{iif(form.exists(), form.id, Patient.id)}}"/></td></tr>
+<table class="grid">
+  <tr><td>Surname:</td><td><input name="family" value="{{iif(form.exists(), form.family, Patient.name[0].family)}}"/></td></tr>
+  <tr><td>Given:</td><td><input name="given" value="{{iif(form.exists(), form.given, Patient.name[0].given[0])}}"/></td></tr>
+  <tr><td>Middle:</td><td><input name="middle" value="{{iif(form.exists(), form.middle, Patient.name[0].given[1])}}"/></td></tr>
+  <tr><td>Gender:</td><td><select name="gender">
+    <option value="male" {%if iif(form.exists(), form.gender, Patient.gender) = 'male'%} selected{%endif%}>Male</option>
+    <option value="female" {%if iif(form.exists(), form.gender, Patient.gender) = 'female'%} selected{%endif%}>Female</option>
+    <option value="other" {%if iif(form.exists(), form.gender, Patient.gender) = 'other'%} selected{%endif%}>Other</option>
+    <option value="unknown" {%if iif(form.exists(), form.gender, Patient.gender) = 'unknown'%} selected{%endif%}>Unknown</option>
+  </select></td></tr>
+  <tr><td>DoB:</td><td><input name="dob" value="{{iif(form.exists(), form.dob, Patient.birthDate)}}"/> (YYYY-MM-DD)</td></tr>
+  <tr><td>Phone (Mobile):</td><td> <input name="mobile" value="{{iif(form.exists(), form.mobile, Patient.telecom.where(use='mobile').value)}}"/> </td></tr>
+  <tr><td>Email:</td><td> <input name="email" value="{{iif(form.exists(), form.email, Patient.telecom.where(system='email').value)}}"/> </td></tr>
+  <tr><td>Address Line:</td><td> <input name="line1" value="{{iif(form.exists(), form.line1, Patient.address[0].line[0])}}"/> </td></tr>
+  <tr><td>Address Line #2:</td><td> <input name="line2" value="{{iif(form.exists(), form.line2, Patient.address[0].line[1])}}"/> </td></tr>
+  <tr><td>Suburb:</td><td> <input name="city" value="{{iif(form.exists(), form.city, Patient.address[0].city)}}"/> </td></tr>
+  <tr><td>State:</td><td> <input name="state" value="{{iif(form.exists(), form.state, Patient.address[0].state)}}"/> </td></tr>
+  <tr><td>Post Code:</td><td> <input name="postcode" value="{{iif(form.exists(), form.postcode, Patient.address[0].postalCode)}}"/> </td></tr>
+</table>

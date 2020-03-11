@@ -36,6 +36,7 @@ uses
 type
   TFHIRWebServerSourceProvider = class abstract (TFslObject)
   public
+    function link : TFHIRWebServerSourceProvider; overload;
     function AltFile(path, base: String): String;
     function getSource(filename : String) : String; virtual; abstract;
     function exists(filename : String) : boolean; virtual; abstract;
@@ -78,6 +79,11 @@ begin
     result := path.Substring(1).Replace('/', '\')
   else
     result := path;
+end;
+
+function TFHIRWebServerSourceProvider.link: TFHIRWebServerSourceProvider;
+begin
+  result := TFHIRWebServerSourceProvider(inherited Link);
 end;
 
 { TFHIRWebServerSourceFolderProvider }

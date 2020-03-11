@@ -45,7 +45,7 @@ var
   GCounterFHIRRequests : integer = 0;
 
 type
-  TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TFslStringDictionary = nil) of Object;
+  TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TFslMap<TFHIRObject> = nil) of Object;
 
   TFHIRResourceConfig = class (TFslObject)
   public

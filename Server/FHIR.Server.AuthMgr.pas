@@ -133,7 +133,7 @@ type
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     function nonceIsUnique(nonce : String) : boolean;
     procedure readScopes(scopes: TStringList; params: TParseMap);
-    procedure loadScopeVariables(variables: TFslStringDictionary; scope: String; user : TSCIMUser);
+    procedure loadScopeVariables(variables: TFslMap<TFHIRObject>; scope: String; user : TSCIMUser);
     function GetPatientListAsOptions : String;
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
   public
@@ -346,7 +346,7 @@ var
   message : String;
   b : TStringBuilder;
   ok : boolean;
-  variables : TFslStringDictionary;
+  variables : TFslMap<TFHIRObject>;
   client : TRegisteredClientInformation;
 begin
   client_id := checkNotEmpty(params.GetVar('client_id'), 'client_id', '', '');
@@ -371,12 +371,12 @@ begin
     b := TStringBuilder.Create;
     try
       ok := true;
-      variables := TFslStringDictionary.create;
+      variables := TFslMap<TFHIRObject>.create('scim.vars');
       try
-        variables.Add('/oauth2', FPath);
-        variables.Add('idmethods', BuildLoginList(id));
-        variables.Add('client', client.name);
-        variables.Add('client-notes', message);
+        variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
+        variables.Add('idmethods', TFHIRSystemString.Create(BuildLoginList(id)));
+        variables.Add('client', TFHIRSystemString.Create(client.name));
+        variables.Add('client-notes', TFHIRSystemString.Create(message));
         if ok then
           OnProcessFile(request, response, session, '/oauth_login.html', true, variables)
         else
@@ -400,7 +400,7 @@ end;
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id, name, authurl: String;
-  variables : TFslStringDictionary;
+  variables : TFslMap<TFHIRObject>;
   scopes : TStringList;
   redirect, state, scope : String;
 begin
@@ -459,12 +459,12 @@ begin
   end
   else
   begin
-    variables := TFslStringDictionary.create;
+    variables := TFslMap<TFHIRObject>.create('scim.vars');
     try
-      variables.Add('client', ServerContext.Storage.getClientName(client_id));
-      variables.Add('/oauth2', FPath);
-      variables.Add('username', name);
-      variables.Add('patient-list', GetPatientListAsOptions);
+      variables.Add('client', TFHIRSystemString.Create(ServerContext.Storage.getClientName(client_id)));
+      variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
+      variables.Add('username', TFHIRSystemString.Create(name));
+      variables.Add('patient-list', TFHIRSystemString.Create(GetPatientListAsOptions));
       loadScopeVariables(variables, scope, session.User);
       OnProcessFile(request, response, session, '/oauth_choice.html', true, variables)
     finally
@@ -854,7 +854,7 @@ end;
 procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   token, id, name, email, password, domain, client_id : String;
-  variables : TFslStringDictionary;
+  variables : TFslMap<TFHIRObject>;
 begin
   domain := request.Host;
   if domain.Contains(':') then
@@ -897,9 +897,9 @@ begin
   end
   else
   begin
-    variables := TFslStringDictionary.create;
+    variables := TFslMap<TFHIRObject>.create('scim.vars');
     try
-      variables.Add('/oauth2', FPath);
+      variables.Add('/oauth2', TFHIRSystemString.create(FPath));
       OnProcessFile(request, response, session, FPath+'/auth_skype.html', true, variables);
     finally
       variables.free;
@@ -1335,7 +1335,7 @@ end;
 
 procedure TAuth2Server.HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  variables : TFslStringDictionary;
+  variables : TFslMap<TFHIRObject>;
 begin
   if session = nil then
     response.Redirect(FPath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
@@ -1347,10 +1347,10 @@ begin
     end
     else
     begin
-      variables := TFslStringDictionary.create;
+      variables := TFslMap<TFHIRObject>.create('scim.vars');
       try
-        variables.Add('username', session.User.username);
-        variables.Add('/oauth2', FPath);
+        variables.Add('username', TFHIRSystemString.create(session.User.username));
+        variables.Add('/oauth2', TFHIRSystemString.create(FPath));
         OnProcessFile(request, response, session, '/oauth_userdetails.html', true, variables)
       finally
         variables.free;
@@ -1483,7 +1483,7 @@ begin
 //  raise EFslException.Create('Needs further development right now');
 end;
 
-procedure TAuth2Server.loadScopeVariables(variables : TFslStringDictionary; scope : String; user : TSCIMUser);
+procedure TAuth2Server.loadScopeVariables(variables : TFslMap<TFHIRObject>; scope : String; user : TSCIMUser);
 //patient/*.read	Permission to read any resource for the current patient
 //user/*.*	Permission to read and write all resources that the current user can access
 //openid profile	Permission to retrieve information about the current logged-in user
@@ -1493,24 +1493,24 @@ var
   security : TFHIRSecurityRights;
   s, c : String;
 begin
-  variables.add('userlevel', '');
-  variables.add('userinfo', '');
+  variables.add('userlevel', TFHIRSystemString.create(''));
+  variables.add('userinfo', TFHIRSystemString.create(''));
   security := TFHIRSecurityRights.create(ServerContext.ValidatorContext.Link, user, scope, true);
   try
     if security.canAdministerUsers then
-      variables.add('useradmin', '<input type="checkbox" name="useradmin" value="1"/> Administer Users')
+      variables.add('useradmin', TFHIRSystemString.create('<input type="checkbox" name="useradmin" value="1"/> Administer Users'))
     else
-      variables.add('useradmin', '');
+      variables.add('useradmin', TFHIRSystemString.create(''));
     if security.canGetUserInfo then
-      variables['userinfo'] := 'checked';
+      variables['userinfo'] := TFHIRSystemString.create('checked');
 
   for s in FFactory.ResourceNames do
   begin
     c := CODES_TTokenCategory[FFactory.resCategory(s)];
-    variables.AddOrSetValue('read'+c, '');
-    variables.AddOrSetValue('write'+c, '');
-    variables.AddOrSetValue('read'+c+'disabled', 'disabled');
-    variables.AddOrSetValue('write'+c+'disabled', 'disabled');
+    variables.AddOrSetValue('read'+c, TFHIRSystemString.create(''));
+    variables.AddOrSetValue('write'+c, TFHIRSystemString.create(''));
+    variables.AddOrSetValue('read'+c+'disabled', TFHIRSystemString.create('disabled'));
+    variables.AddOrSetValue('write'+c+'disabled', TFHIRSystemString.create('disabled'));
   end;
 
     for s in FFactory.ResourceNames do
@@ -1518,13 +1518,13 @@ begin
       c := CODES_TTokenCategory[FFactory.resCategory(s)];
       if security.canRead(s) then
       begin
-        variables['read'+c] := 'checked';
-        variables['read'+c+'disabled'] := '';
+        variables['read'+c] := TFHIRSystemString.create('checked');
+        variables['read'+c+'disabled'] := TFHIRSystemString.create('');
       end;
       if security.canWrite(s) then
       begin
-        variables['write'+c] := 'checked';
-        variables['write'+c+'disabled'] := '';
+        variables['write'+c] := TFHIRSystemString.create('checked');
+        variables['write'+c+'disabled'] := TFHIRSystemString.create('');
       end;
     end;
   finally

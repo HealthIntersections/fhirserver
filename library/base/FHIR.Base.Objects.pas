@@ -32,7 +32,8 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
+  FHIR.Web.Parsers;
 
 Const
   ID_LENGTH = 64;
@@ -557,6 +558,59 @@ type
     Property Display : String read FDisplay write FDisplay;
     function isOk : boolean;
   end;
+
+  TFHIRSystemString = class (TFHIRObject)
+  private
+    FValue : String;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function GetFhirObjectVersion: TFHIRVersion; override;
+  public
+    constructor Create(v : String);
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
+    function fhirType : String; override;
+    function isPrimitive : boolean; override;
+    function hasPrimitiveValue : boolean; override;
+    function primitiveValue : string; override;
+
+    function ToString : String; override;
+  end;
+
+  TFHIRSystemTuple = class (TFHIRObject)
+  private
+    FFields : TFslMap<TFHIRObject>;
+  protected
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function GetFhirObjectVersion: TFHIRVersion; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TFHIRSystemTuple; overload;
+
+    property Fields : TFslMap<TFHIRObject> read FFields;
+
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
+    function fhirType : String; override;
+    function isPrimitive : boolean; override;
+    function hasPrimitiveValue : boolean; override;
+
+    function ToString : String; override;
+
+    class function fromParams(pm : TParseMap) : TFHIRSystemTuple;
+  end;
+
 
 function noList(e : TFHIRObjectList) : boolean; overload;
 function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
@@ -1674,7 +1728,196 @@ begin
   inherited Create('Version '+FHIR_VERSIONS[version]+' not supported '+action);
 end;
 
+{ TFHIRSystemString }
+
+constructor TFHIRSystemString.Create(v: String);
+begin
+  inherited Create;
+  FValue := v;
+end;
+
+function TFHIRSystemString.fhirType: String;
+begin
+  result := 'string';
+end;
+
+procedure TFHIRSystemString.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+end;
+
+function TFHIRSystemString.GetFhirObjectVersion: TFHIRVersion;
+begin
+  result := fhirVersionUnknown;
+end;
+
+function TFHIRSystemString.getId: String;
+begin
+  result := '';
+end;
+
+function TFHIRSystemString.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRSystemString.hasPrimitiveValue: boolean;
+begin
+  result := true;
+end;
+
+function TFHIRSystemString.isPrimitive: boolean;
+begin
+  result := true;
+end;
+
+
+procedure TFHIRSystemString.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+end;
+
+
+function TFHIRSystemString.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := TFHIRSystemString.Create(v);
+end;
+
+
+function TFHIRSystemString.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFHIRSystemString.Create(v);
+end;
+
+
+function TFHIRSystemString.makeStringValue(v: String): TFHIRObject;
+begin
+  result := TFHIRSystemString.Create(v);
+end;
+
+
+function TFHIRSystemString.primitiveValue: string;
+begin
+  result := FValue;
+end;
+
+
+procedure TFHIRSystemString.setIdValue(id: String);
+begin
+
+end;
+
+function TFHIRSystemString.ToString: String;
+begin
+  result := FValue;
+end;
+
+{ TFHIRSystemTuple }
+
+constructor TFHIRSystemTuple.Create;
+begin
+  inherited;
+  FFields := TFslMap<TFhirObject>.create('tuple');
+end;
+
+destructor TFHIRSystemTuple.Destroy;
+begin
+  FFields.Free;
+  inherited;
+end;
+
+function TFHIRSystemTuple.fhirType: String;
+begin
+  result := 'Tuple';
+end;
+
+procedure TFHIRSystemTuple.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+  if FFields.ContainsKey(name) then
+    list.add(FFields[name].Link);
+end;
+
+
+function TFHIRSystemTuple.GetFhirObjectVersion: TFHIRVersion;
+begin
+  result := fhirVersionUnknown;
+end;
+
+
+function TFHIRSystemTuple.getId: String;
+begin
+  result := '';
+end;
+
+
+function TFHIRSystemTuple.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
+
+function TFHIRSystemTuple.hasPrimitiveValue: boolean;
+begin
+  result := false;
+end;
+
+
+function TFHIRSystemTuple.isPrimitive: boolean;
+begin
+  result := false;
+end;
+
+
+function TFHIRSystemTuple.link: TFHIRSystemTuple;
+begin
+  result := TFHIRSystemTuple(inherited link);
+end;
+
+procedure TFHIRSystemTuple.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+end;
+
+
+function TFHIRSystemTuple.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := TFHIRSystemString.Create(v);
+end;
+
+
+function TFHIRSystemTuple.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFHIRSystemString.Create(v);
+end;
+
+
+function TFHIRSystemTuple.makeStringValue(v: String): TFHIRObject;
+begin
+  result := TFHIRSystemString.Create(v);
+end;
+
+
+procedure TFHIRSystemTuple.setIdValue(id: String);
+begin
+end;
+
+
+function TFHIRSystemTuple.ToString: String;
+begin
+  result := FFields.ToString;
+end;
+
+class function TFHIRSystemTuple.fromParams(pm: TParseMap): TFHIRSystemTuple;
+var
+  this : TFHIRSystemTuple;
+  i : integer;
+  s : String;
+begin
+  this := TFHIRSystemTuple.Create;
+  try
+    for i := 0 to pm.getItemCount - 1 do
+      this.Fields.AddOrSetValue(pm.VarName(i), TFHIRSystemString.Create(pm.GetVar(pm.VarName(i))));
+    result := this.Link;
+  finally
+    this.Free;
+  end;
+end;
+
 End.
-
-
-

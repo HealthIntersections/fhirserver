@@ -51,7 +51,7 @@ type
   TFHIRLiquidEngineContext = class (TFslObject)
   private
     FParent: TFHIRLiquidEngineContext;
-    FExternalContext : TFSLObject;
+    FExternalContext : TFslObject;
     FVars : TFslMap<TFHIRObject>;
     FEngine: TFHIRLiquidEngine;
     FDocument : TFHIRLiquidDocument;
@@ -266,6 +266,7 @@ destructor TFHIRLiquidEngineContext.Destroy;
 begin
   FVars.Free;
   FExternalContext.Free;
+  FParent.free;
   inherited;
 end;
 
@@ -878,12 +879,31 @@ end;
 function TFHIRLiquidEngine.resolveConstant(source: TFHIRPathEngine; appInfo: TFslObject; name: String; beforeContext: boolean): TFHIRObject;
 var
   ctxt : TFHIRLiquidEngineContext;
+  context : TFHIRObject;
+  children : TFHIRSelectionList;
 begin
   ctxt := appInfo as TFHIRLiquidEngineContext;
   if (ctxt.Fvars.containsKey(name)) then
     result := ctxt.Fvars[name].Link
   else
-    result := nil;
+  begin
+    context := ctxt.FExternalContext as TFHIRObject;
+    if (context = nil) then
+      result := nil
+    else
+    begin
+      children := TFHIRSelectionList.Create;
+      try
+        context.ListChildrenByName(name, children);
+        if children.Count > 0 then
+          result := children[0].value.link
+        else
+          result := nil;
+      finally
+        children.free;
+      end;
+    end;
+  end;
 //  else if (externalHostServices == null)
 //      return null;
 //    return externalHostServices.resolveConstant(ctxt.externalContext, name, beforeContext);

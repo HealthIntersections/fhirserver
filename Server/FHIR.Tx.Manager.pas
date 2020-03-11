@@ -1835,7 +1835,8 @@ begin
         try
           sn.Load(details['source']);
           add(sn, details['default'] = 'true');
-          FProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
+          if not FProviderClasses.ContainsKey(sn.system(nil)+URI_VERSION_BREAK+sn.EditionUri) then
+            FProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
           snomed.Add(sn.Link);
           if details['default'] = 'true' then
             DefSnomed := sn.Link;

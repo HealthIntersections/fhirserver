@@ -239,6 +239,7 @@ type
     function funcIsQuantity(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcIsDateTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcIsTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcForHtml(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 
     function qtyToCanonical(q : TFHIRQuantity) : TFhirDecimal;
     function pairToQty(p: TUcumPair): TFHIRQuantity;
@@ -616,6 +617,7 @@ begin
     pfConvertsToBoolean: checkParamCount(lexer, location, exp, 0);
     pfConvertsToDateTime: checkParamCount(lexer, location, exp, 0);
     pfConvertsToTime: checkParamCount(lexer, location, exp, 0);
+    pfForHtml : checkParamCount(lexer, location, exp, 0);
     pfCustom: ; // nothing
   end;
 end;
@@ -1812,6 +1814,29 @@ begin
   result := TFHIRSelectionList.Create;
   if focus.Count > 0 then
     result.Add(focus[0].Link);
+end;
+
+function TFHIRPathEngine.funcForHtml(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
+var
+  b : TFslStringBuilder;
+  first : boolean;
+  item : TFHIRSelection;
+begin
+  first := true;
+  b := TFslStringBuilder.Create;
+  try
+    for item in focus do
+    begin
+      if first then first := false else b.Append(', ');
+      if item.value is TFhirType then
+        b.Append(FormatTextToHTML(gen(item.value as TFhirType)))
+      else
+        b.Append('??');
+    end;
+    result := TFHIRSelectionList.Create(TFhirString.Create(b.AsString));
+  finally
+    b.Free;
+  end;
 end;
 
 function TFHIRPathEngine.funcHasExtension(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -4801,6 +4826,7 @@ begin
     pfConvertsToQuantity : result := funcIsQuantity(context, focus, exp);
     pfConvertsToDateTime : result := funcIsDateTime(context, focus, exp);
     pfConvertsToTime : result := funcIsTime(context, focus, exp);
+    pfForHtml  : result := funcForHtml(context, focus, exp);
     pfCustom : result := funcCustom(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
@@ -5301,6 +5327,10 @@ begin
         if (not focus.hasType(self.context, primitiveTypes)) then
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
         result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean]);
+        end;
+      pfForHtml :
+        begin
+        result := TFHIRTypeDetails.create(csSINGLETON, [FP_String]);
         end;
       pfCustom :
         result := evaluateCustomFunctionType(context, focus, exp);
