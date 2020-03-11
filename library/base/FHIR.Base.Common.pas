@@ -673,7 +673,8 @@ type
   TFhirValueSetExpansionW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionW; overload;
-    procedure addParam(name, value : String); virtual; abstract;
+    procedure addParam(name, value : String); overload; virtual; abstract;
+    procedure addParam(name : String; value : boolean); overload; virtual; abstract;
     function hasParam(name : string) : boolean; overload; virtual; abstract;
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;

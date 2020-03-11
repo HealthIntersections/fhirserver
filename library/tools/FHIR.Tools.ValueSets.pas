@@ -1013,21 +1013,21 @@ begin
         exp.addParam('expansion-source', source.url);
 
       if FParams.limitedExpansion then
-        exp.addParam('limitedExpansion', boolToStr(FParams.limitedExpansion));
+        exp.addParam('limitedExpansion', FParams.limitedExpansion);
       if FParams.displayLanguage <> '' then
         exp.addParam('displayLanguage', FParams.displayLanguage);
       if FParams.includeDesignations then
-        exp.addParam('includeDesignations', boolToStr(FParams.includeDesignations));
+        exp.addParam('includeDesignations', FParams.includeDesignations);
       if FParams.includeDefinition then
-        exp.addParam('includeDefinition', boolToStr(FParams.includeDefinition));
+        exp.addParam('includeDefinition', FParams.includeDefinition);
       if FParams.activeOnly then
-        exp.addParam('activeOnly', boolToStr(FParams.activeOnly));
+        exp.addParam('activeOnly', FParams.activeOnly);
       if FParams.excludeNested then
-        exp.addParam('excludeNested', boolToStr(FParams.excludeNested));
+        exp.addParam('excludeNested', FParams.excludeNested);
       if FParams.excludeNotForUI then
-        exp.addParam('excludeNotForUI', boolToStr(FParams.excludeNotForUI));
+        exp.addParam('excludeNotForUI', FParams.excludeNotForUI);
       if FParams.excludePostCoordinated then
-        exp.addParam('excludePostCoordinated', boolToStr(FParams.excludePostCoordinated));
+        exp.addParam('excludePostCoordinated', FParams.excludePostCoordinated);
 
       try
         ics := source.inlineCS;
@@ -1367,6 +1367,7 @@ var
   hash : TStringList;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
+  cctxt : TCodeSystemProviderContext;
 begin
   imports := TFslList<TFHIRValueSetW>.create;
   try
@@ -1449,11 +1450,19 @@ begin
           for cc in cset.concepts.forEnum do
           begin
             FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
-            display := chooseDisplay(cc, params);
-            if (display = '') then
-              display := cs.getDisplay(cc.code, FParams.displayLanguage);
-            if filter.passes(display) or filter.passes(cc.code) then
-              processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cc.code, display, cs.getDefinition(cc.code), expansion, params, hash);
+            cctxt := cs.locate(cc.code);
+            try
+              if not params.activeOnly or not cs.IsInactive(cctxt) then
+              begin
+                display := chooseDisplay(cc, params);
+                if (display = '') then
+                  display := cs.Display(cctxt, FParams.displayLanguage);
+                if filter.passes(display) or filter.passes(cc.code) then
+                  processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cc.code, display, cs.Definition(cctxt), expansion, params, hash);
+              end;
+            finally
+              cs.Close(cctxt);
+            end;
           end;
 
           if cset.hasFilters then
@@ -1500,7 +1509,7 @@ begin
                   begin
                     c := cs.FilterConcept(filters[0]);
                     try
-                      ok := true;
+                      ok := not params.activeOnly or not cs.IsInactive(c);
                       if inner then
                         for i := 1 to length(filters) - 1 do
                           ok := ok and cs.InFilter(filters[i], c);

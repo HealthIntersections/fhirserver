@@ -397,6 +397,7 @@ type
     function exp : TFhirValueSetExpansion;
   public
     procedure addParam(name, value : String); override;
+    procedure addParam(name : String; value : boolean); override;
     function hasParam(name : string) : boolean; overload; override;
     function hasParam(name, value : string) : boolean; overload; override;
     procedure copyParams(source : TFhirValueSetExpansionW); override;
@@ -3278,6 +3279,11 @@ end;
 function TFhirValueSetExpansion3.addContains: TFhirValueSetExpansionContainsW;
 begin
   result := TFhirValueSetExpansionContains3.Create((element as TFhirValueSetExpansion).containsList.Append.Link);
+end;
+
+procedure TFhirValueSetExpansion3.addParam(name: String; value: boolean);
+begin
+  exp.AddParam(name, value);
 end;
 
 procedure TFhirValueSetExpansion3.addParam(name, value: String);
