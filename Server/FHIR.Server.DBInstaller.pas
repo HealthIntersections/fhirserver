@@ -1146,9 +1146,9 @@ begin
       drop('Indexes');
       drop('Spaces');
 
-      drop('PackagesFHIRVersions');
-      drop('PackagesDependencies');
-      drop('PackagesVersions');
+      drop('PackageFHIRVersions');
+      drop('PackageDependencies');
+      drop('PackageVersions');
       drop('Packages');
 
       drop('VersionTags');
