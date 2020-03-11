@@ -995,7 +995,7 @@ begin
   else
     db := connectToDatabase(result, FIni.databases[result]);
   try
-    logt('mount endpoint '+result);
+    logt('mount endpoint '+result+' on '+db.DBDetails);
     scim := TSCIMServer.Create(db.Link, salt, FIni.web['host'], FIni.admin['default-rights'], true);
     try
       conn := db.GetConnection('setup');
@@ -1067,7 +1067,7 @@ begin
   else
     db := connectToDatabase(n, FIni.databases[n]);
   try
-    logt('unmount database '+n);
+    logt('unmount database '+n+' at '+db.DBDetails);
     conn := db.GetConnection('setup');
     try
       dbi := TFHIRDatabaseInstaller.create(conn, '', factoryFactory(v), TKernelServerFactory.create(v));
