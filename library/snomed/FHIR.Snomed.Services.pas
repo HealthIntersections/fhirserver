@@ -691,6 +691,37 @@ function genCheckDigit(s : String): char;
 
 Implementation
 
+{ TCardinalArray }
+
+function mergeCardinals(c1, c2 : Cardinal) : TCardinalArray; overload;
+begin
+  SetLength(result, 2);
+  result[0] := c1;
+  result[1] := c2;
+end;
+
+function mergeCardinals(c1 : Cardinal; c2 : TCardinalArray) : TCardinalArray; overload;
+var
+   i : integer;
+begin
+  setLength(result, length(c2)+1);
+  result[0] := c1;
+  for i := 0 to length(c2) - 1 do
+    result[i+1] := c2[i];
+end;
+
+function mergeCardinals(c1, c2 : TCardinalArray) : TCardinalArray; overload;
+var
+   i : integer;
+begin
+  setLength(result, length(c1)+length(c2));
+  for i := 0 to length(c2) - 1 do
+    result[0] := c1[i];
+  for i := 0 to length(c2) - 1 do
+    result[i+length(c1)] := c2[i];
+end;
+
+
 { TSnomedStrings }
 
 function TSnomedStrings.GetEntry(iIndex: Cardinal): String;
@@ -3504,7 +3535,7 @@ begin
   try
     if not Concept.FindConcept(id, index) then
       raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
-    res.descendants := GetConceptDescendants(index);
+    res.descendants := mergeCardinals(index, GetConceptDescendants(index));
     result := TSnomedFilterContext(res.link);
   finally
     res.Free;

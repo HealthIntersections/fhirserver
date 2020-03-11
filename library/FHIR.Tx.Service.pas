@@ -101,7 +101,8 @@ Type
     function locate(code : String) : TCodeSystemProviderContext; overload; virtual;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
-    function IsInactive(context : TCodeSystemProviderContext) : boolean; virtual;
+    function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
+    function IsInactive(code : String) : boolean; overload; virtual;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function Display(context : TCodeSystemProviderContext; lang : String) : string; virtual; abstract;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
@@ -187,6 +188,18 @@ end;
 function TCodeSystemProvider.hasSupplement(url: String): boolean;
 begin
   result := false;
+end;
+
+function TCodeSystemProvider.IsInactive(code: String): boolean;
+var
+  ctxt : TCodeSystemProviderContext;
+begin
+  ctxt := locate(code);
+  try
+    result := IsInactive(ctxt);
+  finally
+    Close(ctxt);
+  end;
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
