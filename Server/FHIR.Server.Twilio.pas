@@ -72,7 +72,7 @@ begin
       arr := json.forceArr['messages'];
       FDB.connection('twilio', Procedure (conn : TFslDBConnection)
         begin
-          conn.sql := 'Select Source, Created, Body from Twilio where AccountId = :a and Status = 1';
+          conn.sql := 'Select SourceNum, CreatedDate, MsgBody from Twilio where AccountId = :a and Status = 1';
           conn.Prepare;
           conn.BindString('a', a);
           conn.Execute;
@@ -80,12 +80,12 @@ begin
           begin
             obj := TJsonObject.Create;
             arr.add(obj);
-            obj.vStr['from'] := conn.ColStringByName['Source'];
-            obj.vStr['date'] := conn.ColStringByName['Created'];
-            obj.vStr['body'] := conn.ColBlobAsStringByName['Body'];
+            obj.vStr['from'] := conn.ColStringByName['SourceNum'];
+            obj.vStr['date'] := conn.ColStringByName['CreatedDate'];
+            obj.vStr['body'] := conn.ColBlobAsStringByName['MsgBody'];
           end;
           conn.Terminate;
-          conn.sql := 'Update Twilio set Status = 2 where AccountId = :a';
+          conn.sql := 'Update Twilio set Status = 2, DownloadedDate = getdate() where AccountId = :a';
           conn.Prepare;
           conn.BindString('a', a);
           conn.Execute;
@@ -125,7 +125,7 @@ begin
     b := pm.GetVar('Body');
     FDB.connection('twilio', Procedure (conn : TFslDBConnection)
       begin
-        conn.sql := 'Insert into Twilio (TwilioKey, AccountId, Status, Source, Created, Body) values (:k, :a, 1, :f, getDate(), :b)';
+        conn.sql := 'Insert into Twilio (TwilioKey, AccountId, Status, SourceNum, CreatedDate, MsgBody) values (:k, :a, 1, :f, getDate(), :b)';
         conn.Prepare;
         conn.BindInteger('k', tk);
         conn.BindString('a', a);
