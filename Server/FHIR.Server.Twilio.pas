@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json,
   FHIR.Web.Parsers,
   FHIR.DataBase.Manager;
 
@@ -18,6 +18,7 @@ type
     FKey : Integer;
 
     procedure processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    procedure processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
     Constructor Create(Db : TFslDBManager);
     destructor Destroy; override;
@@ -53,9 +54,54 @@ begin
   if request.CommandType = hcPOST then
     processTwilioPost(request, response)
   else
-  begin
-    raise Exception.Create('Not done yet');
+    processTwilioGet(request, response);
+end;
+
+procedure TTwilioServer.processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  pm : TParseMap;
+  a : String;
+  json, obj : TJsonObject;
+  arr : TJsonArray;
+begin
+  pm := TParseMap.Create(request.UnparsedParams);
+  try
+    a := pm.GetVar('AccountSid');
+    json := TJsonObject.Create;
+    try
+      arr := json.forceArr['messages'];
+      FDB.connection('twilio', Procedure (conn : TFslDBConnection)
+        begin
+          conn.sql := 'Select Source, Created, Body from Twilio where AccountId = :a and Status = 1';
+          conn.Prepare;
+          conn.BindString('a', a);
+          conn.Execute;
+          while (conn.fetchNext) do
+          begin
+            obj := TJsonObject.Create;
+            arr.add(obj);
+            obj.vStr['from'] := conn.ColStringByName['Source'];
+            obj.vStr['date'] := conn.ColStringByName['Created'];
+            obj.vStr['body'] := conn.ColBlobAsStringByName['Body'];
+          end;
+          conn.Terminate;
+          conn.sql := 'Update Twilio set Status = 2 where AccountId = :a';
+          conn.Prepare;
+          conn.BindString('a', a);
+          conn.Execute;
+          conn.Terminate;
+        end);
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      response.ContentType := 'application/json';
+      response.ContentText := TJsonWriterDirect.writeObjectStr(json);
+    finally
+      json.Free;
+    end;
+  finally
+    pm.Free;
   end;
+
 end;
 
 procedure TTwilioServer.processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
