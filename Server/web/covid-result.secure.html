@@ -2,7 +2,7 @@
 
 <html xml:lang="en" lang="en">
 <head>
-    <title>Covid-19 Edit Patient</title>
+    <title>Covid-19 Patient Result</title>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="http://hl7.org/fhir" name="author"/>
@@ -106,51 +106,20 @@ function hideEditEvent() {
 
 <p><a href="covid.html">Start over</a></p>
 
-  <h2>Covid-19: Edit Patient</h2>
+  <h2>Covid-19: Patient Result</h2>
 
 [%covid.patient-banner covid-patient-banner.liquid%]
 
 [%covid.error%]
 
-<p id="edit-button"><button onclick="editPatient()">Edit Patient</button></p>
-
-<div id="edit-form" style="display: none">
-<form method="POST" action="[%path%]/covid-patient.html">
-
-[%covid.editpatient covid-patient-form.liquid%] 
-
-<p><input type="submit" value="[%html.submit%]"/> <button onclick="hideEditPatient()">Hide</button></p>
-
-</form>
-</div>
-
 <hr/>
 
-<table class="none">
-  <tr>
-   <td>
-     <b>Relevant Events</b>
-<p id="edit-event-button"><button onclick="editEvent()">Add Event</button></p>
-     
-<div id="edit-event-form" style="display: none">
+<form method="POST" action="covid-result.html">
+[%covid.editresult covid-result-form.liquid%] 
 
-<p> <button onclick="hideEditEvent()">Hide</button></p>
-<ul>
- <li><a href="covid-exposure.html">Exposure</a></li>
- <li><a href="covid-symptoms.html">Symptoms</a></li>
- <li>Test - <a href="covid-request.html">Requested</a>, <a href="covid-notest.html">Not Eligible</a>, <a href="covid-tested.html">Done</a></li>
- <li><a href="covid-result.html?patient=[%covid.patient%]">Test Result</a></li>
- <li><a href="covid-admission.html">Hospital</a></li>
- <li><a href="covid-outcome.html">Outcome</a></li>
-</ul>
-</div>     
+<p><input type="submit" value="[%html.submit%]"/> </p>
 
-   </td>
-   <td style="border-left: 1px silver solid">
-     <b>Communications</b>
-   </td>
-  </tr>
-</table>
+</form>
 
  </div>
 

@@ -85,7 +85,8 @@ Uses
   {$IFDEF MSWINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base,
+  FHIR.Database.ODBC,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
   FHIR.Client.HTTP,
   FHIR.Cache.PackageUpdater,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
@@ -97,7 +98,7 @@ Uses
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
   FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.UsageStats,
   {$IFNDEF NO_JS} FHIR.Server.Javascript, {$ENDIF}
-  FHIR.Server.Subscriptions, FHIR.Server.Packages;
+  FHIR.Server.Subscriptions, FHIR.Server.Packages, FHIR.Server.Twilio;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -237,6 +238,39 @@ Type
     function getRedirect(token : String; var url : String) : boolean;
   end;
 
+  TFHIRPathServerObject = class (TFHIRObject)
+  protected
+    FContext : TFHIRServerContext;
+    Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function GetFhirObjectVersion: TFHIRVersion; override;
+  public
+    Constructor Create(context : TFHIRServerContext);
+    destructor Destroy; override;
+
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
+    function hasExtensions : boolean; override;
+    function fhirType : String; override;
+    function isPrimitive : boolean; override;
+    function hasPrimitiveValue : boolean; override;
+    function primitiveValue : string; override;
+    function ToString : String; override;
+  end;
+
+  TFHIRWebServerExtension = class abstract (TFHIRPathEngineExtension)
+  protected
+    FContext : TFHIRServerContext;
+  public
+    Constructor Create(context : TFHIRServerContext);
+    destructor Destroy; override;
+
+    function resolveConstant(context : TFHIRPathExecutionContext; s : String; var obj : TFHIRObject) : boolean; override;
+  end;
+
   TFhirWebServerEndpoint = class (TFslObject)
   private
     FWebServer : TFHIRWebServer;
@@ -356,6 +390,7 @@ Type
     FFacebookLike: boolean;
     FHostSms: String; // for status update messages
     FSourceProvider: TFHIRWebServerSourceProvider;
+    FTwilioDB : String;
 
     // web configuration
     FHost: String;
@@ -401,6 +436,7 @@ Type
     {$ENDIF}
     FUsageServer : TUsageStatsServer;
     FPackageServer : TFHIRPackageServer;
+    FTwilioServer : TTwilioServer;
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
@@ -432,6 +468,7 @@ Type
     function loadMultipartForm(const request: TStream; const contentType: String; var upload: boolean): TMimeMessage;
     function DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
+    Procedure HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
     Procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception = nil);
     procedure smsStatus(Msg: String);
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
@@ -463,6 +500,7 @@ Type
     property JWTAuthorities: TFslStringDictionary read FJWTAuthorities;
     property settings : TFHIRServerSettings read FSettings;
     property PackageServer : TFHIRPackageServer read FPackageServer;
+
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
     function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
@@ -3785,7 +3823,7 @@ begin
   if factory.version = fhirVersionRelease4 then
   begin
     FPlugins.add(THtmlFormScriptPlugin.create);
-    FPlugins.add(TCovidScriptPlugin.create(FWebServer.SourceProvider.link, FContext.ValidatorContext.Link));
+    FPlugins.add(TCovidScriptPlugin.create(FWebServer.SourceProvider.link, FContext.Link));
   end;
 end;
 
@@ -3836,6 +3874,7 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  FTwilioServer.Free;
   FPackageServer.Free;
   FUsageServer.Free;
   StopAsyncTasks;
@@ -3953,7 +3992,7 @@ begin
   if ini.web['clients'] = '' then
     raise EIOException.create('No Authorization file found');
   FGoogle.serverId := ini.web['googleid'];
-
+  FTwilioDB := ini.admin['twilio'];
 end;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
@@ -4047,6 +4086,9 @@ end;
 
 Procedure TFhirWebServer.Start(active: boolean);
 Begin
+  if FTwilioDB <> '' then
+    FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''));
+
   logt('Start Web Server:');
   if (FActualPort = 0) then
     logt('  http: not active')
@@ -4416,6 +4458,8 @@ begin
       begin
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        else if request.Document = '/twilio' then
+          HandleTwilio(AContext, request, response, false, false)
         else if sp.exists(sp.AltFile(request.Document, '/')) then
           ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
         else if request.Document = '/' then
@@ -4440,6 +4484,7 @@ begin
     MarkExit(AContext);
   end;
 end;
+
 
 procedure TFhirWebServer.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
 begin
@@ -4671,6 +4716,11 @@ begin
   End;
 end;
 
+
+procedure TFhirWebServer.HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
+begin
+  FTwilioServer.process(AContext, request, response);
+end;
 
 Constructor ERestfulAuthenticationNeeded.Create(Const sContext : String; sMessage, sCaption, lang : String);
 begin
@@ -5560,7 +5610,7 @@ end;
 
 function TFHIRWebServerCommunicator.operationV(atype: TFHIRResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  result := fetchResource('POST', makeUrl(aType+'/$'+opName), params);
 end;
 
 function TFHIRWebServerCommunicator.operationV(atype: TFHIRResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
@@ -5598,7 +5648,6 @@ var
   s : String;
   bnd : TFHIRResourceV;
   bh : TFHIRBundleW;
-  headers : THTTPHeaders;
   res : TFHIRResourceV;
 begin
   res := fetchResource('GET', makeUrl(aType)+'?'+params, nil);
@@ -5737,6 +5786,114 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+{ TFHIRWebServerExtension }
+
+constructor TFHIRWebServerExtension.Create(context: TFHIRServerContext);
+begin
+  inherited Create;
+  FContext := context;
+end;
+
+destructor TFHIRWebServerExtension.Destroy;
+begin
+  FContext.Free;
+  inherited;
+end;
+
+function TFHIRWebServerExtension.resolveConstant(context: TFHIRPathExecutionContext; s: String; var obj: TFHIRObject): boolean;
+begin
+  if (s = '%server') then
+  begin
+    result := true;
+    obj := TFHIRPathServerObject.create(FContext.link)
+  end
+  else
+    result := false;
+end;
+
+{ TFHIRPathServerObject }
+
+constructor TFHIRPathServerObject.Create(context: TFHIRServerContext);
+begin
+  inherited Create;
+  FContext := context;
+end;
+
+destructor TFHIRPathServerObject.Destroy;
+begin
+  FContext.Free;
+  inherited;
+end;
+
+function TFHIRPathServerObject.fhirType: String;
+begin
+  result := 'FHIRServer';
+end;
+
+procedure TFHIRPathServerObject.GetChildrenByName(name: string; list: TFHIRSelectionList);
+begin
+end;
+
+function TFHIRPathServerObject.GetFhirObjectVersion: TFHIRVersion;
+begin
+  result := fhirVersionUnknown;
+end;
+
+function TFHIRPathServerObject.getId: String;
+begin
+  result := FContext.DatabaseId;
+
+end;
+
+function TFHIRPathServerObject.hasExtensions: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRPathServerObject.hasPrimitiveValue: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRPathServerObject.isPrimitive: boolean;
+begin
+  result := false;
+end;
+
+procedure TFHIRPathServerObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+end;
+
+function TFHIRPathServerObject.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := FContext.Factory.makeCode(v);
+end;
+
+function TFHIRPathServerObject.makeIntValue(v: String): TFHIRObject;
+begin
+  result := FContext.Factory.makeInteger(v);
+end;
+
+function TFHIRPathServerObject.makeStringValue(v: String): TFHIRObject;
+begin
+  result := FContext.Factory.makeString(v);
+end;
+
+function TFHIRPathServerObject.primitiveValue: string;
+begin
+  result := '';
+end;
+
+procedure TFHIRPathServerObject.setIdValue(id: String);
+begin
+  // nothing
+end;
+
+function TFHIRPathServerObject.ToString: String;
+begin
+  result := '(Server '+FContext.DatabaseId+'';
 end;
 
 Initialization

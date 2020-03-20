@@ -204,7 +204,11 @@ type
   TFHIRResolveReferenceEvent = function (source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject of object;
 
   TFHIRPathEngineExtension = class abstract (TFslObject)
+  protected
+    function executeV(engine : TFHIRPathEngineV; context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual;
+    function executeV(engine : TFHIRPathEngineV; context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual;
   public
+    function resolveConstant(context : TFHIRPathExecutionContext; s : String; var obj : TFHIRObject) : boolean; virtual; abstract;
     function isValidFunction(name : String) : boolean; virtual; abstract;
     function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; virtual; abstract;
     function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNodeV>; engine : TFHIRPathEngineV): TFHIRSelectionList; virtual; abstract;
@@ -217,6 +221,8 @@ type
   protected
     FExtensions : TFslList<TFHIRPathEngineExtension>;
     FOnResolveReference: TFHIRResolveReferenceEvent;
+    function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
+    function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -993,4 +999,16 @@ begin
     token(kw);
 end;
 
-end.
+{ TFHIRPathEngineExtension }
+
+function TFHIRPathEngineExtension.executeV(engine: TFHIRPathEngineV; context: TFHIRPathExecutionContext; item: TFHIRObject; exp: TFHIRPathExpressionNodeV; atEntry: boolean): TFHIRSelectionList;
+begin
+  result := engine.executeV(context, item, exp, atEntry);
+end;
+
+function TFHIRPathEngineExtension.executeV(engine: TFHIRPathEngineV; context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNodeV; atEntry: boolean): TFHIRSelectionList;
+begin
+  result := engine.executeV(context, focus, exp, atEntry);
+end;
+
+End.

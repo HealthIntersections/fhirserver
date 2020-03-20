@@ -111,6 +111,7 @@ Type
     procedure CreateClientRegistrations;
     procedure CreatePseudoData;
     procedure CreatePackagesTables;
+    procedure CreateTwilioTable;
 //    procedure runScript(s : String);
   public
     constructor Create(conn : TFslDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
@@ -753,6 +754,20 @@ begin
   FConn.ExecSQL('Create INDEX SK_SubscriptionsQueue_Reload ON SubscriptionQueue (Handled)');
 end;
 
+procedure TFHIRDatabaseInstaller.CreateTwilioTable;
+begin
+  FConn.ExecSQL('CREATE TABLE Twilio ( '+#13#10+
+       ' TwilioKey      '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' AccountId       nchar(34)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Status          int                                 '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Source            nchar(68)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Created         '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Downloaded      '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Body            '+DBBlobType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Twilio', 'TwilioKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_Twilio_Account ON Twilio (AccountId, Status, Downloaded)');
+end;
+
 procedure TFHIRDatabaseInstaller.CreateAsyncTasks;
 begin
   FConn.ExecSQL('CREATE TABLE AsyncTasks ( '+#13#10+
@@ -1066,6 +1081,8 @@ begin
     if assigned(CallBack) then Callback(76, 'Create Package Tables');
     CreatePackagesTables;
     if assigned(CallBack) then Callback(77, 'Commit');
+    CreateTwilioTable;
+    if assigned(CallBack) then Callback(78, 'Commit');
 
     FConn.Commit;
   except
@@ -1174,6 +1191,7 @@ begin
       drop('Unii');
       drop('AsyncTasks');
       drop('PseudoData');
+      drop('Twilio');
 
       FConn.Commit;
     except
@@ -1247,6 +1265,8 @@ begin
     end;
     if (version < 24) then
       CreatePackagesTables;
+    if (version < 25) then
+      CreateTwilioTable;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

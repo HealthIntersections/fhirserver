@@ -216,7 +216,7 @@ type
 
   TFHIRLiquidEngine = class (TFslObject)
   private
-    fpe : TFHIRPathEngine;
+    FEngine : TFHIRPathEngine;
     FOnFetchInclude: TFHIRLiquidEngineFetchIncludeEvent;
 
     function debug(dbgContext : TFHIRLiquidEngineContext; node : TFHIRLiquidNode) : TFHIRLiquidEngineContext; overload;
@@ -231,6 +231,7 @@ type
     function evaluate(document : TFHIRLiquidDocument; resource : TFHIRResource;  appContext : TFslObject; OnDebug : TFHIRLiquidEngineDebugEvent) : String; overload;
 
     property OnFetchInclude : TFHIRLiquidEngineFetchIncludeEvent read FOnFetchInclude write FOnFetchInclude;
+    property engine : TFHIRPathEngine read FEngine;
   end;
 
 implementation
@@ -341,7 +342,7 @@ var
 begin
   c := ctxt.FEngine.debug(ctxt, self);
   try
-    b.append(c.FEngine.fpe.evaluateToString(ctxt, resource, FCompiled));
+    b.append(c.FEngine.FEngine.evaluateToString(ctxt, resource, FCompiled));
   finally
     c.free;
   end;
@@ -384,7 +385,7 @@ var
 begin
   c := ctxt.FEngine.debug(ctxt, self);
   try
-    ok := ctxt.Fengine.fpe.evaluateToBoolean(ctxt, resource, resource, FCompiled);
+    ok := ctxt.Fengine.FEngine.evaluateToBoolean(ctxt, resource, resource, FCompiled);
     if ok then
       list := FThenBody
     else
@@ -446,7 +447,7 @@ var
   o : TFHIRSelection;
   c : TFHIRLiquidEngineContext;
 begin
-  list := ctxt.Fengine.fpe.evaluate(ctxt, resource, resource, FCompiled);
+  list := ctxt.Fengine.FEngine.evaluate(ctxt, resource, resource, FCompiled);
   try
     for o in list do
     begin
@@ -769,8 +770,8 @@ end;
 constructor TFHIRLiquidEngine.Create(fpe: TFHIRPathEngine);
 begin
   Inherited Create;
-  self.fpe := fpe;
-  self.fpe.OnResolveConstant := resolveConstant;
+  self.FEngine := fpe;
+  self.FEngine.OnResolveConstant := resolveConstant;
 end;
 
 function TFHIRLiquidEngine.debug(dbgContext: TFHIRLiquidEngineContext; node: TFHIRLiquidNode; name: String; value: TFHIRObject): TFHIRLiquidEngineContext;
@@ -800,7 +801,7 @@ end;
 
 destructor TFHIRLiquidEngine.Destroy;
 begin
-  fpe.Free;
+  FEngine.Free;
   inherited;
 end;
 
@@ -867,7 +868,7 @@ var
 begin
   parser := TFHIRLiquidParser.Create(source);
   try
-    parser.fpe := fpe;
+    parser.fpe := FEngine;
     parser.sourceName := sourceName;
     result := parser.parse;
     result.source := sourceName;
@@ -939,7 +940,7 @@ begin
     incl := TFHIRTuple.create;
     try
       for s in FParams.Keys do
-        incl.addProperty(s, ctxt.Fengine.fpe.evaluate(ctxt, resource, resource, FParams[s]));
+        incl.addProperty(s, ctxt.Fengine.FEngine.evaluate(ctxt, resource, resource, FParams[s]));
       c := ctxt.FEngine.debug(ctxt, self, 'include', incl);
       try
         for n in doc.body do

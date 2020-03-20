@@ -426,7 +426,8 @@ uses
   FHIR.Server.Packages in 'FHIR.Server.Packages.pas',
   FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
   FHIR.Server.Covid in 'Modules\FHIR.Server.Covid.pas',
-  FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas';
+  FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas',
+  FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

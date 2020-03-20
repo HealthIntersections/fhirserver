@@ -286,8 +286,11 @@ type
     function processDateConstant(appinfo : TFslObject; value : String) : TFHIRObject; overload;
     procedure getClassInfoChildTypesByName(name: String; result: TFHIRTypeDetails);
     procedure getSimpleTypeChildTypesByName(name: String; result: TFHIRTypeDetails);
+  protected
     function funcCustom(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList; virtual;
     function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails; virtual;
+    function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
+    function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
@@ -1335,6 +1338,16 @@ begin
   raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
+function TFHIRPathEngine.executeV(context: TFHIRPathExecutionContext; item: TFHIRObject; exp: TFHIRPathExpressionNodeV; atEntry: boolean): TFHIRSelectionList;
+begin
+  result := execute(context, item, exp as TFHIRPathExpressionNode, atEntry);
+end;
+
+function TFHIRPathEngine.executeV(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNodeV; atEntry: boolean): TFHIRSelectionList;
+begin
+  result := execute(context, focus, exp as TFHIRPathExpressionNode, atEntry);
+end;
+
 function TFHIRPathEngine.evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base: TFHIRObject; path: String): boolean;
 var
   res : TFHIRSelectionList;
@@ -1403,7 +1416,7 @@ begin
     end;
     if not ok then
     begin
-      if atEntry and (CharInSet(exp.name[1], ['A'..'Z'])) then // special case for start up
+      if atEntry and (exp.name <> '') and (CharInSet(exp.name[1], ['A'..'Z'])) then // special case for start up
       begin
         if (item.FhirType = exp.name) or StringArrayExistsSensitive(['Resource', 'DomainResource'], exp.name) then
           result.Add(item.Link);
@@ -4586,6 +4599,8 @@ end;
 
 
 function TFHIRPathEngine.resolveConstant(context : TFHIRPathExecutionContext; s : String) : TFHIRObject;
+var
+  ext : TFHIRPathEngineExtension;
 begin
   if (s = '%sct') then
     result := TFHIRString.create('http://snomed.info/sct').noExtensions()
@@ -4610,7 +4625,14 @@ begin
   else if (s.startsWith('%`ext-')) then
     result := TFHIRString.create('http://hl7.org/fhir/StructureDefinition/'+s.substring(6, s.length-7)).noExtensions()
   else
+  begin
+    for ext in FExtensions do
+    begin
+      if ext.resolveConstant(context, s, result) then
+        exit;
+    end;
     raise EFHIRPath.create('Unknown fixed constant "'+s+'"')
+  end;
 end;
 
 
