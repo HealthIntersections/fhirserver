@@ -23,6 +23,7 @@ type
     Constructor Create(Db : TFslDBManager);
     destructor Destroy; override;
 
+    procedure sweep;
     procedure process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   end;
 
@@ -141,6 +142,14 @@ begin
   finally
     pm.Free;
   end;
+end;
+
+procedure TTwilioServer.sweep;
+begin
+  FDB.connection('twilio', Procedure (conn : TFslDBConnection)
+    begin
+      conn.ExecSQL('Delete from Twilio where DownloadedDate < DATEADD(day, -2, GETDATE())');
+    end);
 end;
 
 end.

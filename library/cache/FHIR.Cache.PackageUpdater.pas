@@ -60,7 +60,7 @@ begin
   fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := url+'?'+TFslDateTime.makeLocal().toHL7;
-    fetcher.Accept := mimetype;
+    // fetcher.Accept := mimetype;
     fetcher.userAgent := 'HealthIntersections/FhirServer';
     fetcher.Fetch;
     result := fetcher.Buffer.AsBytes;
@@ -143,7 +143,7 @@ begin
       cvkey := FDB.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc');
       if (cvkey = vkey) then
       begin
-        FDB.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = cvkey where PackageKey = '+inttostr(pkey);
+        FDB.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(cvkey)+' where PackageKey = '+inttostr(pkey);
         FDB.prepare;
         FDB.Execute;
         FDB.Terminate;

@@ -5058,6 +5058,12 @@ begin
               ep.CheckAsyncTasks;
           except
           end;
+        if (not terminated) and (FServer.FTwilioServer <> nil) then
+          try
+            FServer.Settings.MaintenanceThreadStatus := 'Sweeping Twilio';
+            FServer.FTwilioServer.sweep;
+          except
+          end;
     until terminated;
     try
       FServer.Settings.MaintenanceThreadStatus := 'dead';
