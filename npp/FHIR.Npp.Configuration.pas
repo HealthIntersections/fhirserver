@@ -175,7 +175,7 @@ begin
       cbR2.Checked := Settings.loadR2
     else
       cbR2.enabled := false;
-    if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+    if FCache.packageExists('hl7.fhir.core', '3.0.2') then
       cbR3.Checked := Settings.loadR3
     else
       cbR3.enabled := false;
@@ -309,7 +309,7 @@ begin
     cbR2.Checked := Settings.loadR2
   else
     cbR2.enabled := false;
-  if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+  if FCache.packageExists('hl7.fhir.core', '3.0.2') then
     cbR3.Checked := Settings.loadR3
   else
     cbR3.enabled := false;
