@@ -16,11 +16,12 @@ type
     FLock : TFslLock;
     FDb : TFslDBManager;
     FKey : Integer;
+    FResponse : String;
 
     procedure processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
-    Constructor Create(Db : TFslDBManager);
+    Constructor Create(Db : TFslDBManager; response : String);
     destructor Destroy; override;
 
     procedure sweep;
@@ -31,9 +32,12 @@ implementation
 
 { TTwilioServer }
 
-constructor TTwilioServer.Create(Db : TFslDBManager);
+constructor TTwilioServer.Create(Db : TFslDBManager; response : String);
 begin
   Inherited Create;
+  FResponse := response;
+  if FResponse = '' then
+    FResponse := 'Thanks. Working...';
   FLock := TFslLock.Create('Twilio');
   FDb := db;
   FDB.connection('twilio', Procedure (conn : TFslDBConnection)
@@ -138,7 +142,7 @@ begin
     response.ResponseNo := 200;
     response.ResponseText := 'OK';
     response.ContentType := 'application/xml';
-    response.ContentText := '<?xml version="1.0" encoding="UTF-8" ?><Response><Message>Your message has been received and is being processed</Message></Response>';
+    response.ContentText := '<?xml version="1.0" encoding="UTF-8" ?><Response><Message>'+FResponse+'</Message></Response>';
   finally
     pm.Free;
   end;
