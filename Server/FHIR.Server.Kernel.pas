@@ -926,7 +926,7 @@ begin
   begin
     FWebServer.PackageServer.DB := FDatabases[FIni.web['package-server']].Link;
     logt('Starting TPackageUpdaterThread (db = '+FIni.web['package-server']+')');
-    FPackageUpdater := TPackageUpdaterThread.Create(FWebServer.PackageServer.DB.Link);
+    FPackageUpdater := TPackageUpdaterThread.Create(FWebServer, FWebServer.PackageServer.DB.Link);
   end;
   FWebServer.Start(not FNotServing);
 end;

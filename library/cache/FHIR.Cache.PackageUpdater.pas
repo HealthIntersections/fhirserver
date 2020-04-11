@@ -27,6 +27,7 @@ Type
   TPackageUpdater = class (TFslObject)
   private
     FDB : TFslDBConnection;
+    FErrors: String;
     procedure log(msg : String);
 
     function fetchUrl(url, mimetype : string) : TBytes;
@@ -41,6 +42,7 @@ Type
   public
     procedure update(DB : TFslDBConnection);
 
+    property errors : String read FErrors;
     class procedure test(db : TFslDBManager);
   end;
 
@@ -85,6 +87,7 @@ end;
 
 procedure TPackageUpdater.log(msg: String);
 begin
+  FErrors := FErrors + msg+#13#10;
   logt(msg);
 end;
 
@@ -173,6 +176,7 @@ var
   i : integer;
   pr : TPackageRestrictions;
 begin
+  FErrors := '';
   FDB := DB;
   try
     log('Fetch '+MASTER_URL);
@@ -205,6 +209,7 @@ var
 begin
   try
     log('Fetch '+url);
+
     xml := fetchXml(url);
     try
       for channel in xml.first.Children do
@@ -236,8 +241,9 @@ var
   guid : String;
   content : TBytes;
   date : TFslDateTime;
-  id : String;
+  id, url: String;
 begin
+  url := '??';
   guid := item.element('guid').Text;
   try
     id := item.element('title').Text;
@@ -247,7 +253,8 @@ begin
       begin
         date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', item.element('pubDate').Text.Substring(5));
         log('Fetch '+item.element('link').Text);
-        content := fetchUrl(item.element('link').Text, 'application/tar+gzip');
+        url := item.element('link').Text;
+        content := fetchUrl(url, 'application/tar+gzip');
         store(source, guid, date, content, id);
       end;
     end
@@ -256,7 +263,7 @@ begin
   except
     on e : Exception do
     begin
-      log('Exception processing item: '+guid+': '+e.Message);
+      log('Exception processing item: '+guid+' from '+url+': '+e.Message);
     end;
   end;
 end;

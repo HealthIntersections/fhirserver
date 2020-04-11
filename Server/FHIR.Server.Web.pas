@@ -78,8 +78,8 @@ Interface
 Uses
   {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
   SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug,} EncdDecd,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL,
-  IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, FHIR.Web.Socket,
+  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
+  IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.MXml,
   {$IFDEF MSWINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
@@ -115,9 +115,17 @@ Type
   TFhirWebServer = class;
   TFhirWebServerEndpoint = class;
 
-  TFhirServerMaintenanceThread = class(TThread)
-  private
+  TFHIRServerThread = class (TThread)
+  protected
     FServer: TFhirWebServer;
+
+    procedure sendEmail(dest, subj, body : String);
+  public
+    constructor Create(server: TFhirWebServer; suspended : boolean);
+  end;
+
+  TFhirServerMaintenanceThread = class(TFHIRServerThread)
+  private
     FLastSweep: TDateTime;
   protected
     procedure Execute; override;
@@ -125,37 +133,34 @@ Type
     constructor Create(server: TFhirWebServer);
   end;
 
-  TFhirServerSubscriptionThread = class(TThread)
-  private
-    FServer: TFhirWebServer;
+  TFhirServerSubscriptionThread = class(TFHIRServerThread)
   protected
     procedure Execute; override;
   public
     constructor Create(server: TFhirWebServer);
   end;
 
-  TFhirServerEmailThread = class(TThread)
-  private
-    FServer: TFhirWebServer;
+  TFhirServerEmailThread = class(TFHIRServerThread)
   protected
     procedure Execute; override;
   public
     constructor Create(server: TFhirWebServer);
   end;
 
-  TPackageUpdaterThread  = class(TThread)
+  TPackageUpdaterThread  = class(TFHIRServerThread)
   private
     FDB : TFslDBManager;
     FNextRun : TDateTime;
+    FLastEmail : TDateTime;
     procedure RunUpdater;
   protected
     procedure Execute; override;
   public
-    constructor Create(db : TFslDBManager);
+    constructor Create(server: TFhirWebServer; db : TFslDBManager);
     destructor Destroy; override;
   end;
 
-  TAsyncTaskThread = class(TThread)
+  TAsyncTaskThread = class(TFHIRServerThread)
   private
     FKey : integer;
     FServer : TFhirWebServerEndPoint;
@@ -175,7 +180,7 @@ Type
   protected
     procedure Execute; override;
   public
-    constructor Create();
+    constructor Create(server: TFhirWebServer);
     destructor Destroy; override;
 
     procedure kill;
@@ -391,6 +396,7 @@ Type
     FHostSms: String; // for status update messages
     FSourceProvider: TFHIRWebServerSourceProvider;
     FTwilioDB : String;
+    FTwilioResponse : String;
 
     // web configuration
     FHost: String;
@@ -2550,7 +2556,7 @@ var
 begin
   if not (request.CommandType in [fcmdSearch, fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem, fcmdTransaction, fcmdBatch, fcmdUpload, fcmdOperation]) then
     raise EFHIRException.CreateLang('NO_ASYNC', request.Lang);
-  thread := TAsyncTaskThread.create;
+  thread := TAsyncTaskThread.create(FWebServer);
   FWebServer.FLock.Lock;
   try
     FWebServer.FThreads.add(thread);
@@ -3993,6 +3999,7 @@ begin
     raise EIOException.create('No Authorization file found');
   FGoogle.serverId := ini.web['googleid'];
   FTwilioDB := ini.admin['twilio'];
+  FTwilioResponse := ini.admin['twilio-text'];
 end;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
@@ -4087,7 +4094,7 @@ end;
 Procedure TFhirWebServer.Start(active: boolean);
 Begin
   if FTwilioDB <> '' then
-    FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''));
+    FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
 
   logt('Start Web Server:');
   if (FActualPort = 0) then
@@ -4997,9 +5004,8 @@ end;
 constructor TFhirServerMaintenanceThread.Create(server: TFhirWebServer);
 begin
   FreeOnTerminate := true;
-  FServer := server;
   FLastSweep := Now;
-  inherited Create;
+  inherited Create(server, false);
 end;
 
 procedure TFhirServerMaintenanceThread.Execute;
@@ -5095,7 +5101,7 @@ constructor TFhirServerSubscriptionThread.Create(server: TFhirWebServer);
 begin
   FreeOnTerminate := true;
   FServer := server;
-  inherited Create;
+  inherited Create(server, false);
 end;
 
 procedure TFhirServerSubscriptionThread.Execute;
@@ -5145,8 +5151,7 @@ end;
 constructor TFhirServerEmailThread.Create(server: TFhirWebServer);
 begin
   FreeOnTerminate := true;
-  FServer := server;
-  inherited Create;
+  inherited Create(server, false);
 end;
 
 procedure TFhirServerEmailThread.Execute;
@@ -5302,9 +5307,9 @@ begin
   status(atsProcessing, StrParam);
 end;
 
-constructor TAsyncTaskThread.Create;
+constructor TAsyncTaskThread.Create(server : TFhirWebServer);
 begin
-  inherited Create(true); // suspended
+  inherited Create(Server, true); // suspended
 end;
 
 destructor TAsyncTaskThread.Destroy;
@@ -5482,9 +5487,9 @@ end;
 
 { TPackageUpdaterThread }
 
-constructor TPackageUpdaterThread.Create(db: TFslDBManager);
+constructor TPackageUpdaterThread.Create(server: TFhirWebServer; db: TFslDBManager);
 begin
-  inherited create;
+  inherited create(server, false);
   FDB := db;
   FNextRun := now + 1/(24 * 60);
 end;
@@ -5518,6 +5523,12 @@ begin
       try
         try
           upd.update(conn);
+          if (TFslDateTime.makeToday.DateTime <> FLastEmail) then
+          begin
+            if upd.errors <> '' then
+              sendEmail('grahameg@gmail.com', 'Package Feed Errors', upd.errors);
+            FLastEmail := TFslDateTime.makeToday.DateTime;
+          end;
         except
           on e : exception do
           begin
@@ -5900,6 +5911,60 @@ end;
 function TFHIRPathServerObject.ToString: String;
 begin
   result := '(Server '+FContext.DatabaseId+'';
+end;
+
+{ TFHIRServerThread }
+
+constructor TFHIRServerThread.Create(server: TFhirWebServer;
+  suspended: boolean);
+begin
+  FServer := server;
+  inherited Create(suspended);
+end;
+
+procedure TFHIRServerThread.sendEmail(dest, subj, body: String);
+var
+  sender : TIdSMTP;
+  msg : TIdMessage;
+  ssl : TIdSSLIOHandlerSocketOpenSSL;
+begin
+  sender := TIdSMTP.Create(Nil);
+  try
+    sender.Host := FServer.settings.SMTPHost;
+    sender.port := StrToInt(FServer.settings.SMTPPort);
+    sender.Username := FServer.settings.SMTPUsername;
+    sender.Password := FServer.settings.SMTPPassword;
+    if FServer.settings.SMTPUseTLS then
+    begin
+      ssl := TIdSSLIOHandlerSocketOpenSSL.create;
+      sender.IOHandler := ssl;
+      sender.UseTLS := utUseExplicitTLS;
+      ssl.Destination := FServer.settings.SMTPHost+':'+FServer.settings.SMTPPort;
+      ssl.Host := FServer.settings.SMTPHost;
+      ssl.MaxLineAction := maException;
+      ssl.Port := StrToInt(FServer.settings.SMTPPort);
+      ssl.SSLOptions.Method := sslvTLSv1_2;
+      ssl.SSLOptions.Mode := sslmUnassigned;
+      ssl.SSLOptions.VerifyMode := [];
+      ssl.SSLOptions.VerifyDepth := 0;
+    end;
+    sender.Connect;
+    msg := TIdMessage.Create(Nil);
+    try
+      msg.Subject := subj;
+      msg.Recipients.Add.Address := dest;
+      msg.From.Text := FServer.settings.SMTPSender;
+      msg.Body.Text := body;
+      logt('Send '+msg.MsgId+' to '+dest);
+      sender.Send(msg);
+    Finally
+      msg.Free;
+    End;
+    sender.Disconnect;
+  Finally
+    sender.IOHandler.free;
+    sender.Free;
+  End;
 end;
 
 Initialization
