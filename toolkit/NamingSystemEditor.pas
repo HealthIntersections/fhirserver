@@ -83,6 +83,8 @@ type
     coLComment: TStringColumn;
     colPeriodStart: TDateColumn;
     colPeriodEnd: TDateColumn;
+    Label5: TLabel;
+    edtUrl: TEdit;
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
     procedure btnMemoPurposeClick(Sender: TObject);
@@ -203,6 +205,10 @@ var
 begin
   NamingSystem.name := edtName.Text;
   NamingSystem.publisher := edtPublisher.text;
+  if edtUrl.text = '' then
+    NamingSystem.removeExtension('http://hl7.org/fhir/5.0/StructureDefinition/extension-NamingSystem.url')
+  else
+    NamingSystem.setExtensionString('http://hl7.org/fhir/5.0/StructureDefinition/extension-NamingSystem.url',  edtUrl.text);
   NamingSystem.description := edtDescription.Text;
   NamingSystem.usage := edtPurpose.Text;
   NamingSystem.kind := TFhirNamingsystemTypeEnum(cbxKind.ItemIndex);
@@ -322,6 +328,7 @@ begin
   try
     edtName.Text := NamingSystem.name;
     edtPublisher.text := NamingSystem.publisher;
+    edtUrl.text := NamingSystem.getExtensionString('http://hl7.org/fhir/5.0/StructureDefinition/extension-NamingSystem.url');
     edtDescription.Text := NamingSystem.description;
     edtPurpose.Text := NamingSystem.usage;
     cbxKind.ItemIndex := ord(NamingSystem.kind);
