@@ -489,7 +489,7 @@ operations
     FEditionName : String;
 
     function filterIn(id : UInt64): TCodeSystemProviderFilterContext;
-    function filterIsA(id : UInt64): TCodeSystemProviderFilterContext;
+    function filterIsA(id : UInt64; includeBase : boolean): TCodeSystemProviderFilterContext;
 
   //  Function FindWord(s : String; var index : Integer) : Boolean;
     Function FindStem(s : String; var index : Integer) : Boolean;
@@ -3526,7 +3526,7 @@ begin
   TSnomedFilterContext(ctxt).free;
 end;
 
-function TSnomedServices.filterIsA(id : UInt64): TCodeSystemProviderFilterContext;
+function TSnomedServices.filterIsA(id : UInt64; includeBase : boolean): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
   index : cardinal;
@@ -3535,7 +3535,10 @@ begin
   try
     if not Concept.FindConcept(id, index) then
       raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
-    res.descendants := mergeCardinals(index, GetConceptDescendants(index));
+    if includeBase then
+      res.descendants := mergeCardinals(index, GetConceptDescendants(index))
+    else
+      res.descendants := GetConceptDescendants(index);
     result := TSnomedFilterContext(res.link);
   finally
     res.Free;
@@ -3567,7 +3570,9 @@ begin
   result := nil;
   if (prop = 'concept') and StringIsId(value, id) then
     if op = foIsA then
-      result := filterIsA(id)
+      result := filterIsA(id, true)
+    else if op = foDescendentOf then
+      result := filterIsA(id, false)
     else if op = foIn then
       result := filterIn(id);
 end;
