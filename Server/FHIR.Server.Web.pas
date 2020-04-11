@@ -3805,7 +3805,7 @@ begin
           exit(fhirVersionRelease3)
         else if r = '3.0' then
           exit(fhirVersionRelease3)
-        else if r = '3.0.1' then
+        else if r = '3.0.2' then
           exit(fhirVersionRelease3)
         else if r = 'r2' then
           exit(fhirVersionRelease2)

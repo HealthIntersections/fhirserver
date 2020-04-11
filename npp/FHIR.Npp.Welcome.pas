@@ -147,7 +147,7 @@ end;
 
 procedure TWelcomeScreenForm.chkR3Click(Sender: TObject);
 begin
-  if chkR3.Checked and not FCache.packageExists('hl7.fhir.core', '3.0.1') then
+  if chkR3.Checked and not FCache.packageExists('hl7.fhir.core', '3.0.2') then
   begin
     PackageCacheForm := TPackageCacheForm.Create(self);
     try
@@ -157,12 +157,12 @@ begin
     finally
       FreeAndNil(PackageCacheForm);
     end;
-    if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+    if FCache.packageExists('hl7.fhir.core', '3.0.2') then
     begin
       Settings.loadR3 := true;
       Settings.CommitChanges;
     end;
-    chkR3.Checked := FCache.packageExists('hl7.fhir.core', '3.0.1') and Settings.loadR3;
+    chkR3.Checked := FCache.packageExists('hl7.fhir.core', '3.0.2') and Settings.loadR3;
   end;
 end;
 
@@ -201,7 +201,7 @@ begin
   chkVisualizer.Checked := Settings.VisualiserVisible;
   chkValidation.Checked := Settings.BackgroundValidation;
   chkR4.Checked := FCache.packageExists('hl7.fhir.core', 'current') and Settings.loadR4;
-  chkR3.Checked := FCache.packageExists('hl7.fhir.core', '3.0.1') and Settings.loadR3;
+  chkR3.Checked := FCache.packageExists('hl7.fhir.core', '3.0.2') and Settings.loadR3;
   chkR2.Checked := FCache.packageExists('hl7.fhir.core', '1.0.2') and Settings.loadR2;
 end;
 

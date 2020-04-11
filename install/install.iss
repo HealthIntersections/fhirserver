@@ -1859,7 +1859,7 @@ function checkDatabaseR3 : boolean;
 var 
   s, c : String;
 begin
-  s := MyDllCheckDatabase(dbDriverR3.text, ConnectionPageR3.values[0], ConnectionPageR3.values[1], ConnectionPageR3.values[2], ConnectionPageR3.values[3], '3.0.1');
+  s := MyDllCheckDatabase(dbDriverR3.text, ConnectionPageR3.values[0], ConnectionPageR3.values[1], ConnectionPageR3.values[2], ConnectionPageR3.values[3], '3.0.2');
   c := s[1];
   s := copy(s, 2, length(s));
   result := true;
@@ -2136,7 +2136,7 @@ var
   pl, s, t, pi : String;
   i : integer;
 begin
-  pl := MyDllListPackages('system', '3.0.1');
+  pl := MyDllListPackages('system', '3.0.2');
   
   PackagesR3.Text := pl;
   for i := 0 to packagesR3.count - 1 do 

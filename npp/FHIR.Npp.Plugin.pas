@@ -1740,7 +1740,7 @@ begin
     GBackgroundTasks.queueTask(FLoader2Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR2.create, Settings.TerminologyServerR2))
   else
     FContext.VersionLoading[fhirVersionRelease2] := vlsNotLoaded;
-  if Settings.loadR3 and FContext.Cache.packageExists('hl7.fhir.core', '3.0.1') then
+  if Settings.loadR3 and FContext.Cache.packageExists('hl7.fhir.core', '3.0.2') then
     GBackgroundTasks.queueTask(FLoader3Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR3.create, Settings.TerminologyServerR3))
   else
     FContext.VersionLoading[fhirVersionRelease3] := vlsNotLoaded;
