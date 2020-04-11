@@ -337,7 +337,7 @@ begin
         ssl.Host := settings.DirectPopHost;
         ssl.MaxLineAction := maException;
         ssl.Port := StrToInt(settings.DirectPopPort);
-        ssl.SSLOptions.Method := sslvTLSv1;
+        ssl.SSLOptions.Method := sslvTLSv1_2;
         ssl.SSLOptions.Mode := sslmUnassigned;
         ssl.SSLOptions.VerifyMode := [];
         ssl.SSLOptions.VerifyDepth := 0;
@@ -658,7 +658,7 @@ begin
       ssl.Host := chooseSMTPHost(direct);
       ssl.MaxLineAction := maException;
       ssl.Port := StrToInt(chooseSMTPPort(direct));
-      ssl.SSLOptions.Method := sslvTLSv1;
+      ssl.SSLOptions.Method := sslvTLSv1_2;
       ssl.SSLOptions.Mode := sslmUnassigned;
       ssl.SSLOptions.VerifyMode := [];
       ssl.SSLOptions.VerifyDepth := 0;
@@ -861,7 +861,7 @@ begin
       ssl.Host := settings.DirectHost;
       ssl.MaxLineAction := maException;
       ssl.Port := StrToInt(settings.DirectPort);
-      ssl.SSLOptions.Method := sslvTLSv1;
+      ssl.SSLOptions.Method := sslvTLSv1_2;
       ssl.SSLOptions.Mode := sslmUnassigned;
       ssl.SSLOptions.VerifyMode := [];
       ssl.SSLOptions.VerifyDepth := 0;
