@@ -40,7 +40,7 @@ interface
 
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.Rtti,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
@@ -178,6 +178,8 @@ type
     MenuItem11: TMenuItem;
     mnuResourceOrganise: TMenuItem;
     ProgressBar1: TProgressBar;
+    Button14: TButton;
+    MenuItem12: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -216,6 +218,7 @@ type
     procedure mnuPublishClick(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
     procedure mnuResourceOrganiseClick(Sender: TObject);
+    procedure btnPasteAsNewClick(Sender: TObject);
   private
     { Private declarations }
     FSettings: TFHIRToolkitSettings;
@@ -242,7 +245,8 @@ type
     procedure saveFiles;
     procedure openResourceFromFile(filename: String; res: TFHIRResource; format: TFHIRFormat; frameClass: TBaseResourceFrameClass);
     procedure OpenResourcefromClient(Sender: TObject; Client: TFHIRClient; format: TFHIRFormat; resource: TFHIRResource);
-    procedure newResource(rClass: TFhirResourceClass; frameClass: TBaseResourceFrameClass);
+    procedure newResource(rClass: TFhirResourceClass; frameClass: TBaseResourceFrameClass); overload;
+    procedure newResource(source : String); overload;
     procedure addFileToList(filename: String);
     function frameForResource(res: TFHIRResource): TBaseResourceFrameClass;
     function doSave: Boolean;
@@ -679,6 +683,26 @@ end;
 procedure TMasterToolsForm.btnStopClick(Sender: TObject);
 begin
   FIsStopped := true;
+end;
+
+procedure TMasterToolsForm.btnPasteAsNewClick(Sender: TObject);
+var
+  Svc: IFMXClipboardService;
+  text : String;
+  Value: TValue;
+begin
+ if TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService, Svc) then
+  begin
+    Value := Svc.GetClipboard;
+    if not Value.IsEmpty then
+    begin
+      if Value.IsType<string> then
+      begin
+        Text := Value.ToString;
+        newResource(text);
+      end;
+    end;
+  end;
 end;
 
 procedure TMasterToolsForm.tbnSaveClick(Sender: TObject);
@@ -1281,6 +1305,54 @@ begin
     frame.tab := FValidationTab;
     frame.Align := TAlignLayout.Client;
     frame.load;
+  end;
+end;
+
+procedure TMasterToolsForm.newResource(source: String);
+var
+  format : TFHIRFormat;
+  res : TFHIRResource;
+  tab: TTabItem;
+  frame: TBaseResourceFrame;
+  fcs: IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    format := ffUnspecified;
+    res := stringToResource(source, format);
+    try
+      tab := tbMain.Add(TTabItem);
+      tbMain.ActiveTab := tab;
+      frame := frameForResource(res).Create(tab);
+      tab.TagObject := frame;
+      tab.Text := 'New ' + res.fhirType;
+      tab.Hint := tab.Text;
+      tab.ShowHint := true;
+      frame.TagObject := tab;
+      frame.Parent := tab;
+      frame.tabs := tbMain;
+      frame.OnWork := dowork;
+      frame.Settings := FSettings.Link;
+      frame.tab := tab;
+      frame.Align := TAlignLayout.Client;
+      frame.filename := '$$';
+      frame.resource := res.link;
+      frame.format := format;
+      frame.load;
+    finally
+      res.free;
+    end;
+  finally
+    if Assigned(fcs) then
+      fcs.SetCursor(Cursor);
   end;
 end;
 
