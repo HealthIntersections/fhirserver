@@ -1452,7 +1452,7 @@ begin
             FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
             cctxt := cs.locate(cc.code);
             try
-              if not params.activeOnly or not cs.IsInactive(cctxt) then
+              if (cctxt <> nil) and (not params.activeOnly or not cs.IsInactive(cctxt)) then
               begin
                 display := chooseDisplay(cc, params);
                 if (display = '') then
