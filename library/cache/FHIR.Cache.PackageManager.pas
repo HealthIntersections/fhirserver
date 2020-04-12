@@ -1371,11 +1371,11 @@ class procedure TPackageDefinition.AddStandardPackages;
   end;
 begin
   addPackage('hl7.fhir.r5.core', '4.2.0', 'http://hl7.org/fhir', '4.2.0', 'http://hl7.org/fhir/2020Feb/hl7.fhir.r5.core.tgz', EncodeDate(2019, 12, 31), 'FHIR R5');
-  addPackage('hl7.fhir.r4.core', '4.0.1', 'http://hl7.org/fhir', '4.0.0', 'http://hl7.org/fhir/R4/hl7.fhir.r4.core.tgz', EncodeDate(2018, 12, 18), 'FHIR R4');
+  addPackage('hl7.fhir.r4.core', '4.0.1', 'http://hl7.org/fhir', '4.0.1', 'http://hl7.org/fhir/R4/hl7.fhir.r4.core.tgz', EncodeDate(2018, 12, 18), 'FHIR R4');
   addPackage('hl7.fhir.r3.core', '3.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/STU3/hl7.fhir.r3.core.tgz', EncodeDate(2017, 4, 19), 'FHIR R3');
   addPackage('hl7.fhir.r2.core', '1.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/DSTU2/hl7.fhir.r2.core.tgz', EncodeDate(2016, 5, 15), 'FHIR R2');
   addPackage('hl7.fhir.r5.examples', '4.2.0', 'http://hl7.org/fhir', '4.2.0', 'http://hl7.org/fhir/2020Feb/hl7.fhir.r5.examples.tgz', EncodeDate(2019, 12, 31), 'FHIR R5');
-  addPackage('hl7.fhir.r4.examples', '4.0.1', 'http://hl7.org/fhir', '4.0.0', 'http://hl7.org/fhir/R4/hl7.fhir.r4.examples.tgz', EncodeDate(2018, 12, 18), 'FHIR R4');
+  addPackage('hl7.fhir.r4.examples', '4.0.1', 'http://hl7.org/fhir', '4.0.1', 'http://hl7.org/fhir/R4/hl7.fhir.r4.examples.tgz', EncodeDate(2018, 12, 18), 'FHIR R4');
   addPackage('hl7.fhir.r3.examples', '3.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/STU3/hl7.fhir.r3.examples.tgz', EncodeDate(2017, 4, 19), 'FHIR R3');
   addPackage('hl7.fhir.r2.examples', '1.0.2', 'http://hl7.org/fhir', '3.0.2', 'http://hl7.org/fhir/DSTU2/hl7.fhir.r2.examples.tgz', EncodeDate(2016, 5, 15), 'FHIR R2');
 end;
@@ -1400,8 +1400,8 @@ class procedure TPackageDefinition.AddCustomPackages;
     end;
   end;
 begin
-  add('fhir.tx.support', '4.0.0', 'http://fhir.org/test', 'tx.fhir.org definitions', '4.0.1', 'http://fhir.org/packages/fhir.tx.support/4.0.0');
-  add('fhir.tx.support', '3.0.1', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.0.2', 'http://fhir.org/packages/fhir.tx.support/3.0.1');
+  add('fhir.tx.support', '4.0.1', 'http://fhir.org/test', 'tx.fhir.org definitions', '4.0.1', 'http://fhir.org/packages/fhir.tx.support/4.0.1');
+  add('fhir.tx.support', '3.0.2', 'http://fhir.org/test', 'tx.fhir.org definitions', '3.0.2', 'http://fhir.org/packages/fhir.tx.support/3.0.2');
   add('fhir.tx.support', '1.0.2', 'http://fhir.org/test', 'tx.fhir.org definitions', '1.0.2', 'http://fhir.org/packages/fhir.tx.support/1.0.2');
   add('fhir.argonaut.ehr', '1.0.0', 'http://fhir.org/guides/argonaut', 'Argonaut EHR Query', '1.0.2', 'http://www.fhir.org/guides/argonaut/r2');
 end;
