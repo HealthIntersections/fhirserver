@@ -515,7 +515,7 @@ begin
       if (dep.has('simplifier.core.r2')) then
         exit('2.0');
     end;
-    raise EFHIRException.create('no core dependency or FHIR Version found in the Package definition');
+    result := 'n/a';
   end;
 end;
 

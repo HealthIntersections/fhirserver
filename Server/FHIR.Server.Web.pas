@@ -85,7 +85,9 @@ Uses
   {$IFDEF MSWINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
+  {$IFDEF MSWINDOWS}
   FHIR.Database.ODBC,
+  {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
   FHIR.Client.HTTP,
   FHIR.Cache.PackageUpdater,
@@ -555,7 +557,7 @@ Uses
 {$IFDEF MSWINDOWS}
   Registry,
 {$ENDIF}
-  FHIR.Web.Facebook, FHIR.Server.Covid;
+  FHIR.Web.Facebook{$IFDEF COVID}, FHIR.Server.Covid{$ENDIF};
 
 type
   THtmlFormScriptPlugin = class (TFHIRWebServerScriptPlugin)
@@ -3829,7 +3831,9 @@ begin
   if factory.version = fhirVersionRelease4 then
   begin
     FPlugins.add(THtmlFormScriptPlugin.create);
+    {$IFDEF COVID}
     FPlugins.add(TCovidScriptPlugin.create(FWebServer.SourceProvider.link, FContext.Link));
+    {$ENDIF}
   end;
 end;
 
@@ -4093,8 +4097,10 @@ end;
 
 Procedure TFhirWebServer.Start(active: boolean);
 Begin
+  {$IFDEF MSWINDOWS}
   if FTwilioDB <> '' then
     FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
+  {$ENDIF}
 
   logt('Start Web Server:');
   if (FActualPort = 0) then

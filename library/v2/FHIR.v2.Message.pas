@@ -239,6 +239,7 @@ type
 
   TV2FHIRPathExtensions = class (TFHIRPathEngineExtension)
   public
+    function resolveConstant(context : TFHIRPathExecutionContext; s : String; var obj : TFHIRObject) : boolean; override;
     function isValidFunction(name : String) : boolean; override;
     function functionApplies(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; name : String): boolean; override;
     function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNodeV>; engine : TFHIRPathEngineV): TFHIRSelectionList; override;
@@ -1414,6 +1415,11 @@ end;
 function TV2FHIRPathExtensions.isValidFunction(name: String): boolean;
 begin
   result := (name = 'text') or (name = 'element') or (name = 'simple') ;
+end;
+
+function TV2FHIRPathExtensions.resolveConstant(context: TFHIRPathExecutionContext; s: String; var obj: TFHIRObject): boolean;
+begin
+  result := false;
 end;
 
 function TV2FHIRPathExtensions.functionApplies(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; name: String): boolean;

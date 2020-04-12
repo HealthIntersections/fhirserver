@@ -1,5 +1,5 @@
 inherited SettingForm: TSettingForm
-  ActiveControl = cbPathSummary
+  ActiveControl = edtServerR2
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'FHIR notepad++ Plugin Settings'
@@ -25,7 +25,7 @@ inherited SettingForm: TSettingForm
     Top = 0
     Width = 699
     Height = 373
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -36,10 +36,6 @@ inherited SettingForm: TSettingForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Configuration'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -263,7 +259,7 @@ inherited SettingForm: TSettingForm
             Top = 19
             Width = 73
             Height = 17
-            Caption = 'R2 (1.0.2)'
+            Caption = 'R2 (1.0)'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -277,7 +273,7 @@ inherited SettingForm: TSettingForm
             Top = 42
             Width = 73
             Height = 17
-            Caption = 'R3 (3.0.1)'
+            Caption = 'R3 (3.0)'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -291,7 +287,7 @@ inherited SettingForm: TSettingForm
             Top = 65
             Width = 73
             Height = 17
-            Caption = 'R4 (3.4.0)'
+            Caption = 'R4 (4.0)'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -345,10 +341,6 @@ inherited SettingForm: TSettingForm
     object TabSheet3: TTabSheet
       Caption = 'Settings'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -359,7 +351,6 @@ inherited SettingForm: TSettingForm
         ParentBackground = False
         ParentColor = True
         TabOrder = 0
-        ExplicitTop = -3
         object GroupBox3: TGroupBox
           Left = 0
           Top = 115
@@ -374,8 +365,6 @@ inherited SettingForm: TSettingForm
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 0
-          ExplicitTop = 8
-          ExplicitWidth = 688
           DesignSize = (
             691
             67)
@@ -471,9 +460,6 @@ inherited SettingForm: TSettingForm
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 2
-          ExplicitLeft = -4
-          ExplicitTop = 140
-          ExplicitWidth = 688
           object chkWelcome: TCheckBox
             Left = 30
             Top = 27
@@ -506,18 +492,12 @@ inherited SettingForm: TSettingForm
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 4
-          ExplicitLeft = -4
-          ExplicitTop = 172
         end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Servers'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -597,7 +577,7 @@ inherited SettingForm: TSettingForm
           end
           item
             Position = 1
-            Width = 241
+            Width = 237
             WideText = 'URL'
           end
           item

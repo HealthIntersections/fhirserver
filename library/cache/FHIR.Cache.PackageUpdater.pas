@@ -28,7 +28,7 @@ Type
   private
     FDB : TFslDBConnection;
     FErrors: String;
-    procedure log(msg : String);
+    procedure log(msg, source : String; error : boolean);
 
     function fetchUrl(url, mimetype : string) : TBytes;
     function fetchJson(url : string) : TJsonObject;
@@ -38,7 +38,7 @@ Type
     procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
     procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
-    procedure updateTheFeed(url : String; pr : TPackageRestrictions);
+    procedure updateTheFeed(url, source : String; pr : TPackageRestrictions);
   public
     procedure update(DB : TFslDBConnection);
 
@@ -85,9 +85,10 @@ begin
   FDB.Terminate;
 end;
 
-procedure TPackageUpdater.log(msg: String);
+procedure TPackageUpdater.log(msg, source: String; error : boolean);
 begin
-  FErrors := FErrors + msg+#13#10;
+  if error then
+    FErrors := FErrors + msg+' (from '+source+')'+#13#10;
   logt(msg);
 end;
 
@@ -106,7 +107,7 @@ begin
     version := npm.version;
     if (id+'#'+version <> idver) then
     begin
-      log('Error processing '+idver+': actually found '+id+'#'+version+' in the package');
+      log('Error processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
       exit;
     end;
 
@@ -179,14 +180,14 @@ begin
   FErrors := '';
   FDB := DB;
   try
-    log('Fetch '+MASTER_URL);
+    log('Fetch '+MASTER_URL, '', false);
     json := fetchJson(MASTER_URL);
     try
       pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
       try
         arr := json.arr['feeds'];
         for i := 0 to arr.Count - 1 do
-          updateTheFeed(arr.Obj[i].str['url'], pr);
+          updateTheFeed(arr.Obj[i].str['url'], MASTER_URL, pr);
       finally
         pr.Free;
       end;
@@ -196,19 +197,19 @@ begin
   except
     on e : Exception do
     begin
-      Log('Exception Processing Registry: '+e.Message)
+      Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
     end;
   end;
 end;
 
-procedure TPackageUpdater.updateTheFeed(url: String; pr : TPackageRestrictions);
+procedure TPackageUpdater.updateTheFeed(url, source: String; pr : TPackageRestrictions);
 var
   xml : TMXmlElement;
   channel : TMXmlElement;
   item : TMXmlElement;
 begin
   try
-    log('Fetch '+url);
+    log('Fetch '+url, source, false);
 
     xml := fetchXml(url);
     try
@@ -231,7 +232,7 @@ begin
   except
     on e : Exception do
     begin
-      log('Exception processing feed: '+url+': '+e.Message);
+      log('Exception processing feed: '+url+': '+e.Message, source, false);
     end;
   end;
 end;
@@ -252,18 +253,18 @@ begin
       if (not hasStored(guid)) then
       begin
         date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', item.element('pubDate').Text.Substring(5));
-        log('Fetch '+item.element('link').Text);
+        log('Fetch '+item.element('link').Text, source, false);
         url := item.element('link').Text;
         content := fetchUrl(url, 'application/tar+gzip');
         store(source, guid, date, content, id);
       end;
     end
     else
-      log('The package '+id+' is not allowed to come from '+source);
+      log('The package '+id+' is not allowed to come from '+source, source, true);
   except
     on e : Exception do
     begin
-      log('Exception processing item: '+guid+' from '+url+': '+e.Message);
+      log('Exception processing item: '+guid+' from '+url+': '+e.Message, source, true);
     end;
   end;
 end;

@@ -895,7 +895,11 @@ begin
           b.Append(#13#10);
       end
       else
+      begin
         b.append('/>');
+        if pretty then
+          b.Append(#13#10);
+      end;
       end;
     ntText:
       if pretty then

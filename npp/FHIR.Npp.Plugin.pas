@@ -1736,15 +1736,15 @@ begin
   if Settings.loadR4 then
     FContext.VersionLoading[fhirVersionRelease4] := vlsLoading;
   reset;
-  if Settings.loadR2 and FContext.Cache.packageExists('hl7.fhir.core', '1.0.2') then
+  if Settings.loadR2 and FContext.Cache.packageExists('hl7.fhir.r2.core', '1.0') then
     GBackgroundTasks.queueTask(FLoader2Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR2.create, Settings.TerminologyServerR2))
   else
     FContext.VersionLoading[fhirVersionRelease2] := vlsNotLoaded;
-  if Settings.loadR3 and FContext.Cache.packageExists('hl7.fhir.core', '3.0.1') then
+  if Settings.loadR3 and FContext.Cache.packageExists('hl7.fhir.r3.core', '3.0') then
     GBackgroundTasks.queueTask(FLoader3Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR3.create, Settings.TerminologyServerR3))
   else
     FContext.VersionLoading[fhirVersionRelease3] := vlsNotLoaded;
-  if Settings.loadR4 and (FContext.Cache.packageExists('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION) or FContext.Cache.packageExists('hl7.fhir.core', 'current')) then
+  if Settings.loadR4 and FContext.Cache.packageExists('hl7.fhir.r4.core', '4.0') then
     GBackgroundTasks.queueTask(FLoader4Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR4.create, Settings.TerminologyServerR4))
   else
     FContext.VersionLoading[fhirVersionRelease4] := vlsNotLoaded;
@@ -2261,7 +2261,7 @@ begin
         // limit the amount of resource types loaded for convenience...
         rset := TFslStringSet.Create(['StructureDefinition', 'CodeSystem', 'ValueSet']);
         try
-          input.Plugin.Context.Cache.loadPackage('hl7.fhir.core', input.Factory.versionString, rset, ctxt.loadInfo);
+          input.Plugin.Context.Cache.loadPackage(input.Factory.corePackage, input.Factory.versionString, rset, ctxt.loadInfo);
         finally
           rset.Free;
         end;

@@ -171,15 +171,15 @@ begin
   PackageCacheForm := TPackageCacheForm.Create(self);
   try
     PackageCacheForm.ShowModal;
-    if FCache.packageExists('hl7.fhir.core', '1.0.2') then
+    if FCache.packageExists('hl7.fhir.r2.core', '1.0') then
       cbR2.Checked := Settings.loadR2
     else
       cbR2.enabled := false;
-    if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+    if FCache.packageExists('hl7.fhir.r3.core', '3.0') then
       cbR3.Checked := Settings.loadR3
     else
       cbR3.enabled := false;
-    if FCache.packageExists('hl7.fhir.core', FHIR_GENERATED_VERSION) or FCache.packageExists('hl7.fhir.core', 'current') then
+    if FCache.packageExists('hl7.fhir.r4.core', '4.0') then
       cbR4.Checked := Settings.loadR4
     else
       cbR4.enabled := false;
@@ -305,15 +305,15 @@ begin
   edtServerR2.Text := Settings.TerminologyServerR2;
   edtServerR3.Text := Settings.TerminologyServerR3;
   edtServerR4.Text := Settings.TerminologyServerR4;
-  if FCache.packageExists('hl7.fhir.core', '1.0.2') then
+  if FCache.packageExists('hl7.fhir.r2.core', '1.0') then
     cbR2.Checked := Settings.loadR2
   else
     cbR2.enabled := false;
-  if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+  if FCache.packageExists('hl7.fhir.r3.core', '3.0') then
     cbR3.Checked := Settings.loadR3
   else
     cbR3.enabled := false;
-  if FCache.packageExists('hl7.fhir.core', FHIR_GENERATED_VERSION) or FCache.packageExists('hl7.fhir.core', 'current') then
+  if FCache.packageExists('hl7.fhir.r4.core', '4.0') then
     cbR4.Checked := Settings.loadR4
   else
     cbR4.enabled := false;

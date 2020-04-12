@@ -977,6 +977,13 @@ begin
       if ExtractFileName(s).StartsWith(id+'#') then
         exit(true);
   end
+  else if ver.CountChar('.') = 1 then
+  begin
+    result := false;
+    for s in TDirectory.GetDirectories(FFolder) do
+      if ExtractFileName(s).StartsWith(id+'#'+ver) then
+        exit(true);
+  end
   else
   begin
     result := FolderExists(Path([FFolder, id+'#'+ver]));

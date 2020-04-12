@@ -158,6 +158,8 @@ function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 function bytesToResource(bytes : TBytes) : TFhirResource; overload;
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource; overload;
+function stringToResource(source : String) : TFhirResource; overload;
+function stringToResource(source : String; var format : TFHIRFormat) : TFhirResource; overload;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
@@ -5757,6 +5759,26 @@ var
 begin
   format := ffUnspecified;
   result := fileToResource(name, format);
+end;
+
+function stringToResource(source : String) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  format := ffUnspecified;
+  result := stringToResource(source, format);
+end;
+
+function stringToResource(source : String; var format : TFHIRFormat) : TFhirResource;
+var
+  b : TStringStream;
+begin
+  b := TStringStream.Create(source, TEncoding.UTF8);
+  try
+    result := streamToResource(b, format);
+  finally
+    b.Free;
+  end;
 end;
 
 function bytesToResource(bytes : TBytes) : TFhirResource;

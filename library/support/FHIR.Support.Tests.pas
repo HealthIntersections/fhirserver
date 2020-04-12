@@ -161,6 +161,17 @@ Type
   end;
 
   [TextFixture]
+  TXmlUtilsTests = Class (TObject)
+  Private
+  Published
+    [TestCase]
+    procedure TestUnPretty;
+    procedure TestPretty;
+    procedure TestNoPretty;
+    procedure TestNoDense;
+  End;
+
+  [TextFixture]
   TXPathParserTests = Class (TObject)
   Private
     tests : TMXmlDocument;
@@ -4561,11 +4572,81 @@ begin
   self.value := value;
 end;
 
+{ TXmlUtilsTests }
+
+procedure TXmlUtilsTests.TestNoDense;
+var
+  x : TMXmlDocument;
+  src, output, tgt : String;
+begin
+  src := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-pretty.xml', TEncoding.UTF8);
+  tgt := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-pretty.xml', TEncoding.UTF8);
+  x := TMXmlParser.parse(src, [xpDropWhitespace]);
+  try
+    output := x.ToXml(true, false);
+  finally
+    x.Free;
+  end;
+  StringToFile(output, 'C:\work\fhirserver\utilities\tests\xml\xml-output.xml', TEncoding.UTF8);
+  Assert.AreEqual(output, tgt);
+end;
+
+procedure TXmlUtilsTests.TestNoPretty;
+var
+  x : TMXmlDocument;
+  src, output, tgt : String;
+begin
+  src := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-condensed.xml', TEncoding.UTF8);
+  tgt := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-condensed.xml', TEncoding.UTF8);
+  x := TMXmlParser.parse(src, [xpDropWhitespace]);
+  try
+    output := x.ToXml(false, false);
+  finally
+    x.Free;
+  end;
+  StringToFile(output, 'C:\work\fhirserver\utilities\tests\xml\xml-output.xml', TEncoding.UTF8);
+  Assert.AreEqual(output, tgt);
+end;
+
+procedure TXmlUtilsTests.TestPretty;
+var
+  x : TMXmlDocument;
+  src, output, tgt : String;
+begin
+  src := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-condensed.xml', TEncoding.UTF8);
+  tgt := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-pretty.xml', TEncoding.UTF8);
+  x := TMXmlParser.parse(src, [xpDropWhitespace]);
+  try
+    output := x.ToXml(true, false);
+  finally
+    x.Free;
+  end;
+  StringToFile(output, 'C:\work\fhirserver\utilities\tests\xml\xml-output.xml', TEncoding.UTF8);
+  Assert.AreEqual(output, tgt);
+end;
+
+procedure TXmlUtilsTests.TestUnPretty;
+var
+  x : TMXmlDocument;
+  src, output, tgt : String;
+begin
+  src := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-pretty.xml', TEncoding.UTF8);
+  tgt := FileToString('C:\work\fhirserver\utilities\tests\xml\xml-condensed.xml', TEncoding.UTF8);
+  x := TMXmlParser.parse(src, [xpDropWhitespace]);
+  try
+    output := x.ToXml(false, false);
+  finally
+    x.Free;
+  end;
+  Assert.AreEqual(output, tgt);
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
   TDUnitX.RegisterTestFixture(TOSXTests);
   TDUnitX.RegisterTestFixture(TXmlParserTests);
+  TDUnitX.RegisterTestFixture(TXmlUtilsTests);
   TDUnitX.RegisterTestFixture(TXPathParserTests);
   TDUnitX.RegisterTestFixture(TXPathEngineTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);

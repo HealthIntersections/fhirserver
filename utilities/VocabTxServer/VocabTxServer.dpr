@@ -209,7 +209,8 @@ uses
   FHIR.Server.IndexingR4 in '..\..\Server\FHIR.Server.IndexingR4.pas',
   FHIR.Server.ValidatorR4 in '..\..\Server\FHIR.Server.ValidatorR4.pas',
   FHIR.Cache.PackageUpdater in '..\..\library\cache\FHIR.Cache.PackageUpdater.pas',
-  FHIR.Server.Packages in '..\..\Server\FHIR.Server.Packages.pas';
+  FHIR.Server.Packages in '..\..\Server\FHIR.Server.Packages.pas',
+  FHIR.Server.Twilio in '..\..\Server\FHIR.Server.Twilio.pas';
 
 {$R *.res}
 
