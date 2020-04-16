@@ -552,7 +552,10 @@ var
 begin
   ctxt := ServerContext.ValidatorContext as TFHIRServerWorkerContextR3;
   r := res as TFhirResource;
-  expression := ctxt.PatientIdExpression(r.ResourceType);
+  if r = nil then
+    expression := nil
+  else
+    expression := ctxt.PatientIdExpression(r.ResourceType);
   if expression <> nil then
   begin
     CreateIndexer;

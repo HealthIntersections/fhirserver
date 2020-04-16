@@ -592,7 +592,7 @@ begin
 
   ctxt := ServerContext.ValidatorContext as TFHIRServerWorkerContextR4;
   r := res as TFhirResource;
-  if r <> nil then
+  if r = nil then
     expression := nil
   else
     expression := ctxt.PatientIdExpression(r.ResourceType);
