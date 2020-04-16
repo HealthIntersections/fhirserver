@@ -473,8 +473,8 @@ begin
       try
         packages := TFslList<TFHIRPackageInfo>.create;
         try
-          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_PRIMARY, '');
-          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_BACKUP, '');
+//          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_PRIMARY, '');
+//          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_BACKUP, '');
           for p in packages do
           begin
             if versionMatches(p.FHIRVersion, version) then
