@@ -58,7 +58,8 @@ uses
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Base.Utilities in '..\..\library\base\FHIR.Base.Utilities.pas',
   FHIR.Web.Parsers in '..\..\library\web\FHIR.Web.Parsers.pas',
-  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas';
+  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
+  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
@@ -437,11 +438,32 @@ begin
   result := (p = 'u') or (p = 'user');
 end;
 
+function normaliseVersion(v : String): String;
+begin
+  if (v = 'STU3') then
+    result := '3.0'
+  else if (v = 'DSTU3') then
+    result := '1.0'
+  else if (v = 'R4') then
+    result := '4.0'
+  else if (v.Length > 3) then
+    result := v.Substring(0, 3)
+  else
+    result := v;
+end;
+
+function versionMatches(v1, v2 : String): boolean;
+begin
+  v1 := normaliseVersion(v1);
+  v2 := normaliseVersion(v2);
+  result := v1 = v2;
+end;
+
 Function MyDllListPackages(mode : PAnsiChar; Version : PAnsiChar) : PAnsiChar; stdcall;
 var
   pcm : TFHIRPackageManager;
-  packages : TFslList<TPackageDefinition>;
-  p : TPackageDefinition;
+  packages : TFslList<TFHIRPackageInfo>;
+  p : TFHIRPackageInfo;
   b : TFslStringBuilder;
 begin
   try
@@ -449,14 +471,13 @@ begin
     try
       pcm := TFHIRPackageManager.Create(isUser(mode));
       try
-        packages := TFslList<TPackageDefinition>.create;
+        packages := TFslList<TFHIRPackageInfo>.create;
         try
-          TPackageDefinition.addStandardPackages(packages);
-          TPackageDefinition.addCustomPackages(packages);
-          TPackageDefinition.addPackagesFromBuild(packages);
+          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_PRIMARY, '');
+          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_BACKUP, '');
           for p in packages do
           begin
-            if p.FHIRVersion = version then
+            if versionMatches(p.FHIRVersion, version) then
             begin
               if b.Length > 0 then
                 b.Append(#13#10);
@@ -516,10 +537,6 @@ var
 begin
   packages := TFslList<TPackageDefinition>.create;
   try
-    TPackageDefinition.addStandardPackages(packages);
-    TPackageDefinition.addCustomPackages(packages);
-    TPackageDefinition.addPackagesFromBuild(packages);
-
     pcm := TFHIRPackageManager.Create(FUserMode);
     try
       pcm.OnCheck := check;

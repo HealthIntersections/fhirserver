@@ -136,16 +136,21 @@ begin
   v := edit1.Text;
   s := MyDllListPackages(PAnsiChar(edtPackage.Text), PAnsiChar(v));
   p := s;
+  if (p.startsWith('Error')) then
+    raise Exception.Create(p.subString(6));
   p := p.replace(#13#10, '~');
   pl := p.Split(['~']);
   CheckListBox1.Items.Clear;
   urls.clear;
   for p in pl do
   begin
-    tl := p.Trim.Split(['|']);
-    CheckListBox1.Items.Add(tl[2] + ': '+tl[3]);
-    CheckListBox1.Checked[CheckListBox1.Items.count- 1] := tl[1] = '1';
-    urls.Add(tl[2]);
+    if p <> '' then
+    begin
+      tl := p.Trim.Split(['|']);
+      CheckListBox1.Items.Add(tl[2] + ': '+tl[3]);
+      CheckListBox1.Checked[CheckListBox1.Items.count- 1] := tl[1] = '1';
+      urls.Add(tl[2]);
+    end;
   end;
 end;
 

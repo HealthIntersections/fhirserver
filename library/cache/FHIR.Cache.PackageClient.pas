@@ -148,14 +148,20 @@ var
 begin
   this := TFHIRPackageClient.Create(server);
   try
-    if (server.Contains('build.fhir.org')) then
-      l := this.fetchFromCIBuild
-    else
-      l := this.getVersions(id);
     try
-      list.AddAll(l);
-    finally
-      l.free;
+      if (server.Contains('build.fhir.org')) then
+        l := this.fetchFromCIBuild
+      else if (id = '') then
+        l := this.search('', '', '', false)
+      else
+        l := this.getVersions(id);
+      try
+        list.AddAll(l);
+      finally
+        l.free;
+      end;
+    except
+      // suppress for now
     end;
   finally
     this.Free;
