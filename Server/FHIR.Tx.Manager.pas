@@ -769,10 +769,13 @@ begin
   FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.create('tx.cs.base');
   FSupplementsById := TFslMap<TFhirCodeSystemW>.create('tx.cs.suppl');
 
-
   FBaseConceptMaps := TFslMap<TLoadedConceptMap>.create('tx.cm.base');
   FConceptMapsById := TFslMap<TLoadedConceptMap>.create('tx.cm.id');
   FConceptMapsByURL := TFslMap<TLoadedConceptMap>.create('tx.cm.url');
+
+  FBaseValueSets.defaultValue := nil;
+  FBaseCodeSystems.defaultValue := nil;
+  FBaseConceptMaps.defaultValue := nil;
 
   FStem := GetStemmer_8('english');
 
