@@ -3698,7 +3698,11 @@ begin
             for i := 0 to bl.count - 1 do
             begin
               be := bl[i];
-              Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
+              if (be.resource <> nil) then
+                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id
+              else
+                Context.messageDetail := be.requestUrl;
+
               context.progress(0+trunc(100 * (i / (bl.count * 10))));
               be.Tag := scanId(request, be, ids, i).Link;
             end;
