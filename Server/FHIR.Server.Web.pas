@@ -3956,11 +3956,15 @@ begin
   FHomePage := 'homepage.html';
   FFacebookLike := ini.identityProviders['facebook.com']['like'] = 'true';
   FHost := ini.web['host'];
-  FPackageServer.path := 'https://'+host+'/packages';
+
 
   // web server configuration
   FActualPort := StrToIntDef(ini.web['http'], 0);
   FActualSSLPort := StrToIntDef(ini.web['https'], 0);
+  if FActualPort <> 80 then
+    FPackageServer.path := 'http://'+host+':'+inttostr(FActualPort)+'/packages'
+  else
+    FPackageServer.path := 'http://'+host+'/packages';
   FCertFile := ini.web['certname'];
   FRootCertFile := ini.web['cacertname'];
   FSSLPassword := ini.web['password'];
@@ -4471,6 +4475,8 @@ begin
       begin
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
+          FPackageServer.serve(request, response)
         else if request.Document = '/twilio' then
           HandleTwilio(AContext, request, response, false, false)
         else if sp.exists(sp.AltFile(request.Document, '/')) then
