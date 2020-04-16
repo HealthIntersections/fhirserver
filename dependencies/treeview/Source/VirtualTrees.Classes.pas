@@ -33,7 +33,7 @@ uses
 
 type
   // Helper classes to speed up rendering text formats for clipboard and drag'n drop transfers.
-  TBufferedAnsiString = class
+  TBufferedRawByteString = class
   private
     FStart,
     FPosition,
@@ -48,7 +48,7 @@ type
     property AsString: RawByteString read GetAsString;
   end;
 
-  TWideBufferedString = class
+  TBufferedString = class
   private
     FStart,
     FPosition,
@@ -63,27 +63,15 @@ type
     property AsString: string read GetAsString;
   end;
 
-  TFslLock = class(TObject)
-  protected
-    FSection: TRTLCriticalSection;
-  public
-    constructor Create;
-    destructor Destroy; override;
-
-    procedure Enter;
-    procedure Leave;
-  end;
-
-
 
 implementation
 
-//----------------- TBufferedAnsiString ------------------------------------------------------------------------------------
+//----------------- TBufferedRawByteString ------------------------------------------------------------------------------------
 
 const
   AllocIncrement = 2 shl 11;  // Must be a power of 2.
 
-destructor TBufferedAnsiString.Destroy;
+destructor TBufferedRawByteString.Destroy;
 
 begin
   FreeMem(FStart);
@@ -92,7 +80,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-function TBufferedAnsiString.GetAsString: RawByteString;
+function TBufferedRawByteString.GetAsString: RawByteString;
 
 begin
   SetString(Result, FStart, FPosition - FStart);
@@ -100,7 +88,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-procedure TBufferedAnsiString.Add(const S: RawByteString);
+procedure TBufferedRawByteString.Add(const S: RawByteString);
 
 var
   NewLen,
@@ -126,7 +114,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-procedure TBufferedAnsiString.AddNewLine;
+procedure TBufferedRawByteString.AddNewLine;
 
 var
   NewLen,
@@ -150,9 +138,9 @@ begin
   Inc(FPosition);
 end;
 
-//----------------- TWideBufferedString --------------------------------------------------------------------------------
+//----------------- TBufferedString --------------------------------------------------------------------------------
 
-destructor TWideBufferedString.Destroy;
+destructor TBufferedString.Destroy;
 
 begin
   FreeMem(FStart);
@@ -161,7 +149,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-function TWideBufferedString.GetAsString: string;
+function TBufferedString.GetAsString: string;
 
 begin
   SetString(Result, FStart, FPosition - FStart);
@@ -169,7 +157,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-procedure TWideBufferedString.Add(const S: string);
+procedure TBufferedString.Add(const S: string);
 
 var
   NewLen,
@@ -178,6 +166,8 @@ var
 
 begin
   Len := Length(S);
+  if Len = 0 then
+    exit;//Nothing to do
   // Make room for the new string.
   if FEnd - FPosition <= Len then
   begin
@@ -195,7 +185,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-procedure TWideBufferedString.AddNewLine;
+procedure TBufferedString.AddNewLine;
 
 var
   NewLen,
@@ -217,41 +207,6 @@ begin
   Inc(FPosition);
   FPosition^ := #10;
   Inc(FPosition);
-end;
-
-//----------------- TFslLock -----------------------------------------------------------------------------------
-
-constructor TFslLock.Create;
-
-begin
-  inherited Create;
-  InitializeCriticalSection(FSection);
-end;
-
-//----------------------------------------------------------------------------------------------------------------------
-
-destructor TFslLock.Destroy;
-
-begin
-  DeleteCriticalSection(FSection);
-
-  inherited Destroy;
-end;
-
-//----------------------------------------------------------------------------------------------------------------------
-
-procedure TFslLock.Enter;
-
-begin
-  EnterCriticalSection(FSection);
-end;
-
-//----------------------------------------------------------------------------------------------------------------------
-
-procedure TFslLock.Leave;
-
-begin
-  LeaveCriticalSection(FSection);
 end;
 
 
