@@ -353,6 +353,17 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
+        <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas"/>
+        <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
+        <DCCReference Include="..\library\ui\FHIR.Ui.WorkerTask.pas">
+            <Form>WorkingForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\library\cache\FHIR.Cache.PackageVersionBrowser.pas">
+            <Form>PackageVersionChooserForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>

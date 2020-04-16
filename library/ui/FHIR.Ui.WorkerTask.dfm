@@ -18,9 +18,9 @@ object WorkingForm: TWorkingForm
   object lblStatus: TLabel
     Left = 8
     Top = 8
-    Width = 41
+    Width = 51
     Height = 13
-    Caption = 'lblStatus'
+    Caption = 'Working...'
   end
   object pbPercent: TProgressBar
     Left = 8

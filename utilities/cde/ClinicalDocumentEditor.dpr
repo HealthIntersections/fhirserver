@@ -108,7 +108,9 @@ uses
   FHIR.v2.Publish in '..\..\library\v2\FHIR.v2.Publish.pas',
   FHIR.WP.Format in '..\..\library\wp\FHIR.WP.Format.pas',
   FHIR.v2.Conformance in '..\..\library\v2\FHIR.v2.Conformance.pas',
-  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
+  VirtualTrees.AccessibilityFactory in '..\..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
+  VirtualTrees.HeaderPopup in '..\..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

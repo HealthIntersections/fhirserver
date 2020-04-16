@@ -109,6 +109,7 @@ Type
     procedure move(index, delta : integer);
     procedure clear;
 
+    function asObjects : TFslList<TJsonObject>;
     function GetEnumerator : TJsonArrayEnumerator; // can only use this when the array members are objects
   end;
 
@@ -210,6 +211,7 @@ Type
     Property forceArr[name : String] : TJsonArray read GetForcedArray;
     procedure clear(name : String = '');
 
+    function str2(n1, n2 : String) : String;
     Property name : String read FName write FName;
     Property properties : TFslMap<TJsonNode> read FProperties;
   end;
@@ -1917,6 +1919,20 @@ begin
   add(result);
 end;
 
+function TJsonArray.asObjects: TFslList<TJsonObject>;
+var
+  i : integer;
+begin
+  result := TFslList<TJsonObject>.create;
+  try
+    for I := 0 to count - 1 do
+      result.Add(obj[i].Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
 procedure TJsonArray.clear;
 begin
   FItems.Clear;
@@ -2376,6 +2392,14 @@ begin
   finally
     v.Free;
   end;
+end;
+
+function TJsonObject.str2(n1, n2: String): String;
+begin
+  if has(n1) then
+    result := str[n1]
+  else
+    result := str[n2];
 end;
 
 procedure TJsonObject.SetNumber(name: String; const Value: String);

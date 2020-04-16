@@ -115,7 +115,7 @@ uses
   FHIR.Transformer.SettingsDialog in 'FHIR.Transformer.SettingsDialog.pas' {TransformerOptionsForm},
   FHIR.Base.PathDebugger in '..\library\base\FHIR.Base.PathDebugger.pas' {FHIRPathDebuggerForm},
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
-  FHIR.Transformer.WorkingDialog in 'FHIR.Transformer.WorkingDialog.pas' {WorkingForm},
+  FHIR.Ui.WorkerTask in '..\library\ui\FHIR.Ui.WorkerTask.pas' {WorkingForm},
   FHIR.Transformer.FileChangedDlg in 'FHIR.Transformer.FileChangedDlg.pas' {FileChangedForm},
   FHIR.Transformer.Editor in 'FHIR.Transformer.Editor.pas',
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
@@ -140,7 +140,11 @@ uses
   FHIR.Cda.Javascript in '..\library\cda\FHIR.Cda.Javascript.pas',
   FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog},
   FHIR.Cache.PackageManager in '..\library\cache\FHIR.Cache.PackageManager.pas',
-  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
+  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
+  VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
+  VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
+  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm};
 
 {$R *.res}
 
@@ -155,5 +159,6 @@ begin
   Application.CreateForm(TFileChangedForm, FileChangedForm);
   Application.CreateForm(TMarkdownPreviewForm, MarkdownPreviewForm);
   Application.CreateForm(TTransformerExecConfigForm, TransformerExecConfigForm);
+  Application.CreateForm(TPackageVersionChooserForm, PackageVersionChooserForm);
   Application.Run;
 end.

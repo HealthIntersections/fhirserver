@@ -554,14 +554,17 @@ type
   private
     list : TStringList;
     FIgnoreDuplicates: Boolean;
+    FSeperator: String;
   public
-    constructor Create; override;
+    constructor Create; Overload; Override;
+    constructor Create(s : String); Overload;
     destructor Destroy; override;
 
     procedure add(s : String);
     function asString : string;
 
     property ignoreDuplicates : Boolean read FIgnoreDuplicates write FIgnoreDuplicates;
+    property separator : String read FSeperator write FSeperator;
   end;
 
 
@@ -6961,14 +6964,21 @@ begin
   begin
     result := list[0];
     for i := 1 to list.Count - 1 do
-      result := result + ', '+list[i];
+      result := result + FSeperator + list[i];
   end;
+end;
+
+constructor TCommaBuilder.Create(s: String);
+begin
+  Create;
+  FSeperator := s;
 end;
 
 constructor TCommaBuilder.Create;
 begin
   inherited create;
   list := TStringList.Create;
+  FSeperator := ', ';
 end;
 
 destructor TCommaBuilder.Destroy;

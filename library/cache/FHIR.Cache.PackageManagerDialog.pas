@@ -38,8 +38,11 @@ uses
   FHIR.Web.Fetcher,
   System.ImageList, Vcl.ImgList, Vcl.Menus,
   FHIR.Ui.TextPresentation,
-  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage,
+  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage, FHIR.Ui.WorkerTask,
   Vcl.ComCtrls;
+
+const
+  UMSG_PC = WM_USER + 1;
 
 type
   TTreeDataPointer = record
@@ -121,6 +124,7 @@ type
     FGoUrl: String;
     FActionMessage : String;
     FSelNode : PVirtualNode;
+    FProgress : TWorkingForm;
     procedure LoadPackages;
     procedure selChanged;
     procedure changeMode;
@@ -129,9 +133,18 @@ type
     function packageCheck(sender : TObject; msg : String) : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
     procedure sortPackageVersions;
+    procedure Init(var Msg: TMessage); message UMSG_PC;
   public
     property UserMode : boolean read FUserMode write FUserMode;
     property GoUrl : String read FGoUrl write FGoUrl;
+  end;
+
+  TLoadPackagesTask = class (TWorkerObject)
+  private
+    Form : TPackageCacheForm;
+  protected
+    procedure execute; override;
+    function caption : String; override;
   end;
 
 var
@@ -195,6 +208,11 @@ begin
   finally
     packageWork(sender, 100, true, '');
   end;
+end;
+
+procedure TPackageCacheForm.Init(var Msg: TMessage);
+begin
+  LoadPackages;
 end;
 
 procedure TPackageCacheForm.Button3Click(Sender: TObject);
@@ -303,13 +321,13 @@ begin
   lblFolder.Caption := 'Cache: '+FCache.Folder;
   lblFolder.Refresh;
   Caption := 'FHIR Package Cache Manager - '+FCache.description;
-  LoadPackages;
   if FLoading then
     if UserMode then
       RadioButton1.Checked := true
     else
       RadioButton2.Checked := true;
   FLoading := false;
+  PostMessage(handle, UMSG_PC, 0, 0);
 end;
 
 procedure TPackageCacheForm.lblFolderClick(Sender: TObject);
@@ -318,11 +336,19 @@ begin
 end;
 
 procedure TPackageCacheForm.LoadPackages;
+var
+  task : TLoadPackagesTask;
 begin
   if FPackages = nil then
     FPackages := TFslList<TNpmPackage>.Create;
   FPackages.Clear;
-  FCache.ListPackages(All_Package_Kinds, FPackages);
+  task := TLoadPackagesTask.Create;
+  try
+    task.Form := self;
+    task.runTask(self);
+  finally
+    task.Free;
+  end;
   sortPackageVersions;
   vtPackages.RootNodeCount := 0;
   vtPackages.RootNodeCount := FPackages.Count;
@@ -516,6 +542,18 @@ procedure TPackageCacheForm.vtPackagesKeyDown(Sender: TObject; var Key: Word;Shi
 begin
   if Key = VK_DELETE then
     btnDeleteClick(self);
+end;
+
+{ TLoadPackagesTask }
+
+function TLoadPackagesTask.caption: String;
+begin
+  result := 'Loading Packages';
+end;
+
+procedure TLoadPackagesTask.execute;
+begin
+  Form.FCache.ListPackages(All_Package_Kinds, Form.FPackages);
 end;
 
 end.

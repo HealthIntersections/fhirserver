@@ -219,6 +219,8 @@
         <DCCReference Include="..\..\library\wp\FHIR.WP.Format.pas"/>
         <DCCReference Include="..\..\library\v2\FHIR.v2.Conformance.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas"/>
+        <DCCReference Include="..\..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

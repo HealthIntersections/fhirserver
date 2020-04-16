@@ -79,7 +79,9 @@ Type
     Property ContentType : String read FContentType;
     property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
 
-    class function fetchJsonArr(url : String) : TJsonArray;
+    class function fetchUrl(url : String) : TBytes;
+    class function fetchJson(url : String) : TJsonObject;
+    class function fetchJsonArray(url : String) : TJsonArray;
   End;
 
 Implementation
@@ -201,20 +203,30 @@ begin
   End;
 end;
 
-class function TInternetFetcher.fetchJsonArr(url: String): TJsonArray;
+class function TInternetFetcher.fetchUrl(url : String) : TBytes;
 var
   this : TInternetFetcher;
 begin
   this := TInternetFetcher.Create;
   try
-    this.Buffer := TFslBuffer.Create;
     this.URL := url;
     this.Fetch;
-    result := TJSONParser.ParseNode(this.Buffer.AsBytes) as TJsonArray;
+    result := this.Buffer.AsBytes;
   finally
     this.Free;
   end;
 end;
+
+class function TInternetFetcher.fetchJson(url : String) : TJsonObject;
+begin
+  result := TJSONParser.Parse(fetchUrl(url));
+end;
+
+class function TInternetFetcher.fetchJsonArray(url : String) : TJsonArray;
+begin
+  result := TJSONParser.ParseNode(fetchUrl(url)) as TJsonArray;
+end;
+
 
 procedure TInternetFetcher.HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin

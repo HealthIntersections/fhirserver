@@ -204,7 +204,12 @@ uses
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Client.ClientDialog in '..\library\client\FHIR.Client.ClientDialog.pas' {RegisterClientForm},
   FHIR.Ui.TextPresentation in '..\library\ui\FHIR.Ui.TextPresentation.pas' {TextPresentationDialog},
-  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
+  VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
+  VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
+  FHIR.Ui.WorkerTask in '..\library\ui\FHIR.Ui.WorkerTask.pas' {WorkingForm},
+  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm};
 
 {$R *.res}
 

@@ -158,7 +158,7 @@ Type
   end;
 
 const
-  All_Package_Kinds = [fpkCore..fpkToolGen];
+  All_Package_Kinds = [fpkNull..fpkToolGen];
   CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool', 'GenPack', 'Group', 'Examples');
   NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package', 'Group', 'Examples');
 

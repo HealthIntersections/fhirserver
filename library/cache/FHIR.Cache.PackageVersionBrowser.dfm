@@ -1,7 +1,7 @@
-object PackageFinderForm: TPackageFinderForm
+object PackageVersionChooserForm: TPackageVersionChooserForm
   Left = 0
   Top = 0
-  Caption = 'Package Finder'
+  Caption = 'Select Version'
   ClientHeight = 472
   ClientWidth = 860
   Color = clBtnFace
@@ -13,7 +13,6 @@ object PackageFinderForm: TPackageFinderForm
   OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -23,24 +22,12 @@ object PackageFinderForm: TPackageFinderForm
     Height = 41
     Align = alTop
     TabOrder = 0
-    DesignSize = (
-      860
-      41)
     object Label1: TLabel
       Left = 12
       Top = 10
       Width = 24
       Height = 13
       Caption = 'Filter'
-    end
-    object edtFilter: TEdit
-      Left = 46
-      Top = 7
-      Width = 804
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      TabOrder = 0
-      OnChange = edtFilterChange
     end
   end
   object Panel2: TPanel
@@ -50,49 +37,10 @@ object PackageFinderForm: TPackageFinderForm
     Height = 40
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 434
     DesignSize = (
       860
       40)
-    object Label2: TLabel
-      Left = 12
-      Top = 10
-      Width = 36
-      Height = 13
-      Caption = 'Server:'
-    end
-    object lblDownload: TLabel
-      Left = 215
-      Top = 2
-      Width = 57
-      Height = 13
-      Caption = 'lblDownload'
-      Visible = False
-    end
-    object cbxServer: TComboBox
-      Left = 64
-      Top = 8
-      Width = 145
-      Height = 21
-      Style = csDropDownList
-      ItemIndex = 0
-      TabOrder = 0
-      Text = 'Primary Server'
-      OnChange = cbxServerChange
-      Items.Strings = (
-        'Primary Server'
-        'Secondary Server'
-        'CI Build')
-    end
-    object btnClose: TButton
-      Left = 777
-      Top = 8
-      Width = 75
-      Height = 25
-      Anchors = [akTop, akRight]
-      Caption = 'Close'
-      ModalResult = 8
-      TabOrder = 1
-    end
     object btnInstall: TButton
       Left = 681
       Top = 6
@@ -100,26 +48,19 @@ object PackageFinderForm: TPackageFinderForm
       Height = 25
       Anchors = [akTop, akRight]
       Caption = 'Install'
-      TabOrder = 2
-      OnClick = btnInstallClick
+      Enabled = False
+      ModalResult = 1
+      TabOrder = 0
     end
-    object pbDownload: TProgressBar
-      Left = 215
-      Top = 15
-      Width = 370
-      Height = 17
-      TabOrder = 3
-      Visible = False
-    end
-    object btnCancel: TButton
-      Left = 591
-      Top = 8
+    object btnClose: TButton
+      Left = 771
+      Top = 6
       Width = 75
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'Cancel'
-      TabOrder = 4
-      Visible = False
-      OnClick = btnCancelClick
+      ModalResult = 2
+      TabOrder = 1
     end
   end
   object Panel3: TPanel
@@ -146,12 +87,13 @@ object PackageFinderForm: TPackageFinderForm
       Header.Font.Height = -11
       Header.Font.Name = 'Tahoma'
       Header.Font.Style = []
+      Header.Height = 17
       Header.Options = [hoColumnResize, hoDrag, hoHotTrack, hoShowSortGlyphs, hoVisible]
       TabOrder = 0
       TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
       TreeOptions.SelectionOptions = [toFullRowSelect]
       OnAddToSelection = gridAddToSelection
-      OnDblClick = btnInstallClick
+      OnDblClick = gridDblClick
       OnGetText = gridGetText
       OnHeaderClick = gridHeaderClick
       OnRemoveFromSelection = gridRemoveFromSelection

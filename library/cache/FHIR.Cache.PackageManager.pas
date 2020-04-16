@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, System.Types,
   FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Support.Stream, FHIR.Web.Fetcher,
-  FHIR.Cache.NpmPackage,
+  FHIR.Cache.NpmPackage, FHIR.Cache.PackageClient,
   FHIR.Base.Utilities;
 
 type
@@ -112,9 +112,9 @@ type
     property FHIRVersion : String read FFHIRVersion write FFHIRVersion;
     property Url : String read FUrl write FUrl;
 
-    class procedure addStandardPackages(list : TFslList<TPackageDefinition>);
-    class procedure addPackagesFromBuild(list : TFslList<TPackageDefinition>);
-    class procedure AddCustomPackages(list : TFslList<TPackageDefinition>);
+//    class procedure addStandardPackages(list : TFslList<TPackageDefinition>);
+//    class procedure addPackagesFromBuild(list : TFslList<TPackageDefinition>);
+//    class procedure AddCustomPackages(list : TFslList<TPackageDefinition>);
   end;
 
 (*  TFHIRPackageObject = class abstract (TFslObject)
@@ -505,28 +505,14 @@ begin
     s := '';
     result := false;
     try
-      fetch.URL := URLPath([url, 'package.tgz']);
+      fetch.URL := url;
       fetch.Fetch;
-      result := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
+      result := StringArrayExists(['application/x-compressed', 'application/octet-stream', 'application/x-tar', 'application/tar+gzip'], fetch.ContentType);
     except
       on e : exception do
       begin
         s := e.Message;
         aborted := e is EAbort;
-      end;
-    end;
-    if not result and not aborted then
-    begin
-      try
-        fetch.URL := url;
-        fetch.Fetch;
-        result := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
-      except
-        on e : exception do
-        begin
-          s := e.Message;
-          aborted := e is EAbort;
-        end;
       end;
     end;
     if not result and not aborted then
@@ -787,9 +773,10 @@ begin
               try
                 tar.ReadFile(bi);
                 b := bi.Bytes;
-                if result.ContainsKey(fn) then
-                  raise EFSLException.Create('Duplicate Entry: '+fn);
-                result.Add(fn, copy(b, 0, bi.Size));
+                if not result.ContainsKey(fn) then
+                  result.Add(fn, copy(b, 0, bi.Size));
+//                else
+//                  raise EFSLException.Create('Duplicate Entry: '+fn);
               finally
                 bi.free;
               end;
@@ -897,17 +884,22 @@ end;
 
 function TFHIRPackageManager.autoInstallPackage(id, ver: String): boolean;
 var
-  list : TFslList<TPackageDefinition>;
-  pd : TPackageDefinition;
+  list : TFslList<TFHIRPackageInfo>;
+  pd : TFHIRPackageInfo;
 begin
   result := packageExists(id, ver);
   if (not result) then
   begin
-    list := TFslList<TPackageDefinition>.create;
+    list := TFslList<TFHIRPackageInfo>.create;
     try
-      TPackageDefinition.addStandardPackages(list);
-      TPackageDefinition.addPackagesFromBuild(list);
-      TPackageDefinition.AddCustomPackages(list);
+      if (ver = 'current') then
+        TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_CIBUILD, id)
+      else
+      begin
+        TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_PRIMARY, id);
+        TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
+      end;
+
       for pd in list do
         if (pd.Id = id) and ((ver = '') or (pd.Version = ver)) then
           self.install(pd.Url);
@@ -1316,6 +1308,7 @@ begin
   result := TPackageDefinition(inherited link);
 end;
 
+{
 class procedure TPackageDefinition.addPackagesFromBuild(list: TFslList<TPackageDefinition>);
 var
   j : TJsonObject;
@@ -1405,7 +1398,7 @@ begin
   add('fhir.tx.support', '1.0.2', 'http://fhir.org/test', 'tx.fhir.org definitions', '1.0.2', 'http://fhir.org/packages/fhir.tx.support/1.0.2');
   add('fhir.argonaut.ehr', '1.0.0', 'http://fhir.org/guides/argonaut', 'Argonaut EHR Query', '1.0.2', 'http://www.fhir.org/guides/argonaut/r2');
 end;
-
+}
 (*
 { TNpmPackageInfo }
 

@@ -28,7 +28,6 @@ object PackageCacheForm: TPackageCacheForm
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
-    ExplicitTop = 551
     DesignSize = (
       916
       48)
@@ -66,7 +65,6 @@ object PackageCacheForm: TPackageCacheForm
       ModalResult = 8
       TabOrder = 0
       OnClick = Button1Click
-      ExplicitLeft = 687
     end
     object pbDownload: TProgressBar
       Left = 16
@@ -95,7 +93,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 768
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -130,7 +127,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 656
     DesignSize = (
       112
       508)
@@ -227,7 +223,6 @@ object PackageCacheForm: TPackageCacheForm
     OnInitNode = vtPackagesInitNode
     OnKeyDown = vtPackagesKeyDown
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
-    ExplicitWidth = 656
     Columns = <
       item
         Position = 0

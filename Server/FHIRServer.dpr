@@ -427,7 +427,11 @@ uses
   FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
   FHIR.Server.Covid in 'Modules\FHIR.Server.Covid.pas',
   FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas',
-  FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas';
+  FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas',
+  VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
+  VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
+  FHIR.Ui.WorkerTask in '..\library\ui\FHIR.Ui.WorkerTask.pas' {WorkingForm},
+  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm};
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

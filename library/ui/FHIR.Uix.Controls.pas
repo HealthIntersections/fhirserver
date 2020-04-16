@@ -2773,8 +2773,8 @@ Type
       Procedure DoSelectionChange; Overload;
       Function DoFocusChanging(pOldNode, pNewNode: PVirtualNode; iOldColumn, iNewColumn: TColumnIndex): Boolean; Override;
       Procedure DoFocusNode(pNode : PVirtualNode; bAsk : Boolean); Override;
-      Function DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: Integer): TCustomImageList; Override;
-      Procedure DoGetText(pNode: PVirtualNode; iColumn: TColumnIndex; aTextType: TVSTTextType; Var sText: String); Override;
+      Function DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: TImageIndex): TCustomImageList; Override;
+      procedure DoGetText(var pEventArgs: TVSTGetCellTextEventArgs); Override;
       Procedure DoHeaderClick(const HitInfo: TVTHeaderHitInfo); Override;
       function DoInitChildren(pNode: PVirtualNode; Var iChildCount: Cardinal) : boolean; Override;
       Procedure DoInitNode(pParent, pNode : PVirtualNode; Var aInitStates : TVirtualNodeInitStates); Override;
@@ -2799,7 +2799,7 @@ Type
       Procedure MouseDown(aButton: TMouseButton; aShift: TShiftState; iX, iY: Integer); Override;
 
       // Selection events.
-      Procedure AddToSelection(pNode : PVirtualNode); Overload; Override;
+      Procedure AddToSelection(pNode : PVirtualNode; NotifySynced: Boolean); Overload; Override;
       Procedure AddToSelection(Const aNewItems : TNodeArray; iNewLength: Integer; bForceInsert: Boolean = False); Overload; Override;
       Procedure InternalClearSelection; Override;
       Procedure InternalRemoveFromSelection(pNode : PVirtualNode); Override;
@@ -12679,7 +12679,7 @@ Begin
 
   AutoTriStateTracking := False;
   CentreScrollIntoView := False;
-  CheckImageKind := ckXP;
+  CheckImageKind := ckSystemDefault;
   CheckSupport := True;
   ExtendedFocus := True;
   SelectFullRow := True;
@@ -12857,7 +12857,7 @@ Begin
   Begin
     FReselectIdentifierList.Add(sID);
 
-    AddToSelection(pNode);
+    AddToSelection(pNode, false);
   End;
 
   // Focused node
@@ -13152,25 +13152,25 @@ Begin
 End;
 
 
-Procedure TUixTreeView.DoGetText(pNode: PVirtualNode; iColumn: TColumnIndex; aTextType: TVSTTextType; Var sText: String);
+Procedure TUixTreeView.DoGetText(var pEventArgs: TVSTGetCellTextEventArgs);
 Var
   oNode : TUixTreeViewNode;
 Begin
-  oNode := Render(pNode);
+  oNode := Render(pEventArgs.Node);
 
   If Assigned(oNode) Then
   Begin
     Assert(FRoot.Invariants('DoGetText', oNode, TUixTreeViewNode, 'oNode'));
 
-    If oNode.Captions.ExistsByIndex(iColumn) Then
+    If oNode.Captions.ExistsByIndex(pEventArgs.Column) Then
     Begin
-      If (Not oNode.CaptionVisibilities.ExistsByIndex(iColumn)) Or oNode.CaptionVisibilities[iColumn] Then
-        sText := oNode.Captions[iColumn]
+      If (Not oNode.CaptionVisibilities.ExistsByIndex(pEventArgs.Column)) Or oNode.CaptionVisibilities[pEventArgs.Column] Then
+        pEventArgs.CellText := oNode.Captions[pEventArgs.Column]
       Else
-        sText := '';
+        pEventArgs.CellText := '';
     End
     Else
-      sText := '';
+      pEventArgs.CellText := '';
   End;
 
   Inherited;
@@ -13565,7 +13565,7 @@ Begin
 End;
 
 
-Procedure TUixTreeView.AddToSelection(pNode: PVirtualNode);
+Procedure TUixTreeView.AddToSelection(pNode: PVirtualNode; NotifySynced: Boolean);
 Var
   oNode : TUixTreeViewNode;
 Begin
@@ -13857,7 +13857,7 @@ Begin
 End;
 
 
-Function TUixTreeView.DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: Integer): TCustomImageList;
+Function TUixTreeView.DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: TImageIndex): TCustomImageList;
 Var
   oNode : TUixTreeViewNode;
 Begin

@@ -48,7 +48,7 @@ type
     Button1: TButton;
     btnInstall: TButton;
     Label1: TLabel;
-    ComboBox1: TComboBox;
+    cbxServer: TComboBox;
     Label2: TLabel;
     edtFilter: TEdit;
     grid: TGrid;
@@ -166,9 +166,9 @@ var
   p : TPackageDefinition;
 begin
   FList.clear;
-  TPackageDefinition.AddStandardPackages(Flist);
-  TPackageDefinition.AddCustomPackages(Flist);
-  a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
+//  TPackageDefinition.AddStandardPackages(Flist);
+//  TPackageDefinition.AddCustomPackages(Flist);
+  a := TInternetFetcher.fetchJsonArray('https://build.fhir.org/ig/qas.json');
   try
     for i in a do
     begin

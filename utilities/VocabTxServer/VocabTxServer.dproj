@@ -5,7 +5,7 @@
         <Config Condition="'$(Config)'==''">Debug</Config>
         <FrameworkType>FMX</FrameworkType>
         <MainSource>VocabTxServer.dpr</MainSource>
-        <Platform Condition="'$(Platform)'==''">OSX64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectGuid>{37029A1E-09A8-4395-955A-B32DAC0A619E}</ProjectGuid>
         <ProjectVersion>18.8</ProjectVersion>
         <TargetedPlatforms>4098</TargetedPlatforms>
@@ -363,6 +363,10 @@
         <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageUpdater.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Packages.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Twilio.pas"/>
+        <DCCReference Include="..\..\dependencies\FMM\FastMM4Messages.pas"/>
+        <DCCReference Include="..\..\library\database\FHIR.Database.ODBC.pas"/>
+        <DCCReference Include="..\..\library\database\FHIR.Database.ODBC.Objects.pas"/>
+        <DCCReference Include="..\..\library\database\FHIR.Database.ODBC.Headers.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -502,6 +506,12 @@
                 <DeployFile LocalName="OSX32\Debug\VocabTxServer.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
                     <Platform Name="OSX32">
                         <RemoteName>Info.plist</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Exec\64\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
