@@ -181,7 +181,9 @@ Type
     function GetForcedArray(name: String): TJsonArray;
     function GetNode(name: String): TJsonNode;
     procedure setNode(name: String; const Value: TJsonNode);
-  protected
+    function GetInteger(name: String): Integer;
+
+    procedure SetInteger(name: String; const Value: Integer);  protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
@@ -197,6 +199,7 @@ Type
     property node[name : String] : TJsonNode read GetNode write setNode;
     Property str[name : String] : String read GetString write SetString; default;
     Property num[name : String] : String read GetNumber write SetNumber;
+    Property int[name : String] : Integer read GetInteger write SetInteger;
     Property bool[name : String] : boolean read GetBool write SetBool;
     Property arr[name : String] : TJsonArray read GetArray write SetArray;
     Property obj[name : String] : TJsonObject read GetObject write SetObject;
@@ -2244,6 +2247,35 @@ begin
   result := obj[name];
 end;
 
+function TJsonObject.GetInteger(name: String): Integer;
+var
+  n : TJsonNode;
+  s : String;
+begin
+  n := GetNode(name);
+  result := 0;
+  if (n <> nil) then
+  begin
+    if (n is TJsonBoolean) then
+    begin
+      if (n as TJsonBoolean).value then
+        result := 1
+      else
+        result := 0;
+    end
+    else if (n is TJsonNumber) then
+    begin
+      s := (n as TJsonNumber).FValue;
+      result := StrToIntDef(s, 0);
+    end
+    else if (n is TJsonString) then
+    begin
+      s := (n as TJsonString).FValue;
+      result := StrToIntDef(s, 0);
+    end;
+  end;
+end;
+
 function TJsonObject.GetNode(name: String): TJsonNode;
 begin
   if has(name) then
@@ -2365,6 +2397,18 @@ var
   v : TJsonBoolean;
 begin
   v := TJsonBoolean.Create(path+'/'+name, Value);
+  try
+    properties.AddOrSetValue(name, v.Link);
+  finally
+    v.Free;
+  end;
+end;
+
+procedure TJsonObject.SetInteger(name: String; const Value: Integer);
+var
+  v : TJsonNumber;
+begin
+  v := TJsonNumber.Create(path+'/'+name, IntToStr(Value));
   try
     properties.AddOrSetValue(name, v.Link);
   finally

@@ -690,6 +690,7 @@ type
     function Link : TFslDBManager; overload;
 
     procedure ExecSQL(ASql, AName : String);
+    function CountSQL(ASql, AName : String) : integer;
     function GetConnection(const AUsage: String): TFslDBConnection;
     procedure connection(usage : String; proc : TFslDBConnectionProc);
     procedure SaveSettings(ASettings : TSettingsAdapter); virtual; abstract;
@@ -1662,6 +1663,24 @@ begin
       conn.Error(e);
       raise;
     end;
+  end;
+end;
+
+function TFslDBManager.CountSQL(ASql, AName: String): integer;
+var
+  LConn : TFslDBConnection;
+begin
+  LConn := GetConnection(AName);
+  try
+    result := LConn.CountSQL(ASql);
+    LConn.Release;
+  except
+    on e:exception do
+      begin
+      LConn.Error(e);
+      recordStack(e);
+      raise;
+      end;
   end;
 end;
 

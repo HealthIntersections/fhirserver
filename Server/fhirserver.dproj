@@ -527,6 +527,7 @@
             <Form>PackageVersionChooserForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="FHIR.Server.WebBase.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -449,7 +449,7 @@ Type
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     function WebDump: String;
-//    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
+    procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
 
@@ -3878,6 +3878,7 @@ Begin
 
   FGoogle := TGoogleAnalyticsProvider.Create;
   FPackageServer := TFHIRPackageServer.create;
+  FPackageServer.OnReturnProcessFileEvent := ReturnProcessedFile;
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
   // FAppSecrets := ini.ReadString('fhir', 'oauth-secrets', '');
 End;
@@ -4892,6 +4893,11 @@ begin
   end;
 end;
 
+procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
+begin
+  ReturnProcessedFile(request, response, named, path, secure, variables);
+end;
+
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
 var
   s, n: String;
@@ -5518,8 +5524,14 @@ begin
     sleep(50);
     if not Terminated and (now > FNextRun) and (FNextRun > 0) then
     begin
-      RunUpdater;
+      FServer.FPackageServer.scanning := true;
+      try
+        RunUpdater;
+      finally
+        FServer.FPackageServer.scanning := false;
+      end;
       FNextRun := now + 1/24;
+      FServer.FPackageServer.NextScan := FNextRun;
     end;
   until (Terminated);
 end;

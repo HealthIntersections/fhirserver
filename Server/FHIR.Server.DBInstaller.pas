@@ -1267,6 +1267,13 @@ begin
       CreatePackagesTables;
     if (version <= 25) then
       CreateTwilioTable;
+    if (version <= 26) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.PackageVersions ADD DownloadCount int NULL');
+      Fconn.ExecSQL('Update PackageVersions set DownloadCount = 0');
+      Fconn.ExecSQL('ALTER TABLE dbo.Packages ADD DownloadCount int NULL');
+      Fconn.ExecSQL('Update Packages set DownloadCount = 0');
+    end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

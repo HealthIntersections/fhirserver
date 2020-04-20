@@ -3694,6 +3694,7 @@ Type
     procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : String); overload;
+    constructor Create(value : Integer); overload;
     destructor Destroy; override;
     
     Function Link : TFhirInteger; Overload;
@@ -15020,6 +15021,12 @@ end;
 function TFhirInteger.Clone : TFhirInteger;
 begin
   result := TFhirInteger(inherited Clone);
+end;
+
+constructor TFhirInteger.Create(value: Integer);
+begin
+  Create;
+  FValue := inttostr(value);
 end;
 
 procedure TFhirInteger.setValue(value : String);

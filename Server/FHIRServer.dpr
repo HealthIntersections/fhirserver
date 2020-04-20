@@ -431,7 +431,8 @@ uses
   VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
   VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
   FHIR.Ui.WorkerTask in '..\library\ui\FHIR.Ui.WorkerTask.pas' {WorkingForm},
-  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm};
+  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm},
+  FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

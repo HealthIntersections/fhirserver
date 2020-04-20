@@ -36,13 +36,12 @@ uses
   FHIR.Web.Parsers,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   IdContext, IdCustomHTTPServer,
-  FHIR.Base.Lang, FHIR.Server.Session, FHIR.Base.Xhtml, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Parser,
+  FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Parser,
   FHIR.Tools.ValueSets,
   FHIR.Web.HtmlGen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
-  FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants;
+  FHIR.Server.Session, FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants, FHIR.Server.WebBase;
 
 Type
-  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) of Object;
 
   TSorterType = (byUrl, byVer, byName, byContext, byPub, bySource);
 

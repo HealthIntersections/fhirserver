@@ -44,6 +44,7 @@ BuildDate='2020-01-20';
   INDEX_DIGITS = 20;
   INDEX_DECIMALS = 30;
 
+
 implementation
 
 end.
