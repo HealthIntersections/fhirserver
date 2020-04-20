@@ -230,7 +230,7 @@ begin
     PackageFinderForm.OnLoadUrl := importUrl;
     PackageFinderForm.ShowModal;
   finally
-    PackageFinderForm.Free;
+    FreeAndNil(PackageFinderForm);
   end;
 end;
 
@@ -552,8 +552,16 @@ begin
 end;
 
 procedure TLoadPackagesTask.execute;
+var
+  oe : TWorkProgressEvent;
 begin
-  Form.FCache.ListPackages(All_Package_Kinds, Form.FPackages);
+  oe := Form.FCache.OnWork;
+  try
+    Form.FCache.OnWork := progress;
+    Form.FCache.ListPackages(All_Package_Kinds, Form.FPackages);
+  finally
+    Form.FCache.OnWork := oe;
+  end;
 end;
 
 end.

@@ -24,7 +24,7 @@ type
     procedure execute; virtual; abstract;
     function caption : String; virtual; abstract;
     function canCancel : boolean; virtual;
-    procedure progress(pct : integer; desc : String); // may raise EAbort
+    procedure progress(sender : TObject; pct : integer; done : boolean; desc : String); // may raise EAbort
   public
     procedure runTask(owner : TComponent);
   end;
@@ -44,7 +44,7 @@ begin
   result := false;
 end;
 
-procedure TWorkerObject.progress(pct: integer; desc: String);
+procedure TWorkerObject.progress(sender : TObject; pct : integer; done : boolean; desc : String);
 begin
   FForm.lblStatus.caption := desc;
   FForm.lblStatus.Update;

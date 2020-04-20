@@ -444,6 +444,10 @@ begin
     result := '3.0'
   else if (v = 'DSTU3') then
     result := '1.0'
+  else if (v = 'R3') then
+    result := '3.0'
+  else if (v = 'R2') then
+    result := '1.0'
   else if (v = 'R4') then
     result := '4.0'
   else if (v.Length > 3) then
@@ -459,22 +463,56 @@ begin
   result := v1 = v2;
 end;
 
+procedure listPackages(server : String; packages : TFslList<TFHIRPackageInfo>);
+var
+  pc : TFHIRPackageClient;
+  l : TFslList<TFHIRPackageInfo>;
+  p,t  : TFHIRPackageInfo;
+  ok : boolean;
+begin
+  pc := TFHIRPackageClient.Create(server);
+  try
+    l := pc.search('', '', '', false);
+    try
+      for t in l do
+      begin
+        ok := true;
+        for p in packages do
+        begin
+          if (p.id = t.id) and (p.version = t.version) then
+            ok := false;
+        end;
+        if ok then
+          packages.Add(t.link);
+      end;
+    finally
+      l.Free;
+    end;
+  finally
+    pc.Free;
+  end;
+end;
+
 Function MyDllListPackages(mode : PAnsiChar; Version : PAnsiChar) : PAnsiChar; stdcall;
 var
-  pcm : TFHIRPackageManager;
-  packages : TFslList<TFHIRPackageInfo>;
+  packages, l : TFslList<TFHIRPackageInfo>;
   p : TFHIRPackageInfo;
   b : TFslStringBuilder;
+  pcm : TFHIRPackageManager;
 begin
   try
     b := TFslStringBuilder.create;
     try
-      pcm := TFHIRPackageManager.Create(isUser(mode));
+      packages := TFslList<TFHIRPackageInfo>.create;
       try
-        packages := TFslList<TFHIRPackageInfo>.create;
+        listPackages(PACKAGE_SERVER_PRIMARY, packages);
+        listPackages(PACKAGE_SERVER_BACKUP, packages);
+        packages.Sort(function (const l, r : TFHIRPackageInfo) : Integer
+          begin
+            result := CompareText(l.id, r.id);
+          end);
+        pcm := TFHIRPackageManager.Create(false);
         try
-//          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_PRIMARY, '');
-//          TFHIRPackageClient.loadPackages(packages, PACKAGE_SERVER_BACKUP, '');
           for p in packages do
           begin
             if versionMatches(p.FHIRVersion, version) then
@@ -482,16 +520,16 @@ begin
               if b.Length > 0 then
                 b.Append(#13#10);
               if pcm.packageExists(p.Id, p.Version) then
-                b.Append(p.Url+'|1|'+p.Id+'#'+p.Version+'|'+p.Description)
+                b.Append(p.Url+'|1|'+p.Id+'#'+p.Version+'|'+p.Description.replace('|', ':').replace(#13, '').replace(#10, ' '))
               else
-                b.Append(p.Url+'|0|'+p.Id+'#'+p.Version+'|'+p.Description);
+                b.Append(p.Url+'|0|'+p.Id+'#'+p.Version+'|'+p.Description.replace('|', ':').replace(#13, '').replace(#10, ' '));
             end;
           end;
         finally
-          packages.Free;
+          pcm.Free;
         end;
       finally
-        pcm.Free;
+        packages.Free;
       end;
       result := StrToPchar(b.AsString);
     finally
