@@ -198,8 +198,8 @@ Const
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =
     ('', 'http://healthintersections.com.au/fhir/user/explicit', 'http://www.facebook.com', 'http://www.google.com', 'http://www.hl7.org');
   CODES_TFHIRSummaryOption : array [TFHIRSummaryOption] of String = ('Full', 'Summary', 'Text', 'Data', 'Count');
-  CODES_TFhirIssueType : array [TFhirIssueType] of String = ('Null', 'Invalid', 'Structure', 'Required', 'Value', 'Invariant', 'Security', 'Login', 'Unknown', 'Expired', 'Forbidden', 'Suppressed', 'Processing', 'NotSupported', 'Duplicate', 'NotFound', 'TooLong', 'CodeInvalid', 'Extension', 'TooCostly', 'BusinessRule', 'Conflict', 'Incomplete', 'Transient', 'LockError', 'NoStore', 'Exception', 'Timeout', 'Throttled', 'Informational');
-  CODES_TIssueSeverity : array [TIssueSeverity] of String = ('Null', 'Fatal', 'Error', 'Warning', 'Information');
+  CODES_TFhirIssueType : array [TFhirIssueType] of String = ('null', 'invalid', 'structure', 'required', 'value', 'invariant', 'security', 'login', 'unknown', 'expired', 'forbidden', 'suppressed', 'processing', 'not-supported', 'duplicate', 'not-found', 'too-long', 'code-invalid', 'extension', 'too-costly', 'business-rule', 'conflict', 'incomplete', 'transient', 'lock-error', 'no-store', 'exception', 'timeout', 'throttled', 'informational');
+  CODES_TIssueSeverity : array [TIssueSeverity] of String = ('null', 'fatal', 'error', 'warning', 'information');
 type
 
   TFHIRObject = class;

@@ -133,7 +133,7 @@ Type
     FNoValueSetExpansion : boolean;
 
     function determineSystem(code : String) : String;
-    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String) : boolean; overload;
+    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String; var cause : TFhirIssueType) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFslList<TFhirCodeSystemConceptW>; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
@@ -428,18 +428,19 @@ function TValueSetChecker.check(system, version, code: String; abstractOk, imply
 var
   list : TStringList;
   msg : string;
+  it : TFhirIssueType;
 begin
   list := TStringList.Create;
   try
     list.Duplicates := Classes.dupIgnore;
     list.CaseSensitive := false;
-    result := check(system, version, code, abstractOk, implySystem, list, msg);
+    result := check(system, version, code, abstractOk, implySystem, list, msg, it);
   finally
     list.Free;
   end;
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String; var cause : TFhirIssueType) : boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -458,19 +459,30 @@ begin
     cs := FOnGetCSProvider(self, system, version, FParams, true);
     try
       if cs = nil then
-        result := false
+      begin
+        result := false;
+        cause := itNotFound;
+      end
       else
       begin
         ctxt := cs.locate(code);
         if (ctxt = nil) then
-          result := false
+        begin
+          result := false;
+          cause := itCodeInvalid;
+        end
         else
+        begin
+          cause := itNull;
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
+            if (not result) then
+              cause := itBusinessRule;
             cs.Displays(ctxt, displays, FParams.displayLanguage);
           finally
             cs.Close(ctxt);
           end;
+        end;
       end;
     finally
       cs.Free;
@@ -482,19 +494,30 @@ begin
     cs := FOnGetCSProvider(self, system, version, FParams, true);
     try
       if cs = nil then
-        result := false
+      begin
+        result := false;
+        cause := itNotFound;
+      end
       else
       begin
         ctxt := cs.locate(code);
         if (ctxt = nil) then
-          result := false
+        begin
+          result := false;
+          cause := itCodeInvalid;
+        end
         else
+        begin
+          cause := itNull;
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
+            if (not result) then
+              cause := itBusinessRule;
             cs.Displays(ctxt, displays, FParams.displayLanguage);
           finally
             cs.Close(ctxt);
           end;
+        end;
       end;
     finally
       cs.Free;
@@ -537,7 +560,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(system, version, code, abstractOk, implySystem, displays, message);
+          result := checker.check(system, version, code, abstractOk, implySystem, displays, message, cause);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -567,7 +590,7 @@ begin
         for s in cc.valueSets do
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message);
+          result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause);
         end;
         if result then
           break;
@@ -591,7 +614,7 @@ begin
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message);
+            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause);
           end;
           if excluded then
             exit(false);
@@ -607,6 +630,7 @@ function TValueSetChecker.check(coding: TFhirCodingW; abstractOk, implySystem : 
 var
   list : TStringList;
   message : String;
+  cause : TFhirIssueType;
 begin
   result := FFactory.makeParameters;
   try
@@ -614,13 +638,15 @@ begin
     try
       list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
-      if check(coding.system, coding.version, coding.code, abstractOk, implySystem, list, message) then
+      if check(coding.system, coding.version, coding.code, abstractOk, implySystem, list, message, cause) then
       begin
         result.AddParamBool('result', true);
         if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
           result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code+' - should be one of ['+list.CommaText+']');
         if list.Count > 0 then
           result.AddParamStr('display', list[0]);
+        if cause <> itNull then
+          result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
       end
       else
       begin
@@ -628,6 +654,8 @@ begin
         result.AddParamStr('message', 'The system/code "'+coding.system+'"/"'+coding.code+'" is not in the value set '+FValueSet.name);
         if (message <> '') then
           result.AddParamStr('message', message);
+        if cause <> itNull then
+          result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
       end;
     finally
       list.Free;
@@ -692,7 +720,7 @@ begin
         list.Clear;
         cc := ',{'+c.system+'}'+c.code;
         codelist := codelist + cc;
-        v := check(c.system, c.version, c.code, abstractOk, implySystem, list, message);
+        v := check(c.system, c.version, c.code, abstractOk, implySystem, list, message, cause);
         if not v and (message <> '') then
           msg(message);
         ok := ok or v;
@@ -712,7 +740,7 @@ begin
            if (prov = nil) then
            begin
              msg('The code system "'+c.system+'" is not known (encountered paired with code = "'+c.code+'")');
-             cause := itUnknown;
+             cause := itNotFound;
            end
            else
            begin
@@ -773,6 +801,7 @@ function TValueSetChecker.check(system, version, code: String; implySystem : boo
 var
   list : TStringList;
   message : String;
+  cause : TFhirIssueType;
 begin
   result := FFactory.makeParameters;
   try
@@ -780,11 +809,13 @@ begin
     try
       list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
-      if check(system, version, code, true, implySystem, list, message) then
+      if check(system, version, code, true, implySystem, list, message, cause) then
       begin
         result.AddParamBool('result', true);
         if list.Count > 0 then
           result.AddParamStr('display', list[0]);
+        if cause <> itNull then
+          result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
       end
       else
       begin
@@ -792,6 +823,8 @@ begin
         result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
         if (message <> '') then
           result.AddParamStr('message', message);
+        if cause <> itNull then
+          result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
       end;
     finally
       list.Free;
