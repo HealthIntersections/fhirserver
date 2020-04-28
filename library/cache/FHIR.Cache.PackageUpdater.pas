@@ -24,10 +24,14 @@ Type
     function isOk(package, feed : String) : boolean;
   end;
 
+  TSendEmailEvent = procedure (dest, subj, body : String);
+
   TPackageUpdater = class (TFslObject)
   private
     FDB : TFslDBConnection;
     FErrors: String;
+    FFeedErrors : String;
+    FOnSendEmail : TSendEmailEvent;
     procedure log(msg, source : String; error : boolean);
 
     function fetchUrl(url, mimetype : string) : TBytes;
@@ -38,17 +42,68 @@ Type
     procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
     procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
-    procedure updateTheFeed(url, source : String; pr : TPackageRestrictions);
+    procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
     procedure update(DB : TFslDBConnection);
 
     property errors : String read FErrors;
+    property OnSendEmail : TSendEmailEvent read FOnSendEmail write FOnSendEmail;
+
     class procedure test(db : TFslDBManager);
+
+    class procedure commit(conn : TFslDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; kind : TFHIRPackageKind);
   end;
 
 implementation
 
 { TPackageUpdater }
+
+class procedure TPackageUpdater.commit(conn: TFslDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
+var
+  fver, dep : String;
+  fhirVersions : String;
+  pkey, vkey, cvkey : integer;
+begin
+  vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
+  conn.SQL := 'Insert into PackageVersions '+
+    '(PackageVersionKey,  GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, Description, ManualToken, Content) values ('+
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, :t, :p, :c)';
+  conn.prepare;
+  conn.BindBlobFromString('t', description);
+  conn.BindString('u', canonical);
+  conn.BindStringOrNull('p', canonical);
+  conn.BindString('f', token);
+  conn.BindDateTimeEx('d', date);
+  conn.BindBlob('c', pck);
+  conn.Execute;
+  conn.Terminate;
+
+  for fver in npm.fhirVersionList.Split([',']) do
+    conn.ExecSQL('Insert into PackageFHIRVersions (PackageVersionKey, Version) values ('+inttostr(vkey)+', '''+SQLWrapString(fver)+''')');
+  for dep in npm.dependencies do
+    conn.ExecSQL('Insert into PackageDependencies (PackageVersionKey, Dependency) values('+inttostr(vkey)+', '''+SQLWrapString(dep)+''')');
+
+  pkey := conn.CountSQL('Select Max(PackageKey) from Packages where Id = '''+SQLWrapString(id)+'''');
+  if pkey = 0 then
+  begin
+    pkey := conn.CountSQL('Select Max(PackageKey) from Packages') + 1;
+    conn.SQL := 'Insert into Packages (PackageKey, Id, CurrentVersion, DownloadCount, Canonical) values ('+inttostr(pkey)+', '''+SQLWrapString(id)+''', '+inttostr(vkey)+', 0, '''+SQLWrapString(canonical)+''')';
+    conn.prepare;
+    conn.Execute;
+    conn.Terminate;
+  end
+  else
+  begin
+    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc');
+    if (cvkey = vkey) then
+    begin
+      conn.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(cvkey)+' where PackageKey = '+inttostr(pkey);
+      conn.prepare;
+      conn.Execute;
+      conn.Terminate;
+    end;
+  end;
+end;
 
 function TPackageUpdater.fetchJson(url: string): TJsonObject;
 begin
@@ -88,18 +143,18 @@ end;
 procedure TPackageUpdater.log(msg, source: String; error : boolean);
 begin
   if error then
+  begin
     FErrors := FErrors + msg+' (from '+source+')'+#13#10;
+    FFeedErrors := FFeedErrors + msg+' (from '+source+')'+#13#10;
+  end;
   logt(msg);
 end;
 
 procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
-  pkey, vkey, cvkey : integer;
   id, version, description, canonical : String;
   kind : TFHIRPackageKind;
-  fver, dep : String;
-  fhirVersions : String;
 begin
   npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil);
   try
@@ -110,49 +165,21 @@ begin
       log('Error processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
       exit;
     end;
-
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
 
-    vkey := FDB.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
-    FDB.SQL := 'Insert into PackageVersions '+
-      '(PackageVersionKey,   GUID,                    PubDate, Indexed, Id,                   Version,                            Kind,                    Canonical, FhirVersions, Description, Content) values ('+
-       inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', :u, :f, :t, :c)';
-    FDB.prepare;
-    FDB.BindBlobFromString('t', description);
-    FDB.BindString('u', canonical);
-    FDB.BindString('f', npm.fhirVersionList);
-    FDB.BindDateTimeEx('d', date);
-    FDB.BindBlob('c', package);
-    FDB.Execute;
-    FDB.Terminate;
+    if not isValidPackageId(id) then
+      raise Exception.Create('Id "'+id+'" is not valid');
+    if not isValidSemVer(version) then
+      raise Exception.Create('Version "'+version+'" is not valid');
+    if (canonical = '') then
+      raise Exception.Create('No canonical found in rss');
+    if not isAbsoluteUrl(canonical) then
+      raise Exception.Create('Canonical "'+canonical+'" is not valid');
 
-    for fver in npm.fhirVersionList.Split([',']) do
-      FDB.ExecSQL('Insert into PackageFHIRVersions (PackageVersionKey, Version) values ('+inttostr(vkey)+', '''+SQLWrapString(fver)+''')');
-    for dep in npm.dependencies do
-      FDB.ExecSQL('Insert into PackageDependencies (PackageVersionKey, Dependency) values('+inttostr(vkey)+', '''+SQLWrapString(dep)+''')');
+    commit(FDB, package, npm, date, guid, id, version, description, canonical, '', kind);
 
-    pkey := FDB.CountSQL('Select Max(PackageKey) from Packages where Id = '''+SQLWrapString(id)+'''');
-    if pkey = 0 then
-    begin
-      pkey := FDB.CountSQL('Select Max(PackageKey) from Packages') + 1;
-      FDB.SQL := 'Insert into Packages (PackageKey, Id, CurrentVersion, Canonical) values ('+inttostr(pkey)+', '''+SQLWrapString(id)+''', '+inttostr(vkey)+', '''+SQLWrapString(canonical)+''')';
-      FDB.prepare;
-      FDB.Execute;
-      FDB.Terminate;
-    end
-    else
-    begin
-      cvkey := FDB.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc');
-      if (cvkey = vkey) then
-      begin
-        FDB.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(cvkey)+' where PackageKey = '+inttostr(pkey);
-        FDB.prepare;
-        FDB.Execute;
-        FDB.Terminate;
-      end;
-    end;
   finally
     npm.Free;
   end;
@@ -187,7 +214,7 @@ begin
       try
         arr := json.arr['feeds'];
         for i := 0 to arr.Count - 1 do
-          updateTheFeed(arr.Obj[i].str['url'], MASTER_URL, pr);
+          updateTheFeed(arr.Obj[i].str['url'], MASTER_URL, arr.Obj[i].str['email'], pr);
       finally
         pr.Free;
       end;
@@ -202,7 +229,7 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.updateTheFeed(url, source: String; pr : TPackageRestrictions);
+procedure TPackageUpdater.updateTheFeed(url, source, email: String; pr : TPackageRestrictions);
 var
   xml : TMXmlElement;
   channel : TMXmlElement;
@@ -210,6 +237,7 @@ var
 begin
   try
     log('Fetch '+url, source, false);
+    FFeedErrors := '';
 
     xml := fetchXml(url);
     try
@@ -229,10 +257,14 @@ begin
     finally
       xml.Free;
     end;
+    if (FFeedErrors <> '') and (email <> '') then
+        FOnSendEmail(email, 'Errors Processing '+url, FFeedErrors);
   except
     on e : Exception do
     begin
       log('Exception processing feed: '+url+': '+e.Message, source, false);
+      if (email <> '') then
+        FOnSendEmail(email, 'Exception Processing '+url, e.Message);
     end;
   end;
 end;

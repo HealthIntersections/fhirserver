@@ -56,7 +56,8 @@ const
 //  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
 //  ServerDBVersion = 24; // add AsyncTasks.Secure
 //  ServerDBVersion = 26; // add Twilio Proxy
-  ServerDBVersion = 27; // add Package download count
+//  ServerDBVersion = 27; // add Package download count
+  ServerDBVersion = 28; // add Package token tracking
 
 
 implementation

@@ -316,6 +316,7 @@ Function DescribeBytes(i : int64) : String;
 procedure CommaAdd(var AStr: String; AStrToAdd: String);
 function RemoveQuotes(AStr: String; AUpperCaseString: Boolean = false): String;
 function IsNumericString(st: String): Boolean;
+function isValidSemVer(s : String) : boolean;
 function RemoveAccents(const s : String): String;
 
 function charLower(ch : char) : char; overload;
@@ -5619,6 +5620,22 @@ begin
       Exit;
       end;
     end;
+end;
+
+function isValidSemVer(s : String) : boolean;
+var
+  parts : TArray<string>;
+  p: string;
+begin
+  if (s = '') then
+    exit(false);
+  if (s.CountChar('.') <> 2) then
+    exit(false);
+  parts := s.Split(['.']);
+  for p in parts do
+    if (not IsNumericString(p)) then
+      exit(false);
+  result := true;
 end;
 
 function isAbsoluteUrl(s: String): boolean;

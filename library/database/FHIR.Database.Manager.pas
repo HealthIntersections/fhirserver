@@ -969,7 +969,7 @@ begin
   if StringIsInteger32(AKeyValue) and not bAsString then
     FSQL := 'Select ' + AValueField + ' from ' + ATableName + ' where ' + AKeyField + ' = ' + AKeyValue
   else
-    FSQL := 'Select ' + AValueField + ' from ' + ATableName + ' where ' + AKeyField + ' = ''' + AKeyValue + '''';
+    FSQL := 'Select ' + AValueField + ' from ' + ATableName + ' where ' + AKeyField + ' = ''' + SQLWrapString(AKeyValue) + '''';
   Prepare;
   try
     Execute;

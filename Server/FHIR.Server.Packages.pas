@@ -8,6 +8,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Web.Parsers,
   FHIR.Database.Manager,
+  FHIR.Cache.NpmPackage, FHIR.Cache.PackageUpdater,
   FHIR.Base.Objects, FHIR.Support.Stream,
   FHIR.R4.Types, // choice of R4 is totally arbitrary
   FHIR.Server.WebBase, FHIR.Server.Session;
@@ -32,6 +33,8 @@ type
     function interpretVersion(v : String) : String;
 
     function genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch: boolean): String;
+
+    procedure serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 
     procedure serveHomePage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
@@ -490,6 +493,77 @@ begin
   );
 end;
 
+procedure TFHIRPackageServer.serveCreatePackage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  blob : TBytes;
+  conn : TFslDBConnection;
+  canonical, mask, token, id, version : String;
+  i : integer;
+  npm : TNpmPackage;
+begin
+  conn := FDB.GetConnection('Package.server.create');
+  try
+    token := request.AuthPassword;
+    if (token = '') then
+      raise Exception.Create('Authorization is required');
+    mask := conn.LookupString('PackagePermissions', 'ManualToken', token, 'Mask', '');
+    if (mask = '') then
+      raise Exception.Create('Authorization header not acceptable');
+    if request.PostStream = nil then
+      raise Exception.Create('No Post Content found');
+    blob := StreamToBytes(request.PostStream);
+    npm := TNpmPackage.fromPackage(blob, '', nil);
+    try
+      id := npm.info['name'];
+      version := npm.info['version'];
+      canonical := npm.info['canonical'];
+      if (id = '') then
+        raise Exception.Create('No NPM Name found in package');
+      if not isValidPackageId(id) then
+        raise Exception.Create('Id "'+id+'" is not valid');
+      if (version = '') then
+        raise Exception.Create('No version found in package');
+      if not isValidSemVer(version) then
+        raise Exception.Create('Version "'+version+'" is not valid');
+      if (canonical = '') then
+        raise Exception.Create('No canonical found in package');
+      if not isAbsoluteUrl(canonical) then
+        raise Exception.Create('Canonical "'+canonical+'" is not valid');
+      i := mask.IndexOf('*');
+      if i > 1 then
+      begin
+        if (id.Substring(i) <> mask.Substring(i)) then
+          raise Exception.Create('The security context has permissions of "'+mask+'" and is not authorised to upload "'+id+'"');
+      end;
+      conn.SQL := 'Select Count(*) from PackageVersions where Id = :i and Version = :v';
+      conn.Prepare;
+      conn.BindString('i', id);
+      conn.BindString('v', version);
+      conn.Execute;
+      conn.FetchNext;
+      if conn.ColInteger[1] > 0 then
+        raise Exception.Create('The packageId "'+id+'#'+version+'" already exists, and can''t be changed');
+      conn.Terminate;
+
+      // ok, it's passed all the tests...
+      TPackageUpdater.commit(conn, blob, npm, TFslDateTime.makeUTC, NewGuidId, id, version, npm.description, canonical, token, npm.kind);
+    finally
+      npm.Free;
+    end;
+    conn.Release;
+    response.ResponseNo := 202;
+    response.ResponseText := 'Created';
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      response.ResponseNo := 500;
+      response.ResponseText := 'Error';
+      response.ContentText := e.Message;
+    end;
+  end;
+end;
+
 procedure TFHIRPackageServer.serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
   pm : TParseMap;
@@ -497,7 +571,7 @@ var
 begin
   pm := TParseMap.create(request.UnparsedParams);
   try
-    if request.Document = '/packages/catalog' then
+    if (request.CommandType = hcGET) and (request.Document = '/packages/catalog') then
     begin
       if not pm.VarExists('lastUpdated') then
         serveSearch(pm.GetVar('name'), pm.GetVar('canonical'), pm.GetVar('fhirversion'), pm.GetVar('sort'), request, response)
@@ -506,7 +580,7 @@ begin
       else
         serveUpdates(TFslDateTime.fromXML(pm.GetVar('lastUpdated')), response)
     end
-    else
+    else if request.CommandType = hcGET then
     begin
       s := request.document.subString(10).split(['/']);
       if length(s) = 1 then
@@ -516,7 +590,15 @@ begin
       else if (request.Accept.contains('/html')) then
         serveHomePage(request, response)
       else
-        raise Exception.Create('Not done yet for '+request.Document);
+        raise Exception.Create('The operation GET '+request.Document+' is not supported');
+    end
+    else if (request.CommandType = hcPOST) and (request.Document = '/packages') then
+    begin
+      serveCreatePackage(request, response);
+    end
+    else
+    begin
+      raise Exception.Create('The operation '+request.Command+' is not supported');
     end;
   finally
     pm.free;

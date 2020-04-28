@@ -162,7 +162,40 @@ const
   CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool', 'GenPack', 'Group', 'Examples');
   NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package', 'Group', 'Examples');
 
+function isValidPackageId(id : String) : boolean;
+
 implementation
+
+function isValidPackagePart(part : String) : boolean;
+var
+  ch : char;
+begin
+  if (part = '') or not CharInSet(part[1], ['a'..'z', 'A'..'Z']) then
+    result := false
+  else
+  begin
+    result := true;
+    for ch in part do
+      if not CharInSet(ch, ['a'..'z', 'A'..'Z', '0'..'9', '-']) then
+        result := false;
+  end;
+end;
+
+function isValidPackageId(id : String) : boolean;
+var
+  parts : TArray<String>;
+  p : String;
+begin
+  if id = '' then
+    exit(false);
+  if (not id.Contains('.')) then
+    exit(false);
+  parts := id.Split(['.']);
+  for p in parts do
+    if not isValidPackagePart(p) then
+      exit(false);
+  result := true;
+end;
 
 { TNpmPackageIndexBuilder }
 

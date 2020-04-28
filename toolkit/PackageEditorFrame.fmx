@@ -169,8 +169,8 @@ object PackageEditorFrame: TPackageEditorFrame
       Size.Height = 414.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
-      Viewport.Width = 910.000000000000000000
-      Viewport.Height = 389.000000000000000000
+      Viewport.Width = 930.000000000000000000
+      Viewport.Height = 414.000000000000000000
       object StringColumn2: TStringColumn
         Header = 'Name'
       end
