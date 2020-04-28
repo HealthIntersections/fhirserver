@@ -737,6 +737,7 @@ begin
         if list.Count = 1 then
         begin
           response.HTTPCode := 200;
+          response.Location := request.baseUrl+request.ResourceName+'/'+Connection.Lookup('Ids', 'ResourceKey', inttostr(list[0].key), 'Id', '')+'/_history/'+Connection.Lookup('Versions', 'ResourceVersionKey', inttostr(list[0].version), 'VersionId', '');
         end
         else if list.Count > 1 then
           check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), itNotFound)
