@@ -111,6 +111,7 @@ Type
     procedure CreateClientRegistrations;
     procedure CreatePseudoData;
     procedure CreatePackagesTables;
+    procedure CreatePackagePermissionsTable;
     procedure CreateTwilioTable;
 //    procedure runScript(s : String);
   public
@@ -343,12 +344,25 @@ begin
   FConn.ExecSQL('Insert into ClientRegistrations (ClientKey, DateRegistered, Name, Mode, PatientContext) values (1, '+DBGetDate(FConn.Owner.Platform)+', ''Web Interface'', 0, 0)');
 end;
 
+procedure TFHIRDatabaseInstaller.CreatePackagePermissionsTable;
+begin
+  FConn.ExecSQL('CREATE TABLE PackagePermissions ( '+#13#10+
+       ' PackagePermissionKey  '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' ManualToken           nchar(64)                            '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Email                 nchar(128)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Mask                  nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
+       PrimaryKeyType(FConn.owner.Platform, 'PK_PackagePermissions', 'PackagePermissionKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_PackagePermissions_Token ON PackagePermissions (ManualToken)');
+end;
+
 procedure TFHIRDatabaseInstaller.CreatePackagesTables;
 begin
   FConn.ExecSQL('CREATE TABLE Packages ( '+#13#10+
        ' PackageKey      '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' Id              nchar(64)                            '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Canonical       nchar(128)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' DownloadCount   int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' ManualToken     nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' CurrentVersion  '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Packages', 'PackageKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Packages_Id ON Packages (Id, PackageKey)');
@@ -362,6 +376,8 @@ begin
        ' Id                nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Version           nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Kind              int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' DownloadCount     int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' ManualToken       nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' Canonical         nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' FhirVersions      nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Description       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
@@ -1080,6 +1096,8 @@ begin
     CreatePseudoData;
     if assigned(CallBack) then Callback(76, 'Create Package Tables');
     CreatePackagesTables;
+    if assigned(CallBack) then Callback(77, 'Create Package Permissions Table');
+    CreatePackagePermissionsTable;
     if assigned(CallBack) then Callback(77, 'Commit');
     CreateTwilioTable;
     if assigned(CallBack) then Callback(78, 'Commit');
@@ -1167,6 +1185,7 @@ begin
       drop('PackageDependencies');
       drop('PackageVersions');
       drop('Packages');
+      drop('PackagePermissions');
 
       drop('VersionTags');
       drop('Versions');
@@ -1273,6 +1292,12 @@ begin
       Fconn.ExecSQL('Update PackageVersions set DownloadCount = 0');
       Fconn.ExecSQL('ALTER TABLE dbo.Packages ADD DownloadCount int NULL');
       Fconn.ExecSQL('Update Packages set DownloadCount = 0');
+    end;
+    if (version <= 27) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.PackageVersions ADD ManualToken nchar(64) NULL');
+      Fconn.ExecSQL('ALTER TABLE dbo.Packages ADD ManualToken nchar(64) NULL');
+      CreatePackagePermissionsTable;
     end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
