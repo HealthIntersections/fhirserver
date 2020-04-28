@@ -54,6 +54,7 @@ type
     constructor Create(code : String);
     function Link : TIETFLanguageCodeConcept; overload;
 
+    function isLangRegion : boolean;
   end;
 
   TIETFLanguageEntry = class (TFslObject)
@@ -114,7 +115,8 @@ type
     destructor Destroy; override;
 
     function parse(code : String; var msg : String) : TIETFLanguageCodeConcept;
-    function present(code : TIETFLanguageCodeConcept):String;
+    function present(code : TIETFLanguageCodeConcept) : String; overload;
+    function present(code : TIETFLanguageCodeConcept; template : String) : String; overload;
 
     function getDisplayForRegion(code : String):String;
     function getDisplayForLang(code : String):String;
@@ -304,8 +306,22 @@ begin
 end;
 
 procedure TIETFLanguageCodeServices.Displays(code : String; list : TStringList; lang : String);
+var
+  c : TIETFLanguageCodeConcept;
+  msg : String;
 begin
-  list.Add(getDisplay(code, lang));
+  if (code <> '') then
+  begin
+    c := FDefinitions.parse(code, msg);
+    try
+      if c <> nil then
+        list.Add(FDefinitions.present(c).Trim);
+      if c.isLangRegion then
+        list.Add(FDefinitions.present(c, '{{lang}} ({{region}})').Trim);
+    finally
+      c.Free;
+    end;
+  end;
 end;
 
 
@@ -483,6 +499,13 @@ begin
   self.code := code;
 end;
 
+function TIETFLanguageCodeConcept.isLangRegion: boolean;
+begin
+  result := (language <> '') and (region <> '') and
+    (length(extLang) = 0) and (script = '') and (variant = '') and (extension = '') and (length(privateUse) = 0);
+
+end;
+
 function TIETFLanguageCodeConcept.Link: TIETFLanguageCodeConcept;
 begin
   result := TIETFLanguageCodeConcept(inherited link);
@@ -583,6 +606,11 @@ begin
   end;
 end;
 
+
+function TIETFLanguageDefinitions.present(code: TIETFLanguageCodeConcept; template: String): String;
+begin
+  result := template.Replace('{{lang}}', FLanguages[code.language].display).Replace('{{region}}', FRegions[code.region].display);
+end;
 
 function TIETFLanguageDefinitions.present(code: TIETFLanguageCodeConcept): String;
 var
