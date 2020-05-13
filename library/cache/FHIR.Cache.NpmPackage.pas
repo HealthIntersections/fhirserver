@@ -112,6 +112,7 @@ Type
     function Link : TNpmPackage; overload;
 
     class function fromFolder(path : String) : TNpmPackage; overload;
+    class function fromFolderQuick(path : String) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream; desc : String) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream; desc : String; progress : TWorkProgressEvent) : TNpmPackage; overload;
@@ -429,6 +430,19 @@ begin
   try
     this.loadFiles(path, []);
     this.checkIndexed(path);
+    result := this.link;
+  finally
+    this.free;
+  end;
+end;
+
+class function TNpmPackage.fromFolderQuick(path: String): TNpmPackage;
+var
+  this : TNpmPackage;
+begin
+  this := TNpmPackage.create;
+  try
+    this.FNpm := TJsonParser.parseFile(filePath([path, 'package', 'package.json']));
     result := this.link;
   finally
     this.free;

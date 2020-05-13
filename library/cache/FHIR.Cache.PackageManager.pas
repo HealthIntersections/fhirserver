@@ -110,6 +110,7 @@ type
     property UserMode : boolean read FUser;
     function description : String;
 
+    procedure listAllKnownPackages(list: TFslList<TFHIRPackageInfo>; ver : String);
     procedure ListPackageIds(list : TStrings);
     procedure ListPackages(list : TStrings); overload;
     procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TNpmPackage>); overload;
@@ -207,6 +208,27 @@ end;
 function TFHIRPackageManager.Link: TFHIRPackageManager;
 begin
   result := TFHIRPackageManager(Inherited Link);
+end;
+
+procedure TFHIRPackageManager.listAllKnownPackages(list: TFslList<TFHIRPackageInfo>; ver: String);
+var
+  s, id : String;
+  npm : TNpmPackage;
+  pi : TFHIRPackageInfo;
+begin
+  for s in TDirectory.GetDirectories(FFolder) do
+  begin
+    npm := TNpmPackage.fromFolderQuick(s);
+    try
+      if TFHIRVersions.matches(npm.fhirVersion, ver) then
+        if not list.contains(function (const t : TFHIRPackageInfo) : boolean begin result := npm.name = t.id; end) then
+          list.Add(TFHIRPackageInfo.Create(npm.name, npm.version, npm.fhirVersion, npm.description, npm.canonical, npm.url));
+    finally
+      npm.Free;
+    end;
+  end;
+  TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_BACKUP, ver);
+  TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_PRIMARY, ver);
 end;
 
 procedure TFHIRPackageManager.clearCache;

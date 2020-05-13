@@ -2057,14 +2057,14 @@ begin
     drop(r.id);
 
   FList.add(r.link);
-  FMap.add(r.id, r.link); // we do this so we can drop by id
+  FMap.addOrSetValue(r.id, r.link); // we do this so we can drop by id
 
   if (r.url <> '') then
   begin
     // first, this is the correct resource for this version (if it has a version)
     if (r.version <> '') then
     begin
-      FMap.add(r.url+'|'+r.version, r.link);
+      FMap.addOrSetValue(r.url+'|'+r.version, r.link);
     end;
     updateList(r.url, r.version);
   end;

@@ -1726,7 +1726,7 @@ begin
   patient := factory.wrapPatient(GetResource(request.Session, 'Patient', request.lang, id, ver, ''));
   try
     xhtml := factory.getXhtml(patient.Resource).AsPlainText;
-    startHooks(hooks, patient, request.baseUrl);
+ //   startHooks(hooks, patient, request.baseUrl);
   finally
     patient.Free;
   end;
@@ -3108,6 +3108,7 @@ end;
 
 function TFhirWebServerEndpoint.buildPackageList: String;
 var
+  pcm : TFHIRPackageManager;
   list : TFslList<TFHIRPackageInfo>;
   i : TFHIRPackageInfo;
   loaded : TFslMap<TLoadedPackageInformation>;
@@ -3115,42 +3116,46 @@ var
   lp : TLoadedPackageInformation;
   links : String;
 begin
-  list := TFslList<TFHIRPackageInfo>.create;
+  pcm := TFHIRPackageManager.Create(false);
   try
-    TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_BACKUP, FContext.Factory.versionName);
-    TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_PRIMARY, FContext.Factory.versionName);
-    loaded := FContext.Storage.loadPackages;
+    list := TFslList<TFHIRPackageInfo>.create;
     try
-      loaded.defaultValue := nil;
-      b := TFslStringBuilder.Create;
+      pcm.listAllKnownPackages(list, FContext.Factory.versionName);
+      loaded := FContext.Storage.loadPackages;
       try
-        b.append('<table>'#13#10);
-        b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
-        list.Sort(function (const L, R: TFHIRPackageInfo): Integer begin result := CompareText(l.id, r.id); end);
-        for i in list do
-        begin
-          lp := loaded[i.id];
-          links := '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
-          if (lp <> nil) then
+        loaded.defaultValue := nil;
+        b := TFslStringBuilder.Create;
+        try
+          b.append('<table>'#13#10);
+          b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
+          list.Sort(function (const L, R: TFHIRPackageInfo): Integer begin result := CompareText(l.id, r.id); end);
+          for i in list do
           begin
-            links := links + ' <a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a>';
-          end;
+            lp := loaded[i.id];
+            links := '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
+            if (lp <> nil) then
+            begin
+              links := links + ' <a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a>';
+            end;
 
-          if lp <> nil then
-            b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>'+loaded[i.id].summary+'</td><td>'+links+'</td></tr>'#13#10)
-          else
-            b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>-</td><td>'+links+'</td></tr>'#13#10);
+            if lp <> nil then
+              b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>'+loaded[i.id].summary+'</td><td>'+links+'</td></tr>'#13#10)
+            else
+              b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>-</td><td>'+links+'</td></tr>'#13#10);
+          end;
+          b.append('</table>'#13#10);
+          result := b.toString;
+        finally
+          b.Free;
         end;
-        b.append('</table>'#13#10);
-        result := b.toString;
       finally
-        b.Free;
+        loaded.Free;
       end;
     finally
-      loaded.Free;
+      list.free;
     end;
   finally
-    list.free;
+    pcm.Free;
   end;
 end;
 
@@ -6210,7 +6215,7 @@ var
   parser : TFHIRParser;
   bundle : TFHIRBundleW;
 begin
-  id := params.GetVar('load');
+  id := params.GetVar('reload');
   if (id = '') then
     raise Exception.Create('No package id to load provided');
   cnt := FContext.Storage.fetchLoadedPackage(id);
