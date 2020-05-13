@@ -32,7 +32,7 @@ uses
   {$IFNDEF MACOS}
   FastMM4 in '..\dependencies\FMM\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
-  {$ENDIF}
+  {$ENDIF }
   SysUtils,
   IdSSLOpenSSLHeaders,
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
@@ -163,7 +163,8 @@ uses
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
   FHIR.R3.Organiser in '..\library\r3\FHIR.R3.Organiser.pas',
-  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas';
+  FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
+  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas';
 
 {$R *.res}
 

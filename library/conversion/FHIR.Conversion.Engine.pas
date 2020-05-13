@@ -109,11 +109,11 @@ begin
       pIn.AddParameter('coding', coding.Link);
       pm := TParseMap.Create(params);
       try
-        if pm.VarExists('date') then
+        if pm.has('date') then
           pIn.AddParameter('date', TFhirDateTime.Create(TFslDateTime.fromXML(pm.GetVar('date'))));
-        if pm.VarExists('displayLanguage') then
+        if pm.has('displayLanguage') then
           pIn.AddParameter('displayLanguage', TFhirCode.Create(pm.GetVar('displayLanguage')));
-        if pm.VarExists('property') then
+        if pm.has('property') then
           for s in pm.GetVar('property').Split([';']) do
             pIn.AddParameter('displayLanguage', TFhirCode.Create(s));
         pOut := FTerminologyServer.operation(frtCodeSystem, 'lookup', pIn) as TFhirParameters;

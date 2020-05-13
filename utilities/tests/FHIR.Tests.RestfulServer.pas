@@ -161,6 +161,9 @@ Type
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
     property ServerContext : TFHIRServerContext read FContext write SetContext;
 
+    function loadPackages : TFslMap<TLoadedPackageInformation>; override;
+    function fetchLoadedPackage(id : String) : TBytes; override;
+    procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
   end;
 
 
@@ -294,9 +297,19 @@ begin
   end;
 end;
 
+procedure TTestStorageService.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTestStorageService.hasOAuthSession(id: String; status: integer): boolean;
 begin
   result := FOAuths.ContainsKey(id);
+end;
+
+function TTestStorageService.loadPackages: TFslMap<TLoadedPackageInformation>;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTestStorageService.ProcessEmails;
@@ -335,6 +348,11 @@ begin
 end;
 
 procedure TTestStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTestStorageService.fetchLoadedPackage(id: String): TBytes;
 begin
   raise EFslException.Create('Not Implemented');
 end;

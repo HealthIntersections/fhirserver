@@ -190,7 +190,8 @@ uses
   BaseFileFrame in 'BaseFileFrame.pas',
   PackageEditorFrame in 'PackageEditorFrame.pas' {PackageEditorFrame: TFrame},
   FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
-  NamingSystemEditor in 'NamingSystemEditor.pas' {NamingSystemEditorFrame: TFrame};
+  NamingSystemEditor in 'NamingSystemEditor.pas' {NamingSystemEditorFrame: TFrame},
+  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas';
 
 {$R *.res}
 

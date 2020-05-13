@@ -214,7 +214,9 @@ uses
   FastMM4Messages in '..\..\dependencies\FMM\FastMM4Messages.pas',
   FHIR.Database.ODBC in '..\..\library\database\FHIR.Database.ODBC.pas',
   FHIR.Database.ODBC.Objects in '..\..\library\database\FHIR.Database.ODBC.Objects.pas',
-  FHIR.Database.ODBC.Headers in '..\..\library\database\FHIR.Database.ODBC.Headers.pas';
+  FHIR.Database.ODBC.Headers in '..\..\library\database\FHIR.Database.ODBC.Headers.pas',
+  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas';
 
 {$R *.res}
 

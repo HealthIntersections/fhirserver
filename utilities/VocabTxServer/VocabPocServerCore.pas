@@ -95,7 +95,7 @@ type
   protected
     function GetTotalResourceCount: integer; override;
   public
-    constructor Create(server : TTerminologyServer);
+    constructor Create(server : TTerminologyServer); overload;
     destructor Destroy; override;
 
     // no OAuth Support
@@ -129,6 +129,9 @@ type
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
+    function loadPackages : TFslMap<TLoadedPackageInformation>; override;
+    function fetchLoadedPackage(id : String) : TBytes; override;
+    procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
   end;
 
   TVocabServerFactory = class (TFHIRServerFactory)
@@ -172,6 +175,11 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+function TTerminologyServerStorage.fetchLoadedPackage(id: String): TBytes;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyServerStorage.FetchResource(key: integer): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
@@ -196,6 +204,11 @@ end;
 function TTerminologyServerStorage.GetTotalResourceCount: integer;
 begin
   result := 0;
+end;
+
+function TTerminologyServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyServerStorage.ProcessEmails;
@@ -231,6 +244,11 @@ end;
 procedure TTerminologyServerStorage.RecordFhirSession(session: TFhirSession);
 begin
   // nothing
+end;
+
+procedure TTerminologyServerStorage.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyServerStorage.RegisterAuditEvent(session: TFhirSession; ip: String);

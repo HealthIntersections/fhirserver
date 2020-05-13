@@ -178,9 +178,9 @@ begin
   if req.Parameters.GetVar('schema_version') <> '1.0' then
     raise EFHIRException.create('Unknown schema version for OMH 1.0');
   p := '_profile=http://www.openmhealth.org/schemas/fhir/'+req.Parameters.GetVar('schema_namespace')+'/'+req.Parameters.GetVar('schema_version')+'/'+req.Parameters.GetVar('schema_name');
-  if req.Parameters.VarExists('created_on_or_after') then
+  if req.Parameters.has('created_on_or_after') then
     p := p + '&date=ge'+req.Parameters.getvar('created_on_or_after');
-  if req.Parameters.VarExists('created_before') then
+  if req.Parameters.has('created_before') then
     p := p + '&date=le'+req.Parameters.getvar('created_before');
   req.LoadParams(p);
 end;

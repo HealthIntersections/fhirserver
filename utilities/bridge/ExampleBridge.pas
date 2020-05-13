@@ -153,7 +153,7 @@ Type
   protected
     function GetTotalResourceCount: integer; override;
   public
-    constructor Create(Data : TExampleServerData);
+    constructor Create(Data : TExampleServerData); overload;
     destructor Destroy; override;
 
     // no OAuth Support
@@ -184,6 +184,9 @@ Type
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
+    function loadPackages : TFslMap<TLoadedPackageInformation>; override;
+    function fetchLoadedPackage(id : String) : TBytes; override;
+    procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
   end;
 
   TExampleFHIRUserProvider = class (TFHIRUserProvider)
@@ -637,7 +640,7 @@ end;
 
 { TExampleFhirServerStorage }
 
-constructor TExampleFhirServerStorage.Create;
+constructor TExampleFhirServerStorage.Create(Data : TExampleServerData);
 begin
   inherited Create(TFHIRFactoryR3.create);
   FData := Data;
@@ -654,9 +657,19 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+function TExampleFhirServerStorage.fetchLoadedPackage(id: String): TBytes;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 procedure TExampleFhirServerStorage.RecordFhirSession(session: TFhirSession);
 begin
   // this server doesn't track sessions
+end;
+
+procedure TExampleFhirServerStorage.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TExampleFhirServerStorage.CloseFhirSession(key: integer);
@@ -700,6 +713,11 @@ begin
   result := 1;
 end;
 
+
+function TExampleFhirServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
 
 procedure TExampleFhirServerStorage.ProcessEmails;
 begin

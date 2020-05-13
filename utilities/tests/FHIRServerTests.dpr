@@ -405,7 +405,9 @@ uses
   FHIR.Server.Packages in '..\..\Server\FHIR.Server.Packages.pas',
   FHIR.Cache.PackageUpdater in '..\..\library\cache\FHIR.Cache.PackageUpdater.pas',
   FHIR.Server.Twilio in '..\..\Server\FHIR.Server.Twilio.pas',
-  FHIR.Server.Covid in '..\..\Server\Modules\FHIR.Server.Covid.pas';
+  FHIR.Server.Covid in '..\..\Server\Modules\FHIR.Server.Covid.pas',
+  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas';
 
 var
   runner : ITestRunner;

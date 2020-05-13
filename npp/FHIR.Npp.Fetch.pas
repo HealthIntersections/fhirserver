@@ -221,14 +221,14 @@ var
   ok : boolean;
   s : String;
 begin
-  if pm.VarExists(definition.name) then
+  if pm.has(definition.name) then
     readParamValue(pm.GetVar(definition.name))
   else
   begin
     ok := false;
     if (modList <> nil) then
       for s in modList.Items do
-        if pm.VarExists(definition.name+':'+s) then
+        if pm.has(definition.name+':'+s) then
         begin
           ok := true;
           modList.ItemIndex := modlist.Items.IndexOf(s);
@@ -807,20 +807,20 @@ var
 begin
   for se in FSearchItems do
     se.readFromURL(pm);
-  if pm.varExists('_sort') then
+  if pm.has('_sort') then
   begin
     cbxSort.itemindex := cbxSort.Items.IndexOf(pm.GetVar('_sort'));
     cbSearchOrder.Checked := false;
-  end else if pm.varExists('_sort:asc') then
+  end else if pm.has('_sort:asc') then
   begin
     cbxSort.itemindex := cbxSort.Items.IndexOf(pm.GetVar('_sort:asc'));
     cbSearchOrder.Checked := false;
-  end else if pm.varExists('_sort:desc') then
+  end else if pm.has('_sort:desc') then
   begin
     cbxSort.itemindex := cbxSort.Items.IndexOf(pm.GetVar('_sort:desc'));
     cbSearchOrder.Checked := true;
   end;
-  if (pm.VarExists('_count')) then
+  if (pm.has('_count')) then
     edtPageCount.Value := StrToIntDef(pm.GetVar('_count'), 20);
 end;
 

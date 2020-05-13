@@ -100,7 +100,7 @@ Uses
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
   FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.UsageStats,
   {$IFNDEF NO_JS} FHIR.Server.Javascript, {$ENDIF}
-  FHIR.Server.Subscriptions, FHIR.Server.Packages, FHIR.Server.Twilio;
+  FHIR.Server.Subscriptions, {$IFNDEF FHIR3}FHIR.Server.Packages, {$ENDIF}FHIR.Server.Twilio;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -149,6 +149,7 @@ Type
     constructor Create(server: TFhirWebServer);
   end;
 
+  {$IFNDEF FHIR3}
   TPackageUpdaterThread  = class(TFHIRServerThread)
   private
     FDB : TFslDBManager;
@@ -161,6 +162,7 @@ Type
     constructor Create(server: TFhirWebServer; db : TFslDBManager);
     destructor Destroy; override;
   end;
+  {$ENDIF}
 
   TAsyncTaskThread = class(TFHIRServerThread)
   private
@@ -472,7 +474,9 @@ Type
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
     FUsageServer : TUsageStatsServer;
+    {$IFNDEF FHIR3}
     FPackageServer : TFHIRPackageServer;
+    {$ENDIF}
     FTwilioServer : TTwilioServer;
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
@@ -536,7 +540,9 @@ Type
     property ServeUnverifiedJWT: boolean read FServeUnverifiedJWT write FServeUnverifiedJWT;
     property JWTAuthorities: TFslStringDictionary read FJWTAuthorities;
     property settings : TFHIRServerSettings read FSettings;
+    {$IFNDEF FHIR3}
     property PackageServer : TFHIRPackageServer read FPackageServer;
+    {$ENDIF}
 
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
@@ -3969,8 +3975,10 @@ Begin
   FPatientViewServers := TFslStringDictionary.Create;
 
   FGoogle := TGoogleAnalyticsProvider.Create;
+  {$IFNDEF FHIR3}
   FPackageServer := TFHIRPackageServer.create;
   FPackageServer.OnReturnProcessFileEvent := ReturnProcessedFile;
+  {$ENDIF}
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
   // FAppSecrets := ini.ReadString('fhir', 'oauth-secrets', '');
 End;
@@ -3978,7 +3986,9 @@ End;
 Destructor TFhirWebServer.Destroy;
 Begin
   FTwilioServer.Free;
+  {$IFNDEF FHIR3}
   FPackageServer.Free;
+  {$ENDIF}
   FUsageServer.Free;
   StopAsyncTasks;
   FEndPoints.Free;
@@ -4054,10 +4064,12 @@ begin
   // web server configuration
   FActualPort := StrToIntDef(ini.web['http'], 0);
   FActualSSLPort := StrToIntDef(ini.web['https'], 0);
+  {$IFNDEF FHIR3}
   if FActualPort <> 80 then
     FPackageServer.path := 'http://'+host+':'+inttostr(FActualPort)+'/packages'
   else
     FPackageServer.path := 'http://'+host+'/packages';
+  {$ENDIF}
   FCertFile := ini.web['certname'];
   FRootCertFile := ini.web['cacertname'];
   FSSLPassword := ini.web['password'];
@@ -4501,8 +4513,10 @@ begin
         sp := FSourceProvider;
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        {$IFNDEF FHIR3}
         else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
           FPackageServer.serve(request, response)
+        {$ENDIF}
         else if sp.exists(sp.AltFile(request.Document, '/')) then
           ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
         else if request.Document = '/' then
@@ -4568,8 +4582,10 @@ begin
       begin
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        {$IFNDEF FHIR3}
         else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
           FPackageServer.serve(request, response)
+        {$ENDIF}
         else if request.Document = '/twilio' then
           HandleTwilio(AContext, request, response, false, false)
         else if sp.exists(sp.AltFile(request.Document, '/')) then
@@ -5595,6 +5611,7 @@ begin
   FServer.Context.Storage.updateAsyncTaskStatus(key, status, message);
 end;
 
+{$IFNDEF FHIR3}
 { TPackageUpdaterThread }
 
 constructor TPackageUpdaterThread.Create(server: TFhirWebServer; db: TFslDBManager);
@@ -5657,6 +5674,7 @@ begin
     end
   );
 end;
+{$ENDIF}
 
 { THtmlFormScriptPlugin }
 
