@@ -407,6 +407,10 @@ type
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TFslDBManager read FDB;
+
+    function loadPackages : TFslMap<TLoadedPackageInformation>; override;
+    function fetchLoadedPackage(id : String) : TBytes; override;
+    procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
   end;
 
   TFslDateTimeWrapper = class (TFslObject)
@@ -1044,7 +1048,7 @@ begin
       gql.OnListResources := GraphListResources;
       if request.GraphQL <> nil then
         gql.GraphQL := request.GraphQL.Link
-      else if request.Parameters.VarExists('query') then
+      else if request.Parameters.has('query') then
         gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
       else
         raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
@@ -1098,7 +1102,7 @@ begin
         gql.OnListResources := GraphListResources;
         if request.GraphQL <> nil then
           gql.GraphQL := request.GraphQL.Link
-        else if request.Parameters.VarExists('query') then
+        else if request.Parameters.has('query') then
           gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
         else
           raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
@@ -1587,7 +1591,7 @@ var
 begin
   id := FhirGUIDToString(CreateGuid);
   result := inttostr(FRepository.NextSearchKey);
-  if params.VarExists('_query') and (params.getVar('_query') <> '') then
+  if params.has('_query') and (params.getVar('_query') <> '') then
   begin
     if (params.getVar('_query') = 'mpi') and (aType = 'Patient') then
       ProcessMPISearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, link, sql, total, summaryStatus, strict, reverse)
@@ -1889,7 +1893,7 @@ begin
               id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
             cok := false;
-            if (total = 0) and StringArrayExistsInsensitive(factory.CanonicalResources, request.ResourceName) and (request.Parameters.VarExists('url')) then
+            if (total = 0) and StringArrayExistsInsensitive(factory.CanonicalResources, request.ResourceName) and (request.Parameters.has('url')) then
               cok := processCanonicalSearch(request, bundle);
 
             if not cok then
@@ -1907,7 +1911,7 @@ begin
                 count := SUMMARY_SEARCH_PAGE_LIMIT
               else
                 count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
-              if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
+              if (count = 0) and request.Parameters.has(SEARCH_PARAM_NAME_COUNT) then
                 summaryStatus := soCount;
 
 
@@ -1934,7 +1938,7 @@ begin
                 end;
 
                 chooseField(response.Format, summaryStatus, request.loadObjects, field, prsrFmt, needsObject);
-                if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') and NO_AUDIT_ON_SEARCH then // param __wantObject is for internal use only
+                if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.has('__wantObject') and NO_AUDIT_ON_SEARCH then // param __wantObject is for internal use only
                   prsrfmt := ffUnspecified;
 
                 FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
@@ -3910,7 +3914,7 @@ begin
   else
   begin
     inherited ExecuteOperation(context, request, response);
-    if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
+    if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
       processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
   end;
 end;
@@ -4199,19 +4203,19 @@ end;
 //  cacheId := '';
 //  if (resource <> nil) and (resource is TFHIRValueSet) then
 //    result := resource.Link as TFhirValueSet
-//  else if params.VarExists('_id') then
+//  else if params.has('_id') then
 //  begin
 //    result := GetValueSetById(request, params.getvar('_id'), base);
 //    cacheId := result.url;
 //    used := used+'&_id='+params.getvar('_id')
 //  end
-//  else if params.VarExists('id') then
+//  else if params.has('id') then
 //  begin
 //    result := GetValueSetById(request, params.getvar('id'), base);
 //    cacheId := result.url;
 //    used := used+'&id='+params.getvar('id')
 //  end
-//  else if params.VarExists('identifier') then
+//  else if params.has('identifier') then
 //  begin
 //    if not FRepository.TerminologyServer.isKnownValueSet(params.getvar('identifier'), result) then
 //      result := GetValueSetByIdentity(params.getvar('identifier'), params.getvar('version'));
@@ -4220,7 +4224,7 @@ end;
 //  end
 //  else
 //    result := constructValueSet(params, used, allowNull);
-//  if params.varExists('nocache') then
+//  if params.has('nocache') then
 //    cacheId := '';
 //end;
 //
@@ -4246,7 +4250,7 @@ end;
 //          id := request.Id;
 //          if request.Id <> '' then // and it must exist, because of the check above
 //            profile := GetProfileById(request, request.Id, baseUrl)
-//          else if request.Parameters.VarExists('identifier') then
+//          else if request.Parameters.has('identifier') then
 //            profile := GetProfileByURL(request.Parameters.getvar('identifier'), id)
 //          else if (request.form <> nil) and request.form.hasParam('profile') then
 //            profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
@@ -4707,7 +4711,7 @@ end;
 //  empty : boolean;
 //  function UseParam(name : String; var value : String) : boolean; overload;
 //  begin
-//    result := params.VarExists(name);
+//    result := params.has(name);
 //    value := params.GetVar(name);
 //    used := used + '&'+name+'='+EncodeMime(value);
 //    empty := value <> '';
@@ -5608,6 +5612,26 @@ begin
   end;
 end;
 
+procedure TFHIRNativeStorageService.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
+begin
+  FDB.connection('packages.list', procedure (conn : TFslDBConnection)
+    var k : integer;
+    begin
+      k := conn.CountSQL('Select max(LoadedPackageKey) from LoadedPackages')+1;
+      conn.SQL := 'insert into LoadedPackages (LoadedPackageKey, Id, Version, DateLoaded, Resources, Content) values (:k, :i, :v, :d, :c, :b)';
+      conn.Prepare;
+      conn.BindKey('k', k);
+      conn.BindString('i', id);
+      conn.BindString('v', ver);
+      conn.BindDateTimeEx('d', TFslDateTime.makeUTC);
+      conn.BindInteger('c', count);
+      conn.BindBlob('b', blob);
+      conn.Execute;
+      conn.Terminate;
+    end
+  );
+end;
+
 destructor TFHIRNativeStorageService.Destroy;
 var
   rc : TFHIRResourceConfig;
@@ -5802,6 +5826,29 @@ begin
    );
 end;
 
+
+function TFHIRNativeStorageService.fetchLoadedPackage(id: String): TBytes;
+var
+  b : TBytes;
+begin
+  SetLength(b, 0);
+  FDB.connection('packages.list', procedure (conn : TFslDBConnection)
+    var
+      o : TLoadedPackageInformation;
+    begin
+      conn.SQL := 'select Id, Content from LoadedPackages';
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+      begin
+        if (conn.ColStringByName['Id'] = id) then
+          b := conn.ColBlobByName['Content'];
+      end;
+      conn.Terminate;
+    end
+  );
+  result := b;
+end;
 
 function TFHIRNativeStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
 var
@@ -7251,6 +7298,41 @@ begin
     conn.terminate;
   end;
   FTotalResourceCount := i;
+end;
+
+function TFHIRNativeStorageService.loadPackages: TFslMap<TLoadedPackageInformation>;
+var
+  map : TFslMap<TLoadedPackageInformation>;
+begin
+  map := TFslMap<TLoadedPackageInformation>.create('loaded.packages');
+  try
+    FDB.connection('packages.list', procedure (conn : TFslDBConnection)
+      var
+        o : TLoadedPackageInformation;
+      begin
+        conn.SQL := 'select Id, Version, DateLoaded, Resources from LoadedPackages';
+        conn.Prepare;
+        conn.Execute;
+        while conn.FetchNext do
+        begin
+          o := TLoadedPackageInformation.Create;
+          try
+            o.id := conn.ColStringByName['Id'];
+            o.ver := conn.ColStringByName['Version'];
+            o.date := conn.ColDateTimeExByName['DateLoaded'];
+            o.count := conn.ColIntegerByName['Resources'];
+            map.AddOrSetValue(o.id, o.link);
+          finally
+            o.Free;
+          end;
+        end;
+        conn.Terminate;
+      end
+    );
+    result := map.Link;
+  finally
+    map.Free;
+  end;
 end;
 
 function TFHIRNativeStorageService.loadResource(conn: TFslDBConnection; key: integer): TFHIRResourceV;

@@ -247,6 +247,7 @@ Type
     TDirection = System.Types.TDirection;
     TEmptyFunc = reference to function (const L, R: T): Boolean;
     TListCompareFunc = reference to function (const L, R: T): Integer;
+    TListMatchFunc = reference to function (const i : T): boolean;
     {$ENDIF}
   private
     FJsHandle: pointer;
@@ -332,7 +333,8 @@ Type
 
     function Expand: TFslList<T>;
 
-    function Contains(const Value: T): Boolean;
+    function Contains(const Value: T): Boolean; overload;
+    function Contains(match: TListMatchFunc): Boolean; overload;
     function IndexOf(const Value: T): Integer;
     function IndexOfItem(const Value: T; Direction: TDirection): Integer;
     function LastIndexOf(const Value: T): Integer;
@@ -1570,6 +1572,16 @@ procedure TFslList<T>.Clear;
 begin
   Count := 0;
   Capacity := 0;
+end;
+
+function TFslList<T>.Contains(match: TListMatchFunc): Boolean;
+var
+  i : T;
+begin
+  result := false;
+  for i in self do
+    if (match(i)) then
+      exit(true);
 end;
 
 function TFslList<T>.Expand: TFslList<T>;

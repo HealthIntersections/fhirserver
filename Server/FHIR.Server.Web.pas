@@ -90,7 +90,7 @@ Uses
   {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
   FHIR.Client.HTTP,
-  FHIR.Cache.PackageUpdater,
+  FHIR.Cache.PackageUpdater, FHIR.Cache.PackageClient, FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Tools.GraphQL, FHIR.Tools.NDJsonParser,
   {$IFNDEF NO_CONVERSION} FHIR.XVersion.Convertors,{$ENDIF}
@@ -278,6 +278,34 @@ Type
     function resolveConstant(context : TFHIRPathExecutionContext; s : String; var obj : TFHIRObject) : boolean; override;
   end;
 
+  TFHIRServerPostHandler = class abstract (TFslObject)
+  private
+    FServer : TFhirWebServerEndpoint;
+    FParams: TParseMap;
+    FSecure: boolean;
+    FVariables: TFslMap<TFHIRObject>;
+    FContext : TFHIRServerContext;
+    FSession: TFHIRSession;
+    procedure SetParams(const Value: TParseMap);
+    procedure SetVariables(const Value: TFslMap<TFHIRObject>);
+    procedure SetContext(const Value: TFHIRServerContext);
+    procedure SetSession(const Value: TFHIRSession);
+  protected
+    FRedirect: String;
+  public
+    constructor Create(server : TFhirWebServerEndpoint);
+    destructor Destroy; override;
+
+    procedure execute; virtual; abstract;
+
+    property context : TFHIRServerContext read FContext write SetContext;
+    property params : TParseMap read FParams write SetParams;
+    property redirect : String read FRedirect;
+    property secure : boolean read FSecure write FSecure;
+    property session: TFHIRSession read FSession write SetSession;
+    property variables : TFslMap<TFHIRObject> read FVariables write SetVariables;
+  end;
+
   TFhirWebServerEndpoint = class (TFslObject)
   private
     FWebServer : TFHIRWebServer;
@@ -332,6 +360,7 @@ Type
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
     Function BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
     Function BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean; params : String): String;
+    function buildPackageList : String;
 
     function GetResource(Session: TFHIRSession; rtype: String; lang, id, ver, op: String): TFhirResourceV;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
@@ -563,6 +592,14 @@ type
   THtmlFormScriptPlugin = class (TFHIRWebServerScriptPlugin)
   public
     function process(s : String; request : TIdHTTPRequestInfo; pm : TParseMap; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; override;
+  end;
+
+  TPackageLoader = class (TFHIRServerPostHandler)
+  private
+    procedure load;
+    procedure reload;
+  public
+    procedure execute; override;
   end;
 
 Function GetMimeTypeForExt(AExt: String): String;
@@ -2007,15 +2044,15 @@ Begin
     begin
       oRequest.Version := readVersion(sContentType);
       oRequest.PostFormat := mimeTypeToFormat(sContentType, oRequest.PostFormat);
-      if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.VarExists('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
+      if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.has('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
         sContentType := oRequest.Parameters.GetVar('_format');
     end;
 
     oResponse.Version := readVersion(sContentAccept);
-    if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
+    if oRequest.Parameters.has('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
     oResponse.format := mimeTypeListToFormat(sContentAccept, oResponse.Format);
-    if oRequest.Parameters.VarExists('_pretty') and (oRequest.Parameters.GetVar('_pretty') = 'true') then
+    if oRequest.Parameters.has('_pretty') and (oRequest.Parameters.GetVar('_pretty') = 'true') then
       style := OutputStylePretty
     else if sContentAccept.Contains('pretty=') and (extractProp(sContentAccept, 'pretty') = 'true') then
       style := OutputStylePretty
@@ -2566,7 +2603,7 @@ begin
     FWebServer.FLock.Unlock;
   end;
   id := NewGuidId;
-  if request.Parameters.VarExists('_outputFormat') then
+  if request.Parameters.has('_outputFormat') then
     thread.Format := mimeTypeToFormat(request.Parameters.GetVar('_outputFormat'))
   else
     thread.Format := response.Format;
@@ -2953,6 +2990,7 @@ begin
             '</a> (History of all resources)</li>' + #13#10);
         if not FWebServer.FIsTerminologyServerOnly then
           b.Append('<li><a href="#upload">' + GetFhirMessage('NAME_UPLOAD_SERVICES', lang) + '</a></li>' + #13#10);
+        b.Append('<li><a href="' + sBaseURL + '/package-client.hts">Maintain Packages</a></li>' + #13#10);
 
         if not FWebServer.FIsTerminologyServerOnly then
           b.Append('<li>Create/Edit a new resource based on the profile: <form action="' + sBaseURL + '/_web/Create" method="GET"><select name="profile">' + pol
@@ -3060,6 +3098,54 @@ begin
     + '' + GetFhirMessage('MSG_CONTENT_UPLOAD', lang) + ': <input type="file" name="file" size="60"/><br/>' + #13#10 +
     '<input type="submit" value="Upload"/>'#13#10 + '</form>'#13#10 + ''#13#10 + '<p><br/><a href="' + s + '">' + GetFhirMessage('MSG_BACK_HOME', lang) +
     '</a></p>' + '</div>'#13#10 + '</body>'#13#10 + '</html>'#13#10 + ''#13#10
+end;
+
+function TFhirWebServerEndpoint.buildPackageList: String;
+var
+  list : TFslList<TFHIRPackageInfo>;
+  i : TFHIRPackageInfo;
+  loaded : TFslMap<TLoadedPackageInformation>;
+  b : TFslStringBuilder;
+  lp : TLoadedPackageInformation;
+  links : String;
+begin
+  list := TFslList<TFHIRPackageInfo>.create;
+  try
+    TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_BACKUP, FContext.Factory.versionName);
+    TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_PRIMARY, FContext.Factory.versionName);
+    loaded := FContext.Storage.loadPackages;
+    try
+      loaded.defaultValue := nil;
+      b := TFslStringBuilder.Create;
+      try
+        b.append('<table>'#13#10);
+        b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
+        list.Sort(function (const L, R: TFHIRPackageInfo): Integer begin result := CompareText(l.id, r.id); end);
+        for i in list do
+        begin
+          lp := loaded[i.id];
+          links := '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
+          if (lp <> nil) then
+          begin
+            links := links + ' <a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a>';
+          end;
+
+          if lp <> nil then
+            b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>'+loaded[i.id].summary+'</td><td>'+links+'</td></tr>'#13#10)
+          else
+            b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>-</td><td>'+links+'</td></tr>'#13#10);
+        end;
+        b.append('</table>'#13#10);
+        result := b.toString;
+      finally
+        b.Free;
+      end;
+    finally
+      loaded.Free;
+    end;
+  finally
+    list.free;
+  end;
 end;
 
 //function TFhirWebServerEndpoint.LookupReference(Context: TFHIRRequest; id: String): TResourceWithReference;
@@ -3451,38 +3537,41 @@ begin
 end;
 
 procedure TFhirWebServerEndPoint.RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
-//var
-//  handler : TFHIRServerPostHandler;
-//  params : TParseMap;
-//  variables: TFslMap<TFHIRObject>;
-//  s : string;
+var
+  handler : TFHIRServerPostHandler;
+  params : TParseMap;
+  s : string;
 begin
-  raise EFslException.Create('Not handled at this time');
-//  params := TParseMap.create(request.UnparsedParams);
-//  try
-//    s := params.GetVar('handler');
+  params := TParseMap.create(request.UnparsedParams);
+  try
+    s := params.GetVar('handler');
+    if (s = 'packageloader') then
+      handler := TPackageLoader.create(self)
+    else
+      raise EFHIRException.create('Unknown Handler '+s);
+
 //  !{$IFDEF FHIR3}
 //    if s = 'coverage' then
 //      handler := TFHIRServerCoveragePostHandler.Create
 //    else {$ENDIF}
-//      raise EFHIRException.create('Unknown Handler');
-//    try
-//      handler.secure := secure;
-//      handler.params := params.Link;
-//      handler.context := FContext.Link;
-//      handler.session := Session.Link;
-//      variables := handler.execute;
-//      try
-//        ReturnProcessedFile(request, response, session, claimed, actual, secure, variables);
-//      finally
-//        variables.Free;
-//      end;
-//    finally
-//      handler.Free;
-//    end;
-//  finally
-//    params.Free;
-//  end;
+    try
+      handler.secure := secure;
+      handler.params := params.Link;
+      handler.context := FContext.Link;
+      handler.session := Session.Link;
+      handler.variables := TFslMap<TFHIRObject>.create('post.variables');
+      handler.execute;
+      ;
+      if handler.redirect <> '' then
+        response.Redirect(handler.redirect)
+      else
+        ReturnProcessedFile(request, response, session, claimed, actual, secure, handler.variables);
+    finally
+      handler.Free;
+    end;
+  finally
+    params.Free;
+  end;
 end;
 
 procedure TFhirWebServerEndPoint.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
@@ -3563,6 +3652,9 @@ begin
         v := getReferencesByType(v);
         s := p+v+t;
       end;
+
+      if s.contains('[%package-list%]') then
+        s := s.Replace('[%package-list%]', buildPackageList, [rfReplaceAll]);
 
       for plugin in FPlugins do
         s := plugin.process(s, request, pm, variables, session, client);
@@ -5989,6 +6081,149 @@ begin
     sender.IOHandler.free;
     sender.Free;
   End;
+end;
+
+
+{ TFHIRServerPostHandler }
+
+constructor TFHIRServerPostHandler.Create(server: TFhirWebServerEndpoint);
+begin
+  inherited Create;
+  FServer := server;
+end;
+
+destructor TFHIRServerPostHandler.Destroy;
+begin
+  FSession.Free;
+  FParams.Free;
+  FVariables.Free;
+  FContext.Free;
+  inherited;
+end;
+
+procedure TFHIRServerPostHandler.SetContext(const Value: TFHIRServerContext);
+begin
+  FContext.Free;
+  FContext := Value;
+end;
+
+procedure TFHIRServerPostHandler.SetParams(const Value: TParseMap);
+begin
+  FParams.Free;
+  FParams := Value;
+end;
+
+procedure TFHIRServerPostHandler.SetSession(const Value: TFHIRSession);
+begin
+  FSession.Free;
+  FSession := Value;
+end;
+
+procedure TFHIRServerPostHandler.SetVariables(const Value: TFslMap<TFHIRObject>);
+begin
+  FVariables.Free;
+  FVariables := Value;
+end;
+
+{ TPackageLoader }
+
+procedure TPackageLoader.execute;
+begin
+  if params.has('load') then
+    load
+  else if params.has('reload') then
+    reload
+  else
+    raise Exception.Create('Unknown mode');
+end;
+
+procedure TPackageLoader.load;
+var
+  id, n : String;
+  cnt : TBytes;
+  pcm : TFHIRPackageManager;
+  npm : TNpmPackage;
+  all : TFslList<TFHIRResourceV>;
+  parser : TFHIRParser;
+  bundle : TFHIRBundleW;
+begin
+  id := params.GetVar('load');
+  if (id = '') then
+    raise Exception.Create('No package id to load provided');
+  pcm := TFHIRPackageManager.Create(false);
+  try
+    npm := pcm.loadPackage(id);
+    try
+      parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, '');
+      try
+        all := TFslList<TFHIRResourceV>.create;
+        try
+          for n in npm.list('package') do
+            if (n <> 'ig-r4.json') then
+              all.Add(parser.parseResource(npm.load('package', n)));
+          bundle := FServer.Context.Factory.makeBundle(all);
+          try
+            FServer.Transaction(bundle, false, id+'#'+npm.version, '', nil);
+            FContext.Storage.recordPackageLoaded(id, npm.version, all.Count, cnt);
+          finally
+            bundle.Free;
+          end;
+        finally
+          all.Free;
+        end;
+      finally
+        parser.Free;
+      end;
+    finally
+      npm.Free;
+    end;
+  finally
+    pcm.Free;
+  end;
+  FRedirect := FServer.FPath+'/package-client.hts';
+end;
+
+procedure TPackageLoader.reload;
+var
+  id, n : String;
+  cnt : TBytes;
+  npm : TNpmPackage;
+  all : TFslList<TFHIRResourceV>;
+  parser : TFHIRParser;
+  bundle : TFHIRBundleW;
+begin
+  id := params.GetVar('load');
+  if (id = '') then
+    raise Exception.Create('No package id to load provided');
+  cnt := FContext.Storage.fetchLoadedPackage(id);
+  if length(cnt) = 0 then
+    raise Exception.Create('Unable to locate package '+id);
+  npm := TNpmPackage.fromPackage(cnt, id, nil);
+  try
+    parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, '');
+    try
+      all := TFslList<TFHIRResourceV>.create;
+      try
+        for n in npm.list('package') do
+          if (n <> 'ig-r4.json') then
+            all.Add(parser.parseResource(npm.load('package', n)));
+        bundle := FServer.Context.Factory.makeBundle(all);
+        try
+          FServer.Transaction(bundle, false, id+'#'+npm.version, '', nil);
+          FContext.Storage.recordPackageLoaded(id, npm.version, all.Count, cnt);
+        finally
+          bundle.Free;
+        end;
+      finally
+        all.Free;
+      end;
+    finally
+      parser.Free;
+    end;
+  finally
+    npm.Free;
+  end;
+  FRedirect := FServer.FPath+'/package-client.hts';
 end;
 
 Initialization

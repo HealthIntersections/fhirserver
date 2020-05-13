@@ -8,7 +8,7 @@ uses
 
 const
   PACKAGE_SERVER_PRIMARY = 'http://packages.fhir.org';
-  PACKAGE_SERVER_BACKUP = 'https://test.fhir.org/packages';
+  PACKAGE_SERVER_BACKUP = 'https://packages2.fhir.org/packages';
   PACKAGE_SERVER_CIBUILD = 'https://build.fhir.org/ig/qas.json';
 
 type
@@ -53,6 +53,7 @@ type
     function fetchFromCIBuild : TFslList<TFHIRPackageInfo>;
 
     class procedure loadPackages(list : TFslList<TFHIRPackageInfo>; server : String; id : String);
+    class procedure loadPackagesForVersion(list : TFslList<TFHIRPackageInfo>; server : String; ver : String);
   end;
 
 implementation
@@ -168,6 +169,32 @@ begin
   end;
 end;
 
+class procedure TFHIRPackageClient.loadPackagesForVersion(list: TFslList<TFHIRPackageInfo>; server, ver: String);
+var
+  this : TFHIRPackageClient;
+  l : TFslList<TFHIRPackageInfo>;
+  i : TFHIRPackageInfo;
+begin
+  this := TFHIRPackageClient.Create(server);
+  try
+    try
+      l := this.search('', '', ver, false);
+      try
+        for i in l do
+          if not list.contains(function (const t : TFHIRPackageInfo) : boolean begin result := i.id = t.id; end) then
+            list.Add(i.link);
+      finally
+        l.free;
+      end;
+    except
+      // suppress for now
+    end;
+  finally
+    this.Free;
+  end;
+
+end;
+
 function TFHIRPackageClient.search(name, canonical, fhirVersion: String; preRelease: boolean): TFslList<TFHIRPackageInfo>;
 var
   b : TCommaBuilder;
@@ -187,7 +214,7 @@ begin
       b.add('prerelease='+BooleanToString(preRelease));
     result := TFslList<TFHIRPackageInfo>.create;
     try
-      json := TInternetFetcher.fetchJsonArray(URLPath([address, 'catalog?'])+b.toString());
+      json := TInternetFetcher.fetchJsonArray(URLPath([address, 'catalog?'])+b.asString());
       for e in json do
       begin
         obj := e as TJsonObject;

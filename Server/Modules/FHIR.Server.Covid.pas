@@ -88,15 +88,15 @@ begin
   result := result + '<table class="grid">'+#13#10;
   params := TStringList.Create;
   try
-    if pm.VarExists('name') then
+    if pm.has('name') then
       params.Values['name'] := pm.GetVar('name');
-    if pm.VarExists('gender') then
+    if pm.has('gender') then
       params.Values['gender'] := pm.GetVar('gender');
-    if pm.VarExists('dob') then
+    if pm.has('dob') then
       params.Values['birthdate'] := pm.GetVar('dob');
-    if pm.VarExists('phone') then
+    if pm.has('phone') then
       params.Values['phone'] := pm.GetVar('phone');
-    if pm.VarExists('email') then
+    if pm.has('email') then
       params.Values['email'] := pm.GetVar('email');
 
     bnd := context.FClient.search(frtPatient, true, params);

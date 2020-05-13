@@ -115,11 +115,12 @@ type
 
   TFHIRValidatorClass = class of TFHIRValidatorV;
 
-  TFHIRFactory = class (TFslObject)
+  TFHIRFactory = class abstract (TFslObject)
   public
     function link : TFHIRFactory; overload;
     function version : TFHIRVersion; virtual;
     function versionString : String; virtual;
+    function versionName : String; virtual; abstract;
     function corePackage : String; virtual; abstract;
     function specUrl : String; virtual; abstract;
     function description : String; virtual;
@@ -169,6 +170,7 @@ type
     function makeDateTime(dt : TFslDateTime) : TFHIRObject; virtual; abstract;
     function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
     function makeDuration(dt : TDateTime) : TFHIRObject; virtual; abstract;
+    function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; virtual; abstract;
 
     function makeParameters : TFHIRParametersW; virtual; abstract;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;

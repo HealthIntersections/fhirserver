@@ -112,6 +112,7 @@ Type
     procedure CreatePseudoData;
     procedure CreatePackagesTables;
     procedure CreatePackagePermissionsTable;
+    procedure CreateLoadedPackagesTable;
     procedure CreateTwilioTable;
 //    procedure runScript(s : String);
   public
@@ -498,6 +499,18 @@ begin
 end;
 
 
+
+procedure TFHIRDatabaseInstaller.CreateLoadedPackagesTable;
+begin
+  FConn.ExecSQL('CREATE TABLE LoadedPackages ( '+#13#10+
+       ' LoadedPackageKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Id                 nchar(127) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Version            nchar(50) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' DateLoaded '+      DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Resources          int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Content '+         DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_LoadedPackageKey', 'LoadedPackageKey')+') '+CreateTableInfo(FConn.owner.platform));
+end;
 
 procedure TFHIRDatabaseInstaller.CreateNotificationQueue;
 begin
@@ -1098,9 +1111,11 @@ begin
     CreatePackagesTables;
     if assigned(CallBack) then Callback(77, 'Create Package Permissions Table');
     CreatePackagePermissionsTable;
-    if assigned(CallBack) then Callback(77, 'Commit');
-    CreateTwilioTable;
     if assigned(CallBack) then Callback(78, 'Commit');
+    CreateTwilioTable;
+    if assigned(CallBack) then Callback(79, 'Commit');
+    CreateLoadedPackagesTable;
+    if assigned(CallBack) then Callback(80, 'Commit');
 
     FConn.Commit;
   except
@@ -1180,6 +1195,8 @@ begin
       drop('IndexEntries');
       drop('Indexes');
       drop('Spaces');
+
+      drop('LoadedPackages');
 
       drop('PackageFHIRVersions');
       drop('PackageDependencies');
@@ -1298,6 +1315,10 @@ begin
       Fconn.ExecSQL('ALTER TABLE dbo.PackageVersions ADD ManualToken nchar(64) NULL');
       Fconn.ExecSQL('ALTER TABLE dbo.Packages ADD ManualToken nchar(64) NULL');
       CreatePackagePermissionsTable;
+    end;
+    if (version <= 28) then
+    begin
+      CreateLoadedPackagesTable;
     end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');

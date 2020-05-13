@@ -103,6 +103,22 @@ Type
     Property entries[iIndex : Integer] : TMatchingResource Read GetEntry; Default;
   end;
 
+  TLoadedPackageInformation = class (TFslObject)
+  private
+    FId : String;
+    FVer : String;
+    FDate : TFslDateTime;
+    FCount: integer;
+  public
+    function link : TLoadedPackageInformation; overload;
+    function summary : string;
+
+    property id : String read FId write FId;
+    property ver : String read FVer write FVer;
+    property date : TFslDateTime read FDate write FDate;
+    property count : integer read FCount write FCount;
+  end;
+
   TAsyncTaskInformation = class (TFslObject)
   private
     FKey: integer;
@@ -320,6 +336,10 @@ Type
     function getClientName(id : String) : string; virtual; abstract;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; virtual; abstract;
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); virtual; abstract;
+
+    function loadPackages : TFslMap<TLoadedPackageInformation>; virtual; abstract;
+    function fetchLoadedPackage(id : String) : TBytes; virtual; abstract;
+    procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); virtual; abstract;
   end;
 
 
@@ -608,7 +628,7 @@ end;
 
 procedure TFHIROperationEngine.ExecuteMetadata(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  if not request.Parameters.VarExists('mode') then
+  if not request.Parameters.has('mode') then
     ExecuteCapabilityStatement(request, response, true)
   else if request.Parameters.GetVar('mode') = 'full' then
     ExecuteCapabilityStatement(request, response, true)
@@ -802,7 +822,7 @@ begin
         html.free;
       end;
 
-      if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
+      if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
         processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
     finally
       oConf.free;
@@ -1039,7 +1059,7 @@ begin
       for s in ServerContext.TerminologyServer.listSystems do
         oConf.system(s);
 
-      if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
+      if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
         processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
     finally
       oConf.free;
@@ -1595,6 +1615,18 @@ end;
 function TRegisteredClientInformation.link: TRegisteredClientInformation;
 begin
   result := TRegisteredClientInformation(inherited Link);
+end;
+
+{ TLoadedPackageInformation }
+
+function TLoadedPackageInformation.link: TLoadedPackageInformation;
+begin
+  result := TLoadedPackageInformation(inherited link);
+end;
+
+function TLoadedPackageInformation.summary: string;
+begin
+  result := 'v'+FVer+' (#'+inttostr(FCount)+' on '+FDate.truncToDay.toString('yyyy-mm-dd')+')';
 end;
 
 end.

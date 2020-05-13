@@ -25954,7 +25954,7 @@ end;
 procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionParameterProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionParameter);
 begin
     ParseBackboneElementProperties(obj, result);
-    result.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.parameter.code'), CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum);
+    result.codeElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.parameter.code'));
     result.valueElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.parameter.value'));{q1}
 end;
 
@@ -25973,7 +25973,7 @@ begin
       this.addPredicate('a', 'fhir:ImplementationGuideDefinitionParameter'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
-  ComposeEnum(this, 'ImplementationGuide.definition.parameter', 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum, false, -1);{x.d4}
+  ComposeString(this, 'ImplementationGuide.definition.parameter', 'code', elem.CodeElement, false, -1);{x.d4}
   ComposeString(this, 'ImplementationGuide.definition.parameter', 'value', elem.valueElement, false, -1);{x.2ea}
 end;
 

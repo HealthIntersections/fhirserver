@@ -1173,7 +1173,7 @@ begin
   end
   else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
     result := FFactory.makeDtFromForm(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', 'CodeableConcept') as TFhirCodeableConceptW
-  else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
+  else if request.Parameters.has('code') and request.Parameters.has('system') then
   begin
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;

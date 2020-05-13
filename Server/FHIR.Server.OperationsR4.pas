@@ -1147,7 +1147,7 @@ begin
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
             profile := native(manager).GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
-          else if request.Parameters.VarExists('identifier') then
+          else if request.Parameters.has('identifier') then
             profile := native(manager).GetResourceByURL('StructureDefinition', request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context as TFHIRWorkerContext, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
@@ -1451,7 +1451,7 @@ begin
               entry := native(manager).AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, false, type_, patIds, first);
             keys.Add(TKeyPair.create(type_, conn.ColStringByName['ResourceKey']));
 
-            if request.Parameters.VarExists('_include') then
+            if request.Parameters.has('_include') then
               native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
           End;
         finally
@@ -1459,7 +1459,7 @@ begin
         end;
 
         // process reverse includes
-//          if request.Parameters.VarExists('_reverseInclude') then
+//          if request.Parameters.has('_reverseInclude') then
 //            native(manager).CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
 
 //          //now, add the includes
@@ -1544,7 +1544,7 @@ begin
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
             claim := native(manager).GetResourceById(request, 'Claim', request.Id, request.baseUrl, needSecure) as TFhirClaim
-//          else if request.Parameters.VarExists('identifier') then
+//          else if request.Parameters.has('identifier') then
 //          begin
 //            url := request.Parameters.getvar('identifier');
 //            if (url.startsWith('ValueSet/')) then
@@ -1755,7 +1755,7 @@ begin
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
             profile := native(manager).GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
-          else if request.Parameters.VarExists('identifier') then
+          else if request.Parameters.has('identifier') then
             profile := native(manager).GetResourceByURL('StructureDefinition', request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context as TFHIRWorkerContext, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition

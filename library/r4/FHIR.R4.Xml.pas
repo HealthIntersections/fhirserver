@@ -31354,7 +31354,7 @@ function TFHIRXmlParser.ParseImplementationGuideDefinitionParameterChild(element
 begin
   result := true;
       if (child.localName = 'code') then
-        element.codeElement := ParseEnum(CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum, path+'/code', child){1a}
+        element.codeElement := ParseString(child, path+'/code'){1a}
       else if (child.localName = 'value') then
         element.valueElement := ParseString(child, path+'/value') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -31375,7 +31375,7 @@ end;
 procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionParameterChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionParameter);
 begin
   composeBackboneElementChildren(xml, elem);
-  ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum);
+  ComposeString(xml, 'code', elem.CodeElement);
   ComposeString(xml, 'value', elem.valueElement);{x.2b}
 end;
 

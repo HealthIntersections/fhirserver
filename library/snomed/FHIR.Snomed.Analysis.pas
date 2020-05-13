@@ -406,7 +406,7 @@ begin
     b.appendLine('');
 
 
-    if params.VarExists('script') then
+    if params.has('script') then
     begin
       result := TFslNameBuffer.Create;
       try
@@ -417,7 +417,7 @@ begin
       end;
       exit;
     end
-    else if params.VarExists('scan') then
+    else if params.has('scan') then
     begin
       st := TStringList.Create;
       try

@@ -33909,7 +33909,7 @@ procedure TFHIRJsonParser.ParseImplementationGuideDefinitionParameterProperties(
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum);
+      result.codeElement := parseString(jsn.node['code'], jsn.vObj['_code']);
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := parseString(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
@@ -33920,8 +33920,8 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum, false);
-  ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum, false);
+  ComposeStringValue(json, 'code', elem.CodeElement, false);
+  ComposeStringProps(json, 'code', elem.CodeElement, false);
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
   if not noObj then json.finishObject;

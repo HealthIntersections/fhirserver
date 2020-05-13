@@ -46,6 +46,7 @@ type
   public
     function version : TFHIRVersion; override;
     function versionString : String; override;
+    function versionName : String; override;
     function corePackage : String; override;
     function specUrl : String; override;
     function description : String; override;
@@ -119,6 +120,7 @@ type
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
+    function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR3;
 
@@ -467,6 +469,11 @@ begin
   result := fhirVersionRelease3;
 end;
 
+function TFHIRFactoryR3.versionName: String;
+begin
+  result := 'R3';
+end;
+
 function TFHIRFactoryR3.versionString: String;
 begin
   result := FHIR_GENERATED_VERSION;
@@ -699,6 +706,23 @@ end;
 function TFHIRFactoryR3.makeBoolean(b: boolean): TFHIRObject;
 begin
   result := TFhirBoolean.Create(b);
+end;
+
+function TFHIRFactoryR3.makeBundle(list: TFslList<TFHIRResourceV>): TFHIRBundleW;
+var
+  bnd : TFHIRBundle;
+  r : TFhirResourceV;
+begin
+  bnd := TFHIRBundle.Create(BundleTypeCollection);
+  try
+    for r in list do
+    begin
+      bnd.entryList.Append.resource := r.link as TFhirResource;
+    end;
+    result := TFHIRBundle3.Create(bnd.link);
+  finally
+    bnd.Free;
+  end;
 end;
 
 function TFHIRFactoryR3.makeByName(const name : String) : TFHIRObject;

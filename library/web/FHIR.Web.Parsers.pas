@@ -77,7 +77,7 @@ type
   Public
     constructor Create(const s: String; MimeDecode: Boolean = True);
     function Link : TParseMap; overload;
-    function VarExists(const n: String): Boolean;
+    function has(const n: String): Boolean;
     function GetVar(const n: String): String;
     function GetStringParameter(const Name, errdesc: String; compulsory: Boolean): String;
     function GetIntegerParameter(const Name, errdesc: String; compulsory: Boolean): Integer;
@@ -492,7 +492,7 @@ begin
   Parse(StringTrimWhitespaceRight(s), MimeDecode, '&');
 end;
 
-function TParseMap.VarExists(const n: String): Boolean;
+function TParseMap.has(const n: String): Boolean;
 var 
   i: Integer;
 begin
@@ -578,7 +578,7 @@ end;
 
 function TParseMap.GetStringParameter(const Name, errdesc: String; compulsory: Boolean): String;
 begin
-  if VarExists(Name) then
+  if has(Name) then
     Result := GetVar(Name)
   else if compulsory then
     raise EWebException.create(errdesc + ' not found')
@@ -588,7 +588,7 @@ end;
 
 function TParseMap.GetIntegerParameter(const Name, errdesc: String; compulsory: Boolean): Integer;
 begin
-  if VarExists(Name) then
+  if has(Name) then
     Result := StrToIntDef(GetVar(Name), 0)
   else if compulsory then
     raise EWebException.create(errdesc + ' not found')

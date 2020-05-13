@@ -573,7 +573,7 @@ begin
   try
     if (request.CommandType = hcGET) and (request.Document = '/packages/catalog') then
     begin
-      if not pm.VarExists('lastUpdated') then
+      if not pm.has('lastUpdated') then
         serveSearch(pm.GetVar('name'), pm.GetVar('canonical'), pm.GetVar('fhirversion'), pm.GetVar('sort'), request, response)
       else if pm.getVar('lastUpdated').startsWith('-') then
         serveUpdates(TFslDateTime.makeToday.add(StrToIntDef(pm.GetVar('lastUpdated'), -30)), response)

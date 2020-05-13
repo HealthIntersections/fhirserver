@@ -3337,7 +3337,7 @@ end;
 procedure TFHIRMeta4.addProfile(uri: String);
 begin
   force;
-  m.profileList.Add(TFhirUri.Create(uri));
+  m.profileList.Add(TFhirCanonical.Create(uri));
 end;
 
 procedure TFHIRMeta4.addTag(system, code, display: String);

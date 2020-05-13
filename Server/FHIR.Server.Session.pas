@@ -804,7 +804,7 @@ begin
   begin
     CommandType := fcmdValidate;
     ForceMethod('POST');
-    if Parameters.VarExists('profile') and (Parameters.GetVar('profile') <> '') then
+    if Parameters.has('profile') and (Parameters.GetVar('profile') <> '') then
       tags.AddTag(0, tcProfile, 'urn:ietf:rfc:3986', 'http://localhost/'+Parameters.GetVar('profile'), '');
   end
   else if (sType = '_search') then

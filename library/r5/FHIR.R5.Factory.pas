@@ -47,6 +47,7 @@ type
     function link : TFHIRFactoryR5; overload;
     function version : TFHIRVersion; override;
     function versionString : String; override;
+    function versionName : String; override;
     function corePackage : String; override;
     function specUrl : String; override;
     function description : String; override;
@@ -120,6 +121,7 @@ type
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
     function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
+    function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR5;
 
@@ -474,6 +476,11 @@ begin
   result := fhirVersionRelease5;
 end;
 
+function TFHIRFactoryR5.versionName: String;
+begin
+  result := 'R5';
+end;
+
 function TFHIRFactoryR5.versionString: String;
 begin
   result := FHIR_GENERATED_VERSION;
@@ -707,6 +714,23 @@ end;
 function TFHIRFactoryR5.makeBoolean(b: boolean): TFHIRObject;
 begin
   result := TFhirBoolean.Create(b);
+end;
+
+function TFHIRFactoryR5.makeBundle(list: TFslList<TFHIRResourceV>): TFHIRBundleW;
+var
+  bnd : TFHIRBundle;
+  r : TFhirResourceV;
+begin
+  bnd := TFHIRBundle.Create(BundleTypeCollection);
+  try
+    for r in list do
+    begin
+      bnd.entryList.Append.resource := r.link as TFhirResource;
+    end;
+    result := TFHIRBundle5.Create(bnd.link);
+  finally
+    bnd.Free;
+  end;
 end;
 
 function TFHIRFactoryR5.makeByName(const name : String) : TFHIRObject;

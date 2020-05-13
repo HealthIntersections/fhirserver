@@ -535,7 +535,7 @@ begin
   if domain.Contains(':') then
     domain := domain.Substring(0, domain.IndexOf(':'));
 
-  if params.VarExists('id') and params.VarExists('username') and params.VarExists('password') then
+  if params.has('id') and params.has('username') and params.has('password') then
   begin
     id := params.GetVar('id');
     ServerContext.Storage.fetchOAuthDetails(id, client_id, redirect, state, scope);
@@ -579,7 +579,7 @@ begin
       session.Free;
     end;
   end
-  else if (params.VarExists('state')) then
+  else if (params.has('state')) then
   begin
     if FSSLPort = '443' then
       authurl := 'https://'+FHost+FPath+'/auth_dest'
@@ -591,7 +591,7 @@ begin
       raise EAuthClientException.create('State Prefix mis-match', afrInvalidRequest, redirect, state);
     if not CheckLoginToken(state, id, provider) then
       raise EAuthClientException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
-    if params.VarExists('error') then
+    if params.has('error') then
       raise EAuthClientException.create('error_description', afrServerError, redirect, state);
 
     if provider = apGoogle then

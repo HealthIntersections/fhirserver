@@ -117,6 +117,8 @@ type
     function packageExists(id, ver : String) : boolean; overload;
     function autoInstallPackage(id, ver : String) : boolean; overload;
 
+    function loadPackage(id : String) : TNpmPackage; overload;
+    function loadPackage(id, ver : String) : TNpmPackage; overload;
     procedure loadPackage(id, ver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
     procedure loadPackage(idver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation); overload;
@@ -520,6 +522,31 @@ begin
     loadPackage(id, ver, fsl, loadInfo);
   finally
     fsl.Free;
+  end;
+end;
+
+
+function TFHIRPackageManager.loadPackage(id : String) : TNpmPackage;
+var
+  ver : String;
+begin
+  autoInstallPackage(id, '');
+  if not packageExists(id, '') then
+    raise EIOException.create('Unable to load package '+id+' as it couldn''t be found');
+  ver := latestPackageVersion(id);
+  result := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
+end;
+
+function TFHIRPackageManager.loadPackage(id, ver : String) : TNpmPackage;
+begin
+  if ver = '' then
+    result := loadPackage(id)
+  else
+  begin
+    autoInstallPackage(id, ver);
+    if not packageExists(id, ver) then
+      raise EIOException.create('Unable to load package '+id+'#'+ver+' as it couldn''t be found');
+    result := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
   end;
 end;
 
