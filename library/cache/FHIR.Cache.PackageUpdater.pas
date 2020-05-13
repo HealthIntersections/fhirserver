@@ -32,6 +32,7 @@ Type
     FErrors: String;
     FFeedErrors : String;
     FOnSendEmail : TSendEmailEvent;
+    FTotalBytes : Cardinal;
     procedure log(msg, source : String; error : boolean);
 
     function fetchUrl(url, mimetype : string) : TBytes;
@@ -94,8 +95,8 @@ begin
   end
   else
   begin
-    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc');
-    if (cvkey = vkey) then
+    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc, Version desc');
+    if (cvkey = vkey) then    // if we aded the most recent
     begin
       conn.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(cvkey)+' where PackageKey = '+inttostr(pkey);
       conn.prepare;
@@ -124,6 +125,7 @@ begin
   finally
     fetcher.Free;
   end;
+  FTotalBytes := FTotalBytes + length(result);
 end;
 
 function TPackageUpdater.fetchXml(url: string): TMXmlElement;
@@ -204,6 +206,8 @@ var
   i : integer;
   pr : TPackageRestrictions;
 begin
+  log('Start Package Scan', '', false);
+  FTotalBytes := 0;
   FErrors := '';
   FDB := DB;
   try
@@ -227,6 +231,7 @@ begin
       Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
     end;
   end;
+  log('Finish Package Scan - '+DescribeSize(FTotalBytes, 0), '', false);
 end;
 
 procedure TPackageUpdater.updateTheFeed(url, source, email: String; pr : TPackageRestrictions);

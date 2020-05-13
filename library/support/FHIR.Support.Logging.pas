@@ -48,6 +48,7 @@ var
 
 procedure logt(s : String);
 procedure logtn(s : String);
+Function DescribeSize(b, min: Cardinal): String;
 
 
 Type
