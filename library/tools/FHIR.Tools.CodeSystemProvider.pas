@@ -1208,7 +1208,7 @@ begin
         end);
 
       // the current is the latest
-      FMap.add(url, rl[rl.count-1].link);
+      FMap.addOrSetValue(url, rl[rl.count-1].link);
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
@@ -1222,7 +1222,7 @@ begin
         begin
           lv := TFHIRVersions.getMajMin(latest.version);
           if (lv <> version) then
-            FMap.add(url+'|'+lv, rl[rl.count-1].link);
+            FMap.addOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
       end;
     end;
