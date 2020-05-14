@@ -33,7 +33,7 @@ unit FHIR.R5.Turtle;
 
 interface
 
-// Generated on Fri, Jan 31, 2020 05:56+1100 for FHIR v4.2.0
+// Generated on Mon, May 11, 2020 21:42+1000 for FHIR v4.4.0
 
 
 
@@ -114,6 +114,8 @@ Type
     procedure ParseHumanNameProperties(obj : TTurtleComplex; value : TFhirHumanName); overload; {b\}
     function ParseIdentifier(obj : TTurtleComplex) : TFhirIdentifier; overload; {b\}
     procedure ParseIdentifierProperties(obj : TTurtleComplex; value : TFhirIdentifier); overload; {b\}
+    function ParseMeta(obj : TTurtleComplex) : TFhirMeta; overload; {b\}
+    procedure ParseMetaProperties(obj : TTurtleComplex; value : TFhirMeta); overload; {b\}
     function ParseMoney(obj : TTurtleComplex) : TFhirMoney; overload; {b\}
     procedure ParseMoneyProperties(obj : TTurtleComplex; value : TFhirMoney); overload; {b\}
     function ParseNarrative(obj : TTurtleComplex) : TFhirNarrative; overload; {b\}
@@ -172,8 +174,6 @@ Type
     procedure ParseElementDefinitionProperties(obj : TTurtleComplex; value : TFhirElementDefinition); overload; {b\}
     function ParseMarketingStatus(obj : TTurtleComplex) : TFhirMarketingStatus; overload; {b\}
     procedure ParseMarketingStatusProperties(obj : TTurtleComplex; value : TFhirMarketingStatus); overload; {b\}
-    function ParseMeta(obj : TTurtleComplex) : TFhirMeta; overload; {b\}
-    procedure ParseMetaProperties(obj : TTurtleComplex; value : TFhirMeta); overload; {b\}
     function ParseOrderedDistributionInterval(obj : TTurtleComplex) : TFhirOrderedDistributionInterval; overload; {b\}
     procedure ParseOrderedDistributionIntervalProperties(obj : TTurtleComplex; value : TFhirOrderedDistributionInterval); overload; {b\}
     function ParseOrderedDistribution(obj : TTurtleComplex) : TFhirOrderedDistribution; overload; {b\}
@@ -225,8 +225,8 @@ Type
     procedure ParseActivityDefinitionProperties(obj : TTurtleComplex; value : TFhirActivityDefinition); overload; {b\}
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
-    function ParseAdministrableProductDefinitionCharacteristic(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionCharacteristic; overload; {b\}
-    procedure ParseAdministrableProductDefinitionCharacteristicProperties(obj : TTurtleComplex; value : TFhirAdministrableProductDefinitionCharacteristic); overload; {b\}
+    function ParseAdministrableProductDefinitionProperty(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionProperty; overload; {b\}
+    procedure ParseAdministrableProductDefinitionPropertyProperties(obj : TTurtleComplex; value : TFhirAdministrableProductDefinitionProperty); overload; {b\}
     function ParseAdministrableProductDefinitionRouteOfAdministration(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionRouteOfAdministration; overload; {b\}
     procedure ParseAdministrableProductDefinitionRouteOfAdministrationProperties(obj : TTurtleComplex; value : TFhirAdministrableProductDefinitionRouteOfAdministration); overload; {b\}
     function ParseAdministrableProductDefinitionRouteOfAdministrationTargetSpecies(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies; overload; {b\}
@@ -408,6 +408,50 @@ Type
     function ParseChargeItemDefinition(obj : TTurtleComplex) : TFhirChargeItemDefinition; overload; {b\}
     procedure ParseChargeItemDefinitionProperties(obj : TTurtleComplex; value : TFhirChargeItemDefinition); overload; {b\}
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+    function ParseCitationVariantCitation(obj : TTurtleComplex) : TFhirCitationVariantCitation; overload; {b\}
+    procedure ParseCitationVariantCitationProperties(obj : TTurtleComplex; value : TFhirCitationVariantCitation); overload; {b\}
+    function ParseCitationJournal(obj : TTurtleComplex) : TFhirCitationJournal; overload; {b\}
+    procedure ParseCitationJournalProperties(obj : TTurtleComplex; value : TFhirCitationJournal); overload; {b\}
+    function ParseCitationJournalJournalIssue(obj : TTurtleComplex) : TFhirCitationJournalJournalIssue; overload; {b\}
+    procedure ParseCitationJournalJournalIssueProperties(obj : TTurtleComplex; value : TFhirCitationJournalJournalIssue); overload; {b\}
+    function ParseCitationAlternativeTitle(obj : TTurtleComplex) : TFhirCitationAlternativeTitle; overload; {b\}
+    procedure ParseCitationAlternativeTitleProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeTitle); overload; {b\}
+    function ParseCitationPagination(obj : TTurtleComplex) : TFhirCitationPagination; overload; {b\}
+    procedure ParseCitationPaginationProperties(obj : TTurtleComplex; value : TFhirCitationPagination); overload; {b\}
+    function ParseCitationArticleUrl(obj : TTurtleComplex) : TFhirCitationArticleUrl; overload; {b\}
+    procedure ParseCitationArticleUrlProperties(obj : TTurtleComplex; value : TFhirCitationArticleUrl); overload; {b\}
+    function ParseCitationAlternativeAbstract(obj : TTurtleComplex) : TFhirCitationAlternativeAbstract; overload; {b\}
+    procedure ParseCitationAlternativeAbstractProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeAbstract); overload; {b\}
+    function ParseCitationAuthorList(obj : TTurtleComplex) : TFhirCitationAuthorList; overload; {b\}
+    procedure ParseCitationAuthorListProperties(obj : TTurtleComplex; value : TFhirCitationAuthorList); overload; {b\}
+    function ParseCitationAuthorListAuthor(obj : TTurtleComplex) : TFhirCitationAuthorListAuthor; overload; {b\}
+    procedure ParseCitationAuthorListAuthorProperties(obj : TTurtleComplex; value : TFhirCitationAuthorListAuthor); overload; {b\}
+    function ParseCitationAuthorListAuthorAffiliationInfo(obj : TTurtleComplex) : TFhirCitationAuthorListAuthorAffiliationInfo; overload; {b\}
+    procedure ParseCitationAuthorListAuthorAffiliationInfoProperties(obj : TTurtleComplex; value : TFhirCitationAuthorListAuthorAffiliationInfo); overload; {b\}
+    function ParseCitationAuthorString(obj : TTurtleComplex) : TFhirCitationAuthorString; overload; {b\}
+    procedure ParseCitationAuthorStringProperties(obj : TTurtleComplex; value : TFhirCitationAuthorString); overload; {b\}
+    function ParseCitationContributorList(obj : TTurtleComplex) : TFhirCitationContributorList; overload; {b\}
+    procedure ParseCitationContributorListProperties(obj : TTurtleComplex; value : TFhirCitationContributorList); overload; {b\}
+    function ParseCitationContributorListContributor(obj : TTurtleComplex) : TFhirCitationContributorListContributor; overload; {b\}
+    procedure ParseCitationContributorListContributorProperties(obj : TTurtleComplex; value : TFhirCitationContributorListContributor); overload; {b\}
+    function ParseCitationContributorListContributorAffiliationInfo(obj : TTurtleComplex) : TFhirCitationContributorListContributorAffiliationInfo; overload; {b\}
+    procedure ParseCitationContributorListContributorAffiliationInfoProperties(obj : TTurtleComplex; value : TFhirCitationContributorListContributorAffiliationInfo); overload; {b\}
+    function ParseCitationAlternativeForm(obj : TTurtleComplex) : TFhirCitationAlternativeForm; overload; {b\}
+    procedure ParseCitationAlternativeFormProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeForm); overload; {b\}
+    function ParseCitationAlternativeFormJournalIssue(obj : TTurtleComplex) : TFhirCitationAlternativeFormJournalIssue; overload; {b\}
+    procedure ParseCitationAlternativeFormJournalIssueProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeFormJournalIssue); overload; {b\}
+    function ParseCitationAlternativeFormPagination(obj : TTurtleComplex) : TFhirCitationAlternativeFormPagination; overload; {b\}
+    procedure ParseCitationAlternativeFormPaginationProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeFormPagination); overload; {b\}
+    function ParseCitationMedlinePubMed(obj : TTurtleComplex) : TFhirCitationMedlinePubMed; overload; {b\}
+    procedure ParseCitationMedlinePubMedProperties(obj : TTurtleComplex; value : TFhirCitationMedlinePubMed); overload; {b\}
+    function ParseCitationMedlinePubMedPubMedPubDate(obj : TTurtleComplex) : TFhirCitationMedlinePubMedPubMedPubDate; overload; {b\}
+    procedure ParseCitationMedlinePubMedPubMedPubDateProperties(obj : TTurtleComplex; value : TFhirCitationMedlinePubMedPubMedPubDate); overload; {b\}
+    function ParseCitationMedlinePubMedRelatedArticle(obj : TTurtleComplex) : TFhirCitationMedlinePubMedRelatedArticle; overload; {b\}
+    procedure ParseCitationMedlinePubMedRelatedArticleProperties(obj : TTurtleComplex; value : TFhirCitationMedlinePubMedRelatedArticle); overload; {b\}
+    function ParseCitation(obj : TTurtleComplex) : TFhirCitation; overload; {b\}
+    procedure ParseCitationProperties(obj : TTurtleComplex; value : TFhirCitation); overload; {b\}
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
     function ParseClaimRelated(obj : TTurtleComplex) : TFhirClaimRelated; overload; {b\}
     procedure ParseClaimRelatedProperties(obj : TTurtleComplex; value : TFhirClaimRelated); overload; {b\}
@@ -665,6 +709,10 @@ Type
     procedure ParseDeviceVersionProperties(obj : TTurtleComplex; value : TFhirDeviceVersion); overload; {b\}
     function ParseDeviceProperty(obj : TTurtleComplex) : TFhirDeviceProperty; overload; {b\}
     procedure ParseDevicePropertyProperties(obj : TTurtleComplex; value : TFhirDeviceProperty); overload; {b\}
+    function ParseDeviceOperationalStatus(obj : TTurtleComplex) : TFhirDeviceOperationalStatus; overload; {b\}
+    procedure ParseDeviceOperationalStatusProperties(obj : TTurtleComplex; value : TFhirDeviceOperationalStatus); overload; {b\}
+    function ParseDeviceAssociationStatus(obj : TTurtleComplex) : TFhirDeviceAssociationStatus; overload; {b\}
+    procedure ParseDeviceAssociationStatusProperties(obj : TTurtleComplex; value : TFhirDeviceAssociationStatus); overload; {b\}
     function ParseDevice(obj : TTurtleComplex) : TFhirDevice; overload; {b\}
     procedure ParseDeviceProperties(obj : TTurtleComplex; value : TFhirDevice); overload; {b\}
 {$ENDIF FHIR_DEVICE}
@@ -763,8 +811,6 @@ Type
     procedure ParseEventDefinitionProperties(obj : TTurtleComplex; value : TFhirEventDefinition); overload; {b\}
 {$ENDIF FHIR_EVENTDEFINITION}
 {$IFDEF FHIR_EVIDENCE}
-    function ParseEvidenceReferentGroup(obj : TTurtleComplex) : TFhirEvidenceReferentGroup; overload; {b\}
-    procedure ParseEvidenceReferentGroupProperties(obj : TTurtleComplex; value : TFhirEvidenceReferentGroup); overload; {b\}
     function ParseEvidenceVariableDefinition(obj : TTurtleComplex) : TFhirEvidenceVariableDefinition; overload; {b\}
     procedure ParseEvidenceVariableDefinitionProperties(obj : TTurtleComplex; value : TFhirEvidenceVariableDefinition); overload; {b\}
     function ParseEvidenceCertainty(obj : TTurtleComplex) : TFhirEvidenceCertainty; overload; {b\}
@@ -774,9 +820,17 @@ Type
     function ParseEvidence(obj : TTurtleComplex) : TFhirEvidence; overload; {b\}
     procedure ParseEvidenceProperties(obj : TTurtleComplex; value : TFhirEvidence); overload; {b\}
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+    function ParseEvidenceFocusCharacteristic(obj : TTurtleComplex) : TFhirEvidenceFocusCharacteristic; overload; {b\}
+    procedure ParseEvidenceFocusCharacteristicProperties(obj : TTurtleComplex; value : TFhirEvidenceFocusCharacteristic); overload; {b\}
+    function ParseEvidenceFocus(obj : TTurtleComplex) : TFhirEvidenceFocus; overload; {b\}
+    procedure ParseEvidenceFocusProperties(obj : TTurtleComplex; value : TFhirEvidenceFocus); overload; {b\}
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
     function ParseEvidenceVariableCharacteristic(obj : TTurtleComplex) : TFhirEvidenceVariableCharacteristic; overload; {b\}
     procedure ParseEvidenceVariableCharacteristicProperties(obj : TTurtleComplex; value : TFhirEvidenceVariableCharacteristic); overload; {b\}
+    function ParseEvidenceVariableCharacteristicTimeFromStart(obj : TTurtleComplex) : TFhirEvidenceVariableCharacteristicTimeFromStart; overload; {b\}
+    procedure ParseEvidenceVariableCharacteristicTimeFromStartProperties(obj : TTurtleComplex; value : TFhirEvidenceVariableCharacteristicTimeFromStart); overload; {b\}
     function ParseEvidenceVariable(obj : TTurtleComplex) : TFhirEvidenceVariable; overload; {b\}
     procedure ParseEvidenceVariableProperties(obj : TTurtleComplex; value : TFhirEvidenceVariable); overload; {b\}
 {$ENDIF FHIR_EVIDENCEVARIABLE}
@@ -1025,8 +1079,8 @@ Type
     procedure ParseLocationProperties(obj : TTurtleComplex; value : TFhirLocation); overload; {b\}
 {$ENDIF FHIR_LOCATION}
 {$IFDEF FHIR_MANUFACTUREDITEMDEFINITION}
-    function ParseManufacturedItemDefinitionCharacteristic(obj : TTurtleComplex) : TFhirManufacturedItemDefinitionCharacteristic; overload; {b\}
-    procedure ParseManufacturedItemDefinitionCharacteristicProperties(obj : TTurtleComplex; value : TFhirManufacturedItemDefinitionCharacteristic); overload; {b\}
+    function ParseManufacturedItemDefinitionProperty(obj : TTurtleComplex) : TFhirManufacturedItemDefinitionProperty; overload; {b\}
+    procedure ParseManufacturedItemDefinitionPropertyProperties(obj : TTurtleComplex; value : TFhirManufacturedItemDefinitionProperty); overload; {b\}
     function ParseManufacturedItemDefinition(obj : TTurtleComplex) : TFhirManufacturedItemDefinition; overload; {b\}
     procedure ParseManufacturedItemDefinitionProperties(obj : TTurtleComplex; value : TFhirManufacturedItemDefinition); overload; {b\}
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
@@ -1197,6 +1251,8 @@ Type
     procedure ParseNutritionIntakeConsumedItemProperties(obj : TTurtleComplex; value : TFhirNutritionIntakeConsumedItem); overload; {b\}
     function ParseNutritionIntakeIngredientLabel(obj : TTurtleComplex) : TFhirNutritionIntakeIngredientLabel; overload; {b\}
     procedure ParseNutritionIntakeIngredientLabelProperties(obj : TTurtleComplex; value : TFhirNutritionIntakeIngredientLabel); overload; {b\}
+    function ParseNutritionIntakePerformer(obj : TTurtleComplex) : TFhirNutritionIntakePerformer; overload; {b\}
+    procedure ParseNutritionIntakePerformerProperties(obj : TTurtleComplex; value : TFhirNutritionIntakePerformer); overload; {b\}
     function ParseNutritionIntake(obj : TTurtleComplex) : TFhirNutritionIntake; overload; {b\}
     procedure ParseNutritionIntakeProperties(obj : TTurtleComplex; value : TFhirNutritionIntake); overload; {b\}
 {$ENDIF FHIR_NUTRITIONINTAKE}
@@ -1216,6 +1272,18 @@ Type
     function ParseNutritionOrder(obj : TTurtleComplex) : TFhirNutritionOrder; overload; {b\}
     procedure ParseNutritionOrderProperties(obj : TTurtleComplex; value : TFhirNutritionOrder); overload; {b\}
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+    function ParseNutritionProductNutrient(obj : TTurtleComplex) : TFhirNutritionProductNutrient; overload; {b\}
+    procedure ParseNutritionProductNutrientProperties(obj : TTurtleComplex; value : TFhirNutritionProductNutrient); overload; {b\}
+    function ParseNutritionProductIngredient(obj : TTurtleComplex) : TFhirNutritionProductIngredient; overload; {b\}
+    procedure ParseNutritionProductIngredientProperties(obj : TTurtleComplex; value : TFhirNutritionProductIngredient); overload; {b\}
+    function ParseNutritionProductProductCharacteristic(obj : TTurtleComplex) : TFhirNutritionProductProductCharacteristic; overload; {b\}
+    procedure ParseNutritionProductProductCharacteristicProperties(obj : TTurtleComplex; value : TFhirNutritionProductProductCharacteristic); overload; {b\}
+    function ParseNutritionProductInstance(obj : TTurtleComplex) : TFhirNutritionProductInstance; overload; {b\}
+    procedure ParseNutritionProductInstanceProperties(obj : TTurtleComplex; value : TFhirNutritionProductInstance); overload; {b\}
+    function ParseNutritionProduct(obj : TTurtleComplex) : TFhirNutritionProduct; overload; {b\}
+    procedure ParseNutritionProductProperties(obj : TTurtleComplex; value : TFhirNutritionProduct); overload; {b\}
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
     function ParseObservationReferenceRange(obj : TTurtleComplex) : TFhirObservationReferenceRange; overload; {b\}
     procedure ParseObservationReferenceRangeProperties(obj : TTurtleComplex; value : TFhirObservationReferenceRange); overload; {b\}
@@ -1267,8 +1335,8 @@ Type
     procedure ParsePackagedProductDefinitionBatchIdentifierProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionBatchIdentifier); overload; {b\}
     function ParsePackagedProductDefinitionPackage(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackage; overload; {b\}
     procedure ParsePackagedProductDefinitionPackageProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionPackage); overload; {b\}
-    function ParsePackagedProductDefinitionPackageCharacteristic(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackageCharacteristic; overload; {b\}
-    procedure ParsePackagedProductDefinitionPackageCharacteristicProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionPackageCharacteristic); overload; {b\}
+    function ParsePackagedProductDefinitionPackageProperty(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackageProperty; overload; {b\}
+    procedure ParsePackagedProductDefinitionPackagePropertyProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionPackageProperty); overload; {b\}
     function ParsePackagedProductDefinitionPackageContainedItem(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackageContainedItem; overload; {b\}
     procedure ParsePackagedProductDefinitionPackageContainedItemProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionPackageContainedItem); overload; {b\}
     function ParsePackagedProductDefinition(obj : TTurtleComplex) : TFhirPackagedProductDefinition; overload; {b\}
@@ -1302,6 +1370,14 @@ Type
     function ParsePaymentReconciliation(obj : TTurtleComplex) : TFhirPaymentReconciliation; overload; {b\}
     procedure ParsePaymentReconciliationProperties(obj : TTurtleComplex; value : TFhirPaymentReconciliation); overload; {b\}
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+    function ParsePermissionProcessingActivity(obj : TTurtleComplex) : TFhirPermissionProcessingActivity; overload; {b\}
+    procedure ParsePermissionProcessingActivityProperties(obj : TTurtleComplex; value : TFhirPermissionProcessingActivity); overload; {b\}
+    function ParsePermissionJustification(obj : TTurtleComplex) : TFhirPermissionJustification; overload; {b\}
+    procedure ParsePermissionJustificationProperties(obj : TTurtleComplex; value : TFhirPermissionJustification); overload; {b\}
+    function ParsePermission(obj : TTurtleComplex) : TFhirPermission; overload; {b\}
+    procedure ParsePermissionProperties(obj : TTurtleComplex; value : TFhirPermission); overload; {b\}
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
     function ParsePersonLink(obj : TTurtleComplex) : TFhirPersonLink; overload; {b\}
     procedure ParsePersonLinkProperties(obj : TTurtleComplex; value : TFhirPersonLink); overload; {b\}
@@ -1495,13 +1571,23 @@ Type
 {$IFDEF FHIR_SUBSCRIPTION}
     function ParseSubscriptionFilterBy(obj : TTurtleComplex) : TFhirSubscriptionFilterBy; overload; {b\}
     procedure ParseSubscriptionFilterByProperties(obj : TTurtleComplex; value : TFhirSubscriptionFilterBy); overload; {b\}
-    function ParseSubscriptionChannel(obj : TTurtleComplex) : TFhirSubscriptionChannel; overload; {b\}
-    procedure ParseSubscriptionChannelProperties(obj : TTurtleComplex; value : TFhirSubscriptionChannel); overload; {b\}
-    function ParseSubscriptionChannelPayload(obj : TTurtleComplex) : TFhirSubscriptionChannelPayload; overload; {b\}
-    procedure ParseSubscriptionChannelPayloadProperties(obj : TTurtleComplex; value : TFhirSubscriptionChannelPayload); overload; {b\}
     function ParseSubscription(obj : TTurtleComplex) : TFhirSubscription; overload; {b\}
     procedure ParseSubscriptionProperties(obj : TTurtleComplex; value : TFhirSubscription); overload; {b\}
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+    function ParseSubscriptionStatus(obj : TTurtleComplex) : TFhirSubscriptionStatus; overload; {b\}
+    procedure ParseSubscriptionStatusProperties(obj : TTurtleComplex; value : TFhirSubscriptionStatus); overload; {b\}
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+    function ParseSubscriptionTopicResourceTrigger(obj : TTurtleComplex) : TFhirSubscriptionTopicResourceTrigger; overload; {b\}
+    procedure ParseSubscriptionTopicResourceTriggerProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopicResourceTrigger); overload; {b\}
+    function ParseSubscriptionTopicResourceTriggerQueryCriteria(obj : TTurtleComplex) : TFhirSubscriptionTopicResourceTriggerQueryCriteria; overload; {b\}
+    procedure ParseSubscriptionTopicResourceTriggerQueryCriteriaProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopicResourceTriggerQueryCriteria); overload; {b\}
+    function ParseSubscriptionTopicCanFilterBy(obj : TTurtleComplex) : TFhirSubscriptionTopicCanFilterBy; overload; {b\}
+    procedure ParseSubscriptionTopicCanFilterByProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopicCanFilterBy); overload; {b\}
+    function ParseSubscriptionTopic(obj : TTurtleComplex) : TFhirSubscriptionTopic; overload; {b\}
+    procedure ParseSubscriptionTopicProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopic); overload; {b\}
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
     function ParseSubstanceInstance(obj : TTurtleComplex) : TFhirSubstanceInstance; overload; {b\}
     procedure ParseSubstanceInstanceProperties(obj : TTurtleComplex; value : TFhirSubstanceInstance); overload; {b\}
@@ -1698,16 +1784,6 @@ Type
     function ParseTestScript(obj : TTurtleComplex) : TFhirTestScript; overload; {b\}
     procedure ParseTestScriptProperties(obj : TTurtleComplex; value : TFhirTestScript); overload; {b\}
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-    function ParseTopicResourceTrigger(obj : TTurtleComplex) : TFhirTopicResourceTrigger; overload; {b\}
-    procedure ParseTopicResourceTriggerProperties(obj : TTurtleComplex; value : TFhirTopicResourceTrigger); overload; {b\}
-    function ParseTopicResourceTriggerQueryCriteria(obj : TTurtleComplex) : TFhirTopicResourceTriggerQueryCriteria; overload; {b\}
-    procedure ParseTopicResourceTriggerQueryCriteriaProperties(obj : TTurtleComplex; value : TFhirTopicResourceTriggerQueryCriteria); overload; {b\}
-    function ParseTopicCanFilterBy(obj : TTurtleComplex) : TFhirTopicCanFilterBy; overload; {b\}
-    procedure ParseTopicCanFilterByProperties(obj : TTurtleComplex; value : TFhirTopicCanFilterBy); overload; {b\}
-    function ParseTopic(obj : TTurtleComplex) : TFhirTopic; overload; {b\}
-    procedure ParseTopicProperties(obj : TTurtleComplex; value : TFhirTopic); overload; {b\}
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
     function ParseValueSetCompose(obj : TTurtleComplex) : TFhirValueSetCompose; overload; {b\}
     procedure ParseValueSetComposeProperties(obj : TTurtleComplex; value : TFhirValueSetCompose); overload; {b\}
@@ -1809,6 +1885,7 @@ Type
     procedure ComposeExtension(parent :  TTurtleComplex; parentType, name : String; value : TFhirExtension; useType : boolean; index : integer);
     procedure ComposeHumanName(parent :  TTurtleComplex; parentType, name : String; value : TFhirHumanName; useType : boolean; index : integer);
     procedure ComposeIdentifier(parent :  TTurtleComplex; parentType, name : String; value : TFhirIdentifier; useType : boolean; index : integer);
+    procedure ComposeMeta(parent :  TTurtleComplex; parentType, name : String; value : TFhirMeta; useType : boolean; index : integer);
     procedure ComposeMoney(parent :  TTurtleComplex; parentType, name : String; value : TFhirMoney; useType : boolean; index : integer);
     procedure ComposeNarrative(parent :  TTurtleComplex; parentType, name : String; value : TFhirNarrative; useType : boolean; index : integer);
     procedure ComposeParameterDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirParameterDefinition; useType : boolean; index : integer);
@@ -1838,7 +1915,6 @@ Type
     procedure ComposeElementDefinitionMapping(parent :  TTurtleComplex; parentType, name : String; value : TFhirElementDefinitionMapping; useType : boolean; index : integer);
     procedure ComposeElementDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirElementDefinition; useType : boolean; index : integer);
     procedure ComposeMarketingStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirMarketingStatus; useType : boolean; index : integer);
-    procedure ComposeMeta(parent :  TTurtleComplex; parentType, name : String; value : TFhirMeta; useType : boolean; index : integer);
     procedure ComposeOrderedDistributionInterval(parent :  TTurtleComplex; parentType, name : String; value : TFhirOrderedDistributionInterval; useType : boolean; index : integer);
     procedure ComposeOrderedDistribution(parent :  TTurtleComplex; parentType, name : String; value : TFhirOrderedDistribution; useType : boolean; index : integer);
     procedure ComposePopulation(parent :  TTurtleComplex; parentType, name : String; value : TFhirPopulation; useType : boolean; index : integer);
@@ -1871,7 +1947,7 @@ Type
     procedure ComposeActivityDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirActivityDefinition; useType : boolean; index : integer);
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
-    procedure ComposeAdministrableProductDefinitionCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionCharacteristic; useType : boolean; index : integer);
+    procedure ComposeAdministrableProductDefinitionProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionProperty; useType : boolean; index : integer);
     procedure ComposeAdministrableProductDefinitionRouteOfAdministration(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionRouteOfAdministration; useType : boolean; index : integer);
     procedure ComposeAdministrableProductDefinitionRouteOfAdministrationTargetSpecies(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies; useType : boolean; index : integer);
     procedure ComposeAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod; useType : boolean; index : integer);
@@ -1980,6 +2056,29 @@ Type
     procedure ComposeChargeItemDefinitionPropertyGroupPriceComponent(parent :  TTurtleComplex; parentType, name : String; value : TFhirChargeItemDefinitionPropertyGroupPriceComponent; useType : boolean; index : integer);
     procedure ComposeChargeItemDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirChargeItemDefinition; useType : boolean; index : integer);
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+    procedure ComposeCitationVariantCitation(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationVariantCitation; useType : boolean; index : integer);
+    procedure ComposeCitationJournal(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationJournal; useType : boolean; index : integer);
+    procedure ComposeCitationJournalJournalIssue(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationJournalJournalIssue; useType : boolean; index : integer);
+    procedure ComposeCitationAlternativeTitle(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeTitle; useType : boolean; index : integer);
+    procedure ComposeCitationPagination(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationPagination; useType : boolean; index : integer);
+    procedure ComposeCitationArticleUrl(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationArticleUrl; useType : boolean; index : integer);
+    procedure ComposeCitationAlternativeAbstract(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeAbstract; useType : boolean; index : integer);
+    procedure ComposeCitationAuthorList(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorList; useType : boolean; index : integer);
+    procedure ComposeCitationAuthorListAuthor(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorListAuthor; useType : boolean; index : integer);
+    procedure ComposeCitationAuthorListAuthorAffiliationInfo(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorListAuthorAffiliationInfo; useType : boolean; index : integer);
+    procedure ComposeCitationAuthorString(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorString; useType : boolean; index : integer);
+    procedure ComposeCitationContributorList(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationContributorList; useType : boolean; index : integer);
+    procedure ComposeCitationContributorListContributor(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationContributorListContributor; useType : boolean; index : integer);
+    procedure ComposeCitationContributorListContributorAffiliationInfo(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationContributorListContributorAffiliationInfo; useType : boolean; index : integer);
+    procedure ComposeCitationAlternativeForm(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeForm; useType : boolean; index : integer);
+    procedure ComposeCitationAlternativeFormJournalIssue(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeFormJournalIssue; useType : boolean; index : integer);
+    procedure ComposeCitationAlternativeFormPagination(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeFormPagination; useType : boolean; index : integer);
+    procedure ComposeCitationMedlinePubMed(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationMedlinePubMed; useType : boolean; index : integer);
+    procedure ComposeCitationMedlinePubMedPubMedPubDate(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationMedlinePubMedPubMedPubDate; useType : boolean; index : integer);
+    procedure ComposeCitationMedlinePubMedRelatedArticle(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationMedlinePubMedRelatedArticle; useType : boolean; index : integer);
+    procedure ComposeCitation(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitation; useType : boolean; index : integer);
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
     procedure ComposeClaimRelated(parent :  TTurtleComplex; parentType, name : String; value : TFhirClaimRelated; useType : boolean; index : integer);
     procedure ComposeClaimPayee(parent :  TTurtleComplex; parentType, name : String; value : TFhirClaimPayee; useType : boolean; index : integer);
@@ -2127,6 +2226,8 @@ Type
     procedure ComposeDeviceSpecialization(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceSpecialization; useType : boolean; index : integer);
     procedure ComposeDeviceVersion(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceVersion; useType : boolean; index : integer);
     procedure ComposeDeviceProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceProperty; useType : boolean; index : integer);
+    procedure ComposeDeviceOperationalStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceOperationalStatus; useType : boolean; index : integer);
+    procedure ComposeDeviceAssociationStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceAssociationStatus; useType : boolean; index : integer);
     procedure ComposeDevice(parent :  TTurtleComplex; parentType, name : String; value : TFhirDevice; useType : boolean; index : integer);
 {$ENDIF FHIR_DEVICE}
 {$IFDEF FHIR_DEVICEDEFINITION}
@@ -2190,14 +2291,18 @@ Type
     procedure ComposeEventDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirEventDefinition; useType : boolean; index : integer);
 {$ENDIF FHIR_EVENTDEFINITION}
 {$IFDEF FHIR_EVIDENCE}
-    procedure ComposeEvidenceReferentGroup(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceReferentGroup; useType : boolean; index : integer);
     procedure ComposeEvidenceVariableDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceVariableDefinition; useType : boolean; index : integer);
     procedure ComposeEvidenceCertainty(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceCertainty; useType : boolean; index : integer);
     procedure ComposeEvidenceCertaintyCertaintySubcomponent(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceCertaintyCertaintySubcomponent; useType : boolean; index : integer);
     procedure ComposeEvidence(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidence; useType : boolean; index : integer);
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+    procedure ComposeEvidenceFocusCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceFocusCharacteristic; useType : boolean; index : integer);
+    procedure ComposeEvidenceFocus(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceFocus; useType : boolean; index : integer);
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
     procedure ComposeEvidenceVariableCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceVariableCharacteristic; useType : boolean; index : integer);
+    procedure ComposeEvidenceVariableCharacteristicTimeFromStart(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceVariableCharacteristicTimeFromStart; useType : boolean; index : integer);
     procedure ComposeEvidenceVariable(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceVariable; useType : boolean; index : integer);
 {$ENDIF FHIR_EVIDENCEVARIABLE}
 {$IFDEF FHIR_EXAMPLESCENARIO}
@@ -2344,7 +2449,7 @@ Type
     procedure ComposeLocation(parent :  TTurtleComplex; parentType, name : String; value : TFhirLocation; useType : boolean; index : integer);
 {$ENDIF FHIR_LOCATION}
 {$IFDEF FHIR_MANUFACTUREDITEMDEFINITION}
-    procedure ComposeManufacturedItemDefinitionCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirManufacturedItemDefinitionCharacteristic; useType : boolean; index : integer);
+    procedure ComposeManufacturedItemDefinitionProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirManufacturedItemDefinitionProperty; useType : boolean; index : integer);
     procedure ComposeManufacturedItemDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirManufacturedItemDefinition; useType : boolean; index : integer);
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
 {$IFDEF FHIR_MEASURE}
@@ -2444,6 +2549,7 @@ Type
 {$IFDEF FHIR_NUTRITIONINTAKE}
     procedure ComposeNutritionIntakeConsumedItem(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionIntakeConsumedItem; useType : boolean; index : integer);
     procedure ComposeNutritionIntakeIngredientLabel(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionIntakeIngredientLabel; useType : boolean; index : integer);
+    procedure ComposeNutritionIntakePerformer(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionIntakePerformer; useType : boolean; index : integer);
     procedure ComposeNutritionIntake(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionIntake; useType : boolean; index : integer);
 {$ENDIF FHIR_NUTRITIONINTAKE}
 {$IFDEF FHIR_NUTRITIONORDER}
@@ -2455,6 +2561,13 @@ Type
     procedure ComposeNutritionOrderEnteralFormulaAdministration(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionOrderEnteralFormulaAdministration; useType : boolean; index : integer);
     procedure ComposeNutritionOrder(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionOrder; useType : boolean; index : integer);
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+    procedure ComposeNutritionProductNutrient(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductNutrient; useType : boolean; index : integer);
+    procedure ComposeNutritionProductIngredient(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductIngredient; useType : boolean; index : integer);
+    procedure ComposeNutritionProductProductCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductProductCharacteristic; useType : boolean; index : integer);
+    procedure ComposeNutritionProductInstance(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductInstance; useType : boolean; index : integer);
+    procedure ComposeNutritionProduct(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProduct; useType : boolean; index : integer);
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
     procedure ComposeObservationReferenceRange(parent :  TTurtleComplex; parentType, name : String; value : TFhirObservationReferenceRange; useType : boolean; index : integer);
     procedure ComposeObservationComponent(parent :  TTurtleComplex; parentType, name : String; value : TFhirObservationComponent; useType : boolean; index : integer);
@@ -2487,7 +2600,7 @@ Type
 {$IFDEF FHIR_PACKAGEDPRODUCTDEFINITION}
     procedure ComposePackagedProductDefinitionBatchIdentifier(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionBatchIdentifier; useType : boolean; index : integer);
     procedure ComposePackagedProductDefinitionPackage(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionPackage; useType : boolean; index : integer);
-    procedure ComposePackagedProductDefinitionPackageCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionPackageCharacteristic; useType : boolean; index : integer);
+    procedure ComposePackagedProductDefinitionPackageProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionPackageProperty; useType : boolean; index : integer);
     procedure ComposePackagedProductDefinitionPackageContainedItem(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionPackageContainedItem; useType : boolean; index : integer);
     procedure ComposePackagedProductDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinition; useType : boolean; index : integer);
 {$ENDIF FHIR_PACKAGEDPRODUCTDEFINITION}
@@ -2509,6 +2622,11 @@ Type
     procedure ComposePaymentReconciliationProcessNote(parent :  TTurtleComplex; parentType, name : String; value : TFhirPaymentReconciliationProcessNote; useType : boolean; index : integer);
     procedure ComposePaymentReconciliation(parent :  TTurtleComplex; parentType, name : String; value : TFhirPaymentReconciliation; useType : boolean; index : integer);
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+    procedure ComposePermissionProcessingActivity(parent :  TTurtleComplex; parentType, name : String; value : TFhirPermissionProcessingActivity; useType : boolean; index : integer);
+    procedure ComposePermissionJustification(parent :  TTurtleComplex; parentType, name : String; value : TFhirPermissionJustification; useType : boolean; index : integer);
+    procedure ComposePermission(parent :  TTurtleComplex; parentType, name : String; value : TFhirPermission; useType : boolean; index : integer);
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
     procedure ComposePersonLink(parent :  TTurtleComplex; parentType, name : String; value : TFhirPersonLink; useType : boolean; index : integer);
     procedure ComposePerson(parent :  TTurtleComplex; parentType, name : String; value : TFhirPerson; useType : boolean; index : integer);
@@ -2628,10 +2746,17 @@ Type
 {$ENDIF FHIR_STRUCTUREMAP}
 {$IFDEF FHIR_SUBSCRIPTION}
     procedure ComposeSubscriptionFilterBy(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionFilterBy; useType : boolean; index : integer);
-    procedure ComposeSubscriptionChannel(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionChannel; useType : boolean; index : integer);
-    procedure ComposeSubscriptionChannelPayload(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionChannelPayload; useType : boolean; index : integer);
     procedure ComposeSubscription(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscription; useType : boolean; index : integer);
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+    procedure ComposeSubscriptionStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionStatus; useType : boolean; index : integer);
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+    procedure ComposeSubscriptionTopicResourceTrigger(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopicResourceTrigger; useType : boolean; index : integer);
+    procedure ComposeSubscriptionTopicResourceTriggerQueryCriteria(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopicResourceTriggerQueryCriteria; useType : boolean; index : integer);
+    procedure ComposeSubscriptionTopicCanFilterBy(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopicCanFilterBy; useType : boolean; index : integer);
+    procedure ComposeSubscriptionTopic(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopic; useType : boolean; index : integer);
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
     procedure ComposeSubstanceInstance(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubstanceInstance; useType : boolean; index : integer);
     procedure ComposeSubstanceIngredient(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubstanceIngredient; useType : boolean; index : integer);
@@ -2743,12 +2868,6 @@ Type
     procedure ComposeTestScriptTeardownAction(parent :  TTurtleComplex; parentType, name : String; value : TFhirTestScriptTeardownAction; useType : boolean; index : integer);
     procedure ComposeTestScript(parent :  TTurtleComplex; parentType, name : String; value : TFhirTestScript; useType : boolean; index : integer);
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-    procedure ComposeTopicResourceTrigger(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopicResourceTrigger; useType : boolean; index : integer);
-    procedure ComposeTopicResourceTriggerQueryCriteria(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopicResourceTriggerQueryCriteria; useType : boolean; index : integer);
-    procedure ComposeTopicCanFilterBy(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopicCanFilterBy; useType : boolean; index : integer);
-    procedure ComposeTopic(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopic; useType : boolean; index : integer);
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
     procedure ComposeValueSetCompose(parent :  TTurtleComplex; parentType, name : String; value : TFhirValueSetCompose; useType : boolean; index : integer);
     procedure ComposeValueSetComposeInclude(parent :  TTurtleComplex; parentType, name : String; value : TFhirValueSetComposeInclude; useType : boolean; index : integer);
@@ -4617,6 +4736,68 @@ begin
     ComposePeriod(this, 'Identifier', 'period', value.periodElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference(this, 'Identifier', 'assigner', value.assignerElement, false, -1); {L763}
+end;
+
+function TFHIRTurtleParser.ParseMeta(obj : TTurtleComplex) : TFhirMeta;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMeta.create;
+  try
+    ParseMetaProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMetaProperties(obj : TTurtleComplex; value : TFhirMeta);
+var
+  item : TTurtleComplex;
+begin
+    ParseDataTypeProperties(obj, value);
+    value.versionIdElement := ParseId(obj.complex('http://hl7.org/fhir/Meta.versionId')); {L750}
+    value.lastUpdatedElement := ParseInstant(obj.complex('http://hl7.org/fhir/Meta.lastUpdated')); {L750}
+    value.sourceElement := ParseUri(obj.complex('http://hl7.org/fhir/Meta.source')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Meta.profile') do
+      value.profileList.Add(parseCanonical(item));
+    for item in obj.complexes('http://hl7.org/fhir/Meta.security') do
+      value.securityList.Add(parseCoding(item));
+    for item in obj.complexes('http://hl7.org/fhir/Meta.tag') do
+      value.tagList.Add(parseCoding(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeMeta(parent :  TTurtleComplex; parentType, name : String; value : TFhirMeta; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:Meta'); {L1143}
+  end;
+  composeElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeId(this, 'Meta', 'versionId', value.versionIdElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInstant(this, 'Meta', 'lastUpdated', value.lastUpdatedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUri(this, 'Meta', 'source', value.sourceElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.profileList.Count - 1 do
+      ComposeCanonical(this, 'Meta', 'profile', value.profileList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.securityList.Count - 1 do
+      ComposeCoding(this, 'Meta', 'security', value.securityList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.tagList.Count - 1 do
+      ComposeCoding(this, 'Meta', 'tag', value.tagList[i], false, i); {L639}
 end;
 
 function TFHIRTurtleParser.ParseMoney(obj : TTurtleComplex) : TFhirMoney;
@@ -7005,68 +7186,6 @@ begin
     ComposeDateTime(this, 'MarketingStatus', 'restoreDate', value.restoreDateElement, false, -1); {L751}
 end;
 
-function TFHIRTurtleParser.ParseMeta(obj : TTurtleComplex) : TFhirMeta;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirMeta.create;
-  try
-    ParseMetaProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseMetaProperties(obj : TTurtleComplex; value : TFhirMeta);
-var
-  item : TTurtleComplex;
-begin
-    ParseDataTypeProperties(obj, value);
-    value.versionIdElement := ParseId(obj.complex('http://hl7.org/fhir/Meta.versionId')); {L750}
-    value.lastUpdatedElement := ParseInstant(obj.complex('http://hl7.org/fhir/Meta.lastUpdated')); {L750}
-    value.sourceElement := ParseUri(obj.complex('http://hl7.org/fhir/Meta.source')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Meta.profile') do
-      value.profileList.Add(parseCanonical(item));
-    for item in obj.complexes('http://hl7.org/fhir/Meta.security') do
-      value.securityList.Add(parseCoding(item));
-    for item in obj.complexes('http://hl7.org/fhir/Meta.tag') do
-      value.tagList.Add(parseCoding(item));
-end;
-
-procedure TFHIRTurtleComposer.ComposeMeta(parent :  TTurtleComplex; parentType, name : String; value : TFhirMeta; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:Meta'); {L1143}
-  end;
-  composeElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeId(this, 'Meta', 'versionId', value.versionIdElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInstant(this, 'Meta', 'lastUpdated', value.lastUpdatedElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUri(this, 'Meta', 'source', value.sourceElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.profileList.Count - 1 do
-      ComposeCanonical(this, 'Meta', 'profile', value.profileList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.securityList.Count - 1 do
-      ComposeCoding(this, 'Meta', 'security', value.securityList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.tagList.Count - 1 do
-      ComposeCoding(this, 'Meta', 'tag', value.tagList[i], false, i); {L639}
-end;
-
 function TFHIRTurtleParser.ParseOrderedDistributionInterval(obj : TTurtleComplex) : TFhirOrderedDistributionInterval;
 begin
   if (obj = nil) then
@@ -8405,41 +8524,39 @@ end;
 
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
-function TFHIRTurtleParser.ParseAdministrableProductDefinitionCharacteristic(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionCharacteristic;
+function TFHIRTurtleParser.ParseAdministrableProductDefinitionProperty(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionProperty;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAdministrableProductDefinitionCharacteristic.create;
+  result := TFhirAdministrableProductDefinitionProperty.create;
   try
-    ParseAdministrableProductDefinitionCharacteristicProperties(obj, result);
+    ParseAdministrableProductDefinitionPropertyProperties(obj, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRTurtleParser.ParseAdministrableProductDefinitionCharacteristicProperties(obj : TTurtleComplex; value : TFhirAdministrableProductDefinitionCharacteristic);
+procedure TFHIRTurtleParser.ParseAdministrableProductDefinitionPropertyProperties(obj : TTurtleComplex; value : TFhirAdministrableProductDefinitionProperty);
 var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/AdministrableProductDefinition.characteristic.code')); {L762}
-    if obj.has('valueCoding', item) then
-      value.value := parseCoding(item);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/AdministrableProductDefinition.property.type')); {L762}
+    if obj.has('valueCodeableConcept', item) then
+      value.value := parseCodeableConcept(item);
     if obj.has('valueQuantity', item) then
       value.value := parseQuantity(item);
     if obj.has('valueAttachment', item) then
       value.value := parseAttachment(item);
-    if obj.has('valueString', item) then
-      value.value := parseString(item);
     if obj.has('valueDate', item) then
       value.value := parseDate(item);
     if obj.has('valueBoolean', item) then
       value.value := parseBoolean(item);
-    value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/AdministrableProductDefinition.characteristic.status')); {L762}
+    value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/AdministrableProductDefinition.property.status')); {L762}
 end;
 
-procedure TFHIRTurtleComposer.ComposeAdministrableProductDefinitionCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionCharacteristic; useType : boolean; index : integer);
+procedure TFHIRTurtleComposer.ComposeAdministrableProductDefinitionProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirAdministrableProductDefinitionProperty; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
 begin
@@ -8451,24 +8568,22 @@ begin
   begin
     this := parent.addPredicate('fhir:'+parentType+'.'+name);
     if (useType) then
-      this.addPredicate('a', 'fhir:AdministrableProductDefinitionCharacteristic'); {L1143}
+      this.addPredicate('a', 'fhir:AdministrableProductDefinitionProperty'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeCodeableConcept(this, 'AdministrableProductDefinition.characteristic', 'code', value.codeElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirCoding) {6} then
-    ComposeCoding(this, 'AdministrableProductDefinition.characteristic', 'valueCoding', TFhirCoding(value.value), false, -1) {L905}
+  ComposeCodeableConcept(this, 'AdministrableProductDefinition.property', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'AdministrableProductDefinition.property', 'valueCodeableConcept', TFhirCodeableConcept(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirQuantity) {6} then
-    ComposeQuantity(this, 'AdministrableProductDefinition.characteristic', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
+    ComposeQuantity(this, 'AdministrableProductDefinition.property', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirAttachment) {6} then
-    ComposeAttachment(this, 'AdministrableProductDefinition.characteristic', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
-  else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirString) {6} then
-    ComposeString(this, 'AdministrableProductDefinition.characteristic', 'valueString', TFhirString(value.value), false, -1) {L905}
+    ComposeAttachment(this, 'AdministrableProductDefinition.property', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirDate) {6} then
-    ComposeDate(this, 'AdministrableProductDefinition.characteristic', 'valueDate', TFhirDate(value.value), false, -1) {L905}
+    ComposeDate(this, 'AdministrableProductDefinition.property', 'valueDate', TFhirDate(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirBoolean) {6} then
-    ComposeBoolean(this, 'AdministrableProductDefinition.characteristic', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
+    ComposeBoolean(this, 'AdministrableProductDefinition.property', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(this, 'AdministrableProductDefinition.characteristic', 'status', value.statusElement, false, -1); {L763}
+    ComposeCodeableConcept(this, 'AdministrableProductDefinition.property', 'status', value.statusElement, false, -1); {L763}
 end;
 
 function TFHIRTurtleParser.ParseAdministrableProductDefinitionRouteOfAdministration(obj : TTurtleComplex) : TFhirAdministrableProductDefinitionRouteOfAdministration;
@@ -8648,8 +8763,8 @@ begin
       value.ingredientList.Add(parseReference(item));
     for item in obj.complexes('http://hl7.org/fhir/AdministrableProductDefinition.device') do
       value.deviceList.Add(parseReference(item));
-    for item in obj.complexes('http://hl7.org/fhir/AdministrableProductDefinition.characteristic') do
-      value.characteristicList.Add(parseAdministrableProductDefinitionCharacteristic(item));
+    for item in obj.complexes('http://hl7.org/fhir/AdministrableProductDefinition.property') do
+      value.property_List.Add(parseAdministrableProductDefinitionProperty(item));
     for item in obj.complexes('http://hl7.org/fhir/AdministrableProductDefinition.routeOfAdministration') do
       value.routeOfAdministrationList.Add(parseAdministrableProductDefinitionRouteOfAdministration(item));
 end;
@@ -8689,8 +8804,8 @@ begin
     for i := 0 to value.deviceList.Count - 1 do
       ComposeReference(this, 'AdministrableProductDefinition', 'device', value.deviceList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.characteristicList.Count - 1 do
-      ComposeAdministrableProductDefinitionCharacteristic(this, 'AdministrableProductDefinition', 'characteristic', value.characteristicList[i], false, i); {L639}
+    for i := 0 to value.property_List.Count - 1 do
+      ComposeAdministrableProductDefinitionProperty(this, 'AdministrableProductDefinition', 'property', value.property_List[i], false, i); {L639}
   for i := 0 to value.routeOfAdministrationList.Count - 1 do
       ComposeAdministrableProductDefinitionRouteOfAdministration(this, 'AdministrableProductDefinition', 'routeOfAdministration', value.routeOfAdministrationList[i], false, i); {L639}
 end;
@@ -9861,8 +9976,7 @@ begin
     value.severityElement := ParseEnum(obj.complex('http://hl7.org/fhir/AuditEvent.severity'), CODES_TFhirAuditEventSeverityEnum, SYSTEMS_TFhirAuditEventSeverityEnum); {L746}
     value.period := ParsePeriod(obj.complex('http://hl7.org/fhir/AuditEvent.period')); {L762}
     value.recordedElement := ParseInstant(obj.complex('http://hl7.org/fhir/AuditEvent.recorded')); {L750}
-    value.outcomeElement := ParseEnum(obj.complex('http://hl7.org/fhir/AuditEvent.outcome'), CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum); {L746}
-    value.outcomeDescElement := ParseString(obj.complex('http://hl7.org/fhir/AuditEvent.outcomeDesc')); {L750}
+    value.outcome := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/AuditEvent.outcome')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/AuditEvent.purposeOfEvent') do
       value.purposeOfEventList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/AuditEvent.agent') do
@@ -9900,9 +10014,7 @@ begin
     ComposePeriod(this, 'AuditEvent', 'period', value.periodElement, false, -1); {L763}
   ComposeInstant(this, 'AuditEvent', 'recorded', value.recordedElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeEnum(this, 'AuditEvent', 'outcome', value.outcomeElement, CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum, false, -1); {L747}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'AuditEvent', 'outcomeDesc', value.outcomeDescElement, false, -1); {L751}
+    ComposeCodeableConcept(this, 'AuditEvent', 'outcome', value.outcomeElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.purposeOfEventList.Count - 1 do
       ComposeCodeableConcept(this, 'AuditEvent', 'purposeOfEvent', value.purposeOfEventList[i], false, i); {L639}
@@ -12060,7 +12172,7 @@ begin
       value.scheduled := parsePeriod(item);
     if obj.has('scheduledString', item) then
       value.scheduled := parseString(item);
-    value.location := ParseReference(obj.complex('http://hl7.org/fhir/CarePlan.activity.detail.location')); {L762}
+    value.location := ParseCodeableReference(obj.complex('http://hl7.org/fhir/CarePlan.activity.detail.location')); {L762}
     if obj.has('reportedReference', item) {a3} then
       value.reported := ParseReference(item);
     if obj.has('reportedBoolean', item) then
@@ -12120,7 +12232,7 @@ begin
   else if (SummaryOption in [soFull, soData]) and (value.scheduled is TFhirString) {6} then
     ComposeString(this, 'CarePlan.activity.detail', 'scheduledString', TFhirString(value.scheduled), false, -1); {L905}
   if (SummaryOption in [soFull, soData]) then
-    ComposeReference(this, 'CarePlan.activity.detail', 'location', value.locationElement, false, -1); {L763}
+    ComposeCodeableReference(this, 'CarePlan.activity.detail', 'location', value.locationElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) and (value.reported is TFhirReference) {2} then
     ComposeReference(this, 'CarePlan.activity.detail', 'reportedReference', TFhirReference(value.reported), false,-1) {L886}
   else if (SummaryOption in [soFull, soData]) and (value.reported is TFhirBoolean) {6} then
@@ -13003,6 +13115,1140 @@ begin
 end;
 
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+function TFHIRTurtleParser.ParseCitationVariantCitation(obj : TTurtleComplex) : TFhirCitationVariantCitation;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationVariantCitation.create;
+  try
+    ParseCitationVariantCitationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationVariantCitationProperties(obj : TTurtleComplex; value : TFhirCitationVariantCitation);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.variantCitation.type')); {L762}
+    value.valueElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.variantCitation.value')); {L750}
+    value.baseCitation := ParseReference(obj.complex('http://hl7.org/fhir/Citation.variantCitation.baseCitation')); {L762}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationVariantCitation(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationVariantCitation; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationVariantCitation'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.variantCitation', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.variantCitation', 'value', value.valueElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference(this, 'Citation.variantCitation', 'baseCitation', value.baseCitationElement, false, -1); {L763}
+end;
+
+function TFHIRTurtleParser.ParseCitationJournal(obj : TTurtleComplex) : TFhirCitationJournal;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationJournal.create;
+  try
+    ParseCitationJournalProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationJournalProperties(obj : TTurtleComplex; value : TFhirCitationJournal);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    for item in obj.complexes('http://hl7.org/fhir/Citation.journal.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    value.countryElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.journal.country')); {L750}
+    value.journalIssue := ParseCitationJournalJournalIssue(obj.complex('http://hl7.org/fhir/Citation.journal.journalIssue')); {L762}
+    value.titleElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.journal.title')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationJournal(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationJournal; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationJournal'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation.journal', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.journal', 'country', value.countryElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationJournalJournalIssue(this, 'Citation.journal', 'journalIssue', value.journalIssueElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.journal', 'title', value.titleElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationJournalJournalIssue(obj : TTurtleComplex) : TFhirCitationJournalJournalIssue;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationJournalJournalIssue.create;
+  try
+    ParseCitationJournalJournalIssueProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationJournalJournalIssueProperties(obj : TTurtleComplex; value : TFhirCitationJournalJournalIssue);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.citedMedium := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.journal.journalIssue.citedMedium')); {L762}
+    value.volumeElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.journal.journalIssue.volume')); {L750}
+    value.issueElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.journal.journalIssue.issue')); {L750}
+    value.publicationDateElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.journal.journalIssue.publicationDate')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationJournalJournalIssue(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationJournalJournalIssue; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationJournalJournalIssue'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.journal.journalIssue', 'citedMedium', value.citedMediumElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.journal.journalIssue', 'volume', value.volumeElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.journal.journalIssue', 'issue', value.issueElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.journal.journalIssue', 'publicationDate', value.publicationDateElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationAlternativeTitle(obj : TTurtleComplex) : TFhirCitationAlternativeTitle;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAlternativeTitle.create;
+  try
+    ParseCitationAlternativeTitleProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAlternativeTitleProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeTitle);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeTitle.type')); {L762}
+    value.language := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeTitle.language')); {L762}
+    value.titleElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.alternativeTitle.title')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAlternativeTitle(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeTitle; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAlternativeTitle'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeTitle', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeTitle', 'language', value.languageElement, false, -1); {L763}
+  ComposeMarkdown(this, 'Citation.alternativeTitle', 'title', value.titleElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationPagination(obj : TTurtleComplex) : TFhirCitationPagination;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationPagination.create;
+  try
+    ParseCitationPaginationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationPaginationProperties(obj : TTurtleComplex; value : TFhirCitationPagination);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.pageStringElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.pagination.pageString')); {L750}
+    value.firstPageElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.pagination.firstPage')); {L750}
+    value.lastPageElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.pagination.lastPage')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationPagination(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationPagination; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationPagination'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.pagination', 'pageString', value.pageStringElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.pagination', 'firstPage', value.firstPageElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.pagination', 'lastPage', value.lastPageElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationArticleUrl(obj : TTurtleComplex) : TFhirCitationArticleUrl;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationArticleUrl.create;
+  try
+    ParseCitationArticleUrlProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationArticleUrlProperties(obj : TTurtleComplex; value : TFhirCitationArticleUrl);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.articleUrl.type')); {L762}
+    value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/Citation.articleUrl.url')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationArticleUrl(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationArticleUrl; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationArticleUrl'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.articleUrl', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeUri(this, 'Citation.articleUrl', 'url', value.urlElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationAlternativeAbstract(obj : TTurtleComplex) : TFhirCitationAlternativeAbstract;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAlternativeAbstract.create;
+  try
+    ParseCitationAlternativeAbstractProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAlternativeAbstractProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeAbstract);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeAbstract.type')); {L762}
+    value.language := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeAbstract.language')); {L762}
+    value.abstractElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.alternativeAbstract.abstract')); {L750}
+    value.abstractCopyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.alternativeAbstract.abstractCopyright')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAlternativeAbstract(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeAbstract; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAlternativeAbstract'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeAbstract', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeAbstract', 'language', value.languageElement, false, -1); {L763}
+  ComposeMarkdown(this, 'Citation.alternativeAbstract', 'abstract', value.abstractElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'Citation.alternativeAbstract', 'abstractCopyright', value.abstractCopyrightElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationAuthorList(obj : TTurtleComplex) : TFhirCitationAuthorList;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAuthorList.create;
+  try
+    ParseCitationAuthorListProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAuthorListProperties(obj : TTurtleComplex; value : TFhirCitationAuthorList);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.completeElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Citation.authorList.complete')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorList.author') do
+      value.authorList.Add(parseCitationAuthorListAuthor(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAuthorList(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorList; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAuthorList'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'Citation.authorList', 'complete', value.completeElement, false, -1); {L751}
+  for i := 0 to value.authorList.Count - 1 do
+      ComposeCitationAuthorListAuthor(this, 'Citation.authorList', 'author', value.authorList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseCitationAuthorListAuthor(obj : TTurtleComplex) : TFhirCitationAuthorListAuthor;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAuthorListAuthor.create;
+  try
+    ParseCitationAuthorListAuthorProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAuthorListAuthorProperties(obj : TTurtleComplex; value : TFhirCitationAuthorListAuthor);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.lastNameElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.lastName')); {L750}
+    value.foreNameElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.foreName')); {L750}
+    value.suffixElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.suffix')); {L750}
+    value.initialsElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.initials')); {L750}
+    value.collectiveNameElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.collectiveName')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorList.author.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorList.author.affiliationInfo') do
+      value.affiliationInfoList.Add(parseCitationAuthorListAuthorAffiliationInfo(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorList.author.address') do
+      value.addressList.Add(parseString(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorList.author.telecom') do
+      value.telecomList.Add(parseContactPoint(item));
+    value.correspondingAuthorElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Citation.authorList.author.correspondingAuthor')); {L750}
+    value.listOrderElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/Citation.authorList.author.listOrder')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAuthorListAuthor(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorListAuthor; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAuthorListAuthor'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author', 'lastName', value.lastNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author', 'foreName', value.foreNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author', 'suffix', value.suffixElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author', 'initials', value.initialsElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author', 'collectiveName', value.collectiveNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation.authorList.author', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.affiliationInfoList.Count - 1 do
+      ComposeCitationAuthorListAuthorAffiliationInfo(this, 'Citation.authorList.author', 'affiliationInfo', value.affiliationInfoList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.addressList.Count - 1 do
+      ComposeString(this, 'Citation.authorList.author', 'address', value.addressList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.telecomList.Count - 1 do
+      ComposeContactPoint(this, 'Citation.authorList.author', 'telecom', value.telecomList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'Citation.authorList.author', 'correspondingAuthor', value.correspondingAuthorElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveInt(this, 'Citation.authorList.author', 'listOrder', value.listOrderElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationAuthorListAuthorAffiliationInfo(obj : TTurtleComplex) : TFhirCitationAuthorListAuthorAffiliationInfo;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAuthorListAuthorAffiliationInfo.create;
+  try
+    ParseCitationAuthorListAuthorAffiliationInfoProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAuthorListAuthorAffiliationInfoProperties(obj : TTurtleComplex; value : TFhirCitationAuthorListAuthorAffiliationInfo);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.affiliationElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.affiliationInfo.affiliation')); {L750}
+    value.roleElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorList.author.affiliationInfo.role')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorList.author.affiliationInfo.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAuthorListAuthorAffiliationInfo(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorListAuthorAffiliationInfo; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAuthorListAuthorAffiliationInfo'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author.affiliationInfo', 'affiliation', value.affiliationElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.authorList.author.affiliationInfo', 'role', value.roleElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation.authorList.author.affiliationInfo', 'identifier', value.identifierList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseCitationAuthorString(obj : TTurtleComplex) : TFhirCitationAuthorString;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAuthorString.create;
+  try
+    ParseCitationAuthorStringProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAuthorStringProperties(obj : TTurtleComplex; value : TFhirCitationAuthorString);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.source := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.authorString.source')); {L762}
+    value.valueElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.authorString.value')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAuthorString(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAuthorString; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAuthorString'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.authorString', 'source', value.sourceElement, false, -1); {L763}
+  ComposeString(this, 'Citation.authorString', 'value', value.valueElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationContributorList(obj : TTurtleComplex) : TFhirCitationContributorList;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationContributorList.create;
+  try
+    ParseCitationContributorListProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationContributorListProperties(obj : TTurtleComplex; value : TFhirCitationContributorList);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.completeElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Citation.contributorList.complete')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.contributorList.contributor') do
+      value.contributorList.Add(parseCitationContributorListContributor(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationContributorList(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationContributorList; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationContributorList'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'Citation.contributorList', 'complete', value.completeElement, false, -1); {L751}
+  for i := 0 to value.contributorList.Count - 1 do
+      ComposeCitationContributorListContributor(this, 'Citation.contributorList', 'contributor', value.contributorList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseCitationContributorListContributor(obj : TTurtleComplex) : TFhirCitationContributorListContributor;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationContributorListContributor.create;
+  try
+    ParseCitationContributorListContributorProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationContributorListContributorProperties(obj : TTurtleComplex; value : TFhirCitationContributorListContributor);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.lastNameElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.lastName')); {L750}
+    value.foreNameElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.foreName')); {L750}
+    value.suffixElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.suffix')); {L750}
+    value.initialsElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.initials')); {L750}
+    value.collectiveNameElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.collectiveName')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.contributorList.contributor.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.contributorList.contributor.contribution') do
+      value.contributionList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.contributorList.contributor.affiliationInfo') do
+      value.affiliationInfoList.Add(parseCitationContributorListContributorAffiliationInfo(item));
+    value.listOrderElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.listOrder')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationContributorListContributor(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationContributorListContributor; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationContributorListContributor'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor', 'lastName', value.lastNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor', 'foreName', value.foreNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor', 'suffix', value.suffixElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor', 'initials', value.initialsElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor', 'collectiveName', value.collectiveNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation.contributorList.contributor', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.contributionList.Count - 1 do
+      ComposeCodeableConcept(this, 'Citation.contributorList.contributor', 'contribution', value.contributionList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.affiliationInfoList.Count - 1 do
+      ComposeCitationContributorListContributorAffiliationInfo(this, 'Citation.contributorList.contributor', 'affiliationInfo', value.affiliationInfoList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveInt(this, 'Citation.contributorList.contributor', 'listOrder', value.listOrderElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationContributorListContributorAffiliationInfo(obj : TTurtleComplex) : TFhirCitationContributorListContributorAffiliationInfo;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationContributorListContributorAffiliationInfo.create;
+  try
+    ParseCitationContributorListContributorAffiliationInfoProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationContributorListContributorAffiliationInfoProperties(obj : TTurtleComplex; value : TFhirCitationContributorListContributorAffiliationInfo);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.affiliationElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.affiliationInfo.affiliation')); {L750}
+    value.roleElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.contributorList.contributor.affiliationInfo.role')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.contributorList.contributor.affiliationInfo.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationContributorListContributorAffiliationInfo(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationContributorListContributorAffiliationInfo; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationContributorListContributorAffiliationInfo'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor.affiliationInfo', 'affiliation', value.affiliationElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.contributorList.contributor.affiliationInfo', 'role', value.roleElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation.contributorList.contributor.affiliationInfo', 'identifier', value.identifierList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseCitationAlternativeForm(obj : TTurtleComplex) : TFhirCitationAlternativeForm;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAlternativeForm.create;
+  try
+    ParseCitationAlternativeFormProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAlternativeFormProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeForm);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.publishingModel := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.publishingModel')); {L762}
+    value.language := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.language')); {L762}
+    value.journalIssue := ParseCitationAlternativeFormJournalIssue(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.journalIssue')); {L762}
+    value.pagination := ParseCitationAlternativeFormPagination(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.pagination')); {L762}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAlternativeForm(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeForm; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAlternativeForm'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeForm', 'publishingModel', value.publishingModelElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeForm', 'language', value.languageElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationAlternativeFormJournalIssue(this, 'Citation.alternativeForm', 'journalIssue', value.journalIssueElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationAlternativeFormPagination(this, 'Citation.alternativeForm', 'pagination', value.paginationElement, false, -1); {L763}
+end;
+
+function TFHIRTurtleParser.ParseCitationAlternativeFormJournalIssue(obj : TTurtleComplex) : TFhirCitationAlternativeFormJournalIssue;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAlternativeFormJournalIssue.create;
+  try
+    ParseCitationAlternativeFormJournalIssueProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAlternativeFormJournalIssueProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeFormJournalIssue);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.citedMedium := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.journalIssue.citedMedium')); {L762}
+    value.volumeElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.journalIssue.volume')); {L750}
+    value.issueElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.journalIssue.issue')); {L750}
+    value.publicationDateElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.journalIssue.publicationDate')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAlternativeFormJournalIssue(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeFormJournalIssue; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAlternativeFormJournalIssue'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.alternativeForm.journalIssue', 'citedMedium', value.citedMediumElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.alternativeForm.journalIssue', 'volume', value.volumeElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.alternativeForm.journalIssue', 'issue', value.issueElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.alternativeForm.journalIssue', 'publicationDate', value.publicationDateElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationAlternativeFormPagination(obj : TTurtleComplex) : TFhirCitationAlternativeFormPagination;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationAlternativeFormPagination.create;
+  try
+    ParseCitationAlternativeFormPaginationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationAlternativeFormPaginationProperties(obj : TTurtleComplex; value : TFhirCitationAlternativeFormPagination);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.pageStringElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.pagination.pageString')); {L750}
+    value.firstPageElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.pagination.firstPage')); {L750}
+    value.lastPageElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.alternativeForm.pagination.lastPage')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationAlternativeFormPagination(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationAlternativeFormPagination; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationAlternativeFormPagination'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.alternativeForm.pagination', 'pageString', value.pageStringElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.alternativeForm.pagination', 'firstPage', value.firstPageElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Citation.alternativeForm.pagination', 'lastPage', value.lastPageElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationMedlinePubMed(obj : TTurtleComplex) : TFhirCitationMedlinePubMed;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationMedlinePubMed.create;
+  try
+    ParseCitationMedlinePubMedProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationMedlinePubMedProperties(obj : TTurtleComplex; value : TFhirCitationMedlinePubMed);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.medlineState := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.medlineState')); {L762}
+    value.owner := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.owner')); {L762}
+    value.pmidElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.pmid')); {L750}
+    value.pmidVersionElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.pmidVersion')); {L750}
+    value.dateCreatedElement := ParseDate(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.dateCreated')); {L750}
+    value.dateCompletedElement := ParseDate(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.dateCompleted')); {L750}
+    value.dateRevisedElement := ParseDate(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.dateRevised')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.medlinePubMed.pubMedPubDate') do
+      value.pubMedPubDateList.Add(parseCitationMedlinePubMedPubMedPubDate(item));
+    value.publicationState := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.publicationState')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.medlinePubMed.relatedArticle') do
+      value.relatedArticleList.Add(parseCitationMedlinePubMedRelatedArticle(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationMedlinePubMed(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationMedlinePubMed; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationMedlinePubMed'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.medlinePubMed', 'medlineState', value.medlineStateElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.medlinePubMed', 'owner', value.ownerElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveInt(this, 'Citation.medlinePubMed', 'pmid', value.pmidElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveInt(this, 'Citation.medlinePubMed', 'pmidVersion', value.pmidVersionElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDate(this, 'Citation.medlinePubMed', 'dateCreated', value.dateCreatedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDate(this, 'Citation.medlinePubMed', 'dateCompleted', value.dateCompletedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDate(this, 'Citation.medlinePubMed', 'dateRevised', value.dateRevisedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.pubMedPubDateList.Count - 1 do
+      ComposeCitationMedlinePubMedPubMedPubDate(this, 'Citation.medlinePubMed', 'pubMedPubDate', value.pubMedPubDateList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.medlinePubMed', 'publicationState', value.publicationStateElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.relatedArticleList.Count - 1 do
+      ComposeCitationMedlinePubMedRelatedArticle(this, 'Citation.medlinePubMed', 'relatedArticle', value.relatedArticleList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseCitationMedlinePubMedPubMedPubDate(obj : TTurtleComplex) : TFhirCitationMedlinePubMedPubMedPubDate;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationMedlinePubMedPubMedPubDate.create;
+  try
+    ParseCitationMedlinePubMedPubMedPubDateProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationMedlinePubMedPubMedPubDateProperties(obj : TTurtleComplex; value : TFhirCitationMedlinePubMedPubMedPubDate);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.publicationState := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.pubMedPubDate.publicationState')); {L762}
+    value.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.pubMedPubDate.date')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationMedlinePubMedPubMedPubDate(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationMedlinePubMedPubMedPubDate; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationMedlinePubMedPubMedPubDate'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation.medlinePubMed.pubMedPubDate', 'publicationState', value.publicationStateElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(this, 'Citation.medlinePubMed.pubMedPubDate', 'date', value.dateElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseCitationMedlinePubMedRelatedArticle(obj : TTurtleComplex) : TFhirCitationMedlinePubMedRelatedArticle;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitationMedlinePubMedRelatedArticle.create;
+  try
+    ParseCitationMedlinePubMedRelatedArticleProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationMedlinePubMedRelatedArticleProperties(obj : TTurtleComplex; value : TFhirCitationMedlinePubMedRelatedArticle);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.citationReference := ParseReference(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.relatedArticle.citationReference')); {L762}
+    value.citationMarkdownElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed.relatedArticle.citationMarkdown')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.medlinePubMed.relatedArticle.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitationMedlinePubMedRelatedArticle(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitationMedlinePubMedRelatedArticle; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CitationMedlinePubMedRelatedArticle'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference(this, 'Citation.medlinePubMed.relatedArticle', 'citationReference', value.citationReferenceElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'Citation.medlinePubMed.relatedArticle', 'citationMarkdown', value.citationMarkdownElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation.medlinePubMed.relatedArticle', 'identifier', value.identifierList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseCitation(obj : TTurtleComplex) : TFhirCitation;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCitation.create;
+  try
+    ParseCitationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCitationProperties(obj : TTurtleComplex; value : TFhirCitation);
+var
+  item : TTurtleComplex;
+begin
+    ParseMetadataResourceProperties(obj, value);
+    value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/Citation.url')); {L750}
+    value.versionElement := ParseString(obj.complex('http://hl7.org/fhir/Citation.version')); {L750}
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Citation.status'), CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum); {L746}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.useContext') do
+      value.useContextList.Add(parseUsageContext(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.relatedIdentifier') do
+      value.relatedIdentifierList.Add(parseIdentifier(item));
+    value.dateCitedElement := ParseDateTime(obj.complex('http://hl7.org/fhir/Citation.dateCited')); {L750}
+    value.variantCitation := ParseCitationVariantCitation(obj.complex('http://hl7.org/fhir/Citation.variantCitation')); {L762}
+    value.publishingModel := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.publishingModel')); {L762}
+    value.journal := ParseCitationJournal(obj.complex('http://hl7.org/fhir/Citation.journal')); {L762}
+    value.articleTitleElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.articleTitle')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.alternativeTitle') do
+      value.alternativeTitleList.Add(parseCitationAlternativeTitle(item));
+    value.pagination := ParseCitationPagination(obj.complex('http://hl7.org/fhir/Citation.pagination')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.articleUrl') do
+      value.articleUrlList.Add(parseCitationArticleUrl(item));
+    value.abstractElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.abstract')); {L750}
+    value.abstractCopyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Citation.abstractCopyright')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.alternativeAbstract') do
+      value.alternativeAbstractList.Add(parseCitationAlternativeAbstract(item));
+    value.authorList := ParseCitationAuthorList(obj.complex('http://hl7.org/fhir/Citation.authorList')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.authorString') do
+      value.authorStringList.Add(parseCitationAuthorString(item));
+    value.contributorList := ParseCitationContributorList(obj.complex('http://hl7.org/fhir/Citation.contributorList')); {L762}
+    value.articleLanguage := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Citation.articleLanguage')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Citation.alternativeForm') do
+      value.alternativeFormList.Add(parseCitationAlternativeForm(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.classifier') do
+      value.classifierList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.relatedArtifact') do
+      value.relatedArtifactList.Add(parseRelatedArtifact(item));
+    for item in obj.complexes('http://hl7.org/fhir/Citation.note') do
+      value.noteList.Add(parseAnnotation(item));
+    value.medlinePubMed := ParseCitationMedlinePubMed(obj.complex('http://hl7.org/fhir/Citation.medlinePubMed')); {L762}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCitation(parent :  TTurtleComplex; parentType, name : String; value : TFhirCitation; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:Citation'); {L1143}
+  end;
+  composeMetadataResource(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUri(this, 'Citation', 'url', value.urlElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'Citation', 'version', value.versionElement, false, -1); {L751}
+  ComposeEnum(this, 'Citation', 'status', value.statusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.useContextList.Count - 1 do
+      ComposeUsageContext(this, 'Citation', 'useContext', value.useContextList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.relatedIdentifierList.Count - 1 do
+      ComposeIdentifier(this, 'Citation', 'relatedIdentifier', value.relatedIdentifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'Citation', 'dateCited', value.dateCitedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationVariantCitation(this, 'Citation', 'variantCitation', value.variantCitationElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation', 'publishingModel', value.publishingModelElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationJournal(this, 'Citation', 'journal', value.journalElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeMarkdown(this, 'Citation', 'articleTitle', value.articleTitleElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.alternativeTitleList.Count - 1 do
+      ComposeCitationAlternativeTitle(this, 'Citation', 'alternativeTitle', value.alternativeTitleList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationPagination(this, 'Citation', 'pagination', value.paginationElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.articleUrlList.Count - 1 do
+      ComposeCitationArticleUrl(this, 'Citation', 'articleUrl', value.articleUrlList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'Citation', 'abstract', value.abstractElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'Citation', 'abstractCopyright', value.abstractCopyrightElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.alternativeAbstractList.Count - 1 do
+      ComposeCitationAlternativeAbstract(this, 'Citation', 'alternativeAbstract', value.alternativeAbstractList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationAuthorList(this, 'Citation', 'authorList', value.authorListElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.authorStringList.Count - 1 do
+      ComposeCitationAuthorString(this, 'Citation', 'authorString', value.authorStringList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationContributorList(this, 'Citation', 'contributorList', value.contributorListElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Citation', 'articleLanguage', value.articleLanguageElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.alternativeFormList.Count - 1 do
+      ComposeCitationAlternativeForm(this, 'Citation', 'alternativeForm', value.alternativeFormList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.classifierList.Count - 1 do
+      ComposeCodeableConcept(this, 'Citation', 'classifier', value.classifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.relatedArtifactList.Count - 1 do
+      ComposeRelatedArtifact(this, 'Citation', 'relatedArtifact', value.relatedArtifactList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.noteList.Count - 1 do
+      ComposeAnnotation(this, 'Citation', 'note', value.noteList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCitationMedlinePubMed(this, 'Citation', 'medlinePubMed', value.medlinePubMedElement, false, -1); {L763}
+end;
+
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
 function TFHIRTurtleParser.ParseClaimRelated(obj : TTurtleComplex) : TFhirClaimRelated;
 begin
@@ -15172,6 +16418,7 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/ClinicalUseIssue.identifier') do
       value.identifierList.Add(parseIdentifier(item));
     value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ClinicalUseIssue.type'), CODES_TFhirClinicalUseIssueTypeEnum, SYSTEMS_TFhirClinicalUseIssueTypeEnum); {L746}
+    value.category := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/ClinicalUseIssue.category')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/ClinicalUseIssue.subject') do
       value.subjectList.Add(parseReference(item));
     value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/ClinicalUseIssue.status')); {L762}
@@ -15204,6 +16451,8 @@ begin
     for i := 0 to value.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ClinicalUseIssue', 'identifier', value.identifierList[i], false, i); {L639}
   ComposeEnum(this, 'ClinicalUseIssue', 'type', value.type_Element, CODES_TFhirClinicalUseIssueTypeEnum, SYSTEMS_TFhirClinicalUseIssueTypeEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'ClinicalUseIssue', 'category', value.categoryElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.subjectList.Count - 1 do
       ComposeReference(this, 'ClinicalUseIssue', 'subject', value.subjectList[i], false, i); {L639}
@@ -17660,7 +18909,7 @@ begin
     value.scope := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Consent.scope')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/Consent.category') do
       value.categoryList.Add(parseCodeableConcept(item));
-    value.patient := ParseReference(obj.complex('http://hl7.org/fhir/Consent.patient')); {L762}
+    value.subject := ParseReference(obj.complex('http://hl7.org/fhir/Consent.subject')); {L762}
     value.dateTimeElement := ParseDateTime(obj.complex('http://hl7.org/fhir/Consent.dateTime')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/Consent.performer') do
       value.performerList.Add(parseReference(item));
@@ -17702,7 +18951,7 @@ begin
   for i := 0 to value.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Consent', 'category', value.categoryList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference(this, 'Consent', 'patient', value.patientElement, false, -1); {L763}
+    ComposeReference(this, 'Consent', 'subject', value.subjectElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Consent', 'dateTime', value.dateTimeElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -20169,6 +21418,98 @@ begin
       ComposeCodeableConcept(this, 'Device.property', 'valueCode', value.valueCodeList[i], false, i); {L639}
 end;
 
+function TFHIRTurtleParser.ParseDeviceOperationalStatus(obj : TTurtleComplex) : TFhirDeviceOperationalStatus;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirDeviceOperationalStatus.create;
+  try
+    ParseDeviceOperationalStatusProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseDeviceOperationalStatusProperties(obj : TTurtleComplex; value : TFhirDeviceOperationalStatus);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.value := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Device.operationalStatus.value')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Device.operationalStatus.reason') do
+      value.reasonList.Add(parseCodeableConcept(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeDeviceOperationalStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceOperationalStatus; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:DeviceOperationalStatus'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Device.operationalStatus', 'value', value.valueElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.reasonList.Count - 1 do
+      ComposeCodeableConcept(this, 'Device.operationalStatus', 'reason', value.reasonList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseDeviceAssociationStatus(obj : TTurtleComplex) : TFhirDeviceAssociationStatus;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirDeviceAssociationStatus.create;
+  try
+    ParseDeviceAssociationStatusProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseDeviceAssociationStatusProperties(obj : TTurtleComplex; value : TFhirDeviceAssociationStatus);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.value := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Device.associationStatus.value')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Device.associationStatus.reason') do
+      value.reasonList.Add(parseCodeableConcept(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeDeviceAssociationStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirDeviceAssociationStatus; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:DeviceAssociationStatus'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'Device.associationStatus', 'value', value.valueElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.reasonList.Count - 1 do
+      ComposeCodeableConcept(this, 'Device.associationStatus', 'reason', value.reasonList[i], false, i); {L639}
+end;
+
 function TFHIRTurtleParser.ParseDevice(obj : TTurtleComplex) : TFhirDevice;
 begin
   if (obj = nil) then
@@ -20189,6 +21530,7 @@ begin
     ParseDomainResourceProperties(obj, value);
     for item in obj.complexes('http://hl7.org/fhir/Device.identifier') do
       value.identifierList.Add(parseIdentifier(item));
+    value.displayNameElement := ParseString(obj.complex('http://hl7.org/fhir/Device.displayName')); {L750}
     value.definition := ParseReference(obj.complex('http://hl7.org/fhir/Device.definition')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/Device.udiCarrier') do
       value.udiCarrierList.Add(parseDeviceUdiCarrier(item));
@@ -20205,7 +21547,8 @@ begin
       value.deviceNameList.Add(parseDeviceDeviceName(item));
     value.modelNumberElement := ParseString(obj.complex('http://hl7.org/fhir/Device.modelNumber')); {L750}
     value.partNumberElement := ParseString(obj.complex('http://hl7.org/fhir/Device.partNumber')); {L750}
-    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Device.type')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Device.type') do
+      value.type_List.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/Device.specialization') do
       value.specializationList.Add(parseDeviceSpecialization(item));
     for item in obj.complexes('http://hl7.org/fhir/Device.version') do
@@ -20213,6 +21556,8 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/Device.property') do
       value.property_List.Add(parseDeviceProperty(item));
     value.patient := ParseReference(obj.complex('http://hl7.org/fhir/Device.patient')); {L762}
+    value.operationalStatus := ParseDeviceOperationalStatus(obj.complex('http://hl7.org/fhir/Device.operationalStatus')); {L762}
+    value.associationStatus := ParseDeviceAssociationStatus(obj.complex('http://hl7.org/fhir/Device.associationStatus')); {L762}
     value.owner := ParseReference(obj.complex('http://hl7.org/fhir/Device.owner')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/Device.contact') do
       value.contactList.Add(parseContactPoint(item));
@@ -20245,6 +21590,8 @@ begin
     for i := 0 to value.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Device', 'identifier', value.identifierList[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Device', 'displayName', value.displayNameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'Device', 'definition', value.definitionElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.udiCarrierList.Count - 1 do
@@ -20274,7 +21621,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Device', 'partNumber', value.partNumberElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(this, 'Device', 'type', value.type_Element, false, -1); {L763}
+    for i := 0 to value.type_List.Count - 1 do
+      ComposeCodeableConcept(this, 'Device', 'type', value.type_List[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.specializationList.Count - 1 do
       ComposeDeviceSpecialization(this, 'Device', 'specialization', value.specializationList[i], false, i); {L639}
@@ -20286,6 +21634,10 @@ begin
       ComposeDeviceProperty(this, 'Device', 'property', value.property_List[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'Device', 'patient', value.patientElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDeviceOperationalStatus(this, 'Device', 'operationalStatus', value.operationalStatusElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDeviceAssociationStatus(this, 'Device', 'associationStatus', value.associationStatusElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'Device', 'owner', value.ownerElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
@@ -20613,7 +21965,6 @@ begin
     value.owner := ParseReference(obj.complex('http://hl7.org/fhir/DeviceDefinition.owner')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/DeviceDefinition.contact') do
       value.contactList.Add(parseContactPoint(item));
-    value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/DeviceDefinition.url')); {L750}
     value.onlineInformationElement := ParseUri(obj.complex('http://hl7.org/fhir/DeviceDefinition.onlineInformation')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/DeviceDefinition.note') do
       value.noteList.Add(parseAnnotation(item));
@@ -20684,8 +22035,6 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.contactList.Count - 1 do
       ComposeContactPoint(this, 'DeviceDefinition', 'contact', value.contactList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUri(this, 'DeviceDefinition', 'url', value.urlElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
     ComposeUri(this, 'DeviceDefinition', 'onlineInformation', value.onlineInformationElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
@@ -20906,10 +22255,7 @@ begin
     value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/DeviceRequest.status'), CODES_TFhirRequestStatusEnum, SYSTEMS_TFhirRequestStatusEnum); {L746}
     value.intentElement := ParseEnum(obj.complex('http://hl7.org/fhir/DeviceRequest.intent'), CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum); {L746}
     value.priorityElement := ParseEnum(obj.complex('http://hl7.org/fhir/DeviceRequest.priority'), CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum); {L746}
-    if obj.has('codeReference', item) {a3} then
-      value.code := ParseReference(item);
-    if obj.has('codeCodeableConcept', item) then
-      value.code := parseCodeableConcept(item);
+    value.code := ParseCodeableReference(obj.complex('http://hl7.org/fhir/DeviceRequest.code')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/DeviceRequest.parameter') do
       value.parameterList.Add(parseDeviceRequestParameter(item));
     value.subject := ParseReference(obj.complex('http://hl7.org/fhir/DeviceRequest.subject')); {L762}
@@ -20974,10 +22320,7 @@ begin
   ComposeEnum(this, 'DeviceRequest', 'intent', value.intentElement, CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum, false, -1); {L747}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeEnum(this, 'DeviceRequest', 'priority', value.priorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1); {L747}
-  if (value.code is TFhirReference) {2} then
-    ComposeReference(this, 'DeviceRequest', 'codeReference', TFhirReference(value.code), false,-1) {L886}
-  else if (value.code is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'DeviceRequest', 'codeCodeableConcept', TFhirCodeableConcept(value.code), false, -1); {L905}
+  ComposeCodeableReference(this, 'DeviceRequest', 'code', value.codeElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.parameterList.Count - 1 do
       ComposeDeviceRequestParameter(this, 'DeviceRequest', 'parameter', value.parameterList[i], false, i); {L639}
@@ -21040,21 +22383,27 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/DeviceUseStatement.basedOn') do
       value.basedOnList.Add(parseReference(item));
     value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/DeviceUseStatement.status'), CODES_TFhirDeviceUseStatementStatusEnum, SYSTEMS_TFhirDeviceUseStatementStatusEnum); {L746}
+    for item in obj.complexes('http://hl7.org/fhir/DeviceUseStatement.category') do
+      value.categoryList.Add(parseCodeableConcept(item));
     value.subject := ParseReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.subject')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/DeviceUseStatement.derivedFrom') do
       value.derivedFromList.Add(parseReference(item));
+    value.context := ParseReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.context')); {L762}
     if obj.has('timingTiming', item) then
       value.timing := parseTiming(item);
     if obj.has('timingPeriod', item) then
       value.timing := parsePeriod(item);
     if obj.has('timingDateTime', item) then
       value.timing := parseDateTime(item);
-    value.recordedOnElement := ParseDateTime(obj.complex('http://hl7.org/fhir/DeviceUseStatement.recordedOn')); {L750}
-    value.source := ParseReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.source')); {L762}
-    value.device := ParseReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.device')); {L762}
+    value.dateAssertedElement := ParseDateTime(obj.complex('http://hl7.org/fhir/DeviceUseStatement.dateAsserted')); {L750}
+    value.usageStatus := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceUseStatement.usageStatus')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/DeviceUseStatement.usageReason') do
+      value.usageReasonList.Add(parseCodeableConcept(item));
+    value.informationSource := ParseReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.informationSource')); {L762}
+    value.device := ParseCodeableReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.device')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/DeviceUseStatement.reason') do
       value.reasonList.Add(parseCodeableReference(item));
-    value.bodySite := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceUseStatement.bodySite')); {L762}
+    value.bodySite := ParseCodeableReference(obj.complex('http://hl7.org/fhir/DeviceUseStatement.bodySite')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/DeviceUseStatement.note') do
       value.noteList.Add(parseAnnotation(item));
 end;
@@ -21082,10 +22431,15 @@ begin
     for i := 0 to value.basedOnList.Count - 1 do
       ComposeReference(this, 'DeviceUseStatement', 'basedOn', value.basedOnList[i], false, i); {L639}
   ComposeEnum(this, 'DeviceUseStatement', 'status', value.statusElement, CODES_TFhirDeviceUseStatementStatusEnum, SYSTEMS_TFhirDeviceUseStatementStatusEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.categoryList.Count - 1 do
+      ComposeCodeableConcept(this, 'DeviceUseStatement', 'category', value.categoryList[i], false, i); {L639}
   ComposeReference(this, 'DeviceUseStatement', 'subject', value.subjectElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.derivedFromList.Count - 1 do
       ComposeReference(this, 'DeviceUseStatement', 'derivedFrom', value.derivedFromList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference(this, 'DeviceUseStatement', 'context', value.contextElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) and (value.timing is TFhirTiming) {6} then
     ComposeTiming(this, 'DeviceUseStatement', 'timingTiming', TFhirTiming(value.timing), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.timing is TFhirPeriod) {6} then
@@ -21093,15 +22447,20 @@ begin
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.timing is TFhirDateTime) {6} then
     ComposeDateTime(this, 'DeviceUseStatement', 'timingDateTime', TFhirDateTime(value.timing), false, -1); {L905}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'DeviceUseStatement', 'recordedOn', value.recordedOnElement, false, -1); {L751}
+    ComposeDateTime(this, 'DeviceUseStatement', 'dateAsserted', value.dateAssertedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'DeviceUseStatement', 'usageStatus', value.usageStatusElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.usageReasonList.Count - 1 do
+      ComposeCodeableConcept(this, 'DeviceUseStatement', 'usageReason', value.usageReasonList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference(this, 'DeviceUseStatement', 'source', value.sourceElement, false, -1); {L763}
-  ComposeReference(this, 'DeviceUseStatement', 'device', value.deviceElement, false, -1); {L763}
+    ComposeReference(this, 'DeviceUseStatement', 'informationSource', value.informationSourceElement, false, -1); {L763}
+  ComposeCodeableReference(this, 'DeviceUseStatement', 'device', value.deviceElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.reasonList.Count - 1 do
       ComposeCodeableReference(this, 'DeviceUseStatement', 'reason', value.reasonList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(this, 'DeviceUseStatement', 'bodySite', value.bodySiteElement, false, -1); {L763}
+    ComposeCodeableReference(this, 'DeviceUseStatement', 'bodySite', value.bodySiteElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.noteList.Count - 1 do
       ComposeAnnotation(this, 'DeviceUseStatement', 'note', value.noteList[i], false, i); {L639}
@@ -22585,61 +23944,6 @@ end;
 
 {$ENDIF FHIR_EVENTDEFINITION}
 {$IFDEF FHIR_EVIDENCE}
-function TFHIRTurtleParser.ParseEvidenceReferentGroup(obj : TTurtleComplex) : TFhirEvidenceReferentGroup;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirEvidenceReferentGroup.create;
-  try
-    ParseEvidenceReferentGroupProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseEvidenceReferentGroupProperties(obj : TTurtleComplex; value : TFhirEvidenceReferentGroup);
-var
-  item : TTurtleComplex;
-begin
-    ParseBackboneElementProperties(obj, value);
-    value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Evidence.referentGroup.description')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Evidence.referentGroup.note') do
-      value.noteList.Add(parseAnnotation(item));
-    value.evidenceSource := ParseReference(obj.complex('http://hl7.org/fhir/Evidence.referentGroup.evidenceSource')); {L762}
-    value.intendedGroup := ParseReference(obj.complex('http://hl7.org/fhir/Evidence.referentGroup.intendedGroup')); {L762}
-    value.directnessMatch := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Evidence.referentGroup.directnessMatch')); {L762}
-end;
-
-procedure TFHIRTurtleComposer.ComposeEvidenceReferentGroup(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceReferentGroup; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:EvidenceReferentGroup'); {L1143}
-  end;
-  composeBackboneElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMarkdown(this, 'Evidence.referentGroup', 'description', value.descriptionElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to value.noteList.Count - 1 do
-      ComposeAnnotation(this, 'Evidence.referentGroup', 'note', value.noteList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference(this, 'Evidence.referentGroup', 'evidenceSource', value.evidenceSourceElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference(this, 'Evidence.referentGroup', 'intendedGroup', value.intendedGroupElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(this, 'Evidence.referentGroup', 'directnessMatch', value.directnessMatchElement, false, -1); {L763}
-end;
-
 function TFHIRTurtleParser.ParseEvidenceVariableDefinition(obj : TTurtleComplex) : TFhirEvidenceVariableDefinition;
 begin
   if (obj = nil) then
@@ -22662,8 +23966,8 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/Evidence.variableDefinition.note') do
       value.noteList.Add(parseAnnotation(item));
     value.variableRole := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Evidence.variableDefinition.variableRole')); {L762}
-    value.actualDefinition := ParseReference(obj.complex('http://hl7.org/fhir/Evidence.variableDefinition.actualDefinition')); {L762}
-    value.intendedDefinition := ParseReference(obj.complex('http://hl7.org/fhir/Evidence.variableDefinition.intendedDefinition')); {L762}
+    value.observed := ParseReference(obj.complex('http://hl7.org/fhir/Evidence.variableDefinition.observed')); {L762}
+    value.intended := ParseReference(obj.complex('http://hl7.org/fhir/Evidence.variableDefinition.intended')); {L762}
     value.directnessMatch := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Evidence.variableDefinition.directnessMatch')); {L762}
 end;
 
@@ -22688,12 +23992,11 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.noteList.Count - 1 do
       ComposeAnnotation(this, 'Evidence.variableDefinition', 'note', value.noteList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(this, 'Evidence.variableDefinition', 'variableRole', value.variableRoleElement, false, -1); {L763}
+  ComposeCodeableConcept(this, 'Evidence.variableDefinition', 'variableRole', value.variableRoleElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference(this, 'Evidence.variableDefinition', 'actualDefinition', value.actualDefinitionElement, false, -1); {L763}
+    ComposeReference(this, 'Evidence.variableDefinition', 'observed', value.observedElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
-    ComposeReference(this, 'Evidence.variableDefinition', 'intendedDefinition', value.intendedDefinitionElement, false, -1); {L763}
+    ComposeReference(this, 'Evidence.variableDefinition', 'intended', value.intendedElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Evidence.variableDefinition', 'directnessMatch', value.directnessMatchElement, false, -1); {L763}
 end;
@@ -22843,7 +24146,6 @@ begin
     value.assertionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Evidence.assertion')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/Evidence.note') do
       value.noteList.Add(parseAnnotation(item));
-    value.referentGroup := ParseEvidenceReferentGroup(obj.complex('http://hl7.org/fhir/Evidence.referentGroup')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/Evidence.variableDefinition') do
       value.variableDefinitionList.Add(parseEvidenceVariableDefinition(item));
     value.synthesisType := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Evidence.synthesisType')); {L762}
@@ -22904,9 +24206,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.noteList.Count - 1 do
       ComposeAnnotation(this, 'Evidence', 'note', value.noteList[i], false, i); {L639}
-  ComposeEvidenceReferentGroup(this, 'Evidence', 'referentGroup', value.referentGroupElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to value.variableDefinitionList.Count - 1 do
+  for i := 0 to value.variableDefinitionList.Count - 1 do
       ComposeEvidenceVariableDefinition(this, 'Evidence', 'variableDefinition', value.variableDefinitionList[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Evidence', 'synthesisType', value.synthesisTypeElement, false, -1); {L763}
@@ -22924,6 +24224,156 @@ begin
 end;
 
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+function TFHIRTurtleParser.ParseEvidenceFocusCharacteristic(obj : TTurtleComplex) : TFhirEvidenceFocusCharacteristic;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirEvidenceFocusCharacteristic.create;
+  try
+    ParseEvidenceFocusCharacteristicProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseEvidenceFocusCharacteristicProperties(obj : TTurtleComplex; value : TFhirEvidenceFocusCharacteristic);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/EvidenceFocus.characteristic.code')); {L762}
+    if obj.has('valueReference', item) {a3} then
+      value.value := ParseReference(item);
+    if obj.has('valueCodeableConcept', item) then
+      value.value := parseCodeableConcept(item);
+    if obj.has('valueQuantity', item) then
+      value.value := parseQuantity(item);
+    if obj.has('valueRange', item) then
+      value.value := parseRange(item);
+    if obj.has('valueBoolean', item) then
+      value.value := parseBoolean(item);
+    value.excludeElement := ParseBoolean(obj.complex('http://hl7.org/fhir/EvidenceFocus.characteristic.exclude')); {L750}
+    value.period := ParsePeriod(obj.complex('http://hl7.org/fhir/EvidenceFocus.characteristic.period')); {L762}
+end;
+
+procedure TFHIRTurtleComposer.ComposeEvidenceFocusCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceFocusCharacteristic; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:EvidenceFocusCharacteristic'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  ComposeCodeableConcept(this, 'EvidenceFocus.characteristic', 'code', value.codeElement, false, -1); {L763}
+  if (value.value is TFhirReference) {2} then
+    ComposeReference(this, 'EvidenceFocus.characteristic', 'valueReference', TFhirReference(value.value), false,-1) {L886}
+  else if (value.value is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'EvidenceFocus.characteristic', 'valueCodeableConcept', TFhirCodeableConcept(value.value), false, -1) {L905}
+  else if (value.value is TFhirQuantity) {6} then
+    ComposeQuantity(this, 'EvidenceFocus.characteristic', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
+  else if (value.value is TFhirRange) {6} then
+    ComposeRange(this, 'EvidenceFocus.characteristic', 'valueRange', TFhirRange(value.value), false, -1) {L905}
+  else if (value.value is TFhirBoolean) {6} then
+    ComposeBoolean(this, 'EvidenceFocus.characteristic', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'EvidenceFocus.characteristic', 'exclude', value.excludeElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePeriod(this, 'EvidenceFocus.characteristic', 'period', value.periodElement, false, -1); {L763}
+end;
+
+function TFHIRTurtleParser.ParseEvidenceFocus(obj : TTurtleComplex) : TFhirEvidenceFocus;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirEvidenceFocus.create;
+  try
+    ParseEvidenceFocusProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseEvidenceFocusProperties(obj : TTurtleComplex; value : TFhirEvidenceFocus);
+var
+  item : TTurtleComplex;
+begin
+    ParseMetadataResourceProperties(obj, value);
+    value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/EvidenceFocus.url')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/EvidenceFocus.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    value.versionElement := ParseString(obj.complex('http://hl7.org/fhir/EvidenceFocus.version')); {L750}
+    value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/EvidenceFocus.name')); {L750}
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/EvidenceFocus.status'), CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum); {L746}
+    for item in obj.complexes('http://hl7.org/fhir/EvidenceFocus.useContext') do
+      value.useContextList.Add(parseUsageContext(item));
+    value.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/EvidenceFocus.date')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/EvidenceFocus.note') do
+      value.noteList.Add(parseAnnotation(item));
+    value.copyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/EvidenceFocus.copyright')); {L750}
+    value.citeAs := ParseReference(obj.complex('http://hl7.org/fhir/EvidenceFocus.citeAs')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/EvidenceFocus.characteristic') do
+      value.characteristicList.Add(parseEvidenceFocusCharacteristic(item));
+    for item in obj.complexes('http://hl7.org/fhir/EvidenceFocus.relatedArtifact') do
+      value.relatedArtifactList.Add(parseRelatedArtifact(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeEvidenceFocus(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceFocus; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:EvidenceFocus'); {L1143}
+  end;
+  composeMetadataResource(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUri(this, 'EvidenceFocus', 'url', value.urlElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'EvidenceFocus', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'EvidenceFocus', 'version', value.versionElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'EvidenceFocus', 'name', value.nameElement, false, -1); {L751}
+  ComposeEnum(this, 'EvidenceFocus', 'status', value.statusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.useContextList.Count - 1 do
+      ComposeUsageContext(this, 'EvidenceFocus', 'useContext', value.useContextList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'EvidenceFocus', 'date', value.dateElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.noteList.Count - 1 do
+      ComposeAnnotation(this, 'EvidenceFocus', 'note', value.noteList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'EvidenceFocus', 'copyright', value.copyrightElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference(this, 'EvidenceFocus', 'citeAs', value.citeAsElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.characteristicList.Count - 1 do
+      ComposeEvidenceFocusCharacteristic(this, 'EvidenceFocus', 'characteristic', value.characteristicList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.relatedArtifactList.Count - 1 do
+      ComposeRelatedArtifact(this, 'EvidenceFocus', 'relatedArtifact', value.relatedArtifactList[i], false, i); {L639}
+end;
+
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
 function TFHIRTurtleParser.ParseEvidenceVariableCharacteristic(obj : TTurtleComplex) : TFhirEvidenceVariableCharacteristic;
 begin
@@ -22952,31 +24402,16 @@ begin
       value.definition := parseCodeableConcept(item);
     if obj.has('definitionExpression', item) then
       value.definition := parseExpression(item);
-    if obj.has('definitionDataRequirement', item) then
-      value.definition := parseDataRequirement(item);
-    if obj.has('definitionTriggerDefinition', item) then
-      value.definition := parseTriggerDefinition(item);
     value.method := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.method')); {L762}
     value.device := ParseReference(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.device')); {L762}
-    for item in obj.complexes('http://hl7.org/fhir/EvidenceVariable.characteristic.booleanSet') do
-      value.booleanSetList.Add(parseString(item));
     value.excludeElement := ParseBoolean(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.exclude')); {L750}
-    if obj.has('participantEffectivePeriod', item) then
-      value.participantEffective := parsePeriod(item);
-    if obj.has('participantEffectiveDuration', item) then
-      value.participantEffective := parseDuration(item);
-    if obj.has('participantEffectiveTiming', item) then
-      value.participantEffective := parseTiming(item);
-    if obj.has('participantEffectiveDateTime', item) then
-      value.participantEffective := parseDateTime(item);
-    value.timeFromStart := ParseDuration(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.timeFromStart')); {L762}
+    value.timeFromStart := ParseEvidenceVariableCharacteristicTimeFromStart(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.timeFromStart')); {L762}
     value.groupMeasureElement := ParseEnum(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.groupMeasure'), CODES_TFhirGroupMeasureEnum, SYSTEMS_TFhirGroupMeasureEnum); {L746}
 end;
 
 procedure TFHIRTurtleComposer.ComposeEvidenceVariableCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceVariableCharacteristic; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
-  i : integer;
 begin
   if (value = nil) then
     exit;
@@ -22998,32 +24433,69 @@ begin
   else if (value.definition is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'EvidenceVariable.characteristic', 'definitionCodeableConcept', TFhirCodeableConcept(value.definition), false, -1) {L905}
   else if (value.definition is TFhirExpression) {6} then
-    ComposeExpression(this, 'EvidenceVariable.characteristic', 'definitionExpression', TFhirExpression(value.definition), false, -1) {L905}
-  else if (value.definition is TFhirDataRequirement) {6} then
-    ComposeDataRequirement(this, 'EvidenceVariable.characteristic', 'definitionDataRequirement', TFhirDataRequirement(value.definition), false, -1) {L905}
-  else if (value.definition is TFhirTriggerDefinition) {6} then
-    ComposeTriggerDefinition(this, 'EvidenceVariable.characteristic', 'definitionTriggerDefinition', TFhirTriggerDefinition(value.definition), false, -1); {L905}
+    ComposeExpression(this, 'EvidenceVariable.characteristic', 'definitionExpression', TFhirExpression(value.definition), false, -1); {L905}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EvidenceVariable.characteristic', 'method', value.methodElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'EvidenceVariable.characteristic', 'device', value.deviceElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
-    for i := 0 to value.booleanSetList.Count - 1 do
-      ComposeString(this, 'EvidenceVariable.characteristic', 'booleanSet', value.booleanSetList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'EvidenceVariable.characteristic', 'exclude', value.excludeElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soData]) and (value.participantEffective is TFhirPeriod) {6} then
-    ComposePeriod(this, 'EvidenceVariable.characteristic', 'participantEffectivePeriod', TFhirPeriod(value.participantEffective), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.participantEffective is TFhirDuration) {6} then
-    ComposeDuration(this, 'EvidenceVariable.characteristic', 'participantEffectiveDuration', TFhirDuration(value.participantEffective), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.participantEffective is TFhirTiming) {6} then
-    ComposeTiming(this, 'EvidenceVariable.characteristic', 'participantEffectiveTiming', TFhirTiming(value.participantEffective), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.participantEffective is TFhirDateTime) {6} then
-    ComposeDateTime(this, 'EvidenceVariable.characteristic', 'participantEffectiveDateTime', TFhirDateTime(value.participantEffective), false, -1); {L905}
   if (SummaryOption in [soFull, soData]) then
-    ComposeDuration(this, 'EvidenceVariable.characteristic', 'timeFromStart', value.timeFromStartElement, false, -1); {L763}
+    ComposeEvidenceVariableCharacteristicTimeFromStart(this, 'EvidenceVariable.characteristic', 'timeFromStart', value.timeFromStartElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeEnum(this, 'EvidenceVariable.characteristic', 'groupMeasure', value.groupMeasureElement, CODES_TFhirGroupMeasureEnum, SYSTEMS_TFhirGroupMeasureEnum, false, -1); {L747}
+end;
+
+function TFHIRTurtleParser.ParseEvidenceVariableCharacteristicTimeFromStart(obj : TTurtleComplex) : TFhirEvidenceVariableCharacteristicTimeFromStart;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirEvidenceVariableCharacteristicTimeFromStart.create;
+  try
+    ParseEvidenceVariableCharacteristicTimeFromStartProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseEvidenceVariableCharacteristicTimeFromStartProperties(obj : TTurtleComplex; value : TFhirEvidenceVariableCharacteristicTimeFromStart);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.timeFromStart.description')); {L750}
+    value.quantity := ParseQuantity(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.timeFromStart.quantity')); {L762}
+    value.range := ParseRange(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristic.timeFromStart.range')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/EvidenceVariable.characteristic.timeFromStart.note') do
+      value.noteList.Add(parseAnnotation(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeEvidenceVariableCharacteristicTimeFromStart(parent :  TTurtleComplex; parentType, name : String; value : TFhirEvidenceVariableCharacteristicTimeFromStart; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:EvidenceVariableCharacteristicTimeFromStart'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'EvidenceVariable.characteristic.timeFromStart', 'description', value.descriptionElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(this, 'EvidenceVariable.characteristic.timeFromStart', 'quantity', value.quantityElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeRange(this, 'EvidenceVariable.characteristic.timeFromStart', 'range', value.rangeElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.noteList.Count - 1 do
+      ComposeAnnotation(this, 'EvidenceVariable.characteristic.timeFromStart', 'note', value.noteList[i], false, i); {L639}
 end;
 
 function TFHIRTurtleParser.ParseEvidenceVariable(obj : TTurtleComplex) : TFhirEvidenceVariable;
@@ -23082,6 +24554,7 @@ begin
       value.relatedArtifactList.Add(parseRelatedArtifact(item));
     value.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/EvidenceVariable.type'), CODES_TFhirEvidenceVariableTypeEnum, SYSTEMS_TFhirEvidenceVariableTypeEnum); {L746}
     value.actualElement := ParseBoolean(obj.complex('http://hl7.org/fhir/EvidenceVariable.actual')); {L750}
+    value.characteristicCombinationElement := ParseEnum(obj.complex('http://hl7.org/fhir/EvidenceVariable.characteristicCombination'), CODES_TFhirCharacteristicCombinationEnum, SYSTEMS_TFhirCharacteristicCombinationEnum); {L746}
     for item in obj.complexes('http://hl7.org/fhir/EvidenceVariable.characteristic') do
       value.characteristicList.Add(parseEvidenceVariableCharacteristic(item));
 end;
@@ -23166,6 +24639,8 @@ begin
     ComposeEnum(this, 'EvidenceVariable', 'type', value.type_Element, CODES_TFhirEvidenceVariableTypeEnum, SYSTEMS_TFhirEvidenceVariableTypeEnum, false, -1); {L747}
   if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'EvidenceVariable', 'actual', value.actualElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnum(this, 'EvidenceVariable', 'characteristicCombination', value.characteristicCombinationElement, CODES_TFhirCharacteristicCombinationEnum, SYSTEMS_TFhirCharacteristicCombinationEnum, false, -1); {L747}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.characteristicList.Count - 1 do
       ComposeEvidenceVariableCharacteristic(this, 'EvidenceVariable', 'characteristic', value.characteristicList[i], false, i); {L639}
@@ -26991,14 +28466,8 @@ begin
     value.authority := ParseReference(obj.complex('http://hl7.org/fhir/Immunization.protocolApplied.authority')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/Immunization.protocolApplied.targetDisease') do
       value.targetDiseaseList.Add(parseCodeableConcept(item));
-    if obj.has('doseNumberPositiveInt', item) then
-      value.doseNumber := parsePositiveInt(item);
-    if obj.has('doseNumberString', item) then
-      value.doseNumber := parseString(item);
-    if obj.has('seriesDosesPositiveInt', item) then
-      value.seriesDoses := parsePositiveInt(item);
-    if obj.has('seriesDosesString', item) then
-      value.seriesDoses := parseString(item);
+    value.doseNumberElement := ParseString(obj.complex('http://hl7.org/fhir/Immunization.protocolApplied.doseNumber')); {L750}
+    value.seriesDosesElement := ParseString(obj.complex('http://hl7.org/fhir/Immunization.protocolApplied.seriesDoses')); {L750}
 end;
 
 procedure TFHIRTurtleComposer.ComposeImmunizationProtocolApplied(parent :  TTurtleComplex; parentType, name : String; value : TFhirImmunizationProtocolApplied; useType : boolean; index : integer);
@@ -27024,14 +28493,9 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.targetDiseaseList.Count - 1 do
       ComposeCodeableConcept(this, 'Immunization.protocolApplied', 'targetDisease', value.targetDiseaseList[i], false, i); {L639}
-  if (value.doseNumber is TFhirPositiveInt) {6} then
-    ComposePositiveInt(this, 'Immunization.protocolApplied', 'doseNumberPositiveInt', TFhirPositiveInt(value.doseNumber), false, -1) {L905}
-  else if (value.doseNumber is TFhirString) {6} then
-    ComposeString(this, 'Immunization.protocolApplied', 'doseNumberString', TFhirString(value.doseNumber), false, -1); {L905}
-  if (SummaryOption in [soFull, soData]) and (value.seriesDoses is TFhirPositiveInt) {6} then
-    ComposePositiveInt(this, 'Immunization.protocolApplied', 'seriesDosesPositiveInt', TFhirPositiveInt(value.seriesDoses), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.seriesDoses is TFhirString) {6} then
-    ComposeString(this, 'Immunization.protocolApplied', 'seriesDosesString', TFhirString(value.seriesDoses), false, -1); {L905}
+  ComposeString(this, 'Immunization.protocolApplied', 'doseNumber', value.doseNumberElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'Immunization.protocolApplied', 'seriesDoses', value.seriesDosesElement, false, -1); {L751}
 end;
 
 function TFHIRTurtleParser.ParseImmunization(obj : TTurtleComplex) : TFhirImmunization;
@@ -27211,14 +28675,8 @@ begin
       value.doseStatusReasonList.Add(parseCodeableConcept(item));
     value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.description')); {L750}
     value.seriesElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.series')); {L750}
-    if obj.has('doseNumberPositiveInt', item) then
-      value.doseNumber := parsePositiveInt(item);
-    if obj.has('doseNumberString', item) then
-      value.doseNumber := parseString(item);
-    if obj.has('seriesDosesPositiveInt', item) then
-      value.seriesDoses := parsePositiveInt(item);
-    if obj.has('seriesDosesString', item) then
-      value.seriesDoses := parseString(item);
+    value.doseNumberElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.doseNumber')); {L750}
+    value.seriesDosesElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.seriesDoses')); {L750}
 end;
 
 procedure TFHIRTurtleComposer.ComposeImmunizationEvaluation(parent :  TTurtleComplex; parentType, name : String; value : TFhirImmunizationEvaluation; useType : boolean; index : integer);
@@ -27256,14 +28714,10 @@ begin
     ComposeString(this, 'ImmunizationEvaluation', 'description', value.descriptionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ImmunizationEvaluation', 'series', value.seriesElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soData]) and (value.doseNumber is TFhirPositiveInt) {6} then
-    ComposePositiveInt(this, 'ImmunizationEvaluation', 'doseNumberPositiveInt', TFhirPositiveInt(value.doseNumber), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.doseNumber is TFhirString) {6} then
-    ComposeString(this, 'ImmunizationEvaluation', 'doseNumberString', TFhirString(value.doseNumber), false, -1); {L905}
-  if (SummaryOption in [soFull, soData]) and (value.seriesDoses is TFhirPositiveInt) {6} then
-    ComposePositiveInt(this, 'ImmunizationEvaluation', 'seriesDosesPositiveInt', TFhirPositiveInt(value.seriesDoses), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.seriesDoses is TFhirString) {6} then
-    ComposeString(this, 'ImmunizationEvaluation', 'seriesDosesString', TFhirString(value.seriesDoses), false, -1); {L905}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImmunizationEvaluation', 'doseNumber', value.doseNumberElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImmunizationEvaluation', 'seriesDoses', value.seriesDosesElement, false, -1); {L751}
 end;
 
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
@@ -27299,14 +28753,8 @@ begin
       value.dateCriterionList.Add(parseImmunizationRecommendationRecommendationDateCriterion(item));
     value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.description')); {L750}
     value.seriesElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.series')); {L750}
-    if obj.has('doseNumberPositiveInt', item) then
-      value.doseNumber := parsePositiveInt(item);
-    if obj.has('doseNumberString', item) then
-      value.doseNumber := parseString(item);
-    if obj.has('seriesDosesPositiveInt', item) then
-      value.seriesDoses := parsePositiveInt(item);
-    if obj.has('seriesDosesString', item) then
-      value.seriesDoses := parseString(item);
+    value.doseNumberElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.doseNumber')); {L750}
+    value.seriesDosesElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.seriesDoses')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.supportingImmunization') do
       value.supportingImmunizationList.Add(parseReference(item));
     for item in obj.complexes('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.supportingPatientInformation') do
@@ -27349,14 +28797,10 @@ begin
     ComposeString(this, 'ImmunizationRecommendation.recommendation', 'description', value.descriptionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ImmunizationRecommendation.recommendation', 'series', value.seriesElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.doseNumber is TFhirPositiveInt) {6} then
-    ComposePositiveInt(this, 'ImmunizationRecommendation.recommendation', 'doseNumberPositiveInt', TFhirPositiveInt(value.doseNumber), false, -1) {L905}
-  else if (SummaryOption in [soFull, soSummary, soData]) and (value.doseNumber is TFhirString) {6} then
-    ComposeString(this, 'ImmunizationRecommendation.recommendation', 'doseNumberString', TFhirString(value.doseNumber), false, -1); {L905}
-  if (SummaryOption in [soFull, soData]) and (value.seriesDoses is TFhirPositiveInt) {6} then
-    ComposePositiveInt(this, 'ImmunizationRecommendation.recommendation', 'seriesDosesPositiveInt', TFhirPositiveInt(value.seriesDoses), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.seriesDoses is TFhirString) {6} then
-    ComposeString(this, 'ImmunizationRecommendation.recommendation', 'seriesDosesString', TFhirString(value.seriesDoses), false, -1); {L905}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'ImmunizationRecommendation.recommendation', 'doseNumber', value.doseNumberElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImmunizationRecommendation.recommendation', 'seriesDoses', value.seriesDosesElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.supportingImmunizationList.Count - 1 do
       ComposeReference(this, 'ImmunizationRecommendation.recommendation', 'supportingImmunization', value.supportingImmunizationList[i], false, i); {L639}
@@ -28185,8 +29629,10 @@ begin
     ParseBackboneElementProperties(obj, value);
     value.presentation := ParseRatio(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.presentation')); {L762}
     value.presentationHighLimit := ParseRatio(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.presentationHighLimit')); {L762}
+    value.presentationTextElement := ParseString(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.presentationText')); {L750}
     value.concentration := ParseRatio(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.concentration')); {L762}
     value.concentrationHighLimit := ParseRatio(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.concentrationHighLimit')); {L762}
+    value.concentrationTextElement := ParseString(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.concentrationText')); {L750}
     value.measurementPointElement := ParseString(obj.complex('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.measurementPoint')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/Ingredient.specifiedSubstance.strength.country') do
       value.countryList.Add(parseCodeableConcept(item));
@@ -28215,9 +29661,13 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeRatio(this, 'Ingredient.specifiedSubstance.strength', 'presentationHighLimit', value.presentationHighLimitElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'Ingredient.specifiedSubstance.strength', 'presentationText', value.presentationTextElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeRatio(this, 'Ingredient.specifiedSubstance.strength', 'concentration', value.concentrationElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeRatio(this, 'Ingredient.specifiedSubstance.strength', 'concentrationHighLimit', value.concentrationHighLimitElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'Ingredient.specifiedSubstance.strength', 'concentrationText', value.concentrationTextElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Ingredient.specifiedSubstance.strength', 'measurementPoint', value.measurementPointElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -28358,6 +29808,9 @@ begin
     ParseDomainResourceProperties(obj, value);
     value.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/Ingredient.identifier')); {L762}
     value.role := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Ingredient.role')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Ingredient.function') do
+      value.function_List.Add(parseCodeableConcept(item));
+    value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Ingredient.description')); {L750}
     value.allergenicIndicatorElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Ingredient.allergenicIndicator')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/Ingredient.manufacturer') do
       value.manufacturerList.Add(parseReference(item));
@@ -28385,6 +29838,11 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'Ingredient', 'identifier', value.identifierElement, false, -1); {L763}
   ComposeCodeableConcept(this, 'Ingredient', 'role', value.roleElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.function_List.Count - 1 do
+      ComposeCodeableConcept(this, 'Ingredient', 'function', value.function_List[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeMarkdown(this, 'Ingredient', 'description', value.descriptionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Ingredient', 'allergenicIndicator', value.allergenicIndicatorElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -29759,40 +31217,38 @@ end;
 
 {$ENDIF FHIR_LOCATION}
 {$IFDEF FHIR_MANUFACTUREDITEMDEFINITION}
-function TFHIRTurtleParser.ParseManufacturedItemDefinitionCharacteristic(obj : TTurtleComplex) : TFhirManufacturedItemDefinitionCharacteristic;
+function TFHIRTurtleParser.ParseManufacturedItemDefinitionProperty(obj : TTurtleComplex) : TFhirManufacturedItemDefinitionProperty;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirManufacturedItemDefinitionCharacteristic.create;
+  result := TFhirManufacturedItemDefinitionProperty.create;
   try
-    ParseManufacturedItemDefinitionCharacteristicProperties(obj, result);
+    ParseManufacturedItemDefinitionPropertyProperties(obj, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRTurtleParser.ParseManufacturedItemDefinitionCharacteristicProperties(obj : TTurtleComplex; value : TFhirManufacturedItemDefinitionCharacteristic);
+procedure TFHIRTurtleParser.ParseManufacturedItemDefinitionPropertyProperties(obj : TTurtleComplex; value : TFhirManufacturedItemDefinitionProperty);
 var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/ManufacturedItemDefinition.characteristic.code')); {L762}
-    if obj.has('valueCoding', item) then
-      value.value := parseCoding(item);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/ManufacturedItemDefinition.property.type')); {L762}
+    if obj.has('valueCodeableConcept', item) then
+      value.value := parseCodeableConcept(item);
     if obj.has('valueQuantity', item) then
       value.value := parseQuantity(item);
     if obj.has('valueAttachment', item) then
       value.value := parseAttachment(item);
-    if obj.has('valueString', item) then
-      value.value := parseString(item);
     if obj.has('valueDate', item) then
       value.value := parseDate(item);
     if obj.has('valueBoolean', item) then
       value.value := parseBoolean(item);
 end;
 
-procedure TFHIRTurtleComposer.ComposeManufacturedItemDefinitionCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirManufacturedItemDefinitionCharacteristic; useType : boolean; index : integer);
+procedure TFHIRTurtleComposer.ComposeManufacturedItemDefinitionProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirManufacturedItemDefinitionProperty; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
 begin
@@ -29804,22 +31260,20 @@ begin
   begin
     this := parent.addPredicate('fhir:'+parentType+'.'+name);
     if (useType) then
-      this.addPredicate('a', 'fhir:ManufacturedItemDefinitionCharacteristic'); {L1143}
+      this.addPredicate('a', 'fhir:ManufacturedItemDefinitionProperty'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeCodeableConcept(this, 'ManufacturedItemDefinition.characteristic', 'code', value.codeElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirCoding) {6} then
-    ComposeCoding(this, 'ManufacturedItemDefinition.characteristic', 'valueCoding', TFhirCoding(value.value), false, -1) {L905}
+  ComposeCodeableConcept(this, 'ManufacturedItemDefinition.property', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'ManufacturedItemDefinition.property', 'valueCodeableConcept', TFhirCodeableConcept(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirQuantity) {6} then
-    ComposeQuantity(this, 'ManufacturedItemDefinition.characteristic', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
+    ComposeQuantity(this, 'ManufacturedItemDefinition.property', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirAttachment) {6} then
-    ComposeAttachment(this, 'ManufacturedItemDefinition.characteristic', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
-  else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirString) {6} then
-    ComposeString(this, 'ManufacturedItemDefinition.characteristic', 'valueString', TFhirString(value.value), false, -1) {L905}
+    ComposeAttachment(this, 'ManufacturedItemDefinition.property', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirDate) {6} then
-    ComposeDate(this, 'ManufacturedItemDefinition.characteristic', 'valueDate', TFhirDate(value.value), false, -1) {L905}
+    ComposeDate(this, 'ManufacturedItemDefinition.property', 'valueDate', TFhirDate(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirBoolean) {6} then
-    ComposeBoolean(this, 'ManufacturedItemDefinition.characteristic', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
+    ComposeBoolean(this, 'ManufacturedItemDefinition.property', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
 end;
 
 function TFHIRTurtleParser.ParseManufacturedItemDefinition(obj : TTurtleComplex) : TFhirManufacturedItemDefinition;
@@ -29848,8 +31302,8 @@ begin
       value.manufacturerList.Add(parseReference(item));
     for item in obj.complexes('http://hl7.org/fhir/ManufacturedItemDefinition.ingredient') do
       value.ingredientList.Add(parseReference(item));
-    for item in obj.complexes('http://hl7.org/fhir/ManufacturedItemDefinition.characteristic') do
-      value.characteristicList.Add(parseManufacturedItemDefinitionCharacteristic(item));
+    for item in obj.complexes('http://hl7.org/fhir/ManufacturedItemDefinition.property') do
+      value.property_List.Add(parseManufacturedItemDefinitionProperty(item));
 end;
 
 procedure TFHIRTurtleComposer.ComposeManufacturedItemDefinition(parent :  TTurtleComplex; parentType, name : String; value : TFhirManufacturedItemDefinition; useType : boolean; index : integer);
@@ -29881,8 +31335,8 @@ begin
     for i := 0 to value.ingredientList.Count - 1 do
       ComposeReference(this, 'ManufacturedItemDefinition', 'ingredient', value.ingredientList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.characteristicList.Count - 1 do
-      ComposeManufacturedItemDefinitionCharacteristic(this, 'ManufacturedItemDefinition', 'characteristic', value.characteristicList[i], false, i); {L639}
+    for i := 0 to value.property_List.Count - 1 do
+      ComposeManufacturedItemDefinitionProperty(this, 'ManufacturedItemDefinition', 'property', value.property_List[i], false, i); {L639}
 end;
 
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
@@ -30703,10 +32157,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    if obj.has('itemCodeableConcept', item) then
-      value.item := parseCodeableConcept(item);
-    if obj.has('itemReference', item) {a3} then
-      value.item := ParseReference(item);
+    value.item := ParseCodeableReference(obj.complex('http://hl7.org/fhir/Medication.ingredient.item')); {L762}
     value.isActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Medication.ingredient.isActive')); {L750}
     if obj.has('strengthRatio', item) then
       value.strength := parseRatio(item);
@@ -30731,10 +32182,7 @@ begin
       this.addPredicate('a', 'fhir:MedicationIngredient'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  if (value.item is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'Medication.ingredient', 'itemCodeableConcept', TFhirCodeableConcept(value.item), false, -1) {L905}
-  else if (value.item is TFhirReference) {2} then
-    ComposeReference(this, 'Medication.ingredient', 'itemReference', TFhirReference(value.item), false,-1); {L886}
+  ComposeCodeableReference(this, 'Medication.ingredient', 'item', value.itemElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'Medication.ingredient', 'isActive', value.isActiveElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) and (value.strength is TFhirRatio) {6} then
@@ -30987,10 +32435,7 @@ begin
       value.statusReasonList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/MedicationAdministration.category') do
       value.categoryList.Add(parseCodeableConcept(item));
-    if obj.has('medicationCodeableConcept', item) then
-      value.medication := parseCodeableConcept(item);
-    if obj.has('medicationReference', item) {a3} then
-      value.medication := ParseReference(item);
+    value.medication := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationAdministration.medication')); {L762}
     value.subject := ParseReference(obj.complex('http://hl7.org/fhir/MedicationAdministration.subject')); {L762}
     value.encounter := ParseReference(obj.complex('http://hl7.org/fhir/MedicationAdministration.encounter')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicationAdministration.supportingInformation') do
@@ -31052,10 +32497,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationAdministration', 'category', value.categoryList[i], false, i); {L639}
-  if (value.medication is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationAdministration', 'medicationCodeableConcept', TFhirCodeableConcept(value.medication), false, -1) {L905}
-  else if (value.medication is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationAdministration', 'medicationReference', TFhirReference(value.medication), false,-1); {L886}
+  ComposeCodeableReference(this, 'MedicationAdministration', 'medication', value.medicationElement, false, -1); {L763}
   ComposeReference(this, 'MedicationAdministration', 'subject', value.subjectElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'MedicationAdministration', 'encounter', value.encounterElement, false, -1); {L763}
@@ -31207,16 +32649,10 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/MedicationDispense.partOf') do
       value.partOfList.Add(parseReference(item));
     value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/MedicationDispense.status'), CODES_TFhirMedicationDispenseStatusCodesEnum, SYSTEMS_TFhirMedicationDispenseStatusCodesEnum); {L746}
-    if obj.has('statusReasonCodeableConcept', item) then
-      value.statusReason := parseCodeableConcept(item);
-    if obj.has('statusReasonReference', item) {a3} then
-      value.statusReason := ParseReference(item);
+    value.statusReason := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationDispense.statusReason')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicationDispense.category') do
       value.categoryList.Add(parseCodeableConcept(item));
-    if obj.has('medicationCodeableConcept', item) then
-      value.medication := parseCodeableConcept(item);
-    if obj.has('medicationReference', item) {a3} then
-      value.medication := ParseReference(item);
+    value.medication := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationDispense.medication')); {L762}
     value.subject := ParseReference(obj.complex('http://hl7.org/fhir/MedicationDispense.subject')); {L762}
     value.encounter := ParseReference(obj.complex('http://hl7.org/fhir/MedicationDispense.encounter')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicationDispense.supportingInformation') do
@@ -31272,17 +32708,12 @@ begin
     for i := 0 to value.partOfList.Count - 1 do
       ComposeReference(this, 'MedicationDispense', 'partOf', value.partOfList[i], false, i); {L639}
   ComposeEnum(this, 'MedicationDispense', 'status', value.statusElement, CODES_TFhirMedicationDispenseStatusCodesEnum, SYSTEMS_TFhirMedicationDispenseStatusCodesEnum, false, -1); {L747}
-  if (SummaryOption in [soFull, soData]) and (value.statusReason is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationDispense', 'statusReasonCodeableConcept', TFhirCodeableConcept(value.statusReason), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.statusReason is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationDispense', 'statusReasonReference', TFhirReference(value.statusReason), false,-1); {L886}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableReference(this, 'MedicationDispense', 'statusReason', value.statusReasonElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationDispense', 'category', value.categoryList[i], false, i); {L639}
-  if (value.medication is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationDispense', 'medicationCodeableConcept', TFhirCodeableConcept(value.medication), false, -1) {L905}
-  else if (value.medication is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationDispense', 'medicationReference', TFhirReference(value.medication), false,-1); {L886}
+  ComposeCodeableReference(this, 'MedicationDispense', 'medication', value.medicationElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference(this, 'MedicationDispense', 'subject', value.subjectElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
@@ -31436,10 +32867,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    if obj.has('itemCodeableConcept', item) then
-      value.item := parseCodeableConcept(item);
-    if obj.has('itemReference', item) {a3} then
-      value.item := ParseReference(item);
+    value.item := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationKnowledge.ingredient.item')); {L762}
     value.isActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/MedicationKnowledge.ingredient.isActive')); {L750}
     if obj.has('strengthRatio', item) then
       value.strength := parseRatio(item);
@@ -31464,10 +32892,7 @@ begin
       this.addPredicate('a', 'fhir:MedicationKnowledgeIngredient'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  if (value.item is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationKnowledge.ingredient', 'itemCodeableConcept', TFhirCodeableConcept(value.item), false, -1) {L905}
-  else if (value.item is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationKnowledge.ingredient', 'itemReference', TFhirReference(value.item), false,-1); {L886}
+  ComposeCodeableReference(this, 'MedicationKnowledge.ingredient', 'item', value.itemElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'MedicationKnowledge.ingredient', 'isActive', value.isActiveElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) and (value.strength is TFhirRatio) {6} then
@@ -31581,10 +33006,7 @@ begin
     ParseBackboneElementProperties(obj, value);
     for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuideline.dosage') do
       value.dosageList.Add(parseMedicationKnowledgeAdministrationGuidelineDosage(item));
-    if obj.has('indicationCodeableConcept', item) then
-      value.indication := parseCodeableConcept(item);
-    if obj.has('indicationReference', item) {a3} then
-      value.indication := ParseReference(item);
+    value.indication := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationKnowledge.administrationGuideline.indication')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuideline.patientCharacteristic') do
       value.patientCharacteristicList.Add(parseMedicationKnowledgeAdministrationGuidelinePatientCharacteristic(item));
 end;
@@ -31608,10 +33030,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.dosageList.Count - 1 do
       ComposeMedicationKnowledgeAdministrationGuidelineDosage(this, 'MedicationKnowledge.administrationGuideline', 'dosage', value.dosageList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) and (value.indication is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationKnowledge.administrationGuideline', 'indicationCodeableConcept', TFhirCodeableConcept(value.indication), false, -1) {L905}
-  else if (SummaryOption in [soFull, soData]) and (value.indication is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationKnowledge.administrationGuideline', 'indicationReference', TFhirReference(value.indication), false,-1); {L886}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableReference(this, 'MedicationKnowledge.administrationGuideline', 'indication', value.indicationElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.patientCharacteristicList.Count - 1 do
       ComposeMedicationKnowledgeAdministrationGuidelinePatientCharacteristic(this, 'MedicationKnowledge.administrationGuideline', 'patientCharacteristic', value.patientCharacteristicList[i], false, i); {L639}
@@ -31679,18 +33099,16 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    if obj.has('characteristicCodeableConcept', item) then
-      value.characteristic := parseCodeableConcept(item);
-    if obj.has('characteristicQuantity', item) then
-      value.characteristic := parseQuantity(item);
-    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuideline.patientCharacteristic.value') do
-      value.valueList.Add(parseString(item));
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.administrationGuideline.patientCharacteristic.type')); {L762}
+    if obj.has('valueCodeableConcept', item) then
+      value.value := parseCodeableConcept(item);
+    if obj.has('valueQuantity', item) then
+      value.value := parseQuantity(item);
 end;
 
 procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeAdministrationGuidelinePatientCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirMedicationKnowledgeAdministrationGuidelinePatientCharacteristic; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
-  i : integer;
 begin
   if (value = nil) then
     exit;
@@ -31703,13 +33121,11 @@ begin
       this.addPredicate('a', 'fhir:MedicationKnowledgeAdministrationGuidelinePatientCharacteristic'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  if (value.characteristic is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationKnowledge.administrationGuideline.patientCharacteristic', 'characteristicCodeableConcept', TFhirCodeableConcept(value.characteristic), false, -1) {L905}
-  else if (value.characteristic is TFhirQuantity) {6} then
-    ComposeQuantity(this, 'MedicationKnowledge.administrationGuideline.patientCharacteristic', 'characteristicQuantity', TFhirQuantity(value.characteristic), false, -1); {L905}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to value.valueList.Count - 1 do
-      ComposeString(this, 'MedicationKnowledge.administrationGuideline.patientCharacteristic', 'value', value.valueList[i], false, i); {L639}
+  ComposeCodeableConcept(this, 'MedicationKnowledge.administrationGuideline.patientCharacteristic', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) and (value.value is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.administrationGuideline.patientCharacteristic', 'valueCodeableConcept', TFhirCodeableConcept(value.value), false, -1) {L905}
+  else if (SummaryOption in [soFull, soData]) and (value.value is TFhirQuantity) {6} then
+    ComposeQuantity(this, 'MedicationKnowledge.administrationGuideline.patientCharacteristic', 'valueQuantity', TFhirQuantity(value.value), false, -1); {L905}
 end;
 
 function TFHIRTurtleParser.ParseMedicationKnowledgeMedicineClassification(obj : TTurtleComplex) : TFhirMedicationKnowledgeMedicineClassification;
@@ -32372,10 +33788,7 @@ begin
     value.doNotPerformElement := ParseBoolean(obj.complex('http://hl7.org/fhir/MedicationRequest.doNotPerform')); {L750}
     value.reportedElement := ParseBoolean(obj.complex('http://hl7.org/fhir/MedicationRequest.reported')); {L750}
     value.informationSource := ParseReference(obj.complex('http://hl7.org/fhir/MedicationRequest.informationSource')); {L762}
-    if obj.has('medicationCodeableConcept', item) then
-      value.medication := parseCodeableConcept(item);
-    if obj.has('medicationReference', item) {a3} then
-      value.medication := ParseReference(item);
+    value.medication := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationRequest.medication')); {L762}
     value.subject := ParseReference(obj.complex('http://hl7.org/fhir/MedicationRequest.subject')); {L762}
     value.encounter := ParseReference(obj.complex('http://hl7.org/fhir/MedicationRequest.encounter')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicationRequest.supportingInformation') do
@@ -32445,10 +33858,7 @@ begin
     ComposeBoolean(this, 'MedicationRequest', 'reported', value.reportedElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'MedicationRequest', 'informationSource', value.informationSourceElement, false, -1); {L763}
-  if (value.medication is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationRequest', 'medicationCodeableConcept', TFhirCodeableConcept(value.medication), false, -1) {L905}
-  else if (value.medication is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationRequest', 'medicationReference', TFhirReference(value.medication), false,-1); {L886}
+  ComposeCodeableReference(this, 'MedicationRequest', 'medication', value.medicationElement, false, -1); {L763}
   ComposeReference(this, 'MedicationRequest', 'subject', value.subjectElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference(this, 'MedicationRequest', 'encounter', value.encounterElement, false, -1); {L763}
@@ -32537,10 +33947,7 @@ begin
       value.statusReasonList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/MedicationUsage.category') do
       value.categoryList.Add(parseCodeableConcept(item));
-    if obj.has('medicationCodeableConcept', item) then
-      value.medication := parseCodeableConcept(item);
-    if obj.has('medicationReference', item) {a3} then
-      value.medication := ParseReference(item);
+    value.medication := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicationUsage.medication')); {L762}
     value.subject := ParseReference(obj.complex('http://hl7.org/fhir/MedicationUsage.subject')); {L762}
     value.encounter := ParseReference(obj.complex('http://hl7.org/fhir/MedicationUsage.encounter')); {L762}
     if obj.has('effectivePeriod', item) then
@@ -32593,10 +34000,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationUsage', 'category', value.categoryList[i], false, i); {L639}
-  if (value.medication is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'MedicationUsage', 'medicationCodeableConcept', TFhirCodeableConcept(value.medication), false, -1) {L905}
-  else if (value.medication is TFhirReference) {2} then
-    ComposeReference(this, 'MedicationUsage', 'medicationReference', TFhirReference(value.medication), false,-1); {L886}
+  ComposeCodeableReference(this, 'MedicationUsage', 'medication', value.medicationElement, false, -1); {L763}
   ComposeReference(this, 'MedicationUsage', 'subject', value.subjectElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference(this, 'MedicationUsage', 'encounter', value.encounterElement, false, -1); {L763}
@@ -32687,7 +34091,7 @@ var
 begin
     ParseBackboneElementProperties(obj, value);
     value.productNameElement := ParseString(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.name.productName')); {L750}
-    value.type_ := ParseCoding(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.name.type')); {L762}
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.name.type')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.name.namePart') do
       value.namePartList.Add(parseMedicinalProductDefinitionNameNamePart(item));
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.name.countryLanguage') do
@@ -32712,7 +34116,7 @@ begin
   composeBackboneElement(this, '', name, value, false, index);
   ComposeString(this, 'MedicinalProductDefinition.name', 'productName', value.productNameElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCoding(this, 'MedicinalProductDefinition.name', 'type', value.type_Element, false, -1); {L763}
+    ComposeCodeableConcept(this, 'MedicinalProductDefinition.name', 'type', value.type_Element, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.namePartList.Count - 1 do
       ComposeMedicinalProductDefinitionNameNamePart(this, 'MedicinalProductDefinition.name', 'namePart', value.namePartList[i], false, i); {L639}
@@ -32738,7 +34142,7 @@ procedure TFHIRTurtleParser.ParseMedicinalProductDefinitionNameNamePartPropertie
 begin
     ParseBackboneElementProperties(obj, value);
     value.partElement := ParseString(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.name.namePart.part')); {L750}
-    value.type_ := ParseCoding(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.name.namePart.type')); {L762}
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.name.namePart.type')); {L762}
 end;
 
 procedure TFHIRTurtleComposer.ComposeMedicinalProductDefinitionNameNamePart(parent :  TTurtleComplex; parentType, name : String; value : TFhirMedicinalProductDefinitionNameNamePart; useType : boolean; index : integer);
@@ -32757,7 +34161,7 @@ begin
   end;
   composeBackboneElement(this, '', name, value, false, index);
   ComposeString(this, 'MedicinalProductDefinition.name.namePart', 'part', value.partElement, false, -1); {L751}
-  ComposeCoding(this, 'MedicinalProductDefinition.name.namePart', 'type', value.type_Element, false, -1); {L763}
+  ComposeCodeableConcept(this, 'MedicinalProductDefinition.name.namePart', 'type', value.type_Element, false, -1); {L763}
 end;
 
 function TFHIRTurtleParser.ParseMedicinalProductDefinitionNameCountryLanguage(obj : TTurtleComplex) : TFhirMedicinalProductDefinitionNameCountryLanguage;
@@ -32824,7 +34228,7 @@ begin
       value.product := parseIdentifier(item);
     if obj.has('productReference', item) {a3} then
       value.product := ParseReference(item);
-    value.type_ := ParseCoding(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.crossReference.type')); {L762}
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.crossReference.type')); {L762}
 end;
 
 procedure TFHIRTurtleComposer.ComposeMedicinalProductDefinitionCrossReference(parent :  TTurtleComplex; parentType, name : String; value : TFhirMedicinalProductDefinitionCrossReference; useType : boolean; index : integer);
@@ -32847,7 +34251,7 @@ begin
   else if (value.product is TFhirReference) {2} then
     ComposeReference(this, 'MedicinalProductDefinition.crossReference', 'productReference', TFhirReference(value.product), false,-1); {L886}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCoding(this, 'MedicinalProductDefinition.crossReference', 'type', value.type_Element, false, -1); {L763}
+    ComposeCodeableConcept(this, 'MedicinalProductDefinition.crossReference', 'type', value.type_Element, false, -1); {L763}
 end;
 
 function TFHIRTurtleParser.ParseMedicinalProductDefinitionManufacturingBusinessOperation(obj : TTurtleComplex) : TFhirMedicinalProductDefinitionManufacturingBusinessOperation;
@@ -32868,10 +34272,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    if obj.has('typeCoding', item) then
-      value.type_ := parseCoding(item);
-    if obj.has('typeReference', item) {a3} then
-      value.type_ := ParseReference(item);
+    value.type_ := ParseCodeableReference(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.manufacturingBusinessOperation.type')); {L762}
     value.effectiveDate := ParsePeriod(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.manufacturingBusinessOperation.effectiveDate')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.manufacturingBusinessOperation.manufacturer') do
       value.manufacturerList.Add(parseReference(item));
@@ -32895,10 +34296,8 @@ begin
       this.addPredicate('a', 'fhir:MedicinalProductDefinitionManufacturingBusinessOperation'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.type_ is TFhirCoding) {6} then
-    ComposeCoding(this, 'MedicinalProductDefinition.manufacturingBusinessOperation', 'typeCoding', TFhirCoding(value.type_), false, -1) {L905}
-  else if (SummaryOption in [soFull, soSummary, soData]) and (value.type_ is TFhirReference) {2} then
-    ComposeReference(this, 'MedicinalProductDefinition.manufacturingBusinessOperation', 'typeReference', TFhirReference(value.type_), false,-1); {L886}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableReference(this, 'MedicinalProductDefinition.manufacturingBusinessOperation', 'type', value.type_Element, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'MedicinalProductDefinition.manufacturingBusinessOperation', 'effectiveDate', value.effectiveDateElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -32931,9 +34330,10 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.identifier') do
       value.identifierList.Add(parseIdentifier(item));
     value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.type')); {L762}
-    value.domain := ParseCoding(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.domain')); {L762}
+    value.domain := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.domain')); {L762}
     value.versionElement := ParseString(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.version')); {L750}
-    value.status := ParseCoding(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.status')); {L762}
+    value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.status')); {L762}
+    value.statusDateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.statusDate')); {L750}
     value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.description')); {L750}
     value.combinedPharmaceuticalDoseForm := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.combinedPharmaceuticalDoseForm')); {L762}
     value.indicationElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.indication')); {L750}
@@ -32944,6 +34344,8 @@ begin
     value.paediatricUseIndicator := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicinalProductDefinition.paediatricUseIndicator')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.productClassification') do
       value.productClassificationList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.characteristic') do
+      value.characteristicList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.marketingStatus') do
       value.marketingStatusList.Add(parseMarketingStatus(item));
     for item in obj.complexes('http://hl7.org/fhir/MedicinalProductDefinition.pharmaceuticalProduct') do
@@ -32990,11 +34392,13 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'MedicinalProductDefinition', 'type', value.type_Element, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCoding(this, 'MedicinalProductDefinition', 'domain', value.domainElement, false, -1); {L763}
+    ComposeCodeableConcept(this, 'MedicinalProductDefinition', 'domain', value.domainElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'MedicinalProductDefinition', 'version', value.versionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCoding(this, 'MedicinalProductDefinition', 'status', value.statusElement, false, -1); {L763}
+    ComposeCodeableConcept(this, 'MedicinalProductDefinition', 'status', value.statusElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'MedicinalProductDefinition', 'statusDate', value.statusDateElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'MedicinalProductDefinition', 'description', value.descriptionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -33013,6 +34417,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.productClassificationList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicinalProductDefinition', 'productClassification', value.productClassificationList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.characteristicList.Count - 1 do
+      ComposeCodeableConcept(this, 'MedicinalProductDefinition', 'characteristic', value.characteristicList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.marketingStatusList.Count - 1 do
       ComposeMarketingStatus(this, 'MedicinalProductDefinition', 'marketingStatus', value.marketingStatusList[i], false, i); {L639}
@@ -34188,7 +35595,7 @@ procedure TFHIRTurtleParser.ParseNutritionIntakeConsumedItemProperties(obj : TTu
 begin
     ParseBackboneElementProperties(obj, value);
     value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionIntake.consumedItem.type')); {L762}
-    value.nutritionProduct := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionIntake.consumedItem.nutritionProduct')); {L762}
+    value.nutritionProduct := ParseCodeableReference(obj.complex('http://hl7.org/fhir/NutritionIntake.consumedItem.nutritionProduct')); {L762}
     value.schedule := ParseTiming(obj.complex('http://hl7.org/fhir/NutritionIntake.consumedItem.schedule')); {L762}
     value.amount := ParseQuantity(obj.complex('http://hl7.org/fhir/NutritionIntake.consumedItem.amount')); {L762}
     value.rate := ParseQuantity(obj.complex('http://hl7.org/fhir/NutritionIntake.consumedItem.rate')); {L762}
@@ -34212,7 +35619,7 @@ begin
   end;
   composeBackboneElement(this, '', name, value, false, index);
   ComposeCodeableConcept(this, 'NutritionIntake.consumedItem', 'type', value.type_Element, false, -1); {L763}
-  ComposeCodeableConcept(this, 'NutritionIntake.consumedItem', 'nutritionProduct', value.nutritionProductElement, false, -1); {L763}
+  ComposeCodeableReference(this, 'NutritionIntake.consumedItem', 'nutritionProduct', value.nutritionProductElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     ComposeTiming(this, 'NutritionIntake.consumedItem', 'schedule', value.scheduleElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -34241,7 +35648,7 @@ end;
 procedure TFHIRTurtleParser.ParseNutritionIntakeIngredientLabelProperties(obj : TTurtleComplex; value : TFhirNutritionIntakeIngredientLabel);
 begin
     ParseBackboneElementProperties(obj, value);
-    value.nutrient := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionIntake.ingredientLabel.nutrient')); {L762}
+    value.nutrient := ParseCodeableReference(obj.complex('http://hl7.org/fhir/NutritionIntake.ingredientLabel.nutrient')); {L762}
     value.amount := ParseQuantity(obj.complex('http://hl7.org/fhir/NutritionIntake.ingredientLabel.amount')); {L762}
 end;
 
@@ -34260,8 +35667,48 @@ begin
       this.addPredicate('a', 'fhir:NutritionIntakeIngredientLabel'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeCodeableConcept(this, 'NutritionIntake.ingredientLabel', 'nutrient', value.nutrientElement, false, -1); {L763}
+  ComposeCodeableReference(this, 'NutritionIntake.ingredientLabel', 'nutrient', value.nutrientElement, false, -1); {L763}
   ComposeQuantity(this, 'NutritionIntake.ingredientLabel', 'amount', value.amountElement, false, -1); {L763}
+end;
+
+function TFHIRTurtleParser.ParseNutritionIntakePerformer(obj : TTurtleComplex) : TFhirNutritionIntakePerformer;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirNutritionIntakePerformer.create;
+  try
+    ParseNutritionIntakePerformerProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseNutritionIntakePerformerProperties(obj : TTurtleComplex; value : TFhirNutritionIntakePerformer);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.function_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionIntake.performer.function')); {L762}
+    value.actor := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.performer.actor')); {L762}
+end;
+
+procedure TFHIRTurtleComposer.ComposeNutritionIntakePerformer(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionIntakePerformer; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:NutritionIntakePerformer'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'NutritionIntake.performer', 'function', value.function_Element, false, -1); {L763}
+  ComposeReference(this, 'NutritionIntake.performer', 'actor', value.actorElement, false, -1); {L763}
 end;
 
 function TFHIRTurtleParser.ParseNutritionIntake(obj : TTurtleComplex) : TFhirNutritionIntake;
@@ -34284,31 +35731,40 @@ begin
     ParseDomainResourceProperties(obj, value);
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.identifier') do
       value.identifierList.Add(parseIdentifier(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.instantiatesCanonical') do
+      value.instantiatesCanonicalList.Add(parseCanonical(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.instantiatesUri') do
+      value.instantiatesUriList.Add(parseUri(item));
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.basedOn') do
       value.basedOnList.Add(parseReference(item));
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.partOf') do
       value.partOfList.Add(parseReference(item));
-    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/NutritionIntake.status'), CODES_TFhirNutritionIntakeStatusCodesEnum, SYSTEMS_TFhirNutritionIntakeStatusCodesEnum); {L746}
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/NutritionIntake.status'), CODES_TFhirEventStatusEnum, SYSTEMS_TFhirEventStatusEnum); {L746}
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.statusReason') do
       value.statusReasonList.Add(parseCodeableConcept(item));
-    for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.category') do
-      value.categoryList.Add(parseCodeableConcept(item));
+    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionIntake.code')); {L762}
+    value.subject := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.subject')); {L762}
+    value.encounter := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.encounter')); {L762}
+    if obj.has('occurrencePeriod', item) then
+      value.occurrence := parsePeriod(item);
+    if obj.has('occurrenceDateTime', item) then
+      value.occurrence := parseDateTime(item);
+    value.recordedElement := ParseDateTime(obj.complex('http://hl7.org/fhir/NutritionIntake.recorded')); {L750}
+    if obj.has('reportedReference', item) {a3} then
+      value.reported := ParseReference(item);
+    if obj.has('reportedBoolean', item) then
+      value.reported := parseBoolean(item);
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.consumedItem') do
       value.consumedItemList.Add(parseNutritionIntakeConsumedItem(item));
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.ingredientLabel') do
       value.ingredientLabelList.Add(parseNutritionIntakeIngredientLabel(item));
-    value.subject := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.subject')); {L762}
-    value.encounter := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.encounter')); {L762}
-    if obj.has('effectivePeriod', item) then
-      value.effective := parsePeriod(item);
-    if obj.has('effectiveDateTime', item) then
-      value.effective := parseDateTime(item);
-    value.dateAssertedElement := ParseDateTime(obj.complex('http://hl7.org/fhir/NutritionIntake.dateAsserted')); {L750}
-    value.informationSource := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.informationSource')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.performer') do
+      value.performerList.Add(parseNutritionIntakePerformer(item));
+    value.location := ParseReference(obj.complex('http://hl7.org/fhir/NutritionIntake.location')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.derivedFrom') do
       value.derivedFromList.Add(parseReference(item));
-    for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.reasonCode') do
-      value.reasonCodeList.Add(parseCodeableReference(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.reason') do
+      value.reasonList.Add(parseCodeableReference(item));
     for item in obj.complexes('http://hl7.org/fhir/NutritionIntake.note') do
       value.noteList.Add(parseAnnotation(item));
 end;
@@ -34332,41 +35788,53 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.identifierList.Count - 1 do
       ComposeIdentifier(this, 'NutritionIntake', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.instantiatesCanonicalList.Count - 1 do
+      ComposeCanonical(this, 'NutritionIntake', 'instantiatesCanonical', value.instantiatesCanonicalList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.instantiatesUriList.Count - 1 do
+      ComposeUri(this, 'NutritionIntake', 'instantiatesUri', value.instantiatesUriList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.basedOnList.Count - 1 do
       ComposeReference(this, 'NutritionIntake', 'basedOn', value.basedOnList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.partOfList.Count - 1 do
       ComposeReference(this, 'NutritionIntake', 'partOf', value.partOfList[i], false, i); {L639}
-  ComposeEnum(this, 'NutritionIntake', 'status', value.statusElement, CODES_TFhirNutritionIntakeStatusCodesEnum, SYSTEMS_TFhirNutritionIntakeStatusCodesEnum, false, -1); {L747}
+  ComposeEnum(this, 'NutritionIntake', 'status', value.statusElement, CODES_TFhirEventStatusEnum, SYSTEMS_TFhirEventStatusEnum, false, -1); {L747}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.statusReasonList.Count - 1 do
       ComposeCodeableConcept(this, 'NutritionIntake', 'statusReason', value.statusReasonList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.categoryList.Count - 1 do
-      ComposeCodeableConcept(this, 'NutritionIntake', 'category', value.categoryList[i], false, i); {L639}
+    ComposeCodeableConcept(this, 'NutritionIntake', 'code', value.codeElement, false, -1); {L763}
+  ComposeReference(this, 'NutritionIntake', 'subject', value.subjectElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference(this, 'NutritionIntake', 'encounter', value.encounterElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.occurrence is TFhirPeriod) {6} then
+    ComposePeriod(this, 'NutritionIntake', 'occurrencePeriod', TFhirPeriod(value.occurrence), false, -1) {L905}
+  else if (SummaryOption in [soFull, soSummary, soData]) and (value.occurrence is TFhirDateTime) {6} then
+    ComposeDateTime(this, 'NutritionIntake', 'occurrenceDateTime', TFhirDateTime(value.occurrence), false, -1); {L905}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'NutritionIntake', 'recorded', value.recordedElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) and (value.reported is TFhirReference) {2} then
+    ComposeReference(this, 'NutritionIntake', 'reportedReference', TFhirReference(value.reported), false,-1) {L886}
+  else if (SummaryOption in [soFull, soData]) and (value.reported is TFhirBoolean) {6} then
+    ComposeBoolean(this, 'NutritionIntake', 'reportedBoolean', TFhirBoolean(value.reported), false, -1); {L905}
   for i := 0 to value.consumedItemList.Count - 1 do
       ComposeNutritionIntakeConsumedItem(this, 'NutritionIntake', 'consumedItem', value.consumedItemList[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.ingredientLabelList.Count - 1 do
       ComposeNutritionIntakeIngredientLabel(this, 'NutritionIntake', 'ingredientLabel', value.ingredientLabelList[i], false, i); {L639}
-  ComposeReference(this, 'NutritionIntake', 'subject', value.subjectElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference(this, 'NutritionIntake', 'encounter', value.encounterElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.effective is TFhirPeriod) {6} then
-    ComposePeriod(this, 'NutritionIntake', 'effectivePeriod', TFhirPeriod(value.effective), false, -1) {L905}
-  else if (SummaryOption in [soFull, soSummary, soData]) and (value.effective is TFhirDateTime) {6} then
-    ComposeDateTime(this, 'NutritionIntake', 'effectiveDateTime', TFhirDateTime(value.effective), false, -1); {L905}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'NutritionIntake', 'dateAsserted', value.dateAssertedElement, false, -1); {L751}
   if (SummaryOption in [soFull, soData]) then
-    ComposeReference(this, 'NutritionIntake', 'informationSource', value.informationSourceElement, false, -1); {L763}
+    for i := 0 to value.performerList.Count - 1 do
+      ComposeNutritionIntakePerformer(this, 'NutritionIntake', 'performer', value.performerList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference(this, 'NutritionIntake', 'location', value.locationElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.derivedFromList.Count - 1 do
       ComposeReference(this, 'NutritionIntake', 'derivedFrom', value.derivedFromList[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
-    for i := 0 to value.reasonCodeList.Count - 1 do
-      ComposeCodeableReference(this, 'NutritionIntake', 'reasonCode', value.reasonCodeList[i], false, i); {L639}
+    for i := 0 to value.reasonList.Count - 1 do
+      ComposeCodeableReference(this, 'NutritionIntake', 'reason', value.reasonList[i], false, i); {L639}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.noteList.Count - 1 do
       ComposeAnnotation(this, 'NutritionIntake', 'note', value.noteList[i], false, i); {L639}
@@ -34799,6 +36267,298 @@ begin
 end;
 
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+function TFHIRTurtleParser.ParseNutritionProductNutrient(obj : TTurtleComplex) : TFhirNutritionProductNutrient;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirNutritionProductNutrient.create;
+  try
+    ParseNutritionProductNutrientProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseNutritionProductNutrientProperties(obj : TTurtleComplex; value : TFhirNutritionProductNutrient);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.item := ParseCodeableReference(obj.complex('http://hl7.org/fhir/NutritionProduct.nutrient.item')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.nutrient.amount') do
+      value.amountList.Add(parseRatio(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeNutritionProductNutrient(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductNutrient; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:NutritionProductNutrient'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableReference(this, 'NutritionProduct.nutrient', 'item', value.itemElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.amountList.Count - 1 do
+      ComposeRatio(this, 'NutritionProduct.nutrient', 'amount', value.amountList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseNutritionProductIngredient(obj : TTurtleComplex) : TFhirNutritionProductIngredient;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirNutritionProductIngredient.create;
+  try
+    ParseNutritionProductIngredientProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseNutritionProductIngredientProperties(obj : TTurtleComplex; value : TFhirNutritionProductIngredient);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.item := ParseCodeableReference(obj.complex('http://hl7.org/fhir/NutritionProduct.ingredient.item')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.ingredient.amount') do
+      value.amountList.Add(parseRatio(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeNutritionProductIngredient(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductIngredient; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:NutritionProductIngredient'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  ComposeCodeableReference(this, 'NutritionProduct.ingredient', 'item', value.itemElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.amountList.Count - 1 do
+      ComposeRatio(this, 'NutritionProduct.ingredient', 'amount', value.amountList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseNutritionProductProductCharacteristic(obj : TTurtleComplex) : TFhirNutritionProductProductCharacteristic;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirNutritionProductProductCharacteristic.create;
+  try
+    ParseNutritionProductProductCharacteristicProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseNutritionProductProductCharacteristicProperties(obj : TTurtleComplex; value : TFhirNutritionProductProductCharacteristic);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionProduct.productCharacteristic.type')); {L762}
+    if obj.has('valueCodeableConcept', item) then
+      value.value := parseCodeableConcept(item);
+    if obj.has('valueQuantity', item) then
+      value.value := parseQuantity(item);
+    if obj.has('valueAttachment', item) then
+      value.value := parseAttachment(item);
+    if obj.has('valueString', item) then
+      value.value := parseString(item);
+    if obj.has('valueBase64Binary', item) then
+      value.value := parseBase64Binary(item);
+    if obj.has('valueBoolean', item) then
+      value.value := parseBoolean(item);
+end;
+
+procedure TFHIRTurtleComposer.ComposeNutritionProductProductCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductProductCharacteristic; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:NutritionProductProductCharacteristic'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  ComposeCodeableConcept(this, 'NutritionProduct.productCharacteristic', 'type', value.type_Element, false, -1); {L763}
+  if (value.value is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'NutritionProduct.productCharacteristic', 'valueCodeableConcept', TFhirCodeableConcept(value.value), false, -1) {L905}
+  else if (value.value is TFhirQuantity) {6} then
+    ComposeQuantity(this, 'NutritionProduct.productCharacteristic', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
+  else if (value.value is TFhirAttachment) {6} then
+    ComposeAttachment(this, 'NutritionProduct.productCharacteristic', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
+  else if (value.value is TFhirString) {6} then
+    ComposeString(this, 'NutritionProduct.productCharacteristic', 'valueString', TFhirString(value.value), false, -1) {L905}
+  else if (value.value is TFhirBase64Binary) {6} then
+    ComposeBase64Binary(this, 'NutritionProduct.productCharacteristic', 'valueBase64Binary', TFhirBase64Binary(value.value), false, -1) {L905}
+  else if (value.value is TFhirBoolean) {6} then
+    ComposeBoolean(this, 'NutritionProduct.productCharacteristic', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
+end;
+
+function TFHIRTurtleParser.ParseNutritionProductInstance(obj : TTurtleComplex) : TFhirNutritionProductInstance;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirNutritionProductInstance.create;
+  try
+    ParseNutritionProductInstanceProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseNutritionProductInstanceProperties(obj : TTurtleComplex; value : TFhirNutritionProductInstance);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.quantity := ParseQuantity(obj.complex('http://hl7.org/fhir/NutritionProduct.instance.quantity')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.instance.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    value.lotNumberElement := ParseString(obj.complex('http://hl7.org/fhir/NutritionProduct.instance.lotNumber')); {L750}
+    value.expiryElement := ParseDateTime(obj.complex('http://hl7.org/fhir/NutritionProduct.instance.expiry')); {L750}
+    value.useByElement := ParseDateTime(obj.complex('http://hl7.org/fhir/NutritionProduct.instance.useBy')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeNutritionProductInstance(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProductInstance; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:NutritionProductInstance'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(this, 'NutritionProduct.instance', 'quantity', value.quantityElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'NutritionProduct.instance', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'NutritionProduct.instance', 'lotNumber', value.lotNumberElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(this, 'NutritionProduct.instance', 'expiry', value.expiryElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(this, 'NutritionProduct.instance', 'useBy', value.useByElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseNutritionProduct(obj : TTurtleComplex) : TFhirNutritionProduct;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirNutritionProduct.create;
+  try
+    ParseNutritionProductProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseNutritionProductProperties(obj : TTurtleComplex; value : TFhirNutritionProduct);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, value);
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/NutritionProduct.status'), CODES_TFhirNutritionProductStatusEnum, SYSTEMS_TFhirNutritionProductStatusEnum); {L746}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.category') do
+      value.categoryList.Add(parseCodeableConcept(item));
+    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/NutritionProduct.code')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.manufacturer') do
+      value.manufacturerList.Add(parseReference(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.nutrient') do
+      value.nutrientList.Add(parseNutritionProductNutrient(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.ingredient') do
+      value.ingredientList.Add(parseNutritionProductIngredient(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.knownAllergen') do
+      value.knownAllergenList.Add(parseCodeableReference(item));
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.productCharacteristic') do
+      value.productCharacteristicList.Add(parseNutritionProductProductCharacteristic(item));
+    value.instance := ParseNutritionProductInstance(obj.complex('http://hl7.org/fhir/NutritionProduct.instance')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/NutritionProduct.note') do
+      value.noteList.Add(parseAnnotation(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeNutritionProduct(parent :  TTurtleComplex; parentType, name : String; value : TFhirNutritionProduct; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:NutritionProduct'); {L1143}
+  end;
+  composeDomainResource(this, '', name, value, false, index);
+  ComposeEnum(this, 'NutritionProduct', 'status', value.statusElement, CODES_TFhirNutritionProductStatusEnum, SYSTEMS_TFhirNutritionProductStatusEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.categoryList.Count - 1 do
+      ComposeCodeableConcept(this, 'NutritionProduct', 'category', value.categoryList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'NutritionProduct', 'code', value.codeElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.manufacturerList.Count - 1 do
+      ComposeReference(this, 'NutritionProduct', 'manufacturer', value.manufacturerList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.nutrientList.Count - 1 do
+      ComposeNutritionProductNutrient(this, 'NutritionProduct', 'nutrient', value.nutrientList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.ingredientList.Count - 1 do
+      ComposeNutritionProductIngredient(this, 'NutritionProduct', 'ingredient', value.ingredientList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.knownAllergenList.Count - 1 do
+      ComposeCodeableReference(this, 'NutritionProduct', 'knownAllergen', value.knownAllergenList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.productCharacteristicList.Count - 1 do
+      ComposeNutritionProductProductCharacteristic(this, 'NutritionProduct', 'productCharacteristic', value.productCharacteristicList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeNutritionProductInstance(this, 'NutritionProduct', 'instance', value.instanceElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to value.noteList.Count - 1 do
+      ComposeAnnotation(this, 'NutritionProduct', 'note', value.noteList[i], false, i); {L639}
+end;
+
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
 function TFHIRTurtleParser.ParseObservationReferenceRange(obj : TTurtleComplex) : TFhirObservationReferenceRange;
 begin
@@ -36210,7 +37970,7 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.identifier') do
       value.identifierList.Add(parseIdentifier(item));
     value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.package.type')); {L762}
-    value.quantity := ParseQuantity(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.package.quantity')); {L762}
+    value.quantityElement := ParseInteger(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.package.quantity')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.material') do
       value.materialList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.alternateMaterial') do
@@ -36219,8 +37979,8 @@ begin
       value.shelfLifeStorageList.Add(parseProductShelfLife(item));
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.manufacturer') do
       value.manufacturerList.Add(parseReference(item));
-    for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.characteristic') do
-      value.characteristicList.Add(parsePackagedProductDefinitionPackageCharacteristic(item));
+    for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.property') do
+      value.property_List.Add(parsePackagedProductDefinitionPackageProperty(item));
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.containedItem') do
       value.containedItemList.Add(parsePackagedProductDefinitionPackageContainedItem(item));
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.package.package') do
@@ -36249,7 +38009,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'PackagedProductDefinition.package', 'type', value.type_Element, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeQuantity(this, 'PackagedProductDefinition.package', 'quantity', value.quantityElement, false, -1); {L763}
+    ComposeInteger(this, 'PackagedProductDefinition.package', 'quantity', value.quantityElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.materialList.Count - 1 do
       ComposeCodeableConcept(this, 'PackagedProductDefinition.package', 'material', value.materialList[i], false, i); {L639}
@@ -36263,8 +38023,8 @@ begin
     for i := 0 to value.manufacturerList.Count - 1 do
       ComposeReference(this, 'PackagedProductDefinition.package', 'manufacturer', value.manufacturerList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.characteristicList.Count - 1 do
-      ComposePackagedProductDefinitionPackageCharacteristic(this, 'PackagedProductDefinition.package', 'characteristic', value.characteristicList[i], false, i); {L639}
+    for i := 0 to value.property_List.Count - 1 do
+      ComposePackagedProductDefinitionPackageProperty(this, 'PackagedProductDefinition.package', 'property', value.property_List[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.containedItemList.Count - 1 do
       ComposePackagedProductDefinitionPackageContainedItem(this, 'PackagedProductDefinition.package', 'containedItem', value.containedItemList[i], false, i); {L639}
@@ -36273,40 +38033,38 @@ begin
       ComposePackagedProductDefinitionPackage(this, 'PackagedProductDefinition.package', 'package', value.packageList[i], false, i); {L639}
 end;
 
-function TFHIRTurtleParser.ParsePackagedProductDefinitionPackageCharacteristic(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackageCharacteristic;
+function TFHIRTurtleParser.ParsePackagedProductDefinitionPackageProperty(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackageProperty;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPackagedProductDefinitionPackageCharacteristic.create;
+  result := TFhirPackagedProductDefinitionPackageProperty.create;
   try
-    ParsePackagedProductDefinitionPackageCharacteristicProperties(obj, result);
+    ParsePackagedProductDefinitionPackagePropertyProperties(obj, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRTurtleParser.ParsePackagedProductDefinitionPackageCharacteristicProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionPackageCharacteristic);
+procedure TFHIRTurtleParser.ParsePackagedProductDefinitionPackagePropertyProperties(obj : TTurtleComplex; value : TFhirPackagedProductDefinitionPackageProperty);
 var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.package.characteristic.code')); {L762}
-    if obj.has('valueCoding', item) then
-      value.value := parseCoding(item);
+    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.package.property.type')); {L762}
+    if obj.has('valueCodeableConcept', item) then
+      value.value := parseCodeableConcept(item);
     if obj.has('valueQuantity', item) then
       value.value := parseQuantity(item);
     if obj.has('valueAttachment', item) then
       value.value := parseAttachment(item);
-    if obj.has('valueString', item) then
-      value.value := parseString(item);
     if obj.has('valueDate', item) then
       value.value := parseDate(item);
     if obj.has('valueBoolean', item) then
       value.value := parseBoolean(item);
 end;
 
-procedure TFHIRTurtleComposer.ComposePackagedProductDefinitionPackageCharacteristic(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionPackageCharacteristic; useType : boolean; index : integer);
+procedure TFHIRTurtleComposer.ComposePackagedProductDefinitionPackageProperty(parent :  TTurtleComplex; parentType, name : String; value : TFhirPackagedProductDefinitionPackageProperty; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
 begin
@@ -36318,22 +38076,20 @@ begin
   begin
     this := parent.addPredicate('fhir:'+parentType+'.'+name);
     if (useType) then
-      this.addPredicate('a', 'fhir:PackagedProductDefinitionPackageCharacteristic'); {L1143}
+      this.addPredicate('a', 'fhir:PackagedProductDefinitionPackageProperty'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeCodeableConcept(this, 'PackagedProductDefinition.package.characteristic', 'code', value.codeElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirCoding) {6} then
-    ComposeCoding(this, 'PackagedProductDefinition.package.characteristic', 'valueCoding', TFhirCoding(value.value), false, -1) {L905}
+  ComposeCodeableConcept(this, 'PackagedProductDefinition.package.property', 'type', value.type_Element, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'PackagedProductDefinition.package.property', 'valueCodeableConcept', TFhirCodeableConcept(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirQuantity) {6} then
-    ComposeQuantity(this, 'PackagedProductDefinition.package.characteristic', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
+    ComposeQuantity(this, 'PackagedProductDefinition.package.property', 'valueQuantity', TFhirQuantity(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirAttachment) {6} then
-    ComposeAttachment(this, 'PackagedProductDefinition.package.characteristic', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
-  else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirString) {6} then
-    ComposeString(this, 'PackagedProductDefinition.package.characteristic', 'valueString', TFhirString(value.value), false, -1) {L905}
+    ComposeAttachment(this, 'PackagedProductDefinition.package.property', 'valueAttachment', TFhirAttachment(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirDate) {6} then
-    ComposeDate(this, 'PackagedProductDefinition.package.characteristic', 'valueDate', TFhirDate(value.value), false, -1) {L905}
+    ComposeDate(this, 'PackagedProductDefinition.package.property', 'valueDate', TFhirDate(value.value), false, -1) {L905}
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.value is TFhirBoolean) {6} then
-    ComposeBoolean(this, 'PackagedProductDefinition.package.characteristic', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
+    ComposeBoolean(this, 'PackagedProductDefinition.package.property', 'valueBoolean', TFhirBoolean(value.value), false, -1); {L905}
 end;
 
 function TFHIRTurtleParser.ParsePackagedProductDefinitionPackageContainedItem(obj : TTurtleComplex) : TFhirPackagedProductDefinitionPackageContainedItem;
@@ -36407,12 +38163,17 @@ begin
     ParseDomainResourceProperties(obj, value);
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.identifier') do
       value.identifierList.Add(parseIdentifier(item));
+    value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.name')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.subject') do
       value.subjectList.Add(parseReference(item));
-    value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.description')); {L750}
+    value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.status')); {L762}
+    value.statusDateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.statusDate')); {L750}
+    value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.description')); {L750}
     value.legalStatusOfSupply := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.legalStatusOfSupply')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.marketingStatus') do
       value.marketingStatusList.Add(parseMarketingStatus(item));
+    for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.characteristic') do
+      value.characteristicList.Add(parseCodeableConcept(item));
     value.copackagedIndicatorElement := ParseBoolean(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.copackagedIndicator')); {L750}
     value.marketingAuthorization := ParseReference(obj.complex('http://hl7.org/fhir/PackagedProductDefinition.marketingAuthorization')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/PackagedProductDefinition.manufacturer') do
@@ -36443,15 +38204,24 @@ begin
     for i := 0 to value.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PackagedProductDefinition', 'identifier', value.identifierList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'PackagedProductDefinition', 'name', value.nameElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.subjectList.Count - 1 do
       ComposeReference(this, 'PackagedProductDefinition', 'subject', value.subjectList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'PackagedProductDefinition', 'description', value.descriptionElement, false, -1); {L751}
+    ComposeCodeableConcept(this, 'PackagedProductDefinition', 'status', value.statusElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'PackagedProductDefinition', 'statusDate', value.statusDateElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeMarkdown(this, 'PackagedProductDefinition', 'description', value.descriptionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'PackagedProductDefinition', 'legalStatusOfSupply', value.legalStatusOfSupplyElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.marketingStatusList.Count - 1 do
       ComposeMarketingStatus(this, 'PackagedProductDefinition', 'marketingStatus', value.marketingStatusList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.characteristicList.Count - 1 do
+      ComposeCodeableConcept(this, 'PackagedProductDefinition', 'characteristic', value.characteristicList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'PackagedProductDefinition', 'copackagedIndicator', value.copackagedIndicatorElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -37288,6 +39058,186 @@ begin
 end;
 
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+function TFHIRTurtleParser.ParsePermissionProcessingActivity(obj : TTurtleComplex) : TFhirPermissionProcessingActivity;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirPermissionProcessingActivity.create;
+  try
+    ParsePermissionProcessingActivityProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParsePermissionProcessingActivityProperties(obj : TTurtleComplex; value : TFhirPermissionProcessingActivity);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    for item in obj.complexes('http://hl7.org/fhir/Permission.processingActivity.partyReference') do
+      value.partyReferenceList.Add(parseReference(item));
+    for item in obj.complexes('http://hl7.org/fhir/Permission.processingActivity.partyCodeableConcept') do
+      value.partyCodeableConceptList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/Permission.processingActivity.purpose') do
+      value.purposeList.Add(parseCodeableConcept(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposePermissionProcessingActivity(parent :  TTurtleComplex; parentType, name : String; value : TFhirPermissionProcessingActivity; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:PermissionProcessingActivity'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.partyReferenceList.Count - 1 do
+      ComposeReference(this, 'Permission.processingActivity', 'partyReference', value.partyReferenceList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.partyCodeableConceptList.Count - 1 do
+      ComposeCodeableConcept(this, 'Permission.processingActivity', 'partyCodeableConcept', value.partyCodeableConceptList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.purposeList.Count - 1 do
+      ComposeCodeableConcept(this, 'Permission.processingActivity', 'purpose', value.purposeList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParsePermissionJustification(obj : TTurtleComplex) : TFhirPermissionJustification;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirPermissionJustification.create;
+  try
+    ParsePermissionJustificationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParsePermissionJustificationProperties(obj : TTurtleComplex; value : TFhirPermissionJustification);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    for item in obj.complexes('http://hl7.org/fhir/Permission.justification.evidence') do
+      value.evidenceList.Add(parseReference(item));
+    for item in obj.complexes('http://hl7.org/fhir/Permission.justification.grounds') do
+      value.groundsList.Add(parseCodeableConcept(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposePermissionJustification(parent :  TTurtleComplex; parentType, name : String; value : TFhirPermissionJustification; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:PermissionJustification'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.evidenceList.Count - 1 do
+      ComposeReference(this, 'Permission.justification', 'evidence', value.evidenceList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.groundsList.Count - 1 do
+      ComposeCodeableConcept(this, 'Permission.justification', 'grounds', value.groundsList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParsePermission(obj : TTurtleComplex) : TFhirPermission;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirPermission.create;
+  try
+    ParsePermissionProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParsePermissionProperties(obj : TTurtleComplex; value : TFhirPermission);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, value);
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Permission.status'), CODES_TFhirPermissionStatusEnum, SYSTEMS_TFhirPermissionStatusEnum); {L746}
+    value.intent := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Permission.intent')); {L762}
+    value.asserter := ParseReference(obj.complex('http://hl7.org/fhir/Permission.asserter')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Permission.assertionDate') do
+      value.assertionDateList.Add(parseDateTime(item));
+    value.validity := ParsePeriod(obj.complex('http://hl7.org/fhir/Permission.validity')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Permission.purpose') do
+      value.purposeList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/Permission.dataScope') do
+      value.dataScopeList.Add(parseExpression(item));
+    for item in obj.complexes('http://hl7.org/fhir/Permission.processingActivity') do
+      value.processingActivityList.Add(parsePermissionProcessingActivity(item));
+    value.justification := ParsePermissionJustification(obj.complex('http://hl7.org/fhir/Permission.justification')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/Permission.usageLimitations') do
+      value.usageLimitationsList.Add(parseCodeableConcept(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposePermission(parent :  TTurtleComplex; parentType, name : String; value : TFhirPermission; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:Permission'); {L1143}
+  end;
+  composeDomainResource(this, '', name, value, false, index);
+  ComposeEnum(this, 'Permission', 'status', value.statusElement, CODES_TFhirPermissionStatusEnum, SYSTEMS_TFhirPermissionStatusEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'Permission', 'intent', value.intentElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference(this, 'Permission', 'asserter', value.asserterElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.assertionDateList.Count - 1 do
+      ComposeDateTime(this, 'Permission', 'assertionDate', value.assertionDateList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePeriod(this, 'Permission', 'validity', value.validityElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.purposeList.Count - 1 do
+      ComposeCodeableConcept(this, 'Permission', 'purpose', value.purposeList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.dataScopeList.Count - 1 do
+      ComposeExpression(this, 'Permission', 'dataScope', value.dataScopeList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.processingActivityList.Count - 1 do
+      ComposePermissionProcessingActivity(this, 'Permission', 'processingActivity', value.processingActivityList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePermissionJustification(this, 'Permission', 'justification', value.justificationElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.usageLimitationsList.Count - 1 do
+      ComposeCodeableConcept(this, 'Permission', 'usageLimitations', value.usageLimitationsList[i], false, i); {L639}
+end;
+
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
 function TFHIRTurtleParser.ParsePersonLink(obj : TTurtleComplex) : TFhirPersonLink;
 begin
@@ -39613,6 +41563,11 @@ begin
     value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/RegulatedAuthorization.status')); {L762}
     value.statusDateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/RegulatedAuthorization.statusDate')); {L750}
     value.validityPeriod := ParsePeriod(obj.complex('http://hl7.org/fhir/RegulatedAuthorization.validityPeriod')); {L762}
+    if obj.has('indicationCodeableConcept', item) then
+      value.indication := parseCodeableConcept(item);
+    if obj.has('indicationReference', item) {a3} then
+      value.indication := ParseReference(item);
+    value.intendedUse := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/RegulatedAuthorization.intendedUse')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/RegulatedAuthorization.basis') do
       value.basisList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/RegulatedAuthorization.relatedDate') do
@@ -39658,6 +41613,12 @@ begin
     ComposeDateTime(this, 'RegulatedAuthorization', 'statusDate', value.statusDateElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'RegulatedAuthorization', 'validityPeriod', value.validityPeriodElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.indication is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'RegulatedAuthorization', 'indicationCodeableConcept', TFhirCodeableConcept(value.indication), false, -1) {L905}
+  else if (SummaryOption in [soFull, soSummary, soData]) and (value.indication is TFhirReference) {2} then
+    ComposeReference(this, 'RegulatedAuthorization', 'indicationReference', TFhirReference(value.indication), false,-1); {L886}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'RegulatedAuthorization', 'intendedUse', value.intendedUseElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.basisList.Count - 1 do
       ComposeCodeableConcept(this, 'RegulatedAuthorization', 'basis', value.basisList[i], false, i); {L639}
@@ -42864,8 +44825,8 @@ end;
 procedure TFHIRTurtleParser.ParseSubscriptionFilterByProperties(obj : TTurtleComplex; value : TFhirSubscriptionFilterBy);
 begin
     ParseBackboneElementProperties(obj, value);
-    value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/Subscription.filterBy.name')); {L750}
-    value.matchTypeElement := ParseEnum(obj.complex('http://hl7.org/fhir/Subscription.filterBy.matchType'), CODES_TFhirSubscriptionFilterByMatchTypeEnum, SYSTEMS_TFhirSubscriptionFilterByMatchTypeEnum); {L746}
+    value.searchParamNameElement := ParseString(obj.complex('http://hl7.org/fhir/Subscription.filterBy.searchParamName')); {L750}
+    value.searchModifierElement := ParseEnum(obj.complex('http://hl7.org/fhir/Subscription.filterBy.searchModifier'), CODES_TFhirSubscriptionSearchModifierEnum, SYSTEMS_TFhirSubscriptionSearchModifierEnum); {L746}
     value.valueElement := ParseString(obj.complex('http://hl7.org/fhir/Subscription.filterBy.value')); {L750}
 end;
 
@@ -42884,105 +44845,10 @@ begin
       this.addPredicate('a', 'fhir:SubscriptionFilterBy'); {L1143}
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeString(this, 'Subscription.filterBy', 'name', value.nameElement, false, -1); {L751}
+  ComposeString(this, 'Subscription.filterBy', 'searchParamName', value.searchParamNameElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeEnum(this, 'Subscription.filterBy', 'matchType', value.matchTypeElement, CODES_TFhirSubscriptionFilterByMatchTypeEnum, SYSTEMS_TFhirSubscriptionFilterByMatchTypeEnum, false, -1); {L747}
+    ComposeEnum(this, 'Subscription.filterBy', 'searchModifier', value.searchModifierElement, CODES_TFhirSubscriptionSearchModifierEnum, SYSTEMS_TFhirSubscriptionSearchModifierEnum, false, -1); {L747}
   ComposeString(this, 'Subscription.filterBy', 'value', value.valueElement, false, -1); {L751}
-end;
-
-function TFHIRTurtleParser.ParseSubscriptionChannel(obj : TTurtleComplex) : TFhirSubscriptionChannel;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirSubscriptionChannel.create;
-  try
-    ParseSubscriptionChannelProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseSubscriptionChannelProperties(obj : TTurtleComplex; value : TFhirSubscriptionChannel);
-var
-  item : TTurtleComplex;
-begin
-    ParseBackboneElementProperties(obj, value);
-    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Subscription.channel.type')); {L762}
-    value.endpointElement := ParseUrl(obj.complex('http://hl7.org/fhir/Subscription.channel.endpoint')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Subscription.channel.header') do
-      value.headerList.Add(parseString(item));
-    value.heartbeatPeriodElement := ParseUnsignedInt(obj.complex('http://hl7.org/fhir/Subscription.channel.heartbeatPeriod')); {L750}
-    value.payload := ParseSubscriptionChannelPayload(obj.complex('http://hl7.org/fhir/Subscription.channel.payload')); {L762}
-end;
-
-procedure TFHIRTurtleComposer.ComposeSubscriptionChannel(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionChannel; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:SubscriptionChannel'); {L1143}
-  end;
-  composeBackboneElement(this, '', name, value, false, index);
-  ComposeCodeableConcept(this, 'Subscription.channel', 'type', value.type_Element, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUrl(this, 'Subscription.channel', 'endpoint', value.endpointElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.headerList.Count - 1 do
-      ComposeString(this, 'Subscription.channel', 'header', value.headerList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUnsignedInt(this, 'Subscription.channel', 'heartbeatPeriod', value.heartbeatPeriodElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeSubscriptionChannelPayload(this, 'Subscription.channel', 'payload', value.payloadElement, false, -1); {L763}
-end;
-
-function TFHIRTurtleParser.ParseSubscriptionChannelPayload(obj : TTurtleComplex) : TFhirSubscriptionChannelPayload;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirSubscriptionChannelPayload.create;
-  try
-    ParseSubscriptionChannelPayloadProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseSubscriptionChannelPayloadProperties(obj : TTurtleComplex; value : TFhirSubscriptionChannelPayload);
-begin
-    ParseBackboneElementProperties(obj, value);
-    value.contentTypeElement := ParseCode(obj.complex('http://hl7.org/fhir/Subscription.channel.payload.contentType')); {L750}
-    value.contentElement := ParseEnum(obj.complex('http://hl7.org/fhir/Subscription.channel.payload.content'), CODES_TFhirSubscriptionPayloadContentEnum, SYSTEMS_TFhirSubscriptionPayloadContentEnum); {L746}
-end;
-
-procedure TFHIRTurtleComposer.ComposeSubscriptionChannelPayload(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionChannelPayload; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:SubscriptionChannelPayload'); {L1143}
-  end;
-  composeBackboneElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCode(this, 'Subscription.channel.payload', 'contentType', value.contentTypeElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeEnum(this, 'Subscription.channel.payload', 'content', value.contentElement, CODES_TFhirSubscriptionPayloadContentEnum, SYSTEMS_TFhirSubscriptionPayloadContentEnum, false, -1); {L747}
 end;
 
 function TFHIRTurtleParser.ParseSubscription(obj : TTurtleComplex) : TFhirSubscription;
@@ -43006,7 +44872,7 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/Subscription.identifier') do
       value.identifierList.Add(parseIdentifier(item));
     value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/Subscription.name')); {L750}
-    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Subscription.status'), CODES_TFhirSubscriptionStatusEnum, SYSTEMS_TFhirSubscriptionStatusEnum); {L746}
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Subscription.status'), CODES_TFhirSubscriptionStateEnum, SYSTEMS_TFhirSubscriptionStateEnum); {L746}
     value.topic := ParseReference(obj.complex('http://hl7.org/fhir/Subscription.topic')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/Subscription.contact') do
       value.contactList.Add(parseContactPoint(item));
@@ -43016,8 +44882,14 @@ begin
       value.filterByList.Add(parseSubscriptionFilterBy(item));
     for item in obj.complexes('http://hl7.org/fhir/Subscription.error') do
       value.errorList.Add(parseCodeableConcept(item));
-    value.eventCountElement := ParseUnsignedInt(obj.complex('http://hl7.org/fhir/Subscription.eventCount')); {L750}
-    value.channel := ParseSubscriptionChannel(obj.complex('http://hl7.org/fhir/Subscription.channel')); {L762}
+    value.channelType := ParseCoding(obj.complex('http://hl7.org/fhir/Subscription.channelType')); {L762}
+    value.endpointElement := ParseUrl(obj.complex('http://hl7.org/fhir/Subscription.endpoint')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/Subscription.header') do
+      value.headerList.Add(parseString(item));
+    value.heartbeatPeriodElement := ParseUnsignedInt(obj.complex('http://hl7.org/fhir/Subscription.heartbeatPeriod')); {L750}
+    value.timeoutElement := ParseUnsignedInt(obj.complex('http://hl7.org/fhir/Subscription.timeout')); {L750}
+    value.contentTypeElement := ParseCode(obj.complex('http://hl7.org/fhir/Subscription.contentType')); {L750}
+    value.contentElement := ParseEnum(obj.complex('http://hl7.org/fhir/Subscription.content'), CODES_TFhirSubscriptionPayloadContentEnum, SYSTEMS_TFhirSubscriptionPayloadContentEnum); {L746}
 end;
 
 procedure TFHIRTurtleComposer.ComposeSubscription(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscription; useType : boolean; index : integer);
@@ -43041,7 +44913,7 @@ begin
       ComposeIdentifier(this, 'Subscription', 'identifier', value.identifierList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Subscription', 'name', value.nameElement, false, -1); {L751}
-  ComposeEnum(this, 'Subscription', 'status', value.statusElement, CODES_TFhirSubscriptionStatusEnum, SYSTEMS_TFhirSubscriptionStatusEnum, false, -1); {L747}
+  ComposeEnum(this, 'Subscription', 'status', value.statusElement, CODES_TFhirSubscriptionStateEnum, SYSTEMS_TFhirSubscriptionStateEnum, false, -1); {L747}
   ComposeReference(this, 'Subscription', 'topic', value.topicElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.contactList.Count - 1 do
@@ -43056,12 +44928,349 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.errorList.Count - 1 do
       ComposeCodeableConcept(this, 'Subscription', 'error', value.errorList[i], false, i); {L639}
+  ComposeCoding(this, 'Subscription', 'channelType', value.channelTypeElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUnsignedInt(this, 'Subscription', 'eventCount', value.eventCountElement, false, -1); {L751}
-  ComposeSubscriptionChannel(this, 'Subscription', 'channel', value.channelElement, false, -1); {L763}
+    ComposeUrl(this, 'Subscription', 'endpoint', value.endpointElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.headerList.Count - 1 do
+      ComposeString(this, 'Subscription', 'header', value.headerList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUnsignedInt(this, 'Subscription', 'heartbeatPeriod', value.heartbeatPeriodElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUnsignedInt(this, 'Subscription', 'timeout', value.timeoutElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCode(this, 'Subscription', 'contentType', value.contentTypeElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeEnum(this, 'Subscription', 'content', value.contentElement, CODES_TFhirSubscriptionPayloadContentEnum, SYSTEMS_TFhirSubscriptionPayloadContentEnum, false, -1); {L747}
 end;
 
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+function TFHIRTurtleParser.ParseSubscriptionStatus(obj : TTurtleComplex) : TFhirSubscriptionStatus;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSubscriptionStatus.create;
+  try
+    ParseSubscriptionStatusProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSubscriptionStatusProperties(obj : TTurtleComplex; value : TFhirSubscriptionStatus);
+begin
+    ParseDomainResourceProperties(obj, value);
+    value.notificationTypeElement := ParseEnum(obj.complex('http://hl7.org/fhir/SubscriptionStatus.notificationType'), CODES_TFhirSubscriptionNotificationTypeEnum, SYSTEMS_TFhirSubscriptionNotificationTypeEnum); {L746}
+    value.eventsSinceSubscriptionStartElement := ParseInteger64(obj.complex('http://hl7.org/fhir/SubscriptionStatus.eventsSinceSubscriptionStart')); {L750}
+    value.eventsInNotificationElement := ParseInteger(obj.complex('http://hl7.org/fhir/SubscriptionStatus.eventsInNotification')); {L750}
+    value.subscription := ParseReference(obj.complex('http://hl7.org/fhir/SubscriptionStatus.subscription')); {L762}
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/SubscriptionStatus.status'), CODES_TFhirSubscriptionStateEnum, SYSTEMS_TFhirSubscriptionStateEnum); {L746}
+    value.topic := ParseReference(obj.complex('http://hl7.org/fhir/SubscriptionStatus.topic')); {L762}
+end;
+
+procedure TFHIRTurtleComposer.ComposeSubscriptionStatus(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionStatus; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SubscriptionStatus'); {L1143}
+  end;
+  composeDomainResource(this, '', name, value, false, index);
+  ComposeEnum(this, 'SubscriptionStatus', 'notificationType', value.notificationTypeElement, CODES_TFhirSubscriptionNotificationTypeEnum, SYSTEMS_TFhirSubscriptionNotificationTypeEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger64(this, 'SubscriptionStatus', 'eventsSinceSubscriptionStart', value.eventsSinceSubscriptionStartElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(this, 'SubscriptionStatus', 'eventsInNotification', value.eventsInNotificationElement, false, -1); {L751}
+  ComposeReference(this, 'SubscriptionStatus', 'subscription', value.subscriptionElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeEnum(this, 'SubscriptionStatus', 'status', value.statusElement, CODES_TFhirSubscriptionStateEnum, SYSTEMS_TFhirSubscriptionStateEnum, false, -1); {L747}
+  ComposeReference(this, 'SubscriptionStatus', 'topic', value.topicElement, false, -1); {L763}
+end;
+
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+function TFHIRTurtleParser.ParseSubscriptionTopicResourceTrigger(obj : TTurtleComplex) : TFhirSubscriptionTopicResourceTrigger;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSubscriptionTopicResourceTrigger.create;
+  try
+    ParseSubscriptionTopicResourceTriggerProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSubscriptionTopicResourceTriggerProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopicResourceTrigger);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.description')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.resourceType') do
+      value.resourceType.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.methodCriteria') do
+      value.methodCriteriaList.Add(parseEnum(item, CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum));
+    value.queryCriteria := ParseSubscriptionTopicResourceTriggerQueryCriteria(obj.complex('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.queryCriteria')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.fhirPathCriteria') do
+      value.fhirPathCriteriaList.Add(parseString(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeSubscriptionTopicResourceTrigger(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopicResourceTrigger; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SubscriptionTopicResourceTrigger'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SubscriptionTopic.resourceTrigger', 'description', value.descriptionElement, false, -1); {L751}
+  for i := 0 to value.resourceType.Count - 1 do
+      ComposeEnum(this, 'SubscriptionTopic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.resourceType.Count - 1 do
+      ComposeEnum(this, 'SubscriptionTopic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {L610}
+  for i := 0 to value.methodCriteriaList.Count - 1 do
+      ComposeEnum(this, 'SubscriptionTopic.resourceTrigger', 'methodCriteria', value.methodCriteriaList[i], CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum, false, i); {x.d1}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.methodCriteriaList.Count - 1 do
+      ComposeEnum(this, 'SubscriptionTopic.resourceTrigger', 'methodCriteria', value.methodCriteriaList[i], CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum, false, i); {L610}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeSubscriptionTopicResourceTriggerQueryCriteria(this, 'SubscriptionTopic.resourceTrigger', 'queryCriteria', value.queryCriteriaElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.fhirPathCriteriaList.Count - 1 do
+      ComposeString(this, 'SubscriptionTopic.resourceTrigger', 'fhirPathCriteria', value.fhirPathCriteriaList[i], false, i); {L639}
+end;
+
+function TFHIRTurtleParser.ParseSubscriptionTopicResourceTriggerQueryCriteria(obj : TTurtleComplex) : TFhirSubscriptionTopicResourceTriggerQueryCriteria;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSubscriptionTopicResourceTriggerQueryCriteria.create;
+  try
+    ParseSubscriptionTopicResourceTriggerQueryCriteriaProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSubscriptionTopicResourceTriggerQueryCriteriaProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopicResourceTriggerQueryCriteria);
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.previousElement := ParseString(obj.complex('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.queryCriteria.previous')); {L750}
+    value.currentElement := ParseString(obj.complex('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.queryCriteria.current')); {L750}
+    value.requireBothElement := ParseBoolean(obj.complex('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger.queryCriteria.requireBoth')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeSubscriptionTopicResourceTriggerQueryCriteria(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopicResourceTriggerQueryCriteria; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SubscriptionTopicResourceTriggerQueryCriteria'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SubscriptionTopic.resourceTrigger.queryCriteria', 'previous', value.previousElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SubscriptionTopic.resourceTrigger.queryCriteria', 'current', value.currentElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBoolean(this, 'SubscriptionTopic.resourceTrigger.queryCriteria', 'requireBoth', value.requireBothElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseSubscriptionTopicCanFilterBy(obj : TTurtleComplex) : TFhirSubscriptionTopicCanFilterBy;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSubscriptionTopicCanFilterBy.create;
+  try
+    ParseSubscriptionTopicCanFilterByProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSubscriptionTopicCanFilterByProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopicCanFilterBy);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, value);
+    value.searchParamNameElement := ParseString(obj.complex('http://hl7.org/fhir/SubscriptionTopic.canFilterBy.searchParamName')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.canFilterBy.searchModifier') do
+      value.searchModifierList.Add(parseEnum(item, CODES_TFhirSubscriptionSearchModifierEnum, SYSTEMS_TFhirSubscriptionSearchModifierEnum));
+    value.documentationElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/SubscriptionTopic.canFilterBy.documentation')); {L750}
+end;
+
+procedure TFHIRTurtleComposer.ComposeSubscriptionTopicCanFilterBy(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopicCanFilterBy; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SubscriptionTopicCanFilterBy'); {L1143}
+  end;
+  composeBackboneElement(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SubscriptionTopic.canFilterBy', 'searchParamName', value.searchParamNameElement, false, -1); {L751}
+  for i := 0 to value.searchModifierList.Count - 1 do
+      ComposeEnum(this, 'SubscriptionTopic.canFilterBy', 'searchModifier', value.searchModifierList[i], CODES_TFhirSubscriptionSearchModifierEnum, SYSTEMS_TFhirSubscriptionSearchModifierEnum, false, i); {x.d1}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.searchModifierList.Count - 1 do
+      ComposeEnum(this, 'SubscriptionTopic.canFilterBy', 'searchModifier', value.searchModifierList[i], CODES_TFhirSubscriptionSearchModifierEnum, SYSTEMS_TFhirSubscriptionSearchModifierEnum, false, i); {L610}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeMarkdown(this, 'SubscriptionTopic.canFilterBy', 'documentation', value.documentationElement, false, -1); {L751}
+end;
+
+function TFHIRTurtleParser.ParseSubscriptionTopic(obj : TTurtleComplex) : TFhirSubscriptionTopic;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSubscriptionTopic.create;
+  try
+    ParseSubscriptionTopicProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSubscriptionTopicProperties(obj : TTurtleComplex; value : TFhirSubscriptionTopic);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, value);
+    value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/SubscriptionTopic.url')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
+    value.versionElement := ParseString(obj.complex('http://hl7.org/fhir/SubscriptionTopic.version')); {L750}
+    value.titleElement := ParseString(obj.complex('http://hl7.org/fhir/SubscriptionTopic.title')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.derivedFromCanonical') do
+      value.derivedFromCanonicalList.Add(parseCanonical(item));
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.derivedFromUri') do
+      value.derivedFromUriList.Add(parseUri(item));
+    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/SubscriptionTopic.status'), CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum); {L746}
+    value.experimentalElement := ParseBoolean(obj.complex('http://hl7.org/fhir/SubscriptionTopic.experimental')); {L750}
+    value.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/SubscriptionTopic.date')); {L750}
+    value.publisher := ParseReference(obj.complex('http://hl7.org/fhir/SubscriptionTopic.publisher')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.contact') do
+      value.contactList.Add(parseContactDetail(item));
+    value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/SubscriptionTopic.description')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.useContext') do
+      value.useContextList.Add(parseUsageContext(item));
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.jurisdiction') do
+      value.jurisdictionList.Add(parseCodeableConcept(item));
+    value.purposeElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/SubscriptionTopic.purpose')); {L750}
+    value.copyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/SubscriptionTopic.copyright')); {L750}
+    value.approvalDateElement := ParseDate(obj.complex('http://hl7.org/fhir/SubscriptionTopic.approvalDate')); {L750}
+    value.lastReviewDateElement := ParseDate(obj.complex('http://hl7.org/fhir/SubscriptionTopic.lastReviewDate')); {L750}
+    value.effectivePeriod := ParsePeriod(obj.complex('http://hl7.org/fhir/SubscriptionTopic.effectivePeriod')); {L762}
+    value.resourceTrigger := ParseSubscriptionTopicResourceTrigger(obj.complex('http://hl7.org/fhir/SubscriptionTopic.resourceTrigger')); {L762}
+    for item in obj.complexes('http://hl7.org/fhir/SubscriptionTopic.canFilterBy') do
+      value.canFilterByList.Add(parseSubscriptionTopicCanFilterBy(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeSubscriptionTopic(parent :  TTurtleComplex; parentType, name : String; value : TFhirSubscriptionTopic; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (value = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SubscriptionTopic'); {L1143}
+  end;
+  composeDomainResource(this, '', name, value, false, index);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUri(this, 'SubscriptionTopic', 'url', value.urlElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'SubscriptionTopic', 'identifier', value.identifierList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SubscriptionTopic', 'version', value.versionElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SubscriptionTopic', 'title', value.titleElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.derivedFromCanonicalList.Count - 1 do
+      ComposeCanonical(this, 'SubscriptionTopic', 'derivedFromCanonical', value.derivedFromCanonicalList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.derivedFromUriList.Count - 1 do
+      ComposeUri(this, 'SubscriptionTopic', 'derivedFromUri', value.derivedFromUriList[i], false, i); {L639}
+  ComposeEnum(this, 'SubscriptionTopic', 'status', value.statusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1); {L747}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBoolean(this, 'SubscriptionTopic', 'experimental', value.experimentalElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'SubscriptionTopic', 'date', value.dateElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference(this, 'SubscriptionTopic', 'publisher', value.publisherElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.contactList.Count - 1 do
+      ComposeContactDetail(this, 'SubscriptionTopic', 'contact', value.contactList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'SubscriptionTopic', 'description', value.descriptionElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.useContextList.Count - 1 do
+      ComposeUsageContext(this, 'SubscriptionTopic', 'useContext', value.useContextList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.jurisdictionList.Count - 1 do
+      ComposeCodeableConcept(this, 'SubscriptionTopic', 'jurisdiction', value.jurisdictionList[i], false, i); {L639}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'SubscriptionTopic', 'purpose', value.purposeElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'SubscriptionTopic', 'copyright', value.copyrightElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDate(this, 'SubscriptionTopic', 'approvalDate', value.approvalDateElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDate(this, 'SubscriptionTopic', 'lastReviewDate', value.lastReviewDateElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePeriod(this, 'SubscriptionTopic', 'effectivePeriod', value.effectivePeriodElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeSubscriptionTopicResourceTrigger(this, 'SubscriptionTopic', 'resourceTrigger', value.resourceTriggerElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.canFilterByList.Count - 1 do
+      ComposeSubscriptionTopicCanFilterBy(this, 'SubscriptionTopic', 'canFilterBy', value.canFilterByList[i], false, i); {L639}
+end;
+
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
 function TFHIRTurtleParser.ParseSubstanceInstance(obj : TTurtleComplex) : TFhirSubstanceInstance;
 begin
@@ -43385,8 +45594,8 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/SubstanceDefinition.structure.isotope') do
       value.isotopeList.Add(parseSubstanceDefinitionStructureIsotope(item));
     value.molecularWeight := ParseSubstanceDefinitionStructureIsotopeMolecularWeight(obj.complex('http://hl7.org/fhir/SubstanceDefinition.structure.molecularWeight')); {L762}
-    for item in obj.complexes('http://hl7.org/fhir/SubstanceDefinition.structure.sourceCoding') do
-      value.sourceCodingList.Add(parseCoding(item));
+    for item in obj.complexes('http://hl7.org/fhir/SubstanceDefinition.structure.technique') do
+      value.techniqueList.Add(parseCodeableConcept(item));
     for item in obj.complexes('http://hl7.org/fhir/SubstanceDefinition.structure.sourceDocument') do
       value.sourceDocumentList.Add(parseReference(item));
     for item in obj.complexes('http://hl7.org/fhir/SubstanceDefinition.structure.representation') do
@@ -43423,8 +45632,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSubstanceDefinitionStructureIsotopeMolecularWeight(this, 'SubstanceDefinition.structure', 'molecularWeight', value.molecularWeightElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.sourceCodingList.Count - 1 do
-      ComposeCoding(this, 'SubstanceDefinition.structure', 'sourceCoding', value.sourceCodingList[i], false, i); {L639}
+    for i := 0 to value.techniqueList.Count - 1 do
+      ComposeCodeableConcept(this, 'SubstanceDefinition.structure', 'technique', value.techniqueList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.sourceDocumentList.Count - 1 do
       ComposeReference(this, 'SubstanceDefinition.structure', 'sourceDocument', value.sourceDocumentList[i], false, i); {L639}
@@ -43545,6 +45754,7 @@ begin
     ParseBackboneElementProperties(obj, value);
     value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstanceDefinition.structure.representation.type')); {L762}
     value.representationElement := ParseString(obj.complex('http://hl7.org/fhir/SubstanceDefinition.structure.representation.representation')); {L750}
+    value.format := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstanceDefinition.structure.representation.format')); {L762}
     value.attachment := ParseAttachment(obj.complex('http://hl7.org/fhir/SubstanceDefinition.structure.representation.attachment')); {L762}
 end;
 
@@ -43567,6 +45777,8 @@ begin
     ComposeCodeableConcept(this, 'SubstanceDefinition.structure.representation', 'type', value.type_Element, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'SubstanceDefinition.structure.representation', 'representation', value.representationElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'SubstanceDefinition.structure.representation', 'format', value.formatElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeAttachment(this, 'SubstanceDefinition.structure.representation', 'attachment', value.attachmentElement, false, -1); {L763}
 end;
@@ -44237,8 +46449,8 @@ end;
 procedure TFHIRTurtleParser.ParseSubstancePolymerMonomerSetStartingMaterialProperties(obj : TTurtleComplex; value : TFhirSubstancePolymerMonomerSetStartingMaterial);
 begin
     ParseBackboneElementProperties(obj, value);
-    value.material := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.monomerSet.startingMaterial.material')); {L762}
-    value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.monomerSet.startingMaterial.type')); {L762}
+    value.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.monomerSet.startingMaterial.code')); {L762}
+    value.category := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.monomerSet.startingMaterial.category')); {L762}
     value.isDefiningElement := ParseBoolean(obj.complex('http://hl7.org/fhir/SubstancePolymer.monomerSet.startingMaterial.isDefining')); {L750}
     value.amount := ParseSubstanceAmount(obj.complex('http://hl7.org/fhir/SubstancePolymer.monomerSet.startingMaterial.amount')); {L762}
 end;
@@ -44259,9 +46471,9 @@ begin
   end;
   composeBackboneElement(this, '', name, value, false, index);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(this, 'SubstancePolymer.monomerSet.startingMaterial', 'material', value.materialElement, false, -1); {L763}
+    ComposeCodeableConcept(this, 'SubstancePolymer.monomerSet.startingMaterial', 'code', value.codeElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(this, 'SubstancePolymer.monomerSet.startingMaterial', 'type', value.type_Element, false, -1); {L763}
+    ComposeCodeableConcept(this, 'SubstancePolymer.monomerSet.startingMaterial', 'category', value.categoryElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'SubstancePolymer.monomerSet.startingMaterial', 'isDefining', value.isDefiningElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -44338,8 +46550,8 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, value);
-    value.orientationOfPolymerisation := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.orientationOfPolymerisation')); {L762}
-    value.repeatUnitElement := ParseString(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.repeatUnit')); {L750}
+    value.unit_Element := ParseString(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.unit')); {L750}
+    value.orientation := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.orientation')); {L762}
     value.amount := ParseSubstanceAmount(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.amount')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.degreeOfPolymerisation') do
       value.degreeOfPolymerisationList.Add(parseSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisation(item));
@@ -44364,9 +46576,9 @@ begin
   end;
   composeBackboneElement(this, '', name, value, false, index);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(this, 'SubstancePolymer.repeat.repeatUnit', 'orientationOfPolymerisation', value.orientationOfPolymerisationElement, false, -1); {L763}
+    ComposeString(this, 'SubstancePolymer.repeat.repeatUnit', 'unit', value.unit_Element, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'SubstancePolymer.repeat.repeatUnit', 'repeatUnit', value.repeatUnitElement, false, -1); {L751}
+    ComposeCodeableConcept(this, 'SubstancePolymer.repeat.repeatUnit', 'orientation', value.orientationElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSubstanceAmount(this, 'SubstancePolymer.repeat.repeatUnit', 'amount', value.amountElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -44436,6 +46648,7 @@ begin
     ParseBackboneElementProperties(obj, value);
     value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.structuralRepresentation.type')); {L762}
     value.representationElement := ParseString(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.structuralRepresentation.representation')); {L750}
+    value.format := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.structuralRepresentation.format')); {L762}
     value.attachment := ParseAttachment(obj.complex('http://hl7.org/fhir/SubstancePolymer.repeat.repeatUnit.structuralRepresentation.attachment')); {L762}
 end;
 
@@ -44459,6 +46672,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'SubstancePolymer.repeat.repeatUnit.structuralRepresentation', 'representation', value.representationElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'SubstancePolymer.repeat.repeatUnit.structuralRepresentation', 'format', value.formatElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeAttachment(this, 'SubstancePolymer.repeat.repeatUnit.structuralRepresentation', 'attachment', value.attachmentElement, false, -1); {L763}
 end;
 
@@ -44480,12 +46695,12 @@ var
   item : TTurtleComplex;
 begin
     ParseDomainResourceProperties(obj, value);
+    value.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/SubstancePolymer.identifier')); {L762}
     value.class_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.class')); {L762}
     value.geometry := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SubstancePolymer.geometry')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/SubstancePolymer.copolymerConnectivity') do
       value.copolymerConnectivityList.Add(parseCodeableConcept(item));
-    for item in obj.complexes('http://hl7.org/fhir/SubstancePolymer.modification') do
-      value.modificationList.Add(parseString(item));
+    value.modificationElement := ParseString(obj.complex('http://hl7.org/fhir/SubstancePolymer.modification')); {L750}
     for item in obj.complexes('http://hl7.org/fhir/SubstancePolymer.monomerSet') do
       value.monomerSetList.Add(parseSubstancePolymerMonomerSet(item));
     for item in obj.complexes('http://hl7.org/fhir/SubstancePolymer.repeat') do
@@ -44509,6 +46724,8 @@ begin
   end;
   composeDomainResource(this, '', name, value, false, index);
   if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(this, 'SubstancePolymer', 'identifier', value.identifierElement, false, -1); {L763}
+  if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'SubstancePolymer', 'class', value.class_Element, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'SubstancePolymer', 'geometry', value.geometryElement, false, -1); {L763}
@@ -44516,8 +46733,7 @@ begin
     for i := 0 to value.copolymerConnectivityList.Count - 1 do
       ComposeCodeableConcept(this, 'SubstancePolymer', 'copolymerConnectivity', value.copolymerConnectivityList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.modificationList.Count - 1 do
-      ComposeString(this, 'SubstancePolymer', 'modification', value.modificationList[i], false, i); {L639}
+    ComposeString(this, 'SubstancePolymer', 'modification', value.modificationElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.monomerSetList.Count - 1 do
       ComposeSubstancePolymerMonomerSet(this, 'SubstancePolymer', 'monomerSet', value.monomerSetList[i], false, i); {L639}
@@ -45523,10 +47739,7 @@ begin
     value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/SupplyRequest.status'), CODES_TFhirSupplyRequestStatusEnum, SYSTEMS_TFhirSupplyRequestStatusEnum); {L746}
     value.category := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SupplyRequest.category')); {L762}
     value.priorityElement := ParseEnum(obj.complex('http://hl7.org/fhir/SupplyRequest.priority'), CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum); {L746}
-    if obj.has('itemCodeableConcept', item) then
-      value.item := parseCodeableConcept(item);
-    if obj.has('itemReference', item) {a3} then
-      value.item := ParseReference(item);
+    value.item := ParseCodeableReference(obj.complex('http://hl7.org/fhir/SupplyRequest.item')); {L762}
     value.quantity := ParseQuantity(obj.complex('http://hl7.org/fhir/SupplyRequest.quantity')); {L762}
     for item in obj.complexes('http://hl7.org/fhir/SupplyRequest.parameter') do
       value.parameterList.Add(parseSupplyRequestParameter(item));
@@ -45571,10 +47784,7 @@ begin
     ComposeCodeableConcept(this, 'SupplyRequest', 'category', value.categoryElement, false, -1); {L763}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeEnum(this, 'SupplyRequest', 'priority', value.priorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1); {L747}
-  if (value.item is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'SupplyRequest', 'itemCodeableConcept', TFhirCodeableConcept(value.item), false, -1) {L905}
-  else if (value.item is TFhirReference) {2} then
-    ComposeReference(this, 'SupplyRequest', 'itemReference', TFhirReference(value.item), false,-1); {L886}
+  ComposeCodeableReference(this, 'SupplyRequest', 'item', value.itemElement, false, -1); {L763}
   ComposeQuantity(this, 'SupplyRequest', 'quantity', value.quantityElement, false, -1); {L763}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to value.parameterList.Count - 1 do
@@ -46748,6 +48958,8 @@ var
 begin
     ParseCanonicalResourceProperties(obj, value);
     value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/TerminologyCapabilities.url')); {L750}
+    for item in obj.complexes('http://hl7.org/fhir/TerminologyCapabilities.identifier') do
+      value.identifierList.Add(parseIdentifier(item));
     value.versionElement := ParseString(obj.complex('http://hl7.org/fhir/TerminologyCapabilities.version')); {L750}
     value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/TerminologyCapabilities.name')); {L750}
     value.titleElement := ParseString(obj.complex('http://hl7.org/fhir/TerminologyCapabilities.title')); {L750}
@@ -46795,6 +49007,9 @@ begin
   composeCanonicalResource(this, '', name, value, false, index);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'TerminologyCapabilities', 'url', value.urlElement, false, -1); {L751}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'TerminologyCapabilities', 'identifier', value.identifierList[i], false, i); {L639}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TerminologyCapabilities', 'version', value.versionElement, false, -1); {L751}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -48233,278 +50448,6 @@ begin
 end;
 
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-function TFHIRTurtleParser.ParseTopicResourceTrigger(obj : TTurtleComplex) : TFhirTopicResourceTrigger;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirTopicResourceTrigger.create;
-  try
-    ParseTopicResourceTriggerProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseTopicResourceTriggerProperties(obj : TTurtleComplex; value : TFhirTopicResourceTrigger);
-var
-  item : TTurtleComplex;
-begin
-    ParseBackboneElementProperties(obj, value);
-    value.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.description')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.resourceTrigger.resourceType') do
-      value.resourceType.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
-    for item in obj.complexes('http://hl7.org/fhir/Topic.resourceTrigger.methodCriteria') do
-      value.methodCriteriaList.Add(parseEnum(item, CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum));
-    value.queryCriteria := ParseTopicResourceTriggerQueryCriteria(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.queryCriteria')); {L762}
-    value.fhirPathCriteriaElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.fhirPathCriteria')); {L750}
-end;
-
-procedure TFHIRTurtleComposer.ComposeTopicResourceTrigger(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopicResourceTrigger; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:TopicResourceTrigger'); {L1143}
-  end;
-  composeBackboneElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic.resourceTrigger', 'description', value.descriptionElement, false, -1); {L751}
-  for i := 0 to value.resourceType.Count - 1 do
-      ComposeEnum(this, 'Topic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.resourceType.Count - 1 do
-      ComposeEnum(this, 'Topic.resourceTrigger', 'resourceType', value.resourceType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {L610}
-  for i := 0 to value.methodCriteriaList.Count - 1 do
-      ComposeEnum(this, 'Topic.resourceTrigger', 'methodCriteria', value.methodCriteriaList[i], CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum, false, i); {x.d1}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.methodCriteriaList.Count - 1 do
-      ComposeEnum(this, 'Topic.resourceTrigger', 'methodCriteria', value.methodCriteriaList[i], CODES_TFhirInteractionTriggerEnum, SYSTEMS_TFhirInteractionTriggerEnum, false, i); {L610}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeTopicResourceTriggerQueryCriteria(this, 'Topic.resourceTrigger', 'queryCriteria', value.queryCriteriaElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic.resourceTrigger', 'fhirPathCriteria', value.fhirPathCriteriaElement, false, -1); {L751}
-end;
-
-function TFHIRTurtleParser.ParseTopicResourceTriggerQueryCriteria(obj : TTurtleComplex) : TFhirTopicResourceTriggerQueryCriteria;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirTopicResourceTriggerQueryCriteria.create;
-  try
-    ParseTopicResourceTriggerQueryCriteriaProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseTopicResourceTriggerQueryCriteriaProperties(obj : TTurtleComplex; value : TFhirTopicResourceTriggerQueryCriteria);
-begin
-    ParseBackboneElementProperties(obj, value);
-    value.previousElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.queryCriteria.previous')); {L750}
-    value.currentElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.queryCriteria.current')); {L750}
-    value.requireBothElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger.queryCriteria.requireBoth')); {L750}
-end;
-
-procedure TFHIRTurtleComposer.ComposeTopicResourceTriggerQueryCriteria(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopicResourceTriggerQueryCriteria; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:TopicResourceTriggerQueryCriteria'); {L1143}
-  end;
-  composeBackboneElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic.resourceTrigger.queryCriteria', 'previous', value.previousElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic.resourceTrigger.queryCriteria', 'current', value.currentElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBoolean(this, 'Topic.resourceTrigger.queryCriteria', 'requireBoth', value.requireBothElement, false, -1); {L751}
-end;
-
-function TFHIRTurtleParser.ParseTopicCanFilterBy(obj : TTurtleComplex) : TFhirTopicCanFilterBy;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirTopicCanFilterBy.create;
-  try
-    ParseTopicCanFilterByProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseTopicCanFilterByProperties(obj : TTurtleComplex; value : TFhirTopicCanFilterBy);
-var
-  item : TTurtleComplex;
-begin
-    ParseBackboneElementProperties(obj, value);
-    value.nameElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.canFilterBy.name')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.canFilterBy.matchType') do
-      value.matchTypeList.Add(parseEnum(item, CODES_TFhirTopicFilterByMatchTypeEnum, SYSTEMS_TFhirTopicFilterByMatchTypeEnum));
-    value.documentationElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Topic.canFilterBy.documentation')); {L750}
-end;
-
-procedure TFHIRTurtleComposer.ComposeTopicCanFilterBy(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopicCanFilterBy; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:TopicCanFilterBy'); {L1143}
-  end;
-  composeBackboneElement(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic.canFilterBy', 'name', value.nameElement, false, -1); {L751}
-  for i := 0 to value.matchTypeList.Count - 1 do
-      ComposeEnum(this, 'Topic.canFilterBy', 'matchType', value.matchTypeList[i], CODES_TFhirTopicFilterByMatchTypeEnum, SYSTEMS_TFhirTopicFilterByMatchTypeEnum, false, i); {x.d1}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.matchTypeList.Count - 1 do
-      ComposeEnum(this, 'Topic.canFilterBy', 'matchType', value.matchTypeList[i], CODES_TFhirTopicFilterByMatchTypeEnum, SYSTEMS_TFhirTopicFilterByMatchTypeEnum, false, i); {L610}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeMarkdown(this, 'Topic.canFilterBy', 'documentation', value.documentationElement, false, -1); {L751}
-end;
-
-function TFHIRTurtleParser.ParseTopic(obj : TTurtleComplex) : TFhirTopic;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirTopic.create;
-  try
-    ParseTopicProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseTopicProperties(obj : TTurtleComplex; value : TFhirTopic);
-var
-  item : TTurtleComplex;
-begin
-    ParseDomainResourceProperties(obj, value);
-    value.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/Topic.url')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.identifier') do
-      value.identifierList.Add(parseIdentifier(item));
-    value.versionElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.version')); {L750}
-    value.titleElement := ParseString(obj.complex('http://hl7.org/fhir/Topic.title')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.derivedFromCanonical') do
-      value.derivedFromCanonicalList.Add(parseCanonical(item));
-    for item in obj.complexes('http://hl7.org/fhir/Topic.derivedFromUri') do
-      value.derivedFromUriList.Add(parseUri(item));
-    value.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/Topic.status'), CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum); {L746}
-    value.experimentalElement := ParseBoolean(obj.complex('http://hl7.org/fhir/Topic.experimental')); {L750}
-    value.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/Topic.date')); {L750}
-    value.publisher := ParseReference(obj.complex('http://hl7.org/fhir/Topic.publisher')); {L762}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.contact') do
-      value.contactList.Add(parseContactDetail(item));
-    value.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Topic.description')); {L750}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.useContext') do
-      value.useContextList.Add(parseUsageContext(item));
-    for item in obj.complexes('http://hl7.org/fhir/Topic.jurisdiction') do
-      value.jurisdictionList.Add(parseCodeableConcept(item));
-    value.purposeElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Topic.purpose')); {L750}
-    value.copyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/Topic.copyright')); {L750}
-    value.approvalDateElement := ParseDate(obj.complex('http://hl7.org/fhir/Topic.approvalDate')); {L750}
-    value.lastReviewDateElement := ParseDate(obj.complex('http://hl7.org/fhir/Topic.lastReviewDate')); {L750}
-    value.effectivePeriod := ParsePeriod(obj.complex('http://hl7.org/fhir/Topic.effectivePeriod')); {L762}
-    value.resourceTrigger := ParseTopicResourceTrigger(obj.complex('http://hl7.org/fhir/Topic.resourceTrigger')); {L762}
-    for item in obj.complexes('http://hl7.org/fhir/Topic.canFilterBy') do
-      value.canFilterByList.Add(parseTopicCanFilterBy(item));
-end;
-
-procedure TFHIRTurtleComposer.ComposeTopic(parent :  TTurtleComplex; parentType, name : String; value : TFhirTopic; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (value = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:Topic'); {L1143}
-  end;
-  composeDomainResource(this, '', name, value, false, index);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUri(this, 'Topic', 'url', value.urlElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.identifierList.Count - 1 do
-      ComposeIdentifier(this, 'Topic', 'identifier', value.identifierList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic', 'version', value.versionElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'Topic', 'title', value.titleElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.derivedFromCanonicalList.Count - 1 do
-      ComposeCanonical(this, 'Topic', 'derivedFromCanonical', value.derivedFromCanonicalList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.derivedFromUriList.Count - 1 do
-      ComposeUri(this, 'Topic', 'derivedFromUri', value.derivedFromUriList[i], false, i); {L639}
-  ComposeEnum(this, 'Topic', 'status', value.statusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1); {L747}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBoolean(this, 'Topic', 'experimental', value.experimentalElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'Topic', 'date', value.dateElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference(this, 'Topic', 'publisher', value.publisherElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.contactList.Count - 1 do
-      ComposeContactDetail(this, 'Topic', 'contact', value.contactList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMarkdown(this, 'Topic', 'description', value.descriptionElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.useContextList.Count - 1 do
-      ComposeUsageContext(this, 'Topic', 'useContext', value.useContextList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.jurisdictionList.Count - 1 do
-      ComposeCodeableConcept(this, 'Topic', 'jurisdiction', value.jurisdictionList[i], false, i); {L639}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMarkdown(this, 'Topic', 'purpose', value.purposeElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMarkdown(this, 'Topic', 'copyright', value.copyrightElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeDate(this, 'Topic', 'approvalDate', value.approvalDateElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeDate(this, 'Topic', 'lastReviewDate', value.lastReviewDateElement, false, -1); {L751}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposePeriod(this, 'Topic', 'effectivePeriod', value.effectivePeriodElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeTopicResourceTrigger(this, 'Topic', 'resourceTrigger', value.resourceTriggerElement, false, -1); {L763}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.canFilterByList.Count - 1 do
-      ComposeTopicCanFilterBy(this, 'Topic', 'canFilterBy', value.canFilterByList[i], false, i); {L639}
-end;
-
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
 function TFHIRTurtleParser.ParseValueSetCompose(obj : TTurtleComplex) : TFhirValueSetCompose;
 begin
@@ -49639,6 +51582,8 @@ begin
     result := parseHumanName(obj)
   else if SameText(type_, 'Identifier') then
     result := parseIdentifier(obj)
+  else if SameText(type_, 'Meta') then
+    result := parseMeta(obj)
   else if SameText(type_, 'Money') then
     result := parseMoney(obj)
   else if SameText(type_, 'Narrative') then
@@ -49679,8 +51624,6 @@ begin
     result := parseElementDefinition(obj)
   else if SameText(type_, 'MarketingStatus') then
     result := parseMarketingStatus(obj)
-  else if SameText(type_, 'Meta') then
-    result := parseMeta(obj)
   else if SameText(type_, 'OrderedDistribution') then
     result := parseOrderedDistribution(obj)
   else if SameText(type_, 'Population') then
@@ -49775,6 +51718,10 @@ begin
   else if SameText(type_, 'ChargeItemDefinition') then
     result := parseChargeItemDefinition(obj)
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+  else if SameText(type_, 'Citation') then
+    result := parseCitation(obj)
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
   else if SameText(type_, 'Claim') then
     result := parseClaim(obj)
@@ -49907,6 +51854,10 @@ begin
   else if SameText(type_, 'Evidence') then
     result := parseEvidence(obj)
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+  else if SameText(type_, 'EvidenceFocus') then
+    result := parseEvidenceFocus(obj)
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   else if SameText(type_, 'EvidenceVariable') then
     result := parseEvidenceVariable(obj)
@@ -50059,6 +52010,10 @@ begin
   else if SameText(type_, 'NutritionOrder') then
     result := parseNutritionOrder(obj)
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+  else if SameText(type_, 'NutritionProduct') then
+    result := parseNutritionProduct(obj)
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
   else if SameText(type_, 'Observation') then
     result := parseObservation(obj)
@@ -50103,6 +52058,10 @@ begin
   else if SameText(type_, 'PaymentReconciliation') then
     result := parsePaymentReconciliation(obj)
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+  else if SameText(type_, 'Permission') then
+    result := parsePermission(obj)
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
   else if SameText(type_, 'Person') then
     result := parsePerson(obj)
@@ -50195,6 +52154,14 @@ begin
   else if SameText(type_, 'Subscription') then
     result := parseSubscription(obj)
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+  else if SameText(type_, 'SubscriptionStatus') then
+    result := parseSubscriptionStatus(obj)
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+  else if SameText(type_, 'SubscriptionTopic') then
+    result := parseSubscriptionTopic(obj)
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
   else if SameText(type_, 'Substance') then
     result := parseSubstance(obj)
@@ -50247,10 +52214,6 @@ begin
   else if SameText(type_, 'TestScript') then
     result := parseTestScript(obj)
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-  else if SameText(type_, 'Topic') then
-    result := parseTopic(obj)
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
   else if SameText(type_, 'ValueSet') then
     result := parseValueSet(obj)
@@ -50300,6 +52263,8 @@ begin
     result := parseHumanName(obj)
   else if (type_ = TFhirIdentifier) then
     result := parseIdentifier(obj)
+  else if (type_ = TFhirMeta) then
+    result := parseMeta(obj)
   else if (type_ = TFhirMoney) then
     result := parseMoney(obj)
   else if (type_ = TFhirNarrative) then
@@ -50340,8 +52305,6 @@ begin
     result := parseElementDefinition(obj)
   else if (type_ = TFhirMarketingStatus) then
     result := parseMarketingStatus(obj)
-  else if (type_ = TFhirMeta) then
-    result := parseMeta(obj)
   else if (type_ = TFhirOrderedDistribution) then
     result := parseOrderedDistribution(obj)
   else if (type_ = TFhirPopulation) then
@@ -50429,6 +52392,9 @@ begin
 {$IFDEF FHIR_CHARGEITEMDEFINITION}
     frtChargeItemDefinition: ComposeChargeItemDefinition(this, '', 'ChargeItemDefinition', TFhirChargeItemDefinition(resource), true, -1);
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+    frtCitation: ComposeCitation(this, '', 'Citation', TFhirCitation(resource), true, -1);
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
     frtClaim: ComposeClaim(this, '', 'Claim', TFhirClaim(resource), true, -1);
 {$ENDIF FHIR_CLAIM}
@@ -50528,6 +52494,9 @@ begin
 {$IFDEF FHIR_EVIDENCE}
     frtEvidence: ComposeEvidence(this, '', 'Evidence', TFhirEvidence(resource), true, -1);
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+    frtEvidenceFocus: ComposeEvidenceFocus(this, '', 'EvidenceFocus', TFhirEvidenceFocus(resource), true, -1);
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
     frtEvidenceVariable: ComposeEvidenceVariable(this, '', 'EvidenceVariable', TFhirEvidenceVariable(resource), true, -1);
 {$ENDIF FHIR_EVIDENCEVARIABLE}
@@ -50642,6 +52611,9 @@ begin
 {$IFDEF FHIR_NUTRITIONORDER}
     frtNutritionOrder: ComposeNutritionOrder(this, '', 'NutritionOrder', TFhirNutritionOrder(resource), true, -1);
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+    frtNutritionProduct: ComposeNutritionProduct(this, '', 'NutritionProduct', TFhirNutritionProduct(resource), true, -1);
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
     frtObservation: ComposeObservation(this, '', 'Observation', TFhirObservation(resource), true, -1);
 {$ENDIF FHIR_OBSERVATION}
@@ -50675,6 +52647,9 @@ begin
 {$IFDEF FHIR_PAYMENTRECONCILIATION}
     frtPaymentReconciliation: ComposePaymentReconciliation(this, '', 'PaymentReconciliation', TFhirPaymentReconciliation(resource), true, -1);
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+    frtPermission: ComposePermission(this, '', 'Permission', TFhirPermission(resource), true, -1);
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
     frtPerson: ComposePerson(this, '', 'Person', TFhirPerson(resource), true, -1);
 {$ENDIF FHIR_PERSON}
@@ -50744,6 +52719,12 @@ begin
 {$IFDEF FHIR_SUBSCRIPTION}
     frtSubscription: ComposeSubscription(this, '', 'Subscription', TFhirSubscription(resource), true, -1);
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+    frtSubscriptionStatus: ComposeSubscriptionStatus(this, '', 'SubscriptionStatus', TFhirSubscriptionStatus(resource), true, -1);
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+    frtSubscriptionTopic: ComposeSubscriptionTopic(this, '', 'SubscriptionTopic', TFhirSubscriptionTopic(resource), true, -1);
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
     frtSubstance: ComposeSubstance(this, '', 'Substance', TFhirSubstance(resource), true, -1);
 {$ENDIF FHIR_SUBSTANCE}
@@ -50783,9 +52764,6 @@ begin
 {$IFDEF FHIR_TESTSCRIPT}
     frtTestScript: ComposeTestScript(this, '', 'TestScript', TFhirTestScript(resource), true, -1);
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-    frtTopic: ComposeTopic(this, '', 'Topic', TFhirTopic(resource), true, -1);
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
     frtValueSet: ComposeValueSet(this, '', 'ValueSet', TFhirValueSet(resource), true, -1);
 {$ENDIF FHIR_VALUESET}
@@ -50888,6 +52866,10 @@ begin
   else if s = 'ChargeItemDefinition' Then
     result := ParseChargeItemDefinition(obj) 
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+  else if s = 'Citation' Then
+    result := ParseCitation(obj) 
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
   else if s = 'Claim' Then
     result := ParseClaim(obj) 
@@ -51020,6 +53002,10 @@ begin
   else if s = 'Evidence' Then
     result := ParseEvidence(obj) 
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+  else if s = 'EvidenceFocus' Then
+    result := ParseEvidenceFocus(obj) 
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   else if s = 'EvidenceVariable' Then
     result := ParseEvidenceVariable(obj) 
@@ -51172,6 +53158,10 @@ begin
   else if s = 'NutritionOrder' Then
     result := ParseNutritionOrder(obj) 
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+  else if s = 'NutritionProduct' Then
+    result := ParseNutritionProduct(obj) 
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
   else if s = 'Observation' Then
     result := ParseObservation(obj) 
@@ -51216,6 +53206,10 @@ begin
   else if s = 'PaymentReconciliation' Then
     result := ParsePaymentReconciliation(obj) 
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+  else if s = 'Permission' Then
+    result := ParsePermission(obj) 
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
   else if s = 'Person' Then
     result := ParsePerson(obj) 
@@ -51308,6 +53302,14 @@ begin
   else if s = 'Subscription' Then
     result := ParseSubscription(obj) 
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+  else if s = 'SubscriptionStatus' Then
+    result := ParseSubscriptionStatus(obj) 
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+  else if s = 'SubscriptionTopic' Then
+    result := ParseSubscriptionTopic(obj) 
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
   else if s = 'Substance' Then
     result := ParseSubstance(obj) 
@@ -51360,10 +53362,6 @@ begin
   else if s = 'TestScript' Then
     result := ParseTestScript(obj) 
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-  else if s = 'Topic' Then
-    result := ParseTopic(obj) 
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
   else if s = 'ValueSet' Then
     result := ParseValueSet(obj) 

@@ -223,7 +223,7 @@ begin
 
     // basic setup stuff
     subscription.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
-    subscription.channel.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
+    subscription.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
 //    rule(subscription.channel.type_ <> SubscriptionChannelTypeNull, 'A channel type must be specified');
 //    rule(not (subscription.channel.type_ in [SubscriptionChannelTypeMessage]), 'The channel type '+CODES_TFhirSubscriptionChannelTypeEnum[subscription.channel.type_]+' is not supported');
 //    rule((subscription.channel.type_ = SubscriptionChannelTypeWebsocket) or (subscription.channel.endpoint <> ''), 'A channel URL must be specified if not websockets');

@@ -1106,9 +1106,9 @@ begin
   else if (token = '!=') then
     result := ConceptMapRelationshipNotRelatedTo
   else if (token = '<') then
-    result := ConceptMapRelationshipBroader
+    result := ConceptMapRelationshipSourceIsNarrowerThanTarget
   else if (token = '>') then
-    result := ConceptMapRelationshipNarrower
+    result := ConceptMapRelationshipSourceIsBroaderThanTarget
   else
     raise EFHIRException.create('Unknown equivalence token "'+token+'"');
 end;

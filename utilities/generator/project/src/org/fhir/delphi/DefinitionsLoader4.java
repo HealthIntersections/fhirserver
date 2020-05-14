@@ -132,8 +132,8 @@ public class DefinitionsLoader4 {
    
   private void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
     for (CodeType ct : sp.getBase()) {
-      SearchParameterDefn spd = new SearchParameterDefn().loadR4(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), VersionConvertor_10_40.convertSearchParamType(sp.getType()), 
-          sp.getTarget(), SearchParameter10_40.convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+      SearchParameterDefn spd = new SearchParameterDefn().loadR4(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), VersionConvertor_10_40.convertSearchParamType(sp.getTypeElement()).getValue(), 
+          sp.getTarget(), SearchParameter10_40.convertXPathUsageType(sp.getXpathUsageElement()).getValue(), sp.getExpression());
       def.getResourceByName(ct.asStringValue()).getSearchParams().put(spd.getCode(), spd);
     }
   }

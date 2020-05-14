@@ -749,11 +749,11 @@ begin
       c.system := 'http://healthintersections.com.au/fhir/operation-name';
     end;
     if httpCode < 400 then
-      se.event.outcome := AuditEventOutcome0
+      se.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '0')
     else if httpCode < 500 then
-      se.event.outcome := AuditEventOutcome4
+      se.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '4')
     else
-      se.event.outcome := AuditEventOutcome8; // no way we are going down...
+      se.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '8'); // no way we are going down...
     se.event.dateTime := TFslDateTime.makeUTC;
     se.Tag := TFslDateTimeWrapper.Create(se.event.dateTime);
 
@@ -3750,7 +3750,7 @@ begin
     C.system := 'http://nema.org/dicom/dcid';
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome0;
+    se.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '0');
     se.event.dateTime := TFslDateTime.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := ServerContext.Globals.OwnerName;
@@ -3803,8 +3803,8 @@ begin
 //      pc.period := TFHIRPeriod.Create;
 //      pc.period.start := pc.dateTime.Link;
 //      pc.period.end_ := TFslDateTime.CreateUTC(session.expires);
-      pc.patient := TFHIRReference.Create;
-      pc.patient.reference := session.Compartments[0].ToString;
+      pc.subject := TFHIRReference.Create;
+      pc.subject.reference := session.Compartments[0].ToString;
       // todo: do we have a reference for the consentor?
       // todo: do we have an identity for the organization?
   //    for

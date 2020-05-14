@@ -33,7 +33,7 @@ unit FHIR.R5.IndexInfo;
 
 interface
 
-// Generated on Fri, Jan 31, 2020 06:37+1100 for FHIR v4.2.0
+// Generated on Mon, May 11, 2020 21:42+1000 for FHIR v4.4.0
 
 
 
@@ -106,6 +106,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION}
     procedure buildIndexesForChargeItemDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CITATION}
+    procedure buildIndexesForCitation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_CLAIM}
     procedure buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -205,6 +208,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_EVIDENCE}
     procedure buildIndexesForEvidence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEFOCUS}
+    procedure buildIndexesForEvidenceFocus(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_EVIDENCEVARIABLE}
     procedure buildIndexesForEvidenceVariable(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -320,6 +326,9 @@ Type
     {$IFDEF FHIR_NUTRITIONORDER}
     procedure buildIndexesForNutritionOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONPRODUCT}
+    procedure buildIndexesForNutritionProduct(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_OBSERVATION}
     procedure buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -352,6 +361,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_PAYMENTRECONCILIATION}
     procedure buildIndexesForPaymentReconciliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PERMISSION}
+    procedure buildIndexesForPermission(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_PERSON}
     procedure buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -422,6 +434,12 @@ Type
     {$IFDEF FHIR_SUBSCRIPTION}
     procedure buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+    procedure buildIndexesForSubscriptionStatus(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+    procedure buildIndexesForSubscriptionTopic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_SUBSTANCE}
     procedure buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -460,9 +478,6 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT}
     procedure buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
-    {$IFDEF FHIR_TOPIC}
-    procedure buildIndexesForTopic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_VALUESET}
     procedure buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -580,8 +595,7 @@ begin
   indexes.add('AdverseEvent', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('AdverseEvent', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('AdverseEvent', 'actuality', 'actual | potential', sptTOKEN, [], 'AdverseEvent.actuality', sxpNormal);
-  indexes.add('AdverseEvent', 'category', 'product-problem | product-quality | product-use-error | wrong-dose | incorrect-prescribing-information | wrong-technique | wrong-route-of-administration | wrong-rate | wrong-duration | wrong-time | expired-drug | medical-device-use-error | problem-di'
-      +'fferent-manufacturer | unsafe-physical-environment', sptTOKEN, [], 'AdverseEvent.category', sxpNormal);
+  indexes.add('AdverseEvent', 'category', 'wrong-patient | procedure-mishap | medication-mishap | device | unsafe-physical-environment | hospital-aquired-infection | wrong-body-site', sptTOKEN, [], 'AdverseEvent.category', sxpNormal);
   indexes.add('AdverseEvent', 'code', 'Event or incident that occurred or was averted', sptTOKEN, [], 'AdverseEvent.code', sxpNormal);
   indexes.add('AdverseEvent', 'date', 'When the event occurred', sptDATE, [], 'AdverseEvent.occurrence', sxpNormal);
   indexes.add('AdverseEvent', 'identifier', 'Business identifier for the event', sptTOKEN, [], 'AdverseEvent.identifier', sxpNormal);
@@ -616,11 +630,11 @@ begin
   indexes.add('AllergyIntolerance', 'asserter', 'Source of the information about the allergy', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AllergyIntolerance.asserter', sxpNormal);
   indexes.add('AllergyIntolerance', 'category', 'food | medication | environment | biologic', sptTOKEN, [], 'AllergyIntolerance.category', sxpNormal);
   indexes.add('AllergyIntolerance', 'clinical-status', 'active | inactive | resolved', sptTOKEN, [], 'AllergyIntolerance.clinicalStatus', sxpNormal);
-  indexes.add('AllergyIntolerance', 'code', '): Code that identifies the allergy or intolerance', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('AllergyIntolerance', 'code', '): Code that identifies the allergy or intolerance', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('AllergyIntolerance', 'criticality', 'low | high | unable-to-assess', sptTOKEN, [], 'AllergyIntolerance.criticality', sxpNormal);
-  indexes.add('AllergyIntolerance', 'date', '): Date first version of the resource instance was recorded', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('AllergyIntolerance', 'date', '): Date first version of the resource instance was recorded', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('AllergyIntolerance', 'identifier', '): External ids for this item', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -629,12 +643,12 @@ begin
   indexes.add('AllergyIntolerance', 'last-date', 'Date(/time) of last known occurrence of a reaction', sptDATE, [], 'AllergyIntolerance.lastOccurrence', sxpNormal);
   indexes.add('AllergyIntolerance', 'manifestation', 'Clinical symptoms/signs associated with the Event', sptTOKEN, [], 'AllergyIntolerance.reaction.manifestation', sxpNormal);
   indexes.add('AllergyIntolerance', 'patient', '): Who the sensitivity is for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(re'+
-   'solve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.pat'+
+   'ient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('AllergyIntolerance', 'recorder', 'Who recorded the sensitivity', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AllergyIntolerance.recorder', sxpNormal);
   indexes.add('AllergyIntolerance', 'route', 'How the subject was exposed to the substance', sptTOKEN, [], 'AllergyIntolerance.reaction.exposureRoute', sxpNormal);
   indexes.add('AllergyIntolerance', 'severity', 'mild | moderate | severe (of event as a whole)', sptTOKEN, [], 'AllergyIntolerance.reaction.severity', sxpNormal);
@@ -843,7 +857,7 @@ begin
   indexes.add('Bundle', 'identifier', 'Persistent identifier for the bundle', sptTOKEN, [], 'Bundle.identifier', sxpNormal);
   indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', sptREFERENCE, ['MessageHeader'], 'Bundle.entry[0].resource', sxpNormal);
   indexes.add('Bundle', 'timestamp', 'When the bundle was assembled', sptDATE, [], 'Bundle.timestamp', sxpNormal);
-  indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection', sptTOKEN, [], 'Bundle.type', sxpNormal);
+  indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection | subscription-notification', sptTOKEN, [], 'Bundle.type', sxpNormal);
   indexes.add('Bundle', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_BUNDLE}
@@ -958,14 +972,15 @@ begin
   indexes.add('CarePlan', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('CarePlan', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('CarePlan', 'activity-code', 'Detail type of activity', sptTOKEN, [], 'CarePlan.activity.detail.code', sxpNormal);
-  indexes.add('CarePlan', 'activity-date', 'Specified date occurs within period specified by CarePlan.activity.detail.scheduled[x]', sptDATE, [], 'CarePlan.activity.detail.scheduled', sxpNormal);
   indexes.add('CarePlan', 'activity-reference', 'Activity details defined in specific resource', sptREFERENCE, ['Appointment', 'MedicationRequest', 'Task', 'NutritionOrder', 'RequestGroup', 'VisionPrescription', 'DeviceRequest', 'ServiceRequest', 'CommunicationRequest', 'ImmunizationRecommendation'], 'CarePlan.activity.reference', sxpNormal);
+  indexes.add('CarePlan', 'activity-scheduled-date', 'Specified date occurs within period specified by CarePlan.activity.detail.scheduled[x]', sptDATE, [], 'CarePlan.activity.detail.scheduled.as(Timing) | CarePlan.activity.detail.scheduled.as(Period)', sxpNormal);
+  indexes.add('CarePlan', 'activity-scheduled-string', 'When activity is to occur', sptSTRING, [], 'CarePlan.activity.detail.scheduled.as(string)', sxpNormal);
   indexes.add('CarePlan', 'based-on', 'Fulfills CarePlan', sptREFERENCE, ['CarePlan'], 'CarePlan.basedOn', sxpNormal);
   indexes.add('CarePlan', 'care-team', 'Who''s involved in plan?', sptREFERENCE, ['CareTeam'], 'CarePlan.careTeam', sxpNormal);
   indexes.add('CarePlan', 'category', 'Type of plan', sptTOKEN, [], 'CarePlan.category', sxpNormal);
   indexes.add('CarePlan', 'condition', 'Reference to a resource (by instance)', sptREFERENCE, [], 'CarePlan.addresses.reference', sxpNormal);
-  indexes.add('CarePlan', 'date', '): Time period plan covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('CarePlan', 'date', '): Time period plan covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('CarePlan', 'encounter', 'The Encounter during which this CarePlan was created', sptREFERENCE, ['Encounter'], 'CarePlan.encounter', sxpNormal);
   indexes.add('CarePlan', 'goal', 'Desired outcome of plan', sptREFERENCE, ['Goal'], 'CarePlan.goal', sxpNormal);
   indexes.add('CarePlan', 'identifier', '): External Ids for this plan', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -978,12 +993,12 @@ begin
   indexes.add('CarePlan', 'intent', 'proposal | plan | order | option | directive', sptTOKEN, [], 'CarePlan.intent', sxpNormal);
   indexes.add('CarePlan', 'part-of', 'Part of referenced CarePlan', sptREFERENCE, ['CarePlan'], 'CarePlan.partOf', sxpNormal);
   indexes.add('CarePlan', 'patient', '): Who the care plan is for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is P'+
-   'atient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.'+
+   'subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('CarePlan', 'performer', 'Matches if the practitioner is listed as a performer in any of the "simple" activities.  (For performers of the detailed activities, chain through the activitydetail search parameter.)', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'CarePlan.activity.detail.performer', sxpNormal);
   indexes.add('CarePlan', 'replaces', 'CarePlan replaced by this CarePlan', sptREFERENCE, ['CarePlan'], 'CarePlan.replaces', sxpNormal);
   indexes.add('CarePlan', 'status', 'draft | active | on-hold | revoked | completed | entered-in-error | unknown', sptTOKEN, [], 'CarePlan.status', sxpNormal);
@@ -1009,8 +1024,8 @@ begin
   indexes.add('CareTeam', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('CareTeam', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('CareTeam', 'category', 'Type of team', sptTOKEN, [], 'CareTeam.category', sxpNormal);
-  indexes.add('CareTeam', 'date', '): A date within the coverage time period.', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('CareTeam', 'date', '): A date within the coverage time period.', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('CareTeam', 'identifier', '): External Ids for this team', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -1019,12 +1034,12 @@ begin
   indexes.add('CareTeam', 'name', 'Name of the team, such as crisis assessment team', sptSTRING, [], 'CareTeam.name', sxpNormal);
   indexes.add('CareTeam', 'participant', 'Who is involved', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'CareTeam.participant.member', sxpNormal);
   indexes.add('CareTeam', 'patient', '): Who care team is for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is Patie'+
-   'nt) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subj'+
+   'ect.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('CareTeam', 'status', 'proposed | active | suspended | inactive | entered-in-error', sptTOKEN, [], 'CareTeam.status', sxpNormal);
   indexes.add('CareTeam', 'subject', 'Who care team is for', sptREFERENCE, ['Group', 'Patient'], 'CareTeam.subject', sxpNormal);
   indexes.add('CareTeam', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -1126,6 +1141,31 @@ begin
 end;
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 
+{$IFDEF FHIR_CITATION}
+procedure TFHIRIndexBuilderR5.buildIndexesForCitation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('Citation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Citation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('Citation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('Citation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('Citation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Citation', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('Citation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('Citation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('Citation', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Citation', 'context', 'A use context assigned to the citation', sptTOKEN, [], '(Citation.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('Citation', 'context-quantity', 'A quantity- or range-valued use context assigned to the citation', sptQUANTITY, [], '(Citation.useContext.value as Quantity) | (Citation.useContext.value as Range)', sxpNormal);
+  indexes.add('Citation', 'context-type', 'A type of use context assigned to the citation', sptTOKEN, [], 'Citation.useContext.code', sxpNormal);
+  indexes.add('Citation', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the citation', sptCOMPOSITE, [], 'Citation.useContext', sxpNormal);
+  indexes.add('Citation', 'context-type-value', 'A use context type and value assigned to the citation', sptCOMPOSITE, [], 'Citation.useContext', sxpNormal);
+  indexes.add('Citation', 'identifier', 'External identifier for the citation', sptTOKEN, [], 'Citation.identifier', sxpNormal);
+  indexes.add('Citation', 'status', 'The current status of the citation', sptTOKEN, [], 'Citation.status', sxpNormal);
+  indexes.add('Citation', 'url', 'The uri that identifies the citation', sptURI, [], 'Citation.url', sxpNormal);
+  indexes.add('Citation', 'version', 'The business version of the citation', sptTOKEN, [], 'Citation.version', sxpNormal);
+  indexes.add('Citation', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_CITATION}
+
 {$IFDEF FHIR_CLAIM}
 procedure TFHIRIndexBuilderR5.buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1205,19 +1245,19 @@ begin
   indexes.add('ClinicalImpression', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ClinicalImpression', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('ClinicalImpression', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('ClinicalImpression', 'date', '): When the assessment was documented', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('ClinicalImpression', 'date', '): When the assessment was documented', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('ClinicalImpression', 'encounter', 'The Encounter during which this ClinicalImpression was created', sptREFERENCE, ['Encounter'], 'ClinicalImpression.encounter', sxpNormal);
   indexes.add('ClinicalImpression', 'finding-code', 'Reference to a concept (by class)', sptTOKEN, [], 'ClinicalImpression.finding.item.concept', sxpNormal);
   indexes.add('ClinicalImpression', 'finding-ref', 'Reference to a resource (by instance)', sptREFERENCE, [], 'ClinicalImpression.finding.item.reference', sxpNormal);
   indexes.add('ClinicalImpression', 'identifier', 'Business identifier', sptTOKEN, [], 'ClinicalImpression.identifier', sxpNormal);
   indexes.add('ClinicalImpression', 'patient', '): Patient or group assessed', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(res'+
-   'olve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.pati'+
+   'ent | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('ClinicalImpression', 'performer', 'The clinician performing the assessment', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'ClinicalImpression.performer', sxpNormal);
   indexes.add('ClinicalImpression', 'previous', 'Reference to last assessment', sptREFERENCE, ['ClinicalImpression'], 'ClinicalImpression.previous', sxpNormal);
   indexes.add('ClinicalImpression', 'problem', 'Relevant impressions of patient state', sptREFERENCE, ['Condition', 'AllergyIntolerance'], 'ClinicalImpression.problem', sxpNormal);
@@ -1250,7 +1290,7 @@ begin
   indexes.add('ClinicalUseIssue', 'interaction', 'The type of the interaction e.g. drug-drug interaction, drug-food interaction, drug-lab test interaction', sptTOKEN, [], 'ClinicalUseIssue.interaction.type', sxpNormal);
   indexes.add('ClinicalUseIssue', 'product', 'The medicinal product for which this is a clinical usage issue', sptREFERENCE, ['MedicinalProductDefinition'], 'ClinicalUseIssue.subject.where(resolve() is MedicinalProductDefinition)', sxpNormal);
   indexes.add('ClinicalUseIssue', 'subject', 'The resource for which this is a clinical usage issue', sptREFERENCE, ['MedicinalProductDefinition', 'Device', 'Medication', 'DeviceDefinition', 'PlanDefinition', 'Substance', 'ActivityDefinition'], 'ClinicalUseIssue.subject', sxpNormal);
-  indexes.add('ClinicalUseIssue', 'type', 'indication | contraindication | interaction | undesirable-effect | other', sptTOKEN, [], 'ClinicalUseIssue.type', sxpNormal);
+  indexes.add('ClinicalUseIssue', 'type', 'indication | contraindication | interaction | undesirable-effect | warning', sptTOKEN, [], 'ClinicalUseIssue.type', sxpNormal);
   indexes.add('ClinicalUseIssue', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_CLINICALUSEISSUE}
@@ -1290,7 +1330,7 @@ begin
       +'nition.date | StructureMap.date | TerminologyCapabilities.date | ValueSet.date', sxpNormal);
   indexes.add('CodeSystem', 'description', '): The description of the code system', sptSTRING, [], 'CapabilityStatement.description | CodeSystem.description | CompartmentDefinition.description | ConceptMap.description | GraphDefinition.description | ImplementationGuide.description | MessageDefinition.description | NamingSystem.description | Operati'
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
-  indexes.add('CodeSystem', 'identifier', '): External identifier for the code system', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
+  indexes.add('CodeSystem', 'identifier', '): External identifier for the code system', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('CodeSystem', 'jurisdiction', '): Intended jurisdiction for the code system', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('CodeSystem', 'language', 'A language in which a designation is provided', sptTOKEN, [], 'CodeSystem.concept.designation.language', sxpNormal);
@@ -1342,6 +1382,7 @@ begin
   indexes.add('Communication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Encounter', 'Communication', ['encounter']);
+  compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Patient', 'Communication', ['subject', 'sender', 'recipient']);
   compartments.register('Practitioner', 'Communication', ['sender', 'recipient']);
   compartments.register('RelatedPerson', 'Communication', ['sender', 'recipient']);
@@ -1379,6 +1420,7 @@ begin
   indexes.add('CommunicationRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'CommunicationRequest', ['information-provider', 'recipient']);
   compartments.register('Encounter', 'CommunicationRequest', ['encounter']);
+  compartments.register('Device', 'CommunicationRequest', ['sender', 'recipient']);
   compartments.register('Patient', 'CommunicationRequest', ['subject', 'information-provider', 'recipient', 'requester']);
   compartments.register('Practitioner', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
   compartments.register('RelatedPerson', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
@@ -1451,8 +1493,8 @@ begin
   indexes.add('Composition', 'category', 'Categorization of Composition', sptTOKEN, [], 'Composition.category', sxpNormal);
   indexes.add('Composition', 'confidentiality', 'As defined by affinity domain', sptTOKEN, [], 'Composition.confidentiality', sxpNormal);
   indexes.add('Composition', 'context', 'Code(s) that apply to the event being documented', sptTOKEN, [], 'Composition.event.code', sxpNormal);
-  indexes.add('Composition', 'date', '): Composition editing time', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Composition', 'date', '): Composition editing time', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Composition', 'encounter', '): Context of the Composition', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Composition', 'entry', 'A reference to data that supports this section', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.section.entry', sxpNormal);
@@ -1462,12 +1504,12 @@ begin
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | V'+
    'isionPrescription.identifier', sxpNormal);
   indexes.add('Composition', 'patient', '): Who and/or what the composition is about', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.w'+
-   'here(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizat'+
+   'ion.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Composition', 'period', 'The period covered by the documentation', sptDATE, [], 'Composition.event.period', sxpNormal);
   indexes.add('Composition', 'related-id', 'Target of the relationship', sptTOKEN, [], '(Composition.relatesTo.target as Identifier)', sxpNormal);
   indexes.add('Composition', 'related-ref', 'Target of the relationship', sptREFERENCE, ['Composition'], '(Composition.relatesTo.target as Reference)', sxpNormal);
@@ -1519,7 +1561,7 @@ begin
   indexes.add('ConceptMap', 'dependson', 'Reference to property mapping depends on', sptURI, [], 'ConceptMap.group.element.target.dependsOn.property', sxpNormal);
   indexes.add('ConceptMap', 'description', '): The description of the concept map', sptSTRING, [], 'CapabilityStatement.description | CodeSystem.description | CompartmentDefinition.description | ConceptMap.description | GraphDefinition.description | ImplementationGuide.description | MessageDefinition.description | NamingSystem.description | Operati'
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
-  indexes.add('ConceptMap', 'identifier', '): External identifier for the concept map', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
+  indexes.add('ConceptMap', 'identifier', '): External identifier for the concept map', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('ConceptMap', 'jurisdiction', '): Intended jurisdiction for the concept map', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('ConceptMap', 'name', '): Computationally friendly name of the concept map', sptSTRING, [], 'CapabilityStatement.name | CodeSystem.name | CompartmentDefinition.name | ConceptMap.name | GraphDefinition.name | ImplementationGuide.name | MessageDefinition.name | NamingSystem.name | OperationDefinition.name | SearchParameter.name | StructureDefi'
@@ -1566,8 +1608,8 @@ begin
   indexes.add('Condition', 'body-site', 'Anatomical location, if relevant', sptTOKEN, [], 'Condition.bodySite', sxpNormal);
   indexes.add('Condition', 'category', 'The category of the condition', sptTOKEN, [], 'Condition.category', sxpNormal);
   indexes.add('Condition', 'clinical-status', 'The clinical status of the condition', sptTOKEN, [], 'Condition.clinicalStatus', sxpNormal);
-  indexes.add('Condition', 'code', '): Code for the condition', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('Condition', 'code', '): Code for the condition', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('Condition', 'encounter', 'The Encounter during which this Condition was created', sptREFERENCE, ['Encounter'], 'Condition.encounter', sxpNormal);
   indexes.add('Condition', 'evidence', 'Manifestation/symptom', sptTOKEN, [], 'Condition.evidence.code', sxpNormal);
   indexes.add('Condition', 'evidence-detail', 'Supporting information found elsewhere', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Condition.evidence.detail', sxpNormal);
@@ -1580,12 +1622,12 @@ begin
   indexes.add('Condition', 'onset-date', 'Date related onsets (dateTime and Period)', sptDATE, [], 'Condition.onset.as(dateTime) | Condition.onset.as(Period)', sxpNormal);
   indexes.add('Condition', 'onset-info', 'Onsets as a string', sptSTRING, [], 'Condition.onset.as(string)', sxpNormal);
   indexes.add('Condition', 'patient', '): Who has the condition?', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is Pa'+
-   'tient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.s'+
+   'ubject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Condition', 'recorded-date', 'Date record was first recorded', sptDATE, [], 'Condition.recordedDate', sxpNormal);
   indexes.add('Condition', 'severity', 'The severity of the condition', sptTOKEN, [], 'Condition.severity', sxpNormal);
   indexes.add('Condition', 'stage', 'Simple summary (disease specific)', sptTOKEN, [], 'Condition.stage.summary', sxpNormal);
@@ -1647,8 +1689,8 @@ begin
   indexes.add('Consent', 'category', 'Classification of the consent statement - for indexing/retrieval', sptTOKEN, [], 'Consent.category', sxpNormal);
   indexes.add('Consent', 'consentor', 'Who is agreeing to the policy and rules', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'Consent.performer', sxpNormal);
   indexes.add('Consent', 'data', 'The actual data reference', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Consent.provision.data.reference', sxpNormal);
-  indexes.add('Consent', 'date', '): When consent was agreed to', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Consent', 'date', '): When consent was agreed to', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Consent', 'identifier', '): Identifier for this record (external references)', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -1656,12 +1698,12 @@ begin
    'rescription.identifier', sxpNormal);
   indexes.add('Consent', 'organization', 'Custodian of the consent', sptREFERENCE, ['Organization'], 'Consent.organization', sxpNormal);
   indexes.add('Consent', 'patient', '): Who the consent applies to', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is '+
-   'Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List'+
+   '.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Consent', 'period', 'Timeframe for this rule', sptDATE, [], 'Consent.provision.period', sxpNormal);
   indexes.add('Consent', 'policy-uri', 'Search for Consents aligned with a specific policy or policy date/version.  URIs should be complete with date/version and not assume the Resource will maintain versioning information', sptURI, [], 'Consent.policy.uri', sxpNormal);
   indexes.add('Consent', 'purpose', 'Context of activities covered by this rule', sptTOKEN, [], 'Consent.provision.purpose', sxpNormal);
@@ -1669,10 +1711,11 @@ begin
   indexes.add('Consent', 'security-label', 'Security Labels that define affected resources', sptTOKEN, [], 'Consent.provision.securityLabel', sxpNormal);
   indexes.add('Consent', 'source-reference', 'Search by reference to a Consent, DocumentReference, Contract  or QuestionnaireResponse', sptREFERENCE, ['Consent', 'Contract', 'QuestionnaireResponse', 'DocumentReference'], 'Consent.sourceReference', sxpNormal);
   indexes.add('Consent', 'status', 'draft | active | inactive | entered-in-error | unknown', sptTOKEN, [], 'Consent.status', sxpNormal);
+  indexes.add('Consent', 'subject', 'Who the consent applies to', sptREFERENCE, ['Practitioner', 'Patient'], 'Consent.subject', sxpNormal);
   indexes.add('Consent', 'verified', 'Has been verified', sptTOKEN, [], 'Consent.verification.verified', sxpNormal);
   indexes.add('Consent', 'verified-date', 'When consent verified', sptDATE, [], 'Consent.verification.verificationDate', sxpNormal);
   indexes.add('Consent', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  compartments.register('Patient', 'Consent', ['patient']);
+  compartments.register('Patient', 'Consent', ['subject']);
 end;
 {$ENDIF FHIR_CONSENT}
 
@@ -1805,12 +1848,12 @@ begin
    'n.identifier', sxpNormal);
   indexes.add('DetectedIssue', 'implicated', 'Problem resource', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DetectedIssue.implicated', sxpNormal);
   indexes.add('DetectedIssue', 'patient', '): Associated patient', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is Pa'+
-   'tient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.s'+
+   'ubject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DetectedIssue', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DetectedIssue', ['author']);
   compartments.register('Patient', 'DetectedIssue', ['patient']);
@@ -1830,19 +1873,26 @@ begin
   indexes.add('Device', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Device', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Device', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Device', 'definition', 'The definition / type of the device', sptREFERENCE, ['DeviceDefinition'], 'Device.definition', sxpNormal);
   indexes.add('Device', 'device-name', 'A server defined search that may match any of the string fields in Device.deviceName or Device.type.', sptSTRING, [], 'Device.deviceName.name | Device.type.coding.display | Device.type.text', sxpNormal);
   indexes.add('Device', 'din', 'The donation identification number (DIN)', sptTOKEN, [], 'Device.extension(''http://hl7.org/fhir/SearchParameter/device-extensions-Device-din'')', sxpNormal);
+  indexes.add('Device', 'expiration-date', 'The expiration date of the device', sptDATE, [], 'Device.expirationDate', sxpNormal);
   indexes.add('Device', 'identifier', 'Instance id from manufacturer, owner, and others', sptTOKEN, [], 'Device.identifier', sxpNormal);
   indexes.add('Device', 'location', 'A location, where the resource is found', sptREFERENCE, ['Location'], 'Device.location', sxpNormal);
+  indexes.add('Device', 'lot-number', 'The lot number of the device', sptSTRING, [], 'Device.lotNumber', sxpNormal);
+  indexes.add('Device', 'manufacture-date', 'The manufacture date of the device', sptDATE, [], 'Device.manufactureDate', sxpNormal);
   indexes.add('Device', 'manufacturer', 'The manufacturer of the device', sptSTRING, [], 'Device.manufacturer', sxpNormal);
   indexes.add('Device', 'model', 'The model of the device', sptSTRING, [], 'Device.modelNumber', sxpNormal);
   indexes.add('Device', 'organization', 'The organization responsible for the device', sptREFERENCE, ['Organization'], 'Device.owner', sxpNormal);
+  indexes.add('Device', 'parent', 'The parent device', sptREFERENCE, ['Device'], 'Device.parent', sxpNormal);
   indexes.add('Device', 'patient', 'Patient information, if the resource is affixed to a person', sptREFERENCE, ['Patient'], 'Device.patient', sxpNormal);
+  indexes.add('Device', 'serial-number', 'The serial number of the device', sptSTRING, [], 'Device.serialNumber', sxpNormal);
   indexes.add('Device', 'status', 'active | inactive | entered-in-error | unknown', sptTOKEN, [], 'Device.status', sxpNormal);
   indexes.add('Device', 'type', 'The type of the device', sptTOKEN, [], 'Device.type', sxpNormal);
   indexes.add('Device', 'udi-carrier', 'UDI Barcode (RFID or other technology) string in *HRF* format.', sptSTRING, [], 'Device.udiCarrier.carrierHRF', sxpNormal);
   indexes.add('Device', 'udi-di', 'The udi Device Identifier (DI)', sptSTRING, [], 'Device.udiCarrier.deviceIdentifier', sxpNormal);
   indexes.add('Device', 'url', 'Network address to contact device', sptURI, [], 'Device.url', sxpNormal);
+  indexes.add('Device', 'version', 'The specific version of the device', sptSTRING, [], 'Device.version.value', sxpNormal);
   indexes.add('Device', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_DEVICE}
@@ -1901,9 +1951,9 @@ begin
   indexes.add('DeviceRequest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DeviceRequest', 'authored-on', 'When the request transitioned to being actionable', sptDATE, [], 'DeviceRequest.authoredOn', sxpNormal);
   indexes.add('DeviceRequest', 'based-on', 'Plan/proposal/order fulfilled by this request', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DeviceRequest.basedOn', sxpNormal);
-  indexes.add('DeviceRequest', 'code', '): Code for what is being requested/ordered', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('DeviceRequest', 'device', 'Reference to resource that is being requested/ordered', sptREFERENCE, ['Device'], '(DeviceRequest.code as Reference)', sxpNormal);
+  indexes.add('DeviceRequest', 'code', '): Code for what is being requested/ordered', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('DeviceRequest', 'device', 'Reference to resource that is being requested/ordered', sptREFERENCE, [], 'DeviceRequest.code.reference', sxpNormal);
   indexes.add('DeviceRequest', 'encounter', '): Encounter during which request was created', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('DeviceRequest', 'event-date', 'When service should occur', sptDATE, [], '(DeviceRequest.occurrence as dateTime) | (DeviceRequest.occurrence as Period)', sxpNormal);
@@ -1918,19 +1968,19 @@ begin
   indexes.add('DeviceRequest', 'insurance', 'Associated insurance coverage', sptREFERENCE, ['ClaimResponse', 'Coverage'], 'DeviceRequest.insurance', sxpNormal);
   indexes.add('DeviceRequest', 'intent', 'proposal | plan | original-order |reflex-order', sptTOKEN, [], 'DeviceRequest.intent', sxpNormal);
   indexes.add('DeviceRequest', 'patient', '): Individual the service is ordered for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.wh'+
-   'ere(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizati'+
+   'on.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DeviceRequest', 'performer', 'Desired performer for service', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'DeviceRequest.performer', sxpNormal);
   indexes.add('DeviceRequest', 'prior-request', 'Request takes the place of referenced completed or terminated requests', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DeviceRequest.priorRequest', sxpNormal);
   indexes.add('DeviceRequest', 'requester', 'Who/what is requesting service', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'PractitionerRole'], 'DeviceRequest.requester', sxpNormal);
   indexes.add('DeviceRequest', 'status', 'entered-in-error | draft | active |suspended | completed', sptTOKEN, [], 'DeviceRequest.status', sxpNormal);
   indexes.add('DeviceRequest', 'subject', 'Individual the service is ordered for', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'DeviceRequest.subject', sxpNormal);
   indexes.add('DeviceRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  compartments.register('Device', 'DeviceRequest', ['device', 'subject', 'requester', 'performer']);
+  compartments.register('Device', 'DeviceRequest', ['subject', 'requester', 'performer']);
   compartments.register('Encounter', 'DeviceRequest', ['encounter']);
   compartments.register('Patient', 'DeviceRequest', ['subject', 'performer']);
   compartments.register('Practitioner', 'DeviceRequest', ['requester', 'performer']);
@@ -1949,18 +1999,17 @@ begin
   indexes.add('DeviceUseStatement', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DeviceUseStatement', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('DeviceUseStatement', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('DeviceUseStatement', 'device', 'Search by device', sptREFERENCE, ['Device'], 'DeviceUseStatement.device', sxpNormal);
+  indexes.add('DeviceUseStatement', 'device', 'Search by device', sptTOKEN, [], 'DeviceUseStatement.device.concept', sxpNormal);
   indexes.add('DeviceUseStatement', 'identifier', 'Search by identifier', sptTOKEN, [], 'DeviceUseStatement.identifier', sxpNormal);
   indexes.add('DeviceUseStatement', 'patient', '): Search by subject - a patient', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where'+
-   '(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.'+
+   'patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DeviceUseStatement', 'subject', 'Search by subject', sptREFERENCE, ['Group', 'Patient'], 'DeviceUseStatement.subject', sxpNormal);
   indexes.add('DeviceUseStatement', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  compartments.register('Device', 'DeviceUseStatement', ['device']);
   compartments.register('Patient', 'DeviceUseStatement', ['subject']);
 end;
 {$ENDIF FHIR_DEVICEUSESTATEMENT}
@@ -1980,11 +2029,11 @@ begin
   indexes.add('DiagnosticReport', 'assessed-condition', 'Condition assessed by genetic test', sptREFERENCE, [], 'DiagnosticReport.extension(''http://hl7.org/fhir/StructureDefinition/DiagnosticReport-geneticsAssessedCondition'')', sxpNormal);
   indexes.add('DiagnosticReport', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'NutritionOrder', 'ServiceRequest', 'ImmunizationRecommendation'], 'DiagnosticReport.basedOn', sxpNormal);
   indexes.add('DiagnosticReport', 'category', 'Which diagnostic discipline/department created the report', sptTOKEN, [], 'DiagnosticReport.category', sxpNormal);
-  indexes.add('DiagnosticReport', 'code', '): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('DiagnosticReport', 'code', '): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('DiagnosticReport', 'conclusion', 'A coded conclusion (interpretation/impression) on the report', sptTOKEN, [], 'DiagnosticReport.conclusionCode', sxpNormal);
-  indexes.add('DiagnosticReport', 'date', '): The clinically relevant time of the report', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('DiagnosticReport', 'date', '): The clinically relevant time of the report', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('DiagnosticReport', 'encounter', '): The Encounter when the order was made', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('DiagnosticReport', 'identifier', '): An identifier for the report', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -1995,12 +2044,12 @@ begin
   indexes.add('DiagnosticReport', 'issued', 'When the report was issued', sptDATE, [], 'DiagnosticReport.issued', sxpNormal);
   indexes.add('DiagnosticReport', 'media', 'A reference to the image source.', sptREFERENCE, ['DocumentReference'], 'DiagnosticReport.media.link', sxpNormal);
   indexes.add('DiagnosticReport', 'patient', '): The subject of the report if a patient', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subjec'+
-   't.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immuni'+
+   'zation.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DiagnosticReport', 'performer', 'Who is responsible for the report', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'PractitionerRole'], 'DiagnosticReport.performer', sxpNormal);
   indexes.add('DiagnosticReport', 'result', 'Link to an atomic result (observation resource)', sptREFERENCE, ['Observation'], 'DiagnosticReport.result', sxpNormal);
   indexes.add('DiagnosticReport', 'results-interpreter', 'Who was the source of the report', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'PractitionerRole'], 'DiagnosticReport.resultsInterpreter', sxpNormal);
@@ -2037,12 +2086,12 @@ begin
    'onPrescription.identifier', sxpNormal);
   indexes.add('DocumentManifest', 'item', 'Items in manifest', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentManifest.content', sxpNormal);
   indexes.add('DocumentManifest', 'patient', '): The subject of the set of documents', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.w'+
-   'here(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizat'+
+   'ion.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DocumentManifest', 'recipient', 'Intended to get notified about this set of documents', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentManifest.recipient', sxpNormal);
   indexes.add('DocumentManifest', 'related-id', 'Identifiers of things that are related', sptTOKEN, [], 'DocumentManifest.related.identifier', sxpNormal);
   indexes.add('DocumentManifest', 'related-ref', 'Related Resource', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentManifest.related.ref', sxpNormal);
@@ -2094,12 +2143,12 @@ begin
   indexes.add('DocumentReference', 'language', 'Human language of the content (BCP-47)', sptTOKEN, [], 'DocumentReference.content.attachment.language', sxpNormal);
   indexes.add('DocumentReference', 'location', 'Uri where the data can be found', sptURI, [], 'DocumentReference.content.attachment.url', sxpNormal);
   indexes.add('DocumentReference', 'patient', '): Who/what is the subject of the document', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subj'+
-   'ect.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immu'+
+   'nization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('DocumentReference', 'period', 'Time of service that is being documented', sptDATE, [], 'DocumentReference.context.period', sxpNormal);
   indexes.add('DocumentReference', 'related', 'Related identifiers or resources', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentReference.context.related', sxpNormal);
   indexes.add('DocumentReference', 'relatesto', 'Target of the relationship', sptREFERENCE, ['DocumentReference'], 'DocumentReference.relatesTo.target', sxpNormal);
@@ -2135,8 +2184,8 @@ begin
   indexes.add('Encounter', 'appointment', 'The appointment that scheduled this encounter', sptREFERENCE, ['Appointment'], 'Encounter.appointment', sxpNormal);
   indexes.add('Encounter', 'based-on', 'The ServiceRequest that initiated this encounter', sptREFERENCE, ['ServiceRequest'], 'Encounter.basedOn', sxpNormal);
   indexes.add('Encounter', 'class', 'Classification of patient encounter', sptTOKEN, [], 'Encounter.class', sxpNormal);
-  indexes.add('Encounter', 'date', '): A date within the period the Encounter lasted', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Encounter', 'date', '): A date within the period the Encounter lasted', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Encounter', 'diagnosis', 'The diagnosis or procedure relevant to the encounter', sptREFERENCE, ['Condition', 'Procedure'], 'Encounter.diagnosis.condition', sxpNormal);
   indexes.add('Encounter', 'episode-of-care', 'Episode(s) of care that this encounter should be recorded against', sptREFERENCE, ['EpisodeOfCare'], 'Encounter.episodeOfCare', sxpNormal);
   indexes.add('Encounter', 'identifier', '): Identifier(s) by which this encounter is known', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -2151,12 +2200,12 @@ begin
   indexes.add('Encounter', 'participant', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'PractitionerRole', 'RelatedPerson'], 'Encounter.participant.individual', sxpNormal);
   indexes.add('Encounter', 'participant-type', 'Role of participant in encounter', sptTOKEN, [], 'Encounter.participant.type', sxpNormal);
   indexes.add('Encounter', 'patient', '): The patient or group present at the encounter', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subjec'+
-   't.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immuni'+
+   'zation.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Encounter', 'practitioner', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner'], 'Encounter.participant.individual.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('Encounter', 'reason-code', 'Reference to a concept (by class)', sptTOKEN, [], 'Encounter.reason.concept', sxpNormal);
   indexes.add('Encounter', 'reason-reference', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Encounter.reason.reference', sxpNormal);
@@ -2250,8 +2299,8 @@ begin
   indexes.add('EpisodeOfCare', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('EpisodeOfCare', 'care-manager', 'Care manager/care coordinator for the patient', sptREFERENCE, ['Practitioner'], 'EpisodeOfCare.careManager.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('EpisodeOfCare', 'condition', 'Conditions/problems/diagnoses this episode of care is for', sptREFERENCE, ['Condition'], 'EpisodeOfCare.diagnosis.condition', sxpNormal);
-  indexes.add('EpisodeOfCare', 'date', '): The provided date search value falls within the episode of care''s period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('EpisodeOfCare', 'date', '): The provided date search value falls within the episode of care''s period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('EpisodeOfCare', 'identifier', '): Business Identifier(s) relevant for this EpisodeOfCare', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -2260,12 +2309,12 @@ begin
   indexes.add('EpisodeOfCare', 'incoming-referral', 'Incoming Referral Request', sptREFERENCE, ['ServiceRequest'], 'EpisodeOfCare.referralRequest', sxpNormal);
   indexes.add('EpisodeOfCare', 'organization', 'The organization that has assumed the specific responsibilities of this EpisodeOfCare', sptREFERENCE, ['Organization'], 'EpisodeOfCare.managingOrganization', sxpNormal);
   indexes.add('EpisodeOfCare', 'patient', '): The patient who is the focus of this episode of care', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | '+
-   'List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patien'+
+   't) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('EpisodeOfCare', 'status', 'The current status of the Episode of Care as provided (does not check the status history collection)', sptTOKEN, [], 'EpisodeOfCare.status', sxpNormal);
   indexes.add('EpisodeOfCare', 'type', '): Type/class  - e.g. specialist referral, disease management', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
   indexes.add('EpisodeOfCare', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -2339,6 +2388,33 @@ begin
   indexes.add('Evidence', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_EVIDENCE}
+
+{$IFDEF FHIR_EVIDENCEFOCUS}
+procedure TFHIRIndexBuilderR5.buildIndexesForEvidenceFocus(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('EvidenceFocus', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('EvidenceFocus', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('EvidenceFocus', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('EvidenceFocus', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('EvidenceFocus', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EvidenceFocus', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('EvidenceFocus', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('EvidenceFocus', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('EvidenceFocus', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('EvidenceFocus', 'context', 'A use context assigned to the evidence focus', sptTOKEN, [], '(EvidenceFocus.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('EvidenceFocus', 'context-quantity', 'A quantity- or range-valued use context assigned to the evidence focus', sptQUANTITY, [], '(EvidenceFocus.useContext.value as Quantity) | (EvidenceFocus.useContext.value as Range)', sxpNormal);
+  indexes.add('EvidenceFocus', 'context-type', 'A type of use context assigned to the evidence focus', sptTOKEN, [], 'EvidenceFocus.useContext.code', sxpNormal);
+  indexes.add('EvidenceFocus', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the evidence focus', sptCOMPOSITE, [], 'EvidenceFocus.useContext', sxpNormal);
+  indexes.add('EvidenceFocus', 'context-type-value', 'A use context type and value assigned to the evidence focus', sptCOMPOSITE, [], 'EvidenceFocus.useContext', sxpNormal);
+  indexes.add('EvidenceFocus', 'date', 'The evidence focus publication date', sptDATE, [], 'EvidenceFocus.date', sxpNormal);
+  indexes.add('EvidenceFocus', 'identifier', 'External identifier for the evidence focus', sptTOKEN, [], 'EvidenceFocus.identifier', sxpNormal);
+  indexes.add('EvidenceFocus', 'name', 'Computationally friendly name of the evidence focus', sptSTRING, [], 'EvidenceFocus.name', sxpNormal);
+  indexes.add('EvidenceFocus', 'status', 'The current status of the evidence focus', sptTOKEN, [], 'EvidenceFocus.status', sxpNormal);
+  indexes.add('EvidenceFocus', 'url', 'The uri that identifies the evidence focus', sptURI, [], 'EvidenceFocus.url', sxpNormal);
+  indexes.add('EvidenceFocus', 'version', 'The business version of the evidence focus', sptTOKEN, [], 'EvidenceFocus.version', sxpNormal);
+  indexes.add('EvidenceFocus', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_EVIDENCEFOCUS}
 
 {$IFDEF FHIR_EVIDENCEVARIABLE}
 procedure TFHIRIndexBuilderR5.buildIndexesForEvidenceVariable(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2457,10 +2533,10 @@ begin
   indexes.add('FamilyMemberHistory', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('FamilyMemberHistory', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('FamilyMemberHistory', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('FamilyMemberHistory', 'code', '): A search by a condition code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('FamilyMemberHistory', 'date', '): When history was recorded or last updated', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('FamilyMemberHistory', 'code', '): A search by a condition code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('FamilyMemberHistory', 'date', '): When history was recorded or last updated', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('FamilyMemberHistory', 'identifier', '): A search by a record identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -2469,12 +2545,12 @@ begin
   indexes.add('FamilyMemberHistory', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['Questionnaire', 'Measure', 'PlanDefinition', 'OperationDefinition', 'ActivityDefinition'], 'FamilyMemberHistory.instantiatesCanonical', sxpNormal);
   indexes.add('FamilyMemberHistory', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'FamilyMemberHistory.instantiatesUri', sxpNormal);
   indexes.add('FamilyMemberHistory', 'patient', '): The identity of a subject to list family member history items for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immu'+
-   'nization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where('+
+   'resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('FamilyMemberHistory', 'relationship', 'A search by a relationship type', sptTOKEN, [], 'FamilyMemberHistory.relationship', sxpNormal);
   indexes.add('FamilyMemberHistory', 'sex', 'A search by a sex code of a family member', sptTOKEN, [], 'FamilyMemberHistory.sex', sxpNormal);
   indexes.add('FamilyMemberHistory', 'status', 'partial | completed | entered-in-error | health-unknown', sptTOKEN, [], 'FamilyMemberHistory.status', sxpNormal);
@@ -2496,18 +2572,18 @@ begin
   indexes.add('Flag', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Flag', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Flag', 'author', 'Flag creator', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole'], 'Flag.author', sxpNormal);
-  indexes.add('Flag', 'date', '): Time period when flag is active', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Flag', 'date', '): Time period when flag is active', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Flag', 'encounter', '): Alert relevant during encounter', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Flag', 'identifier', 'Business identifier', sptTOKEN, [], 'Flag.identifier', sxpNormal);
   indexes.add('Flag', 'patient', '): The identity of a subject to list flags for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where'+
-   '(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.'+
+   'patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Flag', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'Flag.status', sxpNormal);
   indexes.add('Flag', 'subject', 'The identity of a subject to list flags for', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'Medication', 'Patient', 'PlanDefinition', 'Procedure', 'PractitionerRole', 'Location'], 'Flag.subject', sxpNormal);
   indexes.add('Flag', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -2537,12 +2613,12 @@ begin
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Goal', 'lifecycle-status', 'proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected', sptTOKEN, [], 'Goal.lifecycleStatus', sxpNormal);
   indexes.add('Goal', 'patient', '): Who this goal is intended for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is '+
-   'Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List'+
+   '.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Goal', 'start-date', 'When goal pursuit begins', sptDATE, [], '(Goal.start as date)', sxpNormal);
   indexes.add('Goal', 'subject', 'Who this goal is intended for', sptREFERENCE, ['Group', 'Organization', 'Patient'], 'Goal.subject', sxpNormal);
   indexes.add('Goal', 'target-date', 'Reach goal on or before', sptDATE, [], '(Goal.target.due as date)', sxpNormal);
@@ -2704,12 +2780,12 @@ begin
   indexes.add('ImagingStudy', 'interpreter', 'Who interpreted the images', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'ImagingStudy.interpreter', sxpNormal);
   indexes.add('ImagingStudy', 'modality', 'The modality of the series', sptTOKEN, [], 'ImagingStudy.series.modality', sxpNormal);
   indexes.add('ImagingStudy', 'patient', '): Who the study is about', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is'+
-   ' Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | Lis'+
+   't.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('ImagingStudy', 'performer', 'The person who performed the study', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'ImagingStudy.series.performer.actor', sxpNormal);
   indexes.add('ImagingStudy', 'reason', 'The reason for the study', sptTOKEN, [], '', sxpNormal);
   indexes.add('ImagingStudy', 'referrer', 'The referring physician', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'ImagingStudy.referrer', sxpNormal);
@@ -2734,8 +2810,8 @@ begin
   indexes.add('Immunization', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Immunization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Immunization', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Immunization', 'date', '): Vaccination  (non)-Administration Date', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Immunization', 'date', '): Vaccination  (non)-Administration Date', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Immunization', 'identifier', '): Business identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -2744,12 +2820,12 @@ begin
   indexes.add('Immunization', 'lot-number', 'Vaccine Lot Number', sptSTRING, [], 'Immunization.lotNumber', sxpNormal);
   indexes.add('Immunization', 'manufacturer', 'Vaccine Manufacturer', sptREFERENCE, ['Organization'], 'Immunization.manufacturer', sxpNormal);
   indexes.add('Immunization', 'patient', '): The patient for the vaccination record', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.wh'+
-   'ere(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizati'+
+   'on.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Immunization', 'performer', 'The practitioner or organization who played a role in the vaccination', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'Immunization.performer.actor', sxpNormal);
   indexes.add('Immunization', 'reaction', 'Additional information on reaction', sptREFERENCE, ['Observation'], 'Immunization.reaction.detail', sxpNormal);
   indexes.add('Immunization', 'reaction-date', 'When reaction started', sptDATE, [], 'Immunization.reaction.date', sxpNormal);
@@ -3023,10 +3099,10 @@ begin
   indexes.add('List', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('List', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('List', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('List', 'code', '): What the purpose of this list is', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('List', 'date', '): When the list was prepared', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('List', 'code', '): What the purpose of this list is', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('List', 'date', '): When the list was prepared', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('List', 'empty-reason', 'Why list is empty', sptTOKEN, [], 'List.emptyReason', sxpNormal);
   indexes.add('List', 'encounter', '): Context in which list created', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
@@ -3037,12 +3113,12 @@ begin
   indexes.add('List', 'item', 'Actual entry', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'List.entry.item', sxpNormal);
   indexes.add('List', 'notes', 'The annotation  - text content (as markdown)', sptSTRING, [], 'List.note.text', sxpNormal);
   indexes.add('List', 'patient', '): If all resources have the same subject', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(reso'+
-   'lve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patie'+
+   'nt | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('List', 'source', 'Who and/or what defined the list contents (aka Author)', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'PractitionerRole'], 'List.source', sxpNormal);
   indexes.add('List', 'status', 'current | retired | entered-in-error', sptTOKEN, [], 'List.status', sxpNormal);
   indexes.add('List', 'subject', 'If all resources have the same subject', sptREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'List.subject', sxpNormal);
@@ -3181,13 +3257,13 @@ begin
   indexes.add('Medication', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Medication', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Medication', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Medication', 'code', '): Returns medications for a specific code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('Medication', 'code', '): Returns medications for a specific code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('Medication', 'expiration-date', 'Returns medications in a batch with this expiration date', sptDATE, [], 'Medication.batch.expirationDate', sxpNormal);
   indexes.add('Medication', 'form', 'Returns medications for a specific dose form', sptTOKEN, [], '', sxpNormal);
   indexes.add('Medication', 'identifier', 'Returns medications with this external identifier', sptTOKEN, [], 'Medication.identifier', sxpNormal);
-  indexes.add('Medication', 'ingredient', 'Returns medications for this ingredient reference', sptREFERENCE, ['Medication', 'Substance'], '(Medication.ingredient.item as Reference)', sxpNormal);
-  indexes.add('Medication', 'ingredient-code', 'Returns medications for this ingredient code', sptTOKEN, [], '(Medication.ingredient.item as CodeableConcept)', sxpNormal);
+  indexes.add('Medication', 'ingredient', 'Returns medications for this ingredient reference', sptREFERENCE, [], 'Medication.ingredient.item.reference', sxpNormal);
+  indexes.add('Medication', 'ingredient-code', 'Returns medications for this ingredient code', sptTOKEN, [], 'Medication.ingredient.item.concept', sxpNormal);
   indexes.add('Medication', 'lot-number', 'Returns medications in a batch with this lot number', sptTOKEN, [], 'Medication.batch.lotNumber', sxpNormal);
   indexes.add('Medication', 'manufacturer', 'Returns medications made or sold for this manufacturer', sptREFERENCE, ['Organization'], 'Medication.manufacturer', sxpNormal);
   indexes.add('Medication', 'status', 'Returns medications for this status', sptTOKEN, [], 'Medication.status', sxpNormal);
@@ -3207,8 +3283,8 @@ begin
   indexes.add('MedicationAdministration', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationAdministration', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicationAdministration', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('MedicationAdministration', 'code', '): Return administrations of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('MedicationAdministration', 'code', '): Return administrations of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('MedicationAdministration', 'date', '): Date administration happened (or did not happen)', sptDATE, [], 'MedicationAdministration.occurence | MedicationRequest.dosageInstruction.timing.event', sxpNormal);
   indexes.add('MedicationAdministration', 'device', 'Return administrations with this administration device identity', sptREFERENCE, ['Device'], 'MedicationAdministration.device', sxpNormal);
   indexes.add('MedicationAdministration', 'encounter', '): Return administrations that share this encounter', sptREFERENCE, ['Encounter'], 'MedicationAdministration.encounter | MedicationRequest.encounter', sxpNormal);
@@ -3217,16 +3293,17 @@ begin
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest'+
    '.identifier | VisionPrescription.identifier', sxpNormal);
-  indexes.add('MedicationAdministration', 'medication', '): Return administrations of this medication resource', sptREFERENCE, ['Medication'], '(MedicationAdministration.medication as Reference) | (MedicationDispense.medication as Reference) | (MedicationRequest.medication as Reference) | (MedicationUsage.medication as Reference)', sxpNormal);
+  indexes.add('MedicationAdministration', 'medication', '): Return administrations of this medication reference', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationAdministration', 'patient', '): The identity of a patient to list administrations  for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizati'+
-   'on.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolv'+
+   'e() is Patient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('MedicationAdministration', 'performer', 'The identity of the individual who administered the medication', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationAdministration.performer.actor', sxpNormal);
-  indexes.add('MedicationAdministration', 'reason-given', 'Reasons for administering the medication', sptTOKEN, [], '', sxpNormal);
+  indexes.add('MedicationAdministration', 'reason-given', 'Reference to a resource (by instance)', sptREFERENCE, [], 'MedicationAdministration.reason.reference', sxpNormal);
+  indexes.add('MedicationAdministration', 'reason-given-code', 'Reasons for administering the medication', sptTOKEN, [], 'MedicationAdministration.reason.concept', sxpNormal);
   indexes.add('MedicationAdministration', 'reason-not-given', 'Reasons for not administering the medication', sptTOKEN, [], 'MedicationAdministration.statusReason', sxpNormal);
   indexes.add('MedicationAdministration', 'request', 'The identity of a request to list administrations from', sptREFERENCE, ['MedicationRequest'], 'MedicationAdministration.request', sxpNormal);
   indexes.add('MedicationAdministration', 'status', '): MedicationAdministration event status (for example one of active/paused/completed/nullified)', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
@@ -3252,8 +3329,8 @@ begin
   indexes.add('MedicationDispense', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationDispense', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicationDispense', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('MedicationDispense', 'code', '): Returns dispenses of this medicine code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('MedicationDispense', 'code', '): Returns dispenses of this medicine code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('MedicationDispense', 'destination', 'Returns dispenses that should be sent to a specific destination', sptREFERENCE, ['Location'], 'MedicationDispense.destination', sxpNormal);
   indexes.add('MedicationDispense', 'encounter', 'Returns dispenses with a specific encounter', sptREFERENCE, ['Encounter'], 'MedicationDispense.encounter', sxpNormal);
   indexes.add('MedicationDispense', 'identifier', '): Returns dispenses with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -3261,15 +3338,15 @@ begin
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier'+
    ' | VisionPrescription.identifier', sxpNormal);
-  indexes.add('MedicationDispense', 'medication', '): Returns dispenses of this medicine resource', sptREFERENCE, ['Medication'], '(MedicationAdministration.medication as Reference) | (MedicationDispense.medication as Reference) | (MedicationRequest.medication as Reference) | (MedicationUsage.medication as Reference)', sxpNormal);
+  indexes.add('MedicationDispense', 'medication', '): Returns dispenses of this medicine resource', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationDispense', 'patient', '): The identity of a patient to list dispenses  for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient |'+
-   ' List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
-  indexes.add('MedicationDispense', 'performer', 'Returns dispenses performed by a specific individual', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationDispense.performer.actor', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patie'+
+   'nt) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+  indexes.add('MedicationDispense', 'performer', 'Returns dispenses performed by a specific individual', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationDispense.performer.actor', sxpNormal);
   indexes.add('MedicationDispense', 'prescription', '): The identity of a prescription to list dispenses from', sptREFERENCE, ['MedicationRequest'], 'MedicationDispense.authorizingPrescription', sxpNormal);
   indexes.add('MedicationDispense', 'receiver', 'The identity of a receiver to list dispenses for', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson', 'Location'], 'MedicationDispense.receiver', sxpNormal);
   indexes.add('MedicationDispense', 'responsibleparty', 'Returns dispenses with the specified responsible party', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'MedicationDispense.substitution.responsibleParty', sxpNormal);
@@ -3302,8 +3379,8 @@ begin
   indexes.add('MedicationKnowledge', 'code', 'Code that identifies this medication', sptTOKEN, [], 'MedicationKnowledge.code', sxpNormal);
   indexes.add('MedicationKnowledge', 'doseform', 'powder | tablets | capsule +', sptTOKEN, [], 'MedicationKnowledge.doseForm', sxpNormal);
   indexes.add('MedicationKnowledge', 'identifier', 'Business identifier for this medication', sptTOKEN, [], 'MedicationKnowledge.identifier', sxpNormal);
-  indexes.add('MedicationKnowledge', 'ingredient', 'Medication(s) or MedicinalProductIngredient(s) contained in the medication', sptREFERENCE, ['Ingredient'], '(MedicationKnowledge.ingredient.item as Reference)', sxpNormal);
-  indexes.add('MedicationKnowledge', 'ingredient-code', 'Medication(s) or MedicinalProductIngredient(s) contained in the medication', sptTOKEN, [], '(MedicationKnowledge.ingredient.item as CodeableConcept)', sxpNormal);
+  indexes.add('MedicationKnowledge', 'ingredient', 'Reference to a resource (by instance)', sptREFERENCE, [], 'MedicationKnowledge.ingredient.item.reference', sxpNormal);
+  indexes.add('MedicationKnowledge', 'ingredient-code', 'Reference to a concept (by class)', sptTOKEN, [], 'MedicationKnowledge.ingredient.item.concept', sxpNormal);
   indexes.add('MedicationKnowledge', 'manufacturer', 'Manufacturer of the item', sptREFERENCE, ['Organization'], 'MedicationKnowledge.manufacturer', sxpNormal);
   indexes.add('MedicationKnowledge', 'monitoring-program-name', 'Name of the reviewing program', sptTOKEN, [], 'MedicationKnowledge.monitoringProgram.name', sxpNormal);
   indexes.add('MedicationKnowledge', 'monitoring-program-type', 'Type of program under which the medication is monitored', sptTOKEN, [], 'MedicationKnowledge.monitoringProgram.type', sxpNormal);
@@ -3330,8 +3407,8 @@ begin
   indexes.add('MedicationRequest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicationRequest', 'authoredon', 'Return prescriptions written on this date', sptDATE, [], 'MedicationRequest.authoredOn', sxpNormal);
   indexes.add('MedicationRequest', 'category', 'Returns prescriptions with different categories', sptTOKEN, [], 'MedicationRequest.category', sxpNormal);
-  indexes.add('MedicationRequest', 'code', '): Return prescriptions of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('MedicationRequest', 'code', '): Return prescriptions of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('MedicationRequest', 'date', '): Returns medication request to be administered on a specific date', sptDATE, [], 'MedicationAdministration.occurence | MedicationRequest.dosageInstruction.timing.event', sxpNormal);
   indexes.add('MedicationRequest', 'encounter', '): Return prescriptions with this encounter identifier', sptREFERENCE, ['Encounter'], 'MedicationAdministration.encounter | MedicationRequest.encounter', sxpNormal);
   indexes.add('MedicationRequest', 'identifier', '): Return prescriptions with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -3343,14 +3420,14 @@ begin
   indexes.add('MedicationRequest', 'intended-performer', 'Returns the intended performer of the administration of the medication request', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'MedicationRequest.performer', sxpNormal);
   indexes.add('MedicationRequest', 'intended-performertype', 'Returns requests for a specific type of performer', sptTOKEN, [], 'MedicationRequest.performerType', sxpNormal);
   indexes.add('MedicationRequest', 'intent', 'Returns prescriptions with different intents', sptTOKEN, [], 'MedicationRequest.intent', sxpNormal);
-  indexes.add('MedicationRequest', 'medication', '): Return prescriptions for this medication reference', sptREFERENCE, ['Medication'], '(MedicationAdministration.medication as Reference) | (MedicationDispense.medication as Reference) | (MedicationRequest.medication as Reference) | (MedicationUsage.medication as Reference)', sxpNormal);
+  indexes.add('MedicationRequest', 'medication', '): Return prescriptions for this medication reference', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationRequest', 'patient', '): Returns prescriptions for a specific patient', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List'+
-   '.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) |'+
+   ' Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('MedicationRequest', 'priority', 'Returns prescriptions with different priorities', sptTOKEN, [], 'MedicationRequest.priority', sxpNormal);
   indexes.add('MedicationRequest', 'requester', 'Returns prescriptions prescribed by this prescriber', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationRequest.requester', sxpNormal);
   indexes.add('MedicationRequest', 'status', '): Status of the prescription', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
@@ -3376,8 +3453,8 @@ begin
   indexes.add('MedicationUsage', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('MedicationUsage', 'adherence', 'Returns statements based on adherence or compliance', sptTOKEN, [], 'MedicationUsage.takenAsOrdered', sxpNormal);
   indexes.add('MedicationUsage', 'category', 'Returns statements of this category of MedicationUsage', sptTOKEN, [], 'MedicationUsage.category', sxpNormal);
-  indexes.add('MedicationUsage', 'code', '): Return statements of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('MedicationUsage', 'code', '): Return statements of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('MedicationUsage', 'effective', 'Date when patient was taking (or not taking) the medication', sptDATE, [], 'MedicationUsage.effective', sxpNormal);
   indexes.add('MedicationUsage', 'encounter', 'Returns statements for a specific encounter', sptREFERENCE, ['Encounter'], 'MedicationUsage.encounter', sxpNormal);
   indexes.add('MedicationUsage', 'identifier', '): Return statements with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -3385,15 +3462,15 @@ begin
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | '+
    'VisionPrescription.identifier', sxpNormal);
-  indexes.add('MedicationUsage', 'medication', '): Return statements of this medication reference', sptREFERENCE, ['Medication'], '(MedicationAdministration.medication as Reference) | (MedicationDispense.medication as Reference) | (MedicationRequest.medication as Reference) | (MedicationUsage.medication as Reference)', sxpNormal);
+  indexes.add('MedicationUsage', 'medication', '): Return statements of this medication reference', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationUsage', 'part-of', 'Returns statements that are part of another event.', sptREFERENCE, ['MedicationDispense', 'Observation', 'MedicationAdministration', 'Procedure', 'MedicationUsage'], 'MedicationUsage.partOf', sxpNormal);
   indexes.add('MedicationUsage', 'patient', '): Returns statements for a specific patient.', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.sub'+
-   'ject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Imm'+
+   'unization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('MedicationUsage', 'source', 'Who or where the information in the statement came from', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationUsage.informationSource', sxpNormal);
   indexes.add('MedicationUsage', 'status', '): Return statements that match the given status', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
   indexes.add('MedicationUsage', 'subject', 'The identity of a patient, animal or group to list statements for', sptREFERENCE, ['Group', 'Patient'], 'MedicationUsage.subject', sxpNormal);
@@ -3417,12 +3494,16 @@ begin
   indexes.add('MedicinalProductDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'characteristic', 'Allows the key product features to be recorded, such as "suger free", "modified release", "parallel import"', sptTOKEN, [], 'MedicinalProductDefinition.characteristic', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'contact', 'A product specific contact, person (in a role), or an organization', sptREFERENCE, ['Organization', 'PractitionerRole'], 'MedicinalProductDefinition.contact.contact', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'domain', 'If this medicine applies to human or veterinary uses', sptTOKEN, [], 'MedicinalProductDefinition.domain', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'identifier', 'Business identifier for this product. Could be an MPID', sptTOKEN, [], 'MedicinalProductDefinition.identifier', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'master-file', 'A master file for to the medicinal product (e.g. Pharmacovigilance System Master File)', sptREFERENCE, ['DocumentReference'], 'MedicinalProductDefinition.masterFile', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'name', 'The full product name', sptSTRING, [], 'MedicinalProductDefinition.name.productName', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'name-language', 'Language code for this name', sptTOKEN, [], 'MedicinalProductDefinition.name.countryLanguage.language', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'product-classification', 'Allows the product to be classified by various systems', sptTOKEN, [], 'MedicinalProductDefinition.productClassification', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'status', 'The status within the lifecycle of this product. A high level status, this is not intended to duplicate details carried elswhere such as legal status, or authorization status', sptTOKEN, [], 'MedicinalProductDefinition.status', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'type', 'Regulatory type, e.g. Investigational or Authorized', sptTOKEN, [], 'MedicinalProductDefinition.type', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MEDICINALPRODUCTDEFINITION}
@@ -3463,7 +3544,7 @@ begin
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
   indexes.add('MessageDefinition', 'event', 'The event that triggers the message or link to the event definition.', sptTOKEN, [], 'MessageDefinition.event', sxpNormal);
   indexes.add('MessageDefinition', 'focus', 'A resource that is a permitted focus of the message', sptTOKEN, [], 'MessageDefinition.focus.code', sxpNormal);
-  indexes.add('MessageDefinition', 'identifier', '): External identifier for the message definition', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
+  indexes.add('MessageDefinition', 'identifier', '): External identifier for the message definition', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('MessageDefinition', 'jurisdiction', '): Intended jurisdiction for the message definition', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('MessageDefinition', 'name', '): Computationally friendly name of the message definition', sptSTRING, [], 'CapabilityStatement.name | CodeSystem.name | CompartmentDefinition.name | ConceptMap.name | GraphDefinition.name | ImplementationGuide.name | MessageDefinition.name | NamingSystem.name | OperationDefinition.name | SearchParameter.name | StructureDefi'
@@ -3625,14 +3706,14 @@ begin
   indexes.add('NutritionIntake', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('NutritionIntake', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('NutritionIntake', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('NutritionIntake', 'category', 'Returns statements of this category of NutritionIntake', sptTOKEN, [], 'NutritionIntake.category', sxpNormal);
-  indexes.add('NutritionIntake', 'effective', 'Date when patient was taking (or not taking) the medication', sptDATE, [], 'NutritionIntake.effective', sxpNormal);
+  indexes.add('NutritionIntake', 'code', 'Returns statements of this code of NutritionIntake', sptTOKEN, [], 'NutritionIntake.code', sxpNormal);
+  indexes.add('NutritionIntake', 'date', 'Date when patient was taking (or not taking) the medication', sptDATE, [], 'NutritionIntake.occurrence', sxpNormal);
   indexes.add('NutritionIntake', 'encounter', 'Returns statements for a specific encounter', sptREFERENCE, ['Encounter'], 'NutritionIntake.encounter', sxpNormal);
   indexes.add('NutritionIntake', 'identifier', 'Return statements with this external identifier', sptTOKEN, [], 'NutritionIntake.identifier', sxpNormal);
   indexes.add('NutritionIntake', 'nutrition', 'Return statements of this medication reference', sptTOKEN, [], 'NutritionIntake.consumedItem.nutritionProduct', sxpNormal);
   indexes.add('NutritionIntake', 'part-of', 'Returns statements that are part of another event.', sptREFERENCE, ['Observation', 'Procedure', 'NutritionIntake'], 'NutritionIntake.partOf', sxpNormal);
   indexes.add('NutritionIntake', 'patient', 'Returns statements for a specific patient.', sptREFERENCE, ['Patient'], 'NutritionIntake.subject.where(resolve() is Patient)', sxpNormal);
-  indexes.add('NutritionIntake', 'source', 'Who or where the information in the statement came from', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'NutritionIntake.informationSource', sxpNormal);
+  indexes.add('NutritionIntake', 'source', 'Who or where the information in the statement came from', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], '(NutritionIntake.reported as Reference)', sxpNormal);
   indexes.add('NutritionIntake', 'status', 'Return statements that match the given status', sptTOKEN, [], 'NutritionIntake.status', sxpNormal);
   indexes.add('NutritionIntake', 'subject', 'The identity of a patient, animal or group to list statements for', sptREFERENCE, ['Group', 'Patient'], 'NutritionIntake.subject', sxpNormal);
   indexes.add('NutritionIntake', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -3669,12 +3750,12 @@ begin
   indexes.add('NutritionOrder', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'NutritionOrder.instantiatesUri', sxpNormal);
   indexes.add('NutritionOrder', 'oraldiet', 'Type of diet that can be consumed orally (i.e., take via the mouth).', sptTOKEN, [], 'NutritionOrder.oralDiet.type', sxpNormal);
   indexes.add('NutritionOrder', 'patient', '): The identity of the person who requires the diet, formula or nutritional supplement', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Pa'+
-   'tient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.s'+
+   'ubject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('NutritionOrder', 'provider', 'The identity of the provider who placed the nutrition order', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'NutritionOrder.orderer', sxpNormal);
   indexes.add('NutritionOrder', 'status', 'Status of the nutrition order.', sptTOKEN, [], 'NutritionOrder.status', sxpNormal);
   indexes.add('NutritionOrder', 'supplement', 'Type of supplement product requested', sptTOKEN, [], 'NutritionOrder.supplement.type', sxpNormal);
@@ -3684,6 +3765,24 @@ begin
   compartments.register('Practitioner', 'NutritionOrder', ['provider']);
 end;
 {$ENDIF FHIR_NUTRITIONORDER}
+
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+procedure TFHIRIndexBuilderR5.buildIndexesForNutritionProduct(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('NutritionProduct', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('NutritionProduct', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('NutritionProduct', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('NutritionProduct', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('NutritionProduct', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('NutritionProduct', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('NutritionProduct', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('NutritionProduct', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('NutritionProduct', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('NutritionProduct', 'identifier', 'The identifier for the physical instance, typically a serial number', sptTOKEN, [], 'NutritionProduct.instance.identifier', sxpNormal);
+  indexes.add('NutritionProduct', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'NutritionProduct.status', sxpNormal);
+  indexes.add('NutritionProduct', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 
 {$IFDEF FHIR_OBSERVATION}
 procedure TFHIRIndexBuilderR5.buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -3700,8 +3799,8 @@ begin
   indexes.add('Observation', 'amino-acid-change', 'HGVS Protein Change', sptSTRING, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsAminoAcidChangeName'')', sxpNormal);
   indexes.add('Observation', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'], 'Observation.basedOn', sxpNormal);
   indexes.add('Observation', 'category', 'The classification of the type of observation', sptTOKEN, [], 'Observation.category', sxpNormal);
-  indexes.add('Observation', 'code', '): The code of the observation type', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('Observation', 'code', '): The code of the observation type', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('Observation', 'code-value-concept', 'Code and coded value parameter pair', sptCOMPOSITE, [], 'Observation', sxpNormal);
   indexes.add('Observation', 'code-value-date', 'Code and date/time value parameter pair', sptCOMPOSITE, [], 'Observation', sxpNormal);
   indexes.add('Observation', 'code-value-quantity', 'Code and quantity value parameter pair', sptCOMPOSITE, [], 'Observation', sxpNormal);
@@ -3719,8 +3818,8 @@ begin
   indexes.add('Observation', 'component-value-concept', 'The value of the component observation, if the value is a CodeableConcept', sptTOKEN, [], '(Observation.component.value as CodeableConcept)', sxpNormal);
   indexes.add('Observation', 'component-value-quantity', 'The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.component.value as Quantity) | (Observation.component.value as SampledData)', sxpNormal);
   indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', sptTOKEN, [], 'Observation.dataAbsentReason', sxpNormal);
-  indexes.add('Observation', 'date', '): Obtained date/time. If the obtained element is a period, a date that falls in the period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Observation', 'date', '): Obtained date/time. If the obtained element is a period, a date that falls in the period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Observation', 'derived-from', 'Related measurements the observation is made from', sptREFERENCE, ['Observation', 'ImagingStudy', 'MolecularSequence', 'QuestionnaireResponse', 'DocumentReference'], 'Observation.derivedFrom', sxpNormal);
   indexes.add('Observation', 'device', 'The Device that generated the observation data.', sptREFERENCE, ['Device', 'DeviceMetric'], 'Observation.device', sxpNormal);
   indexes.add('Observation', 'dna-variant', 'HGVS DNA variant', sptSTRING, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDnaVariant'')', sxpNormal);
@@ -3739,12 +3838,12 @@ begin
   indexes.add('Observation', 'method', 'The method used for the observation', sptTOKEN, [], 'Observation.method', sxpNormal);
   indexes.add('Observation', 'part-of', 'Part of referenced event', sptREFERENCE, ['Immunization', 'MedicationDispense', 'MedicationAdministration', 'Procedure', 'ImagingStudy', 'MedicationUsage'], 'Observation.partOf', sxpNormal);
   indexes.add('Observation', 'patient', '): The subject that the observation is about (if patient)', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | '+
-   'List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patien'+
+   't) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Observation', 'performer', 'Who performed the observation', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Observation.performer', sxpNormal);
   indexes.add('Observation', 'specimen', 'Specimen used for this observation', sptREFERENCE, ['Specimen'], 'Observation.specimen', sxpNormal);
   indexes.add('Observation', 'status', 'The status of the observation', sptTOKEN, [], 'Observation.status', sxpNormal);
@@ -3781,6 +3880,7 @@ begin
   indexes.add('ObservationDefinition', 'method', 'Method of observation', sptTOKEN, [], 'ObservationDefinition.method', sxpNormal);
   indexes.add('ObservationDefinition', 'status', 'Publication status of the ObservationDefinition: draft, active, retired, unknown', sptTOKEN, [], 'ObservationDefinition.status', sxpNormal);
   indexes.add('ObservationDefinition', 'title', 'Human-friendly name of the ObservationDefinition', sptSTRING, [], 'ObservationDefinition.title', sxpNormal);
+  indexes.add('ObservationDefinition', 'url', 'The uri that identifies the observation definition', sptURI, [], 'ObservationDefinition.url', sxpNormal);
   indexes.add('ObservationDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_OBSERVATIONDEFINITION}
@@ -3933,6 +4033,8 @@ begin
   indexes.add('PackagedProductDefinition', 'device', 'A device associated within packaged product', sptREFERENCE, ['DeviceDefinition'], '', sxpNormal);
   indexes.add('PackagedProductDefinition', 'identifier', 'Unique identifier', sptTOKEN, [], 'PackagedProductDefinition.identifier', sxpNormal);
   indexes.add('PackagedProductDefinition', 'manufactured-item', 'A manufactured item of medication within this packaged product', sptREFERENCE, ['ManufacturedItemDefinition'], '', sxpNormal);
+  indexes.add('PackagedProductDefinition', 'name', 'A name for this product pack. Typically what it would be listed as in a drug formulary', sptTOKEN, [], 'PackagedProductDefinition.name', sxpNormal);
+  indexes.add('PackagedProductDefinition', 'status', 'The status within the lifecycle of this product. A high level status, this is not intended to duplicate details carried elswhere such as legal status, or authorization or marketing status', sptTOKEN, [], 'PackagedProductDefinition.status', sxpNormal);
   indexes.add('PackagedProductDefinition', 'subject', 'The product that this is a pack for', sptREFERENCE, ['MedicinalProductDefinition'], 'PackagedProductDefinition.subject', sxpNormal);
   indexes.add('PackagedProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
@@ -4047,6 +4149,23 @@ begin
   compartments.register('Practitioner', 'PaymentReconciliation', ['requestor']);
 end;
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+
+{$IFDEF FHIR_PERMISSION}
+procedure TFHIRIndexBuilderR5.buildIndexesForPermission(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('Permission', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('Permission', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('Permission', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('Permission', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('Permission', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Permission', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('Permission', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('Permission', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('Permission', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Permission', 'status', 'active | entered-in-error | draft | rejected', sptTOKEN, [], 'Permission.status', sxpNormal);
+  indexes.add('Permission', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_PERMISSION}
 
 {$IFDEF FHIR_PERSON}
 procedure TFHIRIndexBuilderR5.buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -4204,10 +4323,10 @@ begin
   indexes.add('Procedure', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Procedure', 'based-on', 'A request for this procedure', sptREFERENCE, ['CarePlan', 'ServiceRequest'], 'Procedure.basedOn', sxpNormal);
   indexes.add('Procedure', 'category', 'Classification of the procedure', sptTOKEN, [], 'Procedure.category', sxpNormal);
-  indexes.add('Procedure', 'code', '): A code to identify a  procedure', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('Procedure', 'date', '): When the procedure occurred or is occurring', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Procedure', 'code', '): A code to identify a  procedure', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('Procedure', 'date', '): When the procedure occurred or is occurring', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Procedure', 'encounter', '): The Encounter during which this Procedure was created', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Procedure', 'identifier', '): A unique identifier for a procedure', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -4220,12 +4339,12 @@ begin
   indexes.add('Procedure', 'location', 'Where the procedure happened', sptREFERENCE, ['Location'], 'Procedure.location', sxpNormal);
   indexes.add('Procedure', 'part-of', 'Part of referenced event', sptREFERENCE, ['Observation', 'Procedure', 'MedicationAdministration'], 'Procedure.partOf', sxpNormal);
   indexes.add('Procedure', 'patient', '): Search by subject - a patient', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve('+
-   ') is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient |'+
+   ' List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Procedure', 'performer', 'Who performed the procedure', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'Procedure.performer.actor', sxpNormal);
   indexes.add('Procedure', 'reason-code', 'Reference to a concept (by class)', sptTOKEN, [], 'Procedure.reason.concept', sxpNormal);
   indexes.add('Procedure', 'reason-reference', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Procedure.reason.reference', sxpNormal);
@@ -4351,12 +4470,12 @@ begin
   indexes.add('RegulatedAuthorization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('RegulatedAuthorization', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('RegulatedAuthorization', 'case', 'The case or procedure number', sptTOKEN, [], 'RegulatedAuthorization.case.identifier', sxpNormal);
-  indexes.add('RegulatedAuthorization', 'case-type', 'Type of case', sptTOKEN, [], 'RegulatedAuthorization.case.type', sxpNormal);
+  indexes.add('RegulatedAuthorization', 'case-type', 'The defining type of case', sptTOKEN, [], 'RegulatedAuthorization.case.type', sxpNormal);
   indexes.add('RegulatedAuthorization', 'holder', 'Marketing Authorization Holder', sptREFERENCE, ['Organization'], 'RegulatedAuthorization.holder', sxpNormal);
-  indexes.add('RegulatedAuthorization', 'identifier', 'Business identifier for the marketing authorization, as assigned by a regulator', sptTOKEN, [], 'RegulatedAuthorization.identifier', sxpNormal);
+  indexes.add('RegulatedAuthorization', 'identifier', 'Business identifier for the authorization, typically assigned by the authorizing body', sptTOKEN, [], 'RegulatedAuthorization.identifier', sxpNormal);
   indexes.add('RegulatedAuthorization', 'region', 'The region (country, jurisdiction etc.) in which the marketing authorization has been granted', sptTOKEN, [], 'RegulatedAuthorization.region', sxpNormal);
-  indexes.add('RegulatedAuthorization', 'status', 'The status of the marketing authorization', sptTOKEN, [], 'RegulatedAuthorization.status', sxpNormal);
-  indexes.add('RegulatedAuthorization', 'subject', 'The product that is being authorized', sptREFERENCE, ['MedicinalProductDefinition', 'DeviceDefinition', 'ObservationDefinition', 'PlanDefinition', 'PackagedProductDefinition', 'ResearchStudy', 'ActivityDefinition'], 'RegulatedAuthorization.subject', sxpNormal);
+  indexes.add('RegulatedAuthorization', 'status', 'The status that is authorised e.g. approved. Intermediate states can be tracked with cases and applications', sptTOKEN, [], 'RegulatedAuthorization.status', sxpNormal);
+  indexes.add('RegulatedAuthorization', 'subject', 'The type of product or service that is being authorized', sptREFERENCE, ['MedicinalProductDefinition', 'DeviceDefinition', 'ObservationDefinition', 'PlanDefinition', 'PackagedProductDefinition', 'ResearchStudy', 'ActivityDefinition'], 'RegulatedAuthorization.subject', sxpNormal);
   indexes.add('RegulatedAuthorization', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_REGULATEDAUTHORIZATION}
@@ -4498,8 +4617,8 @@ begin
   indexes.add('RiskAssessment', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('RiskAssessment', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('RiskAssessment', 'condition', 'Condition assessed', sptREFERENCE, ['Condition'], 'RiskAssessment.condition', sxpNormal);
-  indexes.add('RiskAssessment', 'date', '): When was assessment made?', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('RiskAssessment', 'date', '): When was assessment made?', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('RiskAssessment', 'encounter', '): Where was assessment performed?', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('RiskAssessment', 'identifier', '): Unique identifier for the assessment', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -4509,12 +4628,12 @@ begin
    'iption.identifier', sxpNormal);
   indexes.add('RiskAssessment', 'method', 'Evaluation mechanism', sptTOKEN, [], 'RiskAssessment.method', sxpNormal);
   indexes.add('RiskAssessment', 'patient', '): Who/what does assessment apply to?', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.wher'+
-   'e(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization'+
+   '.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('RiskAssessment', 'performer', 'Who did assessment?', sptREFERENCE, ['Practitioner', 'Device', 'PractitionerRole'], 'RiskAssessment.performer', sxpNormal);
   indexes.add('RiskAssessment', 'probability', 'Likelihood of specified outcome', sptNUMBER, [], 'RiskAssessment.prediction.probability', sxpNormal);
   indexes.add('RiskAssessment', 'risk', 'Likelihood of specified outcome as a qualitative value', sptTOKEN, [], 'RiskAssessment.prediction.qualitativeRisk', sxpNormal);
@@ -4624,8 +4743,8 @@ begin
   indexes.add('ServiceRequest', 'based-on', 'What request fulfills', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'ServiceRequest'], 'ServiceRequest.basedOn', sxpNormal);
   indexes.add('ServiceRequest', 'body-site', 'Where procedure is going to be done', sptTOKEN, [], 'ServiceRequest.bodySite', sxpNormal);
   indexes.add('ServiceRequest', 'category', 'Classification of service', sptTOKEN, [], 'ServiceRequest.category', sxpNormal);
-  indexes.add('ServiceRequest', 'code', '): What is being requested/ordered', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.code as CodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicati'
-      +'on as CodeableConcept) | (MedicationDispense.medication as CodeableConcept) | (MedicationRequest.medication as CodeableConcept) | (MedicationUsage.medication as CodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
+  indexes.add('ServiceRequest', 'code', '): What is being requested/ordered', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
+      +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('ServiceRequest', 'encounter', '): An encounter in which this request is made', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter |'
       +' ServiceRequest.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('ServiceRequest', 'identifier', '): Identifiers assigned to this order', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -4638,12 +4757,12 @@ begin
   indexes.add('ServiceRequest', 'intent', 'proposal | plan | directive | order +', sptTOKEN, [], 'ServiceRequest.intent', sxpNormal);
   indexes.add('ServiceRequest', 'occurrence', 'When service should occur', sptDATE, [], 'ServiceRequest.occurrence', sxpNormal);
   indexes.add('ServiceRequest', 'patient', '): Search by subject - a patient', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.where(res'+
-   'olve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.pati'+
+   'ent | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('ServiceRequest', 'performer', 'Requested performer', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'ServiceRequest.performer', sxpNormal);
   indexes.add('ServiceRequest', 'performer-type', 'Performer role', sptTOKEN, [], 'ServiceRequest.performerType', sxpNormal);
   indexes.add('ServiceRequest', 'priority', 'routine | urgent | asap | stat', sptTOKEN, [], 'ServiceRequest.priority', sxpNormal);
@@ -4737,6 +4856,7 @@ begin
   indexes.add('SpecimenDefinition', 'title', 'Human-friendly name of the SpecimenDefinition', sptSTRING, [], 'SpecimenDefinition.title', sxpNormal);
   indexes.add('SpecimenDefinition', 'type', 'The type of collected specimen', sptTOKEN, [], 'SpecimenDefinition.typeCollected', sxpNormal);
   indexes.add('SpecimenDefinition', 'type-tested', 'The type of specimen conditioned for testing', sptTOKEN, [], 'SpecimenDefinition.typeTested.type', sxpNormal);
+  indexes.add('SpecimenDefinition', 'url', 'The uri that identifies the specimen definition', sptURI, [], 'SpecimenDefinition.url', sxpNormal);
   indexes.add('SpecimenDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SPECIMENDEFINITION}
@@ -4780,7 +4900,7 @@ begin
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
   indexes.add('StructureDefinition', 'experimental', 'For testing purposes, not real usage', sptTOKEN, [], 'StructureDefinition.experimental', sxpNormal);
   indexes.add('StructureDefinition', 'ext-context', 'The system is the URL for the context-type: e.g. http://hl7.org/fhir/extension-context-type#element|CodeableConcept.text', sptTOKEN, [], 'StructureDefinition.context', sxpNormal);
-  indexes.add('StructureDefinition', 'identifier', '): External identifier for the structure definition', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
+  indexes.add('StructureDefinition', 'identifier', '): External identifier for the structure definition', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('StructureDefinition', 'jurisdiction', '): Intended jurisdiction for the structure definition', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('StructureDefinition', 'keyword', 'A code for the StructureDefinition', sptTOKEN, [], 'StructureDefinition.keyword', sxpNormal);
@@ -4836,7 +4956,7 @@ begin
       +'nition.date | StructureMap.date | TerminologyCapabilities.date | ValueSet.date', sxpNormal);
   indexes.add('StructureMap', 'description', '): The description of the structure map', sptSTRING, [], 'CapabilityStatement.description | CodeSystem.description | CompartmentDefinition.description | ConceptMap.description | GraphDefinition.description | ImplementationGuide.description | MessageDefinition.description | NamingSystem.description | Operati'
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
-  indexes.add('StructureMap', 'identifier', '): External identifier for the structure map', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
+  indexes.add('StructureMap', 'identifier', '): External identifier for the structure map', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('StructureMap', 'jurisdiction', '): Intended jurisdiction for the structure map', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('StructureMap', 'name', '): Computationally friendly name of the structure map', sptSTRING, [], 'CapabilityStatement.name | CodeSystem.name | CompartmentDefinition.name | ConceptMap.name | GraphDefinition.name | ImplementationGuide.name | MessageDefinition.name | NamingSystem.name | OperationDefinition.name | SearchParameter.name | StructureDefi'
@@ -4867,13 +4987,54 @@ begin
   indexes.add('Subscription', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Subscription', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Subscription', 'contact', 'Contact details for the subscription', sptTOKEN, [], 'Subscription.contact', sxpNormal);
-  indexes.add('Subscription', 'payload', 'The mime-type of the notification payload', sptTOKEN, [], 'Subscription.channel.payload.contentType', sxpNormal);
+  indexes.add('Subscription', 'payload', 'The mime-type of the notification payload', sptTOKEN, [], '', sxpNormal);
   indexes.add('Subscription', 'status', 'The current state of the subscription', sptTOKEN, [], 'Subscription.status', sxpNormal);
-  indexes.add('Subscription', 'type', 'The type of channel for the sent notifications', sptTOKEN, [], 'Subscription.channel.type', sxpNormal);
-  indexes.add('Subscription', 'url', 'The uri that will receive the notifications', sptURI, [], 'Subscription.channel.endpoint', sxpNormal);
+  indexes.add('Subscription', 'type', 'The type of channel for the sent notifications', sptTOKEN, [], '', sxpNormal);
+  indexes.add('Subscription', 'url', 'The uri that will receive the notifications', sptURI, [], '', sxpNormal);
   indexes.add('Subscription', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSCRIPTION}
+
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+procedure TFHIRIndexBuilderR5.buildIndexesForSubscriptionStatus(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('SubscriptionStatus', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubscriptionStatus', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('SubscriptionStatus', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('SubscriptionStatus', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('SubscriptionStatus', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubscriptionStatus', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('SubscriptionStatus', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('SubscriptionStatus', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('SubscriptionStatus', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubscriptionStatus', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+procedure TFHIRIndexBuilderR5.buildIndexesForSubscriptionTopic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('SubscriptionTopic', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
+  indexes.add('SubscriptionTopic', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('SubscriptionTopic', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('SubscriptionTopic', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('SubscriptionTopic', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubscriptionTopic', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
+  indexes.add('SubscriptionTopic', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('SubscriptionTopic', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('SubscriptionTopic', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubscriptionTopic', 'date', 'Date status first applied', sptDATE, [], 'SubscriptionTopic.date', sxpNormal);
+  indexes.add('SubscriptionTopic', 'identifier', 'Business Identifier for SubscriptionTopic', sptTOKEN, [], 'SubscriptionTopic.identifier', sxpNormal);
+  indexes.add('SubscriptionTopic', 'publisher', 'The name of the individual or organization that published the SubscriptionTopic', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'SubscriptionTopic.publisher', sxpNormal);
+  indexes.add('SubscriptionTopic', 'resource-type', 'Candidate types for this subscription topic', sptTOKEN, [], 'SubscriptionTopic.resourceTrigger.resourceType', sxpNormal);
+  indexes.add('SubscriptionTopic', 'status', 'draft | active | retired | unknown', sptTOKEN, [], 'SubscriptionTopic.status', sxpNormal);
+  indexes.add('SubscriptionTopic', 'title', 'Name for this SubscriptionTopic (Human friendly)', sptSTRING, [], 'SubscriptionTopic.title', sxpNormal);
+  indexes.add('SubscriptionTopic', 'trigger-description', 'Text representation of the trigger', sptSTRING, [], 'SubscriptionTopic.resourceTrigger.description', sxpNormal);
+  indexes.add('SubscriptionTopic', 'url', 'Logical canonical URL to reference this SubscriptionTopic (globally unique)', sptURI, [], 'SubscriptionTopic.url', sxpNormal);
+  indexes.add('SubscriptionTopic', 'version', 'Business version of the SubscriptionTopic', sptTOKEN, [], 'SubscriptionTopic.version', sxpNormal);
+  indexes.add('SubscriptionTopic', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 
 {$IFDEF FHIR_SUBSTANCE}
 procedure TFHIRIndexBuilderR5.buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -4911,8 +5072,11 @@ begin
   indexes.add('SubstanceDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('SubstanceDefinition', 'category', 'High level categorization, e.g. polymer or nucleic acid, or food, chemical, biological', sptTOKEN, [], 'SubstanceDefinition.category', sxpNormal);
   indexes.add('SubstanceDefinition', 'code', 'The specific code', sptTOKEN, [], 'SubstanceDefinition.code.code', sxpNormal);
+  indexes.add('SubstanceDefinition', 'domain', 'If the substance applies to only human or veterinary use', sptTOKEN, [], 'SubstanceDefinition.domain', sxpNormal);
   indexes.add('SubstanceDefinition', 'identifier', 'Identifier by which this substance is known', sptTOKEN, [], 'SubstanceDefinition.identifier', sxpNormal);
+  indexes.add('SubstanceDefinition', 'name', 'The actual name', sptSTRING, [], 'SubstanceDefinition.name.name', sxpNormal);
   indexes.add('SubstanceDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_SUBSTANCEDEFINITION}
@@ -5014,12 +5178,12 @@ begin
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('SupplyDelivery', 'patient', '): Patient for whom the item is supplied', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.w'+
-   'here(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizat'+
+   'ion.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('SupplyDelivery', 'receiver', 'Who collected the Supply', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'SupplyDelivery.receiver', sxpNormal);
   indexes.add('SupplyDelivery', 'status', 'in-progress | completed | abandoned | entered-in-error', sptTOKEN, [], 'SupplyDelivery.status', sxpNormal);
   indexes.add('SupplyDelivery', 'supplier', 'Dispenser', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'SupplyDelivery.supplier', sxpNormal);
@@ -5042,8 +5206,8 @@ begin
   indexes.add('SupplyRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SupplyRequest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SupplyRequest', 'category', 'The kind of supply (central, non-stock, etc.)', sptTOKEN, [], 'SupplyRequest.category', sxpNormal);
-  indexes.add('SupplyRequest', 'date', '): When the request was made', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | Immunization.occurrenc'
-      +'e | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('SupplyRequest', 'date', '): When the request was made', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
+      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('SupplyRequest', 'identifier', '): Business Identifier for SupplyRequest', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Im'
       +'munization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identif'
@@ -5129,6 +5293,7 @@ begin
       +'nition.date | StructureMap.date | TerminologyCapabilities.date | ValueSet.date', sxpNormal);
   indexes.add('TerminologyCapabilities', 'description', '): The description of the terminology capabilities', sptSTRING, [], 'CapabilityStatement.description | CodeSystem.description | CompartmentDefinition.description | ConceptMap.description | GraphDefinition.description | ImplementationGuide.description | MessageDefinition.description | NamingSystem.description | Operati'
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
+  indexes.add('TerminologyCapabilities', 'identifier', '): External identifier for the terminology capabilities', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('TerminologyCapabilities', 'jurisdiction', '): Intended jurisdiction for the terminology capabilities', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('TerminologyCapabilities', 'name', '): Computationally friendly name of the terminology capabilities', sptSTRING, [], 'CapabilityStatement.name | CodeSystem.name | CompartmentDefinition.name | ConceptMap.name | GraphDefinition.name | ImplementationGuide.name | MessageDefinition.name | NamingSystem.name | OperationDefinition.name | SearchParameter.name | StructureDefi'
@@ -5200,31 +5365,6 @@ begin
 end;
 {$ENDIF FHIR_TESTSCRIPT}
 
-{$IFDEF FHIR_TOPIC}
-procedure TFHIRIndexBuilderR5.buildIndexesForTopic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('Topic', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('Topic', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
-  indexes.add('Topic', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('Topic', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Topic', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('Topic', '_query', 'A custom search profile that describes a specific defined query operation', sptTOKEN, [], '', sxpNormal);
-  indexes.add('Topic', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('Topic', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('Topic', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Topic', 'date', 'Date status first applied', sptDATE, [], 'Topic.date', sxpNormal);
-  indexes.add('Topic', 'identifier', 'Business Identifier for Topic', sptTOKEN, [], 'Topic.identifier', sxpNormal);
-  indexes.add('Topic', 'publisher', 'The name of the individual or organization that published the Topic', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'Topic.publisher', sxpNormal);
-  indexes.add('Topic', 'resource-type', 'Candidate types for this topic', sptTOKEN, [], 'Topic.resourceTrigger.resourceType', sxpNormal);
-  indexes.add('Topic', 'status', 'draft | active | retired | unknown', sptTOKEN, [], 'Topic.status', sxpNormal);
-  indexes.add('Topic', 'title', 'Name for this Topic (Human friendly)', sptSTRING, [], 'Topic.title', sxpNormal);
-  indexes.add('Topic', 'trigger-description', 'Text representation of the trigger', sptSTRING, [], 'Topic.resourceTrigger.description', sxpNormal);
-  indexes.add('Topic', 'url', 'Logical canonical URL to reference this Topic (globally unique)', sptURI, [], 'Topic.url', sxpNormal);
-  indexes.add('Topic', 'version', 'Business version of the Topic', sptTOKEN, [], 'Topic.version', sxpNormal);
-  indexes.add('Topic', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-end;
-{$ENDIF FHIR_TOPIC}
-
 {$IFDEF FHIR_VALUESET}
 procedure TFHIRIndexBuilderR5.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -5260,7 +5400,7 @@ begin
   indexes.add('ValueSet', 'description', '): The description of the value set', sptSTRING, [], 'CapabilityStatement.description | CodeSystem.description | CompartmentDefinition.description | ConceptMap.description | GraphDefinition.description | ImplementationGuide.description | MessageDefinition.description | NamingSystem.description | Operati'
       +'onDefinition.description | SearchParameter.description | StructureDefinition.description | StructureMap.description | TerminologyCapabilities.description | ValueSet.description', sxpNormal);
   indexes.add('ValueSet', 'expansion', 'Identifies the value set expansion (business identifier)', sptURI, [], 'ValueSet.expansion.identifier', sxpNormal);
-  indexes.add('ValueSet', 'identifier', '): External identifier for the value set', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | ValueSet.identifier', sxpNormal);
+  indexes.add('ValueSet', 'identifier', '): External identifier for the value set', sptTOKEN, [], 'CodeSystem.identifier | ConceptMap.identifier | MessageDefinition.identifier | StructureDefinition.identifier | StructureMap.identifier | TerminologyCapabilities.identifier | ValueSet.identifier', sxpNormal);
   indexes.add('ValueSet', 'jurisdiction', '): Intended jurisdiction for the value set', sptTOKEN, [], 'CapabilityStatement.jurisdiction | CodeSystem.jurisdiction | ConceptMap.jurisdiction | GraphDefinition.jurisdiction | ImplementationGuide.jurisdiction | MessageDefinition.jurisdiction | NamingSystem.jurisdiction | OperationDefinition.jurisdiction | S'
       +'earchParameter.jurisdiction | StructureDefinition.jurisdiction | StructureMap.jurisdiction | TerminologyCapabilities.jurisdiction | ValueSet.jurisdiction', sxpNormal);
   indexes.add('ValueSet', 'name', '): Computationally friendly name of the value set', sptSTRING, [], 'CapabilityStatement.name | CodeSystem.name | CompartmentDefinition.name | ConceptMap.name | GraphDefinition.name | ImplementationGuide.name | MessageDefinition.name | NamingSystem.name | OperationDefinition.name | SearchParameter.name | StructureDefi'
@@ -5317,12 +5457,12 @@ begin
       +'ier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identif'+
    'ier | VisionPrescription.identifier', sxpNormal);
   indexes.add('VisionPrescription', 'patient', '): The identity of a patient to list dispenses for', sptREFERENCE, ['Patient', 'Group'], 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.patient | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifest.subject.where(resol'
-      +'ve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | Goal.subject.where(res'
-      +'olve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | '+
-   'List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.subject.where(resolve('
-      +') is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.where(resolve() is Pati'
-      +'ent) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUseStatement.subject | DiagnosticReport.subject.where(resolve() is Patient) | Document'
+      +'Manifest.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patie'
+      +'nt) | Goal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patien'+
+   't) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDis'
+      +'pense.subject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.sub'
+      +'ject.where(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('VisionPrescription', 'prescriber', 'Who authorized the vision prescription', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'VisionPrescription.prescriber', sxpNormal);
   indexes.add('VisionPrescription', 'status', 'The status of the vision prescription', sptTOKEN, [], 'VisionPrescription.status', sxpNormal);
   indexes.add('VisionPrescription', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -5395,6 +5535,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_CHARGEITEMDEFINITION}
   buildIndexesForChargeItemDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CITATION}
+  buildIndexesForCitation(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_CLAIM}
   buildIndexesForClaim(Indexes, compartments);
@@ -5494,6 +5637,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_EVIDENCE}
   buildIndexesForEvidence(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EVIDENCEFOCUS}
+  buildIndexesForEvidenceFocus(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_EVIDENCEVARIABLE}
   buildIndexesForEvidenceVariable(Indexes, compartments);
@@ -5609,6 +5755,9 @@ begin
   {$IFDEF FHIR_NUTRITIONORDER}
   buildIndexesForNutritionOrder(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_NUTRITIONPRODUCT}
+  buildIndexesForNutritionProduct(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_OBSERVATION}
   buildIndexesForObservation(Indexes, compartments);
   {$ENDIF}
@@ -5641,6 +5790,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_PAYMENTRECONCILIATION}
   buildIndexesForPaymentReconciliation(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PERMISSION}
+  buildIndexesForPermission(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_PERSON}
   buildIndexesForPerson(Indexes, compartments);
@@ -5711,6 +5863,12 @@ begin
   {$IFDEF FHIR_SUBSCRIPTION}
   buildIndexesForSubscription(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+  buildIndexesForSubscriptionStatus(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+  buildIndexesForSubscriptionTopic(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_SUBSTANCE}
   buildIndexesForSubstance(Indexes, compartments);
   {$ENDIF}
@@ -5749,9 +5907,6 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_TESTSCRIPT}
   buildIndexesForTestScript(Indexes, compartments);
-  {$ENDIF}
-  {$IFDEF FHIR_TOPIC}
-  buildIndexesForTopic(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_VALUESET}
   buildIndexesForValueSet(Indexes, compartments);

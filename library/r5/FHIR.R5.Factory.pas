@@ -817,6 +817,8 @@ begin
     result := TFhirHumanName.create()
   else if name = 'Identifier' then
     result := TFhirIdentifier.create()
+  else if name = 'Meta' then
+    result := TFhirMeta.create()
   else if name = 'Money' then
     result := TFhirMoney.create()
   else if name = 'Narrative' then
@@ -857,8 +859,6 @@ begin
     result := TFhirElementDefinition.create()
   else if name = 'MarketingStatus' then
     result := TFhirMarketingStatus.create()
-  else if name = 'Meta' then
-    result := TFhirMeta.create()
   else if name = 'OrderedDistribution' then
     result := TFhirOrderedDistribution.create()
   else if name = 'Population' then
@@ -898,8 +898,8 @@ begin
     result := TFhirActivityDefinition.create()
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
-  else if name = 'AdministrableProductDefinition.characteristic' then
-    result := TFhirAdministrableProductDefinitionCharacteristic.create()
+  else if name = 'AdministrableProductDefinition.property' then
+    result := TFhirAdministrableProductDefinitionProperty.create()
   else if name = 'AdministrableProductDefinition.routeOfAdministration' then
     result := TFhirAdministrableProductDefinitionRouteOfAdministration.create()
   else if name = 'AdministrableProductDefinition.routeOfAdministration.targetSpecies' then
@@ -1081,6 +1081,50 @@ begin
   else if name = 'ChargeItemDefinition' then
     result := TFhirChargeItemDefinition.create()
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+{$IFDEF FHIR_CITATION}
+  else if name = 'Citation.variantCitation' then
+    result := TFhirCitationVariantCitation.create()
+  else if name = 'Citation.journal' then
+    result := TFhirCitationJournal.create()
+  else if name = 'Citation.journal.journalIssue' then
+    result := TFhirCitationJournalJournalIssue.create()
+  else if name = 'Citation.alternativeTitle' then
+    result := TFhirCitationAlternativeTitle.create()
+  else if name = 'Citation.pagination' then
+    result := TFhirCitationPagination.create()
+  else if name = 'Citation.articleUrl' then
+    result := TFhirCitationArticleUrl.create()
+  else if name = 'Citation.alternativeAbstract' then
+    result := TFhirCitationAlternativeAbstract.create()
+  else if name = 'Citation.authorList' then
+    result := TFhirCitationAuthorList.create()
+  else if name = 'Citation.authorList.author' then
+    result := TFhirCitationAuthorListAuthor.create()
+  else if name = 'Citation.authorList.author.affiliationInfo' then
+    result := TFhirCitationAuthorListAuthorAffiliationInfo.create()
+  else if name = 'Citation.authorString' then
+    result := TFhirCitationAuthorString.create()
+  else if name = 'Citation.contributorList' then
+    result := TFhirCitationContributorList.create()
+  else if name = 'Citation.contributorList.contributor' then
+    result := TFhirCitationContributorListContributor.create()
+  else if name = 'Citation.contributorList.contributor.affiliationInfo' then
+    result := TFhirCitationContributorListContributorAffiliationInfo.create()
+  else if name = 'Citation.alternativeForm' then
+    result := TFhirCitationAlternativeForm.create()
+  else if name = 'Citation.alternativeForm.journalIssue' then
+    result := TFhirCitationAlternativeFormJournalIssue.create()
+  else if name = 'Citation.alternativeForm.pagination' then
+    result := TFhirCitationAlternativeFormPagination.create()
+  else if name = 'Citation.medlinePubMed' then
+    result := TFhirCitationMedlinePubMed.create()
+  else if name = 'Citation.medlinePubMed.pubMedPubDate' then
+    result := TFhirCitationMedlinePubMedPubMedPubDate.create()
+  else if name = 'Citation.medlinePubMed.relatedArticle' then
+    result := TFhirCitationMedlinePubMedRelatedArticle.create()
+  else if name = 'Citation' then
+    result := TFhirCitation.create()
+{$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
   else if name = 'Claim.related' then
     result := TFhirClaimRelated.create()
@@ -1338,6 +1382,10 @@ begin
     result := TFhirDeviceVersion.create()
   else if name = 'Device.property' then
     result := TFhirDeviceProperty.create()
+  else if name = 'Device.operationalStatus' then
+    result := TFhirDeviceOperationalStatus.create()
+  else if name = 'Device.associationStatus' then
+    result := TFhirDeviceAssociationStatus.create()
   else if name = 'Device' then
     result := TFhirDevice.create()
 {$ENDIF FHIR_DEVICE}
@@ -1436,8 +1484,6 @@ begin
     result := TFhirEventDefinition.create()
 {$ENDIF FHIR_EVENTDEFINITION}
 {$IFDEF FHIR_EVIDENCE}
-  else if name = 'Evidence.referentGroup' then
-    result := TFhirEvidenceReferentGroup.create()
   else if name = 'Evidence.variableDefinition' then
     result := TFhirEvidenceVariableDefinition.create()
   else if name = 'Evidence.certainty' then
@@ -1447,9 +1493,17 @@ begin
   else if name = 'Evidence' then
     result := TFhirEvidence.create()
 {$ENDIF FHIR_EVIDENCE}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+  else if name = 'EvidenceFocus.characteristic' then
+    result := TFhirEvidenceFocusCharacteristic.create()
+  else if name = 'EvidenceFocus' then
+    result := TFhirEvidenceFocus.create()
+{$ENDIF FHIR_EVIDENCEFOCUS}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   else if name = 'EvidenceVariable.characteristic' then
     result := TFhirEvidenceVariableCharacteristic.create()
+  else if name = 'EvidenceVariable.characteristic.timeFromStart' then
+    result := TFhirEvidenceVariableCharacteristicTimeFromStart.create()
   else if name = 'EvidenceVariable' then
     result := TFhirEvidenceVariable.create()
 {$ENDIF FHIR_EVIDENCEVARIABLE}
@@ -1698,8 +1752,8 @@ begin
     result := TFhirLocation.create()
 {$ENDIF FHIR_LOCATION}
 {$IFDEF FHIR_MANUFACTUREDITEMDEFINITION}
-  else if name = 'ManufacturedItemDefinition.characteristic' then
-    result := TFhirManufacturedItemDefinitionCharacteristic.create()
+  else if name = 'ManufacturedItemDefinition.property' then
+    result := TFhirManufacturedItemDefinitionProperty.create()
   else if name = 'ManufacturedItemDefinition' then
     result := TFhirManufacturedItemDefinition.create()
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
@@ -1870,6 +1924,8 @@ begin
     result := TFhirNutritionIntakeConsumedItem.create()
   else if name = 'NutritionIntake.ingredientLabel' then
     result := TFhirNutritionIntakeIngredientLabel.create()
+  else if name = 'NutritionIntake.performer' then
+    result := TFhirNutritionIntakePerformer.create()
   else if name = 'NutritionIntake' then
     result := TFhirNutritionIntake.create()
 {$ENDIF FHIR_NUTRITIONINTAKE}
@@ -1889,6 +1945,18 @@ begin
   else if name = 'NutritionOrder' then
     result := TFhirNutritionOrder.create()
 {$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+  else if name = 'NutritionProduct.nutrient' then
+    result := TFhirNutritionProductNutrient.create()
+  else if name = 'NutritionProduct.ingredient' then
+    result := TFhirNutritionProductIngredient.create()
+  else if name = 'NutritionProduct.productCharacteristic' then
+    result := TFhirNutritionProductProductCharacteristic.create()
+  else if name = 'NutritionProduct.instance' then
+    result := TFhirNutritionProductInstance.create()
+  else if name = 'NutritionProduct' then
+    result := TFhirNutritionProduct.create()
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
   else if name = 'Observation.referenceRange' then
     result := TFhirObservationReferenceRange.create()
@@ -1940,8 +2008,8 @@ begin
     result := TFhirPackagedProductDefinitionBatchIdentifier.create()
   else if name = 'PackagedProductDefinition.package' then
     result := TFhirPackagedProductDefinitionPackage.create()
-  else if name = 'PackagedProductDefinition.package.characteristic' then
-    result := TFhirPackagedProductDefinitionPackageCharacteristic.create()
+  else if name = 'PackagedProductDefinition.package.property' then
+    result := TFhirPackagedProductDefinitionPackageProperty.create()
   else if name = 'PackagedProductDefinition.package.containedItem' then
     result := TFhirPackagedProductDefinitionPackageContainedItem.create()
   else if name = 'PackagedProductDefinition' then
@@ -1975,6 +2043,14 @@ begin
   else if name = 'PaymentReconciliation' then
     result := TFhirPaymentReconciliation.create()
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERMISSION}
+  else if name = 'Permission.processingActivity' then
+    result := TFhirPermissionProcessingActivity.create()
+  else if name = 'Permission.justification' then
+    result := TFhirPermissionJustification.create()
+  else if name = 'Permission' then
+    result := TFhirPermission.create()
+{$ENDIF FHIR_PERMISSION}
 {$IFDEF FHIR_PERSON}
   else if name = 'Person.link' then
     result := TFhirPersonLink.create()
@@ -2168,13 +2244,23 @@ begin
 {$IFDEF FHIR_SUBSCRIPTION}
   else if name = 'Subscription.filterBy' then
     result := TFhirSubscriptionFilterBy.create()
-  else if name = 'Subscription.channel' then
-    result := TFhirSubscriptionChannel.create()
-  else if name = 'Subscription.channel.payload' then
-    result := TFhirSubscriptionChannelPayload.create()
   else if name = 'Subscription' then
     result := TFhirSubscription.create()
 {$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+  else if name = 'SubscriptionStatus' then
+    result := TFhirSubscriptionStatus.create()
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+  else if name = 'SubscriptionTopic.resourceTrigger' then
+    result := TFhirSubscriptionTopicResourceTrigger.create()
+  else if name = 'SubscriptionTopic.resourceTrigger.queryCriteria' then
+    result := TFhirSubscriptionTopicResourceTriggerQueryCriteria.create()
+  else if name = 'SubscriptionTopic.canFilterBy' then
+    result := TFhirSubscriptionTopicCanFilterBy.create()
+  else if name = 'SubscriptionTopic' then
+    result := TFhirSubscriptionTopic.create()
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
   else if name = 'Substance.instance' then
     result := TFhirSubstanceInstance.create()
@@ -2371,16 +2457,6 @@ begin
   else if name = 'TestScript' then
     result := TFhirTestScript.create()
 {$ENDIF FHIR_TESTSCRIPT}
-{$IFDEF FHIR_TOPIC}
-  else if name = 'Topic.resourceTrigger' then
-    result := TFhirTopicResourceTrigger.create()
-  else if name = 'Topic.resourceTrigger.queryCriteria' then
-    result := TFhirTopicResourceTriggerQueryCriteria.create()
-  else if name = 'Topic.canFilterBy' then
-    result := TFhirTopicCanFilterBy.create()
-  else if name = 'Topic' then
-    result := TFhirTopic.create()
-{$ENDIF FHIR_TOPIC}
 {$IFDEF FHIR_VALUESET}
   else if name = 'ValueSet.compose' then
     result := TFhirValueSetCompose.create()

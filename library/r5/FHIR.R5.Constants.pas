@@ -33,7 +33,7 @@ unit FHIR.R5.Constants;
 
 interface
 
-// Generated on Sat, Jan 11, 2020 07:30+1100 for FHIR v4.2.0
+// Generated on Mon, May 11, 2020 21:42+1000 for FHIR v4.4.0
 
 
 
@@ -44,10 +44,10 @@ uses
 
 const
   currentFHIRVersionRelease = fhirVersionRelease5;
-  FHIR_GENERATED_VERSION = '4.2.0';
-  FHIR_GENERATED_VERSION_BASE = '4.2';
+  FHIR_GENERATED_VERSION = '4.4.0';
+  FHIR_GENERATED_VERSION_BASE = '4.4';
   FHIR_GENERATED_PUBLICATION = '5';
-  FHIR_GENERATED_DATE = 'Sat, Jan 11, 2020 07:30+1100';
+  FHIR_GENERATED_DATE = 'Mon, May 11, 2020 21:42+1000';
 
 const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = (
@@ -72,6 +72,7 @@ const
     {$IFDEF FHIR_CATALOGENTRY} 'CatalogEntry', {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM} 'ChargeItem', {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION} 'ChargeItemDefinition', {$ENDIF}
+    {$IFDEF FHIR_CITATION} 'Citation', {$ENDIF}
     {$IFDEF FHIR_CLAIM} 'Claim', {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE} 'ClaimResponse', {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION} 'ClinicalImpression', {$ENDIF}
@@ -105,6 +106,7 @@ const
     {$IFDEF FHIR_EPISODEOFCARE} 'EpisodeOfCare', {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION} 'EventDefinition', {$ENDIF}
     {$IFDEF FHIR_EVIDENCE} 'Evidence', {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEFOCUS} 'EvidenceFocus', {$ENDIF}
     {$IFDEF FHIR_EVIDENCEVARIABLE} 'EvidenceVariable', {$ENDIF}
     {$IFDEF FHIR_EXAMPLESCENARIO} 'ExampleScenario', {$ENDIF}
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT} 'ExplanationOfBenefit', {$ENDIF}
@@ -143,6 +145,7 @@ const
     {$IFDEF FHIR_NAMINGSYSTEM} 'NamingSystem', {$ENDIF}
     {$IFDEF FHIR_NUTRITIONINTAKE} 'NutritionIntake', {$ENDIF}
     {$IFDEF FHIR_NUTRITIONORDER} 'NutritionOrder', {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONPRODUCT} 'NutritionProduct', {$ENDIF}
     {$IFDEF FHIR_OBSERVATION} 'Observation', {$ENDIF}
     {$IFDEF FHIR_OBSERVATIONDEFINITION} 'ObservationDefinition', {$ENDIF}
     {$IFDEF FHIR_OPERATIONDEFINITION} 'OperationDefinition', {$ENDIF}
@@ -154,6 +157,7 @@ const
     {$IFDEF FHIR_PATIENT} 'Patient', {$ENDIF}
     {$IFDEF FHIR_PAYMENTNOTICE} 'PaymentNotice', {$ENDIF}
     {$IFDEF FHIR_PAYMENTRECONCILIATION} 'PaymentReconciliation', {$ENDIF}
+    {$IFDEF FHIR_PERMISSION} 'Permission', {$ENDIF}
     {$IFDEF FHIR_PERSON} 'Person', {$ENDIF}
     {$IFDEF FHIR_PLANDEFINITION} 'PlanDefinition', {$ENDIF}
     {$IFDEF FHIR_PRACTITIONER} 'Practitioner', {$ENDIF}
@@ -177,6 +181,8 @@ const
     {$IFDEF FHIR_STRUCTUREDEFINITION} 'StructureDefinition', {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP} 'StructureMap', {$ENDIF}
     {$IFDEF FHIR_SUBSCRIPTION} 'Subscription', {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONSTATUS} 'SubscriptionStatus', {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONTOPIC} 'SubscriptionTopic', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCE} 'Substance', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEDEFINITION} 'SubstanceDefinition', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCENUCLEICACID} 'SubstanceNucleicAcid', {$ENDIF}
@@ -190,7 +196,6 @@ const
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES} 'TerminologyCapabilities', {$ENDIF}
     {$IFDEF FHIR_TESTREPORT} 'TestReport', {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT} 'TestScript', {$ENDIF}
-    {$IFDEF FHIR_TOPIC} 'Topic', {$ENDIF}
     {$IFDEF FHIR_VALUESET} 'ValueSet', {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT} 'VerificationResult', {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION} 'VisionPrescription', {$ENDIF}
@@ -219,6 +224,7 @@ const
     {$IFDEF FHIR_CATALOGENTRY} 'catalogentry', {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM} 'chargeitem', {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION} 'chargeitemdefinition', {$ENDIF}
+    {$IFDEF FHIR_CITATION} 'citation', {$ENDIF}
     {$IFDEF FHIR_CLAIM} 'claim', {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE} 'claimresponse', {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION} 'clinicalimpression', {$ENDIF}
@@ -252,6 +258,7 @@ const
     {$IFDEF FHIR_EPISODEOFCARE} 'episodeofcare', {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION} 'eventdefinition', {$ENDIF}
     {$IFDEF FHIR_EVIDENCE} 'evidence', {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEFOCUS} 'evidencefocus', {$ENDIF}
     {$IFDEF FHIR_EVIDENCEVARIABLE} 'evidencevariable', {$ENDIF}
     {$IFDEF FHIR_EXAMPLESCENARIO} 'examplescenario', {$ENDIF}
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT} 'explanationofbenefit', {$ENDIF}
@@ -290,6 +297,7 @@ const
     {$IFDEF FHIR_NAMINGSYSTEM} 'namingsystem', {$ENDIF}
     {$IFDEF FHIR_NUTRITIONINTAKE} 'nutritionintake', {$ENDIF}
     {$IFDEF FHIR_NUTRITIONORDER} 'nutritionorder', {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONPRODUCT} 'nutritionproduct', {$ENDIF}
     {$IFDEF FHIR_OBSERVATION} 'observation', {$ENDIF}
     {$IFDEF FHIR_OBSERVATIONDEFINITION} 'observationdefinition', {$ENDIF}
     {$IFDEF FHIR_OPERATIONDEFINITION} 'operationdefinition', {$ENDIF}
@@ -301,6 +309,7 @@ const
     {$IFDEF FHIR_PATIENT} 'patient', {$ENDIF}
     {$IFDEF FHIR_PAYMENTNOTICE} 'paymentnotice', {$ENDIF}
     {$IFDEF FHIR_PAYMENTRECONCILIATION} 'paymentreconciliation', {$ENDIF}
+    {$IFDEF FHIR_PERMISSION} 'permission', {$ENDIF}
     {$IFDEF FHIR_PERSON} 'person', {$ENDIF}
     {$IFDEF FHIR_PLANDEFINITION} 'plandefinition', {$ENDIF}
     {$IFDEF FHIR_PRACTITIONER} 'practitioner', {$ENDIF}
@@ -324,6 +333,8 @@ const
     {$IFDEF FHIR_STRUCTUREDEFINITION} 'structuredefinition', {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP} 'structuremap', {$ENDIF}
     {$IFDEF FHIR_SUBSCRIPTION} 'subscription', {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONSTATUS} 'subscriptionstatus', {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONTOPIC} 'subscriptiontopic', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCE} 'substance', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEDEFINITION} 'substancedefinition', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCENUCLEICACID} 'substancenucleicacid', {$ENDIF}
@@ -337,7 +348,6 @@ const
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES} 'terminologycapabilities', {$ENDIF}
     {$IFDEF FHIR_TESTREPORT} 'testreport', {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT} 'testscript', {$ENDIF}
-    {$IFDEF FHIR_TOPIC} 'topic', {$ENDIF}
     {$IFDEF FHIR_VALUESET} 'valueset', {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT} 'verificationresult', {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION} 'visionprescription', {$ENDIF}
@@ -366,6 +376,7 @@ const
     {$IFDEF FHIR_CATALOGENTRY} TFhirCatalogEntry, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM} TFhirChargeItem, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION} TFhirChargeItemDefinition, {$ENDIF}
+    {$IFDEF FHIR_CITATION} TFhirCitation, {$ENDIF}
     {$IFDEF FHIR_CLAIM} TFhirClaim, {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE} TFhirClaimResponse, {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION} TFhirClinicalImpression, {$ENDIF}
@@ -399,6 +410,7 @@ const
     {$IFDEF FHIR_EPISODEOFCARE} TFhirEpisodeOfCare, {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION} TFhirEventDefinition, {$ENDIF}
     {$IFDEF FHIR_EVIDENCE} TFhirEvidence, {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEFOCUS} TFhirEvidenceFocus, {$ENDIF}
     {$IFDEF FHIR_EVIDENCEVARIABLE} TFhirEvidenceVariable, {$ENDIF}
     {$IFDEF FHIR_EXAMPLESCENARIO} TFhirExampleScenario, {$ENDIF}
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT} TFhirExplanationOfBenefit, {$ENDIF}
@@ -437,6 +449,7 @@ const
     {$IFDEF FHIR_NAMINGSYSTEM} TFhirNamingSystem, {$ENDIF}
     {$IFDEF FHIR_NUTRITIONINTAKE} TFhirNutritionIntake, {$ENDIF}
     {$IFDEF FHIR_NUTRITIONORDER} TFhirNutritionOrder, {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONPRODUCT} TFhirNutritionProduct, {$ENDIF}
     {$IFDEF FHIR_OBSERVATION} TFhirObservation, {$ENDIF}
     {$IFDEF FHIR_OBSERVATIONDEFINITION} TFhirObservationDefinition, {$ENDIF}
     {$IFDEF FHIR_OPERATIONDEFINITION} TFhirOperationDefinition, {$ENDIF}
@@ -448,6 +461,7 @@ const
     {$IFDEF FHIR_PATIENT} TFhirPatient, {$ENDIF}
     {$IFDEF FHIR_PAYMENTNOTICE} TFhirPaymentNotice, {$ENDIF}
     {$IFDEF FHIR_PAYMENTRECONCILIATION} TFhirPaymentReconciliation, {$ENDIF}
+    {$IFDEF FHIR_PERMISSION} TFhirPermission, {$ENDIF}
     {$IFDEF FHIR_PERSON} TFhirPerson, {$ENDIF}
     {$IFDEF FHIR_PLANDEFINITION} TFhirPlanDefinition, {$ENDIF}
     {$IFDEF FHIR_PRACTITIONER} TFhirPractitioner, {$ENDIF}
@@ -471,6 +485,8 @@ const
     {$IFDEF FHIR_STRUCTUREDEFINITION} TFhirStructureDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP} TFhirStructureMap, {$ENDIF}
     {$IFDEF FHIR_SUBSCRIPTION} TFhirSubscription, {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONSTATUS} TFhirSubscriptionStatus, {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONTOPIC} TFhirSubscriptionTopic, {$ENDIF}
     {$IFDEF FHIR_SUBSTANCE} TFhirSubstance, {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEDEFINITION} TFhirSubstanceDefinition, {$ENDIF}
     {$IFDEF FHIR_SUBSTANCENUCLEICACID} TFhirSubstanceNucleicAcid, {$ENDIF}
@@ -484,7 +500,6 @@ const
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES} TFhirTerminologyCapabilities, {$ENDIF}
     {$IFDEF FHIR_TESTREPORT} TFhirTestReport, {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT} TFhirTestScript, {$ENDIF}
-    {$IFDEF FHIR_TOPIC} TFhirTopic, {$ENDIF}
     {$IFDEF FHIR_VALUESET} TFhirValueSet, {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT} TFhirVerificationResult, {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION} TFhirVisionPrescription, {$ENDIF}
@@ -511,6 +526,7 @@ const
     {$IFDEF FHIR_CATALOGENTRY} frtCatalogEntry, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM} frtChargeItem, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION} frtChargeItemDefinition, {$ENDIF}
+    {$IFDEF FHIR_CITATION} frtCitation, {$ENDIF}
     {$IFDEF FHIR_CLAIM} frtClaim, {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE} frtClaimResponse, {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION} frtClinicalImpression, {$ENDIF}
@@ -544,6 +560,7 @@ const
     {$IFDEF FHIR_EPISODEOFCARE} frtEpisodeOfCare, {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION} frtEventDefinition, {$ENDIF}
     {$IFDEF FHIR_EVIDENCE} frtEvidence, {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEFOCUS} frtEvidenceFocus, {$ENDIF}
     {$IFDEF FHIR_EVIDENCEVARIABLE} frtEvidenceVariable, {$ENDIF}
     {$IFDEF FHIR_EXAMPLESCENARIO} frtExampleScenario, {$ENDIF}
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT} frtExplanationOfBenefit, {$ENDIF}
@@ -582,6 +599,7 @@ const
     {$IFDEF FHIR_NAMINGSYSTEM} frtNamingSystem, {$ENDIF}
     {$IFDEF FHIR_NUTRITIONINTAKE} frtNutritionIntake, {$ENDIF}
     {$IFDEF FHIR_NUTRITIONORDER} frtNutritionOrder, {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONPRODUCT} frtNutritionProduct, {$ENDIF}
     {$IFDEF FHIR_OBSERVATION} frtObservation, {$ENDIF}
     {$IFDEF FHIR_OBSERVATIONDEFINITION} frtObservationDefinition, {$ENDIF}
     {$IFDEF FHIR_OPERATIONDEFINITION} frtOperationDefinition, {$ENDIF}
@@ -593,6 +611,7 @@ const
     {$IFDEF FHIR_PATIENT} frtPatient, {$ENDIF}
     {$IFDEF FHIR_PAYMENTNOTICE} frtPaymentNotice, {$ENDIF}
     {$IFDEF FHIR_PAYMENTRECONCILIATION} frtPaymentReconciliation, {$ENDIF}
+    {$IFDEF FHIR_PERMISSION} frtPermission, {$ENDIF}
     {$IFDEF FHIR_PERSON} frtPerson, {$ENDIF}
     {$IFDEF FHIR_PLANDEFINITION} frtPlanDefinition, {$ENDIF}
     {$IFDEF FHIR_PRACTITIONER} frtPractitioner, {$ENDIF}
@@ -616,6 +635,8 @@ const
     {$IFDEF FHIR_STRUCTUREDEFINITION} frtStructureDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP} frtStructureMap, {$ENDIF}
     {$IFDEF FHIR_SUBSCRIPTION} frtSubscription, {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONSTATUS} frtSubscriptionStatus, {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONTOPIC} frtSubscriptionTopic, {$ENDIF}
     {$IFDEF FHIR_SUBSTANCE} frtSubstance, {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEDEFINITION} frtSubstanceDefinition, {$ENDIF}
     {$IFDEF FHIR_SUBSTANCENUCLEICACID} frtSubstanceNucleicAcid, {$ENDIF}
@@ -629,7 +650,6 @@ const
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES} frtTerminologyCapabilities, {$ENDIF}
     {$IFDEF FHIR_TESTREPORT} frtTestReport, {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT} frtTestScript, {$ENDIF}
-    {$IFDEF FHIR_TOPIC} frtTopic, {$ENDIF}
     {$IFDEF FHIR_VALUESET} frtValueSet, {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT} frtVerificationResult, {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION} frtVisionPrescription, {$ENDIF}
@@ -658,6 +678,7 @@ const
     {$IFDEF FHIR_CATALOGENTRY} 'CatalogEntry', {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM} 'ChargeItem', {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION} 'ChargeItemDefinition', {$ENDIF}
+    {$IFDEF FHIR_CITATION} 'Citation', {$ENDIF}
     {$IFDEF FHIR_CLAIM} 'Claim', {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE} 'ClaimResponse', {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION} 'ClinicalImpression', {$ENDIF}
@@ -691,6 +712,7 @@ const
     {$IFDEF FHIR_EPISODEOFCARE} 'EpisodeOfCare', {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION} 'EventDefinition', {$ENDIF}
     {$IFDEF FHIR_EVIDENCE} 'Evidence', {$ENDIF}
+    {$IFDEF FHIR_EVIDENCEFOCUS} 'EvidenceFocus', {$ENDIF}
     {$IFDEF FHIR_EVIDENCEVARIABLE} 'EvidenceVariable', {$ENDIF}
     {$IFDEF FHIR_EXAMPLESCENARIO} 'ExampleScenario', {$ENDIF}
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT} 'ExplanationOfBenefit', {$ENDIF}
@@ -729,6 +751,7 @@ const
     {$IFDEF FHIR_NAMINGSYSTEM} 'NamingSystem', {$ENDIF}
     {$IFDEF FHIR_NUTRITIONINTAKE} 'NutritionIntake', {$ENDIF}
     {$IFDEF FHIR_NUTRITIONORDER} 'NutritionOrder', {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONPRODUCT} 'NutritionProduct', {$ENDIF}
     {$IFDEF FHIR_OBSERVATION} 'Observation', {$ENDIF}
     {$IFDEF FHIR_OBSERVATIONDEFINITION} 'ObservationDefinition', {$ENDIF}
     {$IFDEF FHIR_OPERATIONDEFINITION} 'OperationDefinition', {$ENDIF}
@@ -740,6 +763,7 @@ const
     {$IFDEF FHIR_PATIENT} 'Patient', {$ENDIF}
     {$IFDEF FHIR_PAYMENTNOTICE} 'PaymentNotice', {$ENDIF}
     {$IFDEF FHIR_PAYMENTRECONCILIATION} 'PaymentReconciliation', {$ENDIF}
+    {$IFDEF FHIR_PERMISSION} 'Permission', {$ENDIF}
     {$IFDEF FHIR_PERSON} 'Person', {$ENDIF}
     {$IFDEF FHIR_PLANDEFINITION} 'PlanDefinition', {$ENDIF}
     {$IFDEF FHIR_PRACTITIONER} 'Practitioner', {$ENDIF}
@@ -763,6 +787,8 @@ const
     {$IFDEF FHIR_STRUCTUREDEFINITION} 'StructureDefinition', {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP} 'StructureMap', {$ENDIF}
     {$IFDEF FHIR_SUBSCRIPTION} 'Subscription', {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONSTATUS} 'SubscriptionStatus', {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTIONTOPIC} 'SubscriptionTopic', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCE} 'Substance', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCEDEFINITION} 'SubstanceDefinition', {$ENDIF}
     {$IFDEF FHIR_SUBSTANCENUCLEICACID} 'SubstanceNucleicAcid', {$ENDIF}
@@ -776,7 +802,6 @@ const
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES} 'TerminologyCapabilities', {$ENDIF}
     {$IFDEF FHIR_TESTREPORT} 'TestReport', {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT} 'TestScript', {$ENDIF}
-    {$IFDEF FHIR_TOPIC} 'Topic', {$ENDIF}
     {$IFDEF FHIR_VALUESET} 'ValueSet', {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT} 'VerificationResult', {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION} 'VisionPrescription', {$ENDIF}
@@ -1190,8 +1215,9 @@ type
     spCarePlan__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
     spCarePlan__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
     spCarePlan_Activitycode {http://hl7.org/fhir/SearchParameter/CarePlanactivitycode},
-    spCarePlan_Activitydate {http://hl7.org/fhir/SearchParameter/CarePlanactivitydate},
     spCarePlan_Activityreference {http://hl7.org/fhir/SearchParameter/CarePlanactivityreference},
+    spCarePlan_Activityscheduleddate {http://hl7.org/fhir/SearchParameter/CarePlanactivityscheduleddate},
+    spCarePlan_Activityscheduledstring {http://hl7.org/fhir/SearchParameter/CarePlanactivityscheduledstring},
     spCarePlan_Basedon {http://hl7.org/fhir/SearchParameter/CarePlanbasedon},
     spCarePlan_Careteam {http://hl7.org/fhir/SearchParameter/CarePlancareteam},
     spCarePlan_Category {http://hl7.org/fhir/SearchParameter/CarePlancategory},
@@ -1317,6 +1343,30 @@ type
     spChargeItemDefinition_Url {http://hl7.org/fhir/SearchParameter/ChargeItemDefinitionurl},
     spChargeItemDefinition_Version {http://hl7.org/fhir/SearchParameter/ChargeItemDefinitionversion});
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
+
+{$IFDEF FHIR_CITATION}
+  // Search Parameters for Citation
+  TSearchParamsCitation = (
+    spCitation__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
+    spCitation__filter {http://hl7.org/fhir/SearchParameter/filter},
+    spCitation__id {http://hl7.org/fhir/SearchParameter/Resourceid},
+    spCitation__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
+    spCitation__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
+    spCitation__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
+    spCitation__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
+    spCitation__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
+    spCitation__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
+    spCitation__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spCitation_Context {http://hl7.org/fhir/SearchParameter/Citationcontext},
+    spCitation_Contextquantity {http://hl7.org/fhir/SearchParameter/Citationcontextquantity},
+    spCitation_Contexttype {http://hl7.org/fhir/SearchParameter/Citationcontexttype},
+    spCitation_Contexttypequantity {http://hl7.org/fhir/SearchParameter/Citationcontexttypequantity},
+    spCitation_Contexttypevalue {http://hl7.org/fhir/SearchParameter/Citationcontexttypevalue},
+    spCitation_Identifier {http://hl7.org/fhir/SearchParameter/Citationidentifier},
+    spCitation_Status {http://hl7.org/fhir/SearchParameter/Citationstatus},
+    spCitation_Url {http://hl7.org/fhir/SearchParameter/Citationurl},
+    spCitation_Version {http://hl7.org/fhir/SearchParameter/Citationversion});
+{$ENDIF FHIR_CITATION}
 
 {$IFDEF FHIR_CLAIM}
   // Search Parameters for Claim
@@ -1721,6 +1771,7 @@ type
     spConsent_Securitylabel {http://hl7.org/fhir/SearchParameter/Consentsecuritylabel},
     spConsent_Sourcereference {http://hl7.org/fhir/SearchParameter/Consentsourcereference},
     spConsent_Status {http://hl7.org/fhir/SearchParameter/Consentstatus},
+    spConsent_Subject {http://hl7.org/fhir/SearchParameter/Consentsubject},
     spConsent_Verified {http://hl7.org/fhir/SearchParameter/Consentverified},
     spConsent_Verifieddate {http://hl7.org/fhir/SearchParameter/Consentverifieddate});
 {$ENDIF FHIR_CONSENT}
@@ -1856,19 +1907,26 @@ type
     spDevice__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
     spDevice__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
     spDevice__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spDevice_Definition {http://hl7.org/fhir/SearchParameter/Devicedefinition},
     spDevice_Devicename {http://hl7.org/fhir/SearchParameter/Devicedevicename},
     spDevice_Din {http://hl7.org/fhir/SearchParameter/deviceextensionsDevicedin},
+    spDevice_Expirationdate {http://hl7.org/fhir/SearchParameter/Deviceexpirationdate},
     spDevice_Identifier {http://hl7.org/fhir/SearchParameter/Deviceidentifier},
     spDevice_Location {http://hl7.org/fhir/SearchParameter/Devicelocation},
+    spDevice_Lotnumber {http://hl7.org/fhir/SearchParameter/Devicelotnumber},
+    spDevice_Manufacturedate {http://hl7.org/fhir/SearchParameter/Devicemanufacturedate},
     spDevice_Manufacturer {http://hl7.org/fhir/SearchParameter/Devicemanufacturer},
     spDevice_Model {http://hl7.org/fhir/SearchParameter/Devicemodel},
     spDevice_Organization {http://hl7.org/fhir/SearchParameter/Deviceorganization},
+    spDevice_Parent {http://hl7.org/fhir/SearchParameter/Deviceparent},
     spDevice_Patient {http://hl7.org/fhir/SearchParameter/Devicepatient},
+    spDevice_Serialnumber {http://hl7.org/fhir/SearchParameter/Deviceserialnumber},
     spDevice_Status {http://hl7.org/fhir/SearchParameter/Devicestatus},
     spDevice_Type {http://hl7.org/fhir/SearchParameter/Devicetype},
     spDevice_Udicarrier {http://hl7.org/fhir/SearchParameter/Deviceudicarrier},
     spDevice_Udidi {http://hl7.org/fhir/SearchParameter/Deviceudidi},
-    spDevice_Url {http://hl7.org/fhir/SearchParameter/Deviceurl});
+    spDevice_Url {http://hl7.org/fhir/SearchParameter/Deviceurl},
+    spDevice_Version {http://hl7.org/fhir/SearchParameter/Deviceversion});
 {$ENDIF FHIR_DEVICE}
 
 {$IFDEF FHIR_DEVICEDEFINITION}
@@ -2248,6 +2306,32 @@ type
     spEvidence_Url {http://hl7.org/fhir/SearchParameter/Evidenceurl},
     spEvidence_Version {http://hl7.org/fhir/SearchParameter/Evidenceversion});
 {$ENDIF FHIR_EVIDENCE}
+
+{$IFDEF FHIR_EVIDENCEFOCUS}
+  // Search Parameters for EvidenceFocus
+  TSearchParamsEvidenceFocus = (
+    spEvidenceFocus__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
+    spEvidenceFocus__filter {http://hl7.org/fhir/SearchParameter/filter},
+    spEvidenceFocus__id {http://hl7.org/fhir/SearchParameter/Resourceid},
+    spEvidenceFocus__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
+    spEvidenceFocus__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
+    spEvidenceFocus__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
+    spEvidenceFocus__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
+    spEvidenceFocus__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
+    spEvidenceFocus__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
+    spEvidenceFocus__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spEvidenceFocus_Context {http://hl7.org/fhir/SearchParameter/EvidenceFocuscontext},
+    spEvidenceFocus_Contextquantity {http://hl7.org/fhir/SearchParameter/EvidenceFocuscontextquantity},
+    spEvidenceFocus_Contexttype {http://hl7.org/fhir/SearchParameter/EvidenceFocuscontexttype},
+    spEvidenceFocus_Contexttypequantity {http://hl7.org/fhir/SearchParameter/EvidenceFocuscontexttypequantity},
+    spEvidenceFocus_Contexttypevalue {http://hl7.org/fhir/SearchParameter/EvidenceFocuscontexttypevalue},
+    spEvidenceFocus_Date {http://hl7.org/fhir/SearchParameter/EvidenceFocusdate},
+    spEvidenceFocus_Identifier {http://hl7.org/fhir/SearchParameter/EvidenceFocusidentifier},
+    spEvidenceFocus_Name {http://hl7.org/fhir/SearchParameter/EvidenceFocusname},
+    spEvidenceFocus_Status {http://hl7.org/fhir/SearchParameter/EvidenceFocusstatus},
+    spEvidenceFocus_Url {http://hl7.org/fhir/SearchParameter/EvidenceFocusurl},
+    spEvidenceFocus_Version {http://hl7.org/fhir/SearchParameter/EvidenceFocusversion});
+{$ENDIF FHIR_EVIDENCEFOCUS}
 
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   // Search Parameters for EvidenceVariable
@@ -2969,6 +3053,7 @@ type
     spMedicationAdministration_Patient {http://hl7.org/fhir/SearchParameter/clinicalpatient},
     spMedicationAdministration_Performer {http://hl7.org/fhir/SearchParameter/MedicationAdministrationperformer},
     spMedicationAdministration_Reasongiven {http://hl7.org/fhir/SearchParameter/MedicationAdministrationreasongiven},
+    spMedicationAdministration_Reasongivencode {http://hl7.org/fhir/SearchParameter/MedicationAdministrationreasongivencode},
     spMedicationAdministration_Reasonnotgiven {http://hl7.org/fhir/SearchParameter/MedicationAdministrationreasonnotgiven},
     spMedicationAdministration_Request {http://hl7.org/fhir/SearchParameter/MedicationAdministrationrequest},
     spMedicationAdministration_Status {http://hl7.org/fhir/SearchParameter/medicationsstatus},
@@ -3106,12 +3191,16 @@ type
     spMedicinalProductDefinition__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
     spMedicinalProductDefinition__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
     spMedicinalProductDefinition__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spMedicinalProductDefinition_Characteristic {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitioncharacteristic},
     spMedicinalProductDefinition_Contact {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitioncontact},
+    spMedicinalProductDefinition_Domain {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitiondomain},
     spMedicinalProductDefinition_Identifier {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionidentifier},
     spMedicinalProductDefinition_Masterfile {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionmasterfile},
     spMedicinalProductDefinition_Name {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionname},
     spMedicinalProductDefinition_Namelanguage {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionnamelanguage},
-    spMedicinalProductDefinition_Productclassification {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionproductclassification});
+    spMedicinalProductDefinition_Productclassification {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionproductclassification},
+    spMedicinalProductDefinition_Status {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitionstatus},
+    spMedicinalProductDefinition_Type {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinitiontype});
 {$ENDIF FHIR_MEDICINALPRODUCTDEFINITION}
 
 {$IFDEF FHIR_MESSAGEDEFINITION}
@@ -3254,8 +3343,8 @@ type
     spNutritionIntake__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
     spNutritionIntake__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
     spNutritionIntake__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
-    spNutritionIntake_Category {http://hl7.org/fhir/SearchParameter/NutritionIntakecategory},
-    spNutritionIntake_Effective {http://hl7.org/fhir/SearchParameter/NutritionIntakeeffective},
+    spNutritionIntake_Code {http://hl7.org/fhir/SearchParameter/NutritionIntakecode},
+    spNutritionIntake_Date {http://hl7.org/fhir/SearchParameter/NutritionIntakedate},
     spNutritionIntake_Encounter {http://hl7.org/fhir/SearchParameter/NutritionIntakeencounter},
     spNutritionIntake_Identifier {http://hl7.org/fhir/SearchParameter/NutritionIntakeidentifier},
     spNutritionIntake_Nutrition {http://hl7.org/fhir/SearchParameter/NutritionIntakenutrition},
@@ -3292,6 +3381,23 @@ type
     spNutritionOrder_Status {http://hl7.org/fhir/SearchParameter/NutritionOrderstatus},
     spNutritionOrder_Supplement {http://hl7.org/fhir/SearchParameter/NutritionOrdersupplement});
 {$ENDIF FHIR_NUTRITIONORDER}
+
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+  // Search Parameters for NutritionProduct
+  TSearchParamsNutritionProduct = (
+    spNutritionProduct__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
+    spNutritionProduct__filter {http://hl7.org/fhir/SearchParameter/filter},
+    spNutritionProduct__id {http://hl7.org/fhir/SearchParameter/Resourceid},
+    spNutritionProduct__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
+    spNutritionProduct__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
+    spNutritionProduct__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
+    spNutritionProduct__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
+    spNutritionProduct__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
+    spNutritionProduct__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
+    spNutritionProduct__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spNutritionProduct_Identifier {http://hl7.org/fhir/SearchParameter/NutritionProductidentifier},
+    spNutritionProduct_Status {http://hl7.org/fhir/SearchParameter/NutritionProductstatus});
+{$ENDIF FHIR_NUTRITIONPRODUCT}
 
 {$IFDEF FHIR_OBSERVATION}
   // Search Parameters for Observation
@@ -3370,7 +3476,8 @@ type
     spObservationDefinition_Identifier {http://hl7.org/fhir/SearchParameter/ObservationDefinitionidentifier},
     spObservationDefinition_Method {http://hl7.org/fhir/SearchParameter/ObservationDefinitionmethod},
     spObservationDefinition_Status {http://hl7.org/fhir/SearchParameter/ObservationDefinitionstatus},
-    spObservationDefinition_Title {http://hl7.org/fhir/SearchParameter/ObservationDefinitiontitle});
+    spObservationDefinition_Title {http://hl7.org/fhir/SearchParameter/ObservationDefinitiontitle},
+    spObservationDefinition_Url {http://hl7.org/fhir/SearchParameter/ObservationDefinitionurl});
 {$ENDIF FHIR_OBSERVATIONDEFINITION}
 
 {$IFDEF FHIR_OPERATIONDEFINITION}
@@ -3498,6 +3605,8 @@ type
     spPackagedProductDefinition_Device {http://hl7.org/fhir/SearchParameter/PackagedProductDefinitiondevice},
     spPackagedProductDefinition_Identifier {http://hl7.org/fhir/SearchParameter/PackagedProductDefinitionidentifier},
     spPackagedProductDefinition_Manufactureditem {http://hl7.org/fhir/SearchParameter/PackagedProductDefinitionmanufactureditem},
+    spPackagedProductDefinition_Name {http://hl7.org/fhir/SearchParameter/PackagedProductDefinitionname},
+    spPackagedProductDefinition_Status {http://hl7.org/fhir/SearchParameter/PackagedProductDefinitionstatus},
     spPackagedProductDefinition_Subject {http://hl7.org/fhir/SearchParameter/PackagedProductDefinitionsubject});
 {$ENDIF FHIR_PACKAGEDPRODUCTDEFINITION}
 
@@ -3600,6 +3709,22 @@ type
     spPaymentReconciliation_Requestor {http://hl7.org/fhir/SearchParameter/PaymentReconciliationrequestor},
     spPaymentReconciliation_Status {http://hl7.org/fhir/SearchParameter/PaymentReconciliationstatus});
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
+
+{$IFDEF FHIR_PERMISSION}
+  // Search Parameters for Permission
+  TSearchParamsPermission = (
+    spPermission__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
+    spPermission__filter {http://hl7.org/fhir/SearchParameter/filter},
+    spPermission__id {http://hl7.org/fhir/SearchParameter/Resourceid},
+    spPermission__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
+    spPermission__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
+    spPermission__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
+    spPermission__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
+    spPermission__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
+    spPermission__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
+    spPermission__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spPermission_Status {http://hl7.org/fhir/SearchParameter/Permissionstatus});
+{$ENDIF FHIR_PERMISSION}
 
 {$IFDEF FHIR_PERSON}
   // Search Parameters for Person
@@ -4172,7 +4297,8 @@ type
     spSpecimenDefinition_Status {http://hl7.org/fhir/SearchParameter/SpecimenDefinitionstatus},
     spSpecimenDefinition_Title {http://hl7.org/fhir/SearchParameter/SpecimenDefinitiontitle},
     spSpecimenDefinition_Type {http://hl7.org/fhir/SearchParameter/SpecimenDefinitiontype},
-    spSpecimenDefinition_Typetested {http://hl7.org/fhir/SearchParameter/SpecimenDefinitiontypetested});
+    spSpecimenDefinition_Typetested {http://hl7.org/fhir/SearchParameter/SpecimenDefinitiontypetested},
+    spSpecimenDefinition_Url {http://hl7.org/fhir/SearchParameter/SpecimenDefinitionurl});
 {$ENDIF FHIR_SPECIMENDEFINITION}
 
 {$IFDEF FHIR_STRUCTUREDEFINITION}
@@ -4266,6 +4392,45 @@ type
     spSubscription_Url {http://hl7.org/fhir/SearchParameter/Subscriptionurl});
 {$ENDIF FHIR_SUBSCRIPTION}
 
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+  // Search Parameters for SubscriptionStatus
+  TSearchParamsSubscriptionStatus = (
+    spSubscriptionStatus__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
+    spSubscriptionStatus__filter {http://hl7.org/fhir/SearchParameter/filter},
+    spSubscriptionStatus__id {http://hl7.org/fhir/SearchParameter/Resourceid},
+    spSubscriptionStatus__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
+    spSubscriptionStatus__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
+    spSubscriptionStatus__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
+    spSubscriptionStatus__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
+    spSubscriptionStatus__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
+    spSubscriptionStatus__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
+    spSubscriptionStatus__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext});
+{$ENDIF FHIR_SUBSCRIPTIONSTATUS}
+
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+  // Search Parameters for SubscriptionTopic
+  TSearchParamsSubscriptionTopic = (
+    spSubscriptionTopic__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
+    spSubscriptionTopic__filter {http://hl7.org/fhir/SearchParameter/filter},
+    spSubscriptionTopic__id {http://hl7.org/fhir/SearchParameter/Resourceid},
+    spSubscriptionTopic__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
+    spSubscriptionTopic__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
+    spSubscriptionTopic__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
+    spSubscriptionTopic__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
+    spSubscriptionTopic__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
+    spSubscriptionTopic__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
+    spSubscriptionTopic__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spSubscriptionTopic_Date {http://hl7.org/fhir/SearchParameter/SubscriptionTopicdate},
+    spSubscriptionTopic_Identifier {http://hl7.org/fhir/SearchParameter/SubscriptionTopicidentifier},
+    spSubscriptionTopic_Publisher {http://hl7.org/fhir/SearchParameter/SubscriptionTopicpublisher},
+    spSubscriptionTopic_Resourcetype {http://hl7.org/fhir/SearchParameter/SubscriptionTopicresourcetype},
+    spSubscriptionTopic_Status {http://hl7.org/fhir/SearchParameter/SubscriptionTopicstatus},
+    spSubscriptionTopic_Title {http://hl7.org/fhir/SearchParameter/SubscriptionTopictitle},
+    spSubscriptionTopic_Triggerdescription {http://hl7.org/fhir/SearchParameter/SubscriptionTopictriggerdescription},
+    spSubscriptionTopic_Url {http://hl7.org/fhir/SearchParameter/SubscriptionTopicurl},
+    spSubscriptionTopic_Version {http://hl7.org/fhir/SearchParameter/SubscriptionTopicversion});
+{$ENDIF FHIR_SUBSCRIPTIONTOPIC}
+
 {$IFDEF FHIR_SUBSTANCE}
   // Search Parameters for Substance
   TSearchParamsSubstance = (
@@ -4302,8 +4467,11 @@ type
     spSubstanceDefinition__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
     spSubstanceDefinition__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
     spSubstanceDefinition__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
+    spSubstanceDefinition_Category {http://hl7.org/fhir/SearchParameter/SubstanceDefinitioncategory},
     spSubstanceDefinition_Code {http://hl7.org/fhir/SearchParameter/SubstanceDefinitioncode},
-    spSubstanceDefinition_Identifier {http://hl7.org/fhir/SearchParameter/SubstanceDefinitionidentifier});
+    spSubstanceDefinition_Domain {http://hl7.org/fhir/SearchParameter/SubstanceDefinitiondomain},
+    spSubstanceDefinition_Identifier {http://hl7.org/fhir/SearchParameter/SubstanceDefinitionidentifier},
+    spSubstanceDefinition_Name {http://hl7.org/fhir/SearchParameter/SubstanceDefinitionname});
 {$ENDIF FHIR_SUBSTANCEDEFINITION}
 
 {$IFDEF FHIR_SUBSTANCENUCLEICACID}
@@ -4477,6 +4645,7 @@ type
     spTerminologyCapabilities_Contexttypevalue {http://hl7.org/fhir/SearchParameter/conformancecontexttypevalue},
     spTerminologyCapabilities_Date {http://hl7.org/fhir/SearchParameter/conformancedate},
     spTerminologyCapabilities_Description {http://hl7.org/fhir/SearchParameter/conformancedescription},
+    spTerminologyCapabilities_Identifier {http://hl7.org/fhir/SearchParameter/conformanceidentifier},
     spTerminologyCapabilities_Jurisdiction {http://hl7.org/fhir/SearchParameter/conformancejurisdiction},
     spTerminologyCapabilities_Name {http://hl7.org/fhir/SearchParameter/conformancename},
     spTerminologyCapabilities_Publisher {http://hl7.org/fhir/SearchParameter/conformancepublisher},
@@ -4537,30 +4706,6 @@ type
     spTestScript_Url {http://hl7.org/fhir/SearchParameter/TestScripturl},
     spTestScript_Version {http://hl7.org/fhir/SearchParameter/TestScriptversion});
 {$ENDIF FHIR_TESTSCRIPT}
-
-{$IFDEF FHIR_TOPIC}
-  // Search Parameters for Topic
-  TSearchParamsTopic = (
-    spTopic__content {http://hl7.org/fhir/SearchParameter/Resourcecontent},
-    spTopic__filter {http://hl7.org/fhir/SearchParameter/filter},
-    spTopic__id {http://hl7.org/fhir/SearchParameter/Resourceid},
-    spTopic__lastUpdated {http://hl7.org/fhir/SearchParameter/ResourcelastUpdated},
-    spTopic__profile {http://hl7.org/fhir/SearchParameter/Resourceprofile},
-    spTopic__query {http://hl7.org/fhir/SearchParameter/Resourcequery},
-    spTopic__security {http://hl7.org/fhir/SearchParameter/Resourcesecurity},
-    spTopic__source {http://hl7.org/fhir/SearchParameter/Resourcesource},
-    spTopic__tag {http://hl7.org/fhir/SearchParameter/Resourcetag},
-    spTopic__text {http://hl7.org/fhir/SearchParameter/DomainResourcetext},
-    spTopic_Date {http://hl7.org/fhir/SearchParameter/Topicdate},
-    spTopic_Identifier {http://hl7.org/fhir/SearchParameter/Topicidentifier},
-    spTopic_Publisher {http://hl7.org/fhir/SearchParameter/Topicpublisher},
-    spTopic_Resourcetype {http://hl7.org/fhir/SearchParameter/Topicresourcetype},
-    spTopic_Status {http://hl7.org/fhir/SearchParameter/Topicstatus},
-    spTopic_Title {http://hl7.org/fhir/SearchParameter/Topictitle},
-    spTopic_Triggerdescription {http://hl7.org/fhir/SearchParameter/Topictriggerdescription},
-    spTopic_Url {http://hl7.org/fhir/SearchParameter/Topicurl},
-    spTopic_Version {http://hl7.org/fhir/SearchParameter/Topicversion});
-{$ENDIF FHIR_TOPIC}
 
 {$IFDEF FHIR_VALUESET}
   // Search Parameters for ValueSet
@@ -4698,9 +4843,9 @@ const
        'resource-profile {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-resource-profile}', 'software {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-software}', 'status {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-status}', 'supported-profile {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-supported-profile}', 'title {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-title}', 'url {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-url}', 'version {http://hl7.org/fhir/SearchParameter/CapabilityStatement2-version}');
 {$ENDIF}
 {$IFDEF FHIR_CAREPLAN}
-  CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'activity-code {http://hl7.org/fhir/SearchParameter/CarePlan-activity-code}', 'activity-date {http://hl7.org/fhir/SearchParameter/CarePlan-activity-date}', 'activity-reference {http://hl7.org/fhir/SearchParameter/CarePlan-activity-reference}',
-       'based-on {http://hl7.org/fhir/SearchParameter/CarePlan-based-on}', 'care-team {http://hl7.org/fhir/SearchParameter/CarePlan-care-team}', 'category {http://hl7.org/fhir/SearchParameter/CarePlan-category}', 'condition {http://hl7.org/fhir/SearchParameter/CarePlan-condition}', 'date {http://hl7.org/fhir/SearchParameter/clinical-date}', 'encounter {http://hl7.org/fhir/SearchParameter/CarePlan-encounter}', 'goal {http://hl7.org/fhir/SearchParameter/CarePlan-goal}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'instantiates-canonical {http://hl7.org/fhir/SearchParameter/CarePlan-instantiates-canonical}', 'instantiates-uri {http://hl7.org/fhir/SearchParameter/CarePlan-instantiates-uri}', 'intent {http://hl7.org/fhir/SearchParameter/CarePlan-intent}', 'part-of {http://hl7.org/fhir/SearchParameter/CarePlan-part-of}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'performer {http://hl7.org/fhir/SearchParameter/CarePlan-performer}',
-       'replaces {http://hl7.org/fhir/SearchParameter/CarePlan-replaces}', 'status {http://hl7.org/fhir/SearchParameter/CarePlan-status}', 'subject {http://hl7.org/fhir/SearchParameter/CarePlan-subject}');
+  CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'activity-code {http://hl7.org/fhir/SearchParameter/CarePlan-activity-code}', 'activity-reference {http://hl7.org/fhir/SearchParameter/CarePlan-activity-reference}', 'activity-scheduled-date {http://hl7.org/fhir/SearchParameter/CarePlan-activity-scheduled-date}',
+       'activity-scheduled-string {http://hl7.org/fhir/SearchParameter/CarePlan-activity-scheduled-string}', 'based-on {http://hl7.org/fhir/SearchParameter/CarePlan-based-on}', 'care-team {http://hl7.org/fhir/SearchParameter/CarePlan-care-team}', 'category {http://hl7.org/fhir/SearchParameter/CarePlan-category}', 'condition {http://hl7.org/fhir/SearchParameter/CarePlan-condition}', 'date {http://hl7.org/fhir/SearchParameter/clinical-date}', 'encounter {http://hl7.org/fhir/SearchParameter/CarePlan-encounter}', 'goal {http://hl7.org/fhir/SearchParameter/CarePlan-goal}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'instantiates-canonical {http://hl7.org/fhir/SearchParameter/CarePlan-instantiates-canonical}', 'instantiates-uri {http://hl7.org/fhir/SearchParameter/CarePlan-instantiates-uri}', 'intent {http://hl7.org/fhir/SearchParameter/CarePlan-intent}', 'part-of {http://hl7.org/fhir/SearchParameter/CarePlan-part-of}',
+       'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'performer {http://hl7.org/fhir/SearchParameter/CarePlan-performer}', 'replaces {http://hl7.org/fhir/SearchParameter/CarePlan-replaces}', 'status {http://hl7.org/fhir/SearchParameter/CarePlan-status}', 'subject {http://hl7.org/fhir/SearchParameter/CarePlan-subject}');
 {$ENDIF}
 {$IFDEF FHIR_CARETEAM}
   CODES_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'category {http://hl7.org/fhir/SearchParameter/CareTeam-category}', 'date {http://hl7.org/fhir/SearchParameter/clinical-date}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'name {http://hl7.org/fhir/SearchParameter/CareTeam-name}',
@@ -4718,6 +4863,10 @@ const
 {$IFDEF FHIR_CHARGEITEMDEFINITION}
   CODES_TSearchParamsChargeItemDefinition : Array[TSearchParamsChargeItemDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'context {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-context-type}',
        'context-type-quantity {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-context-type-value}', 'date {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-date}', 'description {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-description}', 'effective {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-effective}', 'identifier {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-identifier}', 'jurisdiction {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-jurisdiction}', 'publisher {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-publisher}', 'status {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-status}', 'title {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-title}', 'url {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-url}', 'version {http://hl7.org/fhir/SearchParameter/ChargeItemDefinition-version}');
+{$ENDIF}
+{$IFDEF FHIR_CITATION}
+  CODES_TSearchParamsCitation : Array[TSearchParamsCitation] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'context {http://hl7.org/fhir/SearchParameter/Citation-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/Citation-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/Citation-context-type}',
+       'context-type-quantity {http://hl7.org/fhir/SearchParameter/Citation-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/Citation-context-type-value}', 'identifier {http://hl7.org/fhir/SearchParameter/Citation-identifier}', 'status {http://hl7.org/fhir/SearchParameter/Citation-status}', 'url {http://hl7.org/fhir/SearchParameter/Citation-url}', 'version {http://hl7.org/fhir/SearchParameter/Citation-version}');
 {$ENDIF}
 {$IFDEF FHIR_CLAIM}
   CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'care-team {http://hl7.org/fhir/SearchParameter/Claim-care-team}', 'created {http://hl7.org/fhir/SearchParameter/Claim-created}', 'detail-udi {http://hl7.org/fhir/SearchParameter/Claim-detail-udi}', 'encounter {http://hl7.org/fhir/SearchParameter/Claim-encounter}',
@@ -4773,7 +4922,8 @@ const
 {$ENDIF}
 {$IFDEF FHIR_CONSENT}
   CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'action {http://hl7.org/fhir/SearchParameter/Consent-action}', 'actor {http://hl7.org/fhir/SearchParameter/Consent-actor}', 'category {http://hl7.org/fhir/SearchParameter/Consent-category}', 'consentor {http://hl7.org/fhir/SearchParameter/Consent-consentor}',
-       'data {http://hl7.org/fhir/SearchParameter/Consent-data}', 'date {http://hl7.org/fhir/SearchParameter/clinical-date}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'organization {http://hl7.org/fhir/SearchParameter/Consent-organization}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'period {http://hl7.org/fhir/SearchParameter/Consent-period}', 'policy-uri {http://hl7.org/fhir/SearchParameter/Consent-policy-uri}', 'purpose {http://hl7.org/fhir/SearchParameter/Consent-purpose}', 'scope {http://hl7.org/fhir/SearchParameter/Consent-scope}', 'security-label {http://hl7.org/fhir/SearchParameter/Consent-security-label}', 'source-reference {http://hl7.org/fhir/SearchParameter/Consent-source-reference}', 'status {http://hl7.org/fhir/SearchParameter/Consent-status}', 'verified {http://hl7.org/fhir/SearchParameter/Consent-verified}', 'verified-date {http://hl7.org/fhir/SearchParameter/Consent-verified-date}');
+       'data {http://hl7.org/fhir/SearchParameter/Consent-data}', 'date {http://hl7.org/fhir/SearchParameter/clinical-date}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'organization {http://hl7.org/fhir/SearchParameter/Consent-organization}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'period {http://hl7.org/fhir/SearchParameter/Consent-period}', 'policy-uri {http://hl7.org/fhir/SearchParameter/Consent-policy-uri}', 'purpose {http://hl7.org/fhir/SearchParameter/Consent-purpose}', 'scope {http://hl7.org/fhir/SearchParameter/Consent-scope}', 'security-label {http://hl7.org/fhir/SearchParameter/Consent-security-label}', 'source-reference {http://hl7.org/fhir/SearchParameter/Consent-source-reference}', 'status {http://hl7.org/fhir/SearchParameter/Consent-status}', 'subject {http://hl7.org/fhir/SearchParameter/Consent-subject}', 'verified {http://hl7.org/fhir/SearchParameter/Consent-verified}',
+       'verified-date {http://hl7.org/fhir/SearchParameter/Consent-verified-date}');
 {$ENDIF}
 {$IFDEF FHIR_CONTRACT}
   CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'authority {http://hl7.org/fhir/SearchParameter/Contract-authority}', 'domain {http://hl7.org/fhir/SearchParameter/Contract-domain}', 'identifier {http://hl7.org/fhir/SearchParameter/Contract-identifier}', 'instantiates {http://hl7.org/fhir/SearchParameter/Contract-instantiates}',
@@ -4796,8 +4946,9 @@ const
        'implicated {http://hl7.org/fhir/SearchParameter/DetectedIssue-implicated}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}');
 {$ENDIF}
 {$IFDEF FHIR_DEVICE}
-  CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'device-name {http://hl7.org/fhir/SearchParameter/Device-device-name}', 'din {http://hl7.org/fhir/SearchParameter/device-extensions-Device-din}', 'identifier {http://hl7.org/fhir/SearchParameter/Device-identifier}', 'location {http://hl7.org/fhir/SearchParameter/Device-location}',
-       'manufacturer {http://hl7.org/fhir/SearchParameter/Device-manufacturer}', 'model {http://hl7.org/fhir/SearchParameter/Device-model}', 'organization {http://hl7.org/fhir/SearchParameter/Device-organization}', 'patient {http://hl7.org/fhir/SearchParameter/Device-patient}', 'status {http://hl7.org/fhir/SearchParameter/Device-status}', 'type {http://hl7.org/fhir/SearchParameter/Device-type}', 'udi-carrier {http://hl7.org/fhir/SearchParameter/Device-udi-carrier}', 'udi-di {http://hl7.org/fhir/SearchParameter/Device-udi-di}', 'url {http://hl7.org/fhir/SearchParameter/Device-url}');
+  CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'definition {http://hl7.org/fhir/SearchParameter/Device-definition}', 'device-name {http://hl7.org/fhir/SearchParameter/Device-device-name}', 'din {http://hl7.org/fhir/SearchParameter/device-extensions-Device-din}', 'expiration-date {http://hl7.org/fhir/SearchParameter/Device-expiration-date}',
+       'identifier {http://hl7.org/fhir/SearchParameter/Device-identifier}', 'location {http://hl7.org/fhir/SearchParameter/Device-location}', 'lot-number {http://hl7.org/fhir/SearchParameter/Device-lot-number}', 'manufacture-date {http://hl7.org/fhir/SearchParameter/Device-manufacture-date}', 'manufacturer {http://hl7.org/fhir/SearchParameter/Device-manufacturer}', 'model {http://hl7.org/fhir/SearchParameter/Device-model}', 'organization {http://hl7.org/fhir/SearchParameter/Device-organization}', 'parent {http://hl7.org/fhir/SearchParameter/Device-parent}', 'patient {http://hl7.org/fhir/SearchParameter/Device-patient}', 'serial-number {http://hl7.org/fhir/SearchParameter/Device-serial-number}', 'status {http://hl7.org/fhir/SearchParameter/Device-status}', 'type {http://hl7.org/fhir/SearchParameter/Device-type}', 'udi-carrier {http://hl7.org/fhir/SearchParameter/Device-udi-carrier}', 'udi-di {http://hl7.org/fhir/SearchParameter/Device-udi-di}', 'url {http://hl7.org/fhir/SearchParameter/Device-url}',
+       'version {http://hl7.org/fhir/SearchParameter/Device-version}');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEDEFINITION}
   CODES_TSearchParamsDeviceDefinition : Array[TSearchParamsDeviceDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'identifier {http://hl7.org/fhir/SearchParameter/DeviceDefinition-identifier}', 'parent {http://hl7.org/fhir/SearchParameter/DeviceDefinition-parent}', 'type {http://hl7.org/fhir/SearchParameter/DeviceDefinition-type}');
@@ -4857,6 +5008,10 @@ const
 {$IFDEF FHIR_EVIDENCE}
   CODES_TSearchParamsEvidence : Array[TSearchParamsEvidence] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'context {http://hl7.org/fhir/SearchParameter/Evidence-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/Evidence-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/Evidence-context-type}',
        'context-type-quantity {http://hl7.org/fhir/SearchParameter/Evidence-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/Evidence-context-type-value}', 'date {http://hl7.org/fhir/SearchParameter/Evidence-date}', 'description {http://hl7.org/fhir/SearchParameter/Evidence-description}', 'identifier {http://hl7.org/fhir/SearchParameter/Evidence-identifier}', 'status {http://hl7.org/fhir/SearchParameter/Evidence-status}', 'title {http://hl7.org/fhir/SearchParameter/Evidence-title}', 'url {http://hl7.org/fhir/SearchParameter/Evidence-url}', 'version {http://hl7.org/fhir/SearchParameter/Evidence-version}');
+{$ENDIF}
+{$IFDEF FHIR_EVIDENCEFOCUS}
+  CODES_TSearchParamsEvidenceFocus : Array[TSearchParamsEvidenceFocus] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'context {http://hl7.org/fhir/SearchParameter/EvidenceFocus-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/EvidenceFocus-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/EvidenceFocus-context-type}',
+       'context-type-quantity {http://hl7.org/fhir/SearchParameter/EvidenceFocus-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/EvidenceFocus-context-type-value}', 'date {http://hl7.org/fhir/SearchParameter/EvidenceFocus-date}', 'identifier {http://hl7.org/fhir/SearchParameter/EvidenceFocus-identifier}', 'name {http://hl7.org/fhir/SearchParameter/EvidenceFocus-name}', 'status {http://hl7.org/fhir/SearchParameter/EvidenceFocus-status}', 'url {http://hl7.org/fhir/SearchParameter/EvidenceFocus-url}', 'version {http://hl7.org/fhir/SearchParameter/EvidenceFocus-version}');
 {$ENDIF}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   CODES_TSearchParamsEvidenceVariable : Array[TSearchParamsEvidenceVariable] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'composed-of {http://hl7.org/fhir/SearchParameter/EvidenceVariable-composed-of}', 'context {http://hl7.org/fhir/SearchParameter/EvidenceVariable-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/EvidenceVariable-context-quantity}',
@@ -4966,7 +5121,7 @@ const
 {$ENDIF}
 {$IFDEF FHIR_MEDICATIONADMINISTRATION}
   CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'code {http://hl7.org/fhir/SearchParameter/clinical-code}', 'date {http://hl7.org/fhir/SearchParameter/medications-date}', 'device {http://hl7.org/fhir/SearchParameter/MedicationAdministration-device}',
-       'encounter {http://hl7.org/fhir/SearchParameter/medications-encounter}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'medication {http://hl7.org/fhir/SearchParameter/medications-medication}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'performer {http://hl7.org/fhir/SearchParameter/MedicationAdministration-performer}', 'reason-given {http://hl7.org/fhir/SearchParameter/MedicationAdministration-reason-given}', 'reason-not-given {http://hl7.org/fhir/SearchParameter/MedicationAdministration-reason-not-given}', 'request {http://hl7.org/fhir/SearchParameter/MedicationAdministration-request}', 'status {http://hl7.org/fhir/SearchParameter/medications-status}', 'subject {http://hl7.org/fhir/SearchParameter/MedicationAdministration-subject}');
+       'encounter {http://hl7.org/fhir/SearchParameter/medications-encounter}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'medication {http://hl7.org/fhir/SearchParameter/medications-medication}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'performer {http://hl7.org/fhir/SearchParameter/MedicationAdministration-performer}', 'reason-given {http://hl7.org/fhir/SearchParameter/MedicationAdministration-reason-given}', 'reason-given-code {http://hl7.org/fhir/SearchParameter/MedicationAdministration-reason-given-code}', 'reason-not-given {http://hl7.org/fhir/SearchParameter/MedicationAdministration-reason-not-given}', 'request {http://hl7.org/fhir/SearchParameter/MedicationAdministration-request}', 'status {http://hl7.org/fhir/SearchParameter/medications-status}', 'subject {http://hl7.org/fhir/SearchParameter/MedicationAdministration-subject}');
 {$ENDIF}
 {$IFDEF FHIR_MEDICATIONDISPENSE}
   CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'code {http://hl7.org/fhir/SearchParameter/clinical-code}', 'destination {http://hl7.org/fhir/SearchParameter/MedicationDispense-destination}', 'encounter {http://hl7.org/fhir/SearchParameter/MedicationDispense-encounter}',
@@ -4986,8 +5141,8 @@ const
        'effective {http://hl7.org/fhir/SearchParameter/MedicationUsage-effective}', 'encounter {http://hl7.org/fhir/SearchParameter/MedicationUsage-encounter}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'medication {http://hl7.org/fhir/SearchParameter/medications-medication}', 'part-of {http://hl7.org/fhir/SearchParameter/MedicationUsage-part-of}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'source {http://hl7.org/fhir/SearchParameter/MedicationUsage-source}', 'status {http://hl7.org/fhir/SearchParameter/medications-status}', 'subject {http://hl7.org/fhir/SearchParameter/MedicationUsage-subject}');
 {$ENDIF}
 {$IFDEF FHIR_MEDICINALPRODUCTDEFINITION}
-  CODES_TSearchParamsMedicinalProductDefinition : Array[TSearchParamsMedicinalProductDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'contact {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-contact}', 'identifier {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-identifier}',
-       'master-file {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-master-file}', 'name {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-name}', 'name-language {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-name-language}', 'product-classification {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-product-classification}');
+  CODES_TSearchParamsMedicinalProductDefinition : Array[TSearchParamsMedicinalProductDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'characteristic {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-characteristic}', 'contact {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-contact}', 'domain {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-domain}',
+       'identifier {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-identifier}', 'master-file {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-master-file}', 'name {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-name}', 'name-language {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-name-language}', 'product-classification {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-product-classification}', 'status {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-status}', 'type {http://hl7.org/fhir/SearchParameter/MedicinalProductDefinition-type}');
 {$ENDIF}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'category {http://hl7.org/fhir/SearchParameter/MessageDefinition-category}', 'context {http://hl7.org/fhir/SearchParameter/conformance-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/conformance-context-quantity}',
@@ -5009,12 +5164,15 @@ const
        'telecom {http://hl7.org/fhir/SearchParameter/NamingSystem-telecom}', 'type {http://hl7.org/fhir/SearchParameter/NamingSystem-type}', 'url {http://hl7.org/fhir/SearchParameter/conformance-url}', 'value {http://hl7.org/fhir/SearchParameter/NamingSystem-value}', 'version {http://hl7.org/fhir/SearchParameter/conformance-version}');
 {$ENDIF}
 {$IFDEF FHIR_NUTRITIONINTAKE}
-  CODES_TSearchParamsNutritionIntake : Array[TSearchParamsNutritionIntake] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'category {http://hl7.org/fhir/SearchParameter/NutritionIntake-category}', 'effective {http://hl7.org/fhir/SearchParameter/NutritionIntake-effective}', 'encounter {http://hl7.org/fhir/SearchParameter/NutritionIntake-encounter}',
+  CODES_TSearchParamsNutritionIntake : Array[TSearchParamsNutritionIntake] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'code {http://hl7.org/fhir/SearchParameter/NutritionIntake-code}', 'date {http://hl7.org/fhir/SearchParameter/NutritionIntake-date}', 'encounter {http://hl7.org/fhir/SearchParameter/NutritionIntake-encounter}',
        'identifier {http://hl7.org/fhir/SearchParameter/NutritionIntake-identifier}', 'nutrition {http://hl7.org/fhir/SearchParameter/NutritionIntake-nutrition}', 'part-of {http://hl7.org/fhir/SearchParameter/NutritionIntake-part-of}', 'patient {http://hl7.org/fhir/SearchParameter/NutritionIntake-patient}', 'source {http://hl7.org/fhir/SearchParameter/NutritionIntake-source}', 'status {http://hl7.org/fhir/SearchParameter/NutritionIntake-status}', 'subject {http://hl7.org/fhir/SearchParameter/NutritionIntake-subject}');
 {$ENDIF}
 {$IFDEF FHIR_NUTRITIONORDER}
   CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'additive {http://hl7.org/fhir/SearchParameter/NutritionOrder-additive}', 'datetime {http://hl7.org/fhir/SearchParameter/NutritionOrder-datetime}', 'encounter {http://hl7.org/fhir/SearchParameter/clinical-encounter}',
        'formula {http://hl7.org/fhir/SearchParameter/NutritionOrder-formula}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}', 'instantiates-canonical {http://hl7.org/fhir/SearchParameter/NutritionOrder-instantiates-canonical}', 'instantiates-uri {http://hl7.org/fhir/SearchParameter/NutritionOrder-instantiates-uri}', 'oraldiet {http://hl7.org/fhir/SearchParameter/NutritionOrder-oraldiet}', 'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'provider {http://hl7.org/fhir/SearchParameter/NutritionOrder-provider}', 'status {http://hl7.org/fhir/SearchParameter/NutritionOrder-status}', 'supplement {http://hl7.org/fhir/SearchParameter/NutritionOrder-supplement}');
+{$ENDIF}
+{$IFDEF FHIR_NUTRITIONPRODUCT}
+  CODES_TSearchParamsNutritionProduct : Array[TSearchParamsNutritionProduct] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'identifier {http://hl7.org/fhir/SearchParameter/NutritionProduct-identifier}', 'status {http://hl7.org/fhir/SearchParameter/NutritionProduct-status}');
 {$ENDIF}
 {$IFDEF FHIR_OBSERVATION}
   CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'amino-acid-change {http://hl7.org/fhir/SearchParameter/observation-genetic-Observation-amino-acid-change}', 'based-on {http://hl7.org/fhir/SearchParameter/Observation-based-on}', 'category {http://hl7.org/fhir/SearchParameter/Observation-category}',
@@ -5025,7 +5183,7 @@ const
 {$ENDIF}
 {$IFDEF FHIR_OBSERVATIONDEFINITION}
   CODES_TSearchParamsObservationDefinition : Array[TSearchParamsObservationDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'category {http://hl7.org/fhir/SearchParameter/ObservationDefinition-category}', 'code {http://hl7.org/fhir/SearchParameter/ObservationDefinition-code}', 'experimental {http://hl7.org/fhir/SearchParameter/ObservationDefinition-experimental}',
-       'identifier {http://hl7.org/fhir/SearchParameter/ObservationDefinition-identifier}', 'method {http://hl7.org/fhir/SearchParameter/ObservationDefinition-method}', 'status {http://hl7.org/fhir/SearchParameter/ObservationDefinition-status}', 'title {http://hl7.org/fhir/SearchParameter/ObservationDefinition-title}');
+       'identifier {http://hl7.org/fhir/SearchParameter/ObservationDefinition-identifier}', 'method {http://hl7.org/fhir/SearchParameter/ObservationDefinition-method}', 'status {http://hl7.org/fhir/SearchParameter/ObservationDefinition-status}', 'title {http://hl7.org/fhir/SearchParameter/ObservationDefinition-title}', 'url {http://hl7.org/fhir/SearchParameter/ObservationDefinition-url}');
 {$ENDIF}
 {$IFDEF FHIR_OPERATIONDEFINITION}
   CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'base {http://hl7.org/fhir/SearchParameter/OperationDefinition-base}', 'code {http://hl7.org/fhir/SearchParameter/OperationDefinition-code}', 'context {http://hl7.org/fhir/SearchParameter/conformance-context}',
@@ -5045,7 +5203,7 @@ const
 {$ENDIF}
 {$IFDEF FHIR_PACKAGEDPRODUCTDEFINITION}
   CODES_TSearchParamsPackagedProductDefinition : Array[TSearchParamsPackagedProductDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'device {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-device}', 'identifier {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-identifier}',
-       'manufactured-item {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-manufactured-item}', 'subject {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-subject}');
+       'manufactured-item {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-manufactured-item}', 'name {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-name}', 'status {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-status}', 'subject {http://hl7.org/fhir/SearchParameter/PackagedProductDefinition-subject}');
 {$ENDIF}
 {$IFDEF FHIR_PARAMETERS}
   CODES_TSearchParamsParameters : Array[TSearchParamsParameters] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}');
@@ -5062,6 +5220,9 @@ const
 {$IFDEF FHIR_PAYMENTRECONCILIATION}
   CODES_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'created {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-created}', 'disposition {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-disposition}', 'identifier {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-identifier}',
        'outcome {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-outcome}', 'payment-issuer {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-payment-issuer}', 'request {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-request}', 'requestor {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-requestor}', 'status {http://hl7.org/fhir/SearchParameter/PaymentReconciliation-status}');
+{$ENDIF}
+{$IFDEF FHIR_PERMISSION}
+  CODES_TSearchParamsPermission : Array[TSearchParamsPermission] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'status {http://hl7.org/fhir/SearchParameter/Permission-status}');
 {$ENDIF}
 {$IFDEF FHIR_PERSON}
   CODES_TSearchParamsPerson : Array[TSearchParamsPerson] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'address {http://hl7.org/fhir/SearchParameter/individual-address}', 'address-city {http://hl7.org/fhir/SearchParameter/individual-address-city}', 'address-country {http://hl7.org/fhir/SearchParameter/individual-address-country}',
@@ -5148,7 +5309,7 @@ const
 {$ENDIF}
 {$IFDEF FHIR_SPECIMENDEFINITION}
   CODES_TSearchParamsSpecimenDefinition : Array[TSearchParamsSpecimenDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'container {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-container}', 'experimental {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-experimental}', 'identifier {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-identifier}',
-       'is-derived {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-is-derived}', 'status {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-status}', 'title {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-title}', 'type {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-type}', 'type-tested {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-type-tested}');
+       'is-derived {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-is-derived}', 'status {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-status}', 'title {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-title}', 'type {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-type}', 'type-tested {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-type-tested}', 'url {http://hl7.org/fhir/SearchParameter/SpecimenDefinition-url}');
 {$ENDIF}
 {$IFDEF FHIR_STRUCTUREDEFINITION}
   CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'abstract {http://hl7.org/fhir/SearchParameter/StructureDefinition-abstract}', 'base {http://hl7.org/fhir/SearchParameter/StructureDefinition-base}', 'base-path {http://hl7.org/fhir/SearchParameter/StructureDefinition-base-path}',
@@ -5163,12 +5324,20 @@ const
   CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'contact {http://hl7.org/fhir/SearchParameter/Subscription-contact}', 'payload {http://hl7.org/fhir/SearchParameter/Subscription-payload}', 'status {http://hl7.org/fhir/SearchParameter/Subscription-status}', 'type {http://hl7.org/fhir/SearchParameter/Subscription-type}',
        'url {http://hl7.org/fhir/SearchParameter/Subscription-url}');
 {$ENDIF}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}
+  CODES_TSearchParamsSubscriptionStatus : Array[TSearchParamsSubscriptionStatus] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}');
+{$ENDIF}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}
+  CODES_TSearchParamsSubscriptionTopic : Array[TSearchParamsSubscriptionTopic] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'date {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-date}', 'identifier {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-identifier}', 'publisher {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-publisher}',
+       'resource-type {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-resource-type}', 'status {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-status}', 'title {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-title}', 'trigger-description {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-trigger-description}', 'url {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-url}', 'version {http://hl7.org/fhir/SearchParameter/SubscriptionTopic-version}');
+{$ENDIF}
 {$IFDEF FHIR_SUBSTANCE}
   CODES_TSearchParamsSubstance : Array[TSearchParamsSubstance] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'category {http://hl7.org/fhir/SearchParameter/Substance-category}', 'code {http://hl7.org/fhir/SearchParameter/Substance-code}', 'container-identifier {http://hl7.org/fhir/SearchParameter/Substance-container-identifier}', 'expiry {http://hl7.org/fhir/SearchParameter/Substance-expiry}',
        'identifier {http://hl7.org/fhir/SearchParameter/Substance-identifier}', 'quantity {http://hl7.org/fhir/SearchParameter/Substance-quantity}', 'status {http://hl7.org/fhir/SearchParameter/Substance-status}', 'substance-reference {http://hl7.org/fhir/SearchParameter/Substance-substance-reference}');
 {$ENDIF}
 {$IFDEF FHIR_SUBSTANCEDEFINITION}
-  CODES_TSearchParamsSubstanceDefinition : Array[TSearchParamsSubstanceDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'code {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-code}', 'identifier {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-identifier}');
+  CODES_TSearchParamsSubstanceDefinition : Array[TSearchParamsSubstanceDefinition] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'category {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-category}', 'code {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-code}', 'domain {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-domain}',
+       'identifier {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-identifier}', 'name {http://hl7.org/fhir/SearchParameter/SubstanceDefinition-name}');
 {$ENDIF}
 {$IFDEF FHIR_SUBSTANCENUCLEICACID}
   CODES_TSearchParamsSubstanceNucleicAcid : Array[TSearchParamsSubstanceNucleicAcid] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}');
@@ -5199,7 +5368,7 @@ const
 {$ENDIF}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
   CODES_TSearchParamsTerminologyCapabilities : Array[TSearchParamsTerminologyCapabilities] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'context {http://hl7.org/fhir/SearchParameter/conformance-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/conformance-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/conformance-context-type}',
-       'context-type-quantity {http://hl7.org/fhir/SearchParameter/conformance-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/conformance-context-type-value}', 'date {http://hl7.org/fhir/SearchParameter/conformance-date}', 'description {http://hl7.org/fhir/SearchParameter/conformance-description}', 'jurisdiction {http://hl7.org/fhir/SearchParameter/conformance-jurisdiction}', 'name {http://hl7.org/fhir/SearchParameter/conformance-name}', 'publisher {http://hl7.org/fhir/SearchParameter/conformance-publisher}', 'status {http://hl7.org/fhir/SearchParameter/conformance-status}', 'title {http://hl7.org/fhir/SearchParameter/conformance-title}', 'url {http://hl7.org/fhir/SearchParameter/conformance-url}', 'version {http://hl7.org/fhir/SearchParameter/conformance-version}');
+       'context-type-quantity {http://hl7.org/fhir/SearchParameter/conformance-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/conformance-context-type-value}', 'date {http://hl7.org/fhir/SearchParameter/conformance-date}', 'description {http://hl7.org/fhir/SearchParameter/conformance-description}', 'identifier {http://hl7.org/fhir/SearchParameter/conformance-identifier}', 'jurisdiction {http://hl7.org/fhir/SearchParameter/conformance-jurisdiction}', 'name {http://hl7.org/fhir/SearchParameter/conformance-name}', 'publisher {http://hl7.org/fhir/SearchParameter/conformance-publisher}', 'status {http://hl7.org/fhir/SearchParameter/conformance-status}', 'title {http://hl7.org/fhir/SearchParameter/conformance-title}', 'url {http://hl7.org/fhir/SearchParameter/conformance-url}', 'version {http://hl7.org/fhir/SearchParameter/conformance-version}');
 {$ENDIF}
 {$IFDEF FHIR_TESTREPORT}
   CODES_TSearchParamsTestReport : Array[TSearchParamsTestReport] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'identifier {http://hl7.org/fhir/SearchParameter/TestReport-identifier}', 'issued {http://hl7.org/fhir/SearchParameter/TestReport-issued}', 'participant {http://hl7.org/fhir/SearchParameter/TestReport-participant}', 'result {http://hl7.org/fhir/SearchParameter/TestReport-result}',
@@ -5208,10 +5377,6 @@ const
 {$IFDEF FHIR_TESTSCRIPT}
   CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'context {http://hl7.org/fhir/SearchParameter/TestScript-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/TestScript-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/TestScript-context-type}',
        'context-type-quantity {http://hl7.org/fhir/SearchParameter/TestScript-context-type-quantity}', 'context-type-value {http://hl7.org/fhir/SearchParameter/TestScript-context-type-value}', 'date {http://hl7.org/fhir/SearchParameter/TestScript-date}', 'description {http://hl7.org/fhir/SearchParameter/TestScript-description}', 'identifier {http://hl7.org/fhir/SearchParameter/TestScript-identifier}', 'jurisdiction {http://hl7.org/fhir/SearchParameter/TestScript-jurisdiction}', 'name {http://hl7.org/fhir/SearchParameter/TestScript-name}', 'publisher {http://hl7.org/fhir/SearchParameter/TestScript-publisher}', 'status {http://hl7.org/fhir/SearchParameter/TestScript-status}', 'testscript-capability {http://hl7.org/fhir/SearchParameter/TestScript-testscript-capability}', 'title {http://hl7.org/fhir/SearchParameter/TestScript-title}', 'url {http://hl7.org/fhir/SearchParameter/TestScript-url}', 'version {http://hl7.org/fhir/SearchParameter/TestScript-version}');
-{$ENDIF}
-{$IFDEF FHIR_TOPIC}
-  CODES_TSearchParamsTopic : Array[TSearchParamsTopic] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'date {http://hl7.org/fhir/SearchParameter/Topic-date}', 'identifier {http://hl7.org/fhir/SearchParameter/Topic-identifier}', 'publisher {http://hl7.org/fhir/SearchParameter/Topic-publisher}', 'resource-type {http://hl7.org/fhir/SearchParameter/Topic-resource-type}',
-       'status {http://hl7.org/fhir/SearchParameter/Topic-status}', 'title {http://hl7.org/fhir/SearchParameter/Topic-title}', 'trigger-description {http://hl7.org/fhir/SearchParameter/Topic-trigger-description}', 'url {http://hl7.org/fhir/SearchParameter/Topic-url}', 'version {http://hl7.org/fhir/SearchParameter/Topic-version}');
 {$ENDIF}
 {$IFDEF FHIR_VALUESET}
   CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'code {http://hl7.org/fhir/SearchParameter/ValueSet-code}', 'context {http://hl7.org/fhir/SearchParameter/conformance-context}', 'context-quantity {http://hl7.org/fhir/SearchParameter/conformance-context-quantity}', 'context-type {http://hl7.org/fhir/SearchParameter/conformance-context-type}',

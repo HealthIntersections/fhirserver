@@ -64,6 +64,7 @@ const
 {$IFDEF FHIR_CATALOGENTRY}                       tcOther, {$ENDIF}
 {$IFDEF FHIR_CHARGEITEM}                         tcFinancial, {$ENDIF}
 {$IFDEF FHIR_CHARGEITEMDEFINITION}               tcFinancial, {$ENDIF}
+{$IFDEF FHIR_CITATION}                           tcData, {$ENDIF}
 {$IFDEF FHIR_CLAIM}                              tcFinancial, {$ENDIF}
 {$IFDEF FHIR_CLAIMRESPONSE}                      tcFinancial, {$ENDIF}
 {$IFDEF FHIR_CLINICALIMPRESSION}                 tcClinical, {$ENDIF}
@@ -97,6 +98,7 @@ const
 {$IFDEF FHIR_EPISODEOFCARE}                      tcSchedule, {$ENDIF}
 {$IFDEF FHIR_EVENTDEFINITION}                    tcOther, {$ENDIF}
 {$IFDEF FHIR_EVIDENCE}                           tcOther, {$ENDIF}
+{$IFDEF FHIR_EVIDENCEFOCUS}                      tcOther, {$ENDIF}
 {$IFDEF FHIR_EVIDENCEVARIABLE}                   tcOther, {$ENDIF}
 {$IFDEF FHIR_EXAMPLESCENARIO}                    tcOther, {$ENDIF}
 {$IFDEF FHIR_EXPLANATIONOFBENEFIT}               tcFinancial, {$ENDIF}
@@ -135,6 +137,7 @@ const
 {$IFDEF FHIR_NAMINGSYSTEM}                       tcOther, {$ENDIF}
 {$IFDEF FHIR_NUTRITIONINTAKE}                    tcClinical, {$ENDIF}
 {$IFDEF FHIR_NUTRITIONORDER}                     tcClinical, {$ENDIF}
+{$IFDEF FHIR_NUTRITIONPRODUCT}                   tcOther, {$ENDIF}
 {$IFDEF FHIR_OBSERVATION}                        tcClinical, {$ENDIF}
 {$IFDEF FHIR_OBSERVATIONDEFINITION}              tcOther, {$ENDIF}
 {$IFDEF FHIR_OPERATIONDEFINITION}                tcOther, {$ENDIF}
@@ -146,6 +149,7 @@ const
 {$IFDEF FHIR_PATIENT}                            tcData, {$ENDIF}
 {$IFDEF FHIR_PAYMENTNOTICE}                      tcFinancial, {$ENDIF}
 {$IFDEF FHIR_PAYMENTRECONCILIATION}              tcFinancial, {$ENDIF}
+{$IFDEF FHIR_PERMISSION}                         tcData, {$ENDIF}
 {$IFDEF FHIR_PERSON}                             tcData, {$ENDIF}
 {$IFDEF FHIR_PLANDEFINITION}                     tcOther, {$ENDIF}
 {$IFDEF FHIR_PRACTITIONER}                       tcData, {$ENDIF}
@@ -169,6 +173,8 @@ const
 {$IFDEF FHIR_STRUCTUREDEFINITION}                tcOther, {$ENDIF}
 {$IFDEF FHIR_STRUCTUREMAP}                       tcOther, {$ENDIF}
 {$IFDEF FHIR_SUBSCRIPTION}                       tcData, {$ENDIF}
+{$IFDEF FHIR_SUBSCRIPTIONSTATUS}                 tcData, {$ENDIF}
+{$IFDEF FHIR_SUBSCRIPTIONTOPIC}                  tcData, {$ENDIF}
 {$IFDEF FHIR_SUBSTANCE}                          tcData, {$ENDIF}
 {$IFDEF FHIR_SUBSTANCEDEFINITION}                tcMedicationDefinition, {$ENDIF}
 {$IFDEF FHIR_SUBSTANCENUCLEICACID}               tcMedicationDefinition, {$ENDIF}
@@ -182,7 +188,6 @@ const
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}            tcOther, {$ENDIF}
 {$IFDEF FHIR_TESTREPORT}                         tcOther, {$ENDIF}
 {$IFDEF FHIR_TESTSCRIPT}                         tcOther, {$ENDIF}
-{$IFDEF FHIR_TOPIC}                              tcOther, {$ENDIF}
 {$IFDEF FHIR_VALUESET}                           tcOther, {$ENDIF}
 {$IFDEF FHIR_VERIFICATIONRESULT}                 tcMedicationDefinition, {$ENDIF}
 {$IFDEF FHIR_VISIONPRESCRIPTION}                 tcClinical, {$ENDIF}

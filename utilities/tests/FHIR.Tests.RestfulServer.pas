@@ -164,6 +164,10 @@ Type
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
+
+    procedure SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
   end;
 
 
@@ -262,6 +266,10 @@ begin
 end;
 
 procedure TTestStorageService.QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime);
+begin
+end;
+
+procedure TTestStorageService.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
 begin
 end;
 
@@ -402,6 +410,10 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+procedure TTestStorageService.FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+end;
+
 function TTestStorageService.getClientInfo(id: String): TRegisteredClientInformation;
 begin
   result := TRegisteredClientInformation.Create;
@@ -447,6 +459,12 @@ end;
 procedure TTestStorageService.SetContext(const Value: TFHIRServerContext);
 begin
   FContext := Value;
+end;
+
+procedure TTestStorageService.SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+  inherited;
+
 end;
 
 function TTestStorageService.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;

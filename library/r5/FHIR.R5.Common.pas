@@ -61,14 +61,14 @@ const
   MAP_TFhirCodeSystemContentMode : array [TFhirCodeSystemContentMode] of TFhirCodeSystemContentModeEnum = (CodesystemContentModeNull, CodesystemContentModeNotPresent, CodesystemContentModeExample, CodesystemContentModeFragment, CodesystemContentModeComplete, CodesystemContentModeSupplement);
   MAP_TFhirCodeSystemContentModeR : array [TFhirCodeSystemContentModeEnum] of TFhirCodeSystemContentMode = (cscmNull, cscmNotPresent, cscmExample, cscmFragment, cscmComplete, cscmSupplement);
   MAP_TFHIRConceptEquivalence : array [TFhirConceptMapRelationshipEnum] of TFHIRConceptEquivalence = (cmeNull, cmeRelatedto, cmeEquivalent, cmeWider, cmeNarrower, cmeUnmatched);
-  MAP_TFHIRConceptEquivalenceR : array [TFHIRConceptEquivalence] of TFhirConceptMapRelationshipEnum = (ConceptMapRelationshipNull, ConceptMapRelationshipRelatedto, ConceptMapRelationshipRelatedto, ConceptMapRelationshipRelatedto, ConceptMapRelationshipBroader, ConceptMapRelationshipBroader, ConceptMapRelationshipNarrower, ConceptMapRelationshipNarrower, ConceptMapRelationshipNotRelatedTo, ConceptMapRelationshipNotRelatedTo, ConceptMapRelationshipNotRelatedTo);
+  MAP_TFHIRConceptEquivalenceR : array [TFHIRConceptEquivalence] of TFhirConceptMapRelationshipEnum = (ConceptMapRelationshipNull, ConceptMapRelationshipRelatedto, ConceptMapRelationshipRelatedto, ConceptMapRelationshipRelatedto, ConceptMapRelationshipSourceIsNarrowerThanTarget, ConceptMapRelationshipSourceIsNarrowerThanTarget, ConceptMapRelationshipSourceIsBroaderThanTarget, ConceptMapRelationshipSourceIsNarrowerThanTarget, ConceptMapRelationshipNotRelatedTo, ConceptMapRelationshipNotRelatedTo, ConceptMapRelationshipNotRelatedTo);
   MAP_TContactType : array [TContactType] of TFhirContactPointSystemEnum = (ContactPointSystemNull, ContactPointSystemPhone, ContactPointSystemFax, ContactPointSystemEmail, ContactPointSystemPager, ContactPointSystemUrl, ContactPointSystemSms, ContactPointSystemOther);
   MAP_TContactType2 : array [TFhirContactPointSystemEnum] of TContactType = (cpsNull, cpsPhone, cpsFax, cpsEmail, cpsPager, cpsUrl, cpsSms, cpsOther);
-  MAP_TSubscriptionStatus : array [TFhirSubscriptionStatusEnum] of TSubscriptionStatus = (ssNull, ssRequested, ssActive, ssError, ssOff);
-  MAP_TSubscriptionStatus2 : array [TSubscriptionStatus] of TFhirSubscriptionStatusEnum = (SubscriptionStatusNull, SubscriptionStatusRequested, SubscriptionStatusActive, SubscriptionStatusError, SubscriptionStatusOff);
-  BUNDLE_TYPE_TITLE : Array[TFhirBundleTypeEnum] of String = ('', 'Document', 'Message', 'Transaction', 'Transaction Response', 'Batch', 'Batch Response', 'History Record', 'Search Results', 'Resource Collection');
+  MAP_TSubscriptionStatus : array [TFhirSubscriptionStateEnum] of TSubscriptionStatus = (ssNull, ssRequested, ssActive, ssError, ssOff);
+  MAP_TSubscriptionStatus2 : array [TSubscriptionStatus] of TFhirSubscriptionStateEnum = (SubscriptionStateNull, SubscriptionStateRequested, SubscriptionStateActive, SubscriptionStateError, SubscriptionStateOff);
+  BUNDLE_TYPE_TITLE : Array[TFhirBundleTypeEnum] of String = ('', 'Document', 'Message', 'Transaction', 'Transaction Response', 'Batch', 'Batch Response', 'History Record', 'Search Results', 'Resource Collection', 'Subscription Notification');
   MAP_TFHIRBundleType  : array [TBundleType] of TFhirBundleTypeEnum = (BundleTypeNull, BundleTypeDocument, BundleTypeMessage, BundleTypeTransaction, BundleTypeTransactionResponse, BundleTypeBatch, BundleTypeBatchResponse, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection);
-  MAP_TFHIRBundleTypeR : array [TFhirBundleTypeEnum] of TBundleType = (btNull, btDocument, btMessage, btTransaction, btTransactionResponse, btBatch, btBatchResponse, btHistory, btSearchset, btCollection);
+  MAP_TFHIRBundleTypeR : array [TFhirBundleTypeEnum] of TBundleType = (btNull, btDocument, btMessage, btTransaction, btTransactionResponse, btBatch, btBatchResponse, btHistory, btSearchset, btCollection, btCollection);
   MAP_TObservationStatus : array [TObservationStatus] of TFhirObservationStatusEnum = (ObservationStatusNull, ObservationStatusRegistered, ObservationStatusPreliminary, ObservationStatusFinal, ObservationStatusAmended, ObservationStatusCorrected, ObservationStatusCancelled, ObservationStatusEnteredInError, ObservationStatusUnknown);
   MAP_TObservationStatus2 : array [TFhirObservationStatusEnum] of TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
 
@@ -3600,7 +3600,7 @@ begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
   ae.event.action := AuditEventActionE;
-  ae.event.outcome := AuditEventOutcome0;
+  ae.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '0');
   ae.event.dateTime := TFslDateTime.makeUTC;
 end;
 
@@ -3673,13 +3673,13 @@ end;
 
 function TFHIRSubscription5.GetDirect: boolean;
 begin
-  result := sub.channel.endpointElement.hasExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct')
-    and (sub.channel.endpointElement.getExtensionString('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') = 'true');
+  result := sub.endpointElement.hasExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct')
+    and (sub.endpointElement.getExtensionString('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') = 'true');
 end;
 
 function TFHIRSubscription5.GetEndpoint: String;
 begin
-  result := sub.channel.endpoint;
+  result := sub.endpoint;
 end;
 
 function TFHIRSubscription5.GetError: String;
@@ -3691,9 +3691,9 @@ function TFHIRSubscription5.GetHeaders: TArray<String>;
 var
   i : integer;
 begin
-  setLength(result, sub.channel.headerList.Count);
-  for i := 0 to sub.channel.headerList.Count - 1 do
-    result[i] := sub.channel.headerList[i].value;
+  setLength(result, sub.headerList.Count);
+  for i := 0 to sub.headerList.Count - 1 do
+    result[i] := sub.headerList[i].value;
 end;
 
 function TFHIRSubscription5.GetMethod: TSubscriptionMethod;
@@ -3730,14 +3730,14 @@ end;
 procedure TFHIRSubscription5.SetDirect(Value: boolean);
 begin
   if value then
-    sub.channel.endpointElement.setExtensionBoolean('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct', 'true')
+    sub.endpointElement.setExtensionBoolean('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct', 'true')
   else
-    sub.channel.endpointElement.removeExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct');
+    sub.endpointElement.removeExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct');
 end;
 
 procedure TFHIRSubscription5.SetEndpoint(Value: String);
 begin
-  sub.channel.endpoint := value;
+  sub.endpoint := value;
 end;
 
 procedure TFHIRSubscription5.SetError(Value: String);
@@ -3749,9 +3749,9 @@ procedure TFHIRSubscription5.Setheaders(Value: TArray<String>);
 var
   s : String;
 begin
-  sub.channel.headerList.Clear;
+  sub.headerList.Clear;
   for s in value do
-    sub.channel.headerList.Append.value := s;
+    sub.headerList.Append.value := s;
 end;
 
 procedure TFHIRSubscription5.SetMethod(Value: TSubscriptionMethod);
@@ -4735,8 +4735,8 @@ end;
 
 function TFHIRConsent5.GetPatient: String;
 begin
-  if consent.patient <> nil then
-    result := consent.patient.reference
+  if consent.subject <> nil then
+    result := consent.subject.reference
   else
     result := '';
 end;
