@@ -171,6 +171,11 @@ Type
 
   TFindResourceOptions = set of TFindResourceOption;
 
+  TTestScriptBuilder = class (TFslObject)
+  public
+  private
+  end;
+
   TFHIROperationEngine = class (TFslObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
@@ -322,6 +327,10 @@ Type
     function ExpandVS(vs: TFHIRValueSetW; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; virtual;
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResourceV; virtual; abstract;
+
+    procedure SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
+    procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
+    procedure FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
 
     function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; virtual;
     procedure setAsyncTaskDetails(key : integer; transactionTime : TFslDateTime; request : String); virtual;

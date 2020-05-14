@@ -513,7 +513,6 @@ Type
     function DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
     Procedure HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
-    Procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception = nil);
     procedure smsStatus(Msg: String);
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure StopAsyncTasks;
@@ -1367,7 +1366,7 @@ Begin
                     end;
                   end;
                   cacheResponse(response, oResponse.CacheControl);
-                  FWebServer.RecordExchange(oRequest, oResponse);
+                  FContext.Storage.RecordExchange(oRequest, oResponse, nil);
                   ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'));
                   // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
                   // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
@@ -1393,11 +1392,11 @@ Begin
                 end;
                 if noErrCode then
                   response.ResponseNo := 200;
-                FWebServer.RecordExchange(oRequest, oResponse);
+                FContext.Storage.RecordExchange(oRequest, oResponse, nil);
               except
                 on e: exception do
                 begin
-                  FWebServer.RecordExchange(oRequest, oResponse, e);
+                  FContext.Storage.RecordExchange(oRequest, oResponse, e);
                   raise;
                 end;
               end;
@@ -5027,41 +5026,6 @@ begin
   {$ENDIF}
 end;
 
-
-procedure TFhirWebServer.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
-//var
-//  op: TFhirTestScriptSetupActionOperation;
-begin
-//  if req.Session = nil then
-//    exit;
-//  if req.Session.TestScript = nil then
-//    exit;
-//  op := TFhirTestScriptSetupActionOperation.Create;
-//  req.Session.TestScript.testList.Append.actionList.Append.operation := op;
-//  if req.CommandType = fcmdOperation then
-//    op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
-//  else
-//    op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
-//  op.resourceElement := TFhirCode.Create(req.ResourceName);
-//  if resp.format = ffJson then
-//    op.Accept := !{$IFDEF FHIR4} 'application/fhir+json'{$ELSE}ContentTypeJson{$ENDIF}
-//  else
-//    op.Accept := !{$IFDEF FHIR4} 'application/fhir+xml'{$ELSE}ContentTypeXml{$ENDIF};
-//  op.params := req.Parameters.Source;
-//  op.requestHeaderList.Add('Host', req.baseUrl);
-//  op.requestHeaderList.Add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);
-//  if (req.lastModifiedDate <> 0) then
-//    op.requestHeaderList.Add('Last-Modified', DateTimeToXMLDateTimeTimeZoneString(req.lastModifiedDate, TimeZoneBias));
-//  op.requestHeaderList.Add('Language', req.lang);
-//  op.requestHeaderList.Add('if-match', req.IfMatch);
-//  op.requestHeaderList.Add('if-none-match', req.IfNoneMatch);
-//  if (req.IfModifiedSince <> 0) then
-//    op.requestHeaderList.Add('if-modified-since', DateTimeToXMLDateTimeTimeZoneString(req.IfModifiedSince, TimeZoneBias));
-//  op.requestHeaderList.Add('if-none-exist', req.IfNoneExist);
-//  if req.provenance <> nil then
-//    op.requestHeaderList.Add('X-Provenance', ComposeJson(FServerContext.ValidatorContext, req.provenance));
-//  op.url := req.url;
-end;
 
 function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerIniFile): TFhirWebServerEndpoint;
 begin

@@ -362,6 +362,9 @@ type
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; e : Exception); override;
     function engineFactory(lang : String; usage : String) : TFHIRNativeOperationEngine; override;
+    procedure SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
   end;
 
 
@@ -3277,6 +3280,16 @@ begin
   result := TFHIRNativeOperationEngineR3.create(lang, ServerContext, self.Link, DB.GetConnection(usage));
 end;
 
+procedure TFHIRNativeStorageServiceR3.FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+ // nothing
+end;
+
+procedure TFHIRNativeStorageServiceR3.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+ // nothing
+end;
+
 procedure TFHIRNativeStorageServiceR3.RegisterAuditEvent(session: TFhirSession; ip: String);
 var
   se: TFhirAuditEvent;
@@ -3410,6 +3423,11 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+procedure TFHIRNativeStorageServiceR3.SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+ // nothing
 end;
 
 function TFHIRNativeStorageServiceR3.vc: TFHIRServerWorkerContextR3;
