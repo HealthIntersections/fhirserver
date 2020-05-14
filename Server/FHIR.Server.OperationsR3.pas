@@ -3286,9 +3286,43 @@ begin
 end;
 
 procedure TFHIRNativeStorageServiceR3.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+var
+  op: TFhirTestScriptSetupActionOperation;
+  ts : TFhirTestScript;
 begin
- // nothing
+  if req.Session = nil then
+    exit;
+  if req.Session.TestScript = nil then
+    exit;
+  op := TFhirTestScriptSetupActionOperation.Create;
+  ts := req.Session.TestScript.Resource as TFHIRTestScript;
+  ts.testList.Append.actionList.Append.operation := op;
+  if req.CommandType = fcmdOperation then
+    op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
+  else
+    op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
+  op.resourceElement := TFhirCode.Create(req.ResourceName);
+  if resp.format = ffJson then
+    op.Accept := ContentTypeJson
+  else
+    op.Accept := ContentTypeXml;
+  op.params := req.Parameters.Source;
+  op.requestHeaderList.Add('Host', req.baseUrl);
+  op.requestHeaderList.Add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);
+  if (req.lastModifiedDate <> 0) then
+    op.requestHeaderList.Add('Last-Modified', DateTimeToXMLDateTimeTimeZoneString(req.lastModifiedDate, TimeZoneBias));
+  op.requestHeaderList.Add('Language', req.lang);
+  op.requestHeaderList.Add('if-match', req.IfMatch);
+  op.requestHeaderList.Add('if-none-match', req.IfNoneMatch);
+  if (req.IfModifiedSince <> 0) then
+    op.requestHeaderList.Add('if-modified-since', DateTimeToXMLDateTimeTimeZoneString(req.IfModifiedSince, TimeZoneBias));
+  op.requestHeaderList.Add('if-none-exist', req.IfNoneExist);
+  if req.provenance <> nil then
+    op.requestHeaderList.Add('X-Provenance', ComposeJson(ServerContext.ValidatorContext as TFHIRWorkerContext, req.provenance as TFHIRProvenance));
+  op.url := req.url;
+
 end;
+
 
 procedure TFHIRNativeStorageServiceR3.RegisterAuditEvent(session: TFhirSession; ip: String);
 var
