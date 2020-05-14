@@ -546,6 +546,7 @@ begin
        ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
+       ' Launch nchar(255) NULL, '+#13#10+
        ' ClientState '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
@@ -1319,6 +1320,10 @@ begin
     if (version <= 28) then
     begin
       CreateLoadedPackagesTable;
+    end;
+    if (version <= 29) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ADD Launch nchar(255) NULL');
     end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');

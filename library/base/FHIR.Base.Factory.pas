@@ -197,6 +197,7 @@ type
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; virtual; abstract;
     function wrapGroup(r : TFHIRResourceV) : TFhirGroupW; virtual; abstract;
     function wrapPatient(r : TFHIRResourceV) : TFhirPatientW; virtual; abstract;
+    function wrapEncounter(r : TFHIRResourceV) : TFhirEncounterW; virtual; abstract;
     function wrapBundleEntry(o : TFHIRObject) : TFhirBundleEntryW; virtual; abstract;
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; virtual; abstract;
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; virtual; abstract;

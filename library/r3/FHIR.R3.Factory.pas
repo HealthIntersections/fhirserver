@@ -109,6 +109,7 @@ type
     function wrapCodeableConcept(o : TFHIRObject) : TFhirCodeableConceptW; override;
     function wrapGroup(r : TFHIRResourceV) : TFhirGroupW; override;
     function wrapPatient(r : TFHIRResourceV) : TFhirPatientW; override;
+    function wrapEncounter(r : TFHIRResourceV) : TFhirEncounterW; override;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; override;
     function wrapBundleEntry(o : TFHIRObject) : TFhirBundleEntryW; override;
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; override;
@@ -557,6 +558,14 @@ begin
     result := nil
   else
     result := TFHIRConsent3.Create(o);
+end;
+
+function TFHIRFactoryR3.wrapEncounter(r: TFHIRResourceV): TFhirEncounterW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirEncounter3.Create(r);
 end;
 
 function TFHIRFactoryR3.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;

@@ -284,9 +284,9 @@ Type
     property Factory : TFHIRFactory read FFactory;
 
     // OAuth Support
-    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); virtual;
-    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; overload; virtual;
-    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope : String) : boolean; overload; virtual;
+    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); virtual;
+    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope, launch : String) : boolean; overload; virtual;
+    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope, launch : String) : boolean; overload; virtual;
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); virtual;
     function hasOAuthSession(id : String; status : integer) : boolean; virtual;
     function hasOAuthSessionByKey(key, status : integer) : boolean; virtual;
@@ -378,12 +378,12 @@ begin
   //
 end;
 
-function TFHIRStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
+function TFHIRStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope, launch: String): boolean;
 begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
-function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
+function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope, launch: String): boolean;
 begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
@@ -433,7 +433,7 @@ begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
-procedure TFHIRStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state: String);
+procedure TFHIRStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch: String);
 begin
   raise EFHIRException.create('This server does not support OAuth');
 end;

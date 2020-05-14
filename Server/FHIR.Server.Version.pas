@@ -58,7 +58,8 @@ const
 //  ServerDBVersion = 26; // add Twilio Proxy
 //  ServerDBVersion = 27; // add Package download count
 //  ServerDBVersion = 28; // add Package token tracking
-  ServerDBVersion = 29; // add Loaded Package tracking
+//  ServerDBVersion = 29; // add Loaded Package tracking
+  ServerDBVersion = 30; // add OAuthLogin Launch field
 
 
 implementation

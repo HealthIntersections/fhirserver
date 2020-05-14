@@ -339,11 +339,14 @@ Type
     function processProvenanceHeader(header, lang: String): TFhirResourceV;
 //    function LookupReference(Context: TFHIRRequest; id: String): TResourceWithReference;
     function patientAppList(base, id : String) : string;
+    function encounterAppList(base, id : String) : string;
     procedure GetPatients(details : TFslStringDictionary);
+    function GetLaunchParameters(request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String>;
 
     procedure registerScriptPlugins;
 
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+    function HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String);
     function getReferencesByType(t : String) : String;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
@@ -856,7 +859,42 @@ begin
           b.Append(app.url);
           b.Append('?iss=https://');
           b.Append(base);
-          b.Append('&launch=');
+          b.Append('&launch=Patient/');
+          b.Append(id);
+          b.Append('">');
+          b.Append(FormatTextToXml(app.name, xmlText));
+          b.Append('</a></li>'#13#10);
+        end;
+      end;
+    finally
+      apps.Free;
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TFhirWebServerEndpoint.encounterAppList(base, id : String): string;
+var
+  b : TStringBuilder;
+  apps : TFslList<TRegisteredClientInformation>;
+  app : TRegisteredClientInformation;
+begin
+  b := TStringBuilder.Create;
+  try
+    apps := TFslList<TRegisteredClientInformation>.create;
+    try
+      FContext.Storage.fetchClients(apps);
+      for app in apps do
+      begin
+        if app.patientContext then
+        begin
+          b.Append('  <li><a href="');
+          b.Append(app.url);
+          b.Append('?iss=https://');
+          b.Append(base);
+          b.Append('&launch=Encounter/');
           b.Append(id);
           b.Append('">');
           b.Append(FormatTextToXml(app.name, xmlText));
@@ -1767,6 +1805,69 @@ begin
   response.contentType := 'text/html; charset=UTF-8';
 end;
 
+function TFhirWebServerEndPoint.HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+var
+  id, ver: String;
+  s, xhtml: String;
+  encounter: TFHIREncounterW;
+  hookid: String;
+  hooks: TFHIRWebServerPatientViewContext;
+begin
+  result := 0;
+  StringSplit(request.id.Substring(10), '/', id, ver);
+  hookid := NewGuidId;
+  hooks := TFHIRWebServerPatientViewContext.Create(FContext.Link);
+  hooks.manager := TCDSHooksManager.Create;
+  FWebServer.FLock.Lock;
+  try
+    FPatientHooks.Add(hookid, hooks);
+  finally
+    FWebServer.FLock.Unlock;
+  end;
+  encounter := factory.wrapEncounter(GetResource(request.Session, 'Encounter', request.lang, id, ver, ''));
+  try
+    xhtml := factory.getXhtml(encounter.Resource).AsPlainText;
+ //   startHooks(hooks, patient, request.baseUrl);
+  finally
+    encounter.Free;
+  end;
+
+  s := FWebServer.FSourceProvider.getSource('encounter.html');
+  s := s.Replace('[%id%]', FWebServer.FName, [rfReplaceAll]);
+  s := s.Replace('[%hookid%]', hookid, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', factory.versionString, [rfReplaceAll]);
+  s := s.Replace('[%web%]', FWebServer.WebDesc, [rfReplaceAll]);
+  s := s.Replace('[%encounter-details%]', xhtml, [rfReplaceAll]);
+  if FWebServer.FActualSSLPort = 443 then
+    s := s.Replace('[%encounter-app-list%]', encounterAppList(FWebServer.FHost + FPath, id), [rfReplaceAll])
+  else
+    s := s.Replace('[%encounter-app-list%]', encounterAppList(FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort) + FPath, id), [rfReplaceAll]);
+  s := s.Replace('[%patient-id%]', id, [rfReplaceAll]);
+  s := s.Replace('[%admin%]', FWebServer.FAdminEmail, [rfReplaceAll]);
+  if FWebServer.FActualPort = 80 then
+    s := s.Replace('[%host%]', FWebServer.FHost, [rfReplaceAll])
+  else
+    s := s.Replace('[%host%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort), [rfReplaceAll]);
+  if FWebServer.FActualSSLPort = 443 then
+    s := s.Replace('[%securehost%]', FWebServer.FHost, [rfReplaceAll])
+  else
+    s := s.Replace('[%securehost%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort), [rfReplaceAll]);
+  if FWebServer.FActualPort = 80 then
+    s := s.Replace('[%baseOpen%]', FWebServer.FHost + FPath, [rfReplaceAll])
+  else
+    s := s.Replace('[%baseOpen%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort) + FPath, [rfReplaceAll]);
+  if FWebServer.FActualSSLPort = 443 then
+    s := s.Replace('[%baseSecure%]', FWebServer.FHost + FPath, [rfReplaceAll])
+  else
+    s := s.Replace('[%baseSecure%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort) + FPath, [rfReplaceAll]);
+  s := s.Replace('[%root%]', FPath, [rfReplaceAll]);
+
+  s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
+
+  response.Body := s;
+  response.contentType := 'text/html; charset=UTF-8';
+end;
+
 function TFhirWebServerEndPoint.HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 var
   id: String;
@@ -1930,6 +2031,8 @@ begin
     result := HandleWebPatientHooks(request, response, secure)
   else if request.id.StartsWith('Patient/') then
     result := HandleWebPatient(request, response, secure)
+  else if request.id.StartsWith('Encounter/') then
+    result := HandleWebEncounter(request, response, secure)
   else
     raise EFHIRException.CreateLang('MSG_UNKNOWN_CONTENT', request.lang, [request.id, 'web UI']);
 end;
@@ -2626,7 +2729,6 @@ begin
     response.Body := makeTaskRedirect(request.baseUrl, id, 'Preparing', thread.Format, nil);
   end;
 end;
-
 
 procedure TFhirWebServerEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
@@ -3357,6 +3459,35 @@ end;
 //  end;
 //end;
 
+function TFhirWebServerEndpoint.GetLaunchParameters(request: TIdHTTPRequestInfo; session : TFhirSession; launchContext: String; params: TAuthLaunchParamsSet): TDictionary<String, String>;
+var
+  enc : TFhirEncounterW;
+begin
+  result := TDictionary<String, String>.create;
+  if launchContext <> '' then
+  begin
+    if launchContext.StartsWith('Patient/') then
+    begin
+      if alpPatient in params then
+        result.Add('patient', launchContext.Substring(8));
+    end
+    else if launchContext.StartsWith('Encounter/') then
+    begin
+      if alpPatient in params then
+      begin
+        enc := factory.wrapEncounter(GetResource(session, 'Encounter', request.AcceptLanguage, launchContext.Substring(10), '', ''));
+        try
+          result.Add('patient', enc.PatientId);
+        finally
+          enc.Free;
+        end;
+      end;
+      if alpEncounter in params then
+        result.Add('encounter', launchContext.Substring(10));
+    end;
+  end;
+end;
+
 procedure TFhirWebServerEndpoint.GetPatients(details: TFslStringDictionary);
 var
   b : TFHIRBundleW;
@@ -3456,6 +3587,11 @@ begin
     begin
       link := FPath + '/_web/Patient/' + id;
       text := 'Patient Record Page';
+    end;
+    if resource.fhirType = 'Encounter' then
+    begin
+      link := FPath + '/_web/Encounter/' + id;
+      text := 'Patient Encounter Page';
     end;
   end;
 end;
@@ -4938,6 +5074,7 @@ begin
   result.FAuthServer.EndPoint := result.ClientAddress(true);
   result.FAuthServer.OnProcessFile := result.ReturnProcessedFile;
   result.FAuthServer.OnGetPatients := result.GetPatients;
+  result.FAuthServer.OnProcessLaunchParams := result.GetLaunchParameters;
   result.FAuthServer.Active := true;
   context.JWTServices := TJWTServices.Create;
   context.JWTServices.Cert := FCertFile;

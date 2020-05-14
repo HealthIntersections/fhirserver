@@ -858,6 +858,12 @@ type
     function nameSummary : String; override;
   end;
 
+  TFhirEncounter3 = class (TFhirEncounterW)
+  public
+    function patientId : String; override;
+    function summary : String; override;
+  end;
+
   TFHIRStatsOpResponse3 = class (TFHIRStatsOpResponseW)
   public
     procedure addObs(obs : TFHIRResourceV); override;
@@ -4947,6 +4953,18 @@ end;
 function TFHIRConsent3.listProvisions: TFslList<TFhirConsentProvisionW>;
 begin
   result := nil; // for now
+end;
+
+{ TFhirEncounter3 }
+
+function TFhirEncounter3.patientId: String;
+begin
+  result := (FRes as TFHIREncounter).subject.getId;
+end;
+
+function TFhirEncounter3.summary: String;
+begin
+  result := CODES_TFhirEncounterStatusEnum[(FRes as TFHIREncounter).status];
 end;
 
 end.

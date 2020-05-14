@@ -380,9 +380,9 @@ type
     procedure QueueResource(session : TFHIRSession; r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
     procedure RunValidation; override;
 
-    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
-    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; override;
-    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope : String) : boolean; overload; override;
+    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); override;
+    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope, launch : String) : boolean; override;
+    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope, launch : String) : boolean; overload; override;
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
     function hasOAuthSessionByKey(key, status : integer) : boolean; override;
@@ -5586,18 +5586,19 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state: String);
+procedure TFHIRNativeStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch: String);
 var
   conn : TFslDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
-    conn.SQL := 'insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, ClientState) values (:id, :cl, :sc, :ru, 1, '+DBGetDate(DB.Platform)+', :st)';
+    conn.SQL := 'insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, Launch, ClientState) values (:id, :cl, :sc, :ru, 1, '+DBGetDate(DB.Platform)+', :l, :st)';
     conn.prepare;
     conn.BindString('id', id);
     conn.BindString('cl', client_id);
     conn.BindString('sc', scope);
     conn.BindString('ru', redirect_uri);
+    conn.BindString('l', launch);
     conn.BindBlobFromString('st', state);
     conn.execute;
     conn.Terminate;
@@ -5833,8 +5834,6 @@ var
 begin
   SetLength(b, 0);
   FDB.connection('packages.list', procedure (conn : TFslDBConnection)
-    var
-      o : TLoadedPackageInformation;
     begin
       conn.SQL := 'select Id, Content from LoadedPackages';
       conn.Prepare;
@@ -5850,13 +5849,13 @@ begin
   result := b;
 end;
 
-function TFHIRNativeStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
+function TFHIRNativeStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope, launch: String): boolean;
 var
   conn : TFslDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
-    conn.SQL := 'select Client, Scope, Redirect, ClientState from OAuthLogins where id = :id';
+    conn.SQL := 'select Client, Scope, Redirect, Launch, ClientState from OAuthLogins where id = :id';
     conn.Prepare;
     conn.BindString('id', id);
     conn.Execute;
@@ -5866,6 +5865,7 @@ begin
       client_id := conn.ColStringByName['Client'];
       redirect := conn.ColStringByName['Redirect'];
       scope := conn.ColStringByName['Scope'];
+      launch := conn.ColStringByName['Launch'];
       state := conn.ColBlobAsStringByName['ClientState'];
     end;
     conn.Terminate;
@@ -5881,13 +5881,13 @@ begin
 
 end;
 
-function TFHIRNativeStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
+function TFHIRNativeStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope, launch: String): boolean;
 var
   conn : TFslDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
-    conn.SQL := 'select Client, Name, Scope, Redirect, ClientState from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(key)+' and Status = '+inttostr(status)+' and OAuthLogins.SessionKey = Sessions.SessionKey';
+    conn.SQL := 'select Client, Name, Scope, Redirect, Launch, ClientState from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(key)+' and Status = '+inttostr(status)+' and OAuthLogins.SessionKey = Sessions.SessionKey';
     conn.Prepare;
     conn.Execute;
     result := conn.FetchNext;
@@ -5897,6 +5897,7 @@ begin
       name := conn.ColStringByName['Name'];
       redirect := conn.ColStringByName['Redirect'];
       scope := conn.ColStringByName['Scope'];
+      launch := conn.ColStringByName['Launch'];
       state := conn.ColBlobAsStringByName['ClientState'];
     end;
     conn.Terminate;

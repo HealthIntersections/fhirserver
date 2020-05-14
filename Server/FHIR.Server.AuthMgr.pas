@@ -61,6 +61,15 @@ type
     afrServerError, // The authorization server encountered an unexpected condition that prevented it from fulfilling the request. This error code is needed because a 500 Internal Server Error HTTP status code cannot be returned to the client via an HTTP redirect.)
     afrTemporarilyUnavailable // The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server.  (This error code is needed because a 503 Service Unavailable HTTP status code cannot be returned to the client via an HTTP redirect.)       Values for the "error" parameter MUST NOT include characters        outside the set %x20-21 / %x23-5B / %x5D-7E.
   );
+
+  TAuthLaunchParams = (alpPatient, alpEncounter);
+  TAuthLaunchParamsSet = set of TAuthLaunchParams;
+
+const
+  AuthLaunchParams_All = [alpPatient..alpEncounter];
+
+type
+
   EAuthClientException = class (EFHIRException)
   private
     FLocation : String;
@@ -71,6 +80,7 @@ type
   end;
 
   TGetPatientsEvent = procedure (details : TFslStringDictionary) of object;
+  TProcessLaunchParamsEvent = function (request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String> of object;
 //  TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundleW of object;
 
   TFhirLoginToken = Class (TFslObject)
@@ -109,6 +119,7 @@ type
     FPassword : String;
     FNonceList : TStringList;
     FOnGetPatients : TGetPatientsEvent;
+    FOnProcessLaunchParams : TProcessLaunchParamsEvent;
     FRelPath: String;
 
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -134,7 +145,7 @@ type
     function nonceIsUnique(nonce : String) : boolean;
     procedure readScopes(scopes: TStringList; params: TParseMap);
     procedure loadScopeVariables(variables: TFslMap<TFHIRObject>; scope: String; user : TSCIMUser);
-    function GetPatientListAsOptions : String;
+    function GetPatientListAsOptions(launch : String) : String;
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
   public
     constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
@@ -169,6 +180,7 @@ type
     property Active : boolean read FActive write FActive;
     property Host : String read FHost write FHost;
     property OnGetPatients : TGetPatientsEvent read FOnGetPatients write FOnGetPatients;
+    property OnProcessLaunchParams : TProcessLaunchParamsEvent read FOnProcessLaunchParams write FOnProcessLaunchParams;
   end;
 
 
@@ -367,7 +379,7 @@ begin
       raise EAuthClientException.create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')', afrInvalidRequest, redirect_uri, state);
 
     id := newguidid;
-    ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state);
+    ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state, params.GetVar('launch'));
     b := TStringBuilder.Create;
     try
       ok := true;
@@ -402,7 +414,7 @@ var
   client_id, name, authurl: String;
   variables : TFslMap<TFHIRObject>;
   scopes : TStringList;
-  redirect, state, scope : String;
+  redirect, state, scope, launch : String;
 begin
   if session = nil then
     raise EAuthClientException.create('User Session not found');
@@ -412,7 +424,7 @@ begin
   else
     authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
-  if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope) then
+  if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope, launch) then
     raise EAuthClientException.create('State Error - session "'+inttostr(session.key)+'" not ready for a choice', afrInvalidRequest, '', '');
 
   if params.getVar('form') = 'true' then
@@ -464,7 +476,7 @@ begin
       variables.Add('client', TFHIRSystemString.Create(ServerContext.Storage.getClientName(client_id)));
       variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
       variables.Add('username', TFHIRSystemString.Create(name));
-      variables.Add('patient-list', TFHIRSystemString.Create(GetPatientListAsOptions));
+      variables.Add('patient-list', TFHIRSystemString.Create(GetPatientListAsOptions(launch)));
       loadScopeVariables(variables, scope, session.User);
       OnProcessFile(request, response, session, '/oauth_choice.html', true, variables)
     finally
@@ -525,7 +537,7 @@ end;
 
 procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  id, username, password, domain, state, jwt, redirect, scope : String;
+  id, username, password, domain, state, jwt, redirect, scope, launch : String;
   authurl, token, expires, msg, uid, name, email, client_id : String;
   provider : TFHIRAuthProvider;
   ok : boolean;
@@ -538,7 +550,7 @@ begin
   if params.has('id') and params.has('username') and params.has('password') then
   begin
     id := params.GetVar('id');
-    ServerContext.Storage.fetchOAuthDetails(id, client_id, redirect, state, scope);
+    ServerContext.Storage.fetchOAuthDetails(id, client_id, redirect, state, scope, launch);
 
     username := params.GetVar('username');
     password := params.GetVar('password');
@@ -910,7 +922,6 @@ end;
 function readFromScope(scope, name : String) : String;
 var
   i : integer;
-var
   list : TStringList;
 begin
   result := '';
@@ -918,8 +929,29 @@ begin
   try
     list.CommaText := scope.Replace(' ', ',');
     for i := 0 to list.Count - 1 do
-      if list[i].StartsWith(name+':') then
+      if (list[i].StartsWith(name+':')) then
         result := list[i].Substring(name.Length+1)
+  finally
+    list.free;
+  end;
+end;
+
+function readLaunchScopes(scope : String): TAuthLaunchParamsSet;
+var
+  i : integer;
+  list : TStringList;
+begin
+  result := [];
+  list := TStringList.create;
+  try
+    list.CommaText := scope.Replace(' ', ',');
+    for i := 0 to list.count - 1 do
+      if list[i] = 'launch' then
+        result := result + AuthLaunchParams_All
+      else if list[i] = 'launch/patient' then
+        result := result + [alpPatient]
+      else if list[i] = 'launch/encounter' then
+        result := result + [alpEncounter];
   finally
     list.free;
   end;
@@ -1136,11 +1168,13 @@ end;
 procedure TAuth2Server.HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 
 var
-  code, clientId, clientSecret, uri, errCode, client_id : string;
+  code, clientId, clientSecret, uri, errCode, client_id, n : string;
   pclientid, pname, predirect, pstate, pscope : String;
   json : TJSONWriter;
   buffer : TFslMemoryStream;
   launch, scope : String;
+  launchParams : TAuthLaunchParamsSet;
+  launchParamValues : TDictionary<String, String>;
   client : TRegisteredClientInformation;
 begin
   buffer := TFslMemoryStream.Create;
@@ -1154,7 +1188,7 @@ begin
       if not ServerContext.SessionManager.GetSessionByToken(code, session) then // todo: why is session passed in too?
         raise EAuthClientException.create('Authorization Code not recognized');
       try
-        if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope) then
+        if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope, launch) then
           raise EAuthClientException.create('Authorization Code not recognized (2)');
         client := ServerContext.Storage.getClientInfo(pclientid);
         try
@@ -1191,25 +1225,31 @@ begin
 
           // ok, well, it's passed.
           scope := pscope;
-          launch := readFromScope(scope, 'launch');
           ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key, client_id);
           if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
             raise EAuthClientException.create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
 
-          json := TJsonWriterDirect.create;
+          launchParams := readLaunchScopes(scope);
+          launchParamValues := FOnProcessLaunchParams(request, session, launch, launchParams);
           try
-            json.Stream := buffer.link;
-            json.Start;
-            json.Value('access_token', session.Cookie);
-            json.Value('token_type', 'Bearer');
-            json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
-            if session.canGetUser then
-              json.Value('id_token', session.JWTPacked);
-            json.Value('scope', scope);
-            json.Value('patient', launch);
-            json.Finish;
+            json := TJsonWriterDirect.create;
+            try
+              json.Stream := buffer.link;
+              json.Start;
+              json.Value('access_token', session.Cookie);
+              json.Value('token_type', 'Bearer');
+              json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+              if session.canGetUser then
+                json.Value('id_token', session.JWTPacked);
+              json.Value('scope', scope);
+              for n in launchParamValues.Keys do
+                json.Value(n, launchParamValues[n]);
+              json.Finish;
+            finally
+              json.Free;
+            end;
           finally
-            json.Free;
+            launchParamValues.Free;
           end;
         finally
           client.Free;
@@ -1429,7 +1469,7 @@ begin
   result := TFhirLoginToken(inherited link);
 end;
 
-function TAuth2Server.GetPatientListAsOptions: String;
+function TAuth2Server.GetPatientListAsOptions(launch : String): String;
 var
   b : TStringBuilder;
   dict : TFslStringDictionary;
@@ -1445,10 +1485,14 @@ begin
       begin
         b.Append('<option value="');
         b.Append(s);
-        b.Append('">');
+        b.Append('"');
+        if ((launch <> '') and (launch = 'Patient/'+s)) then
+          b.Append(' selected');
+        b.Append('>');
         b.Append(dict[s]);
         b.Append(' (');
         b.Append(s);
+
         b.Append(')</option>');
       end;
       result := b.ToString;

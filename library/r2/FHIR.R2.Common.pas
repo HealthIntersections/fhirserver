@@ -765,6 +765,12 @@ type
     function nameSummary : String; override;
   end;
 
+  TFhirEncounter2 = class (TFhirEncounterW)
+  public
+    function summary : String; override;
+    function patientId : String; override;
+  end;
+
   TFhirBinary2 = class (TFhirBinaryW)
   public
     function ContentType : String; override;
@@ -4407,5 +4413,17 @@ begin
   period.start := value;
 end;
 
+
+{ TFhirEncounter2 }
+
+function TFhirEncounter2.patientId: String;
+begin
+  result := (FRes as TFHIREncounter).patient.getId;
+end;
+
+function TFhirEncounter2.summary: String;
+begin
+  result := CODES_TFhirEncounterStateEnum[(FRes as TFHIREncounter).status];
+end;
 
 end.

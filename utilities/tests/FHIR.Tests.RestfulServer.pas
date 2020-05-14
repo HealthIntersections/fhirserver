@@ -106,7 +106,7 @@ Type
 
   TTestOAuthLogin = class (TFslObject)
   private
-    client_id, name, redirect, state, scope, jwt, patient: String;
+    client_id, name, redirect, state, scope, jwt, patient, launch: String;
   public
     function Link : TTestOAuthLogin; overload;
   end;
@@ -135,10 +135,10 @@ Type
     procedure QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime); override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
-    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
+    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
-    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; overload; override;
-    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope : String) : boolean; overload; override;
+    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope, launch : String) : boolean; overload; override;
+    function fetchOAuthDetails(id : String; var client_id, redirect, state, scope, launch : String) : boolean; overload; override;
     procedure updateOAuthSession(id : String; state, key : integer; var client_id : String); override;
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
@@ -281,7 +281,7 @@ begin
   l.patient := patient;
 end;
 
-procedure TTestStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state: String);
+procedure TTestStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch: String);
 var
   l : TTestOAuthLogin;
 begin
@@ -291,6 +291,7 @@ begin
     l.redirect := redirect_uri;
     l.state := state;
     l.scope := scope;
+    l.launch := launch;
     FOAuths.Add(id, l.Link);
   finally
     l.Free;
@@ -357,7 +358,7 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TTestStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope: String): boolean;
+function TTestStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope, launch: String): boolean;
 var
   l : TTestOAuthLogin;
 begin
@@ -369,11 +370,12 @@ begin
     redirect := l.redirect;
     state := l.state;
     scope := l.scope;
+    launch := l.launch;
   end;
 
 end;
 
-function TTestStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
+function TTestStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope, launch: String): boolean;
 var
   l : TTestOAuthLogin;
 begin
@@ -386,6 +388,7 @@ begin
     redirect := l.redirect;
     state := l.state;
     scope := l.scope;
+    launch := l.launch;
   end;
 end;
 

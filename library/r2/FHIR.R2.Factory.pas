@@ -107,6 +107,7 @@ type
     function wrapCodeableConcept(o : TFHIRObject) : TFhirCodeableConceptW; override;
     function wrapGroup(r : TFHIRResourceV) : TFhirGroupW; override;
     function wrapPatient(r : TFHIRResourceV) : TFhirPatientW; override;
+    function wrapEncounter(r : TFHIRResourceV) : TFhirEncounterW; override;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; override;
     function wrapBundleEntry(o : TFHIRObject) : TFhirBundleEntryW; override;
     function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; override;
@@ -554,6 +555,14 @@ end;
 function TFHIRFactoryR2.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
 begin
   raise EFslException.Create('Not supported in R2');
+end;
+
+function TFHIRFactoryR2.wrapEncounter(r: TFHIRResourceV): TFhirEncounterW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirEncounter2.Create(r);
 end;
 
 function TFHIRFactoryR2.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;

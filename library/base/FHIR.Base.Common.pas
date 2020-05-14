@@ -817,6 +817,13 @@ type
     function nameSummary : String; virtual; abstract;
   end;
 
+  TFhirEncounterW = class (TFHIRXVersionResourceWrapper)
+  public
+    function Link : TFhirEncounterW; overload;
+    function patientId : String; virtual; abstract;
+    function summary : String; virtual; abstract;
+  end;
+
   TFHIRLookupOpRespPropertyW = class (TFHIRXVersionOperationObjectWrapper)
   public
     function link : TFHIRLookupOpRespPropertyW; overload;
@@ -2242,6 +2249,13 @@ procedure TFHIRMetadataResourceManagerW<T>.clear();
 begin
   FList.clear();
   FMap.clear();
+end;
+
+{ TFhirEncounterW }
+
+function TFhirEncounterW.Link: TFhirEncounterW;
+begin
+  result := TFhirEncounterW(inherited Link);
 end;
 
 end.
