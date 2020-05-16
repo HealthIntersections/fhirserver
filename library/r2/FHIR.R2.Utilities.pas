@@ -72,10 +72,10 @@ function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
-function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeComposer(style : TFHIROutputStyle; const lang : THTTPLanguages; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String; overload;
 function fullResourceUri(base: String; url : String) : String; overload;
@@ -85,12 +85,12 @@ procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource; overload;
 function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource; overload;
-function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; lang : String) : TFhirResource;
-function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
-function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages) : TFhirResource;
+function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
 
-function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
-Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 
 function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList; overload;
 function CreateResourceByName(name : String) : TFhirResource;
@@ -716,7 +716,7 @@ end;
   {$ENDIF}
 
 
-function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 var
   mem : TBytesStream;
 begin
@@ -728,7 +728,7 @@ begin
   end;
 end;
 
-function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 begin
   if mimeType.Contains('application/json') or mimeType.Contains('application/fhir+json') Then
     result := TFHIRParsers2.parser(oWorker.Link, ffJson, lang)
@@ -745,7 +745,7 @@ begin
     result.free;
   end;
 end;
-function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
   if aFormat in [ffUnspecified, ffXhtml] then
     result := TFHIRParsers2.parser(oWorker.Link, DetectFormat(oContent), lang)
@@ -761,7 +761,7 @@ begin
   end;
 end;
 
-function MakeComposer(Style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(Style : TFHIROutputStyle; const lang : THTTPLanguages; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
     result := TFHIRParsers2.composer(worker.link, ffXml, lang, Style)
@@ -1051,12 +1051,12 @@ begin
     end;
 end;
 
-function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;
+function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;
 begin
   result := BuildOperationOutcome(lang, e.message, issueCode);
 end;
 
-Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 var
   outcome : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
@@ -1490,7 +1490,7 @@ begin
   end;
 end;
 
-function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
   ct : String;
   parser : TFHIRParser;
@@ -1531,7 +1531,7 @@ begin
   end;
 end;
 
-function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
   parser : TFHIRParser;
   mem : TStringStream;
@@ -1551,7 +1551,7 @@ begin
   end;
 end;
 
-function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; lang : String) : TFhirResource;
+function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages) : TFhirResource;
 var
   ct : String;
   parser : TFHIRParser;
@@ -3664,7 +3664,7 @@ begin
   else if element.FhirType = 'Narrative' then
   begin
     TFhirNarrative(element).status := NarrativeStatusAdditional;
-    TFhirNarrative(element).div_ := TFHIRXhtmlParser.Parse('en', xppAllow, [], '<div xmlns="http://www.w3.org/1999/xhtml"><p>%Some xhtml content%</p></div>');
+    TFhirNarrative(element).div_ := TFHIRXhtmlParser.Parse(THTTPLanguages.create('en'), xppAllow, [], '<div xmlns="http://www.w3.org/1999/xhtml"><p>%Some xhtml content%</p></div>');
   end
   else if element.FhirType = 'Meta' then
   begin
@@ -3724,7 +3724,7 @@ begin
     result := obj as TFhirXHtmlNode
   else if obj.isPrimitive then
   begin
-    result := TFHIRXhtmlParser.parse('en', xppDrop, [], obj.primitiveValue);
+    result := TFHIRXhtmlParser.parse(THTTPLanguages.create('en'), xppDrop, [], obj.primitiveValue);
     obj.Free;
   end
   else
@@ -4022,7 +4022,7 @@ function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String;
 var
   comp : TFHIRComposer;
 begin
-  comp := TFHIRParsers2.composer(worker.link, ffJson, 'en', OutputStyleNormal);
+  comp := TFHIRParsers2.composer(worker.link, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
   try
     result := comp.Compose(r);
   finally
@@ -4903,7 +4903,7 @@ var
 begin
   if format = ffUnspecified then
     format := DetectFormat(stream);
-  p := TFHIRParsers2.parser(nil, format, 'en');
+  p := TFHIRParsers2.parser(nil, format, THTTPLanguages.create('en'));
   try
     p.source := stream;
     p.Parse;
@@ -4959,7 +4959,7 @@ var
 begin
   if format = ffXhtml then
     format := ffXml;
-  c := TFHIRParsers2.composer(nil, format, 'en', style);
+  c := TFHIRParsers2.composer(nil, format, THTTPLanguages.create('en'), style);
   try
     c.Compose(stream, res);
   finally
@@ -4970,17 +4970,17 @@ end;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   i, j : integer;
   n, v : String;
 begin
   result := TFhirParameters.Create;
   try
-    pm := TParseMap.create(StreamToString(stream, TEncoding.ASCII));
+    pm := THTTPParameters.create(StreamToString(stream, TEncoding.ASCII));
     try
-      for i := 0 to pm.getItemCount - 1 do
+      for i := 0 to pm.Count - 1 do
       begin
-        n := pm.VarName(i);
+        n := pm.Name[i];
         for j := 0 to pm.getValueCount(i) - 1 do
         begin
           pm.retrieveNumberedItem(i,j, v);

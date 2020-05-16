@@ -32,7 +32,7 @@ interface
 uses
   Windows, Sysutils, Classes, IniFiles,
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Factory,
   FHIR.Ucum.Services,
   FHIR.R4.Constants, FHIR.R4.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Base.PathEngine,
@@ -133,7 +133,7 @@ Type
     destructor Destroy; override;
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime); override;
-    function createOperationContext(lang : String) : TFHIROperationEngine; override;
+    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
@@ -165,9 +165,9 @@ Type
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
 
-    procedure SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure SetupRecording(Session : TFHIRSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
-    procedure FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure FinishRecording(); override;
   end;
 
 
@@ -247,7 +247,7 @@ begin
   FOAuths := TFslMap<TTestOAuthLogin>.create('oauths');
 end;
 
-function TTestStorageService.createOperationContext(lang: String): TFHIROperationEngine;
+function TTestStorageService.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
   result := TTestFHIROperationEngine.create(FContext.Link, lang);
   TTestFHIROperationEngine(result).FIsReadAllowed := true;
@@ -410,7 +410,7 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TTestStorageService.FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+procedure TTestStorageService.FinishRecording();
 begin
 end;
 
@@ -461,10 +461,8 @@ begin
   FContext := Value;
 end;
 
-procedure TTestStorageService.SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+procedure TTestStorageService.SetupRecording(Session : TFHIRSession);
 begin
-  inherited;
-
 end;
 
 function TTestStorageService.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;

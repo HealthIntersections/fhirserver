@@ -39,7 +39,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Factory,
   FHIR.Tools.ValueSets,
@@ -94,15 +94,15 @@ Type
     function expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFhirValueSetW; overload;
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFhirValueSetW; overload;
 
-    procedure lookupCode(coding : TFHIRCodingW; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+    procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
     function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
     function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean) : TFhirParametersW; overload;
-    function translate(lang : String; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
-    function translate(lang : String; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
-    function translate(lang : String; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW; overload;
+    function translate(const lang : THTTPLanguages; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
+    function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
+    function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW; overload;
     Function MakeChecker(uri : string; profile : TFHIRExpansionParams) : TValueSetChecker;
-    function getDisplayForCode(lang : String; system, version, code : String): String;
-    function checkCode(op : TFhirOperationOutcomeW; lang, path : string; code : string; system, version : string; display : string) : boolean;
+    function getDisplayForCode(const lang : THTTPLanguages; system, version, code : String): String;
+    function checkCode(op : TFhirOperationOutcomeW; const lang : THTTPLanguages; path : string; code : string; system, version : string; display : string) : boolean;
     function isValidCode(system, code : String) : boolean;
     // procedure composeCode(req : TFHIRComposeOpRequest; resp : TFHIRComposeOpResponse);
     function findCanonicalResources(bundle : TFHIRBundleBuilder; rType : String; url, version : String) : boolean;
@@ -112,8 +112,8 @@ Type
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
     function enterIntoClosure(conn : TFslDBConnection; name, uri, code : String) : integer;
 
-    procedure getCodeView(lang : String; coding : TFHIRCodingW; response : TCDSHookResponse); overload;
-    procedure getCodeView(lang : String; coding : TFhirCodeableConceptW; response : TCDSHookResponse); overload;
+    procedure getCodeView(const lang : THTTPLanguages; coding : TFHIRCodingW; response : TCDSHookResponse); overload;
+    procedure getCodeView(const lang : THTTPLanguages; coding : TFhirCodeableConceptW; response : TCDSHookResponse); overload;
 
     // database maintenance
     procedure BuildIndexes(prog : boolean);
@@ -170,7 +170,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.lookupCode(coding : TFHIRCodingW; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TTerminologyServer.lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 var
   provider : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -545,7 +545,7 @@ begin
   result := getProvider(url, version, params, nullOk);
 end;
 
-function TTerminologyServer.checkCode(op : TFhirOperationOutcomeW; lang, path : string; code : string; system, version : string; display : string) : boolean;
+function TTerminologyServer.checkCode(op : TFhirOperationOutcomeW; const lang : THTTPLanguages; path : string; code : string; system, version : string; display : string) : boolean;
 var
   cs : TFhirCodeSystemW;
   cp : TCodeSystemProvider;
@@ -585,8 +585,8 @@ begin
         lct := cp.locate(code);
         try
           if (op.error('InstanceValidator', itInvalid, path, lct <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-            result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = cp.Display(lct, '')),
-            'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct, '')+'"');
+            result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = cp.Display(lct, THTTPLanguages.create(''))),
+            'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct, THTTPLanguages.Create(''))+'"');
         finally
           cp.Close(lct);
         end;
@@ -743,7 +743,7 @@ begin
 end;
 *)
 
-function TTerminologyServer.getDisplayForCode(lang : String; system, version, code: String): String;
+function TTerminologyServer.getDisplayForCode(const lang : THTTPLanguages; system, version, code: String): String;
 var
   provider : TCodeSystemProvider;
 begin
@@ -756,7 +756,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.getCodeView(lang : String; coding: TFHIRCodingW; response: TCDSHookResponse);
+procedure TTerminologyServer.getCodeView(const lang : THTTPLanguages; coding: TFHIRCodingW; response: TCDSHookResponse);
 var
   card : TCDSHookCard;
   cs : TCodeSystemProvider;
@@ -773,7 +773,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.getCodeView(lang : String; coding: TFhirCodeableConceptW; response: TCDSHookResponse);
+procedure TTerminologyServer.getCodeView(const lang : THTTPLanguages; coding: TFhirCodeableConceptW; response: TCDSHookResponse);
 var
   c : TFHIRCodingW;
 begin
@@ -879,7 +879,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.translate(lang : String; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW;
+function TTerminologyServer.translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW;
 var
   op : TFhirOperationOutcomeW;
   list : TLoadedConceptMapList;
@@ -962,7 +962,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.translate(lang : String; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW;
+function TTerminologyServer.translate(const lang : THTTPLanguages; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW;
 var
   c : TFhirCodingW;
 begin
@@ -1282,7 +1282,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.translate(lang : String; cm: TLoadedConceptMap; coding: TFHIRCodingW): TFhirParametersW;
+function TTerminologyServer.translate(const lang : THTTPLanguages; cm: TLoadedConceptMap; coding: TFHIRCodingW): TFhirParametersW;
 var
   op : TFhirOperationOutcomeW;
   g : TFhirConceptMapGroupW;

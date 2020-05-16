@@ -208,7 +208,7 @@ end;
 //begin
 //  stream := TFileStream.Create(filename, fmOpenRead);
 //  try
-//    json := TFHIRJsonParser.Create('en');
+//    json := TFHIRJsonParser.Create(THTTPLanguages.create('en'));
 //    try
 //      json.source := stream;
 //      json.Parse;
@@ -243,7 +243,7 @@ end;
 //begin
 //  stream := TFileStream.Create(filename, fmCreate);
 //  try
-//    json := TFHIRJsonComposer.Create('en');
+//    json := TFHIRJsonComposer.Create(THTTPLanguages.create('en'));
 //    try
 //      json.Compose(stream, resource, true, nil);
 //    finally

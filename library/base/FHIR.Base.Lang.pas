@@ -33,10 +33,11 @@ interface
 uses
   SysUtils, classes, Generics.Collections,
   FHIR.Support.Base,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects;
 
-function GetFhirMessage(id, lang : String):String; overload;
-function GetFhirMessage(id, lang, def : String):String; overload;
+function GetFhirMessage(id : String; const lang : THTTPLanguages) : String; overload;
+function GetFhirMessage(id : String; const lang : THTTPLanguages; def : String) : String; overload;
 
 procedure LoadMessages;
 
@@ -72,8 +73,8 @@ Const
 Type
   EFHIRException = class (EFslException)
   public
-    constructor CreateLang(code, lang : String); overload;
-    constructor CreateLang(code, lang : String; const Args: array of const); overload;
+    constructor CreateLang(code : String; const lang : THTTPLanguages); overload;
+    constructor CreateLang(code : String; const lang : THTTPLanguages; const Args: array of const); overload;
   end;
   EFHIRTodo = Class(EFHIRException)
   public
@@ -95,8 +96,8 @@ Type
     FStatus : word;
     FCode : TFhirIssueType;
   Public
-    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String); Overload; Virtual;
-    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String; const Args: array of const); Overload; Virtual;
+    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage : String; const lang : THTTPLanguages); Overload; Virtual;
+    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage : String; const lang : THTTPLanguages; const Args: array of const); Overload; Virtual;
 
     Property Status : word read FStatus write FStatus;
     Property Code : TFhirIssueType read FCode write FCode;
@@ -114,7 +115,6 @@ Type
 
   EFHIRPathDefinitionCheck = class (EFHIRPath);
 
-function languageMatches(spec, possible : String) : boolean;
 function removeCaseAndAccents(s : String) : String;
 
 implementation
@@ -194,35 +194,12 @@ begin
   end;
 end;
 
-function GetFhirMessage(id, lang : String):String;
-var
-  msg : TFHIRMessage;
-  l : string;
+function GetFhirMessage(id : String; const lang : THTTPLanguages) : String;
 begin
-  result := '';
-  if GMessages = nil then
-    LoadMessages;
-  if GMessages = nil then
-    exit(id);
-  if not GMessages.ContainsKey(id) then
-    result := id
-  else
-  begin
-    msg := GMessages[id];
-    while (result = '') and (lang <> '') do
-    begin
-      StringSplit(lang, [';', ','], l, lang);
-      if msg.FMessages.ContainsKey(l) then
-        result := msg.FMessages[l];
-    end;
-    if result = '' then
-      result := msg.FMessages['en'];
-    if result = '' then
-      result := '??';
-  end;
+  result := GetFhirMessage(id, lang, '??');
 end;
 
-function GetFhirMessage(id, lang, def : String):String;
+function GetFhirMessage(id : String; const lang : THTTPLanguages; def : String) : String;
 var
   msg : TFHIRMessage;
   l : string;
@@ -235,12 +212,9 @@ begin
   else
   begin
     msg := GMessages[id];
-    while (result = '') and (lang <> '') do
-    begin
-      StringSplit(lang, [';', ','], l, lang);
-      if msg.FMessages.ContainsKey(l) then
+    for l in lang.codes do
+      if (result = '') and (msg.FMessages.ContainsKey(l)) then
         result := msg.FMessages[l];
-    end;
     if result = '' then
       result := msg.FMessages['en'];
     if result = '' then
@@ -266,12 +240,12 @@ end;
 
 { EFHIRException }
 
-constructor EFHIRException.CreateLang(code, lang: String);
+constructor EFHIRException.CreateLang(code : String; const lang : THTTPLanguages);
 begin
   inherited Create(GetFhirMessage(code, lang));
 end;
 
-constructor EFHIRException.CreateLang(code, lang: String; const Args: array of const);
+constructor EFHIRException.CreateLang(code : String; const lang : THTTPLanguages; const Args: array of const);
 begin
   inherited Create(Format(GetFhirMessage(code, lang), args));
 end;
@@ -279,7 +253,7 @@ end;
 
 { ERestfulException }
 
-constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage, lang: String; const Args: array of const);
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; const lang : THTTPLanguages; const Args: array of const);
 begin
   inherited Create(Format(GetFhirMessage(sMessage, lang), args));
 
@@ -288,7 +262,7 @@ begin
   FCode := code;
 end;
 
-constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage, lang: String);
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; const lang : THTTPLanguages);
 begin
   inherited Create(GetFhirMessage(sMessage, lang));
 

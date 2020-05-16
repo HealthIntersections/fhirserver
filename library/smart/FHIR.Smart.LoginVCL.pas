@@ -127,16 +127,16 @@ implementation
 procedure TSmartOnFhirLoginForm.DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
   s : TArray<String>;
-  pm : TParseMap;
+  pm : THTTPParameters;
 begin
   if ARequestInfo.Document = '/done' then
   begin
     s := ARequestInfo.RawHTTPCommand.Split([' ']);
-    pm := TParseMap.create(s[1].Substring(6));
+    pm := THTTPParameters.create(s[1].Substring(6));
     try
-      FServerError := pm.getVar('error');
-      FAuthCode := pm.GetVar('code');
-      FFinalState := pm.GetVar('state');
+      FServerError := pm['error'];
+      FAuthCode := pm['code'];
+      FFinalState := pm['state'];
     finally
       pm.free;
     end;

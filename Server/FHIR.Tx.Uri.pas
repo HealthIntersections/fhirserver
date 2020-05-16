@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Tx.Service;
 
@@ -55,15 +55,15 @@ type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -107,7 +107,7 @@ begin
   result := '';
 end;
 
-function TUriServices.getDisplay(code : String; lang : String):String;
+function TUriServices.getDisplay(code : String; const lang : THTTPLanguages):String;
 begin
   result := '';
 end;
@@ -117,7 +117,7 @@ begin
   raise ETerminologyTodo.create('TUriServices.getPrepContext');
 end;
 
-procedure TUriServices.Displays(code : String; list : TStringList; lang : String);
+procedure TUriServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
 begin
 end;
 
@@ -137,12 +137,12 @@ begin
   result := '';
 end;
 
-function TUriServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
+function TUriServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
 begin
   result := '';
 end;
 
-procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
 end;
 

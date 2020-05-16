@@ -35,6 +35,7 @@ Interface
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
 
 const
@@ -69,7 +70,7 @@ Type
     FAllowUnknownContent: Boolean;
     Fresource: TFhirResourceV;
     FSource: TStream;
-    FLang: String;
+    FLang : THTTPLanguages;
     FParserPolicy : TFHIRXhtmlParserPolicy;
     FKeepLineNumbers : boolean;
     FTimeLimit: Cardinal;
@@ -86,7 +87,7 @@ Type
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
   public
-    constructor Create(worker : TFHIRWorkerContextV; lang : String); Virtual;
+    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages); Virtual;
     destructor Destroy; Override;
     property source : TStream read FSource write FSource;
     procedure Parse; Virtual; abstract;
@@ -100,7 +101,7 @@ Type
 
     procedure ParseFile(filename : String); overload;
     Property AllowUnknownContent : Boolean read FAllowUnknownContent write FAllowUnknownContent;
-    Property Lang : String read FLang write FLang;
+    Property Lang : THTTPLanguages read FLang write FLang;
     property ParserPolicy : TFHIRXhtmlParserPolicy read FParserPolicy write FParserPolicy;
     property KeepLineNumbers : boolean read FKeepLineNumbers write FKeepLineNumbers;
     property timeLimit : Cardinal read FTimeLimit write FTimeLimit;
@@ -200,7 +201,7 @@ Type
 
   TFHIRComposer = class abstract (TFslObject)
   private
-    FLang: String;
+    FLang: THTTPLanguages;
     FSummaryOption: TFHIRSummaryOption;
     FNoHeader: Boolean;
     FElements : TStringList;
@@ -226,7 +227,7 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); Virtual;
   public
-    constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
+    constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
     destructor Destroy; override;
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
@@ -238,7 +239,7 @@ Type
 
     Function MimeType : String; virtual;
     function Extension : String; virtual;
-    Property Lang : String read FLang write FLang;
+    Property Lang : THTTPLanguages read FLang write FLang;
     Property SummaryOption : TFHIRSummaryOption read FSummaryOption write FSummaryOption;
     property NoHeader : Boolean read FNoHeader write FNoHeader;
     property ElementToCompose : TStringList read FElements;
@@ -1065,7 +1066,7 @@ begin
     abort;
 end;
 
-constructor TFHIRParser.Create(worker : TFHIRWorkerContextV; lang: String);
+constructor TFHIRParser.Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages);
 begin
   Inherited Create;
   FLang := lang;
@@ -1505,7 +1506,7 @@ begin
     result := value.ToXML;
 end;
 
-constructor TFHIRComposer.Create(worker: TFHIRWorkerContextV; Style : TFHIROutputStyle; lang: String);
+constructor TFHIRComposer.Create(worker: TFHIRWorkerContextV; Style : TFHIROutputStyle; const lang : THTTPLanguages);
 begin
   inherited Create;
   FWorker := worker;

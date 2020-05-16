@@ -38,7 +38,7 @@ Uses
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
-  FHIR.Support.Certs, FHIR.Support.Comparisons,
+  FHIR.Support.Certs, FHIR.Support.Comparisons, FHIR.Web.Parsers,
   DUnitX.TestFramework;
 
 var
@@ -661,6 +661,12 @@ Type
 //    [TestCase] Procedure testGenDSA_256;
   End;
      *)
+
+  [TextFixture]
+  TLangParserTests = Class (TObject)
+  Published
+    [TestCase] Procedure testBase;
+  End;
 
 implementation
 
@@ -4641,6 +4647,20 @@ begin
   Assert.AreEqual(output, tgt);
 end;
 
+Procedure TLangParserTests.testBase;
+var
+  lang : THTTPLanguages;
+begin
+  lang := THTTPLanguages.create('en');
+  Assert.isTrue(lang.header = 'en');
+  Assert.isTrue(length(lang.Codes) = 1);
+  Assert.isTrue(lang.Codes[0] = 'en');
+  Assert.isTrue(lang.prefLang = 'en');
+  Assert.isTrue(lang.matches('en'));
+  Assert.isTrue(lang.matches('en-AU'));
+  Assert.isTrue(not lang.matches('eng'));
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
@@ -4655,6 +4675,7 @@ initialization
   TDUnitX.RegisterTestFixture(TJWTTests);
   TDUnitX.RegisterTestFixture(TTurtleTests);
   TDUnitX.RegisterTestFixture(TDecimalTests);
+  TDUnitX.RegisterTestFixture(TLangParserTests);
 //  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
 end.
 

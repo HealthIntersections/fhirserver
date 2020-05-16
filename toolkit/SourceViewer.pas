@@ -33,7 +33,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ScrollBox, FMX.Memo, FMX.TabControl, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Web.Parsers,
   FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.DiffEngine;
 
 type
@@ -98,11 +98,11 @@ var
   html : string;
 begin
   if rbXml.IsChecked then
-    c := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en')
+    c := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'))
   else if rbJson.IsChecked then
-    c := TFHIRJsonComposer.Create(nil, OutputStylePretty, 'en')
+    c := TFHIRJsonComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'))
   else
-    c := TFHIRTurtleComposer.Create(nil, OutputStylePretty, 'en');
+    c := TFHIRTurtleComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
   try
     case TabControl1.TabIndex of
       0 : mSource.Lines.Text := c.Compose(FCurrent);

@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   MarkDownProcessor,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.Smart.Utilities;
 
@@ -75,7 +75,7 @@ type
     Fuser: String;
     Fpatient: String;
     Fencounter: String;
-    FLang : String;
+    FLang : THTTPLanguages;
     FContext: TFslList<TFHIRResourceV>;
     FPreFetch : TFslMap<TFhirObject>;
     FBaseUrl: String;
@@ -100,7 +100,7 @@ type
     property encounter : String read Fencounter write Fencounter;
     property context : TFslList<TFHIRResourceV> read FContext;
     property preFetch : TFslMap<TFhirObject{BundleEntry}> read FPreFetch;
-    property lang : String read FLang write FLang;
+    property lang : THTTPLanguages read FLang write FLang;
     property baseURL : String read FBaseUrl write FBaseUrl;
   end;
 
@@ -473,7 +473,7 @@ begin
       writer.ValueArray('context');
       for c in context do
       begin
-        comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, 'en');
+        comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, THTTPLanguages.create('en'));
         try
           comp.Compose(writer, c);
         finally
@@ -497,7 +497,7 @@ begin
           if be.resource <> nil then
           begin
             writer.ValueObject('resource');
-            comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, 'en');
+            comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, THTTPLanguages.create('en'));
             try
               comp.Compose(writer, be.resource);
             finally
@@ -555,7 +555,7 @@ begin
   a := json.arr['context'];
   for n in a do
   begin
-    p := TFHIRJsonParser.Create(nil, 'en');
+    p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
     try
       p.Parse(TJsonObject(n));
       FContext.Add(p.resource.Link as TFhirResource);
@@ -578,7 +578,7 @@ begin
         end;
         if e.has('resource') then
         begin
-          p := TFHIRJsonParser.Create(nil, 'en');
+          p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
           try
             p.Parse(e.obj['resource']);
             be.resource := p.resource.Link as TFhirResource;

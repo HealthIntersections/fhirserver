@@ -46,13 +46,13 @@ Type
   TMPISearchProcessor = class (TFslObject)
   private
     // inputs
-    Fparams: TParseMap;
+    Fparams: THTTPParameters;
     FConnection: TFslDBConnection;
     FbaseURL: string;
     Ftypekey: integer;
     Findexes: TFHIRIndexInformation;
     Flink_: string;
-    Flang: string;
+    Flang: THTTPLanguages;
     Fsession: TFHIRSession;
     FKey : String;
 
@@ -68,7 +68,7 @@ Type
 
     procedure SetConnection(const Value: TFslDBConnection);
     procedure Setindexes(const Value: TFHIRIndexInformation);
-    procedure Setparams(const Value: TParseMap);
+    procedure Setparams(const Value: THTTPParameters);
     procedure Setsession(const Value: TFHIRSession);
 
     function baseSQL(sort, score : String; certainty : TMPICertainty) : String;
@@ -89,8 +89,8 @@ Type
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
     property sessionCompartments : TFslList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : string read FbaseURL write FbaseURL;
-    property lang : string read Flang write Flang;
-    property params : TParseMap read Fparams write Setparams;
+    property lang : THTTPLanguages read Flang write Flang;
+    property params : THTTPParameters read Fparams write Setparams;
     property indexes : TFHIRIndexInformation read Findexes write Setindexes;
     property session : TFHIRSession read Fsession write Setsession;
     property Connection : TFslDBConnection read FConnection write SetConnection;
@@ -133,11 +133,11 @@ end;
 procedure TMPISearchProcessor.execute;
 begin
   // parameters we care about:
-  FDateOfBirth := Fparams.GetVar('birthdate').ToLower;
-  FGender := Fparams.GetVar('gender').ToLower;
-  FFirstName := FParams.GetVar('given').ToLower;
-  FFamilyName := FParams.getVar('family').ToLower;
-  FIdentifier := FParams.getVar('identifier').ToLower;
+  FDateOfBirth := Fparams['birthdate'].ToLower;
+  FGender := Fparams['gender'].ToLower;
+  FFirstName := FParams['given'].ToLower;
+  FFamilyName := FParams['family'].ToLower;
+  FIdentifier := FParams['identifier'].ToLower;
 
   if (FFirstName = '') or (FFamilyName = '') or (FGender = '') then
     raise EFHIRException.create('You must provide at least given name, family name, and gender for an MPI search');
@@ -278,7 +278,7 @@ begin
   Findexes := Value;
 end;
 
-procedure TMPISearchProcessor.Setparams(const Value: TParseMap);
+procedure TMPISearchProcessor.Setparams(const Value: THTTPParameters);
 begin
   Fparams := Value;
 end;

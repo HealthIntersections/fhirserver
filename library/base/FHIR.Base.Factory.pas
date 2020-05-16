@@ -34,6 +34,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
+  FHIR.Web.Parsers,
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.ElementModel,
   FHIR.Client.Base;
@@ -129,8 +130,8 @@ type
     function isResourceName(name : String) : boolean; virtual;
     function resCategory(name: String) : TTokenCategory; virtual; abstract;
 
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; virtual; abstract;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; virtual; abstract;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; virtual; abstract;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; virtual; abstract;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual; abstract;
@@ -143,7 +144,7 @@ type
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual;  abstract;// because using indy is necessary if you're writing a server, or unixready code
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual; abstract;
-    function makeClientInt(worker : TFHIRWorkerContextV; lang : String; comm : TFHIRClientCommunicator) : TFhirClientV; overload; virtual; abstract;
+    function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; virtual; abstract;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); virtual; abstract;
@@ -151,8 +152,8 @@ type
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; virtual; abstract;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); virtual; abstract;
-    function buildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
-    Function buildOperationOutcome(lang, message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    function buildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
 
     function makeByName(const name : String) : TFHIRObject; virtual; abstract;
     function makeResource(const name : String) : TFHIRResourceV;
@@ -168,7 +169,7 @@ type
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; virtual; abstract;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; virtual; abstract;
     function makeDateTime(dt : TFslDateTime) : TFHIRObject; virtual; abstract;
-    function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
+    function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
     function makeDuration(dt : TDateTime) : TFHIRObject; virtual; abstract;
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; virtual; abstract;
 
@@ -203,6 +204,7 @@ type
     function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; virtual; abstract;
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; virtual; abstract;
     function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; virtual; abstract;
+    function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; virtual; abstract;
 
     function makeOpReqLookup : TFHIRLookupOpRequestW; virtual; abstract;
     function makeOpRespLookup : TFHIRLookupOpResponseW; virtual; abstract;
@@ -410,7 +412,7 @@ procedure TFHIRWorkerContextWithFactory.loadResourceJson(rtype, id: String; json
 var
   p : TFHIRParser;
 begin
-  p := Factory.makeParser(self.link, ffJson, 'en');
+  p := Factory.makeParser(self.link, ffJson, THTTPLanguages.create('en'));
   try
     p.source := json;
     p.Parse;

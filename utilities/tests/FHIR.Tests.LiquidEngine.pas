@@ -46,7 +46,7 @@ begin
   pages := TDictionary<String, String>.create;
   engine := TFHIRLiquidEngine.Create(TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil));
   engine.OnFetchInclude := FetchInclude;
-  p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
+  p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
   try
     f := TFileStream.Create(FHIR_PUB_FILE('patient-example.xml'), fmOpenRead);
     try

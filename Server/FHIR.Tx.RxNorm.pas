@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   YuStemmer,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.base.Utilities,
@@ -90,15 +90,15 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
 //    function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -111,8 +111,8 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
@@ -315,7 +315,7 @@ begin
   result := '';
 end;
 
-function TUMLSServices.getDisplay(code : String; lang : String):String;
+function TUMLSServices.getDisplay(code : String; const lang : THTTPLanguages):String;
 var
   qry : TFslDBConnection;
 begin
@@ -348,7 +348,7 @@ begin
   result := 'RXNORM';
 end;
 
-procedure TUMLSServices.Displays(code : String; list : TStringList; lang : String);
+procedure TUMLSServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
 begin
   list.Add(getDisplay(code, lang));
 end;
@@ -444,18 +444,18 @@ begin
   inherited;
 end;
 
-function TUMLSServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
+function TUMLSServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
 begin
   result := TUMLSConcept(context).FDisplay.Trim;
 end;
 
-procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Display(context, lang));
   list.AddStrings(TUMLSConcept(context).FOthers);
 end;
 
-procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   qry : TFslDBConnection;
   b : boolean;
@@ -525,7 +525,7 @@ begin
   end;
 end;
 
-procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
+procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
 //    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
   card.detail := 'Not done yet';

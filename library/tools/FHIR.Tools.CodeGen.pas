@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Classes, Character,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang;
 
 type
@@ -772,7 +772,7 @@ end;
 procedure TFHIRCodeGeneratorPascal.processXhtml(indent: integer; variableName: String; value: TFHIRObject);
 begin
   units.add('FHIR.Base.Xhtml');
-  line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(''en'', xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
+  line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(THTTPLanguages.create(''en''), xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
 end;
 
 function TFHIRCodeGeneratorPascal.varName(fhirType: String; defn : TFhirElementDefinitionW; inScope: TArray<String>): string;

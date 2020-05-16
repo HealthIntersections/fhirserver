@@ -34,7 +34,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, IniFiles,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Menus, FMX.Platform,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
-  FHIR.Support.OSX, FHIR.Ui.OSX,
+  FHIR.Support.OSX, FHIR.Ui.OSX, FHIR.Web.Parsers,
   FHIR.Support.Utilities, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Factory,
@@ -533,7 +533,7 @@ var
     res : TFHIRResource;
   begin
     inc(count);
-    res := TFHIRParsers4.ParseFile(nil, ffXML, 'en', fn);
+    res := TFHIRParsers4.ParseFile(nil, ffXML, THTTPLanguages.create('en'), fn);
     try
       server.SeeTerminologyResource(res);
     finally

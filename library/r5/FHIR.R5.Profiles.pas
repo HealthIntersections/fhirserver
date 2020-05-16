@@ -1731,9 +1731,9 @@ begin
               try
                 vcl.Stream := mem.link;
                 if ExtractFileExt(r.Parts[i].Name) = '.json' then
-                  fp := TFHIRParsers5.parser(self.link, ffJson, 'en')
+                  fp := TFHIRParsers5.parser(self.link, ffJson, lang)
                 else
-                  fp := TFHIRParsers5.parser(self.link, ffXml, 'en');
+                  fp := TFHIRParsers5.parser(self.link, ffXml, lang);
                 try
                   fp.IgnoreHtml := true;
                   fp.source := vcl;
@@ -1795,9 +1795,9 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffJson, 'en'))
+    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffJson, lang))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffXml, 'en'))
+    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffXml, lang))
 end;
 
 procedure TBaseWorkerContextR5.LoadFromFolder(folder: string);

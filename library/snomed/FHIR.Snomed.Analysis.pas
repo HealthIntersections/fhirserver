@@ -118,7 +118,7 @@ type
     constructor Create(snomed : TSnomedServices); overload;
     destructor Destroy; override;
 
-    function generate(params : TParseMap) : TFslNameBuffer;
+    function generate(params : THTTPParameters) : TFslNameBuffer;
   end;
 
 implementation
@@ -184,7 +184,7 @@ begin
   b.Append('">');
   b.Append(id);
   b.Append('</a></b> ');
-  b.Append(FormatTextToXML(fsnomed.getDisplay(id, ''), xmlText));
+  b.Append(FormatTextToXML(fsnomed.getDisplay(id, THTTPLanguages.Create('en')), xmlText));
   b.append('.');
   b.Append(inttostr(length(alldesc)));
   b.AppendLine(' rows</td></tr>');
@@ -316,7 +316,7 @@ begin
   end;
 end;
 
-function TSnomedAnalysis.generate(params : TParseMap): TFslNameBuffer;
+function TSnomedAnalysis.generate(params : THTTPParameters): TFslNameBuffer;
 var
   b : TFslStringBuilder;
   st : TStringList;
@@ -410,7 +410,7 @@ begin
     begin
       result := TFslNameBuffer.Create;
       try
-        processScript(result, params.GetVar('script'));
+        processScript(result, params['script']);
         result.Link;
       finally
         result.Free;
@@ -421,7 +421,7 @@ begin
     begin
       st := TStringList.Create;
       try
-        st.CommaText := params.GetVar('scan');
+        st.CommaText := params['scan'];
         b.AppendLine('<form method="POST">');
         b.AppendLine('<p>Rescan: </p><p>');
         b.AppendLine(' Candidate Concepts: <input type="text" name="scan" value="'+st.commatext+'"> (comma separated list of concept ids)</br>');

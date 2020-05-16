@@ -39,7 +39,7 @@ Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Service,
-  FHIR.Web.Fetcher,
+  FHIR.Web.Fetcher, FHIR.Web.Parsers,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services, FHIR.Ucum.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
@@ -694,7 +694,7 @@ begin
               loadList := getLoadResourceList(ploader.FFactory, mode);
               logt('Load Package '+pi+'#'+pv+' - resources of type '+asString(loadList));
               pcm.loadPackage(pi, pv, loadList, li);
-              FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
+              FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', opmCmdLine, callback);
             finally
               ploader.Free;
             end;
@@ -1180,7 +1180,7 @@ procedure TPackageLoader.load(rType, id: String; stream: TStream);
 var
   p : TFHIRParser;
 begin
-  p := FFactory.makeParser(nil, ffJson, 'en');
+  p := FFactory.makeParser(nil, ffJson, THTTPLanguages.create('en'));
   try
     FBundle.addEntry.resource := p.parseResource(stream);
   finally

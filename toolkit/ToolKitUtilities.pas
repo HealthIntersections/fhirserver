@@ -702,7 +702,7 @@ procedure TBackgroundContextLoader.loadResourceJson(rType, id: String; json: TSt
 var
   p : TFHIRParser;
 begin
-  p := details.Context.Factory.makeParser(details.context.link, ffJson, 'en');
+  p := details.Context.Factory.makeParser(details.context.link, ffJson, details.Context.lang);
   try
     p.source := json;
     p.Parse;

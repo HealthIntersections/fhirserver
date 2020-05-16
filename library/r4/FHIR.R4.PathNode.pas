@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Xml, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Parser;
 
@@ -221,13 +221,13 @@ type
   TFHIRExpressionNodeComposer = class (TFslObject)
   private
     FStyle : TFHIROutputStyle;
-    FLang : String;
+    FLang : THTTPLanguages;
     procedure ComposeXml(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure composeXmlExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
   public
-    constructor Create(style : TFHIROutputStyle; lang : String); Virtual;
+    constructor Create(style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
 
     procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet); Virtual;
     function Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet): String; Overload;
@@ -1019,7 +1019,7 @@ end;
 
 { TFHIRExpressionNodeComposer }
 
-constructor TFHIRExpressionNodeComposer.Create(style: TFHIROutputStyle; lang: String);
+constructor TFHIRExpressionNodeComposer.Create(style: TFHIROutputStyle; const lang : THTTPLanguages);
 begin
   inherited Create;
   FLang := lang;

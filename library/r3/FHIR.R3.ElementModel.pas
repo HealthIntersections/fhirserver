@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Variants, Math,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.ElementModel,
   FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
 
@@ -1627,7 +1627,7 @@ begin
         begin
           if (not prop.isChoice()) and ('xhtml' = prop.getType()) then
           begin
-            xhtml := TFHIRXhtmlParser.parse('en', xppReject, [xopValidatorMode], e, path, FHIR_NS);
+            xhtml := TFHIRXhtmlParser.parse(THTTPLanguages.create('en'), xppReject, [xopValidatorMode], e, path, FHIR_NS);
             n := TFHIRMMElement.create('div', prop.link, 'xhtml', TFHIRXhtmlParser.compose(xhtml));
             context.getChildren().add(n);
             n.Xhtml := xhtml;
@@ -2123,7 +2123,7 @@ begin
       if ( not n.Prop.isChoice()) and (n.Type_ = 'xhtml') then
       begin
         try
-          n.Xhtml := TFHIRXhtmlParser.parse('en', xppAllow, [xopValidatorMode], n.value);
+          n.Xhtml := TFHIRXhtmlParser.parse(THTTPLanguages.create('en'), xppAllow, [xopValidatorMode], n.value);
         Except
           on e : Exception do
             logError(main.LocationStart.Line, main.LocationStart.Col, npath, IssueTypeINVALID, 'Error parsing XHTML: '+e.Message, IssueSeverityERROR);

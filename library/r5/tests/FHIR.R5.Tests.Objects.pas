@@ -27,7 +27,7 @@ function TFHIRObjectTests.json(o: TFHIRResource): String;
 var
   c : TFHIRJsonComposer;
 begin
-  c := TFHIRJsonComposer.Create(nil, OutputStyleCanonical, 'en');
+  c := TFHIRJsonComposer.Create(nil, OutputStyleCanonical, THTTPLanguages.create('en'));
   try
     result := c.Compose(o);
   finally

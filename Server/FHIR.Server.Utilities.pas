@@ -35,7 +35,7 @@ uses
   {$IFDEF OSX} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Threads,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Threads, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Server.Ini, FHIR.Server.Session;
 
@@ -156,11 +156,11 @@ type
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 
-function LoadBinaryResource(factory : TFHIRFactory; lang : String; b: TBytes): TFhirResourceV;
+function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
 
 implementation
 
-function LoadBinaryResource(factory : TFHIRFactory; lang : String; b: TBytes): TFhirResourceV;
+function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
 var
   s : TBytes;
   i, j : integer;

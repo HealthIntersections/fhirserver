@@ -71,6 +71,8 @@ type
     function canWrite(resourceName : String) : boolean;
     property canReadAll : boolean read FReadAll;
     property canAdministerUsers : boolean read FAdministerUsers;
+    function canReadAny : boolean;
+    function canWriteAny : boolean;
     procedure allowAll;
 
     property source : String read FSource;
@@ -216,9 +218,19 @@ begin
 end;
 
 
+function TFHIRSecurityRights.canReadAny: boolean;
+begin
+  result := not FReadAllowed.isEmpty;
+end;
+
 function TFHIRSecurityRights.canWrite(resourceName : String): boolean;
 begin
   result := FWriteAllowed.contains(resourceName);
+end;
+
+function TFHIRSecurityRights.canWriteAny: boolean;
+begin
+  result := not FWriteAllowed.isEmpty;
 end;
 
 procedure TFHIRSecurityRights.processScopes(scopes: TStringList; base : TFHIRSecurityRights; secure : boolean);

@@ -173,15 +173,15 @@ procedure TOpenMHealthAdaptor.editSearch(req: TFHIRRequest);
 var
   p : String;
 begin
-  if req.Parameters.GetVar('schema_namespace') <> 'omh' then
+  if req.Parameters['schema_namespace'] <> 'omh' then
     raise EFHIRException.create('Unknown schema namespace');
-  if req.Parameters.GetVar('schema_version') <> '1.0' then
+  if req.Parameters['schema_version'] <> '1.0' then
     raise EFHIRException.create('Unknown schema version for OMH 1.0');
-  p := '_profile=http://www.openmhealth.org/schemas/fhir/'+req.Parameters.GetVar('schema_namespace')+'/'+req.Parameters.GetVar('schema_version')+'/'+req.Parameters.GetVar('schema_name');
+  p := '_profile=http://www.openmhealth.org/schemas/fhir/'+req.Parameters['schema_namespace']+'/'+req.Parameters['schema_version']+'/'+req.Parameters['schema_name'];
   if req.Parameters.has('created_on_or_after') then
-    p := p + '&date=ge'+req.Parameters.getvar('created_on_or_after');
+    p := p + '&date=ge'+req.Parameters['created_on_or_after'];
   if req.Parameters.has('created_before') then
-    p := p + '&date=le'+req.Parameters.getvar('created_before');
+    p := p + '&date=le'+req.Parameters['created_before'];
   req.LoadParams(p);
 end;
 

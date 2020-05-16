@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, System.Types, Classes, IOUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.OIDs,
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.Constants, FHIR.R3.Factory;
 
@@ -1713,9 +1713,9 @@ begin
               try
                 vcl.Stream := mem.link;
                 if ExtractFileExt(r.Parts[i].Name) = '.json' then
-                  fp := TFHIRParsers3.parser(self.link, ffJson, 'en')
+                  fp := TFHIRParsers3.parser(self.link, ffJson, THTTPLanguages.create('en'))
                 else
-                  fp := TFHIRParsers3.parser(self.link, ffXml, 'en');
+                  fp := TFHIRParsers3.parser(self.link, ffXml, THTTPLanguages.create('en'));
                 try
                   fp.IgnoreHtml := true;
                   fp.source := vcl;
@@ -1777,9 +1777,9 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRParsers3.parser(self.link, ffJson, 'en'))
+    LoadFromFile(filename, TFHIRParsers3.parser(self.link, ffJson, THTTPLanguages.create('en')))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRParsers3.parser(self.link, ffXml, 'en'))
+    LoadFromFile(filename, TFHIRParsers3.parser(self.link, ffXml, THTTPLanguages.create('en')))
 end;
 
 procedure TBaseWorkerContextR3.LoadFromFolder(folder: string);

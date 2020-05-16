@@ -1062,7 +1062,7 @@ begin
   result := TFHIRCodeSystem(Resource);
 end;
 
-function displayLang(lang : String) : string;
+function displayLang(lang : string) : string;
 begin
   if lang = '' then
     result := ''

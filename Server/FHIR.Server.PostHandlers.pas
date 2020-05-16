@@ -40,12 +40,12 @@ uses
 Type
   TFHIRServerPostHandler = class (TFslObject)
   private
-    FParams: TParseMap;
+    FParams: THTTPParameters;
     FSecure: boolean;
     FContext : TFHIRServerContext;
     FSession : TFhirSession;
 
-    procedure SetParams(const Value: TParseMap);
+    procedure SetParams(const Value: THTTPParameters);
     procedure SetContext(const Value: TFHIRServerContext);
     procedure SetSession(const Value: TFHIRSession);
   protected
@@ -58,7 +58,7 @@ Type
   public
     destructor Destroy; override;
 
-    property params : TParseMap read FParams write SetParams;
+    property params : THTTPParameters read FParams write SetParams;
     property secure : boolean read FSecure write FSecure;
     property context : TFHIRServerContext read FContext write SetContext;
     property session : TFHIRSession read FSession write SetSession;
@@ -90,7 +90,7 @@ begin
     c := result.codingList.Append;
     c.system := system;
     c.code := code;
-    c.display := context.TerminologyServer.getDisplayForCode('en', system, '', code);
+    c.display := context.TerminologyServer.getDisplayForCode(THTTPLanguages.create('en'), system, '', code);
     result.Link;
   finally
     result.Free;
@@ -101,16 +101,16 @@ end;
 
 function TFHIRServerPostHandler.buildPeriod(startParam, endParam: String): TFHIRPeriod;
 begin
-  if (params.GetVar('startParam') = '') and  (params.GetVar('endParam') = '') then
+  if (params['startParam') = '') and  (params['endParam') = '') then
     exit(nil)
   else
   begin
     result := TFhirPeriod.Create;
     try
-      if (params.GetVar('startParam') <> '') then
-        result.start := TFslDateTime.fromXML(params.GetVar('startParam'));
-      if (params.GetVar('endParam') <> '') then
-        result.end_ := TFslDateTime.fromXML(params.GetVar('endParam'));
+      if (params['startParam') <> '') then
+        result.start := TFslDateTime.fromXML(params['startParam'));
+      if (params['endParam') <> '') then
+        result.end_ := TFslDateTime.fromXML(params['endParam'));
       result.Link;
     finally
       result.Free;
@@ -120,13 +120,13 @@ end;
 
 function TFHIRServerPostHandler.buildReference(param: String): TFhirReference;
 begin
-  if (params.GetVar('param') = '') then
+  if (params['param') = '') then
     exit(nil)
   else
   begin
     result := TFhirReference.Create;
     try
-      result.reference := params.GetVar('param');
+      result.reference := params['param');
       // todo: look up display
       result.Link;
     finally
@@ -149,9 +149,9 @@ var
   s, v, t : String;
   id : TFhirIdentifier;
 begin
-  s := params.GetVar(systemParam);
-  v := params.GetVar(valueParam);
-  t := params.GetVar(typeParam);
+  s := params[systemParam);
+  v := params[valueParam);
+  t := params[typeParam);
   if (s <> '') or (t <> '') or (v <> '') then
   begin
     id := TFhirIdentifier.Create;
@@ -189,7 +189,7 @@ begin
   FContext := Value;
 end;
 
-procedure TFHIRServerPostHandler.SetParams(const Value: TParseMap);
+procedure TFHIRServerPostHandler.SetParams(const Value: THTTPParameters);
 begin
   FParams.Free;
   FParams := Value;
@@ -255,9 +255,9 @@ var
     end;
   end;
 begin
-  if params.GetVar('provenance.name') = '' then
+  if params['provenance.name') = '' then
     raise EFHIRException.create('Please provide a name');
-  if params.GetVar('provenance.country') = '' then
+  if params['provenance.country') = '' then
     raise EFHIRException.create('Please provide a country');
 
   prov := TFhirProvenance.Create;
@@ -268,49 +268,49 @@ begin
       processIdentifier(coverage.identifierList, 'id.system.1',' id.value.1', 'id.type.1');
       processIdentifier(coverage.identifierList, 'id.system.2',' id.value.2', 'id.type.2');
       processIdentifier(coverage.identifierList, 'id.system.3',' id.value.3', 'id.type.3');
-      coverage.status := TFhirFmStatusEnum(StringArrayIndexOfSensitive(['', 'active', 'cancelled', 'draft', 'entered-in-error'], params.GetVar('status')));
-      if params.GetVar('type') <> '' then
-        if params.GetVar('type') = 'pay' then
-          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/coverage-selfpay', params.GetVar('type'))
+      coverage.status := TFhirFmStatusEnum(StringArrayIndexOfSensitive(['', 'active', 'cancelled', 'draft', 'entered-in-error'], params['status')));
+      if params['type') <> '' then
+        if params['type') = 'pay' then
+          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/coverage-selfpay', params['type'))
         else
-          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/v3/ActCode', params.GetVar('type'));
+          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/v3/ActCode', params['type'));
       coverage.policyHolder := buildReference('policy');
       coverage.subscriber := buildReference('subscriber');
-      coverage.subscriberId := params.GetVar('subscriberId');
+      coverage.subscriberId := params['subscriberId');
       coverage.beneficiary := buildReference('beneficiary');
-      coverage.relationship := buildCodeableConcept('http://hl7.org/fhir/policyholder-relationship', params.GetVar('relationship'));
+      coverage.relationship := buildCodeableConcept('http://hl7.org/fhir/policyholder-relationship', params['relationship'));
       coverage.period := buildPeriod('start', 'end');
       processReference(coverage.payorList, 'payor');
 
-      if params.GetVar('group.code') <> '' then
-        forceGroup.group := params.GetVar('group.code');
-      if params.GetVar('group.display') <> '' then
-        forceGroup.groupDisplay := params.GetVar('group.display');
-      if params.GetVar('subgroup.code') <> '' then
-        forceGroup.subGroup := params.GetVar('subgroup.code');
-      if params.GetVar('subgroup.display') <> '' then
-        forceGroup.subGroupDisplay := params.GetVar('subgroup.display');
-      if params.GetVar('plan.code') <> '' then
-        forceGroup.plan := params.GetVar('plan.code');
-      if params.GetVar('plan.display') <> '' then
-        forceGroup.planDisplay := params.GetVar('plan.display');
-      if params.GetVar('subplan.code') <> '' then
-        forceGroup.subPlan := params.GetVar('subplan.code');
-      if params.GetVar('subplan.display') <> '' then
-        forceGroup.subPlanDisplay := params.GetVar('subplan.display');
-      if params.GetVar('class.code') <> '' then
-        forceGroup.class_ := params.GetVar('class.code');
-      if params.GetVar('class.display') <> '' then
-        forceGroup.classDisplay := params.GetVar('class.display');
-      if params.GetVar('subclass.code') <> '' then
-        forceGroup.subclass := params.GetVar('subclass.code');
-      if params.GetVar('subclass.display') <> '' then
-        forceGroup.subclassDisplay := params.GetVar('subclass.display');
+      if params['group.code') <> '' then
+        forceGroup.group := params['group.code');
+      if params['group.display') <> '' then
+        forceGroup.groupDisplay := params['group.display');
+      if params['subgroup.code') <> '' then
+        forceGroup.subGroup := params['subgroup.code');
+      if params['subgroup.display') <> '' then
+        forceGroup.subGroupDisplay := params['subgroup.display');
+      if params['plan.code') <> '' then
+        forceGroup.plan := params['plan.code');
+      if params['plan.display') <> '' then
+        forceGroup.planDisplay := params['plan.display');
+      if params['subplan.code') <> '' then
+        forceGroup.subPlan := params['subplan.code');
+      if params['subplan.display') <> '' then
+        forceGroup.subPlanDisplay := params['subplan.display');
+      if params['class.code') <> '' then
+        forceGroup.class_ := params['class.code');
+      if params['class.display') <> '' then
+        forceGroup.classDisplay := params['class.display');
+      if params['subclass.code') <> '' then
+        forceGroup.subclass := params['subclass.code');
+      if params['subclass.display') <> '' then
+        forceGroup.subclassDisplay := params['subclass.display');
 
-      coverage.dependent := params.GetVar('dependent');
-      coverage.sequence := params.GetVar('sequence');
-      coverage.order := params.GetVar('order');
-      coverage.network := params.GetVar('network');
+      coverage.dependent := params['dependent');
+      coverage.sequence := params['sequence');
+      coverage.order := params['order');
+      coverage.network := params['network');
 
       processExtension('a');
       processExtension('b');
@@ -325,7 +325,7 @@ begin
       prov.containedList.Add(p);
       p.id := 'p1';
       p.nameList.Add(TFhirHumanName.create);
-      p.nameList[0].text := params.GetVar('provenance.name');
+      p.nameList[0].text := params['provenance.name');
       prov.agentList.Append;
       prov.agentList[0].roleList.add(buildCodeableConcept('http://hl7.org/fhir/v3/ParticipationType', 'AUT'));
       prov.agentList[0].who := TFhirReference.Create('#p1');
@@ -333,12 +333,12 @@ begin
       prov.containedList.Add(l);
       l.id := 'l1';
       prov.location := TFhirReference.Create('#l1');
-      l.name := params.GetVar('provenance.country');
+      l.name := params['provenance.country');
       coverage.meta := TFhirMeta.create;
-      coverage.meta.extensionList.AddExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source', params.GetVar('provenance.name')+' @ '+params.GetVar('provenance.country'));
+      coverage.meta.extensionList.AddExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source', params['provenance.name')+' @ '+params['provenance.country'));
 
       // post the coverage
-      client := context.Storage.createClient('en', context, FContext.ValidatorContext.Link, FSession.Link);
+      client := context.Storage.createClient(THTTPLanguages.create('en'), context, FContext.ValidatorContext.Link, FSession.Link);
       try
         client.provenance := prov.Link;
         client.createResource(coverage, id);

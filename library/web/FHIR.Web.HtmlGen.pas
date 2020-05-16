@@ -36,6 +36,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Factory,
+  FHIR.Web.Parsers,
   FHIR.Base.Parser;
 
 Type
@@ -45,11 +46,11 @@ Type
     FBuilder : TStringBuilder;
     FFactory : TFHIRFactory;
     FBaseURL: String;
-    FLang: String;
+    FLang: THTTPLanguages;
     FVersion: String;
     FLogId: String;
-    function Footer(base, lang, logId: String; tail: boolean = true): string;
-    function HeaderX(base, lang, version: String): String;
+    function Footer(base : String; const lang : THTTPLanguages; logId: String; tail: boolean = true): string;
+    function HeaderX(base : String; const lang : THTTPLanguages; version: String): String;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; Override;
@@ -106,7 +107,7 @@ Type
 
     function output : String;
     Property BaseURL : String read FBaseURL write FBaseURL;
-    Property Lang : String read FLang write FLang;
+    Property Lang : THTTPLanguages read FLang write FLang;
     Property Version : String read FVersion write FVersion;
     Property LogId : String read FLogId write FLogid;
   end;
@@ -197,7 +198,7 @@ begin
   inherited;
 end;
 
-function THtmlPublisher.Footer(base, lang, logId : String; tail : boolean = true): string;
+function THtmlPublisher.Footer(base : String; const lang : THTTPLanguages; logId : String; tail : boolean = true): string;
 begin
   result :=
     '</div>'+#13#10+
@@ -306,7 +307,7 @@ begin
   FBuilder.Append('</tr>'#13#10);
 end;
 
-function THtmlPublisher.HeaderX(base, lang, version: String): String;
+function THtmlPublisher.HeaderX(base : String; const lang : THTTPLanguages; version: String): String;
 begin
   result :=
     '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
@@ -399,7 +400,7 @@ begin
   '</head>'#13#10+
   ''#13#10+
   '<body>'#13#10+
-  HeaderX(BaseURL, 'en', Version)+
+  HeaderX(BaseURL, FLang, Version)+
   '<h1>'+s+'</h1>'#13#10);
 end;
 

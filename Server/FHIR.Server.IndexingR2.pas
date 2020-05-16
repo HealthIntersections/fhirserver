@@ -47,7 +47,7 @@ combinations to enable:
 }
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Xml, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.PathEngine,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.IndexInfo, FHIR.R2.Utilities, FHIR.R2.PathEngine, FHIR.R2.Context,
   FHIR.Tools.Indexing,

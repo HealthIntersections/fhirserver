@@ -35,7 +35,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   BaseFrame, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.ComboEdit, FMX.Layouts,
   FMX.ListBox, FMX.Controls.Presentation, FMX.Platform,
-  FHIR.Support.Utilities,
+  FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Factory,
   FHIR.Tools.DiffEngine;
@@ -247,7 +247,7 @@ function TDiffEngineEngineFrame.parseResource(memo: TMemo; desc: String): TFhirR
 var
   x : TFHIRXmlParser;
 begin
-  x := TFHIRXmlParser.Create(nil, 'en');
+  x := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'));
   try
     result := x.parseResource(memo.Text) as TFhirResource;
   finally
@@ -282,7 +282,7 @@ procedure TDiffEngineEngineFrame.writeResource(src: TFhirResource; memo: TMemo);
 var
   x : TFHIRXmlComposer;
 begin
-  x := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en');
+  x := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
   try
     memo.Text := x.Compose(src);
   finally

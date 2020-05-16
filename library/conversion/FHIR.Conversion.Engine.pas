@@ -77,7 +77,7 @@ var
   params, s : String;
   pIn, pOut : TFhirParameters;
   p : TFhirParametersParameter;
-  pm : TParseMap;
+  pm : THTTPParameters;
 begin
   coding := nil;
   try
@@ -107,14 +107,14 @@ begin
     pIn := TFhirParameters.Create;
     try
       pIn.AddParameter('coding', coding.Link);
-      pm := TParseMap.Create(params);
+      pm := THTTPParameters.Create(params);
       try
         if pm.has('date') then
-          pIn.AddParameter('date', TFhirDateTime.Create(TFslDateTime.fromXML(pm.GetVar('date'))));
+          pIn.AddParameter('date', TFhirDateTime.Create(TFslDateTime.fromXML(pm['date'])));
         if pm.has('displayLanguage') then
-          pIn.AddParameter('displayLanguage', TFhirCode.Create(pm.GetVar('displayLanguage')));
+          pIn.AddParameter('displayLanguage', TFhirCode.Create(pm['displayLanguage']));
         if pm.has('property') then
-          for s in pm.GetVar('property').Split([';']) do
+          for s in pm['property'].Split([';']) do
             pIn.AddParameter('displayLanguage', TFhirCode.Create(s));
         pOut := FTerminologyServer.operation(frtCodeSystem, 'lookup', pIn) as TFhirParameters;
         try

@@ -38,7 +38,7 @@ todo:
 }
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities, 
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Tx.Service, FHIR.Base.Factory, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.Tools.CodeSystemProvider;
 
@@ -79,7 +79,7 @@ Type
   private
     FFixedVersions : TFslList<TFhirExpansionParamsFixedVersion>;
     FactiveOnly: boolean;
-    FdisplayLanguage: string;
+    FdisplayLanguage: THTTPLanguages;
     FexcludeNested: boolean;
     FlimitedExpansion: boolean;
     FexcludeNotForUI: boolean;
@@ -96,7 +96,7 @@ Type
 
     property fixedVersions : TFslList<TFhirExpansionParamsFixedVersion> read FFixedVersions;
     property activeOnly : boolean read FactiveOnly write FactiveOnly;
-    property displayLanguage : string read FdisplayLanguage write FdisplayLanguage;
+    property displayLanguage : THTTPLanguages read FdisplayLanguage write FdisplayLanguage;
     property includeDefinition : boolean read FincludeDefinition write FincludeDefinition;
     property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
     property includeDesignations : boolean read FincludeDesignations write FincludeDesignations;
@@ -761,7 +761,7 @@ begin
                end
                else
                begin
-                 prov.Displays(ctxt, list, '');
+                 prov.Displays(ctxt, list, THTTPLanguages.Create('en'));
                  if (c.display <> '') and (list.IndexOf(c.display) = -1) then
                    msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.CommaText+']')
                end;
@@ -887,7 +887,7 @@ begin
       if Loc <> nil then
       begin
         cs.close(loc);
-        cs.displays(code, displays, '');
+        cs.displays(code, displays, THTTPLanguages.Create('en'));
         result := (abstractOk or not cs.IsAbstract(loc));
         exit;
       end;
@@ -1047,8 +1047,8 @@ begin
 
       if FParams.limitedExpansion then
         exp.addParam('limitedExpansion', FParams.limitedExpansion);
-      if FParams.displayLanguage <> '' then
-        exp.addParam('displayLanguage', FParams.displayLanguage);
+      if FParams.displayLanguage.header <> '' then
+        exp.addParam('displayLanguage', FParams.displayLanguage.header);
       if FParams.includeDesignations then
         exp.addParam('includeDesignations', FParams.includeDesignations);
       if FParams.includeDefinition then
@@ -1244,7 +1244,7 @@ var
 begin
   result := c.display;
   for ccd in c.designations.forEnum do
-    if (FParams.displayLanguage = '') or languageMatches(FParams.displayLanguage, ccd.language) then
+    if FParams.displayLanguage.matches(ccd.language) then
       result := ccd.value;
 end;
 
@@ -1254,7 +1254,7 @@ var
 begin
   result := c.display;
   for ccd in c.designations.forEnum do
-    if (FParams.displayLanguage = '') or languageMatches(FParams.displayLanguage, ccd.language) then
+    if (FParams.displayLanguage.matches(ccd.language)) then
       result := ccd.value;
 end;
 
@@ -1631,7 +1631,7 @@ var
       result := '0';
   end;
 begin
-  s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+displayLanguage+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
+  s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+displayLanguage.header+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
     b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid+'|'+inttostr(ord(FValueSetMode));
   result := inttostr(HashStringToCode32(s));
 end;

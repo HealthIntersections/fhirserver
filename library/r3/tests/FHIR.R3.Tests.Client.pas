@@ -65,7 +65,7 @@ var
 begin
   f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
   try
-    prsr := TFHIRJsonParser.Create(nil, 'en');
+    prsr := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
     try
       prsr.source := f;
       prsr.parse;

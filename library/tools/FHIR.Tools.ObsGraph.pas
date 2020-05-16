@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Math,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Web.Parsers,
   FHIR.Ui.Graph,
   FHIR.Base.Objects, FHIR.Client.Base,
   FHIR.Smart.Utilities,
@@ -292,7 +292,7 @@ begin
   if (FClient = nil) or (FClient.address <> details.address) then
   begin
     FClient.Free;
-    FClient := TFhirClient.create(nil, 'en', TFHIRHTTPCommunicator.Create(details.address));
+    FClient := TFhirClient.create(nil, THTTPLanguages.create('en'), TFHIRHTTPCommunicator.Create(details.address));
     FClient.format := ffJson;
     FClient.onProgress := clientProgress;
 //    FClient.smartToken := todo.........

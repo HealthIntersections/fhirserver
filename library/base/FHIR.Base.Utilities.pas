@@ -37,7 +37,7 @@ uses
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
-Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName : String; const lang : THTTPLanguages): TFHIRFormat;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function IsId(s : String) : boolean;
 function isHistoryURL(url : String) : boolean;
@@ -155,7 +155,7 @@ begin
   end;
 end;
 
-Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName : String; const lang : THTTPLanguages): TFHIRFormat;
 Begin
   if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
     result := ffXml

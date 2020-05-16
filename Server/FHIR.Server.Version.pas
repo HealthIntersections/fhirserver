@@ -59,7 +59,8 @@ const
 //  ServerDBVersion = 27; // add Package download count
 //  ServerDBVersion = 28; // add Package token tracking
 //  ServerDBVersion = 29; // add Loaded Package tracking
-  ServerDBVersion = 30; // add OAuthLogin Launch field
+//  ServerDBVersion = 30; // add OAuthLogin Launch field
+  ServerDBVersion = 31; // make OAuthLogin.Scope longer (1024)
 
 
 implementation

@@ -200,6 +200,8 @@ Const
   CODES_TFHIRSummaryOption : array [TFHIRSummaryOption] of String = ('Full', 'Summary', 'Text', 'Data', 'Count');
   CODES_TFhirIssueType : array [TFhirIssueType] of String = ('null', 'invalid', 'structure', 'required', 'value', 'invariant', 'security', 'login', 'unknown', 'expired', 'forbidden', 'suppressed', 'processing', 'not-supported', 'duplicate', 'not-found', 'too-long', 'code-invalid', 'extension', 'too-costly', 'business-rule', 'conflict', 'incomplete', 'transient', 'lock-error', 'no-store', 'exception', 'timeout', 'throttled', 'informational');
   CODES_TIssueSeverity : array [TIssueSeverity] of String = ('null', 'fatal', 'error', 'warning', 'information');
+
+  NON_STD_COMMANDS = [fcmdUnknown, fcmdWebUI, fcmdTask, fcmdDeleteTask, fcmdNull];
 type
 
   TFHIRObject = class;
@@ -460,10 +462,14 @@ type
 
   TFHIRWorkerContextV = class (TFslObject)
   protected
+    FLang : THTTPLanguages;
+
     function GetVersion: TFHIRVersion; virtual;
   public
+    constructor Create; override;
     function link : TFHIRWorkerContextV; overload;
 
+    property lang : THTTPLanguages read FLang write FLang;
     procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
     Property version : TFHIRVersion read GetVersion;
     function versionString : String;
@@ -608,7 +614,7 @@ type
 
     function ToString : String; override;
 
-    class function fromParams(pm : TParseMap) : TFHIRSystemTuple;
+    class function fromParams(pm : THTTPParameters) : TFHIRSystemTuple;
   end;
 
 
@@ -1653,6 +1659,12 @@ end;
 
 { TFHIRWorkerContextV }
 
+constructor TFHIRWorkerContextV.Create;
+begin
+  inherited;
+  FLang := THTTPLanguages.create('en');
+end;
+
 function TFHIRWorkerContextV.GetVersion: TFHIRVersion;
 begin
   result := fhirVersionUnknown;
@@ -1904,7 +1916,7 @@ begin
   result := FFields.ToString;
 end;
 
-class function TFHIRSystemTuple.fromParams(pm: TParseMap): TFHIRSystemTuple;
+class function TFHIRSystemTuple.fromParams(pm: THTTPParameters): TFHIRSystemTuple;
 var
   this : TFHIRSystemTuple;
   i : integer;
@@ -1912,8 +1924,8 @@ var
 begin
   this := TFHIRSystemTuple.Create;
   try
-    for i := 0 to pm.getItemCount - 1 do
-      this.Fields.AddOrSetValue(pm.VarName(i), TFHIRSystemString.Create(pm.GetVar(pm.VarName(i))));
+    for i := 0 to pm.Count - 1 do
+      this.Fields.AddOrSetValue(pm.Name[i], TFHIRSystemString.Create(pm[pm.Name[i]]));
     result := this.Link;
   finally
     this.Free;

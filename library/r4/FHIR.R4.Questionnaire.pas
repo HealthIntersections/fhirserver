@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.R4.Parser, FHIR.Base.Factory, FHIR.Tx.Service, FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.Profiles;
 
@@ -46,7 +46,7 @@ Const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : String; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : String; const lang : THTTPLanguages; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFslObject; uri : String) : TResourceWithReference of object;
 
@@ -82,7 +82,7 @@ Type
     FOnLookupReference : TLookupReferenceEvent;
     FContext : TFslObject;
     FDependencies: TList<String>;
-    FLang : String;
+    FLang : THTTPLanguages;
 
     function nextId(prefix : string) : String;
 
@@ -146,7 +146,7 @@ Type
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
     procedure SetContext(const Value: TFslObject);
   public
-    constructor Create(lang : String);
+    constructor Create(const lang : THTTPLanguages);
     destructor Destroy; override;
 
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
@@ -1219,7 +1219,7 @@ end;
 
 
 
-constructor TQuestionnaireBuilder.create(lang : String);
+constructor TQuestionnaireBuilder.create(const lang : THTTPLanguages);
 begin
   inherited create;
   vsCache := TFslStringMatch.create;

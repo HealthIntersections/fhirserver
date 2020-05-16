@@ -242,7 +242,7 @@ end;
 //	if CurPageID = wpReady then begin
 //		if downloadMessage <> '' then begin
 //			// change isxdl language only if it is not english because isxdl default language is already english
-//			if (ActiveLanguage() <> 'en') then begin
+//			if (ActiveLanguage() <> THTTPLanguages.create('en')) then begin
 //				ExtractTemporaryFile(CustomMessage('isxdl_langfile'));
 //				isxdl_SetOption('language', ExpandConstant('{tmp}{\}') + CustomMessage('isxdl_langfile'));
 //			end;

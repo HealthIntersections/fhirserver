@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R5.Types, FHIR.R5.Resources;
@@ -304,7 +304,7 @@ procedure TResourceMemoryCache.load(rType, id: String; stream: TStream);
 var
   p : TFHIRJsonParser;
 begin
-  p := TFHIRJsonParser.Create(nil, 'en');
+  p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
   try
     p.source := stream;
     p.Parse;

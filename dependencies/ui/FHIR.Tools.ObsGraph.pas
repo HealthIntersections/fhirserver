@@ -263,7 +263,7 @@ begin
   if (FClient = nil) or (FClient.address <> details.address) then
   begin
     FClient.Free;
-    FClient := TFhirClient.create(nil, 'en', TFHIRHTTPCommunicator.Create(details.address));
+    FClient := TFhirClient.create(nil, THTTPLanguages.create('en'), TFHIRHTTPCommunicator.Create(details.address));
     FClient.format := ffJson;
     FClient.onProgress := clientProgress;
 //    FClient.smartToken := todo.........

@@ -33,6 +33,7 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
+  FHIR.Web.Parsers,
   RegularExpressions,
   YuStemmer,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
@@ -363,8 +364,8 @@ Type
 
     Procedure Load(Const sFilename : String);
     Procedure Save(Const sFilename : String; statedDate : String);
-    function langsForLang(lang : String): TLangArray;
-    function supportsLang(lang : String): boolean;
+    function langsForLang(const lang : THTTPLanguages): TLangArray;
+    function supportsLang(const lang : THTTPLanguages): boolean;
 
     Function GetDisplayByName(Const sCode : String; langs : TLangArray) : String;
     procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TStringList);
@@ -401,13 +402,13 @@ Type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -421,8 +422,8 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
   End;
@@ -998,7 +999,7 @@ begin
   result := false;
 end;
 
-function TLOINCServices.langsForLang(lang: String): TLangArray;
+function TLOINCServices.langsForLang(const lang : THTTPLanguages): TLangArray;
   procedure add(b : byte);
   begin
     SetLength(result, length(result)+1);
@@ -1008,7 +1009,7 @@ var
   i : integer;
   llang, country : string;
 begin
-  if lang = '' then
+  if lang.header = '' then
     result := noLang
   else
   begin
@@ -1018,7 +1019,7 @@ begin
     for i := 0 to FLang.count - 1 do
     begin
       FLang.GetEntry(i, llang, country);
-      if (llang +'-'+country = lang) then
+      if (llang +'-'+country = lang.header) then
         add(i);
     end;
     if length(result) = 0 then
@@ -1027,14 +1028,14 @@ begin
       for i := 0 to FLang.count - 1 do
       begin
         FLang.GetEntry(i, llang, country);
-        if (llang +'-'+llang.ToUpper = lang) then
+        if (llang +'-'+llang.ToUpper = lang.header) then
           add(i);
       end;
       // other possible matches
       for i := 0 to FLang.count - 1 do
       begin
         FLang.GetEntry(i, llang, country);
-        if lang = llang then
+        if lang.header = llang then
           add(i);
       end;
     end;
@@ -1188,21 +1189,21 @@ begin
   TLoincFilterHolder(result).SetChildren(lfkConcept, children);
 end;
 
-function TLOINCServices.supportsLang(lang: String): boolean;
+function TLOINCServices.supportsLang(const lang : THTTPLanguages): boolean;
 var
   i : integer;
   llang, country : string;
 begin
-  if lang = '' then
+  if lang.header = '' then
     result := false
   else
   begin
     for i := 0 to FLang.count - 1 do
     begin
       FLang.GetEntry(i, llang, country);
-      if (llang = lang) then
+      if (llang = lang.header) then
         exit(true);
-      if (llang +'-'+country = lang) then
+      if (llang +'-'+country = lang.header) then
         exit(true);
     end;
     result := false;
@@ -1664,7 +1665,7 @@ begin
 end;
 
 
-procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
+procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 var
   b : TStringBuilder;
   iIndex : Cardinal;
@@ -1914,7 +1915,7 @@ begin
   end
 end;
 
-function TLoincServices.Display(context: TCodeSystemProviderContext; lang : String): string;
+function TLoincServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
 var
   index : cardinal;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
@@ -1933,12 +1934,12 @@ begin
   result := Desc.GetEntry(iDescription, ilang);
 end;
 
-procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   GetDisplaysByName(Code(context), langsForLang(lang), list);
 end;
 
-procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   index : cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
@@ -2041,7 +2042,7 @@ begin
   End;
 end;
 
-procedure TLoincServices.Displays(code: String; list: TStringList; lang : String);
+procedure TLoincServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 begin
   GetDisplaysByName(code, langsForLang(lang), list);
 end;
@@ -2052,7 +2053,7 @@ begin
   result := '';
 end;
 
-function TLoincServices.getDisplay(code: String; lang : String): String;
+function TLoincServices.getDisplay(code: String; const lang : THTTPLanguages): String;
 begin
   result := GetDisplayByName(code, langsForLang(lang));
   if result = '' then

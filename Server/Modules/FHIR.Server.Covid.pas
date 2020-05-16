@@ -49,13 +49,13 @@ type
     function newPatient(context : TCovidScriptContext; formName : String) : String;
     function editPatient(context : TCovidScriptContext; formName : String; variables : TFslMap<TFHIRObject>) : String;
     function newObservation(context : TCovidScriptContext; formName : String) : String;
-    function matches(context : TCovidScriptContext; rowName : String; pm : TParseMap) : String;
+    function matches(context : TCovidScriptContext; rowName : String; pm : THTTPParameters) : String;
   public
     constructor Create(source : TFHIRWebServerSourceProvider; context : TFHIRServerContext);
     destructor Destroy; override;
 
-    function process(s : String; request : TIdHTTPRequestInfo; pm : TParseMap; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; override;
-    function processPage(request : TIdHTTPRequestInfo; pm : TParseMap; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV) : boolean; override;
+    function process(s : String; request : TIdHTTPRequestInfo; pm : THTTPParameters; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; override;
+    function processPage(request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV) : boolean; override;
   end;
 
 implementation
@@ -76,7 +76,7 @@ begin
   inherited;
 end;
 
-function TCovidScriptPlugin.matches(context : TCovidScriptContext; rowName: String; pm : TParseMap): String;
+function TCovidScriptPlugin.matches(context : TCovidScriptContext; rowName: String; pm : THTTPParameters): String;
 var
   bnd : TFHIRBundle;
   be : TFhirBundleEntry;
@@ -89,15 +89,15 @@ begin
   params := TStringList.Create;
   try
     if pm.has('name') then
-      params.Values['name'] := pm.GetVar('name');
+      params.Values['name'] := pm['name'];
     if pm.has('gender') then
-      params.Values['gender'] := pm.GetVar('gender');
+      params.Values['gender'] := pm['gender'];
     if pm.has('dob') then
-      params.Values['birthdate'] := pm.GetVar('dob');
+      params.Values['birthdate'] := pm['dob'];
     if pm.has('phone') then
-      params.Values['phone'] := pm.GetVar('phone');
+      params.Values['phone'] := pm['phone'];
     if pm.has('email') then
-      params.Values['email'] := pm.GetVar('email');
+      params.Values['email'] := pm['email'];
 
     bnd := context.FClient.search(frtPatient, true, params);
     try
@@ -221,13 +221,13 @@ begin
   end;
 end;
 
-function TCovidScriptPlugin.process(s: String; request: TIdHTTPRequestInfo; pm : TParseMap; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV): String;
+function TCovidScriptPlugin.process(s: String; request: TIdHTTPRequestInfo; pm : THTTPParameters; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV): String;
 var
   b, e : integer;
   t, n : String;
   context : TCovidScriptContext;
 begin
-   context := TCovidScriptContext.create(client.link as TFhirClient4, pm.GetVar('patient'));
+   context := TCovidScriptContext.create(client.link as TFhirClient4, pm['patient']);
    try
      b := s.IndexOf('[%covid.');
      while b > 0 do
@@ -247,7 +247,7 @@ begin
        else if n.StartsWith('patient-banner ') then
          s := s + banner(context, n.Substring(15), variables)+t.Substring(e+2)
        else if n = 'patient' then
-         s := s + pm.GetVar('patient') + t.Substring(e+2)
+         s := s + pm['patient'] + t.Substring(e+2)
        else if (n = 'error') and (variables.ContainsKey('form-error')) then
          s := s + '<p style="color: maroon">'+variables['form-error'].primitiveValue+'</p>' + t.Substring(e+2)
        else
@@ -261,7 +261,7 @@ begin
 end;
 
 
-function TCovidScriptPlugin.processPage(request: TIdHTTPRequestInfo; pm : TParseMap; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV): boolean;
+function TCovidScriptPlugin.processPage(request: TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV): boolean;
 var
   pat : TFhirPatient;
   i : integer;
@@ -271,69 +271,69 @@ begin
   begin
     result := true;
     try
-      if pm.getVar('patient') <> '' then
-        pat := client.readResourceV('Patient', pm.GetVar('patient')) as TFhirPatient
+      if pm['patient'] <> '' then
+        pat := client.readResourceV('Patient', pm['patient']) as TFhirPatient
       else
         pat := TFhirPatient.Create;
 
       // business rules
-      if pm.GetVar('given') = '' then
+      if pm['given'] = '' then
         raise EFslException.Create('Error: A given name is required');
-      if (pm.GetVar('mobile') = '') and (pm.GetVar('email') = '') then
+      if (pm['mobile'] = '') and (pm['email'] = '') then
         raise EFslException.Create('Error: A mobile phone or an email address is required');
-      if (pm.GetVar('gender') <> '') and (StringArrayIndexOfSensitive(CODES_TFhirAdministrativeGenderEnum, pm.GetVar('gender')) = -1) then
-        raise EFslException.Create('Error: Invalid Gender: '+pm.GetVar('gender'));
-      if (pm.GetVar('dob') <> '') and not TFslDateTime.isValidXmlDate(pm.GetVar('dob')) then
+      if (pm['gender'] <> '') and (StringArrayIndexOfSensitive(CODES_TFhirAdministrativeGenderEnum, pm['gender']) = -1) then
+        raise EFslException.Create('Error: Invalid Gender: '+pm['gender']);
+      if (pm['dob'] <> '') and not TFslDateTime.isValidXmlDate(pm['dob']) then
         raise EFslException.Create('Error: Invalid Date of Birth');
 
       if pat.nameList.IsEmpty then
         pat.nameList.Append;
-      pat.nameList[0].family := pm.GetVar('family');
+      pat.nameList[0].family := pm['family'];
       pat.nameList[0].givenList.clear;
-      pat.nameList[0].givenList.Append.value := pm.GetVar('given');
-      if (pm.GetVar('middle') <> '') then
-        pat.nameList[0].givenList.Append.value := pm.GetVar('middle');
+      pat.nameList[0].givenList.Append.value := pm['given'];
+      if (pm['middle'] <> '') then
+        pat.nameList[0].givenList.Append.value := pm['middle'];
 
-      if (pm.GetVar('gender') <> '') then
-        pat.gender := TFhirAdministrativeGenderEnum(StringArrayIndexOfSensitive(CODES_TFhirAdministrativeGenderEnum, pm.GetVar('gender')));
-      if (pm.GetVar('dob') <> '') then
-        pat.birthDate := TFslDateTime.fromXML(pm.GetVar('dob'));
+      if (pm['gender'] <> '') then
+        pat.gender := TFhirAdministrativeGenderEnum(StringArrayIndexOfSensitive(CODES_TFhirAdministrativeGenderEnum, pm['gender']));
+      if (pm['dob'] <> '') then
+        pat.birthDate := TFslDateTime.fromXML(pm['dob']);
 
       for i := pat.telecomList.Count -1 downto 0 do
         if pat.telecomList[i].use = ContactPointUseMobile then
           pat.telecomList.Remove(i);
-      if pm.GetVar('mobile') <> '' then
+      if pm['mobile'] <> '' then
         with pat.telecomList.Append do
         begin
           use := ContactPointUseMobile;
           system := ContactPointSystemPhone;
-          value := pm.GetVar('mobile');
+          value := pm['mobile'];
         end;
 
       for i := pat.telecomList.Count -1 downto 0 do
         if pat.telecomList[i].system = ContactPointSystemEmail then
           pat.telecomList.Remove(i);
-      if pm.GetVar('email') <> '' then
+      if pm['email'] <> '' then
         with pat.telecomList.Append do
         begin
           system := ContactPointSystemEmail;
-          value := pm.GetVar('email');
+          value := pm['email'];
         end;
 
       if pat.addressList.IsEmpty then
         pat.addressList.Append;
       pat.addressList[0].lineList.clear;
-      if (pm.GetVar('line1') <> '') then
+      if (pm['line1'] <> '') then
       begin
-        pat.addressList[0].lineList.Append.value := pm.GetVar('line1');
-        if (pm.GetVar('line2') <> '') then
-          pat.addressList[0].lineList.Append.value := pm.GetVar('line2');
+        pat.addressList[0].lineList.Append.value := pm['line1'];
+        if (pm['line2'] <> '') then
+          pat.addressList[0].lineList.Append.value := pm['line2'];
       end;
-      pat.addressList[0].city := pm.GetVar('city');
-      pat.addressList[0].state := pm.GetVar('state');
-      pat.addressList[0].postalCode := pm.GetVar('postcode');
+      pat.addressList[0].city := pm['city'];
+      pat.addressList[0].state := pm['state'];
+      pat.addressList[0].postalCode := pm['postcode'];
 
-      if pm.getVar('patient') <> '' then
+      if pm['patient'] <> '' then
       begin
         client.updateResourceV(pat);
         id := pat.id;

@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Math, FHIR.Support.Threads,
-   FHIR.Support.Base, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Web.HtmlGen, FHIR.LOINC.Services;
 
 Const
@@ -63,7 +63,7 @@ Type
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
   Public
-    constructor Create(oLoinc : TLoincServices; FHIRPathEngine, lang : String);
+    constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
     destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;

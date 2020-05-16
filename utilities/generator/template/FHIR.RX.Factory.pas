@@ -51,15 +51,15 @@ type
     function resourceNames : TArray<String>; override;
     function resCategory(name: String) : TTokenCategory; override;
     function canonicalResources : TArray<String>; override;
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; override;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; override;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; override;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
-    function makeClientInt(worker : TFHIRWorkerContextV; lang : String; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
+    function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -67,7 +67,7 @@ type
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
-    function buildOperationOutcome(lang : String; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(lang, message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
     function makeByName(const name : String) : TFHIRObject; override;
@@ -216,7 +216,7 @@ begin
       http.UseIndy := true;
     http.timeout := timeout;
     http.proxy := proxy;
-    result := TFhirClient{{v}}.create(worker, 'en', http.link);
+    result := TFhirClient{{v}}.create(worker, THTTPLanguages.create('en'), http.link);
     try
       result.format := fmt;
       result.link;
@@ -230,7 +230,7 @@ end;
 
 function TFHIRFactoryR{{v}}.makeClientInt(worker: TFHIRWorkerContextV; lang: String; comm: TFHIRClientCommunicator): TFhirClientV;
 begin
-  result := TFhirClient{{v}}.create(worker, 'en', comm);
+  result := TFhirClient{{v}}.create(worker, THTTPLanguages.create('en'), comm);
 end;
 
 function TFHIRFactoryR{{v}}.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
@@ -239,7 +239,7 @@ var
 begin
   c := TFhirThreadedCommunicator.Create(internal, event);
   try
-    result := TFhirClient{{v}}.create(worker, 'en', c.link);
+    result := TFhirClient{{v}}.create(worker, THTTPLanguages.create('en'), c.link);
     try
       result.format := internal.format;
       result.link;

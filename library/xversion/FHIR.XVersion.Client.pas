@@ -16,7 +16,7 @@ uses
 type
   TFhirXVersionClient = class (TFhirClientV)
   public
-    constructor Create(worker : TFHIRWorkerContextV; lang : String; communicator : TFHIRClientCommunicator);
+    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 

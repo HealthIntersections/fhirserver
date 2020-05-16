@@ -173,7 +173,7 @@ begin
           engine.check(nil, '', '', '', node, false)
         else
         begin
-          p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
+          p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
           try
             f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead);
             try

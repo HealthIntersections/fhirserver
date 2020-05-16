@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base,
+  FHIR.Support.Base, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R2.Types, FHIR.R2.Resources;
 

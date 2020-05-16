@@ -258,10 +258,10 @@ begin
       fetch.URL := 'https://https://www.fitbit.com/oauth/request_token';
       fetch.Fetch;
 
-  //      FHIR.Web.Parsers := TParseMap.createSmart(fetch.Buffer.AsUnicode);
+  //      FHIR.Web.Parsers := THTTPParameters.createSmart(fetch.Buffer.AsUnicode);
   //      try
-  //        token := FHIR.Web.Parsers.GetVar('access_token');
-  //        expires := FHIR.Web.Parsers.GetVar('expires');
+  //        token := FHIR.Web.Parsers['access_token');
+  //        expires := FHIR.Web.Parsers['expires');
   //      finally
   //        FHIR.Web.Parsers.free;
   //      end;

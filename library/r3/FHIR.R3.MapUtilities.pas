@@ -638,7 +638,7 @@ begin
 
       result.text := TFhirNarrative.Create;
       result.text.status := NarrativeStatusGenerated;
-      result.text.div_ := TFHIRXhtmlParser.parse('en', xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
+      result.text.div_ := TFHIRXhtmlParser.parse(FWorker.lang, xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
       result.link;
     finally
       result.free;

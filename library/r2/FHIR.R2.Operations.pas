@@ -60,7 +60,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property identifier : String read FIdentifier write FIdentifier;
     property valueSet : TFhirValueSet read FValueSet write SetValueSet;
@@ -82,7 +82,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirValueSet read FReturn write SetReturn;
   end;
@@ -102,7 +102,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property code : String read FCode write FCode;
     property system : String read FSystem write FSystem;
@@ -142,7 +142,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property name : String read FName write FName;
     property version : String read FVersion write FVersion;
@@ -174,7 +174,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property identifier : String read FIdentifier write FIdentifier;
     property context : String read FContext write FContext;
@@ -200,7 +200,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property result : Boolean read FResult write FResult;
     property message : String read FMessage write FMessage;
@@ -220,7 +220,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property resource : TFhirResource read FResource write SetResource;
     property mode : String read FMode write FMode;
@@ -237,7 +237,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirOperationOutcome read FReturn write SetReturn;
   end;
@@ -251,7 +251,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
   end;
 
@@ -265,7 +265,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirMeta read FReturn write SetReturn;
   end;
@@ -281,7 +281,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property meta : TFhirMeta read FMeta write SetMeta;
   end;
@@ -296,7 +296,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirMeta read FReturn write SetReturn;
   end;
@@ -312,7 +312,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property meta : TFhirMeta read FMeta write SetMeta;
   end;
@@ -327,7 +327,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirMeta read FReturn write SetReturn;
   end;
@@ -342,7 +342,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property persist : Boolean read FPersist write FPersist;
   end;
@@ -355,7 +355,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
   end;
 
@@ -394,7 +394,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property code : String read FCode write FCode;
     property system : String read FSystem write FSystem;
@@ -451,7 +451,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property result : Boolean read FResult write FResult;
     property message : String read FMessage write FMessage;
@@ -470,7 +470,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property name : String read FName write FName;
     property conceptList : TFslList<TFhirCoding> read FConceptList;
@@ -487,7 +487,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirConceptMap read FReturn write SetReturn;
   end;
@@ -501,7 +501,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
   end;
 
@@ -515,7 +515,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirBundle read FReturn write SetReturn;
   end;
@@ -531,7 +531,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property patient : String read FPatient write FPatient;
     property name : String read FName write FName;
@@ -545,7 +545,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
   end;
 
@@ -562,7 +562,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property content : TFhirBundle read FContent write SetContent;
     property async : Boolean read FAsync write FAsync;
@@ -579,7 +579,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirBundle read FReturn write SetReturn;
   end;
@@ -602,7 +602,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property identifier : String read FIdentifier write FIdentifier;
     property questionnaire : TFhirQuestionnaire read FQuestionnaire write SetQuestionnaire;
@@ -622,7 +622,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirQuestionnaireResponse read FReturn write SetReturn;
   end;
@@ -640,7 +640,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property identifier : String read FIdentifier write FIdentifier;
     property profile : String read FProfile write FProfile;
@@ -658,7 +658,7 @@ Type
     constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirQuestionnaire read FReturn write SetReturn;
   end;
@@ -692,15 +692,15 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRExpandOpRequest.load(params : TParseMap);
+procedure TFHIRExpandOpRequest.load(params : THTTPParameters);
 begin
-  FIdentifier := params.getVar('identifier');
-  FContext := params.getVar('context');
-  FFilter := params.getVar('filter');
-  FProfile := params.getVar('profile');
-  FDate := TFslDateTime.fromXml(params.getVar('date'));
-  FOffset := params.getVar('offset');
-  FCount := params.getVar('count');
+  FIdentifier := params['identifier'];
+  FContext := params['context'];
+  FFilter := params['filter'];
+  FProfile := params['profile'];
+  FDate := TFslDateTime.fromXml(params['date']);
+  FOffset := params['offset'];
+  FCount := params['count'];
   loadExtensions(params);
 end;
 
@@ -759,7 +759,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRExpandOpResponse.load(params : TParseMap);
+procedure TFHIRExpandOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -810,12 +810,12 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRLookupOpRequest.load(params : TParseMap);
+procedure TFHIRLookupOpRequest.load(params : THTTPParameters);
 begin
-  FCode := params.getVar('code');
-  FSystem := params.getVar('system');
-  FVersion := params.getVar('version');
-  FDate := TFslDateTime.fromXml(params.getVar('date'));
+  FCode := params['code'];
+  FSystem := params['system'];
+  FVersion := params['version'];
+  FDate := TFslDateTime.fromXml(params['date']);
   loadExtensions(params);
 end;
 
@@ -921,12 +921,12 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRLookupOpResponse.load(params : TParseMap);
+procedure TFHIRLookupOpResponse.load(params : THTTPParameters);
 begin
-  FName := params.getVar('name');
-  FVersion := params.getVar('version');
-  FDisplay := params.getVar('display');
-  FAbstract := StrToBoolDef(params.getVar('abstract'), false);
+  FName := params['name'];
+  FVersion := params['version'];
+  FDisplay := params['display'];
+  FAbstract := StrToBoolDef(params['abstract'], false);
   loadExtensions(params);
 end;
 
@@ -1004,16 +1004,16 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRValidateCodeOpRequest.load(params : TParseMap);
+procedure TFHIRValidateCodeOpRequest.load(params : THTTPParameters);
 begin
-  FIdentifier := params.getVar('identifier');
-  FContext := params.getVar('context');
-  FCode := params.getVar('code');
-  FSystem := params.getVar('system');
-  FVersion := params.getVar('version');
-  FDisplay := params.getVar('display');
-  FDate := TFslDateTime.fromXml(params.getVar('date'));
-  FAbstract := StrToBoolDef(params.getVar('abstract'), false);
+  FIdentifier := params['identifier'];
+  FContext := params['context'];
+  FCode := params['code'];
+  FSystem := params['system'];
+  FVersion := params['version'];
+  FDisplay := params['display'];
+  FDate := TFslDateTime.fromXml(params['date']);
+  FAbstract := StrToBoolDef(params['abstract'], false);
   loadExtensions(params);
 end;
 
@@ -1075,11 +1075,11 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRValidateCodeOpResponse.load(params : TParseMap);
+procedure TFHIRValidateCodeOpResponse.load(params : THTTPParameters);
 begin
-  FResult := StrToBoolDef(params.getVar('result'), false);
-  FMessage := params.getVar('message');
-  FDisplay := params.getVar('display');
+  FResult := StrToBoolDef(params['result'], false);
+  FMessage := params['message'];
+  FDisplay := params['display'];
   loadExtensions(params);
 end;
 
@@ -1128,10 +1128,10 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRValidateOpRequest.load(params : TParseMap);
+procedure TFHIRValidateOpRequest.load(params : THTTPParameters);
 begin
-  FMode := params.getVar('mode');
-  FProfile := params.getVar('profile');
+  FMode := params['mode'];
+  FProfile := params['profile'];
   loadExtensions(params);
 end;
 
@@ -1180,7 +1180,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRValidateOpResponse.load(params : TParseMap);
+procedure TFHIRValidateOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1219,7 +1219,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRMetaOpRequest.load(params : TParseMap);
+procedure TFHIRMetaOpRequest.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1263,7 +1263,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRMetaOpResponse.load(params : TParseMap);
+procedure TFHIRMetaOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1310,7 +1310,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRMetaAddOpRequest.load(params : TParseMap);
+procedure TFHIRMetaAddOpRequest.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1357,7 +1357,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRMetaAddOpResponse.load(params : TParseMap);
+procedure TFHIRMetaAddOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1404,7 +1404,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRMetaDeleteOpRequest.load(params : TParseMap);
+procedure TFHIRMetaDeleteOpRequest.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1451,7 +1451,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRMetaDeleteOpResponse.load(params : TParseMap);
+procedure TFHIRMetaDeleteOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1491,9 +1491,9 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRDocumentOpRequest.load(params : TParseMap);
+procedure TFHIRDocumentOpRequest.load(params : THTTPParameters);
 begin
-  FPersist := StrToBoolDef(params.getVar('persist'), false);
+  FPersist := StrToBoolDef(params['persist'], false);
   loadExtensions(params);
 end;
 
@@ -1529,7 +1529,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRDocumentOpResponse.load(params : TParseMap);
+procedure TFHIRDocumentOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1639,13 +1639,13 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRTranslateOpRequest.load(params : TParseMap);
+procedure TFHIRTranslateOpRequest.load(params : THTTPParameters);
 begin
-  FCode := params.getVar('code');
-  FSystem := params.getVar('system');
-  FVersion := params.getVar('version');
-  FValueSet := params.getVar('valueSet');
-  FTarget := params.getVar('target');
+  FCode := params['code'];
+  FSystem := params['system'];
+  FVersion := params['version'];
+  FValueSet := params['valueSet'];
+  FTarget := params['target'];
   loadExtensions(params);
 end;
 
@@ -1815,10 +1815,10 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRTranslateOpResponse.load(params : TParseMap);
+procedure TFHIRTranslateOpResponse.load(params : THTTPParameters);
 begin
-  FResult := StrToBoolDef(params.getVar('result'), false);
-  FMessage := params.getVar('message');
+  FResult := StrToBoolDef(params['result'], false);
+  FMessage := params['message'];
   loadExtensions(params);
 end;
 
@@ -1869,10 +1869,10 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRClosureOpRequest.load(params : TParseMap);
+procedure TFHIRClosureOpRequest.load(params : THTTPParameters);
 begin
-  FName := params.getVar('name');
-  FVersion := params.getVar('version');
+  FName := params['name'];
+  FVersion := params['version'];
   loadExtensions(params);
 end;
 
@@ -1923,7 +1923,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRClosureOpResponse.load(params : TParseMap);
+procedure TFHIRClosureOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -1962,7 +1962,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIREverythingOpRequest.load(params : TParseMap);
+procedure TFHIREverythingOpRequest.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -2005,7 +2005,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIREverythingOpResponse.load(params : TParseMap);
+procedure TFHIREverythingOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -2046,10 +2046,10 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRFindOpRequest.load(params : TParseMap);
+procedure TFHIRFindOpRequest.load(params : THTTPParameters);
 begin
-  FPatient := params.getVar('patient');
-  FName := params.getVar('name');
+  FPatient := params['patient'];
+  FName := params['name'];
   loadExtensions(params);
 end;
 
@@ -2088,7 +2088,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRFindOpResponse.load(params : TParseMap);
+procedure TFHIRFindOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -2133,10 +2133,10 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRProcessMessageOpRequest.load(params : TParseMap);
+procedure TFHIRProcessMessageOpRequest.load(params : THTTPParameters);
 begin
-  FAsync := StrToBoolDef(params.getVar('async'), false);
-  FResponseUrl := params.getVar('response-url');
+  FAsync := StrToBoolDef(params['async'], false);
+  FResponseUrl := params['response-url'];
   loadExtensions(params);
 end;
 
@@ -2184,7 +2184,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRProcessMessageOpResponse.load(params : TParseMap);
+procedure TFHIRProcessMessageOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -2254,10 +2254,10 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRPopulateOpRequest.load(params : TParseMap);
+procedure TFHIRPopulateOpRequest.load(params : THTTPParameters);
 begin
-  FIdentifier := params.getVar('identifier');
-  FLocal := StrToBoolDef(params.getVar('local'), false);
+  FIdentifier := params['identifier'];
+  FLocal := StrToBoolDef(params['local'], false);
   loadExtensions(params);
 end;
 
@@ -2316,7 +2316,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRPopulateOpResponse.load(params : TParseMap);
+procedure TFHIRPopulateOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
@@ -2359,12 +2359,12 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRQuestionnaireOpRequest.load(params : TParseMap);
+procedure TFHIRQuestionnaireOpRequest.load(params : THTTPParameters);
 begin
-  FIdentifier := params.getVar('identifier');
-  FProfile := params.getVar('profile');
-  FUrl := params.getVar('url');
-  FSupportedOnly := StrToBoolDef(params.getVar('supportedOnly'), false);
+  FIdentifier := params['identifier'];
+  FProfile := params['profile'];
+  FUrl := params['url'];
+  FSupportedOnly := StrToBoolDef(params['supportedOnly'], false);
   loadExtensions(params);
 end;
 
@@ -2413,7 +2413,7 @@ begin
   loadExtensions(params);
 end;
 
-procedure TFHIRQuestionnaireOpResponse.load(params : TParseMap);
+procedure TFHIRQuestionnaireOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;

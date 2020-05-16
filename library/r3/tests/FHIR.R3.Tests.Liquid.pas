@@ -92,7 +92,7 @@ begin
   if not gResources.ContainsKey(test.str['focus']) then
   begin
     fn := FHIR_PUB_FILE(test.str['focus'].replace('/', '-')+'.xml');
-    p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
+    p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
     try
       f := TFileStream.Create(fn, fmOpenRead);
       try

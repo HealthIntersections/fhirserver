@@ -201,7 +201,7 @@ type
     constructor Create(res : TFslObject);
     destructor Destroy; override;
     procedure load(params : TFHIRResourceV); overload; virtual; abstract;
-    procedure load(params : TParseMap); overload; virtual; abstract;
+    procedure load(params : THTTPParameters); overload; virtual; abstract;
     function asParams : TFHIRResourceV; virtual; abstract;
 
     property Op : TFslObject read FOp;
@@ -895,7 +895,9 @@ type
     property outcome : String read GetOutcome write SetOutcome;
   end;
 
-  TFhirTestScriptW = class (TFHIRXVersionResourceWrapper);
+  TFhirTestScriptW = class (TFHIRMetadataResourceW)
+  end;
+
   TFhirProvenanceW = class (TFHIRXVersionResourceWrapper);
 
   TFHIRConceptEquivalence = (cmeNull, cmeRelatedto, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact, cmeUnmatched, cmeDisjoint);

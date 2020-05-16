@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Web.Parsers,
   FHIR.Client.Base, FHIR.Client.HTTP,
   FHIR.R3.Parser, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Common;
 
@@ -242,7 +242,7 @@ begin
     if fmt = ffUnspecified then
       fmt := ffJson;
 
-    result := TFhirClient3.create(worker, 'en', http.link);
+    result := TFhirClient3.create(worker, THTTPLanguages.create('en'), http.link);
     try
       result.format := fmt;
       result.link;

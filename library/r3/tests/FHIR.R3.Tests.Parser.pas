@@ -71,19 +71,19 @@ var
   ctxt : TFHIRWorkerContext;
 begin
 //  AllocConsole;
-  r := TFHIRParsers3.parseFile(nil, ffXml, 'en', filename);
+  r := TFHIRParsers3.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers3.composeFile(nil, ffXml, r, 'en', fn, OutputStylePretty);
+      TFHIRParsers3.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRParsers3.composeFile(nil, ffJson, r, 'en', j1, OutputStylePretty);
+    TFHIRParsers3.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
   finally
     r.Free;
   end;
@@ -115,19 +115,19 @@ begin
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRParsers3.parseFile(nil, ffJson, 'en', j2); // crossover too
+  r := TFHIRParsers3.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers3.composeFile(nil, ffJson, r, 'en', fn, OutputStyleNormal);
+      TFHIRParsers3.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRParsers3.composeFile(nil, ffXml, r, 'en', x1, OutputStyleNormal);
+    TFHIRParsers3.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
   finally
     r.Free;
   end;

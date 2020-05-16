@@ -79,7 +79,7 @@ type
 
     procedure AdjustPosition(top, left, width : integer);
     procedure addToUrl(b : TStringBuilder);
-    procedure readFromURL(pm : TParseMap);
+    procedure readFromURL(pm : THTTPParameters);
   end;
 
   TFetchResourceFrm = class(TNppForm)
@@ -152,7 +152,7 @@ type
     procedure layoutSearchParameters;
     procedure loadSortCombo;
     function asURL : String;
-    procedure readURL(pm : TParseMap);
+    procedure readURL(pm : THTTPParameters);
 
     procedure setUpColumns;
     procedure AddColumn(name, path : String);
@@ -216,13 +216,13 @@ begin
   inherited;
 end;
 
-procedure TSearchEntryPanel.readFromURL(pm: TParseMap);
+procedure TSearchEntryPanel.readFromURL(pm: THTTPParameters);
 var
   ok : boolean;
   s : String;
 begin
   if pm.has(definition.name) then
-    readParamValue(pm.GetVar(definition.name))
+    readParamValue(pm[definition.name))
   else
   begin
     ok := false;
@@ -232,7 +232,7 @@ begin
         begin
           ok := true;
           modList.ItemIndex := modlist.Items.IndexOf(s);
-          readParamValue(pm.GetVar(definition.name+':'+s));
+          readParamValue(pm[definition.name+':'+s));
         end;
     if not ok then
       readParamValue('');
@@ -757,7 +757,7 @@ end;
 
 procedure TFetchResourceFrm.btnPasteClick(Sender: TObject);
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   s : String;
 begin
   Clipboard.Open;
@@ -765,7 +765,7 @@ begin
   Clipboard.Close;
   if s.Contains('?') then
     s := s.Substring(s.IndexOf('?')+1);
-  pm := TParseMap.create(s);
+  pm := THTTPParameters.create(s);
   try
     readURL(pm);
   finally
@@ -801,7 +801,7 @@ begin
 end;
 
 
-procedure TFetchResourceFrm.readURL(pm: TParseMap);
+procedure TFetchResourceFrm.readURL(pm: THTTPParameters);
 var
   se : TSearchEntryPanel;
 begin
@@ -809,19 +809,19 @@ begin
     se.readFromURL(pm);
   if pm.has('_sort') then
   begin
-    cbxSort.itemindex := cbxSort.Items.IndexOf(pm.GetVar('_sort'));
+    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort'));
     cbSearchOrder.Checked := false;
   end else if pm.has('_sort:asc') then
   begin
-    cbxSort.itemindex := cbxSort.Items.IndexOf(pm.GetVar('_sort:asc'));
+    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort:asc'));
     cbSearchOrder.Checked := false;
   end else if pm.has('_sort:desc') then
   begin
-    cbxSort.itemindex := cbxSort.Items.IndexOf(pm.GetVar('_sort:desc'));
+    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort:desc'));
     cbSearchOrder.Checked := true;
   end;
   if (pm.has('_count')) then
-    edtPageCount.Value := StrToIntDef(pm.GetVar('_count'), 20);
+    edtPageCount.Value := StrToIntDef(pm['_count'), 20);
 end;
 
 procedure TFetchResourceFrm.btnSearchAllClick(Sender: TObject);

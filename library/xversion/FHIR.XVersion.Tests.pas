@@ -33,7 +33,7 @@ interface
 uses
   SysUtils,
   DUnitX.TestFramework,
-  FHIR.Support.Stream, FHIR.Support.Tests,
+  FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.R3.Parser, FHIR.R4.Parser,
   FHIR.XVersion.Convertors;
@@ -137,8 +137,8 @@ procedure TVersionConversionTests.test4to3to4(res: TBytes);
 var
   b : TBytes;
 begin
-  b := TFhirVersionConvertors.convertResource(res, ffJson, OutputStylePretty, 'en', fhirVersionRelease4, fhirVersionRelease3);
-  b := TFhirVersionConvertors.convertResource(b, ffJson, OutputStylePretty, 'en', fhirVersionRelease3, fhirVersionRelease4);
+  b := TFhirVersionConvertors.convertResource(res, ffJson, OutputStylePretty, THTTPLanguages.create('en'), fhirVersionRelease4, fhirVersionRelease3);
+  b := TFhirVersionConvertors.convertResource(b, ffJson, OutputStylePretty, THTTPLanguages.create('en'), fhirVersionRelease3, fhirVersionRelease4);
   Assert.isTrue(length(b) > 0);
 end;
 

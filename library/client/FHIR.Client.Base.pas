@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Support.Stream, FHIR.Support.Json,
+  FHIR.Support.Stream, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common;
 
 Type
@@ -164,7 +164,7 @@ Type
     FProvenanceString : String;
     FVersionSpecific: boolean;
     FFormat : TFHIRFormat;
-    FLang : string;
+    FLang : THTTPLanguages;
     FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
     FOnProgress : TFhirClientProgressEvent;
@@ -180,14 +180,14 @@ Type
     function getResourceVersionId(res : TFHIRResourceV) : string; virtual;
     function getBundleClass : TFHIRBundleWClass; virtual; abstract;
   public
-    constructor Create(worker : TFHIRWorkerContextV; lang : String; communicator : TFHIRClientCommunicator);
+    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 
     function makeParser(fmt : TFHIRFormat) : TFHIRParser; virtual; abstract;
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
 
-    property lang : string read FLang;
+    property lang : THTTPLanguages read FLang;
     property Worker : TFHIRWorkerContextV read FWorker;
     function version : TFHIRVersion; virtual; abstract;
     function address : String; // result from the communicator
@@ -319,7 +319,7 @@ end;
 
 { TFhirClientV }
 
-constructor TFhirClientV.create(worker : TFHIRWorkerContextV; lang : String; communicator : TFHIRClientCommunicator);
+constructor TFhirClientV.create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
 begin
   inherited Create;
   FWorker := worker;

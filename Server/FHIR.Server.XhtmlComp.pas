@@ -32,8 +32,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities,
-  FHIR.Support.MXml, FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Xml,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Server.Session, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Server.Tags;
 
@@ -67,7 +67,7 @@ type
     function ResourceMediaType: String; override;
     function GetFormat: TFHIRFormat; override;
   public
-    constructor Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; lang, BaseURL : String); reintroduce; overload;
+    constructor Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; const lang : THTTPLanguages; BaseURL : String); reintroduce; overload;
     destructor Destroy; override;
     property BaseURL : String read FBaseURL write FBaseURL;
     Property Session : TFhirSession read FSession write SetSession;
@@ -83,10 +83,10 @@ type
     Property OperationName : String read FOperationName write FOperationName;
     property links : TFslStringDictionary read FLinks write SetLinks;
 
-    class function ResourceLinks(a, lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
+    class function ResourceLinks(a : String; const lang : THTTPLanguages; base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
     class function PageLinks : String;
-    class function Header(factory : TFHIRFactory; Session : TFhirSession; base, lang, version : String) : String;
-    class function Footer(factory : TFHIRFactory; base, lang, logId : String; tail : boolean = true) : string;
+    class function Header(factory : TFHIRFactory; Session : TFhirSession; base : String; const lang : THTTPLanguages; version : String) : String;
+    class function Footer(factory : TFHIRFactory; base : String; const lang : THTTPLanguages; logId : String; tail : boolean = true) : string;
   end;
 
 
@@ -94,7 +94,7 @@ implementation
 
 { TFHIRXhtmlComposer }
 
-constructor TFHIRXhtmlComposer.Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; lang, BaseURL: String);
+constructor TFHIRXhtmlComposer.Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; const lang : THTTPLanguages; BaseURL: String);
 begin
   Create(worker, Style, lang);
   FFactory := worker.Factory.link;
@@ -613,7 +613,7 @@ begin
   result := '.html';
 end;
 
-class function TFHIRXhtmlComposer.Footer(factory : TFHIRFactory; base, lang, logId : String; tail : boolean = true): string;
+class function TFHIRXhtmlComposer.Footer(factory : TFHIRFactory; base : string; const lang : THTTPLanguages; logId : String; tail : boolean = true): string;
 begin
   result :=
     '</div>'+#13#10+
@@ -673,7 +673,7 @@ begin
   result := ffXhtml;
 end;
 
-class function TFHIRXhtmlComposer.Header(factory : TFHIRFactory; Session : TFhirSession; base, lang, version: String): String;
+class function TFHIRXhtmlComposer.Header(factory : TFHIRFactory; Session : TFhirSession; base : String; const lang : THTTPLanguages; version: String): String;
 var
    id : TFHIRCompartmentId;
    f : boolean;
@@ -834,7 +834,7 @@ begin
     result := result +'&nbsp; <a id="tb'+inttostr(c)+'" class="tag" title="Add a tag" href="javascript:addTag(''tb'+inttostr(c)+''', '''+FBaseUrl+''', '''+target+''')">+</a>';
 end;
 
-class function TFHIRXhtmlComposer.ResourceLinks(a : String; lang, base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
+class function TFHIRXhtmlComposer.ResourceLinks(a : String; const lang : THTTPLanguages; base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
 var
   bef, aft, pfx, pfxp : String;
 begin

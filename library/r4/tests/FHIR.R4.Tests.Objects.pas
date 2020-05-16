@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests,
+  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Json;
 
@@ -27,7 +27,7 @@ function TFHIRObjectTests4.json(o: TFHIRResource): String;
 var
   c : TFHIRJsonComposer;
 begin
-  c := TFHIRJsonComposer.Create(nil, OutputStyleCanonical, 'en');
+  c := TFHIRJsonComposer.Create(nil, OutputStyleCanonical, THTTPLanguages.create('en'));
   try
     result := c.Compose(o);
   finally

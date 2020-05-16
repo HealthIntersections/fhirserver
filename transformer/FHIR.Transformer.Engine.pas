@@ -571,9 +571,9 @@ begin
       fmtResource:
         begin
           if f.fmtInfo = 'xml' then
-            c := TFHIRXmlComposer.Create(FContext.Link, OutputStylePretty, 'en')
+            c := TFHIRXmlComposer.Create(FContext.Link, OutputStylePretty, FContext.lang)
           else
-            c := TFHIRJsonComposer.Create(FContext.Link, OutputStylePretty, 'en');
+            c := TFHIRJsonComposer.Create(FContext.Link, OutputStylePretty, FContext.lang);
           try
             result := c.Compose(f.compiled as TFhirResource);
           finally
@@ -665,7 +665,7 @@ procedure TTransformEngine.CheckTerminologyServer;
 begin
   if FTxServer = nil then
   begin
-    FTxServer := TFhirClient4.Create(FContext.Link, 'en', TFHIRHTTPCommunicator.Create(FTerminologyServer));
+    FTxServer := TFhirClient4.Create(FContext.Link, FContext.lang, TFHIRHTTPCommunicator.Create(FTerminologyServer));
     FTxServer.conformance(true); // check it inits ok
   end;
 end;
@@ -822,10 +822,10 @@ begin
   if isXml(src) then
   begin
     f.fmtInfo := 'xml';
-    p := TFHIRXmlParser.Create(nil, 'en');
+    p := TFHIRXmlParser.Create(nil, FContext.lang);
   end
   else
-    p := TFHIRJsonParser.Create(nil, 'en');
+    p := TFHIRJsonParser.Create(nil, FContext.lang);
   try
     result := p.parseResource(src);
   finally

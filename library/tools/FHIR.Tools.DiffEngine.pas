@@ -697,7 +697,7 @@ begin
     result := FormatTextToXml(Value.primitiveValue, xmlText)
   else if (value.isType) and StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType) then
   begin
-    c := FFactory.makeComposer(FContext.link, ffJson, 'en', OutputStyleNormal);
+    c := FFactory.makeComposer(FContext.link, ffJson, FContext.lang, OutputStyleNormal);
     try
       result := c.Compose('value', value);
     finally

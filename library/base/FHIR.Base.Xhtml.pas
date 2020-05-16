@@ -32,6 +32,7 @@ interface
 uses
   SysUtils, Classes, System.Character,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 const
@@ -295,10 +296,10 @@ Type
   private
 	  class Function checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
     class procedure doCompose(node: TFhirXHtmlNode; xml : TXmlBuilder);
-    class function doParse(lang: String; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode; static;
+    class function doParse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode; static;
   public
-    class Function parse(lang : String; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; node : TMXmlElement; path : String; defaultNS : String) : TFhirXHtmlNode; overload;
-    class Function parse(lang : String; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode; Overload;
+    class Function parse(const lang : THTTPLanguages; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; node : TMXmlElement; path : String; defaultNS : String) : TFhirXHtmlNode; overload;
+    class Function parse(const lang : THTTPLanguages; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode; Overload;
 
     class procedure compose(node: TFhirXHtmlNode; xml : TXmlBuilder); overload;
     class procedure compose(node: TFhirXHtmlNode; s : TFslStringBuilder; canonicalise : boolean; indent : integer = 0; relativeReferenceAdjustment : integer = 0); overload;
@@ -1040,7 +1041,7 @@ end;
 
 { TFHIRXhtmlParser }
 
-class Function TFHIRXhtmlParser.parse(lang : String; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode;
+class Function TFHIRXhtmlParser.parse(const lang : THTTPLanguages; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode;
 var
   doc : TMXmlDocument;
 begin
@@ -1052,14 +1053,14 @@ begin
   end;
 end;
 
-class function TFHIRXhtmlParser.parse(lang: String; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
+class function TFHIRXhtmlParser.parse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
 begin
   result := doParse(lang, policy, options, node, path, defaultNS);
   if (result.NsDecl = '') and not (xopValidatorMode in options) then
     result.Attributes.Add('xmlns', XHTML_NS);
 end;
 
-class function TFHIRXhtmlParser.doParse(lang: String; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
+class function TFHIRXhtmlParser.doParse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
 var
   attr : TMXmlAttribute;
   child : TMXmlElement;

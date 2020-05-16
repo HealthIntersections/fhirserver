@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Threads, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.Collections,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Factory,
   FHIR.Tools.CodeSystemProvider, FHIR.Tools.ValueSets,
@@ -274,16 +274,16 @@ Type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); overload; override;
-    procedure Displays(code : String; list : TStringList; lang : String); overload; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); overload; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); overload; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -340,7 +340,7 @@ begin
   end;
 end;
 
-function TAllCodeSystemsProvider.getDisplay(code : String; lang : String):String;
+function TAllCodeSystemsProvider.getDisplay(code : String; const lang : THTTPLanguages):String;
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
@@ -415,7 +415,7 @@ begin
   FActCode := actCode;
 end;
 
-function TAllCodeSystemsProvider.Display(context : TCodeSystemProviderContext; lang : String) : string;
+function TAllCodeSystemsProvider.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
 var
   c : TAllCodeSystemsProviderContext;
 begin
@@ -451,11 +451,11 @@ begin
   inherited;
 end;
 
-procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String);
+procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages);
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
-procedure TAllCodeSystemsProvider.Displays(code : String; list : TStringList; lang : String);
+procedure TAllCodeSystemsProvider.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;

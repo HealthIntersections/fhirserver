@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tools.ValueSets,
@@ -242,7 +242,7 @@ begin
                 vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
               if vs = nil then
                 if not FServer.isKnownValueSet(url, vs) then
-                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters.getvar('version'), false, needSecure));
+                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['version'], false, needSecure));
             end;
             cacheId := vs.url;
             if vs.version <> '' then
@@ -275,7 +275,7 @@ begin
             count := StrToIntDef(params.str('count'), 0);
             offset := StrToIntDef(params.str('offset'), 0);
             limit := StrToIntDef(params.str('_limit'), 0);
-            if profile.displayLanguage = '' then
+            if profile.displayLanguage.header = '' then
               profile.displayLanguage := request.Lang;
 
             dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
@@ -413,7 +413,7 @@ begin
 
               profile := buildExpansionParams(request, manager, params);
               try
-                if profile.displayLanguage = '' then
+                if profile.displayLanguage.header = '' then
                   profile.displayLanguage := request.Lang;
                 try
                   pout := FServer.validate(vs, coded, profile, abstractOk, implySystem);
@@ -707,7 +707,7 @@ var
   req : TFHIRLookupOpRequestW;
   resp : TFHIRLookupOpResponseW;
   c : TFhirCodingW;
-  lang : String;
+  lang : THTTPLanguages;
 begin
   try
     manager.NotFound(request, response);
@@ -724,7 +724,7 @@ begin
         req.loadCoding;
         lang := request.lang;
         if req.displayLanguage <> '' then
-          lang := req.displayLanguage;
+          lang := THTTPLanguages.Create(req.displayLanguage);
 
         response.Body := '';
         response.LastModifiedDate := now;
@@ -1084,7 +1084,7 @@ begin
   if (params.str('limitedExpansion') <> '') then
     result.limitedExpansion := StrToBoolDef(params.str('limitedExpansion'), false);
   if (params.str('displayLanguage') <> '') then
-    result.displayLanguage := params.str('displayLanguage');
+    result.displayLanguage := THTTPLanguages.create(params.str('displayLanguage'));
   if (params.str('includeDesignations') <> '') then
     result.includeDesignations := StrToBoolDef(params.str('includeDesignations'), false);
   if (params.str('includeDefinition') <> '') then
@@ -1177,10 +1177,10 @@ begin
   begin
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
-    coding.system := request.Parameters.GetVar('system');
-    coding.version := request.Parameters.GetVar('version');
-    coding.code := request.Parameters.GetVar('code');
-    coding.display := request.Parameters.GetVar('display');
+    coding.system := request.Parameters['system'];
+    coding.version := request.Parameters['version'];
+    coding.code := request.Parameters['code'];
+    coding.display := request.Parameters['display'];
   end
   else if ((request.resource <> nil) and (request.Resource.fhirType = 'Parameters')) then
   begin

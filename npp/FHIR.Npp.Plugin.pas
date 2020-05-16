@@ -807,7 +807,7 @@ procedure TFHIRPlugin.newResource(r: TFHIRResourceV; version: TFHIRVersion; fmt:
 var
   c : TFHIRComposer;
 begin
-  c := FContext.Version[version].Factory.makeComposer(FContext.Version[version].Worker.link, fmt, 'en', OutputStylePretty);
+  c := FContext.Version[version].Factory.makeComposer(FContext.Version[version].Worker.link, fmt, FContext.Version[version].Worker.lang, OutputStylePretty);
   try
     newResource(c.Compose(r), version, fmt, url);
   finally
@@ -1551,7 +1551,7 @@ end;
 var
   comp : TFHIRExpressionNodeComposer;
 begin
-  comp := TFHIRExpressionNodeComposer.create(FContext.Version[FCurrentFileInfo.workingVersion].Worker.link, OutputStylePretty, 'en');
+  comp := TFHIRExpressionNodeComposer.create(FContext.Version[FCurrentFileInfo.workingVersion].Worker.link, OutputStylePretty, THTTPLanguages.create('en'));
   try
     result := comp.Compose(expr, fmt, items, types);
   finally

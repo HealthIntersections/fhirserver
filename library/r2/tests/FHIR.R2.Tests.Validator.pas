@@ -178,9 +178,9 @@ var
   s : string;
 begin
   if (fmt = ffXml) then
-    p := TFHIRXmlParser.Create(nil, 'en')
+    p := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'))
   else
-    p := TFHIRJsonParser.Create(nil, 'en');
+    p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
   try
     f := TFilestream.create(IncludeTrailingBackslash(PUB_HOME)+path, fmOpenRead + fmShareDenywrite);
     try

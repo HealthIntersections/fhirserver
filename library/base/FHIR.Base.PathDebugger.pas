@@ -536,7 +536,7 @@ begin
     memo.text := def
   else
   begin
-    comp := FServices.Factory.makeComposer(FServices.link, FFormat, 'en', OutputStylePretty);
+    comp := FServices.Factory.makeComposer(FServices.link, FFormat, FServices.lang, OutputStylePretty);
     try
       memo.Text := comp.Compose(name, obj)
     finally
@@ -563,7 +563,7 @@ begin
   end
   else
   begin
-    comp := FFactory.makeComposer(FServices.Link, FFormat, 'en', OutputStylePretty);
+    comp := FFactory.makeComposer(FServices.Link, FFormat, FServices.lang, OutputStylePretty);
     try
       if obj is TFHIRResourceV then
         memo.Text := comp.Compose(TFHIRResourceV(obj))

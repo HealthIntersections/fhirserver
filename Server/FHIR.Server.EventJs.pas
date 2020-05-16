@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Javascript,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Server.Session;
@@ -344,12 +344,12 @@ end;
 
 function TFHIRServerJsHelper.FHIRRequestGetLangJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 begin
-  result := js.wrap(TFHIRRequest(this).Lang);
+  result := js.wrap(TFHIRRequest(this).Lang.header);
 end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetLangJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  TFHIRRequest(this).Lang := js.asString(value);
+  TFHIRRequest(this).Lang := THTTPLanguages.create(js.asString(value));
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetSummaryJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;

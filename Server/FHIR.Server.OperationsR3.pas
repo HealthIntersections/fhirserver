@@ -326,7 +326,7 @@ type
 
   TFhirObservationStatsOperation = class (TFhirNativeOperationR3)
   private
-    function resolveParameter(lang, code : String): TObservationStatsParameter;
+    function resolveParameter(const lang : THTTPLanguages; code : String): TObservationStatsParameter;
   protected
     function isWrite : boolean; override;
     function owningResource : String; override;
@@ -358,13 +358,13 @@ type
     procedure RegisterConsentRecord(session: TFhirSession); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; res : TFHIRResourceV; tags : TFHIRTagList); override;
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : TBytes); override;
-    function createOperationContext(lang : String) : TFHIROperationEngine; override;
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src : TBytes); override;
+    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; e : Exception); override;
-    function engineFactory(lang : String; usage : String) : TFHIRNativeOperationEngine; override;
-    procedure SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; override;
+    procedure SetupRecording(session : TFhirSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
-    procedure FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure FinishRecording(); override;
   end;
 
 
@@ -802,8 +802,8 @@ begin
   else
     result := TFhirParameters.create;
   try
-    for i := 0 to request.Parameters.getItemCount - 1 do
-      result.AddParameter(request.Parameters.VarName(i), TFhirString.Create(request.Parameters.getVar(request.Parameters.VarName(i))));
+    for i := 0 to request.Parameters.Count - 1 do
+      result.AddParameter(request.Parameters.Name[i], TFhirString.Create(request.Parameters[request.Parameters.Name[i]]));
     result.link;
   finally
     result.Free;
@@ -1010,7 +1010,7 @@ begin
           response.Resource := oo;
           oo.text := TFhirNarrative.Create;
           code := '<div><pre>'+FormatCodeToXML(code)+'</pre></div>';
-          oo.text.div_ := TFHIRXhtmlParser.parse('en', xppReject, [], code);
+          oo.text.div_ := TFHIRXhtmlParser.parse(THTTPLanguages.create('en'), xppReject, [], code);
           issue := oo.issueList.Append;
           issue.severity := IssueSeverityInformation;
           issue.code := IssueTypeInformational;
@@ -1108,7 +1108,7 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
             profile := native(manager).GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.has('identifier') then
-            profile := native(manager).GetResourceByURL('StructureDefinition', request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
+            profile := native(manager).GetResourceByURL('StructureDefinition', request.Parameters['identifier'], '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context as TFHIRWorkerContext, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -1252,7 +1252,7 @@ var
         exit;
       end;
     end;
-    result := request.Parameters.GetVar(name);
+    result := request.Parameters[name];
   end;
 begin
   profileId := '';
@@ -1356,7 +1356,7 @@ var
   wantsummary : TFHIRSummaryOption;
   title: string;
   keys : TKeyList;
-  params : TParseMap;
+  params : THTTPParameters;
   prsrFmt : TFhirFormat;
   needsObject : boolean;
   sId, type_ : String;
@@ -1381,7 +1381,7 @@ begin
       response.OnCreateBuilder(request, response, btCollection, bundle);
       includes := TReferenceList.create;
       keys := TKeyList.Create;
-      params := TParseMap.Create('');
+      params := THTTPParameters.Create('');
       try
         if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
           link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
@@ -1412,7 +1412,7 @@ begin
             keys.Add(TKeyPair.create(type_, conn.ColStringByName['ResourceKey']));
 
             if request.Parameters.has('_include') then
-              native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
+              native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters['_include']);
           End;
         finally
           conn.Terminate;
@@ -1420,7 +1420,7 @@ begin
 
         // process reverse includes
 //          if request.Parameters.has('_reverseInclude') then
-//            native(manager).CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
+//            native(manager).CollectReverseIncludes(request.Session, includes, keys, request.Parameters['_reverseInclude'), bundle, request, response, wantsummary);
 
 //          //now, add the includes
 //          if includes.Count > 0 then
@@ -1444,10 +1444,10 @@ begin
         response.Message := 'OK';
         response.Body := '';
         response.resource := bundle.getBundle;
-        if (request.Parameters.getVar('email') <> '') then
-          native(manager).ServerContext.SubscriptionManager.sendByEmail(response.Resource, request.Parameters.getVar('email'), false)
-        else if (request.Parameters.getVar('direct') <> '') then
-          native(manager).ServerContext.SubscriptionManager.sendByEmail(response.Resource, request.Parameters.getVar('direct'), true);
+        if (request.Parameters['email'] <> '') then
+          native(manager).ServerContext.SubscriptionManager.sendByEmail(response.Resource, request.Parameters['email'], false)
+        else if (request.Parameters['direct'] <> '') then
+          native(manager).ServerContext.SubscriptionManager.sendByEmail(response.Resource, request.Parameters['direct'], true);
       finally
         params.free;
         includes.free;
@@ -1506,13 +1506,13 @@ begin
             claim := native(manager).GetResourceById(request, 'Claim', request.Id, request.baseUrl, needSecure) as TFhirClaim
 //          else if request.Parameters.has('identifier') then
 //          begin
-//            url := request.Parameters.getvar('identifier');
+//            url := request.Parameters['identifier'];
 //            if (url.startsWith('ValueSet/')) then
 //              vs := native(manager).GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
 //            else if (url.startsWith(baseURLrequest.request.request.request.request.request.+'ValueSet/')) then
 //              vs := native(manager).GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
 //            else if not native(manager).FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-//              vs := native(manager).GetValueSetByIdentity(request.Parameters.getvar('identifier'), request.Parameters.getvar('version'));
+//              vs := native(manager).GetValueSetByIdentity(request.Parameters['identifier'], request.Parameters.getvar('version'));
 //            cacheId := vs.url;
 //          end
           else if (request.form <> nil) and request.form.hasParam('claim') then
@@ -1715,7 +1715,7 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
             profile := native(manager).GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.has('identifier') then
-            profile := native(manager).GetResourceByURL('StructureDefinition', request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
+            profile := native(manager).GetResourceByURL('StructureDefinition', request.Parameters['identifier'], '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context as TFHIRWorkerContext, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -2099,7 +2099,7 @@ begin
           blob := native(manager).Connection.ColBlobByName['JsonContent'];
           deleted := native(manager).Connection.ColIntegerByName['Status'] = 2;
           native(manager).Connection.Terminate;
-          parser := FFactory.makeParser(request.Context, ffJson, 'en');
+          parser := FFactory.makeParser(request.Context, ffJson, THTTPLanguages.create('en'));
           try
             p := parser.parseResource(blob) as TFhirResource;
             try
@@ -2269,7 +2269,7 @@ begin
           blob := native(manager).Connection.ColBlobByName['JsonContent'];
           deleted := native(manager).Connection.ColIntegerByName['Status'] = 2;
           native(manager).Connection.Terminate;
-          parser := FFactory.MakeParser(request.Context, ffJson, 'en');
+          parser := FFactory.MakeParser(request.Context, ffJson, THTTPLanguages.create('en'));
           try
             p := parser.parseResource(blob) as TFhirResource;
             try
@@ -2402,7 +2402,7 @@ begin
         raise EFHIRException.create('Internal Error fetching content');
       blob := native(manager).Connection.ColBlobByName['JsonContent'];
       native(manager).Connection.Terminate;
-      parser := FFactory.makeParser(request.Context, ffJson, 'en');
+      parser := FFactory.makeParser(request.Context, ffJson, THTTPLanguages.create('en'));
       try
         diff := TDifferenceEngine.create(vc(manager).Link, native(manager).ServerContext.Factory.link);
         try
@@ -2569,7 +2569,7 @@ begin
 end;
 
 
-function TFhirObservationStatsOperation.resolveParameter(lang, code: String): TObservationStatsParameter;
+function TFhirObservationStatsOperation.resolveParameter(const lang : THTTPLanguages; code: String): TObservationStatsParameter;
 var
   i  : integer;
 begin
@@ -2784,7 +2784,7 @@ begin
           finally
             conn.Terminate;
           end;
-          native(manager).processIncludes(request, request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.Lang, field, prsrFmt, patIds);
+          native(manager).processIncludes(request, request.session, request.secure, request.Parameters['_include'], request.Parameters['_revinclude'], bundle, keys, request.baseUrl, request.Lang, field, prsrFmt, patIds);
 
   //          if (op.issueList.Count > 0) then
   //          begin
@@ -3136,7 +3136,7 @@ begin
             entry.resource := composition.Link;
             entry.fullUrl := native(manager).ServerContext.FormalURLPlain+'/Composition/'+composition.id;
 
-            if request.Parameters.getvar('persist') = 'true' then
+            if request.Parameters['persist'] = 'true' then
             begin
               request.ResourceName := bundle.FhirType;
               request.CommandType := fcmdUpdate;
@@ -3270,17 +3270,17 @@ begin
     vc.checkResource(resource as TFhirQuestionnaire)
 end;
 
-function TFHIRNativeStorageServiceR3.createOperationContext(lang: String): TFHIROperationEngine;
+function TFHIRNativeStorageServiceR3.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
   result := TFhirNativeOperationEngineR3.Create(lang, ServerContext, self.Link, DB.GetConnection('Operation'));
 end;
 
-function TFHIRNativeStorageServiceR3.engineFactory(lang, usage: String): TFHIRNativeOperationEngine;
+function TFHIRNativeStorageServiceR3.engineFactory(const lang : THTTPLanguages; usage: String): TFHIRNativeOperationEngine;
 begin
   result := TFHIRNativeOperationEngineR3.create(lang, ServerContext, self.Link, DB.GetConnection(usage));
 end;
 
-procedure TFHIRNativeStorageServiceR3.FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+procedure TFHIRNativeStorageServiceR3.FinishRecording();
 begin
  // nothing
 end;
@@ -3293,6 +3293,8 @@ begin
   if req.Session = nil then
     exit;
   if req.Session.TestScript = nil then
+    exit;
+  if (req.CommandType in NON_STD_COMMANDS) then
     exit;
   op := TFhirTestScriptSetupActionOperation.Create;
   ts := req.Session.TestScript.Resource as TFHIRTestScript;
@@ -3311,7 +3313,7 @@ begin
   op.requestHeaderList.Add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);
   if (req.lastModifiedDate <> 0) then
     op.requestHeaderList.Add('Last-Modified', DateTimeToXMLDateTimeTimeZoneString(req.lastModifiedDate, TimeZoneBias));
-  op.requestHeaderList.Add('Language', req.lang);
+  op.requestHeaderList.Add('Language', req.lang.header);
   op.requestHeaderList.Add('if-match', req.IfMatch);
   op.requestHeaderList.Add('if-none-match', req.IfNoneMatch);
   if (req.IfModifiedSince <> 0) then
@@ -3415,7 +3417,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageServiceR3.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; lang: string; src: TBytes);
+procedure TFHIRNativeStorageServiceR3.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src: TBytes);
 var
   vs : TFHIRValueSet;
   resource : TFHIRResource;
@@ -3459,9 +3461,9 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageServiceR3.SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+procedure TFHIRNativeStorageServiceR3.SetupRecording(Session : TFHIRSession);
 begin
- // nothing
+  session.TestScript := TFhirTestScript3.create(TFhirTestScript.Create);
 end;
 
 function TFHIRNativeStorageServiceR3.vc: TFHIRServerWorkerContextR3;

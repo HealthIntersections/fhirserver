@@ -566,25 +566,25 @@ end;
 
 procedure TFHIRPackageServer.serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   s : TArray<String>;
 begin
-  pm := TParseMap.create(request.UnparsedParams);
+  pm := THTTPParameters.create(request.UnparsedParams);
   try
     if (request.CommandType = hcGET) and (request.Document = '/packages/catalog') then
     begin
       if not pm.has('lastUpdated') then
-        serveSearch(pm.GetVar('name'), pm.GetVar('canonical'), pm.GetVar('fhirversion'), pm.GetVar('sort'), request, response)
-      else if pm.getVar('lastUpdated').startsWith('-') then
-        serveUpdates(TFslDateTime.makeToday.add(StrToIntDef(pm.GetVar('lastUpdated'), -30)), response)
+        serveSearch(pm['name'], pm['canonical'], pm['fhirversion'], pm['sort'], request, response)
+      else if pm['lastUpdated'].startsWith('-') then
+        serveUpdates(TFslDateTime.makeToday.add(StrToIntDef(pm['lastUpdated'], -30)), response)
       else
-        serveUpdates(TFslDateTime.fromXML(pm.GetVar('lastUpdated')), response)
+        serveUpdates(TFslDateTime.fromXML(pm['lastUpdated']), response)
     end
     else if request.CommandType = hcGET then
     begin
       s := request.document.subString(10).split(['/']);
       if length(s) = 1 then
-        serveVersions(s[0], pm.GetVar('sort'), request, response)
+        serveVersions(s[0], pm['sort'], request, response)
       else if length(s) = 2 then
         serveDownload(s[0], s[1], response)
       else if (request.Accept.contains('/html')) then

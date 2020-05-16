@@ -247,6 +247,7 @@ Type
     Property TestScript : TFhirTestScriptW read FTestScript write SetTestScript;
     property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
     property Compartments : TFslList<TFHIRCompartmentId> read FCompartments;
+    procedure buildRow(b : TFslStringBuilder);
 
     function isAnonymous : boolean;
   end;
@@ -276,11 +277,11 @@ Type
     ForiginalId: String;
     FversionId: String;
     FlastModifiedDate: TDateTime;
-    FParams: TParseMap;
+    FParams: THTTPParameters;
     FSource: TFslBuffer;
 //    FcontentLocation: String;
     FDefaultSearch: boolean;
-    FLang: String;
+    FLang: THTTPLanguages;
     FSession: TFhirSession;
     FTags : TFHIRTagList;
     FIp: string;
@@ -318,12 +319,14 @@ Type
     procedure SetResourceName(const Value: String);
     procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
     procedure SetGraphQL(const Value: TGraphQLPackage);
-    procedure SetParams(const Value: TParseMap);
+    procedure SetParams(const Value: THTTPParameters);
     procedure SetPatchXml(const Value: TMXmlElement);
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     function GetHasCompartments: boolean;
 
     procedure SetTransactionResource(const Value: TFhirResourceV);
+    procedure SetLang(const Value: THTTPLanguages);
+
   Public
     constructor Create(worker: TFHIRWorkerContextWithFactory; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     destructor Destroy; Override;
@@ -360,7 +363,7 @@ Type
       any parameters associated with the request (part after the ? in the url). Use
       for search/update
     }
-    property Parameters : TParseMap read FParams write SetParams;
+    property Parameters : THTTPParameters read FParams write SetParams;
 
     function hasTestingTag : boolean;
   
@@ -471,7 +474,7 @@ Type
     {
       Preferred language of the requester (used for error messages)
     }
-    Property Lang : String read FLang write FLang;
+    Property Lang : THTTPLanguages read FLang write SetLang;
 
     {
       What kind of summary is requested
@@ -683,7 +686,7 @@ begin
   result := url;
 end;
 
-Procedure CheckId(lang, id : String);
+Procedure CheckId(const lang : THTTPLanguages; id : String);
 var
   i : integer;
 begin
@@ -724,7 +727,7 @@ var
   s, soURL : String;
 begin
   Elements.Clear;
-  Elements.CommaText := Parameters.GetVar('_elements');
+  Elements.CommaText := Parameters['_elements'];
 
   soURL := sUrl;
   relativeReferenceAdjustment := 0;
@@ -735,7 +738,7 @@ begin
     begin
       if form <> nil then
       begin
-        s := Parameters.GetVar('op');
+        s := Parameters['op'];
         if (s = 'transaction') or (s = '') then
           CommandType := fcmdTransaction
         else if (s = 'validation') or (s = 'validate') then
@@ -804,8 +807,8 @@ begin
   begin
     CommandType := fcmdValidate;
     ForceMethod('POST');
-    if Parameters.has('profile') and (Parameters.GetVar('profile') <> '') then
-      tags.AddTag(0, tcProfile, 'urn:ietf:rfc:3986', 'http://localhost/'+Parameters.GetVar('profile'), '');
+    if Parameters.has('profile') and (Parameters['profile'] <> '') then
+      tags.AddTag(0, tcProfile, 'urn:ietf:rfc:3986', 'http://localhost/'+Parameters['profile'], '');
   end
   else if (sType = '_search') then
   begin
@@ -1111,7 +1114,7 @@ begin
   if (FParams <> nil) then
     FParams.Free;
   FParams := nil;
-  FParams := TParseMap.create(s);
+  FParams := THTTPParameters.create(s);
   processParams;
 end;
 
@@ -1129,7 +1132,7 @@ begin
       n := p.ParamName;
       s := p.Content.AsText.trimRight([#13, #10]);
       if (n <> '') and (not s.Contains(#10)) then
-        FParams.addItem(n, s);
+        FParams.add(n, s);
     end;
   end;
   processParams;
@@ -1155,7 +1158,7 @@ procedure TFHIRRequest.processParams;
 var
   s : String;
 begin
-  s := FParams.GetVar('_summary');
+  s := FParams['_summary'];
   if s = 'true' then
     Summary := soSummary
   else if s = 'text' then
@@ -1234,7 +1237,12 @@ begin
   FGraphQL := Value;
 end;
 
-procedure TFHIRRequest.SetParams(const Value: TParseMap);
+procedure TFHIRRequest.SetLang(const Value: THTTPLanguages);
+begin
+  FLang := Value;
+end;
+
+procedure TFHIRRequest.SetParams(const Value: THTTPParameters);
 begin
   FParams.Free;
   FParams := Value;
@@ -1314,7 +1322,7 @@ begin
   addValue('Last-Modified', FormatDateTime('c', FlastModifiedDate), FlastModifiedDate <> 0);
 //  addValue('Content-Location', FcontentLocation, FcontentLocation <> '');
   addValue('defaultSearch', BooleanToString(FDefaultSearch), CommandType = fcmdSearch);
-  addValue('Language', FLang, FLang <> '');
+  addValue('Language', FLang.header, FLang.header <> '');
   addValue('Tag', FTags.ToString, FTags.count > 0);
   addValue('ip', FIp, FIp <> '');
   if FCompartment <> nil then
@@ -1385,6 +1393,38 @@ end;
 procedure TFhirSession.allowAll;
 begin
   FSecurity.allowAll;
+end;
+
+procedure TFhirSession.buildRow(b: TFslStringBuilder);
+begin
+  b.append(' <tr>');
+  if FSecure then
+    b.append('<td><img src="sec_secure.png"/></td>')
+  else
+    b.append('<td><img src="sec_anonymous.png"/></td>');
+  b.append('<td>'+FormatTextToHTML(FSessionName)+'</td>');
+  b.append('<td>'+FormatTextToHTML(FUserName)+'</td>');
+  b.append('<td>'+FormatTextToHTML(FSystemName)+'</td>');
+  b.append('<td>'+FormatTextToHTML(ProviderName+' ('+CODES_UserIdEvidence[FUserEvidence]+')')+'</td>');
+  b.append('<td>'+DescribePeriod(now - FFirstCreated)+'</td>');
+  b.append('<td>'+DescribePeriod(FExpires - now)+'</td>');
+  b.append('<td>');
+  if FSecurity.canAdministerUsers then
+    b.append('<img src="sec_admin.png"/> ');
+  if FSecurity.canGetUserInfo then
+    b.append('<img src="sec_user.png"/> ');
+  if FSecurity.canReadAny then
+    b.append('<img src="sec_read.png"/> ');
+  if FSecurity.canWriteAny then
+    b.append('<img src="sec_write.png"/> ');
+  b.append('</td>');
+  if FTestScript <> nil then
+    b.append('<td><img src="recording.png"/></td>')
+  else
+    b.append('<td></td>');
+  b.append('<td><a style="font: bold; text-decoration: none; background-color: #EEEEEE; color: #333333; padding: 2px 6px 2px 6px; border-top: 1px solid #CCCCCC; border-right: 1px solid #333333; border-bottom'+
+     ': 1px solid #333333;  border-left: 1px solid #CCCCCC;" href="auth/logout-all?cookie='+FCookie+'">Close</a></td>');
+  b.append('</tr>'#13#10);
 end;
 
 function TFhirSession.canAdministerUsers: boolean;

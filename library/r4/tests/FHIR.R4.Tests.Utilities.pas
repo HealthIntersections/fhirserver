@@ -32,7 +32,8 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests,
+  IdSSLOpenSSLHeaders,
+  FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Version.Parser, 
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
@@ -128,7 +129,7 @@ var
   f : TFileStream;
   s : TStream;
 begin
-  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, 'en', 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
+  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, THTTPLanguages.create('en'), 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
   try
     s:= dr.asZip(fn);
     try

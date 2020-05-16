@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Lang, FHIR.Client.Base,
   FHIR.Server.Session,
   FHIR.CdsHooks.Utilities, FHIR.Server.Utilities, FHIR.Server.Context;
@@ -203,7 +203,7 @@ begin
     try
       req := TCDSHookRequest.Create(jrequest);
       try
-        req.lang := request.AcceptLanguage;
+        req.lang := THTTPLanguages.Create(request.AcceptLanguage);
         req.baseURL := base;
         resp := HandleRequest(server, secure, session, context, req);
         try
@@ -262,7 +262,7 @@ begin
 
   if FEngines.Count = 0 then
     exit(false);
-  client := server.Storage.createClient('en', server, server.ValidatorContext, session);
+  client := server.Storage.createClient(THTTPLanguages.create('en'), server, server.ValidatorContext, session);
   try
     for t in FEngines do
     begin

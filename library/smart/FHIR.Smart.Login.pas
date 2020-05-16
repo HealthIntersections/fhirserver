@@ -257,18 +257,18 @@ end;
 procedure TSmartAppLaunchLogin.DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
   s : TArray<String>;
-  pm : TParseMap;
+  pm : THTTPParameters;
 begin
   if ARequestInfo.Document = '/done' then
   begin
     s := ARequestInfo.RawHTTPCommand.Split([' ']);
-    pm := TParseMap.create(s[1].Substring(6));
+    pm := THTTPParameters.create(s[1].Substring(6));
     try
-      FFinalState := pm.GetVar('state');
-      if pm.getVar('error') <> '' then
-        FErrorMessage := pm.getVar('error')
+      FFinalState := pm['state'];
+      if pm['error'] <> '' then
+        FErrorMessage := pm['error']
       else
-        FAuthCode := pm.GetVar('code');
+        FAuthCode := pm['code'];
       State := stDone;
     finally
       pm.free;

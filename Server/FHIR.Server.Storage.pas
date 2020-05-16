@@ -48,27 +48,35 @@ Type
 
   TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String) of object;
 
-  TFHIRStorageService = class;
-  TFHIROperationEngine = class;
+  TOperationMode = (opmRestful, opmUpload, opmInternal, opmCmdLine, opmSweep);
 
   TOperationContext = class (TFslObject)
   private
-    FUpload : boolean;
+    FMode : TOperationMode;
     FCallback : TInstallerCallback;
     FMessage : String;
     FMessageDetail: String;
   public
     constructor Create; overload; override;
-    constructor Create(upload : boolean; callback : TInstallerCallback; message : String); overload;
-    constructor Create(upload : boolean; message : String); overload;
+    constructor Create(mode : TOperationMode; callback : TInstallerCallback; message : String); overload;
+    constructor Create(mode : TOperationMode; message : String); overload;
 
-    property upload : boolean read FUpload write FUpload;
+    property mode : TOperationMode read FMode write FMode;
     property callback : TInstallerCallback read FCallback write FCallback;
     property message : String read FMessage write FMessage;
     property MessageDetail : String read FMessageDetail write FMessageDetail;
 
     procedure progress(i : integer);
   end;
+
+const
+  OP_MODES_CHECK = [opmRestful, opmCmdLine];
+  OP_CODES_NO_SEC_ON_INSERT = [opmSweep];
+
+type
+  TFHIRStorageService = class;
+  TFHIROperationEngine = class;
+
 
   TFhirOperation = class abstract (TFslObject)
   protected
@@ -179,7 +187,7 @@ Type
   TFHIROperationEngine = class (TFslObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
-    FLang : String;
+    FLang : THTTPLanguages;
     function factory : TFHIRFactory;
   protected
     FServerContext : TFslObject;
@@ -210,7 +218,7 @@ Type
     procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
-    constructor Create(ServerContext : TFslObject; lang : String);
+    constructor Create(ServerContext : TFslObject; const lang : THTTPLanguages);
     destructor Destroy; override;
 
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
@@ -219,10 +227,10 @@ Type
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
-    property lang : String read FLang write FLang;
+    property lang : THTTPLanguages read FLang write FLang;
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
-    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueType) : Boolean; virtual;
+    function check(response : TFHIRResponse; test : boolean; code : Integer; const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType) : Boolean; virtual;
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual; abstract;
     function getResourcesByParam(aType : string; name, value : string; var needSecure : boolean): TFslList<TFHIRResourceV>; virtual;
@@ -235,7 +243,7 @@ Type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
 
-    function createClient(lang : String; session: TFHIRSession) : TFhirClientV; virtual;
+    function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
   end;
 
   TFHIRInternalCommunicator = class (TFHIRClientCommunicator)
@@ -320,17 +328,17 @@ Type
     procedure RunValidation; virtual; abstract;
 
 
-    function createOperationContext(lang : String) : TFHIROperationEngine; virtual; abstract;
+    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; virtual; abstract;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual; abstract;
-    function createClient(lang : String; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession) : TFHIRClientV; virtual;
+    function createClient(const lang : THTTPLanguages; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession) : TFHIRClientV; virtual;
     Procedure Yield(client : TFHIRClientV; exception : Exception); overload; virtual;
-    function ExpandVS(vs: TFHIRValueSetW; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; virtual;
+    function ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; virtual;
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResourceV; virtual; abstract;
 
-    procedure SetupRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
+    procedure SetupRecording(session : TFhirSession); virtual; abstract;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
-    procedure FinishRecording(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
+    procedure FinishRecording(); virtual; abstract;
 
     function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; virtual;
     procedure setAsyncTaskDetails(key : integer; transactionTime : TFslDateTime; request : String); virtual;
@@ -371,7 +379,7 @@ begin
   inherited;
 end;
 
-function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
+function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
 begin
   raise EFHIRException.create('Expanding valuesets is not implemented in this server');
 end;
@@ -477,18 +485,18 @@ begin
   inherited Create;
 end;
 
-constructor TOperationContext.Create(upload: boolean; callback: TInstallerCallback; message : String);
+constructor TOperationContext.Create(mode : TOperationMode; callback: TInstallerCallback; message : String);
 begin
   Create;
-  FUpload := upload;
+  FMode := mode;
   FCallback := callback;
   FMessage := message;
 end;
 
-constructor TOperationContext.Create(upload: boolean; message: String);
+constructor TOperationContext.Create(mode : TOperationMode; message: String);
 begin
   Create;
-  FUpload := upload;
+  FMode := mode;
   FMessage := message;
 end;
 
@@ -509,7 +517,7 @@ end;
 
 { TFHIROperationEngine }
 
-constructor TFHIROperationEngine.create(ServerContext : TFslObject; lang: String);
+constructor TFHIROperationEngine.create(ServerContext : TFslObject; const lang : THTTPLanguages);
 begin
   inherited create;
   FServerContext := ServerContext;
@@ -517,7 +525,7 @@ begin
   FOperations := TFslList<TFhirOperation>.create;
 end;
 
-function TFHIROperationEngine.createClient(lang: String; session: TFHIRSession): TFHIRClientV;
+function TFHIROperationEngine.createClient(const lang : THTTPLanguages; session: TFHIRSession): TFHIRClientV;
 var
   int : TFHIRInternalCommunicator;
 begin
@@ -577,7 +585,7 @@ begin
   response.Resource := factory.BuildOperationOutcome(lang, response.Message);
 end;
 
-function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String; issueCode : TFhirIssueType): Boolean;
+function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; const lang : THTTPLanguages; message: String; issueCode : TFhirIssueType): Boolean;
 begin
   result := test;
   if not test and (response <> nil) then
@@ -639,14 +647,14 @@ procedure TFHIROperationEngine.ExecuteMetadata(request: TFHIRRequest; response: 
 begin
   if not request.Parameters.has('mode') then
     ExecuteCapabilityStatement(request, response, true)
-  else if request.Parameters.GetVar('mode') = 'full' then
+  else if request.Parameters['mode'] = 'full' then
     ExecuteCapabilityStatement(request, response, true)
-  else if request.Parameters.GetVar('mode') = 'normative' then
+  else if request.Parameters['mode'] = 'normative' then
     ExecuteCapabilityStatement(request, response, false)
-  else if request.Parameters.GetVar('mode') = 'terminology' then
+  else if request.Parameters['mode'] = 'terminology' then
     ExecuteTerminologyCapabilities(request, response)
   else
-    raise EFHIRException.Create('unknown mode '+request.Parameters.GetVar('mode'));
+    raise EFHIRException.Create('unknown mode '+request.Parameters['mode']);
 end;
 
 procedure TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest; response: TFHIRResponse; full : boolean);
@@ -832,7 +840,7 @@ begin
       end;
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
-        processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
+        processGraphQL(request.Parameters['_graphql'], request, response);
     finally
       oConf.free;
     end;
@@ -1069,7 +1077,7 @@ begin
         oConf.system(s);
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
-        processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
+        processGraphQL(request.Parameters['_graphql'], request, response);
     finally
       oConf.free;
     end;
@@ -1141,7 +1149,7 @@ begin
   raise EFHIRException.create('Asynchronous Processing is not supported on this server');
 end;
 
-function TFHIRStorageService.createClient(lang: String; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession): TFHIRClientV;
+function TFHIRStorageService.createClient(const lang : THTTPLanguages; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession): TFHIRClientV;
 var
   int : TFHIRInternalCommunicator;
 begin
@@ -1193,7 +1201,7 @@ begin
       end;
     end
     else
-      raise EFHIRClientException.Create(resp.Body, opWrapper.Create(FContext.factory.BuildOperationOutcome('en', resp.Body)));
+      raise EFHIRClientException.Create(resp.Body, opWrapper.Create(FContext.factory.BuildOperationOutcome(THTTPLanguages.create('en'), resp.Body)));
 end;
 
 function TFHIRInternalCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
@@ -1223,7 +1231,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, 'internal');
+  ctxt := TOperationContext.Create(opmRestful, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1314,7 +1322,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, 'internal');
+  ctxt := TOperationContext.Create(opmInternal, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1345,7 +1353,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, 'internal');
+  ctxt := TOperationContext.Create(opmInternal, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1392,13 +1400,13 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, 'internal');
+  ctxt := TOperationContext.Create(opmInternal, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
       req.CommandType := fcmdSearch;
       req.ResourceName := aType;
-      req.Parameters := TParseMap.create(params+'&__wantObject=true');
+      req.Parameters := THTTPParameters.create(params+'&__wantObject=true');
       req.internalRequestId := TFHIRServerContext(FServerContext).Globals.nextRequestId;
 
       resp := TFHIRResponse.Create(FContext.link);
@@ -1591,8 +1599,8 @@ begin
   else
     result := FFactory.wrapParams(FFactory.makeResource('Parameters'));
   try
-    for i := 0 to request.Parameters.getItemCount - 1 do
-      result.AddParamStr(request.Parameters.VarName(i), request.Parameters.getVar(request.Parameters.VarName(i)));
+    for i := 0 to request.Parameters.Count - 1 do
+      result.AddParamStr(request.Parameters.Name[i], request.Parameters[request.Parameters.Name[i]]);
     result.link;
   finally
     result.Free;

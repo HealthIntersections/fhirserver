@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
   {$IFNDEF SIMPLETEST}
@@ -179,7 +179,7 @@ begin
         begin
           if not resources.TryGetValue(input, res) then
           begin
-            p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, 'en');
+            p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'));
             try
               f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', input), fmOpenRead);
               try

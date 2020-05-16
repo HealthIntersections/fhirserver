@@ -33,6 +33,7 @@ interface
 uses
   SysUtils, Classes, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Stream,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.OIDs,
   FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Utilities, FHIR.R2.Constants, FHIR.R2.Context;
 
@@ -1706,7 +1707,7 @@ begin
               vcl := TVCLStream.create;
               try
                 vcl.Stream := mem.link;
-                xml := TFHIRParsers2.parser(self.link, ffXml, 'en');
+                xml := TFHIRParsers2.parser(self.link, ffXml, FLang);
                 try
                   xml.source := vcl;
                   xml.Parse;
@@ -1767,9 +1768,9 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRParsers2.parser(self.Link, ffJson, 'en'))
+    LoadFromFile(filename, TFHIRParsers2.parser(self.Link, ffJson, FLang))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRParsers2.parser(self.Link, ffXml, 'en'))
+    LoadFromFile(filename, TFHIRParsers2.parser(self.Link, ffXml, FLang))
 end;
 
 procedure TBaseWorkerContextR2.LoadFromFolder(folder: string);

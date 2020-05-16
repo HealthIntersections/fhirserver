@@ -167,7 +167,7 @@ var
   s : TStringStream;
   cd : TFhirCodeableConcept;
 begin
-  x := TFHIRXmlParser.Create(ctxt.link, 'en');
+  x := TFHIRXmlParser.Create(ctxt.link, THTTPLanguages.create('en'));
   try
     s := TStringStream.Create('<CD xmlns="urn:hl7-org:v3" code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>');
     try

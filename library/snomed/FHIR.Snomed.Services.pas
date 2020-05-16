@@ -56,7 +56,7 @@ The content loads and works extremely quickly.
 Uses
   SysUtils, Classes, Generics.Collections, Character,
   YuStemmer,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.CdsHooks.Utilities,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
@@ -608,13 +608,13 @@ operations
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -626,9 +626,9 @@ operations
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; slang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const slang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; overload; override;
-    procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function getRefSet(id : int64) : TSnomedReferenceSetMemberArray;
 
@@ -2170,7 +2170,7 @@ begin
   index := L;
 end;
 
-procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; slang, baseURL, code, display: String);
+procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
 var
   b : TStringBuilder;
   Identity : UInt64;
@@ -3269,7 +3269,7 @@ begin
 End;
 *)
 
-function TSnomedServices.Display(context: TCodeSystemProviderContext; lang : String): string;
+function TSnomedServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
 var
   Identity : UInt64;
   Flags : Byte;
@@ -3292,12 +3292,12 @@ begin
   end;
 end;
 
-procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   Displays(Code(context), list, lang);
 end;
 
-procedure TSnomedServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; slang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TSnomedServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const slang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 var
   Identity : UInt64;
   Flags, lang : Byte;
@@ -3410,7 +3410,7 @@ begin
   end;
 end;
 
-procedure TSnomedServices.Displays(code: String; list: TStringList; lang : String);
+procedure TSnomedServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 var
   ctxt : TSnomedExpressionContext;
 begin
@@ -3428,7 +3428,7 @@ begin
   end;
 end;
 
-function TSnomedServices.getDisplay(code: String; lang : String): String;
+function TSnomedServices.getDisplay(code: String; const lang : THTTPLanguages): String;
 var
   ctxt : TCodeSystemProviderContext;
 begin

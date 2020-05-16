@@ -565,17 +565,17 @@ end;
 
 procedure TFHIRGraphDefinitionEngine4.parseParams(params: TFslList<TGraphQLArgument>; value: String; res: TFHIRResource);
 var
-  p : TParseMap;
+  p : THTTPParameters;
   i, j : integer;
   n, v : String;
   refed : boolean;
 begin
   refed := false;
-  p := TParseMap.create(value, false);
+  p := THTTPParameters.create(value, false);
   try
-    for i := 0 to p.getItemCount -1 do
+    for i := 0 to p.Count -1 do
     begin
-      n := p.VarName(i);
+      n := p.Name[i];
       for j := 0 to p.getValueCount(i) - 1 do
       begin
         p.retrieveNumberedItem(i,j, v);

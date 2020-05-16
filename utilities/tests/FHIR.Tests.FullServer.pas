@@ -34,7 +34,7 @@ uses
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
 
-  FHIR.Web.Fetcher,
+  FHIR.Web.Fetcher, FHIR.Web.Parsers,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Ucum.Services,
@@ -294,7 +294,7 @@ function TFullServerTests.parseJson(s: String): TFHIRResource;
 var
   p : TFHIRJsonParser;
 begin
-  p := TFHIRJsonParser.Create(nil, 'en');
+  p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
   try
     p.source := TStringStream.Create(s);
     try

@@ -217,7 +217,7 @@ end;
 
 function TFHIRNppVersionFactory.makeComposer(fmt: TFHIRFormat): TFHIRComposer;
 begin
-  result := FFactory.makeComposer(FWorker.link, fmt, 'en', OutputStylePretty);
+  result := FFactory.makeComposer(FWorker.link, fmt, FWorker.lang, OutputStylePretty);
 end;
 
 function TFHIRNppVersionFactory.makeNarrative: TFHIRNarrativeGeneratorBase;
@@ -246,7 +246,7 @@ end;
 
 function TFHIRNppVersionFactory.makeParser(fmt: TFHIRFormat): TFHIRParser;
 begin
-  result := FFactory.makeParser(FWorker.link, fmt, 'en');
+  result := FFactory.makeParser(FWorker.link, fmt, FWorker.lang);
 end;
 
 function TFHIRNppVersionFactory.makePathEngine: TFHIRPathEngineV;

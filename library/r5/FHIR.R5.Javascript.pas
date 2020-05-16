@@ -50,7 +50,7 @@ begin
   if xv then
     result := ''
   else
-    result := '4';
+    result := '5';
 end;
 
 procedure defineBasePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition; xv : boolean);

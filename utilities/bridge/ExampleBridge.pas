@@ -69,7 +69,7 @@ Uses
   SysUtils, Classes, IniFiles,
 
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities,
-  FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Stream,
+  FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Stream, FHIR.Web.Parsers,
 
   FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Ucum.Services, FHIR.Base.PathEngine,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory, FHIR.R3.PathEngine,
@@ -137,7 +137,7 @@ Type
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
-    constructor Create(Data : TExampleServerData; lang : String);
+    constructor Create(Data : TExampleServerData; const lang : THTTPLanguages);
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -173,7 +173,7 @@ Type
     procedure ProcessObservations; override;
     procedure RunValidation; override;
 
-    function createOperationContext(lang : String) : TFHIROperationEngine; override;
+    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
 
     procedure Sweep; override;
@@ -187,6 +187,11 @@ Type
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
+
+    procedure SetupRecording(session : TFhirSession); override;
+    procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure FinishRecording(); override;
+
   end;
 
   TExampleFHIRUserProvider = class (TFHIRUserProvider)
@@ -401,7 +406,7 @@ end;
 
 { TExampleFHIROperationEngine }
 
-constructor TExampleFHIROperationEngine.create(Data: TExampleServerData; lang: String);
+constructor TExampleFHIROperationEngine.create(Data: TExampleServerData; const lang : THTTPLanguages);
 begin
   inherited Create(nil, lang);
   FData := data;
@@ -662,6 +667,10 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+procedure TExampleFhirServerStorage.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+end;
+
 procedure TExampleFhirServerStorage.RecordFhirSession(session: TFhirSession);
 begin
   // this server doesn't track sessions
@@ -677,7 +686,7 @@ begin
   // this server doesn't track sessions
 end;
 
-function TExampleFhirServerStorage.createOperationContext(lang: String): TFHIROperationEngine;
+function TExampleFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
   result := TExampleFHIROperationEngine.create(FData, lang);
 end;
@@ -696,6 +705,12 @@ begin
   finally
       FData.FLock.Unlock;
   end;
+end;
+
+procedure TExampleFhirServerStorage.FinishRecording;
+begin
+  inherited;
+
 end;
 
 function TExampleFhirServerStorage.getClientInfo(id: String): TRegisteredClientInformation;
@@ -762,6 +777,10 @@ end;
 procedure TExampleFhirServerStorage.RunValidation;
 begin
   // nothing in this server
+end;
+
+procedure TExampleFhirServerStorage.SetupRecording(session: TFhirSession);
+begin
 end;
 
 function TExampleFhirServerStorage.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;

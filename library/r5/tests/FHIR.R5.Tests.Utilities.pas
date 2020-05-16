@@ -128,7 +128,7 @@ var
   f : TFileStream;
   s : TStream;
 begin
-  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, 'en', 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
+  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, THTTPLanguages.create('en'), 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
   try
     s:= dr.asZip(fn);
     try

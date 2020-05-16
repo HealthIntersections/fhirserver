@@ -1254,7 +1254,7 @@ begin
         begin
           if (not prop.isChoice()) and ('xhtml' = prop.getType()) then
           begin
-            xhtml := TFHIRXhtmlParser.parse('en', xppReject, [xopValidatorMode], e, path, FHIR_NS);
+            xhtml := TFHIRXhtmlParser.parse(FContext.Lang, xppReject, [xopValidatorMode], e, path, FHIR_NS);
             n := TFHIRMMElement.create('div', prop.link, 'xhtml', TFHIRXhtmlParser.compose(xhtml));
             context.getChildren().add(n);
             n.Xhtml := xhtml;
@@ -1737,7 +1737,7 @@ begin
         if ( not n.Prop.isChoice()) and (n.Type_ = 'xhtml') then
         begin
           try
-            n.Xhtml := TFHIRXhtmlParser.parse('en', xppAllow, [xopValidatorMode], n.value);
+            n.Xhtml := TFHIRXhtmlParser.parse(FContext.lang, xppAllow, [xopValidatorMode], n.value);
           Except
             on e : Exception do
               logError(main.LocationStart.Line, main.LocationStart.Col, npath, IssueTypeINVALID, 'Error parsing XHTML: '+e.Message, IssueSeverityERROR);

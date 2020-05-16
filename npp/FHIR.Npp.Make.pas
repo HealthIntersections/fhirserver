@@ -101,7 +101,7 @@ begin
   sd := lbProfiles.Items.Objects[lbProfiles.ItemIndex] as TFhirStructureDefinitionW;
   r := f.Factory.createFromProfile(f.Worker, sd);
   try
-    c := f.Factory.makeComposer(f.Worker.link, fmt, 'en', OutputStylePretty);
+    c := f.Factory.makeComposer(f.Worker.link, fmt, f.Worker.Create.lang, OutputStylePretty);
     try
       FNpp.newResource(c.Compose(r), v, fmt, '');
     finally

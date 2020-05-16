@@ -74,7 +74,7 @@ Type
   private
     class function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
-    class Function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : TParseMap) : TFslList<TSearchParameter>;
+    class Function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
     class Function buildUrl(search : TFslList<TSearchParameter>): String;
   end;
 
@@ -238,7 +238,7 @@ begin
 
 end;
 
-class function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: TParseMap): TFslList<TSearchParameter>;
+class function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: THTTPParameters): TFslList<TSearchParameter>;
 var
   iName, iValue : integer;
   name, value : String;
@@ -246,9 +246,9 @@ var
 begin
   result := TFslList<TSearchParameter>.create;
   try
-    for iName := 0 to pm.getItemCount - 1 do
+    for iName := 0 to pm.Count - 1 do
     begin
-      name := pm.VarName(iName);
+      name := pm.Name[iName];
       for iValue := 0 to pm.getValueCount(iName) - 1 do
       begin
         pm.retrieveNumberedItem(iName, iValue, value);

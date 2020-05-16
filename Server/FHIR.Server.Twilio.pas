@@ -64,14 +64,14 @@ end;
 
 procedure TTwilioServer.processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   a : String;
   json, obj : TJsonObject;
   arr : TJsonArray;
 begin
-  pm := TParseMap.Create(request.UnparsedParams);
+  pm := THTTPParameters.Create(request.UnparsedParams);
   try
-    a := pm.GetVar('AccountSid');
+    a := pm['AccountSid'];
     json := TJsonObject.Create;
     try
       arr := json.forceArr['messages'];
@@ -111,7 +111,7 @@ end;
 
 procedure TTwilioServer.processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   tk : integer;
   a, f, b : String;
 begin
@@ -123,11 +123,11 @@ begin
     FLock.Unlock;
   end;
 
-  pm := TParseMap.Create(request.UnparsedParams);
+  pm := THTTPParameters.Create(request.UnparsedParams);
   try
-    a := pm.GetVar('AccountSid');
-    f := pm.GetVar('From');
-    b := pm.GetVar('Body');
+    a := pm['AccountSid'];
+    f := pm['From'];
+    b := pm['Body'];
     FDB.connection('twilio', Procedure (conn : TFslDBConnection)
       begin
         conn.sql := 'Insert into Twilio (TwilioKey, AccountId, Status, SourceNum, CreatedDate, MsgBody) values (:k, :a, 1, :f, getDate(), :b)';

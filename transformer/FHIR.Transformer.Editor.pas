@@ -134,9 +134,9 @@ var
   p : TFHIRParser;
 begin
   if isXml(memo.RawText) then
-    p := TFHIRXmlParser.Create(context.link, 'en')
+    p := TFHIRXmlParser.Create(context.link, context.lang)
   else
-    p := TFHIRJsonParser.Create(context.link, 'en');
+    p := TFHIRJsonParser.Create(context.link, context.lang);
   try
     result := p.parseResource(memo.RawText);
   finally

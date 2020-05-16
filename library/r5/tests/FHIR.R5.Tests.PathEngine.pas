@@ -179,7 +179,7 @@ begin
         begin
           if not resources.TryGetValue(input, res) then
           begin
-            p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
+            p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
             try
               f := TFileStream.Create(FHIR_PUB_FILE(input), fmOpenRead);
               try

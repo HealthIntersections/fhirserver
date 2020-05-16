@@ -155,7 +155,7 @@ Type
 
   TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
-  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : TParseMap; conn : TFslDBConnection): String of object;
+  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : THTTPParameters; conn : TFslDBConnection): String of object;
 
   TSubscriptionManager = class abstract (TFHIRServerWorker)
   private
@@ -172,6 +172,7 @@ Type
 
     FCloseAll : boolean;
     FSemaphores : TFslMap<TWebSocketQueueInfo>;
+    FLang : THTTPLanguages;
 
     function settings : TFHIRServerSettings;
     function factory : TFHIRFactory;
@@ -272,6 +273,7 @@ begin
   FCloseAll := false;
   FLastPopCheck := 0;
   FEventDefinitions := TFslMap<TEventDefinition>.create('subscr.event');
+  FLang := THTTPLanguages.create('en');
 end;
 
 destructor TSubscriptionManager.Destroy;
@@ -679,9 +681,9 @@ begin
       part.ContentType := 'text/plain';
       part.ContentTransfer := '7bit';
       if subst = nil then
-        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, ffJson, 'en', OutputStylePretty)
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, ffJson, FLang, OutputStylePretty)
       else if subst.payload <> '' then
-        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), 'en', OutputStylePretty)
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), FLang, OutputStylePretty)
       else
         comp := nil;
       try
@@ -798,7 +800,7 @@ var
   comp : TFHIRComposer;
   b : TBytes;
 begin
-  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), 'en', OutputStyleNormal);
+  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), FLang, OutputStyleNormal);
   try
     if comp <> nil then
       b := TEncoding.UTF8.GetBytes(comp.Compose(package))
@@ -986,7 +988,7 @@ procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytes
 var
   p : TFHIRParser;
 begin
-  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct), 'en');
+  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct), FLang);
   try
     p.source := res;
     p.Parse;
@@ -1285,10 +1287,10 @@ begin
       raise EFHIRException.create('Cannot find resource');
     id := conn.ColStringByName['Id'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource(factory, 'en', conn.ColBlobByName['Content'])
+      result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['Content'])
     else
     begin
-      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, 'en');
+      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, FLang);
       try
         result := parser.parseResource(conn.ColBlobByName['XmlContent']);
       finally
@@ -1314,10 +1316,10 @@ begin
       raise EFHIRException.create('Cannot find resource');
     userKey := conn.ColIntegerByName['UserKey'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource(factory, 'en', conn.ColBlobByName['Content'])
+      result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['Content'])
     else
     begin
-      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, 'en');
+      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, FLang);
       try
         result := parser.parseResource(conn.ColBlobByName['XmlContent']);
       finally
@@ -1348,10 +1350,10 @@ end;
 function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey, key : integer; conn: TFslDBConnection): boolean;
 var
   l, r, sql : String;
-  p : TParseMap;
+  p : THTTPParameters;
 begin
   StringSplit(criteria, '?', l, r);
-  p := TParseMap.create('_type='+l+'&'+r, true);
+  p := THTTPParameters.create('_type='+l+'&'+r, true);
   try
     sql := FOnExecuteSearch(typekey, nil, nil, p, conn);
     result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;

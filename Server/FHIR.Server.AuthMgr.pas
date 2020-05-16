@@ -114,6 +114,7 @@ type
     FAdminEmail : String;
     FUserProvider : TFHIRUserProvider;
     FEndPoint: String;
+    FRawPath : String;
     FPath: String;
     FActive : boolean;
     FPassword : String;
@@ -122,19 +123,21 @@ type
     FOnProcessLaunchParams : TProcessLaunchParamsEvent;
     FRelPath: String;
 
-    Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    procedure HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
-    procedure HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
-    Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    procedure HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: THTTPParameters; response: TIdHTTPResponseInfo);
+    procedure HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
+    Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
+    Procedure HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters;response: TIdHTTPResponseInfo);
     Procedure HandleRegistration(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
-    procedure HandleTokenJWT(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+    procedure HandleTokenJWT(AContext: TIdContext; request: TIdHTTPRequestInfo; params: THTTPParameters; response: TIdHTTPResponseInfo);
+    Procedure HandleEndAllSessions(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
+
     function checkNotEmpty(v, n, location, state : String): String;
     function isAllowedRedirect(client : TRegisteredClientInformation; redirect_uri: String): boolean;
     function isAllowedAud(client_id, aud_uri: String): boolean;
@@ -143,7 +146,7 @@ type
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     function nonceIsUnique(nonce : String) : boolean;
-    procedure readScopes(scopes: TStringList; params: TParseMap);
+    procedure readScopes(scopes: TStringList; params: THTTPParameters);
     procedure loadScopeVariables(variables: TFslMap<TFHIRObject>; scope: String; user : TSCIMUser);
     function GetPatientListAsOptions(launch : String) : String;
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
@@ -213,6 +216,7 @@ begin
   FGoogleAppSecret := ini.identityProviders['google.com']['app-secret'];
   FGoogleAppKey := ini.identityProviders['google.com']['app-key'];
   FPassword := ini.admin['password'];
+  FRawPath := path;
   FPath := path+'/auth';
   FRelPath := '/auth';
 end;
@@ -347,7 +351,7 @@ begin
  result := FRelPath+'/token';
 end;
 
-procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : THTTPParameters; response: TIdHTTPResponseInfo);
 var
   client_id : String;
   scope : String;
@@ -361,25 +365,25 @@ var
   variables : TFslMap<TFHIRObject>;
   client : TRegisteredClientInformation;
 begin
-  client_id := checkNotEmpty(params.GetVar('client_id'), 'client_id', '', '');
+  client_id := checkNotEmpty(params['client_id'], 'client_id', '', '');
   client := ServerContext.Storage.getClientInfo(client_id);
   try
     if client = nil then
       raise EAuthClientException.create('Unknown Client Identifier "'+client_id+'"', afrNone, '', '');
-    redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri', '', '');
+    redirect_uri := checkNotEmpty(params['redirect_uri'], 'redirect_uri', '', '');
     if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecure+'/internal')) then
       if not isAllowedRedirect(client, redirect_uri) then
         raise EAuthClientException.create('Unacceptable Redirect url "'+redirect_uri+'"', afrNone, '', '');
-    state := checkNotEmpty(params.GetVar('state'), 'state', redirect_uri, state);
-    if params.GetVar('response_type') <> 'code' then
+    state := checkNotEmpty(params['state'], 'state', redirect_uri, state);
+    if params['response_type'] <> 'code' then
       raise EAuthClientException.create('Only response_type allowed is ''code''', afrUnauthorizedClient, redirect_uri, state);
-    scope := checkNotEmpty(params.GetVar('scope'), 'scope', redirect_uri, state);
-    aud := checkNotEmpty(params.GetVar('aud'), 'aud', redirect_uri, state);
+    scope := checkNotEmpty(params['scope'], 'scope', redirect_uri, state);
+    aud := checkNotEmpty(params['aud'], 'aud', redirect_uri, state);
     if not isAllowedAud(client_id, aud) then
       raise EAuthClientException.create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')', afrInvalidRequest, redirect_uri, state);
 
     id := newguidid;
-    ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state, params.GetVar('launch'));
+    ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state, params['launch']);
     b := TStringBuilder.Create;
     try
       ok := true;
@@ -409,7 +413,7 @@ begin
   result := FRelPath+'/register';
 end;
 
-procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   client_id, name, authurl: String;
   variables : TFslMap<TFHIRObject>;
@@ -427,7 +431,7 @@ begin
   if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope, launch) then
     raise EAuthClientException.create('State Error - session "'+inttostr(session.key)+'" not ready for a choice', afrInvalidRequest, '', '');
 
-  if params.getVar('form') = 'true' then
+  if params['form'] = 'true' then
   begin
     scopes := TStringList.create;
     try
@@ -440,7 +444,7 @@ begin
       session.jwt.issuedAt := now;
       session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
 
-      if params.getVar('user') = '1' then
+      if params['user'] = '1' then
       begin
       // if user rights granted
         session.jwt.subject := Names_TFHIRAuthProvider[session.ProviderCode]+':'+session.id;
@@ -450,10 +454,13 @@ begin
       end;
       session.JWTPacked := ServerContext.JWTServices.pack(session.JWT);
 
-      ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
-      if params.GetVar('patient') <> '' then
+      if params['log'] = '1' then
+        ServerContext.Storage.SetupRecording(session);
+
+      ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params['patient']);
+      if params['patient'] <> '' then
 // Will these compartments be freed?
-        session.Compartments.Add(TFHIRCompartmentId.Create('Patient', params.GetVar('patient')));
+        session.Compartments.Add(TFHIRCompartmentId.Create('Patient', params['patient']));
 
       session.scopes := scopes.CommaText.Replace(',', ' ');
       ServerContext.Storage.RegisterConsentRecord(session);
@@ -523,19 +530,32 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleEndAllSessions(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo);
+var
+  params : THTTPParameters;
+begin
+  params := THTTPParameters.Create(request.UnparsedParams);
+  try
+    ServerContext.SessionManager.EndAllSessions(params['cookie'], request.RemoteIP);
+    response.Redirect(FRawPath);
+  finally
+    params.Free;
+  end;
+end;
+
+procedure TAuth2Server.HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 begin
   response.ContentType := 'application/jwt';
   response.ContentText := ServerContext.JWTServices.makeJWT;
 end;
 
-procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 begin
   response.ContentType := 'application/json';
   response.ContentText := ServerContext.JWTServices.makeJWK;
 end;
 
-procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   id, username, password, domain, state, jwt, redirect, scope, launch : String;
   authurl, token, expires, msg, uid, name, email, client_id : String;
@@ -549,11 +569,11 @@ begin
 
   if params.has('id') and params.has('username') and params.has('password') then
   begin
-    id := params.GetVar('id');
+    id := params['id'];
     ServerContext.Storage.fetchOAuthDetails(id, client_id, redirect, state, scope, launch);
 
-    username := params.GetVar('username');
-    password := params.GetVar('password');
+    username := params['username'];
+    password := params['password'];
 
     if not FUserProvider.CheckLogin(username, password, key) then
       raise EAuthClientException.create('Login failed', afrAccessDenied, redirect, state);
@@ -577,8 +597,8 @@ begin
     // HL7
     if not CheckLoginToken(copy(request.document, 26, $FF), id, provider) then
       raise EAuthClientException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
-    uid := params.GetVar('userid');
-    name := params.GetVar('fullName');
+    uid := params['userid'];
+    name := params['fullName'];
     expires := inttostr(60 * 24 * 10); // 10 days
     session := ServerContext.SessionManager.RegisterSession(userExternalOAuth, aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
     try
@@ -598,7 +618,7 @@ begin
     else
       authurl := 'https://'+FHost+':'+FSSLPort+FPath+'/auth_dest';
 
-    state := params.GetVar('state');
+    state := params['state'];
     if not StringStartsWith(state, OAUTH_LOGIN_PREFIX, false) then
       raise EAuthClientException.create('State Prefix mis-match', afrInvalidRequest, redirect, state);
     if not CheckLoginToken(state, id, provider) then
@@ -608,13 +628,13 @@ begin
 
     if provider = apGoogle then
     begin
-      ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, authurl, params.GetVar('code'), token, expires, jwt, msg);
+      ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, authurl, params['code'], token, expires, jwt, msg);
       if ok then
         ok := GoogleGetDetails(token, FGoogleAppKey, jwt, uid, name, email, msg);
     end
     else
     begin
-      ok := FacebookCheckLogin(FFacebookAppid, FFacebookAppSecret, authurl, params.GetVar('code'), token, expires, msg);
+      ok := FacebookCheckLogin(FFacebookAppid, FFacebookAppSecret, authurl, params['code'], token, expires, msg);
       if ok then
         ok := FacebookGetDetails(token, uid, name, email, msg);
     end;
@@ -793,7 +813,7 @@ end;
 
 procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 var
-  params : TParseMap;
+  params : THTTPParameters;
 begin
   if not FActive then
   begin
@@ -812,7 +832,7 @@ begin
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
       response.ContentType := 'application/json';
 
-      params := TParseMap.create(request.UnparsedParams);
+      params := THTTPParameters.create(request.UnparsedParams);
       try
         if (secure and (request.Document = FPath+'/auth')) then
           HandleAuth(AContext, request, session, params, response)
@@ -836,6 +856,8 @@ begin
           HandleRegistration(AContext, request, session, response)
         else if (secure and (request.Document = FPath+'/userdetails')) then
           HandleUserDetails(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/logout-all') then
+          HandleEndAllSessions(AContext, request, session, response)
         else
           raise EAuthClientException.create('Invalid URL');
       finally
@@ -863,7 +885,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   token, id, name, email, password, domain, client_id : String;
   variables : TFslMap<TFHIRObject>;
@@ -871,13 +893,13 @@ begin
   domain := request.Host;
   if domain.Contains(':') then
     domain := domain.Substring(0, domain.IndexOf(':'));
-  if params.getVar('form') <> '' then
+  if params['form'] <> '' then
   begin
-    token := checkNotEmpty(params.GetVar('token'), 'token', '', '');
-    id := checkNotEmpty(params.GetVar('id'), 'id', '', '');
-    name := checkNotEmpty(params.GetVar('name'), 'name', '', '');
-    email := checkNotEmpty(params.GetVar('email'), 'email', '', '');
-    password := checkNotEmpty(params.GetVar('password'), 'password', '', '');
+    token := checkNotEmpty(params['token'], 'token', '', '');
+    id := checkNotEmpty(params['id'], 'id', '', '');
+    name := checkNotEmpty(params['name'], 'name', '', '');
+    email := checkNotEmpty(params['email'], 'email', '', '');
+    password := checkNotEmpty(params['password'], 'password', '', '');
 
     if FPassword <> password then
       raise EAuthClientException.create('Admin Password fail');
@@ -894,9 +916,9 @@ begin
     end;
     response.ContentText := 'done';
   end
-  else if params.getVar('id') <> '' then
+  else if params['id'] <> '' then
   begin
-    if not ServerContext.SessionManager.GetSessionByToken(params.GetVar('id'), session) then
+    if not ServerContext.SessionManager.GetSessionByToken(params['id'], session) then
       raise EAuthClientException.create('State Error (1)');
     try
       if not ServerContext.Storage.hasOAuthSessionByKey(session.Key, 2) then
@@ -957,15 +979,15 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   json : TJSONWriter;
 begin
-  if params.getVar('grant_type') = 'authorization_code' then
+  if params['grant_type'] = 'authorization_code' then
     HandleTokenOAuth(AContext, request, session, params, response)
-  else if params.getVar('grant_type') = 'client_credentials' then
+  else if params['grant_type'] = 'client_credentials' then
   begin
-     if params.GetVar('client_assertion_type') = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' then
+     if params['client_assertion_type'] = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' then
        HandleTokenJWT(AContext, request, params, response) // smart backend services
      else
        HandleTokenBearer(AContext, request, params, response)
@@ -978,7 +1000,7 @@ begin
     try
       json.Start(true);
       json.Value('error', 'unsupported_grant_type');
-      json.Value('error_description', 'Unknown Grant Type '+params.getVar('grant_type'));
+      json.Value('error_description', 'Unknown Grant Type '+params['grant_type']);
       json.Finish(true);
       response.ContentText := json.ToString;
     finally
@@ -987,7 +1009,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   errCode, jwtStored, domain : string;
   json : TJsonWriter;
@@ -1014,7 +1036,7 @@ begin
         raise EAuthClientException.create('Error reading JWT: '+e.message);
     end;
     try
-      uuid := params.getVar('scope');
+      uuid := params['scope'];
       if not ServerContext.Storage.FetchAuthorization(uuid, PatientId, ConsentKey, SessionKey, Expiry, jwtStored) then
         raise EAuthClientException.create('Unrecognised Token');
       if (jwtStored <> request.AuthPassword) then
@@ -1069,7 +1091,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleTokenJWT(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleTokenJWT(AContext: TIdContext; request: TIdHTTPRequestInfo; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
 //  jwtStored,
   errCode, domain : string;
@@ -1090,7 +1112,7 @@ begin
   try
     errCode := 'invalid_request';
     try
-      jwt := TJWTUtils.unpack(params.GetVar('client_assertion'), false, nil); // todo:
+      jwt := TJWTUtils.unpack(params['client_assertion'], false, nil); // todo:
     except
       on e : exception do
         raise EAuthClientException.create('Error reading JWT: '+e.message);
@@ -1115,7 +1137,7 @@ begin
 
         jwk := TJWKList.create(client.publicKey);
         try
-          TJWTUtils.unpack(params.GetVar('client_assertion'), true, jwk).Free;
+          TJWTUtils.unpack(params['client_assertion'], true, jwk).Free;
         finally
           jwk.Free;
         end;
@@ -1124,7 +1146,7 @@ begin
         try
           session.SystemName := jwt.subject;
           session.SystemEvidence := systemFromJWT;
-          session.scopes := params.GetVar('scope');
+          session.scopes := params['scope'];
           json := TJsonWriterDirect.create;
           try
             json.Start;
@@ -1165,7 +1187,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 
 var
   code, clientId, clientSecret, uri, errCode, client_id, n : string;
@@ -1184,7 +1206,7 @@ begin
 
       // now, check the code
       errCode := 'invalid_request';
-      code := checkNotEmpty(params.getVar('code'), 'code', '', '');
+      code := checkNotEmpty(params['code'], 'code', '', '');
       if not ServerContext.SessionManager.GetSessionByToken(code, session) then // todo: why is session passed in too?
         raise EAuthClientException.create('Authorization Code not recognized');
       try
@@ -1197,7 +1219,7 @@ begin
           begin
             // user must supply the correct client id
             errCode := 'invalid_client';
-            clientId := checkNotEmpty(params.getVar('client_id'), 'client_id', '', '');
+            clientId := checkNotEmpty(params['client_id'], 'client_id', '', '');
             if clientId <> pclientid then
               raise EAuthClientException.create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
           end
@@ -1208,8 +1230,8 @@ begin
             clientSecret := request.AuthPassword;
             if (clientId = '') and (clientSecret = '') then // R support
             begin
-              clientId := params.getVar('client_id');
-              clientSecret := params.getVar('client_secret');
+              clientId := params['client_id'];
+              clientSecret := params['client_secret'];
             end;
             if clientId <> pclientid then
               raise EAuthClientException.create('Client Id is wrong ("'+clientId+'") in Authorization Header');
@@ -1218,7 +1240,7 @@ begin
           end;
 
           // now check the redirect URL
-          uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri', '', '');
+          uri := checkNotEmpty(params['redirect_uri'], 'redirect_uri', '', '');
           errCode := 'invalid_request';
           if predirect <> uri then
             raise EAuthClientException.create('Mismatch between claimed and actual redirection URIs');
@@ -1261,7 +1283,7 @@ begin
     except
       on e : Exception do
       begin
-        logt('Error in OAuth Token call: '+e.Message+' (params = '+params.Textdump+')');
+        logt('Error in OAuth Token call: '+e.Message+' (params = '+params.Source+')');
         response.ResponseNo := 400;
         json := TJsonWriterDirect.create;
         try
@@ -1283,7 +1305,7 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   token, clientId, clientSecret : string;
   json : TJSONWriter;
@@ -1296,12 +1318,12 @@ begin
     try
       if request.AuthUsername <> 'Bearer' then
         raise EAuthClientException.create('OAuth2 Access Token is required in the HTTP Authorization Header (type Bearer)');
-      token := checkNotEmpty(params.getVar('token'), 'token', '', '');
+      token := checkNotEmpty(params['token'], 'token', '', '');
       if request.AuthPassword <> token then
         raise EAuthClientException.create('Access Token Required');
 
-      clientId := checkNotEmpty(params.getVar('client_id'), 'client_id', '', '');
-      clientSecret := checkNotEmpty(params.getVar('client_secret'), 'client_secret', '', '');
+      clientId := checkNotEmpty(params['client_id'], 'client_id', '', '');
+      clientSecret := checkNotEmpty(params['client_secret'], 'client_secret', '', '');
 
       client := ServerContext.Storage.getClientInfo(clientId);
       try
@@ -1373,7 +1395,7 @@ begin
 end;
 
 
-procedure TAuth2Server.HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+procedure TAuth2Server.HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: THTTPParameters; response: TIdHTTPResponseInfo);
 var
   variables : TFslMap<TFHIRObject>;
 begin
@@ -1381,7 +1403,7 @@ begin
     response.Redirect(FPath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
   else
   begin
-    if params.getVar('form') = 'true' then
+    if params['form'] = 'true' then
     begin
       raise EFHIRTodo.create('TAuth2Server.HandleUserDetails');
     end
@@ -1577,31 +1599,31 @@ begin
 end;
 
 
-procedure TAuth2Server.readScopes(scopes : TStringList; params : TParseMap);
+procedure TAuth2Server.readScopes(scopes : TStringList; params : THTTPParameters);
 var
   pfx : String;
   s : String;
   all : boolean;
 begin
   scopes.clear;
-  if (params.getVar('userInfo') = '1') then
+  if (params['userInfo'] = '1') then
   begin
     scopes.add('openid');
     scopes.add('profile');
   end;
-  if (params.getVar('useradmin') = '1') then
+  if (params['useradmin'] = '1') then
     scopes.add(SCIM_ADMINISTRATOR);
 
   // if there's a patient, then the scopes a patient specific
-  if (params.getVar('patient') = '') then
+  if (params['patient'] = '') then
     pfx := 'User/'
   else
     pfx := 'Patient/';
 
   all := true;
   for s in FFactory.ResourceNames do
-    if (params.GetVar('read'+CODES_TTokenCategory[Ffactory.resCategory(s)]) <> '1') or
-      (params.GetVar('write'+CODES_TTokenCategory[Ffactory.resCategory(s)]) <> '1') then
+    if (params['read'+CODES_TTokenCategory[Ffactory.resCategory(s)]] <> '1') or
+      (params['write'+CODES_TTokenCategory[Ffactory.resCategory(s)]] <> '1') then
       all := false;
 
   if all then
@@ -1610,9 +1632,9 @@ begin
   begin
   for s in FFactory.ResourceNames do
     begin
-      if params.GetVar('read'+CODES_TTokenCategory[Ffactory.resCategory(s)]) = '1' then
+      if params['read'+CODES_TTokenCategory[Ffactory.resCategory(s)]] = '1' then
         scopes.Add(pfx+s+'.read');
-      if params.GetVar('write'+CODES_TTokenCategory[Ffactory.resCategory(s)]) = '1' then
+      if params['write'+CODES_TTokenCategory[Ffactory.resCategory(s)]] = '1' then
         scopes.Add(pfx+s+'.write');
     end;
   end;

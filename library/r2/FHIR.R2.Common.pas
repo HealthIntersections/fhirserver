@@ -503,7 +503,7 @@ type
   TFHIRLookupOpRequest2 = class (TFHIRLookupOpRequestW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRResourceV; override;
     procedure loadCoding; override;
     function coding : TFHIRCodingW; override;
@@ -520,7 +520,7 @@ type
   TFHIRLookupOpResponse2 = class (TFHIRLookupOpResponseW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
-    procedure load(params : TParseMap); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRResourceV; override;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; override;
     function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
@@ -804,6 +804,27 @@ type
   public
     procedure contact(kind : TContactType; value : String); override;
     procedure system(url : String); override;
+  end;
+
+  TFHIRTestScript2 = class (TFHIRTestScriptW)
+  private
+    function ts : TFHIRTestScript;
+  protected
+    function getURL: String; override;
+    function getName: String; override;
+    function getStatus: TPublicationStatus; override;
+    function getVersion: String; override;
+    function getDescription: String; override;
+    function getDate: TFslDateTime; override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
+    procedure setDate(Value: TFslDateTime); override;
+    procedure setUrl(Value: String); override;
+    procedure setVersion(Value: String); override;
+    procedure setName(Value: String); override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    procedure setDescription(Value: String); override;
+    function getContext: String; override;
   end;
 
 implementation
@@ -2544,7 +2565,7 @@ begin
   result := (op as TFHIRLookupOpResponse).version;
 end;
 
-procedure TFHIRLookupOpResponse2.load(params: TParseMap);
+procedure TFHIRLookupOpResponse2.load(params: THTTPParameters);
 begin
   (op as TFHIRLookupOpResponse).load(params);
 end;
@@ -4142,7 +4163,7 @@ begin
   result := '';
 end;
 
-procedure TFHIRLookupOpRequest2.load(params: TParseMap);
+procedure TFHIRLookupOpRequest2.load(params: THTTPParameters);
 begin
   (op as TFHIRLookupOpRequest).load(params);
 end;
@@ -4425,5 +4446,93 @@ function TFhirEncounter2.summary: String;
 begin
   result := CODES_TFhirEncounterStateEnum[(FRes as TFHIREncounter).status];
 end;
+
+{ TFhirTestScript2 }
+
+function TFHIRTestScript2.getContext: String;
+begin
+  result := '';
+end;
+
+function TFhirTestScript2.getDate: TFslDateTime;
+begin
+  result := ts.date;
+end;
+
+function TFhirTestScript2.getDescription: String;
+begin
+  result := ts.description;
+end;
+
+function TFhirTestScript2.getName: String;
+begin
+  result := ts.name;
+end;
+
+function TFhirTestScript2.getPublisher: String;
+begin
+  result := ts.publisher;
+end;
+
+function TFhirTestScript2.getStatus: TPublicationStatus;
+begin
+  result := MAP_TPublicationStatusR[ts.Status];
+end;
+
+function TFhirTestScript2.getURL: String;
+begin
+  result := ts.url;
+end;
+
+function TFhirTestScript2.getVersion: String;
+begin
+  result := ts.version;
+end;
+
+procedure TFhirTestScript2.setDate(Value: TFslDateTime);
+begin
+  ts.date := value;
+end;
+
+
+procedure TFhirTestScript2.setDescription(Value: String);
+begin
+  ts.description := value;
+end;
+
+
+procedure TFhirTestScript2.setName(Value: String);
+begin
+  ts.name := value;
+end;
+
+
+procedure TFhirTestScript2.setPublisher(Value: String);
+begin
+  ts.publisher := value;
+end;
+
+
+procedure TFhirTestScript2.setStatus(Value: TPublicationStatus);
+begin
+  ts.Status := MAP_TPublicationStatus[Value];
+end;
+
+
+procedure TFhirTestScript2.setUrl(Value: String);
+begin
+  ts.url := value;
+end;
+
+procedure TFhirTestScript2.setVersion(Value: String);
+begin
+  ts.version := value;
+end;
+
+function TFhirTestScript2.ts : TFhirTestScript;
+begin
+  result := (Fres as TFhirTestScript);
+end;
+
 
 end.

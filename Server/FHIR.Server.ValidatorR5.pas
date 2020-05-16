@@ -330,7 +330,7 @@ begin
   try
     result := TValidationResult.Create;
     try
-      if FTerminologyServer.checkCode(op, 'en', '', code, system, version, display) then
+      if FTerminologyServer.checkCode(op, lang, '', code, system, version, display) then
         result.Severity := isNull
       else if op.issueCount = 1 then
       begin

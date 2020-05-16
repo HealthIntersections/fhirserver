@@ -55,7 +55,7 @@ type
   protected
     function isKnownName(name : String) : boolean; overload; virtual;
     procedure loadExtensions(params : TFHIRParameters); overload;
-    procedure loadExtensions(params : TParseMap); overload;
+    procedure loadExtensions(params : THTTPParameters); overload;
     procedure loadExtensions(params : TFhirParametersParameter); overload;
     procedure writeExtensions(params : TFHIRParameters); overload;
     procedure writeExtensions(params : TFhirParametersParameter); overload;
@@ -78,7 +78,7 @@ type
   public
     constructor Create(); overload; override;
     procedure load(params : TFHIRParameters); overload; virtual; abstract;
-    procedure load(params : TParseMap); overload; virtual; abstract;
+    procedure load(params : THTTPParameters); overload; virtual; abstract;
     function asParams : TFHIRParameters; virtual; abstract;
   end;
 
@@ -86,7 +86,7 @@ type
   public
     constructor Create(); overload; override;
     procedure load(params : TFHIRParameters); overload; virtual; abstract;
-    procedure load(params : TParseMap); overload; virtual; abstract;
+    procedure load(params : THTTPParameters); overload; virtual; abstract;
     function asParams : TFHIRParameters; virtual; abstract;
   end;
 
@@ -182,13 +182,13 @@ begin
       addExtension(p.name, p.value.Link);
 end;
 
-procedure TFHIROperationBaseObject.loadExtensions(params: TParseMap);
+procedure TFHIROperationBaseObject.loadExtensions(params: THTTPParameters);
 var
   i : integer;
 begin
   for i := 0 to params.Count - 1 do
-    if not IsKnownName(params.VarName(i)) then
-      addExtension(params.VarName(i), params.GetVar(params.VarName(i)));
+    if not IsKnownName(params.Name[i]) then
+      addExtension(params.Name[i], params[params.Name[i]]);
 end;
 
 procedure TFHIROperationBaseObject.loadExtensions(params: TFHIRParameters);

@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants,
-   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.MXml,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.MXml, FHIR.Web.Parsers,
   FHIR.Web.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.R4.Factory,
   FHIR.R4.Tests.Worker, FHIR.Support.Tests, FHIR.Support.Comparisons;
 
@@ -164,11 +164,11 @@ end;
 procedure TFHIRGraphQLTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'condition-example.xml')))
+    list.add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'condition-example.xml')))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')));
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml')));
   end;
 end;
 
@@ -179,7 +179,7 @@ begin
   filename := FHIR_TESTING_FILE(4, 'examples', requestType+'-'+id+'.xml');
   result := FileExists(filename);
   if result then
-    res := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
+    res := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
 end;
 
 function TFHIRGraphQLTests.ResolveReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
@@ -209,7 +209,7 @@ begin
     filename := FHIR_TESTING_FILE(4, 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
     result := FileExists(filename);
     if result then
-      target := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
+      target := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
   end;
 end;
 
@@ -233,12 +233,12 @@ begin
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml'));
+      resource := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml'));
     end;
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml'));
+      resource := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml'));
       search := TFhirBundleEntrySearch.Create;
       search.score := '0.5';
       search.mode := SearchEntryModeMatch;
@@ -283,7 +283,7 @@ begin
     gql.OnListResources := ListResources;
     gql.OnSearch := Search;
     if (filename <> '') then
-      gql.Focus := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
+      gql.Focus := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
     gql.GraphQL := TGraphQLParser.parseFile(FHIR_TESTING_FILE(4, 'graphql', source));
     gql.GraphQL.OperationName := opName;
     gql.GraphQL.variables.Add(TGraphQLArgument.Create('var', TGraphQLNameValue.Create('true')));

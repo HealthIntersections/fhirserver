@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, 
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Web.Parsers,
   FHIR.Base.Common,
   FHIR.Tx.Service;
 
@@ -151,15 +151,15 @@ type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -279,7 +279,7 @@ begin
   result := '';
 end;
 
-function TIETFLanguageCodeServices.getDisplay(code : String; lang : String):String;
+function TIETFLanguageCodeServices.getDisplay(code : String; const lang : THTTPLanguages):String;
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
@@ -305,7 +305,7 @@ begin
   result := nil;
 end;
 
-procedure TIETFLanguageCodeServices.Displays(code : String; list : TStringList; lang : String);
+procedure TIETFLanguageCodeServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
@@ -347,12 +347,12 @@ begin
   inherited;
 end;
 
-function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
+function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
 begin
   result := getDisplay(TIETFLanguageCodeConcept(context).code, lang);
 end;
 
-procedure TIETFLanguageCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TIETFLanguageCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Display(context, lang));
 end;

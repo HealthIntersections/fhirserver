@@ -33,6 +33,7 @@ Interface
 Uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXml,
+  FHIR.Web.Parsers,
   FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
   FHIR.Base.Common,
   FHIR.CdsHooks.Utilities,
@@ -217,13 +218,13 @@ Type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -239,7 +240,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
     //function subsumes(codeA, codeB : String) : String; override;
   End;
 
@@ -451,7 +452,7 @@ begin
   End;
 end;
 
-procedure TUcumServices.getCDSInfo(card: TCDSHookCard; slang, baseURL, code, display: String);
+procedure TUcumServices.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
 var
   s : String;
   b : TStringBuilder;
@@ -792,7 +793,7 @@ begin
   result := nil;
 end;
 
-function TUcumServices.Display(context: TCodeSystemProviderContext; lang : String): string;
+function TUcumServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
 begin
   if context = nil then
     result := ''
@@ -800,17 +801,17 @@ begin
     result := getDisplay(TUCUMContext(context).concept.code, lang);
 end;
 
-procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Code(context).Trim);
 end;
 
-procedure TUcumServices.Displays(code: String; list: TStringList; lang : String);
+procedure TUcumServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(getDisplay(code, lang));
 end;
 
-function TUcumServices.getDisplay(code: String; lang : String): String;
+function TUcumServices.getDisplay(code: String; const lang : THTTPLanguages): String;
 var
   inc : TFhirValueSetComposeIncludeW;
   cc : TFhirValueSetComposeIncludeConceptW;

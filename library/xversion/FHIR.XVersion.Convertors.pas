@@ -32,26 +32,26 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Web.Parsers,
   {FHIR.R2.Parser, }FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R4.Resources, FHIR.R4.Parser,
   FHIR.XVersion.Conv_30_40;
 
 type
   TFhirVersionConvertors = class
   private
-    class function parse(s : TStream; fmt : TFHIRFormat; version : TFHIRVersion; lang : String) : TFHIRResourceV;
-    class procedure compose(s : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version : TFHIRVersion; lang : String; resource : TFHIRResourceV);
+    class function parse(s : TStream; fmt : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages) : TFHIRResourceV;
+    class procedure compose(s : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version : TFHIRVersion; const lang : THTTPLanguages; resource : TFHIRResourceV);
   public
-    class function convertResource(resource : TFHIRResourceV; lang : String; vSource, vDest : TFHIRVersion) : TFHIRResourceV; overload;
-    class function convertResource(resource : TBytes; fmt : TFHIRFormat; style : TFHIROutputStyle; lang : String; vSource, vDest : TFHIRVersion) : TBytes; overload;
-    class procedure convertResource(resource : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; lang : String; vSource, vDest : TFHIRVersion; dest : TStream); overload;
+    class function convertResource(resource : TFHIRResourceV; const lang : THTTPLanguages; vSource, vDest : TFHIRVersion) : TFHIRResourceV; overload;
+    class function convertResource(resource : TBytes; fmt : TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest : TFHIRVersion) : TBytes; overload;
+    class procedure convertResource(resource : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest : TFHIRVersion; dest : TStream); overload;
   end;
 
 implementation
 
 { TFhirVersionConvertors }
 
-class function TFhirVersionConvertors.parse(s: TStream; fmt : TFHIRFormat; version: TFHIRVersion; lang : String): TFHIRResourceV;
+class function TFhirVersionConvertors.parse(s: TStream; fmt : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages): TFHIRResourceV;
 var
   p : TFHIRParser;
 begin
@@ -69,7 +69,7 @@ begin
   end;
 end;
 
-class procedure TFhirVersionConvertors.compose(s: TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version: TFHIRVersion; lang : String; resource: TFHIRResourceV);
+class procedure TFhirVersionConvertors.compose(s: TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version: TFHIRVersion; const lang : THTTPLanguages; resource: TFHIRResourceV);
 var
   c : TFHIRComposer;
 begin
@@ -87,7 +87,7 @@ begin
   end;
 end;
 
-class function TFhirVersionConvertors.convertResource(resource: TBytes; fmt: TFHIRFormat; style : TFHIROutputStyle; lang : String; vSource, vDest: TFHIRVersion): TBytes;
+class function TFhirVersionConvertors.convertResource(resource: TBytes; fmt: TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest: TFHIRVersion): TBytes;
 var
   s1, s2 : TBytesStream;
   r1, r2 : TFHIRResourceV;
@@ -116,7 +116,7 @@ begin
   end;
 end;
 
-class procedure TFhirVersionConvertors.convertResource(resource: TStream; fmt: TFHIRFormat; style : TFHIROutputStyle; lang : String; vSource, vDest: TFHIRVersion; dest: TStream);
+class procedure TFhirVersionConvertors.convertResource(resource: TStream; fmt: TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest: TFHIRVersion; dest: TStream);
 var
   r1, r2 : TFHIRResourceV;
 begin
@@ -133,7 +133,7 @@ begin
   end;
 end;
 
-class function TFhirVersionConvertors.convertResource(resource: TFHIRResourceV; lang : String; vSource, vDest: TFHIRVersion): TFHIRResourceV;
+class function TFhirVersionConvertors.convertResource(resource: TFHIRResourceV; const lang : THTTPLanguages; vSource, vDest: TFHIRVersion): TFHIRResourceV;
 begin
   case vSource of
     fhirVersionRelease3:

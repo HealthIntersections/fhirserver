@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Scim, FHIR.Base.Factory, FHIR.Base.PathEngine,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Factory, FHIR.R4.Context, FHIR.R4.IndexInfo, FHIR.R4.Validator,
   FHIR.Tools.Search, FHIR.Tools.Indexing,
@@ -75,7 +75,7 @@ type
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
 
   public
-    constructor Create(server : TTerminologyServer; ServerContext : TFHIRServerContext; lang : String);
+    constructor Create(server : TTerminologyServer; ServerContext : TFHIRServerContext; const lang : THTTPLanguages);
     destructor Destroy; override;
 
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TFslList<TFHIRCompartmentId>): boolean; override;
@@ -115,7 +115,7 @@ type
     procedure ProcessObservations; override;
     procedure RunValidation; override;
 
-    function createOperationContext(lang : String) : TFHIROperationEngine; override;
+    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
 
     Property Server : TTerminologyServer read FServer;
@@ -132,6 +132,10 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
+
+    procedure SetupRecording(session : TFhirSession); override;
+    procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
+    procedure FinishRecording(); override;
   end;
 
   TVocabServerFactory = class (TFHIRServerFactory)
@@ -159,7 +163,7 @@ begin
   FServer := server;
 end;
 
-function TTerminologyServerStorage.createOperationContext(lang: String): TFHIROperationEngine;
+function TTerminologyServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
   result := TTerminologyServerOperationEngine.create(FServer.Link, FServerContext, lang);
 end;
@@ -189,6 +193,10 @@ procedure TTerminologyServerStorage.FetchResourceCounts(compList : TFslList<TFHI
 begin
   counts.AddObject('ValueSet', TObject(FServer.ValueSetCount));
   counts.AddObject('CodeSystem', TObject(FServer.CodeSystemCount));
+end;
+
+procedure TTerminologyServerStorage.FinishRecording;
+begin
 end;
 
 function TTerminologyServerStorage.getClientInfo(id: String): TRegisteredClientInformation;
@@ -241,6 +249,10 @@ begin
   // nothing
 end;
 
+procedure TTerminologyServerStorage.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
+begin
+end;
+
 procedure TTerminologyServerStorage.RecordFhirSession(session: TFhirSession);
 begin
   // nothing
@@ -264,6 +276,10 @@ end;
 procedure TTerminologyServerStorage.RunValidation;
 begin
   // nothing
+end;
+
+procedure TTerminologyServerStorage.SetupRecording(session: TFhirSession);
+begin
 end;
 
 function TTerminologyServerStorage.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;
@@ -371,7 +387,7 @@ begin
   end;
 end;
 
-constructor TTerminologyServerOperationEngine.create(server: TTerminologyServer; ServerContext : TFHIRServerContext; lang : String);
+constructor TTerminologyServerOperationEngine.create(server: TTerminologyServer; ServerContext : TFHIRServerContext; const lang : THTTPLanguages);
 begin
   inherited Create(ServerContext, lang);
   FServer := server;
@@ -405,11 +421,11 @@ var
 begin
   offset := 0;
   count := 50;
-  for i := 0 to request.Parameters.getItemCount - 1 do
-    if request.Parameters.VarName(i) = SEARCH_PARAM_NAME_OFFSET then
-      offset := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0)
-    else if request.Parameters.VarName(i) = '_count' then
-      count := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0);
+  for i := 0 to request.Parameters.Count - 1 do
+    if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
+      offset := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0)
+    else if request.Parameters.Name[i] = '_count' then
+      count := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0);
   if (count < 2) then
     count := TX_SEARCH_PAGE_DEFAULT
   else if (Count > TX_SEARCH_PAGE_LIMIT) then
@@ -512,11 +528,11 @@ var
 begin
   offset := 0;
   count := 50;
-  for i := 0 to request.Parameters.getItemCount - 1 do
-    if request.Parameters.VarName(i) = SEARCH_PARAM_NAME_OFFSET then
-      offset := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0)
-    else if request.Parameters.VarName(i) = '_count' then
-      count := StrToIntDef(request.Parameters.Value[request.Parameters.VarName(i)], 0);
+  for i := 0 to request.Parameters.Count - 1 do
+    if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
+      offset := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0)
+    else if request.Parameters.Name[i] = '_count' then
+      count := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0);
   if (count < 2) then
     count := TX_SEARCH_PAGE_DEFAULT
   else if (Count > TX_SEARCH_PAGE_LIMIT) then
@@ -524,7 +540,7 @@ begin
   if offset < 0 then
     offset := 0;
 
-  if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
+  if (request.Parameters.Count = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
     BuildSearchForm(request, response)
   else
   begin
@@ -546,9 +562,9 @@ begin
             FServer.GetCodeSystemList(list)
           else if request.ResourceName = 'ValueSet' then
             FServer.GetValueSetList(list)
-          else if (request.ResourceName = '') and (request.Parameters.GetVar('_type').Contains('ValueSet') or request.Parameters.GetVar('_type').Contains('CodeSystem')) then
+          else if (request.ResourceName = '') and (request.Parameters['_type'].Contains('ValueSet') or request.Parameters['_type'].Contains('CodeSystem')) then
           begin
-            if request.Parameters.GetVar('_type').Contains('CodeSystem') then
+            if request.Parameters['_type'].Contains('CodeSystem') then
             begin
               l := TFslList<TFHIRMetadataResourceW>.create;
               try
@@ -558,7 +574,7 @@ begin
                 l.Free;
               end;
             end;
-            if request.Parameters.GetVar('_type').Contains('ValueSet') then
+            if request.Parameters['_type'].Contains('ValueSet') then
             begin
               l := TFslList<TFHIRMetadataResourceW>.create;
               try
@@ -662,11 +678,11 @@ begin
 //            base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
 //          bundle.link_List.AddRelRef('self', base+link);
 //
-//          offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
-//          if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
+//          offset := StrToIntDef(request.Parameters[SEARCH_PARAM_NAME_OFFSET), 0);
+//          if request.Parameters[SEARCH_PARAM_NAME_COUNT) = 'all' then
 //            count := SUMMARY_SEARCH_PAGE_LIMIT
 //          else
-//            count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
+//            count := StrToIntDef(request.Parameters[SEARCH_PARAM_NAME_COUNT), 0);
 //          if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
 //            summaryStatus := soCount;
 //
@@ -723,7 +739,7 @@ begin
 //              FConnection.Terminate;
 //            end;
 //
-//            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+//            processIncludes(request.session, request.secure, request.Parameters['_include'], request.Parameters['_revinclude'], bundle, keys, field, comp);
 //          end;
 //
 //          bundle.id := FhirGUIDToString(CreateGUID);

@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections,
+   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   YuStemmer;
@@ -95,7 +95,7 @@ Type
     function system(context : TCodeSystemProviderContext) : String; virtual; abstract;
     function version(context : TCodeSystemProviderContext) : String; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
-    function getDisplay(code : String; lang : String):String; virtual; abstract;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; overload; virtual;
@@ -104,10 +104,10 @@ Type
     function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
     function IsInactive(code : String) : boolean; overload; virtual;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; virtual; abstract;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; virtual; abstract;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); overload; virtual; abstract;
-    procedure Displays(code : String; list : TStringList; lang : String); overload; virtual; abstract;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); overload; virtual; abstract;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); overload; virtual; abstract;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
@@ -122,11 +122,11 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); virtual;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); virtual;
     function subsumesTest(codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
-    procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); virtual;
+    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); virtual;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
@@ -163,7 +163,7 @@ end;
 
 
 
-procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 begin
   // nothing here
 end;
@@ -175,7 +175,7 @@ begin
   result := filterLocate(ctxt, code, msg);
 end;
 
-procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
+procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
   card.summary := 'No CDSHook Implemeentation for code system '+system(nil)+' for code '+code+' ('+display+')';
 end;

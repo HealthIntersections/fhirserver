@@ -34,7 +34,7 @@ interface
 // based on a table by importing the excel spreadsheet directly
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Base,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Web.Parsers,
   FHIR.Tx.Service;
 
 type
@@ -81,15 +81,15 @@ type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -145,7 +145,7 @@ begin
   result := FMap[code].definition;
 end;
 
-function TACIRServices.getDisplay(code : String; lang : String):String;
+function TACIRServices.getDisplay(code : String; const lang : THTTPLanguages):String;
 begin
   result := FMap[code].display.Trim;
 end;
@@ -155,7 +155,7 @@ begin
   result := nil;
 end;
 
-procedure TACIRServices.Displays(code : String; list : TStringList; lang : String);
+procedure TACIRServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
 begin
   list.Add(getDisplay(code, lang));
 end;
@@ -265,12 +265,12 @@ begin
   inherited;
 end;
 
-function TACIRServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
+function TACIRServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
 begin
   result := TACIRConcept(context).Display.Trim;
 end;
 
-procedure TACIRServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TACIRServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Display(context, lang));
 end;

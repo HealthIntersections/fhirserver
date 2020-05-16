@@ -115,7 +115,7 @@ type
   private
     FFactory : TFHIRFactory;
     FBundle: TFHIRBundleW;
-    FParseMap : TParseMap;
+    FParseMap : THTTPParameters;
     procedure SetBundle(const Value: TFHIRBundleW);
     function extractLink(name : String) : TFhirObject;
     function extractParam(name : String; int : boolean) : TFhirObject;
@@ -1001,7 +1001,7 @@ begin
   FFactory := factory;
   FBundle := bundle;
   s := bundle.links['self'];
-  FParseMap := TParseMap.create(s.Substring(s.IndexOf('?')+1));
+  FParseMap := THTTPParameters.create(s.Substring(s.IndexOf('?')+1));
 end;
 
 function TFHIRGraphQLSearchWrapper.createPropertyValue(propName: string): TFHIRObject;
@@ -1020,16 +1020,16 @@ end;
 function TFHIRGraphQLSearchWrapper.extractLink(name: String): TFHIRObject;
 var
   s : String;
-  pm : TParseMap;
+  pm : THTTPParameters;
 begin
   s := FBundle.links[name];
   if s = '' then
     result := nil
   else
   begin
-    pm := TParseMap.create(s.Substring(s.IndexOf('?')+1));
+    pm := THTTPParameters.create(s.Substring(s.IndexOf('?')+1));
     try
-      result := FBundle.makeStringValue(pm.GetVar('search-id')+':'+pm.GetVar('search-offset'));
+      result := FBundle.makeStringValue(pm['search-id']+':'+pm['search-offset']);
     finally
       pm.Free;
     end;
@@ -1040,7 +1040,7 @@ function TFHIRGraphQLSearchWrapper.extractParam(name: String; int : boolean): TF
 var
   s : String;
 begin
-  s := FParseMap.GetVar(name);
+  s := FParseMap[name];
   if s = '' then
     result := nil
   else if int then

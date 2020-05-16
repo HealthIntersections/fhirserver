@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang, FHIR.Base.Utilities,
   FHIR.Tx.Service;
 
@@ -163,13 +163,13 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -184,8 +184,8 @@ type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
   end;
 
@@ -382,7 +382,7 @@ begin
     result := s+' ';
 end;
 
-procedure TFhirCodeSystemProvider.getCDSInfo(card: TCDSHookCard; slang, baseURL, code, display: String);
+procedure TFhirCodeSystemProvider.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
 var
   b : TStringBuilder;
   ctxt : TFhirCodeSystemProviderContext;
@@ -477,37 +477,37 @@ begin
   end;
 end;
 
-function TFhirCodeSystemProvider.Display(context: TCodeSystemProviderContext; lang : String): string;
+function TFhirCodeSystemProvider.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
 var
   ccd : TFhirCodeSystemConceptDesignationW;
   css : TFHIRCodeSystemW;
   cc : TFhirCodeSystemConceptW;
 begin
   result := TFhirCodeSystemProviderContext(context).context.display;
-  if (lang <> '') then
+  if (lang.header <> '') then
     for ccd in TFhirCodeSystemProviderContext(context).context.designations.forEnum do
-      if languageMatches(lang, ccd.language) then
+      if lang.matches(ccd.language) then
         result := ccd.value.Trim;
   for css in FCs.Supplements do
   begin
     cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).context.code);
     if (cc <> nil) then
     begin
-      if languageMatches(lang, css.language) then
+      if lang.matches(css.language) then
         result := cc.display.Trim;
       for ccd in cc.designations.forEnum do
-        if languageMatches(lang, ccd.language) then
+        if lang.matches(ccd.language) then
           result := ccd.value.Trim;
     end;
   end;
 end;
 
-procedure TFhirCodeSystemProvider.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TFhirCodeSystemProvider.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Display(context, lang));
 end;
 
-procedure TFhirCodeSystemProvider.Displays(code: String; list: TStringList; lang : String);
+procedure TFhirCodeSystemProvider.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 var
   ccd : TFhirCodeSystemConceptDesignationW;
   cc : TFhirCodeSystemConceptW;
@@ -518,17 +518,21 @@ begin
   try
     list.Add(getDisplay(code, lang));
     for ccd in TFhirCodeSystemProviderContext(ctxt).context.designations.forEnum do
-      if (lang = '') or languageMatches(lang, ccd.language) then
+    begin
+      if (lang.header = '') then
         list.add(ccd.value.Trim);
+      if lang.matches(ccd.language) then
+        list.add(ccd.value.Trim);
+    end;
     for css in FCs.Supplements do
     begin
       cc := locCode(css.conceptList, code);
       if (cc <> nil) then
       begin
-        if languageMatches(lang, css.language) then
+        if lang.matches(css.language) then
           list.add(cc.display.trim);
         for ccd in cc.designations.forEnum do
-          if languageMatches(lang, ccd.language) then
+          if lang.matches(ccd.language) then
             list.add(ccd.value.Trim);
       end;
     end;
@@ -577,7 +581,7 @@ begin
   end;
 end;
 
-function TFhirCodeSystemProvider.getDisplay(code: String; lang : String): String;
+function TFhirCodeSystemProvider.getDisplay(code: String; const lang : THTTPLanguages): String;
 var
   ctxt : TCodeSystemProviderContext;
 begin
@@ -699,7 +703,7 @@ begin
     result := StringArrayExistsSensitive(props, name);
 end;
 
-procedure TFhirCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TFhirCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   concepts : TFslList<TFhirCodeSystemConceptW>;
   cc, context : TFhirCodeSystemConceptW;

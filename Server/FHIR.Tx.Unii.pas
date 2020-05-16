@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities,
-  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Stream, 
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Tx.Service;
 
@@ -75,15 +74,15 @@ type
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; lang : String):String; override;
+    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
-    procedure Displays(code : String; list : TStringList; lang : String); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -161,7 +160,7 @@ begin
   result := '';
 end;
 
-function TUniiServices.getDisplay(code : String; lang : String):String;
+function TUniiServices.getDisplay(code : String; const lang : THTTPLanguages):String;
 var
   qry : TFslDBConnection;
 begin
@@ -190,7 +189,7 @@ begin
   raise ETerminologyTodo.create('TUniiServices.getPrepContext');
 end;
 
-procedure TUniiServices.Displays(code : String; list : TStringList; lang : String);
+procedure TUniiServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
 begin
   list.Add(getDisplay(code, lang));
 end;
@@ -323,12 +322,12 @@ begin
   inherited;
 end;
 
-function TUniiServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
+function TUniiServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
 begin
   result := TUniiConcept(context).FDisplay.trim;
 end;
 
-procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
+procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Display(context, lang));
   list.AddStrings(TUniiConcept(context).FOthers);

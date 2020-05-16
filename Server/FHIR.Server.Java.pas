@@ -303,7 +303,7 @@ begin
   begin
     s := TBytesStream.Create();
     try
-      xml := TFHIRXmlComposer.Create(nil, OutputStyleNormal, 'en');
+      xml := TFHIRXmlComposer.Create(nil, OutputStyleNormal, THTTPLanguages.create('en'));
       try
         xml.Compose(s, r);
       finally

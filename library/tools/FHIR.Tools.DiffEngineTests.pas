@@ -34,6 +34,7 @@ interface
 uses
   Windows, SysUtils, classes,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Version.Parser,
   {$IFDEF FHIR2}
@@ -172,7 +173,7 @@ var
   p : TFHIRXmlComposer;
   s : TStringStream;
 begin
-  p := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en');
+  p := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
   try
     s := TStringStream.Create;
     try
@@ -254,8 +255,7 @@ function TDifferenceEngineTest.parseResource(elem: TMXmlElement): TFhirResource;
 var
   p : TFHIRXmlParser;
 begin
-
-  p := TFHIRXmlParser.Create(nil, 'en');
+  p := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'));
   try
     p.Element := elem.firstElement.Link;
     p.Parse;

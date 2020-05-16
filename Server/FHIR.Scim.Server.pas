@@ -864,33 +864,33 @@ end;
 
 procedure TSCIMServer.processUserQuery(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  params : TParseMap;
+  params : THTTPParameters;
   conn : TFslDBConnection;
   json : TJsonObject;
   list : TJsonArray;
   c, t, l, s : integer;
   sql, sort : String;
 begin
-  params := TParseMap.create(request.QueryParams);
+  params := THTTPParameters.create(request.QueryParams);
   try
     json := TJsonObject.Create;
     try
       json.forceArr['schemas'].add('urn:scim:api:messages:2.0:ListResponse');
       conn := db.GetConnection('scim.user.search');
       try
-        sql := ProcessUserFilter(params.GetVar('filter'));
+        sql := ProcessUserFilter(params['filter']);
         json['totalResults'] := inttostr(Conn.CountSQL('Select Count(*) from Users where status = 1 '+sql));
         list := json.forceArr['Resources'];
 
-        s := StrToIntDef(params.GetVar('startIndex'), 0);
-        l := StrToIntDef(params.GetVar('count'), 50);
+        s := StrToIntDef(params['startIndex'], 0);
+        l := StrToIntDef(params['count'], 50);
         json['itemsPerPage'] := inttostr(l);
         json['startIndex'] := inttostr(s+1);
 
-        sort := RecogniseUserAttribute(params.GetVar('sortBy'));
+        sort := RecogniseUserAttribute(params['sortBy']);
         if (sort=  '') then
           conn.SQL := 'Select Content from Users where status = 1 '+ sql
-        else if params.GetVar('sortOrder') = 'descending' then
+        else if params['sortOrder'] = 'descending' then
           conn.SQL := 'Select Content from Users LEFT OUTER JOIN UserIndexes on Users.UserKey = UserIndexes.UserKey and sortBy = 1 and IndexName = '''+sort+''' where status = 1'+ sql + ' order by Value DESC'
         else
           conn.SQL := 'Select Content from Users LEFT OUTER JOIN UserIndexes on Users.UserKey = UserIndexes.UserKey and sortBy = 1 and IndexName = '''+sort+''' where status = 1'+ sql + ' order by Value ASC';
@@ -1013,7 +1013,7 @@ var
   i : integer;
   s : String;
   st : TStringList;
-  p : TParseMap;
+  p : THTTPParameters;
   uk : integer;
 begin
   bDone := false;
@@ -1036,15 +1036,15 @@ begin
         conn.Terminate;
         if request.Command = 'POST' then
         begin
-          p := TParseMap.Create(request.UnparsedParams);
+          p := THTTPParameters.Create(request.UnparsedParams);
           st := TStringList.create;
           try
-            user.DisplayName := p.GetVar('display');
-            st.Text := p.GetVar('emails');
+            user.DisplayName := p['display'];
+            st.Text := p['emails'];
             user.clearEmails;
             for i := 0 to st.Count - 1 do
               user.AddEmail(st[i], '');
-            st.Text := p.GetVar('rights');
+            st.Text := p['rights'];
             user.clearEntitlements;
             for i := 0 to st.Count - 1 do
               user.addEntitlement(st[i]);
@@ -1058,15 +1058,15 @@ begin
                 user.location := 'https://'+request.Host+prefix+'/scim/Users/'+inttostr(uk);
                 user.version := '1';
                 user.resourceType := 'User';
-                user.username := p.GetVar('username');
+                user.username := p['username'];
                 if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(user.username)+'''') > 0 then
                   raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Duplicate User name');
                 uk := GetNextUserKey;
                 user.id := inttostr(uk);
-                conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values ('+inttostr(uk)+', '''+SQLWrapString(user.username)+''', '''+HashPassword(uk, p.GetVar('password'))+''', 1, :c)';
+                conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values ('+inttostr(uk)+', '''+SQLWrapString(user.username)+''', '''+HashPassword(uk, p['password'])+''', 1, :c)';
               end
-              else if p.GetVar('password') <> '' then
-                conn.SQL := 'Update Users set Password = '''+HashPassword(uk, p.GetVar('password'))+''', Content = :c where UserKey = '+inttostr(uk)
+              else if p['password'] <> '' then
+                conn.SQL := 'Update Users set Password = '''+HashPassword(uk, p['password'])+''', Content = :c where UserKey = '+inttostr(uk)
               else
                 conn.SQL := 'Update Users set Content = :c where UserKey = '+inttostr(uk);
               conn.prepare;

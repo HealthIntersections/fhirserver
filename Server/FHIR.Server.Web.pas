@@ -110,7 +110,7 @@ Type
   private
     FMsg: String;
   public
-    constructor Create(Const sContext : String; sMessage, sCaption, lang : String); overload;
+    constructor Create(Const sContext : String; sMessage, sCaption : String; const lang : THTTPLanguages); overload;
     Property Msg: String read FMsg;
   end;
 
@@ -230,10 +230,10 @@ Type
   private
     FEndPoint : TFhirWebServerEndpoint;
   protected
-    procedure ProcessFile(name : String; request : TIdHTTPRequestInfo; pm : TParseMap; response: TIdHTTPResponseInfo; Session: TFHIRSession; secure : boolean; variables : TFslMap<TFhirObject>);
+    procedure ProcessFile(name : String; request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; secure : boolean; variables : TFslMap<TFhirObject>);
   public
-    function process(s : String; request : TIdHTTPRequestInfo; pm : TParseMap; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; virtual; abstract;
-    function processPage(request : TIdHTTPRequestInfo; pm : TParseMap; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV) : boolean; virtual;
+    function process(s : String; request : TIdHTTPRequestInfo; pm : THTTPParameters; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; virtual; abstract;
+    function processPage(request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV) : boolean; virtual;
   end;
 
   TTokenRedirectManager = class (TFslObject)
@@ -283,12 +283,12 @@ Type
   TFHIRServerPostHandler = class abstract (TFslObject)
   private
     FServer : TFhirWebServerEndpoint;
-    FParams: TParseMap;
+    FParams: THTTPParameters;
     FSecure: boolean;
     FVariables: TFslMap<TFHIRObject>;
     FContext : TFHIRServerContext;
     FSession: TFHIRSession;
-    procedure SetParams(const Value: TParseMap);
+    procedure SetParams(const Value: THTTPParameters);
     procedure SetVariables(const Value: TFslMap<TFHIRObject>);
     procedure SetContext(const Value: TFHIRServerContext);
     procedure SetSession(const Value: TFHIRSession);
@@ -301,7 +301,7 @@ Type
     procedure execute; virtual; abstract;
 
     property context : TFHIRServerContext read FContext write SetContext;
-    property params : TParseMap read FParams write SetParams;
+    property params : THTTPParameters read FParams write SetParams;
     property redirect : String read FRedirect;
     property secure : boolean read FSecure write FSecure;
     property session: TFHIRSession read FSession write SetSession;
@@ -336,7 +336,7 @@ Type
     function parseFile(fmt: TFHIRFormat; name: String): TFHIRResourceV;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
     function EncodeVersionsXml(r: TFHIRResourceV): TBytes;
-    function processProvenanceHeader(header, lang: String): TFhirResourceV;
+    function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirResourceV;
 //    function LookupReference(Context: TFHIRRequest; id: String): TResourceWithReference;
     function patientAppList(base, id : String) : string;
     function encounterAppList(base, id : String) : string;
@@ -355,19 +355,20 @@ Type
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509);
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
 {$IFDEF MSWINDOWS}
-    function transform1(resource: TFhirResourceV; lang, xslt: String; saveOnly: boolean): string;
+    function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
     function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 {$ENDIF}
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
-    Function BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
-    Function BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean; params : String): String;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
+    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String;
     function buildPackageList : String;
+    function buildSessionsTable : String;
 
-    function GetResource(Session: TFHIRSession; rtype: String; lang, id, ver, op: String): TFhirResourceV;
+    function GetResource(Session: TFHIRSession; rtype: String; const lang : THTTPLanguages; id, ver, op: String): TFhirResourceV;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
 //    function FindResource(Session: TFHIRSession; rtype: String; lang, params: String): TFhirResourceV;
     function HandleWebPost(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -383,7 +384,7 @@ Type
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
     Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
-    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
+    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
@@ -391,12 +392,12 @@ Type
     procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     procedure OnCDSResponse(manager: TCDSHooksManager; server: TRegisteredFHIRServer; Context: TObject; response: TCDSHookResponse; error: String);
-    function DoSearch(Session: TFHIRSession; rtype: string; lang, params: String): TFHIRBundleW;
+    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW;
     function processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
 
-    Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 
-    function BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
+    function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String);
@@ -412,8 +413,8 @@ Type
     property Context : TFHIRServerContext read FContext;
     property AuthServer : TAuth2Server  read FAuthServer;
 
-    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback); overload;
-    Procedure Transaction(bundle : TFHIRBundleW; init : boolean; name, base: String; callback: TInstallerCallback); overload;
+    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; mode : TOperationMode; callback: TInstallerCallback); overload;
+    Procedure Transaction(bundle : TFHIRBundleW; init : boolean; name, base: String; mode : TOperationMode; callback: TInstallerCallback); overload;
   end;
 
   TFhirWebServer = Class(TFslObject)
@@ -482,8 +483,8 @@ Type
     {$ENDIF}
     FTwilioServer : TTwilioServer;
 
-    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
-    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
+    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
+    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
     function WebDump: String;
     procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
@@ -501,7 +502,7 @@ Type
     procedure MarkExit(AContext: TIdContext);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function extractFileData(lang : String; form: TMimeMessage; const name: String; var sContentType: String): TStream;
+    function extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     Procedure StartServer(active: boolean);
     Procedure StopServer;
     procedure SSLPassword(var Password: String);
@@ -509,7 +510,7 @@ Type
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc: String;
-    function loadMultipartForm(const request: TStream; const contentType: String; var upload: boolean): TMimeMessage;
+    function loadMultipartForm(const request: TStream; const contentType: String; var mode : TOperationMode): TMimeMessage;
     function DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
     Procedure HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
@@ -599,7 +600,7 @@ Uses
 type
   THtmlFormScriptPlugin = class (TFHIRWebServerScriptPlugin)
   public
-    function process(s : String; request : TIdHTTPRequestInfo; pm : TParseMap; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; override;
+    function process(s : String; request : TIdHTTPRequestInfo; pm : THTTPParameters; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; override;
   end;
 
   TPackageLoader = class (TFHIRServerPostHandler)
@@ -687,7 +688,7 @@ begin
   inherited;
 end;
 
-function TFhirWebServerEndpoint.DoSearch(Session: TFHIRSession; rtype: string; lang, params: String): TFHIRBundleW;
+function TFhirWebServerEndpoint.DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW;
 var
   request: TFHIRRequest;
   response: TFHIRResponse;
@@ -716,7 +717,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServerEndpoint.Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; callback: TInstallerCallback);
+procedure TFhirWebServerEndpoint.Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; mode : TOperationMode; callback: TInstallerCallback);
 var
   req: TFHIRRequest;
   resp: TFHIRResponse;
@@ -724,8 +725,8 @@ var
   Context: TOperationContext;
 begin
   // if init then
-  // op := FServerContext.Storage.createOperationContext('en');
-  Context := TOperationContext.Create(true, callback, 'Load from ' + name);
+  // op := FServerContext.Storage.createOperationContext(THTTPLanguages.create('en'));
+  Context := TOperationContext.Create(mode, callback, 'Load from ' + name);
   try
     req := TFHIRRequest.Create(FContext.ValidatorContext.link, roUpload, FContext.Indexes.Compartments.link);
     try
@@ -760,7 +761,7 @@ var
   p : TFHIRParser;
   f : TFileStream;
 begin
-  p := factory.makeParser(FContext.ValidatorContext.link, fmt, 'en');
+  p := factory.makeParser(FContext.ValidatorContext.link, fmt, THTTPLanguages.create('en'));
   try
     f := TFileStream.Create(name, fmOpenRead);
     try
@@ -773,7 +774,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServerEndpoint.Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
+procedure TFhirWebServerEndpoint.Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; mode : TOperationMode; callback: TInstallerCallback);
 var
   req: TFHIRRequest;
   resp: TFHIRResponse;
@@ -783,8 +784,8 @@ var
   b : TFHIRBundleW;
 begin
   // if init then
-  // op := FServerContext.Storage.createOperationContext('en');
-  Context := TOperationContext.Create(true, callback, 'Load from ' + name);
+  // op := FServerContext.Storage.createOperationContext(THTTPLanguages.create('en'));
+  Context := TOperationContext.Create(mode, callback, 'Load from ' + name);
   try
     req := TFHIRRequest.Create(FContext.ValidatorContext.link, roUpload, FContext.Indexes.Compartments.link);
     try
@@ -795,7 +796,7 @@ begin
         req.resource := ParseFile(ffJson, name)
       else
       begin
-        b := ProcessZip('en', stream, name, base, init, ini, Context, cursor);
+        b := ProcessZip(THTTPLanguages.create('en'), stream, name, base, init, ini, Context, cursor);
         try
           req.resource := b.Resource.link;
         finally
@@ -1061,7 +1062,7 @@ end;
 
 procedure TFhirWebServerEndPoint.HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  pm: TParseMap;
+  pm: THTTPParameters;
   json: TJsonObject;
   userkey: integer;
   Session: TFHIRSession;
@@ -1074,17 +1075,17 @@ begin
   begin
     try
       if request.PostStream <> Nil then
-        pm := TParseMap.Create(StreamToString(request.PostStream, TEncoding.UTF8))
+        pm := THTTPParameters.Create(StreamToString(request.PostStream, TEncoding.UTF8))
       else
-        pm := TParseMap.Create(request.UnparsedParams);
+        pm := THTTPParameters.Create(request.UnparsedParams);
       try
-        if pm.GetVar('grant_type') <> 'password' then
+        if pm['grant_type'] <> 'password' then
           response.ContentText := 'Unknown content type - must be ''password'''
-        else if not FContext.UserProvider.CheckLogin(pm.GetVar('username'), pm.GetVar('password'), userkey) then
+        else if not FContext.UserProvider.CheckLogin(pm['username'], pm['password'], userkey) then
           response.ContentText := 'Unknown username/password'
         else
         begin
-          Session := FContext.SessionManager.CreateImplicitSession(request.RemoteIP, pm.GetVar('username'), 'Anonymous', systemFromOWin, false, true);
+          Session := FContext.SessionManager.CreateImplicitSession(request.RemoteIP, pm['username'], 'Anonymous', systemFromOWin, false, true);
           try
             Session.ExternalUserKey := userkey;
             json := TJsonObject.Create;
@@ -1158,7 +1159,7 @@ var
   sDoc: String;
   s: String;
   aFormat: TFHIRFormat;
-  lang: String;
+  lang: THTTPLanguages;
   sPath: String;
   redirect: boolean;
   form: TMimeMessage;
@@ -1167,12 +1168,13 @@ var
   c: integer;
   domain: String;
   sBearer: String;
-  noErrCode, upload: boolean;
+  noErrCode : boolean;
+  mode : TOperationMode;
   Context: TOperationContext;
   Session: TFHIRSession;
 Begin
   noErrCode := false;
-  upload := false;
+  mode := opmRestful;
 
   Session := nil;
   try
@@ -1184,7 +1186,7 @@ Begin
     if domain.Contains(':') then
       domain := domain.Substring(0, domain.IndexOf(':'));
 
-    lang := request.AcceptLanguage;
+    lang := THTTPLanguages.Create(request.AcceptLanguage);
     s := request.contentType;
     if pos(';', s) > 0 then
       s := copy(s, 1, pos(';', s) - 1); // only read up to the first ';'
@@ -1197,7 +1199,7 @@ Begin
 
       if s.StartsWith('multipart/form-data', true) then
       begin
-        form := FWebServer.loadMultipartForm(request.PostStream, request.contentType, upload);
+        form := FWebServer.loadMultipartForm(request.PostStream, request.contentType, mode);
       end
       else
         form := nil;
@@ -1259,8 +1261,8 @@ Begin
                 oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
                 oRequest.strictSearch := request.RawHeaders.Values['Prefer'] = 'handling=strict';
 
-                noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or
-                  StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
+                noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['nohttperr']) or
+                  StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['_nohttperr']);
                 ReadTags(request.RawHeaders.Values['Category'], oRequest);
                 Session := oRequest.Session.link;
 
@@ -1281,7 +1283,7 @@ Begin
                     response.redirect(oRequest.baseUrl+'?'+request.unparsedParams)
                   else
                   begin
-                    token := oRequest.parameters.getVar('state');
+                    token := oRequest.parameters['state'];
                     if FTokenRedirects.getRedirect(token, url) then
                       response.redirect(url)
                     else
@@ -1332,7 +1334,7 @@ Begin
                   try
                     Context := TOperationContext.Create;
                     try
-                      Context.upload := upload;
+                      Context.mode := mode;
                       checkRequestByJs(context, oRequest);
                       if (oRequest.CommandType = fcmdOperation) then
                         FWebServer.FGoogle.recordEvent(request.Document, '$'+oRequest.OperationName, oRequest.Session.UserName, request.RemoteIP, request.UserAgent)
@@ -1343,7 +1345,7 @@ Begin
                         HandleWebUIRequest(oRequest, oResponse, secure)
                       else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
                         ProcessTaskRequest(Context, oRequest, oResponse)
-                      else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters.GetVar('_async') = 'true') then
+                      else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters['_async'] = 'true') then
                         ProcessAsyncRequest(Context, oRequest, oResponse)
                       else
                         ProcessRequest(Context, oRequest, oResponse);
@@ -1392,7 +1394,6 @@ Begin
                 end;
                 if noErrCode then
                   response.ResponseNo := 200;
-                FContext.Storage.RecordExchange(oRequest, oResponse, nil);
               except
                 on e: exception do
                 begin
@@ -1516,13 +1517,13 @@ function TFhirWebServerEndPoint.HandleWebCreate(request: TFHIRRequest; response:
 //  s, id, fid: String;
 begin
 //  // get the right questionnaire
-//  if request.Parameters.GetVar('profile').StartsWith('Profile/') then
+//  if request.Parameters['profile').StartsWith('Profile/') then
 //  begin
-//    id := request.Parameters.GetVar('profile').Substring(8);
+//    id := request.Parameters['profile').Substring(8);
 //    profile := GetResource(request.Session, 'StructureDefinition', request.lang, id, '', '') as TFhirStructureDefinition;
 //  end
 //  else
-//    profile := FindResource(request.Session, 'StructureDefinition', request.lang, 'url=' + request.Parameters.GetVar('profile')) as TFhirStructureDefinition;
+//    profile := FindResource(request.Session, 'StructureDefinition', request.lang, 'url=' + request.Parameters['profile')) as TFhirStructureDefinition;
 //  try
 //    id := profile.id;
 //    fid := request.baseUrl + 'StructureDefinition/' + id + '/$questionnaire';
@@ -1601,7 +1602,7 @@ begin
 //    else
 //    begin
 //
-//      if request.Parameters.GetVar('srcformat') = 'json' then
+//      if request.Parameters['srcformat') = 'json' then
 //        comp := TFHIRJsonComposer.Create(FContext.ValidatorContext.link, OutputStylePretty, request.lang)
 //      else
 //        comp := TFHIRXMLComposer.Create(FContext.ValidatorContext.link, OutputStylePretty, request.lang);
@@ -1618,7 +1619,7 @@ begin
 //        #13#10 + TFHIRXhtmlComposer.PageLinks + FHIR_JS + '</head>' + #13#10 + '' + #13#10 + '<body>' + #13#10 + '' + #13#10 +
 //        TFHIRXhtmlComposer.header(request.Session, request.baseUrl, request.lang, SERVER_VERSION) + '<h2>Direct Edit for ' + request.id + '</h2>' + #13#10 +
 //        '<form action="' + request.baseUrl + '_web/' + typ + '/' + id + '/$post" method="POST">'#13#10 + '  <input type="hidden" name="srcformat" value="' +
-//        request.Parameters.GetVar('srcformat') + '"/>'#13#10 + '  <textarea cols="80" rows="24" name="source" style="white-space:pre">' +
+//        request.Parameters['srcformat') + '"/>'#13#10 + '  <textarea cols="80" rows="24" name="source" style="white-space:pre">' +
 //        FormatXMLForTextArea(s) + #13#10'</textarea><br/>'#13#10 + '  <input type="submit" value="Save"/>'#13#10 + '</form>'#13#10 +
 //        TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, true);
 //
@@ -1634,7 +1635,7 @@ end;
 function TFhirWebServerEndPoint.HandleWebPost(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 var
   s, typ, id, ver: String;
-  p: TParseMap;
+  p: THTTPParameters;
   prsr: TFHIRParser;
   Context: TOperationContext;
 begin
@@ -1648,14 +1649,14 @@ begin
 
   Context := TOperationContext.Create;
   try
-    p := TParseMap.Create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
+    p := THTTPParameters.Create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
     try
-      if p.GetVar('srcformat') = 'json' then
+      if p['srcformat'] = 'json' then
         prsr := FContext.Factory.makeParser(FContext.ValidatorContext.Link, ffJson, request.lang)
       else
         prsr := FContext.Factory.makeParser(FContext.ValidatorContext.Link, ffXml, request.lang);
       try
-        s := p.GetVar('source');
+        s := p['source'];
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
         try
           prsr.Parse;
@@ -2036,7 +2037,7 @@ begin
     raise EFHIRException.CreateLang('MSG_UNKNOWN_CONTENT', request.lang, [request.id, 'web UI']);
 end;
 
-procedure TFhirWebServerEndpoint.SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueType);
+procedure TFhirWebServerEndpoint.SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueType);
 var
   issue: TFhirOperationOutcomeW;
   oComp: TFHIRComposer;
@@ -2105,7 +2106,7 @@ begin
 end;
 
 
-Function TFhirWebServerEndpoint.BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
+Function TFhirWebServerEndpoint.BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
   sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean;
   form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509)
   : TFHIRRequest;
@@ -2152,15 +2153,15 @@ Begin
     begin
       oRequest.Version := readVersion(sContentType);
       oRequest.PostFormat := mimeTypeToFormat(sContentType, oRequest.PostFormat);
-      if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.has('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
-        sContentType := oRequest.Parameters.GetVar('_format');
+      if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.has('_format') and (form = nil) and (oRequest.Parameters['_format'] <> '') then
+        sContentType := oRequest.Parameters['_format'];
     end;
 
     oResponse.Version := readVersion(sContentAccept);
-    if oRequest.Parameters.has('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
-      sContentAccept := oRequest.Parameters.GetVar('_format');
+    if oRequest.Parameters.has('_format') and (oRequest.Parameters['_format'] <> '') then
+      sContentAccept := oRequest.Parameters['_format'];
     oResponse.format := mimeTypeListToFormat(sContentAccept, oResponse.Format);
-    if oRequest.Parameters.has('_pretty') and (oRequest.Parameters.GetVar('_pretty') = 'true') then
+    if oRequest.Parameters.has('_pretty') and (oRequest.Parameters['_pretty'] = 'true') then
       style := OutputStylePretty
     else if sContentAccept.Contains('pretty=') and (extractProp(sContentAccept, 'pretty') = 'true') then
       style := OutputStylePretty
@@ -2325,7 +2326,12 @@ Begin
   End;
 End;
 
-Function TFhirWebServerEndpoint.ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+function TFhirWebServerEndpoint.buildSessionsTable: String;
+begin
+  result := FContext.SessionManager.buildTable;
+end;
+
+Function TFhirWebServerEndpoint.ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 var
   rdr: TFslZipReader;
   p: TFHIRParser;
@@ -2480,7 +2486,7 @@ begin
               stream.Write(b[0], Length(b));
             stream.Position := 0;
             response.contentType := bin.contentType;
-            if StrToBoolDef(oRequest.Parameters.GetVar('no-attachment'), false) then
+            if StrToBoolDef(oRequest.Parameters['no-attachment'], false) then
               response.ContentDisposition := 'attachment;';
             response.Expires := Now + 0.25;
           finally
@@ -2597,7 +2603,7 @@ begin
   end;
 end;
 
-function TFhirWebServerEndpoint.processProvenanceHeader(header, lang: String): TFHIRResourceV;
+function TFhirWebServerEndpoint.processProvenanceHeader(header : String; const lang : THTTPLanguages): TFHIRResourceV;
 var
   json: TFHIRParser;
   ss: TStringStream;
@@ -2624,45 +2630,48 @@ end;
 
 function TFhirWebServerEndpoint.processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   client : TRegisteredClientInformation;
   s : String;
   jwks : TJWKList;
   json : TJsonObject;
+  lang : THTTPLanguages;
 begin
-  if session = nil then
-    raise EFHIRException.Createlang('MSG_AUTH_REQUIRED', request.AcceptLanguage);
+  lang := THTTPLanguages.Create(request.AcceptLanguage);
 
-  pm := TParseMap.create(request.UnparsedParams);
+  if session = nil then
+    raise EFHIRException.Createlang('MSG_AUTH_REQUIRED', lang);
+
+  pm := THTTPParameters.create(request.UnparsedParams);
   try
     client := TRegisteredClientInformation.Create;
     try
-      client.name := pm.GetVar('client_name').Trim;
+      client.name := pm['client_name'].Trim;
       if client.name = '' then
-        raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['client_name']);
-      client.url := pm.GetVar('client_uri').Trim;
-      client.logo := pm.GetVar('logo_uri').Trim;
-      client.softwareId := pm.GetVar('software_id').Trim;
-      client.softwareVersion := pm.GetVar('software_version').Trim;
-      client.PatientContext := pm.getVar('ctxt-patient') <> '';
-      case StrToIntDef(pm.GetVar('mode'), 0) of
+        raise EFHIRException.Createlang('INFO_MISSING', lang, ['client_name']);
+      client.url := pm['client_uri'].Trim;
+      client.logo := pm['logo_uri'].Trim;
+      client.softwareId := pm['software_id'].Trim;
+      client.softwareVersion := pm['software_version'].Trim;
+      client.PatientContext := pm['ctxt-patient'] <> '';
+      case StrToIntDef(pm['mode'], 0) of
         1: begin
            client.mode := rcmOAuthClient;
            client.secret := NewGuidId;
-           client.redirects.Text := pm.GetVar('redirect_uris');
+           client.redirects.Text := pm['redirect_uris'];
            end;
         2: begin
            client.mode := rcmOAuthClient;
-           client.redirects.Text := pm.GetVar('redirect_uris');
+           client.redirects.Text := pm['redirect_uris'];
            end;
         3: begin
            client.mode := rcmBackendServices;
-           client.issuer := pm.GetVar('issuer').Trim;
+           client.issuer := pm['issuer'].Trim;
            if (client.issuer = '') then
-            raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['issuer']);
-           s := pm.GetVar('public_key').Trim;
+            raise EFHIRException.Createlang('INFO_MISSING', lang, ['issuer']);
+           s := pm['public_key'].Trim;
            if s = '' then
-             raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['A public key is required']);
+             raise EFHIRException.Createlang('INFO_MISSING', lang, ['A public key is required']);
            if s.StartsWith('-----BEGIN CERTIFICATE-----') then
              jwks := loadFromRsaDer(s)
            else
@@ -2680,7 +2689,7 @@ begin
            end;
            end;
       else
-        raise EFHIRException.Createlang('MSG_UNKNOWN_CONTENT', request.AcceptLanguage, ['Mode', 'Processing Registration']);
+        raise EFHIRException.Createlang('MSG_UNKNOWN_CONTENT', lang, ['Mode', 'Processing Registration']);
       end;
 
       if client.secret <> ''  then
@@ -2712,7 +2721,7 @@ begin
   end;
   id := NewGuidId;
   if request.Parameters.has('_outputFormat') then
-    thread.Format := mimeTypeToFormat(request.Parameters.GetVar('_outputFormat'))
+    thread.Format := mimeTypeToFormat(request.Parameters['_outputFormat'])
   else
     thread.Format := response.Format;
   thread.key := FContext.Storage.createAsyncTask(request.url, id, thread.Format, request.secure);
@@ -2782,7 +2791,10 @@ var
   c: integer;
   Session: TFHIRSession;
   check: boolean;
+  lang : THTTPLanguages;
 begin
+  lang := THTTPLanguages.Create(request.AcceptLanguage);
+
   if request.AuthUsername = 'Bearer' then
     sCookie := request.AuthPassword
   else
@@ -2801,16 +2813,16 @@ begin
   begin
     try
       if check and not CheckSessionOK(Session, request.RemoteIP) then
-        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Session Expired', request.AcceptLanguage);
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Session Expired', lang);
       if not Session.canAdministerUsers then
-        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'This Session is not authorised to manage users', request.AcceptLanguage);
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'This Session is not authorised to manage users', lang);
       FContext.UserProvider.ProcessRequest(AContext, request, response, Session, prefix);
     finally
       Session.Free;
     end;
   end
   else
-    Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Authentication required', request.AcceptLanguage);
+    Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Authentication required', lang);
 end;
 
 procedure TFhirWebServerEndpoint.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
@@ -2932,7 +2944,7 @@ begin
             fmt := ffJson;
             if length(outcome) > 0 then
             begin
-              p := factory.makeParser(FContext.ValidatorContext.link, fmt, 'en');
+              p := factory.makeParser(FContext.ValidatorContext.link, fmt, THTTPLanguages.create('en'));
               try
                 response.resource := p.parseResource(outcome);
               finally
@@ -2952,7 +2964,7 @@ begin
             begin
             response.HTTPCode := 404;
             response.Message := 'Not found';
-            response.Resource := factory.BuildOperationOutcome('en', 'Task has been deleted', itUnknown);
+            response.Resource := factory.BuildOperationOutcome(THTTPLanguages.create('en'), 'Task has been deleted', itUnknown);
             end;
         end;
       end
@@ -2961,7 +2973,7 @@ begin
     begin
       response.HTTPCode := 404;
       response.Message := 'Not found';
-      response.Resource := factory.BuildOperationOutcome('en', 'Unknown task', itUnknown);
+      response.Resource := factory.BuildOperationOutcome(THTTPLanguages.create('en'), 'Unknown task', itUnknown);
     end;
   finally
     names.Free;
@@ -2977,10 +2989,10 @@ begin
 end;
 
 
-function TFhirWebServerEndpoint.BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean; params : String): String;
+function TFhirWebServerEndpoint.BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String;
 var
   authurl: string;
-  p : TParseMap;
+  p : THTTPParameters;
 begin
   authurl := OAuthPath(secure);
 
@@ -2994,9 +3006,9 @@ begin
   result := result + '<p>'#13#10 + GetFhirMessage('MSG_AUTH_REQUIRED', lang) + '</p>'#13#10;
   if (Msg = '') and (params <> '') then
   begin
-    p := TParseMap.Create(params);
+    p := THTTPParameters.Create(params);
     try
-      msg := p.GetVar('error_description');
+      msg := p['error_description'];
     finally
       p.Free;
     end;
@@ -3013,10 +3025,10 @@ begin
 
   result := result + '<p>&nbsp;</p>'#13#10 +
     '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart App Launch</a> for OAuth logins</p>'#13#10;
-  result := result + TFHIRXhtmlComposer.Footer(factory, lang, lang, logid);
+  result := result + TFHIRXhtmlComposer.Footer(factory, path, lang, logid);
 end;
 
-function TFhirWebServerEndpoint.BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TFhirWebServerEndpoint.BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   counts: TStringList;
   a: String;
@@ -3098,6 +3110,11 @@ begin
         if not FWebServer.FIsTerminologyServerOnly then
           b.Append('<li><a href="#upload">' + GetFhirMessage('NAME_UPLOAD_SERVICES', lang) + '</a></li>' + #13#10);
         b.Append('<li><a href="' + sBaseURL + '/package-client.hts">Maintain Packages</a></li>' + #13#10);
+        if (secure) then
+        begin
+          b.Append('<li><a href="' + sBaseURL + '/sessions.hts">Manage Sessions</a></li>' + #13#10);
+          b.Append('<li><a href="' + sBaseURL + '/auth/logout-all">Log all users out</a></li>' + #13#10);
+        end;
 
         if not FWebServer.FIsTerminologyServerOnly then
           b.Append('<li>Create/Edit a new resource based on the profile: <form action="' + sBaseURL + '/_web/Create" method="GET"><select name="profile">' + pol
@@ -3180,7 +3197,7 @@ begin
   end;
 end;
 
-function TFhirWebServerEndpoint.BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
+function TFhirWebServerEndpoint.BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
 var
   s: String;
 begin
@@ -3372,7 +3389,7 @@ begin
   result := FContext.Factory;
 end;
 
-function TFhirWebServerEndpoint.GetResource(Session: TFHIRSession; rtype: string; lang, id, ver, op: String): TFhirResourceV;
+function TFhirWebServerEndpoint.GetResource(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; id, ver, op: String): TFhirResourceV;
 var
   request: TFHIRRequest;
   response: TFHIRResponse;
@@ -3474,7 +3491,7 @@ begin
     begin
       if alpPatient in params then
       begin
-        enc := factory.wrapEncounter(GetResource(session, 'Encounter', request.AcceptLanguage, launchContext.Substring(10), '', ''));
+        enc := factory.wrapEncounter(GetResource(session, 'Encounter', THTTPLanguages.Create(request.AcceptLanguage), launchContext.Substring(10), '', ''));
         try
           result.Add('patient', enc.PatientId);
         finally
@@ -3493,7 +3510,7 @@ var
   be : TFhirBundleEntryW;
   p : TFhirPatientW;
 begin
-  b := DoSearch(nil, 'Patient', 'en', '_summary=true&__wantObject=true');
+  b := DoSearch(nil, 'Patient', THTTPLanguages.create('en'), '_summary=true&__wantObject=true');
   try
     for be in b.entries.forEnum do
     begin
@@ -3522,7 +3539,7 @@ begin
   try
     for s in t.trim.Split(['|']) do
     begin
-      bundle := DoSearch(nil, s, 'en', '_summary=true&__wantObject=true&_sort=name&_count=50');
+      bundle := DoSearch(nil, s, THTTPLanguages.create('en'), '_summary=true&__wantObject=true&_sort=name&_count=50');
       for entry in bundle.entries.forEnum do
       begin
         b.Append('<option value="');
@@ -3685,12 +3702,12 @@ end;
 procedure TFhirWebServerEndPoint.RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
 var
   handler : TFHIRServerPostHandler;
-  params : TParseMap;
+  params : THTTPParameters;
   s : string;
 begin
-  params := TParseMap.create(request.UnparsedParams);
+  params := THTTPParameters.create(request.UnparsedParams);
   try
-    s := params.GetVar('handler');
+    s := params['handler'];
     if (s = 'packageloader') then
       handler := TPackageLoader.create(self)
     else
@@ -3727,14 +3744,14 @@ end;
 
 procedure TFhirWebServerEndPoint.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
 var
-  pm : TParseMap;
+  pm : THTTPParameters;
   s, n, p, v, t: String;
   plugin : TFHIRWebServerScriptPlugin;
   client : TFhirClientV;
 begin
-  pm := TParseMap.create(request.UnparsedParams);
+  pm := THTTPParameters.create(request.UnparsedParams);
   try
-    client := FContext.Factory.makeClientInt(FContext.ValidatorContext.Link, 'en', TFHIRWebServerCommunicator.Create(self, secure, session));
+    client := FContext.Factory.makeClientInt(FContext.ValidatorContext.Link, THTTPLanguages.create('en'), TFHIRWebServerCommunicator.Create(self, secure, session));
     try
       for plugin in FPlugins do
       begin
@@ -3801,6 +3818,8 @@ begin
 
       if s.contains('[%package-list%]') then
         s := s.Replace('[%package-list%]', buildPackageList, [rfReplaceAll]);
+      if s.contains('[%sessions-table%]') then
+        s := s.Replace('[%sessions-table%]', buildSessionsTable, [rfReplaceAll]);
 
       for plugin in FPlugins do
         s := plugin.process(s, request, pm, variables, session, client);
@@ -3841,7 +3860,7 @@ begin
   begin
     try
       if check and not CheckSessionOK(Session, request.RemoteIP) then
-        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Session Expired', request.AcceptLanguage);
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Session Expired', THTTPLanguages.Create(request.AcceptLanguage));
       if (variables = nil) then
       begin
         variables := TFslMap<TFHIRObject>.create('file.vars');
@@ -3911,7 +3930,7 @@ end;
 
 {$IFDEF MSWINDOWS}
 
-function TFhirWebServerEndPoint.transform1(resource: TFhirResourceV; lang, xslt: String; saveOnly: boolean): string;
+function TFhirWebServerEndPoint.transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
 var
   xml: TFHIRComposer;
   msx: TMsXmlParser;
@@ -4770,7 +4789,7 @@ begin
   result := FormatDateTime('c', Now);
 end;
 
-function TFhirWebServer.loadMultipartForm(const request: TStream; const contentType: String; var upload: boolean): TMimeMessage;
+function TFhirWebServer.loadMultipartForm(const request: TStream; const contentType: String; var mode: TOperationMode): TMimeMessage;
 var
   m: TMimeMessage;
   mp: TMimePart;
@@ -4779,10 +4798,9 @@ begin
   Try
     m.ReadFromStream(request, contentType);
     result := m;
-    upload := false;
     for mp in m.Parts do
       if SameText(mp.FileName, 'cda.zip') then
-        upload := true;
+        mode := opmUpload;
   Except
     on e: exception do
     begin
@@ -4939,7 +4957,7 @@ begin
   end;
 end;
 
-function TFhirWebServer.extractFileData(lang : String; form: TMimeMessage; const name: String; var sContentType: String): TStream;
+function TFhirWebServer.extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
 var
   sLeft, sRight: String;
   iLoop: integer;
@@ -4990,13 +5008,13 @@ begin
   FTwilioServer.process(AContext, request, response);
 end;
 
-Constructor ERestfulAuthenticationNeeded.Create(Const sContext : String; sMessage, sCaption, lang : String);
+Constructor ERestfulAuthenticationNeeded.Create(Const sContext : String; sMessage, sCaption : String; const lang : THTTPLanguages);
 begin
   inherited Create(sContext, HTTP_ERR_UNAUTHORIZED, itLogin, sMessage, lang);
   FMsg := sCaption;
 end;
 
-procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; lang : String);
+procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
 var
   b : TBytes;
 begin
@@ -5011,7 +5029,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; lang : String);
+procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
 var
   b : TBytes;
 begin
@@ -5510,7 +5528,7 @@ begin
     b := #10;
     f.Write(b, 1);
   end;
-  json := FFactory.makeComposer(nil, ffJson, 'en', OutputStyleNormal);
+  json := FFactory.makeComposer(nil, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
   try
     json.Compose(f, res);
   finally
@@ -5611,7 +5629,7 @@ begin
       op := FServer.Context.Storage.createOperationContext(request.lang);
       try
         op.OnPopulateConformance := FServer.PopulateConformance;
-        ctxt := TOperationContext.create(false, callback, 'starting');
+        ctxt := TOperationContext.create(opmRestful, callback, 'starting');
         try
           op.Execute(ctxt, request, response);
         finally
@@ -5676,9 +5694,9 @@ begin
       f := TFileStream.Create(Path([FServer.Context.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
       try
         if fFormat = ffNDJson then
-          c := FServer.factory.makeComposer(fserver.Context.ValidatorContext.link, ffJson, 'en', OutputStyleNormal)
+          c := FServer.factory.makeComposer(fserver.Context.ValidatorContext.link, ffJson, THTTPLanguages.create('en'), OutputStyleNormal)
         else
-          c := FServer.factory.makeComposer(fserver.Context.ValidatorContext.link, Format, 'en', OutputStyleNormal);
+          c := FServer.factory.makeComposer(fserver.Context.ValidatorContext.link, Format, THTTPLanguages.create('en'), OutputStyleNormal);
         try
           c.Compose(f, response.Resource);
         finally
@@ -5784,7 +5802,7 @@ end;
 
 { THtmlFormScriptPlugin }
 
-function THtmlFormScriptPlugin.process(s: String; request: TIdHTTPRequestInfo; pm : TParseMap; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV): String;
+function THtmlFormScriptPlugin.process(s: String; request: TIdHTTPRequestInfo; pm : THTTPParameters; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV): String;
 var
   b, e : integer;
   t, n : String;
@@ -5796,7 +5814,7 @@ begin
     s := s.Substring(0, b);
     e := t.IndexOf('%]');
     n := t.Substring(13, e-13);
-    s := s + pm.GetVar(n)+t.Substring(e+2);
+    s := s + pm[n]+t.Substring(e+2);
     b := s.IndexOf('[%html.param ');
   end;
   b := s.IndexOf('[%html.submit');
@@ -5805,7 +5823,7 @@ begin
     t := s.Substring(b);
     s := s.Substring(0, b);
     e := t.IndexOf('%]');
-    if (pm.getVar('id') = '') then
+    if (pm['id'] = '') then
       s := s + 'Create'+t.Substring(e+2)
     else
       s := s + 'Update'+t.Substring(e+2);
@@ -5966,7 +5984,7 @@ var
   dummy : integer;
   l, r : String;
 begin
-  ctxt := TOperationContext.Create(false, 'internal');
+  ctxt := TOperationContext.Create(opmInternal, 'internal');
   try
     req := TFHIRRequest.Create(FEndPoint.FContext.ValidatorContext.link, roRestInternal, FEndPoint.FContext.Indexes.Compartments.link);
     try
@@ -5975,7 +5993,7 @@ begin
       req.secure := FSecure;
       req.url := l;
       req.Session := FSession.link;
-      req.lang := 'en'; // todo...
+      req.lang := THTTPLanguages.create('en'); // todo...
       req.analyse(command, l, dummy, nil);
       req.resource := resource.link;
 
@@ -5999,12 +6017,12 @@ end;
 
 { TFHIRWebServerScriptPlugin }
 
-procedure TFHIRWebServerScriptPlugin.ProcessFile(name: String; request: TIdHTTPRequestInfo; pm: TParseMap; response: TIdHTTPResponseInfo; Session: TFHIRSession; secure : boolean; variables : TFslMap<TFhirObject>);
+procedure TFHIRWebServerScriptPlugin.ProcessFile(name: String; request: TIdHTTPRequestInfo; pm: THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; secure : boolean; variables : TFslMap<TFhirObject>);
 begin
   FEndPoint.ReturnSecureFile(request, response, session, name, ChangeFileExt(FEndPoint.FWebServer.SourceProvider.AltFile(request.Document, FEndPoint.path), '.secure.html'), '', secure, variables);
 end;
 
-function TFHIRWebServerScriptPlugin.processPage(request : TIdHTTPRequestInfo; pm : TParseMap; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV): boolean;
+function TFHIRWebServerScriptPlugin.processPage(request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV): boolean;
 begin
   result := false;
 end;
@@ -6231,7 +6249,7 @@ begin
   FContext := Value;
 end;
 
-procedure TFHIRServerPostHandler.SetParams(const Value: TParseMap);
+procedure TFHIRServerPostHandler.SetParams(const Value: THTTPParameters);
 begin
   FParams.Free;
   FParams := Value;
@@ -6271,14 +6289,14 @@ var
   parser : TFHIRParser;
   bundle : TFHIRBundleW;
 begin
-  id := params.GetVar('load');
+  id := params['load'];
   if (id = '') then
     raise Exception.Create('No package id to load provided');
   pcm := TFHIRPackageManager.Create(false);
   try
     npm := pcm.loadPackage(id);
     try
-      parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, '');
+      parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, THTTPLanguages.Create('en'));
       try
         all := TFslList<TFHIRResourceV>.create;
         try
@@ -6287,7 +6305,7 @@ begin
               all.Add(parser.parseResource(npm.load('package', n)));
           bundle := FServer.Context.Factory.makeBundle(all);
           try
-            FServer.Transaction(bundle, false, id+'#'+npm.version, '', nil);
+            FServer.Transaction(bundle, false, id+'#'+npm.version, '', opmCmdLine, nil);
             FContext.Storage.recordPackageLoaded(id, npm.version, all.Count, cnt);
           finally
             bundle.Free;
@@ -6316,7 +6334,7 @@ var
   parser : TFHIRParser;
   bundle : TFHIRBundleW;
 begin
-  id := params.GetVar('reload');
+  id := params['reload'];
   if (id = '') then
     raise Exception.Create('No package id to load provided');
   cnt := FContext.Storage.fetchLoadedPackage(id);
@@ -6324,7 +6342,7 @@ begin
     raise Exception.Create('Unable to locate package '+id);
   npm := TNpmPackage.fromPackage(cnt, id, nil);
   try
-    parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, '');
+    parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, THTTPLanguages.Create('en'));
     try
       all := TFslList<TFHIRResourceV>.create;
       try
@@ -6333,7 +6351,7 @@ begin
             all.Add(parser.parseResource(npm.load('package', n)));
         bundle := FServer.Context.Factory.makeBundle(all);
         try
-          FServer.Transaction(bundle, false, id+'#'+npm.version, '', nil);
+          FServer.Transaction(bundle, false, id+'#'+npm.version, '', opmCmdLine, nil);
           FContext.Storage.recordPackageLoaded(id, npm.version, all.Count, cnt);
         finally
           bundle.Free;

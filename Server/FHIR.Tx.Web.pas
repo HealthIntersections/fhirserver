@@ -75,10 +75,10 @@ Type
     function paramsAsHtml(p : TFhirParametersW) : String; overload;
     function vsSelect(id : String) : String;
 
-    function processFind(pm : TParseMap) : String;
-    function processValidate(pm : TParseMap) : String;
-    function processExpand(pm : TParseMap; lang : string) : String;
-    function processTranslate(pm : TParseMap) : String;
+    function processFind(pm : THTTPParameters) : String;
+    function processValidate(pm : THTTPParameters) : String;
+    function processExpand(pm : THTTPParameters; const lang : THTTPLanguages) : String;
+    function processTranslate(pm : THTTPParameters) : String;
 
     function chooseSnomedRelease() : String;
     Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -192,27 +192,27 @@ end;
 
 procedure TTerminologyWebServer.ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  pm: TParseMap;
+  pm: THTTPParameters;
 var
   vars : TFslMap<TFHIRObject>;
 begin
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
-    pm := TParseMap.create(request.UnparsedParams);
+    pm := THTTPParameters.create(request.UnparsedParams);
     try
       vars.Add('prefix', FWorker.Factory.makeString(FServer.WebBase));
 
-      vars.Add('param.system', FWorker.Factory.makeString(pm.GetVar('system')));
-      vars.Add('param.version', FWorker.Factory.makeString(pm.getVar('version')));
-      vars.Add('param.code', FWorker.Factory.makeString(pm.getVar('code')));
-      vars.Add('param.display', FWorker.Factory.makeString(pm.getVar('display')));
-      vars.Add('param.filter', FWorker.Factory.makeString(pm.getVar('filter')));
-      vars.Add('valuesetlist', FWorker.Factory.makeString(vsSelect(pm.getVar('valueset'))));
-      if pm.getVar('nodetails') = '1' then
+      vars.Add('param.system', FWorker.Factory.makeString(pm['system']));
+      vars.Add('param.version', FWorker.Factory.makeString(pm['version']));
+      vars.Add('param.code', FWorker.Factory.makeString(pm['code']));
+      vars.Add('param.display', FWorker.Factory.makeString(pm['display']));
+      vars.Add('param.filter', FWorker.Factory.makeString(pm['filter']));
+      vars.Add('valuesetlist', FWorker.Factory.makeString(vsSelect(pm['valueset'])));
+      if pm['nodetails'] = '1' then
         vars.Add('param.nodetails', FWorker.Factory.makeString(' checked'))
       else
         vars.Add('param.nodetails', FWorker.Factory.makeString(''));
-      if pm.getVar('abstract') = '1' then
+      if pm['abstract'] = '1' then
         vars.Add('param.abstract', FWorker.Factory.makeString(' checked'))
       else
         vars.Add('param.abstract', FWorker.Factory.makeString(''));
@@ -222,13 +222,13 @@ begin
       vars.Add('expand.results', FWorker.Factory.makeString(''));
       vars.Add('translate.results', FWorker.Factory.makeString(''));
 
-      if pm.getVar('op') = 'find' then
+      if pm['op'] = 'find' then
         vars['find.results'] := FWorker.Factory.makeString(processFind(pm))
-      else if pm.getVar('op') = 'validate' then
+      else if pm['op'] = 'validate' then
         vars['validate.results'] := FWorker.Factory.makeString(processValidate(pm))
-      else if pm.getVar('op') = 'expand' then
-        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, request.AcceptLanguage))
-      else if pm.getVar('op') = 'translate' then
+      else if pm['op'] = 'expand' then
+        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, THTTPLanguages.Create(request.AcceptLanguage)))
+      else if pm['op'] = 'translate' then
         vars['translate.results'] := FWorker.Factory.makeString(processTranslate(pm));
 
       FReturnProcessFileEvent(request, response, session, request.Document, 'txhome.html', false, vars);
@@ -489,22 +489,22 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.processExpand(pm: TParseMap; lang : string): String;
+function TTerminologyWebServer.processExpand(pm: THTTPParameters; const lang : THTTPLanguages): String;
 var
   res : TFHIRValueSetW;
   vs : TFHIRValueSetW;
   profile : TFhirExpansionParams;
 begin
-  vs := FServer.getValueSetById(pm.GetVar('valueset'));
+  vs := FServer.getValueSetById(pm['valueset']);
   profile := TFhirExpansionParams.Create;
   try
-    profile.includeDefinition := pm.GetVar('nodetails') <> '1';
+    profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
-    if lang <> '' then
+    if lang.header <> '' then
       profile.displayLanguage := lang;
 
     try
-      res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, 0, 0);
+      res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0);
       try
         result := asHtml(res.Resource)+#13#10;
 //        if (not profile.includeDefinition) then
@@ -523,7 +523,7 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.processFind(pm: TParseMap): String;
+function TTerminologyWebServer.processFind(pm: THTTPParameters): String;
 var
   coding : TFHIRCodingW;
   resp : TFHIRLookupOpResponseW;
@@ -531,13 +531,13 @@ var
 begin
   coding := FWorker.Factory.wrapCoding(FWorker.Factory.makeByName('Coding'));
   try
-    coding.system := pm.GetVar('system');
-    coding.version := pm.GetVar('version');
-    coding.code := pm.GetVar('code');
+    coding.system := pm['system'];
+    coding.version := pm['version'];
+    coding.code := pm['code'];
     resp := FWorker.Factory.makeOpRespLookup;
     try
       try
-        FServer.lookupCode(coding, 'en', nil, resp);
+        FServer.lookupCode(coding, THTTPLanguages.create('en'), nil, resp);
         p := resp.asParams;
         try
           result := '<div>'+paramsAsHtml(p)+'</div>'#13 +
@@ -735,7 +735,7 @@ var
 begin
   b := TBytesStream.Create();
   try
-    json := FWorker.factory.makeComposer(FWorker.link, ffJson, 'en', OutputStylePretty);
+    json := FWorker.factory.makeComposer(FWorker.link, ffJson, THTTPLanguages.create('en'), OutputStylePretty);
     try
       json.Compose(b, r);
     finally
@@ -754,7 +754,7 @@ var
 begin
   b := TBytesStream.Create();
   try
-    xml := FWorker.factory.makeComposer(FWorker.link, ffXMl, 'en', OutputStylePretty);
+    xml := FWorker.factory.makeComposer(FWorker.link, ffXMl, THTTPLanguages.create('en'), OutputStylePretty);
     try
       xml.Compose(b, r);
     finally
@@ -877,7 +877,7 @@ end;
 //      html.Line;
 //    end;
 //    s := TStringStream.Create;
-//    xml := TFHIRXmlComposer.Create('en');
+//    xml := TFHIRXmlComposer.Create(THTTPLanguages.create('en'));
 //    try
 //      xml.Compose(s, vs, true, nil);
 //      html.startPre;
@@ -920,7 +920,7 @@ var
   analysis : TSnomedAnalysis;
   parts : TArray<String>;
   ss, t : TSnomedServices;
-  pm : TParseMap;
+  pm : THTTPParameters;
   buf : TFslNameBuffer;
 begin
   if request.Document.StartsWith(FServer.webBase+'/snomed/tool/') then // FHIR build process support
@@ -957,7 +957,7 @@ begin
     FServer.CommonTerminologies.DefSnomed.RecordUse;
     analysis := TSnomedAnalysis.create(FServer.CommonTerminologies.DefSnomed.Link);
     try
-      pm := TParseMap.create(request.UnparsedParams);
+      pm := THTTPParameters.create(request.UnparsedParams);
       try
         buf := analysis.generate(pm);
         try
@@ -1005,7 +1005,7 @@ begin
         try
           html.Version := SERVER_VERSION;
           html.BaseURL := '/snomed/'+ss.EditionId+'/';
-          html.Lang := request.AcceptLanguage;
+          html.Lang := THTTPLanguages.Create(request.AcceptLanguage);
           pub.PublishDict(code, FServer.webBase+'/snomed/'+ss.EditionId+'/', html);
           response.ContentText := html.output;
           response.ResponseNo := 200;
@@ -1045,7 +1045,7 @@ begin
   begin
     code := request.UnparsedParams;
     lang := request.Document.substring(FServer.webBase.Length).Substring(12);
-    if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(lang)) then
+    if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(THTTPLanguages.create(lang))) then
     begin
       st := TStringList.create;
       try
@@ -1059,7 +1059,7 @@ begin
         try
           html.Version := SERVER_VERSION;
           html.BaseURL := FServer.webBase+'/loinc/doco/';
-          html.Lang := lang;
+          html.Lang := THTTPLanguages.create(lang);
           html.Header('LOINC Languages');
           html.StartList();
           for i := 0 to st.count - 1 do
@@ -1089,11 +1089,11 @@ begin
       logt('Loinc Doco: '+code);
       try
         html := THtmlPublisher.Create(FWorker.factory.link);
-        pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, lang);
+        pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, THTTPLanguages.Create(lang));
         try
           html.Version := SERVER_VERSION;
           html.BaseURL := FServer.webBase+'/loinc/doco/'+lang;
-          html.Lang := Lang;
+          html.Lang := THTTPLanguages.Create(Lang);
           pub.PublishDict(code, FServer.webBase+'/loinc/doco/'+lang, html);
           mem := TMemoryStream.Create;
           response.ContentStream := mem;
@@ -1179,21 +1179,21 @@ begin
 end;
 
 
-function TTerminologyWebServer.processTranslate(pm: TParseMap): String;
+function TTerminologyWebServer.processTranslate(pm: THTTPParameters): String;
 var
   res : TFhirParametersW;
   vs : TFHIRValueSetW;
   coding : TFhirCodingW;
 begin
-  vs := FServer.getValueSetById(pm.GetVar('valueset')); // this is the target
+  vs := FServer.getValueSetById(pm['valueset']); // this is the target
   try
     coding := FWorker.factory.wrapCoding(FWorker.factory.makeByName('Coding'));
     try
-      coding.system := pm.GetVar('system');
-      coding.version := pm.GetVar('version');
-      coding.code := pm.GetVar('code');
+      coding.system := pm['system'];
+      coding.version := pm['version'];
+      coding.code := pm['code'];
       try
-        res := FServer.translate('en', nil, coding, vs);
+        res := FServer.translate(THTTPLanguages.create('en'), nil, coding, vs);
         try
           result := paramsAsHtml(res)+#13#10 + '<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>';
         finally
@@ -1211,21 +1211,21 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.processValidate(pm: TParseMap): String;
+function TTerminologyWebServer.processValidate(pm: THTTPParameters): String;
 var
   coding : TFHIRCodingW;
   res : TFHIRParametersW;
   vs : TFHIRValueSetW;
 begin
-  vs := FServer.getValueSetById(pm.GetVar('valueset'));
+  vs := FServer.getValueSetById(pm['valueset']);
   try
     coding := FWorker.factory.wrapCoding(FWorker.factory.makeByName('Coding'));
     try
-      coding.system := pm.GetVar('system');
-      coding.version := pm.GetVar('version');
-      coding.code := pm.GetVar('code');
-      coding.display := pm.GetVar('display');
-      res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1', pm.GetVar('implySystem') = '1');
+      coding.system := pm['system'];
+      coding.version := pm['version'];
+      coding.code := pm['code'];
+      coding.display := pm['display'];
+      res := FServer.validate(vs, coding, nil, pm['abstract'] = '1', pm['implySystem'] = '1');
       try
         result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
             #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'

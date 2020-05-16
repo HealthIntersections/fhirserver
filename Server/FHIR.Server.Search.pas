@@ -52,11 +52,11 @@ type
     FTypeKey: integer;
     FCompartment: TFHIRCompartmentId;
     FSessionCompartments : TFslList<TFHIRCompartmentId>;
-    FParams: TParseMap;
+    FParams: THTTPParameters;
     FType: String;
     FBaseURL: String;
     FIndexes: TFhirIndexInformation;
-    FLang: String;
+    FLang: THTTPLanguages;
     FSession : TFhirSession;
 //    FLeftOpen: boolean;
     FcountAllowed: boolean;
@@ -86,7 +86,7 @@ type
     function buildParameterReference(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
     procedure replaceNames(paramPath : TFSFilterParameterPath; components : TFslStringDictionary); overload;
     procedure replaceNames(filter : TFSFilter; components : TFslStringDictionary); overload;
-    procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
+    procedure processQuantityValue(name : String; const lang : THTTPLanguages; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
     procedure processNumberValue(value : TFslDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
     function filterTypes(types: TArray<String>): TArray<String>;
@@ -105,7 +105,7 @@ type
     constructor Create(serverContext : TFslObject);
     destructor Destroy; override;
     procedure Build;
-//procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
+//procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : THTTPParameters; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 
     // inbound
     property resConfig : TFslMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
@@ -114,8 +114,8 @@ type
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
     property sessionCompartments : TFslList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : String read FBaseURL write FBaseURL;
-    property lang : String read FLang write FLang;
-    property params : TParseMap read FParams write FParams;
+    property lang : THTTPLanguages read FLang write FLang;
+    property params : THTTPParameters read FParams write FParams;
     property indexes : TFhirIndexInformation read FIndexes write SetIndexes;
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
@@ -207,11 +207,11 @@ begin
       for j := 0 to ts.count - 1 do
       begin
         handled := false;
-        filter := filter + processParam(TArray<String>.create(type_), params.VarName(i), ts[j], false, first, handled);
+        filter := filter + processParam(TArray<String>.create(type_), params.Name[i], ts[j], false, first, handled);
         if handled then
-          link_ := link_ + '&'+params.VarName(i)+'='+EncodeMIME(ts[j])
-        else if strict and not (knownParam(params.VarName(i))) then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [params.VarName(i)]));
+          link_ := link_ + '&'+params.Name[i]+'='+EncodeMIME(ts[j])
+        else if strict and not (knownParam(params.Name[i])) then
+          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [params.Name[i]]));
       end;
       inc(i);
     end;
@@ -788,7 +788,7 @@ begin
 end;
 
 
-procedure TSearchProcessor.processQuantityValue(name, lang : String; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
+procedure TSearchProcessor.processQuantityValue(name : String; const lang : THTTPLanguages; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
 var
   value : TFslDecimal;
   ns, s : String;
@@ -1013,7 +1013,7 @@ begin
         begin
           n := characteristic.code.fromSystem(['http://hl7.org/fhir/StructureDefinition/Patient', 'http://hl7.org/fhir/StructureDefinition/Practitioner', 'http://hl7.org/fhir/StructureDefinition/Device', 'http://hl7.org/fhir/StructureDefinition/Medication', 'http://hl7.org/fhir/StructureDefinition/Substance']);
           if n = 'Patient.gender' then
-            params.addItem('gender', characteristic.value.fromSystem('http://hl7.org/fhir/ValueSet/administrative-gender', true));
+            params.add('gender', characteristic.value.fromSystem('http://hl7.org/fhir/ValueSet/administrative-gender', true));
         end;
       end
       else

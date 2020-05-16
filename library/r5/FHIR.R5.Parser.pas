@@ -32,23 +32,23 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Web.Parsers,
   FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Xml, FHIR.R5.Json, FHIR.R5.Turtle, FHIR.R5.Context;
 
 type
   TFHIRParsers5 = class
   public
-    class function parser(worker : TFHIRWorkerContext; format : TFHIRFormat; lang : String) : TFHIRParser;
-    class function composer(worker : TFHIRWorkerContext; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer;
-    class function ParseFile(worker : TFHIRWorkerContext; format : TFHIRFormat; lang : String; filename : String) : TFHIRResource; overload;
-    class procedure composeFile(worker : TFHIRWorkerContext; format : TFHIRFormat; r : TFHIRResourceV; lang : String; filename : String; style : TFHIROutputStyle); overload;
+    class function parser(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser;
+    class function composer(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer;
+    class function ParseFile(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages; filename : String) : TFHIRResource; overload;
+    class procedure composeFile(worker : TFHIRWorkerContext; format : TFHIRFormat; r : TFHIRResourceV; const lang : THTTPLanguages; filename : String; style : TFHIROutputStyle); overload;
   end;
 
 implementation
 
 { TFHIRParsers5 }
 
-class function TFHIRParsers5.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; lang: String; style: TFHIROutputStyle): TFHIRComposer;
+class function TFHIRParsers5.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
 begin
   case format of
     ffXml : result := FHIR.R5.Xml.TFHIRXmlComposer.Create(worker, style, lang);
@@ -60,7 +60,7 @@ begin
   end;
 end;
 
-class function TFHIRParsers5.parser(worker: TFHIRWorkerContext; format: TFHIRFormat; lang: String): TFHIRParser;
+class function TFHIRParsers5.parser(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
 begin
   case format of
     ffXml: result := FHIR.R5.Xml.TFHIRXmlParser.Create(worker, lang);
@@ -71,7 +71,7 @@ begin
   end;
 end;
 
-class procedure TFHIRParsers5.composeFile(worker: TFHIRWorkerContext; format: TFHIRFormat; r: TFHIRResourceV; lang, filename: String; style: TFHIROutputStyle);
+class procedure TFHIRParsers5.composeFile(worker: TFHIRWorkerContext; format: TFHIRFormat; r: TFHIRResourceV; const lang : THTTPLanguages; filename: String; style: TFHIROutputStyle);
 var
   c : TFHIRComposer;
   f : TFileStream;
@@ -89,7 +89,7 @@ begin
   end;
 end;
 
-class function TFHIRParsers5.ParseFile(worker: TFHIRWorkerContext; format: TFHIRFormat; lang, filename: String): TFHIRResource;
+class function TFHIRParsers5.ParseFile(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; filename: String): TFHIRResource;
 var
   p : TFHIRParser;
 begin

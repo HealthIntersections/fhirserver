@@ -48,6 +48,7 @@ Type
     FSessions: TFslMap<TFHIRSession>;
     FLastSessionKey: integer;
     function factory : TFHIRFactory;
+    Procedure EndSession(session : TFHIRSession; ip: String); overload;
   public
     constructor Create(ServerSettings : TFHIRServerSettings; ServerContext : TFslObject);
     destructor Destroy; override;
@@ -58,7 +59,7 @@ Type
     Function CreateImplicitSession(ClientIp, ClientSystemId, UserName : String; SystemEvidence : TFHIRSystemIdEvidence; server, useGUID: Boolean) : TFhirSession;
     function getSessionFromJWT(ClientIp, SystemName : String; SystemEvidence : TFHIRSystemIdEvidence; JWT : TJWT) : TFhirSession;
 
-    Procedure EndSession(sCookie, ip: String);
+    Procedure EndSession(sCookie, ip: String); overload;
     function GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean;
     function GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean;
     function RegisterSession(userEvidence : TFHIRUserIdEvidence; provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
@@ -69,6 +70,8 @@ Type
     function GetSessionByKey(userkey : integer) : TFhirSession;
     procedure Sweep;
     function DumpSessions : String;
+    procedure EndAllSessions(cookie, ip : String);
+    function buildTable : String;
   end;
 
 implementation
@@ -90,6 +93,30 @@ begin
   FSessions.free;
   FLock.free;
   inherited;
+end;
+
+function TFHIRSessionManager.buildTable: String;
+var
+  b : TFslStringBuilder;
+  session: TFhirSession;
+begin
+  b := TFslStringBuilder.Create;
+  try
+    b.Append('<table>'#13#10);
+    b.Append(' <tr><td><b>Type</b></td><td><b>Name</b></td><td><b>User</b></td><td><b>System</b></td><td><b>Provider</b></td>'+
+        '<td><b>Created</b></td><td><b>Expires</b></td><td><b>Rights</b></td><td><b>Recording?</b></td><td><b>Actions</b></td></tr>'#13#10);
+    FLock.Lock('table');
+    try
+      for session in FSessions.Values do
+        session.buildRow(b);
+    finally
+      FLock.Unlock;
+    end;
+    b.Append('</table>'#13#10);
+    result := b.AsString;
+  finally
+    b.free;
+  end;
 end;
 
 procedure TFHIRSessionManager.CloseAll;
@@ -181,39 +208,69 @@ begin
   end;
 end;
 
-procedure TFHIRSessionManager.EndSession(sCookie, ip: String);
+procedure TFHIRSessionManager.EndSession(session : TFhirSession; ip: String);
 var
-  session: TFhirSession;
   se: TFhirAuditEventW;
   key: integer;
 begin
-  key := 0;
+  assert(FLock.LockedToMe);
+  se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
+  try
+    se.success;
+    se.eventType('http://nema.org/dicom/dcid', '110114', 'User Authentication');
+    se.eventSubType('http://nema.org/dicom/dcid', '110123', 'Logout');
+    se.source(TFHIRServerContext(serverContext).Globals.OwnerName, 'urn:ietf:rfc:3986', TFHIRServerContext(serverContext).DatabaseId);
+    se.sourceType('http://hl7.org/fhir/security-source-type', '3', 'Web Server');
+    se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
+    if (ip <> '') then
+      se.participantIp(ip);
+    if session.TestScript <> nil then
+      TFHIRServerContext(serverContext).Storage.QueueResource(session, session.TestScript.Resource, se.dateTime);
+    TFHIRServerContext(serverContext).Storage.QueueResource(session, se.Resource, se.dateTime);
+  finally
+    se.free;
+  end;
+  key := session.key;
+  FSessions.Remove(session.Cookie);
+  TFHIRServerContext(serverContext).Storage.CloseFhirSession(key);
+end;
+
+procedure TFHIRSessionManager.EndAllSessions(cookie, ip : String);
+var
+  session : TFhirSession;
+  list : TFslList<TFhirSession>;
+begin
+  list := TFslList<TFhirSession>.create;
+  try
+    FLock.Lock('sweep2');
+    try
+      for session in FSessions.Values do
+        if (cookie = '') or (cookie = session.Cookie) then
+          list.add(session.Link);
+      for session in list do
+        EndSession(session, ip);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    list.Free;
+  end;
+
+end;
+
+procedure TFHIRSessionManager.EndSession(sCookie, ip: String);
+var
+  session: TFhirSession;
+begin
   FLock.Lock('EndSession');
   try
     if FSessions.TryGetValue(sCookie, session) then
     begin
-      se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
-      try
-        se.success;
-        se.eventType('http://nema.org/dicom/dcid', '110114', 'User Authentication');
-        se.eventSubType('http://nema.org/dicom/dcid', '110123', 'Logout');
-        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, 'urn:ietf:rfc:3986', TFHIRServerContext(serverContext).DatabaseId);
-        se.sourceType('http://hl7.org/fhir/security-source-type', '3', 'Web Server');
-        se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
-        if (ip <> '') then
-          se.participantIp(ip);
-        TFHIRServerContext(serverContext).Storage.QueueResource(session, se.Resource, se.dateTime);
-      finally
-        se.free;
-      end;
-      key := session.key;
-      FSessions.Remove(sCookie);
+      EndSession(session, ip);
     end;
   finally
     FLock.Unlock;
   end;
-  if key > 0 then
-    TFHIRServerContext(serverContext).Storage.CloseFhirSession(key);
 end;
 
 function TFHIRSessionManager.factory: TFHIRFactory;
@@ -616,28 +673,30 @@ end;
 
 procedure TFHIRSessionManager.Sweep;
 var
-  key : integer;
   session : TFhirSession;
+  list : TFslList<TFhirSession>;
   d: TDateTime;
 begin
-  key := 0;
-  d := TFslDateTime.makeUTC.DateTime;
-  FLock.Lock('sweep2');
+  list := TFslList<TFhirSession>.create;
   try
-    for session in FSessions.Values do
-    begin
-      if session.expires < d then
+    d := TFslDateTime.makeUTC.DateTime;
+    FLock.Lock('sweep2');
+    try
+      for session in FSessions.Values do
       begin
-        key := session.key;
-        FSessions.Remove(Session.Cookie); // which frees the session
-        break;
+        if session.expires < d then
+        begin
+          list.add(session.Link);
+        end;
       end;
+      for session in list do
+        EndSession(session, '');
+    finally
+      FLock.Unlock;
     end;
   finally
-    FLock.Unlock;
+    list.Free;
   end;
-  if key > 0 then
-    TFHIRServerContext(serverContext).Storage.CloseFhirSession(key);
 end;
 
 function TFHIRSessionManager.DumpSessions: String;

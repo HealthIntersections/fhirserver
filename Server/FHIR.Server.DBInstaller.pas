@@ -537,7 +537,7 @@ begin
   FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
        ' Id nchar('+inttostr(ID_LENGTH)+') NOT NULL, '+#13#10+
        ' Client nchar(48) NOT NULL, '+#13#10+
-       ' Scope nchar(255) NOT NULL, '+#13#10+
+       ' Scope nchar(1024) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
        ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
@@ -1324,6 +1324,10 @@ begin
     if (version <= 29) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ADD Launch nchar(255) NULL');
+    end;
+    if (version <= 30) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ALTER COLUMN Scope nchar(1024) NOT NULL');
     end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
