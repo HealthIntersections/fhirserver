@@ -110,7 +110,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r2 -packages hl7.fhir.r2.core</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>

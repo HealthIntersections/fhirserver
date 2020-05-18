@@ -70,7 +70,7 @@ Type
   end;
 
 const
-  OP_MODES_CHECK = [opmRestful, opmCmdLine];
+  OP_MODES_CHECK = [opmRestful, opmInternal];
   OP_CODES_NO_SEC_ON_INSERT = [opmSweep];
 
 type

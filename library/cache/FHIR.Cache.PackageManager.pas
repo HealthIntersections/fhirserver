@@ -762,7 +762,7 @@ begin
   begin
     n := ExtractFileName(s);
     if n.StartsWith(id+'#') then
-      exit(n.Substring(n.IndexOf('#')+1));
+      result := n.Substring(n.IndexOf('#')+1);
   end;
 end;
 
