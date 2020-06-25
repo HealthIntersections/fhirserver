@@ -121,19 +121,27 @@ var
 begin
   result := TFslList<TFHIRPackageInfo>.create;
   try
-    json := TInternetFetcher.fetchJson(URLPath([address, id]));
     try
-      versions := json.obj['versions'];
-      if (versions <> nil) then
-      begin
-        for s in versions.properties.SortedKeys do
+      json := TInternetFetcher.fetchJson(URLPath([address, id]));
+      try
+        versions := json.obj['versions'];
+        if (versions <> nil) then
         begin
-          obj := versions.obj[s];
-          result.add(TFHIRPackageInfo.create(obj['name'], obj['version'], obj['FhirVersion'], obj['description'], obj['canonical'], obj['url']));
+          for s in versions.properties.SortedKeys do
+          begin
+            obj := versions.obj[s];
+            result.add(TFHIRPackageInfo.create(obj['name'], obj['version'], obj['FhirVersion'], obj['description'], obj['canonical'], obj['url']));
+          end;
         end;
+      finally
+        json.free;
       end;
-    finally
-      json.free;
+    except
+      on e : Exception do
+      begin
+        if not e.Message.Contains('Not Found') then
+          raise;
+      end;
     end;
     result.Link;
   finally

@@ -483,12 +483,13 @@ var
   pmc: PROCESS_MEMORY_COUNTERS;
   {$ENDIF}
 begin
+  result := '';
   {$IFDEF MSWINDOWS}
   GetMemoryManagerState(st);
   v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
   for sb in st.SmallBlockTypeStates do
     v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
-  if v > 0 then
+  if v > 16000 then
     result := ' '+memToMb(v);
 
   hProcess := GetCurrentProcess;
@@ -501,8 +502,6 @@ begin
   finally
     CloseHandle(hProcess);
   end;
-  {$ELSE}
-  result := '';
   {$ENDIF}
 end;
 

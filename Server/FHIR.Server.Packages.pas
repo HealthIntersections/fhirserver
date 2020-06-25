@@ -34,7 +34,7 @@ type
 
     function genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch: boolean): String;
 
-    procedure serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    function serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
 
     procedure serveHomePage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
@@ -51,7 +51,7 @@ type
     property DB : TFSLDBManager read FDB write SetDB;
     property NextScan : TDateTIme read FNextScan write FNextScan;
     property scanning : boolean read FScanning write SetScanning;
-    procedure serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    function serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
   end;
 
 implementation
@@ -493,7 +493,7 @@ begin
   );
 end;
 
-procedure TFHIRPackageServer.serveCreatePackage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TFHIRPackageServer.serveCreatePackage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 var
   blob : TBytes;
   conn : TFslDBConnection;
@@ -516,6 +516,7 @@ begin
     try
       id := npm.info['name'];
       version := npm.info['version'];
+      result := 'Create Package '+id+'#'+version;
       canonical := npm.info['canonical'];
       if (id = '') then
         raise Exception.Create('No NPM Name found in package');
@@ -564,7 +565,7 @@ begin
   end;
 end;
 
-procedure TFHIRPackageServer.serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+function TFHIRPackageServer.serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
 var
   pm : THTTPParameters;
   s : TArray<String>;
@@ -574,27 +575,45 @@ begin
     if (request.CommandType = hcGET) and (request.Document = '/packages/catalog') then
     begin
       if not pm.has('lastUpdated') then
-        serveSearch(pm['name'], pm['canonical'], pm['fhirversion'], pm['sort'], request, response)
+      begin
+        serveSearch(pm['name'], pm['canonical'], pm['fhirversion'], pm['sort'], request, response);
+        result := 'Search Packages';
+      end
       else if pm['lastUpdated'].startsWith('-') then
-        serveUpdates(TFslDateTime.makeToday.add(StrToIntDef(pm['lastUpdated'], -30)), response)
+      begin
+        serveUpdates(TFslDateTime.makeToday.add(StrToIntDef(pm['lastUpdated'], -30)), response);
+        result := 'Packages updates since '+pm['lastUpdated'];
+      end
       else
-        serveUpdates(TFslDateTime.fromXML(pm['lastUpdated']), response)
+      begin
+        serveUpdates(TFslDateTime.fromXML(pm['lastUpdated']), response);
+        result := 'Packages updates since '+pm['lastUpdated'];
+      end;
     end
     else if request.CommandType = hcGET then
     begin
       s := request.document.subString(10).split(['/']);
       if length(s) = 1 then
-        serveVersions(s[0], pm['sort'], request, response)
+      begin
+        serveVersions(s[0], pm['sort'], request, response);
+        result := 'Package Versions for '+s[0];
+      end
       else if length(s) = 2 then
-        serveDownload(s[0], s[1], response)
+      begin
+        serveDownload(s[0], s[1], response);
+        result := 'Package Download for '+s[0]+'#'+s[1];
+      end
       else if (request.Accept.contains('/html')) then
-        serveHomePage(request, response)
+      begin
+        serveHomePage(request, response);
+        result := 'Package Web Request';
+      end
       else
         raise Exception.Create('The operation GET '+request.Document+' is not supported');
     end
     else if (request.CommandType = hcPOST) and (request.Document = '/packages') then
     begin
-      serveCreatePackage(request, response);
+      result := serveCreatePackage(request, response);
     end
     else
     begin

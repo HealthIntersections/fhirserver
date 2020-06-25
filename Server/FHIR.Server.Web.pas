@@ -352,7 +352,7 @@ Type
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509);
+    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509) : String;
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
 {$IFDEF MSWINDOWS}
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
@@ -382,15 +382,15 @@ Type
     function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
     procedure CheckAsyncTasks;
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
-    Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
-    Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+    function ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
+    function ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
-    Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
     procedure OnCDSResponse(manager: TCDSHooksManager; server: TRegisteredFHIRServer; Context: TObject; response: TCDSHookResponse; error: String);
     function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW;
     function processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
@@ -400,8 +400,8 @@ Type
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
-    Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String);
-    Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String);
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String) : String;
     Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip: boolean);
   public
     constructor Create(code : String; path : String; server : TFHIRWebServer; context : TFHIRServerContext);
@@ -512,8 +512,8 @@ Type
     Function WebDesc: String;
     function loadMultipartForm(const request: TStream; const contentType: String; var mode : TOperationMode): TMimeMessage;
     function DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
-    Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
-    Procedure HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
+    function ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
+    function HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : string;
     procedure smsStatus(Msg: String);
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure StopAsyncTasks;
@@ -546,7 +546,6 @@ Type
     {$IFNDEF FHIR3}
     property PackageServer : TFHIRPackageServer read FPackageServer;
     {$ENDIF}
-
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
     function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
@@ -910,7 +909,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServerEndpoint.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String);
+function TFhirWebServerEndpoint.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
 var
   Session: TFHIRSession;
   sp : TFHIRWebServerSourceProvider;
@@ -941,27 +940,57 @@ begin
 
     sp := FWebServer.FSourceProvider;
     if request.Document.StartsWith(FAuthServer.path) then
+    begin
+      result := 'Authorization Request';
       FAuthServer.HandleRequest(AContext, request, Session, response, false)
+    end
     else if sp.exists(sp.AltFile(request.Document, FPath)) then
+    begin
+      result := 'Static File';
       ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, FPath), false)
+    end
     else if request.Document.EndsWith('.hts') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.html')) then
+    begin
+      result := 'Processed File';
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), false)
+    end
     else if request.Document.EndsWith('.phs') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.html')) then
+    begin
+      result := 'Post Handler';
       runPostHandler(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), false)
+    end
     else if (request.Document = path+'/.well-known/smart-configuration') then
+    begin
+      result := 'Smart Configuration';
       FAuthServer.HandleDiscovery(AContext, request, response)
+    end
     else if request.Document.StartsWith(FPath + '/cds-services') and FCDSHooksServer.active then
+    begin
+      result := 'CDS Hooks Service';
       FCDSHooksServer.HandleRequest(false, FPath, Session, AContext, request, response)
+    end
     else if request.Document.StartsWith(AppendForwardSlash(FPath) + 'websockets', false) then
+    begin
+      result := 'Web Sockets';
       HandleWebSockets(AContext, request, response, false, false, FPath)
+    end
     else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
+    begin
+      result := 'Terminology Server';
       FTerminologyWebServer.Process(AContext, request, Session, response, false)
+    end
     else if request.Document.StartsWith(FPath, false) then
-      HandleRequest(AContext, request, response, false, false, FPath, id, Session, nil)
+    begin
+      result := HandleRequest(AContext, request, response, false, false, FPath, id, Session, nil);
+    end
     else if request.Document.StartsWith(AppendForwardSlash(FPath) + 'FSecurePath', false) then
+    begin
+      result := 'Web Sockets';
       HandleWebSockets(AContext, request, response, false, false, FPath)
+    end
     else
     begin
+      result := 'Not Found';
       response.ResponseNo := 404;
       response.ContentText := 'Document ' + request.Document + ' not found';
     end;
@@ -982,7 +1011,7 @@ begin
     conf.addSmartExtensions('', '', '', '', []); // just set cors
 end;
 
-procedure TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String);
+function TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String) : String;
 var
   Session: TFHIRSession;
   sp : TFHIRWebServerSourceProvider;
@@ -1148,7 +1177,7 @@ end;
 
 
 
-Procedure TFhirWebServerEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509);
+function TFhirWebServerEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509) : String;
 var
   sHost, token, url: string;
   oRequest: TFHIRRequest;
@@ -1173,6 +1202,7 @@ var
   Context: TOperationContext;
   Session: TFHIRSession;
 Begin
+  result := '??';
   noErrCode := false;
   mode := opmRestful;
 
@@ -1342,13 +1372,16 @@ Begin
                         FWebServer.FGoogle.recordEvent(request.Document, CODES_TFHIRCommandType[oRequest.CommandType], oRequest.Session.UserName, request.RemoteIP, request.UserAgent);
 
                       if oRequest.CommandType = fcmdWebUI then
+                      begin
+                        result := 'Web Request';
                         HandleWebUIRequest(oRequest, oResponse, secure)
+                      end
                       else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
-                        ProcessTaskRequest(Context, oRequest, oResponse)
+                        result := ProcessTaskRequest(Context, oRequest, oResponse)
                       else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters['_async'] = 'true') then
-                        ProcessAsyncRequest(Context, oRequest, oResponse)
+                        result := ProcessAsyncRequest(Context, oRequest, oResponse)
                       else
-                        ProcessRequest(Context, oRequest, oResponse);
+                        result := ProcessRequest(Context, oRequest, oResponse);
                     finally
                       Context.Free;
                     end;
@@ -2705,7 +2738,7 @@ begin
 end;
 
 
-procedure TFhirWebServerEndpoint.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServerEndpoint.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   thread : TAsyncTaskThread;
   id : String;
@@ -2725,6 +2758,7 @@ begin
   else
     thread.Format := response.Format;
   thread.key := FContext.Storage.createAsyncTask(request.url, id, thread.Format, request.secure);
+  result := 'Async Request => '+id;
   thread.server := self.link as TFhirWebServerEndPoint;
   thread.request := request.Link;
   thread.Start;
@@ -2738,7 +2772,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServerEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServerEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   op: TFHIROperationEngine;
   t: cardinal;
@@ -2757,7 +2791,7 @@ begin
   op := FContext.Storage.createOperationContext(request.lang);
   try
     op.OnPopulateConformance := PopulateConformance;
-    op.Execute(Context, request, response);
+    result := op.Execute(Context, request, response);
     FContext.Storage.yield(op, nil);
   except
     on e: exception do
@@ -2825,7 +2859,7 @@ begin
     Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Authentication required', lang);
 end;
 
-procedure TFhirWebServerEndpoint.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirWebServerEndpoint.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   status : TAsyncTaskStatus;
   message, s, originalRequest : String;
@@ -2842,6 +2876,7 @@ var
 begin
   names := TStringList.Create;
   try
+    result := 'Task Request for '+request.id;
     if FContext.Storage.fetchTaskDetails(request.Id, key, status, fmt, secure, message, originalRequest, transactionTime, expires, names, outcome) then
     begin
       if request.CommandType = fcmdDeleteTask then
@@ -3250,11 +3285,12 @@ begin
           for i in list do
           begin
             lp := loaded[i.id];
-            links := '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
+            links := '';
             if (lp <> nil) then
             begin
-              links := links + ' <a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a>';
+              links := '<a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a> ';
             end;
+            links := links + '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
 
             if lp <> nil then
               b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>'+loaded[i.id].summary+'</td><td>'+links+'</td></tr>'#13#10)
@@ -3724,6 +3760,7 @@ begin
       handler.session := Session.Link;
       handler.variables := TFslMap<TFHIRObject>.create('post.variables');
       handler.execute;
+
       ;
       if handler.redirect <> '' then
         response.Redirect(handler.redirect)
@@ -4622,7 +4659,7 @@ end;
 
 Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  id : string;
+  id, summ : string;
   t: cardinal;
   ep : TFhirWebServerEndpoint;
   ok : boolean;
@@ -4665,31 +4702,38 @@ begin
         if request.Document.StartsWith(ep.path) then
         begin
           ok := true;
-          ep.PlainRequest(AContext, request, response, id);
+          summ := ep.PlainRequest(AContext, request, response, id);
         end;
       if not ok then
       begin
         sp := FSourceProvider;
         if request.Document = '/diagnostics' then
-          ReturnDiagnostics(AContext, request, response, false, false)
+          summ := ReturnDiagnostics(AContext, request, response, false, false)
         {$IFNDEF FHIR3}
         else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-          FPackageServer.serve(request, response)
+          summ := FPackageServer.serve(request, response)
         {$ENDIF}
         else if sp.exists(sp.AltFile(request.Document, '/')) then
+        begin
+          summ := 'Static File';
           ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
+        end
         else if request.Document = '/' then
-          ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), false)
+        begin
+          summ := 'processed File';
+          ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), false);
+        end
         else
         begin
           response.ResponseNo := 404;
           response.ContentText := 'Document ' + request.Document + ' not found';
+          summ := 'Not Found';
         end;
       end;
     end;
     logResponse(id, response);
     t := GetTickCount - t;
-    logt(id+' http: '+request.RawHTTPCommand+' from '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+' in '+inttostr(t)+'ms . mem= '+MemoryStatus);
+    logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
     response.CloseConnection := true;
   finally
     InterlockedDecrement(GCounterWebRequests);
@@ -4701,7 +4745,7 @@ end;
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   cert: TIdX509;
-  id : String;
+  id, summ : String;
   t: cardinal;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
@@ -4735,22 +4779,28 @@ begin
         if request.Document.StartsWith(ep.path) then
         begin
           ok := true;
-          ep.SecureRequest(AContext, request, response, cert, id);
+          summ := ep.SecureRequest(AContext, request, response, cert, id);
         end;
       if not ok then
       begin
         if request.Document = '/diagnostics' then
-          ReturnDiagnostics(AContext, request, response, false, false)
+          summ := ReturnDiagnostics(AContext, request, response, false, false)
         {$IFNDEF FHIR3}
         else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-          FPackageServer.serve(request, response)
+          summ := FPackageServer.serve(request, response)
         {$ENDIF}
         else if request.Document = '/twilio' then
-          HandleTwilio(AContext, request, response, false, false)
+          summ := HandleTwilio(AContext, request, response, false, false)
         else if sp.exists(sp.AltFile(request.Document, '/')) then
+        begin
+          summ := 'Static File';
           ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
+        end
         else if request.Document = '/' then
+        begin
+          summ := 'Processed File';
           ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
+        end
         else
         begin
           response.ResponseNo := 404;
@@ -4762,6 +4812,7 @@ begin
     logResponse(id, response);
     t := GetTickCount - t;
     logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
+    logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
     {$IFNDEF OSX}
 //    if GService <> nil then
 //      logt(GService.ThreadStatus);
@@ -5003,9 +5054,9 @@ begin
 end;
 
 
-procedure TFhirWebServer.HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
+function TFhirWebServer.HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
 begin
-  FTwilioServer.process(AContext, request, response);
+  result := FTwilioServer.process(AContext, request, response);
 end;
 
 Constructor ERestfulAuthenticationNeeded.Create(Const sContext : String; sMessage, sCaption : String; const lang : THTTPLanguages);
@@ -5068,7 +5119,7 @@ begin
 //  context.JWTServices.JWKAddress := ?;
 end;
 
-procedure TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
+function TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
 var
   vars : TFslMap<TFHIRObject>;
   ep : TFhirWebServerEndpoint;
@@ -5100,6 +5151,7 @@ begin
   finally
     vars.Free;
   end;
+  result := 'Diagnostics';
 end;
 
 //procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
@@ -6281,48 +6333,87 @@ end;
 
 procedure TPackageLoader.load;
 var
-  id, n : String;
+  id, ver, n : String;
   cnt : TBytes;
   pcm : TFHIRPackageManager;
   npm : TNpmPackage;
   all : TFslList<TFHIRResourceV>;
   parser : TFHIRParser;
   bundle : TFHIRBundleW;
+  pck : TFHIRPackageClient;
+  vl : TFslList<TFHIRPackageInfo>;
+  v : TFHIRPackageInfo;
+  links : String;
 begin
   id := params['load'];
   if (id = '') then
     raise Exception.Create('No package id to load provided');
-  pcm := TFHIRPackageManager.Create(false);
-  try
-    npm := pcm.loadPackage(id);
+  ver := params['version'];
+  if (ver = '') then
+  begin
+    pck := TFHIRPackageClient.Create(PACKAGE_SERVER_PRIMARY);
     try
-      parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, THTTPLanguages.Create('en'));
+      vl := pck.getVersions(id);
       try
-        all := TFslList<TFHIRResourceV>.create;
-        try
-          for n in npm.list('package') do
-            if (n <> 'ig-r4.json') then
-              all.Add(parser.parseResource(npm.load('package', n)));
-          bundle := FServer.Context.Factory.makeBundle(all);
-          try
-            FServer.Transaction(bundle, false, id+'#'+npm.version, '', opmCmdLine, nil);
-            FContext.Storage.recordPackageLoaded(id, npm.version, all.Count, cnt);
-          finally
-            bundle.Free;
-          end;
-        finally
-          all.Free;
+        if vl.count = 0 then
+        begin
+          vl.free;
+          vl := nil;
+          pck.free;
+          pck := TFHIRPackageClient.Create(PACKAGE_SERVER_BACKUP);
+          vl := pck.getVersions(id);
         end;
+        links := '<p>Package '+id+':</p><ul>';
+        for v in vl do
+        begin
+          if (v.fhirVersion = '') or (v.fhirVersion = FServer.Context.Factory.versionString) then
+          begin
+            links := links + '<li><a href="package-client.phs?handler=packageloader&load='+id+'&version='+v.version+'">'+v.version+'</a></li>';
+          end;
+        end;
+        links := links + '</ul>';
+        variables.Add('package-list', FServer.Context.Factory.makeString(links));
       finally
-        parser.Free;
+        vl.Free;
       end;
     finally
-      npm.Free;
+      pck.Free;
     end;
-  finally
-    pcm.Free;
+  end
+  else
+  begin
+    pcm := TFHIRPackageManager.Create(false);
+    try
+      npm := pcm.loadPackage(id);
+      try
+        parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, THTTPLanguages.Create('en'));
+        try
+          all := TFslList<TFHIRResourceV>.create;
+          try
+            for n in npm.list('package') do
+              if (n <> 'ig-r4.json') then
+                all.Add(parser.parseResource(npm.load('package', n)));
+            bundle := FServer.Context.Factory.makeBundle(all);
+            try
+              FServer.Transaction(bundle, false, id+'#'+npm.version, '', opmCmdLine, nil);
+              FContext.Storage.recordPackageLoaded(id, npm.version, all.Count, cnt);
+            finally
+              bundle.Free;
+            end;
+          finally
+            all.Free;
+          end;
+        finally
+          parser.Free;
+        end;
+      finally
+        npm.Free;
+      end;
+    finally
+      pcm.Free;
+    end;
+    FRedirect := FServer.FPath+'/package-client.hts';
   end;
-  FRedirect := FServer.FPath+'/package-client.hts';
 end;
 
 procedure TPackageLoader.reload;

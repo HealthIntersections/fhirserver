@@ -94,7 +94,7 @@ type
     function Types : TArray<String>; virtual;
     function HandlesRequest(request : TFHIRRequest) : boolean; virtual;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; virtual;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     function formalURL : String; virtual;
   end;
 
@@ -215,7 +215,7 @@ type
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
     procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
-    procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
     constructor Create(ServerContext : TFslObject; const lang : THTTPLanguages);
@@ -605,7 +605,7 @@ begin
   try
     StartTransaction;
     try
-      result := Request.Id;
+      result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.Id;
       case request.CommandType of
         fcmdRead : ExecuteRead(request, response, false);
         fcmdUpdate : ExecuteUpdate(context, request, response);
@@ -615,9 +615,17 @@ begin
         fcmdSearch : ExecuteSearch(request, response);
         fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
         fcmdMetadata : ExecuteMetadata(request, response);
-        fcmdTransaction : ExecuteTransaction(context, request, response);
-        fcmdBatch : ExecuteBatch(context, request, response);
-        fcmdOperation : ExecuteOperation(context, request, response);
+        fcmdTransaction :
+          begin
+          result := 'Transaction';
+          ExecuteTransaction(context, request, response);
+          end;
+        fcmdBatch :
+          begin
+          result := 'Batch';
+          ExecuteBatch(context, request, response);
+          end;
+        fcmdOperation : result := ExecuteOperation(context, request, response);
         fcmdUpload : ExecuteUpload(context, request, response);
         fcmdPatch : ExecutePatch(request, response);
         fcmdValidate : ExecuteValidation(request, response, 'Validation')
@@ -1015,17 +1023,18 @@ begin
   raise EFHIRException.create('This server does not implement the "History" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   i : integer;
   op : TFhirOperation;
 begin
+  result := 'Unknown Operation ';
   for i := 0 to FOperations.count - 1 do
   begin
     op := TFhirOperation(FOperations[i]);
     if (op.HandlesRequest(request)) then
     begin
-      op.Execute(context, self, request, response);
+      result := op.Execute(context, self, request, response);
       exit;
     end;
   end;
@@ -1556,7 +1565,7 @@ begin
   inherited;
 end;
 
-procedure TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 begin
   // nothing
 end;

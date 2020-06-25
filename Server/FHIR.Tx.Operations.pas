@@ -59,7 +59,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     function formalURL : String; override;
   end;
 
@@ -71,7 +71,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     function formalURL : String; override;
   end;
 
@@ -97,7 +97,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     function formalURL : String; override;
   end;
 
@@ -109,7 +109,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     function formalURL : String; override;
   end;
 
@@ -122,7 +122,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     function formalURL : String; override;
   end;
 
@@ -137,7 +137,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     function formalURL : String; override;
   end;
 
@@ -200,7 +200,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirExpandValueSetOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirExpandValueSetOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   vs, dst : TFHIRValueSetW;
   resourceKey, versionKey : integer;
@@ -210,6 +210,7 @@ var
   params : TFhirParametersW;
   needSecure : boolean;
 begin
+  result := 'Expand ValueSet';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -266,6 +267,7 @@ begin
           else
             raise ETerminologyError.create('Unable to find value set to expand (not provided by id, identifier, or directly)');
 
+          result := 'Expand ValueSet '+vs.getId;
           vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
           FFactory.checkNoModifiers(vs.Resource, 'ExpandValueSet', 'ValueSet');
 
@@ -346,7 +348,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
@@ -358,6 +360,7 @@ var
   needSecure : boolean;
   profile : TFhirExpansionParams;
 begin
+  result := 'Validate Code';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -416,6 +419,7 @@ begin
                 if profile.displayLanguage.header = '' then
                   profile.displayLanguage := request.Lang;
                 try
+                  result := 'Validate Code ...';
                   pout := FServer.validate(vs, coded, profile, abstractOk, implySystem);
                   try
                     response.resource := pout.Resource.link;
@@ -592,7 +596,7 @@ begin
   result := 'ConceptMap';
 end;
 
-procedure TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   cm : TLoadedConceptMap;
 //  op : TFhirOperationOutcome;
@@ -602,6 +606,7 @@ var
 //  abstractOk : boolean;
   params, pOut : TFhirParametersW;
 begin
+  result := 'Translate';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -702,13 +707,14 @@ begin
   result := nil;
 end;
 
-procedure TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   req : TFHIRLookupOpRequestW;
   resp : TFHIRLookupOpResponseW;
   c : TFhirCodingW;
   lang : THTTPLanguages;
 begin
+  result := 'lookup code';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -810,7 +816,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirConceptMapClosureOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirConceptMapClosureOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   params : TFhirParametersW;
   p : TFhirParametersParameterW;
@@ -826,6 +832,7 @@ var
     response.Resource := FFactory.BuildOperationOutcome(request.lang, response.Message);
   end;
 begin
+  result := 'Closure';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -957,7 +964,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+function TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   req : TFHIRSubsumesOpRequestW;
   resp : TFHIRSubsumesOpResponseW;
@@ -967,6 +974,7 @@ var
   cacheId : string;
   needSecure : boolean;
 begin
+  result := 'Subsumes';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then

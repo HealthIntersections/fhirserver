@@ -491,6 +491,13 @@ var
   count : integer;
   code : TNDCProviderContext;
 begin
+  if (context = nil) then
+  begin
+    FDB.connection('ChildCount', procedure (conn : TFslDBConnection) begin
+        count := conn.CountSQL('select count(*) from NDCProducts');
+      end);
+    exit(count);
+  end;
   code := context as TNDCProviderContext;
   if code.package then
     exit(0);

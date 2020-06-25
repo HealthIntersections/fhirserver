@@ -208,7 +208,7 @@ type
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; override;
     procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
-    procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
+    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
 
     procedure registerOperations; virtual; abstract;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); virtual; abstract;
@@ -3907,15 +3907,21 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 begin
   if request.OperationName = 'graphql' then
+  begin
+    result := 'GraphQL';
     executeGraphQL(context, request, response)
+  end
   else
   begin
-    inherited ExecuteOperation(context, request, response);
+    result := inherited ExecuteOperation(context, request, response);
     if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
+    begin
       processGraphQL(request.Parameters['_graphql'], request, response);
+      result := 'GraphQL';
+    end;
   end;
 end;
 

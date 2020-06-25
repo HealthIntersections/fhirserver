@@ -161,20 +161,6 @@ type
     edtSteward: TEdit;
     Label16: TLabel;
     Label17: TLabel;
-    Label18: TLabel;
-    gridHistory: TGrid;
-    DateColumn1: TDateColumn;
-    StringColumn16: TStringColumn;
-    StringColumn18: TStringColumn;
-    StringColumn17: TStringColumn;
-    CheckColumn3: TCheckColumn;
-    CheckColumn4: TCheckColumn;
-    StringColumn19: TStringColumn;
-    btnHistoryAdd: TButton;
-    btnHistoryEdit: TButton;
-    btnHistoryUp: TButton;
-    btnHistoryDown: TButton;
-    btnHistoryDelete: TButton;
     Label19: TLabel;
     memOpenIssues: TMemo;
     Label20: TLabel;
@@ -184,16 +170,6 @@ type
     edtLegalese: TEdit;
     edtVDeprecated: TEdit;
     edtVersionPolicy: TEdit;
-    Label24: TLabel;
-    gridContributors: TGrid;
-    StringColumn11: TStringColumn;
-    StringColumn14: TStringColumn;
-    btnContributorAdd: TButton;
-    btnContributorEdit: TButton;
-    btnContributorUp: TButton;
-    btnContributorDown: TButton;
-    btnContributorDelete: TButton;
-    StringColumn12: TStringColumn;
     CheckColumn1: TCheckColumn;
     StringColumn13: TStringColumn;
     StringColumn15: TStringColumn;
@@ -236,22 +212,6 @@ type
     procedure btnPublisherClick(Sender: TObject);
     procedure grdPropertiesCellClick(const Column: TColumn; const Row: Integer);
     procedure grdFiltersCellClick(const Column: TColumn; const Row: Integer);
-    procedure gridHistoryGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
-    procedure gridHistorySelChanged(Sender: TObject);
-    procedure gridHistorsySetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
-    procedure btnHistoryAddClick(Sender: TObject);
-    procedure btnHistoryEditClick(Sender: TObject);
-    procedure btnHistoryUpClick(Sender: TObject);
-    procedure btnHistoryDownClick(Sender: TObject);
-    procedure btnHistoryDeleteClick(Sender: TObject);
-    procedure gridContributorsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
-    procedure gridContributorsSelChanged(Sender: TObject);
-    procedure gridContributorsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
-    procedure btnContributorAddClick(Sender: TObject);
-    procedure btnContributorEditClick(Sender: TObject);
-    procedure btnContributorUpClick(Sender: TObject);
-    procedure btnContributorDownClick(Sender: TObject);
-    procedure btnContributorDeleteClick(Sender: TObject);
     procedure grdPropertiesDrawColumnBackground(Sender: TObject;
       const Canvas: TCanvas; const Column: TColumn; const Bounds: TRectF;
       const Row: Integer; const Value: TValue; const State: TGridDrawStates);
@@ -259,8 +219,6 @@ type
   private
     flatConcepts : TFslList<TFhirCodeSystemConcept>;
     selchanging : boolean;
-    FHistory : TFhirExtensionList;
-    FContributors : TFhirExtensionList;
 
     function GetCodeSystem: TFHIRCodeSystem;
     function readJurisdiction : Integer;
@@ -821,77 +779,6 @@ begin
 
 end;
 
-procedure TCodeSystemEditorFrame.btnHistoryAddClick(Sender: TObject);
-var
-  ext : TFhirExtension;
-  frm : TResourceHistoryForm;
-begin
-  ext := TFhirExtension.Create;
-  try
-    ext.url := 'http://hl7.org/fhir/StructureDefinition/resource-history';
-    ext.setExtensionDate('date', TFslDateTime.makeToday.toXML);
-    frm := TResourceHistoryForm.create(self);
-    try
-       frm.Extension := ext.Link;
-       if showModalHack(frm) = mrOk then
-       begin
-         FHistory.InsertItem(0, ext.link);
-         gridHistory.RowCount := 0;
-         gridHistory.RowCount := FHistory.count;
-         inputChanged(nil);
-       end;
-    finally
-      frm.free;
-    end;
-  finally
-    ext.Free;
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.btnHistoryDeleteClick(Sender: TObject);
-begin
-  FHistory.Remove(gridHistory.Row);
-  gridHistory.RowCount := 0;
-  gridHistory.RowCount := FHistory.count;
-  inputChanged(nil);
-end;
-
-procedure TCodeSystemEditorFrame.btnHistoryDownClick(Sender: TObject);
-begin
-  FHistory.Exchange(gridHistory.Row, gridHistory.Row + 1);
-  gridHistory.RowCount := 0;
-  gridHistory.RowCount := FHistory.count;
-  inputChanged(nil);
-end;
-
-procedure TCodeSystemEditorFrame.btnHistoryEditClick(Sender: TObject);
-var
-  ext : TFhirExtension;
-  frm : TResourceHistoryForm;
-begin
-  ext := FHistory[gridHistory.Row];
-  frm := TResourceHistoryForm.create(self);
-  try
-     frm.Extension := ext.Link;
-     if showModalHack(frm) = mrOk then
-     begin
-       inputChanged(nil);
-       gridHistory.RowCount := 0;
-       gridHistory.RowCount := FHistory.count;
-     end;
-  finally
-    frm.free;
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.btnHistoryUpClick(Sender: TObject);
-begin
-  FHistory.Exchange(gridHistory.Row, gridHistory.Row - 1);
-  gridHistory.RowCount := 0;
-  gridHistory.RowCount := FHistory.count;
-  inputChanged(nil);
-end;
-
 procedure TCodeSystemEditorFrame.cancel;
 begin
 end;
@@ -944,10 +831,6 @@ begin
   else
     CodeSystem.setExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy', edtVersionPolicy.Text);
 
-  CodeSystem.removeExtension('http://hl7.org/fhir/StructureDefinition/resource-history');
-  CodeSystem.extensionList.AddAll(FHistory);
-  CodeSystem.removeExtension('http://hl7.org/fhir/StructureDefinition/codesystem-contributor');
-  CodeSystem.extensionList.AddAll(FContributors);
   CodeSystem.removeExtension('http://hl7.org/fhir/StructureDefinition/codesystem-openIssue');
   for s in memOpenIssues.Lines do
     if s <> '' then
@@ -1028,8 +911,6 @@ end;
 destructor TCodeSystemEditorFrame.Destroy;
 begin
   flatConcepts.Free;
-  FHistory.Free;
-  FContributors.Free;
   inherited;
 end;
 
@@ -1408,48 +1289,6 @@ begin
   ResourceIsDirty := true;
 end;
 
-procedure TCodeSystemEditorFrame.gridHistoryGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
-var
-  ext : TFhirExtension;
-begin
-  ext := FHistory[ARow];
-  Value := '';
-  case aCol of
-    0 { date }: Value := ext.getExtensionDateAsString('date');
-    1 { id }: Value := ext.getExtensionString('id');
-    2 { wg }: Value := ext.getExtensionString('onBehalfOf');
-    3 { editor }: Value := ext.getExtensionString('author');
-    4 { subst? }: Value := ext.getExtensionBoolean('substantive');
-    5 { breaking? }: Value := not ext.getExtensionBoolean('backwardCompatible');
-    6 { notes }: Value := ext.getExtensionString('notes');
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.gridHistorySelChanged(Sender: TObject);
-begin
-  btnHistoryAdd.Enabled := true;
-  btnHistoryEdit.Enabled := gridHistory.Row > -1;
-  btnHistoryUp.Enabled := gridHistory.Row > 0;
-  btnHistoryDown.Enabled := gridHistory.Row < gridHistory.RowCount-1;
-  btnHistoryDelete.Enabled := gridHistory.Row > -1;
-end;
-
-procedure TCodeSystemEditorFrame.gridHistorsySetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
-var
-  ext : TFhirExtension;
-begin
-  ext := FHistory[ARow];
-  case aCol of
-    0 { date }: ext.setExtensionDate('date', value.AsString);
-    1 { id }: ext.setExtensionString('id', value.AsString);
-    2 { wg }: ext.setExtensionString('onBehalfOf', value.AsString);
-    3 { editor }: ext.setExtensionString('author', value.AsString);
-    4 { subst }: ext.setExtensionBoolean('substantive', value.AsBoolean);
-    5 { breaking }: ext.setExtensionBoolean('backwardCompatible', not value.AsBoolean);
-    6 { notes }: ext.setExtensionString('notes', value.AsString);
-  end;
-end;
-
 procedure TCodeSystemEditorFrame.inputChanged(Sender: TObject);
 begin
   if not Loading then
@@ -1524,27 +1363,12 @@ begin
   edtVDeprecated.Text := prepEdit(CodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versionDeprecated'));
   edtVersionPolicy.Text := prepEdit(CodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/resource-versioningPolicy'));
 
-  if FContributors = nil then
-    FContributors := TFhirExtensionList.Create
-  else
-    FContributors.clear;
-  if FHistory = nil then
-    FHistory := TFhirExtensionList.Create
-  else
-    FHistory.clear;
   memOpenIssues.Text := '';
   for ext in CodeSystem.extensionList do
   begin
-    if ext.url = 'http://hl7.org/fhir/StructureDefinition/resource-history' then
-      FHistory.Add(ext.Link);
-    if ext.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-contributor' then
-      FContributors.Add(ext.Link);
     if ext.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-openIssue' then
       memOpenIssues.lines.Add(ext.value.primitiveValue);
   end;
-
-  gridHistory.RowCount := FHistory.Count;
-  gridContributors.RowCount := FContributors.Count;
 end;
 
 procedure TCodeSystemEditorFrame.loadMetadata;
@@ -1750,112 +1574,6 @@ begin
     btnDeleteConcept.Enabled := true;
   end;
 end;
-
-procedure TCodeSystemEditorFrame.gridContributorsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
-var
-  ext : TFhirExtension;
-begin
-  ext := FContributors[ARow];
-  Value := '';
-  case aCol of
-    0 { name }: Value := ext.getExtensionString('name');
-    1 { role }: Value := ext.getExtensionString('role');
-    2 { notes }: Value := ext.getExtensionString('notes');
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.gridContributorsSelChanged(Sender: TObject);
-begin
-  btnContributorAdd.Enabled := true;
-  btnContributorEdit.Enabled := gridContributors.Row > -1;
-  btnContributorUp.Enabled := gridContributors.Row > 0;
-  btnContributorDown.Enabled := gridContributors.Row < gridContributors.RowCount-1;
-  btnContributorDelete.Enabled := gridContributors.Row > -1;
-end;
-
-procedure TCodeSystemEditorFrame.gridContributorsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
-var
-  ext : TFhirExtension;
-begin
-  ext := FContributors[ARow];
-  case aCol of
-    0 { name }: ext.setExtensionString('name', value.AsString);
-    1 { role }: ext.setExtensionString('role', value.AsString);
-    2 { notes }: ext.setExtensionString('notes', value.AsString);
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.btnContributorAddClick(Sender: TObject);
-var
-  ext : TFhirExtension;
-  frm : TResourceContributorForm;
-begin
-  ext := TFhirExtension.Create;
-  try
-    ext.url := 'http://hl7.org/fhir/StructureDefinition/resource-Contributor';
-    ext.setExtensionDate('date', TFslDateTime.makeToday.toXML);
-    frm := TResourceContributorForm.create(self);
-    try
-       frm.Extension := ext.Link;
-       if showModalHack(frm) = mrOk then
-       begin
-         FContributors.InsertItem(0, ext.link);
-         gridContributors.RowCount := 0;
-         gridContributors.RowCount := FContributors.count;
-         inputChanged(nil);
-       end;
-    finally
-      frm.free;
-    end;
-  finally
-    ext.Free;
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.btnContributorDeleteClick(Sender: TObject);
-begin
-  FContributors.Remove(gridContributors.Row);
-  gridContributors.RowCount := 0;
-  gridContributors.RowCount := FContributors.count;
-  inputChanged(nil);
-end;
-
-procedure TCodeSystemEditorFrame.btnContributorDownClick(Sender: TObject);
-begin
-  FContributors.Exchange(gridContributors.Row, gridContributors.Row + 1);
-  gridContributors.RowCount := 0;
-  gridContributors.RowCount := FContributors.count;
-  inputChanged(nil);
-end;
-
-procedure TCodeSystemEditorFrame.btnContributorEditClick(Sender: TObject);
-var
-  ext : TFhirExtension;
-  frm : TResourceContributorForm;
-begin
-  ext := FContributors[gridContributors.Row];
-  frm := TResourceContributorForm.create(self);
-  try
-     frm.Extension := ext.Link;
-     if showModalHack(frm) = mrOk then
-     begin
-       inputChanged(nil);
-       gridContributors.RowCount := 0;
-       gridContributors.RowCount := FContributors.count;
-     end;
-  finally
-    frm.free;
-  end;
-end;
-
-procedure TCodeSystemEditorFrame.btnContributorUpClick(Sender: TObject);
-begin
-  FContributors.Exchange(gridContributors.Row, gridContributors.Row - 1);
-  gridContributors.RowCount := 0;
-  gridContributors.RowCount := FContributors.count;
-  inputChanged(nil);
-end;
-
 
 end.
 

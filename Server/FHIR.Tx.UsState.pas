@@ -111,6 +111,7 @@ begin
   inherited Create;
   FCodes := TFslList<TUSStateConcept>.create;
   FMap := TFslMap<TUSStateConcept>.create('tx.usstate');
+  FMap.defaultValue := nil;
   Load;
 end;
 
@@ -132,8 +133,13 @@ begin
 end;
 
 function TUSStateServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+var
+  v : TUSStateConcept;
 begin
-  result := FMap[code].display.Trim;
+  if Fmap.TryGetValue(code, v) then
+    result := v.display.Trim
+  else
+    result := '';
 end;
 
 function TUSStateServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;

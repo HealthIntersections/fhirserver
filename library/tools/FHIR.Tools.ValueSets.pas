@@ -465,7 +465,7 @@ begin
       end
       else
       begin
-        ctxt := cs.locate(code);
+        ctxt := cs.locate(code, message);
         if (ctxt = nil) then
         begin
           result := false;

@@ -3503,7 +3503,10 @@ begin
   else if Concept.FindConcept(iId, index) Then
     result := TSnomedExpressionContext.create(code, index)
   else
-    raise ETerminologyError.create('unable to find code '+code+' in '+system(nil)+' (version '+version(nil)+')');
+  begin
+    Message := 'Unable to find code '+code+' in '+system(nil)+' (version '+version(nil)+')';
+    result := nil;
+  end;
 end;
 
 function TSnomedServices.system(context : TCodeSystemProviderContext): String;

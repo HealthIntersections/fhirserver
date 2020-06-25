@@ -612,10 +612,10 @@ var
   tgtCtxt : TFHIRResourceV;
   l : TFhirGraphDefinitionLink;
 begin
-  check(link.path <> '', 'Path is needed at '+path);
-  check(link.sliceName = '', 'SliceName is not yet supported at '+path);
-
   path := focusPath+' -> '+link.path;
+  check(link.path <> '', 'Path is needed at '+focusPath);
+  check(link.sliceName = '', 'SliceName is not yet supported at '+focusPath);
+
   if link.pathElement.Tag <> nil then
     node := link.pathElement.Tag.Link as TFHIRPathExpressionNode
   else

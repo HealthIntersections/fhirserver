@@ -773,6 +773,7 @@ object ServerManagerForm: TServerManagerForm
     Style = tsButtons
     TabOrder = 1
     StyleElements = [seFont, seClient]
+    ExplicitLeft = 118
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
       object Panel2: TPanel
@@ -800,7 +801,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = -1
         DesignSize = (
           670
           41)
@@ -963,7 +963,6 @@ object ServerManagerForm: TServerManagerForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 3
-        ExplicitLeft = -1
         DesignSize = (
           670
           220)
@@ -1118,8 +1117,8 @@ object ServerManagerForm: TServerManagerForm
           TabOrder = 0
         end
         object cbxEdition: TComboBox
-          Left = 77
-          Top = 37
+          Left = 76
+          Top = 38
           Width = 584
           Height = 21
           Style = csDropDownList

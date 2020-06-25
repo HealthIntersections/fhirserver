@@ -18,14 +18,14 @@ type
     FKey : Integer;
     FResponse : String;
 
-    procedure processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    procedure processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    function processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
+    function processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
   public
     Constructor Create(Db : TFslDBManager; response : String);
     destructor Destroy; override;
 
     procedure sweep;
-    procedure process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    function process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
   end;
 
 implementation
@@ -54,15 +54,15 @@ begin
   inherited;
 end;
 
-procedure TTwilioServer.process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TTwilioServer.process(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 begin
   if request.CommandType = hcPOST then
-    processTwilioPost(request, response)
+    result := processTwilioPost(request, response)
   else
-    processTwilioGet(request, response);
+    result := processTwilioGet(request, response);
 end;
 
-procedure TTwilioServer.processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TTwilioServer.processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 var
   pm : THTTPParameters;
   a : String;
@@ -72,6 +72,7 @@ begin
   pm := THTTPParameters.Create(request.UnparsedParams);
   try
     a := pm['AccountSid'];
+    result := 'Twillio get '+a;
     json := TJsonObject.Create;
     try
       arr := json.forceArr['messages'];
@@ -109,7 +110,7 @@ begin
 
 end;
 
-procedure TTwilioServer.processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TTwilioServer.processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 var
   pm : THTTPParameters;
   tk : integer;
@@ -126,6 +127,7 @@ begin
   pm := THTTPParameters.Create(request.UnparsedParams);
   try
     a := pm['AccountSid'];
+    result := 'Twillio POST '+a;
     f := pm['From'];
     b := pm['Body'];
     FDB.connection('twilio', Procedure (conn : TFslDBConnection)
