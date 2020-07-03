@@ -56,7 +56,7 @@ type
   // base wrappers.....
   TFhirExtensionW = class;
 
-  TFHIRXVersionElementWrapper = class (TFHIRObject)
+  TFHIRXVersionElementWrapper = class abstract (TFHIRObject)
   protected
     FElement : TFHIRObject;
     function GetFhirObjectVersion: TFHIRVersion; override;
@@ -87,7 +87,12 @@ type
   end;
   TFHIRXVersionElementWrapperClass = class of TFHIRXVersionElementWrapper;
 
-  TFhirCodingW = class (TFHIRXVersionElementWrapper)
+  TFhirDatTypeW = class (TFHIRXVersionElementWrapper)
+  public
+    function renderText : String; virtual; abstract;
+  end;
+
+  TFhirCodingW = class (TFhirDatTypeW)
   protected
     function getCode: String; virtual; abstract;
     function getDisplay: String; virtual; abstract;
@@ -105,7 +110,7 @@ type
     property display : String read GetDisplay write SetDisplay;
   end;
 
-  TFhirQuantityW = class (TFHIRXVersionElementWrapper)
+  TFhirQuantityW = class (TFhirDatTypeW)
   protected
     function getCode: String; virtual; abstract;
     function getSystem: String; virtual; abstract;
@@ -124,7 +129,7 @@ type
     function asDuration : TDateTime; virtual; abstract;
   end;
 
-  TFHIRPeriodW = class (TFHIRXVersionElementWrapper)
+  TFHIRPeriodW = class (TFhirDatTypeW)
   protected
     function GetEnd: TFslDateTime; virtual; abstract;
     function GetStart: TFslDateTime; virtual; abstract;
@@ -208,14 +213,14 @@ type
   end;
 
   // types....
-  TFhirExtensionW = class (TFHIRXVersionElementWrapper)
+  TFhirExtensionW = class (TFhirDatTypeW)
   public
     function link : TFhirExtensionW; overload;
     function url : String; virtual; abstract;
     function value : TFHIRObject; virtual; abstract;
   end;
 
-  TFhirCodeableConceptW = class (TFHIRXVersionElementWrapper)
+  TFhirCodeableConceptW = class (TFhirDatTypeW)
   protected
     function GetText: String; virtual; abstract;
     procedure SetText(const Value: String); virtual; abstract;

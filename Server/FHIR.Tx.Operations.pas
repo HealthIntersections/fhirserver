@@ -419,7 +419,7 @@ begin
                 if profile.displayLanguage.header = '' then
                   profile.displayLanguage := request.Lang;
                 try
-                  result := 'Validate Code ...';
+                  result := 'Validate Code '+coded.renderText;
                   pout := FServer.validate(vs, coded, profile, abstractOk, implySystem);
                   try
                     response.resource := pout.Resource.link;

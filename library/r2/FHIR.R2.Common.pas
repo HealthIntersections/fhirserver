@@ -77,6 +77,7 @@ type
   public
     function url : String; override;
     function value : TFHIRObject; override;
+    function renderText : String; override;
   end;
 
   TFHIRCoding2 = class (TFHIRCodingW)
@@ -89,6 +90,7 @@ type
     procedure setDisplay(Value: String); override;
     procedure setSystem(Value: String); override;
     procedure setVersion(Value: String); override;
+    function renderText : String; override;
   end;
 
   TFhirCodeableConcept2 = class (TFhirCodeableConceptW)
@@ -103,6 +105,7 @@ type
     function summary : String; override;
     function fromSystem(System : String; required : boolean = false) : String; overload; override;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; override;
+    function renderText : String; override;
   end;
 
   TFhirOperationOutcome2 = class (TFhirOperationOutcomeW)
@@ -734,6 +737,7 @@ type
     procedure setValue(Value: String); override;
   public
     function asDuration : TDateTime; override;
+    function renderText : String; override;
   end;
 
   TFHIRPeriod2 = class (TFHIRPeriodW)
@@ -744,6 +748,8 @@ type
     function GetStart: TFslDateTime; override;
     procedure SetEnd(const Value: TFslDateTime); override;
     procedure SetStart(const Value: TFslDateTime); override;
+  public
+    function renderText : String; override;
   end;
 
   TFHIRGroupCharacteristic2 = class (TFHIRGroupCharacteristicW)
@@ -1751,6 +1757,7 @@ begin
   result := FElement as TFhirConformanceRestResourceSearchParam;
 end;
 
+
 function TFHIRSearchParamDefinition2.type_: TFHIRSearchParamType;
 begin
   result := MAP_SearchParamType[param.type_];
@@ -2626,6 +2633,11 @@ end;
 
 { TFHIRExtension2 }
 
+function TFHIRExtension2.renderText: String;
+begin
+  result := gen((Element as TFHIRExtension).value);
+end;
+
 function TFHIRExtension2.url: String;
 begin
   result := (Element as TFHIRExtension).url;
@@ -2656,6 +2668,11 @@ end;
 function TFHIRCoding2.getversion: String;
 begin
   result := (element as TFHIRCoding).version;
+end;
+
+function TFHIRCoding2.renderText: String;
+begin
+  result := gen(element as TFHIRCoding);
 end;
 
 procedure TFHIRCoding2.SetCode(Value: String);
@@ -4126,6 +4143,11 @@ begin
   result := Element as TFHIRQuantity;
 end;
 
+function TFHIRQuantity2.renderText: String;
+begin
+  result := gen(element as TFhirQuantity);
+end;
+
 procedure TFHIRQuantity2.SetCode(Value: String);
 begin
   qty.code := Value;
@@ -4228,6 +4250,11 @@ end;
 function TFhirCodeableConcept2.GetText: String;
 begin
   result := (Element as TFhirCodeableConcept).text;
+end;
+
+function TFhirCodeableConcept2.renderText: String;
+begin
+  result := gen(element as TFhirCodeableConcept);
 end;
 
 procedure TFhirCodeableConcept2.SetText(const Value: String);
@@ -4422,6 +4449,11 @@ begin
   result := Element as TFHIRPeriod;
 end;
 
+function TFHIRPeriod2.renderText: String;
+begin
+  result := gen(element as TFhirPeriod);
+end;
+
 procedure TFHIRPeriod2.SetEnd(const Value: TFslDateTime);
 
 begin
@@ -4429,7 +4461,6 @@ begin
 end;
 
 procedure TFHIRPeriod2.SetStart(const Value: TFslDateTime);
-
 begin
   period.start := value;
 end;

@@ -78,6 +78,7 @@ type
   public
     function url : String; override;
     function value : TFHIRObject; override;
+    function renderText : String; override;
   end;
 
   TFHIRCoding5 = class (TFHIRCodingW)
@@ -90,6 +91,7 @@ type
     procedure setDisplay(Value: String); override;
     procedure setSystem(Value: String); override;
     procedure setVersion(Value: String); override;
+    function renderText : String; override;
   end;
 
   TFhirCodeableConcept5 = class (TFhirCodeableConceptW)
@@ -104,6 +106,7 @@ type
     function summary : String; override;
     function fromSystem(System : String; required : boolean = false) : String; overload; override;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; override;
+    function renderText : String; override;
   end;
 
   TFhirOperationOutcome5 = class (TFhirOperationOutcomeW)
@@ -760,6 +763,7 @@ type
     procedure setValue(Value: String); override;
   public
     function asDuration : TDateTime; override;
+    function renderText : String; override;
   end;
 
   TFHIRPeriod5 = class (TFHIRPeriodW)
@@ -770,6 +774,7 @@ type
     function GetStart: TFslDateTime; override;
     procedure SetEnd(const Value: TFslDateTime); override;
     procedure SetStart(const Value: TFslDateTime); override;
+    function renderText : String; override;
   end;
 
 
@@ -2581,6 +2586,11 @@ end;
 
 { TFHIRExtension5 }
 
+function TFHIRExtension5.renderText: String;
+begin
+  result := gen(element as TFhirExtension);
+end;
+
 function TFHIRExtension5.url: String;
 begin
   result := (Element as TFHIRExtension).url;
@@ -2611,6 +2621,11 @@ end;
 function TFHIRCoding5.GetVersion: String;
 begin
   result := (element as TFHIRCoding).version;
+end;
+
+function TFHIRCoding5.renderText: String;
+begin
+  result := gen(element as TFhirCoding);
 end;
 
 procedure TFHIRCoding5.SetCode(Value: String);
@@ -4248,6 +4263,11 @@ begin
   result := Element as TFHIRQuantity;
 end;
 
+function TFHIRQuantity5.renderText: String;
+begin
+  result := gen(element as TFhirQuantity);
+end;
+
 procedure TFHIRQuantity5.SetCode(Value: String);
 begin
   qty.code := Value;
@@ -4443,6 +4463,11 @@ end;
 function TFhirCodeableConcept5.GetText: String;
 begin
   result := (Element as TFhirCodeableConcept).text;
+end;
+
+function TFhirCodeableConcept5.renderText: String;
+begin
+  result := gen(element as TFhirCodeableConcept);
 end;
 
 procedure TFhirCodeableConcept5.SetText(const Value: String);
@@ -4724,6 +4749,11 @@ end;
 function TFHIRPeriod5.period: TFHIRPeriod;
 begin
   result := Element as TFHIRPeriod;
+end;
+
+function TFHIRPeriod5.renderText: String;
+begin
+  result := gen(element as TFhirPeriod);
 end;
 
 procedure TFHIRPeriod5.SetEnd(const Value: TFslDateTime);
