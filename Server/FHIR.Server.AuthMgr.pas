@@ -671,6 +671,9 @@ end;
 procedure TAuth2Server.HandleRegistration(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo);
 var
   json, resp : TJsonObject;
+  ac, ar : TJsonArray;
+  n : TJsonNode;
+  u : String;
   client : TRegisteredClientInformation;
   function checkPresent(name : String) : String;
   begin
@@ -737,6 +740,18 @@ begin
           client.softwareVersion := json.str['software_version'];
           resp.str['software_version'] := client.softwareVersion;
 
+          ac := json.arr['redirect_uris'];
+          ar := resp.forceArr['redirect_uris'];
+          if (ac <> nil) then
+          begin
+            for n in ac do
+            begin
+              u := (n as TJsonString).value;
+              client.redirects.Add(u);
+              ar.add(u);
+            end;
+          end;
+
           checkPresentA('grant_types');
           checkPresentA('response_types');
           checkPresent('token_endpoint_auth_method');
@@ -777,9 +792,9 @@ begin
           end
           else
             raise EAuthClientException.create('Unable to recognise client mode');
+          client.patientContext := json.bool['fhir_patient_context'];
           resp.str['client_id'] := ServerContext.Storage.storeClient(client, 0 {session.Key});
           resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
-          client.patientContext := json.bool['fhir_patient_context'];
           response.ContentText := TJSONWriter.writeObjectStr(resp);
           response.ResponseNo := 201;
           response.ResponseText := 'OK';
