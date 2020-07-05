@@ -83,6 +83,7 @@ const
 function DetectFormat(oContent : TStream) : TFHIRFormat; overload;
 function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
 function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
+function csName(url : string) : String;
 
 
 implementation
@@ -493,5 +494,23 @@ begin
   v2 := getMajMin(v2);
   result := v1 = v2;
 end;
+
+
+function csName(url : string) : String;
+begin
+  if url.StartsWith('http://hl7.org/fhir/v2') then
+    result := 'V2-'+url.Substring(22)
+  else if url.StartsWith('http://hl7.org/fhir/v3') then
+    result := 'V3-'+url.Substring(22)
+  else if url.StartsWith('http://hl7.org/fhir') then
+    result := 'FHIR'+url.Substring(19)
+  else if url = 'http://snomed.info/sct' then
+    result := 'SNOMED CT'
+  else if url = 'http://loinc.org' then
+    result := 'LOINC'
+  else
+    result := url;
+end;
+
 
 end.

@@ -308,6 +308,26 @@ Type
     property variables : TFslMap<TFHIRObject> read FVariables write SetVariables;
   end;
 
+  TCachedHTTPResponse = class (TFslBuffer)
+  private
+    FContentType: String;
+  public
+    function Link : TCachedHTTPResponse; overload;
+    property ContentType : String read FContentType write FContentType;
+  end;
+
+  THTTPCacheManager = class (TFslObject)
+  private
+    FLock : TFslLock;
+    FCache : TFslMap<TCachedHTTPResponse>;
+    function generateKey(req : TIdHTTPRequestInfo) : String;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function respond(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : boolean;
+    procedure recordResponse(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+  end;
+
   TFhirWebServerEndpoint = class (TFslObject)
   private
     FWebServer : TFHIRWebServer;
@@ -323,6 +343,7 @@ Type
     FCode: String;
     FPlugins : TFslList<TFHIRWebServerScriptPlugin>;
     FTokenRedirects : TTokenRedirectManager;
+    FCache : THTTPCacheManager;
 
     function factory : TFHIRFactory;
 
@@ -402,7 +423,7 @@ Type
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String) : String;
-    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip: boolean);
+    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean);
   public
     constructor Create(code : String; path : String; server : TFHIRWebServer; context : TFHIRServerContext);
     destructor Destroy; override;
@@ -482,6 +503,8 @@ Type
     FPackageServer : TFHIRPackageServer;
     {$ENDIF}
     FTwilioServer : TTwilioServer;
+
+    function TerminologyWebServer: TTerminologyWebServer;
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
@@ -671,10 +694,12 @@ begin
   FTokenRedirects := TTokenRedirectManager.create;
   FPlugins := TFslList<TFHIRWebServerScriptPlugin>.create;
   registerScriptPlugins;
+  FCache := THTTPCacheManager.create;
 end;
 
 destructor TFhirWebServerEndpoint.Destroy;
 begin
+  FCache.free;
   FTokenRedirects.Free;
   FPlugins.free;
   FCDSHooksServer.Free;
@@ -974,10 +999,9 @@ begin
       result := 'Web Sockets';
       HandleWebSockets(AContext, request, response, false, false, FPath)
     end
-    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
+    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequestVersion(request.Document) then
     begin
-      result := 'Terminology Server';
-      FTerminologyWebServer.Process(AContext, request, Session, response, false)
+      result := FTerminologyWebServer.ProcessVersion(AContext, request, Session, response, false)
     end
     else if request.Document.StartsWith(FPath, false) then
     begin
@@ -1049,40 +1073,69 @@ begin
 
     sp := FWebServer.FSourceProvider;
     if request.Document.StartsWith(FAuthServer.path) then
+    begin
+      result := 'OAuth';
       FAuthServer.HandleRequest(AContext, request, Session, response, true)
+    end
     else if FWebServer.OWinSecuritySecure and (request.Document = URLPath([FPath, OWIN_TOKEN_PATH])) then
+    begin
+      result := 'OWin';
       HandleOWinToken(AContext, true, request, response)
+    end
     else if sp.exists(sp.AltFile(request.Document, FPath)) then
+    begin
+      result := 'Spec file '+request.Document;
       ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, FPath), true)
+    end
     else if request.Document.EndsWith('.hts') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.html')) then
+    begin
+      result := 'Processed File '+request.Document;
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.html'), true)
+    end
     else if request.Document.EndsWith('.html') and sp.exists(ChangeFileExt(sp.AltFile(request.Document, FPath), '.secure.html')) then
+    begin
+      result := 'Secure File '+request.Document;
       ReturnSecureFile(request, response, Session, request.Document, ChangeFileExt(sp.AltFile(request.Document, FPath), '.secure.html'), id, true)
+    end
     else if request.Document.StartsWith(FPath+'/scim') then
+    begin
+      result := 'SCIM';
       ProcessScimRequest(AContext, request, response, FPath)
+    end
     else if request.Document.StartsWith(FPath, false) then
-      HandleRequest(AContext, request, response, true, true, FPath, id, Session, cert)
+      result := HandleRequest(AContext, request, response, true, true, FPath, id, Session, cert)
     else if FWebServer.OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([FPath, OWIN_TOKEN_PATH]))) then
     begin
       response.ResponseNo := 401;
       response.ResponseText := 'Unauthorized';
       response.ContentText := 'Authorization is required (OWin at ' + FPath + OWIN_TOKEN_PATH + ')';
       response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
+      result := 'Unauthorized';
     end
     else if request.Document = '/.well-known/openid-configuration' then
+    begin
+      result := 'OAuth Discovery';
       FAuthServer.HandleDiscovery(AContext, request, response)
+    end
     else if request.Document.StartsWith(FPath, false) then
-      HandleRequest(AContext, request, response, true, true, FPath, id, session, cert)
-    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
-      FTerminologyWebServer.Process(AContext, request, Session, response, true)
+      result := HandleRequest(AContext, request, response, true, true, FPath, id, session, cert)
+    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequestVersion(request.Document) then
+      result := FTerminologyWebServer.ProcessVersion(AContext, request, Session, response, true)
     else if request.Document.StartsWith(FPath + '/cds-services') and FCDSHooksServer.active then
+    begin
+      result := 'CDS Hooks request';
       FCDSHooksServer.HandleRequest(true, FPath, Session, AContext, request, response)
+    end
     else if request.Document = FPath then
+    begin
+      result := 'Home Page';
       ReturnProcessedFile(request, response, Session, '/hompage.html', sp.AltFile('/homepage.html', FPath), true)
+    end
     else
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document ' + request.Document + ' not found';
+      result := 'Not Found';
     end;
   finally
     session.Free;
@@ -1201,10 +1254,12 @@ var
   mode : TOperationMode;
   Context: TOperationContext;
   Session: TFHIRSession;
+  cache : boolean;
 Begin
   result := '??';
   noErrCode := false;
   mode := opmRestful;
+  cache := false;
 
   Session := nil;
   try
@@ -1274,164 +1329,168 @@ Begin
                   sCookie := request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length + 1);
               end;
 
-              sBearer := sCookie;
-              oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
-                request.CustomHeaders.Values['content-location'], request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie,
-                request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
-                esession, cert);
-              try
-                oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
-                oRequest.internalRequestId := logId;
-                if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
-                  TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.link;
+              if not FCache.respond(request, response) then
+              begin
+                sBearer := sCookie;
+                oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
+                  request.CustomHeaders.Values['content-location'], request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie,
+                  request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
+                  esession, cert);
+                try
+                  oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
+                  oRequest.internalRequestId := logId;
+                  if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
+                    TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.link;
 
-                oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
-                oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
-                oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
-                oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
-                oRequest.strictSearch := request.RawHeaders.Values['Prefer'] = 'handling=strict';
+                  oRequest.IfMatch := processIfMatch(request.RawHeaders.Values['If-Match']);
+                  oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
+                  oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
+                  oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
+                  oRequest.strictSearch := request.RawHeaders.Values['Prefer'] = 'handling=strict';
 
-                noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['nohttperr']) or
-                  StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['_nohttperr']);
-                ReadTags(request.RawHeaders.Values['Category'], oRequest);
-                Session := oRequest.Session.link;
+                  noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['nohttperr']) or
+                    StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['_nohttperr']);
+                  ReadTags(request.RawHeaders.Values['Category'], oRequest);
+                  Session := oRequest.Session.link;
 
-                // allow scripting to change anything about the request
-                {$IFNDEF NO_JS}
-                GJsHost.previewRequest(Session, oRequest);
-                {$ENDIF}
+                  // allow scripting to change anything about the request
+                  {$IFNDEF NO_JS}
+                  GJsHost.previewRequest(Session, oRequest);
+                  {$ENDIF}
 
-                if redirect then
-                begin
-                  if oRequest.Session <> nil then
+                  if redirect then
                   begin
-                    FAuthServer.setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, domain, '', oRequest.Session.Expires, false);
-                    cacheResponse(response, cacheNotAtAll);
-                    response.redirect(oRequest.Session.OriginalUrl);
-                  end
-                  else if request.unparsedParams.contains('error=') then // oAuth failure
-                    response.redirect(oRequest.baseUrl+'?'+request.unparsedParams)
-                  else
-                  begin
-                    token := oRequest.parameters['state'];
-                    if FTokenRedirects.getRedirect(token, url) then
-                      response.redirect(url)
+                    if oRequest.Session <> nil then
+                    begin
+                      FAuthServer.setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, domain, '', oRequest.Session.Expires, false);
+                      cacheResponse(response, cacheNotAtAll);
+                      response.redirect(oRequest.Session.OriginalUrl);
+                    end
+                    else if request.unparsedParams.contains('error=') then // oAuth failure
+                      response.redirect(oRequest.baseUrl+'?'+request.unparsedParams)
                     else
-                      response.redirect(oRequest.baseUrl);
-                  end;
-                end
-                else if oRequest.CommandType = fcmdNull then
-                begin
-                  response.CustomHeaders.Add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
-                  cacheResponse(response, cacheNormal);
-                end
-                else if oRequest.CommandType = fcmdUnknown then
-                begin
-                  cacheResponse(response, oResponse.CacheControl);
-                  if oResponse.format = ffXhtml then
+                    begin
+                      token := oRequest.parameters['state'];
+                      if FTokenRedirects.getRedirect(token, url) then
+                        response.redirect(url)
+                      else
+                        response.redirect(oRequest.baseUrl);
+                    end;
+                  end
+                  else if oRequest.CommandType = fcmdNull then
                   begin
+                    response.CustomHeaders.Add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
+                    cacheResponse(response, cacheNormal);
+                  end
+                  else if oRequest.CommandType = fcmdUnknown then
+                  begin
+                    cacheResponse(response, oResponse.CacheControl);
+                    if oResponse.format = ffXhtml then
+                    begin
+                      response.ResponseNo := 200;
+                      response.contentType := 'text/html; charset=UTF-8';
+                      response.FreeContentStream := true;
+                      response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
+                    end
+                    else
+                    begin
+                      response.ResponseNo := 404;
+                      response.ContentText := 'Document ' + request.Document + ' not found';
+                    end;
+                  end
+                  else if (oRequest.CommandType = fcmdUpload) and (oRequest.resource = nil) Then
+                  begin
+                    cacheResponse(response, oResponse.CacheControl);
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
-                    response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
+                    response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
+                  end
+                  else if (oRequest.CommandType = fcmdMetadata) and (oRequest.ResourceName <> '') then
+                  begin
+                    cacheResponse(response, oResponse.CacheControl);
+                    response.ResponseNo := 200;
+                    response.contentType := 'text/html; charset=UTF-8';
+                    // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
+                    response.CustomHeaders.Add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
+                    response.FreeContentStream := true;
+                    response.ContentStream := StringToUTF8Stream('OK');
                   end
                   else
                   begin
-                    response.ResponseNo := 404;
-                    response.ContentText := 'Document ' + request.Document + ' not found';
-                  end;
-                end
-                else if (oRequest.CommandType = fcmdUpload) and (oRequest.resource = nil) Then
-                begin
-                  cacheResponse(response, oResponse.CacheControl);
-                  response.ResponseNo := 200;
-                  response.contentType := 'text/html; charset=UTF-8';
-                  response.FreeContentStream := true;
-                  response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
-                end
-                else if (oRequest.CommandType = fcmdMetadata) and (oRequest.ResourceName <> '') then
-                begin
-                  cacheResponse(response, oResponse.CacheControl);
-                  response.ResponseNo := 200;
-                  response.contentType := 'text/html; charset=UTF-8';
-                  // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
-                  response.CustomHeaders.Add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
-                  response.FreeContentStream := true;
-                  response.ContentStream := StringToUTF8Stream('OK');
-                end
-                else
-                begin
-                  try
-                    Context := TOperationContext.Create;
                     try
-                      Context.mode := mode;
-                      checkRequestByJs(context, oRequest);
-                      if (oRequest.CommandType = fcmdOperation) then
-                        FWebServer.FGoogle.recordEvent(request.Document, '$'+oRequest.OperationName, oRequest.Session.UserName, request.RemoteIP, request.UserAgent)
-                      else
-                        FWebServer.FGoogle.recordEvent(request.Document, CODES_TFHIRCommandType[oRequest.CommandType], oRequest.Session.UserName, request.RemoteIP, request.UserAgent);
+                      Context := TOperationContext.Create;
+                      try
+                        Context.mode := mode;
+                        checkRequestByJs(context, oRequest);
+                        if (oRequest.CommandType = fcmdOperation) then
+                          FWebServer.FGoogle.recordEvent(request.Document, '$'+oRequest.OperationName, oRequest.Session.UserName, request.RemoteIP, request.UserAgent)
+                        else
+                          FWebServer.FGoogle.recordEvent(request.Document, CODES_TFHIRCommandType[oRequest.CommandType], oRequest.Session.UserName, request.RemoteIP, request.UserAgent);
 
-                      if oRequest.CommandType = fcmdWebUI then
+                        if oRequest.CommandType = fcmdWebUI then
+                        begin
+                          result := 'Web Request';
+                          HandleWebUIRequest(oRequest, oResponse, secure)
+                        end
+                        else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
+                          result := ProcessTaskRequest(Context, oRequest, oResponse)
+                        else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters['_async'] = 'true') then
+                          result := ProcessAsyncRequest(Context, oRequest, oResponse)
+                        else
+                          result := ProcessRequest(Context, oRequest, oResponse);
+                        cache := context.CacheResponse;
+                      finally
+                        Context.Free;
+                      end;
+                    except
+                      on e: EAbort do
                       begin
-                        result := 'Web Request';
-                        HandleWebUIRequest(oRequest, oResponse, secure)
-                      end
-                      else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
-                        result := ProcessTaskRequest(Context, oRequest, oResponse)
-                      else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters['_async'] = 'true') then
-                        result := ProcessAsyncRequest(Context, oRequest, oResponse)
-                      else
-                        result := ProcessRequest(Context, oRequest, oResponse);
-                    finally
-                      Context.Free;
-                    end;
-                  except
-                    on e: EAbort do
-                    begin
-                      if oResponse.HTTPCode < 300 then
+                        if oResponse.HTTPCode < 300 then
+                        begin
+                          recordStack(e);
+                          raise;
+                        end;
+                      end;
+                      on e: exception do
                       begin
                         recordStack(e);
                         raise;
                       end;
                     end;
-                    on e: exception do
-                    begin
-                      recordStack(e);
-                      raise;
-                    end;
+                    cacheResponse(response, oResponse.CacheControl);
+                    FContext.Storage.RecordExchange(oRequest, oResponse, nil);
+                    ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache);
+                    // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
+                    // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
+                    if oResponse.versionId <> '' then
+                      response.ETag := 'W/"' + oResponse.versionId + '"';
+                    response.LastModified := oResponse.lastModifiedDate;
+                    // todo: timezone
+                    response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
+                      '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
+                      'use of the API constitutes agreement to these terms. See [link] for erasure requests');
+                    if oResponse.tags.Count > 0 then
+                      response.CustomHeaders.Add('Category: ' + oResponse.tags.AsHeader);
+                    if oResponse.links.Count > 0 then
+                      response.CustomHeaders.Add('Link: ' + asLinkHeader(oResponse.links));
+                    if oResponse.originalId <> '' then
+                      response.CustomHeaders.Add('X-Original-Location: ' + oResponse.originalId);
+                    if oResponse.Progress <> '' then
+                      response.CustomHeaders.Add('X-Progress: ' + oResponse.Progress);
+                    if oResponse.ContentLocation <> '' then
+                      response.CustomHeaders.Add('Content-Location: ' + oResponse.ContentLocation);
+                    if oResponse.Location <> '' then
+                      response.Location := oResponse.Location;
                   end;
-                  cacheResponse(response, oResponse.CacheControl);
-                  FContext.Storage.RecordExchange(oRequest, oResponse, nil);
-                  ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'));
-                  // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
-                  // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
-                  if oResponse.versionId <> '' then
-                    response.ETag := 'W/"' + oResponse.versionId + '"';
-                  response.LastModified := oResponse.lastModifiedDate;
-                  // todo: timezone
-                  response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
-                    '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
-                    'use of the API constitutes agreement to these terms. See [link] for erasure requests');
-                  if oResponse.tags.Count > 0 then
-                    response.CustomHeaders.Add('Category: ' + oResponse.tags.AsHeader);
-                  if oResponse.links.Count > 0 then
-                    response.CustomHeaders.Add('Link: ' + asLinkHeader(oResponse.links));
-                  if oResponse.originalId <> '' then
-                    response.CustomHeaders.Add('X-Original-Location: ' + oResponse.originalId);
-                  if oResponse.Progress <> '' then
-                    response.CustomHeaders.Add('X-Progress: ' + oResponse.Progress);
-                  if oResponse.ContentLocation <> '' then
-                    response.CustomHeaders.Add('Content-Location: ' + oResponse.ContentLocation);
-                  if oResponse.Location <> '' then
-                    response.Location := oResponse.Location;
-                end;
-                if noErrCode then
-                  response.ResponseNo := 200;
-              except
-                on e: exception do
-                begin
-                  FContext.Storage.RecordExchange(oRequest, oResponse, e);
-                  raise;
+                  if noErrCode then
+                    response.ResponseNo := 200;
+                except
+                  on e: exception do
+                  begin
+                    FContext.Storage.RecordExchange(oRequest, oResponse, e);
+                    raise;
+                  end;
                 end;
               end;
             finally
@@ -2477,7 +2536,7 @@ begin
 end;
 
 Procedure TFhirWebServerEndpoint.ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
-  relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip: boolean);
+  relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean);
 var
   oComp: TFHIRComposer;
   b: TBytes;
@@ -2630,6 +2689,8 @@ begin
       response.ContentStream := stream;
       ownsStream := false;
     end;
+    if (cache) then
+      FCache.recordResponse(request, response);
   finally
     if ownsStream then
       stream.Free;
@@ -3074,7 +3135,6 @@ var
   b: TStringBuilder;
   pol: String;
 begin
-  logt('home page: ' + Session.scopes);
   counts := TStringList.Create;
   try
 
@@ -3117,7 +3177,7 @@ begin
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
           StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', lang), [s]) +
           ' This server defines some <a href="'+FPath+'/local.hts">extensions to the API</a>, and also offers <a href="'+FPath+'/tx">Terminology Services</a> or '+
-            '(or you can browse <a href="'+FPath+'/snomed/doco/">SNOMED-CT</a> or <a href="'+FPath+'/loinc/doco/">LOINC</a> directly)' + #13#10);
+            '(or you can browse <a href="/snomed/doco/">SNOMED-CT</a> or <a href="/loinc/doco/">LOINC</a> directly)' + #13#10);
         if Session.canGetUser and (Session.User <> nil) and not Session.isAnonymous then
         begin
           b.Append('. You can also <a href="'+FPath+'/registerclient.html">Register a client</a>.'+#13#10);
@@ -3797,8 +3857,6 @@ begin
           exit;
       end;
 
-      logt('script: ' + claimed);
-
       s := FWebServer.FSourceProvider.getSource(actual);
       // actions....
       if s.Contains('<!--[%clientregistration%]-->') then
@@ -3999,7 +4057,7 @@ begin
   finally
     b.Free;
   end;
-  logt(doc.documentElement.namespaceURI + ', ' + doc.documentElement.nodeName);
+//  logt(doc.documentElement.namespaceURI + ', ' + doc.documentElement.nodeName);
 
   v := CreateOLEObject('MSXML2.FreeThreadedDOMDocument.6.0');
   src := IUnknown(TVarData(v).VDispatch) as IXMLDOMDocument2;
@@ -4597,6 +4655,11 @@ Begin
   end;
 End;
 
+function TFhirWebServer.TerminologyWebServer: TTerminologyWebServer;
+begin
+  result := EndPoints[0].FTerminologyWebServer;
+end;
+
 function TFhirWebServer.WebDesc: String;
 begin
   if (FActualPort = 0) then
@@ -4709,6 +4772,10 @@ begin
         sp := FSourceProvider;
         if request.Document = '/diagnostics' then
           summ := ReturnDiagnostics(AContext, request, response, false, false)
+        else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+        begin
+          summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
+        end
         {$IFNDEF FHIR3}
         else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
           summ := FPackageServer.serve(request, response)
@@ -4785,6 +4852,10 @@ begin
       begin
         if request.Document = '/diagnostics' then
           summ := ReturnDiagnostics(AContext, request, response, false, false)
+        else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+        begin
+          summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
+        end
         {$IFNDEF FHIR3}
         else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
           summ := FPackageServer.serve(request, response)
@@ -5186,8 +5257,6 @@ procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; respo
 var
   s, n: String;
 begin
-  logt('script: ' + claimed);
-
   s := FSourceProvider.getSource(actual);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
@@ -6457,6 +6526,83 @@ begin
     npm.Free;
   end;
   FRedirect := FServer.FPath+'/package-client.hts';
+end;
+
+{ THTTPCacheManager }
+
+constructor THTTPCacheManager.Create;
+begin
+  inherited;
+  FLock := TFslLock.Create('HTTP.Cache');
+  FCache := TFslMap<TCachedHTTPResponse>.create('HTTP.Cache');
+end;
+
+destructor THTTPCacheManager.Destroy;
+begin
+  FCache.Free;
+  FLock.Free;
+  inherited;
+end;
+
+function THTTPCacheManager.generateKey(req: TIdHTTPRequestInfo): String;
+begin
+  result := req.RawHTTPCommand+'|'+req.Accept+'|'+req.AuthUsername;
+end;
+
+procedure THTTPCacheManager.recordResponse(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  key : String;
+  pos : integer;
+  co : TCachedHTTPResponse;
+begin
+  pos := response.ContentStream.Position;
+  key := generateKey(request);
+  co := TCachedHTTPResponse.Create;
+  try
+    co.ContentType := response.ContentType;
+    co.LoadFromStream(response.ContentStream);
+    FLock.Lock;
+    try
+      FCache.AddOrSetValue(key, co.Link);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    co.Free;
+  end;
+  response.ContentStream.Position := pos;
+end;
+
+function THTTPCacheManager.respond(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): boolean;
+var
+  co : TCachedHTTPResponse;
+begin
+  FLock.Lock;
+  try
+    result := FCache.TryGetValue(generateKey(request), co);
+    if result then
+      co.Link;
+  finally
+    FLock.Unlock;
+  end;
+  if result then
+  begin
+    try
+      response.ContentStream := TMemoryStream.create;
+      co.SaveToStream(response.ContentStream);
+      response.ContentStream.Position := 0;
+      response.ContentType := co.ContentType;
+    finally
+      co.Free;
+    end;
+  end;
+end;
+
+{ TCachedHTTPResponse }
+
+function TCachedHTTPResponse.Link: TCachedHTTPResponse;
+begin
+  result := TCachedHTTPResponse(inherited Link);
 end;
 
 Initialization

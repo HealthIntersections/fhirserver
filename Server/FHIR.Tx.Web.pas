@@ -81,10 +81,10 @@ Type
     function processTranslate(pm : THTTPParameters) : String;
 
     function chooseSnomedRelease() : String;
-    Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    Procedure HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
+    function HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
+    function HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
+    function HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
+    function HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
 //    Procedure BuildCsByName(html : THtmlPublisher; id : String);
 //    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByName(html : THtmlPublisher; id : String);
@@ -98,19 +98,21 @@ Type
     function sortCmByPub(pA, pB : Pointer) : Integer;
     function sortCmBySrc(pA, pB : Pointer) : Integer;
     function sortCmByTgt(pA, pB : Pointer) : Integer;
-    procedure ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
-    procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+    function ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
+    function ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
   public
     constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
-    function HandlesRequest(path : String) : boolean;
-    Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
+    function HandlesRequestVersion(path : String) : boolean;
+    function HandlesRequestNoVersion(path : String) : boolean;
+    function ProcessVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
+    function ProcessNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
   end;
 
 implementation
@@ -138,7 +140,7 @@ begin
     for ss in FServer.CommonTerminologies.Snomed do
     begin
       html.StartTableRow;
-      html.AddTableCellURL(ss.EditionName, FServer.webBase+'/snomed/'+ss.editionId);
+      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId);
       html.AddTableCell(ss.VersionUri);
       html.AddTableCell(ss.VersionDate);
       html.EndTableRow;
@@ -170,32 +172,44 @@ begin
   inherited;
 end;
 
-function TTerminologyWebServer.HandlesRequest(path: String): boolean;
+function TTerminologyWebServer.HandlesRequestVersion(path: String): boolean;
 begin
-  result := path.StartsWith(FServer.webBase+'/tx') or path.StartsWith(FServer.webBase+'/snomed') or path.StartsWith(FServer.webBase+'/loinc') ;
+  result := path.StartsWith(FServer.webBase+'/tx');
 end;
 
-procedure TTerminologyWebServer.Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
+function TTerminologyWebServer.HandlesRequestNoVersion(path: String): boolean;
+begin
+  result := path.StartsWith('/snomed') or path.StartsWith('/loinc') ;
+end;
+
+function TTerminologyWebServer.ProcessVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
 var
   path : string;
 begin
   path := request.Document;
   if path.StartsWith(FServer.webBase+'/tx/form') then
-    HandleTxForm(AContext, request, session, response, secure)
+    result := HandleTxForm(AContext, request, session, response, secure)
   else if path.StartsWith(FServer.webBase+'/tx') then
-    HandleTxRequest(AContext, request, response, session)
-  else if path.StartsWith(FServer.webBase+'/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
-    HandleSnomedRequest(AContext, request, response)
-  else if request.Document.StartsWith(FServer.webBase+'/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
-    HandleLoincRequest(AContext, request, response)
+    result := HandleTxRequest(AContext, request, response, session)
 end;
 
-procedure TTerminologyWebServer.ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : String;
+var
+  path : string;
+begin
+  path := request.Document;
+  if path.StartsWith('/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
+    result := HandleSnomedRequest(AContext, request, response)
+  else if request.Document.StartsWith('/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
+    result := HandleLoincRequest(AContext, request, response)
+end;
+
+function TTerminologyWebServer.ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
 var
   pm: THTTPParameters;
-var
   vars : TFslMap<TFHIRObject>;
 begin
+  result := 'Tx Server Home';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     pm := THTTPParameters.create(request.UnparsedParams);
@@ -240,11 +254,12 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
 var
   cm: TLoadedConceptMap;
   vars : TFslMap<TFHIRObject>;
 begin
+  result := 'Concept Map '+request.Document.Substring(9);
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     cm := FServer.getConceptMapById(request.Document.Substring(9));
@@ -263,11 +278,12 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   vs: TFhirValueSetW;
   vars : TFslMap<TFHIRObject>;
 begin
+  result := 'Value Set '+request.Document.Substring(14);
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     vs := FServer.getValueSetById(request.Document.Substring(14));
@@ -286,11 +302,12 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   cs: TFhirCodeSystemW;
   vars : TFslMap<TFHIRObject>;
 begin
+  result := 'Code System '+request.Document.Substring(16);
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     cs := FServer.getCodeSystemById(request.Document.Substring(16));
@@ -309,14 +326,14 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   html: THtmlPublisher;
   cs: TCodeSystemProvider;
   c: Integer;
-var
   vars : TFslMap<TFHIRObject>;
 begin
+  result := 'Code System List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     html := THtmlPublisher.Create(FWorker.Factory.link);
@@ -354,13 +371,14 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   list: TFslList<TFHIRCodeSystemW>;
   vs: TFhirCodeSystemW;
   vars : TFslMap<TFHIRObject>;
   html : THtmlPublisher;
 begin
+  result := 'Code System List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     list := TFslList<TFHIRCodeSystemW>.create;
@@ -414,7 +432,7 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   mlist: TLoadedConceptMapList;
   i: Integer;
@@ -422,6 +440,7 @@ var
   html : THtmlPublisher;
   cm : TLoadedConceptMap;
 begin
+  result := 'Concept Map List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     mlist := FServer.GetConceptMapList;
@@ -557,13 +576,14 @@ begin
   end;
 end;
 
-procedure TTerminologyWebServer.ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   vs: TFhirValueSetW;
   vars : TFslMap<TFHIRObject>;
   list : TFslList<TFhirValueSetW>;
   html : THtmlPublisher;
 begin
+  result := 'Value Set List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     list := TFslList<TFhirValueSetW>.create;
@@ -633,7 +653,7 @@ end;
 
 
 
-procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
+function TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : String;
 {var
   vs : String;
   vars : TFslMap<TFHIRObject>;
@@ -642,6 +662,7 @@ procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdH
   i : integer;
   }
 begin
+  result := 'Tx Form - Disabled';
 {  vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
     vs := '';
@@ -666,24 +687,24 @@ begin
   end;}
 end;
 
-procedure TTerminologyWebServer.HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
+function TTerminologyWebServer.HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
 begin
   if request.Document = '/tx/valuesets' then
-    ProcessValueSetList(AContext, request, response, session)
+    result := ProcessValueSetList(AContext, request, response, session)
   else if request.Document = '/tx/maps' then
-    ProcessConceptMapList(AContext, request, response, session)
+    result := ProcessConceptMapList(AContext, request, response, session)
   else if request.Document = '/tx/codesystems' then
-    ProcessCodeSystemList(AContext, request, response, session)
+    result := ProcessCodeSystemList(AContext, request, response, session)
   else if request.Document = '/tx/codesystemproviders' then
-    ProcessCodeSystemProviderList(AContext, request, response, session)
+    result := ProcessCodeSystemProviderList(AContext, request, response, session)
   else if request.Document.StartsWith('/tx/valuesets/') then
-    ProcessValueSet(AContext, request, response, session)
+    result := ProcessValueSet(AContext, request, response, session)
   else if request.Document.StartsWith('/tx/codesystems/') then
-    ProcessCodeSystem(AContext, request, response, session)
+    result := ProcessCodeSystem(AContext, request, response, session)
   else if request.Document.StartsWith('/tx/maps/') then
-    ProcessConceptMap(AContext, request, response, session)
+    result := ProcessConceptMap(AContext, request, response, session)
   else
-    ProcessHome(AContext, request, response, session);
+    result := ProcessHome(AContext, request, response, session);
 end;
 
 function TTerminologyWebServer.paramsAsHtml(p: TFhirResourceV): String;
@@ -912,7 +933,7 @@ end;
 //  html.EndList;}
 //end;
 
-procedure TTerminologyWebServer.HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TTerminologyWebServer.HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 var
   code : String;
   pub : TSnomedPublisher;
@@ -923,7 +944,7 @@ var
   pm : THTTPParameters;
   buf : TFslNameBuffer;
 begin
-  if request.Document.StartsWith(FServer.webBase+'/snomed/tool/') then // FHIR build process support
+  if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
@@ -934,11 +955,12 @@ begin
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document '+request.Document+' not found';
-      logt('miss: '+request.Document);
+      result := 'miss: '+request.Document;
     end
     else
     begin
       ss.RecordUse;
+      result := 'Snomed Tool: '+parts[length(parts)-1];
       response.ContentType := 'text/xml';
       try
         response.ContentText := processSnomedForTool(ss, parts[length(parts)-1]);
@@ -952,8 +974,9 @@ begin
       end;
     end;
   end
-  else if request.Document.StartsWith(FServer.webBase+'/snomed/analysis/')  then
+  else if request.Document.StartsWith('/snomed/analysis/')  then
   begin
+    result := 'Snomed Analysis';
     FServer.CommonTerminologies.DefSnomed.RecordUse;
     analysis := TSnomedAnalysis.create(FServer.CommonTerminologies.DefSnomed.Link);
     try
@@ -975,29 +998,30 @@ begin
       analysis.free;
     end;
   end
-  else if request.Document.StartsWith(FServer.webBase+'/snomed/doco') then
+  else if request.Document.StartsWith('/snomed/doco') then
   begin
     response.ContentText := chooseSnomedRelease();
     response.ResponseNo := 200;
+    result := 'Snomed - choose version';
   end
-  else if request.Document.StartsWith(FServer.webBase+'/snomed/') then
+  else if request.Document.StartsWith('/snomed/') then
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
     for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId = parts[3] then
+      if t.EditionId = parts[2] then
         ss := t;
     if ss = nil then
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document '+request.Document+' not found';
-      logt('miss: '+request.Document);
+      result := 'Snomed: miss '+request.Document;
     end
     else
     begin
       ss.RecordUse;
       code := request.UnparsedParams;
-      logt('Snomed Doco ('+ss.EditionName+'): '+code);
+      result := 'Snomed Doco ('+ss.EditionName+'): '+code;
 
       try
         html := THtmlPublisher.Create(FWorker.factory.link);
@@ -1006,7 +1030,7 @@ begin
           html.Version := SERVER_VERSION;
           html.BaseURL := '/snomed/'+ss.EditionId+'/';
           html.Lang := THTTPLanguages.Create(request.AcceptLanguage);
-          pub.PublishDict(code, FServer.webBase+'/snomed/'+ss.EditionId+'/', html);
+          pub.PublishDict(code, '/snomed/'+ss.EditionId+'/', html);
           response.ContentText := html.output;
           response.ResponseNo := 200;
         finally
@@ -1026,11 +1050,11 @@ begin
   begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
-    logt('miss: '+request.Document);
+    result := 'Snomed: miss: '+request.Document;
   end;
 end;
 
-procedure TTerminologyWebServer.HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TTerminologyWebServer.HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : string;
 var
   code, lang, country : String;
   pub : TLoincPublisher;
@@ -1041,10 +1065,11 @@ var
   st : TStringList;
 begin
   FServer.CommonTerminologies.Loinc.RecordUse;
-  if request.Document.StartsWith(FServer.webBase+'/loinc/doco/') then
+  if request.Document.StartsWith('/loinc/doco/') then
   begin
     code := request.UnparsedParams;
-    lang := request.Document.substring(FServer.webBase.Length).Substring(12);
+    lang := request.Document.Substring(12);
+    result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
     if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(THTTPLanguages.create(lang))) then
     begin
       st := TStringList.create;
@@ -1058,7 +1083,7 @@ begin
         html := THtmlPublisher.Create(FWorker.factory.link);
         try
           html.Version := SERVER_VERSION;
-          html.BaseURL := FServer.webBase+'/loinc/doco/';
+          html.BaseURL := '/loinc/doco/';
           html.Lang := THTTPLanguages.create(lang);
           html.Header('LOINC Languages');
           html.StartList();
@@ -1086,15 +1111,15 @@ begin
     end
     else
     begin
-      logt('Loinc Doco: '+code);
+      result := 'Loinc Doco: '+code;
       try
         html := THtmlPublisher.Create(FWorker.factory.link);
         pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, THTTPLanguages.Create(lang));
         try
           html.Version := SERVER_VERSION;
-          html.BaseURL := FServer.webBase+'/loinc/doco/'+lang;
+          html.BaseURL := '/loinc/doco/'+lang;
           html.Lang := THTTPLanguages.Create(Lang);
-          pub.PublishDict(code, FServer.webBase+'/loinc/doco/'+lang, html);
+          pub.PublishDict(code, '/loinc/doco/'+lang, html);
           mem := TMemoryStream.Create;
           response.ContentStream := mem;
           response.FreeContentStream := true;
@@ -1120,7 +1145,7 @@ begin
   begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
-    logt('miss: '+request.Document);
+    result := ('Loinc : miss '+request.Document);
   end;
 end;
 
@@ -1132,7 +1157,6 @@ var
   exp : TSnomedExpression;
   index : cardinal;
 begin
-  logt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
     if ss.ConceptExists(code, index) then

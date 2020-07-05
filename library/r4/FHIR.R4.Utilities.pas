@@ -1246,15 +1246,20 @@ begin
 end;
 
 function gen(coding : TFHIRCoding):String; overload;
+var
+  system : String;
 begin
   if (coding = nil) then
-     result := ''
-  else if (coding.DisplayElement <> nil) then
-    result := coding.Display
-  else if (coding.CodeElement <> nil) then
-    result := coding.Code
+    result := ''
   else
-    result := '';
+  begin
+    system := csName(coding.system);
+    result := system+'#'+coding.code;
+    if (coding.display <> '') then
+      result := result + ': '+coding.display;
+    if (coding.version <> '') then
+      result := result + ' (version '+coding.version+')';
+  end;
 end;
 
 function gen(code : TFhirCodeableConcept):String; overload;
@@ -3903,22 +3908,6 @@ begin
   result := '';
   for i := 0 to useContextList.Count - 1 do
     result := result + gen(useContextList[i]);
-end;
-
-function csName(url : string) : String;
-begin
-  if url.StartsWith('http://hl7.org/fhir/v2') then
-    result := 'V2 '
-  else if url.StartsWith('http://hl7.org/fhir/v3') then
-    result := 'V3 '
-  else if url.StartsWith('http://hl7.org/fhir') then
-    result := 'FHIR '
-  else if url = 'http://snomed.info/sct' then
-    result := 'SCT '
-  else if url = 'http://loinc.org' then
-    result := 'LOINC '
-  else
-    result := 'Other';
 end;
 
 function TFhirValueSetHelper.source: string;

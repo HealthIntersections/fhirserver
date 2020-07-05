@@ -6899,6 +6899,7 @@ constructor TFslStringBuilder.Create;
 begin
   inherited;
   FBuilder := TStringBuilder.Create;
+  FBuilder.Capacity := 2048;
 end;
 
 procedure TFslStringBuilder.CommaAdd(const sStr: String);

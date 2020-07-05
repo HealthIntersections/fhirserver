@@ -56,6 +56,7 @@ Type
     FCallback : TInstallerCallback;
     FMessage : String;
     FMessageDetail: String;
+    FCacheResponse : boolean;
   public
     constructor Create; overload; override;
     constructor Create(mode : TOperationMode; callback : TInstallerCallback; message : String); overload;
@@ -65,6 +66,7 @@ Type
     property callback : TInstallerCallback read FCallback write FCallback;
     property message : String read FMessage write FMessage;
     property MessageDetail : String read FMessageDetail write FMessageDetail;
+    property CacheResponse : boolean read FCacheResponse write FCacheResponse;
 
     procedure progress(i : integer);
   end;
@@ -210,7 +212,7 @@ type
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); virtual;
     Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; virtual;
-    procedure ExecuteMetadata(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
     procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
@@ -614,7 +616,7 @@ begin
         fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
         fcmdSearch : ExecuteSearch(request, response);
         fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-        fcmdMetadata : ExecuteMetadata(request, response);
+        fcmdMetadata : ExecuteMetadata(context, request, response);
         fcmdTransaction :
           begin
           result := 'Transaction';
@@ -651,8 +653,11 @@ begin
   raise EFHIRException.create('This server does not implement the "Batch" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteMetadata(request: TFHIRRequest; response: TFHIRResponse);
+procedure TFHIROperationEngine.ExecuteMetadata(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
+  if (context <> nil) then
+    context.CacheResponse := true;
+
   if not request.Parameters.has('mode') then
     ExecuteCapabilityStatement(request, response, true)
   else if request.Parameters['mode'] = 'full' then
@@ -1223,7 +1228,7 @@ begin
     req.CommandType := fcmdMetadata;
     resp := TFHIRResponse.Create(FContext.link);
     try
-      FEngine.ExecuteMetadata(req, resp);
+      FEngine.ExecuteMetadata(nil, req, resp);
       checkOutcome(resp);
       result := resp.Resource.Link;
     finally

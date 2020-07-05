@@ -43,7 +43,7 @@ Type
 
   THtmlPublisher = class (TFslObject)
   private
-    FBuilder : TStringBuilder;
+    FBuilder : TFslStringBuilder;
     FFactory : TFHIRFactory;
     FBaseURL: String;
     FLang: THTTPLanguages;
@@ -187,7 +187,7 @@ end;
 constructor THtmlPublisher.Create;
 begin
   inherited Create;
-  FBuilder := TStringBuilder.create;
+  FBuilder := TFslStringBuilder.create;
   FFactory := factory;
 end;
 

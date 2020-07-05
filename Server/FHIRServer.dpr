@@ -435,7 +435,10 @@ uses
   FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas';
 
 begin
-  logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
+  if (FileExists('c:\temp')) then
+    logfile := 'c:\temp\fhirserver.log'
+  else
+    logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
   if ParamCount = 0 then
   begin
     filelog := true;

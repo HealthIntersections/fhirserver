@@ -767,7 +767,7 @@ Begin
           CellConceptRef(html, sPrefix, kind, cdDesc);
           CellConceptRef(html, sPrefix, modifier, cdDesc);
           html.AddTableCell(' '+GetRelGroup(Group));
-          html.AddTableCell(FSnomed.getRelationshipValues(Outbounds[i]));
+          html.AddTableCell(''{FSnomed.getRelationshipValues(Outbounds[i])}); // getRelationshipValues is very expensive
           html.EndTableRow;
         end;
       End;
