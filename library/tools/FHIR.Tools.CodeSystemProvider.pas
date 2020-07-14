@@ -636,11 +636,11 @@ begin
   result := nil;
   for p in FCs.CodeSystem.properties.forEnum do
     if (p.code = code) then
-      exit(p);
+      exit(p.link);
   for cs in FCs.Supplements do
     for p in cs.properties.forEnum do
       if (p.code = code) then
-        exit(p);
+        exit(p.link);
 end;
 
 
@@ -781,10 +781,14 @@ begin
       for cp in cc.properties.forEnum do
       begin
         pp := getProperty(cp.code);
-        if (pp <> nil) and hasProp(props, cp.code, true) then
-        begin
-          p := resp.addprop(cp.code);
-          p.value := cp.value.link; // todo: should we check this?
+        try
+          if (pp <> nil) and hasProp(props, cp.code, true) then
+          begin
+            p := resp.addprop(cp.code);
+            p.value := cp.value.link; // todo: should we check this?
+          end;
+        finally
+          pp.Free;
         end;
       end;
   finally
@@ -929,7 +933,7 @@ var
   concepts : TFslList<TFhirCodeSystemConceptW>;
   css : TFhirCodeSystemW;
   cp : TFhirCodeSystemConceptPropertyW;
-  ok : boolean;
+  ok, val : boolean;
   coding : TFHIRCodingW;
 begin
   concepts := TFslList<TFhirCodeSystemConceptW>.create;
@@ -947,8 +951,12 @@ begin
       for cc in concepts do
       begin
         ok := false;
+        val := false;
         for cp in cc.properties.forEnum do
+        begin
           if not ok and (cp.code = pp.code) then
+          begin
+            val := true;
             case pp.type_ of
               cptCode, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal:
                 ok := cp.value.primitiveValue = value;
@@ -962,7 +970,9 @@ begin
                   end;
                 end;
             end;
-        if ok then
+          end;
+        end;
+        if ok or not (val and (pp.type_ = cptBoolean) and (value = 'false')) then
           list.Add(c.Link, 0);
       end;
       iterateConceptsByProperty(c.conceptList, pp, value, list);
@@ -1065,18 +1075,22 @@ begin
   else
   begin
     pp := getProperty(prop);
-    if (pp <> nil) and (op = foEqual)  then
-    begin
-      result := TFhirCodeSystemProviderFilterContext.create;
-      try
-        iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, value, result as TFhirCodeSystemProviderFilterContext);
-        result.link;
-      finally
-        result.Free;
-      end;
-    end
-    else
-      result := nil;
+    try
+      if (pp <> nil) and (op = foEqual)  then
+      begin
+        result := TFhirCodeSystemProviderFilterContext.create;
+        try
+          iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, value, result as TFhirCodeSystemProviderFilterContext);
+          result.link;
+        finally
+          result.Free;
+        end;
+      end
+      else
+        result := nil;
+    finally
+      pp.Free;
+    end;
   end
 end;
 
