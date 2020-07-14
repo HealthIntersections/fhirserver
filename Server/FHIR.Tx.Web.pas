@@ -111,7 +111,9 @@ Type
     destructor Destroy; Override;
     function HandlesRequestVersion(path : String) : boolean;
     function HandlesRequestNoVersion(path : String) : boolean;
+    function HandlesRequestInNoVersion(path: String): boolean;
     function ProcessVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
+    function RedirectToNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
     function ProcessNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
   end;
 
@@ -177,6 +179,11 @@ begin
   result := path.StartsWith(FServer.webBase+'/tx');
 end;
 
+function TTerminologyWebServer.HandlesRequestInNoVersion(path: String): boolean;
+begin
+  result := path.StartsWith(FServer.webBase+'/snomed') or path.StartsWith(FServer.webBase+'/loinc');
+end;
+
 function TTerminologyWebServer.HandlesRequestNoVersion(path: String): boolean;
 begin
   result := path.StartsWith('/snomed') or path.StartsWith('/loinc') ;
@@ -191,6 +198,17 @@ begin
     result := HandleTxForm(AContext, request, session, response, secure)
   else if path.StartsWith(FServer.webBase+'/tx') then
     result := HandleTxRequest(AContext, request, response, session)
+end;
+
+function TTerminologyWebServer.RedirectToNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo; secure: boolean): string;
+var
+  doc : String;
+begin
+  doc := request.Document.Substring(FServer.webBase.Length+1);
+  if request.UnparsedParams <> '' then
+    doc := doc + '?'+request.UnparsedParams;
+  response.Redirect(doc);
+  result := 'Redirect to base';
 end;
 
 function TTerminologyWebServer.ProcessNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : String;
