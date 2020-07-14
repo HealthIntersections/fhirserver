@@ -1003,6 +1003,10 @@ begin
     begin
       result := FTerminologyWebServer.ProcessVersion(AContext, request, Session, response, false)
     end
+    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequestInNoVersion(request.Document) then
+    begin
+      result := FTerminologyWebServer.redirectToNoVersion(AContext, request, Session, response, false)
+    end
     else if request.Document.StartsWith(FPath, false) then
     begin
       result := HandleRequest(AContext, request, response, false, false, FPath, id, Session, nil);
