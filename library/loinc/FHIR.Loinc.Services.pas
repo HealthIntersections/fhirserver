@@ -2468,9 +2468,9 @@ begin
   begin
     holder := TLoincFilterHolder(ctxt);
     if CodeList.FindCode(code, i) and holder.hasChild(lfkConcept, i) then
-      result := TCodeSystemProviderContext(i+1)
+      result := TLoincProviderContext.create(lpckCode, i)
     else if AnswerLists.FindCode(code, i, FDesc) and holder.hasChild(lfkAnswer, i) then
-      result := TCodeSystemProviderContext(CodeList.Count + i+1)
+      result := TLoincProviderContext.create(lpckAnswer, i)
     else
       result := nil;
   end;
