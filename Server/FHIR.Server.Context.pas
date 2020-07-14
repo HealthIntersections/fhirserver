@@ -108,6 +108,7 @@ Type
     procedure SetGlobals(const Value: TFHIRServerSettings);
 
     procedure SetConsentEngine(const Value: TFHIRConsentEngine);
+    procedure SetValidate(const Value: Boolean);
   public
     constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
@@ -141,7 +142,7 @@ Type
     Property SupportTransaction: Boolean read FSupportTransaction write FSupportTransaction;
     Property DoAudit: Boolean read FDoAudit write FDoAudit;
     Property SupportSystemHistory: Boolean read FSupportSystemHistory write FSupportSystemHistory;
-    Property Validate: Boolean read FValidate write FValidate;
+    Property Validate: Boolean read FValidate write SetValidate;
 
     function oid2Uri(oid : String) : String;
     procedure seeNamingSystem(key : integer; ns : TFhirNamingSystemW);
@@ -403,6 +404,13 @@ procedure TFHIRServerContext.SetUserProvider(const Value: TFHIRUserProvider);
 begin
   FUserProvider.Free;
   FUserProvider := Value;
+end;
+
+procedure TFHIRServerContext.SetValidate(const Value: Boolean);
+begin
+  if (Value <> false) then
+    raise Exception.Create('Validation is not currently supported');
+  FValidate := Value;
 end;
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
