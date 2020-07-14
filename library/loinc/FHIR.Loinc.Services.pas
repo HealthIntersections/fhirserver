@@ -319,6 +319,18 @@ Type
   TLoincSubsets = Array [TLoincSubsetId] of Cardinal;
   TLoincPropertyIds = Array [TLoincPropertyType] of Cardinal;
 
+  TLoincProviderContextKind = (lpckCode, lpckPart, lpckAnswer);
+
+  TLoincProviderContext = class (TCodeSystemProviderContext)
+  private
+    FIndex: cardinal;
+    FKind: TLoincProviderContextKind;
+  public
+    constructor create(kind : TLoincProviderContextKind; index : cardinal);
+    property kind : TLoincProviderContextKind read FKind write FKind;
+    property index : cardinal read FIndex write FIndex;
+  end;
+
   TLoincFilterHolderKind = (lfkConcept, lfkAnswer);
 
   TLoincFilterHolder = class (TCodeSystemProviderFilterContext)
@@ -891,6 +903,7 @@ var
   iEntry : Cardinal;
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iCode, iAnswers : cardinal;
+  parent, children, descendants, descendentConcepts, text, concepts, stems : cardinal;
   iFlags : Byte;
   names : TCardinalArray;
   name : Cardinal;
@@ -918,7 +931,12 @@ begin
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
     list.Add(Desc.GetEntry(iDescription, ilang).Trim);
-  end;
+  end
+  else if Entries.FindCode(sCode, iIndex, FDesc) then
+  begin
+    FEntries.GetEntry(iIndex, iCode, text, parent, children, descendants, concepts, descendentConcepts, stems);
+    list.Add(Desc.GetEntry(text, ilang).Trim);
+  end
 end;
 
 
@@ -1870,17 +1888,23 @@ begin
 end;
 
 function TLoincServices.ChildCount(context: TCodeSystemProviderContext): integer;
+var
+  ctxt : TLoincProviderContext;
 begin
+  ctxt := context as TLoincProviderContext;
   // no children in loinc
+
   if context = nil then
     result := TotalCount
+  else if ctxt.kind = lpckPart then
+    result := 0
   else
     result := 0;
 end;
 
 procedure TLOINCServices.Close(ctxt: TCodeSystemProviderContext);
 begin
-  // nothing, because it's actually a pointer to an integer
+  ctxt.Free;
 end;
 
 function TLoincServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -1893,44 +1917,56 @@ end;
 
 function TLoincServices.Code(context: TCodeSystemProviderContext): string;
 var
-  index : cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry, iCode, iOther, iConcepts, iStem, iParent, iChildren, iDescendents, iDescendantConcepts : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   lang : byte;
+  ctxt : TLoincProviderContext;
 begin
-  index := cardinal(context)-1;
-  if index < CodeList.Count then
-    CodeList.GetInformation(index, nil, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
-  else if index < CodeList.Count + AnswerLists.Count then
-  begin
-    FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther);
-    result := Desc.GetEntry(iCode, lang);
-  end
-  else
-  begin
-    FEntries.GetEntry(index - (CodeList.Count + AnswerLists.Count), iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
-    result := Desc.GetEntry(iCode, lang);
-  end
+  ctxt := context as TLoincProviderContext;
+  case ctxt.kind of
+    lpckCode:
+      begin
+      CodeList.GetInformation(ctxt.index, nil, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+      end;
+    lpckPart:
+      begin
+      FEntries.GetEntry(ctxt.index, iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
+      result := Desc.GetEntry(iCode, lang);
+      end;
+    lpckAnswer:
+      begin
+      FAnswerLists.GetEntry(ctxt.index, iCode, iDescription, iOther);
+      result := Desc.GetEntry(iCode, lang);
+      end;
+  end;
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
 var
-  index : cardinal;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
   iEntry, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   ilang : byte;
+  ctxt : TLoincProviderContext;
 begin
-  index := cardinal(context)-1;
-  if index < CodeList.Count then
-    CodeList.GetInformation(index, langsForLang(lang), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
-  else if index < CodeList.Count + AnswerLists.Count then
-    FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther)
-  else
-    FEntries.GetEntry(index - (CodeList.Count + AnswerLists.Count), iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
+  ctxt := context as TLoincProviderContext;
+  case ctxt.kind of
+    lpckCode:
+      begin
+      CodeList.GetInformation(ctxt.index, langsForLang(lang), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
+      end;
+    lpckPart:
+      begin
+      FAnswerLists.GetEntry(ctxt.index, iCode, iDescription, iOther)
+      end;
+    lpckAnswer:
+      begin
+      FEntries.GetEntry(ctxt.index, iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
+      end;
+  end;
   result := Desc.GetEntry(iDescription, ilang);
 end;
 
@@ -2068,11 +2104,14 @@ end;
 function TLoincServices.locate(code: String; var message : String): TCodeSystemProviderContext;
 var
   i : Cardinal;
+  s : TLoincStrings;
 begin
   if CodeList.FindCode(code, i) then
-    result := TCodeSystemProviderContext(i+1)
+    result := TLoincProviderContext.Create(lpckCode, i)
+  else if Entries.FindCode(code, i, FDesc) then
+    result := TLoincProviderContext.Create(lpckPart, i)
   else if AnswerLists.FindCode(code, i, FDesc) then
-    result := TCodeSystemProviderContext(cardinal(CodeList.Count)+ i+1)
+    result := TLoincProviderContext.Create(lpckAnswer, i)
   else
     result := nil;//raise ETerminologyError.create('unable to find '+code+' in '+system);
 end;
@@ -2709,6 +2748,15 @@ begin
         exit;
       end;
   end;
+end;
+
+{ TLoincProviderContext }
+
+constructor TLoincProviderContext.create(kind: TLoincProviderContextKind; index: cardinal);
+begin
+  inherited Create;
+  FKind := kind;
+  FIndex := index;
 end;
 
 End.
