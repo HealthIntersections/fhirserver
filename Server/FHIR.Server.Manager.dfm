@@ -768,12 +768,11 @@ object ServerManagerForm: TServerManagerForm
     Top = 0
     Width = 678
     Height = 444
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     Style = tsButtons
     TabOrder = 1
     StyleElements = [seFont, seClient]
-    ExplicitLeft = 118
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
       object Panel2: TPanel
@@ -2019,10 +2018,10 @@ object ServerManagerForm: TServerManagerForm
         end
         object Label22: TLabel
           Left = 12
-          Top = 106
-          Width = 35
+          Top = 108
+          Width = 23
           Height = 13
-          Caption = 'Version'
+          Caption = 'Date'
         end
         object edtLoincSource: TEdit
           Left = 80
@@ -2051,12 +2050,12 @@ object ServerManagerForm: TServerManagerForm
         end
         object edtLoincDate: TEdit
           Left = 80
-          Top = 104
+          Top = 101
           Width = 584
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
-          TextHint = '2.56'
+          TextHint = '23/04/2020'
         end
       end
     end
