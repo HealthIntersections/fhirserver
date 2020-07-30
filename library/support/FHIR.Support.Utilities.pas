@@ -4119,7 +4119,7 @@ end;
 Function SystemLanguage : String;
 Begin
   {$IFDEF OSX}
-  result := THTTPLanguages.create('en');
+  result := 'en';
   {$ELSE}
   {$IFDEF FPC}
   {$IFDEF MSWINDOWS}
