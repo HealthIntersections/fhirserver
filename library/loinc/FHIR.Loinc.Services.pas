@@ -1910,7 +1910,7 @@ end;
 function TLoincServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
   if (context = nil) then
-    result := TCodeSystemProviderContext(ndx+1) // offset from 0 to avoid ambiguity about nil contxt, and first entry
+    result := TLoincProviderContext.Create(lpckCode, ndx) // offset from 0 to avoid ambiguity about nil contxt, and first entry
   else
     raise ETerminologyError.create('shouldn''t be here');
 end;
