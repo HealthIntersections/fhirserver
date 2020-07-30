@@ -202,9 +202,15 @@ end;
 
 function TTerminologyWebServer.RedirectToNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo; secure: boolean): string;
 var
+  url : String;
   doc : String;
 begin
-  doc := request.Document.Substring(FServer.webBase.Length+1);
+  url := request.Document;
+  while url.contains('snomed/snomed') do  // hack work around for past mistake 
+                                                               
+    url := url.replace('snomed/snomed', 'snomed');
+
+  doc := url.Substring(FServer.webBase.Length);
   if request.UnparsedParams <> '' then
     doc := doc + '?'+request.UnparsedParams;
   response.Redirect(doc);
