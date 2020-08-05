@@ -6457,7 +6457,7 @@ begin
   begin
     pcm := TFHIRPackageManager.Create(false);
     try
-      npm := pcm.loadPackage(id);
+      npm := pcm.loadPackage(id, ver);
       try
         parser := FServer.Context.Factory.makeParser(FServer.Context.ValidatorContext.link, ffJson, THTTPLanguages.Create('en'));
         try
