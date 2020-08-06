@@ -173,7 +173,7 @@ end;
 function TICD10Provider.ChildCount(context: TCodeSystemProviderContext): integer;
 begin
   if context = nil then
-    result := TotalCount
+    result := FRoots.count
   else if not TICD10Node(context).hasChildren then
     result := 0
   else
@@ -277,32 +277,32 @@ end;
 
 function TICD10Provider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.filter');
 end;
 
 function TICD10Provider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.FilterConcept');
 end;
 
 function TICD10Provider.filterLocate(ctxt: TCodeSystemProviderFilterContext;code: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.filterLocate');
 end;
 
 function TICD10Provider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.filterLocate');
 end;
 
 function TICD10Provider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.FilterMore');
 end;
 
 procedure TICD10Provider.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.getCDSInfo');
 end;
 
 function TICD10Provider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -334,7 +334,7 @@ end;
 
 function TICD10Provider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.InFilter');
 end;
 
 function TICD10Provider.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -349,7 +349,7 @@ end;
 
 function TICD10Provider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise ETerminologyError.create('Not implemented');
+  result := false;
 end;
 
 function TICD10Provider.locate(code: String; var message: String): TCodeSystemProviderContext;
@@ -399,7 +399,7 @@ end;
 
 function TICD10Provider.locateIsA(code,parent: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.locateIsA');
 end;
 
 function TICD10Provider.name(context: TCodeSystemProviderContext): String;
@@ -409,7 +409,7 @@ end;
 
 function TICD10Provider.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.prepare');
 end;
 
 procedure TICD10Provider.readHeader(s: String);
@@ -454,7 +454,7 @@ end;
 
 function TICD10Provider.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.searchFilter');
 end;
 
 function TICD10Provider.SpecialEnumeration: String;
@@ -464,12 +464,12 @@ end;
 
 function TICD10Provider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.specialFilter');
 end;
 
 function TICD10Provider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.create('Not implemented');
+  raise ETerminologyError.create('Not implemented: TICD10Provider.subsumesTest');
 end;
 
 function TICD10Provider.system(context: TCodeSystemProviderContext): String;
