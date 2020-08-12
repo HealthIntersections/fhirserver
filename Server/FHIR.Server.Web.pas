@@ -5425,26 +5425,33 @@ begin
           except
           end;
       end;
-        if (not terminated) then
-          try
-            FServer.Settings.MaintenanceThreadStatus := 'Processing Observations';
-            for ep in FServer.FEndPoints do
-              ep.FContext.Storage.ProcessObservations;
-          except
-          end;
-        if (not terminated) then
-          try
-            FServer.Settings.MaintenanceThreadStatus := 'Checking Async Tasks';
-            for ep in FServer.FEndPoints do
-              ep.CheckAsyncTasks;
-          except
-          end;
-        if (not terminated) and (FServer.FTwilioServer <> nil) then
-          try
-            FServer.Settings.MaintenanceThreadStatus := 'Sweeping Twilio';
-            FServer.FTwilioServer.sweep;
-          except
-          end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Processing Observations';
+          for ep in FServer.FEndPoints do
+            ep.FContext.Storage.ProcessObservations;
+        except
+        end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Checking Async Tasks';
+          for ep in FServer.FEndPoints do
+            ep.CheckAsyncTasks;
+        except
+        end;
+      if (not terminated) and (FServer.FTwilioServer <> nil) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Twilio';
+          FServer.FTwilioServer.sweep;
+        except
+        end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Client Cache';
+          for ep in FServer.FEndPoints do
+            ep.Context.ClientCacheManager.sweep;
+        except
+        end;
     until terminated;
     try
       FServer.Settings.MaintenanceThreadStatus := 'dead';

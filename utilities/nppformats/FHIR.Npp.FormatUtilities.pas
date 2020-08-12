@@ -336,7 +336,9 @@ begin
     end;
   end;
   if ok then
+  begin
     MessageBeep(MB_ICONHAND);
+  end;
 end;
 
 procedure TFormatUtilitiesPlugin.FuncJsonCollapse;

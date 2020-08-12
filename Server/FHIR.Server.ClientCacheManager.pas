@@ -136,7 +136,7 @@ begin
           break;
         end;
       end;
-      if (list = nil) then
+      if (f = nil) then
       begin
         f := TClientCacheManagerEntry.Create;
         FList.Add(f);

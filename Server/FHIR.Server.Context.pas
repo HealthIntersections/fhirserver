@@ -336,6 +336,7 @@ begin
   FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
   {$ENDIF}
   FConsentEngine := TFHIRNullConsentEngine.Create(storage.Factory.link);
+  FClientCacheManager := TClientCacheManager.Create;
 
   FMaps := TFslMap<TFHIRStructureMapW>.create('tx.maps');
   if DirectoryExists('c:\temp') then

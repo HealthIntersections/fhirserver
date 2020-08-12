@@ -45,7 +45,7 @@ type
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
-    function processAdditionalResources(manager: TFHIROperationEngine; params : TFHIRParametersW) : TFslList<TFHIRMetadataResourceW>;
+    function processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslList<TFHIRMetadataResourceW>;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     destructor Destroy; override;
@@ -211,6 +211,7 @@ var
   params : TFhirParametersW;
   needSecure : boolean;
   txResources : TFslList<TFHIRMetadataResourceW>;
+  mr : TFHIRMetadataResourceW;
 begin
   result := 'Expand ValueSet';
   try
@@ -222,6 +223,7 @@ begin
         cacheId := '';
         params := makeParams(request);
         vs := nil;
+        txResources := nil;
         try
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
@@ -234,27 +236,43 @@ begin
           else if params.has('url') then
           begin
             url := params.str('url');
-            if (url.startsWith('ValueSet/')) then
-              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure))
-            else if (url.startsWith(request.baseURL+'ValueSet/')) then
-              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9+request.baseURL.Length), request.baseUrl, needSecure))
-            else
+            txResources := processAdditionalResources(manager, nil, params);
+            for mr in txResources do
+              if (mr.url = url) and (mr is TFHIRValueSetW) then
+              begin
+                vs := mr as TFHIRValueSetW;
+                break;
+              end;
+            if (vs = nil) then
             begin
-              vs := FServer.getValueSetByUrl(url);
-              if vs = nil then
-                vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
-              if vs = nil then
-                if not FServer.isKnownValueSet(url, vs) then
-                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['version'], false, needSecure));
+              if (url.startsWith('ValueSet/')) then
+                vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure))
+              else if (url.startsWith(request.baseURL+'ValueSet/')) then
+                vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9+request.baseURL.Length), request.baseUrl, needSecure))
+              else
+              begin
+                vs := FServer.getValueSetByUrl(url);
+                if vs = nil then
+                  vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
+                if vs = nil then
+                  if not FServer.isKnownValueSet(url, vs) then
+                    vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['version'], false, needSecure));
+              end;
             end;
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
           end
           else if params.has('valueSet') then
-            vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV)
+          begin
+            vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
+            txResources := processAdditionalResources(manager, vs, params);
+          end
           else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
-            vs := FFactory.wrapValueSet(request.Resource.Link)
+          begin
+            vs := FFactory.wrapValueSet(request.Resource.Link);
+            txResources := processAdditionalResources(manager, vs, params);
+          end
           else if params.has('context') then
           begin
             id := params.str('context');
@@ -281,26 +299,24 @@ begin
             limit := StrToIntDef(params.str('_limit'), 0);
             if profile.displayLanguage.header = '' then
               profile.displayLanguage := request.Lang;
-            txResources := processAdditionalResources(manager, params);
+            if (txResources = nil) then
+              txResources := processAdditionalResources(manager, nil, params);
+            dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
             try
-              dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
-              try
-                response.HTTPCode := 200;
-                response.Message := 'OK';
-                response.Body := '';
-                response.LastModifiedDate := now;
-                response.Resource := dst.Resource.Link;
-                // response.categories.... no tags to go on this resource
-              finally
-                dst.free;
-              end;
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+              response.Body := '';
+              response.LastModifiedDate := now;
+              response.Resource := dst.Resource.Link;
+              // response.categories.... no tags to go on this resource
             finally
-              txResources.Free;
+              dst.free;
             end;
           finally
             profile.Free;
           end;
         finally
+          txResources.Free;
           vs.free;
           params.Free;
         end;
@@ -358,7 +374,7 @@ function TFhirValueSetValidationOperation.Execute(context : TOperationContext; m
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  cacheId  : String;
+  cacheId, url : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
   abstractOk, implySystem : boolean;
@@ -366,6 +382,7 @@ var
   needSecure : boolean;
   profile : TFhirExpansionParams;
   txResources : TFslList<TFHIRMetadataResourceW>;
+  mr : TFHIRMetadataResourceW;
 begin
   result := 'Validate Code';
   try
@@ -378,6 +395,7 @@ begin
         params := makeParams(request);
         try
           vs := nil;
+          txResources := nil;
           try
             // first, we have to identify the value set.
             if request.Id <> '' then // and it must exist, because of the check above
@@ -387,10 +405,19 @@ begin
             end
             else if params.has('url') then
             begin
-              vs := FServer.getValueSetByUrl(params.str('url'));
+              url := params.str('url');
+              txResources := processAdditionalResources(manager, nil, params);
+              for mr in txResources do
+                if (mr.url = url) and (mr is TFHIRValueSetW) then
+                begin
+                  vs := mr as TFHIRValueSetW;
+                  break;
+                end;
               if vs = nil then
-                if not FServer.isKnownValueSet(params.str('url'), vs) then
-                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', params.str('url'), params.str('version'), false, needSecure));
+                vs := FServer.getValueSetByUrl(url);
+              if vs = nil then
+                if not FServer.isKnownValueSet(url, vs) then
+                  vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, params.str('version'), false, needSecure));
               if vs = nil then
                 raise ETerminologySetup.Create('Unable to resolve value set');
               cacheId := vs.url;
@@ -399,10 +426,14 @@ begin
             begin
               if not (params.obj('valueSet') is TFHIRResourceV) then
                 raise ETerminologyError.create('Error with valueSet parameter');
-              vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV)
+              vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
+              txResources := processAdditionalResources(manager, vs, params);
             end
             else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
-              vs := FFactory.wrapValueSet(request.Resource.Link)
+            begin
+              vs := FFactory.wrapValueSet(request.Resource.Link);
+              txResources := processAdditionalResources(manager, vs, params);
+            end
             else
               vs := nil;
               // raise ETerminologyError.create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
@@ -420,50 +451,48 @@ begin
                 vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
                 FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
               end;
-              txResources := processAdditionalResources(manager, params);
-              try
+              if txResources = nil then
+                txResources := processAdditionalResources(manager, nil, params);
 
-                profile := buildExpansionParams(request, manager, params);
+              profile := buildExpansionParams(request, manager, params);
+              try
+                if profile.displayLanguage.header = '' then
+                  profile.displayLanguage := request.Lang;
                 try
-                  if profile.displayLanguage.header = '' then
-                    profile.displayLanguage := request.Lang;
+                  result := 'Validate Code '+coded.renderText;
+                  pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources);
                   try
-                    result := 'Validate Code '+coded.renderText;
-                    pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources);
+                    response.resource := pout.Resource.link;
+                  finally
+                    pOut.free;
+                  end;
+                except
+                  on e : Exception do
+                  begin
+                    pout := FFactory.wrapParams(ffactory.makeResource('Parameters'));
                     try
                       response.resource := pout.Resource.link;
+                      pout.addParamBool('result', false);
+                      pout.addParamStr('message', e.Message);
+                      pout.addParamStr('cause', 'unknown');
                     finally
-                      pOut.free;
-                    end;
-                  except
-                    on e : Exception do
-                    begin
-                      pout := FFactory.wrapParams(ffactory.makeResource('Parameters'));
-                      try
-                        response.resource := pout.Resource.link;
-                        pout.addParamBool('result', false);
-                        pout.addParamStr('message', e.Message);
-                        pout.addParamStr('cause', 'unknown');
-                      finally
-                        pOut.Free;
-                      end;
+                      pOut.Free;
                     end;
                   end;
-                  response.HTTPCode := 200;
-                  response.Message := 'OK';
-                  response.Body := '';
-                  response.LastModifiedDate := now;
-                finally
-                  profile.free;
                 end;
+                response.HTTPCode := 200;
+                response.Message := 'OK';
+                response.Body := '';
+                response.LastModifiedDate := now;
               finally
-                txResources.Free;
+                profile.free;
               end;
             finally
               coded.Free;
             end;
           finally
             vs.free;
+            txResources.Free;
           end;
         finally
           params.free;
@@ -1090,7 +1119,7 @@ end;
 
 { TFhirTerminologyOperation }
 
-function TFhirTerminologyOperation.processAdditionalResources(manager: TFHIROperationEngine; params: TFHIRParametersW): TFslList<TFHIRMetadataResourceW>;
+function TFhirTerminologyOperation.processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslList<TFHIRMetadataResourceW>;
 var
   p : TFhirParametersParameterW;
   list : TFslList<TFHIRMetadataResourceW>;
@@ -1099,9 +1128,11 @@ begin
   cacheId := '';
   list := TFslList<TFHIRMetadataResourceW>.create;
   try
+    if (mr <> nil) then
+      list.Add(mr.link);
     for p in params.parameterList do
     begin
-      if (p.name = 'cacheId') then
+      if (p.name = 'cache-id') then
       begin
         cacheId := p.valueString;
       end;
