@@ -579,7 +579,7 @@ end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologyTodo.create('TAreaCodeServices.Close');
+  // nothing
 end;
 
 

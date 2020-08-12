@@ -119,9 +119,12 @@ Type
     FOnGetValueSet : TGetValueSetEvent;
     FOnGetCSProvider : TGetProviderEvent;
     FParams : TFHIRExpansionParams;
+    FAdditionalResources : TFslList<TFHIRMetadataResourceW>;
 
+    function findValueSet(url : String) : TFHIRValueSetW;
+    function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>); overload;
     destructor Destroy; override;
   end;
 
@@ -139,7 +142,7 @@ Type
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
     function getName: String;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; id : String); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; id : String); overload;
     destructor Destroy; override;
 
     property id : String read FId;
@@ -181,7 +184,7 @@ Type
     function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     function canonical(system, version: String): String;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getExpansion : TGetExpansionEvent); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; getExpansion : TGetExpansionEvent); overload;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -193,26 +196,81 @@ implementation
 
 { TValueSetWorker }
 
-constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent);
+constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>);
 begin
   Create;
   FFactory := factory;
   FOnGetValueSet := getVS;
   FOnGetCSProvider := getCS;
+  FAdditionalResources := txResources;
 end;
 
 destructor TValueSetWorker.Destroy;
 begin
+  FAdditionalResources.Free;
   FFactory.Free;
   FParams.Free;
   inherited;
 end;
 
+function TValueSetWorker.findCodeSystem(url, version: String; params: TFHIRExpansionParams; nullOk: boolean): TCodeSystemProvider;
+var
+  r : TFHIRMetadataResourceW;
+  cs : TFhirCodeSystemW;
+begin
+  result := nil;
+
+  if FAdditionalResources <> nil then
+  begin
+    for r in FAdditionalResources do
+     if r.url = url then
+     begin
+       cs := r as TFhirCodeSystemW;
+       if (cs.content = cscmComplete) then
+       begin
+         exit(TFhirCodeSystemProvider.Create(FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+       end;
+     end;
+  end;
+  result := FOnGetCSProvider(self, url, version, params, true);
+
+  if (result <> nil) then
+    exit(result);
+
+  if FAdditionalResources <> nil then
+  begin
+    for r in FAdditionalResources do
+     if r.url = url then
+     begin
+       cs := r as TFhirCodeSystemW;
+       exit(TFhirCodeSystemProvider.Create(FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+     end;
+  end;
+  result := FOnGetCSProvider(self, url, version, params, true);
+
+
+  if not nullok then
+    raise ETerminologySetup.create('Unable to provide support for code system '+url);
+end;
+
+function TValueSetWorker.findValueSet(url: String): TFHIRValueSetW;
+var
+  r : TFHIRMetadataResourceW;
+begin
+  if FAdditionalResources <> nil then
+  begin
+    for r in FAdditionalResources do
+     if r.url = url then
+       exit(r.link.link as TFHIRValueSetW);
+  end;
+  result := FOnGetValueSet(self, url);
+end;
+
 { TValueSetChecker }
 
-constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; id : string);
+constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; id : string);
 begin
-  inherited Create(factory, getVs, getCs);
+  inherited Create(factory, getVs, getCs, txResources);
   FId := id;
   FOthers := TFslStringObjectMatch.create;
   FOthers.PreventDuplicates;
@@ -246,7 +304,7 @@ begin
       exit('');
     if vsi.hasFilters then
       exit('');
-    cs := FOnGetCSProvider(self, vsi.system, '', nil, true);
+    cs := findCodeSystem(vsi.system, '', nil, true);
     if (cs = nil) then
       exit('');
     try
@@ -319,11 +377,11 @@ begin
       // not r2:
       for s in FValueSet.imports do
       begin
-        other := FOnGetValueSet(self, s);
+        other := findValueSet(s);
         try
           if other = nil then
             raise ETerminologyError.create('Unable to find value set '+s);
-          checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, other.url);
+          checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FAdditionalResources.link, other.url);
           try
             checker.prepare(other, params);
             FOthers.Add(s, checker.Link);
@@ -356,11 +414,11 @@ begin
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
   for s in cc.valueSets do
   begin
-    other := FOnGetValueSet(self, s);
+    other := findValueSet(s);
     try
       if other = nil then
         raise ETerminologyError.create('Unable to find value set ' + s);
-      checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, other.url);
+      checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FAdditionalResources.link, other.url);
       try
         checker.prepare(other, FParams);
         FOthers.Add(s, checker.Link);
@@ -372,7 +430,7 @@ begin
     end;
   end;
   if not FOthers.ExistsByKey(cc.system) then
-    FOthers.Add(cc.system, FOnGetCSProvider(self, cc.system, cc.version, FParams, true));
+    FOthers.Add(cc.system, findCodeSystem(cc.system, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
   if (cs = nil) and (FParams.valueSetMode <> vsvmNoMembership) then
     raise ETerminologyError.Create('CodeSystem uri '''+cc.system+''' is unknown');
@@ -456,7 +514,7 @@ begin
   {special case:}
   if (FValueSet.url = ANY_CODE_VS) then
   begin
-    cs := FOnGetCSProvider(self, system, version, FParams, true);
+    cs := findCodeSystem(system, version, FParams, true);
     try
       if cs = nil then
       begin
@@ -491,7 +549,7 @@ begin
   else if FNoValueSetExpansion or (FParams.valueSetMode = vsvmNoMembership) then // first can only be true if second is?
   begin
     // anyhow, we ignore the value set (at least for now)
-    cs := FOnGetCSProvider(self, system, version, FParams, true);
+    cs := findCodeSystem(system, version, FParams, true);
     try
       if cs = nil then
       begin
@@ -735,7 +793,7 @@ begin
         end
         else
         begin
-          prov := FOnGetCSProvider(nil, c.system, c.version, FParams, true);
+          prov := findCodeSystem(c.system, c.version, FParams, true);
           try
            if (prov = nil) then
            begin
@@ -1258,9 +1316,9 @@ begin
       result := ccd.value;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getExpansion: TGetExpansionEvent);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; getExpansion: TGetExpansionEvent);
 begin
-  inherited create(factory, getVS, getCS);
+  inherited create(factory, getVS, getCS, txResources);
   FOnGetExpansion := getExpansion;
 end;
 
@@ -1422,7 +1480,7 @@ begin
     begin
       hash := makeImportHash(imports, 0);
       try
-        cs := FOnGetCSProvider(self, cset.system, cset.version, FParams, false);
+        cs := findCodeSystem(cset.system, cset.version, FParams, false);
         try
           if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
           begin
@@ -1660,3 +1718,6 @@ begin
 end;
 
 end.
+
+
+

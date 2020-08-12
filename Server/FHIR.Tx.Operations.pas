@@ -45,6 +45,7 @@ type
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
+    function processAdditionalResources(params : TFHIRParametersW) : TFslList<TFHIRMetadataResourceW>;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     destructor Destroy; override;
@@ -209,6 +210,7 @@ var
   limit, count, offset : integer;
   params : TFhirParametersW;
   needSecure : boolean;
+  txResources : TFslList<TFHIRMetadataResourceW>;
 begin
   result := 'Expand ValueSet';
   try
@@ -279,17 +281,21 @@ begin
             limit := StrToIntDef(params.str('_limit'), 0);
             if profile.displayLanguage.header = '' then
               profile.displayLanguage := request.Lang;
-
-            dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
+            txResources := processAdditionalResources(params);
             try
-              response.HTTPCode := 200;
-              response.Message := 'OK';
-              response.Body := '';
-              response.LastModifiedDate := now;
-              response.Resource := dst.Resource.Link;
-              // response.categories.... no tags to go on this resource
+              dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
+              try
+                response.HTTPCode := 200;
+                response.Message := 'OK';
+                response.Body := '';
+                response.LastModifiedDate := now;
+                response.Resource := dst.Resource.Link;
+                // response.categories.... no tags to go on this resource
+              finally
+                dst.free;
+              end;
             finally
-              dst.free;
+              txResources.Free;
             end;
           finally
             profile.Free;
@@ -359,6 +365,7 @@ var
   params, pout : TFhirParametersW;
   needSecure : boolean;
   profile : TFhirExpansionParams;
+  txResources : TFslList<TFHIRMetadataResourceW>;
 begin
   result := 'Validate Code';
   try
@@ -413,39 +420,44 @@ begin
                 vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
                 FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
               end;
-
-              profile := buildExpansionParams(request, manager, params);
+              txResources := processAdditionalResources(params);
               try
-                if profile.displayLanguage.header = '' then
-                  profile.displayLanguage := request.Lang;
+
+                profile := buildExpansionParams(request, manager, params);
                 try
-                  result := 'Validate Code '+coded.renderText;
-                  pout := FServer.validate(vs, coded, profile, abstractOk, implySystem);
+                  if profile.displayLanguage.header = '' then
+                    profile.displayLanguage := request.Lang;
                   try
-                    response.resource := pout.Resource.link;
-                  finally
-                    pOut.free;
-                  end;
-                except
-                  on e : Exception do
-                  begin
-                    pout := FFactory.wrapParams(ffactory.makeResource('Parameters'));
+                    result := 'Validate Code '+coded.renderText;
+                    pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources);
                     try
                       response.resource := pout.Resource.link;
-                      pout.addParamBool('result', false);
-                      pout.addParamStr('message', e.Message);
-                      pout.addParamStr('cause', 'unknown');
                     finally
-                      pOut.Free;
+                      pOut.free;
+                    end;
+                  except
+                    on e : Exception do
+                    begin
+                      pout := FFactory.wrapParams(ffactory.makeResource('Parameters'));
+                      try
+                        response.resource := pout.Resource.link;
+                        pout.addParamBool('result', false);
+                        pout.addParamStr('message', e.Message);
+                        pout.addParamStr('cause', 'unknown');
+                      finally
+                        pOut.Free;
+                      end;
                     end;
                   end;
+                  response.HTTPCode := 200;
+                  response.Message := 'OK';
+                  response.Body := '';
+                  response.LastModifiedDate := now;
+                finally
+                  profile.free;
                 end;
-                response.HTTPCode := 200;
-                response.Message := 'OK';
-                response.Body := '';
-                response.LastModifiedDate := now;
               finally
-                profile.free;
+                txResources.Free;
               end;
             finally
               coded.Free;
@@ -1077,6 +1089,26 @@ end;
 
 
 { TFhirTerminologyOperation }
+
+function TFhirTerminologyOperation.processAdditionalResources(params: TFHIRParametersW): TFslList<TFHIRMetadataResourceW>;
+var
+  p : TFhirParametersParameterW;
+begin
+  result := TFslList<TFHIRMetadataResourceW>.create;
+  try
+    for p in params.parameterList do
+    begin
+      if (p.name = 'tx-resource') then
+        if p.resource.fhirType = 'ValueSet' then
+          result.Add(FFactory.wrapValueSet(p.resource.link))
+        else if p.resource.fhirType = 'CodeSystem' then
+          result.Add(FFactory.wrapCodeSystem(p.resource.link))
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
 
 procedure TFhirTerminologyOperation.processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW; result : TFHIRExpansionParams);
 var
