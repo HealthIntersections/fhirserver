@@ -41,7 +41,8 @@ uses
   FHIR.Client.Base, FHIR.CdsHooks.Utilities,
   FHIR.Server.Session,
   FHIR.Tools.Indexing, FHIR.Tools.GraphQL,
-  FHIR.Server.XhtmlComp, FHIR.Server.Subscriptions, FHIR.Server.Utilities, FHIR.Server.Constants, FHIR.Server.Indexing, FHIR.Server.BundleBuilder;
+  FHIR.Server.XhtmlComp, FHIR.Server.Subscriptions, FHIR.Server.Utilities, FHIR.Server.Constants, FHIR.Server.Indexing, FHIR.Server.BundleBuilder,
+  FHIR.Server.ClientCacheManager;
 
 Type
   TAsyncTaskStatus = (atsCreated, atsWaiting, atsProcessing, atsComplete, atsAborted, atsTerminated, atsError, atsDeleted);
@@ -191,6 +192,7 @@ type
     FOnPopulateConformance : TPopulateConformanceEvent;
     FLang : THTTPLanguages;
     function factory : TFHIRFactory;
+    function GetClientCacheManager: TClientCacheManager;
   protected
     FServerContext : TFslObject;
     FOperations : TFslList<TFhirOperation>;
@@ -245,6 +247,7 @@ type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
 
+    property clientCacheManager : TClientCacheManager read GetClientCacheManager;
     function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
   end;
 
@@ -1141,6 +1144,11 @@ end;
 function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 begin
   raise EFHIRException.create('This server does not implement the "FindResource" function');
+end;
+
+function TFHIROperationEngine.GetClientCacheManager: TClientCacheManager;
+begin
+  result := TFHIRServerContext(FServerContext).ClientCacheManager;
 end;
 
 function TFHIROperationEngine.GetResourceByKey(key: integer; var needSecure: boolean): TFHIRResourceV;

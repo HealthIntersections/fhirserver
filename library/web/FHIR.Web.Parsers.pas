@@ -78,6 +78,7 @@ type
     function Link : THTTPParameters; overload;
 
     function has(const n: String): Boolean;
+
     property Count : Integer read getItemCount;
     property Value[Name: String]: String Read GetVar; default;
     property Name[index : integer]: String Read VarName;

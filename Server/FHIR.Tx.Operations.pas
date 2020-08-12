@@ -45,7 +45,7 @@ type
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
-    function processAdditionalResources(params : TFHIRParametersW) : TFslList<TFHIRMetadataResourceW>;
+    function processAdditionalResources(manager: TFHIROperationEngine; params : TFHIRParametersW) : TFslList<TFHIRMetadataResourceW>;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     destructor Destroy; override;
@@ -281,7 +281,7 @@ begin
             limit := StrToIntDef(params.str('_limit'), 0);
             if profile.displayLanguage.header = '' then
               profile.displayLanguage := request.Lang;
-            txResources := processAdditionalResources(params);
+            txResources := processAdditionalResources(manager, params);
             try
               dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
               try
@@ -420,7 +420,7 @@ begin
                 vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
                 FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
               end;
-              txResources := processAdditionalResources(params);
+              txResources := processAdditionalResources(manager, params);
               try
 
                 profile := buildExpansionParams(request, manager, params);
@@ -1090,23 +1090,43 @@ end;
 
 { TFhirTerminologyOperation }
 
-function TFhirTerminologyOperation.processAdditionalResources(params: TFHIRParametersW): TFslList<TFHIRMetadataResourceW>;
+function TFhirTerminologyOperation.processAdditionalResources(manager: TFHIROperationEngine; params: TFHIRParametersW): TFslList<TFHIRMetadataResourceW>;
 var
   p : TFhirParametersParameterW;
+  list : TFslList<TFHIRMetadataResourceW>;
+  cacheId : String;
 begin
-  result := TFslList<TFHIRMetadataResourceW>.create;
+  cacheId := '';
+  list := TFslList<TFHIRMetadataResourceW>.create;
   try
     for p in params.parameterList do
     begin
+      if (p.name = 'cacheId') then
+      begin
+        cacheId := p.valueString;
+      end;
       if (p.name = 'tx-resource') then
+      begin
         if p.resource.fhirType = 'ValueSet' then
-          result.Add(FFactory.wrapValueSet(p.resource.link))
+        begin
+          list.Add(FFactory.wrapValueSet(p.resource.link))
+        end
         else if p.resource.fhirType = 'CodeSystem' then
-          result.Add(FFactory.wrapCodeSystem(p.resource.link))
+        begin
+          list.Add(FFactory.wrapCodeSystem(p.resource.link))
+        end;
+      end;
     end;
-    result.link;
+    if cacheId = '' then
+    begin
+      result := list.link
+    end
+    else
+    begin
+      result := manager.clientCacheManager.processResources(cacheId, list);
+    end;
   finally
-    result.free;
+    list.free;
   end;
 end;
 

@@ -82,7 +82,7 @@ Type
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
-    procedure ExecuteMetadata(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
@@ -528,7 +528,7 @@ procedure TTestFHIROperationEngine.CommitTransaction;
 begin
 end;
 
-procedure TTestFHIROperationEngine.ExecuteMetadata(request: TFHIRRequest; response: TFHIRResponse);
+procedure TTestFHIROperationEngine.ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   oConf : TFhirCapabilityStatement;
   c : TFhirContactPoint;

@@ -216,7 +216,8 @@ uses
   FHIR.Database.ODBC.Objects in '..\..\library\database\FHIR.Database.ODBC.Objects.pas',
   FHIR.Database.ODBC.Headers in '..\..\library\database\FHIR.Database.ODBC.Headers.pas',
   FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
-  FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas';
+  FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas',
+  FHIR.Server.ClientCacheManager in '..\..\Server\FHIR.Server.ClientCacheManager.pas';
 
 {$R *.res}
 

@@ -37,7 +37,8 @@ uses
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Validator,
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
-  FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine
+  FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine,
+  FHIR.Server.ClientCacheManager
   {$IFNDEF NO_JS}, FHIR.Server.Javascript {$ENDIF};
 
 Const
@@ -99,6 +100,7 @@ Type
     FGlobals: TFHIRServerSettings;
     FServerFactory : TFHIRServerFactory;
     FConsentEngine: TFHIRConsentEngine;
+    FClientCacheManager: TClientCacheManager;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -109,6 +111,8 @@ Type
 
     procedure SetConsentEngine(const Value: TFHIRConsentEngine);
     procedure SetValidate(const Value: Boolean);
+
+    procedure SetClientCacheManager(const Value: TClientCacheManager);
   public
     constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
@@ -133,6 +137,7 @@ Type
     {$ENDIF}
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
+    property ClientCacheManager: TClientCacheManager read FClientCacheManager write SetClientCacheManager;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -360,6 +365,7 @@ begin
   UserProvider.Free;
   FServerFactory.Free;
   FTerminologyServer.Free;
+  FClientCacheManager.Free;
 
   FValidatorContext.Free;
   FValidator.free;
@@ -417,6 +423,12 @@ procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin
   FJWTServices.Free;
   FJWTServices := Value;
+end;
+
+procedure TFHIRServerContext.SetClientCacheManager(const Value: TClientCacheManager);
+begin
+  FClientCacheManager.Free;
+  FClientCacheManager := Value;
 end;
 
 procedure TFHIRServerContext.SetConsentEngine(const Value: TFHIRConsentEngine);
