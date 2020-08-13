@@ -891,6 +891,7 @@ type
   public
     procedure contact(kind : TContactType; value : String); override;
     procedure system(url : String); override;
+    procedure addExpansionParameter(code, doco : String); override;
   end;
 
   TFHIRTestScript5 = class (TFHIRTestScriptW)
@@ -4623,6 +4624,17 @@ begin
 end;
 
 { TFhirTerminologyCapabilities5 }
+
+procedure TFhirTerminologyCapabilities5.addExpansionParameter(code, doco: String);
+begin
+  if (tc.expansion = nil) then
+    tc.expansion := TFhirTerminologyCapabilitiesExpansion.Create;
+  with tc.expansion.parameterList.Append do
+  begin
+    name := code;
+    documentation := doco;
+  end;
+end;
 
 procedure TFhirTerminologyCapabilities5.contact(kind: TContactType; value: String);
 var

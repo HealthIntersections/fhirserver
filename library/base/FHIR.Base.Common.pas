@@ -1196,6 +1196,7 @@ type
 
     procedure contact(kind : TContactType; value : String); virtual; abstract;
     procedure system(url : String); virtual; abstract;
+    procedure addExpansionParameter(code, doco : String); virtual; abstract;
   end;
 
   TFhirConsentProvisionAction = (cpaRead, capStore, cpaChange);

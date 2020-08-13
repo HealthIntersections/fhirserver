@@ -909,6 +909,7 @@ type
   public
     procedure contact(kind : TContactType; value : String); override;
     procedure system(url : String); override;
+    procedure addExpansionParameter(code, doco : String); override;
   end;
 
   TFHIRConsent3 = class (TFHIRConsentW)
@@ -4940,6 +4941,11 @@ end;
 procedure TFhirTerminologyCapabilities3.system(url: String);
 begin
   (FRes as TFhirParameters).AddParameter('system', TFhirUri.create(url));
+end;
+
+procedure TFhirTerminologyCapabilities3.addExpansionParameter(code, doco : String);
+begin
+  (FRes as TFhirParameters).AddParameter('expansion.parameter', TFhirCode.create(code));
 end;
 
 { TFHIRPeriod3 }
