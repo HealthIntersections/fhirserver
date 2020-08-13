@@ -3831,7 +3831,6 @@ begin
       begin
         dest := resp.addEntry;
         try
-          write('.');
           if (resp.type_ = btBatch) and (src.requestMethod = '') then
             raise EFHIRException.create('No request details');
           if (src.requestMethod = '') then
