@@ -1977,7 +1977,6 @@ end;
 
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
-  index : cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
@@ -1990,12 +1989,13 @@ var
   i : integer;
   p : TFHIRLookupOpRespPropertyW;
   {$ENDIF}
+  ctx : TLoincProviderContext;
 begin
   langs := langsForLang(lang);
-  index := cardinal(ctxt)-1;
-  if index < CodeList.Count then
+  ctx := ctxt as TLoincProviderContext;
+  if ctx.FKind = lpckCode then
   begin
-    CodeList.GetInformation(index, langs, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(ctx.FIndex, langs, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 
   {$IFNDEF FHIR2}
     if hasProp(props, 'COMPONENT', true) and (iComponent <> 0) Then
