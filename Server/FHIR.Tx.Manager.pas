@@ -39,7 +39,7 @@ uses
   FHIR.Tools.CodeSystemProvider, FHIR.Tools.ValueSets,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR,
   FHIR.Tx.Uri, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState, FHIR.Tx.Iso4217,
-  FHIR.Tx.MimeTypes, FHIR.Tx.Lang, FHIR.Support.Logging, FHIR.Tx.NDC,
+  FHIR.Tx.MimeTypes, FHIR.Tx.Lang, FHIR.Support.Logging, FHIR.Tx.NDC, FHIR.Tx.HGVS,
   YuStemmer,
   FHIR.Server.Utilities, FHIR.Server.Ini;
 
@@ -1814,6 +1814,7 @@ begin
   add(TMimeTypeCodeServices.Create).free;
   add(TCountryCodeServices.Create).free;
   add(TUSStateServices.Create).free;
+  add(THGVSProvider.Create).free;
 
   for s in ini.terminologies.Keys do
   begin

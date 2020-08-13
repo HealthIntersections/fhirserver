@@ -529,6 +529,7 @@
         </DCCReference>
         <DCCReference Include="FHIR.Server.WebBase.pas"/>
         <DCCReference Include="FHIR.Server.ClientCacheManager.pas"/>
+        <DCCReference Include="FHIR.Tx.HGVS.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

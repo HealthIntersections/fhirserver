@@ -433,7 +433,8 @@ uses
   FHIR.Ui.WorkerTask in '..\library\ui\FHIR.Ui.WorkerTask.pas' {WorkingForm},
   FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm},
   FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas',
-  FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas';
+  FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
+  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
 
 begin
   if (FileExists('c:\temp')) then
