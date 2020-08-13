@@ -596,6 +596,8 @@ type
   TFHIRValueSetW = class;
 
   TFHIRMetadataResourceW = class (TFHIRXVersionResourceWrapper)
+  private
+    function GetVUrl: String;
   protected
     function getURL: String; virtual; abstract;
     function getName: String; virtual; abstract;
@@ -618,6 +620,7 @@ type
     property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
     property version : String read GetVersion write SetVersion;
+    property vurl : String read GetVUrl;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
     property date : TFslDateTime read GetDate write SetDate;
@@ -1927,6 +1930,13 @@ end;
 
 
 { TFHIRMetadataResourceW }
+
+function TFHIRMetadataResourceW.GetVUrl: String;
+begin
+  result := url;
+  if version <> '' then
+    result := result + '|'+version;
+end;
 
 function TFHIRMetadataResourceW.link: TFHIRMetadataResourceW;
 begin
