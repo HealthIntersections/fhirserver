@@ -218,19 +218,24 @@ var
   r : TFHIRMetadataResourceW;
   cs : TFhirCodeSystemW;
 begin
+  if (url = '') then
+    exit(nil);
+
   result := nil;
 
   if FAdditionalResources <> nil then
   begin
     for r in FAdditionalResources do
-     if r.url = url then
-     begin
-       cs := r as TFhirCodeSystemW;
-       if (cs.content = cscmComplete) then
-       begin
-         exit(TFhirCodeSystemProvider.Create(FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
-       end;
-     end;
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      begin
+        if not (r is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
+        cs := r as TFhirCodeSystemW;
+        if (cs.content = cscmComplete) then
+        begin
+          exit(TFhirCodeSystemProvider.Create(FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+        end;
+      end;
   end;
   result := FOnGetCSProvider(self, url, version, params, true);
 
@@ -240,14 +245,15 @@ begin
   if FAdditionalResources <> nil then
   begin
     for r in FAdditionalResources do
-     if r.url = url then
-     begin
-       cs := r as TFhirCodeSystemW;
-       exit(TFhirCodeSystemProvider.Create(FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
-     end;
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      begin
+        if not (r is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
+        cs := r as TFhirCodeSystemW;
+        exit(TFhirCodeSystemProvider.Create(FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+      end;
   end;
   result := FOnGetCSProvider(self, url, version, params, true);
-
 
   if not nullok then
     raise ETerminologySetup.create('Unable to provide support for code system '+url);
@@ -257,11 +263,18 @@ function TValueSetWorker.findValueSet(url: String): TFHIRValueSetW;
 var
   r : TFHIRMetadataResourceW;
 begin
+  if (url = '') then
+    exit(nil);
+
   if FAdditionalResources <> nil then
   begin
     for r in FAdditionalResources do
-     if r.url = url then
-       exit(r.link.link as TFHIRValueSetW);
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      begin
+        if not (r is TFHIRValueSetW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.fhirType);
+        exit(r.link as TFHIRValueSetW);
+      end;
   end;
   result := FOnGetValueSet(self, url);
 end;
