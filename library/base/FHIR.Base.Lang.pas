@@ -264,8 +264,7 @@ end;
 
 constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; const lang : THTTPLanguages);
 begin
-  inherited Create(GetFhirMessage(sMessage, lang));
-
+  inherited Create(GetFhirMessage(sMessage, lang, sMessage));
   FContext := sContext;
   FStatus := aStatus;
   FCode := code;

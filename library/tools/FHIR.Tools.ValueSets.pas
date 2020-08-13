@@ -836,9 +836,9 @@ begin
       if (not ok) then
       begin
         if FValueSet.name = '' then
-          msg(Summary(code) +' valid')
+          msg(Summary(code) +'valid')
         else
-          msg(Summary(code) +' valid in the value set '+FValueSet.name);
+          msg(Summary(code) +'valid in the value set '''+FValueSet.name+'''');
         if cause = itNull then
           cause := itUnknown;
       end;
