@@ -2438,7 +2438,7 @@ end;
 
 function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TCodeSystemProviderContext(TLoincFilterHolder(ctxt).FChildren[TLoincFilterHolder(ctxt).FIndex-1]+1);
+  result := TLoincProviderContext.create(lpckCode, TLoincFilterHolder(ctxt).FChildren[TLoincFilterHolder(ctxt).FIndex-1]);
 end;
 
 function TLoincServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
