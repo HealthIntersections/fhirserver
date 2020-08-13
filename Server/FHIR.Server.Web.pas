@@ -104,6 +104,8 @@ Uses
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
+  PLAIN_KEEP_ALIVE = true;
+  SECURE_KEEP_ALIVE = false;
 
 Type
   ERestfulAuthenticationNeeded = class(ERestfulException)
@@ -4589,7 +4591,7 @@ Begin
     FPlainServer.ServerSoftware := 'Health Intersections FHIR Server';
     FPlainServer.ParseParams := false;
     FPlainServer.DefaultPort := FActualPort;
-    FPlainServer.KeepAlive := false;
+    FPlainServer.KeepAlive := PLAIN_KEEP_ALIVE;
     FPlainServer.OnCreatePostStream := CreatePostStream;
     FPlainServer.OnCommandGet := PlainRequest;
     FPlainServer.OnCommandOther := PlainRequest;
@@ -4612,7 +4614,7 @@ Begin
     FSSLServer.ServerSoftware := 'Health Intersections FHIR Server';
     FSSLServer.ParseParams := false;
     FSSLServer.DefaultPort := FActualSSLPort;
-    FSSLServer.KeepAlive := false;
+    FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
@@ -4805,7 +4807,7 @@ begin
     logResponse(id, response);
     t := GetTickCount - t;
     logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
-    response.CloseConnection := true;
+    response.CloseConnection := not PLAIN_KEEP_ALIVE;
   finally
     InterlockedDecrement(GCounterWebRequests);
     MarkExit(AContext);
@@ -4892,6 +4894,7 @@ begin
 //    if GService <> nil then
 //      logt(GService.ThreadStatus);
     {$ENDIF}
+    response.CloseConnection := not SECURE_KEEP_ALIVE;
   finally
     InterlockedDecrement(GCounterWebRequests);
     MarkExit(AContext);
