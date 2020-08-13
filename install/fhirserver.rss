@@ -3,11 +3,95 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.342 2020-08-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.342.exe</link>
+			<description>2020-08-13 (v1.0.342): FIx bugs in LOINC server</description>
+		</item>
+<item><title>FHIRServer release 1.0.341 2020-08-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.341.exe</link>
+			<description>2020-08-13 (v1.0.341): fix for bugs in caching for client provided terminology resources</description>
+		</item>
+		<item><title>FHIRServer release 1.0.340 2020-08-12</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.340.exe</link>
+			<description>2020-08-12 (v1.0.340): caching for client provided terminology reosurces</description>
+		</item>
+		<item><title>FHIRServer release 1.0.339 2020-08-12</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.339.exe</link>
+			<description>2020-08-12 (v1.0.339): pass dependencies to $expand and $validate-code</description>
+		</item>
+		<item><title>FHIRServer release 1.0.338 2020-08-06</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.338.exe</link>
+			<description>2020-08-06 (v1.0.338): Fix bugs in ICD10 expansion</description>
+		</item>
+		<item><title>FHIRServer release 1.0.337 2020-08-05</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.337.exe</link>
+			<description>2020-08-05 (v1.0.337): fix bug reloading package</description>
+		</item>
+		<item><title>FHIRServer release 1.0.336 2020-07-30</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.336.exe</link>
+			<description>2020-07-30 (v1.0.336): fix bug in LOINC value set expansion</description>
+		</item>
+		<item><title>FHIRServer release 1.0.335 2020-07-14</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.335.exe</link>
+			<description>2020-07-14 (v1.0.335): fix handling of boolena filters in value sets + fix LOINC bug</description>
+		</item>
+		<item><title>FHIRServer release 1.0.334 2020-07-14</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.334.exe</link>
+			<description>2020-07-14 (v1.0.334): fix LOINC part code bugs</description>
+		</item>
+		<item><title>FHIRServer release 1.0.333 2020-07-05</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.333.exe</link>
+			<description>2020-07-05 (v1.0.333): Performance improvements for tx.fhir.org</description>
+		</item>
+		<item><title>FHIRServer release 1.0.332 2020-07-03</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.332.exe</link>
+			<description>2020-07-03 (v1.0.332): Fix USPS coding system, and fix bug in client registration</description>
+		</item>
+		<item><title>FHIRServer release 1.0.331 2020-06-25</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.331.exe</link>
+			<description>2020-06-25 (v1.0.331): Fix logging output and Snomed error handling</description>
+		</item>
+		<item><title>FHIRServer release 1.0.330 2020-05-14</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.330.exe</link>
+			<description>2020-05-14 (v1.0.330): fix for launch context nin smart app launch</description>
+		</item>
+		<item><title>FHIRServer release 1.0.329 2020-05-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.329.exe</link>
+			<description>2020-05-13 (v1.0.329): fix bug loading packages</description>
+		</item>
+		<item><title>FHIRServer release 1.0.328 2020-05-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.328.exe</link>
+			<description>2020-05-13 (v1.0.328): fix bug loading code systems</description>
+		</item>
+		<item><title>FHIRServer release 1.0.327 2020-05-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.327.exe</link>
+			<description>2020-05-13 (v1.0.327): fix package handling and add package loading through the Web UI</description>
+		</item>
+		<item><title>FHIRServer release 1.0.326 2020-04-28</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.326.exe</link>
+			<description>2020-04-28 (v1.0.326): tx server fixes</description>
+		</item>
+		<item><title>FHIRServer release 1.0.325 2020-04-20</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.325.exe</link>
+			<description>2020-04-20 (v1.0.325): fix bug in package server + add web interface</description>
+		</item>
+		<item><title>FHIRServer release 1.0.324 2020-04-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.324.exe</link>
+			<description>2020-04-16 (v1.0.324): Fix access violation when deleting resources</description>
+		</item>
+		<item><title>FHIRServer release 1.0.323 2020-04-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.323.exe</link>
+			<description>2020-04-16 (v1.0.323): fix bug in package server</description>
+		</item>
+		<item><title>FHIRServer release 1.0.322 2020-04-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.322.exe</link>
+			<description>2020-04-16 (v1.0.322): fix bug doing expand</description>
+		</item>
 		<item><title>FHIRServer release 1.0.308 2020-01-20</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.308.exe</link>
 			<description>2020-01-20 (v1.0.308): debugging release</description>
 		</item>
-<item><title>FHIRServer release 1.0.307 2020-01-20</title>
+		<item><title>FHIRServer release 1.0.307 2020-01-20</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.307.exe</link>
 			<description>2020-01-20 (v1.0.307): fix snomed version loading bug</description>
 		</item>

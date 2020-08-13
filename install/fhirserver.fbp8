@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix bug in server internal cache"
+        as.returnvalue = "fix bug doing expand"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -177,6 +177,7 @@ begin
           delphiversion = Delphi10Tokyo
           description = "Compile the Server Tests"
           enabled = false
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -201,11 +202,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\tests\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -331,7 +335,8 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -355,11 +360,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\install\\helper\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -460,8 +468,9 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
           description = "Compile the Debug Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -486,11 +495,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -619,8 +631,9 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
           description = "Compile the Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -645,11 +658,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -801,8 +817,9 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
           description = "Compile the Debug Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -827,11 +844,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -960,8 +980,9 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
           description = "Compile the Server (DSTU4)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -986,11 +1007,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -1187,22 +1211,29 @@ begin
         id = {10259440-4D8D-497E-8521-A9AF3BB6ADED}
         action.ftp.connect
         begin
+          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+          allowselfsignedcertificate = false
           connecttimeoutinsec = 0
           cookie = q3B4xMWDXfAo74OHdw\=\=
           detailedlogging = false
           enablekeepalives = false
+          encryptdatachannel = false
           ftpconnectionname = HealthIntersections2
           ftphost = 27.123.25.1
           ftpport = 21
           id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+          logsslnegotiation = false
           passive = true
           proxyport = 0
           proxytype = fpcmNone
+          tlsmode = ExplicitTLS
           transfertype = ftBinary
+          useepsv = false
           useglobalopt = false
           usehost = true
           useproxy = false
           userid = healthi3
+          usessl = false
         end
         action.ftp.upload.file
         begin
