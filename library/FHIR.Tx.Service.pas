@@ -40,6 +40,7 @@ uses
 
 const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
+  ALL_CODE_CS = 'http://hl7.org/fhir/CodeSystem/@all';
 
 Type
 

@@ -1520,6 +1520,8 @@ begin
               if cs.isNotClosed(filter) then
                 if cs.SpecialEnumeration <> '' then
                   raise ETooCostly.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+                else  if (cs.system(nil) = ALL_CODE_CS) then
+                  raise ETooCostly.create('Cannot filter across all code Systems known to the server')
                 else
                   raise ETooCostly.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly');
 

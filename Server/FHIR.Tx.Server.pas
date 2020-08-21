@@ -414,7 +414,7 @@ begin
     result.status := psActive;
     inc := result.addInclude;
     try
-      inc.system := ANY_CODE_VS;
+      inc.system := ALL_CODE_CS;
     finally
       inc.Free;
     end;
