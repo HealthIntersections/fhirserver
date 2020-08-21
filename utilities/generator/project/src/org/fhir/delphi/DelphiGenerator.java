@@ -5,24 +5,19 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.fhir.delphi.VersionConvertorTranslator.ClassInfo;
 import org.hl7.fhir.dstu2.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.OperationDefinition;
 import org.hl7.fhir.dstu3.model.OperationDefinition.OperationDefinitionParameterComponent;
 import org.hl7.fhir.dstu3.model.OperationDefinition.OperationParameterUse;
-import org.hl7.fhir.dstu3.model.StructureDefinition;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.TextFile;
 import org.hl7.fhir.utilities.Utilities;
@@ -454,7 +449,7 @@ public class DelphiGenerator {
             params.append("    for "+v+" in F"+Utilities.capitalize(pn)+"List do\r\n");
             create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as TFhir"+Utilities.capitalize(p.getType())+rId+").value);{ob.1}\r\n");
             params.append("      result.AddParameter('"+p.getName()+"', TFhir"+Utilities.capitalize(p.getType())+".create("+v+"));\r\n");
-            screate.append("  for s in params.getVar('"+p.getName()+"').Split([';']) do\r\n");
+            screate.append("  for s in params['"+p.getName()+"'].Split([';']) do\r\n");
             screate.append("    F"+Utilities.capitalize(pn)+"List.add(s); \r\n");
             usesS = true;
 
@@ -475,7 +470,7 @@ public class DelphiGenerator {
             } else if (isPrimitive(p.getType())) {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add(p.value.Link);{c}\r\n");
               params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
-              screate.append("  !F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false); - 3\r\n");
+              screate.append("  !F"+Utilities.capitalize(pn)+" := StrToBoolDef(params['"+p.getName()+"'], false); - 3\r\n");
             } else if (complex) {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add("+pt+".create(p));{a}\r\n");
               params.append("      result.AddParameter("+v+".asParams('"+p.getName()+"'));\r\n");
@@ -522,13 +517,13 @@ public class DelphiGenerator {
             params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType())+rId+".create(F"+Utilities.capitalize(pn)+"));{oz.5f}\r\n");
             if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false);\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params['"+p.getName()+"'], false);\r\n");
             } else if (pt.equals("TDateTimeEx")) {
               create.append("  F"+Utilities.capitalize(pn)+" := TDateTimeEx.fromXml(params.str['"+p.getName()+"']);\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := TDateTimeEx.fromXml(params.getVar('"+p.getName()+"'));\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := TDateTimeEx.fromXml(params['"+p.getName()+"']);\r\n");
             } else {
               create.append("  F"+Utilities.capitalize(pn)+" := params.str['"+p.getName()+"'];\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := params.getVar('"+p.getName()+"');\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := params['"+p.getName()+"'];\r\n");
             }
           }
         }
@@ -560,7 +555,7 @@ public class DelphiGenerator {
               "    constructor Create; overload; override;\r\n"+
               "    destructor Destroy; override;\r\n"+
               "    procedure load(params : TFHIRParameters"+rId+"); overload; override;\r\n"+
-              "    procedure load(params : TParseMap); overload; override;\r\n"+
+              "    procedure load(params : THTTPParameters); overload; override;\r\n"+
               "    function asParams : TFHIRParameters"+rId+"; override;\r\n"+
               properties.toString()+
           "  end;\r\n");
@@ -585,7 +580,7 @@ public class DelphiGenerator {
           create.toString()+
           "  loadExtensions(params);\r\n"+
           "end;\r\n");
-      defCodeOp.classImpls.add("procedure TFHIR"+name+"Op"+suffix+rId+".load(params : TParseMap);\r\n"+
+      defCodeOp.classImpls.add("procedure TFHIR"+name+"Op"+suffix+rId+".load(params : THTTPParameters);\r\n"+
           (usesS ? "var\r\n  s : String;\r\n" : "")+
           "begin\r\n"+
           screate.toString()+

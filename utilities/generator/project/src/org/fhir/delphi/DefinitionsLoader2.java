@@ -1,19 +1,12 @@
 package org.fhir.delphi;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hl7.fhir.convertors.VersionConvertor_10_30;
-import org.hl7.fhir.convertors.VersionConvertor_10_40;
-import org.hl7.fhir.convertors.VersionConvertor_30_40;
 import org.hl7.fhir.convertors.conv10_30.OperationDefinition10_30;
 import org.hl7.fhir.dstu2.formats.JsonParser;
-import org.hl7.fhir.dstu2.formats.XmlParser;
-import org.hl7.fhir.dstu2.model.Bundle;
-import org.hl7.fhir.dstu2.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu2.model.Conformance;
 import org.hl7.fhir.dstu2.model.OperationDefinition;
 import org.hl7.fhir.dstu2.model.Resource;
@@ -22,16 +15,15 @@ import org.hl7.fhir.dstu2.model.StructureDefinition;
 import org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.dstu2.model.ValueSet;
 import org.hl7.fhir.dstu2.utils.ToolingExtensions;
-import org.hl7.fhir.r4.model.CompartmentDefinition;
 import org.hl7.fhir.utilities.Utilities;
+import org.hl7.fhir.utilities.cache.FilesystemPackageCacheManager;
 import org.hl7.fhir.utilities.cache.NpmPackage;
-import org.hl7.fhir.utilities.cache.PackageCacheManager;
 import org.hl7.fhir.utilities.cache.ToolsVersion;
 
 public class DefinitionsLoader2 {
 
   public Definitions loadDefinitions(String ver) throws Exception {
-    PackageCacheManager pcm = new PackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
+    FilesystemPackageCacheManager pcm = new FilesystemPackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
     NpmPackage npm = pcm.loadPackage("hl7.fhir.core.gen", ver);
     
     List<StructureDefinition> sdl = new ArrayList<>();

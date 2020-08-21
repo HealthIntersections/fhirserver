@@ -111,7 +111,7 @@ public class OperationsGenerator extends BaseGenerator {
             params.append("    for "+v+" in F"+Utilities.capitalize(pn)+"List do\r\n");
             create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as TFhir"+Utilities.capitalize(p.getType().toCode())+").value);"+marker()+"\r\n");
             params.append("      result.AddParameter('"+p.getName()+"', TFhir"+Utilities.capitalize(p.getType().toCode())+".create("+v+"));\r\n");
-            screate.append("  for s in params.getVar('"+p.getName()+"').Split([';']) do\r\n");
+            screate.append("  for s in params['"+p.getName()+"'].Split([';']) do\r\n");
             screate.append("    F"+Utilities.capitalize(pn)+"List.add(s); \r\n");
             usesS = true;
 
@@ -132,7 +132,7 @@ public class OperationsGenerator extends BaseGenerator {
             } else if (isPrimitive(p.getType())) {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add(p.value.Link);"+marker()+"\r\n");
               params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
-              screate.append("  !F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false); - 3\r\n");
+              screate.append("  !F"+Utilities.capitalize(pn)+" := StrToBoolDef(params['"+p.getName()+"'], false); - 3\r\n");
             } else if (complex) {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add("+pt+".create(p));"+marker()+"\r\n");
               params.append("      result.AddParameter("+v+".asParams('"+p.getName()+"'));\r\n");
@@ -185,13 +185,13 @@ public class OperationsGenerator extends BaseGenerator {
             params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
             if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false);\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params['"+p.getName()+"'], false);\r\n");
             } else if (pt.equals("TFslDateTime")) {
               create.append("  F"+Utilities.capitalize(pn)+" := TFslDateTime.fromXml(params.str['"+p.getName()+"']);\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := TFslDateTime.fromXml(params.getVar('"+p.getName()+"'));\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := TFslDateTime.fromXml(params['"+p.getName()+"']);\r\n");
             } else {
               create.append("  F"+Utilities.capitalize(pn)+" := params.str['"+p.getName()+"'];\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := params.getVar('"+p.getName()+"');\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := params['"+p.getName()+"'];\r\n");
             }
           }
         }
@@ -223,7 +223,7 @@ public class OperationsGenerator extends BaseGenerator {
               "    constructor Create; overload; override;\r\n"+
               "    destructor Destroy; override;\r\n"+
               "    procedure load(params : TFHIRParameters"+"); overload; override;\r\n"+
-              "    procedure load(params : TParseMap); overload; override;\r\n"+
+              "    procedure load(params : THTTPParameters); overload; override;\r\n"+
               "    function asParams : TFHIRParameters"+"; override;\r\n"+
               properties.toString()+
           "  end;\r\n");
@@ -248,7 +248,7 @@ public class OperationsGenerator extends BaseGenerator {
           create.toString()+
           "  loadExtensions(params);\r\n"+
           "end;\r\n");
-      o2.append("procedure TFHIR"+name+"Op"+suffix+".load(params : TParseMap);\r\n"+
+      o2.append("procedure TFHIR"+name+"Op"+suffix+".load(params : THTTPParameters);\r\n"+
           (usesS ? "var\r\n  s : String;\r\n" : "")+
           "begin\r\n"+
           screate.toString()+

@@ -26,7 +26,7 @@ import org.hl7.fhir.r5.model.StructureDefinition.TypeDerivationRule;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.cache.NpmPackage;
-import org.hl7.fhir.utilities.cache.PackageCacheManager;
+import org.hl7.fhir.utilities.cache.FilesystemPackageCacheManager;
 import org.hl7.fhir.utilities.cache.ToolsVersion;
 
 public class PascalGenerator {
@@ -56,15 +56,15 @@ public class PascalGenerator {
     System.out.println("Produce source in  "+dest);
     Configuration config = new Configuration(tp, sp, dest);
     
-    PackageCacheManager pcm = new PackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
+    FilesystemPackageCacheManager pcm = new FilesystemPackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
     System.out.println("Cache: "+pcm.getFolder());
-    System.out.println("Load hl7.fhir.r5.core");
+    System.out.println("Load hl7.fhir.r5.core#"+version);
     NpmPackage npm = pcm.loadPackage("hl7.fhir.r5.core", version);
     Definitions master = DefinitionsLoader.load(npm); 
     
     markValueSets(master, config);
     
-    System.out.println("Load hl7.fhir.r5.expansions");
+    System.out.println("Load hl7.fhir.r5.expansions#"+version);
     Definitions expansions = DefinitionsLoader.load(pcm.loadPackage("hl7.fhir.r5.expansions", version));
     
     System.out.println("Process Expansions");

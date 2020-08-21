@@ -1,11 +1,5 @@
 package org.fhir.delphi;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.hl7.fhir.convertors.VersionConvertor_10_40;
 import org.hl7.fhir.dstu2.model.Enumerations.SearchParamType;
 import org.hl7.fhir.dstu2.model.SearchParameter.XPathUsageType;
 import org.hl7.fhir.utilities.TextFile;
