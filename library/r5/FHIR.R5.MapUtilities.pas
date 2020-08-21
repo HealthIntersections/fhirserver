@@ -1205,9 +1205,7 @@ begin
       lexer.token('types');
       group.TypeMode := StructureMapGroupTypeModeTYPES;
      end;
-  end
-  else
-    group.TypeMode := StructureMapGroupTypeModeNone;
+  end;
 
   group.Name := lexer.take();
 
@@ -1230,7 +1228,6 @@ begin
   end;
   if (newFmt) then
   begin
-    group.TypeMode := StructureMapGroupTypeModeNone;
     if (lexer.hasToken('<')) then
     begin
       lexer.token('<');
@@ -2368,7 +2365,7 @@ end;
 
 function TFHIRStructureMapUtilities.matchesByType(map: TFHIRStructureMap; ruleId : String; grp: TFHIRStructureMapGroup; tnSrc, tnTgt: String): boolean;
 begin
-  if (grp.typeMode in [StructureMapGroupTypeModeNone, StructureMapGroupTypeModeNull]) then
+  if (grp.typeMode = StructureMapGroupTypeModeNull) then
     exit(false);
   if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> StructureMapInputModeSource) or (grp.inputList[1].mode <> StructureMapInputModeTarget) then
     exit(false);

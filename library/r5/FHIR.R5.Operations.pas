@@ -33,7 +33,7 @@ unit FHIR.R5.Operations;
 
 interface
 
-// Generated on Mon, May 11, 2020 21:42+1000 for FHIR v4.4.0
+// Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
 
 
@@ -787,6 +787,37 @@ Type
     property message : String read FMessage write FMessage;
     property matchList : TFslList<TFHIRTranslateOpRespMatch> read FMatchList;
   end;
+  //Operation generate (Generate a DocumentReference from a document)
+  TFHIRGenerateOpRequest = class (TFHIROperationRequest)
+  private
+    FUrl : String;
+    FPersist : TFhirBinary;
+    procedure SetPersist(value : TFhirBinary);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
+    function asParams : TFHIRParameters; override;
+    property url : String read FUrl write FUrl;
+    property persist : TFhirBinary read FPersist write SetPersist;
+  end;
+  TFHIRGenerateOpResponse = class (TFHIROperationResponse)
+  private
+    FDocRef : TFhirDocumentReference;
+    procedure SetDocRef(value : TFhirDocumentReference);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
+    function asParams : TFHIRParameters; override;
+    property docRef : TFhirDocumentReference read FDocRef write SetDocRef;
+  end;
   //Operation everything (Fetch Encounter Record)
   TFHIREverythingOpRequest = class (TFHIROperationRequest)
   private
@@ -1454,6 +1485,34 @@ Type
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirResource read FReturn write SetReturn;
+  end;
+  //Operation status (Get Current Subscription Status for One or More Subscriptions)
+  TFHIRStatusOpRequest = class (TFHIROperationRequest)
+  private
+    FIdsList : TList<String>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
+    function asParams : TFHIRParameters; override;
+    property idsList : TList<String> read FIdsList;
+  end;
+  TFHIRStatusOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirBundle;
+    procedure SetReturn(value : TFhirBundle);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirBundle read FReturn write SetReturn;
   end;
   //Operation expand (Value Set Expansion)
   TFHIRExpandOpRequest = class (TFHIROperationRequest)
@@ -3472,6 +3531,84 @@ end;
 function TFHIRTranslateOpResponse.isKnownName(name : String) : boolean;begin
   result := StringArrayExists(['result', 'message', 'match'], name);
 end;
+procedure TFHIRGenerateOpRequest.SetPersist(value : TFhirBinary);
+begin
+  FPersist.free;
+  FPersist := value;
+end;
+constructor TFHIRGenerateOpRequest.create;
+begin
+  inherited create();
+end;
+procedure TFHIRGenerateOpRequest.load(params : TFHIRParameters);
+begin
+  if params.param['url'] <> nil then
+    FUrl := (params.param['url'].value as TFHIRUri).Value;  {L167}
+  FPersist := (params.res['persist'] as TFhirBinary).Link; {L164}
+  loadExtensions(params);
+end;
+procedure TFHIRGenerateOpRequest.load(params : THTTPParameters);
+begin
+  loadExtensions(params);
+end;
+destructor TFHIRGenerateOpRequest.Destroy;
+begin
+  FPersist.free;
+  inherited;
+end;
+function TFHIRGenerateOpRequest.asParams : TFhirParameters;begin
+  result := TFHIRParameters.create;
+  try
+    if (FUrl <> '') then
+      result.addParameter('url', TFHIRUri.create(FUrl)); {L166}
+    if (FPersist <> nil) then
+      result.addParameter('persist', FPersist.Link); {L163}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+function TFHIRGenerateOpRequest.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['url', 'persist'], name);
+end;
+procedure TFHIRGenerateOpResponse.SetDocRef(value : TFhirDocumentReference);
+begin
+  FDocRef.free;
+  FDocRef := value;
+end;
+constructor TFHIRGenerateOpResponse.create;
+begin
+  inherited create();
+end;
+procedure TFHIRGenerateOpResponse.load(params : TFHIRParameters);
+begin
+  FDocRef := (params.res['docRef'] as TFhirDocumentReference).Link; {L164}
+  loadExtensions(params);
+end;
+procedure TFHIRGenerateOpResponse.load(params : THTTPParameters);
+begin
+  loadExtensions(params);
+end;
+destructor TFHIRGenerateOpResponse.Destroy;
+begin
+  FDocRef.free;
+  inherited;
+end;
+function TFHIRGenerateOpResponse.asParams : TFhirParameters;begin
+  result := TFHIRParameters.create;
+  try
+    if (FDocRef <> nil) then
+      result.addParameter('docRef', FDocRef.Link); {L163}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+function TFHIRGenerateOpResponse.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['docRef'], name);
+end;
 constructor TFHIREverythingOpRequest.create;
 begin
   inherited create();
@@ -5143,6 +5280,84 @@ function TFHIRTransformOpResponse.asParams : TFhirParameters;begin
   end;
 end;
 function TFHIRTransformOpResponse.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['return'], name);
+end;
+constructor TFHIRStatusOpRequest.create;
+begin
+  inherited create();
+  FIdsList := TList<String>.create;
+end;
+procedure TFHIRStatusOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  for p in params.parameterList do
+    if p.name = 'ids' then
+      FIdsList.Add((p.value as TFhirId).value); {L112}
+  loadExtensions(params);
+end;
+procedure TFHIRStatusOpRequest.load(params : THTTPParameters);
+var
+  s : String;
+begin
+  for s in params['ids'].Split([';']) do
+    FIdsList.add(s); 
+  loadExtensions(params);
+end;
+destructor TFHIRStatusOpRequest.Destroy;
+begin
+  FIdsList.free;
+  inherited;
+end;
+function TFHIRStatusOpRequest.asParams : TFhirParameters;var  v1 : String;begin
+  result := TFHIRParameters.create;
+  try
+    for v1 in FIdsList do
+      result.AddParameter('ids', TFhirId.create(v1));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+function TFHIRStatusOpRequest.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['ids'], name);
+end;
+procedure TFHIRStatusOpResponse.SetReturn(value : TFhirBundle);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+constructor TFHIRStatusOpResponse.create;
+begin
+  inherited create();
+end;
+procedure TFHIRStatusOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirBundle).Link; {L164}
+  loadExtensions(params);
+end;
+procedure TFHIRStatusOpResponse.load(params : THTTPParameters);
+begin
+  loadExtensions(params);
+end;
+destructor TFHIRStatusOpResponse.Destroy;
+begin
+  FReturn.free;
+  inherited;
+end;
+function TFHIRStatusOpResponse.asParams : TFhirParameters;begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link); {L163}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+function TFHIRStatusOpResponse.isKnownName(name : String) : boolean;begin
   result := StringArrayExists(['return'], name);
 end;
 procedure TFHIRExpandOpRequest.SetValueSet(value : TFhirValueSet);

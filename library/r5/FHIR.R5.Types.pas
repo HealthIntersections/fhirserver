@@ -33,7 +33,7 @@ unit FHIR.R5.Types;
 
 interface
 
-// Generated on Mon, May 11, 2020 21:42+1000 for FHIR v4.4.0
+// Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
 
 
@@ -203,14 +203,14 @@ type
   TFhirStatisticSampleSizeList = class;
   TFhirStatisticAttributeEstimate = class;
   TFhirStatisticAttributeEstimateList = class;
-  TFhirStatisticAttributeEstimateEstimateQualifier = class;
-  TFhirStatisticAttributeEstimateEstimateQualifierList = class;
+  TFhirStatisticAttributeEstimateAttributeEstimate = class;
+  TFhirStatisticAttributeEstimateAttributeEstimateList = class;
+  TFhirStatisticModelCharacteristic = class;
+  TFhirStatisticModelCharacteristicList = class;
+  TFhirStatisticModelCharacteristicVariable = class;
+  TFhirStatisticModelCharacteristicVariableList = class;
   TFhirStatistic = class;
   TFhirStatisticList = class;
-  TFhirSubstanceAmountReferenceRange = class;
-  TFhirSubstanceAmountReferenceRangeList = class;
-  TFhirSubstanceAmount = class;
-  TFhirSubstanceAmountList = class;
   TFhirTimingRepeat = class;
   TFhirTimingRepeatList = class;
   TFhirTiming = class;
@@ -8467,13 +8467,11 @@ type
   // The shelf-life and storage information for a medicinal product item or container can be described using this class.
   TFhirProductShelfLife = class (TFhirBackboneType)
   protected
-    FIdentifier : TFhirIdentifier;
     FType_ : TFhirCodeableConcept;
-    FPeriod : TFhirQuantity;
+    FPeriod : TFhirDataType;
     FspecialPrecautionsForStorageList : TFhirCodeableConceptList;
-    procedure SetIdentifier(value : TFhirIdentifier);
     procedure SetType_(value : TFhirCodeableConcept);
-    procedure SetPeriod(value : TFhirQuantity);
+    procedure SetPeriod(value : TFhirDataType);
     function GetSpecialPrecautionsForStorageList : TFhirCodeableConceptList;
     function GetHasSpecialPrecautionsForStorageList : Boolean;
   
@@ -8496,20 +8494,15 @@ type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
   published
-    // Typed access to Unique identifier for the packaged Medicinal Product. (defined for API consistency)
-    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
-    // Unique identifier for the packaged Medicinal Product.
-    property identifierElement : TFhirIdentifier read FIdentifier write SetIdentifier;
-
     // Typed access to This describes the shelf life, taking into account various scenarios such as shelf life of the packaged Medicinal Product itself, shelf life after transformation where necessary and shelf life after the first opening of a bottle, etc. The shelf life type shall be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified. (defined for API consistency)
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
     // This describes the shelf life, taking into account various scenarios such as shelf life of the packaged Medicinal Product itself, shelf life after transformation where necessary and shelf life after the first opening of a bottle, etc. The shelf life type shall be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified.
     property type_Element : TFhirCodeableConcept read FType_ write SetType_;
 
     // Typed access to The shelf life time period can be specified using a numerical value for the period of time and its unit of time measurement The unit of measurement shall be specified in accordance with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be used. (defined for API consistency)
-    property period : TFhirQuantity read FPeriod write SetPeriod;
+    property period : TFhirDataType read FPeriod write SetPeriod;
     // The shelf life time period can be specified using a numerical value for the period of time and its unit of time measurement The unit of measurement shall be specified in accordance with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be used.
-    property periodElement : TFhirQuantity read FPeriod write SetPeriod;
+    property periodElement : TFhirDataType read FPeriod write SetPeriod;
 
     // Special precautions for storage, if any, can be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified.
     property specialPrecautionsForStorageList : TFhirCodeableConceptList read GetSpecialPrecautionsForStorageList;
@@ -8581,7 +8574,6 @@ type
     FNumberOfStudies : TFhirInteger;
     FNumberOfParticipants : TFhirInteger;
     FKnownDataCount : TFhirInteger;
-    FNumeratorCount : TFhirInteger;
     procedure SetDescription(value : TFhirString);
     function GetDescriptionST : String;
     procedure SetDescriptionST(value : String);
@@ -8596,9 +8588,6 @@ type
     procedure SetKnownDataCount(value : TFhirInteger);
     function GetKnownDataCountST : String;
     procedure SetKnownDataCountST(value : String);
-    procedure SetNumeratorCount(value : TFhirInteger);
-    function GetNumeratorCountST : String;
-    procedure SetNumeratorCountST(value : String);
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -8642,11 +8631,6 @@ type
     property knownDataCount : String read GetKnownDataCountST write SetKnownDataCountST;
     // Number of participants with known results for measured variables.
     property knownDataCountElement : TFhirInteger read FKnownDataCount write SetKnownDataCount;
-
-    // Typed access to Number of participants with “positive” results, only used to report actual numerator count for a proportion.
-    property numeratorCount : String read GetNumeratorCountST write SetNumeratorCountST;
-    // Number of participants with “positive” results, only used to report actual numerator count for a proportion.
-    property numeratorCountElement : TFhirInteger read FNumeratorCount write SetNumeratorCount;
 
   end;
 
@@ -8706,7 +8690,7 @@ type
     property FhirStatisticSampleSizes[index : Integer] : TFhirStatisticSampleSize read GetItemN write SetItemN; default;
   End;
 
-  // An estimate of the precision of the statistic.
+  // A statistical attribute of the statistic such as a measure of heterogeneity.
   TFhirStatisticAttributeEstimate = class (TFhirElement)
   protected
     FDescription : TFhirString;
@@ -8715,7 +8699,7 @@ type
     FQuantity : TFhirQuantity;
     FLevel : TFhirDecimal;
     FRange : TFhirRange;
-    FestimateQualifierList : TFhirStatisticAttributeEstimateEstimateQualifierList;
+    FattributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList;
     procedure SetDescription(value : TFhirString);
     function GetDescriptionST : String;
     procedure SetDescriptionST(value : String);
@@ -8727,8 +8711,8 @@ type
     function GetLevelST : String;
     procedure SetLevelST(value : String);
     procedure SetRange(value : TFhirRange);
-    function GetEstimateQualifierList : TFhirStatisticAttributeEstimateEstimateQualifierList;
-    function GetHasEstimateQualifierList : Boolean;
+    function GetAttributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList;
+    function GetHasAttributeEstimateList : Boolean;
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -8758,14 +8742,14 @@ type
     property noteList : TFhirAnnotationList read GetNoteList;
     property hasNoteList : boolean read GetHasNoteList;
 
-    // Typed access to The estimateType of precision estimate, eg confidence interval or p value type. (defined for API consistency)
+    // Typed access to The type of attribute estimate, eg confidence interval or p value. (defined for API consistency)
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
-    // The estimateType of precision estimate, eg confidence interval or p value type.
+    // The type of attribute estimate, eg confidence interval or p value.
     property type_Element : TFhirCodeableConcept read FType_ write SetType_;
 
-    // Typed access to The singular quantity of the precision estimate, for precision estimates represented as single values; also used to report unit of measure. (defined for API consistency)
+    // Typed access to The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure. (defined for API consistency)
     property quantity : TFhirQuantity read FQuantity write SetQuantity;
-    // The singular quantity of the precision estimate, for precision estimates represented as single values; also used to report unit of measure.
+    // The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure.
     property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
 
     // Typed access to Use 95 for a 95% confidence interval.
@@ -8778,9 +8762,9 @@ type
     // Lower bound of confidence interval.
     property rangeElement : TFhirRange read FRange write SetRange;
 
-    // An estimate of the precision of the estimate.
-    property estimateQualifierList : TFhirStatisticAttributeEstimateEstimateQualifierList read GetEstimateQualifierList;
-    property hasEstimateQualifierList : boolean read GetHasEstimateQualifierList;
+    // A nested attribute estimate; which is the attribute estimate of an attribute estimate.
+    property attributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList read GetAttributeEstimateList;
+    property hasAttributeEstimateList : boolean read GetHasAttributeEstimateList;
 
   end;
 
@@ -8840,8 +8824,8 @@ type
     property FhirStatisticAttributeEstimates[index : Integer] : TFhirStatisticAttributeEstimate read GetItemN write SetItemN; default;
   End;
 
-  // An estimate of the precision of the estimate.
-  TFhirStatisticAttributeEstimateEstimateQualifier = class (TFhirElement)
+  // A nested attribute estimate; which is the attribute estimate of an attribute estimate.
+  TFhirStatisticAttributeEstimateAttributeEstimate = class (TFhirElement)
   protected
     FDescription : TFhirString;
     FnoteList : TFhirAnnotationList;
@@ -8867,8 +8851,8 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatisticAttributeEstimateEstimateQualifier; overload;
-    function Clone : TFhirStatisticAttributeEstimateEstimateQualifier; overload;
+    function Link : TFhirStatisticAttributeEstimateAttributeEstimate; overload;
+    function Clone : TFhirStatisticAttributeEstimateAttributeEstimate; overload;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
@@ -8889,9 +8873,9 @@ type
     property noteList : TFhirAnnotationList read GetNoteList;
     property hasNoteList : boolean read GetHasNoteList;
 
-    // Typed access to The estimateType of attribute estimate, eg confidence interval or p value type. (defined for API consistency)
+    // Typed access to The type of attribute estimate, eg confidence interval or p value. (defined for API consistency)
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
-    // The estimateType of attribute estimate, eg confidence interval or p value type.
+    // The type of attribute estimate, eg confidence interval or p value.
     property type_Element : TFhirCodeableConcept read FType_ write SetType_;
 
     // Typed access to The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure. (defined for API consistency)
@@ -8911,49 +8895,49 @@ type
 
   end;
 
-  TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator = class (TFslObject)
+  TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator = class (TFslObject)
   private
     FIndex : integer;
-    FList : TFhirStatisticAttributeEstimateEstimateQualifierList;
-    function GetCurrent : TFhirStatisticAttributeEstimateEstimateQualifier;
+    FList : TFhirStatisticAttributeEstimateAttributeEstimateList;
+    function GetCurrent : TFhirStatisticAttributeEstimateAttributeEstimate;
   public
-    constructor Create(list : TFhirStatisticAttributeEstimateEstimateQualifierList);
+    constructor Create(list : TFhirStatisticAttributeEstimateAttributeEstimateList);
     destructor Destroy; override;
     function MoveNext : boolean;
-    property Current : TFhirStatisticAttributeEstimateEstimateQualifier read GetCurrent;
+    property Current : TFhirStatisticAttributeEstimateAttributeEstimate read GetCurrent;
   end;
 
-  TFhirStatisticAttributeEstimateEstimateQualifierList = class (TFHIRObjectList)
+  TFhirStatisticAttributeEstimateAttributeEstimateList = class (TFHIRObjectList)
   private
-    function GetItemN(index : Integer) : TFhirStatisticAttributeEstimateEstimateQualifier;
-    procedure SetItemN(index : Integer; value : TFhirStatisticAttributeEstimateEstimateQualifier);
+    function GetItemN(index : Integer) : TFhirStatisticAttributeEstimateAttributeEstimate;
+    procedure SetItemN(index : Integer; value : TFhirStatisticAttributeEstimateAttributeEstimate);
   protected
     function ItemClass : TFslObjectClass; override;
   public
-    function Link : TFhirStatisticAttributeEstimateEstimateQualifierList; overload;
-    function Clone : TFhirStatisticAttributeEstimateEstimateQualifierList; overload;
-    function GetEnumerator : TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator;
+    function Link : TFhirStatisticAttributeEstimateAttributeEstimateList; overload;
+    function Clone : TFhirStatisticAttributeEstimateAttributeEstimateList; overload;
+    function GetEnumerator : TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator;
     
-    //  Add a FhirStatisticAttributeEstimateEstimateQualifier to the end of the list.
-    function Append : TFhirStatisticAttributeEstimateEstimateQualifier;
+    //  Add a FhirStatisticAttributeEstimateAttributeEstimate to the end of the list.
+    function Append : TFhirStatisticAttributeEstimateAttributeEstimate;
     
-    // Add an already existing FhirStatisticAttributeEstimateEstimateQualifier to the end of the list.
-    procedure AddItem(value : TFhirStatisticAttributeEstimateEstimateQualifier); overload;
+    // Add an already existing FhirStatisticAttributeEstimateAttributeEstimate to the end of the list.
+    procedure AddItem(value : TFhirStatisticAttributeEstimateAttributeEstimate); overload;
     
     // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatisticAttributeEstimateEstimateQualifier) : Integer;
+    function IndexOf(value : TFhirStatisticAttributeEstimateAttributeEstimate) : Integer;
     
-    // Insert FhirStatisticAttributeEstimateEstimateQualifier before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatisticAttributeEstimateEstimateQualifier;
+    // Insert FhirStatisticAttributeEstimateAttributeEstimate before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirStatisticAttributeEstimateAttributeEstimate;
     
-    // Insert an existing FhirStatisticAttributeEstimateEstimateQualifier before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatisticAttributeEstimateEstimateQualifier);
+    // Insert an existing FhirStatisticAttributeEstimateAttributeEstimate before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirStatisticAttributeEstimateAttributeEstimate);
     
-    // Get the iIndexth FhirStatisticAttributeEstimateEstimateQualifier. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatisticAttributeEstimateEstimateQualifier);
+    // Get the iIndexth FhirStatisticAttributeEstimateAttributeEstimate. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirStatisticAttributeEstimateAttributeEstimate);
     
     // The number of items in the collection
-    function Item(index : Integer) : TFhirStatisticAttributeEstimateEstimateQualifier;
+    function Item(index : Integer) : TFhirStatisticAttributeEstimateAttributeEstimate;
     
     // The number of items in the collection
     function Count : Integer; overload;
@@ -8964,7 +8948,226 @@ type
     // Remove All Items from the list
     procedure ClearItems;
     
-    property FhirStatisticAttributeEstimateEstimateQualifiers[index : Integer] : TFhirStatisticAttributeEstimateEstimateQualifier read GetItemN write SetItemN; default;
+    property FhirStatisticAttributeEstimateAttributeEstimates[index : Integer] : TFhirStatisticAttributeEstimateAttributeEstimate read GetItemN write SetItemN; default;
+  End;
+
+  // A component of the method to generate the statistic.
+  TFhirStatisticModelCharacteristic = class (TFhirElement)
+  protected
+    FCode : TFhirCodeableConcept;
+    FValue : TFhirDataType;
+    FvariableList : TFhirStatisticModelCharacteristicVariableList;
+    procedure SetCode(value : TFhirCodeableConcept);
+    procedure SetValue(value : TFhirDataType);
+    function GetVariableList : TFhirStatisticModelCharacteristicVariableList;
+    function GetHasVariableList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirStatisticModelCharacteristic; overload;
+    function Clone : TFhirStatisticModelCharacteristic; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  published
+    // Typed access to Description of a component of the method to generate the statistic. (defined for API consistency)
+    property code : TFhirCodeableConcept read FCode write SetCode;
+    // Description of a component of the method to generate the statistic.
+    property codeElement : TFhirCodeableConcept read FCode write SetCode;
+
+    // Typed access to Further specification of a component of the method to generate the statistic. (defined for API consistency)
+    property value : TFhirDataType read FValue write SetValue;
+    // Further specification of a component of the method to generate the statistic.
+    property valueElement : TFhirDataType read FValue write SetValue;
+
+    // A variable adjusted for in the adjusted analysis.
+    property variableList : TFhirStatisticModelCharacteristicVariableList read GetVariableList;
+    property hasVariableList : boolean read GetHasVariableList;
+
+  end;
+
+  TFhirStatisticModelCharacteristicListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirStatisticModelCharacteristicList;
+    function GetCurrent : TFhirStatisticModelCharacteristic;
+  public
+    constructor Create(list : TFhirStatisticModelCharacteristicList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirStatisticModelCharacteristic read GetCurrent;
+  end;
+
+  TFhirStatisticModelCharacteristicList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirStatisticModelCharacteristic;
+    procedure SetItemN(index : Integer; value : TFhirStatisticModelCharacteristic);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirStatisticModelCharacteristicList; overload;
+    function Clone : TFhirStatisticModelCharacteristicList; overload;
+    function GetEnumerator : TFhirStatisticModelCharacteristicListEnumerator;
+    
+    //  Add a FhirStatisticModelCharacteristic to the end of the list.
+    function Append : TFhirStatisticModelCharacteristic;
+    
+    // Add an already existing FhirStatisticModelCharacteristic to the end of the list.
+    procedure AddItem(value : TFhirStatisticModelCharacteristic); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirStatisticModelCharacteristic) : Integer;
+    
+    // Insert FhirStatisticModelCharacteristic before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirStatisticModelCharacteristic;
+    
+    // Insert an existing FhirStatisticModelCharacteristic before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirStatisticModelCharacteristic);
+    
+    // Get the iIndexth FhirStatisticModelCharacteristic. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirStatisticModelCharacteristic);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirStatisticModelCharacteristic;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirStatisticModelCharacteristics[index : Integer] : TFhirStatisticModelCharacteristic read GetItemN write SetItemN; default;
+  End;
+
+  // A variable adjusted for in the adjusted analysis.
+  TFhirStatisticModelCharacteristicVariable = class (TFhirElement)
+  protected
+    FVariableDefinition : TFhirReference;
+    FHandling : TFhirEnum;
+    FvalueCategoryList : TFhirCodeableConceptList;
+    FvalueQuantityList : TFhirQuantityList;
+    FvalueRangeList : TFhirRangeList;
+    procedure SetVariableDefinition(value : TFhirReference);
+    procedure SetHandling(value : TFhirEnum);
+    function GetHandlingST : TFhirEvidenceVariableHandlingEnum;
+    procedure SetHandlingST(value : TFhirEvidenceVariableHandlingEnum);
+    function GetValueCategoryList : TFhirCodeableConceptList;
+    function GetHasValueCategoryList : Boolean;
+    function GetValueQuantityList : TFhirQuantityList;
+    function GetHasValueQuantityList : Boolean;
+    function GetValueRangeList : TFhirRangeList;
+    function GetHasValueRangeList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirStatisticModelCharacteristicVariable; overload;
+    function Clone : TFhirStatisticModelCharacteristicVariable; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  published
+    // Typed access to Description of the variable. (defined for API consistency)
+    property variableDefinition : TFhirReference read FVariableDefinition write SetVariableDefinition;
+    // Description of the variable.
+    property variableDefinitionElement : TFhirReference read FVariableDefinition write SetVariableDefinition;
+
+    // How the variable is classified for use in adjusted analysis.
+    property handling : TFhirEvidenceVariableHandlingEnum read GetHandlingST write SetHandlingST;
+    property handlingElement : TFhirEnum read FHandling write SetHandling;
+
+    // Description for grouping of ordinal or polychotomous variables.
+    property valueCategoryList : TFhirCodeableConceptList read GetValueCategoryList;
+    property hasValueCategoryList : boolean read GetHasValueCategoryList;
+
+    // Discrete value for grouping of ordinal or polychotomous variables.
+    property valueQuantityList : TFhirQuantityList read GetValueQuantityList;
+    property hasValueQuantityList : boolean read GetHasValueQuantityList;
+
+    // Range of values for grouping of ordinal or polychotomous variables.
+    property valueRangeList : TFhirRangeList read GetValueRangeList;
+    property hasValueRangeList : boolean read GetHasValueRangeList;
+
+  end;
+
+  TFhirStatisticModelCharacteristicVariableListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirStatisticModelCharacteristicVariableList;
+    function GetCurrent : TFhirStatisticModelCharacteristicVariable;
+  public
+    constructor Create(list : TFhirStatisticModelCharacteristicVariableList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirStatisticModelCharacteristicVariable read GetCurrent;
+  end;
+
+  TFhirStatisticModelCharacteristicVariableList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirStatisticModelCharacteristicVariable;
+    procedure SetItemN(index : Integer; value : TFhirStatisticModelCharacteristicVariable);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirStatisticModelCharacteristicVariableList; overload;
+    function Clone : TFhirStatisticModelCharacteristicVariableList; overload;
+    function GetEnumerator : TFhirStatisticModelCharacteristicVariableListEnumerator;
+    
+    //  Add a FhirStatisticModelCharacteristicVariable to the end of the list.
+    function Append : TFhirStatisticModelCharacteristicVariable;
+    
+    // Add an already existing FhirStatisticModelCharacteristicVariable to the end of the list.
+    procedure AddItem(value : TFhirStatisticModelCharacteristicVariable); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirStatisticModelCharacteristicVariable) : Integer;
+    
+    // Insert FhirStatisticModelCharacteristicVariable before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirStatisticModelCharacteristicVariable;
+    
+    // Insert an existing FhirStatisticModelCharacteristicVariable before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirStatisticModelCharacteristicVariable);
+    
+    // Get the iIndexth FhirStatisticModelCharacteristicVariable. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirStatisticModelCharacteristicVariable);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirStatisticModelCharacteristicVariable;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirStatisticModelCharacteristicVariables[index : Integer] : TFhirStatisticModelCharacteristicVariable read GetItemN write SetItemN; default;
   End;
 
   // A fact or piece of data from a  study of a large quantity of numerical data.  A mathematical or quantified characteristic of a group of observations.
@@ -8974,8 +9177,10 @@ type
     FnoteList : TFhirAnnotationList;
     FStatisticType : TFhirCodeableConcept;
     FQuantity : TFhirQuantity;
+    FNumberOfEvents : TFhirInteger;
     FSampleSize : TFhirStatisticSampleSize;
     FattributeEstimateList : TFhirStatisticAttributeEstimateList;
+    FmodelCharacteristicList : TFhirStatisticModelCharacteristicList;
     procedure SetDescription(value : TFhirString);
     function GetDescriptionST : String;
     procedure SetDescriptionST(value : String);
@@ -8983,9 +9188,14 @@ type
     function GetHasNoteList : Boolean;
     procedure SetStatisticType(value : TFhirCodeableConcept);
     procedure SetQuantity(value : TFhirQuantity);
+    procedure SetNumberOfEvents(value : TFhirInteger);
+    function GetNumberOfEventsST : String;
+    procedure SetNumberOfEventsST(value : String);
     procedure SetSampleSize(value : TFhirStatisticSampleSize);
     function GetAttributeEstimateList : TFhirStatisticAttributeEstimateList;
     function GetHasAttributeEstimateList : Boolean;
+    function GetModelCharacteristicList : TFhirStatisticModelCharacteristicList;
+    function GetHasModelCharacteristicList : Boolean;
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -9025,14 +9235,23 @@ type
     // Statistic value.
     property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
 
+    // Typed access to The number of events associated with the statistic.
+    property numberOfEvents : String read GetNumberOfEventsST write SetNumberOfEventsST;
+    // The number of events associated with the statistic.
+    property numberOfEventsElement : TFhirInteger read FNumberOfEvents write SetNumberOfEvents;
+
     // Typed access to Number of samples in the statistic. (defined for API consistency)
     property sampleSize : TFhirStatisticSampleSize read FSampleSize write SetSampleSize;
     // Number of samples in the statistic.
     property sampleSizeElement : TFhirStatisticSampleSize read FSampleSize write SetSampleSize;
 
-    // An estimate of the precision of the statistic.
+    // A statistical attribute of the statistic such as a measure of heterogeneity.
     property attributeEstimateList : TFhirStatisticAttributeEstimateList read GetAttributeEstimateList;
     property hasAttributeEstimateList : boolean read GetHasAttributeEstimateList;
+
+    // A component of the method to generate the statistic.
+    property modelCharacteristicList : TFhirStatisticModelCharacteristicList read GetModelCharacteristicList;
+    property hasModelCharacteristicList : boolean read GetHasModelCharacteristicList;
 
   end;
 
@@ -9090,212 +9309,6 @@ type
     procedure ClearItems;
     
     property FhirStatistics[index : Integer] : TFhirStatistic read GetItemN write SetItemN; default;
-  End;
-
-  // Reference range of possible or expected values.
-  TFhirSubstanceAmountReferenceRange = class (TFhirElement)
-  protected
-    FLowLimit : TFhirQuantity;
-    FHighLimit : TFhirQuantity;
-    procedure SetLowLimit(value : TFhirQuantity);
-    procedure SetHighLimit(value : TFhirQuantity);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirSubstanceAmountReferenceRange; overload;
-    function Clone : TFhirSubstanceAmountReferenceRange; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  published
-    // Typed access to Lower limit possible or expected. (defined for API consistency)
-    property lowLimit : TFhirQuantity read FLowLimit write SetLowLimit;
-    // Lower limit possible or expected.
-    property lowLimitElement : TFhirQuantity read FLowLimit write SetLowLimit;
-
-    // Typed access to Upper limit possible or expected. (defined for API consistency)
-    property highLimit : TFhirQuantity read FHighLimit write SetHighLimit;
-    // Upper limit possible or expected.
-    property highLimitElement : TFhirQuantity read FHighLimit write SetHighLimit;
-
-  end;
-
-  TFhirSubstanceAmountReferenceRangeListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirSubstanceAmountReferenceRangeList;
-    function GetCurrent : TFhirSubstanceAmountReferenceRange;
-  public
-    constructor Create(list : TFhirSubstanceAmountReferenceRangeList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirSubstanceAmountReferenceRange read GetCurrent;
-  end;
-
-  TFhirSubstanceAmountReferenceRangeList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirSubstanceAmountReferenceRange;
-    procedure SetItemN(index : Integer; value : TFhirSubstanceAmountReferenceRange);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirSubstanceAmountReferenceRangeList; overload;
-    function Clone : TFhirSubstanceAmountReferenceRangeList; overload;
-    function GetEnumerator : TFhirSubstanceAmountReferenceRangeListEnumerator;
-    
-    //  Add a FhirSubstanceAmountReferenceRange to the end of the list.
-    function Append : TFhirSubstanceAmountReferenceRange;
-    
-    // Add an already existing FhirSubstanceAmountReferenceRange to the end of the list.
-    procedure AddItem(value : TFhirSubstanceAmountReferenceRange); overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirSubstanceAmountReferenceRange) : Integer;
-    
-    // Insert FhirSubstanceAmountReferenceRange before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirSubstanceAmountReferenceRange;
-    
-    // Insert an existing FhirSubstanceAmountReferenceRange before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirSubstanceAmountReferenceRange);
-    
-    // Get the iIndexth FhirSubstanceAmountReferenceRange. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirSubstanceAmountReferenceRange);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirSubstanceAmountReferenceRange;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirSubstanceAmountReferenceRanges[index : Integer] : TFhirSubstanceAmountReferenceRange read GetItemN write SetItemN; default;
-  End;
-
-  // Chemical substances are a single substance type whose primary defining element is the molecular structure. Chemical substances shall be defined on the basis of their complete covalent molecular structure; the presence of a salt (counter-ion) and/or solvates (water, alcohols) is also captured. Purity, grade, physical form or particle size are not taken into account in the definition of a chemical substance or in the assignment of a Substance ID.
-  TFhirSubstanceAmount = class (TFhirBackboneType)
-  protected
-    FAmount : TFhirDataType;
-    FAmountType : TFhirCodeableConcept;
-    FAmountText : TFhirString;
-    FReferenceRange : TFhirSubstanceAmountReferenceRange;
-    procedure SetAmount(value : TFhirDataType);
-    procedure SetAmountType(value : TFhirCodeableConcept);
-    procedure SetAmountText(value : TFhirString);
-    function GetAmountTextST : String;
-    procedure SetAmountTextST(value : String);
-    procedure SetReferenceRange(value : TFhirSubstanceAmountReferenceRange);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirSubstanceAmount; overload;
-    function Clone : TFhirSubstanceAmount; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  published
-    // Typed access to Used to capture quantitative values for a variety of elements. If only limits are given, the arithmetic mean would be the average. If only a single definite value for a given element is given, it would be captured in this field. (defined for API consistency)
-    property amount : TFhirDataType read FAmount write SetAmount;
-    // Used to capture quantitative values for a variety of elements. If only limits are given, the arithmetic mean would be the average. If only a single definite value for a given element is given, it would be captured in this field.
-    property amountElement : TFhirDataType read FAmount write SetAmount;
-
-    // Typed access to Most elements that require a quantitative value will also have a field called amount type. Amount type should always be specified because the actual value of the amount is often dependent on it. EXAMPLE: In capturing the actual relative amounts of substances or molecular fragments it is essential to indicate whether the amount refers to a mole ratio or weight ratio. For any given element an effort should be made to use same the amount type for all related definitional elements. (defined for API consistency)
-    property amountType : TFhirCodeableConcept read FAmountType write SetAmountType;
-    // Most elements that require a quantitative value will also have a field called amount type. Amount type should always be specified because the actual value of the amount is often dependent on it. EXAMPLE: In capturing the actual relative amounts of substances or molecular fragments it is essential to indicate whether the amount refers to a mole ratio or weight ratio. For any given element an effort should be made to use same the amount type for all related definitional elements.
-    property amountTypeElement : TFhirCodeableConcept read FAmountType write SetAmountType;
-
-    // Typed access to A textual comment on a numeric value.
-    property amountText : String read GetAmountTextST write SetAmountTextST;
-    // A textual comment on a numeric value.
-    property amountTextElement : TFhirString read FAmountText write SetAmountText;
-
-    // Typed access to Reference range of possible or expected values. (defined for API consistency)
-    property referenceRange : TFhirSubstanceAmountReferenceRange read FReferenceRange write SetReferenceRange;
-    // Reference range of possible or expected values.
-    property referenceRangeElement : TFhirSubstanceAmountReferenceRange read FReferenceRange write SetReferenceRange;
-
-  end;
-
-  TFhirSubstanceAmountListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirSubstanceAmountList;
-    function GetCurrent : TFhirSubstanceAmount;
-  public
-    constructor Create(list : TFhirSubstanceAmountList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirSubstanceAmount read GetCurrent;
-  end;
-
-  TFhirSubstanceAmountList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirSubstanceAmount;
-    procedure SetItemN(index : Integer; value : TFhirSubstanceAmount);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirSubstanceAmountList; overload;
-    function Clone : TFhirSubstanceAmountList; overload;
-    function GetEnumerator : TFhirSubstanceAmountListEnumerator;
-    
-    //  Add a FhirSubstanceAmount to the end of the list.
-    function Append : TFhirSubstanceAmount;
-    
-    // Add an already existing FhirSubstanceAmount to the end of the list.
-    procedure AddItem(value : TFhirSubstanceAmount); overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirSubstanceAmount) : Integer;
-    
-    // Insert FhirSubstanceAmount before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirSubstanceAmount;
-    
-    // Insert an existing FhirSubstanceAmount before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirSubstanceAmount);
-    
-    // Get the iIndexth FhirSubstanceAmount. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirSubstanceAmount);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirSubstanceAmount;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirSubstanceAmounts[index : Integer] : TFhirSubstanceAmount read GetItemN write SetItemN; default;
   End;
 
   // A set of rules that describe when the event is scheduled.
@@ -34046,7 +34059,6 @@ end;
 
 destructor TFhirProductShelfLife.Destroy;
 begin
-  FIdentifier.free;
   FType_.free;
   FPeriod.free;
   FSpecialPrecautionsForStorageList.Free;
@@ -34056,7 +34068,6 @@ end;
 procedure TFhirProductShelfLife.Assign(oSource : TFslObject);
 begin
   inherited;
-  identifier := TFhirProductShelfLife(oSource).identifier.Clone;
   type_ := TFhirProductShelfLife(oSource).type_.Clone;
   period := TFhirProductShelfLife(oSource).period.Clone;
   if (TFhirProductShelfLife(oSource).FSpecialPrecautionsForStorageList = nil) then
@@ -34075,12 +34086,10 @@ end;
 procedure TFhirProductShelfLife.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'identifier') Then
-     list.add(self.link, 'identifier', FIdentifier.Link);
   if (child_name = 'type') Then
      list.add(self.link, 'type', FType_.Link);
-  if (child_name = 'period') Then
-     list.add(self.link, 'period', FPeriod.Link);
+  if (child_name = 'period[x]') or (child_name = 'period') Then
+     list.add(self.link, 'period[x]', FPeriod.Link);
   if (child_name = 'specialPrecautionsForStorage') Then
     list.addAll(self, 'specialPrecautionsForStorage', FSpecialPrecautionsForStorageList);
 end;
@@ -34088,27 +34097,21 @@ end;
 procedure TFhirProductShelfLife.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Quantity', false, TFhirQuantity, FPeriod.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'period[x]', 'Quantity|string', false, TFhirDataType, FPeriod.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'specialPrecautionsForStorage', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialPrecautionsForStorageList.Link)) {L1039};
 end;
 
 function TFhirProductShelfLife.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'identifier') then
-  begin
-    Identifier := propValue as TFhirIdentifier {L1199};
-    result := propValue;
-  end
-  else if (propName = 'type') then
+  if (propName = 'type') then
   begin
     Type_ := propValue as TFhirCodeableConcept {L1199};
     result := propValue;
   end
-  else if (propName = 'period') then
+  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then
   begin
-    Period := propValue as TFhirQuantity {L1199};
+    Period := propValue as TFhirDataType {L1185};
     result := propValue;
   end
   else if (propName = 'specialPrecautionsForStorage') then
@@ -34127,27 +34130,24 @@ end;
 
 function TFhirProductShelfLife.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create() {L1203}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'period') then result := TFhirQuantity.create() {L1203}
+  if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
+  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then raise EFHIRException.create('Cannot make property Period') {L1191}
   else if (propName = 'specialPrecautionsForStorage') then result := SpecialPrecautionsForStorageList.new() {L1053}
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirProductShelfLife.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'identifier') then result := 'Identifier'
-  else if (propName = 'type') then result := 'CodeableConcept'
-  else if (propName = 'period') then result := 'Quantity'
+  if (propName = 'type') then result := 'CodeableConcept'
+  else if (propName = 'period[x]') then result := 'Quantity|string'
   else if (propName = 'specialPrecautionsForStorage') then result := 'CodeableConcept'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirProductShelfLife.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then IdentifierElement := nil
-  else if (propName = 'type') then Type_Element := nil
-  else if (propName = 'period') then PeriodElement := nil
+  if (propName = 'type') then Type_Element := nil
+  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then PeriodElement := nil {L1189}
   else if (propName = 'specialPrecautionsForStorage') then deletePropertyValue('specialPrecautionsForStorage', SpecialPrecautionsForStorageList, value) {L1054}
   else
     inherited deleteProperty(propName, value);
@@ -34155,9 +34155,8 @@ end;
 
 procedure TFhirProductShelfLife.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then IdentifierElement := new as TFhirIdentifier {L1195}
-  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'period') then PeriodElement := new as TFhirQuantity {L1195}
+  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
+  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then PeriodElement := new as TFhirDataType {L1190}
   else if (propName = 'specialPrecautionsForStorage') then replacePropertyValue('specialPrecautionsForStorage', SpecialPrecautionsForStorageList, existing, new) {L1055}
   else
     inherited replaceProperty(propName, existing, new);
@@ -34196,20 +34195,14 @@ begin
   else
   begin
     o := TFhirProductShelfLife(other);
-    result := compareDeep(identifierElement, o.identifierElement, true) and compareDeep(type_Element, o.type_Element, true) and 
-      compareDeep(periodElement, o.periodElement, true) and compareDeep(specialPrecautionsForStorageList, o.specialPrecautionsForStorageList, true);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(periodElement, o.periodElement, true) and 
+      compareDeep(specialPrecautionsForStorageList, o.specialPrecautionsForStorageList, true);
   end;
 end;
 
 function TFhirProductShelfLife.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FIdentifier) and isEmptyProp(FType_) and isEmptyProp(FPeriod) and isEmptyProp(FspecialPrecautionsForStorageList);
-end;
-
-procedure TFhirProductShelfLife.SetIdentifier(value : TFhirIdentifier);
-begin
-  FIdentifier.free;
-  FIdentifier := value; {L1134}
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FPeriod) and isEmptyProp(FspecialPrecautionsForStorageList);
 end;
 
 procedure TFhirProductShelfLife.SetType_(value : TFhirCodeableConcept);
@@ -34218,7 +34211,7 @@ begin
   FType_ := value; {L1134}
 end;
 
-procedure TFhirProductShelfLife.SetPeriod(value : TFhirQuantity);
+procedure TFhirProductShelfLife.SetPeriod(value : TFhirDataType);
 begin
   FPeriod.free;
   FPeriod := value; {L1134}
@@ -34371,7 +34364,6 @@ begin
   FNumberOfStudies.free;
   FNumberOfParticipants.free;
   FKnownDataCount.free;
-  FNumeratorCount.free;
   inherited;
 end;
 
@@ -34393,7 +34385,6 @@ begin
   numberOfStudiesElement := TFhirStatisticSampleSize(oSource).numberOfStudiesElement.Clone;
   numberOfParticipantsElement := TFhirStatisticSampleSize(oSource).numberOfParticipantsElement.Clone;
   knownDataCountElement := TFhirStatisticSampleSize(oSource).knownDataCountElement.Clone;
-  numeratorCountElement := TFhirStatisticSampleSize(oSource).numeratorCountElement.Clone;
 end;
 
 procedure TFhirStatisticSampleSize.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
@@ -34409,8 +34400,6 @@ begin
      list.add(self.link, 'numberOfParticipants', FNumberOfParticipants.Link);
   if (child_name = 'knownDataCount') Then
      list.add(self.link, 'knownDataCount', FKnownDataCount.Link);
-  if (child_name = 'numeratorCount') Then
-     list.add(self.link, 'numeratorCount', FNumeratorCount.Link);
 end;
 
 procedure TFhirStatisticSampleSize.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -34421,7 +34410,6 @@ begin
   oList.add(TFHIRProperty.create(self, 'numberOfStudies', 'integer', false, TFhirInteger, FNumberOfStudies.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'numberOfParticipants', 'integer', false, TFhirInteger, FNumberOfParticipants.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'knownDataCount', 'integer', false, TFhirInteger, FKnownDataCount.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'numeratorCount', 'integer', false, TFhirInteger, FNumeratorCount.Link)); {L1172}
 end;
 
 function TFhirStatisticSampleSize.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -34451,11 +34439,6 @@ begin
     KnownDataCountElement := asInteger(propValue) {L1221};
     result := propValue;
   end
-  else if (propName = 'numeratorCount') then
-  begin
-    NumeratorCountElement := asInteger(propValue) {L1221};
-    result := propValue;
-  end
   else result := inherited setProperty(propName, propValue);
 end;
 
@@ -34472,7 +34455,6 @@ begin
   else if (propName = 'numberOfStudies') then result := TFhirInteger.create() {L1223}
   else if (propName = 'numberOfParticipants') then result := TFhirInteger.create() {L1223}
   else if (propName = 'knownDataCount') then result := TFhirInteger.create() {L1223}
-  else if (propName = 'numeratorCount') then result := TFhirInteger.create() {L1223}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -34483,7 +34465,6 @@ begin
   else if (propName = 'numberOfStudies') then result := 'integer'
   else if (propName = 'numberOfParticipants') then result := 'integer'
   else if (propName = 'knownDataCount') then result := 'integer'
-  else if (propName = 'numeratorCount') then result := 'integer'
   else result := inherited getTypesForProperty(propName);
 end;
 
@@ -34494,7 +34475,6 @@ begin
   else if (propName = 'numberOfStudies') then NumberOfStudiesElement := nil
   else if (propName = 'numberOfParticipants') then NumberOfParticipantsElement := nil
   else if (propName = 'knownDataCount') then KnownDataCountElement := nil
-  else if (propName = 'numeratorCount') then NumeratorCountElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
@@ -34506,7 +34486,6 @@ begin
   else if (propName = 'numberOfStudies') then NumberOfStudiesElement := asInteger(new) {L1222}
   else if (propName = 'numberOfParticipants') then NumberOfParticipantsElement := asInteger(new) {L1222}
   else if (propName = 'knownDataCount') then KnownDataCountElement := asInteger(new) {L1222}
-  else if (propName = 'numeratorCount') then NumeratorCountElement := asInteger(new) {L1222}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -34546,13 +34525,13 @@ begin
     o := TFhirStatisticSampleSize(other);
     result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
       compareDeep(numberOfStudiesElement, o.numberOfStudiesElement, true) and compareDeep(numberOfParticipantsElement, o.numberOfParticipantsElement, true) and 
-      compareDeep(knownDataCountElement, o.knownDataCountElement, true) and compareDeep(numeratorCountElement, o.numeratorCountElement, true);
+      compareDeep(knownDataCountElement, o.knownDataCountElement, true);
   end;
 end;
 
 function TFhirStatisticSampleSize.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FNumberOfStudies) and isEmptyProp(FNumberOfParticipants) and isEmptyProp(FKnownDataCount) and isEmptyProp(FNumeratorCount);
+  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FNumberOfStudies) and isEmptyProp(FNumberOfParticipants) and isEmptyProp(FKnownDataCount);
 end;
 
 procedure TFhirStatisticSampleSize.SetDescription(value : TFhirString);
@@ -34669,32 +34648,6 @@ begin
   end
   else if FKnownDataCount <> nil then
     FKnownDataCount.value := '';
-end;
-
-procedure TFhirStatisticSampleSize.SetNumeratorCount(value : TFhirInteger);
-begin
-  FNumeratorCount.free;
-  FNumeratorCount := value; {L1134}
-end;
-
-function TFhirStatisticSampleSize.GetNumeratorCountST : String;
-begin
-  if FNumeratorCount = nil then
-    result := ''
-  else
-    result := FNumeratorCount.value;
-end;
-
-procedure TFhirStatisticSampleSize.SetNumeratorCountST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FNumeratorCount = nil then
-      FNumeratorCount := TFhirInteger.create;
-    FNumeratorCount.value := value
-  end
-  else if FNumeratorCount <> nil then
-    FNumeratorCount.value := '';
 end;
 
 { TFhirStatisticSampleSizeListEnumerator }
@@ -34833,7 +34786,7 @@ begin
   FQuantity.free;
   FLevel.free;
   FRange.free;
-  FEstimateQualifierList.Free;
+  FAttributeEstimateList.Free;
   inherited;
 end;
 
@@ -34856,16 +34809,16 @@ begin
   quantity := TFhirStatisticAttributeEstimate(oSource).quantity.Clone;
   levelElement := TFhirStatisticAttributeEstimate(oSource).levelElement.Clone;
   range := TFhirStatisticAttributeEstimate(oSource).range.Clone;
-  if (TFhirStatisticAttributeEstimate(oSource).FEstimateQualifierList = nil) then
+  if (TFhirStatisticAttributeEstimate(oSource).FAttributeEstimateList = nil) then
   begin
-    FEstimateQualifierList.free;
-    FEstimateQualifierList := nil;
+    FAttributeEstimateList.free;
+    FAttributeEstimateList := nil;
   end
   else
   begin
-    if FEstimateQualifierList = nil then
-      FEstimateQualifierList := TFhirStatisticAttributeEstimateEstimateQualifierList.Create;
-    FEstimateQualifierList.Assign(TFhirStatisticAttributeEstimate(oSource).FEstimateQualifierList);
+    if FAttributeEstimateList = nil then
+      FAttributeEstimateList := TFhirStatisticAttributeEstimateAttributeEstimateList.Create;
+    FAttributeEstimateList.Assign(TFhirStatisticAttributeEstimate(oSource).FAttributeEstimateList);
   end;
 end;
 
@@ -34884,8 +34837,8 @@ begin
      list.add(self.link, 'level', FLevel.Link);
   if (child_name = 'range') Then
      list.add(self.link, 'range', FRange.Link);
-  if (child_name = 'estimateQualifier') Then
-    list.addAll(self, 'estimateQualifier', FEstimateQualifierList);
+  if (child_name = 'attributeEstimate') Then
+    list.addAll(self, 'attributeEstimate', FAttributeEstimateList);
 end;
 
 procedure TFhirStatisticAttributeEstimate.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -34897,7 +34850,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'level', 'decimal', false, TFhirDecimal, FLevel.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'range', 'Range', false, TFhirRange, FRange.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'estimateQualifier', 'Element', true, TFhirStatisticAttributeEstimateEstimateQualifier, FEstimateQualifierList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'attributeEstimate', 'Element', true, TFhirStatisticAttributeEstimateAttributeEstimate, FAttributeEstimateList.Link)) {L1039};
 end;
 
 function TFhirStatisticAttributeEstimate.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -34932,9 +34885,9 @@ begin
     Range := propValue as TFhirRange {L1199};
     result := propValue;
   end
-  else if (propName = 'estimateQualifier') then
+  else if (propName = 'attributeEstimate') then
   begin
-    EstimateQualifierList.add(propValue as TFhirStatisticAttributeEstimateEstimateQualifier) {L1048};
+    AttributeEstimateList.add(propValue as TFhirStatisticAttributeEstimateAttributeEstimate) {L1048};
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -34943,7 +34896,7 @@ end;
 procedure TFhirStatisticAttributeEstimate.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
   if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
-  else if (propName = 'estimateQualifier') then EstimateQualifierList.insertItem(index, propValue as TFhirStatisticAttributeEstimateEstimateQualifier) {L1049}
+  else if (propName = 'attributeEstimate') then AttributeEstimateList.insertItem(index, propValue as TFhirStatisticAttributeEstimateAttributeEstimate) {L1049}
   else inherited;
 end;
 
@@ -34955,7 +34908,7 @@ begin
   else if (propName = 'quantity') then result := TFhirQuantity.create() {L1203}
   else if (propName = 'level') then result := TFhirDecimal.create() {L1223}
   else if (propName = 'range') then result := TFhirRange.create() {L1203}
-  else if (propName = 'estimateQualifier') then result := EstimateQualifierList.new() {L1053}
+  else if (propName = 'attributeEstimate') then result := AttributeEstimateList.new() {L1053}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -34967,7 +34920,7 @@ begin
   else if (propName = 'quantity') then result := 'Quantity'
   else if (propName = 'level') then result := 'decimal'
   else if (propName = 'range') then result := 'Range'
-  else if (propName = 'estimateQualifier') then result := 'Element'
+  else if (propName = 'attributeEstimate') then result := 'Element'
   else result := inherited getTypesForProperty(propName);
 end;
 
@@ -34979,7 +34932,7 @@ begin
   else if (propName = 'quantity') then QuantityElement := nil
   else if (propName = 'level') then LevelElement := nil
   else if (propName = 'range') then RangeElement := nil
-  else if (propName = 'estimateQualifier') then deletePropertyValue('estimateQualifier', EstimateQualifierList, value) {L1054}
+  else if (propName = 'attributeEstimate') then deletePropertyValue('attributeEstimate', AttributeEstimateList, value) {L1054}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -34992,7 +34945,7 @@ begin
   else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity {L1195}
   else if (propName = 'level') then LevelElement := asDecimal(new) {L1222}
   else if (propName = 'range') then RangeElement := new as TFhirRange {L1195}
-  else if (propName = 'estimateQualifier') then replacePropertyValue('estimateQualifier', EstimateQualifierList, existing, new) {L1055}
+  else if (propName = 'attributeEstimate') then replacePropertyValue('attributeEstimate', AttributeEstimateList, existing, new) {L1055}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -35000,7 +34953,7 @@ end;
 procedure TFhirStatisticAttributeEstimate.reorderProperty(propName : string; source, destination : integer);
 begin
   if (propName = 'note') then NoteList.move(source, destination) {L1050}
-  else if (propName = 'estimateQualifier') then EstimateQualifierList.move(source, destination) {L1050}
+  else if (propName = 'attributeEstimate') then AttributeEstimateList.move(source, destination) {L1050}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -35034,13 +34987,13 @@ begin
     result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
       compareDeep(type_Element, o.type_Element, true) and compareDeep(quantityElement, o.quantityElement, true) and 
       compareDeep(levelElement, o.levelElement, true) and compareDeep(rangeElement, o.rangeElement, true) and 
-      compareDeep(estimateQualifierList, o.estimateQualifierList, true);
+      compareDeep(attributeEstimateList, o.attributeEstimateList, true);
   end;
 end;
 
 function TFhirStatisticAttributeEstimate.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FType_) and isEmptyProp(FQuantity) and isEmptyProp(FLevel) and isEmptyProp(FRange) and isEmptyProp(FestimateQualifierList);
+  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FType_) and isEmptyProp(FQuantity) and isEmptyProp(FLevel) and isEmptyProp(FRange) and isEmptyProp(FattributeEstimateList);
 end;
 
 procedure TFhirStatisticAttributeEstimate.SetDescription(value : TFhirString);
@@ -35125,16 +35078,16 @@ begin
   FRange := value; {L1134}
 end;
 
-function TFhirStatisticAttributeEstimate.GetEstimateQualifierList : TFhirStatisticAttributeEstimateEstimateQualifierList;
+function TFhirStatisticAttributeEstimate.GetAttributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList;
 begin
-  if FEstimateQualifierList = nil then
-    FEstimateQualifierList := TFhirStatisticAttributeEstimateEstimateQualifierList.Create;
-  result := FEstimateQualifierList;
+  if FAttributeEstimateList = nil then
+    FAttributeEstimateList := TFhirStatisticAttributeEstimateAttributeEstimateList.Create;
+  result := FAttributeEstimateList;
 end;
 
-function TFhirStatisticAttributeEstimate.GetHasEstimateQualifierList : boolean;
+function TFhirStatisticAttributeEstimate.GetHasAttributeEstimateList : boolean;
 begin
-  result := (FEstimateQualifierList <> nil) and (FEstimateQualifierList.count > 0);
+  result := (FAttributeEstimateList <> nil) and (FAttributeEstimateList.count > 0);
 end;
 
 { TFhirStatisticAttributeEstimateListEnumerator }
@@ -35258,14 +35211,14 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-{ TFhirStatisticAttributeEstimateEstimateQualifier }
+{ TFhirStatisticAttributeEstimateAttributeEstimate }
 
-constructor TFhirStatisticAttributeEstimateEstimateQualifier.Create;
+constructor TFhirStatisticAttributeEstimateAttributeEstimate.Create;
 begin
   inherited;
 end;
 
-destructor TFhirStatisticAttributeEstimateEstimateQualifier.Destroy;
+destructor TFhirStatisticAttributeEstimateAttributeEstimate.Destroy;
 begin
   FDescription.free;
   FNoteList.Free;
@@ -35276,11 +35229,11 @@ begin
   inherited;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.Assign(oSource : TFslObject);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.Assign(oSource : TFslObject);
 begin
   inherited;
-  descriptionElement := TFhirStatisticAttributeEstimateEstimateQualifier(oSource).descriptionElement.Clone;
-  if (TFhirStatisticAttributeEstimateEstimateQualifier(oSource).FNoteList = nil) then
+  descriptionElement := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).descriptionElement.Clone;
+  if (TFhirStatisticAttributeEstimateAttributeEstimate(oSource).FNoteList = nil) then
   begin
     FNoteList.free;
     FNoteList := nil;
@@ -35289,15 +35242,15 @@ begin
   begin
     if FNoteList = nil then
       FNoteList := TFhirAnnotationList.Create;
-    FNoteList.Assign(TFhirStatisticAttributeEstimateEstimateQualifier(oSource).FNoteList);
+    FNoteList.Assign(TFhirStatisticAttributeEstimateAttributeEstimate(oSource).FNoteList);
   end;
-  type_ := TFhirStatisticAttributeEstimateEstimateQualifier(oSource).type_.Clone;
-  quantity := TFhirStatisticAttributeEstimateEstimateQualifier(oSource).quantity.Clone;
-  levelElement := TFhirStatisticAttributeEstimateEstimateQualifier(oSource).levelElement.Clone;
-  range := TFhirStatisticAttributeEstimateEstimateQualifier(oSource).range.Clone;
+  type_ := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).type_.Clone;
+  quantity := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).quantity.Clone;
+  levelElement := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).levelElement.Clone;
+  range := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).range.Clone;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'description') Then
@@ -35314,7 +35267,7 @@ begin
      list.add(self.link, 'range', FRange.Link);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link)); {L1172}
@@ -35325,7 +35278,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'range', 'Range', false, TFhirRange, FRange.Link)); {L1172}
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+function TFhirStatisticAttributeEstimateAttributeEstimate.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'description') then
   begin
@@ -35360,13 +35313,13 @@ begin
   else result := inherited setProperty(propName, propValue);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
   if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
   else inherited;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.createPropertyValue(propName : string) : TFHIRObject;
+function TFhirStatisticAttributeEstimateAttributeEstimate.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'description') then result := TFhirString.create() {L1223}
   else if (propName = 'note') then result := NoteList.new() {L1053}
@@ -35377,7 +35330,7 @@ begin
   else result := inherited createPropertyValue(propName);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.getTypesForProperty(propName: string) : String;
+function TFhirStatisticAttributeEstimateAttributeEstimate.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'description') then result := 'string'
   else if (propName = 'note') then result := 'Annotation'
@@ -35388,7 +35341,7 @@ begin
   else result := inherited getTypesForProperty(propName);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.deleteProperty(propName: string; value : TFHIRObject);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'description') then DescriptionElement := nil
   else if (propName = 'note') then deletePropertyValue('note', NoteList, value) {L1054}
@@ -35400,7 +35353,7 @@ begin
     inherited deleteProperty(propName, value);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.replaceProperty(propName : string; existing, new : TFHIRObject);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'description') then DescriptionElement := asString(new) {L1222}
   else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new) {L1055}
@@ -35412,57 +35365,57 @@ begin
     inherited replaceProperty(propName, existing, new);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.reorderProperty(propName : string; source, destination : integer);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.reorderProperty(propName : string; source, destination : integer);
 begin
   if (propName = 'note') then NoteList.move(source, destination) {L1050}
   else
     inherited reorderProperty(propName, source, destination);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.fhirType : string;
+function TFhirStatisticAttributeEstimateAttributeEstimate.fhirType : string;
 begin
-  result := 'Statistic.attributeEstimate.estimateQualifier';
+  result := 'Statistic.attributeEstimate.attributeEstimate';
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.Link : TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimate.Link : TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier(inherited Link);
+  result := TFhirStatisticAttributeEstimateAttributeEstimate(inherited Link);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.Clone : TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimate.Clone : TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier(inherited Clone);
+  result := TFhirStatisticAttributeEstimateAttributeEstimate(inherited Clone);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.equals(other : TObject) : boolean; 
+function TFhirStatisticAttributeEstimateAttributeEstimate.equals(other : TObject) : boolean; 
 var
-  o : TFhirStatisticAttributeEstimateEstimateQualifier;
+  o : TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
   if (not inherited equals(other)) then
     result := false
-  else if (not (other is TFhirStatisticAttributeEstimateEstimateQualifier)) then
+  else if (not (other is TFhirStatisticAttributeEstimateAttributeEstimate)) then
     result := false
   else
   begin
-    o := TFhirStatisticAttributeEstimateEstimateQualifier(other);
+    o := TFhirStatisticAttributeEstimateAttributeEstimate(other);
     result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
       compareDeep(type_Element, o.type_Element, true) and compareDeep(quantityElement, o.quantityElement, true) and 
       compareDeep(levelElement, o.levelElement, true) and compareDeep(rangeElement, o.rangeElement, true);
   end;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.isEmpty : boolean;
+function TFhirStatisticAttributeEstimateAttributeEstimate.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FType_) and isEmptyProp(FQuantity) and isEmptyProp(FLevel) and isEmptyProp(FRange);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetDescription(value : TFhirString);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetDescription(value : TFhirString);
 begin
   FDescription.free;
   FDescription := value; {L1134}
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.GetDescriptionST : String;
+function TFhirStatisticAttributeEstimateAttributeEstimate.GetDescriptionST : String;
 begin
   if FDescription = nil then
     result := ''
@@ -35470,7 +35423,7 @@ begin
     result := FDescription.value;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetDescriptionST(value : String);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetDescriptionST(value : String);
 begin
   if value <> '' then
   begin
@@ -35482,37 +35435,37 @@ begin
     FDescription.value := '';
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.GetNoteList : TFhirAnnotationList;
+function TFhirStatisticAttributeEstimateAttributeEstimate.GetNoteList : TFhirAnnotationList;
 begin
   if FNoteList = nil then
     FNoteList := TFhirAnnotationList.Create;
   result := FNoteList;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.GetHasNoteList : boolean;
+function TFhirStatisticAttributeEstimateAttributeEstimate.GetHasNoteList : boolean;
 begin
   result := (FNoteList <> nil) and (FNoteList.count > 0);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetType_(value : TFhirCodeableConcept);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetType_(value : TFhirCodeableConcept);
 begin
   FType_.free;
   FType_ := value; {L1134}
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetQuantity(value : TFhirQuantity);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetQuantity(value : TFhirQuantity);
 begin
   FQuantity.free;
   FQuantity := value; {L1134}
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetLevel(value : TFhirDecimal);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetLevel(value : TFhirDecimal);
 begin
   FLevel.free;
   FLevel := value; {L1134}
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifier.GetLevelST : String;
+function TFhirStatisticAttributeEstimateAttributeEstimate.GetLevelST : String;
 begin
   if FLevel = nil then
     result := ''
@@ -35520,7 +35473,7 @@ begin
     result := FLevel.value;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetLevelST(value : String);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetLevelST(value : String);
 begin
   if value <> '' then
   begin
@@ -35532,49 +35485,49 @@ begin
     FLevel.value := '';
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifier.SetRange(value : TFhirRange);
+procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetRange(value : TFhirRange);
 begin
   FRange.free;
   FRange := value; {L1134}
 end;
 
-{ TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator }
+{ TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator }
 
-constructor TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator.Create(list : TFhirStatisticAttributeEstimateEstimateQualifierList);
+constructor TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.Create(list : TFhirStatisticAttributeEstimateAttributeEstimateList);
 begin
   inherited Create;
   FIndex := -1;
   FList := list;
 end;
 
-destructor TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator.Destroy;
+destructor TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.Destroy;
 begin
   FList.Free;
   inherited;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator.MoveNext : boolean;
+function TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.MoveNext : boolean;
 begin
   inc(FIndex);
   Result := FIndex < FList.count;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator.GetCurrent : TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.GetCurrent : TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
   Result := FList[FIndex];
 end;
 
-{ TFhirStatisticAttributeEstimateEstimateQualifierList }
+{ TFhirStatisticAttributeEstimateAttributeEstimateList }
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifierList.AddItem(value: TFhirStatisticAttributeEstimateEstimateQualifier);
+procedure TFhirStatisticAttributeEstimateAttributeEstimateList.AddItem(value: TFhirStatisticAttributeEstimateAttributeEstimate);
 begin
-  assert(value.ClassName = 'TFhirStatisticAttributeEstimateEstimateQualifier', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStatisticAttributeEstimateEstimateQualifier');
+  assert(value.ClassName = 'TFhirStatisticAttributeEstimateAttributeEstimate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStatisticAttributeEstimateAttributeEstimate');
   add(value);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.Append: TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.Append: TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier.create;
+  result := TFhirStatisticAttributeEstimateAttributeEstimate.create;
   try
     add(result.Link);
   finally
@@ -35582,43 +35535,43 @@ begin
   end;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifierList.ClearItems;
+procedure TFhirStatisticAttributeEstimateAttributeEstimateList.ClearItems;
 begin
   Clear;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.GetEnumerator : TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.GetEnumerator : TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifierListEnumerator.Create(self.link);
+  result := TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.Create(self.link);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.Clone: TFhirStatisticAttributeEstimateEstimateQualifierList;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.Clone: TFhirStatisticAttributeEstimateAttributeEstimateList;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifierList(inherited Clone);
+  result := TFhirStatisticAttributeEstimateAttributeEstimateList(inherited Clone);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.Count: Integer;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.Count: Integer;
 begin
   result := Inherited Count;
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.GetItemN(index: Integer): TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.GetItemN(index: Integer): TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier(ObjectByIndex[index]);
+  result := TFhirStatisticAttributeEstimateAttributeEstimate(ObjectByIndex[index]);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.ItemClass: TFslObjectClass;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.ItemClass: TFslObjectClass;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier;
+  result := TFhirStatisticAttributeEstimateAttributeEstimate;
 end;
-function TFhirStatisticAttributeEstimateEstimateQualifierList.IndexOf(value: TFhirStatisticAttributeEstimateEstimateQualifier): Integer;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.IndexOf(value: TFhirStatisticAttributeEstimateAttributeEstimate): Integer;
 begin
   result := IndexByReference(value);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.Insert(index: Integer): TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.Insert(index: Integer): TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier.create;
+  result := TFhirStatisticAttributeEstimateAttributeEstimate.create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35626,36 +35579,729 @@ begin
   end;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifierList.InsertItem(index: Integer; value: TFhirStatisticAttributeEstimateEstimateQualifier);
+procedure TFhirStatisticAttributeEstimateAttributeEstimateList.InsertItem(index: Integer; value: TFhirStatisticAttributeEstimateAttributeEstimate);
 begin
-  assert(value is TFhirStatisticAttributeEstimateEstimateQualifier);
+  assert(value is TFhirStatisticAttributeEstimateAttributeEstimate);
   Inherited Insert(index, value);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.Item(index: Integer): TFhirStatisticAttributeEstimateEstimateQualifier;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.Item(index: Integer): TFhirStatisticAttributeEstimateAttributeEstimate;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifier(ObjectByIndex[index]);
+  result := TFhirStatisticAttributeEstimateAttributeEstimate(ObjectByIndex[index]);
 end;
 
-function TFhirStatisticAttributeEstimateEstimateQualifierList.Link: TFhirStatisticAttributeEstimateEstimateQualifierList;
+function TFhirStatisticAttributeEstimateAttributeEstimateList.Link: TFhirStatisticAttributeEstimateAttributeEstimateList;
 begin
-  result := TFhirStatisticAttributeEstimateEstimateQualifierList(inherited Link);
+  result := TFhirStatisticAttributeEstimateAttributeEstimateList(inherited Link);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifierList.Remove(index: Integer);
+procedure TFhirStatisticAttributeEstimateAttributeEstimateList.Remove(index: Integer);
 begin
   DeleteByIndex(index);
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifierList.SetItemByIndex(index: Integer; value: TFhirStatisticAttributeEstimateEstimateQualifier);
+procedure TFhirStatisticAttributeEstimateAttributeEstimateList.SetItemByIndex(index: Integer; value: TFhirStatisticAttributeEstimateAttributeEstimate);
 begin
-  assert(value is TFhirStatisticAttributeEstimateEstimateQualifier);
-  FhirStatisticAttributeEstimateEstimateQualifiers[index] := value;
+  assert(value is TFhirStatisticAttributeEstimateAttributeEstimate);
+  FhirStatisticAttributeEstimateAttributeEstimates[index] := value;
 end;
 
-procedure TFhirStatisticAttributeEstimateEstimateQualifierList.SetItemN(index: Integer; value: TFhirStatisticAttributeEstimateEstimateQualifier);
+procedure TFhirStatisticAttributeEstimateAttributeEstimateList.SetItemN(index: Integer; value: TFhirStatisticAttributeEstimateAttributeEstimate);
 begin
-  assert(value is TFhirStatisticAttributeEstimateEstimateQualifier);
+  assert(value is TFhirStatisticAttributeEstimateAttributeEstimate);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirStatisticModelCharacteristic }
+
+constructor TFhirStatisticModelCharacteristic.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirStatisticModelCharacteristic.Destroy;
+begin
+  FCode.free;
+  FValue.free;
+  FVariableList.Free;
+  inherited;
+end;
+
+procedure TFhirStatisticModelCharacteristic.Assign(oSource : TFslObject);
+begin
+  inherited;
+  code := TFhirStatisticModelCharacteristic(oSource).code.Clone;
+  value := TFhirStatisticModelCharacteristic(oSource).value.Clone;
+  if (TFhirStatisticModelCharacteristic(oSource).FVariableList = nil) then
+  begin
+    FVariableList.free;
+    FVariableList := nil;
+  end
+  else
+  begin
+    if FVariableList = nil then
+      FVariableList := TFhirStatisticModelCharacteristicVariableList.Create;
+    FVariableList.Assign(TFhirStatisticModelCharacteristic(oSource).FVariableList);
+  end;
+end;
+
+procedure TFhirStatisticModelCharacteristic.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'value[x]') or (child_name = 'value') Then
+     list.add(self.link, 'value[x]', FValue.Link);
+  if (child_name = 'variable') Then
+    list.addAll(self, 'variable', FVariableList);
+end;
+
+procedure TFhirStatisticModelCharacteristic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'CodeableConcept|boolean|Quantity|Range', false, TFhirDataType, FValue.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'variable', 'Element', true, TFhirStatisticModelCharacteristicVariable, FVariableList.Link)) {L1039};
+end;
+
+function TFhirStatisticModelCharacteristic.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'code') then
+  begin
+    Code := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range'])) then
+  begin
+    Value := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'variable') then
+  begin
+    VariableList.add(propValue as TFhirStatisticModelCharacteristicVariable) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirStatisticModelCharacteristic.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'variable') then VariableList.insertItem(index, propValue as TFhirStatisticModelCharacteristicVariable) {L1049}
+  else inherited;
+end;
+
+function TFhirStatisticModelCharacteristic.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range'])) then raise EFHIRException.create('Cannot make property Value') {L1191}
+  else if (propName = 'variable') then result := VariableList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirStatisticModelCharacteristic.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'code') then result := 'CodeableConcept'
+  else if (propName = 'value[x]') then result := 'CodeableConcept|boolean|Quantity|Range'
+  else if (propName = 'variable') then result := 'Element'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirStatisticModelCharacteristic.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range'])) then ValueElement := nil {L1189}
+  else if (propName = 'variable') then deletePropertyValue('variable', VariableList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirStatisticModelCharacteristic.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range'])) then ValueElement := new as TFhirDataType {L1190}
+  else if (propName = 'variable') then replacePropertyValue('variable', VariableList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirStatisticModelCharacteristic.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'variable') then VariableList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirStatisticModelCharacteristic.fhirType : string;
+begin
+  result := 'Statistic.modelCharacteristic';
+end;
+
+function TFhirStatisticModelCharacteristic.Link : TFhirStatisticModelCharacteristic;
+begin
+  result := TFhirStatisticModelCharacteristic(inherited Link);
+end;
+
+function TFhirStatisticModelCharacteristic.Clone : TFhirStatisticModelCharacteristic;
+begin
+  result := TFhirStatisticModelCharacteristic(inherited Clone);
+end;
+
+function TFhirStatisticModelCharacteristic.equals(other : TObject) : boolean; 
+var
+  o : TFhirStatisticModelCharacteristic;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirStatisticModelCharacteristic)) then
+    result := false
+  else
+  begin
+    o := TFhirStatisticModelCharacteristic(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(valueElement, o.valueElement, true) and 
+      compareDeep(variableList, o.variableList, true);
+  end;
+end;
+
+function TFhirStatisticModelCharacteristic.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FValue) and isEmptyProp(FvariableList);
+end;
+
+procedure TFhirStatisticModelCharacteristic.SetCode(value : TFhirCodeableConcept);
+begin
+  FCode.free;
+  FCode := value; {L1134}
+end;
+
+procedure TFhirStatisticModelCharacteristic.SetValue(value : TFhirDataType);
+begin
+  FValue.free;
+  FValue := value; {L1134}
+end;
+
+function TFhirStatisticModelCharacteristic.GetVariableList : TFhirStatisticModelCharacteristicVariableList;
+begin
+  if FVariableList = nil then
+    FVariableList := TFhirStatisticModelCharacteristicVariableList.Create;
+  result := FVariableList;
+end;
+
+function TFhirStatisticModelCharacteristic.GetHasVariableList : boolean;
+begin
+  result := (FVariableList <> nil) and (FVariableList.count > 0);
+end;
+
+{ TFhirStatisticModelCharacteristicListEnumerator }
+
+constructor TFhirStatisticModelCharacteristicListEnumerator.Create(list : TFhirStatisticModelCharacteristicList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirStatisticModelCharacteristicListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirStatisticModelCharacteristicListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirStatisticModelCharacteristicListEnumerator.GetCurrent : TFhirStatisticModelCharacteristic;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirStatisticModelCharacteristicList }
+
+procedure TFhirStatisticModelCharacteristicList.AddItem(value: TFhirStatisticModelCharacteristic);
+begin
+  assert(value.ClassName = 'TFhirStatisticModelCharacteristic', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStatisticModelCharacteristic');
+  add(value);
+end;
+
+function TFhirStatisticModelCharacteristicList.Append: TFhirStatisticModelCharacteristic;
+begin
+  result := TFhirStatisticModelCharacteristic.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirStatisticModelCharacteristicList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirStatisticModelCharacteristicList.GetEnumerator : TFhirStatisticModelCharacteristicListEnumerator;
+begin
+  result := TFhirStatisticModelCharacteristicListEnumerator.Create(self.link);
+end;
+
+function TFhirStatisticModelCharacteristicList.Clone: TFhirStatisticModelCharacteristicList;
+begin
+  result := TFhirStatisticModelCharacteristicList(inherited Clone);
+end;
+
+function TFhirStatisticModelCharacteristicList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirStatisticModelCharacteristicList.GetItemN(index: Integer): TFhirStatisticModelCharacteristic;
+begin
+  result := TFhirStatisticModelCharacteristic(ObjectByIndex[index]);
+end;
+
+function TFhirStatisticModelCharacteristicList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirStatisticModelCharacteristic;
+end;
+function TFhirStatisticModelCharacteristicList.IndexOf(value: TFhirStatisticModelCharacteristic): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirStatisticModelCharacteristicList.Insert(index: Integer): TFhirStatisticModelCharacteristic;
+begin
+  result := TFhirStatisticModelCharacteristic.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirStatisticModelCharacteristicList.InsertItem(index: Integer; value: TFhirStatisticModelCharacteristic);
+begin
+  assert(value is TFhirStatisticModelCharacteristic);
+  Inherited Insert(index, value);
+end;
+
+function TFhirStatisticModelCharacteristicList.Item(index: Integer): TFhirStatisticModelCharacteristic;
+begin
+  result := TFhirStatisticModelCharacteristic(ObjectByIndex[index]);
+end;
+
+function TFhirStatisticModelCharacteristicList.Link: TFhirStatisticModelCharacteristicList;
+begin
+  result := TFhirStatisticModelCharacteristicList(inherited Link);
+end;
+
+procedure TFhirStatisticModelCharacteristicList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirStatisticModelCharacteristicList.SetItemByIndex(index: Integer; value: TFhirStatisticModelCharacteristic);
+begin
+  assert(value is TFhirStatisticModelCharacteristic);
+  FhirStatisticModelCharacteristics[index] := value;
+end;
+
+procedure TFhirStatisticModelCharacteristicList.SetItemN(index: Integer; value: TFhirStatisticModelCharacteristic);
+begin
+  assert(value is TFhirStatisticModelCharacteristic);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirStatisticModelCharacteristicVariable }
+
+constructor TFhirStatisticModelCharacteristicVariable.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirStatisticModelCharacteristicVariable.Destroy;
+begin
+  FVariableDefinition.free;
+  FHandling.free;
+  FValueCategoryList.Free;
+  FValueQuantityList.Free;
+  FValueRangeList.Free;
+  inherited;
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.Assign(oSource : TFslObject);
+begin
+  inherited;
+  variableDefinition := TFhirStatisticModelCharacteristicVariable(oSource).variableDefinition.Clone;
+  handlingElement := TFhirStatisticModelCharacteristicVariable(oSource).handlingElement.Clone;
+  if (TFhirStatisticModelCharacteristicVariable(oSource).FValueCategoryList = nil) then
+  begin
+    FValueCategoryList.free;
+    FValueCategoryList := nil;
+  end
+  else
+  begin
+    if FValueCategoryList = nil then
+      FValueCategoryList := TFhirCodeableConceptList.Create;
+    FValueCategoryList.Assign(TFhirStatisticModelCharacteristicVariable(oSource).FValueCategoryList);
+  end;
+  if (TFhirStatisticModelCharacteristicVariable(oSource).FValueQuantityList = nil) then
+  begin
+    FValueQuantityList.free;
+    FValueQuantityList := nil;
+  end
+  else
+  begin
+    if FValueQuantityList = nil then
+      FValueQuantityList := TFhirQuantityList.Create;
+    FValueQuantityList.Assign(TFhirStatisticModelCharacteristicVariable(oSource).FValueQuantityList);
+  end;
+  if (TFhirStatisticModelCharacteristicVariable(oSource).FValueRangeList = nil) then
+  begin
+    FValueRangeList.free;
+    FValueRangeList := nil;
+  end
+  else
+  begin
+    if FValueRangeList = nil then
+      FValueRangeList := TFhirRangeList.Create;
+    FValueRangeList.Assign(TFhirStatisticModelCharacteristicVariable(oSource).FValueRangeList);
+  end;
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'variableDefinition') Then
+     list.add(self.link, 'variableDefinition', FVariableDefinition.Link);
+  if (child_name = 'handling') Then
+     list.add(self.link, 'handling', FHandling.Link);
+  if (child_name = 'valueCategory') Then
+    list.addAll(self, 'valueCategory', FValueCategoryList);
+  if (child_name = 'valueQuantity') Then
+    list.addAll(self, 'valueQuantity', FValueQuantityList);
+  if (child_name = 'valueRange') Then
+    list.addAll(self, 'valueRange', FValueRangeList);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'variableDefinition', 'Reference', false, TFhirReference, FVariableDefinition.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'handling', 'code', false, TFhirEnum, FHandling.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'valueCategory', 'CodeableConcept', true, TFhirCodeableConcept, FValueCategoryList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'valueRange', 'Range', true, TFhirRange, FValueRangeList.Link)) {L1039};
+end;
+
+function TFhirStatisticModelCharacteristicVariable.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'variableDefinition') then
+  begin
+    VariableDefinition := propValue as TFhirReference {L1199};
+    result := propValue;
+  end
+  else if (propName = 'handling') then
+  begin
+    HandlingElement := asEnum(SYSTEMS_TFhirEvidenceVariableHandlingEnum, CODES_TFhirEvidenceVariableHandlingEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'valueCategory') then
+  begin
+    ValueCategoryList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'valueQuantity') then
+  begin
+    ValueQuantityList.add(propValue as TFhirQuantity) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'valueRange') then
+  begin
+    ValueRangeList.add(propValue as TFhirRange) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'valueCategory') then ValueCategoryList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'valueQuantity') then ValueQuantityList.insertItem(index, propValue as TFhirQuantity) {L1049}
+  else if (propName = 'valueRange') then ValueRangeList.insertItem(index, propValue as TFhirRange) {L1049}
+  else inherited;
+end;
+
+function TFhirStatisticModelCharacteristicVariable.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'variableDefinition') then result := TFhirReference.create() {L1203}
+  else if (propName = 'handling') then result := TFhirEnum.create(SYSTEMS_TFhirEvidenceVariableHandlingEnum[EvidenceVariableHandlingNull], CODES_TFhirEvidenceVariableHandlingEnum[EvidenceVariableHandlingNull])  {L1211}
+  else if (propName = 'valueCategory') then result := ValueCategoryList.new() {L1053}
+  else if (propName = 'valueQuantity') then result := ValueQuantityList.new() {L1053}
+  else if (propName = 'valueRange') then result := ValueRangeList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'variableDefinition') then result := 'Reference'
+  else if (propName = 'handling') then result := 'code'
+  else if (propName = 'valueCategory') then result := 'CodeableConcept'
+  else if (propName = 'valueQuantity') then result := 'Quantity'
+  else if (propName = 'valueRange') then result := 'Range'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'variableDefinition') then VariableDefinitionElement := nil
+  else if (propName = 'handling') then HandlingElement := nil
+  else if (propName = 'valueCategory') then deletePropertyValue('valueCategory', ValueCategoryList, value) {L1054}
+  else if (propName = 'valueQuantity') then deletePropertyValue('valueQuantity', ValueQuantityList, value) {L1054}
+  else if (propName = 'valueRange') then deletePropertyValue('valueRange', ValueRangeList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'variableDefinition') then VariableDefinitionElement := new as TFhirReference {L1195}
+  else if (propName = 'handling') then HandlingElement := asEnum(SYSTEMS_TFhirEvidenceVariableHandlingEnum, CODES_TFhirEvidenceVariableHandlingEnum, new) {L1210}
+  else if (propName = 'valueCategory') then replacePropertyValue('valueCategory', ValueCategoryList, existing, new) {L1055}
+  else if (propName = 'valueQuantity') then replacePropertyValue('valueQuantity', ValueQuantityList, existing, new) {L1055}
+  else if (propName = 'valueRange') then replacePropertyValue('valueRange', ValueRangeList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'valueCategory') then ValueCategoryList.move(source, destination) {L1050}
+  else if (propName = 'valueQuantity') then ValueQuantityList.move(source, destination) {L1050}
+  else if (propName = 'valueRange') then ValueRangeList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.fhirType : string;
+begin
+  result := 'Statistic.modelCharacteristic.variable';
+end;
+
+function TFhirStatisticModelCharacteristicVariable.Link : TFhirStatisticModelCharacteristicVariable;
+begin
+  result := TFhirStatisticModelCharacteristicVariable(inherited Link);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.Clone : TFhirStatisticModelCharacteristicVariable;
+begin
+  result := TFhirStatisticModelCharacteristicVariable(inherited Clone);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.equals(other : TObject) : boolean; 
+var
+  o : TFhirStatisticModelCharacteristicVariable;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirStatisticModelCharacteristicVariable)) then
+    result := false
+  else
+  begin
+    o := TFhirStatisticModelCharacteristicVariable(other);
+    result := compareDeep(variableDefinitionElement, o.variableDefinitionElement, true) and 
+      compareDeep(handlingElement, o.handlingElement, true) and compareDeep(valueCategoryList, o.valueCategoryList, true) and 
+      compareDeep(valueQuantityList, o.valueQuantityList, true) and compareDeep(valueRangeList, o.valueRangeList, true);
+  end;
+end;
+
+function TFhirStatisticModelCharacteristicVariable.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FVariableDefinition) and isEmptyProp(FHandling) and isEmptyProp(FvalueCategoryList) and isEmptyProp(FvalueQuantityList) and isEmptyProp(FvalueRangeList);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.SetVariableDefinition(value : TFhirReference);
+begin
+  FVariableDefinition.free;
+  FVariableDefinition := value; {L1134}
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.SetHandling(value : TFhirEnum);
+begin
+  FHandling.free;
+  FHandling := value;
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetHandlingST : TFhirEvidenceVariableHandlingEnum;
+begin
+  if FHandling = nil then
+    result := TFhirEvidenceVariableHandlingEnum(0)
+  else
+    result := TFhirEvidenceVariableHandlingEnum(StringArrayIndexOfSensitive(CODES_TFhirEvidenceVariableHandlingEnum, FHandling.value));
+end;
+
+procedure TFhirStatisticModelCharacteristicVariable.SetHandlingST(value : TFhirEvidenceVariableHandlingEnum);
+begin
+  if ord(value) = 0 then
+    HandlingElement := nil
+  else
+    HandlingElement := TFhirEnum.create(SYSTEMS_TFhirEvidenceVariableHandlingEnum[value], CODES_TFhirEvidenceVariableHandlingEnum[value]);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetValueCategoryList : TFhirCodeableConceptList;
+begin
+  if FValueCategoryList = nil then
+    FValueCategoryList := TFhirCodeableConceptList.Create;
+  result := FValueCategoryList;
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetHasValueCategoryList : boolean;
+begin
+  result := (FValueCategoryList <> nil) and (FValueCategoryList.count > 0);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetValueQuantityList : TFhirQuantityList;
+begin
+  if FValueQuantityList = nil then
+    FValueQuantityList := TFhirQuantityList.Create;
+  result := FValueQuantityList;
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetHasValueQuantityList : boolean;
+begin
+  result := (FValueQuantityList <> nil) and (FValueQuantityList.count > 0);
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetValueRangeList : TFhirRangeList;
+begin
+  if FValueRangeList = nil then
+    FValueRangeList := TFhirRangeList.Create;
+  result := FValueRangeList;
+end;
+
+function TFhirStatisticModelCharacteristicVariable.GetHasValueRangeList : boolean;
+begin
+  result := (FValueRangeList <> nil) and (FValueRangeList.count > 0);
+end;
+
+{ TFhirStatisticModelCharacteristicVariableListEnumerator }
+
+constructor TFhirStatisticModelCharacteristicVariableListEnumerator.Create(list : TFhirStatisticModelCharacteristicVariableList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirStatisticModelCharacteristicVariableListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirStatisticModelCharacteristicVariableListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirStatisticModelCharacteristicVariableListEnumerator.GetCurrent : TFhirStatisticModelCharacteristicVariable;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirStatisticModelCharacteristicVariableList }
+
+procedure TFhirStatisticModelCharacteristicVariableList.AddItem(value: TFhirStatisticModelCharacteristicVariable);
+begin
+  assert(value.ClassName = 'TFhirStatisticModelCharacteristicVariable', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStatisticModelCharacteristicVariable');
+  add(value);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.Append: TFhirStatisticModelCharacteristicVariable;
+begin
+  result := TFhirStatisticModelCharacteristicVariable.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirStatisticModelCharacteristicVariableList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.GetEnumerator : TFhirStatisticModelCharacteristicVariableListEnumerator;
+begin
+  result := TFhirStatisticModelCharacteristicVariableListEnumerator.Create(self.link);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.Clone: TFhirStatisticModelCharacteristicVariableList;
+begin
+  result := TFhirStatisticModelCharacteristicVariableList(inherited Clone);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.GetItemN(index: Integer): TFhirStatisticModelCharacteristicVariable;
+begin
+  result := TFhirStatisticModelCharacteristicVariable(ObjectByIndex[index]);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirStatisticModelCharacteristicVariable;
+end;
+function TFhirStatisticModelCharacteristicVariableList.IndexOf(value: TFhirStatisticModelCharacteristicVariable): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.Insert(index: Integer): TFhirStatisticModelCharacteristicVariable;
+begin
+  result := TFhirStatisticModelCharacteristicVariable.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirStatisticModelCharacteristicVariableList.InsertItem(index: Integer; value: TFhirStatisticModelCharacteristicVariable);
+begin
+  assert(value is TFhirStatisticModelCharacteristicVariable);
+  Inherited Insert(index, value);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.Item(index: Integer): TFhirStatisticModelCharacteristicVariable;
+begin
+  result := TFhirStatisticModelCharacteristicVariable(ObjectByIndex[index]);
+end;
+
+function TFhirStatisticModelCharacteristicVariableList.Link: TFhirStatisticModelCharacteristicVariableList;
+begin
+  result := TFhirStatisticModelCharacteristicVariableList(inherited Link);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariableList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirStatisticModelCharacteristicVariableList.SetItemByIndex(index: Integer; value: TFhirStatisticModelCharacteristicVariable);
+begin
+  assert(value is TFhirStatisticModelCharacteristicVariable);
+  FhirStatisticModelCharacteristicVariables[index] := value;
+end;
+
+procedure TFhirStatisticModelCharacteristicVariableList.SetItemN(index: Integer; value: TFhirStatisticModelCharacteristicVariable);
+begin
+  assert(value is TFhirStatisticModelCharacteristicVariable);
   ObjectByIndex[index] := value;
 end;
 
@@ -35672,8 +36318,10 @@ begin
   FNoteList.Free;
   FStatisticType.free;
   FQuantity.free;
+  FNumberOfEvents.free;
   FSampleSize.free;
   FAttributeEstimateList.Free;
+  FModelCharacteristicList.Free;
   inherited;
 end;
 
@@ -35694,6 +36342,7 @@ begin
   end;
   statisticType := TFhirStatistic(oSource).statisticType.Clone;
   quantity := TFhirStatistic(oSource).quantity.Clone;
+  numberOfEventsElement := TFhirStatistic(oSource).numberOfEventsElement.Clone;
   sampleSize := TFhirStatistic(oSource).sampleSize.Clone;
   if (TFhirStatistic(oSource).FAttributeEstimateList = nil) then
   begin
@@ -35705,6 +36354,17 @@ begin
     if FAttributeEstimateList = nil then
       FAttributeEstimateList := TFhirStatisticAttributeEstimateList.Create;
     FAttributeEstimateList.Assign(TFhirStatistic(oSource).FAttributeEstimateList);
+  end;
+  if (TFhirStatistic(oSource).FModelCharacteristicList = nil) then
+  begin
+    FModelCharacteristicList.free;
+    FModelCharacteristicList := nil;
+  end
+  else
+  begin
+    if FModelCharacteristicList = nil then
+      FModelCharacteristicList := TFhirStatisticModelCharacteristicList.Create;
+    FModelCharacteristicList.Assign(TFhirStatistic(oSource).FModelCharacteristicList);
   end;
 end;
 
@@ -35719,10 +36379,14 @@ begin
      list.add(self.link, 'statisticType', FStatisticType.Link);
   if (child_name = 'quantity') Then
      list.add(self.link, 'quantity', FQuantity.Link);
+  if (child_name = 'numberOfEvents') Then
+     list.add(self.link, 'numberOfEvents', FNumberOfEvents.Link);
   if (child_name = 'sampleSize') Then
      list.add(self.link, 'sampleSize', FSampleSize.Link);
   if (child_name = 'attributeEstimate') Then
     list.addAll(self, 'attributeEstimate', FAttributeEstimateList);
+  if (child_name = 'modelCharacteristic') Then
+    list.addAll(self, 'modelCharacteristic', FModelCharacteristicList);
 end;
 
 procedure TFhirStatistic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -35732,8 +36396,10 @@ begin
   oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)) {L1039};
   oList.add(TFHIRProperty.create(self, 'statisticType', 'CodeableConcept', false, TFhirCodeableConcept, FStatisticType.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'numberOfEvents', 'integer', false, TFhirInteger, FNumberOfEvents.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'sampleSize', 'Element', false, TFhirStatisticSampleSize, FSampleSize.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'attributeEstimate', 'Element', true, TFhirStatisticAttributeEstimate, FAttributeEstimateList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'modelCharacteristic', 'Element', true, TFhirStatisticModelCharacteristic, FModelCharacteristicList.Link)) {L1039};
 end;
 
 function TFhirStatistic.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -35758,6 +36424,11 @@ begin
     Quantity := propValue as TFhirQuantity {L1199};
     result := propValue;
   end
+  else if (propName = 'numberOfEvents') then
+  begin
+    NumberOfEventsElement := asInteger(propValue) {L1221};
+    result := propValue;
+  end
   else if (propName = 'sampleSize') then
   begin
     SampleSize := propValue as TFhirStatisticSampleSize {L1199};
@@ -35768,6 +36439,11 @@ begin
     AttributeEstimateList.add(propValue as TFhirStatisticAttributeEstimate) {L1048};
     result := propValue;
   end
+  else if (propName = 'modelCharacteristic') then
+  begin
+    ModelCharacteristicList.add(propValue as TFhirStatisticModelCharacteristic) {L1048};
+    result := propValue;
+  end
   else result := inherited setProperty(propName, propValue);
 end;
 
@@ -35775,6 +36451,7 @@ procedure TFhirStatistic.insertProperty(propName: string; propValue: TFHIRObject
 begin
   if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
   else if (propName = 'attributeEstimate') then AttributeEstimateList.insertItem(index, propValue as TFhirStatisticAttributeEstimate) {L1049}
+  else if (propName = 'modelCharacteristic') then ModelCharacteristicList.insertItem(index, propValue as TFhirStatisticModelCharacteristic) {L1049}
   else inherited;
 end;
 
@@ -35784,8 +36461,10 @@ begin
   else if (propName = 'note') then result := NoteList.new() {L1053}
   else if (propName = 'statisticType') then result := TFhirCodeableConcept.create() {L1203}
   else if (propName = 'quantity') then result := TFhirQuantity.create() {L1203}
+  else if (propName = 'numberOfEvents') then result := TFhirInteger.create() {L1223}
   else if (propName = 'sampleSize') then result := TFhirStatisticSampleSize.create() {L1203}
   else if (propName = 'attributeEstimate') then result := AttributeEstimateList.new() {L1053}
+  else if (propName = 'modelCharacteristic') then result := ModelCharacteristicList.new() {L1053}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -35795,8 +36474,10 @@ begin
   else if (propName = 'note') then result := 'Annotation'
   else if (propName = 'statisticType') then result := 'CodeableConcept'
   else if (propName = 'quantity') then result := 'Quantity'
+  else if (propName = 'numberOfEvents') then result := 'integer'
   else if (propName = 'sampleSize') then result := 'Element'
   else if (propName = 'attributeEstimate') then result := 'Element'
+  else if (propName = 'modelCharacteristic') then result := 'Element'
   else result := inherited getTypesForProperty(propName);
 end;
 
@@ -35806,8 +36487,10 @@ begin
   else if (propName = 'note') then deletePropertyValue('note', NoteList, value) {L1054}
   else if (propName = 'statisticType') then StatisticTypeElement := nil
   else if (propName = 'quantity') then QuantityElement := nil
+  else if (propName = 'numberOfEvents') then NumberOfEventsElement := nil
   else if (propName = 'sampleSize') then SampleSizeElement := nil
   else if (propName = 'attributeEstimate') then deletePropertyValue('attributeEstimate', AttributeEstimateList, value) {L1054}
+  else if (propName = 'modelCharacteristic') then deletePropertyValue('modelCharacteristic', ModelCharacteristicList, value) {L1054}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -35818,8 +36501,10 @@ begin
   else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new) {L1055}
   else if (propName = 'statisticType') then StatisticTypeElement := new as TFhirCodeableConcept {L1195}
   else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity {L1195}
+  else if (propName = 'numberOfEvents') then NumberOfEventsElement := asInteger(new) {L1222}
   else if (propName = 'sampleSize') then SampleSizeElement := new as TFhirStatisticSampleSize {L1195}
   else if (propName = 'attributeEstimate') then replacePropertyValue('attributeEstimate', AttributeEstimateList, existing, new) {L1055}
+  else if (propName = 'modelCharacteristic') then replacePropertyValue('modelCharacteristic', ModelCharacteristicList, existing, new) {L1055}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -35828,6 +36513,7 @@ procedure TFhirStatistic.reorderProperty(propName : string; source, destination 
 begin
   if (propName = 'note') then NoteList.move(source, destination) {L1050}
   else if (propName = 'attributeEstimate') then AttributeEstimateList.move(source, destination) {L1050}
+  else if (propName = 'modelCharacteristic') then ModelCharacteristicList.move(source, destination) {L1050}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -35860,13 +36546,14 @@ begin
     o := TFhirStatistic(other);
     result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
       compareDeep(statisticTypeElement, o.statisticTypeElement, true) and compareDeep(quantityElement, o.quantityElement, true) and 
-      compareDeep(sampleSizeElement, o.sampleSizeElement, true) and compareDeep(attributeEstimateList, o.attributeEstimateList, true);
+      compareDeep(numberOfEventsElement, o.numberOfEventsElement, true) and compareDeep(sampleSizeElement, o.sampleSizeElement, true) and 
+      compareDeep(attributeEstimateList, o.attributeEstimateList, true) and compareDeep(modelCharacteristicList, o.modelCharacteristicList, true);
   end;
 end;
 
 function TFhirStatistic.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FStatisticType) and isEmptyProp(FQuantity) and isEmptyProp(FSampleSize) and isEmptyProp(FattributeEstimateList);
+  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FStatisticType) and isEmptyProp(FQuantity) and isEmptyProp(FNumberOfEvents) and isEmptyProp(FSampleSize) and isEmptyProp(FattributeEstimateList) and isEmptyProp(FmodelCharacteristicList);
 end;
 
 procedure TFhirStatistic.SetDescription(value : TFhirString);
@@ -35919,6 +36606,32 @@ begin
   FQuantity := value; {L1134}
 end;
 
+procedure TFhirStatistic.SetNumberOfEvents(value : TFhirInteger);
+begin
+  FNumberOfEvents.free;
+  FNumberOfEvents := value; {L1134}
+end;
+
+function TFhirStatistic.GetNumberOfEventsST : String;
+begin
+  if FNumberOfEvents = nil then
+    result := ''
+  else
+    result := FNumberOfEvents.value;
+end;
+
+procedure TFhirStatistic.SetNumberOfEventsST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FNumberOfEvents = nil then
+      FNumberOfEvents := TFhirInteger.create;
+    FNumberOfEvents.value := value
+  end
+  else if FNumberOfEvents <> nil then
+    FNumberOfEvents.value := '';
+end;
+
 procedure TFhirStatistic.SetSampleSize(value : TFhirStatisticSampleSize);
 begin
   FSampleSize.free;
@@ -35935,6 +36648,18 @@ end;
 function TFhirStatistic.GetHasAttributeEstimateList : boolean;
 begin
   result := (FAttributeEstimateList <> nil) and (FAttributeEstimateList.count > 0);
+end;
+
+function TFhirStatistic.GetModelCharacteristicList : TFhirStatisticModelCharacteristicList;
+begin
+  if FModelCharacteristicList = nil then
+    FModelCharacteristicList := TFhirStatisticModelCharacteristicList.Create;
+  result := FModelCharacteristicList;
+end;
+
+function TFhirStatistic.GetHasModelCharacteristicList : boolean;
+begin
+  result := (FModelCharacteristicList <> nil) and (FModelCharacteristicList.count > 0);
 end;
 
 { TFhirStatisticListEnumerator }
@@ -36055,587 +36780,6 @@ end;
 procedure TFhirStatisticList.SetItemN(index: Integer; value: TFhirStatistic);
 begin
   assert(value is TFhirStatistic);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirSubstanceAmountReferenceRange }
-
-constructor TFhirSubstanceAmountReferenceRange.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirSubstanceAmountReferenceRange.Destroy;
-begin
-  FLowLimit.free;
-  FHighLimit.free;
-  inherited;
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.Assign(oSource : TFslObject);
-begin
-  inherited;
-  lowLimit := TFhirSubstanceAmountReferenceRange(oSource).lowLimit.Clone;
-  highLimit := TFhirSubstanceAmountReferenceRange(oSource).highLimit.Clone;
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'lowLimit') Then
-     list.add(self.link, 'lowLimit', FLowLimit.Link);
-  if (child_name = 'highLimit') Then
-     list.add(self.link, 'highLimit', FHighLimit.Link);
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'lowLimit', 'Quantity', false, TFhirQuantity, FLowLimit.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'highLimit', 'Quantity', false, TFhirQuantity, FHighLimit.Link)); {L1172}
-end;
-
-function TFhirSubstanceAmountReferenceRange.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'lowLimit') then
-  begin
-    LowLimit := propValue as TFhirQuantity {L1199};
-    result := propValue;
-  end
-  else if (propName = 'highLimit') then
-  begin
-    HighLimit := propValue as TFhirQuantity {L1199};
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  inherited;
-end;
-
-function TFhirSubstanceAmountReferenceRange.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'lowLimit') then result := TFhirQuantity.create() {L1203}
-  else if (propName = 'highLimit') then result := TFhirQuantity.create() {L1203}
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirSubstanceAmountReferenceRange.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'lowLimit') then result := 'Quantity'
-  else if (propName = 'highLimit') then result := 'Quantity'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'lowLimit') then LowLimitElement := nil
-  else if (propName = 'highLimit') then HighLimitElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'lowLimit') then LowLimitElement := new as TFhirQuantity {L1195}
-  else if (propName = 'highLimit') then HighLimitElement := new as TFhirQuantity {L1195}
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.reorderProperty(propName : string; source, destination : integer);
-begin
-  inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirSubstanceAmountReferenceRange.fhirType : string;
-begin
-  result := 'SubstanceAmount.referenceRange';
-end;
-
-function TFhirSubstanceAmountReferenceRange.Link : TFhirSubstanceAmountReferenceRange;
-begin
-  result := TFhirSubstanceAmountReferenceRange(inherited Link);
-end;
-
-function TFhirSubstanceAmountReferenceRange.Clone : TFhirSubstanceAmountReferenceRange;
-begin
-  result := TFhirSubstanceAmountReferenceRange(inherited Clone);
-end;
-
-function TFhirSubstanceAmountReferenceRange.equals(other : TObject) : boolean; 
-var
-  o : TFhirSubstanceAmountReferenceRange;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirSubstanceAmountReferenceRange)) then
-    result := false
-  else
-  begin
-    o := TFhirSubstanceAmountReferenceRange(other);
-    result := compareDeep(lowLimitElement, o.lowLimitElement, true) and compareDeep(highLimitElement, o.highLimitElement, true);
-  end;
-end;
-
-function TFhirSubstanceAmountReferenceRange.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FLowLimit) and isEmptyProp(FHighLimit);
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.SetLowLimit(value : TFhirQuantity);
-begin
-  FLowLimit.free;
-  FLowLimit := value; {L1134}
-end;
-
-procedure TFhirSubstanceAmountReferenceRange.SetHighLimit(value : TFhirQuantity);
-begin
-  FHighLimit.free;
-  FHighLimit := value; {L1134}
-end;
-
-{ TFhirSubstanceAmountReferenceRangeListEnumerator }
-
-constructor TFhirSubstanceAmountReferenceRangeListEnumerator.Create(list : TFhirSubstanceAmountReferenceRangeList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirSubstanceAmountReferenceRangeListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirSubstanceAmountReferenceRangeListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirSubstanceAmountReferenceRangeListEnumerator.GetCurrent : TFhirSubstanceAmountReferenceRange;
-begin
-  Result := FList[FIndex];
-end;
-
-{ TFhirSubstanceAmountReferenceRangeList }
-
-procedure TFhirSubstanceAmountReferenceRangeList.AddItem(value: TFhirSubstanceAmountReferenceRange);
-begin
-  assert(value.ClassName = 'TFhirSubstanceAmountReferenceRange', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSubstanceAmountReferenceRange');
-  add(value);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.Append: TFhirSubstanceAmountReferenceRange;
-begin
-  result := TFhirSubstanceAmountReferenceRange.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirSubstanceAmountReferenceRangeList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.GetEnumerator : TFhirSubstanceAmountReferenceRangeListEnumerator;
-begin
-  result := TFhirSubstanceAmountReferenceRangeListEnumerator.Create(self.link);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.Clone: TFhirSubstanceAmountReferenceRangeList;
-begin
-  result := TFhirSubstanceAmountReferenceRangeList(inherited Clone);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.GetItemN(index: Integer): TFhirSubstanceAmountReferenceRange;
-begin
-  result := TFhirSubstanceAmountReferenceRange(ObjectByIndex[index]);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirSubstanceAmountReferenceRange;
-end;
-function TFhirSubstanceAmountReferenceRangeList.IndexOf(value: TFhirSubstanceAmountReferenceRange): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.Insert(index: Integer): TFhirSubstanceAmountReferenceRange;
-begin
-  result := TFhirSubstanceAmountReferenceRange.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirSubstanceAmountReferenceRangeList.InsertItem(index: Integer; value: TFhirSubstanceAmountReferenceRange);
-begin
-  assert(value is TFhirSubstanceAmountReferenceRange);
-  Inherited Insert(index, value);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.Item(index: Integer): TFhirSubstanceAmountReferenceRange;
-begin
-  result := TFhirSubstanceAmountReferenceRange(ObjectByIndex[index]);
-end;
-
-function TFhirSubstanceAmountReferenceRangeList.Link: TFhirSubstanceAmountReferenceRangeList;
-begin
-  result := TFhirSubstanceAmountReferenceRangeList(inherited Link);
-end;
-
-procedure TFhirSubstanceAmountReferenceRangeList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirSubstanceAmountReferenceRangeList.SetItemByIndex(index: Integer; value: TFhirSubstanceAmountReferenceRange);
-begin
-  assert(value is TFhirSubstanceAmountReferenceRange);
-  FhirSubstanceAmountReferenceRanges[index] := value;
-end;
-
-procedure TFhirSubstanceAmountReferenceRangeList.SetItemN(index: Integer; value: TFhirSubstanceAmountReferenceRange);
-begin
-  assert(value is TFhirSubstanceAmountReferenceRange);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirSubstanceAmount }
-
-constructor TFhirSubstanceAmount.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirSubstanceAmount.Destroy;
-begin
-  FAmount.free;
-  FAmountType.free;
-  FAmountText.free;
-  FReferenceRange.free;
-  inherited;
-end;
-
-procedure TFhirSubstanceAmount.Assign(oSource : TFslObject);
-begin
-  inherited;
-  amount := TFhirSubstanceAmount(oSource).amount.Clone;
-  amountType := TFhirSubstanceAmount(oSource).amountType.Clone;
-  amountTextElement := TFhirSubstanceAmount(oSource).amountTextElement.Clone;
-  referenceRange := TFhirSubstanceAmount(oSource).referenceRange.Clone;
-end;
-
-procedure TFhirSubstanceAmount.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'amount[x]') or (child_name = 'amount') Then
-     list.add(self.link, 'amount[x]', FAmount.Link);
-  if (child_name = 'amountType') Then
-     list.add(self.link, 'amountType', FAmountType.Link);
-  if (child_name = 'amountText') Then
-     list.add(self.link, 'amountText', FAmountText.Link);
-  if (child_name = 'referenceRange') Then
-     list.add(self.link, 'referenceRange', FReferenceRange.Link);
-end;
-
-procedure TFhirSubstanceAmount.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'amount[x]', 'Quantity|Range|string', false, TFhirDataType, FAmount.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'amountType', 'CodeableConcept', false, TFhirCodeableConcept, FAmountType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'amountText', 'string', false, TFhirString, FAmountText.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'referenceRange', 'Element', false, TFhirSubstanceAmountReferenceRange, FReferenceRange.Link)); {L1172}
-end;
-
-function TFhirSubstanceAmount.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then
-  begin
-    Amount := propValue as TFhirDataType {L1185};
-    result := propValue;
-  end
-  else if (propName = 'amountType') then
-  begin
-    AmountType := propValue as TFhirCodeableConcept {L1199};
-    result := propValue;
-  end
-  else if (propName = 'amountText') then
-  begin
-    AmountTextElement := asString(propValue) {L1221};
-    result := propValue;
-  end
-  else if (propName = 'referenceRange') then
-  begin
-    ReferenceRange := propValue as TFhirSubstanceAmountReferenceRange {L1199};
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirSubstanceAmount.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  inherited;
-end;
-
-function TFhirSubstanceAmount.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then raise EFHIRException.create('Cannot make property Amount') {L1191}
-  else if (propName = 'amountType') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'amountText') then result := TFhirString.create() {L1223}
-  else if (propName = 'referenceRange') then result := TFhirSubstanceAmountReferenceRange.create() {L1203}
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirSubstanceAmount.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'amount[x]') then result := 'Quantity|Range|string'
-  else if (propName = 'amountType') then result := 'CodeableConcept'
-  else if (propName = 'amountText') then result := 'string'
-  else if (propName = 'referenceRange') then result := 'Element'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirSubstanceAmount.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then AmountElement := nil {L1189}
-  else if (propName = 'amountType') then AmountTypeElement := nil
-  else if (propName = 'amountText') then AmountTextElement := nil
-  else if (propName = 'referenceRange') then ReferenceRangeElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirSubstanceAmount.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (isMatchingName(propName, 'amount', ['Quantity', 'Range', 'String'])) then AmountElement := new as TFhirDataType {L1190}
-  else if (propName = 'amountType') then AmountTypeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'amountText') then AmountTextElement := asString(new) {L1222}
-  else if (propName = 'referenceRange') then ReferenceRangeElement := new as TFhirSubstanceAmountReferenceRange {L1195}
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirSubstanceAmount.reorderProperty(propName : string; source, destination : integer);
-begin
-  inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirSubstanceAmount.fhirType : string;
-begin
-  result := 'SubstanceAmount';
-end;
-
-function TFhirSubstanceAmount.Link : TFhirSubstanceAmount;
-begin
-  result := TFhirSubstanceAmount(inherited Link);
-end;
-
-function TFhirSubstanceAmount.Clone : TFhirSubstanceAmount;
-begin
-  result := TFhirSubstanceAmount(inherited Clone);
-end;
-
-function TFhirSubstanceAmount.equals(other : TObject) : boolean; 
-var
-  o : TFhirSubstanceAmount;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirSubstanceAmount)) then
-    result := false
-  else
-  begin
-    o := TFhirSubstanceAmount(other);
-    result := compareDeep(amountElement, o.amountElement, true) and compareDeep(amountTypeElement, o.amountTypeElement, true) and 
-      compareDeep(amountTextElement, o.amountTextElement, true) and compareDeep(referenceRangeElement, o.referenceRangeElement, true);
-  end;
-end;
-
-function TFhirSubstanceAmount.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FAmount) and isEmptyProp(FAmountType) and isEmptyProp(FAmountText) and isEmptyProp(FReferenceRange);
-end;
-
-procedure TFhirSubstanceAmount.SetAmount(value : TFhirDataType);
-begin
-  FAmount.free;
-  FAmount := value; {L1134}
-end;
-
-procedure TFhirSubstanceAmount.SetAmountType(value : TFhirCodeableConcept);
-begin
-  FAmountType.free;
-  FAmountType := value; {L1134}
-end;
-
-procedure TFhirSubstanceAmount.SetAmountText(value : TFhirString);
-begin
-  FAmountText.free;
-  FAmountText := value; {L1134}
-end;
-
-function TFhirSubstanceAmount.GetAmountTextST : String;
-begin
-  if FAmountText = nil then
-    result := ''
-  else
-    result := FAmountText.value;
-end;
-
-procedure TFhirSubstanceAmount.SetAmountTextST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FAmountText = nil then
-      FAmountText := TFhirString.create;
-    FAmountText.value := value
-  end
-  else if FAmountText <> nil then
-    FAmountText.value := '';
-end;
-
-procedure TFhirSubstanceAmount.SetReferenceRange(value : TFhirSubstanceAmountReferenceRange);
-begin
-  FReferenceRange.free;
-  FReferenceRange := value; {L1134}
-end;
-
-{ TFhirSubstanceAmountListEnumerator }
-
-constructor TFhirSubstanceAmountListEnumerator.Create(list : TFhirSubstanceAmountList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirSubstanceAmountListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirSubstanceAmountListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirSubstanceAmountListEnumerator.GetCurrent : TFhirSubstanceAmount;
-begin
-  Result := FList[FIndex];
-end;
-
-{ TFhirSubstanceAmountList }
-
-procedure TFhirSubstanceAmountList.AddItem(value: TFhirSubstanceAmount);
-begin
-  assert(value.ClassName = 'TFhirSubstanceAmount', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSubstanceAmount');
-  add(value);
-end;
-
-function TFhirSubstanceAmountList.Append: TFhirSubstanceAmount;
-begin
-  result := TFhirSubstanceAmount.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirSubstanceAmountList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirSubstanceAmountList.GetEnumerator : TFhirSubstanceAmountListEnumerator;
-begin
-  result := TFhirSubstanceAmountListEnumerator.Create(self.link);
-end;
-
-function TFhirSubstanceAmountList.Clone: TFhirSubstanceAmountList;
-begin
-  result := TFhirSubstanceAmountList(inherited Clone);
-end;
-
-function TFhirSubstanceAmountList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirSubstanceAmountList.GetItemN(index: Integer): TFhirSubstanceAmount;
-begin
-  result := TFhirSubstanceAmount(ObjectByIndex[index]);
-end;
-
-function TFhirSubstanceAmountList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirSubstanceAmount;
-end;
-function TFhirSubstanceAmountList.IndexOf(value: TFhirSubstanceAmount): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirSubstanceAmountList.Insert(index: Integer): TFhirSubstanceAmount;
-begin
-  result := TFhirSubstanceAmount.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirSubstanceAmountList.InsertItem(index: Integer; value: TFhirSubstanceAmount);
-begin
-  assert(value is TFhirSubstanceAmount);
-  Inherited Insert(index, value);
-end;
-
-function TFhirSubstanceAmountList.Item(index: Integer): TFhirSubstanceAmount;
-begin
-  result := TFhirSubstanceAmount(ObjectByIndex[index]);
-end;
-
-function TFhirSubstanceAmountList.Link: TFhirSubstanceAmountList;
-begin
-  result := TFhirSubstanceAmountList(inherited Link);
-end;
-
-procedure TFhirSubstanceAmountList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirSubstanceAmountList.SetItemByIndex(index: Integer; value: TFhirSubstanceAmount);
-begin
-  assert(value is TFhirSubstanceAmount);
-  FhirSubstanceAmounts[index] := value;
-end;
-
-procedure TFhirSubstanceAmountList.SetItemN(index: Integer; value: TFhirSubstanceAmount);
-begin
-  assert(value is TFhirSubstanceAmount);
   ObjectByIndex[index] := value;
 end;
 

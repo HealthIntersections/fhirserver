@@ -878,8 +878,6 @@ begin
     result := TFhirProductShelfLife.create()
   else if name = 'Statistic' then
     result := TFhirStatistic.create()
-  else if name = 'SubstanceAmount' then
-    result := TFhirSubstanceAmount.create()
   else if name = 'Timing' then
     result := TFhirTiming.create()
 {$IFDEF FHIR_RESOURCE}
@@ -1091,12 +1089,20 @@ begin
     result := TFhirChargeItemDefinition.create()
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 {$IFDEF FHIR_CITATION}
+  else if name = 'Citation.summary' then
+    result := TFhirCitationSummary.create()
   else if name = 'Citation.variantCitation' then
     result := TFhirCitationVariantCitation.create()
   else if name = 'Citation.journal' then
     result := TFhirCitationJournal.create()
   else if name = 'Citation.journal.journalIssue' then
     result := TFhirCitationJournalJournalIssue.create()
+  else if name = 'Citation.journal.journalIssue.publicationDate' then
+    result := TFhirCitationJournalJournalIssuePublicationDate.create()
+  else if name = 'Citation.publicationInfo' then
+    result := TFhirCitationPublicationInfo.create()
+  else if name = 'Citation.publicationInfo.publishedIn' then
+    result := TFhirCitationPublicationInfoPublishedIn.create()
   else if name = 'Citation.alternativeTitle' then
     result := TFhirCitationAlternativeTitle.create()
   else if name = 'Citation.pagination' then
@@ -1105,26 +1111,30 @@ begin
     result := TFhirCitationArticleUrl.create()
   else if name = 'Citation.alternativeAbstract' then
     result := TFhirCitationAlternativeAbstract.create()
-  else if name = 'Citation.authorList' then
-    result := TFhirCitationAuthorList.create()
-  else if name = 'Citation.authorList.author' then
-    result := TFhirCitationAuthorListAuthor.create()
-  else if name = 'Citation.authorList.author.affiliationInfo' then
-    result := TFhirCitationAuthorListAuthorAffiliationInfo.create()
-  else if name = 'Citation.authorString' then
-    result := TFhirCitationAuthorString.create()
-  else if name = 'Citation.contributorList' then
-    result := TFhirCitationContributorList.create()
-  else if name = 'Citation.contributorList.contributor' then
-    result := TFhirCitationContributorListContributor.create()
-  else if name = 'Citation.contributorList.contributor.affiliationInfo' then
-    result := TFhirCitationContributorListContributorAffiliationInfo.create()
+  else if name = 'Citation.contributorship' then
+    result := TFhirCitationContributorship.create()
+  else if name = 'Citation.contributorship.entry' then
+    result := TFhirCitationContributorshipEntry.create()
+  else if name = 'Citation.contributorship.entry.affiliationInfo' then
+    result := TFhirCitationContributorshipEntryAffiliationInfo.create()
+  else if name = 'Citation.contributorship.summary' then
+    result := TFhirCitationContributorshipSummary.create()
   else if name = 'Citation.alternativeForm' then
     result := TFhirCitationAlternativeForm.create()
   else if name = 'Citation.alternativeForm.journalIssue' then
     result := TFhirCitationAlternativeFormJournalIssue.create()
+  else if name = 'Citation.alternativeForm.journalIssue.publicationDate' then
+    result := TFhirCitationAlternativeFormJournalIssuePublicationDate.create()
   else if name = 'Citation.alternativeForm.pagination' then
     result := TFhirCitationAlternativeFormPagination.create()
+  else if name = 'Citation.alternativeForm.publicationInfo' then
+    result := TFhirCitationAlternativeFormPublicationInfo.create()
+  else if name = 'Citation.alternativeForm.publicationInfo.publishedIn' then
+    result := TFhirCitationAlternativeFormPublicationInfoPublishedIn.create()
+  else if name = 'Citation.keywordList' then
+    result := TFhirCitationKeywordList.create()
+  else if name = 'Citation.keywordList.keyword' then
+    result := TFhirCitationKeywordListKeyword.create()
   else if name = 'Citation.medlinePubMed' then
     result := TFhirCitationMedlinePubMed.create()
   else if name = 'Citation.medlinePubMed.pubMedPubDate' then
@@ -1443,12 +1453,12 @@ begin
     result := TFhirDocumentManifest.create()
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
+  else if name = 'DocumentReference.attester' then
+    result := TFhirDocumentReferenceAttester.create()
   else if name = 'DocumentReference.relatesTo' then
     result := TFhirDocumentReferenceRelatesTo.create()
   else if name = 'DocumentReference.content' then
     result := TFhirDocumentReferenceContent.create()
-  else if name = 'DocumentReference.context' then
-    result := TFhirDocumentReferenceContext.create()
   else if name = 'DocumentReference' then
     result := TFhirDocumentReference.create()
 {$ENDIF FHIR_DOCUMENTREFERENCE}
@@ -1502,17 +1512,25 @@ begin
   else if name = 'Evidence' then
     result := TFhirEvidence.create()
 {$ENDIF FHIR_EVIDENCE}
-{$IFDEF FHIR_EVIDENCEFOCUS}
-  else if name = 'EvidenceFocus.characteristic' then
-    result := TFhirEvidenceFocusCharacteristic.create()
-  else if name = 'EvidenceFocus' then
-    result := TFhirEvidenceFocus.create()
-{$ENDIF FHIR_EVIDENCEFOCUS}
+{$IFDEF FHIR_EVIDENCEREPORT}
+  else if name = 'EvidenceReport.subject' then
+    result := TFhirEvidenceReportSubject.create()
+  else if name = 'EvidenceReport.subject.characteristic' then
+    result := TFhirEvidenceReportSubjectCharacteristic.create()
+  else if name = 'EvidenceReport.relatesTo' then
+    result := TFhirEvidenceReportRelatesTo.create()
+  else if name = 'EvidenceReport.section' then
+    result := TFhirEvidenceReportSection.create()
+  else if name = 'EvidenceReport' then
+    result := TFhirEvidenceReport.create()
+{$ENDIF FHIR_EVIDENCEREPORT}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   else if name = 'EvidenceVariable.characteristic' then
     result := TFhirEvidenceVariableCharacteristic.create()
   else if name = 'EvidenceVariable.characteristic.timeFromStart' then
     result := TFhirEvidenceVariableCharacteristicTimeFromStart.create()
+  else if name = 'EvidenceVariable.category' then
+    result := TFhirEvidenceVariableCategory.create()
   else if name = 'EvidenceVariable' then
     result := TFhirEvidenceVariable.create()
 {$ENDIF FHIR_EVIDENCEVARIABLE}
@@ -1693,14 +1711,14 @@ begin
     result := TFhirImplementationGuide.create()
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
 {$IFDEF FHIR_INGREDIENT}
-  else if name = 'Ingredient.specifiedSubstance' then
-    result := TFhirIngredientSpecifiedSubstance.create()
-  else if name = 'Ingredient.specifiedSubstance.strength' then
-    result := TFhirIngredientSpecifiedSubstanceStrength.create()
-  else if name = 'Ingredient.specifiedSubstance.strength.referenceStrength' then
-    result := TFhirIngredientSpecifiedSubstanceStrengthReferenceStrength.create()
   else if name = 'Ingredient.substance' then
     result := TFhirIngredientSubstance.create()
+  else if name = 'Ingredient.substance.strength' then
+    result := TFhirIngredientSubstanceStrength.create()
+  else if name = 'Ingredient.substance.strength.referenceStrength' then
+    result := TFhirIngredientSubstanceStrengthReferenceStrength.create()
+  else if name = 'Ingredient.specifiedSubstance' then
+    result := TFhirIngredientSpecifiedSubstance.create()
   else if name = 'Ingredient' then
     result := TFhirIngredient.create()
 {$ENDIF FHIR_INGREDIENT}
@@ -2339,8 +2357,6 @@ begin
     result := TFhirSubstanceReferenceInformationGene.create()
   else if name = 'SubstanceReferenceInformation.geneElement' then
     result := TFhirSubstanceReferenceInformationGeneElement.create()
-  else if name = 'SubstanceReferenceInformation.classification' then
-    result := TFhirSubstanceReferenceInformationClassification.create()
   else if name = 'SubstanceReferenceInformation.target' then
     result := TFhirSubstanceReferenceInformationTarget.create()
   else if name = 'SubstanceReferenceInformation' then

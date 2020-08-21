@@ -98,7 +98,7 @@ const
 {$IFDEF FHIR_EPISODEOFCARE}                      tcSchedule, {$ENDIF}
 {$IFDEF FHIR_EVENTDEFINITION}                    tcOther, {$ENDIF}
 {$IFDEF FHIR_EVIDENCE}                           tcOther, {$ENDIF}
-{$IFDEF FHIR_EVIDENCEFOCUS}                      tcOther, {$ENDIF}
+{$IFDEF FHIR_EVIDENCEREPORT}                     tcOther, {$ENDIF}
 {$IFDEF FHIR_EVIDENCEVARIABLE}                   tcOther, {$ENDIF}
 {$IFDEF FHIR_EXAMPLESCENARIO}                    tcOther, {$ENDIF}
 {$IFDEF FHIR_EXPLANATIONOFBENEFIT}               tcFinancial, {$ENDIF}
