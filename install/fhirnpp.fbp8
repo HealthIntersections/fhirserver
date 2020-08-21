@@ -65,7 +65,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix r4 install issue"
+        as.returnvalue = "fix problem installing R4 package"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -107,6 +107,7 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
+          enabled = false
           failifnofile = true
           filespec = C:\\work\\fhirserver\\Exec\\32\\installer.dll
           id = {4EF74AFA-15F6-42DB-9458-CB0574AB865E}
@@ -125,7 +126,8 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -149,11 +151,14 @@ begin
           regenerateresource = true
           releaseversion = 0
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\install\\helper\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -206,7 +211,7 @@ begin
             mapfile = 0
             maxstacksize = 1048576
             minstacksize = 16384
-            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;DUnitX.MemoryLeakMonitor;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
             openstrings = true
             optimisation = true
             outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -215,6 +220,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
+            searchpath = C:\\work\\fhirserver\\dependencies\\jcl
             showhints = true
             showwarnings = true
             stackframes = false
@@ -262,8 +268,9 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
           description = "Compile the Plugin (32)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -288,11 +295,14 @@ begin
           regenerateresource = true
           releaseversion = 47
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\npp\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -383,8 +393,9 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Tokyo
+          delphiversion = Delphi10_3
           description = "Compile the Plugin (64)"
+          enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -409,11 +420,14 @@ begin
           regenerateresource = true
           releaseversion = 47
           resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
           startingdir = C:\\work\\fhirserver\\npp\\
+          timeoutlength = 1
           updatedoffile = false
           updatepackagesource = false
           updateversioninfokeys = false
           useeurekalogcompiler = false
+          usefastdcccompiler = false
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
@@ -536,8 +550,11 @@ begin
           archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-32-1.0.%BuildCount%.zip
           archivetype = zZip
           compressionlevel = clNormal
+          compressionmethod = Deflate
           createsfxarchive = false
+          deleteaftercompression = false
           enabletimeout = false
+          encryptfilenames = false
           expandimpersonationtoken = false
           fileslist = "C:\\work\\fhirserver\\tmp\\build\\npp\\i32\\*.*" +
                       ""
@@ -552,6 +569,7 @@ begin
           solidmode = true
           terminateontimeout = false
           timeoutlength = 2
+          useaes256 = false
           useerrordialogmonitor = false
           usevolumesize = false
           volumesize = 4000
@@ -598,8 +616,11 @@ begin
           archivename = C:\\work\\fhirserver\\install\\build\\fhir-npp-64-1.0.%BuildCount%.zip
           archivetype = zZip
           compressionlevel = clNormal
+          compressionmethod = Deflate
           createsfxarchive = false
+          deleteaftercompression = false
           enabletimeout = false
+          encryptfilenames = false
           expandimpersonationtoken = false
           fileslist = "C:\\work\\fhirserver\\tmp\\build\\npp\\i64\\*.*" +
                       ""
@@ -614,6 +635,7 @@ begin
           solidmode = true
           terminateontimeout = false
           timeoutlength = 2
+          useaes256 = false
           useerrordialogmonitor = false
           usevolumesize = false
           volumesize = 4000
@@ -691,41 +713,56 @@ begin
         id = {CE10A1D8-3E04-486D-A875-FADFA7F66BB1}
         action.ftp.connect
         begin
+          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+          allowselfsignedcertificate = false
           connecttimeoutinsec = 0
           cookie = q3B4xMWDXfAo74OHdw\=\=
           detailedlogging = false
           enablekeepalives = false
+          encryptdatachannel = false
           ftpconnectionname = HealthIntersections
           ftphost = 27.123.25.1
           ftpport = 21
           id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+          logsslnegotiation = false
           passive = true
           proxyport = 0
           proxytype = fpcmNone
+          tlsmode = ExplicitTLS
           transfertype = ftBinary
+          useepsv = false
           useglobalopt = false
           usehost = true
           useproxy = false
           userid = healthi3
+          usessl = false
         end
         action.ftp.connect
         begin
+          allowedtlsversions = [tlsV1,tlsV1_1,tlsV1_2]
+          allowselfsignedcertificate = false
           connecttimeoutinsec = 0
           cookie = q3B4xMWDXfAo74OHf/5tMSdZ
           detailedlogging = false
+          enabled = false
           enablekeepalives = false
+          encryptdatachannel = false
           ftpconnectionname = fhir.org
           ftphost = 192.185.190.126
           ftpport = 21
           id = {1C151550-8F1D-4A24-B182-F6C2DDA922BA}
+          logsslnegotiation = false
           passive = true
           proxyport = 0
           proxytype = fpcmNone
+          tlsmode = ExplicitTLS
           transfertype = ftBinary
+          useepsv = false
           useglobalopt = false
           usehost = true
           useproxy = false
           userid = npp-ftp@fhir.org
+          usessl = false
         end
         action.ftp.upload.file
         begin
@@ -759,6 +796,7 @@ begin
           checkfilesizes = false
           connectionname = fhir.org
           detailedlogging = false
+          enabled = false
           enabletimeout = false
           filespec = fhir-npp-32-1.0.%BuildCount%.zip
           forcenextclockskewupdate = true
@@ -783,6 +821,7 @@ begin
           checkfilesizes = false
           connectionname = fhir.org
           detailedlogging = false
+          enabled = false
           enabletimeout = false
           filespec = fhir-npp-64-1.0.%BuildCount%.zip
           forcenextclockskewupdate = true
@@ -949,6 +988,7 @@ begin
           autoreconnect = false
           connectionname = fhir.org
           detailedlogging = false
+          enabled = false
           id = {6C431726-1D96-4C58-A8BD-125C8947226B}
         end
       end
