@@ -597,32 +597,32 @@ end;
 
 function TNDCServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.filter');
 end;
 
 function TNDCServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.FilterConcept');
 end;
 
 function TNDCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.filterLocate');
 end;
 
 function TNDCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.FilterMore');
 end;
 
 procedure TNDCServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.getCDSInfo');
 end;
 
 function TNDCServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.getcontext');
 end;
 
 function TNDCServices.getDefinition(code: String): String;
@@ -657,12 +657,12 @@ end;
 
 function TNDCServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.getPrepContext:');
 end;
 
 function TNDCServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.InFilter');
 end;
 
 function TNDCServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -697,17 +697,17 @@ end;
 
 function TNDCServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.locateIsA');
 end;
 
 function TNDCServices.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.prepare');
 end;
 
 function TNDCServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet');
+  raise ETerminologyTodo.Create('Not done yet: TNDCServices.searchFilter');
 end;
 
 function TNDCServices.system(context: TCodeSystemProviderContext): String;
