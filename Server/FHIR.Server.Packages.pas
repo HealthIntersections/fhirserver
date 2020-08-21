@@ -18,7 +18,8 @@ type
 
   TFHIRPackageServer = class (TFslObject)
   private
-    FPath : String;
+    FPathAbsolute : String;
+    FPathRelative : String;
     FDB : TFSLDBManager;
     FLastUpdate : TDateTime;
     FNextScan : TDateTIme;
@@ -45,7 +46,8 @@ type
   public
     destructor Destroy; override;
 
-    property path : String read FPath write FPath;  // includes http://host/path
+    property pathAbsolute : String read FPathAbsolute write FPathAbsolute;  // includes http://host/path
+    property pathRelative : String read FPathRelative write FPathRelative;  // includes http://host/path
     property OnReturnProcessFileEvent : TReturnProcessFileEvent read FReturnProcessFileEvent write FReturnProcessFileEvent;
 
     property DB : TFSLDBManager read FDB write SetDB;
@@ -161,7 +163,7 @@ begin
       if (inSearch) then
         b.Append('  <td class="pck-cell"><a href="'+i['url']+'" title="'+FormatTextToHTML(i['description'])+'">'+i['name']+'</a></td>'#13#10);
       if (inSearch) then
-        b.Append('  <td class="pck-cell">'+i['version']+' (<a href="'+URLPath([FPath, i['name']])+'">all</a>)</td>'#13#10)
+        b.Append('  <td class="pck-cell">'+i['version']+' (<a href="'+URLPath([FPathAbsolute, i['name']])+'">all</a>)</td>'#13#10)
       else
         b.Append('  <td class="pck-cell"><a href="'+i['url']+'" title="'+FormatTextToHTML(i['description'])+'">'+i['version']+'</a></td>'#13#10);
       b.Append('  <td class="pck-cell">'+i['date'].Substring(0, 10)+'</td>'#13#10);
@@ -278,7 +280,7 @@ begin
   try
     vars.add('count', TFHIRInteger.create(FDB.CountSQL('Select count(*) from PackageVersions', 'Package.server.home')));
     vars.add('downloads', TFHIRInteger.create(FDB.CountSQL('Select sum(DownloadCount) from Packages', 'Package.server.home')));
-    vars.add('prefix', TFHIRString.create(path));
+    vars.add('prefix', TFHIRString.create(FPathAbsolute));
     vars.add('ver', TFHIRString.create('4.0.1'));
     vars.add('status', TFHIRString.create(status));
     FReturnProcessFileEvent(request, response, nil, request.Document, 'packages-home.html', false, vars);
@@ -324,7 +326,7 @@ begin
                 json['description'] := conn.ColBlobAsStringByName['Description'];
                 v['description'] := conn.ColBlobAsStringByName['Description'];
               end;
-              v['url'] := URLPath([path, id, conn.ColStringByName['Version']]);
+              v['url'] := URLPath([FPathAbsolute, id, conn.ColStringByName['Version']]);
             end;
 
             vars.add('name', TFHIRString.create(json['name']));
@@ -338,9 +340,9 @@ begin
           response.ResponseText := 'OK';
           if (request.Accept.contains('/html')) then
           begin
-            vars.add('prefix', TFHIRString.create(path));
+            vars.add('prefix', TFHIRString.create(FPathAbsolute));
             vars.add('ver', TFHIRString.create('4.0.1'));
-            vars.add('matches', TFHIRString.create(genTable(FPath+'/'+ID, list, readSort(sort), sort.startsWith('-'), false)));
+            vars.add('matches', TFHIRString.create(genTable(FPathAbsolute+'/'+ID, list, readSort(sort), sort.startsWith('-'), false)));
             vars.add('status', TFHIRString.create(status));
             FReturnProcessFileEvent(request, response, nil, request.Document, 'packages-versions.html', false, vars);
           end
@@ -407,7 +409,7 @@ begin
             v['canonical'] := conn.ColStringByName['Canonical'];
             if not conn.ColNullByName['Description'] then
               v['description'] := conn.ColBlobAsStringByName['Description'];
-            v['url'] := URLPath([path, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
+            v['url'] := URLPath([FPathAbsolute, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
           end;
 
           src := TJsonWriterDirect.writeArrayStr(json, true);
@@ -426,12 +428,12 @@ begin
             vars.add('canonical', TFHIRString.create(canonical));
             vars.add('FHIRVersion', TFHIRString.create(FHIRVersion));
             vars.add('count', TFHIRInteger.create(conn.CountSQL('Select count(*) from PackageVersions')));
-            vars.add('prefix', TFHIRString.create(path));
+            vars.add('prefix', TFHIRString.create(FPathAbsolute));
             vars.add('ver', TFHIRString.create('4.0.1'));
             vars.add('r2selected', TFHIRString.create(sel('R2', FHIRVersion)));
             vars.add('r3selected', TFHIRString.create(sel('R3', FHIRVersion)));
             vars.add('r4selected', TFHIRString.create(sel('R4', FHIRVersion)));
-            vars.add('matches', TFHIRString.create(genTable(FPath+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true)));
+            vars.add('matches', TFHIRString.create(genTable(FPathAbsolute+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true)));
             vars.add('status', TFHIRString.create(status));
             FReturnProcessFileEvent(request, response, nil, request.Document, 'packages-search.html', false, vars);
           finally
@@ -476,7 +478,7 @@ begin
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
-          v['url'] := URLPath([path, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
+          v['url'] := URLPath([FPathAbsolute, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
         end;
 
         src := TJsonWriterDirect.writeArrayStr(json, true);

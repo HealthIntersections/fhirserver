@@ -535,6 +535,7 @@ Type
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc: String;
+    function packageLink: String;
     function loadMultipartForm(const request: TStream; const contentType: String; var mode : TOperationMode): TMimeMessage;
     function DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
     function ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
@@ -780,7 +781,6 @@ begin
     Context.Free;
   end;
 end;
-
 
 function TFhirWebServerEndpoint.parseFile(fmt : TFHIRFormat; name : String) : TFHIRResourceV;
 var
@@ -4326,9 +4326,10 @@ begin
   FActualSSLPort := StrToIntDef(ini.web['https'], 0);
   {$IFNDEF FHIR3}
   if FActualPort <> 80 then
-    FPackageServer.path := 'http://'+host+':'+inttostr(FActualPort)+'/packages'
+    FPackageServer.pathAbsolute := 'http://'+host+':'+inttostr(FActualPort)+'/packages'
   else
-    FPackageServer.path := 'http://'+host+'/packages';
+    FPackageServer.pathAbsolute := 'http://'+host+'/packages';
+  FPackageServer.pathRelative := '/packages';
   {$ENDIF}
   FCertFile := ini.web['certname'];
   FRootCertFile := ini.web['cacertname'];
@@ -4669,11 +4670,11 @@ end;
 function TFhirWebServer.WebDesc: String;
 begin
   if (FActualPort = 0) then
-    result := 'HTTPS is supported on Port ' + inttostr(FActualSSLPort) + '.'
+    result := 'Port ' + inttostr(FActualSSLPort) + ' (https).'
   else if FActualSSLPort = 0 then
-    result := 'HTTP is supported on Port ' + inttostr(FActualPort) + '.'
+    result := 'Port ' + inttostr(FActualPort) + ' (http).'
   else
-    result := 'HTTPS is supported on Port ' + inttostr(FActualSSLPort) + '. HTTP is supported on Port ' + inttostr(FActualPort) + '.'
+    result := 'Port ' + inttostr(FActualSSLPort) + ' (https) and Port ' + inttostr(FActualPort) + ' (http).'
 end;
 
 function TFhirWebServer.WebDump: String;
@@ -5086,6 +5087,14 @@ begin
   end;
 end;
 
+function TFhirWebServer.packageLink: String;
+begin
+  if FPackageServer <> nil then
+    result := '<p>This server also runs as a <a href="'+FPackageServer.pathRelative+'">package server</a></p>'
+  else
+    result := '';
+end;
+
 function TFhirWebServer.extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
 var
   sLeft, sRight: String;
@@ -5271,6 +5280,7 @@ begin
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
+  s := s.Replace('[%package-link%]', packageLink, [rfReplaceAll]);
   if FActualPort = 80 then
     s := s.Replace('[%host%]', FHost, [rfReplaceAll])
   else
@@ -6622,3 +6632,5 @@ end;
 Initialization
   IdSSLOpenSSLHeaders.Load;
 End.
+
+
