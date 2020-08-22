@@ -1,5 +1,7 @@
 unit FHIR.Support.Threads;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -58,7 +60,9 @@ procedure SetThreadName(name : String);
 function GetThreadName(id : integer) : String;
 
 type
+  {$IFNDEF FPC}
   TCriticalSectionProcedure = reference to procedure;
+  {$ENDIF}
 
   TFslLock = class(TObject)
   Private
@@ -101,7 +105,10 @@ type
     procedure changeName(aName : String);
 
 
+    {$IFNDEF FPC}
     procedure exec(proc : TCriticalSectionProcedure); overload;
+    {$ENDIF}
+
     // debugging support
     property Category: String Read FCategory Write FCategory;
     class function CurrentCount: Integer;
@@ -453,6 +460,7 @@ begin
   Lock(AName);
 end;
 
+{$IFNDEF FPC}
 procedure TFslLock.exec(proc: TCriticalSectionProcedure);
 begin
   lock;
@@ -462,6 +470,7 @@ begin
     unlock;
   end;
 end;
+{$ENDIF}
 
 procedure TFslLock.Leave;
 begin
@@ -804,7 +813,7 @@ constructor TBackgroundTaskThread.Create(engine: TBackgroundTaskEngine);
 begin
   FEngine := engine;
   FreeOnTerminate := true;
-  inherited Create;
+  inherited Create(false);
 end;
 
 procedure TBackgroundTaskThread.execute;

@@ -1,5 +1,7 @@
 unit FHIR.Support.Logging;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -32,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, PSApi, {$ENDIF}
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF} {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections;
 
@@ -475,6 +477,9 @@ end;
 
 function MemoryStatus: String;
 var
+  {$IFDEF FPC}
+  heap : TFPCHeapStatus;
+  {$ELSE}
   st: TMemoryManagerState;
   sb: TSmallBlockTypeState;
   v : UInt64;
@@ -482,7 +487,12 @@ var
   {$IFDEF MSWINDOWS}
   pmc: PROCESS_MEMORY_COUNTERS;
   {$ENDIF}
+  {$ENDIF}
 begin
+  {$IFDEF FPC}
+  heap := GetFPCHeapStatus;
+  result := memToMB(heap.CurrHeapSize);
+  {$ELSE}
   result := '';
   {$IFDEF MSWINDOWS}
   GetMemoryManagerState(st);
@@ -502,6 +512,7 @@ begin
   finally
     CloseHandle(hProcess);
   end;
+  {$ENDIF}
   {$ENDIF}
 end;
 

@@ -1,5 +1,7 @@
 ﻿unit FHIR.Support.Lang;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -33,9 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities,
-  FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Base.Common;
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream;
 
 type
   TIso4217Currency = class (TFSLObject)

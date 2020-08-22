@@ -83,7 +83,7 @@ type
     property Value[Name: String]: String Read GetVar; default;
     property Name[index : integer]: String Read VarName;
     property Source: String Read FSource;
-    procedure add(name: String; const value: String);
+    procedure add(sName: String; const sValue: String);
   end;
 
   TMimeContentType = class (TFslObject)
@@ -688,6 +688,7 @@ begin
     FBase := 'application/'+Value;
 end;
 
+{$IFNDEF FPC}
 class function TMimeContentType.parseList(s : String): TFslList<TMimeContentType>;
 var
   e : String;
@@ -701,6 +702,7 @@ begin
     result.Free;
   end;
 end;
+{$ENDIF}
 
 class function TMimeContentType.parseSingle(s : String): TMimeContentType;
 var

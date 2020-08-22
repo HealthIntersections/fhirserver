@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="12"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasScaledStatement Value="False"/>
-        <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
       <Title Value="Test FHIR Application"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
@@ -31,7 +31,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="35">
       <Unit0>
         <Filename Value="TestFHIRApplication.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -83,6 +83,103 @@
         <Filename Value="..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="..\..\library\support\FHIR.Support.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\..\library\support\FHIR.Support.Utilities.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\..\library\support\FHIR.Support.Osx.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\..\library\support\FHIR.Support.Collections.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\..\dependencies\Indy10\Protocols\IdHeaderList.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\..\dependencies\Indy10\System\IdGlobal.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\..\dependencies\Indy10\Core\IdIPAddress.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\..\library\support\FHIR.Support.Json.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Support.JSON"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\..\library\support\FHIR.Support.Xml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\..\library\support\FHIR.Support.Turtle.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\..\library\support\FHIR.Support.Certs.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\..\library\support\FHIR.Support.Javascript.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\..\library\javascript\FHIR.Javascript.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\..\library\support\FHIR.Support.Signatures.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\..\library\web\FHIR.Web.Fetcher.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Services.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Handlers.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Expressions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Search.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Publisher.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\..\library\ucum\FHIR.Ucum.Validators.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -94,7 +191,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <Libraries Value="..\reference-platform\support"/>
-      <OtherUnitFiles Value="..\reference-platform\support;..\reference-platform\base"/>
+      <OtherUnitFiles Value="..\reference-platform\support;..\reference-platform\base;..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>

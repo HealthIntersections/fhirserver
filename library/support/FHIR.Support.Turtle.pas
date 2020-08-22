@@ -1,5 +1,7 @@
 unit FHIR.Support.Turtle;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, System.Character, System.RegularExpressions, System.Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
+  SysUtils, Classes, Character, RegularExpressions, Generics.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc;
 
 Const
 	GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo
@@ -365,7 +367,7 @@ end;
 
 procedure TTurtleURL.setUri(value: String);
 begin
-  if (not TRegEx.Match(value, IRI_URL).Success) then
+  if (not TRegEx.isMatch(value, IRI_URL)) then
     raise ERdfException.create('Illegal URI '+uri);
   FUri := value;
 end;

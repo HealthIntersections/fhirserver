@@ -35,7 +35,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, ActiveX, FHIR.Support.Fpc, {$ENDIF}
-  SysUtils, AnsiStrings, Classes, RTLConsts, ZLib,
+  SysUtils, {$IFNDEF FPC}AnsiStrings, {$ENDIF}Classes, RTLConsts, ZLib, {$IFDEF FPC}ZStream,{$ENDIF}
   IdHeaderList, idGlobal, IdGlobalProtocols,
   FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
 
@@ -5254,6 +5254,11 @@ Begin
 End;
 
 
+{$IFDEF FPC}
+type
+   TZDecompressionStream = TDecompressionStream;
+{$ENDIF}
+
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
   oSrc : TStream;
@@ -5773,7 +5778,7 @@ function ExtractNumber (P : PAnsiChar) : integer; overload;
 var
   Strg : AnsiString;
 begin
-  Strg := Trim (AnsiStrings.StrPas (P));
+  Strg := Trim ({$IFNDEF FPC}AnsiStrings.{$ENDIF}StrPas (P));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) DO
@@ -5787,7 +5792,7 @@ function ExtractNumber64 (P : PAnsiChar) : int64; overload;
 var
   Strg : AnsiString;
 begin
-  Strg := Trim (AnsiStrings.StrPas (P));
+  Strg := Trim ({$IFNDEF FPC}AnsiStrings.{$ENDIF}StrPas (P));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) DO
@@ -5803,8 +5808,8 @@ var
   S0   : array [0..255] of AnsiChar;
   Strg : AnsiString;
 begin
-  AnsiStrings.StrLCopy (S0, P, MaxLen);
-  Strg := Trim (AnsiStrings.StrPas (S0));
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (S0, P, MaxLen);
+  Strg := Trim ({$IFNDEF FPC}AnsiStrings.{$ENDIF}StrPas (S0));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) DO
@@ -5820,8 +5825,8 @@ var
   S0   : array [0..255] of AnsiChar;
   Strg : AnsiString;
 begin
-  AnsiStrings.StrLCopy (S0, P, MaxLen);
-  Strg := Trim (AnsiStrings.StrPas (S0));
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (S0, P, MaxLen);
+  Strg := Trim ({$IFNDEF FPC}AnsiStrings.{$ENDIF}StrPas (S0));
   P := PAnsiChar (Strg);
   Result := 0;
   while (P^ <> #32) and (P^ <> #0) do
@@ -5897,7 +5902,7 @@ var
   I        : integer;
 begin
   FillChar (Rec, RECORDSIZE, 0);
-  AnsiStrings.StrLCopy (TH.Name, PAnsiChar (DirRec.Name), NAMSIZ);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (TH.Name, PAnsiChar (DirRec.Name), NAMSIZ);
   CASE DirRec.FileType of
     ftNormal, ftLink  : Mode := $08000;
     ftSymbolicLink    : Mode := $0A000;
@@ -5937,13 +5942,13 @@ begin
     ftMultiVolume  : TH.LinkFlag := 'M';
     ftVolumeHeader : TH.LinkFlag := 'V';
     end;
-  AnsiStrings.StrLCopy (TH.LinkName, PAnsiChar (DirRec.LinkName), NAMSIZ);
-  AnsiStrings.StrLCopy (TH.Magic, PAnsiChar (DirRec.Magic + #32#32#32#32#32#32#32#32), 7);
-  AnsiStrings.StrLCopy (TH.UName, PAnsiChar (DirRec.UserName), TUNMLEN);
-  AnsiStrings.StrLCopy (TH.GName, PAnsiChar (DirRec.GroupName), TGNMLEN);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (TH.LinkName, PAnsiChar (DirRec.LinkName), NAMSIZ);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (TH.Magic, PAnsiChar (DirRec.Magic + #32#32#32#32#32#32#32#32), 7);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (TH.UName, PAnsiChar (DirRec.UserName), TUNMLEN);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLCopy (TH.GName, PAnsiChar (DirRec.GroupName), TGNMLEN);
   OctalN (DirRec.MajorDevNo, @TH.DevMajor, 8);
   OctalN (DirRec.MinorDevNo, @TH.DevMinor, 8);
-  AnsiStrings.StrMove (TH.ChkSum, CHKBLANKS, 8);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrMove (TH.ChkSum, CHKBLANKS, 8);
 
   CheckSum := 0;
   FOR I := 0 TO SizeOf (TTarHeader)-1 do
@@ -6064,7 +6069,7 @@ begin
 
   HeaderChkSum := ExtractNumber (@Header.ChkSum);   // Calc Checksum
   CheckSum := 0;
-  AnsiStrings.StrMove (Header.ChkSum, CHKBLANKS, 8);
+  {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrMove (Header.ChkSum, CHKBLANKS, 8);
   FOR I := 0 TO SizeOf (TTarHeader)-1 do
     INC (CheckSum, integer (ORD (Rec [I])));
   DirRec.CheckSumOK := WORD (CheckSum) = WORD (HeaderChkSum);
@@ -6128,7 +6133,7 @@ begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
   SetLength (Result, FBytesToGo);
-  FStream.ReadBuffer(Result, 0, FBytesToGo);
+  FStream.ReadBuffer(Result, {$IFNDEF FPC}0, {$ENDIF}FBytesToGo);
   FStream.Seek (RestBytes, soFromCurrent);
   FBytesToGo := 0;
 end;

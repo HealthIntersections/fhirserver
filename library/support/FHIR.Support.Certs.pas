@@ -1,5 +1,7 @@
 ﻿unit FHIR.Support.Certs;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -31,7 +33,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  System.SysUtils, Classes,
+  SysUtils, Classes,
   IdGlobal, IdSSLOpenSSL, IdSSLOpenSSLHeaders, IdHMAC, IdHash, IdHMACSHA1,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json;
 
@@ -1177,7 +1179,7 @@ var
   TheFileName : array[0..MAX_PATH] of widechar;
 begin
  FillChar(TheFileName, sizeof(TheFileName), #0);
- GetModuleFileName(GetCryptLibHandle, TheFileName, sizeof(TheFileName));
+ GetModuleFileName(GetCryptLibHandle, @TheFileName, sizeof(TheFileName));
  result := TheFileName;
 end;
 

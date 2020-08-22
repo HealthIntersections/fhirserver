@@ -1,5 +1,7 @@
 unit FHIR.Support.Javascript;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -35,7 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, Soap.EncdDecd, System.NetEncoding,
+  SysUtils, Classes, Generics.Collections, EncdDecd, System.NetEncoding,
   FHIR.Javascript,
   FHIR.Support.Base, FHIR.Support.Collections;
 

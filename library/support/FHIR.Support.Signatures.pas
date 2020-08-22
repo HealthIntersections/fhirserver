@@ -1,5 +1,7 @@
 unit FHIR.Support.Signatures;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -120,7 +122,9 @@ Type
     destructor Destroy; override;
   end;
 
+  {$IFNDEF FPC}
   TSignatureLocationFinderMethod = reference to function (doc : TMXmlDocument) : TMXmlElement;
+  {$ENDIF}
 
   TDigitalSigner = class (TFslObject)
   private
@@ -170,7 +174,9 @@ Type
 
     // classic XML Enveloped Signature
     function signEnveloped(xml : TBytes; method : TSignatureMethod; keyinfo : boolean) : TBytes; overload;
+    {$IFNDEF FPC}
     function signEnveloped(xml : TBytes; finder : TSignatureLocationFinderMethod; method : TSignatureMethod; keyinfo : boolean) : TBytes; overload;
+    {$ENDIF}
 
     function signDetached(xml : TBytes; refUrl : String; method : TSignatureMethod; canonicalization : string; keyinfo : boolean) : TBytes; overload;
 
@@ -748,9 +754,14 @@ end;
 
 function TDigitalSigner.signEnveloped(xml: TBytes; method : TSignatureMethod; keyinfo : boolean): TBytes;
 begin
+  {$IFDEF FPC}
+  raise Exception.create('not done yet');
+  {$ELSE}
   result := signEnveloped(xml, function (doc : TMXmlDocument) : TMXmlElement begin result := doc.docElement end, method, keyInfo);
+  {$ENDIF}
 end;
 
+{$IFNDEF FPC}
 function TDigitalSigner.signEnveloped(xml: TBytes; finder : TSignatureLocationFinderMethod; method : TSignatureMethod; keyinfo : boolean): TBytes;
 var
   can, dig :  TBytes;
@@ -785,6 +796,7 @@ begin
     dom.Free;
   end;
 end;
+{$ENDIF}
 
 function bn2Base64(p : PBigNum) : String;
 var

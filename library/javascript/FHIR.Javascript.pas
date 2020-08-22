@@ -1,4 +1,7 @@
 unit FHIR.Javascript;
+
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 A unit that allows you to execute Javascript inside your application,
 with access to functionality as defined by you.
@@ -52,7 +55,7 @@ interface
 
 uses
   Windows,
-  SysUtils, Classes, AnsiStrings,
+  SysUtils, Classes, {$IFNDEF FPC} AnsiStrings, {$ENDIF}
   Generics.Collections,
   ChakraCoreUtils, ChakraCore, ChakraCommon,
   FHIR.Support.Base, FHIR.Support.Utilities;

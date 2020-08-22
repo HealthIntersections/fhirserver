@@ -28,8 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
-{$mode objfpc}{$H+}
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
 
 interface
 
@@ -37,9 +36,46 @@ uses
   Classes, SysUtils, RegExpr;
 
 type
-  TRegEx = Regexpr.TRegExpr;
+  TRegExOption = (roNone, roIgnoreCase, roMultiLine, roExplicitCapture,
+    roCompiled, roSingleLine, roIgnorePatternSpace, roNotEmpty);
+  TRegExOptions = set of TRegExOption;
+
+  { TRegEx }
+
+  TRegEx = class (Regexpr.TRegExpr)
+  private
+  public
+    constructor Create(const Pattern: string; Options: TRegExOptions); overload;
+    function IsMatch(const Input: string): Boolean; overload;
+
+    class function isMatch(const pattern, input: string): Boolean; overload;
+  end;
 
 implementation
+
+{ TRegEx }
+
+constructor TRegEx.Create(const Pattern: string; Options: TRegExOptions);
+begin
+  inherited Create(pattern);
+end;
+
+function TRegEx.IsMatch(const Input: string): Boolean;
+begin
+  result := Exec(input);
+end;
+
+class function TRegEx.isMatch(const pattern, input: string): Boolean;
+var
+  this : TRegEx;
+begin
+  this := TRegEx.create(pattern);
+  try
+    result := this.isMatch(input);
+  finally
+    this.free;
+  end;
+end;
 
 end.
 

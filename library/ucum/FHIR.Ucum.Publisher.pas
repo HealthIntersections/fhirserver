@@ -1,5 +1,7 @@
 unit FHIR.Ucum.Publisher;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -31,20 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  classes,
-  Math,
-  FHIR.Support.Base,
-  SysUtils,
-  WordProcessorDocuments,
-  WordProcessorEntities,
-  AdvStringLists,
-  KProcs,
-  AdvStringMatches,
-  AdvExclusiveCriticalSections,
-  WPDocumentBuilders,
-  HL7V2DocumentPublishers,
-  UCum,
-  gwUcum;
+  SysUtils, Classes, Math,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.WP.Documents, FHIR.UCUM.Base;
 
 Const
   MAX_ROWS = 200;
@@ -70,10 +61,6 @@ Type
   End;
 
 Implementation
-
-Uses
-  EncodeSupport,
-  FHIR.Support.Utilities;
 
 Function ShowUnit(s : String; sPost : String = ''):String;
 Begin

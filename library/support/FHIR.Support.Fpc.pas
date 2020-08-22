@@ -49,6 +49,8 @@ type
   public
     function isDigit : boolean;
     function IsNumber : boolean;
+    function isUpper : boolean;
+    function IsWhiteSpace : boolean;
   end;
 
   { TTimeZone }
@@ -111,6 +113,16 @@ end;
 function TCharHelper.IsNumber: boolean;
 begin
   result := Character.isDigit(self);
+end;
+
+function TCharHelper.isUpper : boolean;
+begin
+  result := Character.IsUpper(self);
+end;
+
+function TCharHelper.IsWhiteSpace: boolean;
+begin
+  result := Character.IsWhiteSpace(self);
 end;
 
 function ColorToString(Color: TColor): AnsiString;

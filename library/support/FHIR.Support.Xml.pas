@@ -1,5 +1,7 @@
 unit FHIR.Support.Xml;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -32,12 +34,7 @@ interface
 
 Uses
   SysUtils, Classes,
-  Xml.xmlintf,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml;
-
-
-function getChildNode(node : IXMLNode; name, ns : String) : IXMLNode; overload;
-function getChildNode(node : IXMLNode; name : String) : IXMLNode; overload;
 
 Type
 
@@ -99,11 +96,6 @@ Type
     procedure DocType(sText : String); overload; virtual; abstract;
 
     Procedure WriteXml(iElement : TMXMLElement);
-{
-    Procedure WriteXml(iElement : XmlIntf.IXMLNode; first : boolean); overload; virtual; abstract;
-    Procedure WriteXmlNode(iNode : XmlIntf.IXMLNode; first : boolean); overload; virtual; abstract;
-    Procedure WriteXmlDocument(iDoc : XmlIntf.IXMLDocument); overload; virtual; abstract;
-}
 
     procedure inject(Const aBytes : TBytes); Overload; virtual; abstract; // not supported on all implementations
 
@@ -556,20 +548,6 @@ Type
     property CanonicalEntities : boolean read FCanonicalEntities write SetCanonicalEntities;
   End;
 
-  // http://www.w3.org/TR/2012/WD-xml-c14n2-testcases-20120105/
-  TFslXmlBuilderCanonicalizationTests = class (TFslObject)
-  private
-    class procedure check(source : String; can : TXmlCanonicalisationMethodSet; target : String);
-    class procedure Test1;
-    class procedure Test2;
-    class procedure Test3;
-    class procedure Test4;
-    class procedure Test5;
-
-  public
-    class procedure Test;
-  end;
-
   TXmlPatchEngine = class (TFslObject)
   private
     class procedure remove(doc : TMXmlDocument; sel : String; target : TMXmlElement);
@@ -776,23 +754,6 @@ begin
   xml.ProduceBytes(bytes);
 end;
 
-{function TFslXmlBuilder.nsIsUsed(elem: IXmlNode; ns: String): boolean;
-var
-  i : integer;
-begin
-  result := false;
-  if elem.NamespaceURI = ns then
-    result := true
-  else
-    for i := 0 to elem.AttributeNodes.Count - 1 do
-      result := result or (elem.AttributeNodes[i].NamespaceURI = ns);
-
-  for i := 0 to elem.ChildNodes.Count - 1 do
-    if elem.ChildNodes[i].NodeType = ntElement then
-      result := result or nsIsUsed(elem.ChildNodes[i], ns);
-end;
-}
-
 Procedure TFslXmlBuilder.Build(oStream: TStream);
 begin
   buf.SaveToStream(oStream);
@@ -833,30 +794,6 @@ begin
 end;
 
 
-{procedure TFslXmlBuilder.defineNamespace(element, attribute: IXMLNode);
-var
-  ns : String;
-begin
-  if attribute.NodeValue = Null then
-    ns := ''
-  else
-    ns := attribute.NodeValue;
-
-  if not (xcmCanonicalise in FCanonicalise) then
-    xml.AddAttribute(attribute.NodeName, ns)
-  else if attribute.NodeName = 'xmlns' then
-  begin
-    if CurrentNamespaces.DefaultNS <> ns then
-    begin
-      CurrentNamespaces.DefaultNS := ns;
-      CurrentNamespaces.DefaultSet := false; // duck the hook
-      xml.AddAttribute(attribute.NodeName, ns);
-    end;
-  end
-  else if nsIsUsed(element, ns) then
-    xml.AddAttribute(attribute.NodeName, ns)
-end;
-}
 procedure TFslXmlBuilder.defineNS(abbrev, uri: String);
 begin
   CurrentNamespaces.Add(uri, abbrev);
@@ -1006,309 +943,6 @@ begin
   result.col := 0; //xml.col;
 end;
 
-{ TFslXmlBuilderCanonicalizationTests }
-
-class procedure TFslXmlBuilderCanonicalizationTests.check(source: String; can: TXmlCanonicalisationMethodSet; target: String);
-{var
-  doc : IXMLDocument;
-  dom : TMXMLDocument;
-  xb : TFslXmlBuilder;
-  s : String;}
-begin
-(*  dom := TMXMLDocument.Create;
-  doc := dom;
-  dom.DOMVendor := OpenXML4Factory;
-  dom.ParseOptions := [poPreserveWhiteSpace];
-  dom.Options := [{doNodeAutoCreate, doNodeAutoIndent, doAttrNull,  doAutoPrefix, doAutoSave} doNamespaceDecl];
-  doc.LoadFromXML(source);
-
-  xb := TFslXmlBuilder.Create;
-  try
-    xb.Canonicalise := can;
-    xb.Start;
-    xb.WriteXmlDocument(doc);
-    xb.Finish;
-    s := xb.Build;
-  finally
-    xb.Free;
-  end;
-  if s <> target then
-    raise EXmlException.Create('Mismatch');
-    *)
-end;
-
-class procedure TFslXmlBuilderCanonicalizationTests.Test;
-begin
-  Test1;
-  Test2;
-  Test3;
-  Test4;
-  Test5;
-end;
-
-class procedure TFslXmlBuilderCanonicalizationTests.Test1;
-var
-  s : String;
-begin
-  s :=
-'<?xml version="1.0"?>'+#13#10+
-''+#13#10+
-'<?xml-stylesheet   href="doc.xsl"'+#13#10+
-'   type="text/xsl"   ?>'+#13#10+
-''+#13#10+
-'<!DOCTYPE doc SYSTEM "doc.dtd">'+#13#10+
-''+#13#10+
-'<doc>Hello, world!<!-- Comment 1 --></doc>'+#13#10+
-''+#13#10+
-'<?pi-without-data     ?>'+#13#10+
-''+#13#10+
-'<!-- Comment 2 -->'+#13#10+
-''+#13#10+
-'<!-- Comment 3 -->'+#13#10+
-''+#13#10;
-
-check(s, [xcmCanonicalise],
-'<?xml-stylesheet href="doc.xsl"'+#10+
-'   type="text/xsl"   ?>'+#10+
-'<doc>Hello, world!</doc>'+#10+
-'<?pi-without-data?>');
-
-check(s, [xcmCanonicalise, xcmComments],
-'<?xml-stylesheet href="doc.xsl"'+#10+
-'   type="text/xsl"   ?>'+#10+
-'<doc>Hello, world!<!-- Comment 1 --></doc>'+#10+
-'<?pi-without-data?>'+#10+
-'<!-- Comment 2 -->'+#10+
-'<!-- Comment 3 -->');
-end;
-
-class procedure TFslXmlBuilderCanonicalizationTests.Test2;
-var
-  s : String;
-begin
-  s :=
-'<doc>'+#13#10+
-'   <clean>   </clean>'+#13#10+
-'   <dirty>   A   B   </dirty>'+#13#10+
-'   <mixed>'+#13#10+
-'      A'+#13#10+
-'      <clean>   </clean>'+#13#10+
-'      B'+#13#10+
-'      <dirty>   A   B   </dirty>'+#13#10+
-'      C'+#13#10+
-'   </mixed>'+#13#10+
-'</doc>'+#13#10;
-
-check(s, [xcmCanonicalise],
-'<doc>'+#10+
-'   <clean>   </clean>'+#10+
-'   <dirty>   A   B   </dirty>'+#10+
-'   <mixed>'+#10+
-'      A'+#10+
-'      <clean>   </clean>'+#10+
-'      B'+#10+
-'      <dirty>   A   B   </dirty>'+#10+
-'      C'+#10+
-'   </mixed>'+#10+
-'</doc>');
-
-check(s, [xcmCanonicalise, xcmTrimWhitespace],
-'<doc><clean></clean><dirty>A   B</dirty><mixed>A<clean></clean>B<dirty>A   B</dirty>C</mixed></doc>');
-end;
-
-class procedure TFslXmlBuilderCanonicalizationTests.Test3;
-var
-  s : String;
-begin
-  s :=
-'<doc>'+#13#10+
-'   <e1   />'+#13#10+
-'   <e2   ></e2>'+#13#10+
-'   <e3   name = "elem3"   id="elem3"   />'+#13#10+
-'   <e4   name="elem4"   id="elem4"   ></e4>'+#13#10+
-'   <e5 a:attr="out" b:attr="sorted" attr2="all" attr="I''m"'+#13#10+
-'      xmlns:b="http://www.ietf.org"'+#13#10+
-'      xmlns:a="http://www.w3.org"'+#13#10+
-'      xmlns="http://example.org"/>'+#13#10+
-'   <e6 xmlns="" xmlns:a="http://www.w3.org">'+#13#10+
-'      <e7 xmlns="http://www.ietf.org">'+#13#10+
-'         <e8 xmlns="" xmlns:a="http://www.w3.org">'+#13#10+
-'            <e9 xmlns="" xmlns:a="http://www.ietf.org"/>'+#13#10+
-'         </e8>'+#13#10+
-'      </e7>'+#13#10+
-'   </e6>'+#13#10+
-'</doc>'+#13#10;
-
-  check(s, [xcmCanonicalise],
-'<doc>'+#10+
-'   <e1></e1>'+#10+
-'   <e2></e2>'+#10+
-'   <e3 id="elem3" name="elem3"></e3>'+#10+
-'   <e4 id="elem4" name="elem4"></e4>'+#10+
-'   <e5 xmlns="http://example.org" xmlns:a="http://www.w3.org" xmlns:b="http://www.ietf.org" attr="I''m" attr2="all" b:attr="sorted" a:attr="out"></e5>'+#10+
-'   <e6>'+#10+
-'      <e7 xmlns="http://www.ietf.org">'+#10+
-'         <e8 xmlns="">'+#10+
-'            <e9></e9>'+#10+
-'         </e8>'+#10+
-'      </e7>'+#10+
-'   </e6>'+#10+
-'</doc>'
-  );
-//  check(s, [xcmCanonicalise, xcmPrefixRewrite],
-//'<n0:doc xmlns:n0="">'+#10+
-//'   <n0:e1></n0:e1>'+#10+
-//'   <n0:e2></n0:e2>'+#10+
-//'   <n0:e3 id="elem3" name="elem3"></n0:e3>'+#10+
-//'   <n0:e4 id="elem4" name="elem4"></n0:e4>'+#10+
-//'   <n1:e5 xmlns:n1="http://example.org" xmlns:n2="http://www.ietf.org" xmlns:n3="http://www.w3.org" attr="I''m" attr2="all" n2:attr="sorted" n3:attr="out"></n1:e5>'+#10+
-//'   <n0:e6>'+#10+
-//'      <n2:e7 xmlns:n2="http://www.ietf.org">'+#10+
-//'         <n0:e8>'+#10+
-//'            <n0:e9></n0:e9>'+#10+
-//'         </n0:e8>'+#10+
-//'      </n2:e7>'+#10+
-//'   </n0:e6>'+#10+
-//'</n0:doc>'+#10
-//  );
-
-check(s, [xcmCanonicalise, xcmTrimWhitespace],
-'<doc><e1></e1><e2></e2><e3 id="elem3" name="elem3"></e3><e4 id="elem4" name="elem4"></e4><e5 xmlns="http://example.org" xmlns:a="http://www.w3.org" xmlns:b="http://www.ietf.org" attr="I''m" attr2="all" '+'b:attr="sorted" a:attr="out"></e5><e6><e7 xmlns="http://www.ietf.org"><e8 xmlns=""><e9></e9></e8></e7></e6></doc>'
-);
-end;
-
-class procedure TFslXmlBuilderCanonicalizationTests.Test4;
-var
-  s : String;
-begin
-  s :=
-'<doc>'+#13#10+
-'   <text>First line&#x0d;&#10;Second line</text>'+#13#10+
-'   <value>&#x32;</value>'+#13#10+
-'   <compute><![CDATA[value>"0" && value<"10" ?"valid":"error"]]></compute>'+#13#10+
-'   <compute expr=''value>"0" &amp;&amp; value&lt;"10" ?"valid":"error"''>valid</compute>'+#13#10+
-'   <norm attr='' &apos;   &#x20;&#13;&#xa;&#9;   &apos; ''/>'+#13#10+
-'   <normNames attr=''   A   &#x20;&#13;&#xa;&#9;   B   ''/>'+#13#10+
-'   <normId id='' &apos;&#x20;&#13;&#xa;&#9; &apos; ''/>'+#13#10+
-'</doc>'+#13#10;
-
-  check(s, [xcmCanonicalise],
-'<doc>'+#10+
-'   <text>First line&#xD;'+#10+
-'Second line</text>'+#10+
-'   <value>2</value>'+#10+
-'   <compute>value&gt;"0" &amp;&amp; value&lt;"10" ?"valid":"error"</compute>'+#10+
-'   <compute expr="value>&quot;0&quot; &amp;&amp; value&lt;&quot;10&quot; ?&quot;valid&quot;:&quot;error&quot;">valid</compute>'+#10+
-'   <norm attr=" ''    &#xD;&#xA;&#x9;   '' "></norm>'+#10+
-'   <normNames attr="   A    &#xD;&#xA;&#x9;   B   "></normNames>'+#10+
-'   <normId id=" '' &#xD;&#xA;&#x9; '' "></normId>'+#10+
-'</doc>');
-check(s, [xcmCanonicalise, xcmTrimWhitespace],
-'<doc><text>First line&#xD;'+#10+
-'Second line</text><value>2</value><compute>value&gt;"0" &amp;&amp; value&lt;"10" ?"valid":"error"</compute><compute expr="value>&quot;0&quot; &amp;&amp; value&lt;&quot;10&quot; ?&quot;valid&quot;:&quot;error&quot;">'+
-  'valid</compute><norm attr=" ''    &#xD;&#xA;&#x9;   '' "></norm><normNames attr="   A    &#xD;&#xA;&#x9;   B   "></normNames><normId id=" '' &#xD;&#xA;&#x9; '' "></normId></doc>'
-);
-end;
-
-class procedure TFslXmlBuilderCanonicalizationTests.Test5;
-var
-  s : String;
-begin
-  s :=
-'<?xml version="1.0" encoding="ISO-8859-1"?>'+#13#10+
-'<doc>&#169;</doc>'+#13#10;
-
-  check(s, [xcmCanonicalise],
-'<doc>©</doc>');
-
-end;
-
-(*procedure TFslXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
-var
-  attr : IXMLNode;
-  a: Integer;
-begin
-  NSPush;
-
-  if first then
-  begin
-    if (iELement.NamespaceURI <> '') and (iELement.LocalName = iELement.NodeName) then
-      // we are inheriting a default namespaces
-      CurrentNamespaces.DefaultNS := iELement.NamespaceURI;
-  end;
-
-
-  if iElement.AttributeNodes <> nil then
-    for a := 0 to iElement.AttributeNodes.Count - 1 do
-    begin
-      attr := iElement.attributeNodes[a];
-      if attr.nodeName.StartsWith('xmlns') then
-        DefineNamespace(iElement, attr)
-      else if attr.nodeValue = Null then
-        AddAttribute(attr.nodeName, '')
-      else
-
-        AddAttribute(attr.nodeName, DecodeXML(attr.nodeValue));
-    end;
-
-  if iElement.childNodes.count = 0 then
-    Tag(iElement.localName)
-  else
-  begin
-    Open(iElement.localName);
-    writeXmlNode(iElement, false);
-    Close(iElement.localName);
-  end;
-  NSPop;
-end;
-
-procedure TFslXmlBuilder.WriteXmlDocument(iDoc: IXMLDocument);
-var
-  n : IXMLNode;
-  i : integer;
-begin
-  for i := 0 to iDoc.childNodes.count - 1 do
-  begin
-    n := iDoc.childNodes[i];
-    case n.nodeType of
-      ntElement : WriteXml(n, false);
-      ntComment : Comment(n.text);
-      ntText : Text(n.text);
-      ntDocType : DocType(n.text);
-      ntProcessingInstr : ProcessingInstruction(n.nodeName, n.text);
-    else
-      raise EXmlException.Create('Unhandled node type on document: '+inttostr(ord(n.nodeType)));
-    end;
-  end;
-end;
-
-{ntReserved, ntElement, ntAttribute, ntText, ntCData,
-    ntEntityRef, ntEntity, ntProcessingInstr, ntComment, ntDocument,
-    ntDocType, ntDocFragment, ntNotation);}
-
-
-procedure TFslXmlBuilder.WriteXmlNode(iNode : IXMLNode; first : boolean);
-var
-  n : IXMLNode;
-  i : integer;
-begin
-  for i := 0 to inode.childNodes.count - 1 do
-  begin
-    n := inode.childNodes[i];
-    case n.nodeType of
-      ntElement : WriteXml(n, first);
-      ntComment : Comment(n.text);
-      ntText : Text(n.text);
-      ntProcessingInstr : ProcessingInstruction(n.nodeName, n.Text);
-      ntCData : CData(n.text);
-    else
-      raise EXmlException.Create('Unhandled node type on document: '+inttostr(ord(n.nodeType)));
-    end;
-  end;
-end;
- *)
-
- 
 { TXmlBuilderNamespaceList }
 
 procedure TXmlBuilderNamespaceList.Assign(oObject: TFslObject);
@@ -1441,40 +1075,6 @@ begin
       ntCData: raise EXmlException.Create('Illegal CDATA not supported');
     end;
   Close(n);
-end;
-
-function getChildNode(node : IXMLNode; name, ns : String) : IXMLNode;
-var
-  i : integer;
-  child : IXMLNode;
-begin
-  result := nil;
-  for i := 0 to node.ChildNodes.Count - 1 do
-  begin
-    child  := node.ChildNodes[i];
-    if (child.NamespaceURI = ns) and (child.NodeName = name) then
-    begin
-      result := child;
-      exit;
-    end;
-  end;
-end;
-
-function getChildNode(node : IXMLNode; name : String) : IXMLNode;
-var
-  i : integer;
-  child : IXMLNode;
-begin
-  result := nil;
-  for i := 0 to node.ChildNodes.Count - 1 do
-  begin
-    child  := node.ChildNodes[i];
-    if (child.NodeName = name) then
-    begin
-      result := child;
-      exit;
-    end;
-  end;
 end;
 
 { TXmlPatchEngine }
@@ -3171,20 +2771,6 @@ begin
   oStream.Write(b[0], length(b));
 end;
 
-
-{function HasElements(oElem : IXMLDOMElement) : Boolean;
-var
-  oChild : IXMLDOMNode;
-Begin
-  Result := False;
-  oChild := oElem.firstChild;
-  While Not result and (oChild <> nil) Do
-  Begin
-    result := oChild.nodeType = NODE_ELEMENT;
-    oChild := oChild.nextSibling;
-  End;
-End;
-}
 function TMXmlBuilder.Open(const sName: String) : TSourceLocation;
 var
   oElem : TMXmlElement;

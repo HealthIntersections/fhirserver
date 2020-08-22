@@ -1,5 +1,7 @@
 Unit FHIR.Ucum.Expressions;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -779,8 +781,7 @@ begin
   result := TUcumCanonical.create();
   try
     result.Value := TFslDecimal.Create(1);
-
-		debug(indent, 'canonicalise', term);
+    debug(indent, 'canonicalise', term);
     divb := false;
 		t := term;
 		while (t <> nil) do
@@ -860,9 +861,13 @@ begin
 		end;
 
 		debug(indent, 'sort', result);
+    {$IFDEF FPC}
+    raise Exception.create('not done yet');
+    {$ELSE}
     result.Units.Sort(function (const L, R: TUcumCanonicalUnit): Integer begin
     	 result := l.Base.Code.compareTo(r.Base.Code);
       end);
+    {$ENDIF}
 		debug(indent, 'done', result);
 		result.Link;
   finally

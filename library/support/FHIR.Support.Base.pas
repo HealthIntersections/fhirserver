@@ -34,7 +34,14 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}    // Interlocked* API and HResult
-  SysUtils, Classes, System.Types, RTLConsts, Generics.Collections, Generics.Defaults;
+  SysUtils, Classes, Types, RTLConsts, Generics.Collections, Generics.Defaults;
+
+const
+  {$IFDEF FPC}
+  SArgumentOutOfRange : AnsiString = 'something';
+  {$ENDIF}
+  EMPTY_HASH = -1;
+
 
 threadvar
   gExceptionStack : String;
@@ -243,8 +250,8 @@ Type
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
   type
+    //TDirection = {$IFNDEF FPC}  System.{$ENDIF}Types.TDirection;
     {$IFNDEF FPC}
-    TDirection = System.Types.TDirection;
     TEmptyFunc = reference to function (const L, R: T): Boolean;
     TListCompareFunc = reference to function (const L, R: T): Integer;
     TListMatchFunc = reference to function (const i : T): boolean;
@@ -274,7 +281,9 @@ Type
     procedure Grow(ACount: Integer);
     procedure GrowCheck(ACount: Integer); inline;
     procedure DoDelete(Index: Integer; Notification: TCollectionNotification);
+    {$IFNDEF FPC}
     procedure QuickSort(L, R: Integer; compare: TListCompareFunc); overload;
+    {$ENDIF}
     procedure QuickSort(L, R: Integer; comparer: IComparer<T>); overload;
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
@@ -334,7 +343,9 @@ Type
     function Expand: TFslList<T>;
 
     function Contains(const Value: T): Boolean; overload;
+    {$IFNDEF FPC}
     function Contains(match: TListMatchFunc): Boolean; overload;
+    {$ENDIF}
     function IndexOf(const Value: T): Integer;
     function IndexOfItem(const Value: T; Direction: TDirection): Integer;
     function LastIndexOf(const Value: T): Integer;
@@ -343,9 +354,11 @@ Type
 
     procedure Sort; overload;
     procedure Sort(const AComparer: IComparer<T>); overload;
+    {$IFNDEF FPC}
     procedure Sort(compare: TListCompareFunc); overload;
     function BinarySearch(const Item: T; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean; overload;
+    {$ENDIF}
     function matches(other : TFslList<T>; ordered : boolean; criteria : IComparer<T>) : boolean;
 
     procedure TrimExcess;
@@ -1028,7 +1041,7 @@ begin
   buf := TFslList<T>.Create;
   try
     for x in Self do
-      buf.Add(TFslObject(x).Link);
+      buf.Add(T(TFslObject(x).Link));
     Result := buf.ToArray; // relies on TList<T>.ToArray override
   finally
     buf.Free;
@@ -1145,6 +1158,7 @@ Begin
   Until I >= R;
 End;
 
+{$IFNDEF FPC}
 Procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareFunc);
 Var
   I, J, K : Integer;
@@ -1197,6 +1211,7 @@ begin
   If (FCount > 1) Then
     QuickSort(0, FCount - 1, compare);              // call the quicksort routine
 end;
+{$ENDIF}
 
 procedure TFslList<T>.Grow(ACount: Integer);
 var
@@ -1242,7 +1257,7 @@ begin
   repeat
     // Locate the first/next non-nil element in the list
 //    while (StartIndex < FCount) and (FComparer.Compare(FItems[StartIndex], Default(T)) = 0) do
-    while (StartIndex < FCount) and (FItems[StartIndex] = nil) do
+    while (StartIndex < FCount) and (FItems[StartIndex] = T(nil)) do
       Inc(StartIndex);
 
     if StartIndex < FCount then // There is nothing more to do
@@ -1250,7 +1265,7 @@ begin
       // Locate the next nil pointer
       EndIndex := StartIndex;
 //      while (EndIndex < FCount) and (FComparer.Compare(FItems[EndIndex], Default(T)) <> 0) do
-      while (EndIndex < FCount) and (FItems[EndIndex] <> nil) do
+      while (EndIndex < FCount) and (FItems[EndIndex] <> T(nil)) do
         Inc(EndIndex);
       Dec(EndIndex);
 
@@ -1312,12 +1327,12 @@ end;
 
 class procedure TFslList<T>.Error(const Msg: string; Data: NativeInt);
 begin
-  raise EListError.CreateFmt(Msg, [Data]) at ReturnAddress;
+  raise EListError.CreateFmt(Msg, [Data]) {$IFNDEF FPC}at ReturnAddress{$ENDIF};
 end;
 
 class procedure TFslList<T>.Error(Msg: PResStringRec; Data: NativeInt);
 begin
-  raise EListError.CreateFmt(LoadResString(Msg), [Data]) at ReturnAddress;
+  raise EListError.CreateFmt(LoadResString(Msg), [Data]) {$IFNDEF FPC}at ReturnAddress{$ENDIF};
 end;
 
 function TFslList<T>.DoGetEnumerator: TEnumerator<T>;
@@ -1349,7 +1364,7 @@ var
   item: T;
 begin
   for item in list do
-    Add(TFslObject(item).link); // yes we link here too
+    Add(T(TFslObject(item).link)); // yes we link here too
 end;
 
 procedure TFslList<T>.AddRange(const Collection: TEnumerable<T>);
@@ -1357,6 +1372,7 @@ begin
   InsertRange(Count, Collection);
 end;
 
+{$IFNDEF FPC}
 function TFslList<T>.BinarySearch(const Item: T; out Index: Integer): Boolean;
 begin
   Result := TArray.BinarySearch<T>(FItems, Item, Index, FComparer, 0, Count);
@@ -1367,6 +1383,7 @@ function TFslList<T>.BinarySearch(const Item: T; out Index: Integer;
 begin
   Result := TArray.BinarySearch<T>(FItems, Item, Index, AComparer, 0, Count);
 end;
+{$ENDIF}
 
 procedure TFslList<T>.Insert(Index: Integer; const Value: T);
 begin
@@ -1413,7 +1430,7 @@ var
 begin
   for item in Collection do
   begin
-    Insert(Index, TFslObject(item).link); // yes we link here too
+    Insert(Index, T(TFslObject(item).link)); // yes we link here too
     Inc(Index);
   end;
 end;
@@ -1424,7 +1441,7 @@ var
 begin
   for item in Collection do
   begin
-    Insert(Index, TFslObject(item).Link);
+    Insert(Index, T(TFslObject(item).Link));
     Inc(Index);
   end;
 end;
@@ -1449,7 +1466,7 @@ var
 begin
   index := IndexOfItem(Value, Direction);
   if index < 0 then
-    Result := nil
+    Result := T(nil)
   else
   begin
     Result := FItems[index];
@@ -1475,6 +1492,7 @@ begin
     Delete(Result);
 end;
 
+{$IFNDEF FPC}
 procedure TFslList<T>.RemoveAll(filter: TFslListRemoveFunction);
 var
   i : integer;
@@ -1483,13 +1501,14 @@ begin
     if (filter(Items[i])) then
       Delete(i);
 end;
+{$ENDIF}
 
 procedure TFslList<T>.RemoveAll(list: TFslList<T>);
 var
   item: T;
 begin
   for item in list do
-    Remove(TFslObject(item));
+    Remove(T(item));
 end;
 
 function TFslList<T>.RemoveItem(const Value: T; Direction: TDirection): Integer;
@@ -1574,6 +1593,7 @@ begin
   Capacity := 0;
 end;
 
+{$IFNDEF FPC}
 function TFslList<T>.Contains(match: TListMatchFunc): Boolean;
 var
   i : T;
@@ -1583,6 +1603,7 @@ begin
     if (match(i)) then
       exit(true);
 end;
+{$ENDIF}
 
 function TFslList<T>.Expand: TFslList<T>;
 begin
@@ -1799,8 +1820,6 @@ begin
 end;
 
 { TFslMap<T> }
-const
-  EMPTY_HASH = -1;
 
 procedure TFslMap<T>.Rehash(NewCapPow2: Integer);
 var
@@ -2133,7 +2152,7 @@ begin
     value := FDefault;
   end
   else
-    Value := nil;
+    Value := T(nil);
 end;
 
 procedure TFslMap<T>.DoAdd(HashCode, Index: Integer; const Key: String; const Value: T);

@@ -1,50 +1,17 @@
 {$MODE delphi}
 program TestFHIRApplication;
 
-uses Generics.Collections;
-
-type
-  TFslObject = class(TObject)
-  end;
-
-  TFslPair<T: TFslObject> = record
-  end;
-
-  TFslMap<T: TFslObject> = class(TEnumerable<TFslPair<T>>)
-  end;
-
-begin
-
-end.
-!!
-{$MODE delphi}
-program TestFHIRApplication;
-
 uses
-  Generics.Collections;
+  Classes, SysUtils, IdHeaderList, IdGlobal, IdIPAddress, FHIR.Support.Base,
+  FHIR.Support.Utilities, FHIR.Support.Osx, FHIR.Support.Collections,
+  FHIR.Support.Stream, FHIR.Support.Lang, FHIR.Support.Logging,
+  FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.Xml,
+  FHIR.Support.Turtle, FHIR.Support.Certs, FHIR.Support.Signatures,
+  FHIR.Web.Fetcher, FHIR.Ucum.Base, FHIR.Ucum.Handlers, FHIR.Ucum.Validators,
+  FHIR.Ucum.Search, FHIR.Ucum.Expressions,
+  FHIR.Ucum.Services, MarkdownHTMLEntities;
 
-type
-  TFslObject = class(TObject)
-  end;
-
-  TFslPair<T: TFslObject> = record
-  end;
-
-  TFslMap<T: TFslObject> = class(TEnumerable<TFslPair<T>>)
-  end;
-
-begin
-end.
-(*
-{$mode objfpc}{$H+}
-
-uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
-  {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, FHIR.Support.Objects, FHIR.Support.DateTime,
-  FHIR.Support.Decimal, FHIR.Support.TarBall, FHIR.Base.Objects;
-
+!
 type
 
   { TTestFHIRApplication }
@@ -110,4 +77,4 @@ begin
   Application.Run;
   Application.Free;
 end.
-*)
+

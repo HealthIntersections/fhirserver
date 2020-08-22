@@ -1,5 +1,7 @@
 unit FHIR.Support.MXml;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Originally Based on MicroXML, but grew somewhat to handle minimal necessities.
 
@@ -33,11 +35,12 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
 interface
 
 uses
   SysUtils, Classes, Generics.Collections, Character, RegularExpressions,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   MarkdownHtmlEntities;
 
 const

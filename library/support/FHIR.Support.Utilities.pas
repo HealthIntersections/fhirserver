@@ -35,7 +35,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
-  SysUtils, System.Types, System.TimeSpan, System.NetEncoding, Classes, EncdDecd, Generics.Collections, UIConsts, Math, TypInfo, Character, RegularExpressions, SysConst,
+  SysUtils, Types, System.TimeSpan, System.NetEncoding, Classes, EncdDecd, Generics.Collections, UIConsts, Math, TypInfo, Character, RegularExpressions, SysConst,
   FHIR.Support.Fpc, FHIR.Support.Base;
 
 
@@ -468,7 +468,7 @@ Type
     destructor Destroy; Override;
 
     Function AsString : String;
-    Function ToString : String;
+    Function ToString : String; override;
 
     Procedure Clear;
 
@@ -502,7 +502,6 @@ Type
     Property Length : Integer Read FLength;
     Procedure Read(index : integer; var buffer; ilength : integer);
     Procedure Overwrite(index : integer; content : String);
-    function toString: String; override;
   End;
 
 
@@ -1195,7 +1194,9 @@ type
     function clone : TFslDateTime;
     function link : TFslDateTime;
 
+    {$IFNDEF FPC}
     class operator Trunc(a : TFslDateTime) : TFslDateTime;
+    {$ENDIF}
     class operator Equal(a: TFslDateTime; b: TFslDateTime) : Boolean;
     class operator NotEqual(a: TFslDateTime; b: TFslDateTime) : Boolean;
     class operator GreaterThan(a: TFslDateTime; b: TFslDateTime) : Boolean;
@@ -1673,7 +1674,9 @@ Type
     class operator Explicit(a : Integer) : TFslDecimal;
     class operator Negative(a : TFslDecimal) : TFslDecimal;
     class operator Positive(a : TFslDecimal) : TFslDecimal;
+    {$IFNDEF FPC}
     class operator Trunc(a : TFslDecimal) : TFslDecimal;
+    {$ENDIF}
     class operator Equal(a: TFslDecimal; b: TFslDecimal) : Boolean;
     class operator NotEqual(a: TFslDecimal; b: TFslDecimal) : Boolean;
     class operator GreaterThan(a: TFslDecimal; b: TFslDecimal) : Boolean;
@@ -5794,14 +5797,16 @@ var
   c: char;
   temp: string;
 begin
-  nLength := NormalizeString(NormalizationD, PChar(s), Length(s), nil, 0);
+  nLength := NormalizeString(NormalizationD, PWideChar(s), Length(s), nil, 0);
   SetLength(temp, nLength);
-  nLength := NormalizeString(NormalizationD, PChar(s), Length(s), PChar(temp), nLength);
+  nLength := NormalizeString(NormalizationD, PWideChar(s), Length(s), PWideChar(temp), nLength);
   SetLength(temp, nLength);
   result := '';
+  {$IFNDEF FPC}
   for c in temp do
     if (c.GetUnicodeCategory <> TUnicodeCategory.ucNonSpacingMark) and (c.GetUnicodeCategory <> TUnicodeCategory.ucCombiningMark) then
       result := result + c;
+  {$ENDIF}
 end;
 
 {$ENDIF}
@@ -7691,7 +7696,7 @@ Begin
         sPluralisation := 's';
       End;
 
-      If cLastCharacter.IsUpper Then
+      If cLastCharacter.isUpper Then
         sPluralisation := StringUpper(sPluralisation);
 
       Result := Result + sPluralisation;
@@ -8656,10 +8661,12 @@ begin
     end;
 end;
 
+{$IFNDEF FPC}
 class operator TFslDateTime.Trunc(a: TFslDateTime): TFslDateTime;
 begin
   result := a.truncToDay;
 end;
+{$ENDIF}
 
 function TFslDateTime.truncToDay: TFslDateTime;
 begin
@@ -10123,7 +10130,7 @@ Begin
     Inc(pValue);
 
   // Date
-  FillChar(aGuess, SizeOf(aGuess), -1);
+  FillChar(aGuess, SizeOf(aGuess), 255);
 
   iLoop := Low(aNumbers);
   While (pValue^ <> #0) And (iLoop <= High(aNumbers)) Do
@@ -10187,7 +10194,7 @@ Var
   iLength : Integer;
   cFound : Char;
 Begin
-  FillChar(aIndices, SizeOf(aIndices), -1);
+  FillChar(aIndices, SizeOf(aIndices), 255);
 
   aSeparators := DateSeparators;
   iLoop := 0;
@@ -12706,7 +12713,7 @@ end;
 
 class operator TFslDecimal.Equal(a, b: TFslDecimal): Boolean;
 begin
-  result := Equals(a, b);
+  result := TFslDecimal.Equals(a, b);
 end;
 
 class operator TFslDecimal.Explicit(a: String): TFslDecimal;
@@ -12794,10 +12801,12 @@ begin
   result := a.Subtract(b);
 end;
 
+{$IFNDEF FPC}
 class operator TFslDecimal.Trunc(a: TFslDecimal): TFslDecimal;
 begin
   result := a.Trunc;
 end;
+{$ENDIF}
 
 class function TFslDecimalHelper.Create(value: Double): TFslDecimal;
 begin
