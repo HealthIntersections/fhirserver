@@ -250,7 +250,6 @@ Type
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
   type
-    //TDirection = {$IFNDEF FPC}  System.{$ENDIF}Types.TDirection;
     {$IFNDEF FPC}
     TEmptyFunc = reference to function (const L, R: T): Boolean;
     TListCompareFunc = reference to function (const L, R: T): Integer;
@@ -2205,7 +2204,7 @@ var
   s : String;
 begin
   for s in other.Keys do
-    AddOrSetValue(s, other[s].link);
+    AddOrSetValue(s, T(other[s].link));
 end;
 
 procedure TFslMap<T>.AddOrSetValue(const Key: String; const Value: T);

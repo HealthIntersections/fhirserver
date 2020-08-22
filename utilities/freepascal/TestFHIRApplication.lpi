@@ -31,7 +31,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="38">
       <Unit0>
         <Filename Value="TestFHIRApplication.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -180,6 +180,18 @@
         <Filename Value="..\..\library\ucum\FHIR.Ucum.Validators.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
+      <Unit35>
+        <Filename Value="..\..\library\web\FHIR.Web.Parsers.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\..\library\base\FHIR.Base.Common.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\..\library\base\FHIR.Base.Lang.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit37>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -191,7 +203,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <Libraries Value="..\reference-platform\support"/>
-      <OtherUnitFiles Value="..\reference-platform\support;..\reference-platform\base;..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum"/>
+      <OtherUnitFiles Value="..\reference-platform\support;..\reference-platform\base;..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum;..\..\library\base"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>

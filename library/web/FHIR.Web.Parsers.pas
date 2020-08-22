@@ -1,5 +1,7 @@
 unit FHIR.Web.Parsers;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -32,7 +34,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Classes, Generics.Collections,
+  Classes, Generics.Collections, Generics.Defaults,
   FHIR.Support.Base, FHIR.Support.Utilities;
 
 const
@@ -501,9 +503,9 @@ end;
 
 {-----------------------------------------------------------------------------}
 
-procedure THTTPParameters.add(name: String; const value: String);
+procedure THTTPParameters.add(sname: String; const svalue: String);
 begin
-  addItem(name, value);
+  addItem(sname, svalue);
 end;
 
 constructor THTTPParameters.Create(const s: String; MimeDecode: Boolean = True);
@@ -688,7 +690,6 @@ begin
     FBase := 'application/'+Value;
 end;
 
-{$IFNDEF FPC}
 class function TMimeContentType.parseList(s : String): TFslList<TMimeContentType>;
 var
   e : String;
@@ -702,7 +703,7 @@ begin
     result.Free;
   end;
 end;
-{$ENDIF}
+
 
 class function TMimeContentType.parseSingle(s : String): TMimeContentType;
 var
@@ -756,6 +757,22 @@ begin
   FValue := value;
 end;
 
+type
+  TLanguageSpecComparer = class (TInterfacedObject, IComparer<TLanguageSpec>)
+  public
+    function Compare({$IFDEF FPC}constref {$ELSE} const {$ENDIF} l, r: TLanguageSpec): Integer;
+  end;
+
+function TLanguageSpecComparer.Compare({$IFDEF FPC}constref {$ELSE} const {$ENDIF} l, r : TLanguageSpec) : integer;
+begin
+  if l.FValue > r.FValue then
+    result := 1
+  else if r.FValue > l.FValue then
+    result := -1
+  else
+    result := 0;
+end;
+
 { THTTPLanguages }
 
 constructor THTTPLanguages.Create(hdr: String);
@@ -764,6 +781,7 @@ var
   i : integer;
   s, l, r : String;
   d : double;
+  c : TLanguageSpecComparer;
 begin
   FSource := hdr;
   list := TFslList<TLanguageSpec>.create;
@@ -778,7 +796,12 @@ begin
       else
         list.Add(TLanguageSpec.Create(s, 1));
     end;
-    list.Sort(function (const l, r : TLanguageSpec) : integer begin if l.FValue > r.FValue then result := 1 else if r.FValue > l.FValue then result := -1 else result := 0; end);
+    c := TLanguageSpecComparer.create;
+    try
+      list.Sort(c);
+    finally
+      c.free;
+    end;
     SetLength(FCodes, list.Count);
     for i := 0 to list.Count - 1 do
       FCodes[i] := list[i].FCode;

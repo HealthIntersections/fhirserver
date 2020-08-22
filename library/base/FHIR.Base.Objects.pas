@@ -1,5 +1,7 @@
 unit FHIR.Base.Objects;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -628,7 +630,6 @@ function isEmptyProp(v : TFHIRObjectList) : boolean; overload;
 Implementation
 
 Uses
-  EncdDecd,
   FHIR.Base.Lang;
 
 { TFHIRObject }
@@ -989,7 +990,7 @@ end;
 constructor TFHIRObjectText.create(value: TBytes);
 begin
   Create;
-  self.value := String(EncodeBase64(@value[0], length(value)));
+  self.value := EncodeBase64(value);
 end;
 
 function TFHIRObjectText.createPropertyValue(propName: string): TFHIRObject;
@@ -1220,7 +1221,7 @@ begin
   FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
-    FList.Add(FOwner.makeStringValue(String(EncodeBase64(@value[0], length(value)))));
+    FList.Add(FOwner.makeStringValue(EncodeBase64(value)));
 end;
 
 constructor TFHIRProperty.CreateEnum(oOwner: TFHIRObject; const sName: String; bList: boolean; cClass : TClass; enumName, sValue: String);
