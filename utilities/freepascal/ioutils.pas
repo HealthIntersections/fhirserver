@@ -1,5 +1,8 @@
 unit IOUtils;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -28,15 +31,66 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
-{$mode objfpc}{$H+}
-
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, Types,
+  FHIR.Support.Utilities;
+
+Type
+
+  { TDirectory }
+
+  TDirectory = record
+    class function GetFiles(const Path: string): TStringDynArray; overload; inline; static;
+    class function getDirectories(const Path: string): TStringDynArray; overload; inline; static;
+  end;
 
 implementation
+
+{ TDirectory }
+
+class function TDirectory.GetFiles(const Path: string): TStringDynArray;
+var
+  ts: TStringList;
+  SearchRec: TSearchRec;
+begin
+  ts := TStringList.create;
+  try
+    if FindFirst(FHIR.Support.Utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    begin
+      repeat
+        if SearchRec.Attr and SysUtils.faDirectory = 0 then
+          ts.add(FHIR.Support.Utilities.path([Path, SearchRec.Name]));
+      until FindNext(SearchRec) <> 0;
+    end;
+
+    result := ts.ToStringArray;
+  finally
+     ts.free;
+  end;
+end;
+
+class function TDirectory.getDirectories(const Path: string): TStringDynArray;
+var
+  ts: TStringList;
+  SearchRec: TSearchRec;
+begin
+  ts := TStringList.create;
+  try
+    if FindFirst(FHIR.Support.Utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    begin
+      repeat
+        if SearchRec.Attr and SysUtils.faDirectory <> 0 then
+          ts.add(FHIR.Support.Utilities.path([Path, SearchRec.Name]));
+      until FindNext(SearchRec) <> 0;
+    end;
+
+    result := ts.ToStringArray;
+  finally
+     ts.free;
+  end;
+end;
 
 end.
 
