@@ -1,7 +1,8 @@
 unit FHIR.Ucum.Tests;
 
-// -tests  -definitions
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
 
+// -tests  -definitions
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.

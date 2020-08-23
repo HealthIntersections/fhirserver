@@ -1,5 +1,7 @@
 unit FHIR.Cache.PackageManager;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -32,7 +34,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, IniFiles, zlib, Generics.Collections, System.Types,
+  SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
   FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Support.Stream, FHIR.Web.Fetcher,
   FHIR.Cache.NpmPackage, FHIR.Cache.PackageClient,

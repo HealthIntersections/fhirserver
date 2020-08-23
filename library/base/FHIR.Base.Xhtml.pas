@@ -1,4 +1,7 @@
 unit FHIR.Base.Xhtml;
+
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, System.Character,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
+  SysUtils, Classes, Character,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang;
 

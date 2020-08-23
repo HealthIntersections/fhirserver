@@ -2980,7 +2980,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.system := 'http://snomed.info/sct';
+        inc.systemUri := 'http://snomed.info/sct';
         // get the list of reference sets
         for i := 0 to RefSetIndex.Count - 1 Do
         begin
@@ -3012,7 +3012,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.system := 'http://snomed.info/sct';
+        inc.systemUri := 'http://snomed.info/sct';
       finally
         inc.Free;
       end;
@@ -3033,7 +3033,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.system := 'http://snomed.info/sct';
+        inc.systemUri := 'http://snomed.info/sct';
         filt := inc.addFilter;
         try
           filt.prop := 'concept';
@@ -3061,7 +3061,7 @@ begin
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
-      inc.system := 'http://snomed.info/sct';
+      inc.systemUri := 'http://snomed.info/sct';
       filt := inc.addFilter;
       filt.prop := 'concept';
       filt.op := foIsA;

@@ -159,9 +159,9 @@ type
     function makeResource(const name : String) : TFHIRResourceV;
     function makeBoolean(b : boolean): TFHIRObject; virtual; abstract;
     function makeCode(s : string) : TFHIRObject; virtual; abstract;
-    function makeCoding(system, code : String) : TFHIRObject; overload;
-    function makeCoding(system, code, display : String) : TFHIRObject; overload;
-    function makeCoding(system, version, code, display : String) : TFHIRObject; overload; virtual; abstract;
+    function makeCoding(systemUri, code : String) : TFHIRObject; overload;
+    function makeCoding(systemUri, code, display : String) : TFHIRObject; overload;
+    function makeCoding(systemUri, version, code, display : String) : TFHIRObject; overload; virtual; abstract;
     function makeString(s : string) : TFHIRObject; virtual; abstract;
     function makeInteger(s : string) : TFHIRObject; virtual; abstract;
     function makeDecimal(s : string) : TFHIRObject; virtual; abstract;
@@ -253,9 +253,9 @@ type
     function getResourceNames : TFslStringSet; virtual; abstract;
     function fetchResource(rType : String; url : String) : TFhirResourceV; overload; virtual; abstract;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; virtual; abstract;
-    function supportsSystem(system, version : string) : boolean; overload; virtual; abstract;
-    function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
-    function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; virtual; abstract;
+    function supportsSystem(systemUri, version : string) : boolean; overload; virtual; abstract;
+    function validateCode(systemUri, version, code, display : String) : TValidationResult; overload; virtual; abstract;
+    function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; virtual; abstract;
     function allResourceNames : TArray<String>; overload; virtual; abstract;
     function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
@@ -330,14 +330,14 @@ begin
   result := makeByName(name) as TFHIRResourceV;
 end;
 
-function TFHIRFactory.makeCoding(system, code, display: String): TFHIRObject;
+function TFHIRFactory.makeCoding(systemUri, code, display: String): TFHIRObject;
 begin
-  result := makeCoding(system, '', code, display);
+  result := makeCoding(systemUri, '', code, display);
 end;
 
-function TFHIRFactory.makeCoding(system, code: String): TFHIRObject;
+function TFHIRFactory.makeCoding(systemUri, code: String): TFHIRObject;
 begin
-  result := makeCoding(system, '', code, '');
+  result := makeCoding(systemUri, '', code, '');
 end;
 
 { TFHIRVersionFactories }

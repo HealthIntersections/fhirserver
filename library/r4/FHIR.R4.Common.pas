@@ -786,7 +786,7 @@ type
     procedure load(params : TFHIRResourceV); overload; override;
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRResourceV; override;
-    function system : String; override;
+    function systemUri : String; override;
     function codeA : String; override;
     function codeB : String; override;
     function version : String; override;
@@ -893,7 +893,7 @@ type
     procedure setVersion(Value: String); override;
   public
     procedure contact(kind : TContactType; value : String); override;
-    procedure system(url : String); override;
+    procedure systemUri(url : String); override;
     procedure addExpansionParameter(code, doco : String); override;
   end;
 
@@ -4393,7 +4393,7 @@ begin
   (op as TFHIRSubsumesOpRequest).load(params);
 end;
 
-function TFHIRSubsumesOpRequest4.system: String;
+function TFHIRSubsumesOpRequest4.systemUri: String;
 begin
   result := (op as TFHIRSubsumesOpRequest).system;
 end;
@@ -4735,7 +4735,7 @@ begin
 end;
 
 
-procedure TFhirTerminologyCapabilities4.system(url: String);
+procedure TFhirTerminologyCapabilities4.systemUri(url: String);
 begin
   tc.codeSystemList.Append.uri := url;
 end;

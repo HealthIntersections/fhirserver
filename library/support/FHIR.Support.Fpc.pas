@@ -39,7 +39,7 @@ interface
 
 {$IFDEF FPC}
 uses
-  Classes, SysUtils, Character, RegExpr, FileUtil, Generics.Collections, Graphics;
+  Classes, SysUtils, Character, RegExpr, FileUtil, Generics.Collections, Graphics, ZLib;
 
 type
 
@@ -71,6 +71,20 @@ type
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 
 function ColorToString(Color: TColor): AnsiString;
+
+type
+  TZCompressionLevel = (zcNone, zcFastest, zcDefault, zcMax);
+
+const
+    ZLevels: array[TZCompressionLevel] of Shortint = (
+    Z_NO_COMPRESSION,
+    Z_BEST_SPEED,
+    Z_DEFAULT_COMPRESSION,
+    Z_BEST_COMPRESSION
+    );
+
+procedure ZCompress(const inBuffer: TBytes; out outBuffer: TBytes; level: TZCompressionLevel = zcDefault);
+procedure ZDecompress(const inBuffer: TBytes; out outBuffer: TBytes; outEstimate: Integer = 0);
 
 {$ENDIF}
 
@@ -128,6 +142,115 @@ end;
 function ColorToString(Color: TColor): AnsiString;
 begin
   result := Graphics.ColorToString(Color);
+end;
+
+function ZCompressCheck(code: Integer; bufOk : boolean): Integer; overload;
+begin
+  Result := code;
+
+  if code < 0 then
+    case (code) of
+     Z_NEED_DICT : raise Exception.Create('Dictionary Needed');
+     Z_STREAM_END : raise Exception.Create('Input Ended Unexpectedly');
+     Z_OK : ;
+     Z_ERRNO : raise Exception.Create('Error in File');
+     Z_STREAM_ERROR : raise Exception.Create('Error in Stream');
+     Z_DATA_ERROR : raise Exception.Create('Error in Data');
+     Z_MEM_ERROR : raise Exception.Create('Memory Error');
+     Z_BUF_ERROR : if (not bufOk) then raise Exception.Create('Buffer Error');
+     Z_VERSION_ERROR : raise Exception.Create('Version Error');
+    end;
+end;
+
+
+procedure ZCompress(const inBuffer: TBytes; out outBuffer: TBytes; level: TZCompressionLevel);
+const
+  delta = 256;
+var
+  zstream: TZStreamRec;
+  outSize,inSize: Integer;
+begin
+  zstream := Default(TZStreamRec);
+  inSize := Length(inBuffer);
+  outSize := ((inSize + (inSize div 10) + 12) + 255) and not 255;
+  SetLength(outBuffer, outSize);
+
+  try
+    zstream.next_in := @inBuffer[0];
+    zstream.avail_in := inSize;
+    zstream.next_out := @outBuffer[0];
+    zstream.avail_out := outSize;
+
+    ZCompressCheck(DeflateInit(zstream, ZLevels[level]), false);
+
+    try
+      while ZCompressCheck(deflate(zstream, Z_FINISH), false) <> Z_STREAM_END do
+      begin
+        Inc(outSize, delta);
+        SetLength(outBuffer, outSize);
+        zstream.next_out := @outBuffer[0];
+        zstream.avail_out := delta;
+      end;
+    finally
+      ZCompressCheck(deflateEnd(zstream), false);
+    end;
+
+    SetLength(outBuffer,zstream.total_out);
+
+  except
+    SetLength(outBuffer,0);
+    raise;
+  end;
+end;
+
+
+procedure ZDecompress(const inBuffer: TBytes; out outBuffer: TBytes; outEstimate: Integer);
+var
+  zstream: TZStreamRec;
+  delta, inSize, outSize: Integer;
+begin
+  inSize := Length(inBuffer);
+  if inSize = 0 then
+    ZCompressCheck(Z_BUF_ERROR, false);
+
+  zstream := Default(TZStreamRec);
+  delta := (inSize + 255) and not 255;
+
+  if outEstimate = 0 then
+    outSize := delta
+  else
+    outSize := outEstimate;
+  if outSize = 0 then
+    outSize := 16;
+
+  SetLength(outBuffer, outSize);
+
+  try
+    zstream.next_in := @inBuffer[0];
+    zstream.avail_in := inSize;
+    zstream.next_out := @outBuffer[0];
+    zstream.avail_out := outSize;
+
+    ZCompressCheck(InflateInit(zstream), false);
+
+    try
+      while ZCompressCheck(inflate(zstream, Z_NO_FLUSH), true) <> Z_STREAM_END do
+      begin
+        Inc(outSize, delta);
+        SetLength(outBuffer, outSize);
+        zstream.next_out := PBytef(@outBuffer[0]) + zstream.total_out;
+        zstream.avail_out := delta;
+      end;
+    finally
+      ZCompressCheck(inflateEnd(zstream), false);
+    end;
+
+    SetLength(outBuffer, zstream.total_out);
+
+  except
+    SetLength(outBuffer,0);
+    raise;
+  end;
 end;
 
 {$ENDIF}

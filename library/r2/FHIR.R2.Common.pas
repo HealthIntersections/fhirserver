@@ -421,7 +421,7 @@ type
 
   TFHIRValueSetCodeSystem2 = class (TFHIRValueSetCodeSystemW)
   public
-    function system : String; override;
+    function systemUri : String; override;
     function concepts : TFslList<TFHIRCodeSystemConceptW>; override;
 //    function version : String; override;
   end;
@@ -809,7 +809,7 @@ type
     procedure setVersion(Value: String); override;
   public
     procedure contact(kind : TContactType; value : String); override;
-    procedure system(url : String); override;
+    procedure systemUri(url : String); override;
     procedure addExpansionParameter(code, doco : String); override;
   end;
 
@@ -2365,7 +2365,7 @@ begin
     result.Add(TFhirCodeSystemConcept2.create(i.Link));
 end;
 
-function TFHIRValueSetCodeSystem2.system: String;
+function TFHIRValueSetCodeSystem2.systemUri: String;
 begin
   result := (element as TFHIRValueSetCodeSystem ).system;
 end;
@@ -4428,7 +4428,7 @@ begin
 end;
 
 
-procedure TFhirTerminologyCapabilities2.system(url: String);
+procedure TFhirTerminologyCapabilities2.systemUri(url: String);
 begin
   (FRes as TFhirParameters).AddParameter('system', TFhirUri.create(url));
 end;

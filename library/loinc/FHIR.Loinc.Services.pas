@@ -1811,7 +1811,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.system := 'http://loinc.org';
+        inc.systemUri := 'http://loinc.org';
       finally
         inc.free;
       end;
@@ -1834,7 +1834,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.system := 'http://loinc.org';
+        inc.systemUri := 'http://loinc.org';
         filt := inc.addFilter;
         try
           filt.prop := 'ancestor';
@@ -1864,7 +1864,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.system := 'http://loinc.org';
+        inc.systemUri := 'http://loinc.org';
         answers := FRefs.GetCardinals(children);
         for i := 0 to Length(answers) - 1 do
         begin

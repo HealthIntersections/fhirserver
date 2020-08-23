@@ -232,7 +232,9 @@ type
     destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
+    {$IFNDEF FPC}
     class function create<T : TFslObject>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty; Overload;
+    {$ENDIF}
 
     Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
@@ -1249,6 +1251,7 @@ begin
   FList := TFHIRObjectList.Create;
 end;
 
+{$IFNDEF FPC}
 class function TFHIRProperty.create<T>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty;
 var
   o : T;
@@ -1262,6 +1265,7 @@ begin
     result.free;
   end;
 end;
+{$ENDIF}
 
 { TFHIRPropertyList }
 

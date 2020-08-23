@@ -313,11 +313,11 @@ begin
   begin
     if length(vsi.valueSets) > 0 then
       exit('');
-    if vsi.system = '' then
+    if vsi.systemUri = '' then
       exit('');
     if vsi.hasFilters then
       exit('');
-    cs := findCodeSystem(vsi.system, '', nil, true);
+    cs := findCodeSystem(vsi.systemUri, '', nil, true);
     if (cs = nil) then
       exit('');
     try
@@ -330,8 +330,8 @@ begin
           if (match) then
           begin
             if (result = '') then
-              result := vsi.system
-            else if (result <> vsi.System) then
+              result := vsi.systemUri
+            else if (result <> vsi.systemUri) then
               exit('');
           end;
         end;
@@ -343,8 +343,8 @@ begin
         begin
           cs.Close(loc);
           if (result = '') then
-            result := vsi.system
-          else if (result <> vsi.System) then
+            result := vsi.systemUri
+          else if (result <> vsi.systemUri) then
             exit('');
         end;
       end;
@@ -379,7 +379,7 @@ begin
     begin
       try
         FFactory.checkNoModifiers(ics, 'ValueSetChecker.prepare', 'CodeSystem');
-        FOthers.Add(ics.system, TFhirCodeSystemProvider.create(ffactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(FValueSet.Resource.Link))));
+        FOthers.Add(ics.systemUri, TFhirCodeSystemProvider.create(ffactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(FValueSet.Resource.Link))));
       finally
         ics.Free;
       end;
@@ -442,11 +442,11 @@ begin
       other.free;
     end;
   end;
-  if not FOthers.ExistsByKey(cc.system) then
-    FOthers.Add(cc.system, findCodeSystem(cc.system, cc.version, FParams, true));
-  cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+  if not FOthers.ExistsByKey(cc.systemUri) then
+    FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, true));
+  cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
   if (cs = nil) and (FParams.valueSetMode <> vsvmNoMembership) then
-    raise ETerminologyError.Create('CodeSystem uri '''+cc.system+''' is unknown');
+    raise ETerminologyError.Create('CodeSystem uri '''+cc.systemUri+''' is unknown');
   FNoValueSetExpansion := cs = nil;
   if cs <> nil then
   begin
@@ -603,7 +603,7 @@ begin
     if ics <> nil then
     begin
       try
-        if (system = ics.system) or (system = SYSTEM_NOT_APPLICABLE) then
+        if (system = ics.systemUri) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
           ccl := ics.concepts;
           try
@@ -636,14 +636,14 @@ begin
       end;
       for cc in FValueSet.includes.forEnum do
       begin
-        if cc.system = '' then
+        if cc.systemUri = '' then
           result := true
-        else if (cc.system = system) or (system = SYSTEM_NOT_APPLICABLE) then
+        else if (cc.systemUri = system) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
-          cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+          cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
           if (cs = nil) then
           begin
-            message := 'The code system "'+cc.system+'" in the include in "'+FValueSet.url+'" is not known';
+            message := 'The code system "'+cc.systemUri+'" in the include in "'+FValueSet.url+'" is not known';
             exit(false);
           end;
 
@@ -669,11 +669,11 @@ begin
       if result then
         for cc in FValueSet.excludes.forEnum do
         begin
-          if cc.system = '' then
+          if cc.systemUri = '' then
             excluded := true
           else
           begin
-            cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+            cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
             if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
             begin
               s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
@@ -709,7 +709,7 @@ begin
     try
       list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
-      if check(coding.system, coding.version, coding.code, abstractOk, implySystem, list, message, cause) then
+      if check(coding.systemUri, coding.version, coding.code, abstractOk, implySystem, list, message, cause) then
       begin
         result.AddParamBool('result', true);
         if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
@@ -722,7 +722,7 @@ begin
       else
       begin
         result.AddParamBool('result', false);
-        result.AddParamStr('message', 'The system/code "'+coding.system+'"/"'+coding.code+'" is not in the value set '+FValueSet.name);
+        result.AddParamStr('message', 'The system/code "'+coding.systemUri+'"/"'+coding.code+'" is not in the value set '+FValueSet.name);
         if (message <> '') then
           result.AddParamStr('message', message);
         if cause <> itNull then
@@ -789,9 +789,9 @@ begin
       for c in code.codings.forEnum do
       begin
         list.Clear;
-        cc := ',{'+c.system+'}'+c.code;
+        cc := ',{'+c.systemUri+'}'+c.code;
         codelist := codelist + cc;
-        v := check(c.system, c.version, c.code, abstractOk, implySystem, list, message, cause);
+        v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, cause);
         if not v and (message <> '') then
           msg(message);
         ok := ok or v;
@@ -806,11 +806,11 @@ begin
         end
         else
         begin
-          prov := findCodeSystem(c.system, c.version, FParams, true);
+          prov := findCodeSystem(c.systemUri, c.version, FParams, true);
           try
            if (prov = nil) then
            begin
-             msg('The code system "'+c.system+'" is not known (encountered paired with code = "'+c.code+'")');
+             msg('The code system "'+c.systemUri+'" is not known (encountered paired with code = "'+c.code+'")');
              cause := itNotFound;
            end
            else
@@ -820,13 +820,13 @@ begin
                if ctxt = nil then
                begin
                  msg(message);
-                 if (c.system = 'http://ncimeta.nci.nih.gov') then
+                 if (c.systemUri = 'http://ncimeta.nci.nih.gov') then
                  begin
                    // cause := itInvali;
                  end
                  else
                  begin
-                   msg('The code "'+c.code+'" is not valid in the system '+c.system);
+                   msg('The code "'+c.code+'" is not valid in the system '+c.systemUri);
                    cause := itInvalid;
                  end;
                end
@@ -1200,7 +1200,7 @@ begin
             if (table <> nil) then
             begin
               tr := table.AddChild('tr');
-              tr.AddChild('td').AddText(c.system);
+              tr.AddChild('td').AddText(c.systemUri);
               tr.AddChild('td').AddText(c.code);
               tr.AddChild('td').AddText(c.display);
             end;
@@ -1227,7 +1227,7 @@ end;
 
 function TFHIRValueSetExpander.key(c: TFhirValueSetExpansionContainsW): string;
 begin
-  result := key(c.System, c.Code, c.display);
+  result := key(c.systemUri, c.Code, c.display);
 end;
 
 procedure TFHIRValueSetExpander.hashImport(hash: TStringList; cc: TFhirValueSetExpansionContainsW);
@@ -1235,7 +1235,7 @@ var
   ccc : TFhirValueSetExpansionContainsW;
 begin
   if cc.code <> '' then
-    hash.Add(cc.system+#1+cc.code);
+    hash.Add(cc.systemUri+#1+cc.code);
   for ccc in cc.contains.forEnum do
     hashImport(hash, ccc);
 end;
@@ -1294,9 +1294,9 @@ begin
   if (defines.Count > 0) and (expansion <> nil) and (cs.version <> '') then
   begin
     if FFactory.version = fhirVersionRelease2 then
-      v := source.system+FHIR_VERSION_CANONICAL_SPLIT_2+cs.version
+      v := source.systemUri+FHIR_VERSION_CANONICAL_SPLIT_2+cs.version
     else
-      v := source.system+FHIR_VERSION_CANONICAL_SPLIT_3p+cs.version;
+      v := source.systemUri+FHIR_VERSION_CANONICAL_SPLIT_3p+cs.version;
     if not expansion.hasParam('version', v) then
       expansion.addParam('version', v);
   end;
@@ -1304,7 +1304,7 @@ begin
   begin
     FFactory.checkNoModifiers(cm, 'ValueSetExpander.handleDefine', 'concept');
     if filter.passes(cm.display) or filter.passes(cm.code) then
-      addDefinedCode(cs, list, map, source.system, cm, params, importHash);
+      addDefinedCode(cs, list, map, source.systemUri, cm, params, importHash);
     handleDefine(cs, list, map, source, cm.conceptList, filter, nil, params, importHash);
   end;
 end;
@@ -1387,7 +1387,7 @@ begin
   begin
     n := FFactory.makeValueSetContains;
     try
-      n.System := system;
+      n.systemUri := system;
       n.Code := code;
       if (display <> '') then
         n.Display := display
@@ -1446,7 +1446,7 @@ begin
   for c in vs.expansion.contains.forEnum do
   begin
     s := key(c);
-    if passesImportFilter(importHash, c.system, c.code) and not map.containsKey(s) then
+    if passesImportFilter(importHash, c.systemUri, c.code) and not map.containsKey(s) then
     begin
       list.add(c.link);
       map.add(s, c.link);
@@ -1479,7 +1479,7 @@ begin
     for s in cset.valueSets do
       imports.add(expandValueset(s, filter.filter, dependencies, notClosed));
 
-    if cset.system = '' then
+    if cset.systemUri = '' then
     begin
       base := imports[0];
       hash := makeImportHash(imports, 1);
@@ -1493,7 +1493,7 @@ begin
     begin
       hash := makeImportHash(imports, 0);
       try
-        cs := findCodeSystem(cset.system, cset.version, FParams, false);
+        cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
         try
           if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
           begin

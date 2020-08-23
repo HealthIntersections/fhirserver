@@ -250,10 +250,15 @@ Type
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
   type
+    TListCompareEvent = function (sender : TObject; const L, R: T): Integer of object;
+    TEmptyEvent = function (sender : TObject; const L, R: T): Boolean of object;
+    TListMatchEvent = function (sender : TObject; const i : T): boolean of object;
+    TFslListRemoveEvent = function (sender : TObject; item : T):boolean of object;
     {$IFNDEF FPC}
     TEmptyFunc = reference to function (const L, R: T): Boolean;
     TListCompareFunc = reference to function (const L, R: T): Integer;
     TListMatchFunc = reference to function (const i : T): boolean;
+    TFslListRemoveFunc =  reference to function(item : T):boolean;
     {$ENDIF}
   private
     FJsHandle: pointer;
@@ -261,9 +266,6 @@ Type
     function GetEmpty: boolean;
   type
     arrayofT = array of T;
-    {$IFNDEF FPC}
-    TFslListRemoveFunction =  reference to function(item : T):boolean;
-    {$ENDIF}
   var
     FItems: arrayofT;
     FCount: Integer;
@@ -283,6 +285,7 @@ Type
     {$IFNDEF FPC}
     procedure QuickSort(L, R: Integer; compare: TListCompareFunc); overload;
     {$ENDIF}
+    procedure QuickSort(L, R: Integer; compare: TListCompareEvent); overload;
     procedure QuickSort(L, R: Integer; comparer: IComparer<T>); overload;
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
@@ -322,8 +325,9 @@ Type
     function Remove(const Value: T): Integer;
     procedure RemoveAll(list : TFslList<T>); overload;
     {$IFNDEF FPC}
-    procedure RemoveAll(filter : TFslListRemoveFunction); overload;
+    procedure RemoveAll(filter : TFslListRemoveFunc); overload;
     {$ENDIF}
+    procedure RemoveAll(filter : TFslListRemoveEvent); overload;
     function RemoveItem(const Value: T; Direction: TDirection): Integer;
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
@@ -345,6 +349,7 @@ Type
     {$IFNDEF FPC}
     function Contains(match: TListMatchFunc): Boolean; overload;
     {$ENDIF}
+    function Contains(match: TListMatchEvent): Boolean; overload;
     function IndexOf(const Value: T): Integer;
     function IndexOfItem(const Value: T; Direction: TDirection): Integer;
     function LastIndexOf(const Value: T): Integer;
@@ -352,13 +357,23 @@ Type
     procedure Reverse;
 
     procedure Sort; overload;
-    procedure Sort(const AComparer: IComparer<T>); overload;
+
     {$IFNDEF FPC}
     procedure Sort(compare: TListCompareFunc); overload;
+    {$ENDIF}
+    procedure Sort(compare: TListCompareEvent); overload;
+    procedure Sort(const AComparer: IComparer<T>); overload;
+
+    {$IFNDEF FPC}
     function BinarySearch(const Item: T; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean; overload;
     {$ENDIF}
-    function matches(other : TFslList<T>; ordered : boolean; criteria : IComparer<T>) : boolean;
+
+    {$IFNDEF FPC}
+    function matches(other : TFslList<T>; ordered : boolean; criteria : TListCompareFunc) : boolean; overload;
+    {$ENDIF}
+    function matches(other : TFslList<T>; ordered : boolean; criteria : IComparer<T>) : boolean; overload;
+    function matches(other : TFslList<T>; ordered : boolean; criteria : TListCompareEvent) : boolean; overload;
 
     procedure TrimExcess;
 
@@ -1212,6 +1227,59 @@ begin
 end;
 {$ENDIF}
 
+Procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareEvent);
+Var
+  I, J, K : Integer;
+  v : T;
+Begin
+  // QuickSort routine (Recursive)
+  // * Items is the default indexed property that returns a pointer, subclasses
+  //   specify these return values as their default type.
+  // * The Compare routine used must be aware of what this pointer actually means.
+
+  Repeat
+    I := L;
+    J := R;
+    K := (L + R) Shr 1;
+
+    Repeat
+      // Keep pK pointed at the middle element as it might be moved.
+      While (compare(self, Items[I], Items[K]) < 0) Do
+        Inc(I);
+
+      While (compare(self, Items[J], Items[K]) > 0) Do
+        Dec(J);
+
+      If I <= J Then
+      Begin
+        v := FItems[i];
+        Fitems[i] := Fitems[j];
+        FItems[j] := v;
+
+        // Keep K as the index of the original middle element as it might get exchanged.
+        If I = K Then
+          K := J
+        Else If J = K Then
+          K := I;
+
+        Inc(I);
+        Dec(J);
+      End;
+    Until I > J;
+
+    If L < J Then
+      QuickSort(L, J, compare);
+
+    L := I;
+  Until I >= R;
+End;
+
+procedure TFslList<T>.Sort(compare: TListCompareEvent);
+begin
+  If (FCount > 1) Then
+    QuickSort(0, FCount - 1, compare);              // call the quicksort routine
+end;
+
 procedure TFslList<T>.Grow(ACount: Integer);
 var
   newCount: Integer;
@@ -1377,8 +1445,7 @@ begin
   Result := TArray.BinarySearch<T>(FItems, Item, Index, FComparer, 0, Count);
 end;
 
-function TFslList<T>.BinarySearch(const Item: T; out Index: Integer;
-  const AComparer: IComparer<T>): Boolean;
+function TFslList<T>.BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean;
 begin
   Result := TArray.BinarySearch<T>(FItems, Item, Index, AComparer, 0, Count);
 end;
@@ -1492,7 +1559,7 @@ begin
 end;
 
 {$IFNDEF FPC}
-procedure TFslList<T>.RemoveAll(filter: TFslListRemoveFunction);
+procedure TFslList<T>.RemoveAll(filter: TFslListRemoveFunc);
 var
   i : integer;
 begin
@@ -1501,6 +1568,15 @@ begin
       Delete(i);
 end;
 {$ENDIF}
+
+procedure TFslList<T>.RemoveAll(filter: TFslListRemoveEvent);
+var
+  i : integer;
+begin
+  for i := Count - 1 downto 0 do
+    if (filter(self, Items[i])) then
+      Delete(i);
+end;
 
 procedure TFslList<T>.RemoveAll(list: TFslList<T>);
 var
@@ -1604,6 +1680,16 @@ begin
 end;
 {$ENDIF}
 
+function TFslList<T>.Contains(match: TListMatchEvent): Boolean;
+var
+  i : T;
+begin
+  result := false;
+  for i in self do
+    if (match(self, i)) then
+      exit(true);
+end;
+
 function TFslList<T>.Expand: TFslList<T>;
 begin
   if FCount = Length(FItems) then
@@ -1688,6 +1774,74 @@ begin
       ok := false;
       for j := 0 to Count - 1 do
         if criteria.Compare(Items[i], other[j]) = 0 then
+        begin
+          ok := true;
+          break;
+        end;
+      if not ok then
+        exit(false);
+    end;
+  end;
+end;
+
+{$IFNDEF FPC}
+function TFslList<T>.matches(other: TFslList<T>; ordered: boolean; criteria: TListCompareFunc): boolean;
+var
+  i, j : integer;
+  ok : boolean;
+begin
+  if other = nil then
+    exit(false);
+  if count <> other.Count then
+    exit(false);
+  result := true;
+  if ordered then
+  begin
+    for i := 0 to Count - 1 do
+      if criteria(Items[i], other[i]) <> 0 then
+        exit(false);
+  end
+  else
+  begin
+    for i := 0 to Count - 1 do
+    begin
+      ok := false;
+      for j := 0 to Count - 1 do
+        if criteria(Items[i], other[j]) = 0 then
+        begin
+          ok := true;
+          break;
+        end;
+      if not ok then
+        exit(false);
+    end;
+  end;
+end;
+{$ENDIF}
+
+function TFslList<T>.matches(other: TFslList<T>; ordered: boolean; criteria: TListCompareEvent): boolean;
+var
+  i, j : integer;
+  ok : boolean;
+begin
+  if other = nil then
+    exit(false);
+  if count <> other.Count then
+    exit(false);
+  result := true;
+  if ordered then
+  begin
+    for i := 0 to Count - 1 do
+      if criteria(self, Items[i], other[i]) <> 0 then
+        exit(false);
+  end
+  else
+  begin
+    for i := 0 to Count - 1 do
+    begin
+      ok := false;
+      for j := 0 to Count - 1 do
+        if criteria(self, Items[i], other[j]) = 0 then
         begin
           ok := true;
           break;

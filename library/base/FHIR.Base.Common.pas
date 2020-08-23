@@ -106,7 +106,7 @@ type
     procedure setVersion(Value: String); virtual; abstract;
   public
     function link : TFhirCodingW; overload;
-    property system : String read GetSystem write SetSystem;
+    property systemUri : String read GetSystem write SetSystem;
     property version : String read GetVersion write SetVersion;
     property code : String read GetCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
@@ -126,7 +126,7 @@ type
     function link : TFhirQuantityW; overload;
     property value : String read GetValue write SetValue;
     property units : String read GetUnit write SetUnit;
-    property system : String read GetSystem write SetSystem;
+    property systemUri : String read GetSystem write SetSystem;
     property code : String read GetCode write SetCode;
     function asDuration : TDateTime; virtual; abstract;
   end;
@@ -156,16 +156,16 @@ type
     function tags : TFslList<TFHIRCodingW>; virtual; abstract;
     function labels : TFslList<TFHIRCodingW>; virtual; abstract;
     function profiles : TArray<String>; virtual; abstract;
-    function hasTag(system, code : String) : boolean; virtual; abstract;
-    function hasLabel(system, code : String) : boolean; virtual; abstract;
-    procedure addTag(system, code, display : String); virtual; abstract;
-    procedure addLabel(system, code, display : String); virtual; abstract;
+    function hasTag(systemUri, code : String) : boolean; virtual; abstract;
+    function hasLabel(systemUri, code : String) : boolean; virtual; abstract;
+    procedure addTag(systemUri, code, display : String); virtual; abstract;
+    procedure addLabel(systemUri, code, display : String); virtual; abstract;
     procedure addProfile(uri : String); virtual; abstract;
     procedure clearTags; virtual; abstract;
     procedure clearLabels; virtual; abstract;
     procedure clearProfiles; virtual; abstract;
-    procedure removeTag(system, code : String); virtual; abstract;
-    procedure removeLabel(system, code : String); virtual; abstract;
+    procedure removeTag(systemUri, code : String); virtual; abstract;
+    procedure removeLabel(systemUri, code : String); virtual; abstract;
     procedure removeProfile(uri : String); virtual; abstract;
   end;
 
@@ -233,8 +233,8 @@ type
     procedure addCoding(coding : TFHIRCodingW); overload; virtual; abstract;
     function addCoding : TFHIRCodingW; overload; virtual; abstract;
     function summary : String; virtual; abstract;
-    function fromSystem(System : String; required : boolean = false) : String; overload; virtual; abstract;
-    function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; virtual; abstract;
+    function fromSystem(systemUri : String; required : boolean = false) : String; overload; virtual; abstract;
+    function fromSystem(systems : TArray<String>; required : boolean = false) : String; overload; virtual; abstract;
     property text : String read GetText write SetText;
   end;
 
@@ -465,7 +465,7 @@ type
     property fhirVersion : string read GetFhirVersion write SetFhirVersion;
 
     function hasRest : boolean; virtual; abstract;
-    function hasSecurity(system, code : String) : boolean; virtual; abstract;
+    function hasSecurity(systemUri, code : String) : boolean; virtual; abstract;
     procedure readSmartExtension(var authorize, token, register: String); virtual; abstract;
     procedure addSmartExtensions(authorize, token, register, manage: String; caps : Array of String); virtual; abstract;
     function hasFormat(fmt : String) : boolean; virtual; abstract;
@@ -673,7 +673,7 @@ type
     procedure setDisplay(Value: String); virtual; abstract;
     procedure setSystem(Value: String); virtual; abstract;
 
-    property system : String read GetSystem write SetSystem;
+    property systemUri : String read GetSystem write SetSystem;
     property code : String read GetCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
 
@@ -738,7 +738,7 @@ type
   public
     function link : TFhirValueSetComposeIncludeW; overload;
 
-    property system : String read GetSystem write SetSystem;
+    property systemUri : String read GetSystem write SetSystem;
     property version : String read GetVersion write SetVersion;
     function valueSets : TArray<String>; virtual; abstract;
     function hasConcepts : boolean; virtual; abstract;
@@ -752,7 +752,7 @@ type
   TFHIRValueSetCodeSystemW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFHIRValueSetCodeSystemW; overload;
-    function system : String; virtual; abstract;
+    function systemUri : String; virtual; abstract;
     function concepts : TFslList<TFHIRCodeSystemConceptW>; virtual; abstract;
   end;
 
@@ -873,7 +873,7 @@ type
   public
     function link : TFHIRLookupOpResponseW; overload;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; virtual; abstract;
-    function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
+    function addDesignation(systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function getVersion: String; virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
@@ -887,7 +887,7 @@ type
 
   TFHIRSubsumesOpRequestW = class (TFHIRXVersionOperationWrapper)
   public
-    function system : String; virtual; abstract;
+    function systemUri : String; virtual; abstract;
     function codeA : String; virtual; abstract;
     function codeB : String; virtual; abstract;
     function version : String; virtual; abstract;
@@ -1019,12 +1019,12 @@ type
   public
     function link : TFhirAuditEventW; overload;
     procedure success; virtual; abstract;
-    procedure eventType(system, code, display : String); virtual; abstract;
-    procedure eventSubType(system, code, display : String); virtual; abstract;
-    procedure source(name, system, value : String); virtual; abstract;
-    procedure sourceType(system, code, display : String); virtual; abstract;
+    procedure eventType(systemUri, code, display : String); virtual; abstract;
+    procedure eventSubType(systemUri, code, display : String); virtual; abstract;
+    procedure source(name, systemUri, value : String); virtual; abstract;
+    procedure sourceType(systemUri, code, display : String); virtual; abstract;
     procedure participantIp(ip : String); virtual; abstract;
-    procedure participantId(system, value, alt, name : String); virtual; abstract;
+    procedure participantId(systemUri, value, alt, name : String); virtual; abstract;
 
     function dateTime : TFslDateTime; virtual; abstract;
   end;
@@ -1109,10 +1109,10 @@ type
     function link : TFhirObservationW; overload;
     property status : TObservationStatus read GetStatus write SetStatus;
     procedure setCode(c : TFHIRCodingW); overload; virtual; abstract;
-    procedure setCode(system, code, display : String); overload; virtual; abstract;
+    procedure setCode(systemUri, code, display : String); overload; virtual; abstract;
     procedure setCode(text : String); overload; virtual; abstract;
     procedure addCategory(c : TFHIRCodingW); overload; virtual; abstract;
-    procedure addCategory(system, code, display : String); overload; virtual; abstract;
+    procedure addCategory(systemUri, code, display : String); overload; virtual; abstract;
     procedure setPeriod(start, finish : TDateTime); virtual; abstract;
 
     function hasDevice : boolean; virtual; abstract;
@@ -1140,9 +1140,9 @@ type
     property comment : String read GetComment write SetComment;
 
     function components : TFslList<TFhirObservationComponentW>; virtual; abstract;
-    function getComponent(system, code: String; var comp : TFhirObservationComponentW) : boolean; overload; virtual; abstract;
-    function getComponent(system : String; var comp : TFhirObservationComponentW) : boolean; overload; virtual; abstract;
-    function addComp(system, code : String) : TFhirObservationComponentW; virtual; abstract;
+    function getComponent(systemUri, code: String; var comp : TFhirObservationComponentW) : boolean; overload; virtual; abstract;
+    function getComponent(systemUri : String; var comp : TFhirObservationComponentW) : boolean; overload; virtual; abstract;
+    function addComp(systemUri, code : String) : TFhirObservationComponentW; virtual; abstract;
   end;
 
   TFhirGraphDefinitionW = class (TFHIRXVersionResourceWrapper)
@@ -1197,7 +1197,7 @@ type
     property publisher : String read GetPublisher write SetPublisher;
 
     procedure contact(kind : TContactType; value : String); virtual; abstract;
-    procedure system(url : String); virtual; abstract;
+    procedure systemUri(url : String); virtual; abstract;
     procedure addExpansionParameter(code, doco : String); virtual; abstract;
   end;
 
@@ -1249,6 +1249,7 @@ type
     FMap : TFslMap<T>;
     FList : TFslList<T>;
     procedure updateList(url, version: String);
+    function compare(sender : TObject; const l, r : T) : integer;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -2043,7 +2044,7 @@ constructor TFHIRMetadataResourceManagerW<T>.Create;
 begin
   inherited;
   FMap := TFslMap<T>.create('Metadata Resource Manager ('+T.className+')');
-  FMap.defaultValue := nil;
+  FMap.defaultValue := T(nil);
   FList := TFslList<T>.create;
 end;
 
@@ -2114,6 +2115,9 @@ begin
     if (rl.count > 0) then
     begin
       // sort by version as much as we are able
+      {$IFDEF FPC}
+      rl.sort(self.compare);
+      {$ELSE}
       rl.sort(function (const L, R: T): Integer
         var v1, v2, mm1, mm2 : string;
         begin
@@ -2135,19 +2139,20 @@ begin
               result := CompareText(mm1, mm2);
           end;
         end);
+      {$ENDIF}
 
       // the current is the latest
       FMap.AddOrSetValue(url, rl[rl.count-1].link);
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
-        latest := nil;
+        latest := T(nil);
         for tt in rl do
         begin
           if (TFHIRVersions.matches(tt.version, version)) then
             latest := tt;
         end;
-        if (latest <> nil) then // might be null if it's not using semver
+        if (latest <> T(nil)) then // might be null if it's not using semver
         begin
           lv := TFHIRVersions.getMajMin(latest.version);
           if (lv <> version) then
@@ -2177,7 +2182,7 @@ begin
     if (mm <> '') then
       result := FMap[url+'|'+mm]
     else
-      result := nil;
+      result := T(nil);
   end;
 end;
 
@@ -2211,7 +2216,7 @@ function TFHIRMetadataResourceManagerW<T>.has(url, version : string; var res : T
 var
   mm : String;
 begin
-  res := nil;
+  res := T(nil);
   if (FMap.containsKey(url+'|'+version)) then
     res := FMap[url+'|'+version]
   else
@@ -2222,7 +2227,7 @@ begin
     else
      result := false;
   end;
-  result := res <> nil;
+  result := res <> T(nil);
 end;
 
 function TFHIRMetadataResourceManagerW<T>.count : integer;
@@ -2236,7 +2241,7 @@ var
   mm : String;
 begin
   res := FMap[id];
-  if (res <> nil) then
+  if (res <> T(nil)) then
   begin
     FList.remove(res);
     FMap.remove(id);
@@ -2269,6 +2274,29 @@ procedure TFHIRMetadataResourceManagerW<T>.clear();
 begin
   FList.clear();
   FMap.clear();
+end;
+
+function TFHIRMetadataResourceManagerW<T>.compare(sender : TObject; const l, r : T) : integer;
+var
+  v1, v2, mm1, mm2 : string;
+begin
+  v1 := l.version;
+  v2 := r.version;
+  if (v1 = '') and (v2 = '') then
+    result := FList.indexOf(l) - FList.indexOf(r)
+  else if (v1 = '') then
+    result := -1
+  else if (v2 = '') then
+    result := 1
+  else
+  begin
+    mm1 := TFHIRVersions.getMajMin(v1);
+    mm2 := TFHIRVersions.getMajMin(v2);
+    if (mm1 = '') or (mm2 = '') then
+      result := v1.compareTo(v2)
+    else
+      result := CompareText(mm1, mm2);
+  end;
 end;
 
 { TFhirEncounterW }

@@ -1,5 +1,7 @@
 unit FHIR.Base.Utilities;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2018+, Health Intersections Pty Ltd
 All rights reserved.
@@ -31,8 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, AnsiStrings, Classes, ZLib, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher,
+  SysUtils, {$IFNDEF FPC} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Fpc,
+  FHIR.Web.Parsers, FHIR.Web.Fetcher,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
@@ -419,11 +422,11 @@ begin
   setlength(s, ocontent.Size - oContent.Position);
   ocontent.Read(s[1], length(s));
   oContent.Position := i;
-  if (AnsiStrings.AnsiPos('<', s) > 0) and ((AnsiStrings.AnsiPos('<', s) < 10)) then
+  if ({$IFNDEF FPC}{$IFNDEF FPC}AnsiStrings.{$ENDIF}{$ENDIF}AnsiPos('<', s) > 0) and (({$IFNDEF FPC}AnsiStrings.{$ENDIF}AnsiPos('<', s) < 10)) then
     result := ffXml
-  else if (AnsiStrings.AnsiPos('{', s) > 0) and ((AnsiStrings.AnsiPos('{', s) < 10)) then
+  else if ({$IFNDEF FPC}AnsiStrings.{$ENDIF}AnsiPos('{', s) > 0) and (({$IFNDEF FPC}AnsiStrings.{$ENDIF}AnsiPos('{', s) < 10)) then
     result := ffJson
-  else if (AnsiStrings.AnsiPos('@', s) > 0) and ((AnsiStrings.AnsiPos('@', s) < 10)) then
+  else if ({$IFNDEF FPC}AnsiStrings.{$ENDIF}AnsiPos('@', s) > 0) and (({$IFNDEF FPC}AnsiStrings.{$ENDIF}AnsiPos('@', s) < 10)) then
     result := ffTurtle
   else
     result := ffUnspecified;

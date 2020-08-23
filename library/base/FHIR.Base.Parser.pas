@@ -1,5 +1,7 @@
 Unit FHIR.Base.Parser;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -33,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, Character, {$IFNDEF VER260} system.NetEncoding, {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
