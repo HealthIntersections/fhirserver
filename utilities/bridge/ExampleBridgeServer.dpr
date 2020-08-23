@@ -209,7 +209,8 @@ uses
   FHIR.Server.Twilio in '..\..\Server\FHIR.Server.Twilio.pas',
   FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
   FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas',
-  FHIR.Server.ClientCacheManager in '..\..\Server\FHIR.Server.ClientCacheManager.pas';
+  FHIR.Server.ClientCacheManager in '..\..\Server\FHIR.Server.ClientCacheManager.pas',
+  FHIR.Tx.HGVS in '..\..\Server\FHIR.Tx.HGVS.pas';
 
 var
   gsrv : TExampleFhirServer;
