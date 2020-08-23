@@ -267,7 +267,7 @@ begin
   try
     tag := false;
     for c in m.tags.forEnum do
-      tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
+      tag := tag or ((c.systemUri = 'http://www.healthintersections.com.au') and (c.code = 'active'));
 
     if tag then
     begin
@@ -295,7 +295,7 @@ begin
     try
       tag := false;
       for c in m.tags.forEnum do
-        tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
+        tag := tag or ((c.systemUri = 'http://www.healthintersections.com.au') and (c.code = 'active'));
 
       if tag then
       begin

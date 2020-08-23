@@ -171,14 +171,14 @@ begin
 
     for coding in codings do
     begin
-      ck := GetConceptKey(conn, coding.system, coding.code);
+      ck := GetConceptKey(conn, coding.systemUri, coding.code);
       if conn.CountSQL('select Count(*) from ClosureEntries where ClosureKey = '+inttostr(FKey)+' and SubsumesKey = '+inttostr(ck)) = 0 then
       begin
         // enter it into the closure table
         cek := FStore.NextClosureEntryKey;
         conn.ExecSQL('insert into ClosureEntries (ClosureEntryKey, ClosureKey, SubsumesKey, SubsumedKey, IndexedVersion) values ('+inttostr(cek)+', '+inttostr(FKey)+', '+inttostr(ck)+', '+inttostr(ck)+', '+inttostr(FVersion)+')');
         //now, check the subsumes....
-        processEntryInternal(conn, cek, ck, coding.system, coding.code, map);
+        processEntryInternal(conn, cek, ck, coding.systemUri, coding.code, map);
       end;
     end;
     conn.ExecSQL('update Closures set Version = '+inttostr(FVersion)+' where ClosureKey = '+inttostr(FKey));

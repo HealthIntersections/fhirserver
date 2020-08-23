@@ -222,7 +222,7 @@ begin
   try
     c := factory.wrapCoding(factory.makeByName('Coding'));
     try
-      c.system := system;
+      c.systemUri := system;
       c.code := code;
       c.version := version;
       p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil);

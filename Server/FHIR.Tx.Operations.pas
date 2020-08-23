@@ -1032,15 +1032,15 @@ begin
           resp := FFactory.makeOpRespSubsumes;
           try
             try
-              if (request.Id = '') and (req.system <> '') and (req.codeA <> '') and (req.codeB <> '') then
+              if (request.Id = '') and (req.systemUri <> '') and (req.codeA <> '') and (req.codeB <> '') then
               begin
-                if not FServer.isValidCode(req.system, req.codeA) or not FServer.isValidCode(req.system, req.codeB) then
+                if not FServer.isValidCode(req.systemUri, req.codeA) or not FServer.isValidCode(req.systemUri, req.codeB) then
                   raise ETerminologyError.create('Invalid code')
                 else if (req.codeA = req.codeB) then
                   resp.outcome := 'equivalent'
-                else if FServer.subsumes(req.system, req.codeA, req.system, req.codeB) then
+                else if FServer.subsumes(req.systemUri, req.codeA, req.systemUri, req.codeB) then
                   resp.outcome := 'subsumes'
-                else if FServer.subsumes(req.system, req.codeB, req.system, req.codeA) then
+                else if FServer.subsumes(req.systemUri, req.codeB, req.systemUri, req.codeA) then
                   resp.outcome := 'subsumed-by'
                 else
                   resp.outcome := 'not-subsumed';
@@ -1050,8 +1050,8 @@ begin
                 // first, we have to identify the Code System
                 if request.Id <> '' then // and it must exist, because of the check above
                   cs := FFactory.wrapCodeSystem(manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure))
-                else if req.system <> '' then
-                  cs := FFactory.wrapCodeSystem(manager.GetResourceByUrl('CodeSystem', req.system, req.version, false, needSecure))
+                else if req.systemUri <> '' then
+                  cs := FFactory.wrapCodeSystem(manager.GetResourceByUrl('CodeSystem', req.systemUri, req.version, false, needSecure))
                 else
                   raise ETerminologyError.create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
 
@@ -1266,7 +1266,7 @@ begin
   begin
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
-    coding.system := request.Parameters['system'];
+    coding.systemUri := request.Parameters['system'];
     coding.version := request.Parameters['version'];
     coding.code := request.Parameters['code'];
     coding.display := request.Parameters['display'];
@@ -1292,7 +1292,7 @@ begin
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try
-          coding.system := params.str('system');
+          coding.systemUri := params.str('system');
           if params.has('version') then
             coding.version := params.str('version');
           coding.code := params.str('code');

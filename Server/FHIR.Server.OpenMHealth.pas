@@ -340,7 +340,7 @@ begin
   result := FFactory.wrapQuantity(FFactory.makeByName('Quantity'));
   try
     result.value := obj['value'];
-    result.system := 'http://unitsofmeasure.org';
+    result.systemUri := 'http://unitsofmeasure.org';
     result.units := obj['unit'];
     result.code := convertUCUMUnit(result.units);
     result.Link;

@@ -880,10 +880,10 @@ var
   prov : TCodeSystemProvider;
 begin
   // later, see if we can translate instead
-  if (cs.url <> codeA.system) then
-    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeA.system+')');
-  if (cs.url <> codeB.system) then
-    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeB.system+')');
+  if (cs.url <> codeA.systemUri) then
+    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeA.systemUri+')');
+  if (cs.url <> codeB.systemUri) then
+    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeB.systemUri+')');
   if (codeA.code = codeB.code) then
     exit('equivalent');
 

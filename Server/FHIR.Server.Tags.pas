@@ -280,11 +280,11 @@ var
   u : String;
 begin
   for c in meta.tags.forEnum do
-    if not hasTag(tcTag, c.system, c.code) then
-      addTag(0, tcTag, c.system, c.code, c.display);
+    if not hasTag(tcTag, c.systemUri, c.code) then
+      addTag(0, tcTag, c.systemUri, c.code, c.display);
   for c in meta.labels.forEnum do
-    if not hasTag(tcSecurity, c.system, c.code) then
-      addTag(0, tcSecurity, c.system, c.code, c.display);
+    if not hasTag(tcSecurity, c.systemUri, c.code) then
+      addTag(0, tcSecurity, c.systemUri, c.code, c.display);
   if meta <> nil then
     for u in meta.profiles do
       if not hasTag(tcProfile, 'urn:ietf:rfc:3986', u) then
@@ -306,9 +306,9 @@ var
   u : string;
 begin
   for c in meta.tags.forEnum do
-    removeTag(tcTag, c.system, c.code);
+    removeTag(tcTag, c.systemUri, c.code);
   for c in meta.labels.forEnum do
-    removeTag(tcSecurity, c.system, c.code);
+    removeTag(tcSecurity, c.systemUri, c.code);
   for u in meta.profiles do
     removeTag(tcProfile, 'urn:ietf:rfc:3986', u);
 end;

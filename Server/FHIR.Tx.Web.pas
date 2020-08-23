@@ -574,7 +574,7 @@ var
 begin
   coding := FWorker.Factory.wrapCoding(FWorker.Factory.makeByName('Coding'));
   try
-    coding.system := pm['system'];
+    coding.systemUri := pm['system'];
     coding.version := pm['version'];
     coding.code := pm['code'];
     resp := FWorker.Factory.makeOpRespLookup;
@@ -1237,7 +1237,7 @@ begin
   try
     coding := FWorker.factory.wrapCoding(FWorker.factory.makeByName('Coding'));
     try
-      coding.system := pm['system'];
+      coding.systemUri := pm['system'];
       coding.version := pm['version'];
       coding.code := pm['code'];
       try
@@ -1269,7 +1269,7 @@ begin
   try
     coding := FWorker.factory.wrapCoding(FWorker.factory.makeByName('Coding'));
     try
-      coding.system := pm['system'];
+      coding.systemUri := pm['system'];
       coding.version := pm['version'];
       coding.code := pm['code'];
       coding.display := pm['display'];

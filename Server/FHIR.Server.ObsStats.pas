@@ -355,7 +355,7 @@ end;
 
 function TObservationStatsEvaluator.lookupConcept(c: TFHIRCodingW): integer;
 begin
-  FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+'''';
+  FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.systemUri)+'''';
   FConn.prepare;
   FConn.Execute;
   if FConn.FetchNext then
@@ -373,7 +373,7 @@ begin
     result.units := humanUnits;
     if ucumUnits <> '' then
     begin
-      result.system := 'http://unitsofmeasure.org';
+      result.systemUri := 'http://unitsofmeasure.org';
       result.code := ucumUnits;
     end;
     result.Link;
@@ -659,7 +659,7 @@ begin
           u := FUnit;
         if u <> '' then
         begin
-          result.system := 'http://unitsofmeasure.org';
+          result.systemUri := 'http://unitsofmeasure.org';
           result.code := u;
         end;
         result.Link;
@@ -842,12 +842,12 @@ begin
   end
   else
     for c in FConcepts do
-      cks.AddObject(c.system+'::'+c.code, TObject(lookupConcept(c)));
+      cks.AddObject(c.systemUri+'::'+c.code, TObject(lookupConcept(c)));
 end;
 
 function TObservationLastNEvaluator.lookupConcept(c: TFHIRCodingW): integer;
 begin
-  FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+'''';
+  FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.systemUri)+'''';
   FConn.prepare;
   FConn.Execute;
   if FConn.FetchNext then

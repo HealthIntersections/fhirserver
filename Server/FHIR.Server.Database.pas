@@ -2793,7 +2793,7 @@ begin
   try
     result := false;
     for c in m.labels.forEnum do
-      if (c.system = 'http://hl7.org/fhir/v3/ActCode') and StringArrayExistsSensitive(codes, c.code) then
+      if (c.systemUri = 'http://hl7.org/fhir/v3/ActCode') and StringArrayExistsSensitive(codes, c.code) then
         exit(true);
   finally
     m.Free;
@@ -2809,7 +2809,7 @@ begin
   try
     result := false;
     for c in m.labels.forEnum do
-      if (c.system = 'http://hl7.org/fhir/v3/Confidentiality') and StringArrayExistsSensitive(codes, c.code) then
+      if (c.systemUri = 'http://hl7.org/fhir/v3/Confidentiality') and StringArrayExistsSensitive(codes, c.code) then
         exit(true);
   finally
     m.Free;
@@ -4748,11 +4748,11 @@ end;
 //    begin
 //      inc := result.compose.includeList.append;
 //      if (s = 'snomed') then
-//        inc.system := 'http://snomed.info/sct'
+//        inc.systemUri := 'http://snomed.info/sct'
 //      else if (s = 'loinc') then
-//        inc.system := 'http://loinc.org'
+//        inc.systemUri := 'http://loinc.org'
 //      else
-//        inc.system := s;
+//        inc.systemUri := s;
 //      if UseParam('code', s) then
 //      begin
 //        while (s <> '') do
@@ -6208,8 +6208,8 @@ end;
 
 function TFHIRNativeStorageService.resolveConcept(conn: TFslDBConnection; c: TFHIRCodingW): Integer;
 begin
-  if (c.system <> '') and (c.code <> '') then
-    result := resolveConcept(conn, c.system, c.code)
+  if (c.systemUri <> '') and (c.code <> '') then
+    result := resolveConcept(conn, c.systemUri, c.code)
   else
     result := 0;
 end;
@@ -6862,12 +6862,12 @@ var
   upS, upC : TUcumPair;
   vU, cU, ok : Integer;
 begin
-  if (value.value <> '') and (value.code <> '') and (value.system <> '')
+  if (value.value <> '') and (value.code <> '') and (value.systemUri <> '')
     and (ServerContext.TerminologyServer.CommonTerminologies.Ucum <> nil) then
   begin
     val := TFslDecimal.ValueOf(value.value);
-    vu := resolveConcept(conn, value.system, value.code);
-    if (value.system = 'http://unitsofmeasure.org') then
+    vu := resolveConcept(conn, value.systemUri, value.code);
+    if (value.systemUri = 'http://unitsofmeasure.org') then
     begin
       upS := TUcumPair.Create(val, value.code);
       try

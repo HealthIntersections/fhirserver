@@ -185,7 +185,7 @@ var
       result := StringArrayExistsInsensitive(props, name);
   end;
 begin
-  provider := getProvider(coding.system, coding.version, nil);
+  provider := getProvider(coding.systemUri, coding.version, nil);
   try
     resp.name := provider.name(nil);
     s := provider.version(nil);
@@ -194,7 +194,7 @@ begin
     ctxt := provider.locate(coding.code);
     try
       if ctxt = nil then
-        raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.system+' version '+s);
+        raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s);
 
       if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
       begin
@@ -414,7 +414,7 @@ begin
     result.status := psActive;
     inc := result.addInclude;
     try
-      inc.system := ALL_CODE_CS;
+      inc.systemUri := ALL_CODE_CS;
     finally
       inc.Free;
     end;
@@ -632,7 +632,7 @@ end;
 //    cs.Close(ctxt);
 //  end;
 //begin
-//  cs := getProvider(req.system, req.version, nil);
+//  cs := getProvider(req.systemUri, req.version, nil);
 //  try
 //    s := '';
 //    for prop in req.property_List do
@@ -761,7 +761,7 @@ var
   card : TCDSHookCard;
   cs : TCodeSystemProvider;
 begin
-  cs := getProvider(coding.system, coding.version, nil, true);
+  cs := getProvider(coding.systemUri, coding.version, nil, true);
   if cs <> nil then
   begin
     try
@@ -820,7 +820,7 @@ begin
   result := false;
   for g in cm.Resource.groups.forEnum do
     for em in g.elements.forEnum do
-      if (g.source = coding.system) and (em.code = coding.code) then
+      if (g.source = coding.systemUri) and (em.code = coding.code) then
       begin
         result := true;
         match := em.link;
@@ -870,7 +870,7 @@ begin
   begin
     for g in cm.Resource.groups.forEnum do
       for em in g.elements.forEnum do
-        if (g.source = coding.system) and (em.code = coding.code) then
+        if (g.source = coding.systemUri) and (em.code = coding.code) then
       begin
         result := true;
         match := em.link;
@@ -894,8 +894,8 @@ begin
   op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
   try
     try
-      if not checkCode(op, lang, '', coding.code, coding.system, coding.version, coding.display) then
-        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.system+' not recognized');
+      if not checkCode(op, lang, '', coding.code, coding.systemUri, coding.version, coding.display) then
+        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
       p := validate(target, coding, nil, false, false, nil);
@@ -921,7 +921,7 @@ begin
           if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
           try
             if em.targetCount = 0 then
-              raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
+              raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri);
             for map in em.targets.forEnum do
             begin
               if (map.equivalence in [cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
@@ -929,7 +929,7 @@ begin
                 result.addParamBool('result', true);
                 outcome := factory.wrapCoding(factory.makeByName('Coding'));
                 result.AddParam('outcome', outcome);
-                outcome.system := g.target;
+                outcome.systemUri := g.target;
                 outcome.code := map.code;
                 result.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
                 if (map.comments <> '') then
@@ -994,7 +994,7 @@ var
 begin
   result := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
   try
-    if checkCode(result, '', coding.code, coding.system, coding.display) then
+    if checkCode(result, '', coding.code, coding.systemUri, coding.display) then
     begin
       cc := TFhirCodeableConceptW.Create;
       try
@@ -1011,7 +1011,7 @@ begin
           begin
             cm := FConceptMaps.values[i] as TLoadedConceptMap;
             if (cm.source <> nil) and (cm.source.url = vs.url) and
-              cm.hasTranslation(coding.system, coding.code, maps) then
+              cm.hasTranslation(coding.systemUri, coding.code, maps) then
             try
               for j := 0 to maps.Count - 1 do
               begin
@@ -1021,11 +1021,11 @@ begin
                 begin
                   ok := true;
                   c := cc.codingList.Append;
-                  c.system := map.codeSystem;
+                  c.systemUri := map.codeSystem;
                   c.code := map.code;
                   c.display := getDisplayForCode(map.codeSystem, map.code);
                   if map.comments <> '' then
-                    result.hint('terminology-server', 'mapping', '', false, 'Mapping from "'+coding.system+'"/"'+coding.code+'" to "'+c.system+'"/"'+c.code+'": '+map.comments)
+                    result.hint('terminology-server', 'mapping', '', false, 'Mapping from "'+coding.systemUri+'"/"'+coding.code+'" to "'+c.systemUri+'"/"'+c.code+'": '+map.comments)
                 end;
               end;
             finally
@@ -1294,8 +1294,8 @@ begin
   op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
   try
     try
-      if not checkCode(op, lang, '', coding.code, coding.system, coding.version, coding.display) then
-        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.system+' not recognized');
+      if not checkCode(op, lang, '', coding.code, coding.systemUri, coding.version, coding.display) then
+        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized');
 
 //      // check to see whether the coding is already in the target value set, and if so, just return it
 //      p := validate(target, coding, false);
@@ -1316,7 +1316,7 @@ begin
       if isOkSource(cm, coding, g, em) then
       try
         if em.targetCount = 0 then
-          raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
+          raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri);
         for map in em.targets.forEnum do
         begin
           if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
@@ -1325,7 +1325,7 @@ begin
             outcome := Factory.wrapCoding(factory.makeByName('Coding'));
             try
               p := result.AddParam('match');
-              outcome.system := g.target;
+              outcome.systemUri := g.target;
               outcome.code := map.code;
               p.AddParam('match', outcome.Element.Link);
               p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
