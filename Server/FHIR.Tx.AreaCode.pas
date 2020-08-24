@@ -547,8 +547,15 @@ begin
 end;
 
 function TAreaCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
+var
+  filter : TAreaCodeConceptFilter;
+  c : TAreaCodeConcept;
 begin
-  raise ETerminologyTodo.create('TAreaCodeServices.filterLocate');
+  filter := ctxt as TAreaCodeConceptFilter;
+  result := nil;
+  for c in filter.FList do
+    if c.code = code then
+      exit(c.link);
 end;
 
 function TAreaCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
