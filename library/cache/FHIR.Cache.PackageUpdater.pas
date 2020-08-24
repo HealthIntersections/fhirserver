@@ -279,7 +279,7 @@ var
   guid : String;
   content : TBytes;
   date : TFslDateTime;
-  id, url: String;
+  id, url, d: String;
 begin
   url := '??';
   guid := item.element('guid').Text;
@@ -289,7 +289,10 @@ begin
     begin
       if (not hasStored(guid)) then
       begin
-        date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', item.element('pubDate').Text.Substring(5));
+        d := item.element('pubDate').Text.Replace('  ', ' ').Substring(5);
+        if (d.length > 2) and (d[2] = ' ') and StringIsInteger16(d[1]) then
+          d := '0'+d;
+        date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
         log('Fetch '+item.element('link').Text, source, false);
         url := item.element('link').Text;
         content := fetchUrl(url, 'application/tar+gzip');
