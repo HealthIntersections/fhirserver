@@ -325,7 +325,7 @@ var
   c : TAllCodeSystemsProviderContext;
 begin
   if Context = nil then
-    result := ANY_CODE_VS
+    result := ALL_CODE_CS
   else
   begin
     c := context as TAllCodeSystemsProviderContext;
@@ -373,6 +373,8 @@ function TAllCodeSystemsProvider.locate(code : String; var message : String) : T
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
+
+
 function TAllCodeSystemsProvider.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('Not Created Yet');
@@ -1379,7 +1381,7 @@ begin
     else
       result := ProviderClasses[system].Link
   end
-  else if system = ANY_CODE_VS then
+  else if system = ALL_CODE_CS then
     if FFactory.version in [fhirVersionRelease2, fhirVersionRelease3] then
       result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://hl7.org/fhir/v3/ActCode', '', nil))
     else
