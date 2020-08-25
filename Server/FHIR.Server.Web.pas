@@ -3141,8 +3141,10 @@ var
   b: TStringBuilder;
   pol: String;
 begin
+writeln('fhp1');
   counts := TStringList.Create;
   try
+writeln('fhp2');
 
     for a in FContext.ValidatorContext.allResourceNames do
     begin
@@ -3152,12 +3154,16 @@ begin
       else
         counts.Objects[ix] := TObject(-1);
     end;
+writeln('fhp3');
 
     pol := FContext.Storage.ProfilesAsOptionList;
     profiles := TFslStringMatch.Create;
     try
       profiles.forced := true;
+writeln('fhp4');
+
       FContext.Storage.FetchResourceCounts(compList, counts);
+writeln('fhp5');
 
       s := host + sBaseURL;
       b := TStringBuilder.Create;
@@ -3170,6 +3176,7 @@ begin
           TFHIRXhtmlComposer.header(factory, Session, sBaseURL, lang, SERVER_VERSION));
 
         b.Append('<h2>' + FWebServer.FOwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10);
+writeln('fhp6');
 
         if Session <> nil then
           if secure then
@@ -3194,6 +3201,7 @@ begin
           b.Append('. If you login through OAuth, you can also Register a client'+#13#10);
           b.Append(' or get your bearer token (use this to get access to the secure API without needing OAuth login in the application).</p>');
         end;
+writeln('fhp7');
 
         b.Append('<p>GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address (and '+'logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued use of the API constitutes agreement to these terms. See [link] for erasure requests.</p>');
 
@@ -3216,6 +3224,7 @@ begin
           b.Append('<li><a href="' + sBaseURL + '/sessions.hts">Manage Sessions</a></li>' + #13#10);
           b.Append('<li><a href="' + sBaseURL + '/auth/logout-all">Log all users out</a></li>' + #13#10);
         end;
+writeln('fhp8');
 
         if not FWebServer.FIsTerminologyServerOnly then
           b.Append('<li>Create/Edit a new resource based on the profile: <form action="' + sBaseURL + '/_web/Create" method="GET"><select name="profile">' + pol
@@ -3240,6 +3249,7 @@ begin
             if (ix >= 0) and (integer(counts.Objects[ix]) > -1) and (FContext.ResConfig[a].Supported) then
               names.Add(a);
           end;
+writeln('fhp9');
 
           names.Sort;
           j := 0;
@@ -3273,6 +3283,7 @@ begin
         finally
           names.Free;
         end;
+writeln('fhp10');
         b.Append('</table>'#13#10);
         if not FWebServer.FIsTerminologyServerOnly then
           b.Append('<hr/><h2>' + GetFhirMessage('NAME_UPLOAD_SERVICES', lang) + '</h2>'#13#10 +
@@ -3285,6 +3296,7 @@ begin
             #13#10 + '<tr><td>Profile:</td><td> <select size="1" name="profile">' + #13#10 + '<option value=""></option>' + #13#10 + pol +
             '</select> (if validating, use the selected profile)</td></tr></table><br/>' + #13#10 + '<input type="submit" value="' +
             GetFhirMessage('NAME_UPLOAD', lang) + '"/>'#13#10 + '</p></form>'#13#10);
+writeln('fhp11');
         b.Append(TFHIRXhtmlComposer.Footer(factory, sBaseURL, lang, logId));
         result := b.ToString;
       finally
@@ -3296,6 +3308,7 @@ begin
   finally
     counts.Free;
   end;
+writeln('fhp12');
 end;
 
 function TFhirWebServerEndpoint.BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String;

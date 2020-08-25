@@ -758,12 +758,12 @@ begin
 end;
 
 type
-  TLanguageSpecComparer = class (TInterfacedObject, IComparer<TLanguageSpec>)
+  TLanguageSpecComparer = class (TFslObject)
   public
-    function Compare({$IFDEF FPC}constref {$ELSE} const {$ENDIF} l, r: TLanguageSpec): Integer;
+    function Compare(sender : TObject; const l, r: TLanguageSpec): Integer;
   end;
 
-function TLanguageSpecComparer.Compare({$IFDEF FPC}constref {$ELSE} const {$ENDIF} l, r : TLanguageSpec) : integer;
+function TLanguageSpecComparer.Compare(sender : TObject; const l, r : TLanguageSpec) : integer;
 begin
   if l.FValue > r.FValue then
     result := 1
@@ -796,11 +796,14 @@ begin
       else
         list.Add(TLanguageSpec.Create(s, 1));
     end;
-    c := TLanguageSpecComparer.create;
-    try
-      list.Sort(c);
-    finally
-      c.free;
+    if (list.count > 1) then
+    begin
+      c := TLanguageSpecComparer.create;
+      try
+        list.Sort(c.Compare);
+      finally
+        c.free;
+      end;
     end;
     SetLength(FCodes, list.Count);
     for i := 0 to list.Count - 1 do

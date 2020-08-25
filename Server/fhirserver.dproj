@@ -135,7 +135,6 @@
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <Debugger_CWD>C:\work\fhirserver\Exec</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
-        <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
