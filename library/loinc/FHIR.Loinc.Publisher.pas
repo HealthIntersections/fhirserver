@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 Interface
 
 Uses
@@ -810,7 +812,7 @@ begin
   html.ParaURL('LOINC Home', sPrefix);
 end;
 
-constructor TloincPublisher.Create;
+constructor TloincPublisher.Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
 begin
   inherited Create;
   Lock := TFslLock.Create;

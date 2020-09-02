@@ -29,11 +29,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Vcl.Graphics,
+  SysUtils, Graphics,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.WP.Document, FHIR.WP.Builder, FHIR.WP.Types, FHIR.WP.Format,
   FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Objects;

@@ -115,6 +115,7 @@ type
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
     function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; override;
     function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; override;
+    function wrapProvenance(o : TFHIRResourceV) : TFHIRProvenanceW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
@@ -649,6 +650,14 @@ begin
     result := nil
   else
     result := TFhirPeriod2.Create(r);
+end;
+
+function TFHIRFactoryR2.wrapProvenance(o: TFHIRResourceV): TFHIRProvenanceW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFHIRProvenance2.Create(o);
 end;
 
 function TFHIRFactoryR2.wrapQuantity(r: TFHIRObject): TFhirQuantityW;

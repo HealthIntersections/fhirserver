@@ -59,7 +59,7 @@ type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
@@ -110,7 +110,7 @@ begin
   result := '';
 end;
 
-function TMimeTypeCodeServices.system(context : TCodeSystemProviderContext) : String;
+function TMimeTypeCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
   result := 'urn:ietf:bcp:13';
 end;

@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -381,6 +382,32 @@ const
     {ftObject}       ctUnknown,   {ftSingle{}     ctFloat
     );
   {$ENDIF}
+
+  {$IFDEF FPC}
+  ColTypeMap: array[TFieldType] of TFslDBColumnType =
+    ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
+    {ftSmallint}    ctInteger,    {ftInteger}     ctInteger,
+    {ftWord}        ctInteger,    {ftBoolean}     ctBoolean,
+    {ftFloat}       ctFloat,      {ftCurrency}    ctFloat,
+    {ftBCD}         ctFloat,      {ftDate}        ctDateTime,
+    {ftTime}        ctDateTime,   {ftDateTime}    ctDateTime,
+    {ftBytes}       ctBlob,       {ftVarBytes}    ctBlob,
+    {ftAutoInc}     ctInteger,    {ftBlob}        ctBlob,
+    {ftMemo}        ctBlob,       {ftGraphic}     ctBlob,
+    {ftFmtMemo}     ctBlob,       {ftParadoxOle}  ctBlob,
+    {ftDBaseOle}    ctBlob,       {ftTypedBinary} ctUnknown,
+    {ftCursor}      ctUnknown,    {ftFixedChar}   ctChar,
+    {ftWideString}  ctChar,       {ftLargeint}    ctInteger,
+    {ftADT}         ctUnknown,    {ftArray}       ctUnknown,
+    {ftReference}   ctUnknown,    {ftDataSet}     ctBlob,
+    {ftOraBlob}     ctBlob,       {ftOraClob}     ctBlob,
+    {ftVariant}     ctUnknown,    {ftInterface}   ctUnknown,
+    {ftIDispatch}   ctUnknown,    {ftGuid}        ctUnknown,
+    {ftTimeStamp}   ctUnknown,    {ftFMTBcd}      ctInteger,
+    { ftFixedWideChar} ctBlob,    {ftWideMemo}    ctBlob
+    );
+  {$ENDIF}
+
 
 
 procedure PopulateDBTableMetaData(ADB : TDataSet; ATable : TFslDBTable);

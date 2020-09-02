@@ -28,6 +28,7 @@ unit FHIR.Database.Tests;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 {$DEFINE DIFF}
 
 interface

@@ -1,14 +1,5 @@
 unit FHIR.Database.ODBC.Objects;
 
-// todo: remove this unit, and fold the functionality into KDBODBC
-
-{$IFNDEF MSWINDOWS}
-  {$IFNDEF ODBC}
-  This non-windows compile includes ODBC, which is statically bound, and an extra install dependency outside windows.
-  If you meant to include ODBC in this project, add the ODBC define to the project settings.
-  {$ENDIF}
-{$ENDIF}
-
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -36,6 +27,16 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
+{$IFNDEF MSWINDOWS}
+  {$IFNDEF ODBC}
+  This non-windows compile includes ODBC, which is statically bound, and an extra install dependency outside windows.
+  If you meant to include ODBC in this project, add the ODBC define to the project settings.
+  {$ENDIF}
+{$ENDIF}
+
 interface
 
 Uses
@@ -2160,7 +2161,7 @@ End;
 
 Function MemoryStreamToString(M: TMemoryStream): String;
 Var
-  NewCapacity: LongInt;
+  NewCapacity: {$IFDEF FPC} Int64 {$ELSE} LongInt {$ENDIF};
 Begin
   If (M.Size = 0) Or (M.Memory = Nil) Then
     Result:= ''
@@ -2869,6 +2870,21 @@ begin
   {$ENDIF}
 end;
 
+function fromOdbcPWideChar(p : PWideChar; length : integer) : String;
+  {$IFDEF MACOS}
+var
+  i : integer;
+  {$ENDIF}
+begin
+  {$IFDEF MACOS}
+  SetLength(result, length);
+  for i := 1 to length do
+    result[i] := p[(i-1)*2];
+  {$ELSE}
+  result := p;
+  {$ENDIF}
+end;
+
 function odbcPChar(s : String) : PChar; overload;
 begin
   if s = '' then
@@ -2884,6 +2900,32 @@ begin
     move(s[1], result^, length(s) * 2);
     {$ENDIF}
   end;
+end;
+
+function odbcPWideChar(s : String) : PWideChar; overload;
+begin
+  if s = '' then
+    result := nil
+  else
+  begin
+    {$IFDEF MACOS}
+    getMem(result, (length(s)+1) * 4);
+    fillChar(result^, (length(s)+1)*4, 0);
+    {$ELSE}
+    getMem(result, (length(s)+1) * 2);
+    fillChar(result^, (length(s)+1)*2, 0);
+    move(s[1], result^, length(s) * 2);
+    {$ENDIF}
+  end;
+end;
+
+function odbcPWideChar(count : integer) : PWideChar; overload;
+begin
+  {$IFDEF MACOS}
+  getMem(result, count * 2);
+  {$ELSE}
+  getMem(result, count * 2);
+  {$ENDIF}
 end;
 
 function odbcPChar(count : integer) : PChar; overload;
@@ -2903,13 +2945,13 @@ Var
   ErrorPtr: TErrorPtr;
 
   RetCode: SQLRETURN;
-  State: PChar;
+  State: PWideChar;
   Native: SQLINTEGER;
-  Message: PChar;
+  Message: PWideChar;
   StringLength: SQLSMALLINT;
 Begin
-  State := odbcPChar(DefaultStringSize);
-  Message := odbcPChar(DefaultStringSize);
+  State := odbcPWideChar(DefaultStringSize);
+  Message := odbcPWideChar(DefaultStringSize);
   try
     Result:= TList.Create;
     Result.Clear;
@@ -2928,9 +2970,9 @@ Begin
           If Success(RetCode) Then
           Begin
             New(ErrorPtr);
-            ErrorPtr.FState:= fromOdbcPChar(State, 5);
+            ErrorPtr.FState:= fromOdbcPWideChar(State, 5);
             ErrorPtr.FNative:= Native;
-            ErrorPtr.FMessage:= fromOdbcPChar(Message, StringLength);
+            ErrorPtr.FMessage:= fromOdbcPWideChar(Message, StringLength);
             Result.Add(ErrorPtr);
           End;
         Until Not Success(RetCode);
@@ -3386,8 +3428,8 @@ Begin
 
 Procedure TOdbcConnection.Connect;
 Var
-  ConnectStrIn: PChar;
-  ConnectStrOut: PChar;
+  ConnectStrIn: PWideChar;
+  ConnectStrOut: PWideChar;
   StringLength: SQLSMALLINT;
 
   Function ConnectStr: String;
@@ -3426,10 +3468,10 @@ Begin
                                    Pointer(PChar(FPassword)), SQL_NTS)
     Else
     Begin
-      ConnectStrOut := odbcPChar(DefaultStringSize);
-      ConnectStrIn := odbcPChar(ConnectStr);
+      ConnectStrOut := odbcPWideChar(DefaultStringSize);
+      ConnectStrIn := odbcPWideChar(ConnectStr);
       try
-        FRetCode:= SQLDriverConnect(FHdbc, 0, PChar(ConnectStrIn), SQL_NTS,
+        FRetCode:= SQLDriverConnect(FHdbc, 0, PWideChar(ConnectStrIn), SQL_NTS,
                                                                  ConnectStrOut, DefaultStringSize, StringLength,
                                                                  FInfoPrompt);
       finally
@@ -4700,7 +4742,6 @@ Begin
   ConcurrencyType:= FConcurrencyType;
   CursorType:= FCursorType;
 
-  Init;
   Result:= FActive;
 End;
 
@@ -5048,7 +5089,7 @@ End;
 
 Procedure TOdbcStatement.Prepare;
 Var
-  ParsedSQL: PChar;
+  ParsedSQL: PWideChar;
 Begin
   Log(1, 'TOdbcStatement.Prepare');
 
@@ -5058,7 +5099,7 @@ Begin
   DoBeforePrepare;
 
   { Parse Parameter SQL }
-  ParsedSQL := odbcPChar(ParseSQL);
+  ParsedSQL := odbcPWideChar(ParseSQL);
   try
     { Prepare SQL Statement }
     FRetCode:= SQLPrepare(FHstmt, ParsedSQL, SQL_NTS);
@@ -5870,7 +5911,7 @@ End;
 
 Procedure TOdbcStatement.Execute;
 Var
-  ParsedSQL: PChar;
+  ParsedSQL: PWideChar;
 Begin
   Log(1, 'TOdbcStatement.Execute');
 
@@ -5898,7 +5939,7 @@ Begin
       CloseCursor;
 
     { Parse Parameter SQL }
-    ParsedSQL := odbcPChar(ParseSQL);
+    ParsedSQL := odbcPWideChar(ParseSQL);
     try
       { Execute SQL Statement }
       FRetCode:= SQLExecDirect(FHstmt, ParsedSQL, SQL_NTS);
@@ -5989,7 +6030,7 @@ Var
   SqlValue: SQLPOINTER;
   BufferLength: SQLLEN;
 
-  ColumnName: PChar;
+  ColumnName: PWideChar;
   NameLength: SQLSMALLINT;
   SqlType: SQLSMALLINT;
   ColumnSize: SQLULEN;
@@ -6010,14 +6051,14 @@ Begin
     FTail:= Nil;
     For icol:= 1 To FNumCols Do
     Begin
-      ColumnName := odbcPChar(DefaultStringSize);
+      ColumnName := odbcPWideChar(DefaultStringSize);
       try
         FRetCode:= SQLDescribeCol(FHstmt, icol, ColumnName, DefaultStringSize, NameLength, SqlType, ColumnSize, DecimalDigits, Nullable);
         If Not FEnv.Error.Success(FRetCode) Then
           FEnv.Error.RaiseError(Self, FRetCode);
 
         { Set Column Name }
-        FColNames.Add(fromOdbcPChar(ColumnName, NameLength));
+        FColNames.Add(fromOdbcPWideChar(ColumnName, NameLength));
       finally
         freeMem(columnName);
       end;
@@ -6782,17 +6823,17 @@ End;
 
 Function TOdbcStatement.CursorName: String;
 Var
-  CurName: PChar;
+  CurName: PWideChar;
   StringLength: SQLSMALLINT;
 Begin
   { Determine Cursor Name }
-  CurName := odbcPChar(DefaultStringSize);
+  CurName := odbcPWideChar(DefaultStringSize);
   try
     FRetCode:= SQLGetCursorName(FHstmt, CurName, DefaultStringSize, StringLength);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
-    Result := fromOdbcPChar(CurName, StringLength);
+    Result := fromOdbcPWideChar(CurName, StringLength);
   finally
     freemem(CurName);
   end;
@@ -10090,7 +10131,7 @@ end;
 procedure TOdbcAdministrator.RetrieveDataSources;
 var
   Direction: SQLUSMALLINT;
-  DSName, DSDriver: PChar;
+  DSName, DSDriver: PWideChar;
   StringLength1, StringLength2: SQLSMALLINT;
 begin
   { Retrieve DataSources }
@@ -10106,13 +10147,13 @@ begin
       Direction:= SQL_FETCH_FIRST;
   end;
 
-  DSName := odbcPChar(DefaultStringSize);
-  DSDriver := odbcPChar(DefaultStringSize);
+  DSName := odbcPWideChar(DefaultStringSize);
+  DSDriver := odbcPWideChar(DefaultStringSize);
   try
     while FEnv.Error.Success(SQLDataSources(FEnv.Handle, Direction, DSName, DefaultStringSize, StringLength1, DSDriver, DefaultStringSize, StringLength2)) do
     begin
-      FDataSourceNames.Add(fromOdbcPChar(DSName, StringLength1));
-      FDataSourceDrivers.Add(fromOdbcPChar(DSDriver, StringLength2));
+      FDataSourceNames.Add(fromOdbcPWideChar(DSName, StringLength1));
+      FDataSourceDrivers.Add(fromOdbcPWideChar(DSDriver, StringLength2));
       Direction:= SQL_FETCH_NEXT;
     end;
   finally
@@ -10124,7 +10165,7 @@ end;
 procedure TOdbcAdministrator.RetrieveDrivers;
 var
   Direction: SQLUSMALLINT;
-  DName, DAttr: PChar;
+  DName, DAttr: PWideChar;
   StringLength1, StringLength2: SQLSMALLINT;
 begin
   { Retrieve Drivers }
@@ -10132,12 +10173,12 @@ begin
 
   Direction:= SQL_FETCH_FIRST;
 
-  DName := odbcPChar(DefaultStringSize);
-  DAttr := odbcPChar(DefaultStringSize);
+  DName := odbcPWideChar(DefaultStringSize);
+  DAttr := odbcPWideChar(DefaultStringSize);
   try
     while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction, DName, DefaultStringSize, StringLength1, DAttr, DefaultStringSize, StringLength2)) do
     begin
-      FDriverNames.Add(fromOdbcPChar(DName, StringLength1));
+      FDriverNames.Add(fromOdbcPWideChar(DName, StringLength1));
       Direction:= SQL_FETCH_NEXT;
     end;
   finally

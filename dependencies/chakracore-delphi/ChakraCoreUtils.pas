@@ -26,8 +26,6 @@ SOFTWARE.
 
 unit ChakraCoreUtils;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {$include common.inc}
 
 interface

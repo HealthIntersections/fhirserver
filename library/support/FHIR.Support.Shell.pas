@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 Interface
 
@@ -255,7 +256,7 @@ Begin
   aInfo.lpFile := PChar(sFilename);
   aInfo.lpParameters := PChar(sParameters);
 
-  If ShellExecuteEx(@aInfo) Then
+  If ShellExecuteExW(@aInfo) Then
     Result := aInfo.hProcess
   Else
     Result := 0;
@@ -352,7 +353,7 @@ Begin
   aInfo.lpFile := PChar(sFilename);
   aInfo.lpParameters := PChar(sParameters);
 
-  Result := ShellExecuteEx(@aInfo);
+  Result := ShellExecuteExW(@aInfo);
 End;  
 
 
@@ -471,7 +472,7 @@ Function FilesPoint(hDrop : THandle) : TPoint;
 Begin 
   // Point on window where files were dropped.
 
-  DragQueryPoint(hDrop, Result);
+  DragQueryPoint(hDrop, {$IFDEF FPC}@{$ENDIF} Result);
 End;  
 
 
@@ -532,7 +533,7 @@ Begin
   aData.cbSize := SizeOf(aData);
   aData.hWnd := DesktopHandle;
 
-  SHAppBarMessage(ABM_GETTASKBARPOS, aData);
+  SHAppBarMessage(ABM_GETTASKBARPOS, {$IFDEF FPC}@{$ENDIF} aData);
 
   Result := TRect(aData.rc);
 End;
@@ -632,11 +633,11 @@ Begin
   sei.Wnd := hWnd;
   sei.fMask := SEE_MASK_FLAG_DDEWAIT Or SEE_MASK_FLAG_NO_UI;
   sei.lpVerb := 'runas';
-  sei.lpFile := PChar(sFile);
-  sei.lpParameters := PChar(sParameters);
+  sei.lpFile := PWideChar(sFile);
+  sei.lpParameters := PWideChar(sParameters);
   sei.nShow := SW_SHOWNORMAL;
 
-  Result := ShellExecuteEx(@sei);
+  Result := ShellExecuteExW(@sei);
 End;
 {$ENDIF}
 

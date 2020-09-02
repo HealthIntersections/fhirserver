@@ -15,15 +15,15 @@
 
 unit FHIR.Database.ODBC.Headers;
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 {$WEAKPACKAGEUNIT}
 
-interface
-
-                                                         
+interface                                                       
 
 {$IFDEF MSWINDOWS}
 uses
-  Winapi.Windows
+  Windows
 ;
 {$ENDIF}
 

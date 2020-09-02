@@ -31,6 +31,8 @@ unit FHIR.R4.Javascript;
   
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 // FHIR v4.0.0 generated 2018-12-27T22:37:54+11:00

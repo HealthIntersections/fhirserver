@@ -68,7 +68,7 @@ type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -710,7 +710,7 @@ begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.searchFilter');
 end;
 
-function TNDCServices.system(context: TCodeSystemProviderContext): String;
+function TNDCServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://hl7.org/fhir/sid/ndc';
 end;

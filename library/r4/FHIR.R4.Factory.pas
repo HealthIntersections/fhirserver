@@ -30,6 +30,8 @@
   POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 // FHIR v4.0.0 generated 2018-05-15T06:48:00+10:00
@@ -70,7 +72,7 @@ type
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
-    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
@@ -116,6 +118,7 @@ type
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
     function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; override;
     function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; override;
+    function wrapProvenance(o : TFHIRResourceV) : TFHIRProvenanceW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
@@ -130,7 +133,7 @@ type
 implementation
 
 uses
-  Soap.EncdDecd,
+  EncdDecd,
   FHIR.Client.HTTP,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Context, FHIR.R4.Validator, FHIR.R4.Profiles, FHIR.R4.Operations,
   FHIR.R4.Narrative, FHIR.R4.PathEngine, FHIR.R4.Constants, FHIR.R4.Client, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.AuthMap,
@@ -167,7 +170,7 @@ begin
     end;
 end;
 
-procedure TFHIRFactoryR4.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = []);
+procedure TFHIRFactoryR4.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param)
@@ -662,6 +665,14 @@ begin
     result := nil
   else
     result := TFhirPeriod4.Create(r);
+end;
+
+function TFHIRFactoryR4.wrapProvenance(o: TFHIRResourceV): TFHIRProvenanceW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFHIRProvenance4.Create(o);
 end;
 
 function TFHIRFactoryR4.wrapQuantity(r: TFHIRObject): TFhirQuantityW;

@@ -289,7 +289,7 @@ Type
     FForm: TMimeMessage;
     FOperationName: String;
     FIfMatch : String;
-    FProvenance: TFHIRResourceV;
+    FProvenance: TFhirProvenanceW;
     FIfNoneMatch: String;
     FIfModifiedSince: TDateTime;
     FIfNoneExist: String;
@@ -311,7 +311,7 @@ Type
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
-    procedure SetProvenance(const Value: TFHIRResourceV);
+    procedure SetProvenance(const Value: TFhirProvenanceW);
     procedure processParams;
     procedure SetForm(const Value: TMimeMessage);
     procedure SetPatchJson(const Value: TJsonArray);
@@ -486,7 +486,7 @@ Type
     Property IfModifiedSince : TDateTime read FIfModifiedSince write FIfModifiedSince;
     Property IfNoneExist : String read FIfNoneExist write FIfNoneExist;
 
-    Property Provenance : TFhirResourceV read FProvenance write SetProvenance;
+    Property Provenance : TFhirProvenanceW read FProvenance write SetProvenance;
     Property Origin : TFHIRRequestOrigin read FOrigin;
 
     property externalRequestId : String read FExternalRequestId write FExternalRequestId;
@@ -1260,7 +1260,7 @@ begin
   FPatchXml := Value;
 end;
 
-procedure TFHIRRequest.SetProvenance(const Value: TFHIRResourceV);
+procedure TFHIRRequest.SetProvenance(const Value: TFhirProvenanceW);
 begin
   FProvenance.Free;
   FProvenance := Value;

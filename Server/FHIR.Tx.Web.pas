@@ -373,7 +373,7 @@ begin
       for cs in FServer.ProviderClasses.Values do
       begin
         html.StartTableRow;
-        html.AddTableCell(cs.system(nil));
+        html.AddTableCell(cs.systemUri(nil));
         html.AddTableCell(cs.version(nil));
         html.AddTableCell(cs.name(nil));
         c := cs.TotalCount;

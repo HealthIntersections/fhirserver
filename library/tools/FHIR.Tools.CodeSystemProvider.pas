@@ -167,7 +167,7 @@ type
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -583,7 +583,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
     else
       result := Definition(ctxt);
   finally
@@ -598,7 +598,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
     else
       result := Display(ctxt, lang);
   finally
@@ -854,7 +854,7 @@ begin
   exit('not-subsumed');
 end;
 
-function TFhirCodeSystemProvider.system(context : TCodeSystemProviderContext): String;
+function TFhirCodeSystemProvider.systemUri(context : TCodeSystemProviderContext): String;
 begin
   result := FCs.CodeSystem.url;
 end;

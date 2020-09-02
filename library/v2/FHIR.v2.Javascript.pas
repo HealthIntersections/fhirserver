@@ -31,6 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // wrapper layer for chakra for v2 messages
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses

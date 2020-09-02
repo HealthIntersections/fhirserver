@@ -89,7 +89,7 @@ type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-//    function system(context : TCodeSystemProviderContext) : String; override;
+//    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -123,7 +123,7 @@ type
   TRxNormServices = class (TUMLSServices)
   public
     constructor Create(db : TFslDBManager);
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
   end;
@@ -134,7 +134,7 @@ type
     function getCodeField : String; override;
   public
     constructor Create(db : TFslDBManager);
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
   end;
@@ -142,7 +142,7 @@ type
   TNciMetaServices = class (TUMLSServices)
   public
     constructor Create(db : TFslDBManager);
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
   end;
@@ -824,7 +824,7 @@ begin
   result := 'RxNorm';
 end;
 
-function TRxNormServices.system(context: TCodeSystemProviderContext): String;
+function TRxNormServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
 end;
@@ -846,7 +846,7 @@ begin
   result := 'NCI Metathesaurus';
 end;
 
-function TNciMetaServices.system(context: TCodeSystemProviderContext): String;
+function TNciMetaServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://ncimeta.nci.nih.gov';
 end;
@@ -878,7 +878,7 @@ begin
   result := 'NDFRT';
 end;
 
-function TNDFRTServices.system(context: TCodeSystemProviderContext): String;
+function TNDFRTServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://hl7.org/fhir/ndfrt';
 end;

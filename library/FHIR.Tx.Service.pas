@@ -28,15 +28,19 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Web.Parsers,
+  {$IFNDEF FPC}
+  YuStemmer,
+  {$ENDIF}
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Fpc,
+  FHIR.Web.Parsers,
   FHIR.Base.Common, FHIR.Base.Factory,
-  FHIR.CdsHooks.Utilities,
-  YuStemmer;
+  FHIR.CdsHooks.Utilities;
 
 const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
@@ -93,7 +97,7 @@ Type
     function TotalCount : integer;  virtual; abstract;
     function ChildCount(context : TCodeSystemProviderContext) : integer; virtual; abstract;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; virtual; abstract;
-    function system(context : TCodeSystemProviderContext) : String; virtual; abstract;
+    function systemUri(context : TCodeSystemProviderContext) : String; virtual; abstract;
     function version(context : TCodeSystemProviderContext) : String; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String; const lang : THTTPLanguages):String; virtual; abstract;
@@ -178,7 +182,7 @@ end;
 
 procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
-  card.summary := 'No CDSHook Implemeentation for code system '+system(nil)+' for code '+code+' ('+display+')';
+  card.summary := 'No CDSHook Implemeentation for code system '+systemUri(nil)+' for code '+code+' ('+display+')';
 end;
 
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -247,7 +251,7 @@ end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.create('Subsumption Testing is not supported for system '+system(nil));
+  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil));
 end;
 
 function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
@@ -260,7 +264,9 @@ end;
 constructor TSearchFilterText.create(filter: String);
 begin
   Create;
+  {$IFNDEF FPC}
   FStemmer := GetStemmer_8('english');
+  {$ENDIF}
   FStems := TStringList.Create;
   FFilter := filter;
   process;
@@ -269,7 +275,9 @@ end;
 destructor TSearchFilterText.destroy;
 begin
   FStems.Free;
+  {$IFNDEF FPC}
   FStemmer.Free;
+  {$ENDIF}
   inherited;
 end;
 
@@ -324,7 +332,7 @@ begin
       j := i;
       while (i <= length(value)) and CharInSet(value[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
         inc(i);
-      result := find(lowercase(FStemmer.calc(copy(value, j, i-j))));
+      result := find(lowercase({$IFNDEF FPC}FStemmer.calc{$ENDIF}(copy(value, j, i-j))));
       if result then
         rating := rating + length(value) / FStems.Count;
     end
@@ -369,7 +377,7 @@ begin
       j := i;
       while (i <= length(FFilter)) and CharInSet(FFilter[i], ['0'..'9', 'a'..'z', 'A'..'Z']) do
         inc(i);
-      FStems.Add(lowercase(FStemmer.calc(copy(FFilter, j, i-j))));
+      FStems.Add(lowercase({$IFNDEF FPC}FStemmer.calc{$ENDIF}(copy(FFilter, j, i-j))));
     end
     else
       inc(i);

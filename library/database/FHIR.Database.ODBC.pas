@@ -1,6 +1,5 @@
 unit FHIR.Database.ODBC;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,13 +28,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 
 interface
 
 uses
-  SysUtils, Classes, Contnrs, IniFiles, System.ODBC,
+  SysUtils, Classes, Contnrs, IniFiles, {$IFDEF FPC} odbcsqldyn {$ELSE} ODBC {$ENDIF},
   FHIR.Support.Base, FHIR.Support.Utilities,  
-  FHIR.Database.Dialects, FHIR.Database.Manager, FHIR.Database.Settings,
+  FHIR.Database.Dialects, FHIR.Database.Manager,
   FHIR.Database.ODBC.Objects;
 
 type
@@ -118,9 +119,7 @@ type
     procedure init; override;
   public
     constructor Create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
-    constructor Create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     destructor Destroy; override;
-    procedure SaveSettings(ASettings : TSettingsAdapter); override;
     class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; override;
     property Driver : String read FDriver;
     property Server : String read FServer;
@@ -803,25 +802,6 @@ begin
 end;
 
 { TFslDBOdbcManager }
-
-constructor TFslDBOdbcManager.create(AName : String; ASettings : TSettingsAdapter; AIdent : String = '');
-begin
-  create(AName, ASettings.ReadInteger('MaxConnections', 20), ASettings.ReadInteger('Timeout', 0), ASettings.ReadString('ODBCDriver', ''),
-                ASettings.ReadString('Server', ''),  ASettings.ReadString('Database', ''),
-                ASettings.ReadString('Username', ''), ASettings.ReadEncryptedString('Password', ''));
-end;
-
-procedure TFslDBOdbcManager.SaveSettings(ASettings : TSettingsAdapter);
-begin
-  ASettings.WriteString('Platform', EnumToString(TypeInfo(TFslDBPlatform), ord(GetDBPlatform)));
-  ASettings.WriteString('Provider', EnumToString(TypeInfo(TFslDBProvider), ord(kdbpODBC)));
-  ASettings.WriteInteger('MaxConnections', MaxConnCount);
-  ASettings.WriteString('Driver', FDriver);
-  ASettings.WriteString('Server', FServer);
-  ASettings.WriteString('Database', FDatabase);
-  ASettings.WriteString('Username', FUsername);
-  ASettings.WriteEncryptedString('Password', FPassword);
-end;
 
 constructor TFslDBOdbcManager.create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin

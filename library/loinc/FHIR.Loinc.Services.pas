@@ -28,14 +28,18 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
   RegularExpressions,
+  {$IFNDEF FPC}
   YuStemmer,
+  {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
@@ -411,7 +415,7 @@ Type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function findMAConcept(code : String) : Cardinal;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
@@ -2093,7 +2097,7 @@ function TLoincServices.getDisplay(code: String; const lang : THTTPLanguages): S
 begin
   result := GetDisplayByName(code, langsForLang(lang));
   if result = '' then
-    raise ETerminologyError.create('unable to find '+code+' in '+system(nil));
+    raise ETerminologyError.create('unable to find '+code+' in '+systemUri(nil));
 end;
 
 function TLoincServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -2116,7 +2120,7 @@ begin
     result := nil;//raise ETerminologyError.create('unable to find '+code+' in '+system);
 end;
 
-function TLoincServices.system(context : TCodeSystemProviderContext): String;
+function TLoincServices.systemUri(context : TCodeSystemProviderContext): String;
 begin
   result := 'http://loinc.org';
 end;

@@ -1,8 +1,5 @@
 unit FHIR.Ucum.Tests;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
-// -tests  -definitions
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,6 +27,11 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
+// -tests  -definitions
+
 interface
 
 uses

@@ -1,19 +1,5 @@
 unit FHIR.Snomed.Services;
 
-// URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
-//  intl: 900000000000207008
-//  us:  731000124108
-//  AU: 32506021000036107
-//  Spanish: 449081005
-//  Danish: 554471000005108
-//  Dutch: 11000146104
-//  Swedish: 45991000052106
-//  UK: 999000041000000102
-//  CA: 20611000087101
-//  BE: 11000172109
-
-
-// my combination
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -42,6 +28,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
+// URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
+//  intl: 900000000000207008
+//  us:  731000124108
+//  AU: 32506021000036107
+//  Spanish: 449081005
+//  Danish: 554471000005108
+//  Dutch: 11000146104
+//  Swedish: 45991000052106
+//  UK: 999000041000000102
+//  CA: 20611000087101
+//  BE: 11000172109
+
+
+// my combination
+
 Interface
 
 {
@@ -55,8 +58,10 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
+  {$IFNDEF FPC}
   YuStemmer,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
+  {$ENDIF}
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers, FHIR.Support.Fpc,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.CdsHooks.Utilities,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
@@ -66,6 +71,7 @@ Const
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
+
 var
   SNOMED_DATE_FORMAT : TFormatSettings;
 
@@ -605,7 +611,7 @@ operations
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
@@ -3417,7 +3423,7 @@ begin
   ctxt := locate(code) as TSnomedExpressionContext;
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
     else if ctxt.isComplex then
       // there's only one display name - for now?
       list.Add(displayExpression(ctxt.FExpression).Trim)
@@ -3435,7 +3441,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
     else
       result := Display(ctxt, lang);
   finally
@@ -3504,12 +3510,12 @@ begin
     result := TSnomedExpressionContext.create(code, index)
   else
   begin
-    Message := 'Unable to find code '+code+' in '+system(nil)+' (version '+version(nil)+')';
+    Message := 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')';
     result := nil;
   end;
 end;
 
-function TSnomedServices.system(context : TCodeSystemProviderContext): String;
+function TSnomedServices.systemUri(context : TCodeSystemProviderContext): String;
 begin
   result := 'http://snomed.info/sct';
 end;
@@ -4416,7 +4422,7 @@ begin
   else if self.Concept.FindConcept(StringToId(concept.code), iTerm) Then
     concept.reference := iTerm
   else if (concept.code <> '111115') then
-    raise ETerminologyError.Create('Concept '+concept.code+' not found in '+system(nil));
+    raise ETerminologyError.Create('Concept '+concept.code+' not found in '+systemUri(nil));
 
   if (concept.reference <> NO_REFERENCE) and (concept.description <> '') then
   begin
@@ -4810,5 +4816,9 @@ begin
 end;
 
 initialization
+  {$IFDEF FPC}
+  // what to do?
+  {$ELSE}
   SNOMED_DATE_FORMAT := TFormatSettings.Create('en-AU');
+  {$ENDIF}
 End.

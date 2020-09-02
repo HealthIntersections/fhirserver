@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -777,6 +779,7 @@ type
     function GetStart: TFslDateTime; override;
     procedure SetEnd(const Value: TFslDateTime); override;
     procedure SetStart(const Value: TFslDateTime); override;
+  public
     function renderText : String; override;
   end;
 
@@ -916,6 +919,15 @@ type
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setDescription(Value: String); override;
     function getContext: String; override;
+  end;
+
+  TFhirProvenance4 = class (TFhirProvenanceW)
+  private
+    function p : TFhirProvenance;
+  public
+    procedure clearTargets; override;
+    procedure clearSignatures; override;
+    procedure addTarget(url : String); override;
   end;
 
 implementation
@@ -4910,5 +4922,26 @@ begin
 end;
 
 
+{ TFhirProvenance4 }
+
+procedure TFhirProvenance4.addTarget(url: String);
+begin
+  p.targetList.Append.reference := url;
+end;
+
+procedure TFhirProvenance4.clearSignatures;
+begin
+  p.signatureList.Clear;
+end;
+
+procedure TFhirProvenance4.clearTargets;
+begin
+  p.targetList.Clear;
+end;
+
+function TFhirProvenance4.p: TFhirProvenance;
+begin
+  result := (Fres as TFhirProvenance);
+end;
 
 end.

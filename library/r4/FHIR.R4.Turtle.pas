@@ -31,6 +31,8 @@ unit FHIR.R4.Turtle;
   
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 // FHIR v4.0.0 generated 2018-12-15T16:22:09+11:00

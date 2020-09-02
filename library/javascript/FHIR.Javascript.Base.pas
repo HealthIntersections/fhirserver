@@ -36,6 +36,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Javascript, FHIR.Support.Javascript,
   FHIR.Base.Objects, FHIR.Base.Factory;
+{$IFNDEF FPC}
 
 type
   TFHIRJavascriptDefinedElement = class (TFslObject)
@@ -650,7 +651,9 @@ begin
   result := FFHIRType.Substring(0, FFHIRType.Length-1);
 end;
 
-end.
+{$ELSE}
+implementation
+{$ENDIF}
 
-// FWorker.Factory.makeByName
+end.
 

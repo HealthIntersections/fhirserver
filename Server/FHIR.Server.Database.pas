@@ -165,7 +165,7 @@ type
     procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     function loadResourceVersion(versionKey : integer; allowNil : boolean) : TFHIRResourceV;
-    procedure updateProvenance(prv : TFHIRResourceV; rtype, id, vid : String);
+    procedure updateProvenance(prv : TFhirProvenanceW; inTransaction : boolean; rtype, id, vid : String);
 
     function GetNewResourceId(aType : String; ForTesting : boolean; var id : string; var key : integer):Boolean;
     function AddNewResourceId(aType, id : String; const lang : THTTPLanguages; forTesting : boolean; var resourceKey : integer) : Boolean;
@@ -175,7 +175,7 @@ type
 //    Function IsTypeAndId(s : String; var id : String):Boolean;
 
 
-    procedure SaveProvenance(session : TFhirSession; prv : TFHIRResourceV);
+    procedure SaveProvenance(session : TFhirSession; prv : TFhirProvenanceW);
 
     procedure CheckCompartments(actual, allowed : TFslList<TFHIRCompartmentId>);
     procedure executeReadInTransaction(entry : TFhirBundleEntryW; request: TFHIRRequest; response : TFHIRResponse);
@@ -198,7 +198,7 @@ type
     procedure RollbackTransaction; override;
     function  ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
-    function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
+    function  ExecutePatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); override;
     procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse); override;
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); override;
@@ -215,8 +215,8 @@ type
     function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList; virtual; abstract;
     function readRef(ref : TFHIRObject) : string; virtual; abstract;
     function getOpException(op : TFHIRResourceV) : String; virtual; abstract;
-    procedure doAuditRestPat(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>);
-    procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patientId : String); virtual; abstract;
+    procedure doAuditRestPat(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>);
+    procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patientId : String); virtual; abstract;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
   public
@@ -277,8 +277,8 @@ type
     procedure clear(a : TArray<String>);
     procedure storeResources(list: TFslList<TFHIRQueuedResource>; origin : TFHIRRequestOrigin; mode : TOperationMode);
 
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
 
     // custom resources
 //    function loadCustomResources(response : TFHIRResponse; id : String; startup : boolean; names : TStringList) : boolean; overload;
@@ -523,7 +523,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRNativeOperationEngine.doAuditRestPat(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; opName: String; httpCode: Integer; name, message: String; patients: TArray<String>);
+procedure TFHIRNativeOperationEngine.doAuditRestPat(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patients: TArray<String>);
 var
   sid : String;
 begin
@@ -794,7 +794,7 @@ begin
             if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', itInvalid) then
               ok := false;
 
-          updateProvenance(request.Provenance, request.ResourceName, sid, '1');
+          updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, sid, '1');
 
           if ok then
           begin
@@ -862,7 +862,7 @@ begin
 
             response.id := sId;
             response.versionId := '1';
-            if request.Provenance <> nil then
+            if not context.inTransaction and (request.Provenance <> nil) then
               SaveProvenance(request.Session, request.Provenance);
           end;
         finally
@@ -2123,7 +2123,7 @@ begin
           meta.lastUpdated := TFslDateTime.makeUTC;
           meta.versionId := inttostr(nvid);
           CheckNotSubsetted(meta, 'Updating Resource');
-          updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
+          updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
 
           checkProposedContent(request.session, request, request.Resource, tags);
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
@@ -2193,7 +2193,7 @@ begin
           response.Message := 'OK';
           response.lastModifiedDate := meta.lastUpdated.DateTime;
           response.Location := request.baseUrl+request.ResourceName+'/'+request.Id+'/_history/'+inttostr(nvid);
-          if request.Provenance <> nil then
+          if not context.inTransaction and (request.Provenance <> nil) then
             SaveProvenance(request.Session, request.Provenance);
         end;
       finally
@@ -2213,7 +2213,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse) : boolean;
+function TFHIRNativeOperationEngine.ExecutePatch(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
   resourceKey, versionKey : Integer;
   key, nvid, i : Integer;
@@ -2413,7 +2413,7 @@ begin
           meta.lastUpdated := TFslDateTime.makeUTC;
           meta.versionId := inttostr(nvid);
           CheckNotSubsetted(meta, 'Patching Resource');
-          updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
+          updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
           checkProposedContent(request.session, request, request.resource, tags);
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           GJsHost.checkChanges(ttDataModified, request.Session,
@@ -2477,7 +2477,7 @@ begin
           response.Message := 'OK';
           response.lastModifiedDate := meta.lastUpdated.DateTime;
           response.Location := request.baseUrl+request.ResourceName+'/'+request.Id+'/_history/'+inttostr(nvid);
-          if request.Provenance <> nil then
+          if not context.inTransaction and (request.Provenance <> nil) then
             SaveProvenance(request.Session, request.Provenance);
         finally
           tags.free;
@@ -3062,18 +3062,17 @@ begin
   meta.removeTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED');
 end;
 
-procedure TFHIRNativeOperationEngine.updateProvenance(prv: TFHIRResourceV; rtype, id, vid: String);
+procedure TFHIRNativeOperationEngine.updateProvenance(prv: TFhirProvenanceW; inTransaction : boolean; rtype, id, vid: String);
 begin
-//  if prv <> nil then
-//  begin
-//    prv.targetList.Clear;
-//    prv.targetList.Append.reference := rtype+'/'+id+'/_history/'+vid;
-//
-//    prv.signatureList.Clear;
-//
-//    // todo: check this....
-//  end;
-
+  if prv <> nil then
+  begin
+    if not inTransaction then
+    begin
+      prv.clearTargets;
+      prv.clearSignatures;
+    end;
+    prv.addTarget(rtype+'/'+id+'/_history/'+vid);
+  end;
 end;
 
 procedure TFHIRNativeOperationEngine.CreateIndexer;
@@ -3281,11 +3280,11 @@ end;
 //  end;
 //end;
 //
-procedure TFHIRNativeOperationEngine.SaveProvenance(session: TFhirSession; prv: TFHIRResourceV);
+procedure TFHIRNativeOperationEngine.SaveProvenance(session: TFhirSession; prv: TFhirProvenanceW);
 begin
   prv.id := '';
 
-  FRepository.QueueResource(session, prv);
+  FRepository.QueueResource(session, prv.Resource.link);
 end;
 
 function TFHIRNativeOperationEngine.scanId(request : TFHIRRequest; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
@@ -3612,6 +3611,7 @@ begin
   context := TOperationContext.Create;
   try
     context.mode := mode;
+    context.inTransaction := true;
     case id.state of
       tesIgnore: ;  // yup, ignore it
       tesRead: executeReadInTransaction(entry, request, response);
@@ -3690,6 +3690,11 @@ begin
         request.Source := nil; // ignore that now
         request.transactionResource := request.resource.link;
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
+        if request.Provenance <> nil then
+        begin
+          request.Provenance.clearTargets;
+          request.Provenance.clearSignatures;
+        end;
         ids := TFHIRTransactionEntryList.create;
         try
           resp.type_ := btTransactionResponse;
@@ -3789,6 +3794,8 @@ begin
           finally
             bl.Free;
           end;
+          if (request.Provenance <> nil) then
+            SaveProvenance(request.session, request.Provenance);
           response.HTTPCode := 200;
           response.Message := 'OK';
           response.resource := resp.Resource.Link;
@@ -4784,12 +4791,12 @@ end;
 //    result := nil;
 //end;
 //
-procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFHIRResourceV; httpCode: Integer; name, message: String; patients : TArray<String>);
+procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFhirProvenanceW; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   AuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, '', httpCode, name, message, patients);
 end;
 
-procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode: Integer; name, message: String; patients : TArray<String>);
+procedure TFHIRNativeOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip: string; resourceName: String; id, ver: String; verkey : integer; op: TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   doAuditRestPat(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message, patients);
 end;

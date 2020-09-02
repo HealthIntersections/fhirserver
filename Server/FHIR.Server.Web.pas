@@ -359,7 +359,7 @@ Type
     function parseFile(fmt: TFHIRFormat; name: String): TFHIRResourceV;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
     function EncodeVersionsXml(r: TFHIRResourceV): TBytes;
-    function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirResourceV;
+    function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
 //    function LookupReference(Context: TFHIRRequest; id: String): TResourceWithReference;
     function patientAppList(base, id : String) : string;
     function encounterAppList(base, id : String) : string;
@@ -2703,7 +2703,7 @@ begin
   end;
 end;
 
-function TFhirWebServerEndpoint.processProvenanceHeader(header : String; const lang : THTTPLanguages): TFHIRResourceV;
+function TFhirWebServerEndpoint.processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
 var
   json: TFHIRParser;
   ss: TStringStream;
@@ -2718,7 +2718,7 @@ begin
       try
         json.Source := ss;
         json.Parse;
-        result := json.resource.link;
+        result := factory.wrapProvenance(json.resource.link);
       finally
         json.Free;
       end;

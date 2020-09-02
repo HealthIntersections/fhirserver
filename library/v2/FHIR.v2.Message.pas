@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -458,8 +460,8 @@ procedure TV2Cell.ListProperties(oList: TFHIRPropertyList; bInheritedProperties,
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create<TV2Content>(self, 'content', 'Content', true, TV2Content, FContentList));
-  oList.add(TFHIRProperty.create<TV2Cell>(self, 'component', 'Cell', true, TV2Cell, FComponentList));
+  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Content>{$ENDIF}(self, 'content', 'Content', true, TV2Content, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FContentList)));
+  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Cell>{$ENDIF}(self, 'component', 'Cell', true, TV2Cell, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FComponentList)));
 end;
 
 procedure TV2Cell.SetText(const Value: String);
@@ -530,7 +532,7 @@ procedure TV2Field.ListProperties(oList: TFHIRPropertyList; bInheritedProperties
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create<TV2Cell>(self, 'element', 'Cell', true, TV2Cell, FElementList));
+  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Cell>{$ENDIF}(self, 'element', 'Cell', true, TV2Cell, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FElementList)));
 end;
 
 { TV2Segment }
@@ -603,7 +605,7 @@ procedure TV2Segment.ListProperties(oList: TFHIRPropertyList; bInheritedProperti
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create<TV2Field>(self, 'field', 'Field', true, TV2Field, FFieldList));
+  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Field>{$ENDIF}(self, 'field', 'Field', true, TV2Field, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FFieldList)));
 end;
 
 { TV2Message }
@@ -657,7 +659,7 @@ procedure TV2Message.ListProperties(oList: TFHIRPropertyList; bInheritedProperti
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create<TV2Segment>(self, 'segment', 'Segment', true, TV2Segment, FSegmentList));
+  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Segment>{$ENDIF}(self, 'segment', 'Segment', true, TV2Segment, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FSegmentList)));
 end;
 
 { TV2Parser }

@@ -31,7 +31,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="46">
+    <Units Count="56">
       <Unit0>
         <Filename Value="TestFHIRApplication.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -225,6 +225,46 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitRegistry"/>
       </Unit45>
+      <Unit46>
+        <Filename Value="..\..\library\snomed\FHIR.Snomed.Services.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="..\..\library\loinc\FHIR.Loinc.Services.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\..\library\database\FHIR.Database.Settings.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="..\..\library\v2\FHIR.v2.Message.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="..\..\dependencies\jcl\JclDebug.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\..\library\r4\FHIR.R4.Narrative.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="..\..\library\cda\FHIR.Cda.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="..\..\library\tools\FHIR.Tools.GraphQL.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="..\..\library\wp\FHIR.WP.Document.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="..\..\library\r3\FHIR.R3.Parser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit55>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -234,9 +274,9 @@
       <Filename Value="TestFHIRApplication"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
+      <IncludeFiles Value="$(ProjOutDir);..\..\dependencies\jcl"/>
       <Libraries Value="..\reference-platform\support"/>
-      <OtherUnitFiles Value="..\reference-platform\support;..\reference-platform\base;..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum;..\..\library\base;..\..\library\cdshooks;..\..\library\smart;..\..\library\client;..\..\library;..\..\library\cache"/>
+      <OtherUnitFiles Value="..\reference-platform\support;..\reference-platform\base;..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum;..\..\library\base;..\..\library\cdshooks;..\..\library\smart;..\..\library\client;..\..\library;..\..\library\cache;..\..\library\snomed;..\..\library\loinc;..\..\library\database;..\..\library\v2;..\..\dependencies\jcl;..\..\library\r4;..\..\library\cda;..\..\library\tools;..\..\library\wp;..\..\library\r3"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

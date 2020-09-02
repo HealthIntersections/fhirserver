@@ -28,11 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
   FHIR.R4.PathNode, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.Context, FHIR.R4.Constants;
@@ -3340,9 +3342,9 @@ begin
     else if (focus[0].value is TFHIRDateTime) or (focus[0].value is TFHIRDate) then
       result.add(TFHIRBoolean.create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegEx.Match(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.create(TRegEx.isMatch(convertToString(focus[0].value),
           '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?'
-       ).Success).noExtensions())
+       )).noExtensions())
     else
       result.add(TFHIRBoolean.create(false).noExtensions());
     result.Link;
@@ -3360,8 +3362,8 @@ begin
     else if (focus[0].value is TFHIRTime) then
       result.add(TFHIRBoolean.create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegEx.Match(convertToString(focus[0].value),
-          'T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?').Success).noExtensions())
+      result.add(TFHIRBoolean.create(TRegEx.IsMatch(convertToString(focus[0].value),
+          'T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?')).noExtensions())
     else
       result.add(TFHIRBoolean.create(false).noExtensions());
     result.Link;

@@ -1,7 +1,5 @@
 unit FHIR.Cache.PackageManager;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,12 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
-  FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Fpc,
   FHIR.Support.Stream, FHIR.Web.Fetcher,
   FHIR.Cache.NpmPackage, FHIR.Cache.PackageClient,
   FHIR.Base.Utilities;
@@ -217,14 +217,22 @@ var
   s, id : String;
   npm : TNpmPackage;
   pi : TFHIRPackageInfo;
+  t : TFHIRPackageInfo;
+  found : boolean;
 begin
   for s in TDirectory.GetDirectories(FFolder) do
   begin
     npm := TNpmPackage.fromFolderQuick(s);
     try
       if TFHIRVersions.matches(npm.fhirVersion, ver) then
-        if not list.contains(function (const t : TFHIRPackageInfo) : boolean begin result := npm.name = t.id; end) then
+      begin
+        found := false;
+        for t in list do
+          if npm.name = t.id then
+            found := true;
+        if not found then
           list.Add(TFHIRPackageInfo.Create(npm.name, npm.version, npm.fhirVersion, npm.description, npm.canonical, npm.url));
+      end;
     finally
       npm.Free;
     end;
@@ -726,21 +734,27 @@ end;
 
 function TFHIRPackageManager.packageExists(id, ver: String): boolean;
 var
-  s : String;
+  s, t : String;
 begin
   if ver = '' then
   begin
     result := false;
     for s in TDirectory.GetDirectories(FFolder) do
-      if ExtractFileName(s).StartsWith(id+'#') then
-        exit(true);
+    begin
+        t := ExtractFileName(s);
+        if t.StartsWith(id+'#') then
+          exit(true);
+    end;
   end
   else if ver.CountChar('.') = 1 then
   begin
     result := false;
     for s in TDirectory.GetDirectories(FFolder) do
-      if ExtractFileName(s).StartsWith(id+'#'+ver) then
+    begin
+      t := ExtractFileName(s);
+      if t.StartsWith(id+'#'+ver) then
         exit(true);
+    end;
   end
   else
   begin
@@ -841,7 +855,7 @@ end;
 
 { TPackageLoadingInformation }
 
-constructor TPackageLoadingInformation.Create;
+constructor TPackageLoadingInformation.Create(ver : string);
 begin
   inherited Create;
   FLoaded := TStringList.Create;

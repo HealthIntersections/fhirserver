@@ -1,7 +1,5 @@
 unit FHIR.R4.Constants;
 
-{$I fhir.r4.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -30,6 +28,9 @@ unit FHIR.R4.Constants;
   POSSIBILITY OF SUCH DAMAGE.
   
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r4.inc}
 
 interface
 

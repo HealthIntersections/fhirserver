@@ -1,7 +1,5 @@
 unit FHIR.Ucum.Services;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 Interface
 
@@ -217,7 +217,7 @@ Type
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
@@ -913,7 +913,7 @@ begin
   result := TUcumFilterContext.create('')
 end;
 
-function TUcumServices.system(context : TCodeSystemProviderContext): String;
+function TUcumServices.systemUri(context : TCodeSystemProviderContext): String;
 begin
   result := 'http://unitsofmeasure.org';
 end;

@@ -1,7 +1,5 @@
 unit FHIR.Client.Base;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -162,7 +161,7 @@ Type
     FLogger : TFHIRClientLogger;
     FLastURL: String;
     FLastStatus : integer;
-    FProvenance: TFHIRResourceV;
+    FProvenance: TFhirProvenanceW;
     FProvenanceString : String;
     FVersionSpecific: boolean;
     FFormat : TFHIRFormat;
@@ -171,7 +170,7 @@ Type
     FLastStatusMsg: String;
     FOnProgress : TFhirClientProgressEvent;
     FBundleFactory : TFHIRBundleWClass;
-    procedure SetProvenance(const Value: TFHIRResourceV);
+    procedure SetProvenance(const Value: TFhirProvenanceW);
     procedure SetSmartToken(const Value: TClientAccessToken);
     function encodeParams(params: TStringList): String;
     function GetHeaders: THTTPHeaders;
@@ -203,7 +202,7 @@ Type
     property LastStatus : integer read FLastStatus write FLastStatus;
     property LastStatusMsg : String read FLastStatusMsg write FLastStatusMsg;
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
-    property provenance : TFHIRResourceV read FProvenance write SetProvenance;
+    property provenance : TFhirProvenanceW read FProvenance write SetProvenance;
     property smartToken : TClientAccessToken read FSmartToken write SetSmartToken;
     property OnProgress : TFhirClientProgressEvent read FOnProgress write FOnProgress;
 
@@ -363,7 +362,7 @@ begin
   FLogger := Value;
 end;
 
-procedure TFhirClientV.SetProvenance(const Value: TFHIRResourceV);
+procedure TFhirClientV.SetProvenance(const Value: TFhirProvenanceW);
 var
   c : TFHIRComposer;
 begin
@@ -373,7 +372,7 @@ begin
   begin
     c := makeComposer(ffJson, OutputStyleNormal);
     try
-      FProvenanceString := c.Compose(value);
+      FProvenanceString := c.Compose(value.Resource);
     finally
       c.Free;
     end;

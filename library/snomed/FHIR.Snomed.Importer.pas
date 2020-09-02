@@ -28,15 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 Interface
 
 uses
   Windows, SysUtils, Classes, Inifiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections,
+  {$IFNDEF FPC} YuStemmer, {$ENDIF}
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
-  FHIR.Database.Manager, FHIR.Database.Dialects,
-  YuStemmer;
+  FHIR.Database.Manager, FHIR.Database.Dialects;
 
 //Const
 //  TrackConceptDuplicates = false; // much slower, but only if you aren't reading a snapshot
@@ -237,7 +238,7 @@ end;
 function ExtractFileVersion(fn : String) : String;
 begin
   result := ExtractFileName(fn);
-  result := copy(result, 1, result.Length - extractFileExt(result).Length);
+  result := copy(result, 1, result.Length - Length(extractFileExt(result)));
   result := copy(result, length(result)-7, 8);
 end;
 
@@ -1776,7 +1777,7 @@ procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String; isLa
 var
   s : TBytes;
   i, iId, iTime, iDate, iActive, iModule, iRefSetId, iRefComp : Integer;
-  sId, sActive, sRefSetId, sRefComp, sModule, sDate : String;
+  sId, sActive, sRefSetId, sRefComp, sModule, sDate, ss : String;
   iRef : UInt64;
 
   iTermRef, iRefsetRef, iVal, iType, iMod : Cardinal;
@@ -1800,7 +1801,8 @@ var
     result := iCursor;
   End;
 begin
-  parts := ExtractFileName(sFile).Split(['_']);
+  ss := ExtractFileName(sFile);
+  parts := ss.Split(['_']);
   name := parts[1];
   sname := parts[2];
   ti := 0;

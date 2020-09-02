@@ -199,7 +199,7 @@ Type
     function getCodeSystemById(id : String) : TFHIRCodeSystemW;
     function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystemW;
     function getCodeSystem(url : String) : TFHIRCodeSystemW;
-    function hasCodeSystem(url : String) : Boolean;
+    function hasCodesystemUri(url : String) : Boolean;
     function getConceptMapById(id : String) : TLoadedConceptMap;
     function getConceptMapBySrcTgt(src, tgt : String) : TLoadedConceptMap;
 
@@ -273,7 +273,7 @@ Type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -320,7 +320,7 @@ begin
   raise ETerminologyError.create('Not Created Yet');
 end;
 
-function TAllCodeSystemsProvider.system(context : TCodeSystemProviderContext) : String;
+function TAllCodeSystemsProvider.systemUri(context : TCodeSystemProviderContext) : String;
 var
   c : TAllCodeSystemsProviderContext;
 begin
@@ -330,12 +330,12 @@ begin
   begin
     c := context as TAllCodeSystemsProviderContext;
     case c.source of
-      acssLoinc : result := FStore.Loinc.System(c.context);
-      acssSnomed : result := FStore.DefSnomed.System(c.context);
-      acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.System(c.context) else result := '??';
-      acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.System(c.context) else result := '??';
-      acssUnii : result := FStore.Unii.System(c.context);
-      acssActCode : result := FActCode.System(c.context);
+      acssLoinc : result := FStore.Loinc.systemUri(c.context);
+      acssSnomed : result := FStore.DefSnomed.systemUri(c.context);
+      acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.systemUri(c.context) else result := '??';
+      acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.systemUri(c.context) else result := '??';
+      acssUnii : result := FStore.Unii.systemUri(c.context);
+      acssActCode : result := FActCode.systemUri(c.context);
     end;
   end;
 end;
@@ -803,14 +803,14 @@ begin
 end;
 
 procedure TTerminologyServerStore.declareCodeSystems(list : TFslList<TFhirResourceV>);
-  procedure addCodeSystem(name, id, uri, version : String; count : integer);
+  procedure addCodesystemUri(name, id, uri, version : String; count : integer);
   var
     cs : TFhirCodeSystemW;
     r : TFHIRResourceV;
   begin
     r := FFactory.makeResource('CodeSystem');
     try
-      cs := FFactory.wrapCodeSystem(r.link);
+      cs := FFactory.wrapCodesystem(r.link);
       try
         cs.url := uri;
         cs.version := version;
@@ -837,21 +837,21 @@ var
   icd : TICD10Provider;
 begin
   if FCommonTerminologies.FLoinc <> nil then
-    addCodeSystem('LOINC', 'loinc', FCommonTerminologies.FLoinc.system(nil), FCommonTerminologies.FLoinc.version(nil), FCommonTerminologies.FLoinc.TotalCount);
+    addCodesystemUri('LOINC', 'loinc', FCommonTerminologies.FLoinc.systemUri(nil), FCommonTerminologies.FLoinc.version(nil), FCommonTerminologies.FLoinc.TotalCount);
   for sn in FCommonTerminologies.FSnomed do
-    addCodeSystem('SNOMED CT', 'sct', sn.system(nil), sn.version(nil), sn.TotalCount);
+    addCodesystemUri('SNOMED CT', 'sct', sn.systemUri(nil), sn.version(nil), sn.TotalCount);
   for icd in FCommonTerminologies.FIcd10 do
-    addCodeSystem(icd.title, tail(icd.system(nil)), icd.system(nil), icd.version(nil), icd.TotalCount);
+    addCodesystemUri(icd.title, tail(icd.systemUri(nil)), icd.systemUri(nil), icd.version(nil), icd.TotalCount);
   if FCommonTerminologies.FUcum <> nil then
-    addCodeSystem('Ucum', 'ucum', FCommonTerminologies.FUcum.system(nil), FCommonTerminologies.FUcum.version(nil), FCommonTerminologies.FUcum.TotalCount);
+    addCodesystemUri('Ucum', 'ucum', FCommonTerminologies.FUcum.systemUri(nil), FCommonTerminologies.FUcum.version(nil), FCommonTerminologies.FUcum.TotalCount);
   if FCommonTerminologies.FRxNorm <> nil then
-    addCodeSystem('RxNorm', 'rxnorm', FCommonTerminologies.FRxNorm.system(nil), FCommonTerminologies.FRxNorm.version(nil), FCommonTerminologies.FRxNorm.TotalCount);
+    addCodesystemUri('RxNorm', 'rxnorm', FCommonTerminologies.FRxNorm.systemUri(nil), FCommonTerminologies.FRxNorm.version(nil), FCommonTerminologies.FRxNorm.TotalCount);
   if FCommonTerminologies.NDFRT <> nil then
-    addCodeSystem('NDFRT', 'ndfrt', FCommonTerminologies.NDFRT.system(nil), FCommonTerminologies.NDFRT.version(nil), FCommonTerminologies.NDFRT.TotalCount);
+    addCodesystemUri('NDFRT', 'ndfrt', FCommonTerminologies.NDFRT.systemUri(nil), FCommonTerminologies.NDFRT.version(nil), FCommonTerminologies.NDFRT.TotalCount);
   if FCommonTerminologies.FUnii <> nil then
-    addCodeSystem('Unii', 'unii', FCommonTerminologies.FUnii.system(nil), FCommonTerminologies.FUnii.version(nil), FCommonTerminologies.FUnii.TotalCount);
+    addCodesystemUri('Unii', 'unii', FCommonTerminologies.FUnii.systemUri(nil), FCommonTerminologies.FUnii.version(nil), FCommonTerminologies.FUnii.TotalCount);
   if FCommonTerminologies.FACIR <> nil then
-    addCodeSystem('ACIR', 'acir', FCommonTerminologies.FACIR.system(nil), FCommonTerminologies.FACIR.version(nil), FCommonTerminologies.FACIR.TotalCount);
+    addCodesystemUri('ACIR', 'acir', FCommonTerminologies.FACIR.systemUri(nil), FCommonTerminologies.FACIR.version(nil), FCommonTerminologies.FACIR.TotalCount);
 end;
 
 
@@ -1012,7 +1012,7 @@ begin
         begin
           if vs.hasInlineCS then
           begin
-            cs := FFactory.wrapCodeSystem(resource.Link);
+            cs := FFactory.wrapCodesystem(resource.Link);
             try
               AddCodeSystemToCache(cs, true);
             finally
@@ -1027,7 +1027,7 @@ begin
     end
     else if (resource.fhirType = 'CodeSystem') then
     begin
-      cs := FFactory.wrapCodeSystem(resource.link);
+      cs := FFactory.wrapCodesystem(resource.link);
       try
         AddCodeSystemToCache(cs, true);
       finally
@@ -1076,7 +1076,7 @@ begin
         invalidateVS(vs.url);
         if vs.hasInlineCS then
         begin
-          cs := FFactory.wrapCodeSystem(resource.Link);
+          cs := FFactory.wrapCodesystem(resource.Link);
           try
             AddCodeSystemToCache(cs, true);
           finally
@@ -1090,7 +1090,7 @@ begin
     end
     else if (resource.fhirType = 'CodeSystem') then
     begin
-      cs := FFactory.wrapCodeSystem(resource.link);
+      cs := FFactory.wrapCodesystem(resource.link);
       try
         AddCodeSystemToCache(cs, false);
       finally
@@ -1138,7 +1138,7 @@ begin
         if vs1 <> nil then
         begin
           FValueSets.see(vs1.Link);
-          cs := FFactory.wrapCodeSystem(vs.Resource.link);
+          cs := FFactory.wrapCodesystem(vs.Resource.link);
           try
             AddCodeSystemToCache(cs, false);
           finally
@@ -1489,7 +1489,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.hasCodeSystem(url: String): Boolean;
+function TTerminologyServerStore.hasCodesystemUri(url: String): Boolean;
 begin
   FLock.Lock('getValueSetByUrl');
   try
@@ -1522,7 +1522,7 @@ begin
     FLock.Lock('listSystems');
     try
       for p in ProviderClasses.Values do
-        ts.Add(p.system(nil));
+        ts.Add(p.systemUri(nil));
       for cs in FCodeSystems.list do
         ts.Add(cs.url);
     finally
@@ -1599,7 +1599,7 @@ begin
   result := false;
   if (uri1 <> uri2) then
     result := false // todo later - check that concept maps
-  else if (FCommonTerminologies.DefSnomed <> nil) and (uri1 = FCommonTerminologies.DefSnomed.system(nil)) then
+  else if (FCommonTerminologies.DefSnomed <> nil) and (uri1 = FCommonTerminologies.DefSnomed.systemUri(nil)) then
     result := FCommonTerminologies.DefSnomed.Subsumes(code1, code2)
   else
   begin
@@ -1698,18 +1698,18 @@ end;
 function TCommonTerminologies.add(p: TCodeSystemProvider) : TCodeSystemProvider;
 begin
   if p.version(nil) <> '' then
-    FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
-  if not FProviderClasses.ContainsKey(p.system(nil)) then
-    FProviderClasses.Add(p.system(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  if not FProviderClasses.ContainsKey(p.systemUri(nil)) then
+    FProviderClasses.Add(p.systemUri(nil), p.link);
   result := p;
 end;
 
 procedure TCommonTerminologies.add(p: TCodeSystemProvider; defVer: boolean);
 begin
   if p.version(nil) <> '' then
-    FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
-  if defVer and not FProviderClasses.ContainsKey(p.system(nil)) then
-    FProviderClasses.Add(p.system(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  if defVer and not FProviderClasses.ContainsKey(p.systemUri(nil)) then
+    FProviderClasses.Add(p.systemUri(nil), p.link);
 end;
 
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
@@ -1723,8 +1723,8 @@ begin
   p := TUriServices.Create();
   try
     FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
-    FProviderClasses.Add(p.system(nil), p.link);
-    FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   finally
     p.free;
   end;
@@ -1841,8 +1841,8 @@ begin
         try
           sn.Load(details['source']);
           add(sn, details['default'] = 'true');
-          if not FProviderClasses.ContainsKey(sn.system(nil)+URI_VERSION_BREAK+sn.EditionUri) then
-            FProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
+          if not FProviderClasses.ContainsKey(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri) then
+            FProviderClasses.Add(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
           snomed.Add(sn.Link);
           if details['default'] = 'true' then
             DefSnomed := sn.Link;
@@ -1909,15 +1909,15 @@ procedure TCommonTerminologies.SetRxNorm(const Value: TRxNormServices);
 begin
   if FRxNorm <> nil then
   begin
-    FProviderClasses.Remove(FRxNorm.system(nil));
-    FProviderClasses.Remove(FRxNorm.system(nil)+URI_VERSION_BREAK+FRxNorm.version(nil));
+    FProviderClasses.Remove(FRxNorm.systemUri(nil));
+    FProviderClasses.Remove(FRxNorm.systemUri(nil)+URI_VERSION_BREAK+FRxNorm.version(nil));
   end;
   FRxNorm.Free;
   FRxNorm := Value;
   if FRxNorm <> nil then
   begin
-    FProviderClasses.add(FRxNorm.system(nil), FRxNorm.Link);
-    FProviderClasses.add(FRxNorm.system(nil)+URI_VERSION_BREAK+FRxNorm.version(nil), FRxNorm.Link);
+    FProviderClasses.add(FRxNorm.systemUri(nil), FRxNorm.Link);
+    FProviderClasses.add(FRxNorm.systemUri(nil)+URI_VERSION_BREAK+FRxNorm.version(nil), FRxNorm.Link);
   end;
 end;
 
@@ -1925,15 +1925,15 @@ procedure TCommonTerminologies.SetNDC(const Value: TNDCServices);
 begin
   if FNDC <> nil then
   begin
-    FProviderClasses.Remove(FNDC.system(nil));
-    FProviderClasses.Remove(FNDC.system(nil)+URI_VERSION_BREAK+FNDC.version(nil));
+    FProviderClasses.Remove(FNDC.systemUri(nil));
+    FProviderClasses.Remove(FNDC.systemUri(nil)+URI_VERSION_BREAK+FNDC.version(nil));
   end;
   FNDC.Free;
   FNDC := Value;
   if FNDC <> nil then
   begin
-    FProviderClasses.add(FNDC.system(nil), FNDC.Link);
-    FProviderClasses.add(FNDC.system(nil)+URI_VERSION_BREAK+FNDC.version(nil), FNDC.Link);
+    FProviderClasses.add(FNDC.systemUri(nil), FNDC.Link);
+    FProviderClasses.add(FNDC.systemUri(nil)+URI_VERSION_BREAK+FNDC.version(nil), FNDC.Link);
   end;
 end;
 
@@ -1941,15 +1941,15 @@ procedure TCommonTerminologies.SetNciMeta(const Value: TNciMetaServices);
 begin
   if FNciMeta <> nil then
   begin
-    FProviderClasses.Remove(FNciMeta.system(nil));
-    FProviderClasses.Remove(FNciMeta.system(nil)+URI_VERSION_BREAK+FNciMeta.version(nil));
+    FProviderClasses.Remove(FNciMeta.systemUri(nil));
+    FProviderClasses.Remove(FNciMeta.systemUri(nil)+URI_VERSION_BREAK+FNciMeta.version(nil));
   end;
   FNciMeta.Free;
   FNciMeta := Value;
   if FNciMeta <> nil then
   begin
-    FProviderClasses.add(FNciMeta.system(nil), FNciMeta.Link);
-    FProviderClasses.add(FNciMeta.system(nil)+URI_VERSION_BREAK+FNciMeta.version(nil), FNciMeta.Link);
+    FProviderClasses.add(FNciMeta.systemUri(nil), FNciMeta.Link);
+    FProviderClasses.add(FNciMeta.systemUri(nil)+URI_VERSION_BREAK+FNciMeta.version(nil), FNciMeta.Link);
   end;
 end;
 
@@ -1957,15 +1957,15 @@ procedure TCommonTerminologies.SetNDFRT(const Value: TNDFRTServices);
 begin
   if FNDFRT <> nil then
   begin
-    FProviderClasses.Remove(FNDFRT.system(nil));
-    FProviderClasses.Remove(FNDFRT.system(nil)+URI_VERSION_BREAK+FNDFRT.version(nil));
+    FProviderClasses.Remove(FNDFRT.systemUri(nil));
+    FProviderClasses.Remove(FNDFRT.systemUri(nil)+URI_VERSION_BREAK+FNDFRT.version(nil));
   end;
   FNDFRT.Free;
   FNDFRT := Value;
   if FNDFRT <> nil then
   begin
-    FProviderClasses.add(FNDFRT.system(nil), FNDFRT.Link);
-    FProviderClasses.add(FNDFRT.system(nil)+URI_VERSION_BREAK+FNDFRT.version(nil), FNDFRT.Link);
+    FProviderClasses.add(FNDFRT.systemUri(nil), FNDFRT.Link);
+    FProviderClasses.add(FNDFRT.systemUri(nil)+URI_VERSION_BREAK+FNDFRT.version(nil), FNDFRT.Link);
   end;
 end;
 
@@ -1973,15 +1973,15 @@ procedure TCommonTerminologies.SetUnii(const Value: TUniiServices);
 begin
   if FUnii <> nil then
   begin
-    FProviderClasses.Remove(FUnii.system(nil));
-    FProviderClasses.Remove(FUnii.system(nil)+URI_VERSION_BREAK+FUnii.version(nil));
+    FProviderClasses.Remove(FUnii.systemUri(nil));
+    FProviderClasses.Remove(FUnii.systemUri(nil)+URI_VERSION_BREAK+FUnii.version(nil));
   end;
   FUnii.Free;
   FUnii := Value;
   if FUnii <> nil then
   begin
-    FProviderClasses.add(FUnii.system(nil), FUnii.Link);
-    FProviderClasses.add(FUnii.system(nil)+URI_VERSION_BREAK+FUnii.version(nil), FUnii.Link);
+    FProviderClasses.add(FUnii.systemUri(nil), FUnii.Link);
+    FProviderClasses.add(FUnii.systemUri(nil)+URI_VERSION_BREAK+FUnii.version(nil), FUnii.Link);
   end;
 end;
 
@@ -1989,15 +1989,15 @@ procedure TCommonTerminologies.SetACIR(const Value: TACIRServices);
 begin
   if FACIR <> nil then
   begin
-    FProviderClasses.Remove(FACIR.system(nil));
-    FProviderClasses.Remove(FACIR.system(nil)+URI_VERSION_BREAK+FACIR.version(nil));
+    FProviderClasses.Remove(FACIR.systemUri(nil));
+    FProviderClasses.Remove(FACIR.systemUri(nil)+URI_VERSION_BREAK+FACIR.version(nil));
   end;
   FACIR.Free;
   FACIR := Value;
   if FACIR <> nil then
   begin
-    FProviderClasses.add(FACIR.system(nil), FACIR.Link);
-    FProviderClasses.add(FACIR.system(nil)+URI_VERSION_BREAK+FACIR.version(nil), FACIR.Link);
+    FProviderClasses.add(FACIR.systemUri(nil), FACIR.Link);
+    FProviderClasses.add(FACIR.systemUri(nil)+URI_VERSION_BREAK+FACIR.version(nil), FACIR.Link);
   end;
 end;
 
@@ -2011,15 +2011,15 @@ procedure TCommonTerminologies.SetUcum(const Value: TUcumServices);
 begin
   if FUcum <> nil then
   begin
-    FProviderClasses.Remove(FUcum.system(nil));
-    FProviderClasses.Remove(FUcum.system(nil)+URI_VERSION_BREAK+FUcum.version(nil));
+    FProviderClasses.Remove(FUcum.systemUri(nil));
+    FProviderClasses.Remove(FUcum.systemUri(nil)+URI_VERSION_BREAK+FUcum.version(nil));
   end;
   FUcum.Free;
   FUcum := Value;
   if FUcum <> nil then
   begin
-    FProviderClasses.add(FUcum.system(nil), FUcum.Link);
-    FProviderClasses.add(FUcum.system(nil)+URI_VERSION_BREAK+FUcum.version(nil), FUcum.Link);
+    FProviderClasses.add(FUcum.systemUri(nil), FUcum.Link);
+    FProviderClasses.add(FUcum.systemUri(nil)+URI_VERSION_BREAK+FUcum.version(nil), FUcum.Link);
   end;
 end;
 

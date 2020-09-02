@@ -28,13 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Database.Dialects, FHIR.Database.Manager, FHIR.Database.Settings,
+  FHIR.Database.Dialects, FHIR.Database.Manager,
   FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 
 type
@@ -104,9 +105,7 @@ type
     procedure init; override;
   public
     constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
-    constructor Create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     destructor Destroy; override;
-    procedure SaveSettings(ASettings : TSettingsAdapter); override;
     class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; override;
   end;
 
@@ -119,11 +118,6 @@ begin
   FFilename := filename;
   FAutoCreate := autoCreate;
   Inherited Create(aName, maxConn);
-end;
-
-constructor TFslDBSQLiteManager.create(AName: String; ASettings: TSettingsAdapter; AIdent: String);
-begin
-  create(AName, ASettings.ReadString('Filename', ''), ASettings.ReadBool('AutoCreate', false));
 end;
 
 function TFslDBSQLiteManager.ConnectionFactory: TFslDBConnection;
@@ -169,11 +163,6 @@ class function TFslDBSQLiteManager.IsSupportAvailable(APlatform: TFslDBPlatform;
 begin
   result := false;
   VMsg := 'develop this bit';
-end;
-
-procedure TFslDBSQLiteManager.SaveSettings(ASettings: TSettingsAdapter);
-begin
-  raise EDBTodo.create('TFslDBSQLiteManager.SaveSettings');
 end;
 
 { TFslDBSQLiteConnection }

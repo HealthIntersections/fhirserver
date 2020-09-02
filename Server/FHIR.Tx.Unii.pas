@@ -73,7 +73,7 @@ type
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -150,7 +150,7 @@ begin
   result := '';
 end;
 
-function TUniiServices.system(context : TCodeSystemProviderContext) : String;
+function TUniiServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
   result := 'http://fdasis.nlm.nih.gov';
 end;

@@ -28,12 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Classes, System.Character,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  SysUtils, Classes, Character,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.R4.Resources, FHIR.R4.PathNode, FHIR.R4.PathEngine, FHIR.R4.Context, FHIR.R4.Base;
 

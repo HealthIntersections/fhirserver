@@ -1,6 +1,6 @@
 unit IOUtils;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 
 {

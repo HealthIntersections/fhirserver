@@ -122,7 +122,6 @@ uses
   FHIR.Database.SQLite3.Objects in '..\library\database\FHIR.Database.SQLite3.Objects.pas',
   FHIR.Database.SQLite3.Utilities in '..\library\database\FHIR.Database.SQLite3.Utilities.pas',
   FHIR.Database.SQLite3.Wrapper in '..\library\database\FHIR.Database.SQLite3.Wrapper.pas',
-  FHIR.Database.Settings in '..\library\database\FHIR.Database.Settings.pas',
   FHIR.Database.Utilities in '..\library\database\FHIR.Database.Utilities.pas',
   FHIR.Javascript in '..\library\javascript\FHIR.Javascript.pas',
   FHIR.Javascript.Base in '..\library\javascript\FHIR.Javascript.Base.pas',

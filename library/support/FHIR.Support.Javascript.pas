@@ -1,7 +1,5 @@
 unit FHIR.Support.Javascript;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -34,6 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
   Subclasses the Javascript library so it knows about FHIR.Support.Base library reference counting
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -41,6 +41,7 @@ uses
   FHIR.Javascript,
   FHIR.Support.Base, FHIR.Support.Collections;
 
+{$IFNDEF FPC}
 type
   TFslJavascript = class (TJavascript)
   protected
@@ -223,5 +224,9 @@ begin
   end;
   result := FJavascript.wrap(FList.Count);
 end;
+
+{$ELSE}
+implementation
+{$ENDIF}
 
 end.

@@ -1,7 +1,5 @@
 Unit FHIR.V2.Dictionary.v21;
 
-
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -31,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 { WARNING: This is generated code. Do not make any changes here }
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 Interface
 

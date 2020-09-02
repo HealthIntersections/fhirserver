@@ -1,7 +1,8 @@
 unit FHIR.Cda.Types;
 
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -16,7 +17,7 @@ are permitted provided that the following conditions are met:
    endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -27,6 +28,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -884,7 +887,7 @@ Type
     Class function DiffType : Tv3QTYDatatype; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property value : TFslDecimal read Fvalue write Setvalue;
     Property code : Tv3CD read Fcode write Setcode;
   End;
@@ -908,7 +911,7 @@ Type
     Class function DiffType : Tv3QTYDatatype; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property value : TFslDecimal read Fvalue write Setvalue;
   End;
 
@@ -933,7 +936,7 @@ Type
     Class function DiffType : Tv3QTYDatatype; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property numerator : Tv3QTY read Fnumerator write Setnumerator;
     Property NumeratorType : Tv3QTYDatatype read FNumeratorType write FNumeratorType;
     Property denominator : Tv3QTY read Fdenominator write Setdenominator;
@@ -972,7 +975,7 @@ Type
       whether other is a PQ and has the same canonical units
     }
     Function comparable(other : TV3QTY) : Tv3BL;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property value : TFslDecimal read Fvalue write Setvalue;
     Property codingRationale : Tv3CodingRationale read FcodingRationale write FcodingRationale;
     Property unit_ : String read Funit write Funit;
@@ -996,7 +999,7 @@ Type
     Function EqualsV(oOther : Tv3Base) : Boolean; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property value : TFslDecimal read Fvalue write Setvalue;
   End;
 
@@ -1020,7 +1023,7 @@ Type
     Class function DiffType : Tv3QTYDatatype; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property value : TFslDecimal read Fvalue write Setvalue;
     Property currency : String read Fcurrency write Fcurrency;
   End;
@@ -1043,7 +1046,7 @@ Type
     Function RIMClassNameV: String; Override;
     function render : String;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property value : String read Fvalue write Fvalue;
   End;
 
@@ -1070,7 +1073,7 @@ Type
     Function AddComp(oComp : Tv3QSET) : Boolean; Virtual;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     {
       Whether a GTS is flat (parts of the base QSET part are encoded as a series
       of repeated "effectiveTime" elements) or whether they are encoded as "comp"
@@ -1100,7 +1103,7 @@ Type
     Function AddComp(oComp : Tv3QSET) : Boolean; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property terms : Tv3SetQSET read Fterms write Setterms;
   End;
 
@@ -1122,7 +1125,7 @@ Type
     Function AddComp(oComp : Tv3QSET) : Boolean; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property terms : Tv3SetQSET read Fterms write Setterms;
   End;
 
@@ -1146,7 +1149,7 @@ Type
     Function AddComp(oComp : Tv3QSET) : Boolean; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property minuend : Tv3QSET read Fminuend write Setminuend;
     Property subtrahend : Tv3QSET read Fsubtrahend write Setsubtrahend;
   End;
@@ -1171,7 +1174,7 @@ Type
     Function AddComp(oComp : Tv3QSET) : Boolean; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property low : Tv3QSET read Flow write Setlow;
     Property high : Tv3QSET read Fhigh write Sethigh;
   End;
@@ -1193,7 +1196,7 @@ Type
     procedure Assign(oSource : TFslObject); Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property terms : Tv3SetQTY read Fterms write Setterms;
   End;
 
@@ -1214,7 +1217,7 @@ Type
     procedure Assign(oSource : TFslObject); Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property code : Tv3CD read Fcode write Setcode;
   End;
 
@@ -1249,7 +1252,7 @@ Type
     Function EqualsV(oOther : Tv3Base) : Boolean; Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property low : Tv3QTY read Flow write Setlow;
     {
       false if lowClosed is null, true if lowClosed is either true or false
@@ -1310,7 +1313,7 @@ Type
       false if isFlexible is null, true if isFlexible is either true or false
     }
     Property HasIsFlexible : boolean read FHasisFlexible write FHasisFlexible;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property phase : Tv3IVL read Fphase write Setphase;
     Property period : Tv3PQ read Fperiod write Setperiod;
     Property frequency : Tv3RTO read Ffrequency write Setfrequency;
@@ -1337,7 +1340,7 @@ Type
     procedure Assign(oSource : TFslObject); Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property event : Tv3TimingEvent read Fevent write Fevent;
     Property offset : Tv3IVL read Foffset write Setoffset;
   End;
@@ -1360,7 +1363,7 @@ Type
     procedure Assign(oSource : TFslObject); Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property probability : TFslDecimal read Fprobability write Setprobability;
     Property value : Tv3ANY read Fvalue write Setvalue;
   End;
@@ -1382,7 +1385,7 @@ Type
     procedure Assign(oSource : TFslObject); Override;
     Function RIMClassNameV: String; Override;
 
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     Property item : Tv3SetUVP read Fitem write Setitem;
   End;
 

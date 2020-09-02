@@ -78,7 +78,7 @@ type
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-    function system(context : TCodeSystemProviderContext) : String; override;
+    function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
@@ -472,7 +472,7 @@ begin
   raise ETerminologyError.create('Not implemented: TICD10Provider.subsumesTest');
 end;
 
-function TICD10Provider.system(context: TCodeSystemProviderContext): String;
+function TICD10Provider.systemUri(context: TCodeSystemProviderContext): String;
 begin
   result := FUrl;
 end;

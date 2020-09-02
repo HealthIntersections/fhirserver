@@ -1,24 +1,4 @@
-
-{ Cross platform Database implementation }
-
-{ To implement a Database interface, subclass TBaseKDBConnection overriding
-  all the virtual methods, and subclass the TFslDBConnectionManager and implement
-  functionality as required to set up and manage connections, and a connection
-  factories.
-
-  When creating databases, you have the choice of creating the appropriate
-  class directly, or using the factory provided in this unit.
-
-  Known implementations:
-
-    Unit         ManagerClass             Description
-    odbcconn     TODBCConnectionManager   Standard ODBC Connection class
-    ibconn       TIBConnectionManager     Direct Interbase interface
-    dbisam       TDBISAMConnManager       DBIsam with auto-recovery
-}
-
 unit FHIR.Database.Manager;
-
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -48,13 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
-  FHIR.Database.Settings,
+  Windows, SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,  FHIR.Support.Fpc,
   FHIR.Database.Logging, FHIR.Database.Dialects;
 
 const
@@ -646,7 +626,9 @@ type
     property SQL: String Read FSql Write FSql;
   end;
 
+  {$IFNDEF FPC}
   TFslDBConnectionProc = reference to Procedure (conn : TFslDBConnection);
+  {$ENDIF}
 
   TFslDBManager = class(TFslObject)
   Private
@@ -684,7 +666,6 @@ type
     procedure init; virtual;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
-    constructor Create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; virtual; abstract;
     destructor Destroy; Override;
 
     function Link : TFslDBManager; overload;
@@ -692,8 +673,9 @@ type
     procedure ExecSQL(ASql, AName : String);
     function CountSQL(ASql, AName : String) : integer;
     function GetConnection(const AUsage: String): TFslDBConnection;
+    {$IFNDEF FPC}
     procedure connection(usage : String; proc : TFslDBConnectionProc);
-    procedure SaveSettings(ASettings : TSettingsAdapter); virtual; abstract;
+    {$ENDIF}
 
     property MaxConnCount : Integer Read FMaxConnCount write SetMaxConnCount;
     property CurrConnCount: Integer Read GetCurrentCount;
@@ -1456,7 +1438,7 @@ begin
       FAvail.Add(AConn.Link);
       try
         if FThreadWaitCount > 0 then
-         FSemaphore.Release;
+          FSemaphore.Release;
       except
         on e : exception do
           if DebugConsoleMessages then Writeln('Error releasing semaphore for '+s+': '+e.message+' for '+s);
@@ -1649,6 +1631,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 procedure TFslDBManager.connection(usage: String; proc: TFslDBConnectionProc);
 var
   conn : TFslDBConnection;
@@ -1665,6 +1648,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 function TFslDBManager.CountSQL(ASql, AName: String): integer;
 var

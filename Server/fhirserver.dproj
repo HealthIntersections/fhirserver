@@ -201,7 +201,6 @@
         <DCCReference Include="..\library\database\FHIR.Database.SQLite3.Objects.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.SQLite3.Utilities.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.SQLite3.Wrapper.pas"/>
-        <DCCReference Include="..\library\database\FHIR.Database.Settings.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Utilities.pas"/>
         <DCCReference Include="..\library\javascript\FHIR.Javascript.pas"/>
         <DCCReference Include="..\library\javascript\FHIR.Javascript.Base.pas"/>

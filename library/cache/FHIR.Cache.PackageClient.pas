@@ -1,7 +1,5 @@
 unit FHIR.Cache.PackageClient;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -211,7 +211,8 @@ class procedure TFHIRPackageClient.loadPackagesForVersion(list: TFslList<TFHIRPa
 var
   this : TFHIRPackageClient;
   l : TFslList<TFHIRPackageInfo>;
-  i : TFHIRPackageInfo;
+  i, t : TFHIRPackageInfo;
+  found : boolean;
 begin
   this := TFHIRPackageClient.Create(server);
   try
@@ -219,8 +220,14 @@ begin
       l := this.search('', '', ver, false);
       try
         for i in l do
-          if not list.contains(function (const t : TFHIRPackageInfo) : boolean begin result := i.id = t.id; end) then
+        begin
+          found := false;
+          for t in list do
+            if t.id = i.id then
+              found := true;
+          if not found then
             list.Add(i.link);
+        end;
       finally
         l.free;
       end;
@@ -230,8 +237,8 @@ begin
   finally
     this.Free;
   end;
-
 end;
+
 
 function TFHIRPackageClient.search(name, canonical, fhirVersion: String; preRelease: boolean): TFslList<TFHIRPackageInfo>;
 var

@@ -1,3 +1,5 @@
+Unit FHIR.v2.Conformance;
+
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 
@@ -28,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 // HCP = HL7 Conformance Profile
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
-Unit FHIR.v2.Conformance;
 
 Interface
 

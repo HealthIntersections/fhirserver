@@ -28,12 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 
 interface
 
 uses
   SysUtils, Classes, Generics.Defaults,
-   FHIR.Support.Base;
+  FHIR.Support.Base;
 
 const
   MAX_TERM_LENGTH = 1024;
@@ -148,15 +150,15 @@ Type
 
   TSnomedConceptSorter = class (TFslObject, IComparer<TSnomedConcept>)
   public
-    function Compare(const left, right : TSnomedConcept) : Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedConcept) : Integer;
   end;
   TSnomedRefinementSorter = class (TFslObject, IComparer<TSnomedRefinement>)
   public
-    function Compare(const left, right : TSnomedRefinement) : Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedRefinement) : Integer;
   end;
   TSnomedRefinementGroupSorter = class (TFslObject, IComparer<TSnomedRefinementGroup>)
   public
-    function Compare(const left, right : TSnomedRefinementGroup) : Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedRefinementGroup) : Integer;
   end;
 
   TSnomedExpressionParser = class (TFslObject)
@@ -648,21 +650,21 @@ end;
 
 { TSnomedConceptSorter }
 
-function TSnomedConceptSorter.Compare(const left, right: TSnomedConcept): Integer;
+function TSnomedConceptSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right: TSnomedConcept): Integer;
 begin
   result := left.compare(right);
 end;
 
 { TSnomedRefinementSorter }
 
-function TSnomedRefinementSorter.Compare(const left, right: TSnomedRefinement): Integer;
+function TSnomedRefinementSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right: TSnomedRefinement): Integer;
 begin
   result := left.compare(right);
 end;
 
 { TSnomedRefinementGroupSorter }
 
-function TSnomedRefinementGroupSorter.Compare(const left, right: TSnomedRefinementGroup): Integer;
+function TSnomedRefinementGroupSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right: TSnomedRefinementGroup): Integer;
 begin
   result := left.compare(right);
 end;

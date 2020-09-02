@@ -58,6 +58,7 @@ Type
     FMessage : String;
     FMessageDetail: String;
     FCacheResponse : boolean;
+    FInTransaction: boolean;
   public
     constructor Create; overload; override;
     constructor Create(mode : TOperationMode; callback : TInstallerCallback; message : String); overload;
@@ -68,6 +69,7 @@ Type
     property message : String read FMessage write FMessage;
     property MessageDetail : String read FMessageDetail write FMessageDetail;
     property CacheResponse : boolean read FCacheResponse write FCacheResponse;
+    property inTransaction : boolean read FInTransaction write FInTransaction;
 
     procedure progress(i : integer);
   end;
@@ -208,7 +210,7 @@ type
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; virtual;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
-    function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
+    function  ExecutePatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); virtual;
@@ -243,8 +245,8 @@ type
     function getResourceByUrl(aType : string; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; virtual; abstract;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResourceV; virtual;
     function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
@@ -632,7 +634,7 @@ begin
           end;
         fcmdOperation : result := ExecuteOperation(context, request, response);
         fcmdUpload : ExecuteUpload(context, request, response);
-        fcmdPatch : ExecutePatch(request, response);
+        fcmdPatch : ExecutePatch(context, request, response);
         fcmdValidate : ExecuteValidation(request, response, 'Validation')
       else
         raise EFHIRException.create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
@@ -1061,7 +1063,7 @@ begin
   raise EFHIRException.create('Unsupported Operation '+request.OperationName+' on resource '+request.ResourceName);
 end;
 
-function TFHIROperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse): Boolean;
+function TFHIROperationEngine.ExecutePatch(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
   raise EFHIRException.create('This server does not implement the "Patch" function');
 end;

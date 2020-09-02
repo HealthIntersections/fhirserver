@@ -2,8 +2,7 @@
 program TestFHIRApplication;
 
 uses
-  Classes, SysUtils,
-  unitregistry;
+  Classes, SysUtils, unitregistry;
 
 !
 type

@@ -28,6 +28,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
+
 interface
 
 uses
@@ -205,6 +208,7 @@ type
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; virtual; abstract;
     function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; virtual; abstract;
     function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; virtual; abstract;
+    function wrapProvenance(o : TFHIRResourceV) : TFhirProvenanceW; virtual; abstract;
 
     function makeOpReqLookup : TFHIRLookupOpRequestW; virtual; abstract;
     function makeOpRespLookup : TFHIRLookupOpResponseW; virtual; abstract;

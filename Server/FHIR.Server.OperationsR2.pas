@@ -52,7 +52,7 @@ type
     function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList; override;
     function readRef(ref : TFHIRObject) : string; override;
     function getOpException(op : TFHIRResourceV) : String; override;
-    procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patientId : String); override;
+    procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patientId : String); override;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); override;
   public
@@ -576,7 +576,7 @@ begin
   FOperations.add(TFhirConvertOperation.create(Factory.link));
 end;
 
-procedure TFhirNativeOperationEngineR2.doAuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; opName: String; httpCode: Integer; name, message: String; patientId : String);
+procedure TFhirNativeOperationEngineR2.doAuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patientId : String);
 var
   se : TFhirAuditEvent;
   c : TFhirCoding;
@@ -3015,7 +3015,7 @@ begin
   if (req.IfNoneExist <> '') then
     op.requestHeaderList.Add('if-none-exist', req.IfNoneExist);
   if req.provenance <> nil then
-    op.requestHeaderList.Add('X-Provenance', ComposeJson(ServerContext.ValidatorContext as TFHIRWorkerContext, req.provenance as TFhirProvenance));
+    op.requestHeaderList.Add('X-Provenance', ComposeJson(ServerContext.ValidatorContext as TFHIRWorkerContext, req.provenance.Resource as TFhirProvenance));
   op.url := req.url;
 
   // response

@@ -834,6 +834,16 @@ type
     function getContext: String; override;
   end;
 
+  TFhirProvenance2 = class (TFhirProvenanceW)
+  private
+    function p : TFhirProvenance;
+  public
+    procedure clearTargets; override;
+    procedure clearSignatures; override;
+    procedure addTarget(url : String); override;
+  end;
+
+
 implementation
 
 uses
@@ -4571,5 +4581,26 @@ begin
   result := (Fres as TFhirTestScript);
 end;
 
+{ TFhirProvenance2 }
+
+procedure TFhirProvenance2.addTarget(url: String);
+begin
+  p.targetList.Append.reference := url;
+end;
+
+procedure TFhirProvenance2.clearSignatures;
+begin
+  p.signatureList.Clear;
+end;
+
+procedure TFhirProvenance2.clearTargets;
+begin
+  p.targetList.Clear;
+end;
+
+function TFhirProvenance2.p: TFhirProvenance;
+begin
+  result := (Fres as TFhirProvenance);
+end;
 
 end.

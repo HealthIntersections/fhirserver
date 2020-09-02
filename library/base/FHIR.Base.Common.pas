@@ -1,7 +1,5 @@
 unit FHIR.Base.Common;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -908,7 +908,14 @@ type
   TFhirTestScriptW = class (TFHIRMetadataResourceW)
   end;
 
-  TFhirProvenanceW = class (TFHIRXVersionResourceWrapper);
+  TFhirProvenanceW = class (TFHIRXVersionResourceWrapper)
+  public
+    function link : TFhirProvenanceW; overload;
+
+    procedure clearTargets; virtual; abstract;
+    procedure clearSignatures; virtual; abstract;
+    procedure addTarget(url : String); virtual; abstract;
+  end;
 
   TFHIRConceptEquivalence = (cmeNull, cmeRelatedto, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact, cmeUnmatched, cmeDisjoint);
 
@@ -1271,7 +1278,6 @@ type
     procedure listAll(list: TFslList<T>);
     procedure listAllM(list: TFslList<TFHIRMetadataResourceW>);
   end;
-
 
 implementation
 
@@ -2304,6 +2310,13 @@ end;
 function TFhirEncounterW.Link: TFhirEncounterW;
 begin
   result := TFhirEncounterW(inherited Link);
+end;
+
+{ TFhirProvenanceW }
+
+function TFhirProvenanceW.link: TFhirProvenanceW;
+begin
+  result := TFhirProvenanceW(inherited link);
 end;
 
 end.

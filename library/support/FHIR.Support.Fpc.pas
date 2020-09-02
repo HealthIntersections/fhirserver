@@ -39,7 +39,7 @@ interface
 
 {$IFDEF FPC}
 uses
-  Classes, SysUtils, Character, RegExpr, FileUtil, Generics.Collections, Graphics, ZLib;
+  Classes, SysUtils, Contnrs, Character, RegExpr, FileUtil, Generics.Collections, Graphics, ZLib;
 
 type
 
@@ -51,6 +51,7 @@ type
     function IsNumber : boolean;
     function isUpper : boolean;
     function IsWhiteSpace : boolean;
+    function ToLower : char;
   end;
 
   { TTimeZone }
@@ -68,7 +69,35 @@ type
     class property Local: TTimeZone read FLocal;
   end;
 
+  TWaitResult = (wrSignaled, wrTimeout, wrAbandoned, wrError, wrIOCompletion);
+
+  { TSemaphore }
+
+  TSemaphore = class
+  private
+    fMaxPermits: Cardinal;
+    fPermits: Cardinal;
+    fLock: TRTLCriticalSection;
+    FBlockQueue: Contnrs.TQueue;
+    function GetWaitCount: Cardinal;
+  public
+    constructor Create(MaxPermits: Cardinal); overload;
+    constructor Create(SemaphoreAttributes: Pointer; AInitialCount, AMaximumCount: Integer; const Name: string); overload;
+    destructor Destroy; override;
+
+    procedure Wait;
+    function WaitFor(timeout : integer) : TWaitResult;
+    procedure Post;
+    procedure Release;
+    function Used: Boolean;
+    property WaitCount: Cardinal read GetWaitCount;
+    property Permits: Cardinal read fPermits;
+    property MaxPermits: Cardinal read fMaxPermits;
+  end;
+
+
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
+procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
 
 function ColorToString(Color: TColor): AnsiString;
 
@@ -86,6 +115,25 @@ const
 procedure ZCompress(const inBuffer: TBytes; out outBuffer: TBytes; level: TZCompressionLevel = zcDefault);
 procedure ZDecompress(const inBuffer: TBytes; out outBuffer: TBytes; outEstimate: Integer = 0);
 
+type
+
+  { TZDecompressionStream }
+
+  TZDecompressionStream = class (TStream)
+  private
+  public
+    constructor Create(stream : TStream; level : integer);
+  end;
+
+  { TYuStemmer_8 }
+
+  TYuStemmer_8 = class (TObject)
+  public
+    Function calc(s : String) : String;
+  end;
+
+function GetStemmer_8(lang : String) : TYuStemmer_8;
+
 {$ENDIF}
 
 
@@ -96,6 +144,20 @@ implementation
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 begin
   result := FileUtil.DeleteDirectory(DirectoryName, OnlyChildren);
+end;
+
+{ TYuStemmer_8 }
+
+function TYuStemmer_8.calc(s: String): String;
+begin
+  result := s;
+end;
+
+{ TZDecompressionStream }
+
+constructor TZDecompressionStream.Create(stream: TStream; level: integer);
+begin
+  inherited create;
 end;
 
 { TTimeZone }
@@ -137,6 +199,11 @@ end;
 function TCharHelper.IsWhiteSpace: boolean;
 begin
   result := Character.IsWhiteSpace(self);
+end;
+
+function TCharHelper.ToLower: char;
+begin
+  result := Character.ToLower(self);
 end;
 
 function ColorToString(Color: TColor): AnsiString;
@@ -253,7 +320,117 @@ begin
   end;
 end;
 
+function GetStemmer_8(lang : String) : TYuStemmer_8;
+begin
+  result := TYuStemmer_8.create;
+end;
+
+procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
+begin
+  if readOnly then
+    FileSetAttr(FileName, FileGetAttr(Filename) and faReadOnly)
+  else
+    FileSetAttr(FileName, FileGetAttr(Filename) and not faReadOnly);
+end;
+
+{ TSemaphore }
+
+function TSemaphore.GetWaitCount: Cardinal;
+begin
+  EnterCriticalSection(fLock);
+  try
+    Result:= FBlockQueue.Count;
+  finally
+    LeaveCriticalSection(fLock);
+  end;
+end;
+
+procedure TSemaphore.Wait;
+var
+  aWait: Boolean;
+  aEvent: PRTLEvent;
+begin
+  //writeln('Sem:');
+  //writeln('  locking...');
+  EnterCriticalSection(fLock);
+  try
+    //writeln('  locked');
+    if (fPermits > 0) then begin
+      Dec(fPermits);
+      aWait:= False;
+    end else begin
+      aEvent:= RTLEventCreate;
+      FBlockQueue.Push(aEvent);
+      aWait:= True;
+    end;
+  finally
+    LeaveCriticalSection(fLock);
+  end;
+  if aWait then begin
+    //writeln('  waiting...');
+    RTLeventWaitFor(aEvent);
+    RTLEventDestroy(aEvent);
+  end;
+  //writeln('  aquired');
+end;
+
+function TSemaphore.WaitFor(timeout: integer) : TWaitResult;
+begin
+  wait;
+  result := wrSignaled;
+end;
+
+procedure TSemaphore.Post;
+begin
+  EnterCriticalSection(fLock);
+  try
+    if FBlockQueue.Count > 0 then
+      RTLEventSetEvent(PRTLEvent(FBlockQueue.Pop))
+    else
+      Inc(fPermits);
+  finally
+    LeaveCriticalSection(fLock);
+  end;
+end;
+
+procedure TSemaphore.Release;
+begin
+  Post;
+end;
+
+function TSemaphore.Used: Boolean;
+begin
+  EnterCriticalSection(fLock);
+  try
+    Result := fPermits < fMaxPermits;
+  finally
+    LeaveCriticalSection(fLock);
+  end;
+end;
+
+constructor TSemaphore.Create(MaxPermits: Cardinal);
+begin
+  fMaxPermits := MaxPermits;
+  fPermits := MaxPermits;
+  InitCriticalSection(fLock);
+  FBlockQueue:= TQueue.Create;
+end;
+
+constructor TSemaphore.Create(SemaphoreAttributes: Pointer; AInitialCount,
+  AMaximumCount: Integer; const Name: string);
+begin
+  fMaxPermits:= AMaximumCount;
+end;
+
+destructor TSemaphore.Destroy;
+begin
+  DoneCriticalSection(fLock);
+  FBlockQueue.Free;
+  inherited Destroy;
+end;
+
 {$ENDIF}
 
 end.
+
 

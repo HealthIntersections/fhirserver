@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -222,7 +223,7 @@ begin
 
 end;
 
-constructor TFHIRGraphQLEngine.Create;
+constructor TFHIRGraphQLEngine.Create(factory : TFHIRFactory);
 begin
   inherited Create;
   FFactory := Factory.link;
@@ -1063,7 +1064,7 @@ end;
 
 function TFHIRGraphQLSearchWrapper.getPropertyValue(propName: string): TFHIRProperty;
 var
-  list : TFslList<TFHIRGraphQLSearchEdge>;
+  list : TFslList<TFslObject>;
   be : TFHIRBundleEntryW;
   bel : TFslList<TFHIRBundleEntryW>;
 begin
@@ -1083,13 +1084,13 @@ begin
     result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('_count', true))
   else if propName = 'edges' then
   begin
-    list := TFslList<TFHIRGraphQLSearchEdge>.create;
+    list := TFslList<TFslObject>.create;
     try
       bel := FBundle.entries;
       try
         for be in bel do
           list.Add(TFHIRGraphQLSearchEdge.create(ffactory.link, be.Link));
-        result := TFHIRProperty.Create<TFHIRGraphQLSearchEdge>(self, propname, 'edge', true, nil, list);
+        result := TFHIRProperty.Create(self, propname, 'edge', true, nil, list);
       finally
         bel.Free;
       end;

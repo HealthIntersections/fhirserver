@@ -455,7 +455,7 @@ begin
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
       if not (('concept' = ccf.prop) and (ccf.Op = foIsA)) then
         if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
-          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.system(nil));
+          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.systemUri(nil));
     end;
   end;
 end;
@@ -651,10 +651,10 @@ begin
           begin
             s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
             if not cs.hasSupplement(s) then
-              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
           end;
 
-          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
+          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
         end
         else
           result := false;
@@ -678,9 +678,9 @@ begin
             begin
               s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
               if not cs.hasSupplement(s) then
-                raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+                raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
             end;
-            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
+            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
           end;
           for s in cc.valueSets do
           begin
@@ -1499,7 +1499,7 @@ begin
           begin
             s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
             if not cs.hasSupplement(s) then
-              raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
           end;
 
           if (not cset.hasConcepts) and (not cset.hasFilters) then
@@ -1519,11 +1519,11 @@ begin
             begin
               if cs.isNotClosed(filter) then
                 if cs.SpecialEnumeration <> '' then
-                  raise ETooCostly.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
-                else  if (cs.system(nil) = ALL_CODE_CS) then
+                  raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+                else  if (cs.systemUri(nil) = ALL_CODE_CS) then
                   raise ETooCostly.create('Cannot filter across all code Systems known to the server')
                 else
-                  raise ETooCostly.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly');
+                  raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
 
               if imports.Empty and (cs.TotalCount > FLimit) and not (FParams.limitedExpansion) then
                 raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
@@ -1542,7 +1542,7 @@ begin
                   while cs.FilterMore(ctxt) do
                   begin
                     c := cs.FilterConcept(ctxt);
-                    processCode(doDelete, list, map, cs.system(c), cs.version(c), cs.code(c), cs.display(c, FParams.displayLanguage), cs.definition(c), expansion, params, hash);
+                    processCode(doDelete, list, map, cs.systemUri(c), cs.version(c), cs.code(c), cs.display(c, FParams.displayLanguage), cs.definition(c), expansion, params, hash);
                   end;
                 finally
                   cs.Close(ctxt);
@@ -1564,7 +1564,7 @@ begin
                 if (display = '') then
                   display := cs.Display(cctxt, FParams.displayLanguage);
                 if filter.passes(display) or filter.passes(cc.code) then
-                  processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cc.code, display, cs.Definition(cctxt), expansion, params, hash);
+                  processCode(doDelete, list, map, cs.systemUri(nil), cs.version(nil), cc.code, display, cs.Definition(cctxt), expansion, params, hash);
               end;
             finally
               cs.Close(cctxt);
@@ -1604,7 +1604,7 @@ begin
                     ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                     filters[i+offset] := cs.filter(fc.prop, fc.Op, fc.value, prep);
                     if filters[i+offset] = nil then
-                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
+                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.systemUri(nil));
                     if cs.isNotClosed(filter, filters[i+offset]) then
                       notClosed := true;
                   end;
@@ -1623,7 +1623,7 @@ begin
                       begin
                         inc(count);
                         if count > FOffset then
-                          processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, FParams.displayLanguage), cs.definition(c), expansion, params, hash);
+                          processCode(doDelete, list, map, cs.systemUri(nil), cs.version(nil), cs.code(c), cs.display(c, FParams.displayLanguage), cs.definition(c), expansion, params, hash);
                       end;
                     finally
                       cs.close(c);
@@ -1661,12 +1661,12 @@ begin
   try
     if (cs.version(nil) <> '') and (expansion <> nil) then
     begin
-      vs := canonical(cs.system(nil), cs.version(nil));
+      vs := canonical(cs.systemUri(nil), cs.version(nil));
       if not expansion.hasParam('version', vs) then
         expansion.addParam('version', vs);
     end;
     if not FParams.excludeNotForUI or not cs.IsAbstract(context) then
-      processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context, FParams.displayLanguage), cs.definition(context), expansion, params, importHash);
+      processCode(doDelete, list, map, cs.systemUri(context), '', cs.Code(context), cs.Display(context, FParams.displayLanguage), cs.definition(context), expansion, params, importHash);
     for i := 0 to cs.ChildCount(context) - 1 do
       processCodeAndDescendants(doDelete, list, map, cs, cs.getcontext(context, i), expansion, params, importHash);
   finally

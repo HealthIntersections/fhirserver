@@ -29,10 +29,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
-  SysUtils, System.RegularExpressions, Classes,
+  SysUtils, RegularExpressions, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXml,
   FHIR.V2.Base, FHIR.V2.Dictionary;
 
@@ -9092,11 +9094,7 @@ Begin
     FormatSegments(oMessage.SegmentMap) +
     '</' + oMessage.StructName + '>';
 
-  {$IFDEF UNICODE}
   result := TEncoding.UTF8.GetBytes(R);
-  {$ELSE}
-  Result := StringAsBytes(UTF16BEToUTF8Str(cp1252ToUTF16Str(r), False)); // it's faster to do a single pass to convert this
-  {$ENDIF}
 End;
 
 Function THL7V2XMLEncoder.FormatSegments(oGroup: THL7V2SegmentGroup): String;

@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -184,7 +185,7 @@ begin
   FBuilder.Append('</div>')
 end;
 
-constructor THtmlPublisher.Create;
+constructor THtmlPublisher.Create(factory : TFHIRFactory);
 begin
   inherited Create;
   FBuilder := TFslStringBuilder.create;

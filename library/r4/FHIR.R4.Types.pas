@@ -31,6 +31,8 @@ unit FHIR.R4.Types;
   
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 // FHIR v4.0.0 generated 2018-12-24T07:10:39+11:00
@@ -741,7 +743,7 @@ Type
     CapabilityStatementKindRequirements); 
   TFhirCapabilityStatementKindEnumList = set of TFhirCapabilityStatementKindEnum;
 
-  // All published FHIR Versions. from http://hl7.org/fhir/ValueSet/FHIR-version
+  // All {$IFNDEF FPC}Published{$ENDIF} FHIR Versions. from http://hl7.org/fhir/ValueSet/FHIR-version
   TFhirFHIRVersionEnum = (
     FHIRVersionNull, // Value is missing from Instance 
     FHIRVersion001, 
@@ -2983,7 +2985,7 @@ Type
     function extensionCount(url : String) : integer; override;
     function extensions(url : String) : TFslList<TFHIRObject>; override;
     procedure addExtension(url : String; value : TFHIRObject); override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property id : String read GetIdST write SetIdST;
     // Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
@@ -3115,7 +3117,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.  Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
     property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
     property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
@@ -3213,7 +3215,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.  Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
     property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
     property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
@@ -3309,7 +3311,7 @@ Type
     function isEmpty : boolean; override;
     function isEnum : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the enum
     property value : String read FValue write SetValue;
     property system : String read FSystem write FSystem;
@@ -3413,7 +3415,7 @@ Type
     function isEmpty : boolean; override;
     function fhirType : string; override;
     function dateValue : TFslDateTime; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the date
     property value : TFslDateTime read FValue write SetValue;
   End;    
@@ -3510,7 +3512,7 @@ Type
     function isEmpty : boolean; override;
     function fhirType : string; override;
     function dateValue : TFslDateTime; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the dateTime
     property value : TFslDateTime read FValue write SetValue;
   End;    
@@ -3606,7 +3608,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the string
     property value : String read FValue write SetValue;
   End;    
@@ -3703,7 +3705,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the integer
     property value : String read FValue write SetValue;
   End;    
@@ -3799,7 +3801,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the uri
     property value : String read FValue write SetValue;
   End;    
@@ -3896,7 +3898,7 @@ Type
     function isEmpty : boolean; override;
     function fhirType : string; override;
     function dateValue : TFslDateTime; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the instant
     property value : TFslDateTime read FValue write SetValue;
   End;    
@@ -3992,7 +3994,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the xhtml
     property value : String read FValue write SetValue;
   End;    
@@ -4088,7 +4090,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the boolean
     property value : Boolean read FValue write SetValue;
   End;    
@@ -4184,7 +4186,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the base64Binary
     property value : TBytes read FValue write SetValue;
   End;    
@@ -4280,7 +4282,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the time
     property value : String read FValue write SetValue;
   End;    
@@ -4376,7 +4378,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-  Published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the decimal
     property value : String read FValue write SetValue;
   End;    
@@ -5226,7 +5228,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Source of the definition for the extension code - a logical name or a URL.
     property url : String read GetUrlST write SetUrlST;
     // Source of the definition for the extension code - a logical name or a URL.
@@ -5333,7 +5335,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The status of the narrative - whether it's entirely generated (from just the defined data or the extensions too), or whether a human authored it and it may contain additional data.
     property status : TFhirNarrativeStatusEnum read GetStatusST write SetStatusST;
     property statusElement : TFhirEnum read FStatus write SetStatus;
@@ -5444,7 +5446,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The type of contributor.
     property type_ : TFhirContributorTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -5580,7 +5582,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate.
     property contentType : String read GetContentTypeST write SetContentTypeST;
     // Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate.
@@ -5726,7 +5728,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The code-valued attribute of the filter. The specified path SHALL be a FHIRPath resolveable on the specified type of the DataRequirement, and SHALL consist only of identifiers, constant indexers, and .resolve(). The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details). Note that the index must be an integer constant. The path must resolve to an element of type code, Coding, or CodeableConcept.
     property path : String read GetPathST write SetPathST;
     // The code-valued attribute of the filter. The specified path SHALL be a FHIRPath resolveable on the specified type of the DataRequirement, and SHALL consist only of identifiers, constant indexers, and .resolve(). The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details). Note that the index must be an integer constant. The path must resolve to an element of type code, Coding, or CodeableConcept.
@@ -5846,7 +5848,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The date-valued attribute of the filter. The specified path SHALL be a FHIRPath resolveable on the specified type of the DataRequirement, and SHALL consist only of identifiers, constant indexers, and .resolve(). The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details). Note that the index must be an integer constant. The path must resolve to an element of type date, dateTime, Period, Schedule, or Timing.
     property path : String read GetPathST write SetPathST;
     // The date-valued attribute of the filter. The specified path SHALL be a FHIRPath resolveable on the specified type of the DataRequirement, and SHALL consist only of identifiers, constant indexers, and .resolve(). The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details). Note that the index must be an integer constant. The path must resolve to an element of type date, dateTime, Period, Schedule, or Timing.
@@ -5960,7 +5962,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The attribute of the sort. The specified path must be resolvable from the type of the required data. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements. Note that the index must be an integer constant.
     property path : String read GetPathST write SetPathST;
     // The attribute of the sort. The specified path must be resolvable from the type of the required data. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements. Note that the index must be an integer constant.
@@ -6085,7 +6087,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The type of the required data, specified as the type name of a resource. For profiles, this value is set to the type of the base resource of the profile.
     property type_ : TFhirAllTypesEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -6216,7 +6218,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The kind of dose or rate specified, for example, ordered or calculated. (defined for API consistency)
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
     // The kind of dose or rate specified, for example, ordered or calculated.
@@ -6356,7 +6358,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Indicates the order in which the dosage instructions should be applied or interpreted.
     property sequence : String read GetSequenceST write SetSequenceST;
     // Indicates the order in which the dosage instructions should be applied or interpreted.
@@ -6518,7 +6520,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Numerical value (with implicit precision).
     property value : String read GetValueST write SetValueST;
     // Numerical value (with implicit precision).
@@ -6631,7 +6633,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The country in which the marketing authorisation has been granted shall be specified It should be specified using the ISO 3166 ? 1 alpha-2 code elements. (defined for API consistency)
     property country : TFhirCodeableConcept read FCountry write SetCountry;
     // The country in which the marketing authorisation has been granted shall be specified It should be specified using the ISO 3166 ? 1 alpha-2 code elements.
@@ -6765,7 +6767,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The purpose of this identifier.
     property use : TFhirIdentifierUseEnum read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
@@ -6889,7 +6891,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Lower limit possible or expected. (defined for API consistency)
     property lowLimit : TFhirQuantity read FLowLimit write SetLowLimit;
     // Lower limit possible or expected.
@@ -7000,7 +7002,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Used to capture quantitative values for a variety of elements. If only limits are given, the arithmetic mean would be the average. If only a single definite value for a given element is given, it would be captured in this field. (defined for API consistency)
     property amount : TFhirType read FAmount write SetAmount;
     // Used to capture quantitative values for a variety of elements. If only limits are given, the arithmetic mean would be the average. If only a single definite value for a given element is given, it would be captured in this field.
@@ -7131,7 +7133,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The identification of the code system that defines the meaning of the symbol in the code.
     property system : String read GetSystemST write SetSystemST;
     // The identification of the code system that defines the meaning of the symbol in the code.
@@ -7273,7 +7275,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The base quantity that a measured value of zero represents. In addition, this provides the units of the entire measurement series. (defined for API consistency)
     property origin : TFhirQuantity read FOrigin write SetOrigin;
     // The base quantity that a measured value of zero represents. In addition, this provides the units of the entire measurement series.
@@ -7407,7 +7409,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The age of the specific population. (defined for API consistency)
     property age : TFhirType read FAge write SetAge;
     // The age of the specific population.
@@ -7522,7 +7524,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The value of the numerator. (defined for API consistency)
     property numerator : TFhirQuantity read FNumerator write SetNumerator;
     // The value of the numerator.
@@ -7637,7 +7639,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources.
     property reference : String read GetReferenceST write SetReferenceST;
     // A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources.
@@ -7763,7 +7765,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The type of triggering event.
     property type_ : TFhirTriggerTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -7885,7 +7887,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The start of the period. The boundary is inclusive.
     property start : TFslDateTime read GetStartST write SetStartST;
     // The start of the period. The boundary is inclusive.
@@ -8006,7 +8008,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The value of the measured amount. The value includes an implicit precision in the presentation of the value.
     property value : String read GetValueST write SetValueST;
     // The value of the measured amount. The value includes an implicit precision in the presentation of the value.
@@ -8125,7 +8127,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The low limit. The boundary is inclusive. (defined for API consistency)
     property low : TFhirQuantity read FLow write SetLow;
     // The low limit. The boundary is inclusive.
@@ -8252,7 +8254,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The type of relationship to the related artifact.
     property type_ : TFhirRelatedArtifactTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -8387,7 +8389,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The individual responsible for making the annotation. (defined for API consistency)
     property author : TFhirType read FAuthor write SetAuthor;
     // The individual responsible for making the annotation.
@@ -8502,7 +8504,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Unique identifier for the packaged Medicinal Product. (defined for API consistency)
     property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
     // Unique identifier for the packaged Medicinal Product.
@@ -8619,7 +8621,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The name of an individual to contact.
     property name : String read GetNameST write SetNameST;
     // The name of an individual to contact.
@@ -8739,7 +8741,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to A brief, natural language description of the condition that effectively communicates the intended semantics.
     property description : String read GetDescriptionST write SetDescriptionST;
     // A brief, natural language description of the condition that effectively communicates the intended semantics.
@@ -8859,7 +8861,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to A code that identifies the type of context being specified by this usage context. (defined for API consistency)
     property code : TFhirCoding read FCode write SetCode;
     // A code that identifies the type of context being specified by this usage context.
@@ -8983,7 +8985,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // An indication of the reason that the entity signed this document. This may be explicitly included as part of the signature information and can be used when determining accountability for various actions concerning the document.
     property type_List : TFhirCodingList read GetType_List;
     property hasType_List : boolean read GetHasType_List;
@@ -9135,7 +9137,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Where applicable, the height can be specified using a numerical value and its unit of measurement The unit of measurement shall be specified in accordance with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be used. (defined for API consistency)
     property height : TFhirQuantity read FHeight write SetHeight;
     // Where applicable, the height can be specified using a numerical value and its unit of measurement The unit of measurement shall be specified in accordance with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be used.
@@ -9285,7 +9287,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // A reference to a code defined by a terminology system.
     property codingList : TFhirCodingList read GetCodingList;
     property hasCodingList : boolean read GetHasCodingList;
@@ -9413,7 +9415,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The name of the parameter used to allow access to the value of the parameter in evaluation contexts.
     property name : String read GetNameST write SetNameST;
     // The name of the parameter used to allow access to the value of the parameter in evaluation contexts.
@@ -9555,7 +9557,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Telecommunications form for contact point - what communications system is required to make use of the contact.
     property system : TFhirContactPointSystemEnum read GetSystemST write SetSystemST;
     property systemElement : TFhirEnum read FSystem write SetSystem;
@@ -9692,7 +9694,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Identifies the purpose for this name.
     property use : TFhirNameUseEnum read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
@@ -9835,7 +9837,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The version specific identifier, as it appears in the version portion of the URL. This value changes when the resource is created, updated, or deleted.
     property versionId : String read GetVersionIdST write SetVersionIdST;
     // The version specific identifier, as it appears in the version portion of the URL. This value changes when the resource is created, updated, or deleted.
@@ -9990,7 +9992,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // The purpose of this address.
     property use : TFhirAddressUseEnum read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
@@ -10143,7 +10145,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Designates which child elements are used to discriminate between the slices when processing an instance. If one or more discriminators are provided, the value of the child elements in the instance data SHALL completely distinguish which slice the element in the resource matches based on the allowed values for those elements in each of the slices.
     property discriminatorList : TFhirElementDefinitionSlicingDiscriminatorList read GetDiscriminatorList;
     property hasDiscriminatorList : boolean read GetHasDiscriminatorList;
@@ -10260,7 +10262,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // How the element value is interpreted when discrimination is evaluated.
     property type_ : TFhirDiscriminatorTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -10372,7 +10374,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The Path that identifies the base element - this matches the ElementDefinition.path for that element. Across FHIR, there is only one base definition of any element - that is, an element definition on a [StructureDefinition](structuredefinition.html#) without a StructureDefinition.base.
     property path : String read GetPathST write SetPathST;
     // The Path that identifies the base element - this matches the ElementDefinition.path for that element. Across FHIR, there is only one base definition of any element - that is, an element definition on a [StructureDefinition](structuredefinition.html#) without a StructureDefinition.base.
@@ -10497,7 +10499,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to URL of Data type or Resource that is a(or the) type used for this element. References are URLs that are relative to http://hl7.org/fhir/StructureDefinition e.g. "string" is a reference to http://hl7.org/fhir/StructureDefinition/string. Absolute URLs are only allowed in logical models.
     property code : String read GetCodeST write SetCodeST;
     // URL of Data type or Resource that is a(or the) type used for this element. References are URLs that are relative to http://hl7.org/fhir/StructureDefinition e.g. "string" is a reference to http://hl7.org/fhir/StructureDefinition/string. Absolute URLs are only allowed in logical models.
@@ -10615,7 +10617,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Describes the purpose of this example amoung the set of examples.
     property label_ : String read GetLabel_ST write SetLabel_ST;
     // Describes the purpose of this example amoung the set of examples.
@@ -10744,7 +10746,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
     property key : String read GetKeyST write SetKeyST;
     // Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
@@ -10881,7 +10883,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Indicates the degree of conformance expectations associated with this binding - that is, the degree to which the provided value set must be adhered to in the instances.
     property strength : TFhirBindingStrengthEnum read GetStrengthST write SetStrengthST;
     property strengthElement : TFhirEnum read FStrength write SetStrength;
@@ -11002,7 +11004,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to An internal reference to the definition of a mapping.
     property identity : String read GetIdentityST write SetIdentityST;
     // An internal reference to the definition of a mapping.
@@ -11227,7 +11229,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource or extension.
     property path : String read GetPathST write SetPathST;
     // The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource or extension.
@@ -11539,7 +11541,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Either a duration for the length of the timing schedule, a range of possible length, or outer bounds for start and/or end limits of the timing schedule. (defined for API consistency)
     property bounds : TFhirType read FBounds write SetBounds;
     // Either a duration for the length of the timing schedule, a range of possible length, or outer bounds for start and/or end limits of the timing schedule.
@@ -11707,7 +11709,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
     // Identifies specific times when the event occurs.
     property eventList : TFhirDateTimeList read GetEventList;
     property hasEventList : boolean read GetHasEventList;
@@ -11812,7 +11814,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
   end;
 
 
@@ -11903,7 +11905,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
   end;
 
 
@@ -11994,7 +11996,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
   end;
 
 
@@ -12085,7 +12087,7 @@ Type
     function fhirType : string; override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
-  published
+  {$IFNDEF FPC}Published{$ENDIF}
   end;
 
 

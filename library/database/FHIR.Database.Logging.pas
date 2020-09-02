@@ -1,6 +1,5 @@
 unit FHIR.Database.Logging;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -28,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -100,7 +101,8 @@ begin
   inherited;
   FLock := TFslLock.Create;
   FTotal := 0;
-  FList := TStringList.create(true);
+  FList := TStringList.create;
+  FList.OwnsObjects := true;
   FList.Sorted := true;
   FList.Duplicates := dupError;
 end;
@@ -220,7 +222,7 @@ begin
   FTotalRows := 0;
   FTotalPreps := 0;
   FRunningAvg := 0;
-  FExceptions := TStringList.create(false);
+  FExceptions := TStringList.create;
 end;
 
 destructor TFslDBLogEntry.destroy;

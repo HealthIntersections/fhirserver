@@ -1,7 +1,5 @@
 unit FHIR.Javascript;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 A unit that allows you to execute Javascript inside your application,
 with access to functionality as defined by you.
@@ -51,6 +49,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -59,7 +59,7 @@ uses
   Generics.Collections,
   ChakraCoreUtils, ChakraCore, ChakraCommon,
   FHIR.Support.Base, FHIR.Support.Utilities;
-
+{$IFNDEF FPC}
 type
   // facade for ChakraCommon:
   JsValueRef = ChakraCommon.JsValueRef;
@@ -1327,6 +1327,9 @@ begin
   end;
   result := FJavascript.wrap(FList.Count);
 end;
+{$ELSE}
+implementation
+{$ENDIF}
 
 end.
 

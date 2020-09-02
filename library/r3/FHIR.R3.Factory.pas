@@ -1,7 +1,5 @@
 ﻿unit FHIR.R3.Factory;
 
-{$I fhir.r3.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -28,7 +26,11 @@
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
+
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r3.inc}
 
 interface
 
@@ -69,7 +71,7 @@ type
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
-    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
@@ -117,6 +119,7 @@ type
     function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; override;
     function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; override;
     function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; override;
+    function wrapProvenance(o : TFHIRResourceV) : TFHIRProvenanceW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
@@ -129,7 +132,7 @@ type
 implementation
 
 uses
-  Soap.EncdDecd,
+  EncdDecd,
   FHIR.Client.HTTP,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator, FHIR.R3.Profiles, FHIR.R3.Operations, FHIR.R3.ElementModel,
   FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.AuthMap;
@@ -165,7 +168,7 @@ begin
     end;
 end;
 
-procedure TFHIRFactoryR3.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = []);
+procedure TFHIRFactoryR3.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param)
@@ -654,6 +657,14 @@ begin
     result := nil
   else
     result := TFhirPeriod3.Create(r);
+end;
+
+function TFHIRFactoryR3.wrapProvenance(o: TFHIRResourceV): TFHIRProvenanceW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFHIRProvenance3.Create(o);
 end;
 
 function TFHIRFactoryR3.wrapQuantity(r: TFHIRObject): TFhirQuantityW;

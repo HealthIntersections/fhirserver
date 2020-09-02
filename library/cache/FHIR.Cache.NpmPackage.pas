@@ -1,7 +1,5 @@
 unit FHIR.Cache.NpmPackage;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -135,6 +135,7 @@ Type
     function GetWebLocation: String;
     function findFolder(name : String) : TNpmPackageFolder;
     function GetAuthor: String;
+    function GetNotForPublication: Boolean;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -163,6 +164,7 @@ Type
     property name : String read GetName;
     property date : String read GetDate;
     property canonical : String read GetCanonical;
+    property notForPublication : Boolean read GetNotForPublication;
     property version : String read GetVersion;
     property fhirVersion : String read GetFhirVersion;
     property fhirVersionList : String read GetFhirVersionList;
@@ -653,6 +655,11 @@ end;
 function TNpmPackage.GetName: String;
 begin
   result := info.str['name'];
+end;
+
+function TNpmPackage.GetNotForPublication: Boolean;
+begin
+  result := info.bool['notForPublication'];
 end;
 
 function TNpmPackage.GetSummary: String;

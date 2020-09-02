@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -49,7 +51,9 @@ type
   end;
   PTreeDataPointer = ^TTreeDataPointer;
 
+  {$IFNDEF FPC}
   TFHIRPathExpressionNodeVisitProc = reference to procedure(item : TFHIRPathExpressionNodeV);
+  {$ENDIF}
 
   TFHIRPathExpressionNodeV = class (TFslObject)
   private
@@ -63,7 +67,9 @@ type
 
     function summary : String; virtual; abstract;
 
+    {$IFNDEF FPC}
     procedure visitAll(proc : TFHIRPathExpressionNodeVisitProc); virtual; abstract;
+    {$ENDIF}
     function nodeOpName : String; virtual; abstract;
     function nodeName : String; virtual; abstract;
     function nodeChildCount : integer; virtual; abstract;
@@ -843,7 +849,7 @@ begin
   begin
     result := true;
     for i := 2 to length(FCurrent) do
-      if not CharInSet(FCurrent[i], ['a'..'z', 'A'..'Z', '0'..'Z', '_']) then
+      if not CharInSet(FCurrent[i], ['a'..'z', 'A'..'Z', '0'..'9', '_']) then
         exit(false);
   end;
 end;

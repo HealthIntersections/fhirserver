@@ -28,12 +28,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream,
-  YuStemmer, FHIR.Loinc.Services;
+  {$IFNDEF FPC}
+  YuStemmer,
+  {$ENDIF}
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Fpc,
+  FHIR.Loinc.Services;
 
 Const
   FLAG_LONG_COMMON = 1;
@@ -377,7 +382,11 @@ begin
 
   FWordList.Objects[i] := TObject(m);
 
+  {$IFDEF FPC}
+  sStem := sDesc;
+  {$ELSE}
   sStem := FStemmer.calc(sDesc);
+  {$ENDIF}
   if not FStemList.Find(sStem, i) Then
   Begin
     oList := TFslObjectList.Create;
@@ -1054,7 +1063,9 @@ begin
   FLanguages := TFslList<TLoincLanguage>.create;
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
+  {$IFNDEF FPC}
   FStemmer := GetStemmer_8('english');
+  {$ENDIF}
   oSvc := TLOINCServices.Create;
   Try
     Flanguages.add(TLoincLanguage.create('en', 'US'));

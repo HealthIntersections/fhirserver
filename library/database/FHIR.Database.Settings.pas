@@ -1,6 +1,5 @@
 unit FHIR.Database.Settings;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -48,7 +48,7 @@ type
 
   ESettingsError = class(Exception);
 
-  TSettingsAdapter = class(TFslObject)
+(*  TSettingsAdapter = class(TFslObject)
   Private
   Protected
     procedure ApplyTo(const ATarget: TSettingsAdapter); Virtual;
@@ -137,12 +137,13 @@ type
     property Strings: TStrings Read GetStrings;
 
   end;
-
+        *)
 implementation
 
 uses
   TypInfo;
 
+(*
 { TSettingsAdapter }
 
 procedure TSettingsAdapter.Apply(const ASource: TSettingsAdapter);
@@ -151,7 +152,7 @@ begin
 end;
 
 function GetBeforeDot(var AString: String; var ABefore: String): Boolean;
-var    
+var
   LDotPos: Integer;
 begin
   Result := False;
@@ -500,7 +501,7 @@ begin
     begin
       begin
       case InBuf[InNdx] of
-        'A'..'Z': 
+        'A'..'Z':
           begin
           Value := (Value shl 6) + Longint(Ord(InBuf[InNdx])) - Longint(Ord('A'));
           Inc(Count);
@@ -842,5 +843,5 @@ function TStringSettings.ValueExists(const AName: String): Boolean;
 begin
   Result := FStrings.IndexOfName(AName) <> -1;
 end;
-
+    *)
 end.

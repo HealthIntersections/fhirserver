@@ -1,7 +1,5 @@
 unit FHIR.Base.Objects;
 
-{$IFDEF FPC}{$mode delphi}{$ENDIF}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 Interface
 
@@ -227,11 +227,13 @@ type
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
-    constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
+    constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;    bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass); Overload;
     destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
+    class function create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty; Overload;
+
     {$IFNDEF FPC}
     class function create<T : TFslObject>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty; Overload;
     {$ENDIF}
@@ -1251,7 +1253,22 @@ begin
   FList := TFHIRObjectList.Create;
 end;
 
+class function TFHIRProperty.create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty;
+var
+  o : TFslObject;
+begin
+  result := TFHIRProperty.create(oOwner, sName, sType, bList, cClass);
+  try
+    for o in oList do
+      result.FList.Add(o.Link);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 {$IFNDEF FPC}
+
 class function TFHIRProperty.create<T>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty;
 var
   o : T;
