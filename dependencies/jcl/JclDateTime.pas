@@ -79,7 +79,7 @@ uses
   {$ENDIF ~LINUX}
   {$ENDIF FPC}
   {$ENDIF}
-  JclBase, JclResources;
+  JclBase, JclResources, JclSysUtils;
 
 const
   // 1970-01-01T00:00:00 in TDateTime
@@ -230,9 +230,6 @@ const
 
 implementation
 
-uses
-  JclSysUtils;
-
 const
   DaysInMonths: array [1..12] of Integer =
     (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -263,7 +260,7 @@ const
   //   7 : first full week
   //ISOFirstWeekMinDays = 4;
 
-function EncodeDate(const Year: Integer; Month, Day: Word): TDateTime; overload;
+function EncodeDate(const Year: Integer; Month, Day: Word): TDateTime;
 begin
   if (Year > 0) and (Year < EncodeDateMaxYear + 1) then
     Result := {$IFDEF HAS_UNITSCOPE}System.{$ENDIF}SysUtils.EncodeDate(Year, Month, Day)
