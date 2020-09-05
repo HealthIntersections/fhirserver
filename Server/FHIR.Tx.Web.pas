@@ -138,13 +138,19 @@ begin
     html.AddTableCell('Choose SNOMED Edition');
     html.AddTableCell('Version');
     html.AddTableCell('Date');
+    html.AddTableCell('UseCount');
+    html.AddTableCell('Last Used');
+    html.AddTableCell('Load Status');
     html.EndTableRow;
     for ss in FServer.CommonTerminologies.Snomed do
     begin
       html.StartTableRow;
-      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId);
+      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId+'-'+ss.VersionDate);
       html.AddTableCell(ss.VersionUri);
       html.AddTableCell(ss.VersionDate);
+      html.AddTableCell(inttostr(ss.UseCount));
+      html.AddTableCell(ss.LastUseStatus);
+      html.AddTableCell(ss.LoadStatus);
       html.EndTableRow;
     end;
     html.EndTable;
@@ -984,6 +990,7 @@ begin
     else
     begin
       ss.RecordUse;
+      ss.checkLoaded;
       result := 'Snomed Tool: '+parts[length(parts)-1];
       response.ContentType := 'text/xml';
       try
@@ -1033,7 +1040,7 @@ begin
     parts := request.Document.Split(['/']);
     ss := nil;
     for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId = parts[2] then
+      if t.EditionId+'-'+t.VersionDate = parts[2] then
         ss := t;
     if ss = nil then
     begin
@@ -1044,6 +1051,7 @@ begin
     else
     begin
       ss.RecordUse;
+      ss.checkLoaded;
       code := request.UnparsedParams;
       result := 'Snomed Doco ('+ss.EditionName+'): '+code;
 

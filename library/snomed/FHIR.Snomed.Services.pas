@@ -61,7 +61,7 @@ Uses
   {$IFNDEF FPC}
   YuStemmer,
   {$ENDIF}
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers, FHIR.Support.Fpc,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers, FHIR.Support.Fpc, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.CdsHooks.Utilities,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
@@ -71,6 +71,7 @@ Const
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
+  LOAD_PERIOD = DATETIME_MINUTE_ONE * 3;
 
 var
   SNOMED_DATE_FORMAT : TFormatSettings;
@@ -127,17 +128,18 @@ type
   // We store snomed as three Strings
   //   each entry in the String starts with a byte length, and then the series of characters as bytes
   TSnomedStrings = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-    Public
-      Function GetEntry(iIndex : Cardinal):String;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+  Public
+    Function GetEntry(iIndex : Cardinal):String;
 
-      Procedure StartBuild;
-      Procedure Reopen;
-      Function AddString(Const s : String) : Cardinal;
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Procedure Reopen;
+    Function AddString(Const s : String) : Cardinal;
+    Procedure DoneBuild;
   End;
 
 const
@@ -147,51 +149,54 @@ const
 Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
   TSnomedWords = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-   Public
-      Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
-      Function Count : Integer;
-      Function GetString(iIndex : Cardinal) : Cardinal;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+ Public
+    Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
+    Function Count : Integer;
+    Function GetString(iIndex : Cardinal) : Cardinal;
 
-      Procedure StartBuild;
-      Procedure AddWord(index : Cardinal; Flags : Byte);
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Procedure AddWord(index : Cardinal; Flags : Byte);
+    Procedure DoneBuild;
   End;
 
   // stem word index. Every word is 8 bytes - a 4 byte index into the strings, and a 4 byte index into the references
   TSnomedStems = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-   Public
-      Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
-      Function Count : Integer;
-      Function GetString(iIndex : Cardinal) : Cardinal;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+ Public
+    Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
+    Function Count : Integer;
+    Function GetString(iIndex : Cardinal) : Cardinal;
 
-      Procedure StartBuild;
-      Procedure AddStem(index, reference : Cardinal);
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Procedure AddStem(index, reference : Cardinal);
+    Procedure DoneBuild;
   End;
 
 
   // 2. a list of list of references
   TSnomedReferences = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-    Public
-      Function GetReferences(iIndex : Cardinal) : TCardinalArray;
-      Function Getlength(iIndex : Cardinal) : Cardinal;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+  Public
+    Function GetReferences(iIndex : Cardinal) : TCardinalArray;
+    Function Getlength(iIndex : Cardinal) : Cardinal;
 
-      Procedure StartBuild;
-      Function AddReferences(Const a : TCardinalArray) : Cardinal;
-      Procedure DoneBuild;
-      Procedure Post;
+    Procedure StartBuild;
+    Function AddReferences(Const a : TCardinalArray) : Cardinal;
+    Procedure DoneBuild;
+    Procedure Post;
   End;
 
   // 3. a list of descriptions with flag. we do not store description id
@@ -223,21 +228,22 @@ const
 
 Type
   TSnomedDescriptions = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-    Public
-      function Count : Cardinal;
-      Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
-      function ConceptByIndex(iIndex : Cardinal) : cardinal;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+  Public
+    function Count : Cardinal;
+    Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
+    function ConceptByIndex(iIndex : Cardinal) : cardinal;
 
 
-      Procedure StartBuild;
-      Function AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind, caps : Cardinal; active : Boolean; lang : byte) : Cardinal;
-      Procedure UpdateDetails(iIndex : Cardinal; id : UInt64; concept : Cardinal);
-      Procedure DoneBuild;
-      Procedure SetRefsets(iIndex : Cardinal; refsets, valueses : Cardinal);
+    Procedure StartBuild;
+    Function AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind, caps : Cardinal; active : Boolean; lang : byte) : Cardinal;
+    Procedure UpdateDetails(iIndex : Cardinal; id : UInt64; concept : Cardinal);
+    Procedure DoneBuild;
+    Procedure SetRefsets(iIndex : Cardinal; refsets, valueses : Cardinal);
   End;
 
   TSnomedDescriptionIndex = class (TFslObject)
@@ -245,6 +251,7 @@ Type
     FMaster : TBytes;
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
+    procedure clear;
   Public
     Function FindDescription(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
 
@@ -276,50 +283,51 @@ Const
 
 Type
   TSnomedConceptList = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-    Public
-      Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
-      function getConceptId(iIndex : Cardinal) : UInt64;
-      procedure GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
-      Function GetParent(iIndex : Cardinal): Cardinal;
-      Function GetIdentity(iIndex : Cardinal): UInt64;
-      Function Count : Integer;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+  Public
+    Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
+    function getConceptId(iIndex : Cardinal) : UInt64;
+    procedure GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+    Function GetParent(iIndex : Cardinal): Cardinal;
+    Function GetIdentity(iIndex : Cardinal): UInt64;
+    Function Count : Integer;
 
-      procedure SetParents(iIndex: Cardinal; const Active, Inactive: Cardinal);
-      procedure SetDescriptions(iIndex: Cardinal; const Value: Cardinal);
-      Function GetDescriptions(iIndex: Cardinal) : Cardinal;
-      procedure SetInbounds(iIndex: Cardinal; const Value: Cardinal);
-      Function GetInbounds(iIndex: Cardinal) : Cardinal;
-      procedure SetOutbounds(iIndex: Cardinal; const Value: Cardinal);
-      Function GetOutbounds(iIndex: Cardinal): Cardinal;
+    procedure SetParents(iIndex: Cardinal; const Active, Inactive: Cardinal);
+    procedure SetDescriptions(iIndex: Cardinal; const Value: Cardinal);
+    Function GetDescriptions(iIndex: Cardinal) : Cardinal;
+    procedure SetInbounds(iIndex: Cardinal; const Value: Cardinal);
+    Function GetInbounds(iIndex: Cardinal) : Cardinal;
+    procedure SetOutbounds(iIndex: Cardinal; const Value: Cardinal);
+    Function GetOutbounds(iIndex: Cardinal): Cardinal;
 
-      Function GetAllDesc(iIndex: Cardinal) : Cardinal;
-      procedure SetAllDesc(iIndex: Cardinal; Value: Cardinal);
-      Function GetDepth(iIndex: Cardinal) : Byte;
-      procedure SetDepth(iIndex: Cardinal; Value: Byte);
-      Function GetStems(iIndex: Cardinal) : Cardinal;
-      procedure SetStems(iIndex: Cardinal; Value: Cardinal);
+    Function GetAllDesc(iIndex: Cardinal) : Cardinal;
+    procedure SetAllDesc(iIndex: Cardinal; Value: Cardinal);
+    Function GetDepth(iIndex: Cardinal) : Byte;
+    procedure SetDepth(iIndex: Cardinal; Value: Byte);
+    Function GetStems(iIndex: Cardinal) : Cardinal;
+    procedure SetStems(iIndex: Cardinal; Value: Cardinal);
 
-      Function GetModuleId(iIndex: Cardinal) : Cardinal;
-      procedure SetModuleId(iIndex: Cardinal; Value: Cardinal);
-      Function GetStatus(iIndex: Cardinal) : Cardinal;
-      procedure SetStatus(iIndex: Cardinal; Value: Cardinal);
-      Function GetRefsets(iIndex: Cardinal) : Cardinal;
-      procedure SetRefsets(iIndex: Cardinal; Value: Cardinal);
+    Function GetModuleId(iIndex: Cardinal) : Cardinal;
+    procedure SetModuleId(iIndex: Cardinal; Value: Cardinal);
+    Function GetStatus(iIndex: Cardinal) : Cardinal;
+    procedure SetStatus(iIndex: Cardinal; Value: Cardinal);
+    Function GetRefsets(iIndex: Cardinal) : Cardinal;
+    procedure SetRefsets(iIndex: Cardinal; Value: Cardinal);
 
-      procedure SetFlag(iIndex: Cardinal; iFlags: Byte);
-      procedure SetDate(iIndex: Cardinal; effectiveTime: TSnomedDate);
+    procedure SetFlag(iIndex: Cardinal; iFlags: Byte);
+    procedure SetDate(iIndex: Cardinal; effectiveTime: TSnomedDate);
 
-      procedure SetNormalForm(iIndex: Cardinal; const Value: Cardinal);
-      function GetNormalForm(iIndex: Cardinal) : Cardinal;
+    procedure SetNormalForm(iIndex: Cardinal; const Value: Cardinal);
+    function GetNormalForm(iIndex: Cardinal) : Cardinal;
 
-      // these presume that the terms are registered in order
-      Procedure StartBuild;
-      Function AddConcept(iIdentity : UInt64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
-      Procedure DoneBuild;
+    // these presume that the terms are registered in order
+    Procedure StartBuild;
+    Function AddConcept(iIdentity : UInt64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
+    Procedure DoneBuild;
   End;
 
 // 5. a list of relationships
@@ -329,19 +337,20 @@ Const
 
 Type
   TSnomedRelationshipList = class (TFslObject)
-    private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-    Public
-      // for Persistence
-      Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : Integer);
+  private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+  Public
+    // for Persistence
+    Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : Integer);
 
-      Procedure StartBuild;
-      Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Active, Defining : Boolean; Group : integer) : Cardinal;
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Active, Defining : Boolean; Group : integer) : Cardinal;
+    Procedure DoneBuild;
 
-      function count : integer;
+    function count : integer;
   End;
 
 Type
@@ -363,17 +372,18 @@ Type
 
   // 2. a list of list of references
   TSnomedReferenceSetMembers = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-    Public
-      Function GetMembers(iIndex : Cardinal) : TSnomedReferenceSetMemberArray;
-      Function GetMemberCount(iIndex : Cardinal) : cardinal;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    procedure clear;
+  Public
+    Function GetMembers(iIndex : Cardinal) : TSnomedReferenceSetMemberArray;
+    Function GetMemberCount(iIndex : Cardinal) : cardinal;
 
-      Procedure StartBuild;
-      Function AddMembers(ids : boolean; Const a : TSnomedReferenceSetMemberArray) : Cardinal;
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Function AddMembers(ids : boolean; Const a : TSnomedReferenceSetMemberArray) : Cardinal;
+    Procedure DoneBuild;
   End;
 
 
@@ -382,6 +392,7 @@ Type
     FMaster : TBytes;
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
+    procedure clear;
   Public
     Procedure GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
@@ -470,9 +481,16 @@ operations
 
   TSnomedServices = class (TCodeSystemProvider)
   Private
+    FLock : TFslLock;
+    FLoaded : TDateTime;
+    FLastUse : TDateTime;
+    FSourceFile : String;
+    FBuilding : boolean;
+    FLoading : boolean;
+
     FEdition : String;
     FVersion : String;
-    FLoading : boolean;
+    FTotalCount : Integer;
     FActiveRoots : UInt64Array;
     FInactiveRoots : UInt64Array;
     FIs_a_Index, FFSN, FPreferredTerm, FDefaultLanguage : Cardinal;
@@ -489,7 +507,6 @@ operations
 
     FWords : TSnomedWords;
     FStems : TSnomedStems;
-    FLoaded: Boolean;
     FEditionUri : String;
     FEditionId : String;
     FEditionName : String;
@@ -533,13 +550,35 @@ operations
     procedure rationaliseExpr(exp: TSnomedExpression);
     function GetEditionName: String;
     function GetEditionId: String;
+
+    procedure checkIsLoaded;
+    function GetConcept: TSnomedConceptList;
+    function GetDesc: TSnomedDescriptions;
+    function GetDescRef: TSnomedDescriptionIndex;
+    function GetRefs: TSnomedReferences;
+    function GetRefsetIndex: TSnomedReferenceSetIndex;
+    function GetRefsetMembers: TSnomedReferenceSetMembers;
+    function GetRel: TSnomedRelationshipList;
+    function GetStems: TSnomedStems;
+    function GetStrings: TSnomedStrings;
+    function GetWords: TSnomedWords;
+    function GetLoaded: Boolean;
+    procedure LoadFromSource;
+    procedure InitialLoad;
+    procedure Unload;
+    function GetActiveRoots: UInt64Array;
+    function GetDefaultLanguage: Cardinal;
+    function GetInActiveRoots: UInt64Array;
+    function GetIs_a_Index: Cardinal;
   public
     constructor Create; Override;
     destructor Destroy; Override;
     Function Link : TSnomedServices; Overload;
-    Procedure Load(Const sFilename : String);
+    Procedure Load(Const sFilename : String; immediate : boolean);
     Procedure Save(Const sFilename : String);
-    property Loading : boolean read FLoading write FLoading;
+    procedure checkLoaded;
+    procedure checkUnload;
+    property Building : boolean read FBuilding write FBuilding;
 
     // helper functions
     Function StringToId(Const s : String) : UInt64;
@@ -547,24 +586,24 @@ operations
     Function StringIsId(Const s : String; var iId : UInt64) : Boolean;
 
     // direct access to the raw data
-    Property Strings : TSnomedStrings read FStrings;
-    Property Words : TSnomedWords Read FWords;
-    Property Stems : TSnomedStems Read FStems;
-    Property Refs : TSnomedReferences read FRefs;
-    Property Desc : TSnomedDescriptions read FDesc;
-    Property Concept : TSnomedConceptList read FConcept;
-    Property Rel : TSnomedRelationshipList read FRel;
-    Property RefSetIndex : TSnomedReferenceSetIndex read FRefsetIndex;
-    Property RefSetMembers : TSnomedReferenceSetMembers read FRefsetMembers;
-    Property DescRef : TSnomedDescriptionIndex read FDescRef;
+    Property Strings : TSnomedStrings read GetStrings;
+    Property Words : TSnomedWords Read GetWords;
+    Property Stems : TSnomedStems Read GetStems;
+    Property Refs : TSnomedReferences read GetRefs;
+    Property Desc : TSnomedDescriptions read GetDesc;
+    Property Concept : TSnomedConceptList read GetConcept;
+    Property Rel : TSnomedRelationshipList read GetRel;
+    Property RefSetIndex : TSnomedReferenceSetIndex read GetRefsetIndex;
+    Property RefSetMembers : TSnomedReferenceSetMembers read GetRefsetMembers;
+    Property DescRef : TSnomedDescriptionIndex read GetDescRef;
     function ChildRelationshipCount : Integer; overload;
     function RefSetCount : cardinal; overload;
 
     // low level access for service providers
-    Property ActiveRoots : UInt64Array read FActiveRoots write FActiveRoots;
-    Property InactiveRoots : UInt64Array read FInActiveRoots write FInActiveRoots;
-    Property Is_a_Index : Cardinal read FIs_a_Index write FIs_a_Index;
-    Property DefaultLanguageRefSet : Cardinal read FDefaultLanguage write FDefaultLanguage;
+    Property ActiveRoots : UInt64Array read GetActiveRoots write FActiveRoots;
+    Property InactiveRoots : UInt64Array read GetInActiveRoots write FInActiveRoots;
+    Property Is_a_Index : Cardinal read GetIs_a_Index write FIs_a_Index;
+    Property DefaultLanguageRefSet : Cardinal read GetDefaultLanguage write FDefaultLanguage;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
     Function GetDisplayName(Const iConcept, iLang : Cardinal) : String; Overload;
     Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
@@ -600,12 +639,14 @@ operations
     function ReferenceSetExists(sid : String) : Boolean;
 
     // status stuff
-    Property Loaded : Boolean read FLoaded write FLoaded;
+    Property Loaded : Boolean read GetLoaded;
     Property VersionUri : String read FVersionUri write SetVersionUri;
     Property EditionUri : String read FEditionUri;
     Property VersionDate : String read FVersionDate write FVersionDate;
     Property EditionName : String read GetEditionName;
     Property EditionId : String read GetEditionId;
+    function LoadStatus : String;
+    function LastUseStatus : String;
 
     // generic terminology server interface
     function TotalCount : integer; override;
@@ -761,6 +802,12 @@ begin
   FBuilder.AddString(s);
 end;
 
+procedure TSnomedStrings.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
+end;
+
 procedure TSnomedStrings.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
@@ -810,6 +857,12 @@ Begin
   for iLoop := Low(a) to High(a) Do
     FBuilder.AddCardinal(a[iLoop]);
 End;
+
+procedure TSnomedReferences.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
+end;
 
 procedure TSnomedReferences.DoneBuild;
 begin
@@ -866,6 +919,12 @@ begin
   FBuilder.Append(lang);         // 32
   FBuilder.AddCardinal(0); // 36 refsets
   FBuilder.AddCardinal(0); // 40 refsets values
+end;
+
+procedure TSnomedDescriptions.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
 end;
 
 function TSnomedDescriptions.ConceptByIndex(iIndex: Cardinal): cardinal;
@@ -1115,6 +1174,12 @@ begin
 end;
 
 
+procedure TSnomedConceptList.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
+end;
+
 function TSnomedConceptList.Count: Integer;
 begin
   result := FLength div CONCEPT_SIZE;
@@ -1251,6 +1316,8 @@ end;
 constructor TSnomedServices.Create;
 begin
   inherited;
+  FLock := TFslLock.create('Snomed');
+  FLastUse := 0;
   FStrings := TSnomedStrings.Create;
   FRefs := TSnomedReferences.Create;
   FDesc := TSnomedDescriptions.Create;
@@ -1265,11 +1332,13 @@ end;
 
 function TSnomedServices.DebugDesc(index: cardinal): String;
 begin
+  checkIsLoaded;
   result := GetConceptId(index)+'|'+GetDisplayName(index, FDefaultLanguage)+'|';
 end;
 
 function TSnomedServices.Definition(context: TCodeSystemProviderContext): string;
 begin
+  checkIsLoaded;
   result := '';
 end;
 
@@ -1288,6 +1357,7 @@ function TSnomedServices.defToThisVersion(specifiedVersion: String): boolean;
 var
   tv, sv : TArray<String>;
 begin
+  checkIsLoaded;
   tv := versionSplit(VersionUri);
   sv := versionSplit(specifiedVersion);
   if (tv[0] <> sv[0]) then
@@ -1310,10 +1380,61 @@ begin
   FRel.Free;
   FDesc.Free;
   FConcept.Free;
+  FLock.Free;
   inherited;
 end;
 
-procedure TSnomedServices.Load(const sFilename: String);
+procedure TSnomedServices.Load(const sFilename: String; immediate : boolean);
+begin
+  FLoaded := 0;
+  FSourceFile := sFilename;
+  if immediate then
+    LoadFromSource
+  else
+    InitialLoad;
+end;
+
+procedure TSnomedServices.InitialLoad;
+var
+  oFile : Tfilestream;
+  oread : TReader;
+  s : TArray<String>;
+  function readBytes : TBytes;
+  begin
+    SetLength(result, oRead.ReadInteger);
+    oread.Read(result[0], length(result));
+  end;
+begin
+  oFile := TFileStream.Create(FSourceFile, fmOpenread+fmShareDenyWrite);
+  try
+    oread := TReader.Create(oFile, 8192);
+    try
+      if oRead.ReadString <> SNOMED_CACHE_VERSION Then
+        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities');
+      VersionUri := oread.ReadString;
+      VersionDate := oread.ReadString;
+      s := VersionUri.split(['/']);
+      FEdition := s[4];
+      FVersion := s[6];
+      ReadBytes;
+      ReadBytes;
+      ReadBytes;
+      ReadBytes;
+      ReadBytes;
+      FConcept.FMaster := ReadBytes;
+      FConcept.FLength := Length(FConcept.FMaster);
+      FTotalCount := FConcept.Count;
+      FConcept.Clear;
+    Finally
+      oread.Free;
+    End;
+  Finally
+    oFile.Free;
+  End;
+  FLoaded := 0;
+end;
+
+procedure TSnomedServices.LoadFromSource;
 var
   oFile : Tfilestream;
   oread : TReader;
@@ -1329,63 +1450,80 @@ var
     oread.Read(result, 8);
   end;
 begin
-  oFile := TFileStream.Create(sFilename, fmOpenread+fmShareDenyWrite);
+  FLoading := true;
   try
-    oread := TReader.Create(oFile, 8192);
+    oFile := TFileStream.Create(FSourceFile, fmOpenread+fmShareDenyWrite);
     try
-      if oRead.ReadString <> SNOMED_CACHE_VERSION Then
-        raise ETerminologyError.create('The Snomed cache "'+sFilename+'" must be rebuilt using the server utilities');
-      VersionUri := oread.ReadString;
-      VersionDate := oread.ReadString;
-      s := VersionUri.split(['/']);
-      FEdition := s[4];
-      FVersion := s[6];
+      oread := TReader.Create(oFile, 8192);
+      try
+        if oRead.ReadString <> SNOMED_CACHE_VERSION Then
+          raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities');
+        VersionUri := oread.ReadString;
+        VersionDate := oread.ReadString;
+        s := VersionUri.split(['/']);
+        FEdition := s[4];
+        FVersion := s[6];
 
-      FStrings.FMaster := ReadBytes;
-      FStrings.FLength := Length(FStrings.FMaster);
-      FRefs.FMaster := ReadBytes;
-      FRefs.FLength := Length(FRefs.FMaster);
-      FDesc.FMaster := ReadBytes;
-      FDesc.FLength := Length(FDesc.FMaster);
-      FWords.FMaster := ReadBytes;
-      FWords.FLength := Length(FWords.FMaster);
-      FStems.FMaster := ReadBytes;
-      FStems.FLength := Length(FStems.FMaster);
-      FConcept.FMaster := ReadBytes;
-      FConcept.FLength := Length(FConcept.FMaster);
-      FRel.FMaster := ReadBytes;
-      FRel.FLength := Length(FRel.FMaster);
-      FRefSetIndex.FMaster := ReadBytes;
-      FRefSetIndex.FLength := Length(FRefSetIndex.FMaster);
-      FRefSetMembers.FMaster := ReadBytes;
-      FRefSetMembers.FLength := Length(FRefSetMembers.FMaster);
-      FDescRef.FMaster := ReadBytes;
-      FDescRef.FLength := Length(FDescRef.FMaster);
-      FIs_a_Index := oread.ReadInteger;
-      SetLength(FInactiveRoots, oRead.ReadInteger);
-      for i := 0 to Length(FInactiveRoots) - 1 Do
-        FInactiveRoots[i] := ReadUInt64;
-      SetLength(FActiveRoots, oRead.ReadInteger);
-      for i := 0 to Length(FActiveRoots) - 1 Do
-        FActiveRoots[i] := ReadUInt64;
-      FDefaultLanguage := oread.ReadInteger;
+        FStrings.FMaster := ReadBytes;
+        FStrings.FLength := Length(FStrings.FMaster);
+        FRefs.FMaster := ReadBytes;
+        FRefs.FLength := Length(FRefs.FMaster);
+        FDesc.FMaster := ReadBytes;
+        FDesc.FLength := Length(FDesc.FMaster);
+        FWords.FMaster := ReadBytes;
+        FWords.FLength := Length(FWords.FMaster);
+        FStems.FMaster := ReadBytes;
+        FStems.FLength := Length(FStems.FMaster);
+        FConcept.FMaster := ReadBytes;
+        FConcept.FLength := Length(FConcept.FMaster);
+        FTotalCount := FConcept.Count;
+        FRel.FMaster := ReadBytes;
+        FRel.FLength := Length(FRel.FMaster);
+        FRefSetIndex.FMaster := ReadBytes;
+        FRefSetIndex.FLength := Length(FRefSetIndex.FMaster);
+        FRefSetMembers.FMaster := ReadBytes;
+        FRefSetMembers.FLength := Length(FRefSetMembers.FMaster);
+        FDescRef.FMaster := ReadBytes;
+        FDescRef.FLength := Length(FDescRef.FMaster);
+        FIs_a_Index := oread.ReadInteger;
+        SetLength(FInactiveRoots, oRead.ReadInteger);
+        for i := 0 to Length(FInactiveRoots) - 1 Do
+          FInactiveRoots[i] := ReadUInt64;
+        SetLength(FActiveRoots, oRead.ReadInteger);
+        for i := 0 to Length(FActiveRoots) - 1 Do
+          FActiveRoots[i] := ReadUInt64;
+        FDefaultLanguage := oread.ReadInteger;
+      Finally
+        oread.Free;
+      End;
     Finally
-      oread.Free;
+      oFile.Free;
     End;
-  Finally
-    oFile.Free;
-  End;
-  if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
-    FPreferredTerm := 0;
-  if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
-    FFSN := 0;
-  Loaded := true;
+    if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
+      FPreferredTerm := 0;
+    if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
+      FFSN := 0;
+    FLoaded := now;
+  finally
+    FLoading := false;
+  end;
+end;
+
+function TSnomedServices.LoadStatus: String;
+begin
+  if FLoading then
+    result := 'Loading Now'
+  else if FLoaded <> 0 then
+    result := 'Loaded for '+DescribePeriod(now - FLoaded)
+  else
+    result := 'Not Loaded';
 end;
 
 function TSnomedServices.ReferenceSetExists(sid: String): Boolean;
 var
   iName, index, members, types, iFieldNames : Cardinal;
 begin
+  checkIsLoaded;
   result := FConcept.FindConcept(StringToId(sid), index);
   if result then
     result := GetConceptRefSet(index, true, iName, members, types, iFieldNames) > 0;
@@ -1462,6 +1600,7 @@ function TSnomedServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSy
 var
   res : TSnomedFilterContext;
 begin
+  checkIsLoaded;
   res := TSnomedFilterContext.Create;
   try
     res.matches := Search(0, filter.filter, FDefaultLanguage, false, true);
@@ -1505,6 +1644,7 @@ var
   iAllDesc : TCardinalArray;
   iIndex : integer;
 Begin
+  checkIsLoaded;
   if iParent = iChild then
     result := true
   else
@@ -1703,6 +1843,7 @@ var
   s : String;
   s1 : String;
 begin
+  checkIsLoaded;
   SetLength(words, 0);
   SetLength(aMembers, 0);
   SetLength(aLangMembers, 0);
@@ -1768,6 +1909,7 @@ var
   iParent : Cardinal;
   iChild : Cardinal;
 begin
+  checkIsLoaded;
   if not StringIsInteger64(sParent) or not StringIsInteger64(sChild) then
     exit(false);
 
@@ -1845,6 +1987,7 @@ var
   active : boolean;
   dlist : Array of TDescInfo;
 begin
+  checkIsLoaded;
   SetLength(aMembers, 0);
   result := '';
   if iLang <> 0 then
@@ -1897,6 +2040,7 @@ function TSnomedServices.GetDisplayName(const sTerm, sLangSet: String): String;
 var
   iTerm, iLang : Cardinal;
 begin
+  checkIsLoaded;
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
     raise ETerminologyError.Create('Concept '+sTerm+' not found');
@@ -1950,6 +2094,7 @@ var
   date : TSnomedDate;
   lang : byte;
 begin
+  checkIsLoaded;
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
@@ -1959,6 +2104,23 @@ begin
   End;
 End;
 
+
+function TSnomedServices.GetInActiveRoots: UInt64Array;
+begin
+  checkIsLoaded;
+  Result := FInActiveRoots;
+end;
+
+function TSnomedServices.GetIs_a_Index: Cardinal;
+begin
+  checkIsLoaded;
+  Result := FIs_a_Index;
+end;
+
+function TSnomedServices.GetLoaded: Boolean;
+begin
+  result := FLoaded <> 0;
+end;
 
 Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte);
 var
@@ -1973,6 +2135,7 @@ var
   iInt : Integer;
   date : TSnomedDate;
 begin
+  checkIsLoaded;
   if iLang <> 0 then
     aMembers := FRefSetMembers.GetMembers(iLang);
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
@@ -1989,6 +2152,7 @@ Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const sTerm, sLan
 var
   iTerm, iLang : Cardinal;
 begin
+  checkIsLoaded;
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
     raise ETerminologyError.Create('Concept '+sTerm+' not found');
@@ -2009,6 +2173,7 @@ var
   date : TSnomedDate;
   active : boolean;
 begin
+  checkIsLoaded;
   sTerm := '';
   sFSN := '';
   sPreferred := '';
@@ -2037,6 +2202,7 @@ var
   fsn, v, d : String;
   active : boolean;
 begin
+  checkIsLoaded;
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
@@ -2113,6 +2279,7 @@ function TSnomedServices.ConceptExists(conceptId: String): Boolean;
 var
   i : cardinal;
 begin
+  checkIsLoaded;
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), i);
 end;
 
@@ -2122,6 +2289,7 @@ var
   ref : TSnomedRefinement;
   grp : TSnomedRefinementGroup;
 begin
+  checkIsLoaded;
   grps := TFslList<TSnomedRefinementGroup>.create;
   try
     grps.AddAll(exp.refinementGroups);
@@ -2176,6 +2344,12 @@ begin
   index := L;
 end;
 
+function TSnomedServices.GetActiveRoots: UInt64Array;
+begin
+  checkIsLoaded;
+  Result := FActiveRoots;
+end;
+
 procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
 var
   b : TStringBuilder;
@@ -2196,6 +2370,7 @@ var
   first : boolean;
   did : UInt64;
 begin
+  checkIsLoaded;
   b := TStringBuilder.Create;
   try
     SetLength(inbounds, 0);
@@ -2267,6 +2442,14 @@ begin
   end;
 end;
 
+function TSnomedServices.LastUseStatus: String;
+begin
+  if FLastUse = 0 then
+    result := 'Never Used'
+  else
+    result := DescribePeriod(now - FLastUse);
+end;
+
 function TSnomedServices.Link: TSnomedServices;
 begin
   result := TSnomedServices(inherited link);
@@ -2278,6 +2461,7 @@ var
   c : Cardinal;
   iFilename, iDummy : cardinal;
 begin
+  checkIsLoaded;
   result := 0;
   For i := 0 to FRefSetIndex.Count - 1 do
   Begin
@@ -2293,6 +2477,18 @@ begin
   End;
 end;
 
+function TSnomedServices.GetDesc: TSnomedDescriptions;
+begin
+  checkIsLoaded;
+  result := FDesc;
+end;
+
+function TSnomedServices.GetDescRef: TSnomedDescriptionIndex;
+begin
+  checkIsLoaded;
+  result := FDescRef;
+end;
+
 function TSnomedServices.GetDescRefsets(iDesc: Cardinal): TRefSetMemberEntryArray;
 var
   i : integer;
@@ -2301,6 +2497,7 @@ var
   iIndex : Integer;
   iName, iTypes, iFieldNames : Cardinal;
 begin
+  checkIsLoaded;
   SetLength(result, 0);
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
@@ -2326,6 +2523,7 @@ var
   active : Boolean;
   lang : byte;
 begin
+  checkIsLoaded;
   Desc.GetDescription(iDesc, descNdx, id, date, concept, module, kind, caps, refsets, valueses, active, lang);
   result := inttostr(id);
 end;
@@ -2338,6 +2536,7 @@ var
   iIndex : Integer;
   iName, iTypes, iFieldNames : Cardinal;
 begin
+  checkIsLoaded;
   SetLength(result, 0);
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
@@ -2374,6 +2573,7 @@ function TSnomedServices.CheckLangSet(sTerm: String): Cardinal;
 var
   iId  : UInt64;
 begin
+  checkIsLoaded;
   result := 0;
   if sTerm <> '' Then
   Begin
@@ -2412,6 +2612,7 @@ end;
 
 function TSnomedServices.GetConceptDescendants(index: Cardinal): TCardinalArray;
 begin
+  checkIsLoaded;
   result := FRefs.GetReferences(FConcept.GetAllDesc(index));
 end;
 
@@ -2422,6 +2623,7 @@ var
   Parents, Inbounds, outbounds, descriptions, refsets : Cardinal;
   date : TSnomedDate;
 begin
+  checkIsLoaded;
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
   result := inttostr(Identity);
 end;
@@ -2437,11 +2639,18 @@ var
   refsets : Cardinal;
   date : word;
 begin
+  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   if ParentIndex = 0 Then
     SetLength(result, 0)
   else
     result := Refs.GetReferences(ParentIndex);
+end;
+
+function TSnomedServices.GetConcept: TSnomedConceptList;
+begin
+  checkIsLoaded;
+  result := FConcept;
 end;
 
 function TSnomedServices.GetConceptChildren(index: Cardinal): TCardinalArray;
@@ -2459,6 +2668,7 @@ var
   Active, Defining : Boolean;
   Group : Integer;
 begin
+  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   SetLength(result, 0);
   if InboundIndex > 0 then
@@ -2488,6 +2698,7 @@ function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
 var
   iTerm : Cardinal;
 begin
+  checkIsLoaded;
   if not StringIsInteger64(sTerm) then
     result := false
   else
@@ -2502,6 +2713,7 @@ var
   active : boolean;
   lang : byte;
 begin
+  checkIsLoaded;
   result := DescRef.FindDescription(StringToId(sTerm), iTerm);
   if result then
   begin
@@ -2516,6 +2728,7 @@ var
   exprA, exprB : TSnomedExpression;
   b1, b2 : boolean;
 begin
+  checkIsLoaded;
   exprA := parseExpression(codeA);
   try
     exprB := parseExpression(codeB);
@@ -2576,6 +2789,12 @@ begin
   FBuilder.AddUInt64(identity);
 End;
 
+procedure TSnomedRelationshipList.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
+end;
+
 function TSnomedRelationshipList.count: integer;
 begin
   result := FLength div RELATIONSHIP_SIZE;
@@ -2612,6 +2831,12 @@ procedure TSnomedWords.AddWord(index: Cardinal; Flags: Byte);
 begin
   FBuilder.AddCardinal(index);
   FBuilder.Append(flags);
+end;
+
+procedure TSnomedWords.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
 end;
 
 function TSnomedWords.Count: Integer;
@@ -2655,6 +2880,12 @@ procedure TSnomedStems.AddStem(index: Cardinal; reference : Cardinal);
 begin
   FBuilder.AddCardinal(index);
   FBuilder.AddCardinal(reference);
+end;
+
+procedure TSnomedStems.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
 end;
 
 function TSnomedStems.Count: Integer;
@@ -2753,6 +2984,12 @@ begin
   FBuilder.AddCardinal(iFieldNames);
 end;
 
+procedure TSnomedReferenceSetIndex.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
+end;
+
 function TSnomedReferenceSetIndex.Count: Integer;
 begin
   result := FLength div REFSET_SIZE;
@@ -2824,6 +3061,12 @@ begin
   FBuilder.AddCardinal(reference);
 end;
 
+procedure TSnomedDescriptionIndex.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
+end;
+
 procedure TSnomedDescriptionIndex.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
@@ -2891,6 +3134,12 @@ Begin
     FBuilder.AddCardinal(a[iLoop].Ref);
     FBuilder.AddCardinal(a[iLoop].Values);
   end;
+end;
+
+procedure TSnomedReferenceSetMembers.clear;
+begin
+  SetLength(FMaster, 0);
+  FLength := 0;
 end;
 
 procedure TSnomedReferenceSetMembers.DoneBuild;
@@ -2976,6 +3225,7 @@ begin
 
   if id = '?fhir_vs=refset' then
   begin
+    checkLoaded;
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -3008,6 +3258,7 @@ begin
   end
   else if id = '?fhir_vs' then
   begin
+    checkLoaded;
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -3029,6 +3280,7 @@ begin
   end
   else if id.StartsWith('?fhir_vs=refset/') And ReferenceSetExists(id.Substring(16)) then
   begin
+    checkLoaded;
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -3058,6 +3310,7 @@ begin
   end
   else if id.StartsWith('?fhir_vs=isa/') And ConceptExists(id.Substring(13)) then
   begin
+    checkLoaded;
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -3079,7 +3332,6 @@ begin
   end
   else
     result := nil;
-
 end;
 
 function TSnomedServices.ChildCount(context: TCodeSystemProviderContext): integer;
@@ -3098,6 +3350,7 @@ var
   did : UInt64;
   Active, Defining : boolean;
 begin
+  checkIsLoaded;
   SetLength(inbounds, 0);
   if (context = nil) then // root
     result := length(FActiveRoots)
@@ -3133,6 +3386,7 @@ var
   Inbounds : TCardinalArray;
   date : TSnomedDate;
 begin
+  checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := renderExpression(TSnomedExpressionContext(context).Expression, sroMinimal)
   else
@@ -3145,6 +3399,7 @@ end;
 
 function TSnomedServices.ConceptExists(conceptId: String; var index: cardinal): Boolean;
 begin
+  checkIsLoaded;
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), index);
 end;
 
@@ -3164,6 +3419,7 @@ var
   did : UInt64;
   Active, Defining : boolean;
 begin
+  checkIsLoaded;
   result := nil;
   SetLength(inbounds, 0);
   if (context = nil) then
@@ -3191,6 +3447,12 @@ begin
 end;
 
 
+function TSnomedServices.GetDefaultLanguage: Cardinal;
+begin
+  checkIsLoaded;
+  Result := FDefaultLanguage;
+end;
+
 function TSnomedServices.GetDefiningRelationships(index: Cardinal): TCardinalArray;
 var
   Identity : UInt64;
@@ -3208,6 +3470,7 @@ var
   did : UInt64;
   Active, Defining : boolean;
 begin
+  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   if InboundIndex = 0 Then
     SetLength(result, 0)
@@ -3231,6 +3494,7 @@ end;
 
 function TSnomedServices.getDefinition(code: String): String;
 begin
+  checkIsLoaded;
   result := '';
 end;
 
@@ -3285,6 +3549,7 @@ var
   outboundIndex, refsets : Cardinal;
   date : TSnomedDate;
 begin
+  checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := displayExpression(TSnomedExpressionContext(context).Expression)
   else
@@ -3300,6 +3565,7 @@ end;
 
 procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
+  checkIsLoaded;
   Displays(Code(context), list, lang);
 end;
 
@@ -3321,6 +3587,7 @@ var
   did : UInt64;
   exp : TSnomedExpression;
 begin
+  checkIsLoaded;
   if TSnomedExpressionContext(ctxt).Expression.isSimple then
   begin
     SetLength(inbounds, 0);
@@ -3420,6 +3687,7 @@ procedure TSnomedServices.Displays(code: String; list: TStringList; const lang :
 var
   ctxt : TSnomedExpressionContext;
 begin
+  checkIsLoaded;
   ctxt := locate(code) as TSnomedExpressionContext;
   try
     if (ctxt = nil) then
@@ -3438,6 +3706,7 @@ function TSnomedServices.getDisplay(code: String; const lang : THTTPLanguages): 
 var
   ctxt : TCodeSystemProviderContext;
 begin
+  checkIsLoaded;
   ctxt := locate(code);
   try
     if (ctxt = nil) then
@@ -3451,6 +3720,7 @@ end;
 
 function TSnomedServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
+  checkIsLoaded;
   result := false; // snomed don't do abstract?
 end;
 
@@ -3465,6 +3735,7 @@ var
   refsets : Cardinal;
   date : word;
 begin
+  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   result := (flags and MASK_CONCEPT_STATUS in [FLAG_Active, FLAG_PendingMove]);
 end;
@@ -3472,6 +3743,7 @@ end;
 
 function TSnomedServices.IsInactive(context: TCodeSystemProviderContext): boolean;
 begin
+  checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := false // not sure what to do here?
   else
@@ -3480,6 +3752,7 @@ end;
 
 function TSnomedServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
+  checkIsLoaded;
   result := true;
 end;
 
@@ -3494,6 +3767,7 @@ var
   refsets : Cardinal;
   date : word;
 begin
+  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   result := (flags and MASK_CONCEPT_PRIMITIVE > 0);
 end;
@@ -3503,6 +3777,7 @@ var
   iId : UInt64;
   index : cardinal;
 begin
+  checkIsLoaded;
   iId := StrToUInt64Def(code, 0);
   if iId = 0 then
     result := TSnomedExpressionContext.Create(code, parseExpression(code))
@@ -3522,7 +3797,31 @@ end;
 
 function TSnomedServices.TotalCount: integer;
 begin
-  result := Concept.Count;
+  checkIsLoaded;
+  result := FTotalCount;
+end;
+
+procedure TSnomedServices.Unload;
+begin
+  FLock.Lock;
+  try
+    FStrings.clear;
+    FRefs.clear;
+    FDesc.clear;
+    FWords.clear;
+    FStems.clear;
+    FConcept.clear;
+    FRel.clear;
+    FRefSetIndex.clear;
+    FRefSetMembers.clear;
+    FDescRef.clear;
+    SetLength(FInactiveRoots, 0);
+    SetLength(FActiveRoots, 0);
+    FDefaultLanguage := 0;
+    FLoaded := 0;
+  finally
+    FLock.unlock;
+  end;
 end;
 
 function TSnomedServices.version(context: TCodeSystemProviderContext): String;
@@ -3576,6 +3875,7 @@ function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: St
 var
   id : UInt64;
 begin
+  checkIsLoaded;
   result := nil;
   if (prop = 'concept') and StringIsId(value, id) then
     if op = foIsA then
@@ -3588,6 +3888,7 @@ end;
 
 function TSnomedServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
+  checkIsLoaded;
   if Length(TSnomedFilterContext(ctxt).matches) > 0 then
     result := TSnomedExpressionContext.create(TSnomedFilterContext(ctxt).Matches[TSnomedFilterContext(ctxt).ndx-1].index)
   else if Length(TSnomedFilterContext(ctxt).members) > 0 then
@@ -3600,6 +3901,7 @@ function TSnomedServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concep
 var
   index : integer;
 begin
+  checkIsLoaded;
   if Length(TSnomedFilterContext(ctxt).members) > 0 then
     result := FindMember(TSnomedFilterContext(ctxt).Members, TSnomedExpressionContext(concept).reference, index)
   else
@@ -3608,6 +3910,7 @@ end;
 
 function TSnomedServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
+  checkIsLoaded;
   inc(TSnomedFilterContext(ctxt).ndx);
   if Length(TSnomedFilterContext(ctxt).matches) > 0 then
     result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).matches)
@@ -3619,6 +3922,7 @@ end;
 
 function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 begin
+  checkIsLoaded;
 //  result := TSnomedFilterContext(ctxt).Members[;
   result := nil;
 end;
@@ -3627,6 +3931,7 @@ function TSnomedServices.locateIsA(code, parent: String): TCodeSystemProviderCon
 var
   ic, ip : Cardinal;
 begin
+  checkIsLoaded;
   if Concept.FindConcept(StringToIdOrZero(parent), ip) And
        Concept.FindConcept(StringToIdOrZero(code), ic) And Subsumes(ip, ic) then
     result := TSnomedExpressionContext.create(code, ic)
@@ -3637,6 +3942,7 @@ end;
 
 function TSnomedServices.name(context: TCodeSystemProviderContext): String;
 begin
+  checkIsLoaded;
   result := 'SNOMED CT';
 end;
 
@@ -3652,20 +3958,46 @@ var
   Descriptions : TCardinalArray;
   date : TSnomedDate;
 Begin
+  checkIsLoaded;
   Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Descriptions := Refs.GetReferences(DescriptionIndex);
   result := GetPN(Descriptions);
 End;
 
+function TSnomedServices.GetRefs: TSnomedReferences;
+begin
+  checkIsLoaded;
+  result := FRefs;
+end;
+
 function TSnomedServices.getRefSet(id: int64): TSnomedReferenceSetMemberArray;
 var
   name, index, members, types, iFieldNames : cardinal;
 begin
+  checkIsLoaded;
   if not Concept.FindConcept(id, index) then
     raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
   if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
     raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
   result := RefSetMembers.GetMembers(members);
+end;
+
+function TSnomedServices.GetRefsetIndex: TSnomedReferenceSetIndex;
+begin
+  checkIsLoaded;
+  result := FRefSetIndex;
+end;
+
+function TSnomedServices.GetRefsetMembers: TSnomedReferenceSetMembers;
+begin
+  checkIsLoaded;
+  result := FRefSetMembers;
+end;
+
+function TSnomedServices.GetRel: TSnomedRelationshipList;
+begin
+  checkIsLoaded;
+  result := FRel;
 end;
 
 function TSnomedServices.GetRelationshipId(const iRel: Cardinal): String;
@@ -3676,6 +4008,7 @@ var
   Active, Defining : Boolean;
   Group : integer;
 begin
+  checkIsLoaded;
   Rel.GetRelationship(iRel, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
   result := inttostr(identity);
 end;
@@ -3688,6 +4021,7 @@ var
   member : TSnomedReferenceSetMember;
   tl, vl : TCardinalArray;
 begin
+  checkIsLoaded;
   result := '';
   for i := 0 to FRefSetIndex.Count - 1 do
   begin
@@ -3712,6 +4046,24 @@ begin
         exit();
       end;
   end;
+end;
+
+function TSnomedServices.GetStems: TSnomedStems;
+begin
+  checkIsLoaded;
+  result := FStems;
+end;
+
+function TSnomedServices.GetStrings: TSnomedStrings;
+begin
+  checkIsLoaded;
+  result := FStrings;
+end;
+
+function TSnomedServices.GetWords: TSnomedWords;
+begin
+  checkIsLoaded;
+  result := FWords;
 end;
 
 function TSnomedServices.groupsMatch(a, b: TSnomedRefinementGroup): boolean;
@@ -3835,7 +4187,7 @@ var
   c : cardinal;
   parser : TSnomedExpressionParser;
 begin
-  if FLoading then
+  if FBuilding then
   begin
     exp := TSnomedExpression.create;
     try
@@ -3847,6 +4199,7 @@ begin
   end
   else
   begin
+    checkIsLoaded;
     c := Concept.GetNormalForm(reference);
     parser := TSnomedExpressionParser.Create;
     try
@@ -4088,6 +4441,7 @@ var
   refSrc, refDst : TSnomedRefinement;
   grpSrc, grpDst : TSnomedRefinementGroup;
 begin
+  checkIsLoaded;
   work := TSnomedExpression.Create;
   try
     for concept in exp.concepts do
@@ -4169,6 +4523,7 @@ var
   r, rt : TSnomedRefinementGroup;
   ok : boolean;
 begin
+  checkIsLoaded;
   // subsumes is true if all of the things you can say about a are also things you can say about b
   // b is allowed to say additional things; it's a separate issue as to whether those are coherent
   // (that may be handled elsewhere)
@@ -4304,6 +4659,37 @@ begin
     end
     else if subsumesGroup(grp, g) then
       exit(gmsSubsumed);
+  end;
+end;
+
+procedure TSnomedServices.checkIsLoaded;
+begin
+  if FBuilding or FLoading then
+    exit;
+  if FLoaded = 0 then
+    raise ETerminologyError.Create('This version of SNOMED is not loaded');
+end;
+
+procedure TSnomedServices.checkLoaded;
+begin
+  FLock.Lock;
+  try
+    if FLoaded = 0 then
+      LoadFromSource;
+    FLastUse := now;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TSnomedServices.checkUnload;
+begin
+  FLock.Lock;
+  try
+    if (FLoaded > 0) and (FLastUse < now - LOAD_PERIOD) then
+      Unload;
+  finally
+    FLock.Unlock;
   end;
 end;
 

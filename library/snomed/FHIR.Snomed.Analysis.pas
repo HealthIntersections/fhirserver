@@ -249,6 +249,7 @@ constructor TSnomedAnalysis.Create(snomed: TSnomedServices);
 begin
   Create;
   FSnomed := snomed;
+  snomed.checkLoaded;
 end;
 
 //function TSnomedAnalysis.CreateCC(index: Cardinal): TFhirCodeableConcept;
