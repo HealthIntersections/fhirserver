@@ -216,3 +216,7 @@ System
 /library/wp/backup
 /dependencies/jcl/backup
 /dependencies/stem/backup
+/library/r2/backup
+/library/base/__recovery
+/Server/backup
+/Server/lib/x86_64-win64

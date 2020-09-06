@@ -447,7 +447,7 @@ begin
   FStemmer := GetStemmer_8('english');
   Frefsets := TRefSetList.Create;
   try
-    FSvc.Loading := true;
+    FSvc.Building := true;
     Frefsets.SortedByName;
     FWordList.Sorted := True;
     FStemList.Sorted := True;

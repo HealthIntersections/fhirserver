@@ -2,7 +2,7 @@
 program TestFHIRApplication;
 
 uses
-  Classes, SysUtils, unitregistry;
+  Classes, SysUtils, unitregistry, FHIR.R2.Context;
 
 !
 type

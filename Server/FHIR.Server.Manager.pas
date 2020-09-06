@@ -596,12 +596,12 @@ begin
       combiner := TSnomedCombiner.Create;
       try
         combiner.international := TSnomedServices.Create;
-        combiner.international.Load(edtInternational.Text);
+        combiner.international.Load(edtInternational.Text, true);
         for i := 0 to lbEditions.Items.Count - 1 do
         begin
           svc := TSnomedServices.create;
           combiner.others.Add(svc);
-          svc.load(lbEditions.Items[i]);
+          svc.load(lbEditions.Items[i], true);
         end;
         combiner.callback := cmbCallBack;
         combiner.destination := edtCombinedDestination.text;

@@ -5460,6 +5460,12 @@ begin
         end;
       if (not terminated) then
         try
+          FServer.Settings.MaintenanceThreadStatus := 'Checking Snomed';
+          FServer.FEndPoints.First.FContext.TerminologyServer.CommonTerminologies.sweepSnomed;
+        except
+        end;
+      if (not terminated) then
+        try
           FServer.Settings.MaintenanceThreadStatus := 'Checking Async Tasks';
           for ep in FServer.FEndPoints do
             ep.CheckAsyncTasks;

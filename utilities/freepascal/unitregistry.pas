@@ -46,6 +46,12 @@ uses
   // Tools
   FHIR.Tools.GraphQL,
 
+  // R2:
+  FHIR.R2.Tags, FHIR.R2.Types, FHIR.R2.Utilities, FHIR.R2.Xml, FHIR.R2.AuthMap, FHIR.R2.Base, FHIR.R2.Client, FHIR.R2.Common,
+  FHIR.R2.Constants, FHIR.R2.Context, FHIR.R2.ElementModel, FHIR.R2.Factory, FHIR.R2.IndexInfo, FHIR.R2.Json,
+  FHIR.R2.Narrative, FHIR.R2.Narrative2, FHIR.R2.OpBase, FHIR.R2.Operations, FHIR.R2.Parser, FHIR.R2.ParserBase,
+  FHIR.R2.Patch, FHIR.R2.PathEngine, FHIR.R2.PathNode, FHIR.R2.Profiles, FHIR.R2.Resources,
+
   // R3:
   FHIR.R3.Tags, FHIR.R3.Turtle, FHIR.R3.Types, FHIR.R3.Utilities, FHIR.R3.Xml, FHIR.R3.AuthMap, FHIR.R3.Base, FHIR.R3.Client, FHIR.R3.Common,
   FHIR.R3.Constants, FHIR.R3.Context, FHIR.R3.ElementModel, FHIR.R3.Factory, FHIR.R3.IndexInfo, FHIR.R3.Json, FHIR.R3.Liquid,

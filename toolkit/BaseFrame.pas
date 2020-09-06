@@ -41,10 +41,10 @@ uses
   ToolkitSettings;
 
 type
-  TWorkProc = reference to procedure;
+  TWorkProc = reference to procedure (context : pointer);
   TWorkEvent = procedure (Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc) of object;
   TOnOpenResourceEvent = procedure (sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource) of object;
-  TIsStoppedEvent = reference to function : boolean;
+  TIsStoppedEvent = reference to function (context : pointer): boolean;
 
   TUTGRepositoryBase = class abstract (TFslObject)
   private

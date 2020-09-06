@@ -84,6 +84,7 @@ Type
     procedure add(p : TCodeSystemProvider; defVer : boolean); overload;
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
+    procedure sweepSnomed;
 
     // load external terminology resources (snomed, Loinc, etc)
     procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TFslDBManager>; testing : boolean);
@@ -1380,7 +1381,7 @@ begin
       end;
     end
     else
-      result := ProviderClasses[system].Link
+      result := ProviderClasses[system].Link;
   end
   else if system = ALL_CODE_CS then
     if FFactory.version in [fhirVersionRelease2, fhirVersionRelease3] then
@@ -1404,6 +1405,8 @@ begin
     FLock.Lock('getProvider');
     try
       result.RecordUse;
+      if (result is TSnomedServices) then
+        TSnomedServices(result).checkLoaded;
     finally
       FLock.Unlock;
     end;
@@ -1840,7 +1843,7 @@ begin
         logt('load '+s+' from '+details['source']);
         sn := TSnomedServices.Create;
         try
-          sn.Load(details['source']);
+          sn.Load(details['source'], details['default'] = 'true');
           add(sn, details['default'] = 'true');
           if not FProviderClasses.ContainsKey(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri) then
             FProviderClasses.Add(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
@@ -1984,6 +1987,15 @@ begin
     FProviderClasses.add(FUnii.systemUri(nil), FUnii.Link);
     FProviderClasses.add(FUnii.systemUri(nil)+URI_VERSION_BREAK+FUnii.version(nil), FUnii.Link);
   end;
+end;
+
+procedure TCommonTerminologies.sweepSnomed;
+var
+  ss : TSnomedServices;
+begin
+  for ss in FSnomed do
+    if ss <> FDefSnomed then
+      ss.checkUnload;
 end;
 
 procedure TCommonTerminologies.SetACIR(const Value: TACIRServices);
