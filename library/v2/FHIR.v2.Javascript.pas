@@ -494,7 +494,7 @@ begin
   cell.componentList.jsInstance := 0;
   setLength(params, 1);
   js.iterateArray(value,
-    procedure (i : integer; v : JsValueRef)
+    procedure (context : pointer; i : integer; v : JsValueRef)
     begin
       o := js.getWrapped<TV2Cell>(v).Link;
       try
@@ -522,7 +522,7 @@ begin
   cell.contentList.jsInstance := 0;
   setLength(params, 1);
   js.iterateArray(value,
-    procedure (i : integer; v : JsValueRef)
+    procedure (context : pointer; i : integer; v : JsValueRef)
     begin
       o := js.getWrapped<TV2Content>(v).Link;
       try
@@ -578,7 +578,7 @@ begin
   field.elementList.jsInstance := 0;
   setLength(params, 1);
   js.iterateArray(value,
-    procedure (i : integer; v : JsValueRef)
+    procedure (context : pointer; i : integer; v : JsValueRef)
     begin
       o := js.getWrapped<TV2Cell>(v).Link;
       try
@@ -606,7 +606,7 @@ begin
   message.segmentList.jsInstance := 0;
   setLength(params, 1);
   js.iterateArray(value,
-    procedure (i : integer; v : JsValueRef)
+    procedure (context : pointer; i : integer; v : JsValueRef)
     begin
       o := js.getWrapped<TV2Segment>(v).Link;
       try
@@ -650,7 +650,7 @@ begin
   segment.fieldList.jsInstance := 0;
   setLength(params, 1);
   js.iterateArray(value,
-    procedure (i : integer; v : JsValueRef)
+    procedure (context : pointer; i : integer; v : JsValueRef)
     begin
       o := js.getWrapped<TV2Field>(v).Link;
       try

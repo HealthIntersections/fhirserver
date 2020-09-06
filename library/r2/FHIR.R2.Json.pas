@@ -1,7 +1,5 @@
 unit FHIR.R2.Json;
 
-{$I fhir.r2.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -30,6 +28,9 @@ unit FHIR.R2.Json;
   POSSIBILITY OF SUCH DAMAGE.
   
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r2.inc}
 
 interface
 

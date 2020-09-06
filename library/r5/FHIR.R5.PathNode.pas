@@ -183,7 +183,7 @@ type
     function checkName : boolean;
 
     // version overrides;
-    procedure visitAll(proc : TFHIRPathExpressionNodeVisitProc); override;
+    procedure visitAll(context : pointer; proc : TFHIRPathExpressionNodeVisitProc); override;
     function nodeOpName : String; override;
     function nodeName : String; override;
     function nodeChildCount : integer; override;
@@ -548,20 +548,20 @@ begin
   end;
 end;
 
-procedure TFHIRPathExpressionNode.visitAll(proc: TFHIRPathExpressionNodeVisitProc);
+procedure TFHIRPathExpressionNode.visitAll(context : pointer; proc: TFHIRPathExpressionNodeVisitProc);
 var
   c : TFHIRPathExpressionNode;
 begin
-  proc(self);
+  proc(context, self);
   if ParameterCount > 0 then
     for c in Parameters do
-      c.visitAll(proc);
+      c.visitAll(context, proc);
   if Inner <> nil then
-    Inner.visitAll(proc);
+    Inner.visitAll(context, proc);
   if Group <> nil then
-    Group.visitAll(proc);
+    Group.visitAll(context, proc);
   if OpNext <> nil then
-    OpNext.visitAll(proc);
+    OpNext.visitAll(context, proc);
 end;
 
 procedure TFHIRPathExpressionNode.write(b: TStringBuilder);

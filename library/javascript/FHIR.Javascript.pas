@@ -59,7 +59,7 @@ uses
   Generics.Collections,
   ChakraCoreUtils, ChakraCore, ChakraCommon,
   FHIR.Support.Base, FHIR.Support.Utilities;
-{$IFNDEF FPC}
+
 type
   // facade for ChakraCommon:
   JsValueRef = ChakraCommon.JsValueRef;
@@ -94,9 +94,9 @@ type
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
   TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T of object;
 
-  TJavascriptArrayValueProvider = reference to function (index : integer) : JsValueRef;
-  TJavascriptArrayValueConsumer = reference to procedure (index : integer; value : JsValueRef);
-  TJavascriptPropertyConsumer = reference to procedure (name : String; value : JsValueRef);
+  TJavascriptArrayValueProvider = {$IFNDEF FPC} reference to {$ENDIF} function (context : pointer; index : integer) : JsValueRef;
+  TJavascriptArrayValueConsumer = {$IFNDEF FPC} reference to {$ENDIF} procedure (context : pointer; index : integer; value : JsValueRef);
+  TJavascriptPropertyConsumer = {$IFNDEF FPC} reference to {$ENDIF} procedure (context : pointer; name : String; value : JsValueRef);
 
   TJsValue = JsValueRef;
   TJsValues = array of JsValueRef;
@@ -216,7 +216,9 @@ valueOf()	Returns the primitive value of an array
     procedure fin;
     procedure registerConsoleLog;
     procedure jsCheck(code : JsErrorCode);
+    {$IFNDEF FPC}
     function getPropertyId(name : AnsiString) : JsPropertyIdRef; overload;
+    {$ENDIF}
     function getPropertyId(name : String) : JsPropertyIdRef; overload;
     function getPropertyValue(obj : JsValueRef; name : String) : JsValueRef;
     function doLog(js: TJavascript; context: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
@@ -382,6 +384,7 @@ valueOf()	Returns the primitive value of an array
       given a javscript object. get the underlying delphi object
     }
     function getWrapped<T : class>(obj : JsValueRef) : T;
+    function getWrappedObj(obj : JsValueRef) : TObject;
 
     {
       given a javascript object, get an property value from it (remember to check for undefined)
@@ -858,10 +861,12 @@ begin
   init;
 end;
 
+{$IFNDEF FPC}
 function TJavascript.getPropertyId(name: AnsiString): JsPropertyIdRef;
 begin
   jsCheck(JsCreatePropertyId(PAnsiChar(name), length(name), result));
 end;
+{$ENDIF}
 
 
 function TJavascript.defineClass(name : String; context : Pointer; factoryName : String; factory : TJsFactoryFunction) : TJavascriptClassDefinition;
@@ -1052,7 +1057,7 @@ end;
 
 function TJavascript.asString(val: JsValueRef) : String;
 var
-  p : PWideChar;
+  p : PChar;
   str : JsValueRef;
   l : NativeUInt;
 begin
@@ -1127,10 +1132,23 @@ var
 begin
   jsCheck(JsHasExternalData(obj, ok));
   if not ok then
-    exit(nil);
+    exit(T(nil));
 
   jsCheck(JsGetExternalData(obj, data));
   result := T(data);
+end;
+
+function TJavascript.getWrappedObj(obj: JsValueRef): TObject;
+var
+  data : Pointer;
+  ok : byteBool;
+begin
+  jsCheck(JsHasExternalData(obj, ok));
+  if not ok then
+    exit(nil);
+
+  jsCheck(JsGetExternalData(obj, data));
+  result := TObject(data);
 end;
 
 function TJavascript.getProperty(obj: JsValueRef; name: String): JsValueRef;
@@ -1185,7 +1203,7 @@ begin
   JsCheck(JsCreateArray(count, result));
   for i := 0 to count - 1 do
   begin
-    v := valueProvider(i);
+    v := valueProvider(nil, i);
     vi := wrap(i);
     JsCheck(JsSetIndexedProperty(result, vi, v));
   end;
@@ -1239,7 +1257,7 @@ begin
   begin
     vi := wrap(i);
     jsCheck(JsGetIndexedProperty(arr, vi, v));
-    valueConsumer(i, v);
+    valueConsumer(nil, i, v);
   end;
 end;
 
@@ -1256,7 +1274,7 @@ begin
     vi := wrap(i);
     jsCheck(JsGetIndexedProperty(arr, vi, v));
     n := asString(v);
-    proc(n, getProperty(value, n));
+    proc(nil, n, getProperty(value, n));
   end;
 end;
 
@@ -1318,7 +1336,7 @@ begin
   for p in params do
   begin
     o := FJavascript.getWrapped<T>(p);
-    if o = nil then
+    if o = T(nil) then
     begin
       pl[0] := p;
       o := FObjectDefinition.FFactory(FJavascript, FObjectDefinition, pl, owns) as T;
@@ -1327,9 +1345,6 @@ begin
   end;
   result := FJavascript.wrap(FList.Count);
 end;
-{$ELSE}
-implementation
-{$ENDIF}
 
 end.
 

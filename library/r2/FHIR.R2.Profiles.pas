@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -1137,7 +1139,7 @@ var
   base, derived : TFhirElementDefinition;
   isExtension, ok : boolean;
   s : TFHIRString;
-  expBase, expDerived, vsBase, vsDerived: TFHIRValueSet;
+  expBase, expDerived, vsBase, vsDerived : TFHIRValueSet;
   ts, td : TFhirElementDefinitionType;
   b : TStringList;
   ms, md : TFhirElementDefinitionMapping;

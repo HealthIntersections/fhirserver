@@ -1,6 +1,5 @@
 unit FHIR.Base.Scim;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,8 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
-
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -45,7 +43,7 @@ Type
     FStatusText : String;
     FScimType : String;
   public
-    constructor Create(status : Integer; statusText : String; scimType : String; message : String);
+    constructor Create(status : Integer; statusText : String; scimType : String; sMessage : String);
     property Status : integer read FStatus;
     property StatusText : String read FStatusText;
     property ScimType : String read FScimType;
@@ -76,7 +74,7 @@ Type
     function hasSchema(s : String) : boolean;
     procedure checkSchema(s : String);
   public
-    constructor Create(FJson : TJsonObject); virtual;
+    constructor Create(json : TJsonObject); virtual;
     destructor Destroy; override;
 
     property id : String read GetId write SetId;
@@ -259,10 +257,10 @@ implementation
 
 { TSCIMObject }
 
-constructor TSCIMObject.Create(FJson: TJsonObject);
+constructor TSCIMObject.Create(json: TJsonObject);
 begin
   inherited create;
-  self.FJson := FJson;
+  self.FJson := json;
 end;
 
 destructor TSCIMObject.Destroy;
@@ -1073,9 +1071,9 @@ end;
 
 { ESCIMException }
 
-constructor ESCIMException.Create(status: Integer; statusText, scimType, message: String);
+constructor ESCIMException.Create(status: Integer; statusText, scimType, sMessage: String);
 begin
-  inherited Create(message);
+  inherited Create(sMessage);
   FStatus := status;
   FStatusText := statusText;
   FScimType := scimType;

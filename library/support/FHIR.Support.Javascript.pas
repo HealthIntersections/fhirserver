@@ -37,11 +37,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, EncdDecd, System.NetEncoding,
-  FHIR.Javascript,
-  FHIR.Support.Base, FHIR.Support.Collections;
+  SysUtils, Classes, Generics.Collections, System.NetEncoding,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections,
+  FHIR.Javascript;
 
-{$IFNDEF FPC}
 type
   TFslJavascript = class (TJavascript)
   protected
@@ -92,13 +91,16 @@ function stringAsBase64(value: String): TBytes;
 implementation
 
 function base64AsString(value: TBytes): String;
+var
+  s : String;
 begin
-  result := String(EncodeBase64(@value[0], length(value))).replace(#13#10, '');
+  s := EncodeBase64(value);
+  result := s.replace(#13#10, '');
 end;
 
 function stringAsBase64(value: String): TBytes;
 begin
-  result := DecodeBase64(AnsiString(value));
+  result := DecodeBase64(value);
 end;
 
 { TFslJavascript }
@@ -163,7 +165,7 @@ begin
   for p in params do
   begin
     o := FJavascript.getWrapped<T>(p);
-    if o = nil then
+    if o = T(nil) then
     begin
       if FClassDefinition = nil then
         raise EJavascriptHost.Create('Push with nil object is only possible for lists with known types'); // not sure when this would be triggered
@@ -224,9 +226,5 @@ begin
   end;
   result := FJavascript.wrap(FList.Count);
 end;
-
-{$ELSE}
-implementation
-{$ENDIF}
 
 end.

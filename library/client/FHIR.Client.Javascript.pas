@@ -101,8 +101,9 @@ var
   def : TJavascriptClassDefinition;
   owns : boolean;
 begin
-  bnd := js.getWrapped<TFhirResourceV>(parameters[0]).link;
+  bnd := js.getWrappedObj(parameters[0]) as TFhirResourceV;
   try
+    bnd.link;
     if bnd = nil then
     begin
       def := js.getDefinedClass('Bundle');
@@ -121,7 +122,7 @@ var
   owns : boolean;
   id : String;
 begin
-  res := js.getWrapped<TFhirResourceV>(parameters[0]).link;
+  res := (js.getWrappedObj(parameters[0]) as TFhirResourceV).link;
   try
     if res = nil then
     begin
@@ -155,7 +156,7 @@ var
   def : TJavascriptClassDefinition;
   owns : boolean;
 begin
-  res := js.getWrapped<TFhirResourceV>(parameters[0]).link;
+  res := (js.getWrappedObj(parameters[0]) as TFhirResourceV).link;
   try
     if res = nil then
     begin
@@ -194,10 +195,10 @@ begin
     else
     begin
       js.iterateProperties(parameters[1],
-        procedure (name : String; value : TJsValue)
+        procedure (context : pointer; name : String; value : TJsValue)
         begin
            if js.getType(value) = JsArray then
-             js.iterateArray(value, procedure (i : integer; v : TJsValue)
+             js.iterateArray(value, procedure (context : pointer; i : integer; v : TJsValue)
                begin
                  ts.Add(name+'='+js.asString(v));
                end)
@@ -225,10 +226,10 @@ begin
     else
     begin
       js.iterateProperties(parameters[0],
-        procedure (name : String; value : TJsValue)
+        procedure (context : pointer; name : String; value : TJsValue)
         begin
            if js.getType(value) = JsArray then
-             js.iterateArray(value, procedure (i : integer; v : TJsValue)
+             js.iterateArray(value, procedure (context : pointer; i : integer; v : TJsValue)
                begin
                  ts.Add(name+'='+js.asString(v));
                end)

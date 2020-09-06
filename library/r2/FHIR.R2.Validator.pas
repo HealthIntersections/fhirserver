@@ -28,12 +28,15 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
   POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 
 Uses
-  SysUtils, Classes, System.Character, RegularExpressions, ActiveX, ComObj,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
+  SysUtils, Classes, Character, RegularExpressions, ActiveX, ComObj,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
+  FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.R2.PathNode, FHIR.R2.Context, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.PathEngine, FHIR.R2.ElementModel;
 

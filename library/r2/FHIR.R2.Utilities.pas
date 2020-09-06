@@ -1,7 +1,5 @@
 unit FHIR.R2.Utilities;
 
-{$I fhir.r2.inc}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,12 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r2.inc}
 
 interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Soap.EncdDecd, Generics.Collections, ZLib,
+  SysUtils, Classes, EncdDecd, Generics.Collections, ZLib,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.MXml, 
   FHIR.Web.Fetcher,
@@ -322,11 +322,11 @@ type
   {$IFDEF FHIR_OPERATIONDEFINITION}
   TFHIROperationDefinitionHelper = class helper (TFHIRDomainResourceHelper) for TFHIROperationDefinition
   private
-    function Gettype_: boolean;
-    procedure Settype_(const Value: boolean);
+    function Gettype2_: boolean;
+    procedure Settype2_(const Value: boolean);
   public
     function resourceList : TFhirEnumList;
-    property type_ : boolean read Gettype_ write Settype_;
+    property type_ : boolean read Gettype2_ write Settype2_;
   end;
   {$ENDIF}
 
@@ -672,11 +672,13 @@ function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boole
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 
+{$IFNDEF FPC}
 type
   TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
 
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+{$ENDIF}
 
 implementation
 
@@ -4767,7 +4769,7 @@ end;
 { TFHIROperationDefinitionHelper }
   {$IFDEF FHIR_OPERATIONDEFINITION}
 
-function TFHIROperationDefinitionHelper.Gettype_: boolean;
+function TFHIROperationDefinitionHelper.GetType2_: boolean;
 begin
   result := false;
 end;
@@ -4777,7 +4779,7 @@ begin
   result := type_list;
 end;
 
-procedure TFHIROperationDefinitionHelper.Settype_(const Value: boolean);
+procedure TFHIROperationDefinitionHelper.SetType2_(const Value: boolean);
 begin
   raise EFHIRTodo.create('TFHIROperationDefinitionHelper.Settype_');
 end;
@@ -5141,6 +5143,7 @@ begin
     end_ := TFslDateTime.makeNull;
 end;
 
+{$IFNDEF FPC}
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 begin
   iterateObject(resource, proc);
@@ -5165,6 +5168,8 @@ begin
     end;
   end;
 end;
+{$ENDIF}
+
 
 { TFHIRBundleEntryHelper }
 

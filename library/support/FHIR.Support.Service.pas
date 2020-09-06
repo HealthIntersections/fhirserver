@@ -813,7 +813,7 @@ end;
 
 procedure TServiceManagerHandle.ListServices(AList: TStringList);
 var
-  LSvc: packed array [0..1000] of TEnumServiceStatus;
+  LSvc: packed array [0..1000] of LPENUM_SERVICE_STATUS;
   LNeeded, LReturned, LResume : DWord;
   i : integer;
 begin
@@ -937,12 +937,12 @@ end;
 procedure TServiceHandle.ListDependencies(AList: TStrings);
 var
   LNeeded : DWord;
-  LConfig : array [0..11] of _QUERY_SERVICE_CONFIG;
+  LConfig : array [0..11] of LPQUERY_SERVICE_CONFIG;
   p : pchar;
 begin
   if FHandle = 0 then
     raise EOSError.Create(SysErrorMessage(FHndErr));
-  if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIG)* 10, LNeeded) then
+  if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(LPQUERY_SERVICE_CONFIG)* 10, LNeeded) then
     RaiseLastOSError;
   p := LConfig[0].lpDependencies;
   while assigned(p) and (p[0] <> #0) do

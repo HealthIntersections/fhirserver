@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -1258,7 +1260,7 @@ end;
 
 
 
-constructor TQuestionnaireBuilder.create;
+constructor TQuestionnaireBuilder.create(const lang : THTTPLanguages);
 begin
   inherited create;
   vsCache := TFslStringMatch.create;

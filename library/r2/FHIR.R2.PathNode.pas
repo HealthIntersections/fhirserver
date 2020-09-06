@@ -1,6 +1,5 @@
 unit FHIR.R2.PathNode;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -28,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -130,7 +131,10 @@ type
     function checkName : boolean;
 
     // version overrides;
-    procedure visitAll(proc : TFHIRPathExpressionNodeVisitProc); override;
+    {$IFNDEF FPC}
+    procedure visitAll(context : pointer; proc : TFHIRPathExpressionNodeVisitProc); override;
+    {$ENDIF}
+
     function nodeOpName : String; override;
     function nodeName : String; override;
     function nodeChildCount : integer; override;
@@ -253,7 +257,7 @@ begin
     result := true;
 end;
 
-constructor TFHIRPathExpressionNode.Create;
+constructor TFHIRPathExpressionNode.Create(uniqueId : Integer);
 begin
   inherited Create;
   FUniqueId := uniqueId
@@ -454,21 +458,23 @@ begin
   end;
 end;
 
-procedure TFHIRPathExpressionNode.visitAll(proc: TFHIRPathExpressionNodeVisitProc);
+{$IFNDEF FPC}
+procedure TFHIRPathExpressionNode.visitAll(context : pointer; proc: TFHIRPathExpressionNodeVisitProc);
 var
   c : TFHIRPathExpressionNode;
 begin
-  proc(self);
+  proc(context, self);
   if ParameterCount > 0 then
     for c in Parameters do
-      c.visitAll(proc);
+      c.visitAll(context, proc);
   if Inner <> nil then
-    Inner.visitAll(proc);
+    Inner.visitAll(context, proc);
   if Group <> nil then
-    Group.visitAll(proc);
+    Group.visitAll(context, proc);
   if OpNext <> nil then
-    OpNext.visitAll(proc);
+    OpNext.visitAll(context, proc);
 end;
+{$ENDIF}
 
 procedure TFHIRPathExpressionNode.write(b: TStringBuilder);
 var
@@ -644,7 +650,7 @@ end;
 function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
 begin
   result := TFHIRTypeDetails.createList(csNULL, FTypes);
-  if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
+  if (right.FcollectionStatus in [csUNORDERED, csSINGLETON]) then
     result.FcollectionStatus := csUNORDERED
   else
     result.FcollectionStatus := csORDERED;

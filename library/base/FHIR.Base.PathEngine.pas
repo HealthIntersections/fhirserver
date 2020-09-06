@@ -52,7 +52,7 @@ type
   PTreeDataPointer = ^TTreeDataPointer;
 
   {$IFNDEF FPC}
-  TFHIRPathExpressionNodeVisitProc = reference to procedure(item : TFHIRPathExpressionNodeV);
+  TFHIRPathExpressionNodeVisitProc = reference to procedure(context : pointer; item : TFHIRPathExpressionNodeV);
   {$ENDIF}
 
   TFHIRPathExpressionNodeV = class (TFslObject)
@@ -68,7 +68,7 @@ type
     function summary : String; virtual; abstract;
 
     {$IFNDEF FPC}
-    procedure visitAll(proc : TFHIRPathExpressionNodeVisitProc); virtual; abstract;
+    procedure visitAll(context : pointer; proc : TFHIRPathExpressionNodeVisitProc); virtual; abstract;
     {$ENDIF}
     function nodeOpName : String; virtual; abstract;
     function nodeName : String; virtual; abstract;

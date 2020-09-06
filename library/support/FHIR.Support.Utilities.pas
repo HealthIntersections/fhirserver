@@ -35,7 +35,8 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
-  SysUtils, Types, System.TimeSpan, System.NetEncoding, Classes, EncdDecd, Generics.Collections, UIConsts, Math, TypInfo, Character, RegularExpressions, SysConst,
+  SysUtils, Types, {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, {$ENDIF}
+  Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
   FHIR.Support.Fpc, FHIR.Support.Base;
 
 
@@ -453,6 +454,7 @@ Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiCh
   {$DEFINE NO_BUILDER}
 {$ENDIF}
 
+
 Type
   {$IFDEF NO_BUILDER}
   TFslStringBuilder = Class(TFslObject)
@@ -495,6 +497,8 @@ Type
 
     Procedure Delete(iIndex, iLength : Integer);
 
+    Procedure WriteToStream(aStream : TStream; encoding : TEncoding = nil); overload;
+
     Property BufferSize : integer read FBufferSize write FBufferSize;
     Function IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
     Function LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
@@ -504,8 +508,8 @@ Type
     Procedure Overwrite(index : integer; content : String);
   End;
 
-
   {$ELSE}
+
   TFslStringBuilder = Class (TFslObject)
   Private
     FBuilder : TStringBuilder;
@@ -5773,7 +5777,7 @@ Begin
   Result := Lowercase(sValue);
 
   If Length(Result) > 1 Then
-    Result[1] := charUpper(Result[1]);
+    Result[1] := Result[1].ToUpper;
 End;
 
 
@@ -6872,17 +6876,6 @@ begin
   result := AsString;
 end;
 
-procedure TFslStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
-var
-  a : TBytes;
-Begin
-  if encoding = nil then
-    encoding := TEncoding.UTF8;
-  a := encoding.GetBytes(FBuilder.ToString);
-  if System.length(a) > 0 then
-    aStream.Write(a[0], System.length(a));
-End;
-
 Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
 Begin
   FBuilder.Remove(iIndex, iLength);
@@ -6966,6 +6959,17 @@ begin
   AppendEOL;
 end;
 {$ENDIF}
+
+procedure TFslStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
+var
+  a : TBytes;
+Begin
+  if encoding = nil then
+    encoding := TEncoding.UTF8;
+  a := encoding.GetBytes(ToString);
+  if System.length(a) > 0 then
+    aStream.Write(a[0], System.length(a));
+End;
 
 
 { TCommaBuilder }
@@ -7667,10 +7671,10 @@ Begin
     Begin
       cLastCharacter := sValue[iLength];
 
-      Case charUpper(cLastCharacter) Of
+      Case cLastCharacter.ToUpper Of
         'H' :
         Begin
-          cSecondLastCharacter := charUpper(sValue[iLength - 1]);
+          cSecondLastCharacter := sValue[iLength - 1].ToUpper;
           If (iLength > 1) And ((cSecondLastCharacter = 'T') Or (cSecondLastCharacter = 'G')) Then
             sPluralisation := 's'
           Else
@@ -7713,14 +7717,14 @@ Begin
   Result := sValue;
 
   If Result <> '' Then
-    Result[1] := charUpper(Result[1]);
+    Result[1] := Result[1].ToUpper;
 
   For iLoop := 1 To Length(Result) - 1 Do
   Begin
     cCurrent := Result[iLoop];
 
     If CharInSet(cCurrent, [' ', '_']) Then
-      Result[iLoop + 1] := charUpper(Result[iLoop + 1]);
+      Result[iLoop + 1] := Result[iLoop + 1].ToUpper;
   End;
 End;
 
@@ -9944,7 +9948,7 @@ Begin
   iIndices := IntegerArrayMax(aIndices);
   pValue := PChar(sValue);
 
-  bLeadingTime := CharInSet(charUpper(StringGet(sFormat, 1)), ['H', 'N', 'S', 'Z']);
+  bLeadingTime := CharInSet(StringGet(sFormat, 1).ToUpper, ['H', 'N', 'S', 'Z']);
 
   If bLeadingTime Then
     Result := PCharToTime(pValue, aTime)
@@ -11074,7 +11078,7 @@ Begin
   iIndices := IntegerArrayMax(aIndices);
   pValue := PChar(sValue);
 
-  bLeadingTime := CharInSet(charUpper(StringGet(sFormat, 1)), ['H', 'N', 'S', 'Z']);
+  bLeadingTime := CharInSet(StringGet(sFormat, 1).ToUpper, ['H', 'N', 'S', 'Z']);
 
   If bLeadingTime Then
     Result := PCharToTime(pValue, aTime)
@@ -14218,7 +14222,7 @@ Begin
 
     cMask := FFormat[iFormat];
 
-    Case charUpper(cMask) Of
+    Case cMask.ToUpper Of
       '0', '9' : aSet := setNumbers;
       'A'      : aSet := setAlphanumeric;
       'C'      : aSet := setUniversal;
@@ -14459,7 +14463,7 @@ Begin
   If FCaseSensitive Then
     Result := [cSymbol]
   Else
-    Result := [charLower(cSymbol), charUpper(cSymbol)];
+    Result := [cSymbol.ToLower, cSymbol.ToUpper];
 End;
 
 

@@ -1,7 +1,5 @@
 ﻿unit FHIR.R2.Factory;
 
-{$I fhir.r2.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -29,6 +27,9 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r2.inc}
 
 interface
 
@@ -69,7 +70,7 @@ type
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
-    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
@@ -130,7 +131,7 @@ type
 implementation
 
 uses
-  Soap.EncdDecd,
+  EncdDecd,
   FHIR.Client.HTTP,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Parser, FHIR.R2.Context, FHIR.R2.Validator, FHIR.R2.Profiles, FHIR.R2.Operations, FHIR.R2.ElementModel,
   FHIR.R2.Narrative, FHIR.R2.PathEngine, FHIR.R2.Constants, FHIR.R2.Client, FHIR.R2.Common, FHIR.R2.Utilities, FHIR.R2.AuthMap;
@@ -166,7 +167,7 @@ begin
     end;
 end;
 
-procedure TFHIRFactoryR2.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = []);
+procedure TFHIRFactoryR2.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param)

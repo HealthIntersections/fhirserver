@@ -29,6 +29,8 @@ unit FHIR.Javascript.Base;
 
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -36,7 +38,6 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Javascript, FHIR.Support.Javascript,
   FHIR.Base.Objects, FHIR.Base.Factory;
-{$IFNDEF FPC}
 
 type
   TFHIRJavascriptDefinedElement = class (TFslObject)
@@ -297,7 +298,7 @@ begin
     p.Values.jsInstance := 0;
     setLength(params, 1);
     js.iterateArray(value,
-      procedure (i : integer; v : JsValueRef)
+      procedure (context : pointer; i : integer; v : JsValueRef)
       begin
         o := js.getWrapped<TFHIRObject>(v).Link;
         try
@@ -650,10 +651,6 @@ function TFHIRJavascriptDefinedElement.FHIRTypeNV: String;
 begin
   result := FFHIRType.Substring(0, FFHIRType.Length-1);
 end;
-
-{$ELSE}
-implementation
-{$ENDIF}
 
 end.
 

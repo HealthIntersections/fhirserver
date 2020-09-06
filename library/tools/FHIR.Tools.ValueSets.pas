@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 {
@@ -943,9 +945,7 @@ begin
       begin
         cs.displays(loc, displays, FParams.displayLanguage);
         exit;
-      end
-      else
-
+      end;
     finally
       cs.Close(loc);
     end;

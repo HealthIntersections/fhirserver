@@ -52,6 +52,7 @@ type
     function isUpper : boolean;
     function IsWhiteSpace : boolean;
     function ToLower : char;
+    function ToUpper : char;
   end;
 
   { TTimeZone }
@@ -204,6 +205,11 @@ end;
 function TCharHelper.ToLower: char;
 begin
   result := Character.ToLower(self);
+end;
+
+function TCharHelper.ToUpper: char;
+begin
+  result := Character.ToUpper(self);
 end;
 
 function ColorToString(Color: TColor): AnsiString;

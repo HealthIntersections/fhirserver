@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -100,6 +102,7 @@ type
   private
     FMap : TFslMap<TFHIRCodeSystemEntry>;
     FList : TFslList<TFHIRCodeSystemEntry>;
+    function sort(sender : TObject; const L, R: TFHIRCodeSystemEntry): Integer;
     procedure updateList(url, version: String);
   public
     Constructor Create; override;
@@ -131,30 +134,32 @@ type
     concepts : TFslList<TFhirCodeSystemConceptMatch>;
 
     procedure Add(item : TFhirCodeSystemConceptW; rating : double);
-    function Compare(const Left, Right: TFhirCodeSystemConceptMatch): Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
     procedure sort;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
   end;
 
-  TCodeSystemCodeFilterProc = reference to function (concept : TFhirCodeSystemConceptW) : boolean;
+  TCodeSystemCodeFilterProc = {$IFNDEF FPC}reference to {$ENDIF}function (context : pointer; concept : TFhirCodeSystemConceptW) : boolean;
 
+function allCodes(context : pointer; concept : TFhirCodeSystemConceptW) : boolean;
+function leafCodes(context : pointer; concept : TFhirCodeSystemConceptW) : boolean;
+function nonLeafCodes(context : pointer; concept : TFhirCodeSystemConceptW) : boolean;
+
+type
   TFhirCodeSystemProvider = class (TCodeSystemProvider)
   private
     FCs : TFhirCodeSystemEntry;
     FMap : TFslMap<TFhirCodeSystemConceptW>;
     FFactory : TFHIRFactory;
 
-    function allCodes(concept : TFhirCodeSystemConceptW) : boolean;
-    function leafCodes(concept : TFhirCodeSystemConceptW) : boolean;
-    function nonLeafCodes(concept : TFhirCodeSystemConceptW) : boolean;
     function LocateCode(code : String) : TFhirCodeSystemConceptW;
     function doLocate(code : String) : TFhirCodeSystemProviderContext; overload;
     function doLocate(list : TFslList<TFhirCodeSystemConceptW>; code : String) : TFhirCodeSystemProviderContext; overload;
     function getParent(ctxt : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptW;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText);
-    procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; exception : TFhirCodeSystemConceptW = nil);
+    procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; exception : TFhirCodeSystemConceptW = nil);
     function locCode(list: TFslList<TFhirCodeSystemConceptW>; code: String): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     procedure iterateConceptsByProperty(src : TFslList<TFhirCodeSystemConceptW>; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
@@ -291,7 +296,7 @@ begin
   concepts.Add(TFhirCodeSystemConceptMatch.Create(item, rating));
 end;
 
-function TFhirCodeSystemProviderFilterContext.Compare(const Left, Right: TFhirCodeSystemConceptMatch): Integer;
+function TFhirCodeSystemProviderFilterContext.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
 begin
   if right.FRating > left.FRating then
     result := 1
@@ -356,7 +361,7 @@ begin
   inherited;
 end;
 
-function TFhirCodeSystemProvider.allCodes(concept: TFhirCodeSystemConceptW): boolean;
+function {TFhirCodeSystemProvider.}allCodes(context : pointer; concept: TFhirCodeSystemConceptW): boolean;
 begin
   result := true;
 end;
@@ -796,12 +801,12 @@ begin
   end;
 end;
 
-function TFhirCodeSystemProvider.leafCodes(concept: TFhirCodeSystemConceptW): boolean;
+function {TFhirCodeSystemProvider.}leafCodes(context : pointer; concept: TFhirCodeSystemConceptW): boolean;
 begin
   result := concept.conceptList.Count = 0;
 end;
 
-function TFhirCodeSystemProvider.nonLeafCodes(concept: TFhirCodeSystemConceptW): boolean;
+function {TFhirCodeSystemProvider.}nonLeafCodes(context : pointer; concept: TFhirCodeSystemConceptW): boolean;
 begin
   result := concept.conceptList.Count > 0;
 end;
@@ -886,7 +891,7 @@ begin
   ctxt.Free;
 end;
 
-procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; exception : TFhirCodeSystemConceptW = nil);
+procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; exception : TFhirCodeSystemConceptW = nil);
 var
   i : integer;
   el : TFslList<TFHIRObject>;
@@ -901,10 +906,10 @@ begin
   if (exception <> nil) and (exception.code = base.code) then
     exit;
 
-  if filter(base) then
+  if filter(context, base) then
     list.Add(base.Link, 0);
   for i := 0 to base.conceptList.count - 1 do
-    iterateCodes(base.conceptList[i], list, allCodes);
+    iterateCodes(base.conceptList[i], list, filter, context);
   el := base.extensions('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
   try
     for e in el do
@@ -913,7 +918,7 @@ begin
       try
         ctxt := doLocate(ex.value.primitiveValue);
         try
-          iterateCodes(TFhirCodeSystemProviderContext(ctxt).context, list, allCodes);
+          iterateCodes(TFhirCodeSystemProviderContext(ctxt).context, list, filter, context);
         finally
           Close(ctxt);
         end;
@@ -1000,7 +1005,7 @@ begin
       begin
         result := TFhirCodeSystemProviderFilterContext.create;
         try
-          iterateCodes(code.context, result as TFhirCodeSystemProviderFilterContext, allCodes);
+          iterateCodes(code.context, result as TFhirCodeSystemProviderFilterContext, allCodes, nil);
           result.link;
         finally
           result.Free;
@@ -1064,9 +1069,9 @@ begin
     try
       for cc in FCs.FCodeSystem.conceptList do
         if value = 'true' then
-          iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, nonLeafCodes)
+          iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, nonLeafCodes, nil)
         else
-          iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, leafCodes);
+          iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, leafCodes, nil);
       result.link;
     finally
       result.Free;
@@ -1221,6 +1226,28 @@ begin
   end;
 end;
 
+function TFHIRCodeSystemManager.sort(sender : TObject; const L, R: TFHIRCodeSystemEntry): Integer;
+var v1, v2, mm1, mm2 : string;
+begin
+  v1 := l.version;
+  v2 := r.version;
+  if (v1 = '') and (v2 = '') then
+    result := FList.indexOf(l) - FList.indexOf(r)
+  else if (v1 = '') then
+    result := -1
+  else if (v2 = '') then
+    result := 1
+  else
+  begin
+    mm1 := TFHIRVersions.getMajMin(v1);
+    mm2 := TFHIRVersions.getMajMin(v2);
+    if (mm1 = '') or (mm2 = '') then
+      result := v1.compareTo(v2)
+    else
+      result := CompareText(mm1, mm2);
+  end;
+end;
+
 procedure TFHIRCodeSystemManager.updateList(url, version : String);
 var
   rl : TFslList<TFHIRCodeSystemEntry>;
@@ -1238,6 +1265,9 @@ begin
     if (rl.count > 0) then
     begin
       // sort by version as much as we are able
+      {$IFDEF FPC}
+      rl.sort(sort);
+      {$ELSE}
       rl.sort(function (const L, R: TFHIRCodeSystemEntry): Integer
         var v1, v2, mm1, mm2 : string;
         begin
@@ -1259,6 +1289,7 @@ begin
               result := CompareText(mm1, mm2);
           end;
         end);
+      {$ENDIF}
 
       // the current is the latest
       FMap.addOrSetValue(url, rl[rl.count-1].link);
