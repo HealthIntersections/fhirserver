@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -82,8 +84,8 @@ Type
     procedure seeResource(event : TFhirEventDefinitionW);
   end;
 
-  TJsGetFHIRResource = reference to function : TFHIRResourceV;
-  TJsGetFHIRClient = reference to function : TFHIRClientV;
+  TJsGetFHIRResource = {$IFNDEF FPC}reference to {$ENDIF}function(context : pointer) : TFHIRResourceV;
+  TJsGetFHIRClient = {$IFNDEF FPC}reference to {$ENDIF}function(context : pointer) : TFHIRClientV;
 
   // we create one of these for evrey thread, but it will only actually create a javscript engine when it needs to.
   // then, we retain it as long as we can
@@ -125,8 +127,8 @@ begin
 
   scripts := TFslList<TEventScript>.create;
   try
-    if before <> nil then
-      rn := before.fhirType
+    if before(nil) <> nil then
+      rn := before(nil).fhirType
     else
       rn := after.fhirType;
 
@@ -136,9 +138,9 @@ begin
       engine := FEngine;
       engine.ObjectsImmutable := true;
       s := engine.wrap(session.Link, 'Session', true, true);
-      b := engine.wrap(before.Link, rn, true, true);
+      b := engine.wrap(before(nil).Link, rn, true, true);
       a := engine.wrap(after.Link, rn, true, true);
-      c := engine.wrap(client.link, 'FHIR.Version.Client', true, true);
+      c := engine.wrap(client(nil).link, 'FHIR.Version.Client', true, true);
       engine.addGlobal('fhir', c);
       for script in scripts do
         engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);

@@ -1,5 +1,36 @@
 unit FHIR.Tx.NDC;
 
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
+
 interface
 
 uses
@@ -462,27 +493,46 @@ begin
 end;
 
 procedure TNDCServices.load;
+var
+  conn : TFslDBConnection;
 begin
-  FDB.connection('load', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getConnection('load');
+  try
     loadDict(conn, FTypes, 'select NDCKey, Name from NDCProductTypes');
     loadDict(conn, FOrgs, 'select NDCKey, Name from NDCOrganizations');
     loadDict(conn, FRoutes, 'select NDCKey, Name from NDCRoutes');
     loadDict(conn, FDoseforms, 'select NDCKey, Name from NDCDoseForms');
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
 end;
 
 function TNDCServices.Code(context: TCodeSystemProviderContext): string;
 var
   c : string;
   code : TNDCProviderContext;
+  conn : TFslDBConnection;
 begin
   code := context as TNDCProviderContext;
-  FDB.connection('Code', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getConnection('Code');
+  try
     if code.package then
       c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Code', '')
     else
       c := conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'Code', '');
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   result := c;
 end;
 
@@ -490,20 +540,39 @@ function TNDCServices.ChildCount(context: TCodeSystemProviderContext): integer;
 var
   count : integer;
   code : TNDCProviderContext;
+  conn : TFslDBConnection;
 begin
   if (context = nil) then
   begin
-    FDB.connection('ChildCount', procedure (conn : TFslDBConnection) begin
-        count := conn.CountSQL('select count(*) from NDCProducts');
-      end);
+    conn := FDB.getconnection('ChildCount');
+    try
+      count := conn.CountSQL('select count(*) from NDCProducts');
+      conn.release;
+    except
+      on e : Exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
+    end;
+
     exit(count);
   end;
+
   code := context as TNDCProviderContext;
   if code.package then
     exit(0);
-  FDB.connection('ChildCount', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('ChildCount');
+  try
     count := conn.CountSQL('select count(*) from NDCPackages where ProductKey = '+inttostr(code.key));
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   result := count;
 end;
 
@@ -516,10 +585,12 @@ function TNDCServices.Display(context: TCodeSystemProviderContext; const lang : 
 var
   c : string;
   code : TNDCProviderContext;
+  conn : TFslDBConnection;
 begin
   code := context as TNDCProviderContext;
   c := '';
-  FDB.connection('Display', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('Display');
+  try
     if code.package then
     begin
       conn.sql := 'Select TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key);
@@ -538,7 +609,14 @@ begin
         c := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix'];
       conn.terminate;
     end;
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   result := c;
 end;
 
@@ -546,35 +624,55 @@ procedure TNDCServices.Displays(context: TCodeSystemProviderContext; list: TStri
 var
   c : string;
   code : TNDCProviderContext;
+  conn : TFslDBConnection;
 begin
   code := context as TNDCProviderContext;
-  FDB.connection('Displays', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('Displays');
+  try
     if code.package then
       c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Description', '')
     else
       c := conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'Suffix', '');
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   list.Add(c.Trim);
 end;
 
 procedure TNDCServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 var
   c : string;
+  conn : TFslDBConnection;
 begin
-  FDB.connection('Displays', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('Displays');
+  try
     c := conn.Lookup('NDCPackages', 'Code', code, 'Description', '');
     if c = '' then
       c := conn.Lookup('NDCProducts', 'Code', code, 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'Code', code, 'Suffix', '');
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   list.Add(c.Trim);
 end;
 
 procedure TNDCServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   code : TNDCProviderContext;
+  conn : TFslDBConnection;
 begin
   code := ctxt as TNDCProviderContext;
-  FDB.connection('Display', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('Display');
+  try
     if code.package then
       conn.sql := 'Select Type, TradeName, DoseForm, Route, Company, Category, Generics from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key)
     else
@@ -592,7 +690,14 @@ begin
       resp.addProp('generic').value := factory.makeString(conn.ColBlobAsStringByName['Generics']);
     end;
     conn.terminate;
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
 end;
 
 function TNDCServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -633,9 +738,11 @@ end;
 function TNDCServices.getDisplay(code : String; const lang : THTTPLanguages): String;
 var
   c : string;
+  conn : TFslDBConnection;
 begin
   c := '';
-  FDB.connection('getDisplay', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('getDisplay');
+  try
     conn.sql := 'Select TradeName, Suffix from NDCProducts where Code = '''+SQLWrapString(code)+'''';
     conn.prepare;
     conn.execute;
@@ -651,7 +758,14 @@ begin
         c := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+' '+conn.ColStringByName['Description'];
     end;
     conn.terminate;
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   result := c;
 end;
 
@@ -679,9 +793,11 @@ function TNDCServices.locate(code: String; var message: String): TCodeSystemProv
 var
   c : TCodeSystemProviderContext;
   k : integer;
+  conn : TFslDBConnection;
 begin
   c := nil;
-  FDB.connection('getDisplay', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('getDisplay');
+  try
     k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+''' or code11 = '''+SQLWrapString(code)+'''');
     if k <> 0 then
       c := TNDCProviderContext.create(true, k)
@@ -691,7 +807,14 @@ begin
       if k <> 0 then
         c := TNDCProviderContext.create(false, k)
     end;
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   result := c;
 end;
 
@@ -718,11 +841,20 @@ end;
 function TNDCServices.TotalCount: integer;
 var
   count : cardinal;
+  conn : TFslDBConnection;
 begin
-  FDB.connection('ChildCount', procedure (conn : TFslDBConnection) begin
+  conn := FDB.getconnection('ChildCount');
+  try
     count := conn.CountSQL('select count(*) from NDCPackages');
     count := count + conn.CountSQL('select count(*) from NDCProducts');
-  end);
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
   result := count;
 end;
 

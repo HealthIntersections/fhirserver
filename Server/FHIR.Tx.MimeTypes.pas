@@ -28,11 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections,
+  SysUtils, Classes, Generics.Collections,
    FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Web.Parsers,
   FHIR.Base.Common,
   FHIR.Tx.Service;

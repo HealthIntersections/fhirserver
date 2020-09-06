@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -367,6 +369,11 @@ Type
 
     function hasTestingTag : boolean;
   
+    {
+      Preferred language of the requester (used for error messages)
+    }
+    Property Lang : THTTPLanguages read FLang write SetLang;
+
   published
     {
       The full URL of the original request, if the request was made on a RESTful interface (else empty)
@@ -470,11 +477,6 @@ Type
       The last modified date of the resource identified in the request (if present)
     }
     Property lastModifiedDate : TDateTime read FlastModifiedDate write FlastModifiedDate;
-
-    {
-      Preferred language of the requester (used for error messages)
-    }
-    Property Lang : THTTPLanguages read FLang write SetLang;
 
     {
       What kind of summary is requested

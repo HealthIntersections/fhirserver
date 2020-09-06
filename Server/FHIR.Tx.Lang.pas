@@ -28,11 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections,
+  SysUtils, Classes, Generics.Collections,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Web.Parsers,
   FHIR.Base.Common,
   FHIR.Tx.Service;
@@ -251,7 +252,7 @@ https://www.w3.org/International/articles/language-tags/index.en
 
 { TIETFLanguageCodeServices }
 
-Constructor TIETFLanguageCodeServices.create;
+Constructor TIETFLanguageCodeServices.create(sourceFile : String);
 begin
   inherited Create;
   FDefinitions := TIETFLanguageDefinitions.Create(FileToString(sourceFile, TEncoding.ASCII));
@@ -514,7 +515,7 @@ end;
 
 { TIETFLanguageDefinitions }
 
-constructor TIETFLanguageDefinitions.Create;
+constructor TIETFLanguageDefinitions.Create(source : String);
 begin
   inherited Create;
   FLanguages := TFslMap<TIETFLanguageLanguage>.create('tx.lang');

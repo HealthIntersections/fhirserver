@@ -801,8 +801,8 @@ begin
             checkProposedContent(request.Session, request, request.Resource, tags);
             FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
             GJsHost.checkChanges(ttDataAdded, request.Session,
-              function : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-              function : TFHIRResourceV begin result := nil; end,
+              function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
+              function (context : pointer) : TFHIRResourceV begin result := nil; end,
               request.Resource);
             result := sId;
             request.id := sId;
@@ -965,8 +965,8 @@ begin
         checkProposedDeletion(request.session, request, request.Resource, tags);
         FRepository.checkDropResource(request.session, request, request.Resource, tags);
         GJsHost.checkChanges(ttDataRemoved, request.Session,
-            function : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-            function : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
+            function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
+            function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
             nil);
 
         for i := 0 to tags.count - 1 do
@@ -2128,8 +2128,8 @@ begin
           checkProposedContent(request.session, request, request.Resource, tags);
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           GJsHost.checkChanges(ttDataModified, request.Session,
-            function : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-            function : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
+            function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
+            function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
             request.Resource);
 
           for i := 0 to tags.count - 1 do
@@ -2417,8 +2417,8 @@ begin
           checkProposedContent(request.session, request, request.resource, tags);
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           GJsHost.checkChanges(ttDataModified, request.Session,
-            function : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-            function : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
+            function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
+            function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
             request.Resource);
 
           for i := 0 to tags.count - 1 do
