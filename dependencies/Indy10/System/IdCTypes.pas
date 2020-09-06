@@ -1,21 +1,36 @@
 unit IdCTypes;
 
-// TODO: deprecate this unit and move the declarations to the IdGlobal unit.
-
 interface
 
 {$I IdCompilerDefines.inc}
 
-{This unit should not contain ANY program code.  It is meant to be extremely 
+{
+This unit should not contain ANY program code.  It is meant to be extremely 
 thin.  The idea is that the unit will contain type mappings that used for headers
 and API calls using the headers.  The unit is here because in cross-platform
 headers, the types may not always be the same as they would for Win32 on x86
 Intel architecture.  We also want to be completely compatiable with Borland
-Delphi for Win32.}
+Delphi for Win32.
+}
 
-{$IFDEF HAS_UNIT_ctypes}
+{$IFDEF FPC}
 uses
-  ctypes;
+  ctypes
+  {$IFDEF HAS_UNIT_UnixType}
+  , UnixType
+  {$ENDIF}
+  ;
+{$ELSE}
+  // Delphi defines (P)SIZE_T and (P)SSIZE_T in the Winapi.Windows unit in
+  // XE2+, but we don't want to pull in that whole unit here just to define
+  // a few aliases...
+  {
+  ($IFDEF WINDOWS)
+    ($IFDEF VCL_XE2_OR_ABOVE)
+uses Winapi.Windows;
+    ($ENDIF)
+  ($ENDIF)
+  }
 {$ENDIF}
 
 {
@@ -23,7 +38,6 @@ IMPORTANT!!!
 
 The types below are defined to hide architecture differences for various C++
 types while also making this header compile with Borland Delphi.
-
 }
 type 
   {$IFDEF FPC}
@@ -65,7 +79,7 @@ type
 
   TIdC_INT32 = cint32;
   PIdC_INT32 = pcint32;
-  TIdC_UINT32 = cint32;
+  TIdC_UINT32 = cuint32;
   PIdC_UINT32 = pcuint32;
 
   TIdC_INT64 = cint64;
@@ -80,9 +94,70 @@ type
   TIdC_LONGDOUBLE = clongdouble;
   PIdC_LONGDOUBLE =  pclongdouble;
 
+  {$IFDEF HAS_SIZE_T}
+  TIdC_SIZET = size_t;
+  {$ELSE}
+    {$IFDEF HAS_PtrUInt}
+  TIdC_SIZET = PtrUInt;
+    {$ELSE}
+      {$IFDEF CPU32}
+  TIdC_SIZET = TIdC_UINT32;
+      {$ENDIF}
+      {$IFDEF CPU64}
+  TIdC_SIZET = TIdC_UINT64;
+      {$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
+  {$IFDEF HAS_PSIZE_T}
+  PIdC_SIZET = psize_t;
+  {$ELSE}
+  PIdC_SIZET = ^TIdC_SIZET;
+  {$ENDIF}
+
+  {$IFDEF HAS_SSIZE_T}
+  TIdC_SSIZET = ssize_t;
+  {$ELSE}
+    {$IFDEF HAS_PtrInt}
+  TIdC_SSIZET = PtrInt;
+    {$ELSE}
+      {$IFDEF CPU32}
+  TIdC_SSIZET = TIdC_INT32;
+      {$ENDIF}
+      {$IFDEF CPU64}
+  TIdC_SSIZET = TIdC_INT64;
+      {$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
+  {$IFDEF HAS_PSSIZE_T}
+  // in ptypes.inc, pssize_t is missing, but pSSize is present, and it is defined as ^ssize_t...
+  PIdC_SSIZET = {pssize_t}pSSize;
+  {$ELSE}
+  PIdC_SSIZET = ^TIdC_SSIZET;
+  {$ENDIF}
+
+  {$IFDEF HAS_TIME_T}
+  TIdC_TIMET = time_t;
+  {$ELSE}
+    {$IFDEF HAS_PtrUInt}
+  TIdC_TIMET = PtrUInt;
+    {$ELSE}
+      {$IFDEF CPU32}
+  TIdC_TIMET = TIdC_UINT32;
+      {$ENDIF}
+      {$IFDEF CPU64}
+  TIdC_TIMET = TIdC_UINT64;
+      {$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
+  {$IFDEF HAS_PTIME_T}
+  PIdC_TIMET = ptime_t;
+  {$ELSE}
+  PIdC_TIMET = ^TIdC_TIMET;
+  {$ENDIF}
+
   {$ELSE}
 
-  //this is necessary because Borland still doesn't support QWord
+  // this is necessary because Borland still doesn't support QWord
   // (unsigned 64bit type).
   {$IFNDEF HAS_QWord}
   qword = {$IFDEF HAS_UInt64}UInt64{$ELSE}Int64{$ENDIF};
@@ -114,34 +189,94 @@ type
   PIdC_UNSIGNED = ^TIdC_UNSIGNED;
 
   TIdC_INT8 = Shortint;
-  PIdC_INT8  = ^TIdC_INT8;
+  PIdC_INT8  = ^TIdC_INT8{PShortint};
   TIdC_UINT8 = Byte;
-  PIdC_UINT8 = ^TIdC_UINT8;
+  PIdC_UINT8 = ^TIdC_UINT8{PByte};
 
   TIdC_INT16 = Smallint;
-  PIdC_INT16 = ^TIdC_INT16;
+  PIdC_INT16 = ^TIdC_INT16{PSmallint};
   TIdC_UINT16 = Word;
-  PIdC_UINT16 = ^TIdC_UINT16;
+  PIdC_UINT16 = ^TIdC_UINT16{PWord};
 
   TIdC_INT32 = Integer;
-  PIdC_INT32 = ^TIdC_INT32;
+  PIdC_INT32 = ^TIdC_INT32{PInteger};
   TIdC_UINT32 = Cardinal;
-  PIdC_UINT32 = ^TIdC_UINT32;
+  PIdC_UINT32 = ^TIdC_UINT32{PCardinal};
 
   TIdC_INT64 = Int64;
-  PIdC_INT64 = ^TIdC_INT64;
+  PIdC_INT64 = ^TIdC_INT64{PInt64};
   TIdC_UINT64 = QWord;
-  PIdC_UINT64 = ^TIdC_UINT64;
+  PIdC_UINT64 = ^TIdC_UINT64{PQWord};
 
   TIdC_FLOAT = Single;
-  PIdC_FLOAT = ^TIdC_FLOAT;
+  PIdC_FLOAT = ^TIdC_FLOAT{PSingle};
   TIdC_DOUBLE = Double;
-  PIdC_DOUBLE = ^TIdC_DOUBLE;
+  PIdC_DOUBLE = ^TIdC_DOUBLE{PDouble};
   TIdC_LONGDOUBLE = Extended;
-  PIdC_LONGDOUBLE = ^TIdC_LONGDOUBLE;
+  PIdC_LONGDOUBLE = ^TIdC_LONGDOUBLE{PExtended};
 
-  //Some headers require this in D5 or earlier.
-  //FreePascal already has this in its system unit.
+  {.$IFDEF HAS_SIZE_T}
+  //TIdC_SIZET = Winapi.Windows.SIZE_T;
+  {.$ELSE}
+    {$IFDEF HAS_NativeUInt}
+  TIdC_SIZET = NativeUInt;
+    {$ELSE}
+      {$IFDEF CPU32}
+  TIdC_SIZET = TIdC_UINT32;
+      {$ENDIF}
+      {$IFDEF CPU64}
+  TIdC_SIZET = TIdC_UINT64;
+      {$ENDIF}
+    {$ENDIF}
+  {.$ENDIF}
+  {.$IFDEF HAS_PSIZE_T}
+  //PIdC_SIZET = Winapi.Windows.PSIZE_T;
+  {.$ELSE}
+  PIdC_SIZET = ^TIdC_SIZET;
+  {.$ENDIF}
+
+  {.$IFDEF HAS_SSIZE_T}
+  //TIdC_SSIZET = Winapi.Windows.SSIZE_T;
+  {.$ELSE}
+    {$IFDEF HAS_NativeInt}
+  TIdC_SSIZET = NativeInt;
+    {$ELSE}
+      {$IFDEF CPU32}
+  TIdC_SSIZET = TIdC_INT32;
+      {$ENDIF}
+      {$IFDEF CPU64}
+  TIdC_SSIZET = TIdC_INT64;
+      {$ENDIF}
+    {$ENDIF}
+  {.$ENDIF}
+  {.$IFDEF HAS_PSSIZE_T}
+  //PIdC_SSIZET = Winapi.Windows.PSSIZE_T;
+  {.$ELSE}
+  PIdC_SSIZET = ^TIdC_SSIZET;
+  {.$ENDIF}
+
+  {$IFDEF HAS_TIME_T}
+  TIdC_TIMET = time_t;
+  {$ELSE}
+    {$IFDEF HAS_NativeUInt}
+  TIdC_TIMET = NativeUInt;
+    {$ELSE}
+      {$IFDEF CPU32}
+  TIdC_TIMET = TIdC_UINT32;
+      {$ENDIF}
+      {$IFDEF CPU64}
+  TIdC_TIMET = TIdC_UINT64;
+      {$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
+  {$IFDEF HAS_PTIME_T}
+  PIdC_TIMET = PTIME_T;
+  {$ELSE}
+  PIdC_TIMET = ^TIdC_TIMET;
+  {$ENDIF}
+
+  // Some headers require this in D5 or earlier.
+  // FreePascal already has this in its system unit.
   {$IFNDEF HAS_PByte}PByte = ^Byte;{$ENDIF}
   {$IFNDEF HAS_PWord}PWord = ^Word;{$ENDIF}
 

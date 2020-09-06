@@ -72,6 +72,9 @@
 // as specified further below.  Delphi/C++Builder Mobile/NextGen compilers
 // do not support Ansi data types anymore, and is moving away from raw
 // pointers as well.
+//
+// UPDATE: in Delphi/C++Builder 10.4, all Ansi types are supported again on
+// all platforms, including the mobile compilers.
 {$DEFINE HAS_AnsiString}
 {$DEFINE HAS_AnsiChar}
 {$DEFINE HAS_PAnsiChar}
@@ -81,6 +84,10 @@
 // Make sure the following are $DEFINE'd only for suitable environments
 // as specified further below.  Delphi/C++Builder Mobile/NextGen compilers
 // use ARC for TObject life time management.
+//
+// UPDATE: ARC for TObject lifetime management has been removed in
+// Delphi/C++Builder 10.4 mobile compilers.  All platforms now use a single
+// unified memory management model!
 {$UNDEF USE_MARSHALLED_PTRS}
 {$UNDEF HAS_MarshaledAString}
 {$UNDEF USE_OBJECT_ARC}
@@ -111,7 +118,9 @@
 {$UNDEF HAS_ComponentPlatformsAttribute_Win64}
 {$UNDEF HAS_ComponentPlatformsAttribute_OSX32}
 {$UNDEF HAS_ComponentPlatformsAttribute_iOS_Simulator}
+{$UNDEF HAS_ComponentPlatformsAttribute_iOS_Simulator32}
 {$UNDEF HAS_ComponentPlatformsAttribute_Android}
+{$UNDEF HAS_ComponentPlatformsAttribute_Android32Arm}
 {$UNDEF HAS_ComponentPlatformsAttribute_Linux32}
 {$UNDEF HAS_ComponentPlatformsAttribute_iOS_Device}
 {$UNDEF HAS_ComponentPlatformsAttribute_iOS_Device32}
@@ -119,6 +128,16 @@
 {$UNDEF HAS_ComponentPlatformsAttribute_WinNX32}
 {$UNDEF HAS_ComponentPlatformsAttribute_WinIoT32}
 {$UNDEF HAS_ComponentPlatformsAttribute_iOS_Device64}
+{$UNDEF HAS_ComponentPlatformsAttribute_WinARM}
+{$UNDEF HAS_ComponentPlatformsAttribute_WinARM32}
+{$UNDEF HAS_ComponentPlatformsAttribute_OSX64}
+{$UNDEF HAS_ComponentPlatformsAttribute_OSXNX64}
+{$UNDEF HAS_ComponentPlatformsAttribute_Linux32Arm}
+{$UNDEF HAS_ComponentPlatformsAttribute_Linux64Arm}
+{$UNDEF HAS_ComponentPlatformsAttribute_Android64}
+{$UNDEF HAS_ComponentPlatformsAttribute_Android64Arm}
+{$UNDEF HAS_ComponentPlatformsAttribute_iOS_Simulator64}
+{$UNDEF HAS_ComponentPlatformsAttribute_AllPlatforms}
 {$UNDEF HAS_DIRECTIVE_WARN_DEFAULT}
 
 // Define for Delphi to auto-generate platform-appropriate '#pragma link' statements in HPP files
@@ -393,6 +412,16 @@
       {$DEFINE CBUILDER_10_3}
     {$ELSE}
       {$DEFINE DELPHI_10_3}
+    {$ENDIF}
+  {$ENDIF}
+
+  //Delphi & CBuilder 10.4 Sydney (Denali)
+  {$IFDEF VER340}
+    {$DEFINE VCL_10_4}
+    {$IFDEF CBUILDER}
+      {$DEFINE CBUILDER_10_4}
+    {$ELSE}
+      {$DEFINE DELPHI_10_4}
     {$ENDIF}
   {$ENDIF}
 
@@ -694,8 +723,19 @@
 
 // end FPC
 
-{$IFDEF VCL_10_3}
+{$IFDEF VCL_10_4}
+  {$DEFINE VCL_10_4_OR_ABOVE}
+{$ENDIF}
+
+{$IFDEF VCL_10_4_OR_ABOVE}
   {$DEFINE VCL_10_3_OR_ABOVE}
+  {$DEFINE VCL_10_3_UPDATE2_OR_ABOVE}
+{$ELSE}
+  {$IFDEF VCL_10_3}
+    {$DEFINE VCL_10_3_OR_ABOVE}
+    // TODO: figure out how to detect this version
+    {.$DEFINE VCL_10_3_UPDATE2_OR_ABOVE}
+  {$ENDIF}
 {$ENDIF}
 
 {$IFDEF VCL_10_3_OR_ABOVE}
@@ -921,21 +961,31 @@
   {$ENDIF}
   // TODO: map Pulsar's non-Windows platform defines...
   {$IFDEF VCL_XE2_OR_ABOVE}
-    {$IFDEF CPU386}
-      //any 32-bit CPU
-      {$DEFINE CPU32}
-      //Intel 386 compatible chip architecture
-      {$DEFINE CPUI386}
-    {$ENDIF}
-    {$IFDEF CPUX86}
-      {$DEFINE CPU32}
-    {$ENDIF}
-    {$IFDEF CPUX64}
-      //any 64-bit CPU
-      {$DEFINE CPU64}
-      //AMD64 compatible chip architecture
-      {$DEFINE CPUX86_64}  //historical name for AMD64
-      {$DEFINE CPUAMD64}
+    {$IFDEF VCL_XE8_OR_ABOVE}
+      {$IFDEF CPU32BITS}
+        //any 32-bit CPU
+        {$DEFINE CPU32}
+      {$ENDIF}
+      {$IFDEF CPU64BITS}
+        {$DEFINE CPU64}
+      {$ENDIF}
+    {$ELSE}
+      {$IFDEF CPU386}
+        //any 32-bit CPU
+        {$DEFINE CPU32}
+        //Intel 386 compatible chip architecture
+        {$DEFINE CPUI386}
+      {$ENDIF}
+      {$IFDEF CPUX86}
+        {$DEFINE CPU32}
+      {$ENDIF}
+      {$IFDEF CPUX64}
+        //any 64-bit CPU
+        {$DEFINE CPU64}
+        //AMD64 compatible chip architecture
+        {$DEFINE CPUX86_64}  //historical name for AMD64
+        {$DEFINE CPUAMD64}
+      {$ENDIF}
     {$ENDIF}
   {$ELSE}
     {$IFNDEF DOTNET}
@@ -968,11 +1018,12 @@
   // When generating a C++ HPP file, if a class has no explicit constructor
   // defined and contains compiler-managed members (xxxString, TDateTime,
   // Variant, DelphiInterface, etc), the HPP will contain a forwarding
-  // inline constructor that implicitally initializes those managed members,
+  // inline constructor that implicitly initializes those managed members,
   // which will overwrite any non-default initializations performed inside
   // of InitComponent() overrides! In this situation, the workaround is to
-  // define an explicit constructor that forwards to the base class constructor
-  // manually.
+  // define an explicit constructor that calls the base class constructor
+  // manually, allowing those managed members to be initialized by the
+  // compiler before InitComponent() overrides then re-assign them.
   {$DEFINE WORKAROUND_INLINE_CONSTRUCTORS}
 {$ENDIF}
 
@@ -1137,6 +1188,8 @@
       {$DEFINE HAS_Exception_RaiseOuterException}
     {$ENDIF}
   {$ENDIF}
+  {$DEFINE HAS_SetCodePage}
+  {$DEFINE HAS_PRawByteString}
 {$ENDIF}
 
 {$IFDEF VCL_2010_OR_ABOVE}
@@ -1172,6 +1225,8 @@
 {$IFDEF VCL_XE2_OR_ABOVE}
   {$DEFINE HAS_SIZE_T}
   {$DEFINE HAS_PSIZE_T}
+  {$DEFINE HAS_SSIZE_T}
+  {$DEFINE HAS_PSSIZE_T}
   {$DEFINE HAS_LONG}
   {$DEFINE HAS_ComponentPlatformsAttribute}
   {$DEFINE HAS_ComponentPlatformsAttribute_Win32}
@@ -1192,6 +1247,12 @@
       {$DEFINE USE_OBJECT_ARC}
     {$ENDIF}
   {$ENDIF}
+  // technically, these are present in XE3, but they are not used yet
+  {.$DEFINE HAS_ComponentPlatformsAttribute_iOS_Simulator}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_Android}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_Linux32}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_iOS_Device}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_WinNX32}
 {$ENDIF}
 
 {$IFDEF VCL_XE4_OR_ABOVE}
@@ -1200,10 +1261,6 @@
   {$DEFINE HAS_Character_TCharHelper}
   {$DEFINE HAS_ComponentPlatformsAttribute_iOS_Simulator}
   {$DEFINE HAS_ComponentPlatformsAttribute_iOS_Device}
-  // technically, these are present in XE4, but they are not used yet
-  {.$DEFINE HAS_ComponentPlatformsAttribute_Android}
-  {.$DEFINE HAS_ComponentPlatformsAttribute_Linux32}
-  {.$DEFINE HAS_ComponentPlatformsAttribute_WinNX32}
 {$ENDIF}
 
 {$IFDEF VCL_XE5_OR_ABOVE}
@@ -1230,11 +1287,19 @@
   {$IFDEF ANDROID}
     {$DEFINE HAS_TAndroidHelper}
   {$ENDIF}
+  // technically, these are present in 10.0 Seattle, but they are not used yet
+  {.$DEFINE HAS_ComponentPlatformsAttribute_WinARM}
 {$ENDIF}
 
 {$IFDEF VCL_10_1_OR_ABOVE}
   {$DEFINE HAS_DIRECTIVE_HPPEMIT_LEGACYHPP}
   {$DEFINE HAS_TStrings_AddPair}
+  // technically, these are present in 10.1 Berlin, but they are not used yet
+  {.$DEFINE HAS_ComponentPlatformsAttribute_OSX64}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_OSXNX64}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_Linux32Arm}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_Linux64Arm}
+  {.$DEFINE HAS_ComponentPlatformsAttribute_Android64}
 {$ENDIF}
 
 {$IFDEF VCL_10_2_OR_ABOVE}
@@ -1247,6 +1312,38 @@
   {$IFDEF ANDROID}
     {$DEFINE BROKEN_TThread_ForceQueue}
   {$ENDIF}
+{$ENDIF}
+
+{$IFDEF VCL_10_3_OR_ABOVE}
+  {$DEFINE HAS_ComponentPlatformsAttribute_iOS_Simulator32}
+  {$DEFINE HAS_ComponentPlatformsAttribute_Android32Arm}
+  {$DEFINE HAS_ComponentPlatformsAttribute_WinARM32}
+  {$UNDEF HAS_ComponentPlatformsAttribute_OSXNX64} // removed in 10.3 Rio
+  // technically, these are present in 10.3 Rio, but they are not used yet
+  {.$DEFINE HAS_ComponentPlatformsAttribute_iOS_Simulator64}
+  {$IFDEF DCC}
+    {$IFDEF LINUX}
+      // RLebeau 9/25/2019: there is a bug in the IDE when debugging Linux projects
+      // where the EThreadNameException exception raised by TThread.NameThreadForDebugging()
+      // is not handled correctly.
+      {$UNDEF HAS_NAMED_THREADS}
+    {$ENDIF}
+  {$ENDIF}
+  {$IFDEF ANDROID}
+    {$UNDEF BROKEN_TThread_ForceQueue}
+  {$ENDIF}
+{$ENDIF}
+
+{$IFDEF VCL_10_3_UPDATE2_OR_ABOVE}
+  {$DEFINE HAS_ComponentPlatformsAttribute_OSX64}
+{$ENDIF}
+
+{$IFDEF VCL_10_4_OR_ABOVE}
+  // 0-based string indexing via '[]' is turned off by default in Delphi 10.4.
+  // TStringHelper is always 0-indexed, flat RTL functions are always 1-indexed,
+  // and now '[]' is 1-indexed again on all platforms - {$ZEROBASEDSTRINGS OFF}
+  // is the default.
+  {.$UNDEF HAS_DIRECTIVE_ZEROBASEDSTRINGS}
 {$ENDIF}
 
 // Delphi XE+ cross-compiling
@@ -1298,10 +1395,15 @@
     {$DEFINE HAS_SharedSuffix}
   {$ENDIF}
   {$IFDEF FPC_2_2_4_OR_ABOVE}
-    // size_t and psize_t are only available on Unix systems (FreeBSD, Linux, etc)
+    // these types are only available on Unix systems (FreeBSD, Linux, etc)
     {$IFDEF UNIX}
+      {$DEFINE HAS_UNIT_UnixType}
       {$DEFINE HAS_SIZE_T}
       {$DEFINE HAS_PSIZE_T}
+      {$DEFINE HAS_SSIZE_T}
+      {$DEFINE HAS_PSSIZE_T}
+      {$DEFINE HAS_TIME_T}
+      {$DEFINE HAS_PTIME_T}
     {$ENDIF}
   {$ENDIF}
   {$DEFINE HAS_PtrInt}
@@ -1344,6 +1446,9 @@
     {$DEFINE HAS_UInt16}
     {$DEFINE HAS_Int32}
     {$DEFINE HAS_UInt32}
+    {$DEFINE HAS_GetLocalTimeOffset}
+    {$DEFINE HAS_UniversalTimeToLocal}
+    {$DEFINE HAS_LocalTimeToUniversal}
   {$ENDIF}
   {$IFDEF FPC_2_6_4_OR_ABOVE}
     {$DEFINE HAS_PInt8}
@@ -1355,12 +1460,14 @@
   {$ENDIF}
   {$IFDEF FPC_3_0_0_OR_ABOVE}
     {$DEFINE HAS_STATIC_TThread_Queue}
+    {$DEFINE HAS_SetCodePage}
   {$ENDIF}
   {$IFDEF FPC_UNICODESTRINGS}
     {$DEFINE STRING_IS_UNICODE}
   {$ENDIF}
   {$IFDEF FPC_3_1_1_OR_ABOVE}
     {$DEFINE HAS_STATIC_TThread_ForceQueue} // requires rev 37359+
+    {$DEFINE HAS_PRawByteString}
   {$ENDIF}
 {$ENDIF}
 
@@ -1433,6 +1540,9 @@
 // TODO: Ansi data types were disabled on mobile platforms in XE3, but
 // UTF8String and RawByteString were re-enabled in 10.1 Berlin! What else,
 // if anything, was re-enabled to facilitate that?
+//
+// UPDATE: In 10.4 Sydney, AnsiChar and AnsiString were re-enabled on
+// mobile platforms!  NEXTGEN is no longer defined in the mobile compilers.
 {$IFDEF NO_ANSI_TYPES}
   {$UNDEF HAS_AnsiString}
   {$UNDEF HAS_AnsiChar}
@@ -1580,11 +1690,18 @@
   // DCC defines MACOS for both iOS and OS X platforms, need to differentiate
   {$IFDEF MACOS}
     {$IFNDEF IOS}
+      {$DEFINE OSX}
       {$DEFINE DARWIN}
     {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 {$IFDEF FPC}
+  // FPC defines DARWIN for both OSX and iOS, need to differentiate
+  {$IFDEF DARWIN}
+    {$IFNDEF IOS}
+      {$DEFINE OSX}
+    {$ENDIF}
+  {$ENDIF}
   {$IFDEF MACOS}
     {$DEFINE MACOS_CLASSIC}
   {$ENDIF}
@@ -1633,8 +1750,13 @@ word to an 8 bit byte and an 8 bit byte field named sa_len was added.
       {$ENDIF}
       {$DEFINE THANDLE_32}
     {$ENDIF}
-  {$ELSE}
-    {$DEFINE THANDLE_32}
+  {$ENDIF}
+  {$IFDEF OSX}
+    {$IFDEF FPC}
+      {$DEFINE THANDLE_32}
+    {$ELSE}
+      {$DEFINE THANDLE_CPUBITS} // !!! ADDED OSX BY EMBT
+    {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 {$IFDEF EMBEDDED}
@@ -1746,15 +1868,6 @@ word to an 8 bit byte and an 8 bit byte field named sa_len was added.
 {$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
   {$IFDEF DOTNET}
     {$UNDEF REGISTER_EXPECTED_MEMORY_LEAK}
-  {$ENDIF}
-  {$IFDEF VCL_CROSS_COMPILE}
-    // RLebeau: this should be enabled for Windows, at least...
-    {$IFNDEF MSWINDOWS}
-      // RLebeau: LeakCheck has leak reporting on other platforms...
-      {$IFNDEF USE_LEAKCHECK}
-        {$UNDEF REGISTER_EXPECTED_MEMORY_LEAK}
-      {$ENDIF}
-    {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 

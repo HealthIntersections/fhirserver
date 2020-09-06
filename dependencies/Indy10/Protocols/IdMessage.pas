@@ -439,7 +439,7 @@ type
     procedure Clear; virtual;
     procedure ClearBody;
     procedure ClearHeader;
-    procedure GenerateHeader;
+    procedure GenerateHeader; virtual;
     procedure InitializeISO(var VHeaderEncoding: Char; var VCharSet: String);
     function  IsBodyEncodingRequired: Boolean;
     function  IsBodyEmpty: Boolean;
@@ -447,7 +447,7 @@ type
     procedure LoadFromFile(const AFileName: string; const AHeadersOnly: Boolean = False);
     procedure LoadFromStream(AStream: TStream; const AHeadersOnly: Boolean = False);
 
-    procedure ProcessHeaders;
+    procedure ProcessHeaders; virtual;
 
     procedure SaveToFile(const AFileName : string; const AHeadersOnly: Boolean = False);
     procedure SaveToStream(AStream: TStream; const AHeadersOnly: Boolean = False);
@@ -853,7 +853,7 @@ begin
     FLastGeneratedHeaders.Params['Content-Type', 'charset'] := LCharSet;  {do not localize}
     FLastGeneratedHeaders.Values['Content-Transfer-Encoding'] := ContentTransferEncoding; {do not localize}
   end;
-  FLastGeneratedHeaders.Values['Sender'] := Sender.Text; {do not localize}
+  FLastGeneratedHeaders.Values['Sender'] := EncodeAddressItem(Sender, HeaderEncoding, ISOCharSet); {do not localize}
   FLastGeneratedHeaders.Values['Reply-To'] := EncodeAddress(ReplyTo, HeaderEncoding, ISOCharSet); {do not localize}
   FLastGeneratedHeaders.Values['Organization'] := EncodeHeader(Organization, '', HeaderEncoding, ISOCharSet); {do not localize}
 
@@ -1085,7 +1085,7 @@ begin
       Exit;
     end;
 
-    if (LCharSet = '') and IsHeaderMediaType(FContentType, 'text') then begin {do not localize}
+    if (LCharSet = '') and (FCharSet = '') and IsHeaderMediaType(FContentType, 'text') then begin {do not localize}
       LCharSet := 'us-ascii'; {do not localize}
     end;
 

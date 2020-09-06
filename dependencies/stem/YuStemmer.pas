@@ -44,6 +44,7 @@ uses
   DISystemCompat;
 
 type
+  C_int = System.Integer;
 
   SN_env = packed record
     p: PAnsiChar;
@@ -57,7 +58,7 @@ type
 
   sb_stemmer_close_func = procedure(z: SN_env_ptr);
 
-  sb_stemmer_stem_func = function(z: SN_env_ptr): Integer;
+  sb_stemmer_stem_func = function(z: SN_env_ptr): C_int;
 
 type
 
@@ -161,7 +162,7 @@ type
 
   sb_stemmer_16_close_func = procedure(z: SN_env_16_ptr);
 
-  sb_stemmer_16_stem_func = function(z: SN_env_16_ptr): Integer;
+  sb_stemmer_16_stem_func = function(z: SN_env_16_ptr): C_int;
 
 type
 
@@ -557,7 +558,6 @@ type
   C_float = System.Single;
   C_float_ptr = ^C_float;
 
-  C_int = System.Integer;
   C_int_ptr = ^C_int;
   C_int_array = array[0..MaxInt div SizeOf(C_int) - 1] of C_int;
   C_int_array_ptr = ^C_int_array;

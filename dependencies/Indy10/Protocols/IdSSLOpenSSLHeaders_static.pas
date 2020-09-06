@@ -384,7 +384,7 @@ function i2d_PrivateKey_bio_func(b: PBIO; pkey: PEVP_PKEY): TIdC_INT cdecl; exte
 
 function d2i_X509_bio_func(bp: PBIO; x: PPx509): PX509 cdecl; external SSLCLIB_LIB_name name 'd2i_X509_bio';
 
-function i2d_X509_REQ_bio_func(x: PX509_REQ; bp: PBIO): TIdC_INT cdecl; external SSLCLIB_LIB_name name 'i2d_X509_REQ_bio';
+function i2d_X509_REQ_bio_func(bp: PBIO; x: PX509_REQ): TIdC_INT cdecl; external SSLCLIB_LIB_name name 'i2d_X509_REQ_bio';
 
 function i2d_PKCS7_func(x: PPKCS7; buf: PPByte): TIdC_INT cdecl; external SSLCLIB_LIB_name name 'i2d_PKCS7';
 
@@ -595,7 +595,7 @@ function EVP_PKEY_new_func: PEVP_PKEY cdecl; external SSLCLIB_LIB_name name 'EVP
 
 procedure EVP_PKEY_free_proc(pkey: PEVP_PKEY) cdecl; external SSLCLIB_LIB_name name 'EVP_PKEY_free';
 
-function EVP_PKEY_assign_func(pkey: PEVP_PKEY; _type: TIdC_INT; key: PIdAnsiChar): TIdC_INT cdecl; external SSLCLIB_LIB_name name 'EVP_PKEY_assign';
+function EVP_PKEY_assign_func(pkey: PEVP_PKEY; _type: TIdC_INT; key: Pointer): TIdC_INT cdecl; external SSLCLIB_LIB_name name 'EVP_PKEY_assign';
 
 function EVP_get_digestbyname_func(const name: PIdAnsiChar): PEVP_MD cdecl; external SSLCLIB_LIB_name name 'EVP_get_digestbyname';
 

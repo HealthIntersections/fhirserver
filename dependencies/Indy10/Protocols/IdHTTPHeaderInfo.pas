@@ -630,7 +630,7 @@ begin
     // UTF-8, or the XML MIME entity has an explicit encoding declaration,
     // XML and MIME processors MUST assume the charset is "us-ascii".
 
-    if (LCharSet = '') and IsHeaderMediaType(FContentType, 'text') then begin {do not localize}
+    if (LCharSet = '') and (FCharSet = '') and IsHeaderMediaType(FContentType, 'text') then begin {do not localize}
       S := ExtractHeaderMediaSubType(FContentType);
       if (PosInStrArray(S, ['xml', 'xml-external-parsed-entity'], False) >= 0) or TextEndsWith(S, '+xml') then begin {do not localize}
         LCharSet := 'us-ascii'; {do not localize}
@@ -1172,7 +1172,7 @@ begin
   end;
   if FLastModified > 0 then
   begin
-    RawHeaders.Values['Last-Modified'] := DateTimeGMTToHttpStr(FLastModified); {do not localize}
+    RawHeaders.Values['Last-Modified'] := LocalDateTimeToHttpStr(FLastModified); {do not localize}
   end;
 end;
 

@@ -21,16 +21,6 @@ uses
 {.$DEFINE STATICLOAD_ICONV}
 //These should be defined in libc.pas.
 type
-  {$IFDEF WINDOWS}
-  {$EXTERNALSYM SIZE_T}
-    {$IFDEF CPU64}
-  size_t = QWord;
-    {$ELSE}
-  size_t = DWord;
-    {$ENDIF}
-  Psize_t = ^size_t;
-  {$ENDIF}
-
   Piconv_t = ^iconv_t;
   iconv_t = Pointer;
 
@@ -49,7 +39,7 @@ type
   TIdiconv = function (__cd : iconv_t; __inbuf : PPAnsiChar;
                     __inbytesleft : Psize_t;
 		    __outbuf : PPAnsiChar;
-		    __outbytesleft : Psize_t ) : size_t; cdecl;
+		    __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
 //   This function is a possible cancellation points and therefore not
 //   marked with __THROW.  */
 //extern int iconv_close (iconv_t __cd);
@@ -197,9 +187,9 @@ function iconv_open(__tocode : PAnsiChar; __fromcode : PAnsiChar) : iconv_t; cde
   external LICONV name FN_ICONV_OPEN;
 
 function iconv(__cd : iconv_t; __inbuf : PPAnsiChar;
-                    __inbytesleft : Psize_t;
+                    __inbytesleft : PIdC_SIZET;
 		    __outbuf : PPAnsiChar;
-		    __outbytesleft : Psize_t ) : size_t; cdecl;
+		    __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
   external LICONV name FN_ICONV;
 
 function iconv_close(__cd : iconv_t) : TIdC_INT; cdecl;
@@ -266,7 +256,7 @@ begin
       raise EIdIconvStubError.Build(Format(RSIconvCallError, [AName]), 0);
     end;
   end;
-  Result := GetProcAddress(hIconv, PChar(AName));
+  Result := LoadLibFunction(hIconv, AName);
   {
   IMPORTANT!!!
 
@@ -276,7 +266,7 @@ begin
   IOW, CYA!!!
   }
   if Result = nil then begin
-    Result := GetProcAddress(hIconv, PChar('lib'+AName));
+    Result := LoadLibFunction(hIconv, 'lib'+AName);
     if Result = nil then begin
       raise EIdIconvStubError.Build(Format(RSIconvCallError, [AName]), 10022);
     end;
@@ -292,9 +282,9 @@ begin
 end;
 
 function stub_iconv(__cd : iconv_t; __inbuf : PPAnsiChar; 
-                    __inbytesleft : Psize_t; 
+                    __inbytesleft : PIdC_SIZET; 
 		    __outbuf : PPAnsiChar;
-		    __outbytesleft : Psize_t ) : size_t; cdecl;
+		    __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
 begin
   iconv := Fixup(FN_ICONV);
   Result := iconv(__cd,__inbuf,__inbytesleft,__outbuf,__outbytesleft);
@@ -452,7 +442,7 @@ begin
     if hmsvcrt = 0 then begin
       raise EIdMSVCRTStubError.Build('Failed to load ' + LIBMSVCRTL, 0);
     end;
-    errno := GetProcAddress(hmsvcrt, PChar(FN_errno));
+    errno := LoadLibFunction(hmsvcrt, FN_errno);
     if not Assigned(errno) then begin
       errno := Stub_errno;
       raise EIdMSVCRTStubError.Build('Failed to load ' + FN_errno + ' in ' + LIBMSVCRTL, 0);

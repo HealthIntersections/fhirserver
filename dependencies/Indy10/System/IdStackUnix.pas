@@ -177,7 +177,7 @@ type
       const ABufferLength, AFlags: Integer; const AIP: string; const APort: TIdPort;
       AIPVersion: TIdIPVersion = ID_DEFAULT_IP_VERSION); override;
     function WSSocket(AFamily, AStruct, AProtocol: Integer;
-     const AOverlapped: Boolean = False): TIdStackSocketHandle; override;
+     const ANonBlocking: Boolean = False): TIdStackSocketHandle; override;
     procedure Disconnect(ASocket: TIdStackSocketHandle); override;
     {$IFDEF VCL_XE3_OR_ABOVE}
     procedure GetSocketOption(ASocket: TIdStackSocketHandle; ALevel: TIdSocketOptionLevel;
@@ -221,6 +221,7 @@ implementation
 uses
   netdb,
   unix,
+  termio,
   IdResourceStrings,
   IdResourceStringsUnix,
   IdException,
@@ -404,7 +405,7 @@ begin
       IPVersionUnsupported;
     end;
   end;
-  {$IFDEF DARWIN}
+  {$IFDEF DARWIN} // TODO: use HAS_SOCKET_NOSIGPIPE instead...
   SetSocketOption(ASocket, Id_SOL_SOCKET, SO_NOSIGPIPE, 1);
   {$ENDIF}
 end;
@@ -690,9 +691,16 @@ begin
 end;
 
 function TIdStackUnix.WSSocket(AFamily, AStruct, AProtocol: Integer;
-  const AOverlapped: Boolean = False): TIdStackSocketHandle; 
+  const ANonBlocking: Boolean = False): TIdStackSocketHandle; 
+var
+  LValue: UInt32;
 begin
   Result := fpsocket(AFamily, AStruct, AProtocol);
+  if Result <> Id_INVALID_SOCKET then begin
+    //SetBlocking(Result, not ANonBlocking);
+    LValue := UInt32(ANonBlocking);
+    fpioctl(Result, FIONBIO, @LValue);
+  end;
 end;
 
 function TIdStackUnix.WSGetServByName(const AServiceName: string): TIdPort;
@@ -718,30 +726,17 @@ end;
 
 function TIdStackUnix.HostToNetwork(AValue: UInt32): UInt32;
 begin
-  {$IFOPT R+} // detect range checking
-    {$DEFINE _RPlusWasEnabled}
-    {$R-}
-  {$ENDIF}
+  {$i IdRangeCheckingOff.inc} // disable range checking
   Result := htonl(AValue);
-  // Restore range checking
-  {$IFDEF _RPlusWasEnabled} // detect previous setting
-    {$UNDEF _RPlusWasEnabled}
-    {$R+}
-  {$ENDIF}
+  {$i IdRangeCheckingOn.inc} // Restore range checking
 end;
 
 function TIdStackUnix.NetworkToHost(AValue: UInt32): UInt32;
 begin
-  {$IFOPT R+} // detect range checking
-    {$DEFINE _RPlusWasEnabled}
-    {$R-}
-  {$ENDIF}
+  {$i IdRangeCheckingOff.inc} // disable range checking
   Result := ntohl(AValue);
   // Restore range checking
-  {$IFDEF _RPlusWasEnabled} // detect previous setting
-    {$UNDEF _RPlusWasEnabled}
-    {$R+}
-  {$ENDIF}
+  {$i IdRangeCheckingOn.inc} // Restore range checking
 end;
 
 { RP - I'm not sure what endian Linux natively uses, thus the
@@ -751,10 +746,7 @@ var
   LParts: TIdUInt64Parts;
   L: UInt32;
 begin
-  {$IFOPT R+} // detect range checking
-    {$DEFINE _RPlusWasEnabled}
-    {$R-}
-  {$ENDIF}
+  {$i IdRangeCheckingOff.inc} // disable range checking
   if (htonl(1) <> 1) then begin
     LParts.QuadPart := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
     L := htonl(LParts.HighPart);
@@ -764,11 +756,7 @@ begin
   end else begin
     Result{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF} := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
   end;
-  // Restore range checking
-  {$IFDEF _RPlusWasEnabled} // detect previous setting
-    {$UNDEF _RPlusWasEnabled}
-    {$R+}
-  {$ENDIF}
+  {$i IdRangeCheckingOn.inc} // Restore range checking
 end;
 
 function TIdStackUnix.NetworkToHost(AValue: TIdUInt64): TIdUInt64;
@@ -776,10 +764,7 @@ var
   LParts: TIdUInt64Parts;
   L: UInt32;
 begin
-  {$IFOPT R+} // detect range checking
-    {$DEFINE _RPlusWasEnabled}
-    {$R-}
-  {$ENDIF}
+  {$i IdRangeCheckingOff.inc} // disable range checking
   if (ntohl(1) <> 1) then begin
     LParts.QuadPart := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
     L := ntohl(LParts.HighPart);
@@ -789,11 +774,7 @@ begin
   end else begin
     Result{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF} := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
   end;
-  // Restore range checking
-  {$IFDEF _RPlusWasEnabled} // detect previous setting
-    {$UNDEF _RPlusWasEnabled}
-    {$R+}
-  {$ENDIF}
+  {$i IdRangeCheckingOn.inc} // Restore range checking
 end;
 
 {$IFDEF HAS_getifaddrs}
@@ -817,7 +798,13 @@ const
   
 function getifaddrs(var ifap: pifaddrs): Integer; cdecl; external 'libc.so' name 'getifaddrs'; {do not localize}
 procedure freeifaddrs(ifap: pifaddrs); cdecl; external 'libc.so' name 'freeifaddrs'; {do not localize}
+  {$IFDEF HAS_if_nametoindex}
+procedure if_nametoindex(const ifname: PIdAnsiChar): UInt32; cdecl; external 'libc.so' name 'if_nametoindex'; {do not localize}
+  {$ENDIF}
 
+type
+  TIdStackLocalAddressAccess = class(TIdStackLocalAddress)
+  end;
 {$ENDIF}
 
 procedure TIdStackUnix.GetLocalAddressList(AAddresses: TIdStackLocalAddressList);
@@ -825,6 +812,7 @@ var
   {$IFDEF HAS_getifaddrs}
   LAddrList, LAddrInfo: pifaddrs;
   LSubNetStr: String;
+  LAddress: TIdStackLocalAddress;
   {$ELSE}
   LI4 : array of THostAddr;
   LI6 : array of THostAddr6;
@@ -851,6 +839,7 @@ begin
       repeat
         if (LAddrInfo^.ifa_addr <> nil) and ((LAddrInfo^.ifa_flags and IFF_LOOPBACK) = 0) then
         begin
+          LAddress := nil;
           case LAddrInfo^.ifa_addr^.sa_family of
             Id_PF_INET4: begin
               if LAddrInfo^.ifa_netmask <> nil then begin
@@ -858,11 +847,17 @@ begin
               end else begin
                 LSubNetStr := '';
               end;
-              TIdStackLocalAddressIPv4.Create(AAddresses, TranslateTInAddrToString( PSockAddr_In(LAddrInfo^.ifa_addr)^.sin_addr, Id_IPv4), LSubNetStr);
+              LAddress := TIdStackLocalAddressIPv4.Create(AAddresses, TranslateTInAddrToString( PSockAddr_In(LAddrInfo^.ifa_addr)^.sin_addr, Id_IPv4), LSubNetStr);
             end;
             Id_PF_INET6: begin
-              TIdStackLocalAddressIPv6.Create(AAddresses, TranslateTInAddrToString( PSockAddr_In6(LAddrInfo^.ifa_addr)^.sin6_addr, Id_IPv6));
+              LAddress := TIdStackLocalAddressIPv6.Create(AAddresses, TranslateTInAddrToString( PSockAddr_In6(LAddrInfo^.ifa_addr)^.sin6_addr, Id_IPv6));
             end;
+          end;
+          if LAddress <> nil then begin
+            TIdStackLocalAddressAccess(LAddress).FInterfaceName := String(LAddrInfo^.ifa_name);
+            {$IFDEF HAS_if_nametoindex}
+            TIdStackLocalAddressAccess(LAddress).FInterfaceIndex := if_nametoindex(LAddrInfo^.ifa_name);
+            {$ENDIF}
           end;
         end;
         LAddrInfo := LAddrInfo^.ifa_next;
@@ -1025,24 +1020,20 @@ end;
 
 procedure TIdStackUnix.SetBlocking(ASocket: TIdStackSocketHandle;
   const ABlocking: Boolean);
+var
+  LValue: UInt32;
 begin
-  // TODO: enable this
-  {
   LValue := UInt32(not ABlocking);
   CheckForSocketError(fpioctl(ASocket, FIONBIO, @LValue));
-  }
-  if not ABlocking then begin
-    raise EIdNonBlockingNotSupported.Create(RSStackNonBlockingNotSupported);
-  end;
 end;
 
 function TIdStackUnix.WouldBlock(const AResult: Integer): Boolean;
 begin
-  //non-blocking does not exist in Linux, always indicate things will block
-  Result := True;
-
-  // TODO: enable this:
-  //Result := (AResult in [EAGAIN, EWOULDBLOCK, EINPROGRESS]);
+  // using if-else instead of in..range because EAGAIN and EWOULDBLOCK
+  // have often the same value and so FPC might report a range error
+  Result := (AResult = Id_WSAEAGAIN) or
+            (AResult = Id_WSAEWOULDBLOCK) or
+            (AResult = Id_WSAEINPROGRESS);
 end;
 
 function TIdStackUnix.SupportsIPv4: Boolean;

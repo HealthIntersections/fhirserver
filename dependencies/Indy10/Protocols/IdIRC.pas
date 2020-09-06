@@ -376,6 +376,8 @@ type
     procedure SetChannelKey(const AChannel, AKey: String);
     //
     property Away: Boolean read FUserAway;
+    property SenderNick: String read FSenderNick;
+    property SenderHost: String read FSenderHost;
   published
     property Nickname: String read FNickname write SetNickname;
     property AltNickname: String read FAltNickname write FAltNickname;

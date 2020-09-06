@@ -1,5 +1,5 @@
 {-------------------------------------------------------------------------------
- 
+
  Copyright (c) 1999-2016 Ralf Junker, Yunqa
  Internet: http://www.yunqa.de
  E-Mail:   delphi@yunqa.de
@@ -123,14 +123,14 @@ const
 
 type
 
-  UInt64 = 0..High(Int64);
+  //UInt64 = 0..High(Int64);
 
   {$ENDIF ~COMPILE_9_UP}
 
   {$IFNDEF COMPILER_12_UP}
 
-type
-
+//type
+//
   NativeInt = Integer;
 
   RawByteString = AnsiString;

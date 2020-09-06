@@ -1895,7 +1895,7 @@ begin
     // which charset to use for decoding query string parameters.  We
     // should not be using the 'Content-Type' charset for that.  For
     // 'application/x-www-form-urlencoded' forms, we should be, though...
-    LEncoding := CharsetToEncoding(CharSet);
+    LEncoding := CharsetToEncoding(CharSet);//IndyTextEncoding_UTF8;
     i := 1;
     while i <= Length(AValue) do
     begin
@@ -2213,6 +2213,7 @@ procedure TIdHTTPResponseInfo.WriteHeader;
 var
   i: Integer;
   LBufferingStarted: Boolean;
+  LCharSet: string;
 begin
   if HeaderHasBeenWritten then begin
     raise EIdHTTPHeaderAlreadyWritten.Create(RSHTTPHeaderAlreadyWritten);
@@ -2233,8 +2234,12 @@ begin
   // RLebeau 5/15/2012: for backwards compatibility. We really should
   // make the user set this every time instead...
   if ContentType = '' then begin
-    if (ContentText <> '') or (Assigned(ContentStream)) then begin
-      ContentType := 'text/html; charset=ISO-8859-1'; {Do not Localize}
+    if (ContentText <> '') or Assigned(ContentStream) then begin
+      LCharSet := FCharSet;
+      if LCharSet = '' then begin
+        LCharSet := 'ISO-8859-1'; {Do not Localize}
+      end;
+      ContentType := 'text/html; charset=' + LCharSet; {Do not Localize}
     end;
   end;
 
@@ -2509,7 +2514,7 @@ end;
 
 constructor TIdHTTPSessionCleanerThread.Create(SessionList: TIdHTTPCustomSessionList);
 begin
-  inherited Create(false);
+  inherited Create(False);
   // thread priority used to be set to tpIdle but this is not supported
   // under DotNet. How low do you want to go?
   IndySetThreadPriority(Self, tpLowest);

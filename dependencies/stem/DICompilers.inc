@@ -313,7 +313,17 @@
     {$DEFINE COMPILER_24}
   {$ENDIF VER320}
 
-  {$IFDEF VER330} // RAD Studio 10.2 Tokyo
+  {$IFDEF VER330} // RAD Studio 10.3
+    {$IFDEF BCB}
+      {$DEFINE BCB_24}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_24}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_24}
+  {$ENDIF VER330}
+
+  {$IFDEF VER340} // RAD Studio 10.4
     {$IFDEF BCB}
       {$DEFINE BCB_24}
     {$ELSE}

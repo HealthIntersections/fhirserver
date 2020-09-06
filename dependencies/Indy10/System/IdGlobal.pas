@@ -552,7 +552,7 @@ uses
       {$ENDIF}
       {$IFDEF USE_ICONV_ENC}iconvenc, {$ENDIF}
     {$ENDIF}
-    {$IFDEF DARWIN}
+    {$IFDEF OSX}
       {$IFNDEF FPC}
       //RLebeau: FPC does not provide mach_timebase_info() and mach_absolute_time() yet...
       Macapi.Mach,
@@ -763,9 +763,14 @@ const
   INFINITE = UInt32($FFFFFFFF);     { Infinite timeout }
   {$ENDIF}
 
-  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause, only
-  // in the implementation's 'uses' clause, so map to what DynLibs.NilHandle maps to...
-  IdNilHandle = {$IFDEF FPC}{DynLibs.NilHandle}PtrInt(0){$ELSE}THandle(0){$ENDIF};
+  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause on
+  // all platforms, so map to what DynLibs.NilHandle maps to...
+  {$IFDEF FPC}
+  IdNilHandle = {DynLibs.NilHandle}{$IFDEF WINDOWS}PtrUInt(0){$ELSE}PtrInt(0){$ENDIF};
+  {$ELSE}
+  IdNilHandle = THandle(0);
+  {$ENDIF}
+
   LF = #10;
   CR = #13;
 
@@ -920,6 +925,13 @@ type
   PPIdAnsiChar = ^PIdAnsiChar;
   {$ENDIF}
 
+  {$IFDEF HAS_SetCodePage}
+    {$IFNDEF HAS_PRawByteString}
+  {$EXTERNALSYM PRawByteString}
+  PRawByteString = ^RawByteString;
+    {$ENDIF}
+  {$ENDIF}
+
   {$IFDEF STRING_IS_UNICODE}
   TIdWideChar = Char;
   PIdWideChar = PChar;
@@ -1020,11 +1032,12 @@ type
   // RLebeau 12/1/2018: FPC's System unit defines an HMODULE type as a PtrUInt. But,
   // the DynLibs unit defines its own HModule type that is a TLibHandle, which is a
   // PtrInt instead. And to make matters worse, although FPC's System.THandle is a
-  // platform-dependant type, it is not always defined as 8 bytes on 64bit platforms,
-  // which has been known to cause overflows when dynamic libraries are loaded at
-  // high addresses! (FPC bug?)  So, we can't rely on THandle to hold correct handles
-  // for libraries that we load dynamically at runtime (which is probably why FPC
-  // defines TLibHandle in the first place, but why is it signed instead of unsigned?).
+  // platform-dependant type, it is not always defined as 8 bytes on 64bit platforms
+  // (https://bugs.freepascal.org/view.php?id=21669), which has been known to cause
+  // overflows when dynamic libraries are loaded at high addresses! (FPC bug?)  So,
+  // we can't rely on THandle to hold correct handles for libraries that we load
+  // dynamically at runtime (which is probably why FPC defines TLibHandle in the first
+  // place, but why is it signed instead of unsigned?).
   //
   // Delphi's HMODULE is a System.THandle, which is a NativeUInt, and so is defined
   // with a proper byte size across all 32bit and 64bit platforms.
@@ -1034,9 +1047,38 @@ type
   // signed vs unsigned library handles.  I would prefer to use unsigned everywhere,
   // but we should use what is more natural for each compiler...
 
-  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause, only
-  // in the implementation's 'uses' clause, so map to what DynLibs.TLibHandle maps to...
-  TIdLibHandle = {$IFDEF FPC}{DynLibs.TLibHandle}PtrInt{$ELSE}THandle{$ENDIF};
+  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause on all
+  // platforms, so map to what DynLibs.TLibHandle maps to...
+
+  // RLebeau 4/29/2020: to make metters worse, FPC defines TLibHandle as System.THandle
+  // on Windows, not as PtrInt as previously observed!  And FPC's Windows.GetProcAddress()
+  // uses HINST, which is also defined as System.THandle.  But, as we know from above,
+  // FPC's System.THandle has problems on some 64bit systems! But does that apply on
+  // Windows?  I THINK the latest FPC uses QWord/DWord (aka PtrUInt) for all Windows
+  // platforms, which is good...
+
+  {$IFDEF FPC}
+  // TODO: use the THANDLE_(32|64|CPUBITS) defines in IdCompilerDefines.inc to decide
+  // how to define TIdLibHandle when not using the DynLibs unit?
+  TIdLibHandle = {DynLibs.TLibHandle}{$IFDEF WINDOWS}PtrUInt{$ELSE}PtrInt{$ENDIF};
+  {$ELSE}
+  TIdLibHandle = THandle;
+  {$ENDIF}
+
+  { IMPORTANT!!!
+
+  WindowsCE only has a Unicode (WideChar) version of GetProcAddress.  We could use
+  a version of GetProcAddress in the FreePascal dynlibs unit but that does a
+  conversion from ASCII to Unicode which might not be necessary since most calls
+  pass a constant anyway.
+  }
+  {$IFDEF WINCE}
+  TIdLibFuncName = TIdUnicodeString;
+  PIdLibFuncNameChar = PWideChar;
+  {$ELSE}
+  TIdLibFuncName = String;
+  PIdLibFuncNameChar = PChar;
+  {$ENDIF}
 
   {$IFDEF STRING_IS_IMMUTABLE}
   // In .NET and Delphi next-gen, strings are immutable (and zero-indexed), so we
@@ -1192,6 +1234,9 @@ var
 
 procedure EnsureEncoding(var VEncoding : IIdTextEncoding; ADefEncoding: IdTextEncodingType = encIndyDefault);
 procedure CheckByteEncoding(var VBytes: TIdBytes; ASrcEncoding, ADestEncoding: IIdTextEncoding);
+{$IFNDEF DOTNET}
+function GetEncodingCodePage(AEncoding: IIdTextEncoding): UInt16;
+{$ENDIF}
 
 type
   TIdAppendFileStream = class(TFileStream)
@@ -1408,6 +1453,11 @@ type
   TIdMemoryBufferStream = class(TCustomMemoryStream)
   public
     constructor Create(APtr: Pointer; ASize: TIdNativeInt);
+    function Write(const Buffer; Count: Longint): Longint; override;
+  end;
+
+  TIdReadOnlyMemoryBufferStream = class(TIdMemoryBufferStream)
+  public
     function Write(const Buffer; Count: Longint): Longint; override;
   end;
   {$ENDIF}
@@ -1802,12 +1852,15 @@ function IPv4MakeLongWordInRange(const AInt: Int64; const A256Power: Integer): U
 function IndyRegisterExpectedMemoryLeak(AAddress: Pointer): Boolean;
   {$ENDIF}
 {$ENDIF}
+function LoadLibFunction(const ALibHandle: TIdLibHandle; const AProcName: TIdLibFuncName): Pointer;
 {$IFDEF UNIX}
 function HackLoad(const ALibName : String; const ALibVersions : array of String) : TIdLibHandle;
 {$ENDIF}
 {$IFNDEF DOTNET}
 function MemoryPos(const ASubStr: string; MemBuff: PChar; MemorySize: Integer): Integer;
 {$ENDIF}
+// TODO: have OffsetFromUTC() return minutes as an integer instead, and
+// then use DateUtils.IncMinutes() when adding the offset to a TDateTime...
 function OffsetFromUTC: TDateTime;
 function UTCOffsetToStr(const AOffset: TDateTime; const AUseGMTStr: Boolean = False): string;
 
@@ -1886,11 +1939,16 @@ function IndyCheckWindowsVersion(const AMajor: Integer; const AMinor: Integer = 
 // For Nextgen compilers: IdDisposeAndNil calls TObject.DisposeOf() to ensure
 // the object is freed immediately even if it has active references to it,
 // for instance when freeing an Owned component
+
+// Embarcadero changed the signature of FreeAndNil() in 10.4 Denali:
+// procedure FreeAndNil(const [ref] Obj: TObject); inline;
+
+// TODO: Change the signature of IdDisposeAndNil() to match FreeAndNil() in 10.4+...
 procedure IdDisposeAndNil(var Obj); {$IFDEF USE_INLINE}inline;{$ENDIF}
 
 //RLebeau: FPC does not provide mach_timebase_info() and mach_absolute_time() yet...
 {$IFDEF UNIX}
-  {$IFDEF DARWIN}
+  {$IFDEF OSX}
     {$IFDEF FPC}
 type
   TTimebaseInfoData = record
@@ -1907,7 +1965,7 @@ var
   // For linux the user needs to set this variable to be accurate where used (mail, etc)
   GOffsetFromUTC: TDateTime = 0{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$ENDIF};
 
-    {$IFDEF DARWIN}
+    {$IFDEF OSX}
   GMachTimeBaseInfo: TTimebaseInfoData;
     {$ENDIF}
   {$ENDIF}
@@ -1915,12 +1973,12 @@ var
   IndyPos: TPosProc = nil;
 
 {$IFDEF UNIX}
-  {$UNDEF DARWIN_OR_IOS}
-  {$IFDEF DARWIN}
-    {$DEFINE DARWIN_OR_IOS}
+  {$UNDEF OSX_OR_IOS}
+  {$IFDEF OSX}
+    {$DEFINE OSX_OR_IOS}
   {$ENDIF}
   {$IFDEF IOS}
-    {$DEFINE DARWIN_OR_IOS}
+    {$DEFINE OSX_OR_IOS}
   {$ENDIF}
 {$ENDIF}
 
@@ -1929,7 +1987,7 @@ const
   {$IFDEF HAS_SharedSuffix}
   LIBEXT = '.' + SharedSuffix; {do not localize}
   {$ELSE}
-    {$IFDEF DARWIN_OR_IOS}
+    {$IFDEF OSX_OR_IOS}
   LIBEXT = '.dylib'; {do not localize}
     {$ELSE}
   LIBEXT = '.so'; {do not localize}
@@ -1962,7 +2020,7 @@ uses
   Posix.SysTime,
   {$ENDIF}
   {$IFDEF USE_VCL_POSIX}
-    {$IFDEF DARWIN}
+    {$IFDEF OSX}
   Macapi.CoreServices,
     {$ENDIF}
   {$ENDIF}
@@ -2903,6 +2961,37 @@ begin
   Create(CodePage, 0, 0);
 end;
 
+{$IFDEF WINDOWS}
+  // TODO: move this into IdCompilerDefines.inc?
+  {$IFNDEF WINCE}
+    {$IFDEF DCC}
+      {$IFDEF VCL_2009_OR_ABOVE}
+        {$DEFINE HAS_GetCPInfoEx}
+      {$ELSE}
+        {$UNDEF HAS_GetCPInfoEx}
+      {$ENDIF}
+    {$ELSE}
+      // TODO: when was GetCPInfoEx() added to FreePascal?
+      {$DEFINE HAS_GetCPInfoEx}
+    {$ENDIF}
+
+    {$IFNDEF HAS_GetCPInfoEx}
+// TODO: implement GetCPInfoEx() as a stub that falls back to GetCPInfo() if needed
+type
+  TCPInfoEx = record
+    MaxCharSize: UINT;                       { max length (bytes) of a char }
+    DefaultChar: array[0..MAX_DEFAULTCHAR - 1] of Byte; { default character }
+    LeadByte: array[0..MAX_LEADBYTES - 1] of Byte;      { lead byte ranges }
+    UnicodeDefaultChar: WideChar;
+    Codepage: UINT;
+    CodePageName: array[0..MAX_PATH -1] of {$IFDEF UNICODE}WideChar{$ELSE}AnsiChar{$ENDIF};
+  end;
+
+function GetCPInfoEx(CodePage: UINT; dwFlags: DWORD; var lpCPInfoEx: TCPInfoEx): BOOL; stdcall; external 'KERNEL32' name {$IFDEF UNICODE}'GetCPInfoExW'{$ELSE}'GetCPInfoExA'{$ENDIF};
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 constructor TIdMBCSEncoding.Create(CodePage, MBToWCharFlags, WCharToMBFlags: Integer);
 {$IFNDEF WINDOWS}
 const
@@ -2913,7 +3002,7 @@ const
   cValue: array[0..1] of UInt16 = ($DBFF, $DFFF);
 {$ELSE}
 var
-  LCPInfo: TCPInfo;
+  LCPInfo: {$IFDEF WINCE}TCPInfo{$ELSE}TCPInfoEx{$ENDIF};
   LError: Boolean;
 {$ENDIF}
 begin
@@ -2923,25 +3012,36 @@ begin
   FMBToWCharFlags := MBToWCharFlags;
   FWCharToMBFlags := WCharToMBFlags;
 
+  {$IFDEF FPC} // TODO: do this for Delphi 2009+, too...
+  if FCodePage = CP_ACP then begin
+    FCodePage := DefaultSystemCodePage;
+  end;
+  {$ENDIF}
+
   {$IFDEF WINDOWS}
-  LError := not GetCPInfo(FCodePage, LCPInfo);
+
+  LError := not {$IFDEF WINCE}GetCPInfo(FCodePage, LCPInfo){$ELSE}GetCPInfoEx(FCodePage, 0, LCPInfo){$ENDIF};
   if LError and (FCodePage = 20127) then begin
     // RLebeau: 20127 is the official codepage for ASCII, but not
     // all OS versions support that codepage, so fallback to 1252
     // or even 437...
-    FCodePage := 1252;
-    LError := not GetCPInfo(FCodePage, LCPInfo);
+    LError := not {$IFDEF WINCE}GetCPInfo(1252, LCPInfo){$ELSE}GetCPInfoEx(1252, 0, LCPInfo){$ENDIF};
     // just in case...
     if LError then begin
-      FCodePage := 437;
-      LError := not GetCPInfo(FCodePage, LCPInfo);
+      LError := not {$IFDEF WINCE}GetCPInfo(437, LCPInfo){$ELSE}GetCPInfoEx(437, 0, LCPInfo){$ENDIF};
     end;
   end;
   if LError then begin
     raise EIdException.CreateResFmt(PResStringRec(@RSInvalidCodePage), [FCodePage]);
   end;
+
+  {$IFNDEF WINCE}
+  FCodePage := LCPInfo.CodePage;
+  {$ENDIF}
   FMaxCharSize := LCPInfo.MaxCharSize;
+
   {$ELSE}
+
   case FCodePage of
     65000: begin
       FMaxCharSize := 5;
@@ -2967,11 +3067,13 @@ begin
     // FMaxCharSize gets set to 0, preventing any character conversions.  So
     // force FMaxCharSize to 1 if GetByteCount() fails, until a better solution
     // can be found.  Maybe loop through the codepoints until we find the largest
-    // one that is supported by this codepage (though that will take time)...
+    // one that is supported by this codepage (though that will take time). Or
+    // at least implement a lookup table for the more commonly used charsets...
     if FMaxCharSize = 0 then begin
       FMaxCharSize := 1;
     end;
   end;
+
   {$ENDIF}
 
   FIsSingleByte := (FMaxCharSize = 1);
@@ -4321,11 +4423,95 @@ begin
   Result := IndyTextEncoding_UTF8;
 end;
 
+{$IFNDEF DOTNET}
+function GetEncodingCodePage(AEncoding: IIdTextEncoding): UInt16;
+begin
+  Result := 0;
+  if AEncoding = nil then begin
+    Exit;
+  end;
+
+  // RLebeau 2/15/2019: AEncoding is checked this way until IIdTextEncoding is updated to expose its assigned CodePage...
+
+  {$IFDEF USE_ICONV}
+  {
+  if AEncoding is TIdMBCSEncoding then begin
+    case PosInStrArray(TIdMBCSEncoding(AEncoding).FCharSet, ['UTF-7', 'UTF7', 'UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE', 'char', 'ISO-8859-1'], False) of
+      0, 1: Result := 65000;
+      2, 3: Result := 65001;
+      4..7: Result := 1200;
+      8, 9: Result := 1201;
+      10:   Result := ($IFDEF HAS_SetCodePage)DefaultSystemCodePage($ELSE)0($ENDIF);
+      11:   Result := 28591;
+      // TODO: add support for UTF-32...
+    else
+      if IsCharsetASCII(TIdMBCSEncoding(AEncoding).FCharSet) then begin
+        Result := 20127;
+      end;
+    end;
+  end
+  else
+  }
+  {$ELSE}
+    {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
+  {
+  if AEncoding is TIdMBCSEncoding then begin
+    Result := TIdMBCSEncoding(AEncoding).FCodePage;
+  end
+  else
+  }
+    {$ENDIF}
+  {$ENDIF}
+
+  if (AEncoding = GIdOSDefaultEncoding) then
+  begin
+    {$IFDEF HAS_SetCodePage}
+    Result := DefaultSystemCodePage;
+    {$ELSE}
+      {$IFDEF WINDOWS}
+    Result := GetACP();
+      {$ENDIF}
+    {$ENDIF}
+  end
+  else if (AEncoding = GId8BitEncoding) {or (AEncoding is TId8BitEncoding)} then
+  begin
+    Result := 28591;
+  end
+  else if (AEncoding = GIdASCIIEncoding) {or (AEncoding is TIdASCIIEncoding)} then
+  begin
+    Result := 20127;
+  end
+  else if (AEncoding = GIdUTF16BigEndianEncoding) {or (AEncoding is TIdUTF16BigEndianEncoding)} then
+  begin
+    Result := 1201;
+  end
+  else if (AEncoding = GIdUTF16LittleEndianEncoding) {or (AEncoding is TIdUTF16LittleEndianEncoding)} then
+  begin
+    Result := 1200;
+  end
+  else if (AEncoding = GIdUTF7Encoding) {or (AEncoding is TIdUTF7Encoding)} then
+  begin
+    Result := 65000;
+  end
+  else if (AEncoding = GIdUTF8Encoding) {or (AEncoding is TIdUTF8Encoding)} then
+  begin
+    Result := 65001;
+  end;
+end;
+{$ENDIF}
+
+function LoadLibFunction(const ALibHandle: TIdLibHandle; const AProcName: TIdLibFuncName): Pointer;
+begin
+  {$I IdRangeCheckingOff.inc}
+  Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(ALibHandle, PIdLibFuncNameChar(AProcName));
+  {$I IdRangeCheckingOn.inc}
+end;
+
 {$IFDEF UNIX}
 function HackLoadFileName(const ALibName, ALibVer : String) : string;
   {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  {$IFDEF DARWIN_OR_IOS}
+  {$IFDEF OSX_OR_IOS}
   Result := ALibName + ALibVer + LIBEXT;
   {$ELSE}
   Result := ALibName + LIBEXT + ALibVer;
@@ -4562,7 +4748,7 @@ function Stub_InterlockedCompareExchange(var Destination: PtrInt; Exchange, Comp
     // TODO: what is Embarcadero's 64-bit define going to be?
     cInterlockedCompareExchange = {$IFDEF CPU64}'InterlockedCompareExchange64'{$ELSE}'InterlockedCompareExchange'{$ENDIF}; {do not localize}
   begin
-    Result := GetProcAddress(GetModuleHandle(cKernel32), cInterlockedCompareExchange);
+    Result := LoadLibFunction(GetModuleHandle(cKernel32), cInterlockedCompareExchange);
     if Result = nil then begin
       Result := @Impl_InterlockedCompareExchange;
     end;
@@ -5633,7 +5819,7 @@ function Stub_GetTickCount64: UInt64; stdcall;
 
   function GetImpl: Pointer;
   begin
-    Result := GetProcAddress(GetModuleHandle('KERNEL32'), 'GetTickCount64'); {do not localize}
+    Result := LoadLibFunction(GetModuleHandle('KERNEL32'), 'GetTickCount64'); {do not localize}
     if Result = nil then begin
       Result := @Impl_GetTickCount64;
     end;
@@ -5721,7 +5907,7 @@ end;
     {$ELSE}
       {$IFDEF UNIX}
 
-  {$IFDEF DARWIN}
+  {$IFDEF OSX}
     {$IFDEF FPC}
 //RLebeau: FPC does not provide mach_timebase_info() and mach_absolute_time() yet...
 function mach_timebase_info(var TimebaseInfoData: TTimebaseInfoData): Integer; cdecl; external 'libc';
@@ -5730,14 +5916,14 @@ function mach_absolute_time: QWORD; cdecl; external 'libc';
   {$ENDIF}
 
 function Ticks64: TIdTicks;
-  {$IFDEF DARWIN}
+  {$IFDEF OSX}
     {$IFDEF USE_INLINE} inline;{$ENDIF}
   {$ELSE}
 var
   tv: timeval;
   {$ENDIF}
 begin
-  {$IFDEF DARWIN}
+  {$IFDEF OSX}
 
   // TODO: mach_absolute_time() does NOT count ticks while the system is
   // sleeping! We can use time() to account for that:
@@ -5769,6 +5955,8 @@ begin
   Result := (mach_absolute_time() * GMachTimeBaseInfo.numer) div (1000000 * GMachTimeBaseInfo.denom);
 
   {$ELSE}
+
+  // TODO: raise an exception if gettimeofday() fails...
 
     {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
   gettimeofday(tv, nil);
@@ -5851,13 +6039,23 @@ begin
 end;
 
 {$IFNDEF DOTNET}
+
+// TODO: define STRING_UNICODE_MISMATCH for WinCE in IdCompilerDefines.inc?
+{$IFDEF WINDOWS}
+  {$IFDEF WINCE}
+    {$IFNDEF STRING_IS_UNICODE}
+      {$DEFINE SERVICE_STRING_MISMATCH}
+    {$ENDIF}
+  {$ELSE}
+    {$IFDEF STRING_UNICODE_MISMATCH}
+      {$DEFINE SERVICE_STRING_MISMATCH}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 function ServicesFilePath: string;
 var
-  {$IFDEF WINDOWS}
-  sLocation: {$IFDEF STRING_UNICODE_MISMATCH}TIdPlatformString{$ELSE}string{$ENDIF};
-  {$ELSE}
-  sLocation: string;
-  {$ENDIF}
+  sLocation: {$IFDEF SERVICE_STRING_MISMATCH}TIdPlatformString{$ELSE}string{$ENDIF};
 begin
   {$IFDEF UNIX}
   sLocation := '/etc/';  // assume Berkeley standard placement   {do not localize}
@@ -5866,10 +6064,8 @@ begin
   {$IFDEF WINDOWS}
     {$IFNDEF WINCE}
   SetLength(sLocation, MAX_PATH);
-  SetLength(sLocation, GetWindowsDirectory(
-    {$IFDEF STRING_UNICODE_MISMATCH}PIdPlatformChar(sLocation){$ELSE}PChar(sLocation){$ENDIF}
-    , MAX_PATH));
-  sLocation := IndyIncludeTrailingPathDelimiter(sLocation);
+  SetLength(sLocation, GetWindowsDirectory(PIdPlatformChar(sLocation), MAX_PATH));
+  sLocation := IndyIncludeTrailingPathDelimiter(string(sLocation));
   if IndyWindowsPlatform = VER_PLATFORM_WIN32_NT then begin
     sLocation := sLocation + 'system32\drivers\etc\'; {do not localize}
   end;
@@ -7329,6 +7525,9 @@ begin
   end else
   begin
     SetString(Result, Buffer, Len);
+    {$IFDEF STRING_IS_ANSI}
+    // TODO: do we need to use SetCodePage() here?
+    {$ENDIF}
   end;
       {$ELSE}
   Result := SysUtils.Format(AFormat, Args, EnglishFmt);
@@ -7400,19 +7599,37 @@ end;
 function LocalDateTimeToHttpStr(const Value: TDateTime) : String;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := DateTimeGMTToHttpStr(Value - OffsetFromUTC);
+  Result := DateTimeGMTToHttpStr(
+    {$IFDEF HAS_LocalTimeToUniversal}
+    LocalTimeToUniversal(Value)
+    {$ELSE}
+    Value - OffsetFromUTC
+    {$ENDIF}
+  );
 end;
 
 function LocalDateTimeToCookieStr(const Value: TDateTime; const AUseNetscapeFmt: Boolean = True) : String;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := DateTimeGMTToCookieStr(Value - OffsetFromUTC, AUseNetscapeFmt);
+  Result := DateTimeGMTToCookieStr(
+    {$IFDEF HAS_LocalTimeToUniversal}
+    LocalTimeToUniversal(Value)
+    {$ELSE}
+    Value - OffsetFromUTC
+    {$ENDIF}
+    , AUseNetscapeFmt);
 end;
 
 function LocalDateTimeToImapStr(const Value: TDateTime) : String;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := DateTimeGMTToImapStr(Value - OffsetFromUTC);
+  Result := DateTimeGMTToImapStr(
+    {$IFDEF HAS_LocalTimeToUniversal}
+    LocalTimeToUniversal(Value)
+    {$ELSE}
+    Value - OffsetFromUTC
+    {$ENDIF}
+  );
 end;
 
 {$I IdDeprecatedImplBugOff.inc}
@@ -7451,23 +7668,25 @@ var
   iBias: Integer;
   tmez: TTimeZoneInformation;
   {$ELSE}
-    {$IFDEF UNIX}
-      {$IFDEF USE_VCL_POSIX}
+    {$IFNDEF HAS_GetLocalTimeOffset}
+      {$IFDEF UNIX}
+        {$IFDEF USE_VCL_POSIX}
 var
   T : Time_t;
   TV : TimeVal;
   UT : tm;
-      {$ELSE}
-        {$IFDEF KYLIXCOMPAT}
+        {$ELSE}
+          {$IFDEF KYLIXCOMPAT}
 var
   T : Time_T;
   TV : TTimeVal;
   UT : TUnixTime;
-        {$ELSE}
-          {$IFDEF USE_BASEUNIX}
+          {$ELSE}
+            {$IFDEF USE_BASEUNIX}
  var
    timeval: TTimeVal;
    timezone: TTimeZone;
+            {$ENDIF}
           {$ENDIF}
         {$ENDIF}
       {$ENDIF}
@@ -7511,27 +7730,37 @@ begin
     Result := 0.0 - Result;
   end;
     {$ELSE}
-      {$IFDEF UNIX}
+      {$IFDEF HAS_GetLocalTimeOffset}
+  // RLebeau: Note that on Linux/Unix, this information may be inaccurate around
+  // the DST time changes (for optimization). In that case, the unix.ReReadLocalTime()
+  // function must be used to re-initialize the timezone information...
+  Result := -1 * (GetLocalTimeOffset() / 60 / 24);
+      {$ELSE}
+        {$IFDEF UNIX}
 
-        {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
+  // TODO: raise EIdFailedToRetreiveTimeZoneInfo if gettimeofday() fails...
+
+          {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
   {from http://edn.embarcadero.com/article/27890 but without multiplying the Result by -1}
 
   gettimeofday(TV, nil);
   T := TV.tv_sec;
   localtime_r({$IFDEF KYLIXCOMPAT}@{$ENDIF}T, UT);
   Result := UT.{$IFDEF KYLIXCOMPAT}__tm_gmtoff{$ELSE}tm_gmtoff{$ENDIF} / 60 / 60 / 24;
-        {$ELSE}
-          {$IFDEF USE_BASEUNIX}
+          {$ELSE}
+            {$IFDEF USE_BASEUNIX}
   fpGetTimeOfDay (@TimeVal, @TimeZone);
   Result := -1 * (timezone.tz_minuteswest / 60 / 24);
-          {$ELSE}
+            {$ELSE}
   {$message error gettimeofday is not called on this platform!}
   Result := GOffsetFromUTC;
+            {$ENDIF}
           {$ENDIF}
-        {$ENDIF}
 
-      {$ELSE}
+        {$ELSE}
+  {$message error no platform API called to get UTC offset!}
   Result := GOffsetFromUTC;
+        {$ENDIF}
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
@@ -7540,6 +7769,7 @@ end;
 function UTCOffsetToStr(const AOffset: TDateTime; const AUseGMTStr: Boolean = False): string;
 var
   AHour, AMin, ASec, AMSec: Word;
+  s: string;
   {$IFDEF STRING_IS_IMMUTABLE}
   LSB: TIdStringBuilder;
   {$ENDIF}
@@ -7550,9 +7780,10 @@ begin
   end else
   begin
     DecodeTime(AOffset, AHour, AMin, ASec, AMSec);
+    s := IndyFormat(' %0.2d%0.2d', [AHour, AMin]); {do not localize}
     {$IFDEF STRING_IS_IMMUTABLE}
     LSB := TIdStringBuilder.Create(5);
-    LSB.Append(IndyFormat(' %0.2d%0.2d', [AHour, AMin])); {do not localize}
+    LSB.Append(s);
     if AOffset < 0.0 then begin
       LSB[0] := '-'; {do not localize}
     end else begin
@@ -7560,7 +7791,7 @@ begin
     end;
     Result := LSB.ToString;
     {$ELSE}
-    Result := IndyFormat(' %0.2d%0.2d', [AHour, AMin]); {do not localize}
+    Result := s;
     if AOffset < 0.0 then begin
       Result[1] := '-'; {do not localize}
     end else begin
@@ -7704,6 +7935,7 @@ function CompareDate(const D1, D2: TDateTime): Integer;
 var
   LTM1, LTM2 : TTimeStamp;
 begin
+  // TODO: use DateUtils.CompareDateTime() instead...
   LTM1 := DateTimeToTimeStamp(D1);
   LTM2 := DateTimeToTimeStamp(D2);
   if LTM1.Date = LTM2.Date then begin
@@ -8354,8 +8586,11 @@ begin
     end;
     CheckByteEncoding(LBytes, AByteEncoding, ADestEncoding);
     SetString(Result, PAnsiChar(LBytes), Length(LBytes));
-    // TODO: on compilers that support AnsiString codepages,
+      {$IFDEF HAS_SetCodePage}
+    // on compilers that support AnsiString codepages,
     // set the string's codepage to match ADestEncoding...
+    SetCodePage(PRawByteString(@Result)^, GetEncodingCodePage(ADestEncoding), False);
+      {$ENDIF}
     {$ENDIF}
   end else begin
     Result := '';
@@ -8379,8 +8614,11 @@ begin
     Result := IndyTextEncoding_8Bit.GetString(AValue, AStartIndex, LLength);
     {$ELSE}
     SetString(Result, PAnsiChar(@AValue[AStartIndex]), LLength);
-    // TODO: on compilers that support AnsiString codepages,
+      {$IFDEF HAS_SetCodePage}
+    // on compilers that support AnsiString codepages,
     // set the string's codepage to something like ISO-8859-1...
+    SetCodePage(PRawByteString(@Result)^, 28591, False);
+      {$ENDIF}
     {$ENDIF}
   end else begin
     Result := '';
@@ -8786,6 +9024,12 @@ begin
   end;
 end;
 {$ENDIF}
+
+function TIdReadOnlyMemoryBufferStream.Write(const Buffer; Count: Longint): Longint;
+begin
+  // TODO: raise an exception instead?
+  Result := 0;
+end;
 
 procedure AppendBytes(var VBytes: TIdBytes; const AToAdd: TIdBytes; const AIndex: Integer = 0; const ALength: Integer = -1);
 var
@@ -9351,8 +9595,11 @@ begin
   // System.RegisterExpectedMemoryLeak() redirects to the leak registration
   // code of the installed memory manager."
 
+    {$I IdSymbolPlatformOff.inc}
   //Result := System.SysRegisterExpectedMemoryLeak(AAddress);
   Result := System.RegisterExpectedMemoryLeak(AAddress);
+    {$I IdSymbolPlatformOn.inc}
+
   {$ELSE}
     // RLebeau 10/5/2014: the user can override the RTL's version of FastMM
     // (2006+ only) with any memory manager, such as MadExcept, so check for
@@ -9588,6 +9835,16 @@ begin
 end;
 {$ENDIF}
 
+// Embarcadero changed the signature of FreeAndNil() in 10.4 Denali...
+{$UNDEF HAS_FreeAndNil_ConstRef_Param}
+{$IFNDEF USE_OBJECT_ARC}
+  {$IFDEF DCC}
+    {$IFDEF VCL_10_4_OR_ABOVE}
+      {$DEFINE HAS_FreeAndNil_TObject_Param}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 procedure IdDisposeAndNil(var Obj);
 {$IFDEF USE_OBJECT_ARC}
 var
@@ -9610,7 +9867,7 @@ begin
   Temp.DisposeOf;
   // __ObjRelease() is called when Temp goes out of scope
   {$ELSE}
-  FreeAndNil(Obj);
+  FreeAndNil({$IFDEF HAS_FreeAndNil_TObject_Param}TObject(Obj){$ELSE}Obj{$ENDIF});
   {$ENDIF}
 end;
 
@@ -9632,7 +9889,7 @@ initialization
   GetTickCount64 := Stub_GetTickCount64;
   {$ENDIF}
   {$IFDEF UNIX}
-    {$IFDEF DARWIN}
+    {$IFDEF OSX}
   mach_timebase_info(GMachTimeBaseInfo);
     {$ENDIF}
   {$ENDIF}

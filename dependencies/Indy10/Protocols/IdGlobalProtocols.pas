@@ -507,9 +507,12 @@ type
 
   function ProcessPath(const ABasePath: String; const APath: String; const APathDelim: string = '/'): string;    {Do not Localize}
   function RightStr(const AStr: String; const Len: Integer): String;
+
   // still to figure out how to reproduce these under .Net
+  // TODO: deprecate these, as Indy does not use them at all...
   function ROL(const AVal: UInt32; AShift: Byte): UInt32;
   function ROR(const AVal: UInt32; AShift: Byte): UInt32;
+
   function RPos(const ASub, AIn: String; AStart: Integer = -1): Integer;
   function IndySetLocalTime(Value: TDateTime): Boolean;
 
@@ -584,14 +587,19 @@ implementation
 
 uses
   {$IFDEF USE_VCL_POSIX}
-    {$IFDEF DARWIN}
+    {$IFDEF OSX}
   Macapi.CoreServices,
     {$ENDIF}
   {$ENDIF}
   IdIPAddress,
+  {$IFDEF HAS_GetLocalTimeOffset}
+  DateUtils,
+  {$ENDIF}
   {$IFDEF UNIX}
     {$IFDEF USE_VCL_POSIX}
+      {$IFNDEF HAS_GetLocalTimeOffset}
   DateUtils,
+      {$ENDIF}
   Posix.SysStat, Posix.SysTime, Posix.Time, Posix.Unistd,
     {$ELSE}
       {$IFDEF KYLIXCOMPAT}
@@ -599,7 +607,9 @@ uses
       {$ELSE}
         {$IFDEF USE_BASEUNIX}
   BaseUnix, Unix,
+          {$IFNDEF HAS_GetLocalTimeOffset}
   DateUtils,
+          {$ENDIF}
         {$ENDIF}
       {$ENDIF}
     {$ENDIF}
@@ -1341,7 +1351,7 @@ begin
   if ATimeStamp <> '' then begin
     Result := FTPMLSToGMTDateTime(ATimeStamp);
     // Apply local offset
-    Result := Result + OffsetFromUTC;
+    Result := {$IFDEF HAS_UniversalTimeToLocal}UniversalTimeToLocal(Result){$ELSE}Result + OffsetFromUTC{$ENDIF};
   end;
 end;
 
@@ -1367,7 +1377,13 @@ stamps based on GMT)
 function FTPLocalDateTimeToMLS(const ATimeStamp : TDateTime; const AIncludeMSecs : Boolean=True): String;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := FTPGMTDateTimeToMLS(ATimeStamp - OffsetFromUTC, AIncludeMSecs);
+  Result := FTPGMTDateTimeToMLS(
+    {$IFDEF HAS_LocalTimeToUniversal}
+    LocalTimeToUniversal(ATimeStamp)
+    {$ELSE}
+    ATimeStamp - OffsetFromUTC
+    {$ENDIF}
+    , AIncludeMSecs);
 end;
 
 
@@ -1764,10 +1780,12 @@ begin
     LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
     {$ENDIF}
+      // TODO: use GetFileAttributesEx(GetFileExInfoStandard) if available...
       LHandle := Windows.FindFirstFile(PIdFileNameChar(AFileName), LRec);
       if LHandle <> INVALID_HANDLE_VALUE then begin
         Windows.FindClose(LHandle);
         if (LRec.dwFileAttributes and Windows.FILE_ATTRIBUTE_DIRECTORY) = 0 then begin
+          // TODO: use ULARGE_INTEGER instead...
           Result := (Int64(LRec.nFileSizeHigh) shl 32) + LRec.nFileSizeLow;
         end;
       end;
@@ -1959,14 +1977,17 @@ begin
 end;
 
 function TimeZoneBias: TDateTime;
-{$IFDEF USE_INLINE} inline; {$ENDIF}
 {$IFNDEF FPC}
   {$IFDEF UNIX}
 var
   T: Time_T;
   TV: TimeVal;
   UT: {$IFDEF USE_VCL_POSIX}tm{$ELSE}TUnixTime{$ENDIF};
+  {$ELSE}
+    {$IFDEF USE_INLINE} inline; {$ENDIF}
   {$ENDIF}
+{$ELSE}
+  {$IFDEF USE_INLINE} inline; {$ENDIF}
 {$ENDIF}
 begin
 {$IFNDEF FPC}
@@ -2774,7 +2795,8 @@ begin
   if RawStrInternetToDateTime(S, Result) then begin
     DateTimeOffset := GmtOffsetStrToDateTime(S);
     {-Apply GMT and local offsets}
-    Result := Result - DateTimeOffset + OffsetFromUTC;
+    Result := Result - DateTimeOffset;
+    Result := {$IFDEF HAS_UniversalTimeToLocal}UniversalTimeToLocal(Result){$ELSE}Result + OffsetFromUTC{$ENDIF};
   end;
 end;
 
@@ -3028,7 +3050,8 @@ begin
       raise Exception.Create('Invalid Cookie Date format');
     end;
 
-    Result := EncodeDate(LYear, LMonth, LDayOfMonth) + EncodeTime(LHour, LMinute, LSecond, 0) + OffsetFromUTC;
+    Result := EncodeDate(LYear, LMonth, LDayOfMonth) + EncodeTime(LHour, LMinute, LSecond, 0);
+    Result := {$IFDEF HAS_UniversalTimeToLocal}UniversalTimeToLocal(Result){$ELSE}Result + OffsetFromUTC{$ENDIF};
   except
     Result := 0.0;
   end;
@@ -3655,6 +3678,10 @@ begin
   end;
   { Check list }
   if FFileExt.IndexOf(LExt) = -1 then begin
+    // TODO: multiple MIME types can belong to the same file extension.
+    // Change this logic to have FFileExt contain "<ext>=<mimetype>"
+    // pairs so an extension can map to a prefered MIME type, and have
+    // FMIMEList contain "<mimetype>=<ext>" pairs for simple lookup.
     FFileExt.Add(LExt);
     FMIMEList.Add(LMIMEType);
   end else begin
@@ -3720,6 +3747,10 @@ begin
     Index := FMIMEList.IndexOf(LMIMEType);
   end;
   if Index <> -1 then begin
+    // TODO: multiple MIME types can belong to the same file extension.
+    // Change this logic to have FFileExt contain "<ext>=<mimetype>"
+    // pairs so an extension can map to a prefered MIME type, and have
+    // FMIMEList contain "<mimetype>=<ext>" pairs for simple lookup.
     Result := FFileExt[Index];
   end else begin
     Result := '';    {Do not Localize}
@@ -3739,6 +3770,10 @@ begin
     Index := FFileExt.IndexOf(LExt);
   end;
   if Index <> -1 then begin
+    // TODO: multiple MIME types can belong to the same file extension.
+    // Change this logic to have FFileExt contain "<ext>=<mimetype>"
+    // pairs so an extension can map to a prefered MIME type, and have
+    // FMIMEList contain "<mimetype>=<ext>" pairs for simple lookup.
     Result := FMIMEList[Index];
   end else begin
     Result := 'application/octet-stream' {do not localize}
@@ -4242,9 +4277,7 @@ var
 begin
   while VPos <= ALen do begin
     DiscardUntil(AStr, '<', VPos, ALen); {do not localize}
-    if (VPos > ALen) then
-      break;
-    if (AStr[VPos] = '<') then begin {do not localize}
+    if AStr[VPos] = '<' then begin {do not localize}
       Inc(VPos);
     end;
     LTmp := '<' + ExtractDocWhiteSpace(AStr, VPos, ALen);
@@ -4859,12 +4892,18 @@ begin
   {$ENDIF}
 end;
 
+// TODO: should we just get rid of the inline assembly here and let the compiler generate opcode as needed?
 {$UNDEF NO_NATIVE_ASM}
 {$IFDEF DOTNET}
   {$DEFINE NO_NATIVE_ASM}
 {$ENDIF}
 {$IFDEF IOS}
   {$IFDEF CPUARM}
+    {$DEFINE NO_NATIVE_ASM}
+  {$ENDIF}
+{$ENDIF}
+{$IFDEF OSX} // !!! ADDED OSX BY EMBT
+  {$IFDEF CPUX64}
     {$DEFINE NO_NATIVE_ASM}
   {$ENDIF}
 {$ENDIF}
@@ -4881,6 +4920,7 @@ end;
 {$ENDIF}
 
 {$IFDEF NO_NATIVE_ASM}
+
 function ROL(const AVal: UInt32; AShift: Byte): UInt32;
   {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
@@ -4986,8 +5026,15 @@ begin
   end;
     {$ELSE}
   i := MAX_COMPUTERNAME_LENGTH;
-  if GetComputerName(LHost, i) then begin
+  if {$IFDEF STRING_IS_UNICODE}GetComputerNameW{$ELSE}GetComputerNameA{$ENDIF}(LHost, i) then begin
     SetString(Result, LHost, i);
+    {$IFDEF STRING_IS_ANSI}
+    // on compilers that support AnsiString codepages,
+    // set the string's codepage to match the OS...
+      {$IFDEF HAS_SetCodePage}
+    SetCodePage(PRawByteString(@Result)^, GetACP(), False);
+      {$ENDIF}
+    {$ENDIF}
   end;
     {$ENDIF}
   {$ENDIF}
