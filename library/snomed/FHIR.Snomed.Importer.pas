@@ -34,7 +34,7 @@ Interface
 
 uses
   Windows, SysUtils, Classes, Inifiles, Generics.Collections,
-  {$IFNDEF FPC} YuStemmer, {$ENDIF}
+  YuStemmer,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects;
@@ -1353,7 +1353,7 @@ var
 begin
   sDesc := lowercase(sdesc);
   if not FWordList.Find(sDesc, i) Then
-    i := FWordList.AddObject(sdesc, TWordCache.Create(FStemmer.calc(sDesc)));
+    i := FWordList.AddObject(sdesc, TWordCache.Create(FStemmer.Stem(sDesc)));
   oWord := TWordCache(FWordList.Objects[i]);
   m := oWord.Flags;
   if FSN then

@@ -31,7 +31,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
-
 (*
 
 Notes from Thurs Q0 Atlanta 2015
@@ -48,7 +47,7 @@ interface
 
 uses
   SysUtils, Classes, SyncObjs,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
   FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Json,
@@ -1736,7 +1735,7 @@ begin
   inherited;
   FConnected := false;
   FQueue := TFslList<TFslBuffer>.create;
-  FEvent := TEvent.Create;
+  FEvent := TEvent.Create(nil, True, False, '');
   FEvent.ResetEvent;
 end;
 

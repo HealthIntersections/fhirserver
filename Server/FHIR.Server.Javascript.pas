@@ -196,7 +196,7 @@ end;
 
 { TEventScriptRegistry }
 
-constructor TEventScriptRegistry.Create;
+constructor TEventScriptRegistry.Create(factory : TFHIRFactory);
 begin
   inherited Create;
   FLock := TFslLock.create;

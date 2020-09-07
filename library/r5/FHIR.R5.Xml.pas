@@ -1,7 +1,5 @@
 unit FHIR.R5.Xml;
 
-{$I fhir.r5.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -30,6 +28,9 @@ unit FHIR.R5.Xml;
   POSSIBILITY OF SUCH DAMAGE.
   
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r5.inc}
 
 interface
 

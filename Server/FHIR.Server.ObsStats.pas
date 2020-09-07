@@ -6,7 +6,6 @@ spec to do:
 }
 unit FHIR.Server.ObsStats;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -34,6 +33,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -135,7 +136,7 @@ Type
     function genKurtosis() : Double;
     function genRegression() : Double;
     function genIntercept() : Double;
-    function Compare(const Left, Right: TObservation): Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
 
   public
     constructor Create(factory : TFHIRFactory; conn : TFslDBConnection; resp : TFHIRStatsOpResponseW);
@@ -190,7 +191,7 @@ implementation
 
 { TObservationStatsEvaluator }
 
-function TObservationStatsEvaluator.Compare(const Left, Right: TObservation): Integer;
+function TObservationStatsEvaluator.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
 begin
   if (left = nil) or (right = nil) then
     exit(0);

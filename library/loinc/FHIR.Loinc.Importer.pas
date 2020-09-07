@@ -34,9 +34,7 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  {$IFNDEF FPC}
   YuStemmer,
-  {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Loinc.Services;
 

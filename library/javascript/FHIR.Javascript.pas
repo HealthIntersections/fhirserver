@@ -394,7 +394,7 @@ valueOf()	Returns the primitive value of an array
     {
       iterate through all the properties on an object
     }
-    procedure iterateProperties(value : JsValueRef; proc : TJavascriptPropertyConsumer);
+    procedure iterateProperties(value : JsValueRef; proc : TJavascriptPropertyConsumer; context : pointer);
 
     {
       given a javascript object, see whether it has a property value which is not undefined
@@ -435,7 +435,7 @@ valueOf()	Returns the primitive value of an array
     {
       iterate the array calling valueConsumer once for each item in it
     }
-    procedure iterateArray(arr : JsValueRef; valueConsumer : TJavascriptArrayValueConsumer);
+    procedure iterateArray(arr : JsValueRef; valueConsumer : TJavascriptArrayValueConsumer; context : Pointer);
 
     {
       Javascript callbaxks cannot let an exception propagate back into the JS run time.
@@ -1248,7 +1248,7 @@ begin
   jsCheck(JsNumberToInt(v, result));
 end;
 
-procedure TJavascript.iterateArray(arr: JsValueRef; valueConsumer: TJavascriptArrayValueConsumer);
+procedure TJavascript.iterateArray(arr: JsValueRef; valueConsumer: TJavascriptArrayValueConsumer; context : Pointer);
 var
   i : integer;
   vi, v : JsValueRef;
@@ -1257,11 +1257,11 @@ begin
   begin
     vi := wrap(i);
     jsCheck(JsGetIndexedProperty(arr, vi, v));
-    valueConsumer(nil, i, v);
+    valueConsumer(context, i, v);
   end;
 end;
 
-procedure TJavascript.iterateProperties(value: JsValueRef; proc: TJavascriptPropertyConsumer);
+procedure TJavascript.iterateProperties(value: JsValueRef; proc: TJavascriptPropertyConsumer; context : pointer);
 var
   arr : JsValueRef;
   i : integer;
@@ -1274,7 +1274,7 @@ begin
     vi := wrap(i);
     jsCheck(JsGetIndexedProperty(arr, vi, v));
     n := asString(v);
-    proc(nil, n, getProperty(value, n));
+    proc(context, n, getProperty(value, n));
   end;
 end;
 

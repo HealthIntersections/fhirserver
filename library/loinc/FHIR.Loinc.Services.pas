@@ -34,12 +34,10 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
+  RegularExpressions,
+  YuStemmer,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
-  RegularExpressions,
-  {$IFNDEF FPC}
-  YuStemmer,
-  {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
@@ -1438,7 +1436,7 @@ begin
       Begin
         SetLength(words, length(words)+1);
         words[length(words)-1].original := s;
-        s1 := oStemmer.calc(s);
+        s1 := oStemmer.Stem(s);
         if FindStem(s1, index) Then
           words[length(words)-1].stem := FStems.GetString(index);
       End;

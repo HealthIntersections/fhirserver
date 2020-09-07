@@ -30,13 +30,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 // to convert .crt to .pem openssl x509 -in mycert.crt -out mycert.pem -outform PEM
 
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections, IniFiles,
+  SysUtils, Classes, Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Threads,
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects,
@@ -79,8 +80,9 @@ type
     constructor Create(message : String; reason : TAuthFailReason; location, state : String); overload;
   end;
 
+  TDictionaryStringString = TDictionary<String, String>;
   TGetPatientsEvent = procedure (details : TFslStringDictionary) of object;
-  TProcessLaunchParamsEvent = function (request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String> of object;
+  TProcessLaunchParamsEvent = function (request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionaryStringString of object;
 //  TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundleW of object;
 
   TFhirLoginToken = Class (TFslObject)

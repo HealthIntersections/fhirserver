@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -175,21 +177,29 @@ end;
 
 function TFHIRServerJsHelper.FHIRSessionCompartmentsJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
+  {$IFDEF FPC}
+  raise EFHIRException.create('todo');
+  {$ELSE}
   result := js.makeArray(TFhirSession(this).Compartments.Count, function (context : pointer; i : integer) : JsValueRef
      begin
        result := js.wrap(TFhirSession(this).Compartments[i].Id);
      end);
+  {$ENDIF}
 end;
 
 function TFHIRServerJsHelper.FHIRSessionScopesJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   sl : TArray<String>;
 begin
+  {$IFDEF FPC}
+  raise EFHIRException.create('todo');
+  {$ELSE}
   sl := TFhirSession(this).scopes.Split([' ']);
   result := js.makeArray(length(sl), function (context : pointer; i : integer) : JsValueRef
      begin
        result := js.wrap(sl[i]);
      end);
+  {$ENDIF}
 end;
 
 function TFHIRServerJsHelper.FHIRSessionIsAnonymousJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;

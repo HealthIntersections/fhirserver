@@ -1,7 +1,5 @@
 unit FHIR.R5.Utilities;
 
-{$I fhir.r5.inc}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,11 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r5.inc}
+
 interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Soap.EncdDecd, Generics.Collections, ZLib,
+  SysUtils, Classes, Generics.Collections, ZLib,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
   FHIR.Web.Fetcher,
@@ -817,11 +818,15 @@ function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boole
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 
+{$IFNDEF FPC}
 type
   TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
+{$ENDIF}
 
+{$IFNDEF FPC}
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+{$ENDIF}
 
 
 implementation
@@ -6297,6 +6302,7 @@ begin
     end_ := TFslDateTime.makeNull;
 end;
 
+{$IFNDEF FPC}
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 begin
   iterateObject(resource, proc);
@@ -6321,6 +6327,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TFhirConformanceRestResourceHelper.removeInteraction(type_: TFhirTypeRestfulInteractionEnum);
 var

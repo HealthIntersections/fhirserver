@@ -28,6 +28,9 @@ unit FHIR.Server.Database;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
+
 interface
 
 uses
@@ -800,10 +803,12 @@ begin
           begin
             checkProposedContent(request.Session, request, request.Resource, tags);
             FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+            {$IFNDEF FPC}
             GJsHost.checkChanges(ttDataAdded, request.Session,
               function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
               function (context : pointer) : TFHIRResourceV begin result := nil; end,
               request.Resource);
+            {$ENDIF}
             result := sId;
             request.id := sId;
             key := FRepository.NextVersionKey;
@@ -964,10 +969,12 @@ begin
 
         checkProposedDeletion(request.session, request, request.Resource, tags);
         FRepository.checkDropResource(request.session, request, request.Resource, tags);
+        {$IFNDEF FPC}
         GJsHost.checkChanges(ttDataRemoved, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
             function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
             nil);
+        {$ENDIF}
 
         for i := 0 to tags.count - 1 do
           FRepository.RegisterTag(tags[i], FConnection);
@@ -2127,10 +2134,12 @@ begin
 
           checkProposedContent(request.session, request, request.Resource, tags);
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          {$IFNDEF FPC}
           GJsHost.checkChanges(ttDataModified, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
             function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
             request.Resource);
+          {$ENDIF}
 
           for i := 0 to tags.count - 1 do
             FRepository.RegisterTag(tags[i], FConnection);
@@ -2416,10 +2425,12 @@ begin
           updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
           checkProposedContent(request.session, request, request.resource, tags);
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          {$IFNDEF FPC}
           GJsHost.checkChanges(ttDataModified, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
             function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
             request.Resource);
+          {$ENDIF}
 
           for i := 0 to tags.count - 1 do
             FRepository.RegisterTag(tags[i], FConnection);
@@ -5321,15 +5332,24 @@ End;
 function TFHIRNativeStorageService.createAsyncTask(url, id: string; format : TFHIRFormat; secure : boolean): integer;
 var
   key : integer;
+  conn : TFslDBConnection;
 begin
   key := NextAsyncTaskKey;
-  DB.connection('async', procedure(conn : TFslDBConnection)
+  conn := DB.getConnection('async');
+  try
+    conn.SQL := 'Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Secure, Status, Created) values ('+inttostr(key)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+booleanToSQL(secure)+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')';
+    conn.Prepare;
+    conn.Execute;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
     begin
-      conn.SQL := 'Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Secure, Status, Created) values ('+inttostr(key)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+booleanToSQL(secure)+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')';
-      conn.Prepare;
-      conn.Execute;
-      conn.Terminate;
-    end);
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
   result := key;
 end;
 
@@ -5625,23 +5645,32 @@ begin
 end;
 
 procedure TFHIRNativeStorageService.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
+var
+  conn : TFslDBConnection;
+  k : integer;
 begin
-  FDB.connection('packages.list', procedure (conn : TFslDBConnection)
-    var k : integer;
+  conn := DB.getConnection('packages.list');
+  try
+    k := conn.CountSQL('Select max(LoadedPackageKey) from LoadedPackages')+1;
+    conn.SQL := 'insert into LoadedPackages (LoadedPackageKey, Id, Version, DateLoaded, Resources, Content) values (:k, :i, :v, :d, :c, :b)';
+    conn.Prepare;
+    conn.BindKey('k', k);
+    conn.BindString('i', id);
+    conn.BindString('v', ver);
+    conn.BindDateTimeEx('d', TFslDateTime.makeUTC);
+    conn.BindInteger('c', count);
+    conn.BindBlob('b', blob);
+    conn.Execute;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
     begin
-      k := conn.CountSQL('Select max(LoadedPackageKey) from LoadedPackages')+1;
-      conn.SQL := 'insert into LoadedPackages (LoadedPackageKey, Id, Version, DateLoaded, Resources, Content) values (:k, :i, :v, :d, :c, :b)';
-      conn.Prepare;
-      conn.BindKey('k', k);
-      conn.BindString('i', id);
-      conn.BindString('v', ver);
-      conn.BindDateTimeEx('d', TFslDateTime.makeUTC);
-      conn.BindInteger('c', count);
-      conn.BindBlob('b', blob);
-      conn.Execute;
-      conn.Terminate;
-    end
-  );
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 destructor TFHIRNativeStorageService.Destroy;
@@ -5778,85 +5807,107 @@ end;
 procedure TFHIRNativeStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
 var
   client : TRegisteredClientInformation;
+  conn : TFslDBConnection;
 begin
-  FDB.connection('clients',
-    procedure (conn : TFslDBConnection)
+  conn := DB.getConnection('clients');
+  try
+    conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, PatientContext, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
     begin
-      conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, PatientContext, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations';
-      conn.Prepare;
-      conn.Execute;
-      while conn.FetchNext do
-      begin
-        client := TRegisteredClientInformation.Create;
-        try
-          client.name := conn.ColStringByName['Name'];
-          client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
-          client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
-          client.secret := conn.ColStringByName['Secret'];
-          client.redirects.Text := conn.ColBlobAsStringByName['Redirects'];
-          client.publicKey := conn.ColBlobAsStringByName['PublicKey'];
-          client.issuer := conn.ColStringByName['Issuer'];
-          client.url := conn.ColStringByName['Uri'];
-          client.logo := conn.ColStringByName['LogoUri'];
-          client.softwareId := conn.ColStringByName['SoftwareId'];
-          client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
-          client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
-          list.Add(client.link);
-        finally
-          client.Free;
-        end;
+      client := TRegisteredClientInformation.Create;
+      try
+        client.name := conn.ColStringByName['Name'];
+        client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
+        client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
+        client.secret := conn.ColStringByName['Secret'];
+        client.redirects.Text := conn.ColBlobAsStringByName['Redirects'];
+        client.publicKey := conn.ColBlobAsStringByName['PublicKey'];
+        client.issuer := conn.ColStringByName['Issuer'];
+        client.url := conn.ColStringByName['Uri'];
+        client.logo := conn.ColStringByName['LogoUri'];
+        client.softwareId := conn.ColStringByName['SoftwareId'];
+        client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
+        client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
+        list.Add(client.link);
+      finally
+        client.Free;
       end;
-      conn.Terminate;
-    end
-  );
+    end;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
+    begin
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TFHIRNativeStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
+var
+  conn : TFslDBConnection;
+  task : TAsyncTaskInformation;
 begin
-  DB.connection('async',
-    procedure (conn : TFslDBConnection)
-    var
-      task : TAsyncTaskInformation;
+  conn := DB.getConnection('async');
+  try
+    conn.SQL := 'select TaskKey, Format, Names from AsyncTasks where Status != '+inttostr(ord(atsDeleted))+' and Expires < '+DBGetDate(DB.Platform);
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
     begin
-      conn.SQL := 'select TaskKey, Format, Names from AsyncTasks where Status != '+inttostr(ord(atsDeleted))+' and Expires < '+DBGetDate(DB.Platform);
-      conn.Prepare;
-      conn.Execute;
-      while conn.FetchNext do
-      begin
-        task := TAsyncTaskInformation.Create;
-        try
-          task.key := conn.ColIntegerByName['TaskKey'];
-          task.format := TFHIRFormat(conn.ColIntegerByName['Format']);
-          task.names := conn.ColStringByName['Names'].Split([',']);
-          tasks.Add(task.Link);
-        finally
-          task.Free;
-        end;
+      task := TAsyncTaskInformation.Create;
+      try
+        task.key := conn.ColIntegerByName['TaskKey'];
+        task.format := TFHIRFormat(conn.ColIntegerByName['Format']);
+        task.names := conn.ColStringByName['Names'].Split([',']);
+        tasks.Add(task.Link);
+      finally
+        task.Free;
       end;
-      conn.Terminate;
-    end
-   );
+    end;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
+    begin
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 
 function TFHIRNativeStorageService.fetchLoadedPackage(id: String): TBytes;
 var
   b : TBytes;
+  conn : TFslDBConnection;
 begin
   SetLength(b, 0);
-  FDB.connection('packages.list', procedure (conn : TFslDBConnection)
+  conn := DB.getConnection('packages.list');
+  try
+    conn.SQL := 'select Id, Content from LoadedPackages';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
     begin
-      conn.SQL := 'select Id, Content from LoadedPackages';
-      conn.Prepare;
-      conn.Execute;
-      while conn.FetchNext do
-      begin
-        if (conn.ColStringByName['Id'] = id) then
-          b := conn.ColBlobByName['Content'];
-      end;
-      conn.Terminate;
-    end
-  );
+      if (conn.ColStringByName['Id'] = id) then
+        b := conn.ColBlobByName['Content'];
+    end;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
+    begin
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
   result := b;
 end;
 
@@ -6467,14 +6518,24 @@ begin
 end;
 
 procedure TFHIRNativeStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
+var
+  conn : TFslDBConnection;
 begin
-  DB.connection('async', procedure(conn : TFslDBConnection)
+  conn := DB.getConnection('async');
+  try
+    if status in [atsComplete, atsError] then
+      conn.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''', Finished = '+DBGetDate(DB.Platform)+' where TaskKey = '+inttostr(key))
+    else
+      conn.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''' where TaskKey = '+inttostr(key));
+    conn.Release;
+  except
+    on e: Exception do
     begin
-      if status in [atsComplete, atsError] then
-        conn.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''', Finished = '+DBGetDate(DB.Platform)+' where TaskKey = '+inttostr(key))
-      else
-        conn.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''' where TaskKey = '+inttostr(key));
-    end);
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TFHIRNativeStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
@@ -6529,16 +6590,26 @@ begin
 end;
 
 procedure TFHIRNativeStorageService.setAsyncTaskDetails(key: integer; transactionTime: TFslDateTime; request: String);
+var
+  conn : TFslDBConnection;
 begin
-  DB.connection('async', procedure (conn : TFslDBConnection)
+  conn := DB.getConnection('async');
+  try
+    conn.sql := 'Update AsyncTasks set TransactionTime = :t, Request = :r where TaskKey = '+inttostr(key);
+    conn.Prepare;
+    conn.BindString('r', request);
+    conn.BindDateTimeEx('t', transactionTime);
+    conn.Execute;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
     begin
-      conn.sql := 'Update AsyncTasks set TransactionTime = :t, Request = :r where TaskKey = '+inttostr(key);
-      conn.Prepare;
-      conn.BindString('r', request);
-      conn.BindDateTimeEx('t', transactionTime);
-      conn.Execute;
-      conn.Terminate;
-    end);
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 function TFHIRNativeStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;
@@ -7147,32 +7218,39 @@ end;
 function TFHIRNativeStorageService.getClientInfo(id: String): TRegisteredClientInformation;
 var
   client : TRegisteredClientInformation;
+  conn : TFslDBConnection;
 begin
   client := TRegisteredClientInformation.Create;
   try
-    FDB.connection('clients',
-      procedure (conn : TFslDBConnection)
+    conn := DB.getConnection('clients');
+    try
+      conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, PatientContext, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
+      conn.Prepare;
+      conn.Execute;
+      if not conn.FetchNext then
+        raise EFHIRException.create('Unable to find registered client '+id);
+      client.name := conn.ColStringByName['Name'];
+      client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
+      client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
+      client.secret := conn.ColStringByName['Secret'];
+      client.redirects.Text := conn.ColBlobAsStringByName['Redirects'];
+      client.publicKey := conn.ColBlobAsStringByName['PublicKey'];
+      client.issuer := conn.ColStringByName['Issuer'];
+      client.url := conn.ColStringByName['Uri'];
+      client.logo := conn.ColStringByName['LogoUri'];
+      client.softwareId := conn.ColStringByName['SoftwareId'];
+      client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
+      client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
+      conn.Terminate;
+      conn.Release;
+    except
+      on e: Exception do
       begin
-        conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, PatientContext, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
-        conn.Prepare;
-        conn.Execute;
-        if not conn.FetchNext then
-          raise EFHIRException.create('Unable to find registered client '+id);
-        client.name := conn.ColStringByName['Name'];
-        client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
-        client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
-        client.secret := conn.ColStringByName['Secret'];
-        client.redirects.Text := conn.ColBlobAsStringByName['Redirects'];
-        client.publicKey := conn.ColBlobAsStringByName['PublicKey'];
-        client.issuer := conn.ColStringByName['Issuer'];
-        client.url := conn.ColStringByName['Uri'];
-        client.logo := conn.ColStringByName['LogoUri'];
-        client.softwareId := conn.ColStringByName['SoftwareId'];
-        client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
-        client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
-        conn.Terminate;
-      end
-    );
+        conn.Error(e);
+        recordStack(e);
+        raise;
+      end;
+    end;
     result := client.link;
   finally
     client.Free;
@@ -7182,19 +7260,26 @@ end;
 function TFHIRNativeStorageService.getClientName(id: String): string;
 var
   s : string;
+  conn : TFslDBConnection;
 begin
-  FDB.connection('clients',
-    procedure (conn : TFslDBConnection)
+  conn := DB.getConnection('clients');
+  try
+    conn.SQL := 'select Name from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
+    conn.Prepare;
+    conn.Execute;
+    if not conn.FetchNext then
+      raise EFHIRException.create('Unable to find registered client '+id);
+    s := conn.ColStringByName['Name'];
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
     begin
-      conn.SQL := 'select Name from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
-      conn.Prepare;
-      conn.Execute;
-      if not conn.FetchNext then
-        raise EFHIRException.create('Unable to find registered client '+id);
-      s := conn.ColStringByName['Name'];
-      conn.Terminate;
-    end
-  );
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
   result := s;
 end;
 
@@ -7315,32 +7400,39 @@ end;
 function TFHIRNativeStorageService.loadPackages: TFslMap<TLoadedPackageInformation>;
 var
   map : TFslMap<TLoadedPackageInformation>;
+  conn : TFslDBConnection;
+  o : TLoadedPackageInformation;
 begin
   map := TFslMap<TLoadedPackageInformation>.create('loaded.packages');
   try
-    FDB.connection('packages.list', procedure (conn : TFslDBConnection)
-      var
-        o : TLoadedPackageInformation;
+    conn := DB.getConnection('packages.list');
+    try
+      conn.SQL := 'select Id, Version, DateLoaded, Resources from LoadedPackages';
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
       begin
-        conn.SQL := 'select Id, Version, DateLoaded, Resources from LoadedPackages';
-        conn.Prepare;
-        conn.Execute;
-        while conn.FetchNext do
-        begin
-          o := TLoadedPackageInformation.Create;
-          try
-            o.id := conn.ColStringByName['Id'];
-            o.ver := conn.ColStringByName['Version'];
-            o.date := conn.ColDateTimeExByName['DateLoaded'];
-            o.count := conn.ColIntegerByName['Resources'];
-            map.AddOrSetValue(o.id, o.link);
-          finally
-            o.Free;
-          end;
+        o := TLoadedPackageInformation.Create;
+        try
+          o.id := conn.ColStringByName['Id'];
+          o.ver := conn.ColStringByName['Version'];
+          o.date := conn.ColDateTimeExByName['DateLoaded'];
+          o.count := conn.ColIntegerByName['Resources'];
+          map.AddOrSetValue(o.id, o.link);
+        finally
+          o.Free;
         end;
-        conn.Terminate;
-      end
-    );
+      end;
+      conn.Terminate;
+      conn.Release;
+    except
+      on e: Exception do
+      begin
+        conn.Error(e);
+        recordStack(e);
+        raise;
+      end;
+    end;
     result := map.Link;
   finally
     map.Free;
@@ -7406,27 +7498,35 @@ end;
 procedure TFHIRNativeStorageService.MarkTaskForDownload(key: integer; names : TStringList);
 var
   exp : TFslDateTime;
+  conn : TFslDBConnection;
 begin
   exp := TFslDateTime.makeLocal.add(1/24);
-  DB.connection('async',
-    procedure (conn : TFslDBConnection)
-    begin
-     conn.SQL := 'Update AsyncTasks set Expires = :t, Names = :n, Count = :c where TaskKey = '+inttostr(key);
-     conn.Prepare;
-     conn.BindDateTimeEx('t', exp);
-     if names = nil then
-     begin
-       conn.BindNull('n');
-       conn.BindInteger('c', 1);
-     end
-     else
-     begin
-       conn.BindBlobFromString('n', names.CommaText);
-       conn.BindInteger('c', names.Count);
-     end;
-     conn.Execute;
-     conn.Terminate;
-    end);
+  conn := DB.getConnection('async');
+  try
+   conn.SQL := 'Update AsyncTasks set Expires = :t, Names = :n, Count = :c where TaskKey = '+inttostr(key);
+   conn.Prepare;
+   conn.BindDateTimeEx('t', exp);
+   if names = nil then
+   begin
+     conn.BindNull('n');
+     conn.BindInteger('c', 1);
+   end
+   else
+   begin
+     conn.BindBlobFromString('n', names.CommaText);
+     conn.BindInteger('c', names.Count);
+   end;
+   conn.Execute;
+   conn.Terminate;
+   conn.Release;
+ except
+   on e: Exception do
+   begin
+     conn.Error(e);
+     recordStack(e);
+     raise;
+   end;
+ end;
 end;
 
 { TFhirNativeOperation }

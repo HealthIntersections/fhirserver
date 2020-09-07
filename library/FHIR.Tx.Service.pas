@@ -34,9 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  {$IFNDEF FPC}
   YuStemmer,
-  {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
   FHIR.Base.Common, FHIR.Base.Factory,

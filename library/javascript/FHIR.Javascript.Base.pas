@@ -276,44 +276,54 @@ begin
   end;
 end;
 
+type
+  TCallBackRecord2 = record
+    js : TJavascript;
+    cdef : TJavascriptClassDefinition;
+    params : TJsValues;
+    owns : boolean;
+    p : TFHIRProperty;
+  end;
+  PCallBackRecord2 = ^TCallBackRecord2;
+
+procedure iterArray2(context : pointer; i : integer; v : JsValueRef);
+var
+  p : PCallBackRecord2;
+  o : TFHIRObject;
+begin
+  p := context;
+  o := p.js.getWrapped<TFHIRObject>(v).Link;
+  try
+    if (o = nil) then
+    begin
+      p.params[0] := v;
+      o := p.cdef.factory(p.js, p.cdef, p.params, p.owns) as TFHIRObject;
+    end;
+    p.p.values.Add(o.Link);
+  finally
+    o.Free;
+  end;
+end;
+
 procedure TFHIRJavascript.setFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
-  cdef : TJavascriptClassDefinition;
-  p : TFHIRProperty;
-  o : TFHIRObject;
-  owns : boolean;
-//  def : TJavascriptClassDefinition;
-  params : TJsValues;
+  cb1 : TCallBackRecord2;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
-  cdef := js.getDefinedClass(def.FFHIRType);
-  p := obj.getPropertyValue(propDef.Name);
-  if (p = nil) then
+  cb1.cdef := js.getDefinedClass(def.FFHIRType);
+  cb1.p := obj.getPropertyValue(propDef.Name);
+  if (cb1.p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    p.Values.Clear;
-    p.Values.jsInstance := 0;
-    setLength(params, 1);
-    js.iterateArray(value,
-      procedure (context : pointer; i : integer; v : JsValueRef)
-      begin
-        o := js.getWrapped<TFHIRObject>(v).Link;
-        try
-          if (o = nil) then
-          begin
-            params[0] := v;
-            o := cdef.factory(js, cdef, params, owns) as TFHIRObject;
-          end;
-          p.values.Add(o.Link);
-        finally
-          o.Free;
-        end;
-      end);
+    cb1.p.Values.Clear;
+    cb1.p.Values.jsInstance := 0;
+    setLength(cb1.params, 1);
+    js.iterateArray(value, iterArray2, @cb1);
   finally
-    p.Free;
+    cb1.p.Free;
   end;
 end;
 
