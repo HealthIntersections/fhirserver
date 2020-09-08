@@ -507,7 +507,7 @@ begin
       finally
         o.Free;
       end;
-    end);
+    end, nil);
 end;
 
 procedure TV2JavascriptHelper.setCellContents(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
@@ -535,7 +535,7 @@ begin
       finally
         o.Free;
       end;
-    end);
+    end, nil);
 end;
 
 procedure TV2JavascriptHelper.setCellText(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
@@ -591,7 +591,7 @@ begin
       finally
         o.Free;
       end;
-    end);
+    end, nil);
 end;
 
 procedure TV2JavascriptHelper.setMessageSegments(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
@@ -619,7 +619,7 @@ begin
       finally
         o.Free;
       end;
-    end);
+    end, nil);
 end;
 
 procedure TV2JavascriptHelper.setObjectId(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
@@ -663,7 +663,7 @@ begin
       finally
         o.Free;
       end;
-    end);
+    end, nil);
 end;
 
 end.

@@ -380,11 +380,7 @@ begin
 
   FWordList.Objects[i] := TObject(m);
 
-  {$IFDEF FPC}
-  sStem := sDesc;
-  {$ELSE}
-  sStem := FStemmer.calc(sDesc);
-  {$ENDIF}
+  sStem := FStemmer.Stem(sDesc);
   if not FStemList.Find(sStem, i) Then
   Begin
     oList := TFslObjectList.Create;
@@ -1061,9 +1057,7 @@ begin
   FLanguages := TFslList<TLoincLanguage>.create;
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
-  {$IFNDEF FPC}
   FStemmer := GetStemmer_8('english');
-  {$ENDIF}
   oSvc := TLOINCServices.Create;
   Try
     Flanguages.add(TLoincLanguage.create('en', 'US'));
