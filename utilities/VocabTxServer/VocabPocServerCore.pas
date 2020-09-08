@@ -83,8 +83,8 @@ type
     function getResourceByUrl(aType : String; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; override;
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFHIRProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; override;
   end;
 
@@ -345,12 +345,12 @@ end;
 
 { TTerminologyServerOperationEngine }
 
-procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
+procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRProvenanceW; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRResourceV; httpCode: Integer; name, message: String; patients : TArray<String>);
+procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFHIRProvenanceW; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;

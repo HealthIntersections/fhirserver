@@ -36,7 +36,7 @@ uses
   {$IFNDEF FPC}
   FastMM4,
   {$ENDIF}
-  Windows, {$IFDEF FPC} JwaWinSvc{$ELSE}WinSvc, PSApi, TlHelp32, {$ENDIF}, SysUtils, Classes,
+  Windows, {$IFDEF FPC} JwaWinSvc, {$ELSE}WinSvc, PSApi, TlHelp32, {$ENDIF} SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities;
 
 type
@@ -491,7 +491,7 @@ begin
   GServiceInfo[0].lpServiceProc := @ServiceMainEntry;
   GServiceInfo[1].lpServiceName := NIL;
   GServiceInfo[1].lpServiceProc := NIL;
-  StartServiceCtrlDispatcher(@GServiceInfo[0]);
+  StartServiceCtrlDispatcher({$IFDEF FPC}@{$ENDIF}GServiceInfo[0]);
 end;
 
 procedure TSystemService.SetStatus(AState, AControls : DWord);
@@ -839,7 +839,7 @@ begin
   LResume := 0;
   repeat
     if not EnumServicesStatus(FHandle, SERVICE_WIN32, SERVICE_ACTIVE or SERVICE_INACTIVE,
-              LSvc[0], sizeof(TEnumServiceStatus) * 1000, LNeeded, LReturned, LResume) then
+              {$IFDEF FPC}@{$ENDIF}LSvc[0], sizeof(TEnumServiceStatus) * 1000, LNeeded, LReturned, LResume) then
       RaiseLastOSError;
     for i := 0 to LReturned - 1 do
       AList.Values[LSvc[i].lpServiceName] := LSvc[i].lpDisplayName;

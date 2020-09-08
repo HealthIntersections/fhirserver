@@ -28,11 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections, Generics.Defaults,
+  SysUtils, Classes, Generics.Collections, Generics.Defaults,
   FHIR.Web.Parsers,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   IdContext, IdCustomHTTPServer,
@@ -49,14 +50,14 @@ Type
   private
     FSortType : TSorterType;
   public
-    function Compare(const Left, Right: TFHIRCodeSystemW): Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRCodeSystemW): Integer;
   end;
 
   TValueSetSorter = class (TFslObject, IComparer<TFHIRValueSetW>)
   private
     FSortType : TSorterType;
   public
-    function Compare(const Left, Right: TFHIRValueSetW): Integer;
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRValueSetW): Integer;
   end;
 
   TTerminologyWebServer = class (TFslObject)
@@ -1130,7 +1131,7 @@ begin
           response.ContentStream := mem;
           response.FreeContentStream := true;
           op := TEncoding.UTF8.GetBytes(html.output);
-          mem.Write(op, 0, length(op));
+          mem.Write(op[0], length(op));
           mem.Position := 0;
           response.ContentType := 'text/html; charset=utf-8';
           response.ResponseNo := 200;
@@ -1156,7 +1157,7 @@ begin
           response.ContentStream := mem;
           response.FreeContentStream := true;
           op := TEncoding.UTF8.GetBytes(html.output);
-          mem.Write(op, 0, length(op));
+          mem.Write(op[0], length(op));
           mem.Position := 0;
           response.ContentType := 'text/html; charset=utf-8';
           response.ResponseNo := 200;
@@ -1387,7 +1388,7 @@ end;
 
 { TCodeSystemSorter }
 
-function TCodeSystemSorter.Compare(const Left, Right: TFHIRCodeSystemW): Integer;
+function TCodeSystemSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRCodeSystemW): Integer;
 begin
   case FSortType of
     byUrl: result := CompareStr(left.url, right.url);
@@ -1402,7 +1403,7 @@ end;
 
 { TValueSetSorter }
 
-function TValueSetSorter.Compare(const Left, Right: TFHIRValueSetW): Integer;
+function TValueSetSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRValueSetW): Integer;
 begin
   case FSortType of
     byUrl: result := CompareStr(left.url, right.url);

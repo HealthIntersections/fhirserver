@@ -8175,7 +8175,5 @@ Finalization
     Free;
   End;
 
-{$ENDIF}
-
 End.
 

@@ -31,7 +31,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="57">
+    <Units Count="58">
       <Unit0>
         <Filename Value="TestFHIRApplication.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -269,6 +269,10 @@
         <Filename Value="..\..\library\r2\FHIR.R2.Context.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
+      <Unit57>
+        <Filename Value="..\..\dependencies\stem\YuStemmer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit57>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -278,8 +282,8 @@
       <Filename Value="TestFHIRApplication"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);..\..\dependencies\jcl"/>
-      <OtherUnitFiles Value="..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum;..\..\library\base;..\..\library\cdshooks;..\..\library\smart;..\..\library\client;..\..\library;..\..\library\cache;..\..\library\snomed;..\..\library\loinc;..\..\library\database;..\..\library\v2;..\..\dependencies\jcl;..\..\library\r4;..\..\library\cda;..\..\library\tools;..\..\library\wp;..\..\library\r3;..\..\library\r2"/>
+      <IncludeFiles Value="$(ProjOutDir);..\..\dependencies\jcl;..\..\dependencies\Indy10\System"/>
+      <OtherUnitFiles Value="..\..\library\support;..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\..\markdown\source;..\..\library\javascript;..\..\dependencies\chakracore-delphi;..\..\library\web;..\..\library\ucum;..\..\library\base;..\..\library\cdshooks;..\..\library\smart;..\..\library\client;..\..\library;..\..\library\cache;..\..\library\snomed;..\..\library\loinc;..\..\library\database;..\..\library\v2;..\..\dependencies\jcl;..\..\library\r4;..\..\library\cda;..\..\library\tools;..\..\library\wp;..\..\library\r3;..\..\library\r2;..\..\dependencies\stem"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

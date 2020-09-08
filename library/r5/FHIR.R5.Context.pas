@@ -59,6 +59,7 @@ type
     FMap : TFslMap<T>;
     FList : TFslList<T>;
     procedure updateList(url, version: String);
+    function sort(sender : TObject; const L, R: T): Integer;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -97,8 +98,8 @@ type
     function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
     function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
-    function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
-    function validateCode(system, version, code : String) : TValidationResult; overload; virtual; abstract;
+    function validateCode(systemUri, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(systemUri, version, code : String) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;  abstract;
@@ -111,7 +112,7 @@ type
     // override version independent variants:
     function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
-    function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
+    function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
 
     procedure loadFromCache(cache : TResourceMemoryCache); overload;
@@ -164,9 +165,9 @@ begin
   result := Factory.wrapValueSet(expand(vs.Resource as TFhirValueSet, options));
 end;
 
-function TFHIRWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSetW): TValidationResult;
+function TFHIRWorkerContext.validateCode(systemUri, version, code: String; vs: TFhirValueSetW): TValidationResult;
 begin
-  result := validateCode(system, version, code, vs.Resource as TFHIRValueSet);
+  result := validateCode(systemUri, version, code, vs.Resource as TFHIRValueSet);
 end;
 
 function TFHIRWorkerContext.fetchCodeSystem(url: String): TFhirCodeSystem;
@@ -376,6 +377,29 @@ begin
   end;
 end;
 
+function TFHIRMetadataResourceManager<T>.sort(sender : TObject; const L, R: T): Integer;
+var
+  v1, v2, mm1, mm2 : string;
+begin
+  v1 := l.version;
+  v2 := r.version;
+  if (v1 = '') and (v2 = '') then
+    result := FList.indexOf(l) - FList.indexOf(r)
+  else if (v1 = '') then
+    result := -1
+  else if (v2 = '') then
+    result := 1
+  else
+  begin
+    mm1 := TFHIRVersions.getMajMin(v1);
+    mm2 := TFHIRVersions.getMajMin(v2);
+    if (mm1 = '') or (mm2 = '') then
+      result := v1.compareTo(v2)
+    else
+      result := CompareText(mm1, mm2);
+  end;
+end;
+
 procedure TFHIRMetadataResourceManager<T>.updateList(url, version : String);
 var
   rl : TFslList<T>;
@@ -393,6 +417,9 @@ begin
     if (rl.count > 0) then
     begin
       // sort by version as much as we are able
+      {$IFDEF FPC}
+      rl.sort(sort);
+      {$ELSE}
       rl.sort(function (const L, R: T): Integer
         var v1, v2, mm1, mm2 : string;
         begin
@@ -414,19 +441,20 @@ begin
               result := CompareText(mm1, mm2);
           end;
         end);
+      {$ENDIF}
 
       // the current is the latest
       FMap.AddOrSetValue(url, rl[rl.count-1].link);
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
-        latest := nil;
+        latest := T(nil);
         for tt in rl do
         begin
           if (TFHIRVersions.matches(tt.version, version)) then
             latest := tt;
         end;
-        if (latest <> nil) then // might be null if it's not using semver
+        if (latest <> T(nil)) then // might be null if it's not using semver
         begin
           lv := TFHIRVersions.getMajMin(latest.version);
           if (lv <> version) then
@@ -461,7 +489,7 @@ begin
     if (mm <> '') then
       result := FMap[url+'|'+mm]
     else
-      result := nil;
+      result := T(nil);
   end;
 end;
 
@@ -492,7 +520,7 @@ var
   mm : String;
 begin
   res := FMap[id];
-  if (res <> nil) then
+  if (res <> T(nil)) then
   begin
     FList.remove(res);
     FMap.remove(id);

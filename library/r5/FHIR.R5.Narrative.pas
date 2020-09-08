@@ -1,6 +1,5 @@
 unit FHIR.R5.Narrative;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,10 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
+
 uses
-  SysUtils, Generics.Collections, EncdDecd,
+  SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Narrative, FHIR.Base.Lang,
   FHIR.R5.Resources, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Constants, FHIR.R5.Context, FHIR.R5.Utilities;

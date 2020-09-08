@@ -31,6 +31,8 @@ unit FHIR.R5.Javascript;
   
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0

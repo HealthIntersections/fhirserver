@@ -30,6 +30,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -66,6 +68,7 @@ type
     FServerId: String;
     FCycle : integer;
     procedure post(cnt : String);
+    function filter(sender : TObject; item : TGoogleAnalyaticsEventData) : boolean;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -160,6 +163,11 @@ begin
   end;
 end;
 
+function TGoogleAnalyticsProvider.filter(sender : TObject; item : TGoogleAnalyaticsEventData) : boolean;
+begin
+  result := item.cycle = FCycle;
+end;
+
 procedure TGoogleAnalyticsProvider.commit;
 var
   b : TStringBuilder;
@@ -194,10 +202,14 @@ begin
     post(b.ToString);
     FLock.Lock;
     try
+      {$IFDEF FPC}
+      FEvents.removeAll(filter);
+      {$ELSE}
       FEvents.removeAll(function (item : TGoogleAnalyaticsEventData) : boolean
         begin
           result := item.cycle = FCycle;
         end);
+      {$ENDIF}
     finally
       FLock.Unlock;
     end;

@@ -168,7 +168,7 @@ begin
     end;
 end;
 
-procedure TFHIRFactoryR5.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = []);
+procedure TFHIRFactoryR5.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param)

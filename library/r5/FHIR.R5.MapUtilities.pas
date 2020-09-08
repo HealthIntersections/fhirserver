@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -1425,7 +1426,7 @@ end;
 
 procedure TFHIRStructureMapUtilities.parseSource(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
 var
-  source : TFHIRStructureMapGroupRuleSource;
+  source : TFHIRStructureMapGroupRuleSource;
   node : TFHIRPathExpressionNode;
 begin
   source := rule.sourceList.Append;

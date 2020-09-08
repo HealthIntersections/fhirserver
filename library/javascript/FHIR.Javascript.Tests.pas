@@ -182,7 +182,7 @@ var
 begin
   obj := this as TArrayObj;
   result := js.makeArray(obj.value.Count,
-      function (index : integer) : JsValueRef
+      function (context : pointer; index : integer) : JsValueRef
       begin
         result := js.wrap(obj.value[index]);
       end);
@@ -203,10 +203,10 @@ begin
   obj := this as TArrayObj;
   obj.value.Clear;
   js.iterateArray(value,
-      procedure (i : integer; v : JsValueRef)
+      procedure (context : pointer; i : integer; v : JsValueRef)
       begin
         obj.value.Add(js.asString(v));
-      end);
+      end, nil);
 end;
 
 type
@@ -259,7 +259,7 @@ begin
   obj.value.Clear;
   def := js.getDefinedClass('TPropObj');
   js.iterateArray(value,
-    procedure (i : integer; v : JsValueRef)
+    procedure (context : pointer; i : integer; v : JsValueRef)
     begin
       o := js.getWrapped<TPropObj>(v);
       if (o = nil) then
@@ -270,7 +270,7 @@ begin
       end;
       obj.value.Add(o);
       js.unOwn(v);
-    end);
+    end, nil);
 end;
 
 
@@ -404,10 +404,10 @@ begin
       o := js.wrap(i, 'TIntObj', false);
       js.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
       c := 0;
-      js.iterateProperties(o, procedure (name : String; v : TJsValue)
+      js.iterateProperties(o, procedure (context : pointer; name : String; v : TJsValue)
         begin
           inc(c);
-        end);
+        end, nil);
       Assert.IsTrue(c > 0);
     finally
       js.Free;

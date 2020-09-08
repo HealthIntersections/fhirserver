@@ -30,6 +30,7 @@ Unit FHIR.Server.Web;
 
 {$IFDEF FPC}
 {$MODE Delphi}
+{$DEFINE NO_CONVERSION}
 {$ENDIF}
 {
 
@@ -77,7 +78,7 @@ Interface
 
 Uses
   {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
-  SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug,} EncdDecd,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  SysUtils, Classes, IniFiles, Generics.Collections, {JCL JclDebug,} {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
   IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
 
@@ -5102,9 +5103,11 @@ end;
 
 function TFhirWebServer.packageLink: String;
 begin
+  {$IFNDEF FHIR3}
   if FPackageServer <> nil then
     result := '<p>This server also runs as a <a href="'+FPackageServer.pathRelative+'">package server</a></p>'
   else
+  {$ENDIF}
     result := '';
 end;
 

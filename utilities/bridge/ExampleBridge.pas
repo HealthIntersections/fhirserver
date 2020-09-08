@@ -71,7 +71,7 @@ Uses
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities,
   FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Stream, FHIR.Web.Parsers,
 
-  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Ucum.Services, FHIR.Base.PathEngine,
+  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Ucum.Services, FHIR.Base.PathEngine, FHIR.Base.Common,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory, FHIR.R3.PathEngine,
   FHIR.Tools.Indexing,
   FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Server.WebSource,
@@ -142,8 +142,8 @@ Type
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
     function getResourceByUrl(aType : string; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; override;
   end;
 
@@ -422,12 +422,12 @@ begin
   FData.FLock.Unlock;
 end;
 
-procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; httpCode: Integer; name, message: String; patients : TArray<String>);
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
 end;

@@ -179,7 +179,7 @@ end;
 procedure TSnomedTests.Setup;
 begin
   FServices := TSnomedServices.Create;
-  FServices.Load('C:\ProgramData\fhirserver\snomed_20161031_au.cache');
+  FServices.Load('C:\ProgramData\fhirserver\snomed_20161031_au.cache', true);
 end;
 
 procedure TSnomedTests.TearDown;

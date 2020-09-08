@@ -4,10 +4,11 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="241">
+    <Units Count="242">
       <Unit0>
         <Filename Value="TestFHIRApplication.lpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="7"/>
         <UsageCount Value="227"/>
@@ -353,7 +354,8 @@
         <Filename Value="..\..\library\FHIR.Tx.Service.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <CursorPos Y="4"/>
+        <TopLine Value="22"/>
+        <CursorPos X="42" Y="30"/>
         <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
@@ -397,14 +399,14 @@
         <Filename Value="..\..\library\snomed\FHIR.Snomed.Services.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="143"/>
+        <UsageCount Value="148"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit46>
       <Unit47>
         <Filename Value="..\..\library\loinc\FHIR.Loinc.Services.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="142"/>
+        <UsageCount Value="147"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
@@ -413,7 +415,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="31"/>
         <CursorPos X="59" Y="40"/>
-        <UsageCount Value="141"/>
+        <UsageCount Value="146"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
@@ -422,7 +424,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="621"/>
         <CursorPos X="169" Y="662"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="30"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
       <Unit50>
@@ -430,7 +432,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="14" Y="43"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="30"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit50>
       <Unit51>
@@ -438,7 +440,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="3"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="29"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit51>
       <Unit52>
@@ -446,7 +448,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="34"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="29"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit52>
       <Unit53>
@@ -455,7 +457,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1075"/>
         <CursorPos Y="1105"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="28"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
@@ -464,7 +466,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="31" Y="37"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
       <Unit55>
@@ -472,7 +474,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="2"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="26"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
@@ -481,7 +483,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="103"/>
         <CursorPos X="66" Y="127"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="26"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
@@ -516,10 +518,11 @@
       </Unit60>
       <Unit61>
         <Filename Value="..\..\dependencies\stem\YuStemmer.pas"/>
+        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1134"/>
-        <CursorPos X="87" Y="1147"/>
-        <UsageCount Value="8"/>
+        <CursorPos X="68" Y="1145"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
@@ -1850,11 +1853,18 @@
       <Unit240>
         <Filename Value="C:\tools\lazarus\components\lazutils\fileutil.pas"/>
         <UnitName Value="FileUtil"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="35"/>
         <UsageCount Value="10"/>
       </Unit240>
+      <Unit241>
+        <Filename Value="..\..\dependencies\Indy10\Protocols\IdHashSHA.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="147"/>
+        <CursorPos X="60" Y="160"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit241>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
     <RunParams>

@@ -29,8 +29,9 @@ unit FHIR.XVersion.Conv_30_40;
   
 }
 
-interface
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
+interface
 
 uses
   SysUtils, Classes,

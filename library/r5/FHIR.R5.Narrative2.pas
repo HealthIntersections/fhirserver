@@ -28,6 +28,8 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
   POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -37,7 +39,6 @@ uses
   FHIR.R5.Resources, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Constants, FHIR.R5.Utilities, FHIR.R5.Profiles, FHIR.R5.Questionnaire;
 
 type
-
   TNarrativeGenerator = class (TFslObject)
   private
     Fprefix : String;
