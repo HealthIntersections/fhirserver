@@ -7359,8 +7359,8 @@ begin
         mem := conn.ColBlobByName['XmlContent'];
         parser := factory.makeParser(ServerContext.ValidatorContext.link, ffXml, THTTPLanguages.create('en'));
         try
-          p := parser.parseResource(mem);
           try
+            p := parser.parseResource(mem);
             try
               SeeResource(conn.ColIntegerByName['ResourceKey'],
                 conn.ColIntegerByName['ResourceVersionKey'],
@@ -7368,15 +7368,15 @@ begin
                 conn.ColStringByName['Id'],
                 conn.ColIntegerByName['Secure'] = 1,
                 false, p, cback, true, nil, THTTPLanguages.create('en'), mem);
-            except
-              on e : Exception do
-              begin
-                // log this, and keep trying
-                logt('Error loading '+conn.ColStringByName['ResourceKey']+' ('+conn.ColStringByName['ResourceName']+'/'+conn.ColStringByName['Id']+': '+e.Message);
-              end;
+            finally
+              p.Free;
             end;
-          finally
-            p.Free;
+          except
+            on e : Exception do
+            begin
+              // log this, and keep trying
+              logt('Error loading '+conn.ColStringByName['ResourceKey']+' ('+conn.ColStringByName['ResourceName']+'/'+conn.ColStringByName['Id']+': '+e.Message);
+            end;
           end;
         finally
           parser.free;
