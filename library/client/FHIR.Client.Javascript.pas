@@ -26,7 +26,9 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
-}
+}  
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -183,10 +185,41 @@ begin
   result := JS_INVALID_REFERENCE;
 end;
 
+type
+  TCallBackContext1 = record
+    js : TJavascript;
+    ts : TStringList;
+    name : String;
+  end;
+  PCallBackContext1 = ^TCallBackContext1;
+
+procedure arryIter1(context : pointer; i : integer; v : TJsValue);
+var
+  p : PCallBackContext1;
+begin
+  p := context;
+  p.ts.Add(p.name+'='+p.js.asString(v));
+end;
+
+procedure propIter1(context : pointer; name : String; value : TJsValue);
+var
+  p : PCallBackContext1;
+begin
+  p := context;
+  if p.js.getType(value) = JsArray then
+  begin
+    p.name := name;
+    p.js.iterateArray(value, arryIter1, p);
+  end
+  else
+    p.ts.Add(name+'='+p.js.asString(value));
+end;
+
 function TFHIRClientJSHelper.FHIRClientSearchJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   ts : TStringList;
   bnd : TFhirResourceV;
+  cb1 : TCallBackContext1;
 begin
   ts := TStringList.create;
   try
@@ -194,17 +227,9 @@ begin
       bnd := TFhirClientV(this).searchV(js.asString(parameters[0]), true, js.asString(parameters[1]))
     else
     begin
-      js.iterateProperties(parameters[1],
-        procedure (context : pointer; name : String; value : TJsValue)
-        begin
-           if js.getType(value) = JsArray then
-             js.iterateArray(value, procedure (context : pointer; i : integer; v : TJsValue)
-               begin
-                 ts.Add(name+'='+js.asString(v));
-               end)
-           else
-             ts.Add(name+'='+js.asString(value));
-        end);
+      cb1.js := js;
+      cb1.ts := ts;
+      js.iterateProperties(parameters[1], propIter1, @cb1);
       bnd := TFhirClientV(this).searchV(js.asString(parameters[0]), true, js.asString(parameters[1]))
     end;
     result := js.wrap(bnd, 'Bundle', true);
@@ -218,6 +243,7 @@ function TFHIRClientJSHelper.FHIRClientSearchAllJs(js : TJavascript; propDef : T
 var
   ts : TStringList;
   bnd : TFhirResourceV;
+  cb1 : TCallBackContext1;
 begin
   ts := TStringList.create;
   try
@@ -225,17 +251,9 @@ begin
       bnd := TFhirClientV(this).searchV(true, js.asString(parameters[1]))
     else
     begin
-      js.iterateProperties(parameters[0],
-        procedure (context : pointer; name : String; value : TJsValue)
-        begin
-           if js.getType(value) = JsArray then
-             js.iterateArray(value, procedure (context : pointer; i : integer; v : TJsValue)
-               begin
-                 ts.Add(name+'='+js.asString(v));
-               end)
-           else
-             ts.Add(name+'='+js.asString(value));
-        end);
+      cb1.js := js;
+      cb1.ts := ts;
+      js.iterateProperties(parameters[0], propIter1, @cb1);
       bnd := TFhirClientV(this).searchV(true, js.asString(parameters[1]))
     end;
     result := js.wrap(TFhirClientV(this).transactionV(bnd), 'Bundle', true);

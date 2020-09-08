@@ -1,7 +1,5 @@
 unit FHIR.R5.Factory;
 
-{$I fhir.r5.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -29,6 +27,9 @@ unit FHIR.R5.Factory;
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.r5.inc}
 
 interface
 
@@ -70,7 +71,7 @@ type
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
-    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
@@ -131,7 +132,6 @@ type
 implementation
 
 uses
-  Soap.EncdDecd,
   FHIR.Client.HTTP,
   FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Parser, FHIR.R5.Context, FHIR.R5.Validator, FHIR.R5.Profiles, FHIR.R5.Operations,
   FHIR.R5.Narrative, FHIR.R5.PathEngine, FHIR.R5.Constants, FHIR.R5.Client, FHIR.R5.Common, FHIR.R5.Utilities, FHIR.R5.AuthMap,

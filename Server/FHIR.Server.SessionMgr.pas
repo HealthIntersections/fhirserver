@@ -82,7 +82,7 @@ uses
 
 { TFHIRSessionManager }
 
-constructor TFHIRSessionManager.Create;
+constructor TFHIRSessionManager.Create(ServerSettings : TFHIRServerSettings; ServerContext : TFslObject);
 begin
   inherited Create(ServerContext);
   FLock := TFslLock.Create('session-manager');

@@ -39,7 +39,7 @@ interface
 
 {$IFDEF FPC}
 uses
-  Classes, SysUtils, Contnrs, Character, RegExpr, FileUtil, Generics.Collections, Graphics, ZLib;
+  Classes, SysUtils, SyncObjs, Contnrs, Character, RegExpr, FileUtil, Generics.Collections, Graphics, ZLib;
 
 type
 
@@ -48,6 +48,7 @@ type
   TCharHelper = type helper for char
   public
     function isDigit : boolean;
+    function isLetter : boolean;
     function IsNumber : boolean;
     function isUpper : boolean;
     function IsWhiteSpace : boolean;
@@ -70,7 +71,7 @@ type
     class property Local: TTimeZone read FLocal;
   end;
 
-  TWaitResult = (wrSignaled, wrTimeout, wrAbandoned, wrError, wrIOCompletion);
+//  TWaitResult = (wrSignaled, wrTimeout, wrAbandoned, wrError, wrIOCompletion);
 
   { TSemaphore }
 
@@ -126,15 +127,6 @@ type
     constructor Create(stream : TStream; level : integer);
   end;
 
-  { TYuStemmer_8 }
-
-  TYuStemmer_8 = class (TObject)
-  public
-    Function calc(s : String) : String;
-  end;
-
-function GetStemmer_8(lang : String) : TYuStemmer_8;
-
 {$ENDIF}
 
 
@@ -147,12 +139,6 @@ begin
   result := FileUtil.DeleteDirectory(DirectoryName, OnlyChildren);
 end;
 
-{ TYuStemmer_8 }
-
-function TYuStemmer_8.calc(s: String): String;
-begin
-  result := s;
-end;
 
 { TZDecompressionStream }
 
@@ -185,6 +171,11 @@ end;
 function TCharHelper.isDigit: boolean;
 begin
   result := Character.isDigit(self);
+end;
+
+function TCharHelper.isLetter: boolean;
+begin
+  result := Character.isLetter(self);
 end;
 
 function TCharHelper.IsNumber: boolean;
@@ -324,11 +315,6 @@ begin
     SetLength(outBuffer,0);
     raise;
   end;
-end;
-
-function GetStemmer_8(lang : String) : TYuStemmer_8;
-begin
-  result := TYuStemmer_8.create;
 end;
 
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);

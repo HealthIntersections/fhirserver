@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -321,7 +322,7 @@ constructor TFHIRMetadataResourceManager<T>.Create;
 begin
   inherited;
   FMap := TFslMap<T>.create('metadata resource manager '+t.className);
-  FMap.defaultValue := nil;
+  FMap.defaultValue := T(nil);
   FList := TFslList<T>.create;
 end;
 

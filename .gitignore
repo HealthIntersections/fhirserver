@@ -220,3 +220,5 @@ System
 /library/base/__recovery
 /Server/backup
 /Server/lib/x86_64-win64
+/library/r4/backup
+/library/r5/backup

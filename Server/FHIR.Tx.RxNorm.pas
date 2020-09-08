@@ -164,7 +164,7 @@ begin
     s := StringTrimSet(s, ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']).ToLower;
     if (s <> '') and not StringIsInteger16(s) and (s[1] >= 'a') then
     begin
-      s := stemmer.calc(s);
+      s := stemmer.Stem(s);
       if stems.Find(s, i) then
         TStringList(stems.Objects[i]).add(cui)
       else

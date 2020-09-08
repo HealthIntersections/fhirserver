@@ -1,7 +1,7 @@
 {-------------------------------------------------------------------------------
-
- Copyright (c) 1999-2016 Ralf Junker, Yunqa
- Internet: http://www.yunqa.de
+ 
+ Copyright (c) 1999-2020 Ralf Junker, Yunqa
+ Internet: https://www.yunqa.de
  E-Mail:   delphi@yunqa.de
 
 -------------------------------------------------------------------------------}
@@ -12,53 +12,25 @@ unit YuStemmer;
 {$A+}
 {$Z+}
 
-
-{$IFDEF OSX}
-interface
-
-type
-  TYuStemmer_8 = class
-  private
-  public
-    function calc(s : String) : String;
-  end;
-
-function GetStemmer_8(s : String) : TYuStemmer_8;
-
-implementation
-
-function TYuStemmer_8.calc(s : String) : String;
-begin
-  result := s;
-end;
-
-function GetStemmer_8(s : String) : TYuStemmer_8;
-begin
-  result := TYuStemmer_8.Create;
-end;
-
-{$ELSE}
 interface
 
 uses
   DISystemCompat;
 
 type
-  C_int = System.Integer;
 
   SN_env = packed record
     p: PAnsiChar;
     c: Integer; l: Integer; lb: Integer; bra: Integer; ket: Integer;
     s: ^PAnsiChar;
     i: ^Integer;
-    b: Pointer;
   end;
 
   SN_env_ptr = ^SN_env;
 
   sb_stemmer_close_func = procedure(z: SN_env_ptr);
 
-  sb_stemmer_stem_func = function(z: SN_env_ptr): C_int;
+  sb_stemmer_stem_func = function(z: SN_env_ptr): System.Integer;
 
 type
 
@@ -79,7 +51,7 @@ function GetStemmer(const Name: AnsiString): TYuStemmer;
 
 const
 
-  STEMMER_LIST: array[0..19] of AnsiString = (
+  STEMMER_LIST: array[0..23] of AnsiString = (
     'basque',
     'catalan',
     'czech',
@@ -91,8 +63,12 @@ const
     'german',
     'german2',
     'hungarian',
+    'indonesian',
     'irish',
     'italian',
+    'kraaij_pohlmann',
+    'latin',
+    'lovins',
     'norwegian',
     'porter',
     'portuguese',
@@ -112,8 +88,6 @@ type
   public
     destructor Destroy; override;
 
-    function calc(const s: String): String;
-
     function Stem(const s: Utf8String): Utf8String; overload;
 
     procedure Stem(var p: PUtf8Char; var l: Integer); overload;
@@ -123,7 +97,8 @@ function GetStemmer_8(const Name: Utf8String): TYuStemmer_8;
 
 const
 
-  STEMMER_LIST_8: array[0..21] of Utf8String = (
+  STEMMER_LIST_8: array[0..33] of Utf8String = (
+    'arabic',
     'armenian',
     'basque',
     'catalan',
@@ -135,16 +110,27 @@ const
     'french',
     'german',
     'german2',
+    'greek',
+    'hindi',
     'hungarian',
+    'indonesian',
     'irish',
     'italian',
+    'kraaij_pohlmann',
+    'latin',
+    'lithuanian',
+    'lovins',
+    'nepali',
     'norwegian',
     'porter',
     'portuguese',
     'romanian',
     'russian',
+    'serbian',
+    'slovene',
     'spanish',
     'swedish',
+    'tamil',
     'turkish'
     );
 
@@ -155,14 +141,13 @@ type
     c: Integer; l: Integer; lb: Integer; bra: Integer; ket: Integer;
     s: ^PWideChar;
     i: ^Integer;
-    b: Pointer;
   end;
 
   SN_env_16_ptr = ^SN_env_16;
 
   sb_stemmer_16_close_func = procedure(z: SN_env_16_ptr);
 
-  sb_stemmer_16_stem_func = function(z: SN_env_16_ptr): C_int;
+  sb_stemmer_16_stem_func = function(z: SN_env_16_ptr): System.Integer;
 
 type
 
@@ -183,7 +168,8 @@ function GetStemmer_16(const Name: UnicodeString): TYuStemmer_16;
 
 const
 
-  STEMMER_LIST_16: array[0..21] of UnicodeString = (
+  STEMMER_LIST_16: array[0..33] of UnicodeString = (
+    'arabic',
     'armenian',
     'basque',
     'catalan',
@@ -195,20 +181,41 @@ const
     'french',
     'german',
     'german2',
+    'greek',
+    'hindi',
     'hungarian',
+    'indonesian',
     'irish',
     'italian',
+    'kraaij_pohlmann',
+    'latin',
+    'lithuanian',
+    'lovins',
+    'nepali',
     'norwegian',
     'porter',
     'portuguese',
     'romanian',
     'russian',
+    'serbian',
+    'slovene',
     'spanish',
     'swedish',
+    'tamil',
     'turkish'
     );
 
 type
+
+  TYuStemmer_Arabic_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Arabic_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
 
   TYuStemmer_Armenian_8 = class(TYuStemmer_8)
   public
@@ -370,6 +377,26 @@ type
     constructor Create;
   end;
 
+  TYuStemmer_Greek_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Greek_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Hindi_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Hindi_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
   TYuStemmer_Hungarian = class(TYuStemmer)
   public
     constructor Create;
@@ -381,6 +408,21 @@ type
   end;
 
   TYuStemmer_Hungarian_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Indonesian = class(TYuStemmer)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Indonesian_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Indonesian_16 = class(TYuStemmer_16)
   public
     constructor Create;
   end;
@@ -411,6 +453,71 @@ type
   end;
 
   TYuStemmer_Italian_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Kraaij_Pohlmann = class(TYuStemmer)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Kraaij_Pohlmann_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Kraaij_Pohlmann_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Latin = class(TYuStemmer)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Latin_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Latin_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Lithuanian_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Lithuanian_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Lovins = class(TYuStemmer)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Lovins_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Lovins_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Nepali_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Nepali_16 = class(TYuStemmer_16)
   public
     constructor Create;
   end;
@@ -490,6 +597,26 @@ type
     constructor Create;
   end;
 
+  TYuStemmer_Serbian_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Serbian_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Slovene_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Slovene_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
   TYuStemmer_Spanish = class(TYuStemmer)
   public
     constructor Create;
@@ -520,6 +647,16 @@ type
     constructor Create;
   end;
 
+  TYuStemmer_Tamil_8 = class(TYuStemmer_8)
+  public
+    constructor Create;
+  end;
+
+  TYuStemmer_Tamil_16 = class(TYuStemmer_16)
+  public
+    constructor Create;
+  end;
+
   TYuStemmer_Turkish_8 = class(TYuStemmer_8)
   public
     constructor Create;
@@ -531,6 +668,30 @@ type
   end;
 
 implementation
+
+{$UNDEF C_COMPILER_BORLAND}
+{$UNDEF C_COMPILER_BORLAND_32}
+
+{$UNDEF C_COMPILER_MSC}
+{$UNDEF C_COMPILER_MSC_64}
+
+{$IFDEF CPUX86}
+{$DEFINE C_COMPILER_BORLAND_32}
+{$ELSE}
+{$IFDEF CPUX64}
+{$DEFINE C_COMPILER_MSC_64}
+{$ELSE}
+ 'Error: C compiler for this CPU not yet $DEFINEd.'
+{$ENDIF}
+{$ENDIF}
+
+{$IFDEF C_COMPILER_BORLAND_32}
+{$DEFINE C_COMPILER_BORLAND}
+{$ENDIF C_COMPILER_BORLAND_32}
+
+{$IFDEF C_COMPILER_MSC_64}
+{$DEFINE C_COMPILER_MSC}
+{$ENDIF C_COMPILER_MSC_64}
 
 type
 
@@ -546,103 +707,68 @@ type
 
   C_char = System.AnsiChar;
 
-  C_char_ptr = System.PAnsiChar;
-  C_char_ptr_ptr = ^C_char_ptr;
+  C_char_ptr = System.PAnsiChar; C_char_ptr_ptr = ^C_char_ptr;
+
   C_char_ptr_array = array[0..MaxInt div SizeOf(C_char_ptr) - 1] of C_char_ptr;
   C_char_ptr_array_ptr = ^C_char_ptr_array;
-  C_char_num = System.ShortInt;
 
-  C_char_num_ptr = ^C_char_num;
+  C_char_num = System.ShortInt; C_char_num_ptr = ^C_char_num;
   C_double = System.Double;
   C_double_ptr = ^C_double;
   C_float = System.Single;
   C_float_ptr = ^C_float;
+  C_long_double = System.Extended;
+  C_long_double_ptr = ^C_long_double;
 
-  C_int_ptr = ^C_int;
-  C_int_array = array[0..MaxInt div SizeOf(C_int) - 1] of C_int;
-  C_int_array_ptr = ^C_int_array;
+  C_int = System.Integer; C_int_ptr = ^C_int; C_int_ptr_ptr = ^C_int_ptr;
+  C_int8_t = C___int8; C_int8_t_ptr = ^C_int8_t;
+  C_int16_t = C___int16; C_int16_t_ptr = ^C_int16_t;
+  C_int32_t = C___int32; C_int32_t_ptr = ^C_int32_t;
+  C_int64_t = C___int64; C_int64_t_ptr = ^C_int64_t;
 
-  C_int8_t = C___int8;
+  C_int_array = array[0..MaxInt div SizeOf(C_int) - 1] of C_int; C_int_array_ptr = ^C_int_array;
+  C_int8_t_array = array[0..MaxInt div SizeOf(C_int8_t) - 1] of C_int8_t; C_int8_t_array_ptr = ^C_int8_t_array;
+  C_int16_t_array = array[0..MaxInt div SizeOf(C_int16_t) - 1] of C_int16_t; C_int16_t_array_ptr = ^C_int16_t_array;
+  C_int32_t_array = array[0..MaxInt div SizeOf(C_int32_t) - 1] of C_int32_t; C_int32_t_array_ptr = ^C_int32_t_array;
+  C_int64_t_array = array[0..MaxInt div SizeOf(C_int64_t) - 1] of C_int64_t; C_int64_t_array_ptr = ^C_int64_t_array;
 
-  C_int8_t_ptr = ^C_int8_t;
-  C_int8_t_array = array[0..MaxInt div SizeOf(C_int8_t) - 1] of C_int8_t;
-  C_int8_t_array_ptr = ^C_int8_t_array;
-
-  C_int16_t = C___int16;
-
-  C_int16_t_ptr = ^C_int16_t;
-  C_int16_t_array = array[0..MaxInt div SizeOf(C_int16_t) - 1] of C_int16_t;
-  C_int16_t_array_ptr = ^C_int16_t_array;
-
-  C_int32_t = C___int32;
-
-  C_int32_t_ptr = ^C_int32_t;
-  C_int32_t_array = array[0..MaxInt div SizeOf(C_int32_t) - 1] of C_int32_t;
-  C_int32_t_array_ptr = ^C_int32_t_array;
-
-  C_int64_t = C___int64;
-
-  C_int64_t_ptr = ^C_int64_t;
-  C_int64_t_array = array[0..MaxInt div SizeOf(C_int64_t) - 1] of C_int64_t;
-  C_int64_t_array_ptr = ^C_int64_t_array;
-
-  C_long = System.Integer;
-  C_long_ptr = ^C_long;
-  C_long_long = System.Int64;
-  C_long_long_ptr = ^C_long_long;
-  C_long_int = System.Integer;
-  C_long_int_ptr = C_long_int;
-  C_short = System.SmallInt;
-  C_short_ptr = ^C_short;
-  C_short_int = System.SmallInt;
-  C_short_int_ptr = ^C_short_int;
-  C_signed_char = System.ShortInt;
-  C_signed_int = System.Integer;
-  C_signed_int_ptr = ^C_signed_int;
-  C_signed_long = System.Integer;
-  C_signed_long_ptr = ^C_signed_long;
-  C_signed_long_long = System.Int64;
-  C_signed_long_long_ptr = ^C_signed_long_long;
+  C_long = System.Integer; C_long_ptr = ^C_long;
+  C_long_long = System.Int64; C_long_long_ptr = ^C_long_long;
+  C_long_int = System.Integer; C_long_int_ptr = C_long_int;
+  C_short = System.SmallInt; C_short_ptr = ^C_short;
+  C_short_int = System.SmallInt; C_short_int_ptr = ^C_short_int;
+  C_signed_char = System.ShortInt; C_signed_char_ptr = ^C_signed_char;
+  C_signed_int = System.Integer; C_signed_int_ptr = ^C_signed_int;
+  C_signed_long = System.Integer; C_signed_long_ptr = ^C_signed_long;
+  C_signed_long_long = System.Int64; C_signed_long_long_ptr = ^C_signed_long_long;
   C_signed_short = System.SmallInt;
 
-  C_unsigned = System.Cardinal;
-  C_unsigned_ptr = ^C_unsigned;
+  C_unsigned = System.Cardinal; C_unsigned_ptr = ^C_unsigned;
 
   C_unsigned_char = System.AnsiChar;
-
-  C_unsigned_char_array = array[0..MaxInt div SizeOf(C_unsigned_char) - 1] of C_unsigned_char;
-
-  C_unsigned_char_array_ptr = ^C_unsigned_char_array;
-
   C_unsigned_char_ptr = System.PAnsiChar;
-
-  C_unsigned_char_ptr_array = array[0..MaxInt div SizeOf(C_unsigned_char_ptr) - 1] of C_unsigned_char_ptr;
-
-  C_unsigned_char_ptr_array_ptr = ^C_unsigned_char_ptr_array;
-
   C_unsigned_char_ptr_ptr = ^C_unsigned_char_ptr;
 
+  C_unsigned_char_array = array[0..MaxInt div SizeOf(C_unsigned_char) - 1] of C_unsigned_char;
+  C_unsigned_char_array_ptr = ^C_unsigned_char_array;
+
   C_unsigned_char_num = System.Byte;
-
-  C_unsigned_char_num_array = array[0..MaxInt div SizeOf(C_unsigned_char_num) - 1] of C_unsigned_char_num;
-
-  C_unsigned_char_num_array_ptr = ^C_unsigned_char_num_array;
-
-  C_unsigned_char_num_array_ptr_ptr = ^C_unsigned_char_num_array_ptr;
-
   C_unsigned_char_num_ptr = ^C_unsigned_char_num;
 
-  C_unsigned_int = System.Cardinal;
-  C_unsigned_int_ptr = ^C_unsigned_int;
+  C_unsigned_char_ptr_array = array[0..MaxInt div SizeOf(C_unsigned_char_ptr) - 1] of C_unsigned_char_ptr;
+  C_unsigned_char_ptr_array_ptr = ^C_unsigned_char_ptr_array;
+
+  C_unsigned_char_num_array = array[0..MaxInt div SizeOf(C_unsigned_char_num) - 1] of C_unsigned_char_num;
+  C_unsigned_char_num_array_ptr = ^C_unsigned_char_num_array;
+  C_unsigned_char_num_array_ptr_ptr = ^C_unsigned_char_num_array_ptr;
+
+  C_unsigned_int = System.Cardinal; C_unsigned_int_ptr = ^C_unsigned_int;
   C_unsigned___int64 = C___uint64;
-  C_unsigned_long = System.Cardinal;
+  C_unsigned_long = System.Cardinal; C_unsigned_long_ptr = ^C_unsigned_long;
   C_unsigned_long_int = System.Integer;
   C_unsigned_long_long = System.{$IFDEF SUPPORTS_UINT64}UInt64{$ELSE}Int64{$ENDIF};
-  C_unsigned_long_ptr = ^C_unsigned_long;
-  C_unsigned_short = System.Word;
-  C_unsigned_short_ptr = ^C_unsigned_short;
-  C_unsigned_short_int = System.Word;
-  C_unsigned_short_int_ptr = ^C_unsigned_short_int;
+  C_unsigned_short = System.Word; C_unsigned_short_ptr = ^C_unsigned_short;
+  C_unsigned_short_int = System.Word; C_unsigned_short_int_ptr = ^C_unsigned_short_int;
 
   C_errno_t = C_int;
 
@@ -695,14 +821,6 @@ type
   C_wchar_t_ptr = System.PWideChar;
   C_wchar_t_ptr_ptr = ^C_wchar_t_ptr;
 
-{$IFDEF MSWINDOWS}
-
-{$ENDIF MSWINDOWS}
-
-{$IFDEF MsWindows}
-
-{$ENDIF MsWindows}
-
 type
   symbol_ptr = C_char_ptr;
 
@@ -718,6 +836,14 @@ function SN_set_current_16(
   z: SN_env_16_ptr;
   Size: C_int;
   const s: symbol_16_ptr): C_int; external;
+
+function arabic_utf_8_create_env: SN_env_ptr; external;
+procedure arabic_utf_8_close_env(z: SN_env_ptr); external;
+function arabic_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function arabic_utf_16_create_env: SN_env_16_ptr; external;
+procedure arabic_utf_16_close_env(z: SN_env_16_ptr); external;
+function arabic_utf_16_stem(z: SN_env_16_ptr): C_int; external;
 
 function armenian_utf_8_create_env: SN_env_ptr; external;
 procedure armenian_utf_8_close_env(z: SN_env_ptr); external;
@@ -847,6 +973,22 @@ function german2_utf_16_create_env: SN_env_16_ptr; external;
 procedure german2_utf_16_close_env(z: SN_env_16_ptr); external;
 function german2_utf_16_stem(z: SN_env_16_ptr): C_int; external;
 
+function greek_utf_8_create_env: SN_env_ptr; external;
+procedure greek_utf_8_close_env(z: SN_env_ptr); external;
+function greek_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function greek_utf_16_create_env: SN_env_16_ptr; external;
+procedure greek_utf_16_close_env(z: SN_env_16_ptr); external;
+function greek_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function hindi_utf_8_create_env: SN_env_ptr; external;
+procedure hindi_utf_8_close_env(z: SN_env_ptr); external;
+function hindi_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function hindi_utf_16_create_env: SN_env_16_ptr; external;
+procedure hindi_utf_16_close_env(z: SN_env_16_ptr); external;
+function hindi_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
 function hungarian_iso_8859_2_create_env: SN_env_ptr; external;
 procedure hungarian_iso_8859_2_close_env(z: SN_env_ptr); external;
 function hungarian_iso_8859_2_stem(z: SN_env_ptr): C_int; external;
@@ -858,6 +1000,18 @@ function hungarian_utf_8_stem(z: SN_env_ptr): C_int; external;
 function hungarian_utf_16_create_env: SN_env_16_ptr; external;
 procedure hungarian_utf_16_close_env(z: SN_env_16_ptr); external;
 function hungarian_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function indonesian_iso_8859_1_create_env: SN_env_ptr; external;
+procedure indonesian_iso_8859_1_close_env(z: SN_env_ptr); external;
+function indonesian_iso_8859_1_stem(z: SN_env_ptr): C_int; external;
+
+function indonesian_utf_8_create_env: SN_env_ptr; external;
+procedure indonesian_utf_8_close_env(z: SN_env_ptr); external;
+function indonesian_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function indonesian_utf_16_create_env: SN_env_16_ptr; external;
+procedure indonesian_utf_16_close_env(z: SN_env_16_ptr); external;
+function indonesian_utf_16_stem(z: SN_env_16_ptr): C_int; external;
 
 function irish_iso_8859_1_create_env: SN_env_ptr; external;
 procedure irish_iso_8859_1_close_env(z: SN_env_ptr); external;
@@ -882,6 +1036,58 @@ function italian_utf_8_stem(z: SN_env_ptr): C_int; external;
 function italian_utf_16_create_env: SN_env_16_ptr; external;
 procedure italian_utf_16_close_env(z: SN_env_16_ptr); external;
 function italian_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function kraaij_pohlmann_iso_8859_1_create_env: SN_env_ptr; external;
+procedure kraaij_pohlmann_iso_8859_1_close_env(z: SN_env_ptr); external;
+function kraaij_pohlmann_iso_8859_1_stem(z: SN_env_ptr): C_int; external;
+
+function kraaij_pohlmann_utf_8_create_env: SN_env_ptr; external;
+procedure kraaij_pohlmann_utf_8_close_env(z: SN_env_ptr); external;
+function kraaij_pohlmann_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function kraaij_pohlmann_utf_16_create_env: SN_env_16_ptr; external;
+procedure kraaij_pohlmann_utf_16_close_env(z: SN_env_16_ptr); external;
+function kraaij_pohlmann_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function latin_iso_8859_1_create_env: SN_env_ptr; external;
+procedure latin_iso_8859_1_close_env(z: SN_env_ptr); external;
+function latin_iso_8859_1_stem(z: SN_env_ptr): C_int; external;
+
+function latin_utf_8_create_env: SN_env_ptr; external;
+procedure latin_utf_8_close_env(z: SN_env_ptr); external;
+function latin_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function latin_utf_16_create_env: SN_env_16_ptr; external;
+procedure latin_utf_16_close_env(z: SN_env_16_ptr); external;
+function latin_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function lithuanian_utf_8_create_env: SN_env_ptr; external;
+procedure lithuanian_utf_8_close_env(z: SN_env_ptr); external;
+function lithuanian_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function lithuanian_utf_16_create_env: SN_env_16_ptr; external;
+procedure lithuanian_utf_16_close_env(z: SN_env_16_ptr); external;
+function lithuanian_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function lovins_iso_8859_1_create_env: SN_env_ptr; external;
+procedure lovins_iso_8859_1_close_env(z: SN_env_ptr); external;
+function lovins_iso_8859_1_stem(z: SN_env_ptr): C_int; external;
+
+function lovins_utf_8_create_env: SN_env_ptr; external;
+procedure lovins_utf_8_close_env(z: SN_env_ptr); external;
+function lovins_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function lovins_utf_16_create_env: SN_env_16_ptr; external;
+procedure lovins_utf_16_close_env(z: SN_env_16_ptr); external;
+function lovins_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function nepali_utf_8_create_env: SN_env_ptr; external;
+procedure nepali_utf_8_close_env(z: SN_env_ptr); external;
+function nepali_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function nepali_utf_16_create_env: SN_env_16_ptr; external;
+procedure nepali_utf_16_close_env(z: SN_env_16_ptr); external;
+function nepali_utf_16_stem(z: SN_env_16_ptr): C_int; external;
 
 function norwegian_iso_8859_1_create_env: SN_env_ptr; external;
 procedure norwegian_iso_8859_1_close_env(z: SN_env_ptr); external;
@@ -943,6 +1149,22 @@ function russian_utf_16_create_env: SN_env_16_ptr; external;
 procedure russian_utf_16_close_env(z: SN_env_16_ptr); external;
 function russian_utf_16_stem(z: SN_env_16_ptr): C_int; external;
 
+function serbian_utf_8_create_env: SN_env_ptr; external;
+procedure serbian_utf_8_close_env(z: SN_env_ptr); external;
+function serbian_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function serbian_utf_16_create_env: SN_env_16_ptr; external;
+procedure serbian_utf_16_close_env(z: SN_env_16_ptr); external;
+function serbian_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
+function slovene_utf_8_create_env: SN_env_ptr; external;
+procedure slovene_utf_8_close_env(z: SN_env_ptr); external;
+function slovene_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function slovene_utf_16_create_env: SN_env_16_ptr; external;
+procedure slovene_utf_16_close_env(z: SN_env_16_ptr); external;
+function slovene_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
 function spanish_iso_8859_1_create_env: SN_env_ptr; external;
 procedure spanish_iso_8859_1_close_env(z: SN_env_ptr); external;
 function spanish_iso_8859_1_stem(z: SN_env_ptr): C_int; external;
@@ -967,6 +1189,14 @@ function swedish_utf_16_create_env: SN_env_16_ptr; external;
 procedure swedish_utf_16_close_env(z: SN_env_16_ptr); external;
 function swedish_utf_16_stem(z: SN_env_16_ptr): C_int; external;
 
+function tamil_utf_8_create_env: SN_env_ptr; external;
+procedure tamil_utf_8_close_env(z: SN_env_ptr); external;
+function tamil_utf_8_stem(z: SN_env_ptr): C_int; external;
+
+function tamil_utf_16_create_env: SN_env_16_ptr; external;
+procedure tamil_utf_16_close_env(z: SN_env_16_ptr); external;
+function tamil_utf_16_stem(z: SN_env_16_ptr): C_int; external;
+
 function turkish_utf_8_create_env: SN_env_ptr; external;
 procedure turkish_utf_8_close_env(z: SN_env_ptr); external;
 function turkish_utf_8_stem(z: SN_env_ptr): C_int; external;
@@ -986,8 +1216,7 @@ begin
   if SN_set_current(FEnv, Length(s), Pointer(s)) = 0 then
     if FStem(FEnv) >= 0 then
       begin
-        with FEnv^ do
-          SetString(Result, p, l);
+        SetString(Result, FEnv^.p, FEnv^.l);
         Exit;
       end;
   Assert(False);
@@ -999,7 +1228,8 @@ begin
   if SN_set_current(FEnv, l, p) = 0 then
     if FStem(FEnv) >= 0 then
       begin
-        p := FEnv^.p; l := FEnv^.l;
+        p := FEnv^.p;
+        l := FEnv^.l;
         Exit;
       end;
   Assert(False);
@@ -1019,8 +1249,12 @@ begin
   else if Name = 'german' then Result := TYuStemmer_German.Create
   else if Name = 'german2' then Result := TYuStemmer_German2.Create
   else if Name = 'hungarian' then Result := TYuStemmer_Hungarian.Create
+  else if Name = 'indonesian' then Result := TYuStemmer_Indonesian.Create
   else if Name = 'irish' then Result := TYuStemmer_Irish.Create
   else if Name = 'italian' then Result := TYuStemmer_Italian.Create
+  else if Name = 'kraaij_pohlmann' then Result := TYuStemmer_Kraaij_Pohlmann.Create
+  else if Name = 'latin' then Result := TYuStemmer_Latin.Create
+  else if Name = 'lovins' then Result := TYuStemmer_Lovins.Create
   else if Name = 'norwegian' then Result := TYuStemmer_Norwegian.Create
   else if Name = 'porter' then Result := TYuStemmer_Porter.Create
   else if Name = 'portuguese' then Result := TYuStemmer_Portuguese.Create
@@ -1043,8 +1277,7 @@ begin
   if SN_set_current(FEnv, Length(s), Pointer(s)) = 0 then
     if FStem(FEnv) >= 0 then
       begin
-        with FEnv^ do
-          SetString(Result, p, l);
+        SetString(Result, FEnv^.p, FEnv^.l);
         Exit;
       end;
   Assert(False);
@@ -1056,7 +1289,8 @@ begin
   if SN_set_current(FEnv, l, p) = 0 then
     if FStem(FEnv) >= 0 then
       begin
-        p := FEnv^.p; l := FEnv^.l;
+        p := FEnv^.p;
+        l := FEnv^.l;
         Exit;
       end;
   Assert(False);
@@ -1065,7 +1299,8 @@ end;
 function GetStemmer_8(const Name: Utf8String): TYuStemmer_8;
 begin
 
-  if Name = 'armenian' then Result := TYuStemmer_Armenian_8.Create
+  if Name = 'arabic' then Result := TYuStemmer_Arabic_8.Create
+  else if Name = 'armenian' then Result := TYuStemmer_Armenian_8.Create
   else if Name = 'basque' then Result := TYuStemmer_Basque_8.Create
   else if Name = 'catalan' then Result := TYuStemmer_Catalan_8.Create
   else if Name = 'czech' then Result := TYuStemmer_Czech_8.Create
@@ -1076,16 +1311,27 @@ begin
   else if Name = 'french' then Result := TYuStemmer_French_8.Create
   else if Name = 'german' then Result := TYuStemmer_German_8.Create
   else if Name = 'german2' then Result := TYuStemmer_German2_8.Create
+  else if Name = 'greek' then Result := TYuStemmer_Greek_8.Create
+  else if Name = 'hindi' then Result := TYuStemmer_Hindi_8.Create
   else if Name = 'hungarian' then Result := TYuStemmer_Hungarian_8.Create
+  else if Name = 'indonesian' then Result := TYuStemmer_Indonesian_8.Create
   else if Name = 'irish' then Result := TYuStemmer_Irish_8.Create
   else if Name = 'italian' then Result := TYuStemmer_Italian_8.Create
+  else if Name = 'kraaij_pohlmann' then Result := TYuStemmer_Kraaij_Pohlmann_8.Create
+  else if Name = 'latin' then Result := TYuStemmer_Latin_8.Create
+  else if Name = 'lithuanian' then Result := TYuStemmer_Lithuanian_8.Create
+  else if Name = 'lovins' then Result := TYuStemmer_Lovins_8.Create
+  else if Name = 'nepali' then Result := TYuStemmer_Nepali_8.Create
   else if Name = 'norwegian' then Result := TYuStemmer_Norwegian_8.Create
   else if Name = 'porter' then Result := TYuStemmer_Porter_8.Create
   else if Name = 'portuguese' then Result := TYuStemmer_Portuguese_8.Create
   else if Name = 'romanian' then Result := TYuStemmer_Romanian_8.Create
   else if Name = 'russian' then Result := TYuStemmer_Russian_8.Create
+  else if Name = 'serbian' then Result := TYuStemmer_Serbian_8.Create
+  else if Name = 'slovene' then Result := TYuStemmer_Slovene_8.Create
   else if Name = 'spanish' then Result := TYuStemmer_Spanish_8.Create
   else if Name = 'swedish' then Result := TYuStemmer_Swedish_8.Create
+  else if Name = 'tamil' then Result := TYuStemmer_Tamil_8.Create
   else if Name = 'turkish' then Result := TYuStemmer_Turkish_8.Create
   else Result := nil;
 end;
@@ -1102,8 +1348,7 @@ begin
   if SN_set_current_16(FEnv, Length(s), Pointer(s)) = 0 then
     if FStem(FEnv) >= 0 then
       begin
-        with FEnv^ do
-          SetString(Result, p, l);
+        SetString(Result, FEnv^.p, FEnv^.l);
         Exit;
       end;
   Assert(False);
@@ -1115,21 +1360,18 @@ begin
   if SN_set_current_16(FEnv, l, p) = 0 then
     if FStem(FEnv) >= 0 then
       begin
-        p := FEnv^.p; l := FEnv^.l;
+        p := FEnv^.p;
+        l := FEnv^.l;
         Exit;
       end;
   Assert(False);
 end;
 
-function TYuStemmer_8.calc(const s: String): String;
-begin
-  result := String(Stem(UTF8String(s)));
-end;
-
 function GetStemmer_16(const Name: UnicodeString): TYuStemmer_16;
 begin
 
-  if Name = 'armenian' then Result := TYuStemmer_Armenian_16.Create
+  if Name = 'arabic' then Result := TYuStemmer_Arabic_16.Create
+  else if Name = 'armenian' then Result := TYuStemmer_Armenian_16.Create
   else if Name = 'basque' then Result := TYuStemmer_Basque_16.Create
   else if Name = 'catalan' then Result := TYuStemmer_Catalan_16.Create
   else if Name = 'czech' then Result := TYuStemmer_Czech_16.Create
@@ -1140,18 +1382,47 @@ begin
   else if Name = 'french' then Result := TYuStemmer_French_16.Create
   else if Name = 'german' then Result := TYuStemmer_German_16.Create
   else if Name = 'german2' then Result := TYuStemmer_German2_16.Create
+  else if Name = 'greek' then Result := TYuStemmer_Greek_16.Create
+  else if Name = 'hindi' then Result := TYuStemmer_Hindi_16.Create
   else if Name = 'hungarian' then Result := TYuStemmer_Hungarian_16.Create
+  else if Name = 'indonesian' then Result := TYuStemmer_Indonesian_16.Create
   else if Name = 'irish' then Result := TYuStemmer_Irish_16.Create
   else if Name = 'italian' then Result := TYuStemmer_Italian_16.Create
+  else if Name = 'kraaij_pohlmann' then Result := TYuStemmer_Kraaij_Pohlmann_16.Create
+  else if Name = 'latin' then Result := TYuStemmer_Latin_16.Create
+  else if Name = 'lithuanian' then Result := TYuStemmer_Lithuanian_16.Create
+  else if Name = 'lovins' then Result := TYuStemmer_Lovins_16.Create
+  else if Name = 'nepali' then Result := TYuStemmer_Nepali_16.Create
   else if Name = 'norwegian' then Result := TYuStemmer_Norwegian_16.Create
   else if Name = 'porter' then Result := TYuStemmer_Porter_16.Create
   else if Name = 'portuguese' then Result := TYuStemmer_Portuguese_16.Create
   else if Name = 'romanian' then Result := TYuStemmer_Romanian_16.Create
   else if Name = 'russian' then Result := TYuStemmer_Russian_16.Create
+  else if Name = 'serbian' then Result := TYuStemmer_Serbian_16.Create
+  else if Name = 'slovene' then Result := TYuStemmer_Slovene_16.Create
   else if Name = 'spanish' then Result := TYuStemmer_Spanish_16.Create
   else if Name = 'swedish' then Result := TYuStemmer_Swedish_16.Create
+  else if Name = 'tamil' then Result := TYuStemmer_Tamil_16.Create
   else if Name = 'turkish' then Result := TYuStemmer_Turkish_16.Create
   else Result := nil;
+end;
+
+constructor TYuStemmer_Arabic_8.Create;
+begin
+  inherited;
+
+  FStem := arabic_utf_8_stem;
+  FEnv := arabic_utf_8_create_env;
+  FClose := arabic_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Arabic_16.Create;
+begin
+  inherited;
+
+  FStem := arabic_utf_16_stem;
+  FEnv := arabic_utf_16_create_env;
+  FClose := arabic_utf_16_close_env;
 end;
 
 constructor TYuStemmer_Armenian_8.Create;
@@ -1442,6 +1713,42 @@ begin
   FClose := german2_utf_16_close_env;
 end;
 
+constructor TYuStemmer_Greek_8.Create;
+begin
+  inherited;
+
+  FStem := greek_utf_8_stem;
+  FEnv := greek_utf_8_create_env;
+  FClose := greek_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Greek_16.Create;
+begin
+  inherited;
+
+  FStem := greek_utf_16_stem;
+  FEnv := greek_utf_16_create_env;
+  FClose := greek_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Hindi_8.Create;
+begin
+  inherited;
+
+  FStem := hindi_utf_8_stem;
+  FEnv := hindi_utf_8_create_env;
+  FClose := hindi_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Hindi_16.Create;
+begin
+  inherited;
+
+  FStem := hindi_utf_16_stem;
+  FEnv := hindi_utf_16_create_env;
+  FClose := hindi_utf_16_close_env;
+end;
+
 constructor TYuStemmer_Hungarian.Create;
 begin
   inherited;
@@ -1467,6 +1774,33 @@ begin
   FStem := hungarian_utf_16_stem;
   FEnv := hungarian_utf_16_create_env;
   FClose := hungarian_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Indonesian.Create;
+begin
+  inherited;
+
+  FStem := indonesian_iso_8859_1_stem;
+  FEnv := indonesian_iso_8859_1_create_env;
+  FClose := indonesian_iso_8859_1_close_env;
+end;
+
+constructor TYuStemmer_Indonesian_8.Create;
+begin
+  inherited;
+
+  FStem := indonesian_utf_8_stem;
+  FEnv := indonesian_utf_8_create_env;
+  FClose := indonesian_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Indonesian_16.Create;
+begin
+  inherited;
+
+  FStem := indonesian_utf_16_stem;
+  FEnv := indonesian_utf_16_create_env;
+  FClose := indonesian_utf_16_close_env;
 end;
 
 constructor TYuStemmer_Irish.Create;
@@ -1521,6 +1855,123 @@ begin
   FStem := italian_utf_16_stem;
   FEnv := italian_utf_16_create_env;
   FClose := italian_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Kraaij_Pohlmann.Create;
+begin
+  inherited;
+
+  FStem := kraaij_pohlmann_iso_8859_1_stem;
+  FEnv := kraaij_pohlmann_iso_8859_1_create_env;
+  FClose := kraaij_pohlmann_iso_8859_1_close_env;
+end;
+
+constructor TYuStemmer_Kraaij_Pohlmann_8.Create;
+begin
+  inherited;
+
+  FStem := kraaij_pohlmann_utf_8_stem;
+  FEnv := kraaij_pohlmann_utf_8_create_env;
+  FClose := kraaij_pohlmann_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Kraaij_Pohlmann_16.Create;
+begin
+  inherited;
+
+  FStem := kraaij_pohlmann_utf_16_stem;
+  FEnv := kraaij_pohlmann_utf_16_create_env;
+  FClose := kraaij_pohlmann_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Latin.Create;
+begin
+  inherited;
+
+  FStem := latin_iso_8859_1_stem;
+  FEnv := latin_iso_8859_1_create_env;
+  FClose := latin_iso_8859_1_close_env;
+end;
+
+constructor TYuStemmer_Latin_8.Create;
+begin
+  inherited;
+
+  FStem := latin_utf_8_stem;
+  FEnv := latin_utf_8_create_env;
+  FClose := latin_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Latin_16.Create;
+begin
+  inherited;
+
+  FStem := latin_utf_16_stem;
+  FEnv := latin_utf_16_create_env;
+  FClose := latin_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Lithuanian_8.Create;
+begin
+  inherited;
+
+  FStem := lithuanian_utf_8_stem;
+  FEnv := lithuanian_utf_8_create_env;
+  FClose := lithuanian_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Lithuanian_16.Create;
+begin
+  inherited;
+
+  FStem := lithuanian_utf_16_stem;
+  FEnv := lithuanian_utf_16_create_env;
+  FClose := lithuanian_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Lovins.Create;
+begin
+  inherited;
+
+  FStem := lovins_iso_8859_1_stem;
+  FEnv := lovins_iso_8859_1_create_env;
+  FClose := lovins_iso_8859_1_close_env;
+end;
+
+constructor TYuStemmer_Lovins_8.Create;
+begin
+  inherited;
+
+  FStem := lovins_utf_8_stem;
+  FEnv := lovins_utf_8_create_env;
+  FClose := lovins_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Lovins_16.Create;
+begin
+  inherited;
+
+  FStem := lovins_utf_16_stem;
+  FEnv := lovins_utf_16_create_env;
+  FClose := lovins_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Nepali_8.Create;
+begin
+  inherited;
+
+  FStem := nepali_utf_8_stem;
+  FEnv := nepali_utf_8_create_env;
+  FClose := nepali_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Nepali_16.Create;
+begin
+  inherited;
+
+  FStem := nepali_utf_16_stem;
+  FEnv := nepali_utf_16_create_env;
+  FClose := nepali_utf_16_close_env;
 end;
 
 constructor TYuStemmer_Norwegian.Create;
@@ -1658,6 +2109,42 @@ begin
   FClose := russian_utf_16_close_env;
 end;
 
+constructor TYuStemmer_Serbian_8.Create;
+begin
+  inherited;
+
+  FStem := serbian_utf_8_stem;
+  FEnv := serbian_utf_8_create_env;
+  FClose := serbian_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Serbian_16.Create;
+begin
+  inherited;
+
+  FStem := serbian_utf_16_stem;
+  FEnv := serbian_utf_16_create_env;
+  FClose := serbian_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Slovene_8.Create;
+begin
+  inherited;
+
+  FStem := slovene_utf_8_stem;
+  FEnv := slovene_utf_8_create_env;
+  FClose := slovene_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Slovene_16.Create;
+begin
+  inherited;
+
+  FStem := slovene_utf_16_stem;
+  FEnv := slovene_utf_16_create_env;
+  FClose := slovene_utf_16_close_env;
+end;
+
 constructor TYuStemmer_Spanish.Create;
 begin
   inherited;
@@ -1710,6 +2197,24 @@ begin
   FStem := swedish_utf_16_stem;
   FEnv := swedish_utf_16_create_env;
   FClose := swedish_utf_16_close_env;
+end;
+
+constructor TYuStemmer_Tamil_8.Create;
+begin
+  inherited;
+
+  FStem := tamil_utf_8_stem;
+  FEnv := tamil_utf_8_create_env;
+  FClose := tamil_utf_8_close_env;
+end;
+
+constructor TYuStemmer_Tamil_16.Create;
+begin
+  inherited;
+
+  FStem := tamil_utf_16_stem;
+  FEnv := tamil_utf_16_create_env;
+  FClose := tamil_utf_16_close_env;
 end;
 
 constructor TYuStemmer_Turkish_8.Create;
@@ -1853,107 +2358,137 @@ begin
     Result := malloc(Size);
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF CPUX64}{$L stemmer_win64\arabic_utf_8}{$ELSE}{$L stemmer_win32\arabic_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\arabic_utf_16}{$ELSE}{$L stemmer_win32\arabic_utf_16}{$ENDIF}
 
-{$ENDIF MSWINDOWS}
+{$IFDEF CPUX64}{$L stemmer_win64\armenian_utf_8}{$ELSE}{$L stemmer_win32\armenian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\armenian_utf_16}{$ELSE}{$L stemmer_win32\armenian_utf_16}{$ENDIF}
 
-{$IFDEF MsWindows}
+{$IFDEF CPUX64}{$L stemmer_win64\basque_iso_8859_1}{$ELSE}{$L stemmer_win32\basque_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\basque_utf_8}{$ELSE}{$L stemmer_win32\basque_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\basque_utf_16}{$ELSE}{$L stemmer_win32\basque_utf_16}{$ENDIF}
 
-{$ENDIF MsWindows}
+{$IFDEF CPUX64}{$L stemmer_win64\catalan_iso_8859_1}{$ELSE}{$L stemmer_win32\catalan_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\catalan_utf_8}{$ELSE}{$L stemmer_win32\catalan_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\catalan_utf_16}{$ELSE}{$L stemmer_win32\catalan_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_armenian_utf_8}{$ELSE}{$L stemmer_win32\stem_armenian_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_armenian_utf_16}{$ELSE}{$L stemmer_win32\stem_armenian_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\czech_iso_8859_2}{$ELSE}{$L stemmer_win32\czech_iso_8859_2}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\czech_utf_8}{$ELSE}{$L stemmer_win32\czech_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\czech_utf_16}{$ELSE}{$L stemmer_win32\czech_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_basque_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_basque_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_basque_utf_8}{$ELSE}{$L stemmer_win32\stem_basque_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_basque_utf_16}{$ELSE}{$L stemmer_win32\stem_basque_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\danish_iso_8859_1}{$ELSE}{$L stemmer_win32\danish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\danish_utf_8}{$ELSE}{$L stemmer_win32\danish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\danish_utf_16}{$ELSE}{$L stemmer_win32\danish_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_catalan_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_catalan_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_catalan_utf_8}{$ELSE}{$L stemmer_win32\stem_catalan_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_catalan_utf_16}{$ELSE}{$L stemmer_win32\stem_catalan_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\dutch_iso_8859_1}{$ELSE}{$L stemmer_win32\dutch_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\dutch_utf_8}{$ELSE}{$L stemmer_win32\dutch_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\dutch_utf_16}{$ELSE}{$L stemmer_win32\dutch_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_czech_iso_8859_2}{$ELSE}{$L stemmer_win32\stem_czech_iso_8859_2}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_czech_utf_8}{$ELSE}{$L stemmer_win32\stem_czech_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_czech_utf_16}{$ELSE}{$L stemmer_win32\stem_czech_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\english_iso_8859_1}{$ELSE}{$L stemmer_win32\english_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\english_utf_8}{$ELSE}{$L stemmer_win32\english_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\english_utf_16}{$ELSE}{$L stemmer_win32\english_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_danish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_danish_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_danish_utf_8}{$ELSE}{$L stemmer_win32\stem_danish_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_danish_utf_16}{$ELSE}{$L stemmer_win32\stem_danish_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\finnish_iso_8859_1}{$ELSE}{$L stemmer_win32\finnish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\finnish_utf_8}{$ELSE}{$L stemmer_win32\finnish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\finnish_utf_16}{$ELSE}{$L stemmer_win32\finnish_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_dutch_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_dutch_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_dutch_utf_8}{$ELSE}{$L stemmer_win32\stem_dutch_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_dutch_utf_16}{$ELSE}{$L stemmer_win32\stem_dutch_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\french_iso_8859_1}{$ELSE}{$L stemmer_win32\french_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\french_utf_8}{$ELSE}{$L stemmer_win32\french_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\french_utf_16}{$ELSE}{$L stemmer_win32\french_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_english_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_english_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_english_utf_8}{$ELSE}{$L stemmer_win32\stem_english_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_english_utf_16}{$ELSE}{$L stemmer_win32\stem_english_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\german_iso_8859_1}{$ELSE}{$L stemmer_win32\german_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\german_utf_8}{$ELSE}{$L stemmer_win32\german_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\german_utf_16}{$ELSE}{$L stemmer_win32\german_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_finnish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_finnish_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_finnish_utf_8}{$ELSE}{$L stemmer_win32\stem_finnish_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_finnish_utf_16}{$ELSE}{$L stemmer_win32\stem_finnish_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\german2_iso_8859_1}{$ELSE}{$L stemmer_win32\german2_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\german2_utf_8}{$ELSE}{$L stemmer_win32\german2_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\german2_utf_16}{$ELSE}{$L stemmer_win32\german2_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_french_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_french_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_french_utf_8}{$ELSE}{$L stemmer_win32\stem_french_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_french_utf_16}{$ELSE}{$L stemmer_win32\stem_french_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\greek_utf_8}{$ELSE}{$L stemmer_win32\greek_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\greek_utf_16}{$ELSE}{$L stemmer_win32\greek_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_german_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_german_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_german_utf_8}{$ELSE}{$L stemmer_win32\stem_german_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_german_utf_16}{$ELSE}{$L stemmer_win32\stem_german_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\hindi_utf_8}{$ELSE}{$L stemmer_win32\hindi_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\hindi_utf_16}{$ELSE}{$L stemmer_win32\hindi_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_german2_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_german2_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_german2_utf_8}{$ELSE}{$L stemmer_win32\stem_german2_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_german2_utf_16}{$ELSE}{$L stemmer_win32\stem_german2_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\hungarian_iso_8859_2}{$ELSE}{$L stemmer_win32\hungarian_iso_8859_2}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\hungarian_utf_8}{$ELSE}{$L stemmer_win32\hungarian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\hungarian_utf_16}{$ELSE}{$L stemmer_win32\hungarian_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_hungarian_iso_8859_2}{$ELSE}{$L stemmer_win32\stem_hungarian_iso_8859_2}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_hungarian_utf_8}{$ELSE}{$L stemmer_win32\stem_hungarian_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_hungarian_utf_16}{$ELSE}{$L stemmer_win32\stem_hungarian_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\indonesian_iso_8859_1}{$ELSE}{$L stemmer_win32\indonesian_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\indonesian_utf_8}{$ELSE}{$L stemmer_win32\indonesian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\indonesian_utf_16}{$ELSE}{$L stemmer_win32\indonesian_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_irish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_irish_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_irish_utf_8}{$ELSE}{$L stemmer_win32\stem_irish_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_irish_utf_16}{$ELSE}{$L stemmer_win32\stem_irish_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\irish_iso_8859_1}{$ELSE}{$L stemmer_win32\irish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\irish_utf_8}{$ELSE}{$L stemmer_win32\irish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\irish_utf_16}{$ELSE}{$L stemmer_win32\irish_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_italian_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_italian_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_italian_utf_8}{$ELSE}{$L stemmer_win32\stem_italian_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_italian_utf_16}{$ELSE}{$L stemmer_win32\stem_italian_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\italian_iso_8859_1}{$ELSE}{$L stemmer_win32\italian_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\italian_utf_8}{$ELSE}{$L stemmer_win32\italian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\italian_utf_16}{$ELSE}{$L stemmer_win32\italian_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_norwegian_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_norwegian_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_norwegian_utf_8}{$ELSE}{$L stemmer_win32\stem_norwegian_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_norwegian_utf_16}{$ELSE}{$L stemmer_win32\stem_norwegian_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\kraaij_pohlmann_iso_8859_1}{$ELSE}{$L stemmer_win32\kraaij_pohlmann_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\kraaij_pohlmann_utf_8}{$ELSE}{$L stemmer_win32\kraaij_pohlmann_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\kraaij_pohlmann_utf_16}{$ELSE}{$L stemmer_win32\kraaij_pohlmann_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_porter_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_porter_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_porter_utf_8}{$ELSE}{$L stemmer_win32\stem_porter_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_porter_utf_16}{$ELSE}{$L stemmer_win32\stem_porter_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\latin_iso_8859_1}{$ELSE}{$L stemmer_win32\latin_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\latin_utf_8}{$ELSE}{$L stemmer_win32\latin_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\latin_utf_16}{$ELSE}{$L stemmer_win32\latin_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_portuguese_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_portuguese_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_portuguese_utf_8}{$ELSE}{$L stemmer_win32\stem_portuguese_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_portuguese_utf_16}{$ELSE}{$L stemmer_win32\stem_portuguese_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\lithuanian_utf_8}{$ELSE}{$L stemmer_win32\lithuanian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\lithuanian_utf_16}{$ELSE}{$L stemmer_win32\lithuanian_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_romanian_iso_8859_2}{$ELSE}{$L stemmer_win32\stem_romanian_iso_8859_2}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_romanian_utf_8}{$ELSE}{$L stemmer_win32\stem_romanian_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_romanian_utf_16}{$ELSE}{$L stemmer_win32\stem_romanian_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\lovins_iso_8859_1}{$ELSE}{$L stemmer_win32\lovins_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\lovins_utf_8}{$ELSE}{$L stemmer_win32\lovins_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\lovins_utf_16}{$ELSE}{$L stemmer_win32\lovins_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_russian_KOI8_R}{$ELSE}{$L stemmer_win32\stem_russian_KOI8_R}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_russian_utf_8}{$ELSE}{$L stemmer_win32\stem_russian_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_russian_utf_16}{$ELSE}{$L stemmer_win32\stem_russian_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\nepali_utf_8}{$ELSE}{$L stemmer_win32\nepali_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\nepali_utf_16}{$ELSE}{$L stemmer_win32\nepali_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_spanish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_spanish_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_spanish_utf_8}{$ELSE}{$L stemmer_win32\stem_spanish_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_spanish_utf_16}{$ELSE}{$L stemmer_win32\stem_spanish_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\norwegian_iso_8859_1}{$ELSE}{$L stemmer_win32\norwegian_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\norwegian_utf_8}{$ELSE}{$L stemmer_win32\norwegian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\norwegian_utf_16}{$ELSE}{$L stemmer_win32\norwegian_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_swedish_iso_8859_1}{$ELSE}{$L stemmer_win32\stem_swedish_iso_8859_1}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_swedish_utf_8}{$ELSE}{$L stemmer_win32\stem_swedish_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_swedish_utf_16}{$ELSE}{$L stemmer_win32\stem_swedish_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\porter_iso_8859_1}{$ELSE}{$L stemmer_win32\porter_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\porter_utf_8}{$ELSE}{$L stemmer_win32\porter_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\porter_utf_16}{$ELSE}{$L stemmer_win32\porter_utf_16}{$ENDIF}
 
-{$IFDEF CPUX64}{$L stemmer_win64\stem_turkish_utf_8}{$ELSE}{$L stemmer_win32\stem_turkish_utf_8}{$ENDIF}
-{$IFDEF CPUX64}{$L stemmer_win64\stem_turkish_utf_16}{$ELSE}{$L stemmer_win32\stem_turkish_utf_16}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\portuguese_iso_8859_1}{$ELSE}{$L stemmer_win32\portuguese_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\portuguese_utf_8}{$ELSE}{$L stemmer_win32\portuguese_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\portuguese_utf_16}{$ELSE}{$L stemmer_win32\portuguese_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\romanian_iso_8859_2}{$ELSE}{$L stemmer_win32\romanian_iso_8859_2}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\romanian_utf_8}{$ELSE}{$L stemmer_win32\romanian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\romanian_utf_16}{$ELSE}{$L stemmer_win32\romanian_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\russian_KOI8_R}{$ELSE}{$L stemmer_win32\russian_KOI8_R}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\russian_utf_8}{$ELSE}{$L stemmer_win32\russian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\russian_utf_16}{$ELSE}{$L stemmer_win32\russian_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\serbian_utf_8}{$ELSE}{$L stemmer_win32\serbian_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\serbian_utf_16}{$ELSE}{$L stemmer_win32\serbian_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\slovene_utf_8}{$ELSE}{$L stemmer_win32\slovene_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\slovene_utf_16}{$ELSE}{$L stemmer_win32\slovene_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\spanish_iso_8859_1}{$ELSE}{$L stemmer_win32\spanish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\spanish_utf_8}{$ELSE}{$L stemmer_win32\spanish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\spanish_utf_16}{$ELSE}{$L stemmer_win32\spanish_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\swedish_iso_8859_1}{$ELSE}{$L stemmer_win32\swedish_iso_8859_1}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\swedish_utf_8}{$ELSE}{$L stemmer_win32\swedish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\swedish_utf_16}{$ELSE}{$L stemmer_win32\swedish_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\tamil_utf_8}{$ELSE}{$L stemmer_win32\tamil_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\tamil_utf_16}{$ELSE}{$L stemmer_win32\tamil_utf_16}{$ENDIF}
+
+{$IFDEF CPUX64}{$L stemmer_win64\turkish_utf_8}{$ELSE}{$L stemmer_win32\turkish_utf_8}{$ENDIF}
+{$IFDEF CPUX64}{$L stemmer_win64\turkish_utf_16}{$ELSE}{$L stemmer_win32\turkish_utf_16}{$ENDIF}
 
 {$IFDEF CPUX64}{$L stemmer_win64\api}{$ELSE}{$L stemmer_win32\api}{$ENDIF}
 {$IFDEF CPUX64}{$L stemmer_win64\utilities}{$ELSE}{$L stemmer_win32\utilities}{$ENDIF}
 
 {$IFDEF CPUX64}{$L stemmer_win64\api16}{$ELSE}{$L stemmer_win32\api16}{$ENDIF}
 {$IFDEF CPUX64}{$L stemmer_win64\utilities16}{$ELSE}{$L stemmer_win32\utilities16}{$ENDIF}
-
-{$ENDIF}
 
 end.
 

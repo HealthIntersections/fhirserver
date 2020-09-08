@@ -58,9 +58,7 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  {$IFNDEF FPC}
   YuStemmer,
-  {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers, FHIR.Support.Fpc, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.CdsHooks.Utilities,
@@ -1857,7 +1855,7 @@ begin
       Begin
         SetLength(words, length(words)+1);
         words[length(words)-1].original := lowercase(s);
-        s1 := oStemmer.calc(s);
+        s1 := oStemmer.Stem(s);
         if FindStem(s1, index) Then
           words[length(words)-1].stem := FStems.GetString(index);
       End;

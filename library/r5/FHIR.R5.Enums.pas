@@ -31,6 +31,8 @@ unit FHIR.R5.Enums;
   
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
@@ -38,7 +40,7 @@ interface
 
 
 uses
-  Classes, SysUtils, EncdDecd, 
+  Classes, SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
   FHIR.R5.Base;

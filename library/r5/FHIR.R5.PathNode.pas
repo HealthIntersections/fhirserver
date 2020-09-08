@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
@@ -183,7 +184,9 @@ type
     function checkName : boolean;
 
     // version overrides;
+    {$IFNDEF FPC}
     procedure visitAll(context : pointer; proc : TFHIRPathExpressionNodeVisitProc); override;
+    {$ENDIF}
     function nodeOpName : String; override;
     function nodeName : String; override;
     function nodeChildCount : integer; override;
@@ -307,7 +310,7 @@ begin
     result := true;
 end;
 
-constructor TFHIRPathExpressionNode.Create;
+constructor TFHIRPathExpressionNode.Create(uniqueId : Integer);
 begin
   inherited Create;
   FUniqueId := uniqueId
@@ -548,6 +551,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 procedure TFHIRPathExpressionNode.visitAll(context : pointer; proc: TFHIRPathExpressionNodeVisitProc);
 var
   c : TFHIRPathExpressionNode;
@@ -563,6 +567,7 @@ begin
   if OpNext <> nil then
     OpNext.visitAll(context, proc);
 end;
+{$ENDIF}
 
 procedure TFHIRPathExpressionNode.write(b: TStringBuilder);
 var
@@ -938,7 +943,7 @@ var
 begin
   result := TFHIRTypeDetails.create(csNULL, []);
   try
-    if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
+    if (right.FcollectionStatus in [csUNORDERED, csSingleton]) then
       result.FcollectionStatus := csUNORDERED
     else
       result.FcollectionStatus := csORDERED;
@@ -973,7 +978,7 @@ var
 begin
   result := TFHIRTypeDetails.create(csNULL, []);
   try
-    if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
+    if (right.FcollectionStatus in [csUNORDERED, csSINGLETON]) then
       result.FcollectionStatus := csUNORDERED
     else
       result.FcollectionStatus := csORDERED;

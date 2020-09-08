@@ -553,6 +553,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 procedure TFHIRPathExpressionNode.visitAll(context : pointer; proc: TFHIRPathExpressionNodeVisitProc);
 var
   c : TFHIRPathExpressionNode;
@@ -568,6 +569,7 @@ begin
   if OpNext <> nil then
     OpNext.visitAll(context, proc);
 end;
+{$ENDIF}
 
 procedure TFHIRPathExpressionNode.write(b: TStringBuilder);
 var

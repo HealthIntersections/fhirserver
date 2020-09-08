@@ -681,7 +681,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
     begin
       StringSplit(t, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, t);
       if (s <> '') Then
-        result.Add(lowercase(FStem.calc(s)));
+        result.Add(lowercase(FStem.Stem(s)));
     end;
     result.SortAscending;
   end;

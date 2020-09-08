@@ -38,7 +38,7 @@ interface
 // FHIR v4.0.0 generated 2018-12-24T07:10:39+11:00
 
 uses
-  Classes, SysUtils, EncdDecd, 
+  Classes, SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
   FHIR.R4.Base;

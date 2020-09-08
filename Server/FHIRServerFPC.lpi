@@ -198,6 +198,7 @@
       <Unit41>
         <Filename Value="..\library\loinc\FHIR.Loinc.Importer.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.LOINC.Importer"/>
       </Unit41>
       <Unit42>
         <Filename Value="..\library\loinc\FHIR.Loinc.Publisher.pas"/>

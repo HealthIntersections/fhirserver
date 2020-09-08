@@ -28,12 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
+  {$IFNDEF FPC}
   FastMM4,
-  Windows, WinSvc, PSApi, TlHelp32, SysUtils, Classes,
-   FHIR.Support.Base, FHIR.Support.Utilities;
+  {$ENDIF}
+  Windows, {$IFDEF FPC} JwaWinSvc{$ELSE}WinSvc, PSApi, TlHelp32, {$ENDIF}, SysUtils, Classes,
+  FHIR.Support.Base, FHIR.Support.Utilities;
 
 type
   TSystemService = { Abstract } class (TFslObject)
@@ -79,7 +83,9 @@ type
     procedure Stop(AReason : String; ATellUser : boolean = true);
     procedure Execute;
     Property DisplayName : String read FDisplayName;
+    {$IFNDEF FPC}
     function ThreadStatus: String;
+    {$ENDIF}
   end;
 
 var
@@ -225,6 +231,7 @@ begin
   result := EncodeDate(1601, 1, 1);
 end;
 
+{$IFNDEF FPC}
 function TSystemService.ThreadStatus : String;
 var
   SnapProcHandle: THandle;
@@ -282,10 +289,14 @@ begin
     end;
   result := result+inttostr(count)+' threads';
 end;
+{$ENDIF}
+
 
 procedure TSystemService.dump;
 begin
+  {$IFNDEF FPC}
   logt(ThreadStatus);
+  {$ENDIF}
   logt(DumpLocks);
 end;
 
@@ -317,6 +328,7 @@ begin
     end;
 end;
 
+{$IFNDEF FPC}
 Procedure DeathThread(o : TObject); Stdcall;
 var
   LMemMgr: {$IFDEF VER130}TMemoryManager {$ELSE}TMemoryManagerEx{$ENDIF};
@@ -368,6 +380,7 @@ var
 Begin
   CloseHandle(CreateThread(Nil, 8192, @DeathThread, nil, 0, ThreadID));
 End;
+{$ENDIF}
 
 
 procedure TSystemService.InternalExecute;
@@ -402,7 +415,9 @@ begin
         if not FDebugMode then
           begin
           SetStatus(SERVICE_STOP_PENDING, 0);
+          {$IFNDEF FPC}
           LaunchDeathThread; // just to make sure we really really do shut down
+          {$ENDIF}
           end;
         DoStop;
       end;
@@ -476,7 +491,7 @@ begin
   GServiceInfo[0].lpServiceProc := @ServiceMainEntry;
   GServiceInfo[1].lpServiceName := NIL;
   GServiceInfo[1].lpServiceProc := NIL;
-  StartServiceCtrlDispatcher(GServiceInfo[0]);
+  StartServiceCtrlDispatcher(@GServiceInfo[0]);
 end;
 
 procedure TSystemService.SetStatus(AState, AControls : DWord);
