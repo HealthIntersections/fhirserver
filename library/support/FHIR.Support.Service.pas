@@ -813,7 +813,7 @@ end;
 
 procedure TServiceManagerHandle.ListServices(AList: TStringList);
 var
-  LSvc: packed array [0..1000] of LPENUM_SERVICE_STATUS;
+  LSvc: packed array [0..1000] of ENUM_SERVICE_STATUS;
   LNeeded, LReturned, LResume : DWord;
   i : integer;
 begin
