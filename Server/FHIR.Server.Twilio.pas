@@ -42,7 +42,7 @@ begin
     FResponse := 'Thanks. Working...';
   FLock := TFslLock.Create('Twilio');
   FDb := db;
-  FKey := FDB.countSql('twilio', 'Select Max(TwilioKey) from Twilio');
+  FKey := FDB.countSql('Select Max(TwilioKey) from Twilio', 'twilio');
 end;
 
 destructor TTwilioServer.Destroy;

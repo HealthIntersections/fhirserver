@@ -3157,7 +3157,12 @@ writeln('fhp2');
     end;
 writeln('fhp3');
 
-    pol := FContext.Storage.ProfilesAsOptionList;
+    try
+      pol := FContext.Storage.ProfilesAsOptionList;
+    except
+      on e : Exception do
+        pol := e.message;
+    end;
     profiles := TFslStringMatch.Create;
     try
       profiles.forced := true;
