@@ -36,7 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
+  Windows, SysUtils, StrUtils, Classes, IniFiles, ActiveX, ComObj,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Service,
   FHIR.Web.Fetcher, FHIR.Web.Parsers,
@@ -62,7 +62,7 @@ Uses
   FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, FHIR.Base.Objects,
   FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource,
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
-  FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Manager, FHIR.Server.Ini, FHIR.Server.Version;
+  FHIR.Server.Indexing, FHIR.Server.Subscriptions, {$IFNDEF FPC} FHIR.Server.Manager, {$ENDIF} FHIR.Server.Ini, FHIR.Server.Version;
 
 Type
   TKernelServerFactory = class (TFHIRServerFactory)

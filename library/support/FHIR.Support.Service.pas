@@ -839,7 +839,8 @@ begin
   LResume := 0;
   repeat
     if not EnumServicesStatus(FHandle, SERVICE_WIN32, SERVICE_ACTIVE or SERVICE_INACTIVE,
-              {$IFDEF FPC}@{$ENDIF}LSvc[0], sizeof(TEnumServiceStatus) * 1000, LNeeded, LReturned, LResume) then
+              {$IFDEF FPC}@{$ENDIF}{$IFDEF VER340}@{$ENDIF}
+              LSvc[0], sizeof(TEnumServiceStatus) * 1000, LNeeded, LReturned, LResume) then
       RaiseLastOSError;
     for i := 0 to LReturned - 1 do
       AList.Values[LSvc[i].lpServiceName] := LSvc[i].lpDisplayName;

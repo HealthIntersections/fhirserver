@@ -33,6 +33,8 @@ implementation
 { TTwilioServer }
 
 constructor TTwilioServer.Create(Db : TFslDBManager; response : String);
+var
+  conn : TFslDBConnection;
 begin
   Inherited Create;
   FResponse := response;
@@ -40,11 +42,7 @@ begin
     FResponse := 'Thanks. Working...';
   FLock := TFslLock.Create('Twilio');
   FDb := db;
-  FDB.connection('twilio', Procedure (conn : TFslDBConnection)
-  begin
-    FKey := conn.CountSQL('Select Max(TwilioKey) from Twilio');
-  end
-  );
+  FKey := FDB.countSql('twilio', 'Select Max(TwilioKey) from Twilio');
 end;
 
 destructor TTwilioServer.Destroy;
@@ -68,6 +66,7 @@ var
   a : String;
   json, obj : TJsonObject;
   arr : TJsonArray;
+  conn : TFslDBConnection;
 begin
   pm := THTTPParameters.Create(request.UnparsedParams);
   try
@@ -76,27 +75,34 @@ begin
     json := TJsonObject.Create;
     try
       arr := json.forceArr['messages'];
-      FDB.connection('twilio', Procedure (conn : TFslDBConnection)
+      conn := FDB.getConnection('twilio');
+      try
+        conn.sql := 'Select SourceNum, CreatedDate, MsgBody from Twilio where AccountId = :a and Status = 1';
+        conn.Prepare;
+        conn.BindString('a', a);
+        conn.Execute;
+        while (conn.fetchNext) do
         begin
-          conn.sql := 'Select SourceNum, CreatedDate, MsgBody from Twilio where AccountId = :a and Status = 1';
-          conn.Prepare;
-          conn.BindString('a', a);
-          conn.Execute;
-          while (conn.fetchNext) do
-          begin
-            obj := TJsonObject.Create;
-            arr.add(obj);
-            obj.vStr['from'] := conn.ColStringByName['SourceNum'];
-            obj.vStr['date'] := conn.ColStringByName['CreatedDate'];
-            obj.vStr['body'] := conn.ColBlobAsStringByName['MsgBody'];
-          end;
-          conn.Terminate;
-          conn.sql := 'Update Twilio set Status = 2, DownloadedDate = getdate() where AccountId = :a';
-          conn.Prepare;
-          conn.BindString('a', a);
-          conn.Execute;
-          conn.Terminate;
-        end);
+          obj := TJsonObject.Create;
+          arr.add(obj);
+          obj.vStr['from'] := conn.ColStringByName['SourceNum'];
+          obj.vStr['date'] := conn.ColStringByName['CreatedDate'];
+          obj.vStr['body'] := conn.ColBlobAsStringByName['MsgBody'];
+        end;
+        conn.Terminate;
+        conn.sql := 'Update Twilio set Status = 2, DownloadedDate = getdate() where AccountId = :a';
+        conn.Prepare;
+        conn.BindString('a', a);
+        conn.Execute;
+        conn.Terminate;
+        conn.release;
+      except
+        on e : Exception do
+        begin
+          conn.error(e);
+          raise;
+        end;
+      end;
       response.ResponseNo := 200;
       response.ResponseText := 'OK';
       response.ContentType := 'application/json';
@@ -115,6 +121,7 @@ var
   pm : THTTPParameters;
   tk : integer;
   a, f, b : String;
+  conn : TFslDBConnection;
 begin
   FLock.Lock;
   try
@@ -130,17 +137,24 @@ begin
     result := 'Twillio POST '+a;
     f := pm['From'];
     b := pm['Body'];
-    FDB.connection('twilio', Procedure (conn : TFslDBConnection)
+    conn := FDB.getConnection('twilio');
+    try
+      conn.sql := 'Insert into Twilio (TwilioKey, AccountId, Status, SourceNum, CreatedDate, MsgBody) values (:k, :a, 1, :f, getDate(), :b)';
+      conn.Prepare;
+      conn.BindInteger('k', tk);
+      conn.BindString('a', a);
+      conn.BindString('f', f);
+      conn.BindBlobFromString('b', b);
+      conn.Execute;
+      conn.Terminate;
+      conn.release;
+    except
+      on e : Exception do
       begin
-        conn.sql := 'Insert into Twilio (TwilioKey, AccountId, Status, SourceNum, CreatedDate, MsgBody) values (:k, :a, 1, :f, getDate(), :b)';
-        conn.Prepare;
-        conn.BindInteger('k', tk);
-        conn.BindString('a', a);
-        conn.BindString('f', f);
-        conn.BindBlobFromString('b', b);
-        conn.Execute;
-        conn.Terminate;
-      end);
+        conn.error(e);
+        raise;
+      end;
+    end;
     response.ResponseNo := 200;
     response.ResponseText := 'OK';
     response.ContentType := 'application/xml';
@@ -151,11 +165,20 @@ begin
 end;
 
 procedure TTwilioServer.sweep;
+var
+  conn : TFslDBConnection;
 begin
-  FDB.connection('twilio', Procedure (conn : TFslDBConnection)
+  conn := FDB.getConnection('twilio');
+  try
+    conn.ExecSQL('Delete from Twilio where DownloadedDate < DATEADD(day, -2, GETDATE())');
+    conn.release;
+  except
+    on e : Exception do
     begin
-      conn.ExecSQL('Delete from Twilio where DownloadedDate < DATEADD(day, -2, GETDATE())');
-    end);
+      conn.error(e);
+      raise;
+    end;
+  end;
 end;
 
 end.

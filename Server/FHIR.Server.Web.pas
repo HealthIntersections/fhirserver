@@ -3339,6 +3339,17 @@ begin
     '</a></p>' + '</div>'#13#10 + '</body>'#13#10 + '</html>'#13#10 + ''#13#10
 end;
 
+type
+  TPackageListSorter = class (TFslObject)
+  public
+    function doSort(sender : TObject; const l, r : TFHIRPackageInfo) : integer;
+  end;
+
+function TPackageListSorter.doSort(sender : TObject; const l, r : TFHIRPackageInfo) : integer;
+begin
+  result := CompareText(l.id, r.id);
+end;
+
 function TFhirWebServerEndpoint.buildPackageList: String;
 var
   pcm : TFHIRPackageManager;
@@ -3348,6 +3359,7 @@ var
   b : TFslStringBuilder;
   lp : TLoadedPackageInformation;
   links : String;
+  sorter : TPackageListSorter;
 begin
   pcm := TFHIRPackageManager.Create(false);
   try
@@ -3361,7 +3373,14 @@ begin
         try
           b.append('<table>'#13#10);
           b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
-          list.Sort(function (const L, R: TFHIRPackageInfo): Integer begin result := CompareText(l.id, r.id); end);
+
+          sorter := TPackageListSorter.create;
+          try
+            list.Sort(sorter.doSort);
+          finally
+            sorter.free;
+          end;
+
           for i in list do
           begin
             lp := loaded[i.id];
@@ -5937,33 +5956,39 @@ begin
 end;
 
 procedure TPackageUpdaterThread.RunUpdater;
+var
+  conn : TFslDBConnection;
+  upd : TPackageUpdater;
 begin
-  FDB.connection('server.packages.update',
-    Procedure (conn : TFslDBConnection)
-    var
-      upd : TPackageUpdater;
-    begin
-      upd := TPackageUpdater.create;
+  conn := FDB.getConnection('server.packages.update');
+  try
+    upd := TPackageUpdater.create;
+    try
       try
-        try
-          upd.update(conn);
-          if (TFslDateTime.makeToday.DateTime <> FLastEmail) then
-          begin
-            if upd.errors <> '' then
-              sendEmail('grahameg@gmail.com', 'Package Feed Errors', upd.errors);
-            FLastEmail := TFslDateTime.makeToday.DateTime;
-          end;
-        except
-          on e : exception do
-          begin
-            logt('Exception updating packages: '+e.Message);
-          end;
+        upd.update(conn);
+        if (TFslDateTime.makeToday.DateTime <> FLastEmail) then
+        begin
+          if upd.errors <> '' then
+            sendEmail('grahameg@gmail.com', 'Package Feed Errors', upd.errors);
+          FLastEmail := TFslDateTime.makeToday.DateTime;
         end;
-      finally
-        upd.free;
+      except
+        on e : exception do
+        begin
+          logt('Exception updating packages: '+e.Message);
+        end;
       end;
-    end
-  );
+    finally
+      upd.free;
+    end;
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
 end;
 {$ENDIF}
 

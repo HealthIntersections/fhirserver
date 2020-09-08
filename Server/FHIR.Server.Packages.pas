@@ -149,7 +149,16 @@ begin
     result := '-'+ result;
 end;
 
-function TFHIRPackageServer.sort(sender : TObject; const l, r : TJsonObject) : integer;
+type
+  TFHIRPackageServerSorter = class (TFslObject)
+  private
+    sort : TMatchTableSort;
+    factor : integer;
+  public
+    function doSort(sender : TObject; const l, r : TJsonObject) : integer;
+  end;
+
+function TFHIRPackageServerSorter.doSort(sender : TObject; const l, r : TJsonObject) : integer;
 begin
   case sort of
     mtsId : result := CompareText(l['name'], r['name']) * factor;
@@ -161,33 +170,27 @@ begin
   else
     result := 0;
   end;
-end);
+end;
 
 function TFHIRPackageServer.genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch: boolean): String;
 var
   b : TFslStringBuilder;
   i : TJsonObject;
-  factor : integer;
   ss : String;
+  sorter : TFHIRPackageServerSorter;
 begin
   if inSearch then
     ss := '&sort='
   else
     ss := '?sort=';
-  if rev then factor := -1 else factor := 1;
-  list.sort(function (const l, r : TJsonObject) : integer
-    begin
-      case sort of
-        mtsId : result := CompareText(l['name'], r['name']) * factor;
-        mtsVersion : result := CompareText(l['version'], r['version']) * factor;
-        mtsDate : result := CompareText(l['date'], r['date']) * factor;
-        mtsFhirVersion : result := CompareText(l['fhirVersion'], r['fhirVersion']) * factor;
-        mtsCanonical : result := CompareText(l['canonical'], r['canonical']) * factor;
-        mtsDownloads : result := (l.int['count'] - r.int['count']) * factor;
-      else
-        result := 0;
-      end;
-    end);
+  sorter := TFHIRPackageServerSorter.create;
+  try
+    sorter.sort := sort;
+    if rev then sorter.factor := -1 else sorter.factor := 1;
+    list.sort(sorter.doSort);
+  finally
+    sorter.free;
+  end;
   b := TFslStringBuilder.Create;
   try
     b.Append('<table class="grid pck-matches">'#13#10);
@@ -280,11 +283,12 @@ begin
 end;
 
 procedure TFHIRPackageServer.serveDownload(id, version : String; response : TIdHTTPResponseInfo);
+var
+  conn : TFslDBConnection;
 begin
-  FDB.connection('Package.server.download',
-    procedure (conn : TFslDBConnection)
-    begin
-      conn.SQL := 'Select Content from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version = '''+SQLWrapString(version)+'''';
+  conn := FDB.getConnection('Package.server.download');
+  try
+    conn.SQL := 'Select Content from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version = '''+SQLWrapString(version)+'''';
       conn.Prepare;
       conn.Execute;
       if conn.FetchNext then
@@ -312,9 +316,16 @@ begin
         response.ContentText := 'The package "'+id+'#'+version+'" is not known by this server';
       end;
       conn.Terminate;
-    end
-  );
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
 end;
+
 
 procedure TFHIRPackageServer.serveHomePage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
@@ -334,15 +345,15 @@ begin
 end;
 
 procedure TFHIRPackageServer.serveVersions(id, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+var
+  conn : TFslDBConnection;
+  json, v: TJsonObject;
+  src : String;
+  vars : TFslMap<TFHIRObject>;
+  list : TFslList<TJsonObject>;
 begin
-  FDB.connection('Package.server.versions',
-    procedure (conn : TFslDBConnection)
-    var
-      json, v: TJsonObject;
-      src : String;
-      vars : TFslMap<TFHIRObject>;
-      list : TFslList<TJsonObject>;
-    begin
+  conn := FDB.getConnection('Package.server.versions');
+  try
       conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, DownloadCount, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
       conn.prepare;
       conn.Execute;
@@ -401,8 +412,14 @@ begin
       finally
         list.Free;
       end;
-    end
-  );
+      conn.release;
+    except
+      on e : Exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
+    end;
 end;
 
 function sel(this, that : String) : string;
@@ -414,112 +431,43 @@ begin
 end;
 
 procedure TFHIRPackageServer.serveSearch(name, canonical, FHIRVersion, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+var
+  conn : TFslDBConnection;
+  json : TJsonArray;
+    v : TJsonObject;
+    filter, src : String;
+    vars : TFslMap<TFHIRObject>;
+    list : TFslList<TJsonObject>;
 begin
-  FDB.connection('Package.server.search',
-    procedure (conn : TFslDBConnection)
-    var
-      json : TJsonArray;
-      v : TJsonObject;
-      filter, src : String;
-      vars : TFslMap<TFHIRObject>;
-      list : TFslList<TJsonObject>;
-    begin
-      filter := '';
-      if name <> '' then
-        filter := filter + ' and PackageVersions.id like ''%'+name+'%''';
-      if canonical <> '' then
-        filter := filter + ' and PackageVersions.canonical like '''+canonical+'%''';
-      if FHIRVersion <> '' then
-        filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+getVersion(FHIRVersion)+'%'')';
+  conn := FDB.getConnection('Package.server.search');
+  try
+    filter := '';
+    if name <> '' then
+      filter := filter + ' and PackageVersions.id like ''%'+name+'%''';
+    if canonical <> '' then
+      filter := filter + ' and PackageVersions.canonical like '''+canonical+'%''';
+    if FHIRVersion <> '' then
+      filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+getVersion(FHIRVersion)+'%'')';
 
-      conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, PackageVersions.Canonical, Packages.DownloadCount, Description from Packages, PackageVersions '+
-        'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
-      conn.prepare;
-      conn.Execute;
-      list := TFslList<TJsonObject>.create;
-      try
-        json := TJsonArray.Create;
-        try
-          while conn.FetchNext do
-          begin
-            v := TJsonObject.Create;
-            json.add(v);
-            list.Add(v.Link);
-            v['name'] := conn.ColStringByName['Id'];
-            v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
-            v['version'] := conn.ColStringByName['Version'];
-            v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
-              v['count'] := conn.ColStringByName['DownloadCount'];
-            v['canonical'] := conn.ColStringByName['Canonical'];
-            if not conn.ColNullByName['Description'] then
-              v['description'] := conn.ColBlobAsStringByName['Description'];
-            v['url'] := URLPath([FPathAbsolute, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
-          end;
-
-          src := TJsonWriterDirect.writeArrayStr(json, true);
-        finally
-          json.Free;
-        end;
-
-        conn.terminate;
-        response.ResponseNo := 200;
-        response.ResponseText := 'OK';
-        if (request.Accept.contains('/html')) then
-        begin
-          vars := TFslMap<TFHIRObject>.create('vars');
-          try
-            vars.add('name', TFHIRString.create(name));
-            vars.add('canonical', TFHIRString.create(canonical));
-            vars.add('FHIRVersion', TFHIRString.create(FHIRVersion));
-            vars.add('count', TFHIRInteger.create(conn.CountSQL('Select count(*) from PackageVersions')));
-            vars.add('prefix', TFHIRString.create(FPathAbsolute));
-            vars.add('ver', TFHIRString.create('4.0.1'));
-            vars.add('r2selected', TFHIRString.create(sel('R2', FHIRVersion)));
-            vars.add('r3selected', TFHIRString.create(sel('R3', FHIRVersion)));
-            vars.add('r4selected', TFHIRString.create(sel('R4', FHIRVersion)));
-            vars.add('matches', TFHIRString.create(genTable(FPathAbsolute+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true)));
-            vars.add('status', TFHIRString.create(status));
-            FReturnProcessFileEvent(request, response, nil, request.Document, 'packages-search.html', false, vars);
-          finally
-            vars.free;
-          end;
-        end
-        else
-        begin
-          response.ContentType := 'application/json';
-          response.ContentText := src;
-        end;
-      finally
-        list.Free;
-      end;
-    end
-  );
-end;
-
-procedure TFHIRPackageServer.serveUpdates(date : TFslDateTime; response : TIdHTTPResponseInfo);
-begin
-  FDB.connection('Package.server.search',
-    procedure (conn : TFslDBConnection)
-    var
-      json : TJsonArray;
-      v : TJsonObject;
-      src : String;
-    begin
-      conn.sql := 'select Id, Version, PubDate, FhirVersions, Canonical, Description from PackageVersions where Indexed >= :d order by Indexed';
-      conn.prepare;
-      conn.BindDateTimeEx('d', date);
-      conn.Execute;
+    conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, PackageVersions.Canonical, Packages.DownloadCount, Description from Packages, PackageVersions '+
+      'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
+    conn.prepare;
+    conn.Execute;
+    list := TFslList<TJsonObject>.create;
+    try
       json := TJsonArray.Create;
       try
         while conn.FetchNext do
         begin
           v := TJsonObject.Create;
           json.add(v);
+          list.Add(v.Link);
           v['name'] := conn.ColStringByName['Id'];
           v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
           v['version'] := conn.ColStringByName['Version'];
-          v['canonical'] := conn.ColStringByName['Canonical'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
+            v['count'] := conn.ColStringByName['DownloadCount'];
+          v['canonical'] := conn.ColStringByName['Canonical'];
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
           v['url'] := URLPath([FPathAbsolute, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
@@ -529,14 +477,95 @@ begin
       finally
         json.Free;
       end;
+
       conn.terminate;
       response.ResponseNo := 200;
       response.ResponseText := 'OK';
-      response.Date := TFslDateTime.makeUTC.DateTime;
-      response.ContentType := 'application/json';
-      response.ContentText := src;
-    end
-  );
+      if (request.Accept.contains('/html')) then
+      begin
+        vars := TFslMap<TFHIRObject>.create('vars');
+        try
+          vars.add('name', TFHIRString.create(name));
+          vars.add('canonical', TFHIRString.create(canonical));
+          vars.add('FHIRVersion', TFHIRString.create(FHIRVersion));
+          vars.add('count', TFHIRInteger.create(conn.CountSQL('Select count(*) from PackageVersions')));
+          vars.add('prefix', TFHIRString.create(FPathAbsolute));
+          vars.add('ver', TFHIRString.create('4.0.1'));
+          vars.add('r2selected', TFHIRString.create(sel('R2', FHIRVersion)));
+          vars.add('r3selected', TFHIRString.create(sel('R3', FHIRVersion)));
+          vars.add('r4selected', TFHIRString.create(sel('R4', FHIRVersion)));
+          vars.add('matches', TFHIRString.create(genTable(FPathAbsolute+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true)));
+          vars.add('status', TFHIRString.create(status));
+          FReturnProcessFileEvent(request, response, nil, request.Document, 'packages-search.html', false, vars);
+        finally
+          vars.free;
+        end;
+      end
+      else
+      begin
+        response.ContentType := 'application/json';
+        response.ContentText := src;
+      end;
+    finally
+      list.Free;
+    end;
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
+end;
+
+procedure TFHIRPackageServer.serveUpdates(date : TFslDateTime; response : TIdHTTPResponseInfo);
+var
+  conn : TFslDBConnection;
+  json : TJsonArray;
+  v : TJsonObject;
+  src : String;
+begin
+  conn := FDB.getConnection('Package.server.search');
+  try
+    conn.sql := 'select Id, Version, PubDate, FhirVersions, Canonical, Description from PackageVersions where Indexed >= :d order by Indexed';
+    conn.prepare;
+    conn.BindDateTimeEx('d', date);
+    conn.Execute;
+    json := TJsonArray.Create;
+    try
+      while conn.FetchNext do
+      begin
+        v := TJsonObject.Create;
+        json.add(v);
+        v['name'] := conn.ColStringByName['Id'];
+        v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
+        v['version'] := conn.ColStringByName['Version'];
+        v['canonical'] := conn.ColStringByName['Canonical'];
+        v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
+        if not conn.ColNullByName['Description'] then
+          v['description'] := conn.ColBlobAsStringByName['Description'];
+        v['url'] := URLPath([FPathAbsolute, conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
+      end;
+
+      src := TJsonWriterDirect.writeArrayStr(json, true);
+    finally
+      json.Free;
+    end;
+    conn.terminate;
+    response.ResponseNo := 200;
+    response.ResponseText := 'OK';
+    response.Date := TFslDateTime.makeUTC.DateTime;
+    response.ContentType := 'application/json';
+    response.ContentText := src;
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
 end;
 
 function TFHIRPackageServer.serveCreatePackage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
