@@ -76,6 +76,7 @@ type
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
     procedure LoadingFinished; override;
 
     function PatientIdExpression(rt : TFhirResourceType) : TFHIRPathExpressionNode;
@@ -295,6 +296,11 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+function TFHIRServerWorkerContextR5.getSearchParameter(resourceType, name: String): TFHIRResourceV;
+begin
+  result := FSearchParameters[resourceType+'.'+name];
 end;
 
 function TFHIRServerWorkerContextR5.expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet;

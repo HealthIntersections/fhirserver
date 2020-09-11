@@ -669,6 +669,7 @@ type
   private
     function sub : TFhirSubscription;
   protected
+    function getTopic: string; override;
     function getCriteria: String; override;
     function getDirect: boolean; override;
     function getEndpoint: String; override;
@@ -686,6 +687,12 @@ type
     procedure setMethod(Value: TSubscriptionMethod); override;
     procedure setPayload(Value: String); override;
     procedure setStatus(Value: TSubscriptionStatus); override;
+  end;
+
+  TFHIRSubscriptionTopic5 = class (TFHIRSubscriptionTopicW)
+  private
+    function sub : TFhirSubscriptionTopic;
+  public
   end;
 
   TFhirObservationComponent5 = class (TFhirObservationComponentW)
@@ -3745,6 +3752,11 @@ begin
     result[i] := sub.headerList[i].value;
 end;
 
+function TFHIRSubscription5.getTopic : String;
+begin
+  result := sub.topic.reference;
+end;
+
 function TFHIRSubscription5.GetMethod: TSubscriptionMethod;
 begin
   result := smNull; // MAP_TSubscriptionMethod[sub.channel.type_];
@@ -4940,6 +4952,13 @@ end;
 function TFhirProvenance5.p: TFhirProvenance;
 begin
   result := (Fres as TFhirProvenance);
+end;
+
+{ TFHIRSubscriptionTopic5 }
+
+function TFHIRSubscriptionTopic5.sub: TFhirSubscriptionTopic;
+begin
+  result := resource as TFhirSubscriptionTopic;
 end;
 
 end.

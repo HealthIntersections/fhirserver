@@ -141,7 +141,7 @@ begin
         if not (resource is FHIR.R3.Resources.TFhirResource) then
           raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', lang, [CODES_TFHIRVersion[vSource]] );
         case vDest of
-          fhirVersionRelease4: exit(TVersionConvertor_30_40.convertResource(resource as FHIR.R3.Resources.TFhirResource));
+          fhirVersionRelease4: exit(TVersionConvertor_30_40.convertResource3(resource as FHIR.R3.Resources.TFhirResource));
         end;
       end;
     fhirVersionRelease4:
@@ -149,7 +149,7 @@ begin
         if not (resource is FHIR.R4.Resources.TFhirResource) then
           raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', lang, [CODES_TFHIRVersion[vSource]] );
         case vDest of
-          fhirVersionRelease3: exit(TVersionConvertor_30_40.convertResource(resource as FHIR.R4.Resources.TFhirResource));
+          fhirVersionRelease3: exit(TVersionConvertor_30_40.convertResource4(resource as FHIR.R4.Resources.TFhirResource));
         end;
       end;
   end;

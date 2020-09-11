@@ -418,7 +418,9 @@ begin
                 else if work is TFhirResource then
                   // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                 else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
-                  raise EFHIRException.create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
+                begin
+                  writeln('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
+                end;
                 end;
               sxpPhonetic:
                 begin

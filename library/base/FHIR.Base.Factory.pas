@@ -196,6 +196,7 @@ type
     function wrapBinary(r : TFHIRResourceV) : TFhirBinaryW; virtual; abstract;
     function wrapAuditEvent(r : TFHIRResourceV) : TFhirAuditEventW; virtual; abstract;
     function wrapSubscription(r : TFHIRResourceV) : TFhirSubscriptionW; virtual; abstract;
+    function wrapSubscriptionTopic(r : TFHIRResourceV) : TFhirSubscriptionTopicW; virtual; abstract;
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; virtual; abstract;
     function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; virtual; abstract;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; virtual; abstract;
@@ -215,6 +216,9 @@ type
     function makeOpReqSubsumes : TFHIRSubsumesOpRequestW; virtual; abstract;
     function makeOpRespSubsumes : TFHIRSubsumesOpResponseW; virtual; abstract;
     function makeValueSetContains : TFhirValueSetExpansionContainsW; virtual; abstract;
+
+    function parseJson(worker : TFHIRWorkerContextV; bytes : TBytes) : TFHIRResourceV;
+    function parseXml(worker : TFHIRWorkerContextV; bytes : TBytes) : TFHIRResourceV;
   end;
 
   TFHIRVersionFactories = class (TFslObject)
@@ -265,6 +269,7 @@ type
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; virtual; abstract;
     procedure LoadingFinished; virtual;
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; virtual; abstract;
   end;
 
 
@@ -332,6 +337,30 @@ end;
 function TFHIRFactory.makeResource(const name: String): TFHIRResourceV;
 begin
   result := makeByName(name) as TFHIRResourceV;
+end;
+
+function TFHIRFactory.parseJson(worker: TFHIRWorkerContextV; bytes : TBytes): TFHIRResourceV;
+var
+  parser : TFHIRParser;
+begin
+  parser := makeParser(worker, ffJson, THTTPlanguages.Create('en'));
+  try
+    result := parser.parseResource(bytes);
+  finally
+    parser.Free;
+  end;
+end;
+
+function TFHIRFactory.parseXml(worker: TFHIRWorkerContextV; bytes : TBytes): TFHIRResourceV;
+var
+  parser : TFHIRParser;
+begin
+  parser := makeParser(worker, ffXml, THTTPlanguages.Create('en'));
+  try
+    result := parser.parseResource(bytes);
+  finally
+    parser.Free;
+  end;
 end;
 
 function TFHIRFactory.makeCoding(systemUri, code, display: String): TFHIRObject;

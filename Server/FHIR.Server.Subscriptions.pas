@@ -114,7 +114,7 @@ Type
     property TrackerItem[i : integer] : TFHIRSubscriptionTracker read GetTracker; default;
   end;
 
-  TEventDefinition = class (TFslObject)
+  TSubscriptionTopic = class (TFslObject)
   private
     FResource: TFHIRResourceV;
     FId: String;
@@ -122,7 +122,7 @@ Type
     procedure SetResource(const Value: TFHIRResourceV);
   public
     destructor Destroy; override;
-    function link : TEventDefinition;
+    function link : TSubscriptionTopic;
     property id : String read FId write FId;
     property url : String read FUrl write FUrl;
     property resource : TFHIRResourceV read FResource write SetResource;
@@ -132,16 +132,18 @@ Type
   private
     FSubscription : TFHIRSubscriptionW;
     FKey : Integer;
-    FResourceType: Integer;
+    FResourceTypes: TArray<Integer>;
     FId: String;
-    procedure SeTFHIRSubscriptionW(const Value: TFHIRSubscriptionW);
+    procedure SetFHIRSubscriptionW(const Value: TFHIRSubscriptionW);
   public
     constructor Create; Override;
     destructor Destroy; Override;
     Property Key : integer read FKey write FKey;
     Property Id : String read FId write FId;
-    Property ResourceType : Integer read FResourceType write FResourceType;
-    Property Subscription : TFHIRSubscriptionW read FSubscription write SeTFHIRSubscriptionW;
+    Property ResourceTypes : TArray<Integer> read FResourceTypes write FResourceTypes;
+    Property Subscription : TFHIRSubscriptionW read FSubscription write SetFHIRSubscriptionW;
+
+    function hasResourceType(key : Integer) : boolean;
   end;
 
   TFHIRSubscriptionEntryList = class (TFslObjectList)
@@ -150,14 +152,14 @@ Type
   protected
     function ItemClass : TFslObjectClass; override;
   public
-    procedure add(Key, ResourceType : Integer; id : String; Subscription : TFHIRSubscriptionW); overload;
+    procedure add(Key : Integer; ResourceTypes : TArray<Integer>; id : String; Subscription : TFHIRSubscriptionW); overload;
     function getByKey(Key : integer) : TFHIRSubscriptionEntry;
     property EntryItem[i : integer] : TFHIRSubscriptionEntry read GetEntry; default;
   end;
 
   TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
-  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : THTTPParameters; conn : TFslDBConnection): String of object;
+  TExecuteSearchEvent = function (typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : THTTPParameters; conn : TFslDBConnection): String of object;
 
   TSubscriptionManager = class abstract (TFHIRServerWorker)
   private
@@ -171,10 +173,12 @@ Type
     FBase : String;
     FOnGetSessionEvent: TGetSessionEvent;
     FLastPopCheck : TDateTime;
+    FSubscriptionTopics : TFslMap<TSubscriptionTopic>;
 
     FCloseAll : boolean;
     FSemaphores : TFslMap<TWebSocketQueueInfo>;
     FLang : THTTPLanguages;
+    FLoading: boolean;
 
     function settings : TFHIRServerSettings;
     function factory : TFHIRFactory;
@@ -191,7 +195,8 @@ Type
     function chooseSMTPSender(direct : boolean): String;
     function chooseSMTPUsername(direct : boolean): String;
 
-    function determineResourceTypeKey(criteria : String; conn : TFslDBConnection) : integer;
+    function determineResourceTypeKeys(subscription : TFHIRSubscriptionW; conn : TFslDBConnection) : TArray<integer>; overload;
+    function determineResourceTypeKeys(criteria : String; conn : TFslDBConnection) : TArray<integer>; overload;
     procedure SeeNewSubscription(key : Integer; id : String; subscription : TFHIRResourceV; session : TFHIRSession; conn : TFslDBConnection);
     function ProcessSubscription(conn : TFslDBConnection): Boolean;
     function ProcessNotification(conn : TFslDBConnection): Boolean;
@@ -222,20 +227,23 @@ Type
     procedure checkSaveTags(subst : TFHIRSubscriptionW; conn : TFslDBConnection; key : integer; res : TFHIRResourceV);
   protected
     FLock : TFslLock;
-    FEventDefinitions : TFslMap<TEventDefinition>;
-    function MeetsCriteriaSearch(criteria : String; typekey, key : integer; conn : TFslDBConnection) : boolean;
-    function LoadResourceFromDBByVer(conn : TFslDBConnection; vkey: integer; var id : String) : TFhirResourceV;
+    function MeetsCriteriaSearch(criteria : String; typekey : Integer; key : integer; conn : TFslDBConnection) : boolean;
+    function LoadResourceFromDBByVer(conn : TFslDBConnection; vkey: integer; var id : String) : TFhirResourceV; overload;
+    function LoadResourceFromDBByVer(conn : TFslDBConnection; vkey: integer; var id : String; canBeNull : boolean) : TFhirResourceV; overload;
 
     procedure checkAcceptable(subscription : TFHIRSubscriptionW; session : TFHIRSession); virtual; abstract;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
     function preparePackage(userkey : integer; created : boolean; subscription : TFHIRSubscriptionW; resource : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
-    function MeetsCriteria(subscription : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TFslDBConnection) : boolean; virtual; abstract;
+    function MeetsCriteria(subscription : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFslDBConnection) : boolean; virtual; abstract;
     function checkSubscription(subscription: TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
-    function loadEventDefinition(res : TFHIRResourceV) : TEventDefinition; virtual; abstract;
+    function checkSubscriptionTopic(subscription: TFHIRResourceV) : TFHIRSubscriptionTopicW; virtual; abstract;
+    function loadSubscriptionTopic(res : TFHIRResourceV) : TSubscriptionTopic; virtual; abstract;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
     function bundleIsTransaction(res : TFHIRResourceV) : boolean; virtual; abstract;
     function processUrlTemplate(url : String; resource : TFhirResourceV) : String; virtual; abstract;
+    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>; overload; virtual; abstract;
     // function getSummaryForChannel(subst : TFHIRSubscriptionW) : String; virtual; abstract;
+
   public
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
@@ -246,8 +254,11 @@ Type
     procedure Process; // spend up to 30 seconds working on subscriptions
     procedure ProcessEmails; // on a separate thread to Process
     procedure HandleWebSocket(connection : TIdWebSocket);
+    procedure DoneLoading(conn : TFslDBConnection);
 
     procedure sendByEmail(resource : TFHIRResourceV; dest : String; direct : boolean); overload;
+    property SubscriptionTopics : TFslMap<TSubscriptionTopic> read FSubscriptionTopics;
+    function getSubscriptionTopic(canonical : string): TSubscriptionTopic; virtual;
 
     Property Database : TFslDBManager read FDatabase write FDatabase;
 
@@ -274,16 +285,17 @@ begin
   FSemaphores := TFslMap<TWebSocketQueueInfo>.Create('subscr.semaphore');
   FCloseAll := false;
   FLastPopCheck := 0;
-  FEventDefinitions := TFslMap<TEventDefinition>.create('subscr.event');
+  FSubscriptionTopics := TFslMap<TSubscriptionTopic>.create('subscr.event');
   FLang := THTTPLanguages.create('en');
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
   wsWakeAll;
-  FEventDefinitions.Free;
+  FSubscriptionTopics.Free;
   FSemaphores.Free;
   FSubscriptionTrackers.Free;
+  FSubscriptionTopics.Free;
   FSubscriptions.Free;
   FLock.Free;
   FDatabase.Free;
@@ -300,7 +312,8 @@ begin
   try
     request.internalRequestId := TFHIRServerContext(ServerContext).Globals.nextRequestId;
     request.Id := id;
-    request.Session := OnGetSessionEvent(userkey);
+    if (userkey <> 0) then
+      request.Session := OnGetSessionEvent(userkey);
     request.Resource := resource.Link;
     request.ResourceName := resource.fhirType;
     request.CommandType := fcmdUpdate;
@@ -376,17 +389,17 @@ end;
 
 procedure TSubscriptionManager.DropResource(key, vkey, pvkey: Integer);
 var
-  evd : TEventDefinition;
+  evd : TSubscriptionTopic;
 begin
   DoDropResource(key, vKey, pvkey, false);
   FLock.Lock('DropResource');
   try
-    if FEventDefinitions.ContainsKey('key:'+inttostr(key)) then
+    if FSubscriptionTopics.ContainsKey('key:'+inttostr(key)) then
     begin
-      evd := FEventDefinitions['key:'+inttostr(key)];
-      FEventDefinitions.Remove(evd.id);
-      FEventDefinitions.Remove(evd.url);
-      FEventDefinitions.Remove('key:'+inttostr(key));
+      evd := FSubscriptionTopics['key:'+inttostr(key)];
+      FSubscriptionTopics.Remove(evd.id);
+      FSubscriptionTopics.Remove(evd.url);
+      FSubscriptionTopics.Remove('key:'+inttostr(key));
     end;
   finally
     FLock.Unlock;
@@ -396,6 +409,22 @@ end;
 function TSubscriptionManager.factory: TFHIRFactory;
 begin
   result := TFHIRServerContext(ServerContext).Factory;
+end;
+
+function TSubscriptionManager.getSubscriptionTopic(canonical: string): TSubscriptionTopic;
+begin
+  result := nil;
+  FLock.Lock('getSubscriptionTopic');
+  try
+    if not FSubscriptionTopics.TryGetValue(canonical, result) then
+    begin
+      if canonical.StartsWith('SubscriptionTopic/') then
+        FSubscriptionTopics.TryGetValue(canonical.Substring(16), result);
+    end;
+  finally
+    FLock.Unlock;
+  end;
+
 end;
 
 function TSubscriptionManager.checkForClose(connection: TIdWebSocket; id : String; worked : boolean) : boolean;
@@ -582,6 +611,32 @@ begin
   end;
 end;
 
+procedure TSubscriptionManager.DoneLoading(conn : TFslDBConnection);
+var
+  i : integer;
+  sub : TFHIRSubscriptionEntry;
+  topic : TSubscriptionTopic;
+begin
+  for i := FSubscriptions.Count - 1 downto 0 do
+  begin
+    sub := FSubscriptions[i];
+    if (length(sub.FResourceTypes) = 1) and (sub.FResourceTypes[0] = -1) then
+    begin
+      topic := getSubscriptionTopic(sub.FSubscription.topic);
+      if topic = nil then
+      begin
+        // this is an error condition; we're going to remove this subscription
+        NotifyFailure(0, sub.Key, 'Topic '+sub.FSubscription.topic+' not found');
+        FSubscriptions.DeleteByIndex(i);
+      end
+      else
+      begin
+        sub.ResourceTypes := determineResourceTypeKeys(topic, conn);
+      end;
+    end;
+  end;
+end;
+
 procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFHIRResourceV; session: TFHIRSession; conn : TFslDBConnection);
 var
   s : TFHIRSubscriptionW;
@@ -590,17 +645,37 @@ begin
   if s <> nil then
   begin
     DoDropResource(Key, 0, 0, true); // delete any previously existing entry for this subscription
-    FSubscriptions.add(key, determineResourceTypeKey(s.criteria, conn), id, s);
+    FSubscriptions.add(key, determineResourceTypeKeys(s, conn), id, s);
     FSubscriptionTrackers.addorUpdate(key, s.summary, s.status);
   end;
 end;
 
 procedure TSubscriptionManager.SeeResource(key, vkey, pvkey: Integer; id : String; op : TFHIRSubscriptionWOperation; resource: TFHIRResourceV; conn : TFslDBConnection; reload: boolean; session : TFHIRSession);
 var
-  evd : TEventDefinition;
+  evd : TSubscriptionTopic;
 begin
   FLock.Enter('SeeResource');
   try
+    if resource.fhirType = 'Subscription' then
+      SeeNewSubscription(key, id, resource, session, conn);
+
+    if resource.fhirType = 'SubscriptionTopic' then
+    begin
+      evd := loadSubscriptionTopic(resource);
+      try
+        FLock.Lock('SeeResource');
+        try
+          FSubscriptionTopics.addOrSetValue(evd.url, evd.link);
+          FSubscriptionTopics.addOrSetValue(evd.id, evd.link);
+          FSubscriptionTopics.addOrSetValue('key:'+inttostr(key), evd.link);
+        finally
+          FLock.Unlock;
+        end;
+      finally
+        evd.free;
+      end;
+    end;
+
     if not reload then // ignore if we are starting up
     begin
       // we evaluate the criteria retrospectively in a different thead, so for now, all we do is add the entry to a queue
@@ -612,24 +687,6 @@ begin
       EmptyQueue := false;
     end;
 
-    if resource.fhirType = 'Subscription' then
-      SeeNewSubscription(key, id, resource, session, conn);
-    if resource.fhirType = 'EventDefinition' then
-    begin
-      evd := loadEventDefinition(resource);
-      try
-        FLock.Lock('getEventDefinition');
-        try
-          FEventDefinitions.addOrSetValue(evd.url, evd.link);
-          FEventDefinitions.addOrSetValue(evd.id, evd.link);
-          FEventDefinitions.addOrSetValue('key:'+inttostr(key), evd.link);
-        finally
-          FLock.Unlock;
-        end;
-      finally
-        evd.free;
-      end;
-    end;
   finally
     FLock.Leave;
   end;
@@ -1201,6 +1258,9 @@ var
   i : integer;
   list : TFHIRSubscriptionEntryList;
   created : boolean;
+  bytes : TBytes;
+  id : String;
+  oldRes, newRes : TFHIRResourceV;
 begin
   SubscriptionQueueKey := 0;
   ResourceKey := 0;
@@ -1209,8 +1269,10 @@ begin
   ResourcePreviousKey := 0;
   created := false;
 
-  conn.SQL := RestrictToNRows(conn.Owner.Platform, 'Select SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, SubscriptionQueue.ResourcePreviousKey, Operation, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
-    'Handled is null and Ids.ResourceKey = SubscriptionQueue.ResourceKey order by SubscriptionQueueKey', 1);
+  conn.SQL := RestrictToNRows(conn.Owner.Platform, 'Select SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, SubscriptionQueue.ResourcePreviousKey, '+
+    'Operation, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
+    'Handled is null and Ids.ResourceKey = SubscriptionQueue.ResourceKey '+
+    'order by SubscriptionQueueKey', 1);
   conn.Prepare;
   try
     conn.Execute;
@@ -1229,29 +1291,45 @@ begin
   end;
   if result then
   begin
-    list := TFHIRSubscriptionEntryList.Create;
+    newRes := LoadResourceFromDBByVer(conn, ResourceVersionKey, id, true); // may return null
     try
-      // keep the lock short
-      FLock.Lock('List Subscriptions');
+      oldRes := nil;
+      if (ResourcePreviousKey <> 0) then
+        oldRes := LoadResourceFromDBByVer(conn, ResourcePreviousKey, id);
       try
-        for i := 0 to FSubscriptions.Count - 1 do
-          list.Add(FSubscriptions[i].FKey, FSubscriptions[i].FResourceType, FSubscriptions[i].FId, FSubscriptions[i].FSubscription.Link); // not clone
+        list := TFHIRSubscriptionEntryList.Create;
+        try
+          // keep the lock short
+          FLock.Lock('List Subscriptions');
+          try
+            for i := 0 to FSubscriptions.Count - 1 do
+              list.Add(FSubscriptions[i].FKey, FSubscriptions[i].ResourceTypes, FSubscriptions[i].FId, FSubscriptions[i].FSubscription.Link); // not clone
+          finally
+            FLock.Leave;
+          end;
+          conn.StartTransact;
+          try
+            for i := 0 to list.Count - 1 do
+            begin
+              if list[i].hasResourceType(ResourceTypeKey) and MeetsCriteria(list[i].Subscription, ResourceTypeKey, ResourceKey, ResourceVersionKey, ResourcePreviousKey, newRes, oldRes, conn) then
+              begin
+                CreateNotification(ResourceVersionKey, list[i].FKey, created, conn);
+              end;
+            end;
+            conn.ExecSQL('Update SubscriptionQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where SubscriptionQueueKey = '+inttostr(SubscriptionQueueKey));
+            conn.Commit;
+          except
+            conn.Rollback;
+            raise;
+          end;
+        finally
+          list.free;
+        end;
       finally
-        FLock.Leave;
-      end;
-      conn.StartTransact;
-      try
-        for i := 0 to list.Count - 1 do
-          if ((list[i].FResourceType = 0) or (list[i].FResourceType = ResourceTypeKey) ) and MeetsCriteria(list[i].Subscription, list[i].FResourceType, ResourceKey, ResourceVersionKey, ResourcePreviousKey, conn) then
-            CreateNotification(ResourceVersionKey, list[i].FKey, created, conn);
-         conn.ExecSQL('Update SubscriptionQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where SubscriptionQueueKey = '+inttostr(SubscriptionQueueKey));
-         conn.Commit;
-      except
-        conn.Rollback;
-        raise;
+        oldRes.Free;
       end;
     finally
-      list.free;
+      newRes.Free;
     end;
   end;
 end;
@@ -1278,16 +1356,29 @@ begin
 end;
 
 function TSubscriptionManager.LoadResourceFromDBByVer(conn: TFslDBConnection; vkey: integer; var id : String): TFhirResourceV;
+begin
+  result := LoadResourceFromDBByVer(conn, vkey, id, false);
+end;
+
+function TSubscriptionManager.LoadResourceFromDBByVer(conn: TFslDBConnection; vkey: integer; var id : String; canBeNull : boolean): TFhirResourceV;
 var
   parser : TFHIRParser;
 begin
-  conn.SQL := 'select ResourceName, Ids.Id, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
+  conn.SQL := 'select ResourceName, Ids.Id, Status, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
     conn.Execute;
     if not conn.FetchNext then
       raise EFHIRException.create('Cannot find resource');
     id := conn.ColStringByName['Id'];
+    if conn.ColIntegerByName['Status'] = 2 then
+    begin
+      // deleted
+      if canBeNull then
+        exit(nil)
+      else
+      raise EFHIRException.create('Resource has been deleted');
+    end;
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['Content'])
     else
@@ -1333,23 +1424,35 @@ begin
   end;
 end;
 
-function TSubscriptionManager.determineResourceTypeKey(criteria: String; conn: TFslDBConnection): integer;
+function TSubscriptionManager.determineResourceTypeKeys(subscription : TFHIRSubscriptionW; conn: TFslDBConnection) : TArray<integer>;
+begin
+  if subscription.topic <> '' then
+  begin
+    setLength(result, 1);
+    result[0] := -1; // look this up later
+  end
+  else
+    result := determineResourceTypeKeys(subscription.criteria, conn);
+end;
+
+function TSubscriptionManager.determineResourceTypeKeys(criteria : String; conn: TFslDBConnection) : TArray<integer>;
 var
   t : string;
 begin
   if criteria.StartsWith('?') then
-    result := 0
+    SetLength(result, 0)
   else
   begin
     if criteria.IndexOf('?') = -1 then
       t := criteria
     else
       t := criteria.Substring(0, criteria.IndexOf('?'));
-    result := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(t)+'''')
+    SetLength(result, 1);
+    result[0] := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(t)+'''')
   end;
 end;
 
-function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey, key : integer; conn: TFslDBConnection): boolean;
+function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey : Integer; key : integer; conn: TFslDBConnection): boolean;
 var
   l, r, sql : String;
   p : THTTPParameters;
@@ -1464,14 +1567,14 @@ end;
 
 { TFHIRSubscriptionEntryList }
 
-procedure TFHIRSubscriptionEntryList.add(Key, ResourceType: Integer; Id : String; Subscription: TFhirSubscriptionW);
+procedure TFHIRSubscriptionEntryList.add(Key : Integer; ResourceTypes : TArray<Integer>; Id : String; Subscription: TFhirSubscriptionW);
 var
   entry : TFHIRSubscriptionEntry;
 begin
   entry := TFHIRSubscriptionEntry.Create;
   try
     entry.Key := key;
-    entry.resourceType := ResourceType;
+    entry.resourceTypes := ResourceTypes;
     entry.Subscription := subscription;
     entry.Id := id;
     add(entry.link);
@@ -1711,6 +1814,21 @@ begin
   inherited;
 end;
 
+function TFHIRSubscriptionEntry.hasResourceType(key: Integer): boolean;
+var
+  i : integer;
+begin
+  if length(FResourceTypes) = 0 then
+    result := true
+  else
+  begin
+    result := false;
+    for I in FResourceTypes do
+      if (i = key) then
+        exit(true);
+  end;
+end;
+
 procedure TFHIRSubscriptionEntry.SeTFHIRSubscriptionW(const Value: TFhirSubscriptionW);
 begin
   FSubscription.Free;
@@ -1786,20 +1904,20 @@ begin
   result := FStream;
 end;
 
-{ TEventDefinition }
+{ TSubscriptionTopic }
 
-destructor TEventDefinition.Destroy;
+destructor TSubscriptionTopic.Destroy;
 begin
   FResource.free;
   inherited;
 end;
 
-function TEventDefinition.link: TEventDefinition;
+function TSubscriptionTopic.link: TSubscriptionTopic;
 begin
-  result := TEventDefinition(inherited link);
+  result := TSubscriptionTopic(inherited link);
 end;
 
-procedure TEventDefinition.SetResource(const Value: TFHIRResourceV);
+procedure TSubscriptionTopic.SetResource(const Value: TFHIRResourceV);
 begin
   FResource.Free;
   FResource := value;

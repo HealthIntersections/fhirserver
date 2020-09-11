@@ -109,8 +109,10 @@ Type
     FKnownVersion : TFHIRVersion;
     FProgress : integer;
     FProgressName : string;
+    FContexts : TFslMap<TFHIRServerContext>;
 
     function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
+    function doGetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
     Procedure checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     procedure ConnectToDatabases();
     procedure LoadTerminologies;
@@ -161,9 +163,28 @@ begin
   raise EFHIRException.create('Test');
 end;
 
+function getParam(name : String; var res : String) : boolean;
+begin
+  {$IFDEF FPC}
+  raise Exception.create('not implemtnered');
+  {$ELSE}
+  result := FindCmdLineSwitch(name, res, true, [clstValueNextParam]);
+  {$ENDIF}
+end;
+
+function hasParam(name : String) : boolean;
+begin
+  {$IFDEF FPC}
+  raise Exception.create('not implemtnered');
+  {$ELSE}
+  result := FindCmdLineSwitch(name);
+  {$ENDIF}
+end;
+
+
 function endpoint : String;
 begin
-  if not FindCmdLineSwitch('endpoint', result, true, [clstValueNextParam]) then
+  if not getParam('endpoint', result) then
     raise EFslException.Create('No endpoint parameter supplied');
 end;
 
@@ -181,18 +202,18 @@ begin
   //AllocConsole;
   try
     Consolelog := true;
-    if FindCmdLineSwitch('log', fn, true, [clstValueNextParam]) then
+    if getParam('log', fn) then
     begin
       filelog := true;
       logfile := fn;
     end;
 
     CoInitialize(nil);
-    if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
+    if not getParam('ini', iniName) then
       iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
-    if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
+    if not getParam('name', svcName) then
       svcName := 'FHIRServer';
-    if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
+    if not getParam('title', dispName) then
       dispName := 'FHIR Server';
     iniName := iniName.replace('.dstu', '.dev');
 
@@ -208,18 +229,21 @@ begin
     try
         GJsHost := TJsHost.Create;
         try
-          if FindCmdLineSwitch('installer') then
+          if hasParam('installer') then
           begin
             svc.FInstaller := true;
             svc.callback := svc.InstallerCallBack;
           end;
 
-          svc.FLoadStore := not FindCmdLineSwitch('noload');
+          svc.FLoadStore := not hasParam('noload');
 
-          if FindCmdLineSwitch('cmd', cmd, true, [clstValueNextParam]) then
+          if getParam('cmd', cmd) then
           begin
             if cmd = 'manager' then
             begin
+              {$IFDEF FPC}
+              raise Exception.create('Not implemented yet');
+              {$ELSE}
               FreeConsole;
               ServerManagerForm := TServerManagerForm.Create(nil);
               try
@@ -227,15 +251,16 @@ begin
               finally
                 FreeAndNil(ServerManagerForm);
               end;
+              {$ENDIF}
             end
             else if cmd = 'mount' then
             begin
-              if FindCmdLineSwitch('mode', smode, true, [clstValueNextParam]) then
+              if getParam('mode', smode) then
                 mode := readInstallerSecurityMode(smode)
               else
                 mode := ismUnstated;
               name:= svc.InstallDatabase(endpoint, mode);
-              if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+              if getParam('unii', fn) then
                 ImportUnii(fn,  svc.FDatabases[name]);
             end
             else if cmd = 'pword' then
@@ -244,7 +269,7 @@ begin
               svc.UninstallDatabase(endpoint)
             else if cmd = 'remount' then
             begin
-              if FindCmdLineSwitch('mode', smode, true, [clstValueNextParam]) then
+              if getParam('mode', smode) then
                 mode := readInstallerSecurityMode(smode)
               else
                 mode := ismUnstated;
@@ -252,21 +277,21 @@ begin
               svc.FNotServing := true;
               svc.UninstallDatabase(endpoint);
               name := svc.InstallDatabase(endpoint, mode);
-              if FindCmdLineSwitch('unii', fn2, true, [clstValueNextParam]) then
+              if getParam('unii', fn2) then
                 ImportUnii(fn2, svc.FDatabases[name]);
-  //            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+  //            if getParam('profile', fn) then
   //              svc.LoadByProfile(fn, true)
   //            else
-              if FindCmdLineSwitch('packages', fn2, true, [clstValueNextParam]) then
+              if getParam('packages', fn2) then
                 svc.Load(endpoint, fn2, mode);
             end
             else if cmd = 'load' then
             begin
               svc.DebugMode := true;
               svc.FNotServing := true;
-              if not FindCmdLineSwitch('endpoint', name, true, [clstValueNextParam]) then
+              if not getParam('endpoint', name) then
                 raise Exception.Create('Must provide an endpoint for loading a package');
-              if not FindCmdLineSwitch('package', plist, true, [clstValueNextParam]) then
+              if not getParam('package', plist) then
                 raise Exception.Create('Must specify a package');
               svc.Load(name, plist, ismUnstated);
             end
@@ -316,7 +341,7 @@ begin
   except
     on e : Exception do
     begin
-      if FindCmdLineSwitch('installer') then
+      if hasParam('installer') then
         writeln('##> Exception '+E.Message)
       else
         logt(E.ClassName+ ': '+E.Message+#13#10#13#10+ExceptionStack(e));
@@ -426,19 +451,26 @@ begin
   inherited create(ASystemName, ADisplayName);
   FIni := TFHIRServerIniFile.Create(AIniName);
   FSettings := TFHIRServerSettings.Create;
-  FSettings.ForLoad := not FindCmdLineSwitch('noload');
+  FSettings.ForLoad := not hasParam('noload');
   FSettings.load(FIni);
   FDatabases := TFslMap<TFslDBManager>.create('fhir.svc');
+  FContexts := TFslMap<TFHIRServerContext>.create('server contexts');
 end;
 
 destructor TFHIRService.Destroy;
 begin
   FPackageUpdater.Free;
   CloseDatabase;
+  FContexts.Free;
   FDatabases.Free;
   FIni.Free;
   FSettings.Free;
   inherited;
+end;
+
+function TFHIRService.doGetNamedContext(sender: TObject; name: String): TFHIRServerContext;
+begin
+  result := FContexts[name];
 end;
 
 procedure TFHIRService.registerJs(sender : TObject; js : TJsHost);
@@ -798,7 +830,7 @@ begin
   un := FIni.admin['username'];
   if (un = '') then
     raise EFHIRException.create('You must define an admin username in the ini file');
-  FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
+  getParam('password', pw);
   if (pw = '') then
     raise EFHIRException.create('You must provide a admin password as a parameter to the command');
   em := FIni.admin['email'];
@@ -848,6 +880,7 @@ var
   store : TFHIRNativeStorageService;
   s : String;
   details : TFHIRServerIniComplex;
+  conn : TFslDBConnection;
 begin
   store := nil;
 
@@ -869,13 +902,13 @@ begin
       fhirVersionRelease5: if details['version'] <> 'r5' then continue;
     end;
 
-    if FindCmdLineSwitch('r5') and (details['version'] <> 'r5') then
+    if hasParam('r5') and (details['version'] <> 'r5') then
       continue;
-    if FindCmdLineSwitch('r4') and (details['version'] <> 'r4') then
+    if hasParam('r4') and (details['version'] <> 'r4') then
       continue;
-    if FindCmdLineSwitch('r3') and (details['version'] <> 'r3') then
+    if hasParam('r3') and (details['version'] <> 'r3') then
       continue;
-    if FindCmdLineSwitch('r2') and (details['version'] <> 'r2') then
+    if hasParam('r2') and (details['version'] <> 'r2') then
       continue;
 
     if details['version'] = 'r2' then
@@ -897,10 +930,11 @@ begin
     else
       raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
 
-
     try
       ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
       try
+        FContexts.add(s, ctxt.Link);
+        ctxt.OnGetNamedContext := doGetNamedContext;
         logt('  .. check DB '+details['database']);
         checkDatabase(store.DB, store.Factory, ctxt.ServerFactory);
         ctxt.Globals := FSettings.Link;
@@ -917,6 +951,22 @@ begin
       store.Free;
     end;
   end;
+
+  for ctxt in FContexts.values do
+  begin
+    conn := (TFHIRServerContext(ctxt).Storage as TFHIRNativeStorageService).DB.GetConnection('Done-Loading');
+    try
+      ctxt.doneLoading(conn);
+      conn.release;
+    except
+      on e : Exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
+    end;
+  end;
+
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksCodeViewService.create);
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksIdentifierViewService.create);
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
@@ -961,7 +1011,7 @@ begin
   un := FIni.admin['username'];
   if (un = '') then
     raise EFHIRException.create('You must define an admin username in the ini file');
-  FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
+  getParam('password', pw);
   if (pw = '') then
     raise EFHIRException.create('You must provide a admin password as a parameter to the command');
   em := FIni.admin['email'];

@@ -643,6 +643,7 @@ type
   private
     function sub : TFhirSubscription;
   protected
+    function getTopic: string; override;
     function getCriteria: String; override;
     function getDirect: boolean; override;
     function getEndpoint: String; override;
@@ -3662,6 +3663,11 @@ function TFHIRSubscription2.GetSummary: String;
 begin
   result := sub.channel.type_Element.value+#1+sub.channel.endpoint+#1+sub.channel.payload;
   result := result+#0+sub.channel.header;
+end;
+
+function TFHIRSubscription2.getTopic: string;
+begin
+  result := '';
 end;
 
 procedure TFHIRSubscription2.SetCriteria(Value: String);

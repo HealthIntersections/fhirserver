@@ -99,6 +99,7 @@ type
     function wrapBinary(r : TFHIRResourceV) : TFhirBinaryW; override;
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; override;
     function wrapSubscription(r : TFHIRResourceV) : TFhirSubscriptionW; override;
+    function wrapSubscriptionTopic(r : TFHIRResourceV) : TFhirSubscriptionTopicW; override;
     function wrapMeta(r : TFHIRResourceV) : TFhirMetaW; overload; override;
     function wrapMeta(r : TFHIRObject) : TFhirMetaW; overload; override;
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; override;
@@ -704,6 +705,11 @@ begin
     result := nil
   else
     result := TFhirSubscription4.Create(r);
+end;
+
+function TFHIRFactoryR4.wrapSubscriptionTopic(r: TFHIRResourceV): TFhirSubscriptionTopicW;
+begin
+  result := nil;
 end;
 
 function TFHIRFactoryR4.wrapTestScript(o: TFHIRResourceV): TFHIRTestScriptW;

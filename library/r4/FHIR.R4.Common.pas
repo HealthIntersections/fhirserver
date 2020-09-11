@@ -672,6 +672,7 @@ type
   private
     function sub : TFhirSubscription;
   protected
+    function getTopic: string; override;
     function getCriteria: String; override;
     function getDirect: boolean; override;
     function getEndpoint: String; override;
@@ -3770,6 +3771,11 @@ begin
   for s in sub.channel.headerList do
     result := result+#0+s.value;
 //  result := result+#0+subst.channel.header;
+end;
+
+function TFHIRSubscription4.getTopic: string;
+begin
+  result := sub.getExtensionString('http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-topic-canonical');
 end;
 
 procedure TFHIRSubscription4.SetCriteria(Value: String);

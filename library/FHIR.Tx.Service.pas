@@ -34,7 +34,6 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  YuStemmer,
   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
   FHIR.Base.Common, FHIR.Base.Factory,
@@ -67,7 +66,7 @@ Type
   private
     FFilter: string;
     FStems : TStringList;
-    FStemmer : TYuStemmer_8;
+    FStemmer : TFslWordStemmer;
 
     function find(s : String) : boolean;
 
@@ -262,9 +261,7 @@ end;
 constructor TSearchFilterText.create(filter: String);
 begin
   Create;
-  {$IFNDEF FPC}
-  FStemmer := GetStemmer_8('english');
-  {$ENDIF}
+  FStemmer := TFslWordStemmer.create('english');
   FStems := TStringList.Create;
   FFilter := filter;
   process;
@@ -273,9 +270,7 @@ end;
 destructor TSearchFilterText.destroy;
 begin
   FStems.Free;
-  {$IFNDEF FPC}
   FStemmer.Free;
-  {$ENDIF}
   inherited;
 end;
 

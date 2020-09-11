@@ -110,7 +110,7 @@ procedure generateNciStems(db : TFslDBManager);
 
 implementation
 
-procedure MakeStems(stemmer : TYuStemmer_8; stems : TStringList; desc : String; cui : string);
+procedure MakeStems(stemmer : TFslWordStemmer; stems : TStringList; desc : String; cui : string);
 var
   s : String;
   i : integer;
@@ -140,10 +140,10 @@ procedure generateNciStems(db : TFslDBManager);
 var
   stems, list : TStringList;
   qry : TFslDBConnection;
-  stemmer : TYuStemmer_8;
+  stemmer : TFslWordStemmer;
   i, j : integer;
 begin
-  stemmer := GetStemmer_8('english');
+  stemmer := TFslWordStemmer.create('english');
   stems := TStringList.Create;
   try
     stems.Sorted := true;

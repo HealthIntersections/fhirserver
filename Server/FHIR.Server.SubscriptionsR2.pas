@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -44,12 +46,14 @@ Type
     procedure checkAcceptable(sub : TFHIRSubscriptionW; session : TFHIRSession); override;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function preparePackage(userkey : integer; created : boolean; sub : TFHIRSubscriptionW; res : TFHIRResourceV) : TFHIRResourceV; override;
-    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TFslDBConnection) : boolean; override;
+    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey : Integer; key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFslDBConnection) : boolean; override;
     function checkSubscription(sub: TFHIRResourceV) : TFHIRSubscriptionW; override;
-    function loadEventDefinition(res : TFHIRResourceV) : TEventDefinition; override;
+    function checkSubscriptionTopic(sub: TFHIRResourceV) : TFHIRSubscriptionTopicW; override;
+    function loadSubscriptionTopic(res : TFHIRResourceV) : TSubscriptionTopic; override;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function bundleIsTransaction(res : TFHIRResourceV) : boolean; override;
     function processUrlTemplate(url : String; res : TFhirResourceV) : String; override;
+    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>; override;
   end;
 
 implementation
@@ -69,7 +73,17 @@ begin
     result := nil;
 end;
 
-function TSubscriptionManagerR2.loadEventDefinition(res: TFHIRResourceV): TEventDefinition;
+function TSubscriptionManagerR2.checkSubscriptionTopic(sub: TFHIRResourceV): TFHIRSubscriptionTopicW;
+begin
+  result := nil;
+end;
+
+function TSubscriptionManagerR2.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>;
+begin
+  SetLength(result, 0);
+end;
+
+function TSubscriptionManagerR2.loadSubscriptionTopic(res: TFHIRResourceV): TSubscriptionTopic;
 begin
   raise EFHIRUnsupportedVersion.Create(fhirVersionRelease2, 'Creating Event Definition');
 end;
@@ -286,7 +300,7 @@ begin
   result := url;
 end;
 
-function TSubscriptionManagerR2.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR2.MeetsCriteria(sub : TFhirSubscriptionW; typekey : Integer; key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFslDBConnection): boolean;
 var
   subscription : TFhirSubscription;
 begin

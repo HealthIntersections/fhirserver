@@ -35,7 +35,6 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  YuStemmer,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.base.Utilities,
   FHIR.CdsHooks.Utilities,
@@ -152,7 +151,7 @@ procedure generateRxStems(db : TFslDBManager; callback : TInstallerCallback = ni
 
 implementation
 
-procedure MakeStems(stemmer : TYuStemmer_8; stems : TStringList; desc : String; cui : string);
+procedure MakeStems(stemmer : TFslWordStemmer; stems : TStringList; desc : String; cui : string);
 var
   s : String;
   i : integer;
@@ -182,10 +181,10 @@ procedure generateRxStems(db : TFslDBManager; callback : TInstallerCallback = ni
 var
   stems, list : TStringList;
   qry : TFslDBConnection;
-  stemmer : TYuStemmer_8;
+  stemmer : TFslWordStemmer;
   i, j, t : integer;
 begin
-  stemmer := GetStemmer_8('english');
+  stemmer := TFslWordStemmer.create('english');
   stems := TStringList.Create;
   try
     stems.Sorted := true;

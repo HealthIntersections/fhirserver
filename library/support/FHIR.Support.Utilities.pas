@@ -571,6 +571,11 @@ type
     property separator : String read FSeperator write FSeperator;
   end;
 
+  TFslWordStemmer = class (TFslObject)
+  public
+    constructor create(lang : String);
+    function stem(word : String) : String;
+  end;
 
 //Type
 //  TXmlEncodingMode = (xmlText, xmlAttribute, xmlCanonical);
@@ -14522,6 +14527,18 @@ begin
   finally
     b.free;
   end;
+end;
+
+{ TFslWordStemmer }
+
+constructor TFslWordStemmer.create(lang: String);
+begin
+
+end;
+
+function TFslWordStemmer.stem(word: String): String;
+begin
+
 end;
 
 

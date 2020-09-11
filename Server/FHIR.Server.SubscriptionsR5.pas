@@ -45,21 +45,23 @@ Type
   private
     fpp : TFHIRPathParser;
     fpe : TFHIRPathEngine;
-    function getEventDefinition(subscription: TFhirSubscription): TFhirEventDefinition;
-    function MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
+    function MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
   protected
     procedure checkAcceptable(sub : TFHIRSubscriptionW; session : TFHIRSession); override;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function preparePackage(userkey : integer; created : boolean; sub : TFHIRSubscriptionW; res : TFHIRResourceV) : TFHIRResourceV; override;
-    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TFslDBConnection) : boolean; override;
+    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFslDBConnection) : boolean; override;
     function checkSubscription(sub: TFHIRResourceV) : TFHIRSubscriptionW; override;
-    function loadEventDefinition(res : TFHIRResourceV) : TEventDefinition; override;
+    function checkSubscriptionTopic(sub: TFHIRResourceV) : TFHIRSubscriptionTopicW; override;
+    function loadSubscriptionTopic(res : TFHIRResourceV) : TSubscriptionTopic; override;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function bundleIsTransaction(res : TFHIRResourceV) : boolean; override;
     function processUrlTemplate(url : String; res : TFhirResourceV) : String; override;
+    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>; override;
   public
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
+    function getSubscriptionTopicResource(subscription: TFhirSubscription): TFhirSubscriptionTopic; overload;
   end;
 
 implementation
@@ -78,34 +80,18 @@ begin
   inherited;
 end;
 
-
-function TSubscriptionManagerR5.getEventDefinition(subscription: TFhirSubscription): TFhirEventDefinition;
-var
-  ext : TFhirDataType;
-  s : String;
-  evd : TEventDefinition;
+function TSubscriptionManagerR5.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>;
 begin
-  result := nil;
-  ext := subscription.getExtensionValue('http://hl7.org/fhir/subscription/topics');
-  if (ext <> nil) and (ext is TFHIRReference) then
-  begin
-    s := (ext as TFHIRReference).reference;
-    FLock.Lock('getEventDefinition');
-    try
-      if (s.StartsWith('EventDefinition/')) then
-      begin
-        if FEventDefinitions.TryGetValue(s.Substring(16), evd) then
-          result := evd.resource.Link as TFhirEventDefinition;
-      end
-      else if FEventDefinitions.TryGetValue(s, evd) then
-        result := evd.resource.Link as TFhirEventDefinition;
-    finally
-      FLock.Unlock;
-    end;
-  end;
+  SetLength(result, 0);
 end;
 
-function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR5.getSubscriptionTopicResource(subscription: TFhirSubscription): TFhirSubscriptionTopic;
+begin
+  result := nil;
+//    result := getSubscriptionTopic(subscription.topic.reference);
+end;
+
+function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
 var
   old : TFhirResource;
   new : TFhirResource;
@@ -123,11 +109,11 @@ begin
     end;
     try
       // todo: code and date requirements from DataRequirement
-      if (evd.triggerList.Count = 1) and (evd.triggerList[0].condition <> nil) then
-      begin
-
-      end
-      else
+//      if (evd.triggerList.Count = 1) and (evd.triggerList[0].condition <> nil) then
+//      begin
+//
+//      end
+//      else
         result := false;
     finally
       old.Free;
@@ -148,18 +134,30 @@ var
 begin
   subscription := sub as TFHIRSubscription;
   subscription.checkNoImplicitRules('SubscriptionManager.SeeNewSubscription', 'subscription');
-//  if subscription.status in [SubscriptionStatusActive, SubscriptionStatusError] then
-//    result := TFHIRSubscription4.Create(subscription.Link)
-//  else
+  if subscription.status in [SubscriptionStateRequested, SubscriptionStateActive, SubscriptionStateError] then
+    result := TFHIRSubscription5.Create(subscription.Link)
+  else
     result := nil;
 end;
 
-function TSubscriptionManagerR5.loadEventDefinition(res: TFHIRResourceV): TEventDefinition;
+function TSubscriptionManagerR5.checkSubscriptionTopic(sub: TFHIRResourceV): TFHIRSubscriptionTopicW;
 var
-  r : TFhirEventDefinition;
+  subscriptionTopic: TFHIRSubscriptionTopic;
 begin
-  r := res as TFhirEventDefinition;
-  result := TEventDefinition.Create;
+  subscriptionTopic := sub as TFHIRSubscriptionTopic;
+  subscriptionTopic.checkNoImplicitRules('SubscriptionManager.SeeNewSubscription', 'subscription');
+  if subscriptionTopic.status in [PublicationStatusDraft, PublicationStatusActive] then
+    result := TFHIRSubscriptionTopic5.Create(subscriptionTopic.Link)
+  else
+    result := nil;
+end;
+
+function TSubscriptionManagerR5.loadSubscriptionTopic(res: TFHIRResourceV): TSubscriptionTopic;
+var
+  r : TFhirSubscriptionTopic;
+begin
+  r := res as TFhirSubscriptionTopic;
+  result := TSubscriptionTopic.Create;
   try
     result.id := r.id;
     result.url := r.url;
@@ -197,7 +195,7 @@ end;
 procedure TSubscriptionManagerR5.checkAcceptable(sub: TFhirSubscriptionW; session: TFHIRSession);
 var
   ts : TStringList;
-  evd : TFHIREventDefinition;
+  evd : TFHIRSubscriptionTopic;
   function rule(test : boolean; message : String) : boolean;
   begin
     if not test then
@@ -233,7 +231,7 @@ begin
 //
 //    if subscription.hasExtension('http://hl7.org/fhir/subscription/topics') then
 //    begin
-//      evd := getEventDefinition(subscription);
+//      evd := getSubscriptionTopic(subscription);
 //      if rule(evd <> nil, 'Topic not understood or found') then
 //      try
 //        evd.checkNoModifiers('SubscriptionManager.checkAcceptable', 'topic definition');
@@ -416,10 +414,10 @@ begin
   result := url;
 end;
 
-function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFslDBConnection): boolean;
 var
   subscription : TFhirSubscription;
-  evd : TFHIREventDefinition;
+  evd : TFHIRSubscriptionTopic;
 begin
   subscription := sub.Resource as TFhirSubscription;
 //  if subscription.criteria = '*' then
@@ -429,7 +427,7 @@ begin
 //  // extension for San Deigo Subscription connectathon
 //  if result then
 //  begin
-//    evd := getEventDefinition(subscription);
+//    evd := getSubscriptionTopic(subscription);
 //    try
 //      if evd <> nil then
 //        result := MeetsCriteriaEvent(evd, subscription, typekey, key, ResourceVersionKey, ResourcePreviousKey, conn);

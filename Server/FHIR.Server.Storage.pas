@@ -687,14 +687,12 @@ var
 //  ct : TFhirConformanceContact;
   ServerContext : TFHIRServerContext;
 begin
-writeln('ecc1');
   ServerContext := TFHIRServerContext(FServerContext);
   try
     response.HTTPCode := 200;
     oConf := factory.wrapCapabilityStatement(factory.makeResource('CapabilityStatement'));
     try
       response.Resource := oConf.Resource.link;
-writeln('ecc2');
 
       oConf.id := 'FhirServer';
       oConf.contact(cpsOther, 'http://healthintersections.com.au/');
@@ -726,17 +724,14 @@ writeln('ecc2');
         oConf.fmt('application/xml+fhir');
         oConf.fmt('application/json+fhir');
       end;
-writeln('ecc3');
 
       oConf.fhirVersion := factory.versionString;
       oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets', TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView);
-writeln('ecc4');
 
       html := TFslStringBuilder.Create;
       try
         html.append('<div><h2>'+ServerContext.Globals.OwnerName+' Conformance Statement</h2><p>FHIR v'+factory.versionString+' released '+SERVER_RELEASE_DATE+'. '+
          'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
-writeln('ecc5');
         for a in ServerContext.ValidatorContext.allResourceNames do
           if (a <> 'Custom') and (a <> 'Parameters') then
           begin
@@ -829,7 +824,6 @@ writeln('ecc5');
 
     //              html.append('</ul>');                                                                                                                               }
                 end;
-writeln('ecc6');
                 html.append('</tr>'#13#10);
                 if (not res.hasInteraction) then
                   raise Exception.Create('No interactions for '+res.code+'?');
@@ -843,11 +837,9 @@ writeln('ecc6');
               end;
             end;
           end;
-writeln('ecc7');
         html.append('</table>'#13#10);
 
         html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
-writeln('ecc8');
         for i := 0 to FOperations.Count - 1 do
         begin
           if TFhirOperation(FOperations[i]).formalURL <> '' then
@@ -865,26 +857,22 @@ writeln('ecc8');
       finally
         html.free;
       end;
-writeln('ecc9');
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
         processGraphQL(request.Parameters['_graphql'], request, response);
     finally
       oConf.free;
     end;
-writeln('ecc10');
 
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
   except
     on e: exception do
     begin
-writeln('eccq11');
       AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message, []);
       recordStack(e);
       raise;
     end;
   end;
-writeln('eccq2');
 end;
 
 function describeResourceTypes(aTypes : TArray<String>) : String;

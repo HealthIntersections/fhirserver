@@ -30,7 +30,6 @@ Unit FHIR.Server.Web;
 
 {$IFDEF FPC}
 {$MODE Delphi}
-{$DEFINE NO_CONVERSION}
 {$ENDIF}
 {
 
@@ -5202,7 +5201,7 @@ begin
   b := StreamToBytes(stream);
   b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, version, CURRENT_FHIR_VERSION);
   stream.Size := 0;
-  stream.Write(b, 0, length(b));
+  stream.Write(b[0], length(b));
   stream.Position := 0;
   {$ENDIF}
 end;
@@ -5217,7 +5216,7 @@ begin
   b := StreamToBytes(stream);
   b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, CURRENT_FHIR_VERSION, version);
   stream.Size := 0;
-  stream.Write(b, 0, length(b));
+  stream.Write(b[0], length(b));
   stream.Position := 0;
   {$ENDIF}
 end;

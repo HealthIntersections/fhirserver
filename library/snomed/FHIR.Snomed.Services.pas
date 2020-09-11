@@ -58,7 +58,6 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  YuStemmer,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers, FHIR.Support.Fpc, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.CdsHooks.Utilities,
@@ -1837,7 +1836,7 @@ var
   iC, iMembers : Cardinal;
   aMembers : TSnomedReferenceSetMemberArray;
   index : integer;
-  oStemmer : TYuStemmer_8;
+  oStemmer : TFslWordStemmer;
   s : String;
   s1 : String;
 begin
@@ -1846,7 +1845,7 @@ begin
   SetLength(aMembers, 0);
   SetLength(aLangMembers, 0);
   sText := LowerCase(sText);
-  oStemmer := GetStemmer_8('english');
+  oStemmer := TFslWordStemmer.create('english');
   Try
     while (sText <> '') Do
     Begin

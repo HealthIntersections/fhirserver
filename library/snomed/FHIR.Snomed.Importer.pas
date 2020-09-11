@@ -34,7 +34,6 @@ Interface
 
 uses
   Windows, SysUtils, Classes, Inifiles, Generics.Collections,
-  YuStemmer,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects;
@@ -165,7 +164,7 @@ Type
     Findex_is_a : Cardinal;
     FWordList : TStringList;
     FStemList : TStringList;
-    FStemmer : TYuStemmer_8;
+    FStemmer : TFslWordStemmer;
 
     FStatus: Integer;
     FKey: Integer;
@@ -444,7 +443,7 @@ begin
   FStemList := TStringList.Create;
   FStringsTemp := TStringList.Create;
   FConcepts := TFslObjectList.Create;
-  FStemmer := GetStemmer_8('english');
+  FStemmer := TFslWordStemmer.create('english');
   Frefsets := TRefSetList.Create;
   try
     FSvc.Building := true;

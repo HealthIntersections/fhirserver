@@ -72,6 +72,7 @@ Type
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
     procedure LoadingFinished; override;
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
   end;
 
 implementation
@@ -218,6 +219,11 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+function TFHIRServerWorkerContextR2.getSearchParameter(resourceType, name: String): TFHIRResourceV;
+begin
+  result := nil;
 end;
 
 function TFHIRServerWorkerContextR2.expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet;

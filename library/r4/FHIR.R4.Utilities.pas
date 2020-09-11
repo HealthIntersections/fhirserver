@@ -101,6 +101,8 @@ function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang
 
 function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+function BuildOperationOutcome4(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome4(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 
 function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList; overload;
 function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;
@@ -1200,6 +1202,16 @@ begin
       result := resource.containedList[i];
       exit;
     end;
+end;
+
+function BuildOperationOutcome4(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+begin
+  result := BuildOperationOutcome(lang, e.message, issueCode);
+end;
+
+Function BuildOperationOutcome4(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+begin
+  result := BuildOperationOutcome(lang, message, issueCode);
 end;
 
 function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;

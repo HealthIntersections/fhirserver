@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Validator,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Validator, FHIR.Database.Manager,
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
   FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine,
@@ -68,7 +68,11 @@ Type
     procedure clear; overload;
   end;
 
-  TFHIRServerContext = class abstract (TFslObject)
+  TFHIRServerContext = class;
+
+  TGetNamedContextEvent = function (Sender : TObject; name : String) : TFHIRServerContext of object;
+
+  TFHIRServerContext = class (TFslObject)
   private
     FLock: TFslLock;
     FStorage : TFHIRStorageService;
@@ -102,6 +106,7 @@ Type
     FServerFactory : TFHIRServerFactory;
     FConsentEngine: TFHIRConsentEngine;
     FClientCacheManager: TClientCacheManager;
+    FOnGetNamedContext : TGetNamedContextEvent;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -154,6 +159,10 @@ Type
     procedure seeNamingSystem(key : integer; ns : TFhirNamingSystemW);
     procedure seeMap(map : TFHIRStructureMapW);
     function getMaps : TFslMap<TFHIRStructureMapW>;
+
+    procedure DoneLoading(conn : TFslDBConnection);
+
+    property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
   end;
 
 implementation
@@ -377,6 +386,11 @@ begin
   inherited;
 end;
 
+
+procedure TFHIRServerContext.DoneLoading(conn : TFslDBConnection);
+begin
+  FSubscriptionManager.DoneLoading(conn);
+end;
 
 function TFHIRServerContext.GetFactory: TFHIRFactory;
 begin

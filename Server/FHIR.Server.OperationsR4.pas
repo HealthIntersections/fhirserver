@@ -511,19 +511,21 @@ end;
 procedure TFhirNativeOperationEngineR4.checkProposedContent(session: TFhirSession; request: TFHIRRequest; resource: TFHIRResourceV; tags: TFHIRTagList);
 var
   l, r : String;
+  sub : TFhirSubscription;
 begin
   if resource is TFhirSubscription then
   begin
-    if (TFhirSubscription(resource).status <> SubscriptionStatusRequested) and (request.origin = roRest) then // nil = from the internal system, which is allowed to
-      raise EFHIRException.create('Subscription status must be "requested", not '+TFhirSubscription(resource).statusElement.value);
-    if (TFhirSubscription(resource).channel = nil) then
+    sub := TFhirSubscription(resource);
+    if (sub.status <> SubscriptionStatusRequested) and (request.origin = roRest) then // nil = from the internal system, which is allowed to
+      raise EFHIRException.create('Subscription status must be "requested", not '+sub.statusElement.value);
+    if (sub.channel = nil) then
       raise EFHIRException.create('Subscription must have a channel');
-    if (TFhirSubscription(resource).channel.type_ = SubscriptionChannelTypeWebsocket) and not ((TFhirSubscription(resource).channel.payload = '') or StringArrayExistsSensitive(['application/xml+fhir', 'application/fhir+xml', 'application/xml', 'application/json+fhir', 'application/fhir+json', 'application/json'], TFhirSubscription(resource).channel.payload)) then
+    if (sub.channel.type_ = SubscriptionChannelTypeWebsocket) and not ((sub.channel.payload = '') or StringArrayExistsSensitive(['application/xml+fhir', 'application/fhir+xml', 'application/xml', 'application/json+fhir', 'application/fhir+json', 'application/json'], sub.channel.payload)) then
       raise EFHIRException.create('A websocket subscription must have a no payload, or the payload must be application/xml+fhir or application/json+fhir');
-    if (TFhirSubscription(resource).status = SubscriptionStatusRequested) then
-      TFhirSubscription(resource).status := SubscriptionStatusActive; // well, it will be, or it will be rejected later
-    StringSplit(TFhirSubscription(resource).criteria, '?', l, r);
-    if (StringArrayIndexOfSensitive(CODES_TFhirResourceType, l) < 1) or (r = '') then
+    if (sub.status = SubscriptionStatusRequested) then
+      sub.status := SubscriptionStatusActive; // well, it will be, or it will be rejected later
+    StringSplit(sub.criteria, '?', l, r);
+    if (StringArrayIndexOfSensitive(CODES_TFhirResourceType, l) < 1) or ((r = '') and not (sub.hasExtension('http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-topic-canonical'))) then
       raise EFHIRException.create('Criteria is not valid');
   end;
   if (resource is TFHIROperationDefinition) then

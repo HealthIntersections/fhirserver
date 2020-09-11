@@ -824,8 +824,6 @@ begin
                 begin
                   if (ed = nil) then
                   begin
-                    if (url.startsWith('http://hl7.org/fhir')) then
-                      raise EFHIRException.create('unknown extension ' + url);
                     // writeln('unknown extension '+url);
                     pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', p.getTypeCode(), true, TFHIRExtension,
                       { p.getDefinition(), p.getMinCardinality(), p.getMaxCardinality(), } ex));

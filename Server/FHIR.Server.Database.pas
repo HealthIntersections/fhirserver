@@ -317,7 +317,7 @@ type
     procedure ProcessLoadedResources;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
-    function DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFslDBConnection): String;
+    function DoExecuteSearch(typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFslDBConnection): String;
     function getTypeForKey(key: integer): String;
     procedure doRegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
     procedure checkRegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
@@ -5720,7 +5720,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFslDBConnection): String;
+function TFHIRNativeStorageService.DoExecuteSearch(typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFslDBConnection): String;
 var
   sp: TSearchProcessor;
 begin
@@ -7346,7 +7346,7 @@ begin
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Types.ResourceName, Secure, XmlContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
-    '(Types.ResourceName in (''ValueSet'', ''EventDefinition'', ''Organization'', ''Device'' , ''CodeSystem'', ''ConceptMap'', ''StructureDefinition'', ''Questionnaire'', ''StructureMap'', ''Subscription'')) and Versions.Status < 2';
+    '(Types.ResourceName in (''ValueSet'', ''EventDefinition'', ''Organization'', ''Device'' , ''CodeSystem'', ''ConceptMap'', ''StructureDefinition'', ''Questionnaire'', ''StructureMap'', ''Subscription'', ''SubscriptionTopic'')) and Versions.Status < 2';
   conn.Prepare;
   try
     cback := FDB.GetConnection('load2');

@@ -476,11 +476,16 @@ end;
 //
 procedure TFHIRCompartmentList.register(comp: String; resource : String; indexes : array of String);
 begin
-  if comp = 'Patient' then FPatientCompartment.add(resource, TFslStringSet.create(indexes))
-  else if comp = 'Practitioner' then FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes))
-  else if comp = 'Encounter' then FEncounterCompartment.add(resource, TFslStringSet.create(indexes))
-  else if comp = 'RelatedPerson' then FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes))
-  else if comp = 'Device' then FDeviceCompartment.add(resource, TFslStringSet.create(indexes))
+  if comp = 'Patient' then
+    FPatientCompartment.add(resource, TFslStringSet.create(indexes))
+  else if comp = 'Practitioner' then
+    FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes))
+  else if comp = 'Encounter' then
+    FEncounterCompartment.add(resource, TFslStringSet.create(indexes))
+  else if comp = 'RelatedPerson' then
+    FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes))
+  else if comp = 'Device' then
+    FDeviceCompartment.add(resource, TFslStringSet.create(indexes))
   else
     raise EFHIRException.create('Unknown compartment');
 end;

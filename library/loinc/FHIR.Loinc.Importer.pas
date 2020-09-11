@@ -34,7 +34,6 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  YuStemmer,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Loinc.Services;
 
@@ -258,7 +257,7 @@ Type
     FVersion: String;
     FWordList : TStringList;
     FStemList : TStringList;
-    FStemmer : TYuStemmer_8;
+    FStemmer : TFslWordStemmer;
     FOutputFile: String;
     FDate: String;
 
@@ -1057,7 +1056,7 @@ begin
   FLanguages := TFslList<TLoincLanguage>.create;
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
-  FStemmer := GetStemmer_8('english');
+  FStemmer := TFslWordStemmer.create('english');
   oSvc := TLOINCServices.Create;
   Try
     Flanguages.add(TLoincLanguage.create('en', 'US'));

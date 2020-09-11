@@ -35,7 +35,6 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
   RegularExpressions,
-  YuStemmer,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
@@ -1421,13 +1420,13 @@ var
   words : TSearchWordArray;
   i : cardinal;
   index : integer;
-  oStemmer : TYuStemmer_8;
+  oStemmer : TFslWordStemmer;
   s : String;
   s1 : String;
 begin
   SetLength(words, 0);
   sText := LowerCase(sText);
-  oStemmer := GetStemmer_8('english');
+  oStemmer := TFslWordStemmer.create('english');
   Try
     while (sText <> '') Do
     Begin

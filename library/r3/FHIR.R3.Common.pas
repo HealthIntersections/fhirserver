@@ -713,6 +713,7 @@ type
   private
     function sub : TFhirSubscription;
   protected
+    function getTopic: string; override;
     function getCriteria: String; override;
     function getDirect: boolean; override;
     function getEndpoint: String; override;
@@ -4066,6 +4067,11 @@ begin
   for s in sub.channel.headerList do
     result := result+#0+s.value;
 //  result := result+#0+subst.channel.header;
+end;
+
+function TFHIRSubscription3.getTopic: string;
+begin
+  result := '';
 end;
 
 procedure TFHIRSubscription3.SetCriteria(Value: String);

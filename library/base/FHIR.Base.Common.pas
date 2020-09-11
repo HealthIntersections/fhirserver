@@ -1038,6 +1038,7 @@ type
 
   TFHIRSubscriptionW = class (TFHIRXVersionResourceWrapper)
   protected
+    function getTopic: string; virtual; abstract;
     function getCriteria: String; virtual; abstract;
     function getDirect: boolean; virtual; abstract;
     function getEndpoint: String; virtual; abstract;
@@ -1057,6 +1058,7 @@ type
     procedure setStatus(Value: TSubscriptionStatus); virtual; abstract;
   public
     function link : TFHIRSubscriptionW; overload;
+    property topic : String read getTopic;
     property criteria : String read GetCriteria write SetCriteria;
     property summary : String read GetSummary;
     property status : TSubscriptionStatus read GetStatus write SetStatus;
@@ -1066,6 +1068,11 @@ type
     property direct : boolean read GetDirect write SetDirect;
     property method : TSubscriptionMethod read GetMethod write SetMethod;
     property error : String read GetError write SetError;
+  end;
+
+  TFHIRSubscriptionTopicW = class (TFHIRXVersionResourceWrapper)
+  public
+    function link : TFHIRSubscriptionTopicW; overload;
   end;
 
   TFHIRStatsOpResponseW = class (TFHIRXVersionOperationWrapper)
@@ -1865,7 +1872,19 @@ begin
   result := TFHIRSubscriptionW(inherited link);
 end;
 
-{ TFHIRStatsOpResponseW }
+{ TFHIRSubscriptionW }
+
+{function TFHIRSubscriptionW.GetIsTopicBased: boolean;
+begin
+
+end;
+
+ function TFHIRSubscriptionW.link: TFHIRSubscriptionW;
+begin
+
+end;
+
+TFHIRStatsOpResponseW }
 
 function TFHIRStatsOpResponseW.link: TFHIRStatsOpResponseW;
 begin
@@ -2317,6 +2336,13 @@ end;
 function TFhirProvenanceW.link: TFhirProvenanceW;
 begin
   result := TFhirProvenanceW(inherited link);
+end;
+
+{ TFHIRSubscriptionTopicW }
+
+function TFHIRSubscriptionTopicW.link: TFHIRSubscriptionTopicW;
+begin
+  result := TFHIRSubscriptionTopicW(inherited link);
 end;
 
 end.

@@ -1074,7 +1074,7 @@ begin
           json.Start;
           json.Value('access_token', session.Cookie);
           json.Value('token_type', 'Bearer');
-          json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+          json.Value('expires_in', trunc((session.Expires - now) / DATETIME_SECOND_ONE));
 //          json.Value('id_token', session.JWTPacked);
           json.Value('scope', session.scopes);
           json.Value('patient', session.Compartments[0].id);
@@ -1277,7 +1277,7 @@ begin
               json.Start;
               json.Value('access_token', session.Cookie);
               json.Value('token_type', 'Bearer');
-              json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+              json.Value('expires_in', trunc((session.Expires - now) / DATETIME_SECOND_ONE));
               if session.canGetUser then
                 json.Value('id_token', session.JWTPacked);
               json.Value('scope', scope);
