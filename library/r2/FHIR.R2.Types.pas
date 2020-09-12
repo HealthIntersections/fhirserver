@@ -39,7 +39,7 @@ interface
 uses
   Classes, SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.R2.Base;
 
 Type
@@ -1239,7 +1239,7 @@ Type
     OperationParameterTypeTime, 
     OperationParameterTypeUnsignedInt, 
     OperationParameterTypeUuid, 
-    OperationParameterTypeXhtml, 
+    OperationParameterTypeXhtml,
     OperationParameterTypeAccount, 
     OperationParameterTypeAllergyIntolerance, 
     OperationParameterTypeAppointment, 
@@ -7538,8 +7538,8 @@ Const
   SYSTEMS_TFhirOperationKindEnum : Array[TFhirOperationKindEnum] of String = ('', 'http://hl7.org/fhir/operation-kind', 'http://hl7.org/fhir/operation-kind');
   CODES_TFhirOperationParameterUseEnum : Array[TFhirOperationParameterUseEnum] of String = ('', 'in', 'out');
   SYSTEMS_TFhirOperationParameterUseEnum : Array[TFhirOperationParameterUseEnum] of String = ('', 'http://hl7.org/fhir/operation-parameter-use', 'http://hl7.org/fhir/operation-parameter-use');
-  CODES_TFhirOperationParameterTypeEnum : Array[TFhirOperationParameterTypeEnum] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity', 'uri', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'base64Binary', 'boolean', 'code', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'time', 'unsignedInt', 'uuid', 'xhtml', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 
-    'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 
+  CODES_TFhirOperationParameterTypeEnum : Array[TFhirOperationParameterTypeEnum] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity', 'uri', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'base64Binary', 'boolean', 'code', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'time', 'unsignedInt', 'uuid', 'xhtml', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage',
+    'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance',
     'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Slot', 'Specimen', 'StructureDefinition', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'TestScript', 'ValueSet', 'VisionPrescription');
   SYSTEMS_TFhirOperationParameterTypeEnum : Array[TFhirOperationParameterTypeEnum] of String = ('', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
     'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
@@ -7907,9 +7907,8 @@ function asPositiveInt(obj : TFHIRObject) : TFhirPositiveInt;
 
 implementation
 
-//uses
-//  {FHIR.R2.ElementModel,} FHIR.R2.Utilities;
-//
+uses
+  FHIR.R2.ElementModel, FHIR.R2.Utilities;
 
 { TFhirElement }
 
@@ -8311,7 +8310,7 @@ end;
 
 function TFhirType.ToString : String;
 begin
-//  result := gen(self);
+  result := gen(self);
 end;
 
 function TFhirType.isType : boolean;
@@ -12544,7 +12543,7 @@ begin
   end
   else if (propName = 'div') then
   begin
-//    Div_Element := asXHtmlNode(propValue){5a};
+    Div_Element := asXHtmlNode(propValue){5a};
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);;
@@ -12579,7 +12578,7 @@ end;
 procedure TFhirNarrative.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, new){4}
-//  else if (propName = 'div') then Div_Element := asXHtmlNode(new){5b}
+  else if (propName = 'div') then Div_Element := asXHtmlNode(new){5b}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -27279,11 +27278,11 @@ function asDateTime(obj : TFHIRObject) : TFHIRDateTime;
 begin
   if obj is TFHIRDateTime then
     result := obj as TFHIRDateTime
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
@@ -27299,11 +27298,11 @@ function asDate(obj : TFHIRObject) : TFHIRDate;
 begin
   if obj is TFHIRDate then
     result := obj as TFHIRDate
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
@@ -27319,11 +27318,11 @@ function asString(obj : TFHIRObject) : TFHIRString;
 begin
   if obj is TFHIRString then
     result := obj as TFHIRString
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRString.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRString.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRString.create(TFHIRObject(obj).primitiveValue);
@@ -27339,11 +27338,11 @@ function asInteger(obj : TFHIRObject) : TFHIRInteger;
 begin
   if obj is TFHIRInteger then
     result := obj as TFHIRInteger
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRInteger.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRInteger.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRInteger.create(TFHIRObject(obj).primitiveValue);
@@ -27359,11 +27358,11 @@ function asUri(obj : TFHIRObject) : TFHIRUri;
 begin
   if obj is TFHIRUri then
     result := obj as TFHIRUri
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRUri.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUri.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUri.create(TFHIRObject(obj).primitiveValue);
@@ -27379,11 +27378,11 @@ function asInstant(obj : TFHIRObject) : TFHIRInstant;
 begin
   if obj is TFHIRInstant then
     result := obj as TFHIRInstant
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
@@ -27399,11 +27398,11 @@ function asBoolean(obj : TFHIRObject) : TFHIRBoolean;
 begin
   if obj is TFHIRBoolean then
     result := obj as TFHIRBoolean
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRBoolean.create(TFHIRMMElement(obj).value = 'true');
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRBoolean.create(TFHIRMMElement(obj).value = 'true');
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRBoolean.create(TFHIRObject(obj).primitiveValue = 'true');
@@ -27419,11 +27418,11 @@ function asBase64Binary(obj : TFHIRObject) : TFHIRBase64Binary;
 begin
   if obj is TFHIRBase64Binary then
     result := obj as TFHIRBase64Binary
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRBase64Binary.create(DecodeBase64(TFHIRMMElement(obj).value));
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRBase64Binary.create(DecodeBase64(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRBase64Binary.create(DecodeBase64(TFHIRObject(obj).primitiveValue));
@@ -27439,11 +27438,11 @@ function asTime(obj : TFHIRObject) : TFHIRTime;
 begin
   if obj is TFHIRTime then
     result := obj as TFHIRTime
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRTime.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRTime.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRTime.create(TFHIRObject(obj).primitiveValue);
@@ -27459,11 +27458,11 @@ function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
 begin
   if obj is TFHIRDecimal then
     result := obj as TFHIRDecimal
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRDecimal.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDecimal.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRDecimal.create(TFHIRObject(obj).primitiveValue);
@@ -27479,11 +27478,11 @@ function asCode(obj : TFHIRObject) : TFHIRCode;
 begin
   if obj is TFHIRCode then
     result := obj as TFHIRCode
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRCode.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRCode.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRCode.create(TFHIRObject(obj).primitiveValue);
@@ -27499,11 +27498,11 @@ function asOid(obj : TFHIRObject) : TFHIROid;
 begin
   if obj is TFHIROid then
     result := obj as TFHIROid
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIROid.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIROid.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIROid.create(TFHIRObject(obj).primitiveValue);
@@ -27519,11 +27518,11 @@ function asUuid(obj : TFHIRObject) : TFHIRUuid;
 begin
   if obj is TFHIRUuid then
     result := obj as TFHIRUuid
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRUuid.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUuid.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUuid.create(TFHIRObject(obj).primitiveValue);
@@ -27539,11 +27538,11 @@ function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
 begin
   if obj is TFHIRMarkdown then
     result := obj as TFHIRMarkdown
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRMarkdown.create(TFHIRObject(obj).primitiveValue);
@@ -27559,11 +27558,11 @@ function asUnsignedInt(obj : TFHIRObject) : TFHIRUnsignedInt;
 begin
   if obj is TFHIRUnsignedInt then
     result := obj as TFHIRUnsignedInt
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRUnsignedInt.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUnsignedInt.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUnsignedInt.create(TFHIRObject(obj).primitiveValue);
@@ -27579,11 +27578,11 @@ function asId(obj : TFHIRObject) : TFHIRId;
 begin
   if obj is TFHIRId then
     result := obj as TFHIRId
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRId.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRId.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRId.create(TFHIRObject(obj).primitiveValue);
@@ -27599,11 +27598,11 @@ function asPositiveInt(obj : TFHIRObject) : TFHIRPositiveInt;
 begin
   if obj is TFHIRPositiveInt then
     result := obj as TFHIRPositiveInt
-  //else if obj is TFHIRMMElement then
-  //begin
-  //  result := TFHIRPositiveInt.create(TFHIRMMElement(obj).value);
-  //  obj.Free;
-  //end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRPositiveInt.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRPositiveInt.create(TFHIRObject(obj).primitiveValue);

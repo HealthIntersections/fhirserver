@@ -589,8 +589,10 @@ begin
 
   if subscription.criteria = '*' then
     result := true
+  else if newRes = nil then
+    result := false
   else
-    result := MeetsCriteriaSearch(subscription.criteria, typekey, key, conn);
+    result := MeetsCriteriaSearch(subscription.criteria, newRes, typekey, key, conn);
 end;
 
 function TSubscriptionManagerR4.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>;

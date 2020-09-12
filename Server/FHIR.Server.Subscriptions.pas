@@ -227,7 +227,7 @@ Type
     procedure checkSaveTags(subst : TFHIRSubscriptionW; conn : TFslDBConnection; key : integer; res : TFHIRResourceV);
   protected
     FLock : TFslLock;
-    function MeetsCriteriaSearch(criteria : String; typekey : Integer; key : integer; conn : TFslDBConnection) : boolean;
+    function MeetsCriteriaSearch(criteria : String; res : TFHIRResourceV; typekey : Integer; key : integer; conn : TFslDBConnection) : boolean;
     function LoadResourceFromDBByVer(conn : TFslDBConnection; vkey: integer; var id : String) : TFhirResourceV; overload;
     function LoadResourceFromDBByVer(conn : TFslDBConnection; vkey: integer; var id : String; canBeNull : boolean) : TFhirResourceV; overload;
 
@@ -1452,18 +1452,25 @@ begin
   end;
 end;
 
-function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey : Integer; key : integer; conn: TFslDBConnection): boolean;
+function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; res : TFHIRResourceV; typekey : Integer; key : integer; conn: TFslDBConnection): boolean;
 var
   l, r, sql : String;
   p : THTTPParameters;
 begin
   StringSplit(criteria, '?', l, r);
-  p := THTTPParameters.create('_type='+l+'&'+r, true);
-  try
-    sql := FOnExecuteSearch(typekey, nil, nil, p, conn);
-    result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;
-  finally
-    p.Free;
+  if r = '' then
+  begin
+    result := l = res.fhirType;
+  end
+  else
+  begin
+    p := THTTPParameters.create('_type='+l+'&'+r, true);
+    try
+      sql := FOnExecuteSearch(typekey, nil, nil, p, conn);
+      result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;
+    finally
+      p.Free;
+    end;
   end;
 end;
 
