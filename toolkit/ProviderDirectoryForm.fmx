@@ -7,14 +7,12 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
     Size.Width = 1138.000000000000000000
     Size.Height = 442.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 0
     object Panel1: TPanel
       Align = MostRight
       Position.X = 912.000000000000000000
       Size.Width = 226.000000000000000000
       Size.Height = 442.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 2
       object gridProperties: TGrid
         Align = Client
         CanFocus = True
@@ -22,7 +20,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Width = 226.000000000000000000
         Size.Height = 442.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
         RowCount = 0
         OnGetValue = gridPropertiesGetValue
         Viewport.Width = 226.000000000000000000
@@ -42,14 +39,12 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
       Size.Width = 904.000000000000000000
       Size.Height = 442.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 3
       object Panel3: TPanel
         Align = Bottom
         Position.Y = 382.000000000000000000
         Size.Width = 904.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 1
         object lblOutcome: TLabel
           Anchors = [akLeft, akTop, akRight]
           Cursor = crHandPoint
@@ -59,7 +54,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
           Size.Width = 782.000000000000000000
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           OnClick = lblOutcomeClick
         end
         object btnFetchMore: TButton
@@ -70,7 +64,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
           Size.Width = 97.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           Text = 'Fetch More'
           OnClick = btnFetchMoreClick
         end
@@ -81,7 +74,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Width = 904.000000000000000000
         Size.Height = 34.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
         object lblMessages: TLabel
           Align = Client
           StyledSettings = [Family, Size, Style]
@@ -92,7 +84,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
           Size.PlatformDefault = False
           TextSettings.FontColor = claMaroon
           Text = 'lblMessages'
-          TabOrder = 0
         end
       end
       object TabControl1: TTabControl
@@ -101,7 +92,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 382.000000000000000000
         Size.PlatformDefault = False
         TabIndex = 1
-        TabOrder = 4
         TabPosition = PlatformDefault
         Sizes = (
           904s
@@ -113,6 +103,7 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             item
             end>
           IsSelected = False
+          Size.Width = 0.000000000000000000
           Size.Height = 5.000000000000000000
           Size.PlatformDefault = False
           StyleLookup = ''
@@ -125,14 +116,12 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             Size.Width = 904.000000000000000000
             Size.Height = 105.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 0
             object btnHSSearch: TButton
               Position.X = 712.000000000000000000
               Position.Y = 14.000000000000000000
               Size.Width = 97.000000000000000000
               Size.Height = 25.000000000000000000
               Size.PlatformDefault = False
-              TabOrder = 3
               Text = 'Search'
               OnClick = btnHSSearchClick
             end
@@ -140,7 +129,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
               Position.X = 16.000000000000000000
               Position.Y = 14.000000000000000000
               Text = 'Service Name:'
-              TabOrder = 5
             end
             object Label3: TLabel
               Position.X = 16.000000000000000000
@@ -149,11 +137,9 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
               Size.Height = 23.000000000000000000
               Size.PlatformDefault = False
               Text = 'HPI-O'
-              TabOrder = 6
             end
             object edtHPIO: TEdit
               Touch.InteractiveGestures = [LongTap, DoubleTap]
-              TabOrder = 7
               Position.X = 72.000000000000000000
               Position.Y = 40.000000000000000000
               Size.Width = 289.000000000000000000
@@ -162,7 +148,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             end
             object edtServiceName: TEdit
               Touch.InteractiveGestures = [LongTap, DoubleTap]
-              TabOrder = 8
               Position.X = 104.000000000000000000
               Position.Y = 14.000000000000000000
               Size.Width = 313.000000000000000000
@@ -180,7 +165,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             Size.Width = 892.000000000000000000
             Size.Height = 266.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 1
             RowCount = 0
             Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
             OnSelectCell = gridHSMatchesSelectCell
@@ -219,6 +203,7 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             item
             end>
           IsSelected = True
+          Size.Width = 0.000000000000000000
           Size.Height = 5.000000000000000000
           Size.PlatformDefault = False
           StyleLookup = ''
@@ -231,14 +216,12 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             Size.Width = 904.000000000000000000
             Size.Height = 105.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 0
             object btnSearchProvider: TButton
               Position.X = 712.000000000000000000
               Position.Y = 14.000000000000000000
               Size.Width = 97.000000000000000000
               Size.Height = 25.000000000000000000
               Size.PlatformDefault = False
-              TabOrder = 3
               Text = 'Search'
               OnClick = btnSearchProviderClick
             end
@@ -246,7 +229,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
               Position.X = 16.000000000000000000
               Position.Y = 14.000000000000000000
               Text = 'Family:'
-              TabOrder = 5
             end
             object Label11: TLabel
               Position.X = 16.000000000000000000
@@ -255,11 +237,9 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
               Size.Height = 23.000000000000000000
               Size.PlatformDefault = False
               Text = 'Identifier:'
-              TabOrder = 7
             end
             object edtIdentifier: TEdit
               Touch.InteractiveGestures = [LongTap, DoubleTap]
-              TabOrder = 10
               Position.X = 72.000000000000000000
               Position.Y = 40.000000000000000000
               Size.Width = 153.000000000000000000
@@ -268,7 +248,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             end
             object edtFamily: TEdit
               Touch.InteractiveGestures = [LongTap, DoubleTap]
-              TabOrder = 11
               Position.X = 56.000000000000000000
               Position.Y = 14.000000000000000000
               Size.Width = 145.000000000000000000
@@ -282,11 +261,9 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
               Size.Height = 17.000000000000000000
               Size.PlatformDefault = False
               Text = 'Given:'
-              TabOrder = 6
             end
             object edtGiven: TEdit
               Touch.InteractiveGestures = [LongTap, DoubleTap]
-              TabOrder = 9
               Position.X = 264.000000000000000000
               Position.Y = 14.000000000000000000
               Size.Width = 153.000000000000000000
@@ -300,7 +277,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
               Size.Height = 23.000000000000000000
               Size.PlatformDefault = False
               Text = 'of Type:'
-              TabOrder = 8
             end
             object cbxIdType: TComboBox
               Items.Strings = (
@@ -311,7 +287,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
                 'NP/OI')
               Position.X = 280.000000000000000000
               Position.Y = 40.000000000000000000
-              TabOrder = 12
             end
           end
           object gridPRMatches: TGrid
@@ -324,7 +299,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
             Size.Width = 892.000000000000000000
             Size.Height = 266.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 1
             RowCount = 0
             Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
             OnSelectCell = gridPRMatchesSelectCell
@@ -368,7 +342,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Width = 185.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 5
       end
       object cbxPayload: TComboBox
         Position.X = 528.000000000000000000
@@ -376,7 +349,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Width = 169.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 6
       end
       object Label17: TLabel
         Position.X = 480.000000000000000000
@@ -385,7 +357,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 23.000000000000000000
         Size.PlatformDefault = False
         Text = 'Payload'
-        TabOrder = 7
       end
       object Label7: TLabel
         Position.X = 16.000000000000000000
@@ -394,7 +365,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 23.000000000000000000
         Size.PlatformDefault = False
         Text = 'Specialty:'
-        TabOrder = 8
       end
       object Label8: TLabel
         Position.X = 248.000000000000000000
@@ -403,7 +373,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 23.000000000000000000
         Size.PlatformDefault = False
         Text = 'Type:'
-        TabOrder = 9
       end
       object cbxState: TComboBox
         Position.X = 600.000000000000000000
@@ -411,11 +380,9 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Width = 81.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 10
       end
       object edtOrgName: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 11
         Position.X = 544.000000000000000000
         Position.Y = 38.000000000000000000
         Size.Width = 153.000000000000000000
@@ -424,7 +391,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
       end
       object edtPostcode: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 12
         Position.X = 752.000000000000000000
         Position.Y = 64.000000000000000000
         Size.Width = 57.000000000000000000
@@ -433,7 +399,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
       end
       object edtSuburb: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 13
         Position.X = 440.000000000000000000
         Position.Y = 64.000000000000000000
         Size.Width = 105.000000000000000000
@@ -447,7 +412,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 23.000000000000000000
         Size.PlatformDefault = False
         Text = 'Suburb'
-        TabOrder = 14
       end
       object Label12: TLabel
         Position.X = 560.000000000000000000
@@ -456,7 +420,6 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 23.000000000000000000
         Size.PlatformDefault = False
         Text = 'State:'
-        TabOrder = 15
       end
       object Label13: TLabel
         Position.X = 696.000000000000000000
@@ -465,17 +428,14 @@ object ProviderDirectoryFrame: TProviderDirectoryFrame
         Size.Height = 23.000000000000000000
         Size.PlatformDefault = False
         Text = 'PostCode'
-        TabOrder = 16
       end
       object Label9: TLabel
         Position.X = 432.000000000000000000
         Position.Y = 38.000000000000000000
         Text = 'Organisation Name:'
-        TabOrder = 17
       end
       object edtSpecialty: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 18
         Position.X = 72.000000000000000000
         Position.Y = 96.000000000000000000
         Size.Width = 153.000000000000000000

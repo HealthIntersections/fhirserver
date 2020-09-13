@@ -63,7 +63,7 @@ begin
 //  Application.ProcessMessages;
   {$ENDIF}
   try
-    proc;
+    proc(nil);
   finally
     ModalResult := mrClose;
   end;

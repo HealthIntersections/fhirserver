@@ -45,22 +45,23 @@ type
   TMultiValList = class(TFslObject)
   Private
     fItemList: TStringList;
-    FSource: String;
 
     procedure addItem(itemname: String; const itemvalue: String);
     procedure RemoveItem(itemname: String);
     //      procedure StripEntries(starter : string);
     function retrieveItem(const itemname: String; index: Integer; var itemval: String): Boolean;
     function retrieveNameIndex(itemname: String; var itemnum: Integer): Boolean;
-    function getItemCount: Integer;
     function dumpList(const heading: String): String;
     function dumpFormList(starter: String): String;
     function dumpParameterList: String;
     function Textdump: String;
     procedure ParseAddItem(p: PChar; decodeflag: Boolean; itemnamestart, itemnamelen, itemvalstart, itemvallen: Integer);
     procedure Parse(const instr: String; decodeflag: Boolean; delimchar: Char);
+    Function GetCount : Integer;
+  protected
+    FSource: String;
+    function getItemCount: Integer;
     function VarName(index: Integer): String;
-    Function Count : Integer;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -618,7 +619,7 @@ begin
     Result := 0;
 end;
 
-function TMultiValList.Count: Integer;
+function TMultiValList.GetCount: Integer;
 begin
   result := fItemList.count;
 end;

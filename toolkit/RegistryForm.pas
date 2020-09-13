@@ -36,9 +36,9 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   IdComponent,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Base.Xhtml,
   BaseFrame, CapabilityStatementEditor, FMX.WebBrowser,
-  FMX.Memo;
+  FMX.Memo, FMX.Memo.Types;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -133,7 +133,7 @@ var
 begin
   pnlMessages.Height := 0;
   work('Fetch Resources', true,
-    procedure
+    procedure (context : pointer)
     var
       be : TFhirBundleEntry;
       params : TStringList;
@@ -218,7 +218,7 @@ end;
 procedure TRegistryFrame.btnFetchMoreClick(Sender: TObject);
 begin
   work('Fetch More', true,
-    procedure
+    procedure (context : pointer)
     var
       be : TFhirBundleEntry;
       start : TDateTime;
@@ -275,7 +275,7 @@ end;
 procedure TRegistryFrame.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
   Application.ProcessMessages;
-  if assigned(OnStopped) and OnStopped then
+  if assigned(OnStopped) and OnStopped(nil) then
     abort;
 end;
 

@@ -9,7 +9,7 @@ uses
   FHIR.Javascript,
   FHIR.v2.Message, FHIR.v2.Javascript,
   FHIR.Cda.Objects, FHIR.Cda.Javascript,
-  FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Profiles,
+  FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.ElementModel, FHIR.R4.Profiles,
   FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Client, FHIR.Client.HTTP, FHIR.R4.Javascript,
   FHIR.Conversion.Engine, FHIR.Javascript.Base,
   FHIR.Transformer.Utilities, FHIR.Transformer.Workspace, FHIR.Transformer.Context, FHIR.Transformer.Editor;

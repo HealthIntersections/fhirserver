@@ -7,7 +7,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Base,
-  FHIR.R4.Resources;
+  FHIR.R4.Resources, FHIR.R4.Resources.Base;
 
 type
   TFHIRResourceOrganiser = class (TFslObject)

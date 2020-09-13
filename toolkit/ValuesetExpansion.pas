@@ -36,7 +36,7 @@ uses
   FMX.Edit, FMX.Controls.Presentation, FMX.ListBox, FMX.Platform,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Smart.Utilities,
+  FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Smart.Utilities,
   SettingsDialog, BaseFrame, ProcessForm,
   ToolkitSettings;
 
@@ -91,7 +91,7 @@ type
     procedure SetExpansion(const Value: TFHIRValueSet);
     procedure SetSettings(const Value: TFHIRToolkitSettings);
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
-    function GetStopped: boolean;
+    function GetStopped(context : pointer): boolean;
     procedure btnStopClick(Sender: TObject);
     procedure loadServers;
   public
@@ -280,7 +280,7 @@ begin
   StringColumn13.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(StringColumn13.Width));
 end;
 
-function TValuesetExpansionForm.GetStopped: boolean;
+function TValuesetExpansionForm.GetStopped(context : pointer): boolean;
 begin
 
 end;
@@ -301,7 +301,7 @@ begin
      false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
   dowork(self, 'Expanding', true,
-    procedure
+    procedure (context : pointer)
     var
       params :  TFHIRParameters;
     begin

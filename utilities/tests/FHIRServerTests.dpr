@@ -419,7 +419,21 @@ uses
   FHIR.R3.Resources.Other in '..\..\library\r3\FHIR.R3.Resources.Other.pas',
   FHIR.R3.Resources.Admin in '..\..\library\r3\FHIR.R3.Resources.Admin.pas',
   FHIR.R3.Resources.Base in '..\..\library\r3\FHIR.R3.Resources.Base.pas',
-  FHIR.R2.Resources.Base in '..\..\library\r2\FHIR.R2.Resources.Base.pas';
+  FHIR.R2.Resources.Base in '..\..\library\r2\FHIR.R2.Resources.Base.pas',
+  FHIR.R4.Resources.Canonical in '..\..\library\r4\FHIR.R4.Resources.Canonical.pas',
+  FHIR.R4.Resources.Base in '..\..\library\r4\FHIR.R4.Resources.Base.pas',
+  FHIR.R4.Resources.Admin in '..\..\library\r4\FHIR.R4.Resources.Admin.pas',
+  FHIR.R4.Resources.Other in '..\..\library\r4\FHIR.R4.Resources.Other.pas',
+  FHIR.R4.Resources.Medications in '..\..\library\r4\FHIR.R4.Resources.Medications.pas',
+  FHIR.R4.Resources.Financial in '..\..\library\r4\FHIR.R4.Resources.Financial.pas',
+  FHIR.R4.Resources.Clinical in '..\..\library\r4\FHIR.R4.Resources.Clinical.pas',
+  FHIR.R5.Resources.Canonical in '..\..\library\r5\FHIR.R5.Resources.Canonical.pas',
+  FHIR.R5.Resources.Base in '..\..\library\r5\FHIR.R5.Resources.Base.pas',
+  FHIR.R5.Resources.Admin in '..\..\library\r5\FHIR.R5.Resources.Admin.pas',
+  FHIR.R5.Resources.Other in '..\..\library\r5\FHIR.R5.Resources.Other.pas',
+  FHIR.R5.Resources.Medications in '..\..\library\r5\FHIR.R5.Resources.Medications.pas',
+  FHIR.R5.Resources.Financial in '..\..\library\r5\FHIR.R5.Resources.Financial.pas',
+  FHIR.R5.Resources.Clinical in '..\..\library\r5\FHIR.R5.Resources.Clinical.pas';
 
 var
   runner : ITestRunner;

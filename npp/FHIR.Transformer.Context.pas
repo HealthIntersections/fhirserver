@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.OIDs,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Client, FHIR.R4.Utilities;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Client, FHIR.R4.Utilities;
 
 type
   TFHIRTransformerContext = class (TBaseWorkerContextR4)
@@ -34,6 +34,7 @@ type
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
   end;
 
 implementation
@@ -154,6 +155,11 @@ begin
 //  finally
 //    FLock.Unlock;
 //  end;
+end;
+
+function TFHIRTransformerContext.getSearchParameter(resourceType, name: String): TFHIRResourceV;
+begin
+  result := nil;
 end;
 
 function TFHIRTransformerContext.expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet;

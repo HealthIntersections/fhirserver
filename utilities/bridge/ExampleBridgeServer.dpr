@@ -69,7 +69,6 @@ uses
   FHIR.R3.Turtle in '..\..\library\r3\FHIR.R3.Turtle.pas',
   FHIR.Base.Parser in '..\..\library\base\FHIR.Base.Parser.pas',
   FHIR.R3.Profiles in '..\..\library\r3\FHIR.R3.Profiles.pas',
-  FHIR.R3.Resources in '..\..\library\r3\FHIR.R3.Resources.pas',
   FHIR.Server.Security in '..\..\server\FHIR.Server.Security.pas',
   FHIR.Server.Session in '..\..\server\FHIR.Server.Session.pas',
   FHIR.R3.Tags in '..\..\library\r3\FHIR.R3.Tags.pas',
@@ -210,7 +209,13 @@ uses
   FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
   FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas',
   FHIR.Server.ClientCacheManager in '..\..\Server\FHIR.Server.ClientCacheManager.pas',
-  FHIR.Tx.HGVS in '..\..\Server\FHIR.Tx.HGVS.pas';
+  FHIR.Tx.HGVS in '..\..\Server\FHIR.Tx.HGVS.pas',
+  FHIR.R3.Resources.Base in '..\..\library\r3\FHIR.R3.Resources.Base.pas',
+  FHIR.R3.Resources.Admin in '..\..\library\r3\FHIR.R3.Resources.Admin.pas',
+  FHIR.R3.Resources.Other in '..\..\library\r3\FHIR.R3.Resources.Other.pas',
+  FHIR.R3.Resources.Clinical in '..\..\library\r3\FHIR.R3.Resources.Clinical.pas',
+  FHIR.R3.Resources.Canonical in '..\..\library\r3\FHIR.R3.Resources.Canonical.pas',
+  FHIR.R3.Resources in '..\..\library\r3\FHIR.R3.Resources.pas';
 
 var
   gsrv : TExampleFhirServer;

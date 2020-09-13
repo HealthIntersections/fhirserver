@@ -164,7 +164,12 @@ uses
   FHIR.Ui.Fmx in '..\library\ui\FHIR.Ui.Fmx.pas',
   FHIR.R3.Organiser in '..\library\r3\FHIR.R3.Organiser.pas',
   FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
-  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas';
+  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.R3.Resources.Admin in '..\library\r3\FHIR.R3.Resources.Admin.pas',
+  FHIR.R3.Resources.Other in '..\library\r3\FHIR.R3.Resources.Other.pas',
+  FHIR.R3.Resources.Clinical in '..\library\r3\FHIR.R3.Resources.Clinical.pas',
+  FHIR.R3.Resources.Canonical in '..\library\r3\FHIR.R3.Resources.Canonical.pas',
+  FHIR.R3.Resources.Base in '..\library\r3\FHIR.R3.Resources.Base.pas';
 
 {$R *.res}
 

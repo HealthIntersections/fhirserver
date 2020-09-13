@@ -8,7 +8,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
-  FHIR.R4.Client, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities; // Terminology Layer
+  FHIR.R4.Client, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Utilities; // Terminology Layer
 
 (*
 function lookup(coded, params) : Parameters;

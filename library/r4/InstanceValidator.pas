@@ -35,7 +35,7 @@ uses
   Windows, SysUtils, Classes, RegularExpressions, Character,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Lang,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.ElementModel, FHIR.R4.Validator, FHIR.R4.Adaptor, FHIR.R4.Context, FHIR.R4.PathNode, FHIR.R4.PathEngine;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Utilities, FHIR.R4.ElementModel, FHIR.R4.Validator, FHIR.R4.Adaptor, FHIR.R4.Context, FHIR.R4.PathNode, FHIR.R4.PathEngine;
 
 Type
   TFHIRRferenceRefetcher = class (TFslObject)

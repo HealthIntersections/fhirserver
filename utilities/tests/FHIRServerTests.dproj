@@ -619,6 +619,21 @@
         <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Admin.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Base.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Base.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Canonical.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Base.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Admin.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Other.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Medications.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Financial.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Canonical.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Base.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Admin.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Other.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Medications.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Financial.pas"/>
+        <DCCReference Include="..\..\library\r5\FHIR.R5.Resources.Clinical.pas"/>
+        <None Include="FHIRServerTests.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -643,6 +658,12 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="Win64\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIR.Server.Tests.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -687,9 +708,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="FHIRServerTests.dpr" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win64">
-                        <RemoteName>FHIR.Server.Tests.exe</RemoteName>
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

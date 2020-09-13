@@ -349,6 +349,13 @@
         <DCCReference Include="..\..\Server\FHIR.Server.WebBase.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.ClientCacheManager.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.HGVS.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Admin.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Other.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Medications.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Base.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Financial.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
+        <DCCReference Include="..\..\library\r4\FHIR.R4.Resources.Canonical.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

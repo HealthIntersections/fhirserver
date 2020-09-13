@@ -36,9 +36,9 @@ uses
   FMX.Memo, FMX.StdCtrls, FMX.Edit, FMX.ListBox, FMX.Controls.Presentation,
   FMX.Ani,
   FHIR.Support.Utilities, FHIR.Support.Threads,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities,
   FHIR.Version.Client, FHIR.Client.Async,
-  BaseDialog, ToolkitSettings;
+  BaseDialog, ToolkitSettings, FMX.Memo.Types;
 
 type
   TForm = TBaseForm;

@@ -191,7 +191,14 @@ uses
   PackageEditorFrame in 'PackageEditorFrame.pas' {PackageEditorFrame: TFrame},
   FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
   NamingSystemEditor in 'NamingSystemEditor.pas' {NamingSystemEditorFrame: TFrame},
-  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas';
+  FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.R4.Resources.Canonical in '..\library\r4\FHIR.R4.Resources.Canonical.pas',
+  FHIR.R4.Resources.Base in '..\library\r4\FHIR.R4.Resources.Base.pas',
+  FHIR.R4.Resources.Admin in '..\library\r4\FHIR.R4.Resources.Admin.pas',
+  FHIR.R4.Resources.Other in '..\library\r4\FHIR.R4.Resources.Other.pas',
+  FHIR.R4.Resources.Medications in '..\library\r4\FHIR.R4.Resources.Medications.pas',
+  FHIR.R4.Resources.Financial in '..\library\r4\FHIR.R4.Resources.Financial.pas',
+  FHIR.R4.Resources.Clinical in '..\library\r4\FHIR.R4.Resources.Clinical.pas';
 
 {$R *.res}
 

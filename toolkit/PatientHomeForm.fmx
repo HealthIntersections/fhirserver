@@ -7,17 +7,14 @@ object PatientHomeFrame: TPatientHomeFrame
     Size.Width = 950.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 0
     object lblName: TLabel
       Position.X = 112.000000000000000000
       Position.Y = 8.000000000000000000
       Text = 'lblName'
-      TabOrder = 0
     end
     object Button1: TButton
       Position.X = 752.000000000000000000
       Position.Y = 8.000000000000000000
-      TabOrder = 1
       Text = '&Edit'
       OnClick = Button1Click
     end
@@ -27,7 +24,6 @@ object PatientHomeFrame: TPatientHomeFrame
       Position.Y = 8.000000000000000000
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       Text = 'Patient Details:'
-      TabOrder = 2
     end
   end
   object Panel4: TPanel
@@ -36,7 +32,6 @@ object PatientHomeFrame: TPatientHomeFrame
     Size.Width = 950.000000000000000000
     Size.Height = 28.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 1
     object lblOutcome: TLabel
       Anchors = [akLeft, akTop, akRight]
       Position.X = 8.000000000000000000
@@ -44,7 +39,6 @@ object PatientHomeFrame: TPatientHomeFrame
       Size.Width = 933.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 0
     end
   end
   object TabControl1: TTabControl
@@ -53,7 +47,6 @@ object PatientHomeFrame: TPatientHomeFrame
     Size.Height = 607.000000000000000000
     Size.PlatformDefault = False
     TabIndex = 0
-    TabOrder = 2
     TabPosition = PlatformDefault
     Sizes = (
       950s
@@ -67,6 +60,7 @@ object PatientHomeFrame: TPatientHomeFrame
         item
         end>
       IsSelected = True
+      Size.Width = 0.000000000000000000
       Size.Height = 5.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -79,13 +73,11 @@ object PatientHomeFrame: TPatientHomeFrame
         Size.Width = 950.000000000000000000
         Size.Height = 129.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
         object Panel9: TPanel
           Align = Top
           Size.Width = 950.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           object Label6: TLabel
             Align = Left
             StyledSettings = [Family, Size, FontColor]
@@ -94,7 +86,6 @@ object PatientHomeFrame: TPatientHomeFrame
             Size.PlatformDefault = False
             TextSettings.Font.StyleExt = {00070000000000000004000000}
             Text = '    Names'
-            TabOrder = 0
           end
         end
         object Panel10: TPanel
@@ -102,7 +93,6 @@ object PatientHomeFrame: TPatientHomeFrame
           Size.Width = 950.000000000000000000
           Size.Height = 104.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           object grdName: TGrid
             Align = Client
             CanFocus = True
@@ -110,7 +100,6 @@ object PatientHomeFrame: TPatientHomeFrame
             Size.Width = 950.000000000000000000
             Size.Height = 104.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 0
             OnGetValue = grdNameGetValue
             Viewport.Width = 950.000000000000000000
             Viewport.Height = 104.000000000000000000
@@ -147,7 +136,6 @@ object PatientHomeFrame: TPatientHomeFrame
         Size.Width = 950.000000000000000000
         Size.Height = 136.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 1
       end
     end
     object TabItem2: TTabItem
@@ -155,6 +143,7 @@ object PatientHomeFrame: TPatientHomeFrame
         item
         end>
       IsSelected = False
+      Size.Width = 0.000000000000000000
       Size.Height = 5.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -170,21 +159,18 @@ object PatientHomeFrame: TPatientHomeFrame
         Size.Width = 950.000000000000000000
         Size.Height = 177.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 2
         object Panel5: TPanel
           Align = Top
           Position.X = 10.000000000000000000
           Size.Width = 930.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           object Label3: TLabel
             Align = Left
             Size.Width = 449.000000000000000000
             Size.Height = 25.000000000000000000
             Size.PlatformDefault = False
             Text = 'Heart Rate (Beats/min over last 24 hours)'
-            TabOrder = 1
           end
         end
       end
@@ -197,21 +183,18 @@ object PatientHomeFrame: TPatientHomeFrame
         Size.Width = 950.000000000000000000
         Size.Height = 177.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 1
         object Panel7: TPanel
           Align = Top
           Position.X = 10.000000000000000000
           Size.Width = 930.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           object Label5: TLabel
             Align = Left
             Size.Width = 120.000000000000000000
             Size.Height = 25.000000000000000000
             Size.PlatformDefault = False
             Text = 'O2 Saturation'
-            TabOrder = 1
           end
         end
       end
@@ -224,21 +207,18 @@ object PatientHomeFrame: TPatientHomeFrame
         Size.Width = 950.000000000000000000
         Size.Height = 177.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
         object Panel6: TPanel
           Align = Top
           Position.X = 10.000000000000000000
           Size.Width = 930.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           object Label4: TLabel
             Align = Left
             Size.Width = 120.000000000000000000
             Size.Height = 25.000000000000000000
             Size.PlatformDefault = False
             Text = 'Blood Pressure'
-            TabOrder = 1
           end
         end
       end
@@ -248,6 +228,7 @@ object PatientHomeFrame: TPatientHomeFrame
         item
         end>
       IsSelected = False
+      Size.Width = 0.000000000000000000
       Size.Height = 5.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -268,7 +249,6 @@ object PatientHomeFrame: TPatientHomeFrame
         Size.Width = 946.000000000000000000
         Size.Height = 598.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
         object Panel3: TPanel
           Align = Top
           Position.X = 2.000000000000000000
@@ -276,14 +256,12 @@ object PatientHomeFrame: TPatientHomeFrame
           Size.Width = 942.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           object Label2: TLabel
             StyledSettings = [Family, Size, FontColor]
             Position.X = 8.000000000000000000
             Position.Y = 8.000000000000000000
             TextSettings.Font.StyleExt = {00070000000000000004000000}
             Text = 'Compositions'
-            TabOrder = 0
           end
         end
         object lbCompositions: TListBox
@@ -291,7 +269,6 @@ object PatientHomeFrame: TPatientHomeFrame
           Size.Width = 942.000000000000000000
           Size.Height = 561.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           OnDblClick = lbCompositionsDblClick
           DisableFocusEffect = True
           DefaultItemStyles.ItemStyle = ''

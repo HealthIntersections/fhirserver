@@ -222,7 +222,7 @@ var
   s : String;
 begin
   if pm.has(definition.name) then
-    readParamValue(pm[definition.name))
+    readParamValue(pm[definition.name])
   else
   begin
     ok := false;
@@ -232,7 +232,7 @@ begin
         begin
           ok := true;
           modList.ItemIndex := modlist.Items.IndexOf(s);
-          readParamValue(pm[definition.name+':'+s));
+          readParamValue(pm[definition.name+':'+s]);
         end;
     if not ok then
       readParamValue('');
@@ -809,19 +809,19 @@ begin
     se.readFromURL(pm);
   if pm.has('_sort') then
   begin
-    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort'));
+    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort']);
     cbSearchOrder.Checked := false;
   end else if pm.has('_sort:asc') then
   begin
-    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort:asc'));
+    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort:asc']);
     cbSearchOrder.Checked := false;
   end else if pm.has('_sort:desc') then
   begin
-    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort:desc'));
+    cbxSort.itemindex := cbxSort.Items.IndexOf(pm['_sort:desc']);
     cbSearchOrder.Checked := true;
   end;
   if (pm.has('_count')) then
-    edtPageCount.Value := StrToIntDef(pm['_count'), 20);
+    edtPageCount.Value := StrToIntDef(pm['_count'], 20);
 end;
 
 procedure TFetchResourceFrm.btnSearchAllClick(Sender: TObject);

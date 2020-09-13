@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 
 function checkSSL : boolean;
 function checkUpgrade : String;
@@ -93,6 +93,7 @@ type
 //    function allResourceNames : TArray<String>; overload; virtual; abstract;
 //    function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
 //    procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
     procedure loadStructures(id : integer; structures : TFslObject);
     procedure LoadingFinished; override;
   end;
@@ -620,6 +621,11 @@ end;
 function TToolkitWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
   raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.getSearchParameter(resourceType, name: String): TFHIRResourceV;
+begin
+  result := nil;
 end;
 
 function TToolkitWorkerContext.Link: TToolkitWorkerContext;

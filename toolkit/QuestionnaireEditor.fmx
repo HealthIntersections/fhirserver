@@ -7,13 +7,11 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
     Size.Width = 121.000000000000000000
     Size.Height = 760.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 0
     object Panel4: TPanel
       Align = Top
       Size.Width = 121.000000000000000000
       Size.Height = 33.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 0
       object Label1: TLabel
         Position.X = 8.000000000000000000
         Position.Y = 4.000000000000000000
@@ -21,7 +19,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         Size.Height = 21.000000000000000000
         Size.PlatformDefault = False
         Text = 'Questionnaire'
-        TabOrder = 0
       end
     end
     object tvStructure: TTreeView
@@ -29,7 +26,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
       Size.Width = 121.000000000000000000
       Size.Height = 727.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 1
       OnClick = tvStructureClick
       Viewport.Width = 121.000000000000000000
       Viewport.Height = 727.000000000000000000
@@ -37,35 +33,30 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         IsChecked = False
         IsExpanded = False
         IsSelected = False
-        TabOrder = 0
         Text = 'Metadata'
       end
       object tvSDC: TTreeViewItem
         IsChecked = False
         IsExpanded = False
         IsSelected = False
-        TabOrder = 4
         Text = 'SDC Information'
       end
       object tvContext: TTreeViewItem
         IsChecked = False
         IsExpanded = False
         IsSelected = False
-        TabOrder = 2
         Text = 'Context'
       end
       object tvGrid: TTreeViewItem
         IsChecked = False
         IsExpanded = False
         IsSelected = False
-        TabOrder = 1
         Text = 'Grid'
       end
       object tvForm: TTreeViewItem
         IsChecked = False
         IsExpanded = False
         IsSelected = False
-        TabOrder = 3
         Text = 'Layout'
       end
     end
@@ -75,14 +66,12 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
     Size.Width = 952.000000000000000000
     Size.Height = 760.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
     object tbStructure: TTabControl
       Align = Client
       Size.Width = 952.000000000000000000
       Size.Height = 760.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 4
-      TabOrder = 0
       TabPosition = None
       Sizes = (
         952s
@@ -113,7 +102,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 952.000000000000000000
           Size.Height = 760.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           Viewport.Width = 952.000000000000000000
           Viewport.Height = 760.000000000000000000
           object dedDate: TDateEdit
@@ -126,11 +114,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 380.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 11
           end
           object edtCopyright: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 9
             TextSettings.VertAlign = Leading
             Position.X = 84.000000000000000000
             Position.Y = 261.000000000000000000
@@ -143,7 +129,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtDescription: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 7
             TextSettings.VertAlign = Leading
             Position.X = 84.000000000000000000
             Position.Y = 192.000000000000000000
@@ -156,7 +141,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 1
             Position.X = 84.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 20
@@ -168,7 +152,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtPublisher: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 6
             Position.X = 84.000000000000000000
             Position.Y = 157.000000000000000000
             HelpContext = 25
@@ -180,7 +163,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtPurpose: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 8
             TextSettings.VertAlign = Leading
             Position.X = 84.000000000000000000
             Position.Y = 226.000000000000000000
@@ -193,7 +175,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtTitle: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 3
             Position.X = 84.000000000000000000
             Position.Y = 85.000000000000000000
             HelpContext = 21
@@ -205,7 +186,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtURL: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 0
             Position.X = 84.000000000000000000
             Position.Y = 16.000000000000000000
             HelpContext = 17
@@ -217,7 +197,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtVersion: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 2
             Position.X = 384.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 19
@@ -234,7 +213,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Purpose'
-            TabOrder = 16
           end
           object Label11: TLabel
             Position.X = 16.000000000000000000
@@ -243,7 +221,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Copyright:'
-            TabOrder = 17
           end
           object Label13: TLabel
             Position.X = 16.000000000000000000
@@ -252,7 +229,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Jurisdiction:'
-            TabOrder = 18
           end
           object Label2: TLabel
             Position.X = 16.000000000000000000
@@ -261,7 +237,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'URL:'
-            TabOrder = 19
           end
           object Label3: TLabel
             Position.X = 16.000000000000000000
@@ -270,7 +245,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Name:'
-            TabOrder = 20
           end
           object Label4: TLabel
             Position.X = 328.000000000000000000
@@ -279,7 +253,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Version:'
-            TabOrder = 22
           end
           object Label5: TLabel
             Position.X = 16.000000000000000000
@@ -288,7 +261,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Title'
-            TabOrder = 24
           end
           object Label6: TLabel
             Position.X = 16.000000000000000000
@@ -297,7 +269,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Status'
-            TabOrder = 26
           end
           object Label7: TLabel
             Position.X = 16.000000000000000000
@@ -306,7 +277,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Date:'
-            TabOrder = 28
           end
           object Label8: TLabel
             Position.X = 16.000000000000000000
@@ -315,7 +285,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Publisher'
-            TabOrder = 29
           end
           object Label9: TLabel
             Position.X = 16.000000000000000000
@@ -324,7 +293,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Description:'
-            TabOrder = 30
           end
           object btnCopyright: TButton
             Images = ToolbarImages
@@ -334,7 +302,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 31
             OnClick = btnCopyrightClick
           end
           object btnDescription: TButton
@@ -345,7 +312,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 35
             OnClick = btnDescriptionClick
           end
           object btnPurpose: TButton
@@ -356,7 +322,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 36
             OnClick = btnPurposeClick
           end
           object cbExperimental: TCheckBox
@@ -366,7 +331,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 122.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 5
             Text = 'Experimental'
             OnChange = inputChanged
           end
@@ -406,7 +370,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 380.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 10
             OnChange = inputChanged
           end
           object cbxStatus: TComboBox
@@ -422,7 +385,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 269.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 4
             OnChange = inputChanged
           end
           object Label14: TLabel
@@ -432,7 +394,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Approval:'
-            TabOrder = 27
           end
           object dedApproval: TDateEdit
             Date = 43966.000000000000000000
@@ -444,7 +405,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 380.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 12
           end
           object Label15: TLabel
             Position.X = 16.000000000000000000
@@ -453,7 +413,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Review:'
-            TabOrder = 25
           end
           object dedReview: TDateEdit
             Date = 43966.000000000000000000
@@ -465,7 +424,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 380.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 13
           end
           object dedBegin: TDateEdit
             Date = 43966.000000000000000000
@@ -477,7 +435,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 380.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 14
           end
           object Label16: TLabel
             Position.X = 16.000000000000000000
@@ -486,7 +443,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Use Begin:'
-            TabOrder = 23
           end
           object dedEnd: TDateEdit
             Date = 43966.000000000000000000
@@ -498,7 +454,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 380.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 15
           end
           object Label17: TLabel
             Position.X = 16.000000000000000000
@@ -507,7 +462,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Use End:'
-            TabOrder = 21
           end
           object btnPublisher: TButton
             Images = ToolbarImages
@@ -517,7 +471,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 34
             OnClick = btnPublisherClick
           end
           object btnTitle: TButton
@@ -528,7 +481,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 33
             OnClick = btnTitleClick
           end
           object btnName: TButton
@@ -539,7 +491,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 32
             OnClick = btnNameClick
           end
         end
@@ -562,7 +513,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 952.000000000000000000
           Size.Height = 760.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           Viewport.Width = 952.000000000000000000
           Viewport.Height = 760.000000000000000000
           object cbProvenanceSignatureRequired: TCheckBox
@@ -575,7 +525,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 193.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 0
             Text = 'Provenance Signature Required'
           end
           object cbSDC: TCheckBox
@@ -584,7 +533,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 193.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 1
             Text = 'Mark as SDC Form'
           end
           object cbStyleSensitive: TCheckBox
@@ -598,12 +546,10 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 193.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 2
             Text = 'Style Sensitive'
           end
           object edtSDCEndPoint: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 3
             Position.X = 80.000000000000000000
             Position.Y = 48.000000000000000000
             Hint = 
@@ -619,7 +565,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtSDCIdSystem: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 4
             Position.X = 88.000000000000000000
             Position.Y = 154.000000000000000000
             HelpContext = 20
@@ -631,7 +576,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtSDCIdValue: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 5
             Position.X = 304.000000000000000000
             Position.Y = 154.000000000000000000
             HelpContext = 19
@@ -643,7 +587,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtSDCsourceStructureMap: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 8
             Position.X = 120.000000000000000000
             Position.Y = 206.000000000000000000
             Hint = 
@@ -656,7 +599,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtSDCtargetStructureMap: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 9
             Position.X = 120.000000000000000000
             Position.Y = 238.000000000000000000
             Hint = 
@@ -681,7 +623,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'End-Point:'
-            TabOrder = 10
           end
           object Label23: TLabel
             StyledSettings = [Family, Size, FontColor]
@@ -689,7 +630,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.Y = 184.000000000000000000
             TextSettings.Font.StyleExt = {00070000000000000004000000}
             Text = 'Maps'
-            TabOrder = 14
           end
           object Label24: TLabel
             Hint = 
@@ -699,7 +639,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.X = 24.000000000000000000
             Position.Y = 208.000000000000000000
             Text = 'Source Structure'
-            TabOrder = 15
           end
           object Label25: TLabel
             Hint = 
@@ -709,7 +648,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.X = 24.000000000000000000
             Position.Y = 240.000000000000000000
             Text = 'Target Structure'
-            TabOrder = 16
           end
           object Label26: TLabel
             Position.X = 16.000000000000000000
@@ -718,7 +656,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Study Protocol Identifier:'
-            TabOrder = 17
           end
           object Label27: TLabel
             Position.X = 16.000000000000000000
@@ -727,7 +664,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'System:'
-            TabOrder = 18
           end
           object Label28: TLabel
             Position.X = 257.000000000000000000
@@ -736,7 +672,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Value:'
-            TabOrder = 19
           end
           object Label21: TLabel
             StyledSettings = [Family, Size, FontColor]
@@ -744,7 +679,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.Y = 272.000000000000000000
             TextSettings.Font.StyleExt = {00070000000000000004000000}
             Text = 'Title'
-            TabOrder = 12
           end
           object Label29: TLabel
             Hint = 
@@ -755,11 +689,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.X = 24.000000000000000000
             Position.Y = 296.000000000000000000
             Text = 'Style'
-            TabOrder = 13
           end
           object edtSDCTitleStyle: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 6
             Position.X = 72.000000000000000000
             Position.Y = 294.000000000000000000
             Hint = 
@@ -773,7 +705,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object edtSDCTitleXtml: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 7
             Position.X = 72.000000000000000000
             Position.Y = 326.000000000000000000
             Hint = 
@@ -796,7 +727,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.X = 24.000000000000000000
             Position.Y = 328.000000000000000000
             Text = 'XHTML'
-            TabOrder = 11
           end
           object Label31: TLabel
             StyledSettings = [Family, Size, FontColor]
@@ -804,7 +734,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Position.Y = 368.000000000000000000
             TextSettings.Font.StyleExt = {00070000000000000004000000}
             Text = 'Context'
-            TabOrder = 20
           end
           object gridContext: TGrid
             CanFocus = True
@@ -814,7 +743,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 409.000000000000000000
             Size.Height = 153.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 21
             OnGetValue = gridContextGetValue
             Viewport.Width = 409.000000000000000000
             Viewport.Height = 153.000000000000000000
@@ -832,21 +760,18 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           object Button1: TButton
             Position.X = 24.000000000000000000
             Position.Y = 552.000000000000000000
-            TabOrder = 22
             Text = 'Add'
             OnClick = Button1Click
           end
           object Button2: TButton
             Position.X = 112.000000000000000000
             Position.Y = 552.000000000000000000
-            TabOrder = 23
             Text = 'Edit'
             OnClick = Button2Click
           end
           object Button3: TButton
             Position.X = 200.000000000000000000
             Position.Y = 552.000000000000000000
-            TabOrder = 24
             Text = 'Remove'
             OnClick = Button3Click
           end
@@ -871,7 +796,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Position.Y = 8.000000000000000000
           TextSettings.Font.StyleExt = {00070000000000000004000000}
           Text = 'Usage Context'
-          TabOrder = 1
         end
         object Label19: TLabel
           StyledSettings = [Family, Size, FontColor]
@@ -879,7 +803,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Position.Y = 232.000000000000000000
           TextSettings.Font.StyleExt = {00070000000000000004000000}
           Text = 'Subject Types'
-          TabOrder = 0
         end
         object lbResources: TListBox
           Anchors = [akLeft, akTop, akRight, akBottom]
@@ -888,7 +811,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 929.000000000000000000
           Size.Height = 473.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 2
           Columns = 3
           DisableFocusEffect = True
           DefaultItemStyles.ItemStyle = ''
@@ -908,7 +830,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 841.000000000000000000
           Size.Height = 185.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 3
           Options = [ColumnResize, ColumnMove, ColLines, RowLines, Tabs, Header, HeaderClick, AutoDisplacement]
           OnGetValue = grdUseContextGetValue
           Viewport.Width = 841.000000000000000000
@@ -929,7 +850,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 80.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 6
           Text = 'Add'
           OnClick = btnAddCodeClick
         end
@@ -940,7 +860,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 80.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 5
           Text = 'Edit'
           OnClick = btnEditCodeClick
         end
@@ -951,7 +870,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 80.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 4
           Text = 'Remove'
           OnClick = btnRemoveCodeClick
         end
@@ -975,26 +893,22 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 952.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           object btnAddItem: TButton
             StyledSettings = []
             Position.X = 6.000000000000000000
             Position.Y = 6.000000000000000000
-            TabOrder = 0
             Text = 'Add'
             OnClick = btnAddItemClick
           end
           object btnAddChildItem: TButton
             Position.X = 96.000000000000000000
             Position.Y = 6.000000000000000000
-            TabOrder = 2
             Text = 'Add Child'
             OnClick = btnAddChildItemClick
           end
           object btnEditItem: TButton
             Position.X = 272.000000000000000000
             Position.Y = 6.000000000000000000
-            TabOrder = 4
             Text = 'Edit'
             OnClick = btnEditItemClick
           end
@@ -1004,7 +918,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 41.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 8
             Text = 'Up'
             OnClick = btnItemUpClick
           end
@@ -1014,7 +927,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 53.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 5
             Text = 'Down'
             OnClick = btnItemDownClick
           end
@@ -1024,7 +936,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 41.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 7
             Text = 'In'
             OnClick = btnItemInClick
           end
@@ -1034,21 +945,18 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 41.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 6
             Text = 'Out'
             OnClick = btnItemOutClick
           end
           object btnDeleteItem: TButton
             Position.X = 568.000000000000000000
             Position.Y = 6.000000000000000000
-            TabOrder = 3
             Text = 'Delete'
             OnClick = btnDeleteItemClick
           end
           object btnClone: TButton
             Position.X = 180.000000000000000000
             Position.Y = 6.000000000000000000
-            TabOrder = 1
             Text = 'Clone'
             OnClick = btnCloneClick
           end
@@ -1060,7 +968,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 952.000000000000000000
           Size.Height = 695.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 2
           RowCount = 0
           Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, AlwaysShowSelection, Tabs, Header, HeaderClick, AutoDisplacement]
           OnSelChanged = grdItemsSelChanged
@@ -1126,16 +1033,13 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 952.000000000000000000
           Size.Height = 32.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           object Label20: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 8.000000000000000000
             Text = 'Search:'
-            TabOrder = 0
           end
           object edtSearch: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
-            TabOrder = 1
             Position.X = 64.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 177.000000000000000000
@@ -1148,7 +1052,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 89.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 5
             Text = 'From Start'
           end
           object btnSearchNext: TButton
@@ -1157,7 +1060,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 89.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 4
             Text = 'Next'
           end
           object btnSearchPrev: TButton
@@ -1166,7 +1068,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 89.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 3
             Text = 'Prev'
           end
           object btnSearchEnd: TButton
@@ -1175,13 +1076,11 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 89.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 2
             Text = 'From End'
           end
           object CheckBox1: TCheckBox
             Position.X = 608.000000000000000000
             Position.Y = 6.000000000000000000
-            TabOrder = 7
             Text = 'CheckBox1'
           end
         end
@@ -1204,14 +1103,12 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Width = 952.000000000000000000
           Size.Height = 30.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           object btnAddQuestionItem: TButton
             Position.X = 8.000000000000000000
             Position.Y = 4.000000000000000000
             Size.Width = 97.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 1
             Text = 'Add Item'
             OnClick = btnAddQuestionItemClick
           end
@@ -1222,7 +1119,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             Text = 'Display Language:'
-            TabOrder = 2
           end
           object ComboBox1: TComboBox
             Position.X = 240.000000000000000000
@@ -1230,7 +1126,6 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.Width = 201.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 3
           end
         end
       end
@@ -1428,31 +1323,31 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              030949444154384F75936B48536118C79FBDE7CC6DC7B9AD36B7A99B3BB5B665
-              A69266D9C5A0F5C122BB182DC48AD5C8202AC828A8A8641FCAA02FD1B705919F
-              52A1B20B54D015854A6BE6AD63E9DC6A2D75B99B9B368FBBA5E324C4F0072FCF
-              79FFEFFBFF7D38F0B26001CAEA5A788564F0600443A13BE3CE16309BE3CCD17F
-              2066A69097451BAA74CA2B3B358A06032F7B3D13A7B0A040F4BBA79CCFE54816
-              E3B88AFFFD631113A7B0A0C0EF1B77BB3D5EF00402C04DE3FC61E21416142084
-              7C8885808510F0389C192686BD75753CE633C9BC60F725CBB67366F3AB43B526
-              D3DCDE1B084FCC76019F5DAED140ACBEBE1E998E18CFEA0B565AAF3E7A6D4C96
-              66C19909623AB499148AF43979227D685F6DF5A87F46169E0E4374F6DFFB68F5
-              459767F2B8F18071232B16857BEFFAF3981A60CC8450B1BDCD3FED93C458F1D5
-              032361358AE964A37E026C636CC0796A6902D27223A1C160DBFB37667BEF6483
-              CDD6199BEBCD0BD0D690494A1206A92A5D2A5C1E80F1B44158CCD1039FA78125
-              E422187307C1DAF5FCC2C396A6EBFFCA732405D28B829ADDABD637D614564BF7
-              2C3B062A41160848178C400F88239B219D488749FF3044677EB40D0FF4B5279B
-              0C1818002B5C9173ABA268AD024578B042BE0E7E7AED807122E0A62918E8C301
-              9B226047390B3205DC0DA44E93B3B448D747597B2792821243254F2CFA737E7F
-              FE0961A96C170804429065A8409C50C350F0137474BAC0F52114DB5349A295F9
-              0578B654568A45127B15EA5C9ABBE9403FB67DE7B553E9DE5755901D459DEE27
-              A011AD81E75F1B810ABD00D78417265F7AE289B8F7F0D077AA110354A6D56A17
-              A94852A85128B7238C2DC18A2B6BB405CBE4555DE1B78024BF401455828D6E07
-              57DC06BFA8046CD3ED6079A69CF5AD77EFB71304D1EA703A647269668152990B
-              AF7B1DB7B1AE67CDDDAB2A4EC607877BBC5F82DF08ABEFA9C83A6EA3BBBB7D4D
-              DAE92D2E3C219CB2F75316BBDD3E4551D444C7FB8E07843C6BC44EB3DFDD3C6D
-              BA917CCE472D1636E578CCA7E065491A1BD7C781E5A483587379D629017F2643
-              DC7CF9CCE7B97BA900FC05CB0B29A202608AC10000000049454E44AE426082}
+              030649444154384F75936B4853611CC69FBDE7CCB9E3DA56B3CDDBDCA9B59995
+              4AF7AB41EB438576315A8415D6A8202AC828A8A8641FBA405FA26F06919F4AA1
+              7B504165A19068CDBC752C9BB36C69CBDDDCB479DC2D1DA720863F78F99FF779
+              DFE7F7E1C02BC214ACA8AC9316B281BD618A046F0DF5D7C16A8D0947FF418499
+              447E266F2ECBD35EDC62C8B96C9666AD12E224A614287FB517CB5225E933685A
+              27FBFAAE4888939852E0F30EB95C6E0FDC7E3F525324BF853889290584102F11
+              118808815422191762ECA8AC940A9F09FE09B69DAFDE74DA6A7DB5EFA0C532B9
+              F7F843C3135DD013CB39E88F56555511CB818A53A68205B64B8FEA2B12A50968
+              6142C507D7B10AA5293B5F690AEE3CB86BD037AE098D851099F8F75E5E7FCEE9
+              1E3952B1A7628D281AC1DDB75DF9420D9430115CE468F08D79D3A3A2D892EE81
+              909E44F334833E06F69F62D052BD3A8E94DC70B027D0D0F4DAEAE818B96CB7B7
+              44277BFF046463D0A26619B35A97A656CCF56328A507332426C8A406CC62A7E3
+              A72B005BEBF3B30FEBEE5CFD5B9E2421509F93976F5BB8AAA6BC70977AFB9CC3
+              D0C93321679D18403B54E1754863D230E2EB4564FC5B436F776763A22940C10C
+              AA705EF68D0D45CB7348588A79192BF1DDE3002509C3C573E8EEA4418D32D85C
+              2CC24C79EA6A36CF903DBB28AF93B3750C27048BCDA55295F2F799DDF38F2A96
+              6AB6422E5740334D07555C8F2F81F7686E71E27B5330BABD94250BE617D0596A
+              CD522A1CDF91A3CFE553D7EEE9A24AB65C399EE6795586AC0869713D8141B90C
+              CF3FD5800BBE8073D8839117EE18E29EFD5FBE723514C80AA3D1385DC7B20A43
+              8EB68450E2746A5169B9B1604E46596BE80D48FA0F28235AD8F946386376FCE0
+              E2D83477B3C83DDA5FF5E0F6BD4686611EF4F5F76932D4330BB4DA5CD477F4DD
+              A45A9FD5B62DDC702CD6D3DBEEF918F8CCD8BC4F95B6213BDFD6E6BD631C5BEF
+              A4E38A51471757ED703846398E1B6E6E6ABECF64640E3878F1DBEB272CD712CF
+              F95075B598EB7B2CE3F072718A9836C520EAE703546D71E671B96C7C9AAAF6C2
+              C90F93F79201FE00EB3928A2B04DBB3B0000000049454E44AE426082}
             FileName = 'C:\data\Images\collection\16\Node 2  Add.png'
           end>
         Name = 'add child'
@@ -1502,31 +1397,31 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              02FC49444154384F4D534B681351143D3393C9CFA62955A4A9266DB1F14BA9A2
-              C5851FC41FB482E0461005BB1241BA74A50B5DB8D0851B17153FA85D144111C5
-              0F5A1551E30FA4C64AB594A6C4C67E929A443389934E32EF79DF9B0A5EB86F2E
-              F7BD73EEB9F7BD5140B6EBE4CB6E4FD0735053B0DE34E0F50520F372E5B47086
-              0A6389DF3FD9F37C72FAF8D75BFB2DB94F260F769E89BDBED1B37E55E647AA2E
-              148968E0724F1A9731C76CB182FE8FBF3036FAE74FFEFB78FDE30B5D7362C725
-              1655535664A626EB0C7FB356CA12A75314362DD52A8759B1B12D1AC0AE500C07
-              8D3EBF166D2B97D6EE06CA9387554150318D9A7038ACB935153A655C444021A8
-              2528E42A31CECDDC45D4788986B64368DDDE8DA68E232894C2E72481EEAFA563
-              E220B90010EA7F0F9A03B00B43A88F6E8299FB0633F90181DA0604F448501208
-              13BDBA3472627051694785821AF30DA29E41045B76C0B606E0F64FE07BFC21EE
-              5CBBCE2D57A65D1208B098954B519DAA140BB0D77885087F8AE0B22E94A72E43
-              D1F3D06B02F0B11C1EB93B2B1B7BEE8E3A04E43433A7DF79D9E5E47DD4970610
-              6CDD4BB3EA85AA5760159A917EFD19BEADA731698704441603AB3A2A44469095
-              C61FC26FBCC5E2357B60CD5C81E6E6982B34211D1B4476732F94852B614BF83F
-              02C689C0E96366F0267CBFDED1C369C4F4970B445A4629B704E9F72330B65E84
-              521382575790CD8B52F30482CD1678FACE7EB98AD59B8FC0938A61F4DE1BC49F
-              E430FC2C8EE2C6B3A8FA1BA5425DDC314836997C488CD8182938F5C9425B6216
-              D6F003B4B46FC1EFD92C12F1045E6CBB8D9FC930A97140FD0D3AAD39194B823C
-              6CD83610AAD5313C96C1F94BBDE858D902B3B11DC59D7D581B58EADC14F950A6
-              4A4A29284BBC43E053191B4F26B9652F57EA4EFCC0B8C29198FF9F58916EA758
-              2585444057AB3205535329C6CABA9423092CD34E37B746161D488C2DA027AD8A
-              46E7878CA04F1E91D57D34BC546A822D0D3518161F9914795966C3D127C72A55
-              BE4F55B5750C45BFC84923D07F1F19CCC15BD6190655CEFB87AE755DFD0B2041
-              4CF5817B9DC40000000049454E44AE426082}
+              02FE49444154384F4D535D48145114FE6666677557D7158B702D775B72D10AD1
+              30F12113A90C34087A89C0209F24081F7BAA877AE8A11E7AF1C1A8C4F241820A
+              8C92D28A30B51F0833C37ECCF567755357DD5567D7596777663AF78E8107CE9D
+              C3B9F7FBCE77CEBD2380ACEE6A7F53863BA3511250A12AC874B8C0F37C356931
+              0DA40C23B8B66CBC8D4DCF5FFEF1F8ACC6F7C9F8C1FA1B83030F5B2AF6476643
+              B91E9F4F82C9F7B8993C36B1144FA1EBCB2A26C6373662339379AF5A1B36D98E
+              8D2DA2241447C273B94A965F4AAC10A755143A2DE9B40935A5A336E0429D6710
+              8D4AA7530A942613E5278164F882C80852AA925DE8F54A7649844C191B115008
+              6A0902B9488C9B0BDD0828FDC82F3D8FA2634DF05536633D51788B13C8CE1C3A
+              C60E923300A1B6BB5BED83BE3E8ABCC011A8D19F50A73FC395930F97EC757302
+              66AC579B444E0C362A6DA91090AD0E2190310CB7FF3874AD0F76670833233D78
+              DAF1C0D46C91324EC0C06C563641B4AA52CCC099CA7B78CDD770EF6B40F2EF3D
+              08720C72B60B0E238A97F6FA54554BF7B845404E33B3FADD929D9C7E8EBC441F
+              DC45A769566D10E514B4F5BD581CF80647CD7584750F83F06230D2960A966164
+              89C91E38950FD875F014B485FB90EC2636D77D581C1CC64A751B841D25D039FC
+              3F81611281D5C7C2F02338563FD2C329C0FCF756224D2211DD8DC54FBFA0D4DC
+              8190ED41A62C6025C64A6D1130369DE1E9BBF4BD1D07AA9B91313B88F1674318
+              E98D62ECCD08E25537917616708532BB63906C32FE900C623348C1B5AF1A4A83
+              4BD0C65EC05F76146B4B2B088E04F1AEF60996A70B498D05EACA97698DF29813
+              C4A043D7014F8E8CB189086EDF6D4365891F6A4119E2273A51EEDA63DD14F968
+              244D4A294872BC45E010E94F999A3235BD58C8BD328749C14470EB7F32E2743B
+              F134292402BA5AD110100E870C232973399C4053F5457FC0B7F3DCC49F2CAFD7
+              2BB246B7860CB7831FE1D51D34BC5068C6282CF0289AF93BCCF2BCCCE18BBD97
+              5269F38C284A870CC49D2CC78D40DB3E3CD844665236302C9A66D7684743FB3F
+              24EE4CF6064D480D0000000049454E44AE426082}
             FileName = 'C:\data\Images\collection\16\page_edit.png'
           end>
         Name = 'edit'
@@ -1684,32 +1579,31 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              030B49444154384F5D535B48146114FEFE999D556758DD9BEE6AEBAE9A9A4A86
-              9728B61E0ABA3C041151591B84561044111145BD14650F15F4D0431444525964
-              E04377BA400F161444A5D8AA45A6BB76DB7471D75D67DD9DDD9969FEB124FDE0
-              CCFC9CF37DFF0FDF3987600E8EEDDD6B59981ADFC02B4A8351550A684E22E477
-              4265DF7DCC521E9CBBD239A113FF62D605C777B7AC6FAEADB95092B095B1EF7F
-              20FC2BA6E7ED85B9C834BA1014C243377AFB0F9E6EBBFE502F6860FFFE716277
-              CB96ED9EBACECAAEA88DF9A1095D66905555302E9A072E2981F18760FD92B238
-              6BCB9B6C658E81AEEE9E7EAA63E887BEECF3D47554F54DB2F1D31B818C82D4C9
-              CD786C73EB41CF34476BD5FE184BB95443B5ECD13D5BF2762EA8BF5FF92A6A9D
-              BAB803DCAB01B0255618962D00FF7108454A12F67A3730110309C720ED5B83C2
-              4B6F98E2E5C55EA1B4BC9DDC6ADEBA636BE5DA76E9C520788709622806C19405
-              085A44A7E823803907105310E32908CE5C247EC791B5BA1C77069FEF34F0445E
-              6C78F71DE2051FC45C1EC63DD7103FEF0363344078F856D78BEB97409132C8DE
-              7F13E29926646209F0A7EE8137290D8C51551D6A328DBC2A3784223B32B20253
-              891342B11B018B550F7AA6395AA31CCA45220D0EAA4337F17F90D99D9D0586CC
-              A9A990193A24249BC3C4A711883FC3605982783004F1DB084A22E37AD033CD31
-              0CD139940B9E439A90F08C89E4E53058B719E960049C45332D371B1813A75FCA
-              17805812E9C814388F05F248145851AA9BC8562CAD0996B9ACDB6C5F53E6A466
-              1E781606A7499BAC4D08686312AD71C17C641D303A8E4C8307E95D2BC13DEAC1
-              508D1A78164D1E62E86CB7F7F61DF8ECB5CB39873B20D57980A70390B4B65104
-              591ED2640AEA937EBD46399F9615C85473F6F2E5C88C2B74947DA58D1D55AF47
-              59B09AB7A556A0221F8A8105D317D26E1A07B42E0C78F3E53B810FBED6B6EB9D
-              5437B30B74B6EDF30B7B8ABDF396E6390B2DCCE73184DF0430D5FB13BC56CF2C
-              7163B85A1EBAFDC5BFABF5EAB5BBD3AA39DB48F16F9D73E44CA3919002DA2A09
-              EA684261BAFD39B8377B9D813F1052459B18EB10920000000049454E44AE4260
-              82}
+              030A49444154384F5D535B48146114FEFE99DDD59D61756FB66BE9BA9A662E96
+              6961590F055D1E0289286F0FD10D022922A2A897A2F2A1821E7C0884282A0B2C
+              7CE84E17E8217B10A250D4DD35B2CDB59BE9B2AEBBCD5E6677669A7F3269FDE0
+              CCFC9CF37DFF0FDF398760014EB7B75BAA53E11D9C2CD719147911CD8984FC8A
+              2BECFBE11CF9F1E56BBDB31A710E59179C39B8AF71EF0A4FA73B6E2B633F7C47
+              E86754CBDB0BF390595D84201F0ADC1EF21DEBB871EB895650C1CEFD71F6E0BE
+              A636574DEFB2BE591BF35D15169941362F8761E512E89322989149583FA52C8E
+              EAA5CDF632A7FFCDC0A08FEA18FAA12FB7BA6A7AAA7C021BEBD8096464A4CEED
+              C6339B4B0B7AA6395AF378632CE5520DD5B2A70E35E5EFAFAC7D54F936624D5C
+              DD03FD5B3F58B715BAF595E08603582C2761AF7501B351905014E2E1AD28ECEA
+              678A371437F0A5E5DDE4EEDE963D2DCBB6758BAFC7C0394C1026A3E04D3900AF
+              4624411F01CC4640484188A5C03BF310FF1543CE9672DC1B7BB55FC711698DEE
+              FD37089D6D10F238180EDD44EC4A1B18830EFC93779A5E68AC872C66907BE40E
+              848BCDC844E3E0CE3F046792EB1883A23894641AF9CB5DE017DB91916498DC4E
+              F0C52E8C5BAC5AD033CDD11AE5502EE269E8A1383413FF07C9EE6C1618B2A0A6
+              4062E890905C3D66472720FC0881650962C149085F27E09E096B41CF34C73044
+              E3502E383DD28484E64D247D5FC0BACC480767A0B7A8A6E5E502D3C2DF970A78
+              209A447A26017D8905D24404D858AA99C856ACF504CB8AACADB6CF297352350F
+              1C0B9DD3A44ED62E8CAB6312F114C17C723B301546A6AE04E9039BA07F3A8880
+              47197F19491E67E86C770F798F8EAEB349C6133D105795002FFC10D5B6510459
+              0EE2EF1494E73EAD4639FE8602896A2E7575CDCCBB4247B9D55DD753D53FCD82
+              55BD2DB502150590752C18EFA47A531850BBE05B6797EE0707DA2EDCB8D54B75
+              F3BB4067DB5E5E3858DCB0646DBEB3D0C27C9C46A87F1C89A11FE0D47AA6DE85
+              2F5552A067CC7BE0C2F59B0FFEAA166C23C5BF75364A99D5064216D1568950A6
+              E232333062C4C3EC7506FE000B324599274BB1F10000000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

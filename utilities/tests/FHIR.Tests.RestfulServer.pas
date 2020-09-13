@@ -35,7 +35,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Ucum.Services,
-  FHIR.R4.Constants, FHIR.R4.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Base.PathEngine,
+  FHIR.R4.Constants, FHIR.R4.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.Base.PathEngine,
   FHIR.R4.Utilities, FHIR.R4.Validator, FHIR.R4.IndexInfo, FHIR.R4.Javascript,
   FHIR.R4.Factory, FHIR.Tools.Indexing, FHIR.Javascript.Base, FHIR.R4.PathEngine,
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,

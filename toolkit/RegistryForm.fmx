@@ -7,14 +7,12 @@ object RegistryFrame: TRegistryFrame
     Size.Width = 1076.000000000000000000
     Size.Height = 442.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 0
     object Panel1: TPanel
       Align = MostRight
       Position.X = 744.000000000000000000
       Size.Width = 332.000000000000000000
       Size.Height = 442.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 2
       object memSource: TMemo
         Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
         DataDetectorTypes = []
@@ -26,9 +24,8 @@ object RegistryFrame: TRegistryFrame
         Size.Width = 320.000000000000000000
         Size.Height = 430.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
-        Viewport.Width = 316.000000000000000000
-        Viewport.Height = 426.000000000000000000
+        Viewport.Width = 320.000000000000000000
+        Viewport.Height = 430.000000000000000000
       end
     end
     object Panel4: TPanel
@@ -36,18 +33,15 @@ object RegistryFrame: TRegistryFrame
       Size.Width = 736.000000000000000000
       Size.Height = 442.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 3
       object pnlSearch: TPanel
         Align = Top
         Size.Width = 736.000000000000000000
         Size.Height = 97.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
         object Label3: TLabel
           Position.X = 8.000000000000000000
           Position.Y = 64.000000000000000000
           Text = 'URL:'
-          TabOrder = 10
         end
         object btnConfSearch: TButton
           Position.X = 496.000000000000000000
@@ -55,7 +49,6 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 57.000000000000000000
           Size.Height = 81.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 3
           Text = 'Search'
           OnClick = btnConfSearchClick
         end
@@ -65,7 +58,6 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 89.000000000000000000
           Size.Height = 19.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 4
           Text = 'New Since'
           OnChange = cbConfUseLastUpdatedClick
           OnClick = cbConfUseLastUpdatedClick
@@ -105,11 +97,9 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 169.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 5
         end
         object edtConfText: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          TabOrder = 6
           Position.X = 48.000000000000000000
           Position.Y = 37.000000000000000000
           Size.Width = 185.000000000000000000
@@ -123,11 +113,9 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 169.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 7
         end
         object edtConfUrl: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          TabOrder = 8
           Position.X = 48.000000000000000000
           Position.Y = 64.000000000000000000
           Size.Width = 185.000000000000000000
@@ -141,7 +129,6 @@ object RegistryFrame: TRegistryFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           Text = 'Text:'
-          TabOrder = 9
         end
         object Label8: TLabel
           Position.X = 240.000000000000000000
@@ -150,7 +137,6 @@ object RegistryFrame: TRegistryFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           Text = 'Jurisdiction:'
-          TabOrder = 11
         end
         object Label1: TLabel
           Position.X = 8.000000000000000000
@@ -159,7 +145,6 @@ object RegistryFrame: TRegistryFrame
           Size.Height = 23.000000000000000000
           Size.PlatformDefault = False
           Text = 'Type:'
-          TabOrder = 13
         end
         object cbxType: TComboBox
           Items.Strings = (
@@ -180,7 +165,6 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 185.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 14
           OnChange = cbxTypeChange
         end
         object Label2: TLabel
@@ -190,7 +174,6 @@ object RegistryFrame: TRegistryFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           Text = 'Profile on:'
-          TabOrder = 15
         end
         object cbxProfile: TComboBox
           Items.Strings = (
@@ -322,7 +305,6 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 169.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 16
         end
       end
       object gridConfMatches: TGrid
@@ -335,14 +317,13 @@ object RegistryFrame: TRegistryFrame
         Size.Width = 724.000000000000000000
         Size.Height = 193.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 2
         RowCount = 0
         Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
         OnSelectCell = gridConfMatchesSelectCell
         OnGetValue = gridConfMatchesGetValue
         OnCellDblClick = gridConfMatchesCellDblClick
-        Viewport.Width = 720.000000000000000000
-        Viewport.Height = 168.000000000000000000
+        Viewport.Width = 724.000000000000000000
+        Viewport.Height = 193.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Type'
           Size.Width = 65.000000000000000000
@@ -379,7 +360,6 @@ object RegistryFrame: TRegistryFrame
         Size.Width = 736.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
         object lblOutcome: TLabel
           Anchors = [akLeft, akTop, akRight]
           Cursor = crHandPoint
@@ -389,7 +369,6 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 614.000000000000000000
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 0
           OnClick = lblOutcomeClick
         end
         object btnFetchMore: TButton
@@ -400,7 +379,6 @@ object RegistryFrame: TRegistryFrame
           Size.Width = 97.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
           Text = 'Fetch More'
           OnClick = btnFetchMoreClick
         end
@@ -411,7 +389,6 @@ object RegistryFrame: TRegistryFrame
         Size.Width = 736.000000000000000000
         Size.Height = 120.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 5
         object lblMessages: TLabel
           Align = Client
           StyledSettings = [Family, Size, Style]
@@ -422,7 +399,6 @@ object RegistryFrame: TRegistryFrame
           Size.PlatformDefault = False
           TextSettings.FontColor = claMaroon
           Text = 'lblMessages'
-          TabOrder = 0
         end
       end
     end

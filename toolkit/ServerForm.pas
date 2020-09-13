@@ -36,7 +36,7 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   IdComponent,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
   ProviderDirectoryForm, PatientHomeForm, BulkDataForm;
 
@@ -418,7 +418,7 @@ end;
 procedure TServerFrame.btnConfSearchClick(Sender: TObject);
 begin
   work('Fetch Resources', true,
-    procedure
+    procedure (context : pointer)
     var
       be : TFhirBundleEntry;
       params : TStringList;
@@ -476,7 +476,7 @@ end;
 procedure TServerFrame.btnFetchMoreClick(Sender: TObject);
 begin
   work('Fetch More', true,
-    procedure
+    procedure (context : pointer)
     var
       be : TFhirBundleEntry;
       start : TDateTime;
@@ -529,7 +529,7 @@ end;
 procedure TServerFrame.btnMatchClick(Sender: TObject);
 begin
   work('Match Patients', true,
-    procedure
+    procedure (context : pointer)
     var
       pat : TFHIRPatient;
       params : TFhirParameters;
@@ -573,7 +573,7 @@ end;
 procedure TServerFrame.btnSearchPatientsClick(Sender: TObject);
 begin
   work('Search Patients', true,
-    procedure
+    procedure  (context : pointer)
     var
       params : TStringList;
       be : TFhirBundleEntry;
@@ -663,7 +663,7 @@ end;
 procedure TServerFrame.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
   Application.ProcessMessages;
-  if assigned(OnStopped) and OnStopped then
+  if assigned(OnStopped) and OnStopped(nil) then
     abort;
 end;
 

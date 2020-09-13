@@ -37,7 +37,7 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.PathEngine,
-  FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.PathEngine, FHIR.R3.Factory;
+  FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Resources.Base, FHIR.R3.Context, FHIR.R3.PathEngine, FHIR.R3.Factory;
 
 type
   TVariableMode = (vmINPUT, vmOUTPUT);

@@ -37,7 +37,7 @@ uses
   IdComponent,
   FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Version.Resources, FHIR.Version.Client,
+  FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client,
   ToolkitSettings;
 
 type
@@ -144,7 +144,7 @@ end;
 
 procedure TBaseFrame.ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
-  if assigned(OnStopped) and OnStopped then
+  if assigned(OnStopped) and OnStopped(nil) then
     abort;
 end;
 

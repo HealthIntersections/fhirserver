@@ -49,7 +49,7 @@ uses
   FHIR.Support.Logging,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Web.Fetcher,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, NamingSystemEditor, HelpContexts, ProcessForm, SettingsDialog,
@@ -256,7 +256,7 @@ type
     function processHelpContext(helpContext: String): String;
     function searchDesc(s: String): String;
     procedure fhirDefn(s: String; b: TStringBuilder);
-    function GetStopped: Boolean;
+    function GetStopped(context : pointer): Boolean;
     procedure DoIdle(out stop: Boolean);
     procedure DoOpenURL(url: String);
     procedure CheckVersionUpgradeOutome(id: integer; outcome: TFslObject);
@@ -349,7 +349,7 @@ begin
     if Server.SmartAppLaunchMode <> salmNone then
     begin
       dowork(self, 'Logging in', true,
-        procedure
+        procedure (context : pointer)
         begin
           Smart := TSmartAppLaunchLogin.Create;
           try
@@ -375,7 +375,7 @@ begin
     try
       cs := nil;
       dowork(nil, 'Connect', true,
-        procedure
+        procedure (context : pointer)
         begin
           cs := Client.conformance(false);
         end);
@@ -805,7 +805,7 @@ end;
 procedure TMasterToolsForm.DoIdle(out stop: Boolean);
 begin
   Application.ProcessMessages;
-  stop := GetStopped;
+  stop := GetStopped(nil);
 end;
 
 procedure TMasterToolsForm.DoOpenURL(url: String);
@@ -813,7 +813,7 @@ begin
   openURL(url);
 end;
 
-function TMasterToolsForm.GetStopped: Boolean;
+function TMasterToolsForm.GetStopped(context : pointer): Boolean;
 begin
   result := FIsStopped;
 end;
@@ -833,7 +833,7 @@ begin
       ok := false;
       frame.OnStopped := GetStopped;
       frame.work('Save', false,
-        procedure
+        procedure (context : pointer)
         begin;
           ok := frame.save;
         end);
@@ -861,7 +861,7 @@ begin
       begin
         ok := false;
         frame.work('Save As', false,
-          procedure
+          procedure (context : pointer)
           begin
             fn := sdFile.filename;
             ext := ExtractFileExt(fn).ToLower;
@@ -1108,7 +1108,7 @@ begin
   if UpgradeOnClose then
   begin
     dowork(self, 'Checking Version', true,
-      procedure
+      procedure (context : pointer)
       begin
         newVersion := checkUpgrade;
       end);
@@ -1366,7 +1366,7 @@ var
   newVersion: String;
 begin
   dowork(self, 'Checking Version', true,
-    procedure
+    procedure (context : pointer)
     begin
       newVersion := checkUpgrade;
     end);

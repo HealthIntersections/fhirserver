@@ -51,7 +51,7 @@ uses
   SHDocVw, PngImage, Generics.Collections, Generics.Defaults, VirtualTrees,
   IdSSLOpenSSLHeaders, IdSSLOpenSSL, IdResourceStringsOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Base.Xhtml,
   ServerLoginDialog, ProgressDialog, FHIRDemoLogging;
 
 type

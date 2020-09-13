@@ -48,6 +48,7 @@ Type
   TFhirResourceTypeSet = FHIR.R3.Resources.Base.TFhirResourceTypeSet;
 Type
   TFhirResource = FHIR.R3.Resources.Base.TFhirResource;
+  TFhirResourceClass = FHIR.R3.Resources.Base.TFhirResourceClass;
   TFhirResourceList = FHIR.R3.Resources.Base.TFhirResourceList;
   TFhirDomainResource = FHIR.R3.Resources.Base.TFhirDomainResource;
   TFhirDomainResourceList = FHIR.R3.Resources.Base.TFhirDomainResourceList;

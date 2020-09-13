@@ -120,7 +120,6 @@
         <DCCReference Include="..\..\library\r3\FHIR.R3.Turtle.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Profiles.pas"/>
-        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.pas"/>
         <DCCReference Include="..\..\server\FHIR.Server.Security.pas"/>
         <DCCReference Include="..\..\server\FHIR.Server.Session.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Tags.pas"/>
@@ -262,6 +261,12 @@
         <DCCReference Include="..\..\Server\FHIR.Server.WebBase.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.ClientCacheManager.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.HGVS.pas"/>
+        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Base.pas"/>
+        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Admin.pas"/>
+        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Other.pas"/>
+        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Clinical.pas"/>
+        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Canonical.pas"/>
+        <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

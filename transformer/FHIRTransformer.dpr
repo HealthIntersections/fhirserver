@@ -144,7 +144,14 @@ uses
   FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
   VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
   VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
-  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm};
+  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm},
+  FHIR.R4.Resources.Base in '..\library\r4\FHIR.R4.Resources.Base.pas',
+  FHIR.R4.Resources.Admin in '..\library\r4\FHIR.R4.Resources.Admin.pas',
+  FHIR.R4.Resources.Other in '..\library\r4\FHIR.R4.Resources.Other.pas',
+  FHIR.R4.Resources.Medications in '..\library\r4\FHIR.R4.Resources.Medications.pas',
+  FHIR.R4.Resources.Financial in '..\library\r4\FHIR.R4.Resources.Financial.pas',
+  FHIR.R4.Resources.Clinical in '..\library\r4\FHIR.R4.Resources.Clinical.pas',
+  FHIR.R4.Resources.Canonical in '..\library\r4\FHIR.R4.Resources.Canonical.pas';
 
 {$R *.res}
 

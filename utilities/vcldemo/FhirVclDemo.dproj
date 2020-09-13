@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{85F4F3BB-5E5A-493D-975F-1E5F6B21C7B2}</ProjectGuid>
-        <ProjectVersion>18.8</ProjectVersion>
+        <ProjectVersion>19.0</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FhirVclDemo.dpr</MainSource>
         <Base>True</Base>
@@ -113,7 +113,7 @@
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_MapFile>3</DCC_MapFile>
-        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R2.AuthMap;FHIR.Version.Constants=FHIR.R2.Constants;FHIR.Version.Context=FHIR.R2.Context;FHIR.Version.IndexInfo=FHIR.R2.IndexInfo;FHIR.Version.Javascript=FHIR.R2.Javascript;FHIR.Version.ElementModel=FHIR.R2.ElementModel;FHIR.Version.Narrative=FHIR.R2.Narrative;FHIR.Version.Operations=FHIR.R2.Operations;FHIR.Version.Json=FHIR.R2.Json;FHIR.Version.Turtle=FHIRParserTurtle2;FHIR.Version.Xml=FHIR.R2.Xml;FHIR.Version.PathNode=FHIR.R2.PathNode;FHIR.Version.Profiles=FHIR.R2.Profiles;FHIR.Version.Resources=FHIR.R2.Resources;FHIR.Version.MapUtilities=FHIRStructureMapUtilities2;FHIR.Version.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Version.Types=FHIR.R2.Types;FHIR.Version.Utilities=FHIR.R2.Utilities;FHIR.Version.Validator=FHIR.R2.Validator;FHIR.Version.OpBase=FHIR.R2.OpBase;FHIR.Version.PathEngine=FHIR.R2.PathEngine;FHIR.Version.Narrative2=FHIR.R2.Narrative2;FHIR.Version.Questionnaire=FHIR.R2.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R2.AuthMap;FHIR.Version.Constants=FHIR.R2.Constants;FHIR.Version.Context=FHIR.R2.Context;FHIR.Version.IndexInfo=FHIR.R2.IndexInfo;FHIR.Version.Javascript=FHIR.R2.Javascript;FHIR.Version.ElementModel=FHIR.R2.ElementModel;FHIR.Version.Narrative=FHIR.R2.Narrative;FHIR.Version.Operations=FHIR.R2.Operations;FHIR.Version.Json=FHIR.R2.Json;FHIR.Version.Turtle=FHIRParserTurtle2;FHIR.Version.Xml=FHIR.R2.Xml;FHIR.Version.PathNode=FHIR.R2.PathNode;FHIR.Version.Profiles=FHIR.R2.Profiles;FHIR.Version.Resources=FHIR.R2.Resources;FHIR.Version.MapUtilities=FHIRStructureMapUtilities2;FHIR.Version.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Version.Types=FHIR.R2.Types;FHIR.Version.Utilities=FHIR.R2.Utilities;FHIR.Version.Validator=FHIR.R2.Validator;FHIR.Version.OpBase=FHIR.R2.OpBase;FHIR.Version.PathEngine=FHIR.R2.PathEngine;FHIR.Version.Narrative2=FHIR.R2.Narrative2;FHIR.Version.Questionnaire=FHIR.R2.Questionnaire;FHIR.Version.Resources.Base=FHIR.R2.Resources.Base;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r264\</DCC_DcuOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
@@ -198,7 +198,6 @@
         <DCCReference Include="..\..\library\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Narrative.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Common.pas"/>
         <DCCReference Include="..\..\library\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\..\library\support\fhir.support.fpc.pas"/>
@@ -218,6 +217,12 @@
         <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\..\library\cache\FHIR.Cache.NpmPackage.pas"/>
         <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\..\library\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Other.pas"/>
+        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Clinical.pas"/>
+        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Canonical.pas"/>
+        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Base.pas"/>
+        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Admin.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -239,8 +244,8 @@
                     <Source Name="MainSource">FhirVclDemo.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -785,6 +790,16 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
+                <DeployClass Name="iPad_Launch2x">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="iPad_Launch768">
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
@@ -804,6 +819,16 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_LaunchDark2x">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -906,6 +931,16 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
+                <DeployClass Name="iPhone_Launch2x">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="iPhone_Launch320">
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
@@ -914,6 +949,16 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch3x">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -958,6 +1003,26 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_LaunchDark2x">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_LaunchDark3x">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -1006,6 +1071,16 @@
                     </Platform>
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSLaunchScreen">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectiOSResource">
@@ -1134,7 +1209,6 @@
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
-                <Platform value="OSX32">False</Platform>
                 <Platform value="OSX64">False</Platform>
                 <Platform value="Win32">False</Platform>
                 <Platform value="Win64">True</Platform>

@@ -52,7 +52,6 @@ uses
   FHIR.Base.Objects in '..\library\base\FHIR.Base.Objects.pas',
   FHIR.R3.Utilities in '..\library\r3\FHIR.R3.Utilities.pas',
   FHIR.Base.Scim in '..\library\base\FHIR.Base.Scim.pas',
-  FHIR.R3.Resources in '..\library\r3\FHIR.R3.Resources.pas',
   FHIR.R3.Types in '..\library\r3\FHIR.R3.Types.pas',
   FHIR.R3.Constants in '..\library\r3\FHIR.R3.Constants.pas',
   FHIR.R3.Tags in '..\library\r3\FHIR.R3.Tags.pas',
@@ -209,7 +208,25 @@ uses
   VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
   FHIR.Ui.WorkerTask in '..\library\ui\FHIR.Ui.WorkerTask.pas' {WorkingForm},
   FHIR.Cache.PackageClient in '..\library\cache\FHIR.Cache.PackageClient.pas',
-  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm};
+  FHIR.Cache.PackageVersionBrowser in '..\library\cache\FHIR.Cache.PackageVersionBrowser.pas' {PackageVersionChooserForm},
+  FHIR.R4.Resources.Clinical in '..\library\r4\FHIR.R4.Resources.Clinical.pas',
+  FHIR.R4.Resources.Canonical in '..\library\r4\FHIR.R4.Resources.Canonical.pas',
+  FHIR.R4.Resources.Base in '..\library\r4\FHIR.R4.Resources.Base.pas',
+  FHIR.R4.Resources.Admin in '..\library\r4\FHIR.R4.Resources.Admin.pas',
+  FHIR.R4.Resources.Other in '..\library\r4\FHIR.R4.Resources.Other.pas',
+  FHIR.R4.Resources.Medications in '..\library\r4\FHIR.R4.Resources.Medications.pas',
+  FHIR.R4.Resources.Financial in '..\library\r4\FHIR.R4.Resources.Financial.pas',
+  FHIR.R2.Resources.Base in '..\library\r2\FHIR.R2.Resources.Base.pas',
+  FHIR.R2.Resources.Admin in '..\library\r2\FHIR.R2.Resources.Admin.pas',
+  FHIR.R2.Resources.Other in '..\library\r2\FHIR.R2.Resources.Other.pas',
+  FHIR.R2.Resources.Clinical in '..\library\r2\FHIR.R2.Resources.Clinical.pas',
+  FHIR.R2.Resources.Canonical in '..\library\r2\FHIR.R2.Resources.Canonical.pas',
+  FHIR.R3.Resources.Admin in '..\library\r3\FHIR.R3.Resources.Admin.pas',
+  FHIR.R3.Resources.Other in '..\library\r3\FHIR.R3.Resources.Other.pas',
+  FHIR.R3.Resources.Clinical in '..\library\r3\FHIR.R3.Resources.Clinical.pas',
+  FHIR.R3.Resources.Canonical in '..\library\r3\FHIR.R3.Resources.Canonical.pas',
+  FHIR.R3.Resources.Base in '..\library\r3\FHIR.R3.Resources.Base.pas',
+  FHIR.R3.Resources in '..\library\r3\FHIR.R3.Resources.pas';
 
 {$R *.res}
 

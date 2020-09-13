@@ -36,7 +36,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Base,
-  FHIR.R3.Resources;
+  FHIR.R3.Resources, FHIR.R3.Resources.Base;
 
 type
   TFHIRResourceOrganiser = class (TFslObject)

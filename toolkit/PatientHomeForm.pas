@@ -37,7 +37,7 @@ uses
   FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
   FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Support.Base, FHIR.Base.Objects,
-  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Version.Types,
+  FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Version.Types,
   BaseFrame, DocumentGenerationForm, System.Rtti, FMX.Grid.Style, FMX.Grid,
   FMX.ScrollBox;
 
@@ -295,7 +295,7 @@ begin
   prac := TFslList<TFHIRPractitioner>.create;
   try
     doc := nil;
-    work('Fetch Document', true, procedure
+    work('Fetch Document', true, procedure (context : pointer)
         var
           bnd : TFHIRBundle;
           be : TFhirBundleEntry;
@@ -348,7 +348,7 @@ begin
     FResources := TFslMap<TFhirResource>.create('resources');
 
   work('Loading Patient Data', true,
-    procedure
+    procedure  (context : pointer)
     var
       be : TFhirBundleEntry;
     begin

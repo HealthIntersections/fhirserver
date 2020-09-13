@@ -58,7 +58,6 @@ uses
   FHIR.Base.Validator in '..\..\library\base\FHIR.Base.Validator.pas',
   FHIR.Base.Common in '..\..\library\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\..\library\base\FHIR.Base.Narrative.pas',
-  FHIR.Base.PathEngine in '..\..\library\base\FHIR.Base.PathEngine.pas',
   FHIR.R2.Common in '..\..\library\r2\FHIR.R2.Common.pas',
   FHIR.Support.Signatures in '..\..\library\support\FHIR.Support.Signatures.pas',
   fhir.support.fpc in '..\..\library\support\fhir.support.fpc.pas',
@@ -75,7 +74,13 @@ uses
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
-  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas';
+  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.Base.PathEngine in '..\..\library\base\FHIR.Base.PathEngine.pas',
+  FHIR.R2.Resources.Other in '..\..\library\r2\FHIR.R2.Resources.Other.pas',
+  FHIR.R2.Resources.Clinical in '..\..\library\r2\FHIR.R2.Resources.Clinical.pas',
+  FHIR.R2.Resources.Canonical in '..\..\library\r2\FHIR.R2.Resources.Canonical.pas',
+  FHIR.R2.Resources.Base in '..\..\library\r2\FHIR.R2.Resources.Base.pas',
+  FHIR.R2.Resources.Admin in '..\..\library\r2\FHIR.R2.Resources.Admin.pas';
 
 {$R *.res}
 

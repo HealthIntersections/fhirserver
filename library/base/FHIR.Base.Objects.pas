@@ -994,7 +994,7 @@ end;
 constructor TFHIRObjectText.create(value: TBytes);
 begin
   Create;
-  self.value := EncodeBase64(value);
+  self.value := String(EncodeBase64(value));
 end;
 
 function TFHIRObjectText.createPropertyValue(propName: string): TFHIRObject;
@@ -1225,7 +1225,7 @@ begin
   FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
-    FList.Add(FOwner.makeStringValue(EncodeBase64(value)));
+    FList.Add(FOwner.makeStringValue(String(EncodeBase64(value))));
 end;
 
 constructor TFHIRProperty.CreateEnum(oOwner: TFHIRObject; const sName: String; bList: boolean; cClass : TClass; enumName, sValue: String);

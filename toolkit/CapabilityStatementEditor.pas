@@ -37,8 +37,9 @@ uses
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Menus,
   BaseResourceFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
-  SearchParameterEditor, SearchParameterCombinationEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
+  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
+  SearchParameterEditor, SearchParameterCombinationEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog,
+  FMX.Memo.Types;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug

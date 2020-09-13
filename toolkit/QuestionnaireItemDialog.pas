@@ -37,10 +37,10 @@ uses
   FMX.ListBox, FMX.Edit, FMX.DialogService, System.ImageList, FMX.ImgList,
   FHIR.Support.Base, FHIR.Support.Utilities,
   ToolkitSettings,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Client, FHIR.Version.Utilities,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Constants, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseDialog,
   ResourceEditingSupport, BaseFrame, ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog, {$IFNDEF FHIR3} ExpressionEditor, {$ENDIF}
-  FMX.Layouts;
+  FMX.Layouts, FMX.Memo.Types;
 
 type
   TForm = TBaseForm;
@@ -502,7 +502,7 @@ begin
       try
         params.addPair('_summary', 'true');
         OnWork(self, 'Fetching ValueSets', true,
-          procedure
+          procedure (context : pointer)
           begin
             bundle := client.search(frtValueSet, true, params);
           end);

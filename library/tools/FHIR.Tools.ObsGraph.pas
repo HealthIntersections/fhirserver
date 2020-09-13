@@ -37,7 +37,7 @@ uses
   FHIR.Ui.Graph,
   FHIR.Base.Objects, FHIR.Client.Base,
   FHIR.Smart.Utilities,
-  FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities;
+  FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Types, FHIR.Version.Utilities;
 
 type
   TObservationGraphingContext = class (TFslObject)

@@ -42,7 +42,7 @@ uses
   FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base, FHIR.Base.PathEngine,
 
   FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
-  FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities, FHIR.R4.PathEngine,
+  FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Resources.Base,
 
   FHIR.Tools.Indexing, FHIR.Version.Client,
   FHIR.Tx.Manager, FHIR.Tx.Server,

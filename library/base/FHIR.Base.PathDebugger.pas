@@ -429,7 +429,7 @@ procedure UpdateMarks(expr : TFHIRPathExpressionNodeV; marks : TStringList);
 begin
   if expr = nil then
     exit;
-  expr.visitAll(procedure (item : TFHIRPathExpressionNodeV)
+  expr.visitAll(nil, procedure (context : pointer; item : TFHIRPathExpressionNodeV)
     begin
       if marks.IndexOf(inttostr(item.uniqueId)) > -1 then
         item.tag := 1
@@ -443,7 +443,7 @@ procedure GetMarks(expr : TFHIRPathExpressionNodeV; marks : TStringList);
 begin
   if expr = nil then
     exit;
-  expr.visitAll(procedure (item : TFHIRPathExpressionNodeV)
+  expr.visitAll(nil, procedure (context : pointer; item : TFHIRPathExpressionNodeV)
     begin
       if item.tag = 1 then
         marks.Add(inttostr(item.uniqueId));
