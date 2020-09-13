@@ -35,8 +35,8 @@ interface
 uses
   SysUtils,
   FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Turtle,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
-  FHIR.R2.Types, FHIR.R2.Resources;
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.R2.Types,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 type
   TFHIRXmlParserBase2 = class (TFHIRXmlParserBase)

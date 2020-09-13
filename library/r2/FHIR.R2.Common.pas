@@ -37,7 +37,8 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Operations, FHIR.R2.OpBase;
+  FHIR.R2.Types, FHIR.R2.Operations, FHIR.R2.OpBase,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 const
   ExceptionTypeTranslations : array [TFhirIssueType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,

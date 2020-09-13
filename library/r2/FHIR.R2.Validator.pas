@@ -38,7 +38,8 @@ Uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.R2.PathNode, FHIR.R2.Context, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.PathEngine, FHIR.R2.ElementModel, FHIR.R2.Resources.Base;
+  FHIR.R2.PathNode, FHIR.R2.Context, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.PathEngine, FHIR.R2.ElementModel,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Other;
 
 
 Type

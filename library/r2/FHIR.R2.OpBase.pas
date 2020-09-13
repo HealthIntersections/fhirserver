@@ -35,7 +35,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Base, FHIR.Web.Parsers,
-  FHIR.R2.Types, FHIR.R2.Resources;
+  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Resources.Other;
 
 type
   TFHIROpExtension = class (TFslObject)

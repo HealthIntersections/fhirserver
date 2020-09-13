@@ -44,6 +44,14 @@ uses
   FHIR.R5.Resources.Canonical;
 
 type
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  TFhirActivityDefinitionParticipant = class;
+  TFhirActivityDefinitionParticipantList = class;
+  TFhirActivityDefinitionDynamicValue = class;
+  TFhirActivityDefinitionDynamicValueList = class;
+  TFhirActivityDefinition = class;
+  TFhirActivityDefinitionList = class;
+{$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_AUDITEVENT}
   TFhirAuditEventAgent = class;
   TFhirAuditEventAgentList = class;
@@ -218,6 +226,24 @@ type
   TFhirPermission = class;
   TFhirPermissionList = class;
 {$ENDIF FHIR_PERMISSION}
+{$IFDEF FHIR_PLANDEFINITION}
+  TFhirPlanDefinitionGoal = class;
+  TFhirPlanDefinitionGoalList = class;
+  TFhirPlanDefinitionGoalTarget = class;
+  TFhirPlanDefinitionGoalTargetList = class;
+  TFhirPlanDefinitionAction = class;
+  TFhirPlanDefinitionActionList = class;
+  TFhirPlanDefinitionActionCondition = class;
+  TFhirPlanDefinitionActionConditionList = class;
+  TFhirPlanDefinitionActionRelatedAction = class;
+  TFhirPlanDefinitionActionRelatedActionList = class;
+  TFhirPlanDefinitionActionParticipant = class;
+  TFhirPlanDefinitionActionParticipantList = class;
+  TFhirPlanDefinitionActionDynamicValue = class;
+  TFhirPlanDefinitionActionDynamicValueList = class;
+  TFhirPlanDefinition = class;
+  TFhirPlanDefinitionList = class;
+{$ENDIF FHIR_PLANDEFINITION}
 {$IFDEF FHIR_PROVENANCE}
   TFhirProvenanceAgent = class;
   TFhirProvenanceAgentList = class;
@@ -234,6 +260,16 @@ type
   TFhirQuestionnaireResponse = class;
   TFhirQuestionnaireResponseList = class;
 {$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REQUESTGROUP}
+  TFhirRequestGroupAction = class;
+  TFhirRequestGroupActionList = class;
+  TFhirRequestGroupActionCondition = class;
+  TFhirRequestGroupActionConditionList = class;
+  TFhirRequestGroupActionRelatedAction = class;
+  TFhirRequestGroupActionRelatedActionList = class;
+  TFhirRequestGroup = class;
+  TFhirRequestGroupList = class;
+{$ENDIF FHIR_REQUESTGROUP}
 {$IFDEF FHIR_RESEARCHSTUDY}
   TFhirResearchStudyArm = class;
   TFhirResearchStudyArmList = class;
@@ -311,6 +347,625 @@ type
   TFhirVerificationResultList = class;
 {$ENDIF FHIR_VERIFICATIONRESULT}
 
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  // Indicates who should participate in performing the action described.
+  TFhirActivityDefinitionParticipant = class (TFhirBackboneElement)
+  protected
+    FType_ : TFhirEnum;
+    FRole : TFhirCodeableConcept;
+    procedure SetType_(value : TFhirEnum);
+    function GetType_ST : TFhirActionParticipantTypeEnum;
+    procedure SetType_ST(value : TFhirActionParticipantTypeEnum);
+    procedure SetRole(value : TFhirCodeableConcept);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirActivityDefinitionParticipant; overload;
+    function Clone : TFhirActivityDefinitionParticipant; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // The type of participant in the action.
+    property type_ : TFhirActionParticipantTypeEnum read GetType_ST write SetType_ST;
+    property type_Element : TFhirEnum read FType_ write SetType_;
+
+    // Typed access to The role the participant should play in performing the described action. (defined for API consistency)
+    property role : TFhirCodeableConcept read FRole write SetRole;
+    // The role the participant should play in performing the described action.
+    property roleElement : TFhirCodeableConcept read FRole write SetRole;
+
+  end;
+
+  TFhirActivityDefinitionParticipantListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirActivityDefinitionParticipantList;
+    function GetCurrent : TFhirActivityDefinitionParticipant;
+  public
+    constructor Create(list : TFhirActivityDefinitionParticipantList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirActivityDefinitionParticipant read GetCurrent;
+  end;
+
+  TFhirActivityDefinitionParticipantList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirActivityDefinitionParticipant;
+    procedure SetItemN(index : Integer; value : TFhirActivityDefinitionParticipant);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirActivityDefinitionParticipantList; overload;
+    function Clone : TFhirActivityDefinitionParticipantList; overload;
+    function GetEnumerator : TFhirActivityDefinitionParticipantListEnumerator;
+
+    //  Add a FhirActivityDefinitionParticipant to the end of the list.
+    function Append : TFhirActivityDefinitionParticipant;
+
+    // Add an already existing FhirActivityDefinitionParticipant to the end of the list.
+    procedure AddItem(value : TFhirActivityDefinitionParticipant); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirActivityDefinitionParticipant) : Integer;
+
+    // Insert FhirActivityDefinitionParticipant before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirActivityDefinitionParticipant;
+
+    // Insert an existing FhirActivityDefinitionParticipant before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirActivityDefinitionParticipant);
+
+    // Get the iIndexth FhirActivityDefinitionParticipant. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirActivityDefinitionParticipant);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirActivityDefinitionParticipant;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirActivityDefinitionParticipants[index : Integer] : TFhirActivityDefinitionParticipant read GetItemN write SetItemN; default;
+  End;
+
+  // Dynamic values that will be evaluated to produce values for elements of the resulting resource. For example, if the dosage of a medication must be computed based on the patient's weight, a dynamic value would be used to specify an expression that calculated the weight, and the path on the request resource that would contain the result.
+  TFhirActivityDefinitionDynamicValue = class (TFhirBackboneElement)
+  protected
+    FPath : TFhirString;
+    FExpression : TFhirExpression;
+    procedure SetPath(value : TFhirString);
+    function GetPathST : String;
+    procedure SetPathST(value : String);
+    procedure SetExpression(value : TFhirExpression);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirActivityDefinitionDynamicValue; overload;
+    function Clone : TFhirActivityDefinitionDynamicValue; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The path to the element to be customized. This is the path on the resource that will hold the result of the calculation defined by the expression. The specified path SHALL be a FHIRPath resolveable on the specified target type of the ActivityDefinition, and SHALL consist only of identifiers, constant indexers, and a restricted subset of functions. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details).
+    property path : String read GetPathST write SetPathST;
+    // The path to the element to be customized. This is the path on the resource that will hold the result of the calculation defined by the expression. The specified path SHALL be a FHIRPath resolveable on the specified target type of the ActivityDefinition, and SHALL consist only of identifiers, constant indexers, and a restricted subset of functions. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details).
+    property pathElement : TFhirString read FPath write SetPath;
+
+    // Typed access to An expression specifying the value of the customized element. (defined for API consistency)
+    property expression : TFhirExpression read FExpression write SetExpression;
+    // An expression specifying the value of the customized element.
+    property expressionElement : TFhirExpression read FExpression write SetExpression;
+
+  end;
+
+  TFhirActivityDefinitionDynamicValueListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirActivityDefinitionDynamicValueList;
+    function GetCurrent : TFhirActivityDefinitionDynamicValue;
+  public
+    constructor Create(list : TFhirActivityDefinitionDynamicValueList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirActivityDefinitionDynamicValue read GetCurrent;
+  end;
+
+  TFhirActivityDefinitionDynamicValueList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirActivityDefinitionDynamicValue;
+    procedure SetItemN(index : Integer; value : TFhirActivityDefinitionDynamicValue);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirActivityDefinitionDynamicValueList; overload;
+    function Clone : TFhirActivityDefinitionDynamicValueList; overload;
+    function GetEnumerator : TFhirActivityDefinitionDynamicValueListEnumerator;
+
+    //  Add a FhirActivityDefinitionDynamicValue to the end of the list.
+    function Append : TFhirActivityDefinitionDynamicValue;
+
+    // Add an already existing FhirActivityDefinitionDynamicValue to the end of the list.
+    procedure AddItem(value : TFhirActivityDefinitionDynamicValue); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirActivityDefinitionDynamicValue) : Integer;
+
+    // Insert FhirActivityDefinitionDynamicValue before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirActivityDefinitionDynamicValue;
+
+    // Insert an existing FhirActivityDefinitionDynamicValue before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirActivityDefinitionDynamicValue);
+
+    // Get the iIndexth FhirActivityDefinitionDynamicValue. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirActivityDefinitionDynamicValue);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirActivityDefinitionDynamicValue;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirActivityDefinitionDynamicValues[index : Integer] : TFhirActivityDefinitionDynamicValue read GetItemN write SetItemN; default;
+  End;
+
+  // This resource allows for the definition of some activity to be performed, independent of a particular patient, practitioner, or other performance context.
+  TFhirActivityDefinition = class (TFhirMetadataResource)
+  protected
+    FSubtitle : TFhirString;
+    FSubject : TFhirDataType;
+    FUsage : TFhirString;
+    FtopicList : TFhirCodeableConceptList;
+    FauthorList : TFhirContactDetailList;
+    FeditorList : TFhirContactDetailList;
+    FreviewerList : TFhirContactDetailList;
+    FendorserList : TFhirContactDetailList;
+    FrelatedArtifactList : TFhirRelatedArtifactList;
+    Flibrary_List : TFhirCanonicalList;
+    FKind : TFhirEnum;
+    FProfile : TFhirCanonical;
+    FCode : TFhirCodeableConcept;
+    FIntent : TFhirEnum;
+    FPriority : TFhirEnum;
+    FDoNotPerform : TFhirBoolean;
+    FTiming : TFhirDataType;
+    FLocation : TFhirReference;
+    FparticipantList : TFhirActivityDefinitionParticipantList;
+    FProduct : TFhirDataType;
+    FQuantity : TFhirQuantity;
+    FdosageList : TFhirDosageList;
+    FbodySiteList : TFhirCodeableConceptList;
+    FspecimenRequirementList : TFhirReferenceList;
+    FobservationRequirementList : TFhirReferenceList;
+    FobservationResultRequirementList : TFhirReferenceList;
+    FTransform : TFhirCanonical;
+    FdynamicValueList : TFhirActivityDefinitionDynamicValueList;
+    procedure SetUrl(value : TFhirUri);
+    function GetUrlST : String;
+    procedure SetUrlST(value : String);
+    function GetIdentifierList : TFhirIdentifierList;
+    function GetHasIdentifierList : Boolean;
+    procedure SetVersion(value : TFhirString);
+    function GetVersionST : String;
+    procedure SetVersionST(value : String);
+    procedure SetName(value : TFhirString);
+    function GetNameST : String;
+    procedure SetNameST(value : String);
+    procedure SetTitle(value : TFhirString);
+    function GetTitleST : String;
+    procedure SetTitleST(value : String);
+    procedure SetSubtitle(value : TFhirString);
+    function GetSubtitleST : String;
+    procedure SetSubtitleST(value : String);
+    procedure SetStatus(value : TFhirEnum);
+    function GetStatusST : TFhirPublicationStatusEnum;
+    procedure SetStatusST(value : TFhirPublicationStatusEnum);
+    procedure SetExperimental(value : TFhirBoolean);
+    function GetExperimentalST : Boolean;
+    procedure SetExperimentalST(value : Boolean);
+    procedure SetSubject(value : TFhirDataType);
+    procedure SetDate(value : TFhirDateTime);
+    function GetDateST : TFslDateTime;
+    procedure SetDateST(value : TFslDateTime);
+    procedure SetPublisher(value : TFhirString);
+    function GetPublisherST : String;
+    procedure SetPublisherST(value : String);
+    function GetContactList : TFhirContactDetailList;
+    function GetHasContactList : Boolean;
+    procedure SetDescription(value : TFhirMarkdown);
+    function GetDescriptionST : String;
+    procedure SetDescriptionST(value : String);
+    function GetUseContextList : TFhirUsageContextList;
+    function GetHasUseContextList : Boolean;
+    function GetJurisdictionList : TFhirCodeableConceptList;
+    function GetHasJurisdictionList : Boolean;
+    procedure SetPurpose(value : TFhirMarkdown);
+    function GetPurposeST : String;
+    procedure SetPurposeST(value : String);
+    procedure SetUsage(value : TFhirString);
+    function GetUsageST : String;
+    procedure SetUsageST(value : String);
+    procedure SetCopyright(value : TFhirMarkdown);
+    function GetCopyrightST : String;
+    procedure SetCopyrightST(value : String);
+    procedure SetApprovalDate(value : TFhirDate);
+    function GetApprovalDateST : TFslDateTime;
+    procedure SetApprovalDateST(value : TFslDateTime);
+    procedure SetLastReviewDate(value : TFhirDate);
+    function GetLastReviewDateST : TFslDateTime;
+    procedure SetLastReviewDateST(value : TFslDateTime);
+    procedure SetEffectivePeriod(value : TFhirPeriod);
+    function GetTopicList : TFhirCodeableConceptList;
+    function GetHasTopicList : Boolean;
+    function GetAuthorList : TFhirContactDetailList;
+    function GetHasAuthorList : Boolean;
+    function GetEditorList : TFhirContactDetailList;
+    function GetHasEditorList : Boolean;
+    function GetReviewerList : TFhirContactDetailList;
+    function GetHasReviewerList : Boolean;
+    function GetEndorserList : TFhirContactDetailList;
+    function GetHasEndorserList : Boolean;
+    function GetRelatedArtifactList : TFhirRelatedArtifactList;
+    function GetHasRelatedArtifactList : Boolean;
+    function GetLibrary_List : TFhirCanonicalList;
+    function GetHasLibrary_List : Boolean;
+    procedure SetKind(value : TFhirEnum);
+    function GetKindST : TFhirRequestResourceTypeEnum;
+    procedure SetKindST(value : TFhirRequestResourceTypeEnum);
+    procedure SetProfile(value : TFhirCanonical);
+    function GetProfileST : String;
+    procedure SetProfileST(value : String);
+    procedure SetCode(value : TFhirCodeableConcept);
+    procedure SetIntent(value : TFhirEnum);
+    function GetIntentST : TFhirRequestIntentEnum;
+    procedure SetIntentST(value : TFhirRequestIntentEnum);
+    procedure SetPriority(value : TFhirEnum);
+    function GetPriorityST : TFhirRequestPriorityEnum;
+    procedure SetPriorityST(value : TFhirRequestPriorityEnum);
+    procedure SetDoNotPerform(value : TFhirBoolean);
+    function GetDoNotPerformST : Boolean;
+    procedure SetDoNotPerformST(value : Boolean);
+    procedure SetTiming(value : TFhirDataType);
+    procedure SetLocation(value : TFhirReference);
+    function GetParticipantList : TFhirActivityDefinitionParticipantList;
+    function GetHasParticipantList : Boolean;
+    procedure SetProduct(value : TFhirDataType);
+    procedure SetQuantity(value : TFhirQuantity);
+    function GetDosageList : TFhirDosageList;
+    function GetHasDosageList : Boolean;
+    function GetBodySiteList : TFhirCodeableConceptList;
+    function GetHasBodySiteList : Boolean;
+    function GetSpecimenRequirementList : TFhirReferenceList;
+    function GetHasSpecimenRequirementList : Boolean;
+    function GetObservationRequirementList : TFhirReferenceList;
+    function GetHasObservationRequirementList : Boolean;
+    function GetObservationResultRequirementList : TFhirReferenceList;
+    function GetHasObservationResultRequirementList : Boolean;
+    procedure SetTransform(value : TFhirCanonical);
+    function GetTransformST : String;
+    procedure SetTransformST(value : String);
+    function GetDynamicValueList : TFhirActivityDefinitionDynamicValueList;
+    function GetHasDynamicValueList : Boolean;
+
+    function GetResourceType : TFhirResourceType; override;
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirActivityDefinition; overload;
+    function Clone : TFhirActivityDefinition; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to An absolute URI that is used to identify this activity definition when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this activity definition is (or will be) {$IFNDEF FPC}published{$ENDIF}. This URL can be the target of a canonical reference. It SHALL remain the same when the activity definition is stored on different servers.
+    property url : String read GetUrlST write SetUrlST;
+    // An absolute URI that is used to identify this activity definition when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this activity definition is (or will be) {$IFNDEF FPC}published{$ENDIF}. This URL can be the target of a canonical reference. It SHALL remain the same when the activity definition is stored on different servers.
+    property urlElement : TFhirUri read FUrl write SetUrl;
+
+    // A formal identifier that is used to identify this activity definition when it is represented in other formats, or referenced in a specification, model, design or an instance.
+    property identifierList : TFhirIdentifierList read GetIdentifierList;
+    property hasIdentifierList : boolean read GetHasIdentifierList;
+
+    // Typed access to The identifier that is used to identify this version of the activity definition when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the activity definition author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence. To provide a version consistent with the Decision Support Service specification, use the format Major.Minor.Revision (e.g. 1.0.0). For more information on versioning knowledge assets, refer to the Decision Support Service specification. Note that a version is required for non-experimental active assets.
+    property version : String read GetVersionST write SetVersionST;
+    // The identifier that is used to identify this version of the activity definition when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the activity definition author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence. To provide a version consistent with the Decision Support Service specification, use the format Major.Minor.Revision (e.g. 1.0.0). For more information on versioning knowledge assets, refer to the Decision Support Service specification. Note that a version is required for non-experimental active assets.
+    property versionElement : TFhirString read FVersion write SetVersion;
+
+    // Typed access to A natural language name identifying the activity definition. This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property name : String read GetNameST write SetNameST;
+    // A natural language name identifying the activity definition. This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property nameElement : TFhirString read FName write SetName;
+
+    // Typed access to A short, descriptive, user-friendly title for the activity definition.
+    property title : String read GetTitleST write SetTitleST;
+    // A short, descriptive, user-friendly title for the activity definition.
+    property titleElement : TFhirString read FTitle write SetTitle;
+
+    // Typed access to An explanatory or alternate title for the activity definition giving additional information about its content.
+    property subtitle : String read GetSubtitleST write SetSubtitleST;
+    // An explanatory or alternate title for the activity definition giving additional information about its content.
+    property subtitleElement : TFhirString read FSubtitle write SetSubtitle;
+
+    // The status of this activity definition. Enables tracking the life-cycle of the content.
+    property status : TFhirPublicationStatusEnum read GetStatusST write SetStatusST;
+    property statusElement : TFhirEnum read FStatus write SetStatus;
+
+    // Typed access to A Boolean value to indicate that this activity definition is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    // A Boolean value to indicate that this activity definition is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimentalElement : TFhirBoolean read FExperimental write SetExperimental;
+
+    // Typed access to A code or group definition that describes the intended subject of the activity being defined. (defined for API consistency)
+    property subject : TFhirDataType read FSubject write SetSubject;
+    // A code or group definition that describes the intended subject of the activity being defined.
+    property subjectElement : TFhirDataType read FSubject write SetSubject;
+
+    // Typed access to The date  (and optionally time) when the activity definition was {$IFNDEF FPC}published{$ENDIF}. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the activity definition changes.
+    property date : TFslDateTime read GetDateST write SetDateST;
+    // The date  (and optionally time) when the activity definition was {$IFNDEF FPC}published{$ENDIF}. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the activity definition changes.
+    property dateElement : TFhirDateTime read FDate write SetDate;
+
+    // Typed access to The name of the organization or individual that {$IFNDEF FPC}published{$ENDIF} the activity definition.
+    property publisher : String read GetPublisherST write SetPublisherST;
+    // The name of the organization or individual that {$IFNDEF FPC}published{$ENDIF} the activity definition.
+    property publisherElement : TFhirString read FPublisher write SetPublisher;
+
+    // Contact details to assist a user in finding and communicating with the publisher.
+    property contactList : TFhirContactDetailList read GetContactList;
+    property hasContactList : boolean read GetHasContactList;
+
+    // Typed access to A free text natural language description of the activity definition from a consumer's perspective.
+    property description : String read GetDescriptionST write SetDescriptionST;
+    // A free text natural language description of the activity definition from a consumer's perspective.
+    property descriptionElement : TFhirMarkdown read FDescription write SetDescription;
+
+    // The content was developed with a focus and intent of supporting the contexts that are listed. These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans, studies, ...) and may be used to assist with indexing and searching for appropriate activity definition instances.
+    property useContextList : TFhirUsageContextList read GetUseContextList;
+    property hasUseContextList : boolean read GetHasUseContextList;
+
+    // A legal or geographic region in which the activity definition is intended to be used.
+    property jurisdictionList : TFhirCodeableConceptList read GetJurisdictionList;
+    property hasJurisdictionList : boolean read GetHasJurisdictionList;
+
+    // Typed access to Explanation of why this activity definition is needed and why it has been designed as it has.
+    property purpose : String read GetPurposeST write SetPurposeST;
+    // Explanation of why this activity definition is needed and why it has been designed as it has.
+    property purposeElement : TFhirMarkdown read FPurpose write SetPurpose;
+
+    // Typed access to A detailed description of how the activity definition is used from a clinical perspective.
+    property usage : String read GetUsageST write SetUsageST;
+    // A detailed description of how the activity definition is used from a clinical perspective.
+    property usageElement : TFhirString read FUsage write SetUsage;
+
+    // Typed access to A copyright statement relating to the activity definition and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the activity definition.
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    // A copyright statement relating to the activity definition and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the activity definition.
+    property copyrightElement : TFhirMarkdown read FCopyright write SetCopyright;
+
+    // Typed access to The date on which the resource content was approved by the publisher. Approval happens once when the content is officially approved for usage.
+    property approvalDate : TFslDateTime read GetApprovalDateST write SetApprovalDateST;
+    // The date on which the resource content was approved by the publisher. Approval happens once when the content is officially approved for usage.
+    property approvalDateElement : TFhirDate read FApprovalDate write SetApprovalDate;
+
+    // Typed access to The date on which the resource content was last reviewed. Review happens periodically after approval but does not change the original approval date.
+    property lastReviewDate : TFslDateTime read GetLastReviewDateST write SetLastReviewDateST;
+    // The date on which the resource content was last reviewed. Review happens periodically after approval but does not change the original approval date.
+    property lastReviewDateElement : TFhirDate read FLastReviewDate write SetLastReviewDate;
+
+    // Typed access to The period during which the activity definition content was or is planned to be in active use. (defined for API consistency)
+    property effectivePeriod : TFhirPeriod read FEffectivePeriod write SetEffectivePeriod;
+    // The period during which the activity definition content was or is planned to be in active use.
+    property effectivePeriodElement : TFhirPeriod read FEffectivePeriod write SetEffectivePeriod;
+
+    // Descriptive topics related to the content of the activity. Topics provide a high-level categorization of the activity that can be useful for filtering and searching.
+    property topicList : TFhirCodeableConceptList read GetTopicList;
+    property hasTopicList : boolean read GetHasTopicList;
+
+    // An individiual or organization primarily involved in the creation and maintenance of the content.
+    property authorList : TFhirContactDetailList read GetAuthorList;
+    property hasAuthorList : boolean read GetHasAuthorList;
+
+    // An individual or organization primarily responsible for internal coherence of the content.
+    property editorList : TFhirContactDetailList read GetEditorList;
+    property hasEditorList : boolean read GetHasEditorList;
+
+    // An individual or organization primarily responsible for review of some aspect of the content.
+    property reviewerList : TFhirContactDetailList read GetReviewerList;
+    property hasReviewerList : boolean read GetHasReviewerList;
+
+    // An individual or organization responsible for officially endorsing the content for use in some setting.
+    property endorserList : TFhirContactDetailList read GetEndorserList;
+    property hasEndorserList : boolean read GetHasEndorserList;
+
+    // Related artifacts such as additional documentation, justification, or bibliographic references.
+    property relatedArtifactList : TFhirRelatedArtifactList read GetRelatedArtifactList;
+    property hasRelatedArtifactList : boolean read GetHasRelatedArtifactList;
+
+    // A reference to a Library resource containing any formal logic used by the activity definition.
+    property library_List : TFhirCanonicalList read GetLibrary_List;
+    property hasLibrary_List : boolean read GetHasLibrary_List;
+
+    // A description of the kind of resource the activity definition is representing. For example, a MedicationRequest, a ServiceRequest, or a CommunicationRequest. Typically, but not always, this is a Request resource.
+    property kind : TFhirRequestResourceTypeEnum read GetKindST write SetKindST;
+    property kindElement : TFhirEnum read FKind write SetKind;
+
+    // Typed access to A profile to which the target of the activity definition is expected to conform.
+    property profile : String read GetProfileST write SetProfileST;
+    // A profile to which the target of the activity definition is expected to conform.
+    property profileElement : TFhirCanonical read FProfile write SetProfile;
+
+    // Typed access to Detailed description of the type of activity; e.g. What lab test, what procedure, what kind of encounter. (defined for API consistency)
+    property code : TFhirCodeableConcept read FCode write SetCode;
+    // Detailed description of the type of activity; e.g. What lab test, what procedure, what kind of encounter.
+    property codeElement : TFhirCodeableConcept read FCode write SetCode;
+
+    // Indicates the level of authority/intentionality associated with the activity and where the request should fit into the workflow chain.
+    property intent : TFhirRequestIntentEnum read GetIntentST write SetIntentST;
+    property intentElement : TFhirEnum read FIntent write SetIntent;
+
+    // Indicates how quickly the activity  should be addressed with respect to other requests.
+    property priority : TFhirRequestPriorityEnum read GetPriorityST write SetPriorityST;
+    property priorityElement : TFhirEnum read FPriority write SetPriority;
+
+    // Typed access to Set this to true if the definition is to indicate that a particular activity should NOT be performed. If true, this element should be interpreted to reinforce a negative coding. For example NPO as a code with a doNotPerform of true would still indicate to NOT perform the action.
+    property doNotPerform : Boolean read GetDoNotPerformST write SetDoNotPerformST;
+    // Set this to true if the definition is to indicate that a particular activity should NOT be performed. If true, this element should be interpreted to reinforce a negative coding. For example NPO as a code with a doNotPerform of true would still indicate to NOT perform the action.
+    property doNotPerformElement : TFhirBoolean read FDoNotPerform write SetDoNotPerform;
+
+    // Typed access to The period, timing or frequency upon which the described activity is to occur. (defined for API consistency)
+    property timing : TFhirDataType read FTiming write SetTiming;
+    // The period, timing or frequency upon which the described activity is to occur.
+    property timingElement : TFhirDataType read FTiming write SetTiming;
+
+    // Typed access to Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic, etc. (defined for API consistency)
+    property location : TFhirReference read FLocation write SetLocation;
+    // Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic, etc.
+    property locationElement : TFhirReference read FLocation write SetLocation;
+
+    // Indicates who should participate in performing the action described.
+    property participantList : TFhirActivityDefinitionParticipantList read GetParticipantList;
+    property hasParticipantList : boolean read GetHasParticipantList;
+
+    // Typed access to Identifies the food, drug or other product being consumed or supplied in the activity. (defined for API consistency)
+    property product : TFhirDataType read FProduct write SetProduct;
+    // Identifies the food, drug or other product being consumed or supplied in the activity.
+    property productElement : TFhirDataType read FProduct write SetProduct;
+
+    // Typed access to Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). (defined for API consistency)
+    property quantity : TFhirQuantity read FQuantity write SetQuantity;
+    // Identifies the quantity expected to be consumed at once (per dose, per meal, etc.).
+    property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
+
+    // Provides detailed dosage instructions in the same way that they are described for MedicationRequest resources.
+    property dosageList : TFhirDosageList read GetDosageList;
+    property hasDosageList : boolean read GetHasDosageList;
+
+    // Indicates the sites on the subject's body where the procedure should be performed (I.e. the target sites).
+    property bodySiteList : TFhirCodeableConceptList read GetBodySiteList;
+    property hasBodySiteList : boolean read GetHasBodySiteList;
+
+    // Defines specimen requirements for the action to be performed, such as required specimens for a lab test.
+    property specimenRequirementList : TFhirReferenceList read GetSpecimenRequirementList;
+    property hasSpecimenRequirementList : boolean read GetHasSpecimenRequirementList;
+
+    // Defines observation requirements for the action to be performed, such as body weight or surface area.
+    property observationRequirementList : TFhirReferenceList read GetObservationRequirementList;
+    property hasObservationRequirementList : boolean read GetHasObservationRequirementList;
+
+    // Defines the observations that are expected to be produced by the action.
+    property observationResultRequirementList : TFhirReferenceList read GetObservationResultRequirementList;
+    property hasObservationResultRequirementList : boolean read GetHasObservationResultRequirementList;
+
+    // Typed access to A reference to a StructureMap resource that defines a transform that can be executed to produce the intent resource using the ActivityDefinition instance as the input.
+    property transform : String read GetTransformST write SetTransformST;
+    // A reference to a StructureMap resource that defines a transform that can be executed to produce the intent resource using the ActivityDefinition instance as the input.
+    property transformElement : TFhirCanonical read FTransform write SetTransform;
+
+    // Dynamic values that will be evaluated to produce values for elements of the resulting resource. For example, if the dosage of a medication must be computed based on the patient's weight, a dynamic value would be used to specify an expression that calculated the weight, and the path on the request resource that would contain the result.
+    property dynamicValueList : TFhirActivityDefinitionDynamicValueList read GetDynamicValueList;
+    property hasDynamicValueList : boolean read GetHasDynamicValueList;
+
+  end;
+
+  TFhirActivityDefinitionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirActivityDefinitionList;
+    function GetCurrent : TFhirActivityDefinition;
+  public
+    constructor Create(list : TFhirActivityDefinitionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirActivityDefinition read GetCurrent;
+  end;
+
+  TFhirActivityDefinitionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirActivityDefinition;
+    procedure SetItemN(index : Integer; value : TFhirActivityDefinition);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirActivityDefinitionList; overload;
+    function Clone : TFhirActivityDefinitionList; overload;
+    function GetEnumerator : TFhirActivityDefinitionListEnumerator;
+
+    //  Add a FhirActivityDefinition to the end of the list.
+    function Append : TFhirActivityDefinition;
+
+    // Add an already existing FhirActivityDefinition to the end of the list.
+    procedure AddItem(value : TFhirActivityDefinition); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirActivityDefinition) : Integer;
+
+    // Insert FhirActivityDefinition before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirActivityDefinition;
+
+    // Insert an existing FhirActivityDefinition before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirActivityDefinition);
+
+    // Get the iIndexth FhirActivityDefinition. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirActivityDefinition);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirActivityDefinition;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirActivityDefinitions[index : Integer] : TFhirActivityDefinition read GetItemN write SetItemN; default;
+  End;
+
+{$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_AUDITEVENT}
   // An actor taking an active role in the event or activity that is logged.
   TFhirAuditEventAgent = class (TFhirBackboneElement)
@@ -9532,6 +10187,1230 @@ type
   End;
 
 {$ENDIF FHIR_PERMISSION}
+{$IFDEF FHIR_PLANDEFINITION}
+  // Goals that describe what the activities within the plan are intended to achieve. For example, weight loss, restoring an activity of daily living, obtaining herd immunity via immunization, meeting a process improvement objective, etc.
+  TFhirPlanDefinitionGoal = class (TFhirBackboneElement)
+  protected
+    FCategory : TFhirCodeableConcept;
+    FDescription : TFhirCodeableConcept;
+    FPriority : TFhirCodeableConcept;
+    FStart : TFhirCodeableConcept;
+    FaddressesList : TFhirCodeableConceptList;
+    FdocumentationList : TFhirRelatedArtifactList;
+    FtargetList : TFhirPlanDefinitionGoalTargetList;
+    procedure SetCategory(value : TFhirCodeableConcept);
+    procedure SetDescription(value : TFhirCodeableConcept);
+    procedure SetPriority(value : TFhirCodeableConcept);
+    procedure SetStart(value : TFhirCodeableConcept);
+    function GetAddressesList : TFhirCodeableConceptList;
+    function GetHasAddressesList : Boolean;
+    function GetDocumentationList : TFhirRelatedArtifactList;
+    function GetHasDocumentationList : Boolean;
+    function GetTargetList : TFhirPlanDefinitionGoalTargetList;
+    function GetHasTargetList : Boolean;
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionGoal; overload;
+    function Clone : TFhirPlanDefinitionGoal; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Indicates a category the goal falls within. (defined for API consistency)
+    property category : TFhirCodeableConcept read FCategory write SetCategory;
+    // Indicates a category the goal falls within.
+    property categoryElement : TFhirCodeableConcept read FCategory write SetCategory;
+
+    // Typed access to Human-readable and/or coded description of a specific desired objective of care, such as "control blood pressure" or "negotiate an obstacle course" or "dance with child at wedding". (defined for API consistency)
+    property description : TFhirCodeableConcept read FDescription write SetDescription;
+    // Human-readable and/or coded description of a specific desired objective of care, such as "control blood pressure" or "negotiate an obstacle course" or "dance with child at wedding".
+    property descriptionElement : TFhirCodeableConcept read FDescription write SetDescription;
+
+    // Typed access to Identifies the expected level of importance associated with reaching/sustaining the defined goal. (defined for API consistency)
+    property priority : TFhirCodeableConcept read FPriority write SetPriority;
+    // Identifies the expected level of importance associated with reaching/sustaining the defined goal.
+    property priorityElement : TFhirCodeableConcept read FPriority write SetPriority;
+
+    // Typed access to The event after which the goal should begin being pursued. (defined for API consistency)
+    property start : TFhirCodeableConcept read FStart write SetStart;
+    // The event after which the goal should begin being pursued.
+    property startElement : TFhirCodeableConcept read FStart write SetStart;
+
+    // Identifies problems, conditions, issues, or concerns the goal is intended to address.
+    property addressesList : TFhirCodeableConceptList read GetAddressesList;
+    property hasAddressesList : boolean read GetHasAddressesList;
+
+    // Didactic or other informational resources associated with the goal that provide further supporting information about the goal. Information resources can include inline text commentary and links to web resources.
+    property documentationList : TFhirRelatedArtifactList read GetDocumentationList;
+    property hasDocumentationList : boolean read GetHasDocumentationList;
+
+    // Indicates what should be done and within what timeframe.
+    property targetList : TFhirPlanDefinitionGoalTargetList read GetTargetList;
+    property hasTargetList : boolean read GetHasTargetList;
+
+  end;
+
+  TFhirPlanDefinitionGoalListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionGoalList;
+    function GetCurrent : TFhirPlanDefinitionGoal;
+  public
+    constructor Create(list : TFhirPlanDefinitionGoalList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionGoal read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionGoalList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionGoal;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionGoal);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionGoalList; overload;
+    function Clone : TFhirPlanDefinitionGoalList; overload;
+    function GetEnumerator : TFhirPlanDefinitionGoalListEnumerator;
+
+    //  Add a FhirPlanDefinitionGoal to the end of the list.
+    function Append : TFhirPlanDefinitionGoal;
+
+    // Add an already existing FhirPlanDefinitionGoal to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionGoal); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionGoal) : Integer;
+
+    // Insert FhirPlanDefinitionGoal before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionGoal;
+
+    // Insert an existing FhirPlanDefinitionGoal before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionGoal);
+
+    // Get the iIndexth FhirPlanDefinitionGoal. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionGoal);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionGoal;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionGoals[index : Integer] : TFhirPlanDefinitionGoal read GetItemN write SetItemN; default;
+  End;
+
+  // Indicates what should be done and within what timeframe.
+  TFhirPlanDefinitionGoalTarget = class (TFhirBackboneElement)
+  protected
+    FMeasure : TFhirCodeableConcept;
+    FDetail : TFhirDataType;
+    FDue : TFhirDuration;
+    procedure SetMeasure(value : TFhirCodeableConcept);
+    procedure SetDetail(value : TFhirDataType);
+    procedure SetDue(value : TFhirDuration);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionGoalTarget; overload;
+    function Clone : TFhirPlanDefinitionGoalTarget; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The parameter whose value is to be tracked, e.g. body weight, blood pressure, or hemoglobin A1c level. (defined for API consistency)
+    property measure : TFhirCodeableConcept read FMeasure write SetMeasure;
+    // The parameter whose value is to be tracked, e.g. body weight, blood pressure, or hemoglobin A1c level.
+    property measureElement : TFhirCodeableConcept read FMeasure write SetMeasure;
+
+    // Typed access to The target value of the measure to be achieved to signify fulfillment of the goal, e.g. 150 pounds or 7.0%. Either the high or low or both values of the range can be specified. When a low value is missing, it indicates that the goal is achieved at any value at or below the high value. Similarly, if the high value is missing, it indicates that the goal is achieved at any value at or above the low value. (defined for API consistency)
+    property detail : TFhirDataType read FDetail write SetDetail;
+    // The target value of the measure to be achieved to signify fulfillment of the goal, e.g. 150 pounds or 7.0%. Either the high or low or both values of the range can be specified. When a low value is missing, it indicates that the goal is achieved at any value at or below the high value. Similarly, if the high value is missing, it indicates that the goal is achieved at any value at or above the low value.
+    property detailElement : TFhirDataType read FDetail write SetDetail;
+
+    // Typed access to Indicates the timeframe after the start of the goal in which the goal should be met. (defined for API consistency)
+    property due : TFhirDuration read FDue write SetDue;
+    // Indicates the timeframe after the start of the goal in which the goal should be met.
+    property dueElement : TFhirDuration read FDue write SetDue;
+
+  end;
+
+  TFhirPlanDefinitionGoalTargetListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionGoalTargetList;
+    function GetCurrent : TFhirPlanDefinitionGoalTarget;
+  public
+    constructor Create(list : TFhirPlanDefinitionGoalTargetList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionGoalTarget read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionGoalTargetList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionGoalTarget;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionGoalTarget);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionGoalTargetList; overload;
+    function Clone : TFhirPlanDefinitionGoalTargetList; overload;
+    function GetEnumerator : TFhirPlanDefinitionGoalTargetListEnumerator;
+
+    //  Add a FhirPlanDefinitionGoalTarget to the end of the list.
+    function Append : TFhirPlanDefinitionGoalTarget;
+
+    // Add an already existing FhirPlanDefinitionGoalTarget to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionGoalTarget); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionGoalTarget) : Integer;
+
+    // Insert FhirPlanDefinitionGoalTarget before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionGoalTarget;
+
+    // Insert an existing FhirPlanDefinitionGoalTarget before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionGoalTarget);
+
+    // Get the iIndexth FhirPlanDefinitionGoalTarget. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionGoalTarget);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionGoalTarget;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionGoalTargets[index : Integer] : TFhirPlanDefinitionGoalTarget read GetItemN write SetItemN; default;
+  End;
+
+  // An action or group of actions to be taken as part of the plan.
+  TFhirPlanDefinitionAction = class (TFhirBackboneElement)
+  protected
+    FPrefix : TFhirString;
+    FTitle : TFhirString;
+    FDescription : TFhirString;
+    FTextEquivalent : TFhirString;
+    FPriority : TFhirEnum;
+    FcodeList : TFhirCodeableConceptList;
+    FreasonList : TFhirCodeableConceptList;
+    FdocumentationList : TFhirRelatedArtifactList;
+    FgoalIdList : TFhirIdList;
+    FSubject : TFhirDataType;
+    FtriggerList : TFhirTriggerDefinitionList;
+    FconditionList : TFhirPlanDefinitionActionConditionList;
+    FinputList : TFhirDataRequirementList;
+    FoutputList : TFhirDataRequirementList;
+    FrelatedActionList : TFhirPlanDefinitionActionRelatedActionList;
+    FTiming : TFhirDataType;
+    FparticipantList : TFhirPlanDefinitionActionParticipantList;
+    FType_ : TFhirCodeableConcept;
+    FGroupingBehavior : TFhirEnum;
+    FSelectionBehavior : TFhirEnum;
+    FRequiredBehavior : TFhirEnum;
+    FPrecheckBehavior : TFhirEnum;
+    FCardinalityBehavior : TFhirEnum;
+    FDefinition : TFhirDataType;
+    FTransform : TFhirCanonical;
+    FdynamicValueList : TFhirPlanDefinitionActionDynamicValueList;
+    FactionList : TFhirPlanDefinitionActionList;
+    procedure SetPrefix(value : TFhirString);
+    function GetPrefixST : String;
+    procedure SetPrefixST(value : String);
+    procedure SetTitle(value : TFhirString);
+    function GetTitleST : String;
+    procedure SetTitleST(value : String);
+    procedure SetDescription(value : TFhirString);
+    function GetDescriptionST : String;
+    procedure SetDescriptionST(value : String);
+    procedure SetTextEquivalent(value : TFhirString);
+    function GetTextEquivalentST : String;
+    procedure SetTextEquivalentST(value : String);
+    procedure SetPriority(value : TFhirEnum);
+    function GetPriorityST : TFhirRequestPriorityEnum;
+    procedure SetPriorityST(value : TFhirRequestPriorityEnum);
+    function GetCodeList : TFhirCodeableConceptList;
+    function GetHasCodeList : Boolean;
+    function GetReasonList : TFhirCodeableConceptList;
+    function GetHasReasonList : Boolean;
+    function GetDocumentationList : TFhirRelatedArtifactList;
+    function GetHasDocumentationList : Boolean;
+    function GetGoalIdList : TFhirIdList;
+    function GetHasGoalIdList : Boolean;
+    procedure SetSubject(value : TFhirDataType);
+    function GetTriggerList : TFhirTriggerDefinitionList;
+    function GetHasTriggerList : Boolean;
+    function GetConditionList : TFhirPlanDefinitionActionConditionList;
+    function GetHasConditionList : Boolean;
+    function GetInputList : TFhirDataRequirementList;
+    function GetHasInputList : Boolean;
+    function GetOutputList : TFhirDataRequirementList;
+    function GetHasOutputList : Boolean;
+    function GetRelatedActionList : TFhirPlanDefinitionActionRelatedActionList;
+    function GetHasRelatedActionList : Boolean;
+    procedure SetTiming(value : TFhirDataType);
+    function GetParticipantList : TFhirPlanDefinitionActionParticipantList;
+    function GetHasParticipantList : Boolean;
+    procedure SetType_(value : TFhirCodeableConcept);
+    procedure SetGroupingBehavior(value : TFhirEnum);
+    function GetGroupingBehaviorST : TFhirActionGroupingBehaviorEnum;
+    procedure SetGroupingBehaviorST(value : TFhirActionGroupingBehaviorEnum);
+    procedure SetSelectionBehavior(value : TFhirEnum);
+    function GetSelectionBehaviorST : TFhirActionSelectionBehaviorEnum;
+    procedure SetSelectionBehaviorST(value : TFhirActionSelectionBehaviorEnum);
+    procedure SetRequiredBehavior(value : TFhirEnum);
+    function GetRequiredBehaviorST : TFhirActionRequiredBehaviorEnum;
+    procedure SetRequiredBehaviorST(value : TFhirActionRequiredBehaviorEnum);
+    procedure SetPrecheckBehavior(value : TFhirEnum);
+    function GetPrecheckBehaviorST : TFhirActionPrecheckBehaviorEnum;
+    procedure SetPrecheckBehaviorST(value : TFhirActionPrecheckBehaviorEnum);
+    procedure SetCardinalityBehavior(value : TFhirEnum);
+    function GetCardinalityBehaviorST : TFhirActionCardinalityBehaviorEnum;
+    procedure SetCardinalityBehaviorST(value : TFhirActionCardinalityBehaviorEnum);
+    procedure SetDefinition(value : TFhirDataType);
+    procedure SetTransform(value : TFhirCanonical);
+    function GetTransformST : String;
+    procedure SetTransformST(value : String);
+    function GetDynamicValueList : TFhirPlanDefinitionActionDynamicValueList;
+    function GetHasDynamicValueList : Boolean;
+    function GetActionList : TFhirPlanDefinitionActionList;
+    function GetHasActionList : Boolean;
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionAction; overload;
+    function Clone : TFhirPlanDefinitionAction; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to A user-visible prefix for the action.
+    property prefix : String read GetPrefixST write SetPrefixST;
+    // A user-visible prefix for the action.
+    property prefixElement : TFhirString read FPrefix write SetPrefix;
+
+    // Typed access to The title of the action displayed to a user.
+    property title : String read GetTitleST write SetTitleST;
+    // The title of the action displayed to a user.
+    property titleElement : TFhirString read FTitle write SetTitle;
+
+    // Typed access to A brief description of the action used to provide a summary to display to the user.
+    property description : String read GetDescriptionST write SetDescriptionST;
+    // A brief description of the action used to provide a summary to display to the user.
+    property descriptionElement : TFhirString read FDescription write SetDescription;
+
+    // Typed access to A text equivalent of the action to be performed. This provides a human-interpretable description of the action when the definition is consumed by a system that might not be capable of interpreting it dynamically.
+    property textEquivalent : String read GetTextEquivalentST write SetTextEquivalentST;
+    // A text equivalent of the action to be performed. This provides a human-interpretable description of the action when the definition is consumed by a system that might not be capable of interpreting it dynamically.
+    property textEquivalentElement : TFhirString read FTextEquivalent write SetTextEquivalent;
+
+    // Indicates how quickly the action should be addressed with respect to other actions.
+    property priority : TFhirRequestPriorityEnum read GetPriorityST write SetPriorityST;
+    property priorityElement : TFhirEnum read FPriority write SetPriority;
+
+    // A code that provides meaning for the action or action group. For example, a section may have a LOINC code for the section of a documentation template.
+    property codeList : TFhirCodeableConceptList read GetCodeList;
+    property hasCodeList : boolean read GetHasCodeList;
+
+    // A description of why this action is necessary or appropriate.
+    property reasonList : TFhirCodeableConceptList read GetReasonList;
+    property hasReasonList : boolean read GetHasReasonList;
+
+    // Didactic or other informational resources associated with the action that can be provided to the CDS recipient. Information resources can include inline text commentary and links to web resources.
+    property documentationList : TFhirRelatedArtifactList read GetDocumentationList;
+    property hasDocumentationList : boolean read GetHasDocumentationList;
+
+    // Identifies goals that this action supports. The reference must be to a goal element defined within this plan definition.
+    property goalIdList : TFhirIdList read GetGoalIdList;
+    property hasGoalIdList : boolean read GetHasGoalIdList;
+
+    // Typed access to A code or group definition that describes the intended subject of the action and its children, if any. (defined for API consistency)
+    property subject : TFhirDataType read FSubject write SetSubject;
+    // A code or group definition that describes the intended subject of the action and its children, if any.
+    property subjectElement : TFhirDataType read FSubject write SetSubject;
+
+    // A description of when the action should be triggered.
+    property triggerList : TFhirTriggerDefinitionList read GetTriggerList;
+    property hasTriggerList : boolean read GetHasTriggerList;
+
+    // An expression that describes applicability criteria or start/stop conditions for the action.
+    property conditionList : TFhirPlanDefinitionActionConditionList read GetConditionList;
+    property hasConditionList : boolean read GetHasConditionList;
+
+    // Defines input data requirements for the action.
+    property inputList : TFhirDataRequirementList read GetInputList;
+    property hasInputList : boolean read GetHasInputList;
+
+    // Defines the outputs of the action, if any.
+    property outputList : TFhirDataRequirementList read GetOutputList;
+    property hasOutputList : boolean read GetHasOutputList;
+
+    // A relationship to another action such as "before" or "30-60 minutes after start of".
+    property relatedActionList : TFhirPlanDefinitionActionRelatedActionList read GetRelatedActionList;
+    property hasRelatedActionList : boolean read GetHasRelatedActionList;
+
+    // Typed access to An optional value describing when the action should be performed. (defined for API consistency)
+    property timing : TFhirDataType read FTiming write SetTiming;
+    // An optional value describing when the action should be performed.
+    property timingElement : TFhirDataType read FTiming write SetTiming;
+
+    // Indicates who should participate in performing the action described.
+    property participantList : TFhirPlanDefinitionActionParticipantList read GetParticipantList;
+    property hasParticipantList : boolean read GetHasParticipantList;
+
+    // Typed access to The type of action to perform (create, update, remove). (defined for API consistency)
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    // The type of action to perform (create, update, remove).
+    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+
+    // Defines the grouping behavior for the action and its children.
+    property groupingBehavior : TFhirActionGroupingBehaviorEnum read GetGroupingBehaviorST write SetGroupingBehaviorST;
+    property groupingBehaviorElement : TFhirEnum read FGroupingBehavior write SetGroupingBehavior;
+
+    // Defines the selection behavior for the action and its children.
+    property selectionBehavior : TFhirActionSelectionBehaviorEnum read GetSelectionBehaviorST write SetSelectionBehaviorST;
+    property selectionBehaviorElement : TFhirEnum read FSelectionBehavior write SetSelectionBehavior;
+
+    // Defines the required behavior for the action.
+    property requiredBehavior : TFhirActionRequiredBehaviorEnum read GetRequiredBehaviorST write SetRequiredBehaviorST;
+    property requiredBehaviorElement : TFhirEnum read FRequiredBehavior write SetRequiredBehavior;
+
+    // Defines whether the action should usually be preselected.
+    property precheckBehavior : TFhirActionPrecheckBehaviorEnum read GetPrecheckBehaviorST write SetPrecheckBehaviorST;
+    property precheckBehaviorElement : TFhirEnum read FPrecheckBehavior write SetPrecheckBehavior;
+
+    // Defines whether the action can be selected multiple times.
+    property cardinalityBehavior : TFhirActionCardinalityBehaviorEnum read GetCardinalityBehaviorST write SetCardinalityBehaviorST;
+    property cardinalityBehaviorElement : TFhirEnum read FCardinalityBehavior write SetCardinalityBehavior;
+
+    // Typed access to A reference to an ActivityDefinition that describes the action to be taken in detail, or a PlanDefinition that describes a series of actions to be taken. (defined for API consistency)
+    property definition : TFhirDataType read FDefinition write SetDefinition;
+    // A reference to an ActivityDefinition that describes the action to be taken in detail, or a PlanDefinition that describes a series of actions to be taken.
+    property definitionElement : TFhirDataType read FDefinition write SetDefinition;
+
+    // Typed access to A reference to a StructureMap resource that defines a transform that can be executed to produce the intent resource using the ActivityDefinition instance as the input.
+    property transform : String read GetTransformST write SetTransformST;
+    // A reference to a StructureMap resource that defines a transform that can be executed to produce the intent resource using the ActivityDefinition instance as the input.
+    property transformElement : TFhirCanonical read FTransform write SetTransform;
+
+    // Customizations that should be applied to the statically defined resource. For example, if the dosage of a medication must be computed based on the patient's weight, a customization would be used to specify an expression that calculated the weight, and the path on the resource that would contain the result.
+    property dynamicValueList : TFhirPlanDefinitionActionDynamicValueList read GetDynamicValueList;
+    property hasDynamicValueList : boolean read GetHasDynamicValueList;
+
+    // Sub actions that are contained within the action. The behavior of this action determines the functionality of the sub-actions. For example, a selection behavior of at-most-one indicates that of the sub-actions, at most one may be chosen as part of realizing the action definition.
+    property actionList : TFhirPlanDefinitionActionList read GetActionList;
+    property hasActionList : boolean read GetHasActionList;
+
+  end;
+
+  TFhirPlanDefinitionActionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionActionList;
+    function GetCurrent : TFhirPlanDefinitionAction;
+  public
+    constructor Create(list : TFhirPlanDefinitionActionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionAction read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionActionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionAction;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionAction);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionActionList; overload;
+    function Clone : TFhirPlanDefinitionActionList; overload;
+    function GetEnumerator : TFhirPlanDefinitionActionListEnumerator;
+
+    //  Add a FhirPlanDefinitionAction to the end of the list.
+    function Append : TFhirPlanDefinitionAction;
+
+    // Add an already existing FhirPlanDefinitionAction to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionAction); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionAction) : Integer;
+
+    // Insert FhirPlanDefinitionAction before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionAction;
+
+    // Insert an existing FhirPlanDefinitionAction before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionAction);
+
+    // Get the iIndexth FhirPlanDefinitionAction. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionAction);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionAction;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionActions[index : Integer] : TFhirPlanDefinitionAction read GetItemN write SetItemN; default;
+  End;
+
+  // An expression that describes applicability criteria or start/stop conditions for the action.
+  TFhirPlanDefinitionActionCondition = class (TFhirBackboneElement)
+  protected
+    FKind : TFhirEnum;
+    FExpression : TFhirExpression;
+    procedure SetKind(value : TFhirEnum);
+    function GetKindST : TFhirActionConditionKindEnum;
+    procedure SetKindST(value : TFhirActionConditionKindEnum);
+    procedure SetExpression(value : TFhirExpression);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionActionCondition; overload;
+    function Clone : TFhirPlanDefinitionActionCondition; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // The kind of condition.
+    property kind : TFhirActionConditionKindEnum read GetKindST write SetKindST;
+    property kindElement : TFhirEnum read FKind write SetKind;
+
+    // Typed access to An expression that returns true or false, indicating whether the condition is satisfied. (defined for API consistency)
+    property expression : TFhirExpression read FExpression write SetExpression;
+    // An expression that returns true or false, indicating whether the condition is satisfied.
+    property expressionElement : TFhirExpression read FExpression write SetExpression;
+
+  end;
+
+  TFhirPlanDefinitionActionConditionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionActionConditionList;
+    function GetCurrent : TFhirPlanDefinitionActionCondition;
+  public
+    constructor Create(list : TFhirPlanDefinitionActionConditionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionActionCondition read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionActionConditionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionActionCondition;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionActionCondition);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionActionConditionList; overload;
+    function Clone : TFhirPlanDefinitionActionConditionList; overload;
+    function GetEnumerator : TFhirPlanDefinitionActionConditionListEnumerator;
+
+    //  Add a FhirPlanDefinitionActionCondition to the end of the list.
+    function Append : TFhirPlanDefinitionActionCondition;
+
+    // Add an already existing FhirPlanDefinitionActionCondition to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionActionCondition); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionActionCondition) : Integer;
+
+    // Insert FhirPlanDefinitionActionCondition before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionActionCondition;
+
+    // Insert an existing FhirPlanDefinitionActionCondition before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionActionCondition);
+
+    // Get the iIndexth FhirPlanDefinitionActionCondition. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionActionCondition);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionActionCondition;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionActionConditions[index : Integer] : TFhirPlanDefinitionActionCondition read GetItemN write SetItemN; default;
+  End;
+
+  // A relationship to another action such as "before" or "30-60 minutes after start of".
+  TFhirPlanDefinitionActionRelatedAction = class (TFhirBackboneElement)
+  protected
+    FActionId : TFhirId;
+    FRelationship : TFhirEnum;
+    FOffset : TFhirDataType;
+    procedure SetActionId(value : TFhirId);
+    function GetActionIdST : String;
+    procedure SetActionIdST(value : String);
+    procedure SetRelationship(value : TFhirEnum);
+    function GetRelationshipST : TFhirActionRelationshipTypeEnum;
+    procedure SetRelationshipST(value : TFhirActionRelationshipTypeEnum);
+    procedure SetOffset(value : TFhirDataType);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionActionRelatedAction; overload;
+    function Clone : TFhirPlanDefinitionActionRelatedAction; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The element id of the related action.
+    property actionId : String read GetActionIdST write SetActionIdST;
+    // The element id of the related action.
+    property actionIdElement : TFhirId read FActionId write SetActionId;
+
+    // The relationship of this action to the related action.
+    property relationship : TFhirActionRelationshipTypeEnum read GetRelationshipST write SetRelationshipST;
+    property relationshipElement : TFhirEnum read FRelationship write SetRelationship;
+
+    // Typed access to A duration or range of durations to apply to the relationship. For example, 30-60 minutes before. (defined for API consistency)
+    property offset : TFhirDataType read FOffset write SetOffset;
+    // A duration or range of durations to apply to the relationship. For example, 30-60 minutes before.
+    property offsetElement : TFhirDataType read FOffset write SetOffset;
+
+  end;
+
+  TFhirPlanDefinitionActionRelatedActionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionActionRelatedActionList;
+    function GetCurrent : TFhirPlanDefinitionActionRelatedAction;
+  public
+    constructor Create(list : TFhirPlanDefinitionActionRelatedActionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionActionRelatedAction read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionActionRelatedActionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionActionRelatedAction;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionActionRelatedAction);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionActionRelatedActionList; overload;
+    function Clone : TFhirPlanDefinitionActionRelatedActionList; overload;
+    function GetEnumerator : TFhirPlanDefinitionActionRelatedActionListEnumerator;
+
+    //  Add a FhirPlanDefinitionActionRelatedAction to the end of the list.
+    function Append : TFhirPlanDefinitionActionRelatedAction;
+
+    // Add an already existing FhirPlanDefinitionActionRelatedAction to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionActionRelatedAction); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionActionRelatedAction) : Integer;
+
+    // Insert FhirPlanDefinitionActionRelatedAction before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionActionRelatedAction;
+
+    // Insert an existing FhirPlanDefinitionActionRelatedAction before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionActionRelatedAction);
+
+    // Get the iIndexth FhirPlanDefinitionActionRelatedAction. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionActionRelatedAction);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionActionRelatedAction;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionActionRelatedActions[index : Integer] : TFhirPlanDefinitionActionRelatedAction read GetItemN write SetItemN; default;
+  End;
+
+  // Indicates who should participate in performing the action described.
+  TFhirPlanDefinitionActionParticipant = class (TFhirBackboneElement)
+  protected
+    FType_ : TFhirEnum;
+    FRole : TFhirCodeableConcept;
+    procedure SetType_(value : TFhirEnum);
+    function GetType_ST : TFhirActionParticipantTypeEnum;
+    procedure SetType_ST(value : TFhirActionParticipantTypeEnum);
+    procedure SetRole(value : TFhirCodeableConcept);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionActionParticipant; overload;
+    function Clone : TFhirPlanDefinitionActionParticipant; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // The type of participant in the action.
+    property type_ : TFhirActionParticipantTypeEnum read GetType_ST write SetType_ST;
+    property type_Element : TFhirEnum read FType_ write SetType_;
+
+    // Typed access to The role the participant should play in performing the described action. (defined for API consistency)
+    property role : TFhirCodeableConcept read FRole write SetRole;
+    // The role the participant should play in performing the described action.
+    property roleElement : TFhirCodeableConcept read FRole write SetRole;
+
+  end;
+
+  TFhirPlanDefinitionActionParticipantListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionActionParticipantList;
+    function GetCurrent : TFhirPlanDefinitionActionParticipant;
+  public
+    constructor Create(list : TFhirPlanDefinitionActionParticipantList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionActionParticipant read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionActionParticipantList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionActionParticipant;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionActionParticipant);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionActionParticipantList; overload;
+    function Clone : TFhirPlanDefinitionActionParticipantList; overload;
+    function GetEnumerator : TFhirPlanDefinitionActionParticipantListEnumerator;
+
+    //  Add a FhirPlanDefinitionActionParticipant to the end of the list.
+    function Append : TFhirPlanDefinitionActionParticipant;
+
+    // Add an already existing FhirPlanDefinitionActionParticipant to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionActionParticipant); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionActionParticipant) : Integer;
+
+    // Insert FhirPlanDefinitionActionParticipant before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionActionParticipant;
+
+    // Insert an existing FhirPlanDefinitionActionParticipant before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionActionParticipant);
+
+    // Get the iIndexth FhirPlanDefinitionActionParticipant. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionActionParticipant);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionActionParticipant;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionActionParticipants[index : Integer] : TFhirPlanDefinitionActionParticipant read GetItemN write SetItemN; default;
+  End;
+
+  // Customizations that should be applied to the statically defined resource. For example, if the dosage of a medication must be computed based on the patient's weight, a customization would be used to specify an expression that calculated the weight, and the path on the resource that would contain the result.
+  TFhirPlanDefinitionActionDynamicValue = class (TFhirBackboneElement)
+  protected
+    FPath : TFhirString;
+    FExpression : TFhirExpression;
+    procedure SetPath(value : TFhirString);
+    function GetPathST : String;
+    procedure SetPathST(value : String);
+    procedure SetExpression(value : TFhirExpression);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinitionActionDynamicValue; overload;
+    function Clone : TFhirPlanDefinitionActionDynamicValue; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The path to the element to be customized. This is the path on the resource that will hold the result of the calculation defined by the expression. The specified path SHALL be a FHIRPath resolveable on the specified target type of the ActivityDefinition, and SHALL consist only of identifiers, constant indexers, and a restricted subset of functions. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details).
+    property path : String read GetPathST write SetPathST;
+    // The path to the element to be customized. This is the path on the resource that will hold the result of the calculation defined by the expression. The specified path SHALL be a FHIRPath resolveable on the specified target type of the ActivityDefinition, and SHALL consist only of identifiers, constant indexers, and a restricted subset of functions. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements (see the [Simple FHIRPath Profile](fhirpath.html#simple) for full details).
+    property pathElement : TFhirString read FPath write SetPath;
+
+    // Typed access to An expression specifying the value of the customized element. (defined for API consistency)
+    property expression : TFhirExpression read FExpression write SetExpression;
+    // An expression specifying the value of the customized element.
+    property expressionElement : TFhirExpression read FExpression write SetExpression;
+
+  end;
+
+  TFhirPlanDefinitionActionDynamicValueListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionActionDynamicValueList;
+    function GetCurrent : TFhirPlanDefinitionActionDynamicValue;
+  public
+    constructor Create(list : TFhirPlanDefinitionActionDynamicValueList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinitionActionDynamicValue read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionActionDynamicValueList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinitionActionDynamicValue;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinitionActionDynamicValue);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionActionDynamicValueList; overload;
+    function Clone : TFhirPlanDefinitionActionDynamicValueList; overload;
+    function GetEnumerator : TFhirPlanDefinitionActionDynamicValueListEnumerator;
+
+    //  Add a FhirPlanDefinitionActionDynamicValue to the end of the list.
+    function Append : TFhirPlanDefinitionActionDynamicValue;
+
+    // Add an already existing FhirPlanDefinitionActionDynamicValue to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinitionActionDynamicValue); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinitionActionDynamicValue) : Integer;
+
+    // Insert FhirPlanDefinitionActionDynamicValue before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinitionActionDynamicValue;
+
+    // Insert an existing FhirPlanDefinitionActionDynamicValue before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinitionActionDynamicValue);
+
+    // Get the iIndexth FhirPlanDefinitionActionDynamicValue. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinitionActionDynamicValue);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinitionActionDynamicValue;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitionActionDynamicValues[index : Integer] : TFhirPlanDefinitionActionDynamicValue read GetItemN write SetItemN; default;
+  End;
+
+  // This resource allows for the definition of various types of plans as a sharable, consumable, and executable artifact. The resource is general enough to support the description of a broad range of clinical artifacts such as clinical decision support rules, order sets and protocols.
+  TFhirPlanDefinition = class (TFhirMetadataResource)
+  protected
+    FSubtitle : TFhirString;
+    FType_ : TFhirCodeableConcept;
+    FSubject : TFhirDataType;
+    FUsage : TFhirString;
+    FtopicList : TFhirCodeableConceptList;
+    FauthorList : TFhirContactDetailList;
+    FeditorList : TFhirContactDetailList;
+    FreviewerList : TFhirContactDetailList;
+    FendorserList : TFhirContactDetailList;
+    FrelatedArtifactList : TFhirRelatedArtifactList;
+    Flibrary_List : TFhirCanonicalList;
+    FgoalList : TFhirPlanDefinitionGoalList;
+    FactionList : TFhirPlanDefinitionActionList;
+    procedure SetUrl(value : TFhirUri);
+    function GetUrlST : String;
+    procedure SetUrlST(value : String);
+    function GetIdentifierList : TFhirIdentifierList;
+    function GetHasIdentifierList : Boolean;
+    procedure SetVersion(value : TFhirString);
+    function GetVersionST : String;
+    procedure SetVersionST(value : String);
+    procedure SetName(value : TFhirString);
+    function GetNameST : String;
+    procedure SetNameST(value : String);
+    procedure SetTitle(value : TFhirString);
+    function GetTitleST : String;
+    procedure SetTitleST(value : String);
+    procedure SetSubtitle(value : TFhirString);
+    function GetSubtitleST : String;
+    procedure SetSubtitleST(value : String);
+    procedure SetType_(value : TFhirCodeableConcept);
+    procedure SetStatus(value : TFhirEnum);
+    function GetStatusST : TFhirPublicationStatusEnum;
+    procedure SetStatusST(value : TFhirPublicationStatusEnum);
+    procedure SetExperimental(value : TFhirBoolean);
+    function GetExperimentalST : Boolean;
+    procedure SetExperimentalST(value : Boolean);
+    procedure SetSubject(value : TFhirDataType);
+    procedure SetDate(value : TFhirDateTime);
+    function GetDateST : TFslDateTime;
+    procedure SetDateST(value : TFslDateTime);
+    procedure SetPublisher(value : TFhirString);
+    function GetPublisherST : String;
+    procedure SetPublisherST(value : String);
+    function GetContactList : TFhirContactDetailList;
+    function GetHasContactList : Boolean;
+    procedure SetDescription(value : TFhirMarkdown);
+    function GetDescriptionST : String;
+    procedure SetDescriptionST(value : String);
+    function GetUseContextList : TFhirUsageContextList;
+    function GetHasUseContextList : Boolean;
+    function GetJurisdictionList : TFhirCodeableConceptList;
+    function GetHasJurisdictionList : Boolean;
+    procedure SetPurpose(value : TFhirMarkdown);
+    function GetPurposeST : String;
+    procedure SetPurposeST(value : String);
+    procedure SetUsage(value : TFhirString);
+    function GetUsageST : String;
+    procedure SetUsageST(value : String);
+    procedure SetCopyright(value : TFhirMarkdown);
+    function GetCopyrightST : String;
+    procedure SetCopyrightST(value : String);
+    procedure SetApprovalDate(value : TFhirDate);
+    function GetApprovalDateST : TFslDateTime;
+    procedure SetApprovalDateST(value : TFslDateTime);
+    procedure SetLastReviewDate(value : TFhirDate);
+    function GetLastReviewDateST : TFslDateTime;
+    procedure SetLastReviewDateST(value : TFslDateTime);
+    procedure SetEffectivePeriod(value : TFhirPeriod);
+    function GetTopicList : TFhirCodeableConceptList;
+    function GetHasTopicList : Boolean;
+    function GetAuthorList : TFhirContactDetailList;
+    function GetHasAuthorList : Boolean;
+    function GetEditorList : TFhirContactDetailList;
+    function GetHasEditorList : Boolean;
+    function GetReviewerList : TFhirContactDetailList;
+    function GetHasReviewerList : Boolean;
+    function GetEndorserList : TFhirContactDetailList;
+    function GetHasEndorserList : Boolean;
+    function GetRelatedArtifactList : TFhirRelatedArtifactList;
+    function GetHasRelatedArtifactList : Boolean;
+    function GetLibrary_List : TFhirCanonicalList;
+    function GetHasLibrary_List : Boolean;
+    function GetGoalList : TFhirPlanDefinitionGoalList;
+    function GetHasGoalList : Boolean;
+    function GetActionList : TFhirPlanDefinitionActionList;
+    function GetHasActionList : Boolean;
+
+    function GetResourceType : TFhirResourceType; override;
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirPlanDefinition; overload;
+    function Clone : TFhirPlanDefinition; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to An absolute URI that is used to identify this plan definition when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this plan definition is (or will be) {$IFNDEF FPC}published{$ENDIF}. This URL can be the target of a canonical reference. It SHALL remain the same when the plan definition is stored on different servers.
+    property url : String read GetUrlST write SetUrlST;
+    // An absolute URI that is used to identify this plan definition when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this plan definition is (or will be) {$IFNDEF FPC}published{$ENDIF}. This URL can be the target of a canonical reference. It SHALL remain the same when the plan definition is stored on different servers.
+    property urlElement : TFhirUri read FUrl write SetUrl;
+
+    // A formal identifier that is used to identify this plan definition when it is represented in other formats, or referenced in a specification, model, design or an instance.
+    property identifierList : TFhirIdentifierList read GetIdentifierList;
+    property hasIdentifierList : boolean read GetHasIdentifierList;
+
+    // Typed access to The identifier that is used to identify this version of the plan definition when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the plan definition author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence. To provide a version consistent with the Decision Support Service specification, use the format Major.Minor.Revision (e.g. 1.0.0). For more information on versioning knowledge assets, refer to the Decision Support Service specification. Note that a version is required for non-experimental active artifacts.
+    property version : String read GetVersionST write SetVersionST;
+    // The identifier that is used to identify this version of the plan definition when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the plan definition author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence. To provide a version consistent with the Decision Support Service specification, use the format Major.Minor.Revision (e.g. 1.0.0). For more information on versioning knowledge assets, refer to the Decision Support Service specification. Note that a version is required for non-experimental active artifacts.
+    property versionElement : TFhirString read FVersion write SetVersion;
+
+    // Typed access to A natural language name identifying the plan definition. This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property name : String read GetNameST write SetNameST;
+    // A natural language name identifying the plan definition. This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property nameElement : TFhirString read FName write SetName;
+
+    // Typed access to A short, descriptive, user-friendly title for the plan definition.
+    property title : String read GetTitleST write SetTitleST;
+    // A short, descriptive, user-friendly title for the plan definition.
+    property titleElement : TFhirString read FTitle write SetTitle;
+
+    // Typed access to An explanatory or alternate title for the plan definition giving additional information about its content.
+    property subtitle : String read GetSubtitleST write SetSubtitleST;
+    // An explanatory or alternate title for the plan definition giving additional information about its content.
+    property subtitleElement : TFhirString read FSubtitle write SetSubtitle;
+
+    // Typed access to A high-level category for the plan definition that distinguishes the kinds of systems that would be interested in the plan definition. (defined for API consistency)
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    // A high-level category for the plan definition that distinguishes the kinds of systems that would be interested in the plan definition.
+    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+
+    // The status of this plan definition. Enables tracking the life-cycle of the content.
+    property status : TFhirPublicationStatusEnum read GetStatusST write SetStatusST;
+    property statusElement : TFhirEnum read FStatus write SetStatus;
+
+    // Typed access to A Boolean value to indicate that this plan definition is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    // A Boolean value to indicate that this plan definition is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimentalElement : TFhirBoolean read FExperimental write SetExperimental;
+
+    // Typed access to A code or group definition that describes the intended subject of the plan definition. (defined for API consistency)
+    property subject : TFhirDataType read FSubject write SetSubject;
+    // A code or group definition that describes the intended subject of the plan definition.
+    property subjectElement : TFhirDataType read FSubject write SetSubject;
+
+    // Typed access to The date  (and optionally time) when the plan definition was {$IFNDEF FPC}published{$ENDIF}. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the plan definition changes.
+    property date : TFslDateTime read GetDateST write SetDateST;
+    // The date  (and optionally time) when the plan definition was {$IFNDEF FPC}published{$ENDIF}. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the plan definition changes.
+    property dateElement : TFhirDateTime read FDate write SetDate;
+
+    // Typed access to The name of the organization or individual that {$IFNDEF FPC}published{$ENDIF} the plan definition.
+    property publisher : String read GetPublisherST write SetPublisherST;
+    // The name of the organization or individual that {$IFNDEF FPC}published{$ENDIF} the plan definition.
+    property publisherElement : TFhirString read FPublisher write SetPublisher;
+
+    // Contact details to assist a user in finding and communicating with the publisher.
+    property contactList : TFhirContactDetailList read GetContactList;
+    property hasContactList : boolean read GetHasContactList;
+
+    // Typed access to A free text natural language description of the plan definition from a consumer's perspective.
+    property description : String read GetDescriptionST write SetDescriptionST;
+    // A free text natural language description of the plan definition from a consumer's perspective.
+    property descriptionElement : TFhirMarkdown read FDescription write SetDescription;
+
+    // The content was developed with a focus and intent of supporting the contexts that are listed. These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans, studies, ...) and may be used to assist with indexing and searching for appropriate plan definition instances.
+    property useContextList : TFhirUsageContextList read GetUseContextList;
+    property hasUseContextList : boolean read GetHasUseContextList;
+
+    // A legal or geographic region in which the plan definition is intended to be used.
+    property jurisdictionList : TFhirCodeableConceptList read GetJurisdictionList;
+    property hasJurisdictionList : boolean read GetHasJurisdictionList;
+
+    // Typed access to Explanation of why this plan definition is needed and why it has been designed as it has.
+    property purpose : String read GetPurposeST write SetPurposeST;
+    // Explanation of why this plan definition is needed and why it has been designed as it has.
+    property purposeElement : TFhirMarkdown read FPurpose write SetPurpose;
+
+    // Typed access to A detailed description of how the plan definition is used from a clinical perspective.
+    property usage : String read GetUsageST write SetUsageST;
+    // A detailed description of how the plan definition is used from a clinical perspective.
+    property usageElement : TFhirString read FUsage write SetUsage;
+
+    // Typed access to A copyright statement relating to the plan definition and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the plan definition.
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    // A copyright statement relating to the plan definition and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the plan definition.
+    property copyrightElement : TFhirMarkdown read FCopyright write SetCopyright;
+
+    // Typed access to The date on which the resource content was approved by the publisher. Approval happens once when the content is officially approved for usage.
+    property approvalDate : TFslDateTime read GetApprovalDateST write SetApprovalDateST;
+    // The date on which the resource content was approved by the publisher. Approval happens once when the content is officially approved for usage.
+    property approvalDateElement : TFhirDate read FApprovalDate write SetApprovalDate;
+
+    // Typed access to The date on which the resource content was last reviewed. Review happens periodically after approval but does not change the original approval date.
+    property lastReviewDate : TFslDateTime read GetLastReviewDateST write SetLastReviewDateST;
+    // The date on which the resource content was last reviewed. Review happens periodically after approval but does not change the original approval date.
+    property lastReviewDateElement : TFhirDate read FLastReviewDate write SetLastReviewDate;
+
+    // Typed access to The period during which the plan definition content was or is planned to be in active use. (defined for API consistency)
+    property effectivePeriod : TFhirPeriod read FEffectivePeriod write SetEffectivePeriod;
+    // The period during which the plan definition content was or is planned to be in active use.
+    property effectivePeriodElement : TFhirPeriod read FEffectivePeriod write SetEffectivePeriod;
+
+    // Descriptive topics related to the content of the plan definition. Topics provide a high-level categorization of the definition that can be useful for filtering and searching.
+    property topicList : TFhirCodeableConceptList read GetTopicList;
+    property hasTopicList : boolean read GetHasTopicList;
+
+    // An individiual or organization primarily involved in the creation and maintenance of the content.
+    property authorList : TFhirContactDetailList read GetAuthorList;
+    property hasAuthorList : boolean read GetHasAuthorList;
+
+    // An individual or organization primarily responsible for internal coherence of the content.
+    property editorList : TFhirContactDetailList read GetEditorList;
+    property hasEditorList : boolean read GetHasEditorList;
+
+    // An individual or organization primarily responsible for review of some aspect of the content.
+    property reviewerList : TFhirContactDetailList read GetReviewerList;
+    property hasReviewerList : boolean read GetHasReviewerList;
+
+    // An individual or organization responsible for officially endorsing the content for use in some setting.
+    property endorserList : TFhirContactDetailList read GetEndorserList;
+    property hasEndorserList : boolean read GetHasEndorserList;
+
+    // Related artifacts such as additional documentation, justification, or bibliographic references.
+    property relatedArtifactList : TFhirRelatedArtifactList read GetRelatedArtifactList;
+    property hasRelatedArtifactList : boolean read GetHasRelatedArtifactList;
+
+    // A reference to a Library resource containing any formal logic used by the plan definition.
+    property library_List : TFhirCanonicalList read GetLibrary_List;
+    property hasLibrary_List : boolean read GetHasLibrary_List;
+
+    // Goals that describe what the activities within the plan are intended to achieve. For example, weight loss, restoring an activity of daily living, obtaining herd immunity via immunization, meeting a process improvement objective, etc.
+    property goalList : TFhirPlanDefinitionGoalList read GetGoalList;
+    property hasGoalList : boolean read GetHasGoalList;
+
+    // An action or group of actions to be taken as part of the plan.
+    property actionList : TFhirPlanDefinitionActionList read GetActionList;
+    property hasActionList : boolean read GetHasActionList;
+
+  end;
+
+  TFhirPlanDefinitionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirPlanDefinitionList;
+    function GetCurrent : TFhirPlanDefinition;
+  public
+    constructor Create(list : TFhirPlanDefinitionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirPlanDefinition read GetCurrent;
+  end;
+
+  TFhirPlanDefinitionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirPlanDefinition;
+    procedure SetItemN(index : Integer; value : TFhirPlanDefinition);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirPlanDefinitionList; overload;
+    function Clone : TFhirPlanDefinitionList; overload;
+    function GetEnumerator : TFhirPlanDefinitionListEnumerator;
+
+    //  Add a FhirPlanDefinition to the end of the list.
+    function Append : TFhirPlanDefinition;
+
+    // Add an already existing FhirPlanDefinition to the end of the list.
+    procedure AddItem(value : TFhirPlanDefinition); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirPlanDefinition) : Integer;
+
+    // Insert FhirPlanDefinition before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirPlanDefinition;
+
+    // Insert an existing FhirPlanDefinition before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirPlanDefinition);
+
+    // Get the iIndexth FhirPlanDefinition. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirPlanDefinition);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirPlanDefinition;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirPlanDefinitions[index : Integer] : TFhirPlanDefinition read GetItemN write SetItemN; default;
+  End;
+
+{$ENDIF FHIR_PLANDEFINITION}
 {$IFDEF FHIR_PROVENANCE}
   // An actor taking a role in an activity  for which it can be assigned some degree of responsibility for the activity taking place.
   TFhirProvenanceAgent = class (TFhirBackboneElement)
@@ -10283,6 +12162,643 @@ type
   End;
 
 {$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REQUESTGROUP}
+  // The actions, if any, produced by the evaluation of the artifact.
+  TFhirRequestGroupAction = class (TFhirBackboneElement)
+  protected
+    FPrefix : TFhirString;
+    FTitle : TFhirString;
+    FDescription : TFhirString;
+    FTextEquivalent : TFhirString;
+    FPriority : TFhirEnum;
+    FcodeList : TFhirCodeableConceptList;
+    FdocumentationList : TFhirRelatedArtifactList;
+    FconditionList : TFhirRequestGroupActionConditionList;
+    FrelatedActionList : TFhirRequestGroupActionRelatedActionList;
+    FTiming : TFhirDataType;
+    FparticipantList : TFhirReferenceList;
+    FType_ : TFhirCodeableConcept;
+    FGroupingBehavior : TFhirEnum;
+    FSelectionBehavior : TFhirEnum;
+    FRequiredBehavior : TFhirEnum;
+    FPrecheckBehavior : TFhirEnum;
+    FCardinalityBehavior : TFhirEnum;
+    FResource : TFhirReference;
+    FactionList : TFhirRequestGroupActionList;
+    procedure SetPrefix(value : TFhirString);
+    function GetPrefixST : String;
+    procedure SetPrefixST(value : String);
+    procedure SetTitle(value : TFhirString);
+    function GetTitleST : String;
+    procedure SetTitleST(value : String);
+    procedure SetDescription(value : TFhirString);
+    function GetDescriptionST : String;
+    procedure SetDescriptionST(value : String);
+    procedure SetTextEquivalent(value : TFhirString);
+    function GetTextEquivalentST : String;
+    procedure SetTextEquivalentST(value : String);
+    procedure SetPriority(value : TFhirEnum);
+    function GetPriorityST : TFhirRequestPriorityEnum;
+    procedure SetPriorityST(value : TFhirRequestPriorityEnum);
+    function GetCodeList : TFhirCodeableConceptList;
+    function GetHasCodeList : Boolean;
+    function GetDocumentationList : TFhirRelatedArtifactList;
+    function GetHasDocumentationList : Boolean;
+    function GetConditionList : TFhirRequestGroupActionConditionList;
+    function GetHasConditionList : Boolean;
+    function GetRelatedActionList : TFhirRequestGroupActionRelatedActionList;
+    function GetHasRelatedActionList : Boolean;
+    procedure SetTiming(value : TFhirDataType);
+    function GetParticipantList : TFhirReferenceList;
+    function GetHasParticipantList : Boolean;
+    procedure SetType_(value : TFhirCodeableConcept);
+    procedure SetGroupingBehavior(value : TFhirEnum);
+    function GetGroupingBehaviorST : TFhirActionGroupingBehaviorEnum;
+    procedure SetGroupingBehaviorST(value : TFhirActionGroupingBehaviorEnum);
+    procedure SetSelectionBehavior(value : TFhirEnum);
+    function GetSelectionBehaviorST : TFhirActionSelectionBehaviorEnum;
+    procedure SetSelectionBehaviorST(value : TFhirActionSelectionBehaviorEnum);
+    procedure SetRequiredBehavior(value : TFhirEnum);
+    function GetRequiredBehaviorST : TFhirActionRequiredBehaviorEnum;
+    procedure SetRequiredBehaviorST(value : TFhirActionRequiredBehaviorEnum);
+    procedure SetPrecheckBehavior(value : TFhirEnum);
+    function GetPrecheckBehaviorST : TFhirActionPrecheckBehaviorEnum;
+    procedure SetPrecheckBehaviorST(value : TFhirActionPrecheckBehaviorEnum);
+    procedure SetCardinalityBehavior(value : TFhirEnum);
+    function GetCardinalityBehaviorST : TFhirActionCardinalityBehaviorEnum;
+    procedure SetCardinalityBehaviorST(value : TFhirActionCardinalityBehaviorEnum);
+    procedure SetResource(value : TFhirReference);
+    function GetActionList : TFhirRequestGroupActionList;
+    function GetHasActionList : Boolean;
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirRequestGroupAction; overload;
+    function Clone : TFhirRequestGroupAction; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to A user-visible prefix for the action.
+    property prefix : String read GetPrefixST write SetPrefixST;
+    // A user-visible prefix for the action.
+    property prefixElement : TFhirString read FPrefix write SetPrefix;
+
+    // Typed access to The title of the action displayed to a user.
+    property title : String read GetTitleST write SetTitleST;
+    // The title of the action displayed to a user.
+    property titleElement : TFhirString read FTitle write SetTitle;
+
+    // Typed access to A short description of the action used to provide a summary to display to the user.
+    property description : String read GetDescriptionST write SetDescriptionST;
+    // A short description of the action used to provide a summary to display to the user.
+    property descriptionElement : TFhirString read FDescription write SetDescription;
+
+    // Typed access to A text equivalent of the action to be performed. This provides a human-interpretable description of the action when the definition is consumed by a system that might not be capable of interpreting it dynamically.
+    property textEquivalent : String read GetTextEquivalentST write SetTextEquivalentST;
+    // A text equivalent of the action to be performed. This provides a human-interpretable description of the action when the definition is consumed by a system that might not be capable of interpreting it dynamically.
+    property textEquivalentElement : TFhirString read FTextEquivalent write SetTextEquivalent;
+
+    // Indicates how quickly the action should be addressed with respect to other actions.
+    property priority : TFhirRequestPriorityEnum read GetPriorityST write SetPriorityST;
+    property priorityElement : TFhirEnum read FPriority write SetPriority;
+
+    // A code that provides meaning for the action or action group. For example, a section may have a LOINC code for a section of a documentation template.
+    property codeList : TFhirCodeableConceptList read GetCodeList;
+    property hasCodeList : boolean read GetHasCodeList;
+
+    // Didactic or other informational resources associated with the action that can be provided to the CDS recipient. Information resources can include inline text commentary and links to web resources.
+    property documentationList : TFhirRelatedArtifactList read GetDocumentationList;
+    property hasDocumentationList : boolean read GetHasDocumentationList;
+
+    // An expression that describes applicability criteria, or start/stop conditions for the action.
+    property conditionList : TFhirRequestGroupActionConditionList read GetConditionList;
+    property hasConditionList : boolean read GetHasConditionList;
+
+    // A relationship to another action such as "before" or "30-60 minutes after start of".
+    property relatedActionList : TFhirRequestGroupActionRelatedActionList read GetRelatedActionList;
+    property hasRelatedActionList : boolean read GetHasRelatedActionList;
+
+    // Typed access to An optional value describing when the action should be performed. (defined for API consistency)
+    property timing : TFhirDataType read FTiming write SetTiming;
+    // An optional value describing when the action should be performed.
+    property timingElement : TFhirDataType read FTiming write SetTiming;
+
+    // The participant that should perform or be responsible for this action.
+    property participantList : TFhirReferenceList read GetParticipantList;
+    property hasParticipantList : boolean read GetHasParticipantList;
+
+    // Typed access to The type of action to perform (create, update, remove). (defined for API consistency)
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    // The type of action to perform (create, update, remove).
+    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+
+    // Defines the grouping behavior for the action and its children.
+    property groupingBehavior : TFhirActionGroupingBehaviorEnum read GetGroupingBehaviorST write SetGroupingBehaviorST;
+    property groupingBehaviorElement : TFhirEnum read FGroupingBehavior write SetGroupingBehavior;
+
+    // Defines the selection behavior for the action and its children.
+    property selectionBehavior : TFhirActionSelectionBehaviorEnum read GetSelectionBehaviorST write SetSelectionBehaviorST;
+    property selectionBehaviorElement : TFhirEnum read FSelectionBehavior write SetSelectionBehavior;
+
+    // Defines expectations around whether an action is required.
+    property requiredBehavior : TFhirActionRequiredBehaviorEnum read GetRequiredBehaviorST write SetRequiredBehaviorST;
+    property requiredBehaviorElement : TFhirEnum read FRequiredBehavior write SetRequiredBehavior;
+
+    // Defines whether the action should usually be preselected.
+    property precheckBehavior : TFhirActionPrecheckBehaviorEnum read GetPrecheckBehaviorST write SetPrecheckBehaviorST;
+    property precheckBehaviorElement : TFhirEnum read FPrecheckBehavior write SetPrecheckBehavior;
+
+    // Defines whether the action can be selected multiple times.
+    property cardinalityBehavior : TFhirActionCardinalityBehaviorEnum read GetCardinalityBehaviorST write SetCardinalityBehaviorST;
+    property cardinalityBehaviorElement : TFhirEnum read FCardinalityBehavior write SetCardinalityBehavior;
+
+    // Typed access to The resource that is the target of the action (e.g. CommunicationRequest). (defined for API consistency)
+    property resource : TFhirReference read FResource write SetResource;
+    // The resource that is the target of the action (e.g. CommunicationRequest).
+    property resourceElement : TFhirReference read FResource write SetResource;
+
+    // Sub actions.
+    property actionList : TFhirRequestGroupActionList read GetActionList;
+    property hasActionList : boolean read GetHasActionList;
+
+  end;
+
+  TFhirRequestGroupActionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirRequestGroupActionList;
+    function GetCurrent : TFhirRequestGroupAction;
+  public
+    constructor Create(list : TFhirRequestGroupActionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirRequestGroupAction read GetCurrent;
+  end;
+
+  TFhirRequestGroupActionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirRequestGroupAction;
+    procedure SetItemN(index : Integer; value : TFhirRequestGroupAction);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirRequestGroupActionList; overload;
+    function Clone : TFhirRequestGroupActionList; overload;
+    function GetEnumerator : TFhirRequestGroupActionListEnumerator;
+
+    //  Add a FhirRequestGroupAction to the end of the list.
+    function Append : TFhirRequestGroupAction;
+
+    // Add an already existing FhirRequestGroupAction to the end of the list.
+    procedure AddItem(value : TFhirRequestGroupAction); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirRequestGroupAction) : Integer;
+
+    // Insert FhirRequestGroupAction before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirRequestGroupAction;
+
+    // Insert an existing FhirRequestGroupAction before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirRequestGroupAction);
+
+    // Get the iIndexth FhirRequestGroupAction. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirRequestGroupAction);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirRequestGroupAction;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirRequestGroupActions[index : Integer] : TFhirRequestGroupAction read GetItemN write SetItemN; default;
+  End;
+
+  // An expression that describes applicability criteria, or start/stop conditions for the action.
+  TFhirRequestGroupActionCondition = class (TFhirBackboneElement)
+  protected
+    FKind : TFhirEnum;
+    FExpression : TFhirExpression;
+    procedure SetKind(value : TFhirEnum);
+    function GetKindST : TFhirActionConditionKindEnum;
+    procedure SetKindST(value : TFhirActionConditionKindEnum);
+    procedure SetExpression(value : TFhirExpression);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirRequestGroupActionCondition; overload;
+    function Clone : TFhirRequestGroupActionCondition; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // The kind of condition.
+    property kind : TFhirActionConditionKindEnum read GetKindST write SetKindST;
+    property kindElement : TFhirEnum read FKind write SetKind;
+
+    // Typed access to An expression that returns true or false, indicating whether or not the condition is satisfied. (defined for API consistency)
+    property expression : TFhirExpression read FExpression write SetExpression;
+    // An expression that returns true or false, indicating whether or not the condition is satisfied.
+    property expressionElement : TFhirExpression read FExpression write SetExpression;
+
+  end;
+
+  TFhirRequestGroupActionConditionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirRequestGroupActionConditionList;
+    function GetCurrent : TFhirRequestGroupActionCondition;
+  public
+    constructor Create(list : TFhirRequestGroupActionConditionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirRequestGroupActionCondition read GetCurrent;
+  end;
+
+  TFhirRequestGroupActionConditionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirRequestGroupActionCondition;
+    procedure SetItemN(index : Integer; value : TFhirRequestGroupActionCondition);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirRequestGroupActionConditionList; overload;
+    function Clone : TFhirRequestGroupActionConditionList; overload;
+    function GetEnumerator : TFhirRequestGroupActionConditionListEnumerator;
+
+    //  Add a FhirRequestGroupActionCondition to the end of the list.
+    function Append : TFhirRequestGroupActionCondition;
+
+    // Add an already existing FhirRequestGroupActionCondition to the end of the list.
+    procedure AddItem(value : TFhirRequestGroupActionCondition); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirRequestGroupActionCondition) : Integer;
+
+    // Insert FhirRequestGroupActionCondition before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirRequestGroupActionCondition;
+
+    // Insert an existing FhirRequestGroupActionCondition before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirRequestGroupActionCondition);
+
+    // Get the iIndexth FhirRequestGroupActionCondition. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirRequestGroupActionCondition);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirRequestGroupActionCondition;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirRequestGroupActionConditions[index : Integer] : TFhirRequestGroupActionCondition read GetItemN write SetItemN; default;
+  End;
+
+  // A relationship to another action such as "before" or "30-60 minutes after start of".
+  TFhirRequestGroupActionRelatedAction = class (TFhirBackboneElement)
+  protected
+    FActionId : TFhirId;
+    FRelationship : TFhirEnum;
+    FOffset : TFhirDataType;
+    procedure SetActionId(value : TFhirId);
+    function GetActionIdST : String;
+    procedure SetActionIdST(value : String);
+    procedure SetRelationship(value : TFhirEnum);
+    function GetRelationshipST : TFhirActionRelationshipTypeEnum;
+    procedure SetRelationshipST(value : TFhirActionRelationshipTypeEnum);
+    procedure SetOffset(value : TFhirDataType);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirRequestGroupActionRelatedAction; overload;
+    function Clone : TFhirRequestGroupActionRelatedAction; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The element id of the action this is related to.
+    property actionId : String read GetActionIdST write SetActionIdST;
+    // The element id of the action this is related to.
+    property actionIdElement : TFhirId read FActionId write SetActionId;
+
+    // The relationship of this action to the related action.
+    property relationship : TFhirActionRelationshipTypeEnum read GetRelationshipST write SetRelationshipST;
+    property relationshipElement : TFhirEnum read FRelationship write SetRelationship;
+
+    // Typed access to A duration or range of durations to apply to the relationship. For example, 30-60 minutes before. (defined for API consistency)
+    property offset : TFhirDataType read FOffset write SetOffset;
+    // A duration or range of durations to apply to the relationship. For example, 30-60 minutes before.
+    property offsetElement : TFhirDataType read FOffset write SetOffset;
+
+  end;
+
+  TFhirRequestGroupActionRelatedActionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirRequestGroupActionRelatedActionList;
+    function GetCurrent : TFhirRequestGroupActionRelatedAction;
+  public
+    constructor Create(list : TFhirRequestGroupActionRelatedActionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirRequestGroupActionRelatedAction read GetCurrent;
+  end;
+
+  TFhirRequestGroupActionRelatedActionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirRequestGroupActionRelatedAction;
+    procedure SetItemN(index : Integer; value : TFhirRequestGroupActionRelatedAction);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirRequestGroupActionRelatedActionList; overload;
+    function Clone : TFhirRequestGroupActionRelatedActionList; overload;
+    function GetEnumerator : TFhirRequestGroupActionRelatedActionListEnumerator;
+
+    //  Add a FhirRequestGroupActionRelatedAction to the end of the list.
+    function Append : TFhirRequestGroupActionRelatedAction;
+
+    // Add an already existing FhirRequestGroupActionRelatedAction to the end of the list.
+    procedure AddItem(value : TFhirRequestGroupActionRelatedAction); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirRequestGroupActionRelatedAction) : Integer;
+
+    // Insert FhirRequestGroupActionRelatedAction before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirRequestGroupActionRelatedAction;
+
+    // Insert an existing FhirRequestGroupActionRelatedAction before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirRequestGroupActionRelatedAction);
+
+    // Get the iIndexth FhirRequestGroupActionRelatedAction. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirRequestGroupActionRelatedAction);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirRequestGroupActionRelatedAction;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirRequestGroupActionRelatedActions[index : Integer] : TFhirRequestGroupActionRelatedAction read GetItemN write SetItemN; default;
+  End;
+
+  // A group of related requests that can be used to capture intended activities that have inter-dependencies such as "give this medication after that one".
+  TFhirRequestGroup = class (TFhirDomainResource)
+  protected
+    FidentifierList : TFhirIdentifierList;
+    FinstantiatesCanonicalList : TFhirCanonicalList;
+    FinstantiatesUriList : TFhirUriList;
+    FbasedOnList : TFhirReferenceList;
+    FreplacesList : TFhirReferenceList;
+    FGroupIdentifier : TFhirIdentifier;
+    FStatus : TFhirEnum;
+    FIntent : TFhirEnum;
+    FPriority : TFhirEnum;
+    FCode : TFhirCodeableConcept;
+    FSubject : TFhirReference;
+    FEncounter : TFhirReference;
+    FAuthoredOn : TFhirDateTime;
+    FAuthor : TFhirReference;
+    FreasonList : TFhirCodeableReferenceList;
+    FnoteList : TFhirAnnotationList;
+    FactionList : TFhirRequestGroupActionList;
+    function GetIdentifierList : TFhirIdentifierList;
+    function GetHasIdentifierList : Boolean;
+    function GetInstantiatesCanonicalList : TFhirCanonicalList;
+    function GetHasInstantiatesCanonicalList : Boolean;
+    function GetInstantiatesUriList : TFhirUriList;
+    function GetHasInstantiatesUriList : Boolean;
+    function GetBasedOnList : TFhirReferenceList;
+    function GetHasBasedOnList : Boolean;
+    function GetReplacesList : TFhirReferenceList;
+    function GetHasReplacesList : Boolean;
+    procedure SetGroupIdentifier(value : TFhirIdentifier);
+    procedure SetStatus(value : TFhirEnum);
+    function GetStatusST : TFhirRequestStatusEnum;
+    procedure SetStatusST(value : TFhirRequestStatusEnum);
+    procedure SetIntent(value : TFhirEnum);
+    function GetIntentST : TFhirRequestIntentEnum;
+    procedure SetIntentST(value : TFhirRequestIntentEnum);
+    procedure SetPriority(value : TFhirEnum);
+    function GetPriorityST : TFhirRequestPriorityEnum;
+    procedure SetPriorityST(value : TFhirRequestPriorityEnum);
+    procedure SetCode(value : TFhirCodeableConcept);
+    procedure SetSubject(value : TFhirReference);
+    procedure SetEncounter(value : TFhirReference);
+    procedure SetAuthoredOn(value : TFhirDateTime);
+    function GetAuthoredOnST : TFslDateTime;
+    procedure SetAuthoredOnST(value : TFslDateTime);
+    procedure SetAuthor(value : TFhirReference);
+    function GetReasonList : TFhirCodeableReferenceList;
+    function GetHasReasonList : Boolean;
+    function GetNoteList : TFhirAnnotationList;
+    function GetHasNoteList : Boolean;
+    function GetActionList : TFhirRequestGroupActionList;
+    function GetHasActionList : Boolean;
+
+    function GetResourceType : TFhirResourceType; override;
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirRequestGroup; overload;
+    function Clone : TFhirRequestGroup; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Allows a service to provide a unique, business identifier for the request.
+    property identifierList : TFhirIdentifierList read GetIdentifierList;
+    property hasIdentifierList : boolean read GetHasIdentifierList;
+
+    // A canonical URL referencing a FHIR-defined protocol, guideline, orderset or other definition that is adhered to in whole or in part by this request.
+    property instantiatesCanonicalList : TFhirCanonicalList read GetInstantiatesCanonicalList;
+    property hasInstantiatesCanonicalList : boolean read GetHasInstantiatesCanonicalList;
+
+    // A URL referencing an externally defined protocol, guideline, orderset or other definition that is adhered to in whole or in part by this request.
+    property instantiatesUriList : TFhirUriList read GetInstantiatesUriList;
+    property hasInstantiatesUriList : boolean read GetHasInstantiatesUriList;
+
+    // A plan, proposal or order that is fulfilled in whole or in part by this request.
+    property basedOnList : TFhirReferenceList read GetBasedOnList;
+    property hasBasedOnList : boolean read GetHasBasedOnList;
+
+    // Completed or terminated request(s) whose function is taken by this new request.
+    property replacesList : TFhirReferenceList read GetReplacesList;
+    property hasReplacesList : boolean read GetHasReplacesList;
+
+    // Typed access to A shared identifier common to all requests that were authorized more or less simultaneously by a single author, representing the identifier of the requisition, prescription or similar form. (defined for API consistency)
+    property groupIdentifier : TFhirIdentifier read FGroupIdentifier write SetGroupIdentifier;
+    // A shared identifier common to all requests that were authorized more or less simultaneously by a single author, representing the identifier of the requisition, prescription or similar form.
+    property groupIdentifierElement : TFhirIdentifier read FGroupIdentifier write SetGroupIdentifier;
+
+    // The current state of the request. For request groups, the status reflects the status of all the requests in the group.
+    property status : TFhirRequestStatusEnum read GetStatusST write SetStatusST;
+    property statusElement : TFhirEnum read FStatus write SetStatus;
+
+    // Indicates the level of authority/intentionality associated with the request and where the request fits into the workflow chain.
+    property intent : TFhirRequestIntentEnum read GetIntentST write SetIntentST;
+    property intentElement : TFhirEnum read FIntent write SetIntent;
+
+    // Indicates how quickly the request should be addressed with respect to other requests.
+    property priority : TFhirRequestPriorityEnum read GetPriorityST write SetPriorityST;
+    property priorityElement : TFhirEnum read FPriority write SetPriority;
+
+    // Typed access to A code that identifies what the overall request group is. (defined for API consistency)
+    property code : TFhirCodeableConcept read FCode write SetCode;
+    // A code that identifies what the overall request group is.
+    property codeElement : TFhirCodeableConcept read FCode write SetCode;
+
+    // Typed access to The subject for which the request group was created. (defined for API consistency)
+    property subject : TFhirReference read FSubject write SetSubject;
+    // The subject for which the request group was created.
+    property subjectElement : TFhirReference read FSubject write SetSubject;
+
+    // Typed access to Describes the context of the request group, if any. (defined for API consistency)
+    property encounter : TFhirReference read FEncounter write SetEncounter;
+    // Describes the context of the request group, if any.
+    property encounterElement : TFhirReference read FEncounter write SetEncounter;
+
+    // Typed access to Indicates when the request group was created.
+    property authoredOn : TFslDateTime read GetAuthoredOnST write SetAuthoredOnST;
+    // Indicates when the request group was created.
+    property authoredOnElement : TFhirDateTime read FAuthoredOn write SetAuthoredOn;
+
+    // Typed access to Provides a reference to the author of the request group. (defined for API consistency)
+    property author : TFhirReference read FAuthor write SetAuthor;
+    // Provides a reference to the author of the request group.
+    property authorElement : TFhirReference read FAuthor write SetAuthor;
+
+    // Describes the reason for the request group in coded or textual form.
+    property reasonList : TFhirCodeableReferenceList read GetReasonList;
+    property hasReasonList : boolean read GetHasReasonList;
+
+    // Provides a mechanism to communicate additional information about the response.
+    property noteList : TFhirAnnotationList read GetNoteList;
+    property hasNoteList : boolean read GetHasNoteList;
+
+    // The actions, if any, produced by the evaluation of the artifact.
+    property actionList : TFhirRequestGroupActionList read GetActionList;
+    property hasActionList : boolean read GetHasActionList;
+
+  end;
+
+  TFhirRequestGroupListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirRequestGroupList;
+    function GetCurrent : TFhirRequestGroup;
+  public
+    constructor Create(list : TFhirRequestGroupList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirRequestGroup read GetCurrent;
+  end;
+
+  TFhirRequestGroupList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirRequestGroup;
+    procedure SetItemN(index : Integer; value : TFhirRequestGroup);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirRequestGroupList; overload;
+    function Clone : TFhirRequestGroupList; overload;
+    function GetEnumerator : TFhirRequestGroupListEnumerator;
+
+    //  Add a FhirRequestGroup to the end of the list.
+    function Append : TFhirRequestGroup;
+
+    // Add an already existing FhirRequestGroup to the end of the list.
+    procedure AddItem(value : TFhirRequestGroup); overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirRequestGroup) : Integer;
+
+    // Insert FhirRequestGroup before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirRequestGroup;
+
+    // Insert an existing FhirRequestGroup before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirRequestGroup);
+
+    // Get the iIndexth FhirRequestGroup. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirRequestGroup);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirRequestGroup;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirRequestGroups[index : Integer] : TFhirRequestGroup read GetItemN write SetItemN; default;
+  End;
+
+{$ENDIF FHIR_REQUESTGROUP}
 {$IFDEF FHIR_RESEARCHSTUDY}
   // Describes an expected sequence of events for one of the participants of a study.  E.g. Exposure to drug A, wash-out, exposure to drug B, wash-out, follow-up.
   TFhirResearchStudyArm = class (TFhirBackboneElement)
@@ -14286,6 +16802,2128 @@ implementation
 
 uses
   FHIR.R5.Utilities;
+
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+{ TFhirActivityDefinitionParticipant }
+
+constructor TFhirActivityDefinitionParticipant.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirActivityDefinitionParticipant.Destroy;
+begin
+  FType_.free;
+  FRole.free;
+  inherited;
+end;
+
+procedure TFhirActivityDefinitionParticipant.Assign(oSource : TFslObject);
+begin
+  inherited;
+  type_Element := TFhirActivityDefinitionParticipant(oSource).type_Element.Clone;
+  role := TFhirActivityDefinitionParticipant(oSource).role.Clone;
+end;
+
+procedure TFhirActivityDefinitionParticipant.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'role') Then
+     list.add(self.link, 'role', FRole.Link);
+end;
+
+procedure TFhirActivityDefinitionParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link)); {L1172}
+end;
+
+function TFhirActivityDefinitionParticipant.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'type') then
+  begin
+    Type_Element := asEnum(SYSTEMS_TFhirActionParticipantTypeEnum, CODES_TFhirActionParticipantTypeEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'role') then
+  begin
+    Role := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirActivityDefinitionParticipant.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirActivityDefinitionParticipant.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirActionParticipantTypeEnum[ActionParticipantTypeNull], CODES_TFhirActionParticipantTypeEnum[ActionParticipantTypeNull])  {L1211}
+  else if (propName = 'role') then result := TFhirCodeableConcept.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirActivityDefinitionParticipant.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'type') then result := 'code'
+  else if (propName = 'role') then result := 'CodeableConcept'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirActivityDefinitionParticipant.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'role') then RoleElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirActivityDefinitionParticipant.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirActionParticipantTypeEnum, CODES_TFhirActionParticipantTypeEnum, new) {L1210}
+  else if (propName = 'role') then RoleElement := new as TFhirCodeableConcept {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirActivityDefinitionParticipant.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirActivityDefinitionParticipant.fhirType : string;
+begin
+  result := 'ActivityDefinition.participant';
+end;
+
+function TFhirActivityDefinitionParticipant.Link : TFhirActivityDefinitionParticipant;
+begin
+  result := TFhirActivityDefinitionParticipant(inherited Link);
+end;
+
+function TFhirActivityDefinitionParticipant.Clone : TFhirActivityDefinitionParticipant;
+begin
+  result := TFhirActivityDefinitionParticipant(inherited Clone);
+end;
+
+function TFhirActivityDefinitionParticipant.equals(other : TObject) : boolean;
+var
+  o : TFhirActivityDefinitionParticipant;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirActivityDefinitionParticipant)) then
+    result := false
+  else
+  begin
+    o := TFhirActivityDefinitionParticipant(other);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(roleElement, o.roleElement, true);
+  end;
+end;
+
+function TFhirActivityDefinitionParticipant.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FRole);
+end;
+
+procedure TFhirActivityDefinitionParticipant.SetType_(value : TFhirEnum);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+function TFhirActivityDefinitionParticipant.GetType_ST : TFhirActionParticipantTypeEnum;
+begin
+  if FType_ = nil then
+    result := TFhirActionParticipantTypeEnum(0)
+  else
+    result := TFhirActionParticipantTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirActionParticipantTypeEnum, FType_.value));
+end;
+
+procedure TFhirActivityDefinitionParticipant.SetType_ST(value : TFhirActionParticipantTypeEnum);
+begin
+  if ord(value) = 0 then
+    Type_Element := nil
+  else
+    Type_Element := TFhirEnum.create(SYSTEMS_TFhirActionParticipantTypeEnum[value], CODES_TFhirActionParticipantTypeEnum[value]);
+end;
+
+procedure TFhirActivityDefinitionParticipant.SetRole(value : TFhirCodeableConcept);
+begin
+  FRole.free;
+  FRole := value; {L1134}
+end;
+
+{ TFhirActivityDefinitionParticipantListEnumerator }
+
+constructor TFhirActivityDefinitionParticipantListEnumerator.Create(list : TFhirActivityDefinitionParticipantList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirActivityDefinitionParticipantListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirActivityDefinitionParticipantListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirActivityDefinitionParticipantListEnumerator.GetCurrent : TFhirActivityDefinitionParticipant;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirActivityDefinitionParticipantList }
+
+procedure TFhirActivityDefinitionParticipantList.AddItem(value: TFhirActivityDefinitionParticipant);
+begin
+  assert(value.ClassName = 'TFhirActivityDefinitionParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirActivityDefinitionParticipant');
+  add(value);
+end;
+
+function TFhirActivityDefinitionParticipantList.Append: TFhirActivityDefinitionParticipant;
+begin
+  result := TFhirActivityDefinitionParticipant.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirActivityDefinitionParticipantList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirActivityDefinitionParticipantList.GetEnumerator : TFhirActivityDefinitionParticipantListEnumerator;
+begin
+  result := TFhirActivityDefinitionParticipantListEnumerator.Create(self.link);
+end;
+
+function TFhirActivityDefinitionParticipantList.Clone: TFhirActivityDefinitionParticipantList;
+begin
+  result := TFhirActivityDefinitionParticipantList(inherited Clone);
+end;
+
+function TFhirActivityDefinitionParticipantList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirActivityDefinitionParticipantList.GetItemN(index: Integer): TFhirActivityDefinitionParticipant;
+begin
+  result := TFhirActivityDefinitionParticipant(ObjectByIndex[index]);
+end;
+
+function TFhirActivityDefinitionParticipantList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirActivityDefinitionParticipant;
+end;
+function TFhirActivityDefinitionParticipantList.IndexOf(value: TFhirActivityDefinitionParticipant): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirActivityDefinitionParticipantList.Insert(index: Integer): TFhirActivityDefinitionParticipant;
+begin
+  result := TFhirActivityDefinitionParticipant.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirActivityDefinitionParticipantList.InsertItem(index: Integer; value: TFhirActivityDefinitionParticipant);
+begin
+  assert(value is TFhirActivityDefinitionParticipant);
+  Inherited Insert(index, value);
+end;
+
+function TFhirActivityDefinitionParticipantList.Item(index: Integer): TFhirActivityDefinitionParticipant;
+begin
+  result := TFhirActivityDefinitionParticipant(ObjectByIndex[index]);
+end;
+
+function TFhirActivityDefinitionParticipantList.Link: TFhirActivityDefinitionParticipantList;
+begin
+  result := TFhirActivityDefinitionParticipantList(inherited Link);
+end;
+
+procedure TFhirActivityDefinitionParticipantList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirActivityDefinitionParticipantList.SetItemByIndex(index: Integer; value: TFhirActivityDefinitionParticipant);
+begin
+  assert(value is TFhirActivityDefinitionParticipant);
+  FhirActivityDefinitionParticipants[index] := value;
+end;
+
+procedure TFhirActivityDefinitionParticipantList.SetItemN(index: Integer; value: TFhirActivityDefinitionParticipant);
+begin
+  assert(value is TFhirActivityDefinitionParticipant);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirActivityDefinitionDynamicValue }
+
+constructor TFhirActivityDefinitionDynamicValue.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirActivityDefinitionDynamicValue.Destroy;
+begin
+  FPath.free;
+  FExpression.free;
+  inherited;
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.Assign(oSource : TFslObject);
+begin
+  inherited;
+  pathElement := TFhirActivityDefinitionDynamicValue(oSource).pathElement.Clone;
+  expression := TFhirActivityDefinitionDynamicValue(oSource).expression.Clone;
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'path') Then
+     list.add(self.link, 'path', FPath.Link);
+  if (child_name = 'expression') Then
+     list.add(self.link, 'expression', FExpression.Link);
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'path', 'string', false, TFhirString, FPath.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'expression', 'Expression', false, TFhirExpression, FExpression.Link)); {L1172}
+end;
+
+function TFhirActivityDefinitionDynamicValue.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'path') then
+  begin
+    PathElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'expression') then
+  begin
+    Expression := propValue as TFhirExpression {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirActivityDefinitionDynamicValue.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'path') then result := TFhirString.create() {L1223}
+  else if (propName = 'expression') then result := TFhirExpression.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirActivityDefinitionDynamicValue.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'path') then result := 'string'
+  else if (propName = 'expression') then result := 'Expression'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := nil
+  else if (propName = 'expression') then ExpressionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := asString(new) {L1222}
+  else if (propName = 'expression') then ExpressionElement := new as TFhirExpression {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirActivityDefinitionDynamicValue.fhirType : string;
+begin
+  result := 'ActivityDefinition.dynamicValue';
+end;
+
+function TFhirActivityDefinitionDynamicValue.Link : TFhirActivityDefinitionDynamicValue;
+begin
+  result := TFhirActivityDefinitionDynamicValue(inherited Link);
+end;
+
+function TFhirActivityDefinitionDynamicValue.Clone : TFhirActivityDefinitionDynamicValue;
+begin
+  result := TFhirActivityDefinitionDynamicValue(inherited Clone);
+end;
+
+function TFhirActivityDefinitionDynamicValue.equals(other : TObject) : boolean;
+var
+  o : TFhirActivityDefinitionDynamicValue;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirActivityDefinitionDynamicValue)) then
+    result := false
+  else
+  begin
+    o := TFhirActivityDefinitionDynamicValue(other);
+    result := compareDeep(pathElement, o.pathElement, true) and compareDeep(expressionElement, o.expressionElement, true);
+  end;
+end;
+
+function TFhirActivityDefinitionDynamicValue.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FExpression);
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.SetPath(value : TFhirString);
+begin
+  FPath.free;
+  FPath := value; {L1134}
+end;
+
+function TFhirActivityDefinitionDynamicValue.GetPathST : String;
+begin
+  if FPath = nil then
+    result := ''
+  else
+    result := FPath.value;
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.SetPathST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPath = nil then
+      FPath := TFhirString.create;
+    FPath.value := value
+  end
+  else if FPath <> nil then
+    FPath.value := '';
+end;
+
+procedure TFhirActivityDefinitionDynamicValue.SetExpression(value : TFhirExpression);
+begin
+  FExpression.free;
+  FExpression := value; {L1134}
+end;
+
+{ TFhirActivityDefinitionDynamicValueListEnumerator }
+
+constructor TFhirActivityDefinitionDynamicValueListEnumerator.Create(list : TFhirActivityDefinitionDynamicValueList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirActivityDefinitionDynamicValueListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirActivityDefinitionDynamicValueListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirActivityDefinitionDynamicValueListEnumerator.GetCurrent : TFhirActivityDefinitionDynamicValue;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirActivityDefinitionDynamicValueList }
+
+procedure TFhirActivityDefinitionDynamicValueList.AddItem(value: TFhirActivityDefinitionDynamicValue);
+begin
+  assert(value.ClassName = 'TFhirActivityDefinitionDynamicValue', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirActivityDefinitionDynamicValue');
+  add(value);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.Append: TFhirActivityDefinitionDynamicValue;
+begin
+  result := TFhirActivityDefinitionDynamicValue.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirActivityDefinitionDynamicValueList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirActivityDefinitionDynamicValueList.GetEnumerator : TFhirActivityDefinitionDynamicValueListEnumerator;
+begin
+  result := TFhirActivityDefinitionDynamicValueListEnumerator.Create(self.link);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.Clone: TFhirActivityDefinitionDynamicValueList;
+begin
+  result := TFhirActivityDefinitionDynamicValueList(inherited Clone);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirActivityDefinitionDynamicValueList.GetItemN(index: Integer): TFhirActivityDefinitionDynamicValue;
+begin
+  result := TFhirActivityDefinitionDynamicValue(ObjectByIndex[index]);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirActivityDefinitionDynamicValue;
+end;
+function TFhirActivityDefinitionDynamicValueList.IndexOf(value: TFhirActivityDefinitionDynamicValue): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.Insert(index: Integer): TFhirActivityDefinitionDynamicValue;
+begin
+  result := TFhirActivityDefinitionDynamicValue.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirActivityDefinitionDynamicValueList.InsertItem(index: Integer; value: TFhirActivityDefinitionDynamicValue);
+begin
+  assert(value is TFhirActivityDefinitionDynamicValue);
+  Inherited Insert(index, value);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.Item(index: Integer): TFhirActivityDefinitionDynamicValue;
+begin
+  result := TFhirActivityDefinitionDynamicValue(ObjectByIndex[index]);
+end;
+
+function TFhirActivityDefinitionDynamicValueList.Link: TFhirActivityDefinitionDynamicValueList;
+begin
+  result := TFhirActivityDefinitionDynamicValueList(inherited Link);
+end;
+
+procedure TFhirActivityDefinitionDynamicValueList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirActivityDefinitionDynamicValueList.SetItemByIndex(index: Integer; value: TFhirActivityDefinitionDynamicValue);
+begin
+  assert(value is TFhirActivityDefinitionDynamicValue);
+  FhirActivityDefinitionDynamicValues[index] := value;
+end;
+
+procedure TFhirActivityDefinitionDynamicValueList.SetItemN(index: Integer; value: TFhirActivityDefinitionDynamicValue);
+begin
+  assert(value is TFhirActivityDefinitionDynamicValue);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirActivityDefinition }
+
+constructor TFhirActivityDefinition.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirActivityDefinition.Destroy;
+begin
+  FSubtitle.free;
+  FSubject.free;
+  FUsage.free;
+  FTopicList.Free;
+  FAuthorList.Free;
+  FEditorList.Free;
+  FReviewerList.Free;
+  FEndorserList.Free;
+  FRelatedArtifactList.Free;
+  FLibrary_List.Free;
+  FKind.free;
+  FProfile.free;
+  FCode.free;
+  FIntent.free;
+  FPriority.free;
+  FDoNotPerform.free;
+  FTiming.free;
+  FLocation.free;
+  FParticipantList.Free;
+  FProduct.free;
+  FQuantity.free;
+  FDosageList.Free;
+  FBodySiteList.Free;
+  FSpecimenRequirementList.Free;
+  FObservationRequirementList.Free;
+  FObservationResultRequirementList.Free;
+  FTransform.free;
+  FDynamicValueList.Free;
+  inherited;
+end;
+
+procedure TFhirActivityDefinition.Assign(oSource : TFslObject);
+begin
+  inherited;
+  subtitleElement := TFhirActivityDefinition(oSource).subtitleElement.Clone;
+  subject := TFhirActivityDefinition(oSource).subject.Clone;
+  usageElement := TFhirActivityDefinition(oSource).usageElement.Clone;
+  if (TFhirActivityDefinition(oSource).FTopicList = nil) then
+  begin
+    FTopicList.free;
+    FTopicList := nil;
+  end
+  else
+  begin
+    if FTopicList = nil then
+      FTopicList := TFhirCodeableConceptList.Create;
+    FTopicList.Assign(TFhirActivityDefinition(oSource).FTopicList);
+  end;
+  if (TFhirActivityDefinition(oSource).FAuthorList = nil) then
+  begin
+    FAuthorList.free;
+    FAuthorList := nil;
+  end
+  else
+  begin
+    if FAuthorList = nil then
+      FAuthorList := TFhirContactDetailList.Create;
+    FAuthorList.Assign(TFhirActivityDefinition(oSource).FAuthorList);
+  end;
+  if (TFhirActivityDefinition(oSource).FEditorList = nil) then
+  begin
+    FEditorList.free;
+    FEditorList := nil;
+  end
+  else
+  begin
+    if FEditorList = nil then
+      FEditorList := TFhirContactDetailList.Create;
+    FEditorList.Assign(TFhirActivityDefinition(oSource).FEditorList);
+  end;
+  if (TFhirActivityDefinition(oSource).FReviewerList = nil) then
+  begin
+    FReviewerList.free;
+    FReviewerList := nil;
+  end
+  else
+  begin
+    if FReviewerList = nil then
+      FReviewerList := TFhirContactDetailList.Create;
+    FReviewerList.Assign(TFhirActivityDefinition(oSource).FReviewerList);
+  end;
+  if (TFhirActivityDefinition(oSource).FEndorserList = nil) then
+  begin
+    FEndorserList.free;
+    FEndorserList := nil;
+  end
+  else
+  begin
+    if FEndorserList = nil then
+      FEndorserList := TFhirContactDetailList.Create;
+    FEndorserList.Assign(TFhirActivityDefinition(oSource).FEndorserList);
+  end;
+  if (TFhirActivityDefinition(oSource).FRelatedArtifactList = nil) then
+  begin
+    FRelatedArtifactList.free;
+    FRelatedArtifactList := nil;
+  end
+  else
+  begin
+    if FRelatedArtifactList = nil then
+      FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+    FRelatedArtifactList.Assign(TFhirActivityDefinition(oSource).FRelatedArtifactList);
+  end;
+  if (TFhirActivityDefinition(oSource).FLibrary_List = nil) then
+  begin
+    FLibrary_List.free;
+    FLibrary_List := nil;
+  end
+  else
+  begin
+    if FLibrary_List = nil then
+      FLibrary_List := TFhirCanonicalList.Create;
+    FLibrary_List.Assign(TFhirActivityDefinition(oSource).FLibrary_List);
+  end;
+  kindElement := TFhirActivityDefinition(oSource).kindElement.Clone;
+  profileElement := TFhirActivityDefinition(oSource).profileElement.Clone;
+  code := TFhirActivityDefinition(oSource).code.Clone;
+  intentElement := TFhirActivityDefinition(oSource).intentElement.Clone;
+  priorityElement := TFhirActivityDefinition(oSource).priorityElement.Clone;
+  doNotPerformElement := TFhirActivityDefinition(oSource).doNotPerformElement.Clone;
+  timing := TFhirActivityDefinition(oSource).timing.Clone;
+  location := TFhirActivityDefinition(oSource).location.Clone;
+  if (TFhirActivityDefinition(oSource).FParticipantList = nil) then
+  begin
+    FParticipantList.free;
+    FParticipantList := nil;
+  end
+  else
+  begin
+    if FParticipantList = nil then
+      FParticipantList := TFhirActivityDefinitionParticipantList.Create;
+    FParticipantList.Assign(TFhirActivityDefinition(oSource).FParticipantList);
+  end;
+  product := TFhirActivityDefinition(oSource).product.Clone;
+  quantity := TFhirActivityDefinition(oSource).quantity.Clone;
+  if (TFhirActivityDefinition(oSource).FDosageList = nil) then
+  begin
+    FDosageList.free;
+    FDosageList := nil;
+  end
+  else
+  begin
+    if FDosageList = nil then
+      FDosageList := TFhirDosageList.Create;
+    FDosageList.Assign(TFhirActivityDefinition(oSource).FDosageList);
+  end;
+  if (TFhirActivityDefinition(oSource).FBodySiteList = nil) then
+  begin
+    FBodySiteList.free;
+    FBodySiteList := nil;
+  end
+  else
+  begin
+    if FBodySiteList = nil then
+      FBodySiteList := TFhirCodeableConceptList.Create;
+    FBodySiteList.Assign(TFhirActivityDefinition(oSource).FBodySiteList);
+  end;
+  if (TFhirActivityDefinition(oSource).FSpecimenRequirementList = nil) then
+  begin
+    FSpecimenRequirementList.free;
+    FSpecimenRequirementList := nil;
+  end
+  else
+  begin
+    if FSpecimenRequirementList = nil then
+      FSpecimenRequirementList := TFhirReferenceList.Create;
+    FSpecimenRequirementList.Assign(TFhirActivityDefinition(oSource).FSpecimenRequirementList);
+  end;
+  if (TFhirActivityDefinition(oSource).FObservationRequirementList = nil) then
+  begin
+    FObservationRequirementList.free;
+    FObservationRequirementList := nil;
+  end
+  else
+  begin
+    if FObservationRequirementList = nil then
+      FObservationRequirementList := TFhirReferenceList.Create;
+    FObservationRequirementList.Assign(TFhirActivityDefinition(oSource).FObservationRequirementList);
+  end;
+  if (TFhirActivityDefinition(oSource).FObservationResultRequirementList = nil) then
+  begin
+    FObservationResultRequirementList.free;
+    FObservationResultRequirementList := nil;
+  end
+  else
+  begin
+    if FObservationResultRequirementList = nil then
+      FObservationResultRequirementList := TFhirReferenceList.Create;
+    FObservationResultRequirementList.Assign(TFhirActivityDefinition(oSource).FObservationResultRequirementList);
+  end;
+  transformElement := TFhirActivityDefinition(oSource).transformElement.Clone;
+  if (TFhirActivityDefinition(oSource).FDynamicValueList = nil) then
+  begin
+    FDynamicValueList.free;
+    FDynamicValueList := nil;
+  end
+  else
+  begin
+    if FDynamicValueList = nil then
+      FDynamicValueList := TFhirActivityDefinitionDynamicValueList.Create;
+    FDynamicValueList.Assign(TFhirActivityDefinition(oSource).FDynamicValueList);
+  end;
+end;
+
+function TFhirActivityDefinition.GetResourceType : TFhirResourceType;
+begin
+  result := frtActivityDefinition;
+end;
+
+procedure TFhirActivityDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'subtitle') Then
+     list.add(self.link, 'subtitle', FSubtitle.Link);
+  if (child_name = 'subject[x]') or (child_name = 'subject') Then
+     list.add(self.link, 'subject[x]', FSubject.Link);
+  if (child_name = 'usage') Then
+     list.add(self.link, 'usage', FUsage.Link);
+  if (child_name = 'topic') Then
+    list.addAll(self, 'topic', FTopicList);
+  if (child_name = 'author') Then
+    list.addAll(self, 'author', FAuthorList);
+  if (child_name = 'editor') Then
+    list.addAll(self, 'editor', FEditorList);
+  if (child_name = 'reviewer') Then
+    list.addAll(self, 'reviewer', FReviewerList);
+  if (child_name = 'endorser') Then
+    list.addAll(self, 'endorser', FEndorserList);
+  if (child_name = 'relatedArtifact') Then
+    list.addAll(self, 'relatedArtifact', FRelatedArtifactList);
+  if (child_name = 'library') Then
+    list.addAll(self, 'library', FLibrary_List);
+  if (child_name = 'kind') Then
+     list.add(self.link, 'kind', FKind.Link);
+  if (child_name = 'profile') Then
+     list.add(self.link, 'profile', FProfile.Link);
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'intent') Then
+     list.add(self.link, 'intent', FIntent.Link);
+  if (child_name = 'priority') Then
+     list.add(self.link, 'priority', FPriority.Link);
+  if (child_name = 'doNotPerform') Then
+     list.add(self.link, 'doNotPerform', FDoNotPerform.Link);
+  if (child_name = 'timing[x]') or (child_name = 'timing') Then
+     list.add(self.link, 'timing[x]', FTiming.Link);
+  if (child_name = 'location') Then
+     list.add(self.link, 'location', FLocation.Link);
+  if (child_name = 'participant') Then
+    list.addAll(self, 'participant', FParticipantList);
+  if (child_name = 'product[x]') or (child_name = 'product') Then
+     list.add(self.link, 'product[x]', FProduct.Link);
+  if (child_name = 'quantity') Then
+     list.add(self.link, 'quantity', FQuantity.Link);
+  if (child_name = 'dosage') Then
+    list.addAll(self, 'dosage', FDosageList);
+  if (child_name = 'bodySite') Then
+    list.addAll(self, 'bodySite', FBodySiteList);
+  if (child_name = 'specimenRequirement') Then
+    list.addAll(self, 'specimenRequirement', FSpecimenRequirementList);
+  if (child_name = 'observationRequirement') Then
+    list.addAll(self, 'observationRequirement', FObservationRequirementList);
+  if (child_name = 'observationResultRequirement') Then
+    list.addAll(self, 'observationResultRequirement', FObservationResultRequirementList);
+  if (child_name = 'transform') Then
+     list.add(self.link, 'transform', FTransform.Link);
+  if (child_name = 'dynamicValue') Then
+    list.addAll(self, 'dynamicValue', FDynamicValueList);
+end;
+
+procedure TFhirActivityDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'subtitle', 'string', false, TFhirString, FSubtitle.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'subject[x]', 'CodeableConcept|Reference', false, TFhirDataType, FSubject.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'usage', 'string', false, TFhirString, FUsage.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'topic', 'CodeableConcept', true, TFhirCodeableConcept, FTopicList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'author', 'ContactDetail', true, TFhirContactDetail, FAuthorList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'editor', 'ContactDetail', true, TFhirContactDetail, FEditorList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'reviewer', 'ContactDetail', true, TFhirContactDetail, FReviewerList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'endorser', 'ContactDetail', true, TFhirContactDetail, FEndorserList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'relatedArtifact', 'RelatedArtifact', true, TFhirRelatedArtifact, FRelatedArtifactList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'library', 'canonical', true, TFhirCanonical, FLibrary_List.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirEnum, FKind.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'profile', 'canonical', false, TFhirCanonical, FProfile.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'intent', 'code', false, TFhirEnum, FIntent.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFhirEnum, FPriority.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'doNotPerform', 'boolean', false, TFhirBoolean, FDoNotPerform.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'timing[x]', 'Timing|dateTime|Age|Period|Range|Duration', false, TFhirDataType, FTiming.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'participant', 'BackboneElement', true, TFhirActivityDefinitionParticipant, FParticipantList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'product[x]', 'Reference|CodeableConcept', false, TFhirDataType, FProduct.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'dosage', 'Dosage', true, TFhirDosage, FDosageList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'specimenRequirement', 'Reference', true, TFhirReference, FSpecimenRequirementList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'observationRequirement', 'Reference', true, TFhirReference, FObservationRequirementList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'observationResultRequirement', 'Reference', true, TFhirReference, FObservationResultRequirementList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'transform', 'canonical', false, TFhirCanonical, FTransform.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'dynamicValue', 'BackboneElement', true, TFhirActivityDefinitionDynamicValue, FDynamicValueList.Link)) {L1039};
+end;
+
+function TFhirActivityDefinition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'subtitle') then
+  begin
+    SubtitleElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then
+  begin
+    Subject := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'usage') then
+  begin
+    UsageElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'topic') then
+  begin
+    TopicList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'author') then
+  begin
+    AuthorList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'editor') then
+  begin
+    EditorList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'reviewer') then
+  begin
+    ReviewerList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'endorser') then
+  begin
+    EndorserList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'relatedArtifact') then
+  begin
+    RelatedArtifactList.add(propValue as TFhirRelatedArtifact) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'library') then
+  begin
+    Library_List.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'kind') then
+  begin
+    KindElement := asEnum(SYSTEMS_TFhirRequestResourceTypeEnum, CODES_TFhirRequestResourceTypeEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'profile') then
+  begin
+    ProfileElement := asCanonical(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'code') then
+  begin
+    Code := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'intent') then
+  begin
+    IntentElement := asEnum(SYSTEMS_TFhirRequestIntentEnum, CODES_TFhirRequestIntentEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'priority') then
+  begin
+    PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'doNotPerform') then
+  begin
+    DoNotPerformElement := asBoolean(propValue) {L1221};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'timing', ['Timing', 'DateTime', 'Age', 'Period', 'Range', 'Duration'])) then
+  begin
+    Timing := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'location') then
+  begin
+    Location := propValue as TFhirReference {L1199};
+    result := propValue;
+  end
+  else if (propName = 'participant') then
+  begin
+    ParticipantList.add(propValue as TFhirActivityDefinitionParticipant) {L1048};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then
+  begin
+    Product := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'quantity') then
+  begin
+    Quantity := propValue as TFhirQuantity {L1199};
+    result := propValue;
+  end
+  else if (propName = 'dosage') then
+  begin
+    DosageList.add(propValue as TFhirDosage) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'bodySite') then
+  begin
+    BodySiteList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'specimenRequirement') then
+  begin
+    SpecimenRequirementList.add(propValue as TFhirReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'observationRequirement') then
+  begin
+    ObservationRequirementList.add(propValue as TFhirReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'observationResultRequirement') then
+  begin
+    ObservationResultRequirementList.add(propValue as TFhirReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'transform') then
+  begin
+    TransformElement := asCanonical(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'dynamicValue') then
+  begin
+    DynamicValueList.add(propValue as TFhirActivityDefinitionDynamicValue) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirActivityDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'topic') then TopicList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'author') then AuthorList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'editor') then EditorList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'reviewer') then ReviewerList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'endorser') then EndorserList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'relatedArtifact') then RelatedArtifactList.insertItem(index, propValue as TFhirRelatedArtifact) {L1049}
+  else if (propName = 'library') then Library_List.insertItem(index, asCanonical(propValue)) {L1045}
+  else if (propName = 'participant') then ParticipantList.insertItem(index, propValue as TFhirActivityDefinitionParticipant) {L1049}
+  else if (propName = 'dosage') then DosageList.insertItem(index, propValue as TFhirDosage) {L1049}
+  else if (propName = 'bodySite') then BodySiteList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'specimenRequirement') then SpecimenRequirementList.insertItem(index, propValue as TFhirReference) {L1049}
+  else if (propName = 'observationRequirement') then ObservationRequirementList.insertItem(index, propValue as TFhirReference) {L1049}
+  else if (propName = 'observationResultRequirement') then ObservationResultRequirementList.insertItem(index, propValue as TFhirReference) {L1049}
+  else if (propName = 'dynamicValue') then DynamicValueList.insertItem(index, propValue as TFhirActivityDefinitionDynamicValue) {L1049}
+  else inherited;
+end;
+
+function TFhirActivityDefinition.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'subtitle') then result := TFhirString.create() {L1223}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Subject') {L1191}
+  else if (propName = 'usage') then result := TFhirString.create() {L1223}
+  else if (propName = 'topic') then result := TopicList.new() {L1053}
+  else if (propName = 'author') then result := AuthorList.new() {L1053}
+  else if (propName = 'editor') then result := EditorList.new() {L1053}
+  else if (propName = 'reviewer') then result := ReviewerList.new() {L1053}
+  else if (propName = 'endorser') then result := EndorserList.new() {L1053}
+  else if (propName = 'relatedArtifact') then result := RelatedArtifactList.new() {L1053}
+  else if (propName = 'library') then result := Library_List.new() {L1053}
+  else if (propName = 'kind') then result := TFhirEnum.create(SYSTEMS_TFhirRequestResourceTypeEnum[RequestResourceTypeNull], CODES_TFhirRequestResourceTypeEnum[RequestResourceTypeNull])  {L1211}
+  else if (propName = 'profile') then result := TFhirCanonical.create() {L1223}
+  else if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'intent') then result := TFhirEnum.create(SYSTEMS_TFhirRequestIntentEnum[RequestIntentNull], CODES_TFhirRequestIntentEnum[RequestIntentNull])  {L1211}
+  else if (propName = 'priority') then result := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[RequestPriorityNull], CODES_TFhirRequestPriorityEnum[RequestPriorityNull])  {L1211}
+  else if (propName = 'doNotPerform') then result := TFhirBoolean.create() {L1223}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'DateTime', 'Age', 'Period', 'Range', 'Duration'])) then raise EFHIRException.create('Cannot make property Timing') {L1191}
+  else if (propName = 'location') then result := TFhirReference.create() {L1203}
+  else if (propName = 'participant') then result := ParticipantList.new() {L1053}
+  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Product') {L1191}
+  else if (propName = 'quantity') then result := TFhirQuantity.create() {L1203}
+  else if (propName = 'dosage') then result := DosageList.new() {L1053}
+  else if (propName = 'bodySite') then result := BodySiteList.new() {L1053}
+  else if (propName = 'specimenRequirement') then result := SpecimenRequirementList.new() {L1053}
+  else if (propName = 'observationRequirement') then result := ObservationRequirementList.new() {L1053}
+  else if (propName = 'observationResultRequirement') then result := ObservationResultRequirementList.new() {L1053}
+  else if (propName = 'transform') then result := TFhirCanonical.create() {L1223}
+  else if (propName = 'dynamicValue') then result := DynamicValueList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirActivityDefinition.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'subtitle') then result := 'string'
+  else if (propName = 'subject[x]') then result := 'CodeableConcept|Reference'
+  else if (propName = 'usage') then result := 'string'
+  else if (propName = 'topic') then result := 'CodeableConcept'
+  else if (propName = 'author') then result := 'ContactDetail'
+  else if (propName = 'editor') then result := 'ContactDetail'
+  else if (propName = 'reviewer') then result := 'ContactDetail'
+  else if (propName = 'endorser') then result := 'ContactDetail'
+  else if (propName = 'relatedArtifact') then result := 'RelatedArtifact'
+  else if (propName = 'library') then result := 'canonical'
+  else if (propName = 'kind') then result := 'code'
+  else if (propName = 'profile') then result := 'canonical'
+  else if (propName = 'code') then result := 'CodeableConcept'
+  else if (propName = 'intent') then result := 'code'
+  else if (propName = 'priority') then result := 'code'
+  else if (propName = 'doNotPerform') then result := 'boolean'
+  else if (propName = 'timing[x]') then result := 'Timing|dateTime|Age|Period|Range|Duration'
+  else if (propName = 'location') then result := 'Reference'
+  else if (propName = 'participant') then result := 'BackboneElement'
+  else if (propName = 'product[x]') then result := 'Reference|CodeableConcept'
+  else if (propName = 'quantity') then result := 'Quantity'
+  else if (propName = 'dosage') then result := 'Dosage'
+  else if (propName = 'bodySite') then result := 'CodeableConcept'
+  else if (propName = 'specimenRequirement') then result := 'Reference'
+  else if (propName = 'observationRequirement') then result := 'Reference'
+  else if (propName = 'observationResultRequirement') then result := 'Reference'
+  else if (propName = 'transform') then result := 'canonical'
+  else if (propName = 'dynamicValue') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirActivityDefinition.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'subtitle') then SubtitleElement := nil
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := nil {L1189}
+  else if (propName = 'usage') then UsageElement := nil
+  else if (propName = 'topic') then deletePropertyValue('topic', TopicList, value) {L1054}
+  else if (propName = 'author') then deletePropertyValue('author', AuthorList, value) {L1054}
+  else if (propName = 'editor') then deletePropertyValue('editor', EditorList, value) {L1054}
+  else if (propName = 'reviewer') then deletePropertyValue('reviewer', ReviewerList, value) {L1054}
+  else if (propName = 'endorser') then deletePropertyValue('endorser', EndorserList, value) {L1054}
+  else if (propName = 'relatedArtifact') then deletePropertyValue('relatedArtifact', RelatedArtifactList, value) {L1054}
+  else if (propName = 'library') then deletePropertyValue('library', Library_List, value) {L1054}
+  else if (propName = 'kind') then KindElement := nil
+  else if (propName = 'profile') then ProfileElement := nil
+  else if (propName = 'code') then CodeElement := nil
+  else if (propName = 'intent') then IntentElement := nil
+  else if (propName = 'priority') then PriorityElement := nil
+  else if (propName = 'doNotPerform') then DoNotPerformElement := nil
+  else if (isMatchingName(propName, 'timing', ['Timing', 'DateTime', 'Age', 'Period', 'Range', 'Duration'])) then TimingElement := nil {L1189}
+  else if (propName = 'location') then LocationElement := nil
+  else if (propName = 'participant') then deletePropertyValue('participant', ParticipantList, value) {L1054}
+  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then ProductElement := nil {L1189}
+  else if (propName = 'quantity') then QuantityElement := nil
+  else if (propName = 'dosage') then deletePropertyValue('dosage', DosageList, value) {L1054}
+  else if (propName = 'bodySite') then deletePropertyValue('bodySite', BodySiteList, value) {L1054}
+  else if (propName = 'specimenRequirement') then deletePropertyValue('specimenRequirement', SpecimenRequirementList, value) {L1054}
+  else if (propName = 'observationRequirement') then deletePropertyValue('observationRequirement', ObservationRequirementList, value) {L1054}
+  else if (propName = 'observationResultRequirement') then deletePropertyValue('observationResultRequirement', ObservationResultRequirementList, value) {L1054}
+  else if (propName = 'transform') then TransformElement := nil
+  else if (propName = 'dynamicValue') then deletePropertyValue('dynamicValue', DynamicValueList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirActivityDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'subtitle') then SubtitleElement := asString(new) {L1222}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := new as TFhirDataType {L1190}
+  else if (propName = 'usage') then UsageElement := asString(new) {L1222}
+  else if (propName = 'topic') then replacePropertyValue('topic', TopicList, existing, new) {L1055}
+  else if (propName = 'author') then replacePropertyValue('author', AuthorList, existing, new) {L1055}
+  else if (propName = 'editor') then replacePropertyValue('editor', EditorList, existing, new) {L1055}
+  else if (propName = 'reviewer') then replacePropertyValue('reviewer', ReviewerList, existing, new) {L1055}
+  else if (propName = 'endorser') then replacePropertyValue('endorser', EndorserList, existing, new) {L1055}
+  else if (propName = 'relatedArtifact') then replacePropertyValue('relatedArtifact', RelatedArtifactList, existing, new) {L1055}
+  else if (propName = 'library') then replacePropertyValue('library', Library_List, existing, new) {L1055}
+  else if (propName = 'kind') then KindElement := asEnum(SYSTEMS_TFhirRequestResourceTypeEnum, CODES_TFhirRequestResourceTypeEnum, new) {L1210}
+  else if (propName = 'profile') then ProfileElement := asCanonical(new) {L1222}
+  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'intent') then IntentElement := asEnum(SYSTEMS_TFhirRequestIntentEnum, CODES_TFhirRequestIntentEnum, new) {L1210}
+  else if (propName = 'priority') then PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, new) {L1210}
+  else if (propName = 'doNotPerform') then DoNotPerformElement := asBoolean(new) {L1222}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'DateTime', 'Age', 'Period', 'Range', 'Duration'])) then TimingElement := new as TFhirDataType {L1190}
+  else if (propName = 'location') then LocationElement := new as TFhirReference {L1195}
+  else if (propName = 'participant') then replacePropertyValue('participant', ParticipantList, existing, new) {L1055}
+  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then ProductElement := new as TFhirDataType {L1190}
+  else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity {L1195}
+  else if (propName = 'dosage') then replacePropertyValue('dosage', DosageList, existing, new) {L1055}
+  else if (propName = 'bodySite') then replacePropertyValue('bodySite', BodySiteList, existing, new) {L1055}
+  else if (propName = 'specimenRequirement') then replacePropertyValue('specimenRequirement', SpecimenRequirementList, existing, new) {L1055}
+  else if (propName = 'observationRequirement') then replacePropertyValue('observationRequirement', ObservationRequirementList, existing, new) {L1055}
+  else if (propName = 'observationResultRequirement') then replacePropertyValue('observationResultRequirement', ObservationResultRequirementList, existing, new) {L1055}
+  else if (propName = 'transform') then TransformElement := asCanonical(new) {L1222}
+  else if (propName = 'dynamicValue') then replacePropertyValue('dynamicValue', DynamicValueList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirActivityDefinition.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'topic') then TopicList.move(source, destination) {L1050}
+  else if (propName = 'author') then AuthorList.move(source, destination) {L1050}
+  else if (propName = 'editor') then EditorList.move(source, destination) {L1050}
+  else if (propName = 'reviewer') then ReviewerList.move(source, destination) {L1050}
+  else if (propName = 'endorser') then EndorserList.move(source, destination) {L1050}
+  else if (propName = 'relatedArtifact') then RelatedArtifactList.move(source, destination) {L1050}
+  else if (propName = 'library') then Library_List.move(source, destination) {L1046}
+  else if (propName = 'participant') then ParticipantList.move(source, destination) {L1050}
+  else if (propName = 'dosage') then DosageList.move(source, destination) {L1050}
+  else if (propName = 'bodySite') then BodySiteList.move(source, destination) {L1050}
+  else if (propName = 'specimenRequirement') then SpecimenRequirementList.move(source, destination) {L1050}
+  else if (propName = 'observationRequirement') then ObservationRequirementList.move(source, destination) {L1050}
+  else if (propName = 'observationResultRequirement') then ObservationResultRequirementList.move(source, destination) {L1050}
+  else if (propName = 'dynamicValue') then DynamicValueList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirActivityDefinition.fhirType : string;
+begin
+  result := 'ActivityDefinition';
+end;
+
+function TFhirActivityDefinition.Link : TFhirActivityDefinition;
+begin
+  result := TFhirActivityDefinition(inherited Link);
+end;
+
+function TFhirActivityDefinition.Clone : TFhirActivityDefinition;
+begin
+  result := TFhirActivityDefinition(inherited Clone);
+end;
+
+function TFhirActivityDefinition.equals(other : TObject) : boolean;
+var
+  o : TFhirActivityDefinition;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirActivityDefinition)) then
+    result := false
+  else
+  begin
+    o := TFhirActivityDefinition(other);
+    result := compareDeep(subtitleElement, o.subtitleElement, true) and compareDeep(subjectElement, o.subjectElement, true) and
+      compareDeep(usageElement, o.usageElement, true) and compareDeep(topicList, o.topicList, true) and
+      compareDeep(authorList, o.authorList, true) and compareDeep(editorList, o.editorList, true) and
+      compareDeep(reviewerList, o.reviewerList, true) and compareDeep(endorserList, o.endorserList, true) and
+      compareDeep(relatedArtifactList, o.relatedArtifactList, true) and compareDeep(library_List, o.library_List, true) and
+      compareDeep(kindElement, o.kindElement, true) and compareDeep(profileElement, o.profileElement, true) and
+      compareDeep(codeElement, o.codeElement, true) and compareDeep(intentElement, o.intentElement, true) and
+      compareDeep(priorityElement, o.priorityElement, true) and compareDeep(doNotPerformElement, o.doNotPerformElement, true) and
+      compareDeep(timingElement, o.timingElement, true) and compareDeep(locationElement, o.locationElement, true) and
+      compareDeep(participantList, o.participantList, true) and compareDeep(productElement, o.productElement, true) and
+      compareDeep(quantityElement, o.quantityElement, true) and compareDeep(dosageList, o.dosageList, true) and
+      compareDeep(bodySiteList, o.bodySiteList, true) and compareDeep(specimenRequirementList, o.specimenRequirementList, true) and
+      compareDeep(observationRequirementList, o.observationRequirementList, true) and
+      compareDeep(observationResultRequirementList, o.observationResultRequirementList, true) and
+      compareDeep(transformElement, o.transformElement, true) and compareDeep(dynamicValueList, o.dynamicValueList, true);
+  end;
+end;
+
+function TFhirActivityDefinition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSubtitle) and isEmptyProp(FSubject) and isEmptyProp(FUsage) and isEmptyProp(FtopicList) and isEmptyProp(FauthorList) and isEmptyProp(FeditorList) and isEmptyProp(FreviewerList) and isEmptyProp(FendorserList) and isEmptyProp(FrelatedArtifactList) and isEmptyProp(Flibrary_List) and isEmptyProp(FKind) and isEmptyProp(FProfile) and isEmptyProp(FCode) and isEmptyProp(FIntent) and isEmptyProp(FPriority) and isEmptyProp(FDoNotPerform) and isEmptyProp(FTiming) and isEmptyProp(FLocation) and isEmptyProp(FparticipantList) and isEmptyProp(FProduct) and isEmptyProp(FQuantity) and isEmptyProp(FdosageList) and isEmptyProp(FbodySiteList) and isEmptyProp(FspecimenRequirementList) and isEmptyProp(FobservationRequirementList) and isEmptyProp(FobservationResultRequirementList) and isEmptyProp(FTransform) and isEmptyProp(FdynamicValueList);
+end;
+
+procedure TFhirActivityDefinition.SetUrl(value : TFhirUri);
+begin
+  FUrl.free;
+  FUrl := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirActivityDefinition.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+function TFhirActivityDefinition.GetIdentifierList : TFhirIdentifierList;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  result := FIdentifierList;
+end;
+
+function TFhirActivityDefinition.GetHasIdentifierList : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
+end;
+
+procedure TFhirActivityDefinition.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := FVersion.value;
+end;
+
+procedure TFhirActivityDefinition.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirActivityDefinition.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirActivityDefinition.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetSubtitle(value : TFhirString);
+begin
+  FSubtitle.free;
+  FSubtitle := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetSubtitleST : String;
+begin
+  if FSubtitle = nil then
+    result := ''
+  else
+    result := FSubtitle.value;
+end;
+
+procedure TFhirActivityDefinition.SetSubtitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FSubtitle = nil then
+      FSubtitle := TFhirString.create;
+    FSubtitle.value := value
+  end
+  else if FSubtitle <> nil then
+    FSubtitle.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+function TFhirActivityDefinition.GetStatusST : TFhirPublicationStatusEnum;
+begin
+  if FStatus = nil then
+    result := TFhirPublicationStatusEnum(0)
+  else
+    result := TFhirPublicationStatusEnum(StringArrayIndexOfSensitive(CODES_TFhirPublicationStatusEnum, FStatus.value));
+end;
+
+procedure TFhirActivityDefinition.SetStatusST(value : TFhirPublicationStatusEnum);
+begin
+  if ord(value) = 0 then
+    StatusElement := nil
+  else
+    StatusElement := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
+end;
+
+procedure TFhirActivityDefinition.SetExperimental(value : TFhirBoolean);
+begin
+  FExperimental.free;
+  FExperimental := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetExperimentalST : Boolean;
+begin
+  if FExperimental = nil then
+    result := false
+  else
+    result := FExperimental.value;
+end;
+
+procedure TFhirActivityDefinition.SetExperimentalST(value : Boolean);
+begin
+  if FExperimental = nil then
+    FExperimental := TFhirBoolean.create;
+  FExperimental.value := value
+end;
+
+procedure TFhirActivityDefinition.SetSubject(value : TFhirDataType);
+begin
+  FSubject.free;
+  FSubject := value; {L1134}
+end;
+
+procedure TFhirActivityDefinition.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetDateST : TFslDateTime;
+begin
+  if FDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FDate.value;
+end;
+
+procedure TFhirActivityDefinition.SetDateST(value : TFslDateTime);
+begin
+  if FDate = nil then
+    FDate := TFhirDateTime.create;
+  FDate.value := value
+end;
+
+procedure TFhirActivityDefinition.SetPublisher(value : TFhirString);
+begin
+  FPublisher.free;
+  FPublisher := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetPublisherST : String;
+begin
+  if FPublisher = nil then
+    result := ''
+  else
+    result := FPublisher.value;
+end;
+
+procedure TFhirActivityDefinition.SetPublisherST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPublisher = nil then
+      FPublisher := TFhirString.create;
+    FPublisher.value := value
+  end
+  else if FPublisher <> nil then
+    FPublisher.value := '';
+end;
+
+function TFhirActivityDefinition.GetContactList : TFhirContactDetailList;
+begin
+  if FContactList = nil then
+    FContactList := TFhirContactDetailList.Create;
+  result := FContactList;
+end;
+
+function TFhirActivityDefinition.GetHasContactList : boolean;
+begin
+  result := (FContactList <> nil) and (FContactList.count > 0);
+end;
+
+procedure TFhirActivityDefinition.SetDescription(value : TFhirMarkdown);
+begin
+  FDescription.free;
+  FDescription := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirActivityDefinition.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirMarkdown.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+function TFhirActivityDefinition.GetUseContextList : TFhirUsageContextList;
+begin
+  if FUseContextList = nil then
+    FUseContextList := TFhirUsageContextList.Create;
+  result := FUseContextList;
+end;
+
+function TFhirActivityDefinition.GetHasUseContextList : boolean;
+begin
+  result := (FUseContextList <> nil) and (FUseContextList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetJurisdictionList : TFhirCodeableConceptList;
+begin
+  if FJurisdictionList = nil then
+    FJurisdictionList := TFhirCodeableConceptList.Create;
+  result := FJurisdictionList;
+end;
+
+function TFhirActivityDefinition.GetHasJurisdictionList : boolean;
+begin
+  result := (FJurisdictionList <> nil) and (FJurisdictionList.count > 0);
+end;
+
+procedure TFhirActivityDefinition.SetPurpose(value : TFhirMarkdown);
+begin
+  FPurpose.free;
+  FPurpose := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetPurposeST : String;
+begin
+  if FPurpose = nil then
+    result := ''
+  else
+    result := FPurpose.value;
+end;
+
+procedure TFhirActivityDefinition.SetPurposeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPurpose = nil then
+      FPurpose := TFhirMarkdown.create;
+    FPurpose.value := value
+  end
+  else if FPurpose <> nil then
+    FPurpose.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetUsage(value : TFhirString);
+begin
+  FUsage.free;
+  FUsage := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetUsageST : String;
+begin
+  if FUsage = nil then
+    result := ''
+  else
+    result := FUsage.value;
+end;
+
+procedure TFhirActivityDefinition.SetUsageST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUsage = nil then
+      FUsage := TFhirString.create;
+    FUsage.value := value
+  end
+  else if FUsage <> nil then
+    FUsage.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetCopyright(value : TFhirMarkdown);
+begin
+  FCopyright.free;
+  FCopyright := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetCopyrightST : String;
+begin
+  if FCopyright = nil then
+    result := ''
+  else
+    result := FCopyright.value;
+end;
+
+procedure TFhirActivityDefinition.SetCopyrightST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCopyright = nil then
+      FCopyright := TFhirMarkdown.create;
+    FCopyright.value := value
+  end
+  else if FCopyright <> nil then
+    FCopyright.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetApprovalDate(value : TFhirDate);
+begin
+  FApprovalDate.free;
+  FApprovalDate := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetApprovalDateST : TFslDateTime;
+begin
+  if FApprovalDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FApprovalDate.value;
+end;
+
+procedure TFhirActivityDefinition.SetApprovalDateST(value : TFslDateTime);
+begin
+  if FApprovalDate = nil then
+    FApprovalDate := TFhirDate.create;
+  FApprovalDate.value := value
+end;
+
+procedure TFhirActivityDefinition.SetLastReviewDate(value : TFhirDate);
+begin
+  FLastReviewDate.free;
+  FLastReviewDate := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetLastReviewDateST : TFslDateTime;
+begin
+  if FLastReviewDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FLastReviewDate.value;
+end;
+
+procedure TFhirActivityDefinition.SetLastReviewDateST(value : TFslDateTime);
+begin
+  if FLastReviewDate = nil then
+    FLastReviewDate := TFhirDate.create;
+  FLastReviewDate.value := value
+end;
+
+procedure TFhirActivityDefinition.SetEffectivePeriod(value : TFhirPeriod);
+begin
+  FEffectivePeriod.free;
+  FEffectivePeriod := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetTopicList : TFhirCodeableConceptList;
+begin
+  if FTopicList = nil then
+    FTopicList := TFhirCodeableConceptList.Create;
+  result := FTopicList;
+end;
+
+function TFhirActivityDefinition.GetHasTopicList : boolean;
+begin
+  result := (FTopicList <> nil) and (FTopicList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetAuthorList : TFhirContactDetailList;
+begin
+  if FAuthorList = nil then
+    FAuthorList := TFhirContactDetailList.Create;
+  result := FAuthorList;
+end;
+
+function TFhirActivityDefinition.GetHasAuthorList : boolean;
+begin
+  result := (FAuthorList <> nil) and (FAuthorList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetEditorList : TFhirContactDetailList;
+begin
+  if FEditorList = nil then
+    FEditorList := TFhirContactDetailList.Create;
+  result := FEditorList;
+end;
+
+function TFhirActivityDefinition.GetHasEditorList : boolean;
+begin
+  result := (FEditorList <> nil) and (FEditorList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetReviewerList : TFhirContactDetailList;
+begin
+  if FReviewerList = nil then
+    FReviewerList := TFhirContactDetailList.Create;
+  result := FReviewerList;
+end;
+
+function TFhirActivityDefinition.GetHasReviewerList : boolean;
+begin
+  result := (FReviewerList <> nil) and (FReviewerList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetEndorserList : TFhirContactDetailList;
+begin
+  if FEndorserList = nil then
+    FEndorserList := TFhirContactDetailList.Create;
+  result := FEndorserList;
+end;
+
+function TFhirActivityDefinition.GetHasEndorserList : boolean;
+begin
+  result := (FEndorserList <> nil) and (FEndorserList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetRelatedArtifactList : TFhirRelatedArtifactList;
+begin
+  if FRelatedArtifactList = nil then
+    FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+  result := FRelatedArtifactList;
+end;
+
+function TFhirActivityDefinition.GetHasRelatedArtifactList : boolean;
+begin
+  result := (FRelatedArtifactList <> nil) and (FRelatedArtifactList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetLibrary_List : TFhirCanonicalList;
+begin
+  if FLibrary_List = nil then
+    FLibrary_List := TFhirCanonicalList.Create;
+  result := FLibrary_List;
+end;
+
+function TFhirActivityDefinition.GetHasLibrary_List : boolean;
+begin
+  result := (FLibrary_List <> nil) and (FLibrary_List.count > 0);
+end;
+
+procedure TFhirActivityDefinition.SetKind(value : TFhirEnum);
+begin
+  FKind.free;
+  FKind := value;
+end;
+
+function TFhirActivityDefinition.GetKindST : TFhirRequestResourceTypeEnum;
+begin
+  if FKind = nil then
+    result := TFhirRequestResourceTypeEnum(0)
+  else
+    result := TFhirRequestResourceTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestResourceTypeEnum, FKind.value));
+end;
+
+procedure TFhirActivityDefinition.SetKindST(value : TFhirRequestResourceTypeEnum);
+begin
+  if ord(value) = 0 then
+    KindElement := nil
+  else
+    KindElement := TFhirEnum.create(SYSTEMS_TFhirRequestResourceTypeEnum[value], CODES_TFhirRequestResourceTypeEnum[value]);
+end;
+
+procedure TFhirActivityDefinition.SetProfile(value : TFhirCanonical);
+begin
+  FProfile.free;
+  FProfile := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetProfileST : String;
+begin
+  if FProfile = nil then
+    result := ''
+  else
+    result := FProfile.value;
+end;
+
+procedure TFhirActivityDefinition.SetProfileST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FProfile = nil then
+      FProfile := TFhirCanonical.create;
+    FProfile.value := value
+  end
+  else if FProfile <> nil then
+    FProfile.value := '';
+end;
+
+procedure TFhirActivityDefinition.SetCode(value : TFhirCodeableConcept);
+begin
+  FCode.free;
+  FCode := value; {L1134}
+end;
+
+procedure TFhirActivityDefinition.SetIntent(value : TFhirEnum);
+begin
+  FIntent.free;
+  FIntent := value;
+end;
+
+function TFhirActivityDefinition.GetIntentST : TFhirRequestIntentEnum;
+begin
+  if FIntent = nil then
+    result := TFhirRequestIntentEnum(0)
+  else
+    result := TFhirRequestIntentEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestIntentEnum, FIntent.value));
+end;
+
+procedure TFhirActivityDefinition.SetIntentST(value : TFhirRequestIntentEnum);
+begin
+  if ord(value) = 0 then
+    IntentElement := nil
+  else
+    IntentElement := TFhirEnum.create(SYSTEMS_TFhirRequestIntentEnum[value], CODES_TFhirRequestIntentEnum[value]);
+end;
+
+procedure TFhirActivityDefinition.SetPriority(value : TFhirEnum);
+begin
+  FPriority.free;
+  FPriority := value;
+end;
+
+function TFhirActivityDefinition.GetPriorityST : TFhirRequestPriorityEnum;
+begin
+  if FPriority = nil then
+    result := TFhirRequestPriorityEnum(0)
+  else
+    result := TFhirRequestPriorityEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestPriorityEnum, FPriority.value));
+end;
+
+procedure TFhirActivityDefinition.SetPriorityST(value : TFhirRequestPriorityEnum);
+begin
+  if ord(value) = 0 then
+    PriorityElement := nil
+  else
+    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[value], CODES_TFhirRequestPriorityEnum[value]);
+end;
+
+procedure TFhirActivityDefinition.SetDoNotPerform(value : TFhirBoolean);
+begin
+  FDoNotPerform.free;
+  FDoNotPerform := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetDoNotPerformST : Boolean;
+begin
+  if FDoNotPerform = nil then
+    result := false
+  else
+    result := FDoNotPerform.value;
+end;
+
+procedure TFhirActivityDefinition.SetDoNotPerformST(value : Boolean);
+begin
+  if FDoNotPerform = nil then
+    FDoNotPerform := TFhirBoolean.create;
+  FDoNotPerform.value := value
+end;
+
+procedure TFhirActivityDefinition.SetTiming(value : TFhirDataType);
+begin
+  FTiming.free;
+  FTiming := value; {L1134}
+end;
+
+procedure TFhirActivityDefinition.SetLocation(value : TFhirReference);
+begin
+  FLocation.free;
+  FLocation := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetParticipantList : TFhirActivityDefinitionParticipantList;
+begin
+  if FParticipantList = nil then
+    FParticipantList := TFhirActivityDefinitionParticipantList.Create;
+  result := FParticipantList;
+end;
+
+function TFhirActivityDefinition.GetHasParticipantList : boolean;
+begin
+  result := (FParticipantList <> nil) and (FParticipantList.count > 0);
+end;
+
+procedure TFhirActivityDefinition.SetProduct(value : TFhirDataType);
+begin
+  FProduct.free;
+  FProduct := value; {L1134}
+end;
+
+procedure TFhirActivityDefinition.SetQuantity(value : TFhirQuantity);
+begin
+  FQuantity.free;
+  FQuantity := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetDosageList : TFhirDosageList;
+begin
+  if FDosageList = nil then
+    FDosageList := TFhirDosageList.Create;
+  result := FDosageList;
+end;
+
+function TFhirActivityDefinition.GetHasDosageList : boolean;
+begin
+  result := (FDosageList <> nil) and (FDosageList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetBodySiteList : TFhirCodeableConceptList;
+begin
+  if FBodySiteList = nil then
+    FBodySiteList := TFhirCodeableConceptList.Create;
+  result := FBodySiteList;
+end;
+
+function TFhirActivityDefinition.GetHasBodySiteList : boolean;
+begin
+  result := (FBodySiteList <> nil) and (FBodySiteList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetSpecimenRequirementList : TFhirReferenceList;
+begin
+  if FSpecimenRequirementList = nil then
+    FSpecimenRequirementList := TFhirReferenceList.Create;
+  result := FSpecimenRequirementList;
+end;
+
+function TFhirActivityDefinition.GetHasSpecimenRequirementList : boolean;
+begin
+  result := (FSpecimenRequirementList <> nil) and (FSpecimenRequirementList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetObservationRequirementList : TFhirReferenceList;
+begin
+  if FObservationRequirementList = nil then
+    FObservationRequirementList := TFhirReferenceList.Create;
+  result := FObservationRequirementList;
+end;
+
+function TFhirActivityDefinition.GetHasObservationRequirementList : boolean;
+begin
+  result := (FObservationRequirementList <> nil) and (FObservationRequirementList.count > 0);
+end;
+
+function TFhirActivityDefinition.GetObservationResultRequirementList : TFhirReferenceList;
+begin
+  if FObservationResultRequirementList = nil then
+    FObservationResultRequirementList := TFhirReferenceList.Create;
+  result := FObservationResultRequirementList;
+end;
+
+function TFhirActivityDefinition.GetHasObservationResultRequirementList : boolean;
+begin
+  result := (FObservationResultRequirementList <> nil) and (FObservationResultRequirementList.count > 0);
+end;
+
+procedure TFhirActivityDefinition.SetTransform(value : TFhirCanonical);
+begin
+  FTransform.free;
+  FTransform := value; {L1134}
+end;
+
+function TFhirActivityDefinition.GetTransformST : String;
+begin
+  if FTransform = nil then
+    result := ''
+  else
+    result := FTransform.value;
+end;
+
+procedure TFhirActivityDefinition.SetTransformST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTransform = nil then
+      FTransform := TFhirCanonical.create;
+    FTransform.value := value
+  end
+  else if FTransform <> nil then
+    FTransform.value := '';
+end;
+
+function TFhirActivityDefinition.GetDynamicValueList : TFhirActivityDefinitionDynamicValueList;
+begin
+  if FDynamicValueList = nil then
+    FDynamicValueList := TFhirActivityDefinitionDynamicValueList.Create;
+  result := FDynamicValueList;
+end;
+
+function TFhirActivityDefinition.GetHasDynamicValueList : boolean;
+begin
+  result := (FDynamicValueList <> nil) and (FDynamicValueList.count > 0);
+end;
+
+{ TFhirActivityDefinitionListEnumerator }
+
+constructor TFhirActivityDefinitionListEnumerator.Create(list : TFhirActivityDefinitionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirActivityDefinitionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirActivityDefinitionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirActivityDefinitionListEnumerator.GetCurrent : TFhirActivityDefinition;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirActivityDefinitionList }
+
+procedure TFhirActivityDefinitionList.AddItem(value: TFhirActivityDefinition);
+begin
+  assert(value.ClassName = 'TFhirActivityDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirActivityDefinition');
+  add(value);
+end;
+
+function TFhirActivityDefinitionList.Append: TFhirActivityDefinition;
+begin
+  result := TFhirActivityDefinition.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirActivityDefinitionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirActivityDefinitionList.GetEnumerator : TFhirActivityDefinitionListEnumerator;
+begin
+  result := TFhirActivityDefinitionListEnumerator.Create(self.link);
+end;
+
+function TFhirActivityDefinitionList.Clone: TFhirActivityDefinitionList;
+begin
+  result := TFhirActivityDefinitionList(inherited Clone);
+end;
+
+function TFhirActivityDefinitionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirActivityDefinitionList.GetItemN(index: Integer): TFhirActivityDefinition;
+begin
+  result := TFhirActivityDefinition(ObjectByIndex[index]);
+end;
+
+function TFhirActivityDefinitionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirActivityDefinition;
+end;
+function TFhirActivityDefinitionList.IndexOf(value: TFhirActivityDefinition): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirActivityDefinitionList.Insert(index: Integer): TFhirActivityDefinition;
+begin
+  result := TFhirActivityDefinition.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirActivityDefinitionList.InsertItem(index: Integer; value: TFhirActivityDefinition);
+begin
+  assert(value is TFhirActivityDefinition);
+  Inherited Insert(index, value);
+end;
+
+function TFhirActivityDefinitionList.Item(index: Integer): TFhirActivityDefinition;
+begin
+  result := TFhirActivityDefinition(ObjectByIndex[index]);
+end;
+
+function TFhirActivityDefinitionList.Link: TFhirActivityDefinitionList;
+begin
+  result := TFhirActivityDefinitionList(inherited Link);
+end;
+
+procedure TFhirActivityDefinitionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirActivityDefinitionList.SetItemByIndex(index: Integer; value: TFhirActivityDefinition);
+begin
+  assert(value is TFhirActivityDefinition);
+  FhirActivityDefinitions[index] := value;
+end;
+
+procedure TFhirActivityDefinitionList.SetItemN(index: Integer; value: TFhirActivityDefinition);
+begin
+  assert(value is TFhirActivityDefinition);
+  ObjectByIndex[index] := value;
+end;
+
+{$ENDIF FHIR_ACTIVITYDEFINITION}
 
 {$IFDEF FHIR_AUDITEVENT}
 { TFhirAuditEventAgent }
@@ -44344,6 +48982,4104 @@ begin
 end;
 
 {$ENDIF FHIR_PERMISSION}
+{$IFDEF FHIR_PLANDEFINITION}
+{ TFhirPlanDefinitionGoal }
+
+constructor TFhirPlanDefinitionGoal.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionGoal.Destroy;
+begin
+  FCategory.free;
+  FDescription.free;
+  FPriority.free;
+  FStart.free;
+  FAddressesList.Free;
+  FDocumentationList.Free;
+  FTargetList.Free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionGoal.Assign(oSource : TFslObject);
+begin
+  inherited;
+  category := TFhirPlanDefinitionGoal(oSource).category.Clone;
+  description := TFhirPlanDefinitionGoal(oSource).description.Clone;
+  priority := TFhirPlanDefinitionGoal(oSource).priority.Clone;
+  start := TFhirPlanDefinitionGoal(oSource).start.Clone;
+  if (TFhirPlanDefinitionGoal(oSource).FAddressesList = nil) then
+  begin
+    FAddressesList.free;
+    FAddressesList := nil;
+  end
+  else
+  begin
+    if FAddressesList = nil then
+      FAddressesList := TFhirCodeableConceptList.Create;
+    FAddressesList.Assign(TFhirPlanDefinitionGoal(oSource).FAddressesList);
+  end;
+  if (TFhirPlanDefinitionGoal(oSource).FDocumentationList = nil) then
+  begin
+    FDocumentationList.free;
+    FDocumentationList := nil;
+  end
+  else
+  begin
+    if FDocumentationList = nil then
+      FDocumentationList := TFhirRelatedArtifactList.Create;
+    FDocumentationList.Assign(TFhirPlanDefinitionGoal(oSource).FDocumentationList);
+  end;
+  if (TFhirPlanDefinitionGoal(oSource).FTargetList = nil) then
+  begin
+    FTargetList.free;
+    FTargetList := nil;
+  end
+  else
+  begin
+    if FTargetList = nil then
+      FTargetList := TFhirPlanDefinitionGoalTargetList.Create;
+    FTargetList.Assign(TFhirPlanDefinitionGoal(oSource).FTargetList);
+  end;
+end;
+
+procedure TFhirPlanDefinitionGoal.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'category') Then
+     list.add(self.link, 'category', FCategory.Link);
+  if (child_name = 'description') Then
+     list.add(self.link, 'description', FDescription.Link);
+  if (child_name = 'priority') Then
+     list.add(self.link, 'priority', FPriority.Link);
+  if (child_name = 'start') Then
+     list.add(self.link, 'start', FStart.Link);
+  if (child_name = 'addresses') Then
+    list.addAll(self, 'addresses', FAddressesList);
+  if (child_name = 'documentation') Then
+    list.addAll(self, 'documentation', FDocumentationList);
+  if (child_name = 'target') Then
+    list.addAll(self, 'target', FTargetList);
+end;
+
+procedure TFhirPlanDefinitionGoal.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'description', 'CodeableConcept', false, TFhirCodeableConcept, FDescription.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'start', 'CodeableConcept', false, TFhirCodeableConcept, FStart.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'addresses', 'CodeableConcept', true, TFhirCodeableConcept, FAddressesList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'documentation', 'RelatedArtifact', true, TFhirRelatedArtifact, FDocumentationList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'target', 'BackboneElement', true, TFhirPlanDefinitionGoalTarget, FTargetList.Link)) {L1039};
+end;
+
+function TFhirPlanDefinitionGoal.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'category') then
+  begin
+    Category := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'description') then
+  begin
+    Description := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'priority') then
+  begin
+    Priority := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'start') then
+  begin
+    Start := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'addresses') then
+  begin
+    AddressesList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationList.add(propValue as TFhirRelatedArtifact) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'target') then
+  begin
+    TargetList.add(propValue as TFhirPlanDefinitionGoalTarget) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionGoal.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'addresses') then AddressesList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'documentation') then DocumentationList.insertItem(index, propValue as TFhirRelatedArtifact) {L1049}
+  else if (propName = 'target') then TargetList.insertItem(index, propValue as TFhirPlanDefinitionGoalTarget) {L1049}
+  else inherited;
+end;
+
+function TFhirPlanDefinitionGoal.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'category') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'description') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'priority') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'start') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'addresses') then result := AddressesList.new() {L1053}
+  else if (propName = 'documentation') then result := DocumentationList.new() {L1053}
+  else if (propName = 'target') then result := TargetList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionGoal.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'category') then result := 'CodeableConcept'
+  else if (propName = 'description') then result := 'CodeableConcept'
+  else if (propName = 'priority') then result := 'CodeableConcept'
+  else if (propName = 'start') then result := 'CodeableConcept'
+  else if (propName = 'addresses') then result := 'CodeableConcept'
+  else if (propName = 'documentation') then result := 'RelatedArtifact'
+  else if (propName = 'target') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionGoal.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'category') then CategoryElement := nil
+  else if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'priority') then PriorityElement := nil
+  else if (propName = 'start') then StartElement := nil
+  else if (propName = 'addresses') then deletePropertyValue('addresses', AddressesList, value) {L1054}
+  else if (propName = 'documentation') then deletePropertyValue('documentation', DocumentationList, value) {L1054}
+  else if (propName = 'target') then deletePropertyValue('target', TargetList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionGoal.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'category') then CategoryElement := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'description') then DescriptionElement := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'priority') then PriorityElement := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'start') then StartElement := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'addresses') then replacePropertyValue('addresses', AddressesList, existing, new) {L1055}
+  else if (propName = 'documentation') then replacePropertyValue('documentation', DocumentationList, existing, new) {L1055}
+  else if (propName = 'target') then replacePropertyValue('target', TargetList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionGoal.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'addresses') then AddressesList.move(source, destination) {L1050}
+  else if (propName = 'documentation') then DocumentationList.move(source, destination) {L1050}
+  else if (propName = 'target') then TargetList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionGoal.fhirType : string;
+begin
+  result := 'PlanDefinition.goal';
+end;
+
+function TFhirPlanDefinitionGoal.Link : TFhirPlanDefinitionGoal;
+begin
+  result := TFhirPlanDefinitionGoal(inherited Link);
+end;
+
+function TFhirPlanDefinitionGoal.Clone : TFhirPlanDefinitionGoal;
+begin
+  result := TFhirPlanDefinitionGoal(inherited Clone);
+end;
+
+function TFhirPlanDefinitionGoal.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionGoal;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionGoal)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionGoal(other);
+    result := compareDeep(categoryElement, o.categoryElement, true) and compareDeep(descriptionElement, o.descriptionElement, true) and
+      compareDeep(priorityElement, o.priorityElement, true) and compareDeep(startElement, o.startElement, true) and
+      compareDeep(addressesList, o.addressesList, true) and compareDeep(documentationList, o.documentationList, true) and
+      compareDeep(targetList, o.targetList, true);
+  end;
+end;
+
+function TFhirPlanDefinitionGoal.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCategory) and isEmptyProp(FDescription) and isEmptyProp(FPriority) and isEmptyProp(FStart) and isEmptyProp(FaddressesList) and isEmptyProp(FdocumentationList) and isEmptyProp(FtargetList);
+end;
+
+procedure TFhirPlanDefinitionGoal.SetCategory(value : TFhirCodeableConcept);
+begin
+  FCategory.free;
+  FCategory := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionGoal.SetDescription(value : TFhirCodeableConcept);
+begin
+  FDescription.free;
+  FDescription := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionGoal.SetPriority(value : TFhirCodeableConcept);
+begin
+  FPriority.free;
+  FPriority := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionGoal.SetStart(value : TFhirCodeableConcept);
+begin
+  FStart.free;
+  FStart := value; {L1134}
+end;
+
+function TFhirPlanDefinitionGoal.GetAddressesList : TFhirCodeableConceptList;
+begin
+  if FAddressesList = nil then
+    FAddressesList := TFhirCodeableConceptList.Create;
+  result := FAddressesList;
+end;
+
+function TFhirPlanDefinitionGoal.GetHasAddressesList : boolean;
+begin
+  result := (FAddressesList <> nil) and (FAddressesList.count > 0);
+end;
+
+function TFhirPlanDefinitionGoal.GetDocumentationList : TFhirRelatedArtifactList;
+begin
+  if FDocumentationList = nil then
+    FDocumentationList := TFhirRelatedArtifactList.Create;
+  result := FDocumentationList;
+end;
+
+function TFhirPlanDefinitionGoal.GetHasDocumentationList : boolean;
+begin
+  result := (FDocumentationList <> nil) and (FDocumentationList.count > 0);
+end;
+
+function TFhirPlanDefinitionGoal.GetTargetList : TFhirPlanDefinitionGoalTargetList;
+begin
+  if FTargetList = nil then
+    FTargetList := TFhirPlanDefinitionGoalTargetList.Create;
+  result := FTargetList;
+end;
+
+function TFhirPlanDefinitionGoal.GetHasTargetList : boolean;
+begin
+  result := (FTargetList <> nil) and (FTargetList.count > 0);
+end;
+
+{ TFhirPlanDefinitionGoalListEnumerator }
+
+constructor TFhirPlanDefinitionGoalListEnumerator.Create(list : TFhirPlanDefinitionGoalList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionGoalListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionGoalListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionGoalListEnumerator.GetCurrent : TFhirPlanDefinitionGoal;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionGoalList }
+
+procedure TFhirPlanDefinitionGoalList.AddItem(value: TFhirPlanDefinitionGoal);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionGoal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionGoal');
+  add(value);
+end;
+
+function TFhirPlanDefinitionGoalList.Append: TFhirPlanDefinitionGoal;
+begin
+  result := TFhirPlanDefinitionGoal.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionGoalList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionGoalList.GetEnumerator : TFhirPlanDefinitionGoalListEnumerator;
+begin
+  result := TFhirPlanDefinitionGoalListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionGoalList.Clone: TFhirPlanDefinitionGoalList;
+begin
+  result := TFhirPlanDefinitionGoalList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionGoalList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionGoalList.GetItemN(index: Integer): TFhirPlanDefinitionGoal;
+begin
+  result := TFhirPlanDefinitionGoal(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionGoalList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionGoal;
+end;
+function TFhirPlanDefinitionGoalList.IndexOf(value: TFhirPlanDefinitionGoal): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionGoalList.Insert(index: Integer): TFhirPlanDefinitionGoal;
+begin
+  result := TFhirPlanDefinitionGoal.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionGoalList.InsertItem(index: Integer; value: TFhirPlanDefinitionGoal);
+begin
+  assert(value is TFhirPlanDefinitionGoal);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionGoalList.Item(index: Integer): TFhirPlanDefinitionGoal;
+begin
+  result := TFhirPlanDefinitionGoal(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionGoalList.Link: TFhirPlanDefinitionGoalList;
+begin
+  result := TFhirPlanDefinitionGoalList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionGoalList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionGoalList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionGoal);
+begin
+  assert(value is TFhirPlanDefinitionGoal);
+  FhirPlanDefinitionGoals[index] := value;
+end;
+
+procedure TFhirPlanDefinitionGoalList.SetItemN(index: Integer; value: TFhirPlanDefinitionGoal);
+begin
+  assert(value is TFhirPlanDefinitionGoal);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinitionGoalTarget }
+
+constructor TFhirPlanDefinitionGoalTarget.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionGoalTarget.Destroy;
+begin
+  FMeasure.free;
+  FDetail.free;
+  FDue.free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.Assign(oSource : TFslObject);
+begin
+  inherited;
+  measure := TFhirPlanDefinitionGoalTarget(oSource).measure.Clone;
+  detail := TFhirPlanDefinitionGoalTarget(oSource).detail.Clone;
+  due := TFhirPlanDefinitionGoalTarget(oSource).due.Clone;
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'measure') Then
+     list.add(self.link, 'measure', FMeasure.Link);
+  if (child_name = 'detail[x]') or (child_name = 'detail') Then
+     list.add(self.link, 'detail[x]', FDetail.Link);
+  if (child_name = 'due') Then
+     list.add(self.link, 'due', FDue.Link);
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'measure', 'CodeableConcept', false, TFhirCodeableConcept, FMeasure.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'detail[x]', 'Quantity|Range|CodeableConcept', false, TFhirDataType, FDetail.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'due', 'Duration', false, TFhirDuration, FDue.Link)); {L1172}
+end;
+
+function TFhirPlanDefinitionGoalTarget.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'measure') then
+  begin
+    Measure := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'detail', ['Quantity', 'Range', 'CodeableConcept'])) then
+  begin
+    Detail := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'due') then
+  begin
+    Due := propValue as TFhirDuration {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirPlanDefinitionGoalTarget.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'measure') then result := TFhirCodeableConcept.create() {L1203}
+  else if (isMatchingName(propName, 'detail', ['Quantity', 'Range', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Detail') {L1191}
+  else if (propName = 'due') then result := TFhirDuration.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionGoalTarget.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'measure') then result := 'CodeableConcept'
+  else if (propName = 'detail[x]') then result := 'Quantity|Range|CodeableConcept'
+  else if (propName = 'due') then result := 'Duration'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'measure') then MeasureElement := nil
+  else if (isMatchingName(propName, 'detail', ['Quantity', 'Range', 'CodeableConcept'])) then DetailElement := nil {L1189}
+  else if (propName = 'due') then DueElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'measure') then MeasureElement := new as TFhirCodeableConcept {L1195}
+  else if (isMatchingName(propName, 'detail', ['Quantity', 'Range', 'CodeableConcept'])) then DetailElement := new as TFhirDataType {L1190}
+  else if (propName = 'due') then DueElement := new as TFhirDuration {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionGoalTarget.fhirType : string;
+begin
+  result := 'PlanDefinition.goal.target';
+end;
+
+function TFhirPlanDefinitionGoalTarget.Link : TFhirPlanDefinitionGoalTarget;
+begin
+  result := TFhirPlanDefinitionGoalTarget(inherited Link);
+end;
+
+function TFhirPlanDefinitionGoalTarget.Clone : TFhirPlanDefinitionGoalTarget;
+begin
+  result := TFhirPlanDefinitionGoalTarget(inherited Clone);
+end;
+
+function TFhirPlanDefinitionGoalTarget.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionGoalTarget;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionGoalTarget)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionGoalTarget(other);
+    result := compareDeep(measureElement, o.measureElement, true) and compareDeep(detailElement, o.detailElement, true) and
+      compareDeep(dueElement, o.dueElement, true);
+  end;
+end;
+
+function TFhirPlanDefinitionGoalTarget.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FMeasure) and isEmptyProp(FDetail) and isEmptyProp(FDue);
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.SetMeasure(value : TFhirCodeableConcept);
+begin
+  FMeasure.free;
+  FMeasure := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.SetDetail(value : TFhirDataType);
+begin
+  FDetail.free;
+  FDetail := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionGoalTarget.SetDue(value : TFhirDuration);
+begin
+  FDue.free;
+  FDue := value; {L1134}
+end;
+
+{ TFhirPlanDefinitionGoalTargetListEnumerator }
+
+constructor TFhirPlanDefinitionGoalTargetListEnumerator.Create(list : TFhirPlanDefinitionGoalTargetList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionGoalTargetListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionGoalTargetListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionGoalTargetListEnumerator.GetCurrent : TFhirPlanDefinitionGoalTarget;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionGoalTargetList }
+
+procedure TFhirPlanDefinitionGoalTargetList.AddItem(value: TFhirPlanDefinitionGoalTarget);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionGoalTarget', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionGoalTarget');
+  add(value);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.Append: TFhirPlanDefinitionGoalTarget;
+begin
+  result := TFhirPlanDefinitionGoalTarget.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionGoalTargetList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionGoalTargetList.GetEnumerator : TFhirPlanDefinitionGoalTargetListEnumerator;
+begin
+  result := TFhirPlanDefinitionGoalTargetListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.Clone: TFhirPlanDefinitionGoalTargetList;
+begin
+  result := TFhirPlanDefinitionGoalTargetList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionGoalTargetList.GetItemN(index: Integer): TFhirPlanDefinitionGoalTarget;
+begin
+  result := TFhirPlanDefinitionGoalTarget(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionGoalTarget;
+end;
+function TFhirPlanDefinitionGoalTargetList.IndexOf(value: TFhirPlanDefinitionGoalTarget): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.Insert(index: Integer): TFhirPlanDefinitionGoalTarget;
+begin
+  result := TFhirPlanDefinitionGoalTarget.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionGoalTargetList.InsertItem(index: Integer; value: TFhirPlanDefinitionGoalTarget);
+begin
+  assert(value is TFhirPlanDefinitionGoalTarget);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.Item(index: Integer): TFhirPlanDefinitionGoalTarget;
+begin
+  result := TFhirPlanDefinitionGoalTarget(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionGoalTargetList.Link: TFhirPlanDefinitionGoalTargetList;
+begin
+  result := TFhirPlanDefinitionGoalTargetList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionGoalTargetList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionGoalTargetList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionGoalTarget);
+begin
+  assert(value is TFhirPlanDefinitionGoalTarget);
+  FhirPlanDefinitionGoalTargets[index] := value;
+end;
+
+procedure TFhirPlanDefinitionGoalTargetList.SetItemN(index: Integer; value: TFhirPlanDefinitionGoalTarget);
+begin
+  assert(value is TFhirPlanDefinitionGoalTarget);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinitionAction }
+
+constructor TFhirPlanDefinitionAction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionAction.Destroy;
+begin
+  FPrefix.free;
+  FTitle.free;
+  FDescription.free;
+  FTextEquivalent.free;
+  FPriority.free;
+  FCodeList.Free;
+  FReasonList.Free;
+  FDocumentationList.Free;
+  FGoalIdList.Free;
+  FSubject.free;
+  FTriggerList.Free;
+  FConditionList.Free;
+  FInputList.Free;
+  FOutputList.Free;
+  FRelatedActionList.Free;
+  FTiming.free;
+  FParticipantList.Free;
+  FType_.free;
+  FGroupingBehavior.free;
+  FSelectionBehavior.free;
+  FRequiredBehavior.free;
+  FPrecheckBehavior.free;
+  FCardinalityBehavior.free;
+  FDefinition.free;
+  FTransform.free;
+  FDynamicValueList.Free;
+  FActionList.Free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionAction.Assign(oSource : TFslObject);
+begin
+  inherited;
+  prefixElement := TFhirPlanDefinitionAction(oSource).prefixElement.Clone;
+  titleElement := TFhirPlanDefinitionAction(oSource).titleElement.Clone;
+  descriptionElement := TFhirPlanDefinitionAction(oSource).descriptionElement.Clone;
+  textEquivalentElement := TFhirPlanDefinitionAction(oSource).textEquivalentElement.Clone;
+  priorityElement := TFhirPlanDefinitionAction(oSource).priorityElement.Clone;
+  if (TFhirPlanDefinitionAction(oSource).FCodeList = nil) then
+  begin
+    FCodeList.free;
+    FCodeList := nil;
+  end
+  else
+  begin
+    if FCodeList = nil then
+      FCodeList := TFhirCodeableConceptList.Create;
+    FCodeList.Assign(TFhirPlanDefinitionAction(oSource).FCodeList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FReasonList = nil) then
+  begin
+    FReasonList.free;
+    FReasonList := nil;
+  end
+  else
+  begin
+    if FReasonList = nil then
+      FReasonList := TFhirCodeableConceptList.Create;
+    FReasonList.Assign(TFhirPlanDefinitionAction(oSource).FReasonList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FDocumentationList = nil) then
+  begin
+    FDocumentationList.free;
+    FDocumentationList := nil;
+  end
+  else
+  begin
+    if FDocumentationList = nil then
+      FDocumentationList := TFhirRelatedArtifactList.Create;
+    FDocumentationList.Assign(TFhirPlanDefinitionAction(oSource).FDocumentationList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FGoalIdList = nil) then
+  begin
+    FGoalIdList.free;
+    FGoalIdList := nil;
+  end
+  else
+  begin
+    if FGoalIdList = nil then
+      FGoalIdList := TFhirIdList.Create;
+    FGoalIdList.Assign(TFhirPlanDefinitionAction(oSource).FGoalIdList);
+  end;
+  subject := TFhirPlanDefinitionAction(oSource).subject.Clone;
+  if (TFhirPlanDefinitionAction(oSource).FTriggerList = nil) then
+  begin
+    FTriggerList.free;
+    FTriggerList := nil;
+  end
+  else
+  begin
+    if FTriggerList = nil then
+      FTriggerList := TFhirTriggerDefinitionList.Create;
+    FTriggerList.Assign(TFhirPlanDefinitionAction(oSource).FTriggerList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FConditionList = nil) then
+  begin
+    FConditionList.free;
+    FConditionList := nil;
+  end
+  else
+  begin
+    if FConditionList = nil then
+      FConditionList := TFhirPlanDefinitionActionConditionList.Create;
+    FConditionList.Assign(TFhirPlanDefinitionAction(oSource).FConditionList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FInputList = nil) then
+  begin
+    FInputList.free;
+    FInputList := nil;
+  end
+  else
+  begin
+    if FInputList = nil then
+      FInputList := TFhirDataRequirementList.Create;
+    FInputList.Assign(TFhirPlanDefinitionAction(oSource).FInputList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FOutputList = nil) then
+  begin
+    FOutputList.free;
+    FOutputList := nil;
+  end
+  else
+  begin
+    if FOutputList = nil then
+      FOutputList := TFhirDataRequirementList.Create;
+    FOutputList.Assign(TFhirPlanDefinitionAction(oSource).FOutputList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FRelatedActionList = nil) then
+  begin
+    FRelatedActionList.free;
+    FRelatedActionList := nil;
+  end
+  else
+  begin
+    if FRelatedActionList = nil then
+      FRelatedActionList := TFhirPlanDefinitionActionRelatedActionList.Create;
+    FRelatedActionList.Assign(TFhirPlanDefinitionAction(oSource).FRelatedActionList);
+  end;
+  timing := TFhirPlanDefinitionAction(oSource).timing.Clone;
+  if (TFhirPlanDefinitionAction(oSource).FParticipantList = nil) then
+  begin
+    FParticipantList.free;
+    FParticipantList := nil;
+  end
+  else
+  begin
+    if FParticipantList = nil then
+      FParticipantList := TFhirPlanDefinitionActionParticipantList.Create;
+    FParticipantList.Assign(TFhirPlanDefinitionAction(oSource).FParticipantList);
+  end;
+  type_ := TFhirPlanDefinitionAction(oSource).type_.Clone;
+  groupingBehaviorElement := TFhirPlanDefinitionAction(oSource).groupingBehaviorElement.Clone;
+  selectionBehaviorElement := TFhirPlanDefinitionAction(oSource).selectionBehaviorElement.Clone;
+  requiredBehaviorElement := TFhirPlanDefinitionAction(oSource).requiredBehaviorElement.Clone;
+  precheckBehaviorElement := TFhirPlanDefinitionAction(oSource).precheckBehaviorElement.Clone;
+  cardinalityBehaviorElement := TFhirPlanDefinitionAction(oSource).cardinalityBehaviorElement.Clone;
+  definition := TFhirPlanDefinitionAction(oSource).definition.Clone;
+  transformElement := TFhirPlanDefinitionAction(oSource).transformElement.Clone;
+  if (TFhirPlanDefinitionAction(oSource).FDynamicValueList = nil) then
+  begin
+    FDynamicValueList.free;
+    FDynamicValueList := nil;
+  end
+  else
+  begin
+    if FDynamicValueList = nil then
+      FDynamicValueList := TFhirPlanDefinitionActionDynamicValueList.Create;
+    FDynamicValueList.Assign(TFhirPlanDefinitionAction(oSource).FDynamicValueList);
+  end;
+  if (TFhirPlanDefinitionAction(oSource).FActionList = nil) then
+  begin
+    FActionList.free;
+    FActionList := nil;
+  end
+  else
+  begin
+    if FActionList = nil then
+      FActionList := TFhirPlanDefinitionActionList.Create;
+    FActionList.Assign(TFhirPlanDefinitionAction(oSource).FActionList);
+  end;
+end;
+
+procedure TFhirPlanDefinitionAction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'prefix') Then
+     list.add(self.link, 'prefix', FPrefix.Link);
+  if (child_name = 'title') Then
+     list.add(self.link, 'title', FTitle.Link);
+  if (child_name = 'description') Then
+     list.add(self.link, 'description', FDescription.Link);
+  if (child_name = 'textEquivalent') Then
+     list.add(self.link, 'textEquivalent', FTextEquivalent.Link);
+  if (child_name = 'priority') Then
+     list.add(self.link, 'priority', FPriority.Link);
+  if (child_name = 'code') Then
+    list.addAll(self, 'code', FCodeList);
+  if (child_name = 'reason') Then
+    list.addAll(self, 'reason', FReasonList);
+  if (child_name = 'documentation') Then
+    list.addAll(self, 'documentation', FDocumentationList);
+  if (child_name = 'goalId') Then
+    list.addAll(self, 'goalId', FGoalIdList);
+  if (child_name = 'subject[x]') or (child_name = 'subject') Then
+     list.add(self.link, 'subject[x]', FSubject.Link);
+  if (child_name = 'trigger') Then
+    list.addAll(self, 'trigger', FTriggerList);
+  if (child_name = 'condition') Then
+    list.addAll(self, 'condition', FConditionList);
+  if (child_name = 'input') Then
+    list.addAll(self, 'input', FInputList);
+  if (child_name = 'output') Then
+    list.addAll(self, 'output', FOutputList);
+  if (child_name = 'relatedAction') Then
+    list.addAll(self, 'relatedAction', FRelatedActionList);
+  if (child_name = 'timing[x]') or (child_name = 'timing') Then
+     list.add(self.link, 'timing[x]', FTiming.Link);
+  if (child_name = 'participant') Then
+    list.addAll(self, 'participant', FParticipantList);
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'groupingBehavior') Then
+     list.add(self.link, 'groupingBehavior', FGroupingBehavior.Link);
+  if (child_name = 'selectionBehavior') Then
+     list.add(self.link, 'selectionBehavior', FSelectionBehavior.Link);
+  if (child_name = 'requiredBehavior') Then
+     list.add(self.link, 'requiredBehavior', FRequiredBehavior.Link);
+  if (child_name = 'precheckBehavior') Then
+     list.add(self.link, 'precheckBehavior', FPrecheckBehavior.Link);
+  if (child_name = 'cardinalityBehavior') Then
+     list.add(self.link, 'cardinalityBehavior', FCardinalityBehavior.Link);
+  if (child_name = 'definition[x]') or (child_name = 'definition') Then
+     list.add(self.link, 'definition[x]', FDefinition.Link);
+  if (child_name = 'transform') Then
+     list.add(self.link, 'transform', FTransform.Link);
+  if (child_name = 'dynamicValue') Then
+    list.addAll(self, 'dynamicValue', FDynamicValueList);
+  if (child_name = 'action') Then
+    list.addAll(self, 'action', FActionList);
+end;
+
+procedure TFhirPlanDefinitionAction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'prefix', 'string', false, TFhirString, FPrefix.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'textEquivalent', 'string', false, TFhirString, FTextEquivalent.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFhirEnum, FPriority.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'documentation', 'RelatedArtifact', true, TFhirRelatedArtifact, FDocumentationList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'goalId', 'id', true, TFhirId, FGoalIdList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'subject[x]', 'CodeableConcept|Reference', false, TFhirDataType, FSubject.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'trigger', 'TriggerDefinition', true, TFhirTriggerDefinition, FTriggerList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'condition', 'BackboneElement', true, TFhirPlanDefinitionActionCondition, FConditionList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'input', 'DataRequirement', true, TFhirDataRequirement, FInputList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'output', 'DataRequirement', true, TFhirDataRequirement, FOutputList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'relatedAction', 'BackboneElement', true, TFhirPlanDefinitionActionRelatedAction, FRelatedActionList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'timing[x]', 'dateTime|Age|Period|Duration|Range|Timing', false, TFhirDataType, FTiming.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'participant', 'BackboneElement', true, TFhirPlanDefinitionActionParticipant, FParticipantList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'groupingBehavior', 'code', false, TFhirEnum, FGroupingBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'selectionBehavior', 'code', false, TFhirEnum, FSelectionBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'requiredBehavior', 'code', false, TFhirEnum, FRequiredBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'precheckBehavior', 'code', false, TFhirEnum, FPrecheckBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'cardinalityBehavior', 'code', false, TFhirEnum, FCardinalityBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'definition[x]', 'canonical|uri', false, TFhirDataType, FDefinition.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'transform', 'canonical', false, TFhirCanonical, FTransform.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'dynamicValue', 'BackboneElement', true, TFhirPlanDefinitionActionDynamicValue, FDynamicValueList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'action', '', true, TFhirPlanDefinitionAction, FActionList.Link)) {L1039};
+end;
+
+function TFhirPlanDefinitionAction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'prefix') then
+  begin
+    PrefixElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'title') then
+  begin
+    TitleElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'description') then
+  begin
+    DescriptionElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'textEquivalent') then
+  begin
+    TextEquivalentElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'priority') then
+  begin
+    PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'code') then
+  begin
+    CodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'reason') then
+  begin
+    ReasonList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationList.add(propValue as TFhirRelatedArtifact) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'goalId') then
+  begin
+    GoalIdList.add(asId(propValue)){2};     result := propValue;
+
+  end
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then
+  begin
+    Subject := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'trigger') then
+  begin
+    TriggerList.add(propValue as TFhirTriggerDefinition) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'condition') then
+  begin
+    ConditionList.add(propValue as TFhirPlanDefinitionActionCondition) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'input') then
+  begin
+    InputList.add(propValue as TFhirDataRequirement) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'output') then
+  begin
+    OutputList.add(propValue as TFhirDataRequirement) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'relatedAction') then
+  begin
+    RelatedActionList.add(propValue as TFhirPlanDefinitionActionRelatedAction) {L1048};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then
+  begin
+    Timing := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'participant') then
+  begin
+    ParticipantList.add(propValue as TFhirPlanDefinitionActionParticipant) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'type') then
+  begin
+    Type_ := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'groupingBehavior') then
+  begin
+    GroupingBehaviorElement := asEnum(SYSTEMS_TFhirActionGroupingBehaviorEnum, CODES_TFhirActionGroupingBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'selectionBehavior') then
+  begin
+    SelectionBehaviorElement := asEnum(SYSTEMS_TFhirActionSelectionBehaviorEnum, CODES_TFhirActionSelectionBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'requiredBehavior') then
+  begin
+    RequiredBehaviorElement := asEnum(SYSTEMS_TFhirActionRequiredBehaviorEnum, CODES_TFhirActionRequiredBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'precheckBehavior') then
+  begin
+    PrecheckBehaviorElement := asEnum(SYSTEMS_TFhirActionPrecheckBehaviorEnum, CODES_TFhirActionPrecheckBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'cardinalityBehavior') then
+  begin
+    CardinalityBehaviorElement := asEnum(SYSTEMS_TFhirActionCardinalityBehaviorEnum, CODES_TFhirActionCardinalityBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'definition', ['Canonical', 'Uri'])) then
+  begin
+    Definition := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'transform') then
+  begin
+    TransformElement := asCanonical(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'dynamicValue') then
+  begin
+    DynamicValueList.add(propValue as TFhirPlanDefinitionActionDynamicValue) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'action') then
+  begin
+    ActionList.add(propValue as TFhirPlanDefinitionAction) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionAction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'documentation') then DocumentationList.insertItem(index, propValue as TFhirRelatedArtifact) {L1049}
+  else if (propName = 'goalId') then GoalIdList.insertItem(index, asId(propValue)) {L1045}
+  else if (propName = 'trigger') then TriggerList.insertItem(index, propValue as TFhirTriggerDefinition) {L1049}
+  else if (propName = 'condition') then ConditionList.insertItem(index, propValue as TFhirPlanDefinitionActionCondition) {L1049}
+  else if (propName = 'input') then InputList.insertItem(index, propValue as TFhirDataRequirement) {L1049}
+  else if (propName = 'output') then OutputList.insertItem(index, propValue as TFhirDataRequirement) {L1049}
+  else if (propName = 'relatedAction') then RelatedActionList.insertItem(index, propValue as TFhirPlanDefinitionActionRelatedAction) {L1049}
+  else if (propName = 'participant') then ParticipantList.insertItem(index, propValue as TFhirPlanDefinitionActionParticipant) {L1049}
+  else if (propName = 'dynamicValue') then DynamicValueList.insertItem(index, propValue as TFhirPlanDefinitionActionDynamicValue) {L1049}
+  else if (propName = 'action') then ActionList.insertItem(index, propValue as TFhirPlanDefinitionAction) {L1049}
+  else inherited;
+end;
+
+function TFhirPlanDefinitionAction.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'prefix') then result := TFhirString.create() {L1223}
+  else if (propName = 'title') then result := TFhirString.create() {L1223}
+  else if (propName = 'description') then result := TFhirString.create() {L1223}
+  else if (propName = 'textEquivalent') then result := TFhirString.create() {L1223}
+  else if (propName = 'priority') then result := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[RequestPriorityNull], CODES_TFhirRequestPriorityEnum[RequestPriorityNull])  {L1211}
+  else if (propName = 'code') then result := CodeList.new() {L1053}
+  else if (propName = 'reason') then result := ReasonList.new() {L1053}
+  else if (propName = 'documentation') then result := DocumentationList.new() {L1053}
+  else if (propName = 'goalId') then result := GoalIdList.new() {L1053}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Subject') {L1191}
+  else if (propName = 'trigger') then result := TriggerList.new() {L1053}
+  else if (propName = 'condition') then result := ConditionList.new() {L1053}
+  else if (propName = 'input') then result := InputList.new() {L1053}
+  else if (propName = 'output') then result := OutputList.new() {L1053}
+  else if (propName = 'relatedAction') then result := RelatedActionList.new() {L1053}
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then raise EFHIRException.create('Cannot make property Timing') {L1191}
+  else if (propName = 'participant') then result := ParticipantList.new() {L1053}
+  else if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'groupingBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionGroupingBehaviorEnum[ActionGroupingBehaviorNull], CODES_TFhirActionGroupingBehaviorEnum[ActionGroupingBehaviorNull])  {L1211}
+  else if (propName = 'selectionBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionSelectionBehaviorEnum[ActionSelectionBehaviorNull], CODES_TFhirActionSelectionBehaviorEnum[ActionSelectionBehaviorNull])  {L1211}
+  else if (propName = 'requiredBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionRequiredBehaviorEnum[ActionRequiredBehaviorNull], CODES_TFhirActionRequiredBehaviorEnum[ActionRequiredBehaviorNull])  {L1211}
+  else if (propName = 'precheckBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionPrecheckBehaviorEnum[ActionPrecheckBehaviorNull], CODES_TFhirActionPrecheckBehaviorEnum[ActionPrecheckBehaviorNull])  {L1211}
+  else if (propName = 'cardinalityBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionCardinalityBehaviorEnum[ActionCardinalityBehaviorNull], CODES_TFhirActionCardinalityBehaviorEnum[ActionCardinalityBehaviorNull])  {L1211}
+  else if (isMatchingName(propName, 'definition', ['Canonical', 'Uri'])) then raise EFHIRException.create('Cannot make property Definition') {L1191}
+  else if (propName = 'transform') then result := TFhirCanonical.create() {L1223}
+  else if (propName = 'dynamicValue') then result := DynamicValueList.new() {L1053}
+  else if (propName = 'action') then result := ActionList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionAction.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'prefix') then result := 'string'
+  else if (propName = 'title') then result := 'string'
+  else if (propName = 'description') then result := 'string'
+  else if (propName = 'textEquivalent') then result := 'string'
+  else if (propName = 'priority') then result := 'code'
+  else if (propName = 'code') then result := 'CodeableConcept'
+  else if (propName = 'reason') then result := 'CodeableConcept'
+  else if (propName = 'documentation') then result := 'RelatedArtifact'
+  else if (propName = 'goalId') then result := 'id'
+  else if (propName = 'subject[x]') then result := 'CodeableConcept|Reference'
+  else if (propName = 'trigger') then result := 'TriggerDefinition'
+  else if (propName = 'condition') then result := 'BackboneElement'
+  else if (propName = 'input') then result := 'DataRequirement'
+  else if (propName = 'output') then result := 'DataRequirement'
+  else if (propName = 'relatedAction') then result := 'BackboneElement'
+  else if (propName = 'timing[x]') then result := 'dateTime|Age|Period|Duration|Range|Timing'
+  else if (propName = 'participant') then result := 'BackboneElement'
+  else if (propName = 'type') then result := 'CodeableConcept'
+  else if (propName = 'groupingBehavior') then result := 'code'
+  else if (propName = 'selectionBehavior') then result := 'code'
+  else if (propName = 'requiredBehavior') then result := 'code'
+  else if (propName = 'precheckBehavior') then result := 'code'
+  else if (propName = 'cardinalityBehavior') then result := 'code'
+  else if (propName = 'definition[x]') then result := 'canonical|uri'
+  else if (propName = 'transform') then result := 'canonical'
+  else if (propName = 'dynamicValue') then result := 'BackboneElement'
+  else if (propName = 'action') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionAction.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'prefix') then PrefixElement := nil
+  else if (propName = 'title') then TitleElement := nil
+  else if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'textEquivalent') then TextEquivalentElement := nil
+  else if (propName = 'priority') then PriorityElement := nil
+  else if (propName = 'code') then deletePropertyValue('code', CodeList, value) {L1054}
+  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value) {L1054}
+  else if (propName = 'documentation') then deletePropertyValue('documentation', DocumentationList, value) {L1054}
+  else if (propName = 'goalId') then deletePropertyValue('goalId', GoalIdList, value) {L1054}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := nil {L1189}
+  else if (propName = 'trigger') then deletePropertyValue('trigger', TriggerList, value) {L1054}
+  else if (propName = 'condition') then deletePropertyValue('condition', ConditionList, value) {L1054}
+  else if (propName = 'input') then deletePropertyValue('input', InputList, value) {L1054}
+  else if (propName = 'output') then deletePropertyValue('output', OutputList, value) {L1054}
+  else if (propName = 'relatedAction') then deletePropertyValue('relatedAction', RelatedActionList, value) {L1054}
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then TimingElement := nil {L1189}
+  else if (propName = 'participant') then deletePropertyValue('participant', ParticipantList, value) {L1054}
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'groupingBehavior') then GroupingBehaviorElement := nil
+  else if (propName = 'selectionBehavior') then SelectionBehaviorElement := nil
+  else if (propName = 'requiredBehavior') then RequiredBehaviorElement := nil
+  else if (propName = 'precheckBehavior') then PrecheckBehaviorElement := nil
+  else if (propName = 'cardinalityBehavior') then CardinalityBehaviorElement := nil
+  else if (isMatchingName(propName, 'definition', ['Canonical', 'Uri'])) then DefinitionElement := nil {L1189}
+  else if (propName = 'transform') then TransformElement := nil
+  else if (propName = 'dynamicValue') then deletePropertyValue('dynamicValue', DynamicValueList, value) {L1054}
+  else if (propName = 'action') then deletePropertyValue('action', ActionList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionAction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'prefix') then PrefixElement := asString(new) {L1222}
+  else if (propName = 'title') then TitleElement := asString(new) {L1222}
+  else if (propName = 'description') then DescriptionElement := asString(new) {L1222}
+  else if (propName = 'textEquivalent') then TextEquivalentElement := asString(new) {L1222}
+  else if (propName = 'priority') then PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, new) {L1210}
+  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new) {L1055}
+  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new) {L1055}
+  else if (propName = 'documentation') then replacePropertyValue('documentation', DocumentationList, existing, new) {L1055}
+  else if (propName = 'goalId') then replacePropertyValue('goalId', GoalIdList, existing, new) {L1055}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := new as TFhirDataType {L1190}
+  else if (propName = 'trigger') then replacePropertyValue('trigger', TriggerList, existing, new) {L1055}
+  else if (propName = 'condition') then replacePropertyValue('condition', ConditionList, existing, new) {L1055}
+  else if (propName = 'input') then replacePropertyValue('input', InputList, existing, new) {L1055}
+  else if (propName = 'output') then replacePropertyValue('output', OutputList, existing, new) {L1055}
+  else if (propName = 'relatedAction') then replacePropertyValue('relatedAction', RelatedActionList, existing, new) {L1055}
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then TimingElement := new as TFhirDataType {L1190}
+  else if (propName = 'participant') then replacePropertyValue('participant', ParticipantList, existing, new) {L1055}
+  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'groupingBehavior') then GroupingBehaviorElement := asEnum(SYSTEMS_TFhirActionGroupingBehaviorEnum, CODES_TFhirActionGroupingBehaviorEnum, new) {L1210}
+  else if (propName = 'selectionBehavior') then SelectionBehaviorElement := asEnum(SYSTEMS_TFhirActionSelectionBehaviorEnum, CODES_TFhirActionSelectionBehaviorEnum, new) {L1210}
+  else if (propName = 'requiredBehavior') then RequiredBehaviorElement := asEnum(SYSTEMS_TFhirActionRequiredBehaviorEnum, CODES_TFhirActionRequiredBehaviorEnum, new) {L1210}
+  else if (propName = 'precheckBehavior') then PrecheckBehaviorElement := asEnum(SYSTEMS_TFhirActionPrecheckBehaviorEnum, CODES_TFhirActionPrecheckBehaviorEnum, new) {L1210}
+  else if (propName = 'cardinalityBehavior') then CardinalityBehaviorElement := asEnum(SYSTEMS_TFhirActionCardinalityBehaviorEnum, CODES_TFhirActionCardinalityBehaviorEnum, new) {L1210}
+  else if (isMatchingName(propName, 'definition', ['Canonical', 'Uri'])) then DefinitionElement := new as TFhirDataType {L1190}
+  else if (propName = 'transform') then TransformElement := asCanonical(new) {L1222}
+  else if (propName = 'dynamicValue') then replacePropertyValue('dynamicValue', DynamicValueList, existing, new) {L1055}
+  else if (propName = 'action') then replacePropertyValue('action', ActionList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionAction.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'code') then CodeList.move(source, destination) {L1050}
+  else if (propName = 'reason') then ReasonList.move(source, destination) {L1050}
+  else if (propName = 'documentation') then DocumentationList.move(source, destination) {L1050}
+  else if (propName = 'goalId') then GoalIdList.move(source, destination) {L1046}
+  else if (propName = 'trigger') then TriggerList.move(source, destination) {L1050}
+  else if (propName = 'condition') then ConditionList.move(source, destination) {L1050}
+  else if (propName = 'input') then InputList.move(source, destination) {L1050}
+  else if (propName = 'output') then OutputList.move(source, destination) {L1050}
+  else if (propName = 'relatedAction') then RelatedActionList.move(source, destination) {L1050}
+  else if (propName = 'participant') then ParticipantList.move(source, destination) {L1050}
+  else if (propName = 'dynamicValue') then DynamicValueList.move(source, destination) {L1050}
+  else if (propName = 'action') then ActionList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionAction.fhirType : string;
+begin
+  result := 'PlanDefinition.action';
+end;
+
+function TFhirPlanDefinitionAction.Link : TFhirPlanDefinitionAction;
+begin
+  result := TFhirPlanDefinitionAction(inherited Link);
+end;
+
+function TFhirPlanDefinitionAction.Clone : TFhirPlanDefinitionAction;
+begin
+  result := TFhirPlanDefinitionAction(inherited Clone);
+end;
+
+function TFhirPlanDefinitionAction.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionAction;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionAction)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionAction(other);
+    result := compareDeep(prefixElement, o.prefixElement, true) and compareDeep(titleElement, o.titleElement, true) and
+      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(textEquivalentElement, o.textEquivalentElement, true) and
+      compareDeep(priorityElement, o.priorityElement, true) and compareDeep(codeList, o.codeList, true) and
+      compareDeep(reasonList, o.reasonList, true) and compareDeep(documentationList, o.documentationList, true) and
+      compareDeep(goalIdList, o.goalIdList, true) and compareDeep(subjectElement, o.subjectElement, true) and
+      compareDeep(triggerList, o.triggerList, true) and compareDeep(conditionList, o.conditionList, true) and
+      compareDeep(inputList, o.inputList, true) and compareDeep(outputList, o.outputList, true) and
+      compareDeep(relatedActionList, o.relatedActionList, true) and compareDeep(timingElement, o.timingElement, true) and
+      compareDeep(participantList, o.participantList, true) and compareDeep(type_Element, o.type_Element, true) and
+      compareDeep(groupingBehaviorElement, o.groupingBehaviorElement, true) and compareDeep(selectionBehaviorElement, o.selectionBehaviorElement, true) and
+      compareDeep(requiredBehaviorElement, o.requiredBehaviorElement, true) and compareDeep(precheckBehaviorElement, o.precheckBehaviorElement, true) and
+      compareDeep(cardinalityBehaviorElement, o.cardinalityBehaviorElement, true) and
+      compareDeep(definitionElement, o.definitionElement, true) and compareDeep(transformElement, o.transformElement, true) and
+      compareDeep(dynamicValueList, o.dynamicValueList, true) and compareDeep(actionList, o.actionList, true);
+  end;
+end;
+
+function TFhirPlanDefinitionAction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPrefix) and isEmptyProp(FTitle) and isEmptyProp(FDescription) and isEmptyProp(FTextEquivalent) and isEmptyProp(FPriority) and isEmptyProp(FcodeList) and isEmptyProp(FreasonList) and isEmptyProp(FdocumentationList) and isEmptyProp(FgoalIdList) and isEmptyProp(FSubject) and isEmptyProp(FtriggerList) and isEmptyProp(FconditionList) and isEmptyProp(FinputList) and isEmptyProp(FoutputList) and isEmptyProp(FrelatedActionList) and isEmptyProp(FTiming) and isEmptyProp(FparticipantList) and isEmptyProp(FType_) and isEmptyProp(FGroupingBehavior) and isEmptyProp(FSelectionBehavior) and isEmptyProp(FRequiredBehavior) and isEmptyProp(FPrecheckBehavior) and isEmptyProp(FCardinalityBehavior) and isEmptyProp(FDefinition) and isEmptyProp(FTransform) and isEmptyProp(FdynamicValueList) and isEmptyProp(FactionList);
+end;
+
+procedure TFhirPlanDefinitionAction.SetPrefix(value : TFhirString);
+begin
+  FPrefix.free;
+  FPrefix := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetPrefixST : String;
+begin
+  if FPrefix = nil then
+    result := ''
+  else
+    result := FPrefix.value;
+end;
+
+procedure TFhirPlanDefinitionAction.SetPrefixST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPrefix = nil then
+      FPrefix := TFhirString.create;
+    FPrefix.value := value
+  end
+  else if FPrefix <> nil then
+    FPrefix.value := '';
+end;
+
+procedure TFhirPlanDefinitionAction.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirPlanDefinitionAction.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirPlanDefinitionAction.SetDescription(value : TFhirString);
+begin
+  FDescription.free;
+  FDescription := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirPlanDefinitionAction.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirString.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+procedure TFhirPlanDefinitionAction.SetTextEquivalent(value : TFhirString);
+begin
+  FTextEquivalent.free;
+  FTextEquivalent := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetTextEquivalentST : String;
+begin
+  if FTextEquivalent = nil then
+    result := ''
+  else
+    result := FTextEquivalent.value;
+end;
+
+procedure TFhirPlanDefinitionAction.SetTextEquivalentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTextEquivalent = nil then
+      FTextEquivalent := TFhirString.create;
+    FTextEquivalent.value := value
+  end
+  else if FTextEquivalent <> nil then
+    FTextEquivalent.value := '';
+end;
+
+procedure TFhirPlanDefinitionAction.SetPriority(value : TFhirEnum);
+begin
+  FPriority.free;
+  FPriority := value;
+end;
+
+function TFhirPlanDefinitionAction.GetPriorityST : TFhirRequestPriorityEnum;
+begin
+  if FPriority = nil then
+    result := TFhirRequestPriorityEnum(0)
+  else
+    result := TFhirRequestPriorityEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestPriorityEnum, FPriority.value));
+end;
+
+procedure TFhirPlanDefinitionAction.SetPriorityST(value : TFhirRequestPriorityEnum);
+begin
+  if ord(value) = 0 then
+    PriorityElement := nil
+  else
+    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[value], CODES_TFhirRequestPriorityEnum[value]);
+end;
+
+function TFhirPlanDefinitionAction.GetCodeList : TFhirCodeableConceptList;
+begin
+  if FCodeList = nil then
+    FCodeList := TFhirCodeableConceptList.Create;
+  result := FCodeList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasCodeList : boolean;
+begin
+  result := (FCodeList <> nil) and (FCodeList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetReasonList : TFhirCodeableConceptList;
+begin
+  if FReasonList = nil then
+    FReasonList := TFhirCodeableConceptList.Create;
+  result := FReasonList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasReasonList : boolean;
+begin
+  result := (FReasonList <> nil) and (FReasonList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetDocumentationList : TFhirRelatedArtifactList;
+begin
+  if FDocumentationList = nil then
+    FDocumentationList := TFhirRelatedArtifactList.Create;
+  result := FDocumentationList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasDocumentationList : boolean;
+begin
+  result := (FDocumentationList <> nil) and (FDocumentationList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetGoalIdList : TFhirIdList;
+begin
+  if FGoalIdList = nil then
+    FGoalIdList := TFhirIdList.Create;
+  result := FGoalIdList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasGoalIdList : boolean;
+begin
+  result := (FGoalIdList <> nil) and (FGoalIdList.count > 0);
+end;
+
+procedure TFhirPlanDefinitionAction.SetSubject(value : TFhirDataType);
+begin
+  FSubject.free;
+  FSubject := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetTriggerList : TFhirTriggerDefinitionList;
+begin
+  if FTriggerList = nil then
+    FTriggerList := TFhirTriggerDefinitionList.Create;
+  result := FTriggerList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasTriggerList : boolean;
+begin
+  result := (FTriggerList <> nil) and (FTriggerList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetConditionList : TFhirPlanDefinitionActionConditionList;
+begin
+  if FConditionList = nil then
+    FConditionList := TFhirPlanDefinitionActionConditionList.Create;
+  result := FConditionList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasConditionList : boolean;
+begin
+  result := (FConditionList <> nil) and (FConditionList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetInputList : TFhirDataRequirementList;
+begin
+  if FInputList = nil then
+    FInputList := TFhirDataRequirementList.Create;
+  result := FInputList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasInputList : boolean;
+begin
+  result := (FInputList <> nil) and (FInputList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetOutputList : TFhirDataRequirementList;
+begin
+  if FOutputList = nil then
+    FOutputList := TFhirDataRequirementList.Create;
+  result := FOutputList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasOutputList : boolean;
+begin
+  result := (FOutputList <> nil) and (FOutputList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetRelatedActionList : TFhirPlanDefinitionActionRelatedActionList;
+begin
+  if FRelatedActionList = nil then
+    FRelatedActionList := TFhirPlanDefinitionActionRelatedActionList.Create;
+  result := FRelatedActionList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasRelatedActionList : boolean;
+begin
+  result := (FRelatedActionList <> nil) and (FRelatedActionList.count > 0);
+end;
+
+procedure TFhirPlanDefinitionAction.SetTiming(value : TFhirDataType);
+begin
+  FTiming.free;
+  FTiming := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetParticipantList : TFhirPlanDefinitionActionParticipantList;
+begin
+  if FParticipantList = nil then
+    FParticipantList := TFhirPlanDefinitionActionParticipantList.Create;
+  result := FParticipantList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasParticipantList : boolean;
+begin
+  result := (FParticipantList <> nil) and (FParticipantList.count > 0);
+end;
+
+procedure TFhirPlanDefinitionAction.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionAction.SetGroupingBehavior(value : TFhirEnum);
+begin
+  FGroupingBehavior.free;
+  FGroupingBehavior := value;
+end;
+
+function TFhirPlanDefinitionAction.GetGroupingBehaviorST : TFhirActionGroupingBehaviorEnum;
+begin
+  if FGroupingBehavior = nil then
+    result := TFhirActionGroupingBehaviorEnum(0)
+  else
+    result := TFhirActionGroupingBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionGroupingBehaviorEnum, FGroupingBehavior.value));
+end;
+
+procedure TFhirPlanDefinitionAction.SetGroupingBehaviorST(value : TFhirActionGroupingBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    GroupingBehaviorElement := nil
+  else
+    GroupingBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionGroupingBehaviorEnum[value], CODES_TFhirActionGroupingBehaviorEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionAction.SetSelectionBehavior(value : TFhirEnum);
+begin
+  FSelectionBehavior.free;
+  FSelectionBehavior := value;
+end;
+
+function TFhirPlanDefinitionAction.GetSelectionBehaviorST : TFhirActionSelectionBehaviorEnum;
+begin
+  if FSelectionBehavior = nil then
+    result := TFhirActionSelectionBehaviorEnum(0)
+  else
+    result := TFhirActionSelectionBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionSelectionBehaviorEnum, FSelectionBehavior.value));
+end;
+
+procedure TFhirPlanDefinitionAction.SetSelectionBehaviorST(value : TFhirActionSelectionBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    SelectionBehaviorElement := nil
+  else
+    SelectionBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionSelectionBehaviorEnum[value], CODES_TFhirActionSelectionBehaviorEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionAction.SetRequiredBehavior(value : TFhirEnum);
+begin
+  FRequiredBehavior.free;
+  FRequiredBehavior := value;
+end;
+
+function TFhirPlanDefinitionAction.GetRequiredBehaviorST : TFhirActionRequiredBehaviorEnum;
+begin
+  if FRequiredBehavior = nil then
+    result := TFhirActionRequiredBehaviorEnum(0)
+  else
+    result := TFhirActionRequiredBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionRequiredBehaviorEnum, FRequiredBehavior.value));
+end;
+
+procedure TFhirPlanDefinitionAction.SetRequiredBehaviorST(value : TFhirActionRequiredBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    RequiredBehaviorElement := nil
+  else
+    RequiredBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionRequiredBehaviorEnum[value], CODES_TFhirActionRequiredBehaviorEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionAction.SetPrecheckBehavior(value : TFhirEnum);
+begin
+  FPrecheckBehavior.free;
+  FPrecheckBehavior := value;
+end;
+
+function TFhirPlanDefinitionAction.GetPrecheckBehaviorST : TFhirActionPrecheckBehaviorEnum;
+begin
+  if FPrecheckBehavior = nil then
+    result := TFhirActionPrecheckBehaviorEnum(0)
+  else
+    result := TFhirActionPrecheckBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionPrecheckBehaviorEnum, FPrecheckBehavior.value));
+end;
+
+procedure TFhirPlanDefinitionAction.SetPrecheckBehaviorST(value : TFhirActionPrecheckBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    PrecheckBehaviorElement := nil
+  else
+    PrecheckBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionPrecheckBehaviorEnum[value], CODES_TFhirActionPrecheckBehaviorEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionAction.SetCardinalityBehavior(value : TFhirEnum);
+begin
+  FCardinalityBehavior.free;
+  FCardinalityBehavior := value;
+end;
+
+function TFhirPlanDefinitionAction.GetCardinalityBehaviorST : TFhirActionCardinalityBehaviorEnum;
+begin
+  if FCardinalityBehavior = nil then
+    result := TFhirActionCardinalityBehaviorEnum(0)
+  else
+    result := TFhirActionCardinalityBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionCardinalityBehaviorEnum, FCardinalityBehavior.value));
+end;
+
+procedure TFhirPlanDefinitionAction.SetCardinalityBehaviorST(value : TFhirActionCardinalityBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    CardinalityBehaviorElement := nil
+  else
+    CardinalityBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionCardinalityBehaviorEnum[value], CODES_TFhirActionCardinalityBehaviorEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionAction.SetDefinition(value : TFhirDataType);
+begin
+  FDefinition.free;
+  FDefinition := value; {L1134}
+end;
+
+procedure TFhirPlanDefinitionAction.SetTransform(value : TFhirCanonical);
+begin
+  FTransform.free;
+  FTransform := value; {L1134}
+end;
+
+function TFhirPlanDefinitionAction.GetTransformST : String;
+begin
+  if FTransform = nil then
+    result := ''
+  else
+    result := FTransform.value;
+end;
+
+procedure TFhirPlanDefinitionAction.SetTransformST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTransform = nil then
+      FTransform := TFhirCanonical.create;
+    FTransform.value := value
+  end
+  else if FTransform <> nil then
+    FTransform.value := '';
+end;
+
+function TFhirPlanDefinitionAction.GetDynamicValueList : TFhirPlanDefinitionActionDynamicValueList;
+begin
+  if FDynamicValueList = nil then
+    FDynamicValueList := TFhirPlanDefinitionActionDynamicValueList.Create;
+  result := FDynamicValueList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasDynamicValueList : boolean;
+begin
+  result := (FDynamicValueList <> nil) and (FDynamicValueList.count > 0);
+end;
+
+function TFhirPlanDefinitionAction.GetActionList : TFhirPlanDefinitionActionList;
+begin
+  if FActionList = nil then
+    FActionList := TFhirPlanDefinitionActionList.Create;
+  result := FActionList;
+end;
+
+function TFhirPlanDefinitionAction.GetHasActionList : boolean;
+begin
+  result := (FActionList <> nil) and (FActionList.count > 0);
+end;
+
+{ TFhirPlanDefinitionActionListEnumerator }
+
+constructor TFhirPlanDefinitionActionListEnumerator.Create(list : TFhirPlanDefinitionActionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionActionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionActionListEnumerator.GetCurrent : TFhirPlanDefinitionAction;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionActionList }
+
+procedure TFhirPlanDefinitionActionList.AddItem(value: TFhirPlanDefinitionAction);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionAction');
+  add(value);
+end;
+
+function TFhirPlanDefinitionActionList.Append: TFhirPlanDefinitionAction;
+begin
+  result := TFhirPlanDefinitionAction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionActionList.GetEnumerator : TFhirPlanDefinitionActionListEnumerator;
+begin
+  result := TFhirPlanDefinitionActionListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionActionList.Clone: TFhirPlanDefinitionActionList;
+begin
+  result := TFhirPlanDefinitionActionList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionActionList.GetItemN(index: Integer): TFhirPlanDefinitionAction;
+begin
+  result := TFhirPlanDefinitionAction(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionAction;
+end;
+function TFhirPlanDefinitionActionList.IndexOf(value: TFhirPlanDefinitionAction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionActionList.Insert(index: Integer): TFhirPlanDefinitionAction;
+begin
+  result := TFhirPlanDefinitionAction.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionList.InsertItem(index: Integer; value: TFhirPlanDefinitionAction);
+begin
+  assert(value is TFhirPlanDefinitionAction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionActionList.Item(index: Integer): TFhirPlanDefinitionAction;
+begin
+  result := TFhirPlanDefinitionAction(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionList.Link: TFhirPlanDefinitionActionList;
+begin
+  result := TFhirPlanDefinitionActionList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionActionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionActionList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionAction);
+begin
+  assert(value is TFhirPlanDefinitionAction);
+  FhirPlanDefinitionActions[index] := value;
+end;
+
+procedure TFhirPlanDefinitionActionList.SetItemN(index: Integer; value: TFhirPlanDefinitionAction);
+begin
+  assert(value is TFhirPlanDefinitionAction);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinitionActionCondition }
+
+constructor TFhirPlanDefinitionActionCondition.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionActionCondition.Destroy;
+begin
+  FKind.free;
+  FExpression.free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionActionCondition.Assign(oSource : TFslObject);
+begin
+  inherited;
+  kindElement := TFhirPlanDefinitionActionCondition(oSource).kindElement.Clone;
+  expression := TFhirPlanDefinitionActionCondition(oSource).expression.Clone;
+end;
+
+procedure TFhirPlanDefinitionActionCondition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'kind') Then
+     list.add(self.link, 'kind', FKind.Link);
+  if (child_name = 'expression') Then
+     list.add(self.link, 'expression', FExpression.Link);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirEnum, FKind.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'expression', 'Expression', false, TFhirExpression, FExpression.Link)); {L1172}
+end;
+
+function TFhirPlanDefinitionActionCondition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'kind') then
+  begin
+    KindElement := asEnum(SYSTEMS_TFhirActionConditionKindEnum, CODES_TFhirActionConditionKindEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'expression') then
+  begin
+    Expression := propValue as TFhirExpression {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionCondition.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'kind') then result := TFhirEnum.create(SYSTEMS_TFhirActionConditionKindEnum[ActionConditionKindNull], CODES_TFhirActionConditionKindEnum[ActionConditionKindNull])  {L1211}
+  else if (propName = 'expression') then result := TFhirExpression.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionActionCondition.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'kind') then result := 'code'
+  else if (propName = 'expression') then result := 'Expression'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'kind') then KindElement := nil
+  else if (propName = 'expression') then ExpressionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'kind') then KindElement := asEnum(SYSTEMS_TFhirActionConditionKindEnum, CODES_TFhirActionConditionKindEnum, new) {L1210}
+  else if (propName = 'expression') then ExpressionElement := new as TFhirExpression {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionActionCondition.fhirType : string;
+begin
+  result := 'PlanDefinition.action.condition';
+end;
+
+function TFhirPlanDefinitionActionCondition.Link : TFhirPlanDefinitionActionCondition;
+begin
+  result := TFhirPlanDefinitionActionCondition(inherited Link);
+end;
+
+function TFhirPlanDefinitionActionCondition.Clone : TFhirPlanDefinitionActionCondition;
+begin
+  result := TFhirPlanDefinitionActionCondition(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionCondition.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionActionCondition;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionActionCondition)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionActionCondition(other);
+    result := compareDeep(kindElement, o.kindElement, true) and compareDeep(expressionElement, o.expressionElement, true);
+  end;
+end;
+
+function TFhirPlanDefinitionActionCondition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FKind) and isEmptyProp(FExpression);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.SetKind(value : TFhirEnum);
+begin
+  FKind.free;
+  FKind := value;
+end;
+
+function TFhirPlanDefinitionActionCondition.GetKindST : TFhirActionConditionKindEnum;
+begin
+  if FKind = nil then
+    result := TFhirActionConditionKindEnum(0)
+  else
+    result := TFhirActionConditionKindEnum(StringArrayIndexOfSensitive(CODES_TFhirActionConditionKindEnum, FKind.value));
+end;
+
+procedure TFhirPlanDefinitionActionCondition.SetKindST(value : TFhirActionConditionKindEnum);
+begin
+  if ord(value) = 0 then
+    KindElement := nil
+  else
+    KindElement := TFhirEnum.create(SYSTEMS_TFhirActionConditionKindEnum[value], CODES_TFhirActionConditionKindEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionActionCondition.SetExpression(value : TFhirExpression);
+begin
+  FExpression.free;
+  FExpression := value; {L1134}
+end;
+
+{ TFhirPlanDefinitionActionConditionListEnumerator }
+
+constructor TFhirPlanDefinitionActionConditionListEnumerator.Create(list : TFhirPlanDefinitionActionConditionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionActionConditionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionConditionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionActionConditionListEnumerator.GetCurrent : TFhirPlanDefinitionActionCondition;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionActionConditionList }
+
+procedure TFhirPlanDefinitionActionConditionList.AddItem(value: TFhirPlanDefinitionActionCondition);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionActionCondition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionActionCondition');
+  add(value);
+end;
+
+function TFhirPlanDefinitionActionConditionList.Append: TFhirPlanDefinitionActionCondition;
+begin
+  result := TFhirPlanDefinitionActionCondition.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionConditionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionActionConditionList.GetEnumerator : TFhirPlanDefinitionActionConditionListEnumerator;
+begin
+  result := TFhirPlanDefinitionActionConditionListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionActionConditionList.Clone: TFhirPlanDefinitionActionConditionList;
+begin
+  result := TFhirPlanDefinitionActionConditionList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionConditionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionActionConditionList.GetItemN(index: Integer): TFhirPlanDefinitionActionCondition;
+begin
+  result := TFhirPlanDefinitionActionCondition(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionConditionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionActionCondition;
+end;
+function TFhirPlanDefinitionActionConditionList.IndexOf(value: TFhirPlanDefinitionActionCondition): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionActionConditionList.Insert(index: Integer): TFhirPlanDefinitionActionCondition;
+begin
+  result := TFhirPlanDefinitionActionCondition.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionConditionList.InsertItem(index: Integer; value: TFhirPlanDefinitionActionCondition);
+begin
+  assert(value is TFhirPlanDefinitionActionCondition);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionActionConditionList.Item(index: Integer): TFhirPlanDefinitionActionCondition;
+begin
+  result := TFhirPlanDefinitionActionCondition(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionConditionList.Link: TFhirPlanDefinitionActionConditionList;
+begin
+  result := TFhirPlanDefinitionActionConditionList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionActionConditionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionActionConditionList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionActionCondition);
+begin
+  assert(value is TFhirPlanDefinitionActionCondition);
+  FhirPlanDefinitionActionConditions[index] := value;
+end;
+
+procedure TFhirPlanDefinitionActionConditionList.SetItemN(index: Integer; value: TFhirPlanDefinitionActionCondition);
+begin
+  assert(value is TFhirPlanDefinitionActionCondition);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinitionActionRelatedAction }
+
+constructor TFhirPlanDefinitionActionRelatedAction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionActionRelatedAction.Destroy;
+begin
+  FActionId.free;
+  FRelationship.free;
+  FOffset.free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.Assign(oSource : TFslObject);
+begin
+  inherited;
+  actionIdElement := TFhirPlanDefinitionActionRelatedAction(oSource).actionIdElement.Clone;
+  relationshipElement := TFhirPlanDefinitionActionRelatedAction(oSource).relationshipElement.Clone;
+  offset := TFhirPlanDefinitionActionRelatedAction(oSource).offset.Clone;
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'actionId') Then
+     list.add(self.link, 'actionId', FActionId.Link);
+  if (child_name = 'relationship') Then
+     list.add(self.link, 'relationship', FRelationship.Link);
+  if (child_name = 'offset[x]') or (child_name = 'offset') Then
+     list.add(self.link, 'offset[x]', FOffset.Link);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'actionId', 'id', false, TFhirId, FActionId.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'relationship', 'code', false, TFhirEnum, FRelationship.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'offset[x]', 'Duration|Range', false, TFhirDataType, FOffset.Link)); {L1172}
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'actionId') then
+  begin
+    ActionIdElement := asId(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'relationship') then
+  begin
+    RelationshipElement := asEnum(SYSTEMS_TFhirActionRelationshipTypeEnum, CODES_TFhirActionRelationshipTypeEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then
+  begin
+    Offset := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'actionId') then result := TFhirId.create() {L1223}
+  else if (propName = 'relationship') then result := TFhirEnum.create(SYSTEMS_TFhirActionRelationshipTypeEnum[ActionRelationshipTypeNull], CODES_TFhirActionRelationshipTypeEnum[ActionRelationshipTypeNull])  {L1211}
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then raise EFHIRException.create('Cannot make property Offset') {L1191}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'actionId') then result := 'id'
+  else if (propName = 'relationship') then result := 'code'
+  else if (propName = 'offset[x]') then result := 'Duration|Range'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'actionId') then ActionIdElement := nil
+  else if (propName = 'relationship') then RelationshipElement := nil
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then OffsetElement := nil {L1189}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'actionId') then ActionIdElement := asId(new) {L1222}
+  else if (propName = 'relationship') then RelationshipElement := asEnum(SYSTEMS_TFhirActionRelationshipTypeEnum, CODES_TFhirActionRelationshipTypeEnum, new) {L1210}
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then OffsetElement := new as TFhirDataType {L1190}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.fhirType : string;
+begin
+  result := 'PlanDefinition.action.relatedAction';
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.Link : TFhirPlanDefinitionActionRelatedAction;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction(inherited Link);
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.Clone : TFhirPlanDefinitionActionRelatedAction;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionActionRelatedAction;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionActionRelatedAction)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionActionRelatedAction(other);
+    result := compareDeep(actionIdElement, o.actionIdElement, true) and compareDeep(relationshipElement, o.relationshipElement, true) and
+      compareDeep(offsetElement, o.offsetElement, true);
+  end;
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FActionId) and isEmptyProp(FRelationship) and isEmptyProp(FOffset);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.SetActionId(value : TFhirId);
+begin
+  FActionId.free;
+  FActionId := value; {L1134}
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.GetActionIdST : String;
+begin
+  if FActionId = nil then
+    result := ''
+  else
+    result := FActionId.value;
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.SetActionIdST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FActionId = nil then
+      FActionId := TFhirId.create;
+    FActionId.value := value
+  end
+  else if FActionId <> nil then
+    FActionId.value := '';
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.SetRelationship(value : TFhirEnum);
+begin
+  FRelationship.free;
+  FRelationship := value;
+end;
+
+function TFhirPlanDefinitionActionRelatedAction.GetRelationshipST : TFhirActionRelationshipTypeEnum;
+begin
+  if FRelationship = nil then
+    result := TFhirActionRelationshipTypeEnum(0)
+  else
+    result := TFhirActionRelationshipTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirActionRelationshipTypeEnum, FRelationship.value));
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.SetRelationshipST(value : TFhirActionRelationshipTypeEnum);
+begin
+  if ord(value) = 0 then
+    RelationshipElement := nil
+  else
+    RelationshipElement := TFhirEnum.create(SYSTEMS_TFhirActionRelationshipTypeEnum[value], CODES_TFhirActionRelationshipTypeEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedAction.SetOffset(value : TFhirDataType);
+begin
+  FOffset.free;
+  FOffset := value; {L1134}
+end;
+
+{ TFhirPlanDefinitionActionRelatedActionListEnumerator }
+
+constructor TFhirPlanDefinitionActionRelatedActionListEnumerator.Create(list : TFhirPlanDefinitionActionRelatedActionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionActionRelatedActionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionRelatedActionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionActionRelatedActionListEnumerator.GetCurrent : TFhirPlanDefinitionActionRelatedAction;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionActionRelatedActionList }
+
+procedure TFhirPlanDefinitionActionRelatedActionList.AddItem(value: TFhirPlanDefinitionActionRelatedAction);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionActionRelatedAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionActionRelatedAction');
+  add(value);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.Append: TFhirPlanDefinitionActionRelatedAction;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionRelatedActionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.GetEnumerator : TFhirPlanDefinitionActionRelatedActionListEnumerator;
+begin
+  result := TFhirPlanDefinitionActionRelatedActionListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.Clone: TFhirPlanDefinitionActionRelatedActionList;
+begin
+  result := TFhirPlanDefinitionActionRelatedActionList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.GetItemN(index: Integer): TFhirPlanDefinitionActionRelatedAction;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction;
+end;
+function TFhirPlanDefinitionActionRelatedActionList.IndexOf(value: TFhirPlanDefinitionActionRelatedAction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.Insert(index: Integer): TFhirPlanDefinitionActionRelatedAction;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionRelatedActionList.InsertItem(index: Integer; value: TFhirPlanDefinitionActionRelatedAction);
+begin
+  assert(value is TFhirPlanDefinitionActionRelatedAction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.Item(index: Integer): TFhirPlanDefinitionActionRelatedAction;
+begin
+  result := TFhirPlanDefinitionActionRelatedAction(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionRelatedActionList.Link: TFhirPlanDefinitionActionRelatedActionList;
+begin
+  result := TFhirPlanDefinitionActionRelatedActionList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedActionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionActionRelatedActionList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionActionRelatedAction);
+begin
+  assert(value is TFhirPlanDefinitionActionRelatedAction);
+  FhirPlanDefinitionActionRelatedActions[index] := value;
+end;
+
+procedure TFhirPlanDefinitionActionRelatedActionList.SetItemN(index: Integer; value: TFhirPlanDefinitionActionRelatedAction);
+begin
+  assert(value is TFhirPlanDefinitionActionRelatedAction);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinitionActionParticipant }
+
+constructor TFhirPlanDefinitionActionParticipant.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionActionParticipant.Destroy;
+begin
+  FType_.free;
+  FRole.free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.Assign(oSource : TFslObject);
+begin
+  inherited;
+  type_Element := TFhirPlanDefinitionActionParticipant(oSource).type_Element.Clone;
+  role := TFhirPlanDefinitionActionParticipant(oSource).role.Clone;
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'role') Then
+     list.add(self.link, 'role', FRole.Link);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link)); {L1172}
+end;
+
+function TFhirPlanDefinitionActionParticipant.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'type') then
+  begin
+    Type_Element := asEnum(SYSTEMS_TFhirActionParticipantTypeEnum, CODES_TFhirActionParticipantTypeEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'role') then
+  begin
+    Role := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionParticipant.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirActionParticipantTypeEnum[ActionParticipantTypeNull], CODES_TFhirActionParticipantTypeEnum[ActionParticipantTypeNull])  {L1211}
+  else if (propName = 'role') then result := TFhirCodeableConcept.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionActionParticipant.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'type') then result := 'code'
+  else if (propName = 'role') then result := 'CodeableConcept'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'role') then RoleElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirActionParticipantTypeEnum, CODES_TFhirActionParticipantTypeEnum, new) {L1210}
+  else if (propName = 'role') then RoleElement := new as TFhirCodeableConcept {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionActionParticipant.fhirType : string;
+begin
+  result := 'PlanDefinition.action.participant';
+end;
+
+function TFhirPlanDefinitionActionParticipant.Link : TFhirPlanDefinitionActionParticipant;
+begin
+  result := TFhirPlanDefinitionActionParticipant(inherited Link);
+end;
+
+function TFhirPlanDefinitionActionParticipant.Clone : TFhirPlanDefinitionActionParticipant;
+begin
+  result := TFhirPlanDefinitionActionParticipant(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionParticipant.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionActionParticipant;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionActionParticipant)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionActionParticipant(other);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(roleElement, o.roleElement, true);
+  end;
+end;
+
+function TFhirPlanDefinitionActionParticipant.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FRole);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.SetType_(value : TFhirEnum);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+function TFhirPlanDefinitionActionParticipant.GetType_ST : TFhirActionParticipantTypeEnum;
+begin
+  if FType_ = nil then
+    result := TFhirActionParticipantTypeEnum(0)
+  else
+    result := TFhirActionParticipantTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirActionParticipantTypeEnum, FType_.value));
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.SetType_ST(value : TFhirActionParticipantTypeEnum);
+begin
+  if ord(value) = 0 then
+    Type_Element := nil
+  else
+    Type_Element := TFhirEnum.create(SYSTEMS_TFhirActionParticipantTypeEnum[value], CODES_TFhirActionParticipantTypeEnum[value]);
+end;
+
+procedure TFhirPlanDefinitionActionParticipant.SetRole(value : TFhirCodeableConcept);
+begin
+  FRole.free;
+  FRole := value; {L1134}
+end;
+
+{ TFhirPlanDefinitionActionParticipantListEnumerator }
+
+constructor TFhirPlanDefinitionActionParticipantListEnumerator.Create(list : TFhirPlanDefinitionActionParticipantList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionActionParticipantListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionParticipantListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionActionParticipantListEnumerator.GetCurrent : TFhirPlanDefinitionActionParticipant;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionActionParticipantList }
+
+procedure TFhirPlanDefinitionActionParticipantList.AddItem(value: TFhirPlanDefinitionActionParticipant);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionActionParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionActionParticipant');
+  add(value);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.Append: TFhirPlanDefinitionActionParticipant;
+begin
+  result := TFhirPlanDefinitionActionParticipant.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionParticipantList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionActionParticipantList.GetEnumerator : TFhirPlanDefinitionActionParticipantListEnumerator;
+begin
+  result := TFhirPlanDefinitionActionParticipantListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.Clone: TFhirPlanDefinitionActionParticipantList;
+begin
+  result := TFhirPlanDefinitionActionParticipantList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionActionParticipantList.GetItemN(index: Integer): TFhirPlanDefinitionActionParticipant;
+begin
+  result := TFhirPlanDefinitionActionParticipant(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionActionParticipant;
+end;
+function TFhirPlanDefinitionActionParticipantList.IndexOf(value: TFhirPlanDefinitionActionParticipant): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.Insert(index: Integer): TFhirPlanDefinitionActionParticipant;
+begin
+  result := TFhirPlanDefinitionActionParticipant.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionParticipantList.InsertItem(index: Integer; value: TFhirPlanDefinitionActionParticipant);
+begin
+  assert(value is TFhirPlanDefinitionActionParticipant);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.Item(index: Integer): TFhirPlanDefinitionActionParticipant;
+begin
+  result := TFhirPlanDefinitionActionParticipant(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionParticipantList.Link: TFhirPlanDefinitionActionParticipantList;
+begin
+  result := TFhirPlanDefinitionActionParticipantList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionActionParticipantList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionActionParticipantList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionActionParticipant);
+begin
+  assert(value is TFhirPlanDefinitionActionParticipant);
+  FhirPlanDefinitionActionParticipants[index] := value;
+end;
+
+procedure TFhirPlanDefinitionActionParticipantList.SetItemN(index: Integer; value: TFhirPlanDefinitionActionParticipant);
+begin
+  assert(value is TFhirPlanDefinitionActionParticipant);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinitionActionDynamicValue }
+
+constructor TFhirPlanDefinitionActionDynamicValue.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinitionActionDynamicValue.Destroy;
+begin
+  FPath.free;
+  FExpression.free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.Assign(oSource : TFslObject);
+begin
+  inherited;
+  pathElement := TFhirPlanDefinitionActionDynamicValue(oSource).pathElement.Clone;
+  expression := TFhirPlanDefinitionActionDynamicValue(oSource).expression.Clone;
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'path') Then
+     list.add(self.link, 'path', FPath.Link);
+  if (child_name = 'expression') Then
+     list.add(self.link, 'expression', FExpression.Link);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'path', 'string', false, TFhirString, FPath.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'expression', 'Expression', false, TFhirExpression, FExpression.Link)); {L1172}
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'path') then
+  begin
+    PathElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'expression') then
+  begin
+    Expression := propValue as TFhirExpression {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'path') then result := TFhirString.create() {L1223}
+  else if (propName = 'expression') then result := TFhirExpression.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'path') then result := 'string'
+  else if (propName = 'expression') then result := 'Expression'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := nil
+  else if (propName = 'expression') then ExpressionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := asString(new) {L1222}
+  else if (propName = 'expression') then ExpressionElement := new as TFhirExpression {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.fhirType : string;
+begin
+  result := 'PlanDefinition.action.dynamicValue';
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.Link : TFhirPlanDefinitionActionDynamicValue;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue(inherited Link);
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.Clone : TFhirPlanDefinitionActionDynamicValue;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinitionActionDynamicValue;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinitionActionDynamicValue)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinitionActionDynamicValue(other);
+    result := compareDeep(pathElement, o.pathElement, true) and compareDeep(expressionElement, o.expressionElement, true);
+  end;
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FExpression);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.SetPath(value : TFhirString);
+begin
+  FPath.free;
+  FPath := value; {L1134}
+end;
+
+function TFhirPlanDefinitionActionDynamicValue.GetPathST : String;
+begin
+  if FPath = nil then
+    result := ''
+  else
+    result := FPath.value;
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.SetPathST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPath = nil then
+      FPath := TFhirString.create;
+    FPath.value := value
+  end
+  else if FPath <> nil then
+    FPath.value := '';
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValue.SetExpression(value : TFhirExpression);
+begin
+  FExpression.free;
+  FExpression := value; {L1134}
+end;
+
+{ TFhirPlanDefinitionActionDynamicValueListEnumerator }
+
+constructor TFhirPlanDefinitionActionDynamicValueListEnumerator.Create(list : TFhirPlanDefinitionActionDynamicValueList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionActionDynamicValueListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionActionDynamicValueListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionActionDynamicValueListEnumerator.GetCurrent : TFhirPlanDefinitionActionDynamicValue;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionActionDynamicValueList }
+
+procedure TFhirPlanDefinitionActionDynamicValueList.AddItem(value: TFhirPlanDefinitionActionDynamicValue);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinitionActionDynamicValue', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinitionActionDynamicValue');
+  add(value);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.Append: TFhirPlanDefinitionActionDynamicValue;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValueList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.GetEnumerator : TFhirPlanDefinitionActionDynamicValueListEnumerator;
+begin
+  result := TFhirPlanDefinitionActionDynamicValueListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.Clone: TFhirPlanDefinitionActionDynamicValueList;
+begin
+  result := TFhirPlanDefinitionActionDynamicValueList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.GetItemN(index: Integer): TFhirPlanDefinitionActionDynamicValue;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue;
+end;
+function TFhirPlanDefinitionActionDynamicValueList.IndexOf(value: TFhirPlanDefinitionActionDynamicValue): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.Insert(index: Integer): TFhirPlanDefinitionActionDynamicValue;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValueList.InsertItem(index: Integer; value: TFhirPlanDefinitionActionDynamicValue);
+begin
+  assert(value is TFhirPlanDefinitionActionDynamicValue);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.Item(index: Integer): TFhirPlanDefinitionActionDynamicValue;
+begin
+  result := TFhirPlanDefinitionActionDynamicValue(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionActionDynamicValueList.Link: TFhirPlanDefinitionActionDynamicValueList;
+begin
+  result := TFhirPlanDefinitionActionDynamicValueList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValueList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValueList.SetItemByIndex(index: Integer; value: TFhirPlanDefinitionActionDynamicValue);
+begin
+  assert(value is TFhirPlanDefinitionActionDynamicValue);
+  FhirPlanDefinitionActionDynamicValues[index] := value;
+end;
+
+procedure TFhirPlanDefinitionActionDynamicValueList.SetItemN(index: Integer; value: TFhirPlanDefinitionActionDynamicValue);
+begin
+  assert(value is TFhirPlanDefinitionActionDynamicValue);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirPlanDefinition }
+
+constructor TFhirPlanDefinition.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirPlanDefinition.Destroy;
+begin
+  FSubtitle.free;
+  FType_.free;
+  FSubject.free;
+  FUsage.free;
+  FTopicList.Free;
+  FAuthorList.Free;
+  FEditorList.Free;
+  FReviewerList.Free;
+  FEndorserList.Free;
+  FRelatedArtifactList.Free;
+  FLibrary_List.Free;
+  FGoalList.Free;
+  FActionList.Free;
+  inherited;
+end;
+
+procedure TFhirPlanDefinition.Assign(oSource : TFslObject);
+begin
+  inherited;
+  subtitleElement := TFhirPlanDefinition(oSource).subtitleElement.Clone;
+  type_ := TFhirPlanDefinition(oSource).type_.Clone;
+  subject := TFhirPlanDefinition(oSource).subject.Clone;
+  usageElement := TFhirPlanDefinition(oSource).usageElement.Clone;
+  if (TFhirPlanDefinition(oSource).FTopicList = nil) then
+  begin
+    FTopicList.free;
+    FTopicList := nil;
+  end
+  else
+  begin
+    if FTopicList = nil then
+      FTopicList := TFhirCodeableConceptList.Create;
+    FTopicList.Assign(TFhirPlanDefinition(oSource).FTopicList);
+  end;
+  if (TFhirPlanDefinition(oSource).FAuthorList = nil) then
+  begin
+    FAuthorList.free;
+    FAuthorList := nil;
+  end
+  else
+  begin
+    if FAuthorList = nil then
+      FAuthorList := TFhirContactDetailList.Create;
+    FAuthorList.Assign(TFhirPlanDefinition(oSource).FAuthorList);
+  end;
+  if (TFhirPlanDefinition(oSource).FEditorList = nil) then
+  begin
+    FEditorList.free;
+    FEditorList := nil;
+  end
+  else
+  begin
+    if FEditorList = nil then
+      FEditorList := TFhirContactDetailList.Create;
+    FEditorList.Assign(TFhirPlanDefinition(oSource).FEditorList);
+  end;
+  if (TFhirPlanDefinition(oSource).FReviewerList = nil) then
+  begin
+    FReviewerList.free;
+    FReviewerList := nil;
+  end
+  else
+  begin
+    if FReviewerList = nil then
+      FReviewerList := TFhirContactDetailList.Create;
+    FReviewerList.Assign(TFhirPlanDefinition(oSource).FReviewerList);
+  end;
+  if (TFhirPlanDefinition(oSource).FEndorserList = nil) then
+  begin
+    FEndorserList.free;
+    FEndorserList := nil;
+  end
+  else
+  begin
+    if FEndorserList = nil then
+      FEndorserList := TFhirContactDetailList.Create;
+    FEndorserList.Assign(TFhirPlanDefinition(oSource).FEndorserList);
+  end;
+  if (TFhirPlanDefinition(oSource).FRelatedArtifactList = nil) then
+  begin
+    FRelatedArtifactList.free;
+    FRelatedArtifactList := nil;
+  end
+  else
+  begin
+    if FRelatedArtifactList = nil then
+      FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+    FRelatedArtifactList.Assign(TFhirPlanDefinition(oSource).FRelatedArtifactList);
+  end;
+  if (TFhirPlanDefinition(oSource).FLibrary_List = nil) then
+  begin
+    FLibrary_List.free;
+    FLibrary_List := nil;
+  end
+  else
+  begin
+    if FLibrary_List = nil then
+      FLibrary_List := TFhirCanonicalList.Create;
+    FLibrary_List.Assign(TFhirPlanDefinition(oSource).FLibrary_List);
+  end;
+  if (TFhirPlanDefinition(oSource).FGoalList = nil) then
+  begin
+    FGoalList.free;
+    FGoalList := nil;
+  end
+  else
+  begin
+    if FGoalList = nil then
+      FGoalList := TFhirPlanDefinitionGoalList.Create;
+    FGoalList.Assign(TFhirPlanDefinition(oSource).FGoalList);
+  end;
+  if (TFhirPlanDefinition(oSource).FActionList = nil) then
+  begin
+    FActionList.free;
+    FActionList := nil;
+  end
+  else
+  begin
+    if FActionList = nil then
+      FActionList := TFhirPlanDefinitionActionList.Create;
+    FActionList.Assign(TFhirPlanDefinition(oSource).FActionList);
+  end;
+end;
+
+function TFhirPlanDefinition.GetResourceType : TFhirResourceType;
+begin
+  result := frtPlanDefinition;
+end;
+
+procedure TFhirPlanDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'subtitle') Then
+     list.add(self.link, 'subtitle', FSubtitle.Link);
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'subject[x]') or (child_name = 'subject') Then
+     list.add(self.link, 'subject[x]', FSubject.Link);
+  if (child_name = 'usage') Then
+     list.add(self.link, 'usage', FUsage.Link);
+  if (child_name = 'topic') Then
+    list.addAll(self, 'topic', FTopicList);
+  if (child_name = 'author') Then
+    list.addAll(self, 'author', FAuthorList);
+  if (child_name = 'editor') Then
+    list.addAll(self, 'editor', FEditorList);
+  if (child_name = 'reviewer') Then
+    list.addAll(self, 'reviewer', FReviewerList);
+  if (child_name = 'endorser') Then
+    list.addAll(self, 'endorser', FEndorserList);
+  if (child_name = 'relatedArtifact') Then
+    list.addAll(self, 'relatedArtifact', FRelatedArtifactList);
+  if (child_name = 'library') Then
+    list.addAll(self, 'library', FLibrary_List);
+  if (child_name = 'goal') Then
+    list.addAll(self, 'goal', FGoalList);
+  if (child_name = 'action') Then
+    list.addAll(self, 'action', FActionList);
+end;
+
+procedure TFhirPlanDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'subtitle', 'string', false, TFhirString, FSubtitle.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'subject[x]', 'CodeableConcept|Reference', false, TFhirDataType, FSubject.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'usage', 'string', false, TFhirString, FUsage.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'topic', 'CodeableConcept', true, TFhirCodeableConcept, FTopicList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'author', 'ContactDetail', true, TFhirContactDetail, FAuthorList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'editor', 'ContactDetail', true, TFhirContactDetail, FEditorList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'reviewer', 'ContactDetail', true, TFhirContactDetail, FReviewerList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'endorser', 'ContactDetail', true, TFhirContactDetail, FEndorserList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'relatedArtifact', 'RelatedArtifact', true, TFhirRelatedArtifact, FRelatedArtifactList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'library', 'canonical', true, TFhirCanonical, FLibrary_List.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'goal', 'BackboneElement', true, TFhirPlanDefinitionGoal, FGoalList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'action', 'BackboneElement', true, TFhirPlanDefinitionAction, FActionList.Link)) {L1039};
+end;
+
+function TFhirPlanDefinition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'subtitle') then
+  begin
+    SubtitleElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'type') then
+  begin
+    Type_ := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then
+  begin
+    Subject := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'usage') then
+  begin
+    UsageElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'topic') then
+  begin
+    TopicList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'author') then
+  begin
+    AuthorList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'editor') then
+  begin
+    EditorList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'reviewer') then
+  begin
+    ReviewerList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'endorser') then
+  begin
+    EndorserList.add(propValue as TFhirContactDetail) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'relatedArtifact') then
+  begin
+    RelatedArtifactList.add(propValue as TFhirRelatedArtifact) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'library') then
+  begin
+    Library_List.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'goal') then
+  begin
+    GoalList.add(propValue as TFhirPlanDefinitionGoal) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'action') then
+  begin
+    ActionList.add(propValue as TFhirPlanDefinitionAction) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirPlanDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'topic') then TopicList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'author') then AuthorList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'editor') then EditorList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'reviewer') then ReviewerList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'endorser') then EndorserList.insertItem(index, propValue as TFhirContactDetail) {L1049}
+  else if (propName = 'relatedArtifact') then RelatedArtifactList.insertItem(index, propValue as TFhirRelatedArtifact) {L1049}
+  else if (propName = 'library') then Library_List.insertItem(index, asCanonical(propValue)) {L1045}
+  else if (propName = 'goal') then GoalList.insertItem(index, propValue as TFhirPlanDefinitionGoal) {L1049}
+  else if (propName = 'action') then ActionList.insertItem(index, propValue as TFhirPlanDefinitionAction) {L1049}
+  else inherited;
+end;
+
+function TFhirPlanDefinition.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'subtitle') then result := TFhirString.create() {L1223}
+  else if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Subject') {L1191}
+  else if (propName = 'usage') then result := TFhirString.create() {L1223}
+  else if (propName = 'topic') then result := TopicList.new() {L1053}
+  else if (propName = 'author') then result := AuthorList.new() {L1053}
+  else if (propName = 'editor') then result := EditorList.new() {L1053}
+  else if (propName = 'reviewer') then result := ReviewerList.new() {L1053}
+  else if (propName = 'endorser') then result := EndorserList.new() {L1053}
+  else if (propName = 'relatedArtifact') then result := RelatedArtifactList.new() {L1053}
+  else if (propName = 'library') then result := Library_List.new() {L1053}
+  else if (propName = 'goal') then result := GoalList.new() {L1053}
+  else if (propName = 'action') then result := ActionList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirPlanDefinition.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'subtitle') then result := 'string'
+  else if (propName = 'type') then result := 'CodeableConcept'
+  else if (propName = 'subject[x]') then result := 'CodeableConcept|Reference'
+  else if (propName = 'usage') then result := 'string'
+  else if (propName = 'topic') then result := 'CodeableConcept'
+  else if (propName = 'author') then result := 'ContactDetail'
+  else if (propName = 'editor') then result := 'ContactDetail'
+  else if (propName = 'reviewer') then result := 'ContactDetail'
+  else if (propName = 'endorser') then result := 'ContactDetail'
+  else if (propName = 'relatedArtifact') then result := 'RelatedArtifact'
+  else if (propName = 'library') then result := 'canonical'
+  else if (propName = 'goal') then result := 'BackboneElement'
+  else if (propName = 'action') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirPlanDefinition.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'subtitle') then SubtitleElement := nil
+  else if (propName = 'type') then Type_Element := nil
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := nil {L1189}
+  else if (propName = 'usage') then UsageElement := nil
+  else if (propName = 'topic') then deletePropertyValue('topic', TopicList, value) {L1054}
+  else if (propName = 'author') then deletePropertyValue('author', AuthorList, value) {L1054}
+  else if (propName = 'editor') then deletePropertyValue('editor', EditorList, value) {L1054}
+  else if (propName = 'reviewer') then deletePropertyValue('reviewer', ReviewerList, value) {L1054}
+  else if (propName = 'endorser') then deletePropertyValue('endorser', EndorserList, value) {L1054}
+  else if (propName = 'relatedArtifact') then deletePropertyValue('relatedArtifact', RelatedArtifactList, value) {L1054}
+  else if (propName = 'library') then deletePropertyValue('library', Library_List, value) {L1054}
+  else if (propName = 'goal') then deletePropertyValue('goal', GoalList, value) {L1054}
+  else if (propName = 'action') then deletePropertyValue('action', ActionList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPlanDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'subtitle') then SubtitleElement := asString(new) {L1222}
+  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
+  else if (isMatchingName(propName, 'subject', ['CodeableConcept', 'Reference'])) then SubjectElement := new as TFhirDataType {L1190}
+  else if (propName = 'usage') then UsageElement := asString(new) {L1222}
+  else if (propName = 'topic') then replacePropertyValue('topic', TopicList, existing, new) {L1055}
+  else if (propName = 'author') then replacePropertyValue('author', AuthorList, existing, new) {L1055}
+  else if (propName = 'editor') then replacePropertyValue('editor', EditorList, existing, new) {L1055}
+  else if (propName = 'reviewer') then replacePropertyValue('reviewer', ReviewerList, existing, new) {L1055}
+  else if (propName = 'endorser') then replacePropertyValue('endorser', EndorserList, existing, new) {L1055}
+  else if (propName = 'relatedArtifact') then replacePropertyValue('relatedArtifact', RelatedArtifactList, existing, new) {L1055}
+  else if (propName = 'library') then replacePropertyValue('library', Library_List, existing, new) {L1055}
+  else if (propName = 'goal') then replacePropertyValue('goal', GoalList, existing, new) {L1055}
+  else if (propName = 'action') then replacePropertyValue('action', ActionList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPlanDefinition.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'topic') then TopicList.move(source, destination) {L1050}
+  else if (propName = 'author') then AuthorList.move(source, destination) {L1050}
+  else if (propName = 'editor') then EditorList.move(source, destination) {L1050}
+  else if (propName = 'reviewer') then ReviewerList.move(source, destination) {L1050}
+  else if (propName = 'endorser') then EndorserList.move(source, destination) {L1050}
+  else if (propName = 'relatedArtifact') then RelatedArtifactList.move(source, destination) {L1050}
+  else if (propName = 'library') then Library_List.move(source, destination) {L1046}
+  else if (propName = 'goal') then GoalList.move(source, destination) {L1050}
+  else if (propName = 'action') then ActionList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirPlanDefinition.fhirType : string;
+begin
+  result := 'PlanDefinition';
+end;
+
+function TFhirPlanDefinition.Link : TFhirPlanDefinition;
+begin
+  result := TFhirPlanDefinition(inherited Link);
+end;
+
+function TFhirPlanDefinition.Clone : TFhirPlanDefinition;
+begin
+  result := TFhirPlanDefinition(inherited Clone);
+end;
+
+function TFhirPlanDefinition.equals(other : TObject) : boolean;
+var
+  o : TFhirPlanDefinition;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirPlanDefinition)) then
+    result := false
+  else
+  begin
+    o := TFhirPlanDefinition(other);
+    result := compareDeep(subtitleElement, o.subtitleElement, true) and compareDeep(type_Element, o.type_Element, true) and
+      compareDeep(subjectElement, o.subjectElement, true) and compareDeep(usageElement, o.usageElement, true) and
+      compareDeep(topicList, o.topicList, true) and compareDeep(authorList, o.authorList, true) and
+      compareDeep(editorList, o.editorList, true) and compareDeep(reviewerList, o.reviewerList, true) and
+      compareDeep(endorserList, o.endorserList, true) and compareDeep(relatedArtifactList, o.relatedArtifactList, true) and
+      compareDeep(library_List, o.library_List, true) and compareDeep(goalList, o.goalList, true) and
+      compareDeep(actionList, o.actionList, true);
+  end;
+end;
+
+function TFhirPlanDefinition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSubtitle) and isEmptyProp(FType_) and isEmptyProp(FSubject) and isEmptyProp(FUsage) and isEmptyProp(FtopicList) and isEmptyProp(FauthorList) and isEmptyProp(FeditorList) and isEmptyProp(FreviewerList) and isEmptyProp(FendorserList) and isEmptyProp(FrelatedArtifactList) and isEmptyProp(Flibrary_List) and isEmptyProp(FgoalList) and isEmptyProp(FactionList);
+end;
+
+procedure TFhirPlanDefinition.SetUrl(value : TFhirUri);
+begin
+  FUrl.free;
+  FUrl := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirPlanDefinition.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+function TFhirPlanDefinition.GetIdentifierList : TFhirIdentifierList;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  result := FIdentifierList;
+end;
+
+function TFhirPlanDefinition.GetHasIdentifierList : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
+end;
+
+procedure TFhirPlanDefinition.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := FVersion.value;
+end;
+
+procedure TFhirPlanDefinition.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirPlanDefinition.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirPlanDefinition.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetSubtitle(value : TFhirString);
+begin
+  FSubtitle.free;
+  FSubtitle := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetSubtitleST : String;
+begin
+  if FSubtitle = nil then
+    result := ''
+  else
+    result := FSubtitle.value;
+end;
+
+procedure TFhirPlanDefinition.SetSubtitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FSubtitle = nil then
+      FSubtitle := TFhirString.create;
+    FSubtitle.value := value
+  end
+  else if FSubtitle <> nil then
+    FSubtitle.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value; {L1134}
+end;
+
+procedure TFhirPlanDefinition.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+function TFhirPlanDefinition.GetStatusST : TFhirPublicationStatusEnum;
+begin
+  if FStatus = nil then
+    result := TFhirPublicationStatusEnum(0)
+  else
+    result := TFhirPublicationStatusEnum(StringArrayIndexOfSensitive(CODES_TFhirPublicationStatusEnum, FStatus.value));
+end;
+
+procedure TFhirPlanDefinition.SetStatusST(value : TFhirPublicationStatusEnum);
+begin
+  if ord(value) = 0 then
+    StatusElement := nil
+  else
+    StatusElement := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
+end;
+
+procedure TFhirPlanDefinition.SetExperimental(value : TFhirBoolean);
+begin
+  FExperimental.free;
+  FExperimental := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetExperimentalST : Boolean;
+begin
+  if FExperimental = nil then
+    result := false
+  else
+    result := FExperimental.value;
+end;
+
+procedure TFhirPlanDefinition.SetExperimentalST(value : Boolean);
+begin
+  if FExperimental = nil then
+    FExperimental := TFhirBoolean.create;
+  FExperimental.value := value
+end;
+
+procedure TFhirPlanDefinition.SetSubject(value : TFhirDataType);
+begin
+  FSubject.free;
+  FSubject := value; {L1134}
+end;
+
+procedure TFhirPlanDefinition.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetDateST : TFslDateTime;
+begin
+  if FDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FDate.value;
+end;
+
+procedure TFhirPlanDefinition.SetDateST(value : TFslDateTime);
+begin
+  if FDate = nil then
+    FDate := TFhirDateTime.create;
+  FDate.value := value
+end;
+
+procedure TFhirPlanDefinition.SetPublisher(value : TFhirString);
+begin
+  FPublisher.free;
+  FPublisher := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetPublisherST : String;
+begin
+  if FPublisher = nil then
+    result := ''
+  else
+    result := FPublisher.value;
+end;
+
+procedure TFhirPlanDefinition.SetPublisherST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPublisher = nil then
+      FPublisher := TFhirString.create;
+    FPublisher.value := value
+  end
+  else if FPublisher <> nil then
+    FPublisher.value := '';
+end;
+
+function TFhirPlanDefinition.GetContactList : TFhirContactDetailList;
+begin
+  if FContactList = nil then
+    FContactList := TFhirContactDetailList.Create;
+  result := FContactList;
+end;
+
+function TFhirPlanDefinition.GetHasContactList : boolean;
+begin
+  result := (FContactList <> nil) and (FContactList.count > 0);
+end;
+
+procedure TFhirPlanDefinition.SetDescription(value : TFhirMarkdown);
+begin
+  FDescription.free;
+  FDescription := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirPlanDefinition.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirMarkdown.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+function TFhirPlanDefinition.GetUseContextList : TFhirUsageContextList;
+begin
+  if FUseContextList = nil then
+    FUseContextList := TFhirUsageContextList.Create;
+  result := FUseContextList;
+end;
+
+function TFhirPlanDefinition.GetHasUseContextList : boolean;
+begin
+  result := (FUseContextList <> nil) and (FUseContextList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetJurisdictionList : TFhirCodeableConceptList;
+begin
+  if FJurisdictionList = nil then
+    FJurisdictionList := TFhirCodeableConceptList.Create;
+  result := FJurisdictionList;
+end;
+
+function TFhirPlanDefinition.GetHasJurisdictionList : boolean;
+begin
+  result := (FJurisdictionList <> nil) and (FJurisdictionList.count > 0);
+end;
+
+procedure TFhirPlanDefinition.SetPurpose(value : TFhirMarkdown);
+begin
+  FPurpose.free;
+  FPurpose := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetPurposeST : String;
+begin
+  if FPurpose = nil then
+    result := ''
+  else
+    result := FPurpose.value;
+end;
+
+procedure TFhirPlanDefinition.SetPurposeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPurpose = nil then
+      FPurpose := TFhirMarkdown.create;
+    FPurpose.value := value
+  end
+  else if FPurpose <> nil then
+    FPurpose.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetUsage(value : TFhirString);
+begin
+  FUsage.free;
+  FUsage := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetUsageST : String;
+begin
+  if FUsage = nil then
+    result := ''
+  else
+    result := FUsage.value;
+end;
+
+procedure TFhirPlanDefinition.SetUsageST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUsage = nil then
+      FUsage := TFhirString.create;
+    FUsage.value := value
+  end
+  else if FUsage <> nil then
+    FUsage.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetCopyright(value : TFhirMarkdown);
+begin
+  FCopyright.free;
+  FCopyright := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetCopyrightST : String;
+begin
+  if FCopyright = nil then
+    result := ''
+  else
+    result := FCopyright.value;
+end;
+
+procedure TFhirPlanDefinition.SetCopyrightST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCopyright = nil then
+      FCopyright := TFhirMarkdown.create;
+    FCopyright.value := value
+  end
+  else if FCopyright <> nil then
+    FCopyright.value := '';
+end;
+
+procedure TFhirPlanDefinition.SetApprovalDate(value : TFhirDate);
+begin
+  FApprovalDate.free;
+  FApprovalDate := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetApprovalDateST : TFslDateTime;
+begin
+  if FApprovalDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FApprovalDate.value;
+end;
+
+procedure TFhirPlanDefinition.SetApprovalDateST(value : TFslDateTime);
+begin
+  if FApprovalDate = nil then
+    FApprovalDate := TFhirDate.create;
+  FApprovalDate.value := value
+end;
+
+procedure TFhirPlanDefinition.SetLastReviewDate(value : TFhirDate);
+begin
+  FLastReviewDate.free;
+  FLastReviewDate := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetLastReviewDateST : TFslDateTime;
+begin
+  if FLastReviewDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FLastReviewDate.value;
+end;
+
+procedure TFhirPlanDefinition.SetLastReviewDateST(value : TFslDateTime);
+begin
+  if FLastReviewDate = nil then
+    FLastReviewDate := TFhirDate.create;
+  FLastReviewDate.value := value
+end;
+
+procedure TFhirPlanDefinition.SetEffectivePeriod(value : TFhirPeriod);
+begin
+  FEffectivePeriod.free;
+  FEffectivePeriod := value; {L1134}
+end;
+
+function TFhirPlanDefinition.GetTopicList : TFhirCodeableConceptList;
+begin
+  if FTopicList = nil then
+    FTopicList := TFhirCodeableConceptList.Create;
+  result := FTopicList;
+end;
+
+function TFhirPlanDefinition.GetHasTopicList : boolean;
+begin
+  result := (FTopicList <> nil) and (FTopicList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetAuthorList : TFhirContactDetailList;
+begin
+  if FAuthorList = nil then
+    FAuthorList := TFhirContactDetailList.Create;
+  result := FAuthorList;
+end;
+
+function TFhirPlanDefinition.GetHasAuthorList : boolean;
+begin
+  result := (FAuthorList <> nil) and (FAuthorList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetEditorList : TFhirContactDetailList;
+begin
+  if FEditorList = nil then
+    FEditorList := TFhirContactDetailList.Create;
+  result := FEditorList;
+end;
+
+function TFhirPlanDefinition.GetHasEditorList : boolean;
+begin
+  result := (FEditorList <> nil) and (FEditorList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetReviewerList : TFhirContactDetailList;
+begin
+  if FReviewerList = nil then
+    FReviewerList := TFhirContactDetailList.Create;
+  result := FReviewerList;
+end;
+
+function TFhirPlanDefinition.GetHasReviewerList : boolean;
+begin
+  result := (FReviewerList <> nil) and (FReviewerList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetEndorserList : TFhirContactDetailList;
+begin
+  if FEndorserList = nil then
+    FEndorserList := TFhirContactDetailList.Create;
+  result := FEndorserList;
+end;
+
+function TFhirPlanDefinition.GetHasEndorserList : boolean;
+begin
+  result := (FEndorserList <> nil) and (FEndorserList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetRelatedArtifactList : TFhirRelatedArtifactList;
+begin
+  if FRelatedArtifactList = nil then
+    FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+  result := FRelatedArtifactList;
+end;
+
+function TFhirPlanDefinition.GetHasRelatedArtifactList : boolean;
+begin
+  result := (FRelatedArtifactList <> nil) and (FRelatedArtifactList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetLibrary_List : TFhirCanonicalList;
+begin
+  if FLibrary_List = nil then
+    FLibrary_List := TFhirCanonicalList.Create;
+  result := FLibrary_List;
+end;
+
+function TFhirPlanDefinition.GetHasLibrary_List : boolean;
+begin
+  result := (FLibrary_List <> nil) and (FLibrary_List.count > 0);
+end;
+
+function TFhirPlanDefinition.GetGoalList : TFhirPlanDefinitionGoalList;
+begin
+  if FGoalList = nil then
+    FGoalList := TFhirPlanDefinitionGoalList.Create;
+  result := FGoalList;
+end;
+
+function TFhirPlanDefinition.GetHasGoalList : boolean;
+begin
+  result := (FGoalList <> nil) and (FGoalList.count > 0);
+end;
+
+function TFhirPlanDefinition.GetActionList : TFhirPlanDefinitionActionList;
+begin
+  if FActionList = nil then
+    FActionList := TFhirPlanDefinitionActionList.Create;
+  result := FActionList;
+end;
+
+function TFhirPlanDefinition.GetHasActionList : boolean;
+begin
+  result := (FActionList <> nil) and (FActionList.count > 0);
+end;
+
+{ TFhirPlanDefinitionListEnumerator }
+
+constructor TFhirPlanDefinitionListEnumerator.Create(list : TFhirPlanDefinitionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirPlanDefinitionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirPlanDefinitionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirPlanDefinitionListEnumerator.GetCurrent : TFhirPlanDefinition;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirPlanDefinitionList }
+
+procedure TFhirPlanDefinitionList.AddItem(value: TFhirPlanDefinition);
+begin
+  assert(value.ClassName = 'TFhirPlanDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPlanDefinition');
+  add(value);
+end;
+
+function TFhirPlanDefinitionList.Append: TFhirPlanDefinition;
+begin
+  result := TFhirPlanDefinition.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirPlanDefinitionList.GetEnumerator : TFhirPlanDefinitionListEnumerator;
+begin
+  result := TFhirPlanDefinitionListEnumerator.Create(self.link);
+end;
+
+function TFhirPlanDefinitionList.Clone: TFhirPlanDefinitionList;
+begin
+  result := TFhirPlanDefinitionList(inherited Clone);
+end;
+
+function TFhirPlanDefinitionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirPlanDefinitionList.GetItemN(index: Integer): TFhirPlanDefinition;
+begin
+  result := TFhirPlanDefinition(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirPlanDefinition;
+end;
+function TFhirPlanDefinitionList.IndexOf(value: TFhirPlanDefinition): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirPlanDefinitionList.Insert(index: Integer): TFhirPlanDefinition;
+begin
+  result := TFhirPlanDefinition.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirPlanDefinitionList.InsertItem(index: Integer; value: TFhirPlanDefinition);
+begin
+  assert(value is TFhirPlanDefinition);
+  Inherited Insert(index, value);
+end;
+
+function TFhirPlanDefinitionList.Item(index: Integer): TFhirPlanDefinition;
+begin
+  result := TFhirPlanDefinition(ObjectByIndex[index]);
+end;
+
+function TFhirPlanDefinitionList.Link: TFhirPlanDefinitionList;
+begin
+  result := TFhirPlanDefinitionList(inherited Link);
+end;
+
+procedure TFhirPlanDefinitionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirPlanDefinitionList.SetItemByIndex(index: Integer; value: TFhirPlanDefinition);
+begin
+  assert(value is TFhirPlanDefinition);
+  FhirPlanDefinitions[index] := value;
+end;
+
+procedure TFhirPlanDefinitionList.SetItemN(index: Integer; value: TFhirPlanDefinition);
+begin
+  assert(value is TFhirPlanDefinition);
+  ObjectByIndex[index] := value;
+end;
+
+{$ENDIF FHIR_PLANDEFINITION}
 {$IFDEF FHIR_PROVENANCE}
 { TFhirProvenanceAgent }
 
@@ -46791,6 +55527,2276 @@ begin
 end;
 
 {$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REQUESTGROUP}
+{ TFhirRequestGroupAction }
+
+constructor TFhirRequestGroupAction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirRequestGroupAction.Destroy;
+begin
+  FPrefix.free;
+  FTitle.free;
+  FDescription.free;
+  FTextEquivalent.free;
+  FPriority.free;
+  FCodeList.Free;
+  FDocumentationList.Free;
+  FConditionList.Free;
+  FRelatedActionList.Free;
+  FTiming.free;
+  FParticipantList.Free;
+  FType_.free;
+  FGroupingBehavior.free;
+  FSelectionBehavior.free;
+  FRequiredBehavior.free;
+  FPrecheckBehavior.free;
+  FCardinalityBehavior.free;
+  FResource.free;
+  FActionList.Free;
+  inherited;
+end;
+
+procedure TFhirRequestGroupAction.Assign(oSource : TFslObject);
+begin
+  inherited;
+  prefixElement := TFhirRequestGroupAction(oSource).prefixElement.Clone;
+  titleElement := TFhirRequestGroupAction(oSource).titleElement.Clone;
+  descriptionElement := TFhirRequestGroupAction(oSource).descriptionElement.Clone;
+  textEquivalentElement := TFhirRequestGroupAction(oSource).textEquivalentElement.Clone;
+  priorityElement := TFhirRequestGroupAction(oSource).priorityElement.Clone;
+  if (TFhirRequestGroupAction(oSource).FCodeList = nil) then
+  begin
+    FCodeList.free;
+    FCodeList := nil;
+  end
+  else
+  begin
+    if FCodeList = nil then
+      FCodeList := TFhirCodeableConceptList.Create;
+    FCodeList.Assign(TFhirRequestGroupAction(oSource).FCodeList);
+  end;
+  if (TFhirRequestGroupAction(oSource).FDocumentationList = nil) then
+  begin
+    FDocumentationList.free;
+    FDocumentationList := nil;
+  end
+  else
+  begin
+    if FDocumentationList = nil then
+      FDocumentationList := TFhirRelatedArtifactList.Create;
+    FDocumentationList.Assign(TFhirRequestGroupAction(oSource).FDocumentationList);
+  end;
+  if (TFhirRequestGroupAction(oSource).FConditionList = nil) then
+  begin
+    FConditionList.free;
+    FConditionList := nil;
+  end
+  else
+  begin
+    if FConditionList = nil then
+      FConditionList := TFhirRequestGroupActionConditionList.Create;
+    FConditionList.Assign(TFhirRequestGroupAction(oSource).FConditionList);
+  end;
+  if (TFhirRequestGroupAction(oSource).FRelatedActionList = nil) then
+  begin
+    FRelatedActionList.free;
+    FRelatedActionList := nil;
+  end
+  else
+  begin
+    if FRelatedActionList = nil then
+      FRelatedActionList := TFhirRequestGroupActionRelatedActionList.Create;
+    FRelatedActionList.Assign(TFhirRequestGroupAction(oSource).FRelatedActionList);
+  end;
+  timing := TFhirRequestGroupAction(oSource).timing.Clone;
+  if (TFhirRequestGroupAction(oSource).FParticipantList = nil) then
+  begin
+    FParticipantList.free;
+    FParticipantList := nil;
+  end
+  else
+  begin
+    if FParticipantList = nil then
+      FParticipantList := TFhirReferenceList.Create;
+    FParticipantList.Assign(TFhirRequestGroupAction(oSource).FParticipantList);
+  end;
+  type_ := TFhirRequestGroupAction(oSource).type_.Clone;
+  groupingBehaviorElement := TFhirRequestGroupAction(oSource).groupingBehaviorElement.Clone;
+  selectionBehaviorElement := TFhirRequestGroupAction(oSource).selectionBehaviorElement.Clone;
+  requiredBehaviorElement := TFhirRequestGroupAction(oSource).requiredBehaviorElement.Clone;
+  precheckBehaviorElement := TFhirRequestGroupAction(oSource).precheckBehaviorElement.Clone;
+  cardinalityBehaviorElement := TFhirRequestGroupAction(oSource).cardinalityBehaviorElement.Clone;
+  resource := TFhirRequestGroupAction(oSource).resource.Clone;
+  if (TFhirRequestGroupAction(oSource).FActionList = nil) then
+  begin
+    FActionList.free;
+    FActionList := nil;
+  end
+  else
+  begin
+    if FActionList = nil then
+      FActionList := TFhirRequestGroupActionList.Create;
+    FActionList.Assign(TFhirRequestGroupAction(oSource).FActionList);
+  end;
+end;
+
+procedure TFhirRequestGroupAction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'prefix') Then
+     list.add(self.link, 'prefix', FPrefix.Link);
+  if (child_name = 'title') Then
+     list.add(self.link, 'title', FTitle.Link);
+  if (child_name = 'description') Then
+     list.add(self.link, 'description', FDescription.Link);
+  if (child_name = 'textEquivalent') Then
+     list.add(self.link, 'textEquivalent', FTextEquivalent.Link);
+  if (child_name = 'priority') Then
+     list.add(self.link, 'priority', FPriority.Link);
+  if (child_name = 'code') Then
+    list.addAll(self, 'code', FCodeList);
+  if (child_name = 'documentation') Then
+    list.addAll(self, 'documentation', FDocumentationList);
+  if (child_name = 'condition') Then
+    list.addAll(self, 'condition', FConditionList);
+  if (child_name = 'relatedAction') Then
+    list.addAll(self, 'relatedAction', FRelatedActionList);
+  if (child_name = 'timing[x]') or (child_name = 'timing') Then
+     list.add(self.link, 'timing[x]', FTiming.Link);
+  if (child_name = 'participant') Then
+    list.addAll(self, 'participant', FParticipantList);
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'groupingBehavior') Then
+     list.add(self.link, 'groupingBehavior', FGroupingBehavior.Link);
+  if (child_name = 'selectionBehavior') Then
+     list.add(self.link, 'selectionBehavior', FSelectionBehavior.Link);
+  if (child_name = 'requiredBehavior') Then
+     list.add(self.link, 'requiredBehavior', FRequiredBehavior.Link);
+  if (child_name = 'precheckBehavior') Then
+     list.add(self.link, 'precheckBehavior', FPrecheckBehavior.Link);
+  if (child_name = 'cardinalityBehavior') Then
+     list.add(self.link, 'cardinalityBehavior', FCardinalityBehavior.Link);
+  if (child_name = 'resource') Then
+     list.add(self.link, 'resource', FResource.Link);
+  if (child_name = 'action') Then
+    list.addAll(self, 'action', FActionList);
+end;
+
+procedure TFhirRequestGroupAction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'prefix', 'string', false, TFhirString, FPrefix.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'textEquivalent', 'string', false, TFhirString, FTextEquivalent.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFhirEnum, FPriority.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'documentation', 'RelatedArtifact', true, TFhirRelatedArtifact, FDocumentationList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'condition', 'BackboneElement', true, TFhirRequestGroupActionCondition, FConditionList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'relatedAction', 'BackboneElement', true, TFhirRequestGroupActionRelatedAction, FRelatedActionList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'timing[x]', 'dateTime|Age|Period|Duration|Range|Timing', false, TFhirDataType, FTiming.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'participant', 'Reference', true, TFhirReference, FParticipantList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'groupingBehavior', 'code', false, TFhirEnum, FGroupingBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'selectionBehavior', 'code', false, TFhirEnum, FSelectionBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'requiredBehavior', 'code', false, TFhirEnum, FRequiredBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'precheckBehavior', 'code', false, TFhirEnum, FPrecheckBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'cardinalityBehavior', 'code', false, TFhirEnum, FCardinalityBehavior.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'resource', 'Reference', false, TFhirReference, FResource.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'action', '', true, TFhirRequestGroupAction, FActionList.Link)) {L1039};
+end;
+
+function TFhirRequestGroupAction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'prefix') then
+  begin
+    PrefixElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'title') then
+  begin
+    TitleElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'description') then
+  begin
+    DescriptionElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'textEquivalent') then
+  begin
+    TextEquivalentElement := asString(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'priority') then
+  begin
+    PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'code') then
+  begin
+    CodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationList.add(propValue as TFhirRelatedArtifact) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'condition') then
+  begin
+    ConditionList.add(propValue as TFhirRequestGroupActionCondition) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'relatedAction') then
+  begin
+    RelatedActionList.add(propValue as TFhirRequestGroupActionRelatedAction) {L1048};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then
+  begin
+    Timing := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else if (propName = 'participant') then
+  begin
+    ParticipantList.add(propValue as TFhirReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'type') then
+  begin
+    Type_ := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'groupingBehavior') then
+  begin
+    GroupingBehaviorElement := asEnum(SYSTEMS_TFhirActionGroupingBehaviorEnum, CODES_TFhirActionGroupingBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'selectionBehavior') then
+  begin
+    SelectionBehaviorElement := asEnum(SYSTEMS_TFhirActionSelectionBehaviorEnum, CODES_TFhirActionSelectionBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'requiredBehavior') then
+  begin
+    RequiredBehaviorElement := asEnum(SYSTEMS_TFhirActionRequiredBehaviorEnum, CODES_TFhirActionRequiredBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'precheckBehavior') then
+  begin
+    PrecheckBehaviorElement := asEnum(SYSTEMS_TFhirActionPrecheckBehaviorEnum, CODES_TFhirActionPrecheckBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'cardinalityBehavior') then
+  begin
+    CardinalityBehaviorElement := asEnum(SYSTEMS_TFhirActionCardinalityBehaviorEnum, CODES_TFhirActionCardinalityBehaviorEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'resource') then
+  begin
+    Resource := propValue as TFhirReference {L1199};
+    result := propValue;
+  end
+  else if (propName = 'action') then
+  begin
+    ActionList.add(propValue as TFhirRequestGroupAction) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirRequestGroupAction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  else if (propName = 'documentation') then DocumentationList.insertItem(index, propValue as TFhirRelatedArtifact) {L1049}
+  else if (propName = 'condition') then ConditionList.insertItem(index, propValue as TFhirRequestGroupActionCondition) {L1049}
+  else if (propName = 'relatedAction') then RelatedActionList.insertItem(index, propValue as TFhirRequestGroupActionRelatedAction) {L1049}
+  else if (propName = 'participant') then ParticipantList.insertItem(index, propValue as TFhirReference) {L1049}
+  else if (propName = 'action') then ActionList.insertItem(index, propValue as TFhirRequestGroupAction) {L1049}
+  else inherited;
+end;
+
+function TFhirRequestGroupAction.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'prefix') then result := TFhirString.create() {L1223}
+  else if (propName = 'title') then result := TFhirString.create() {L1223}
+  else if (propName = 'description') then result := TFhirString.create() {L1223}
+  else if (propName = 'textEquivalent') then result := TFhirString.create() {L1223}
+  else if (propName = 'priority') then result := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[RequestPriorityNull], CODES_TFhirRequestPriorityEnum[RequestPriorityNull])  {L1211}
+  else if (propName = 'code') then result := CodeList.new() {L1053}
+  else if (propName = 'documentation') then result := DocumentationList.new() {L1053}
+  else if (propName = 'condition') then result := ConditionList.new() {L1053}
+  else if (propName = 'relatedAction') then result := RelatedActionList.new() {L1053}
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then raise EFHIRException.create('Cannot make property Timing') {L1191}
+  else if (propName = 'participant') then result := ParticipantList.new() {L1053}
+  else if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'groupingBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionGroupingBehaviorEnum[ActionGroupingBehaviorNull], CODES_TFhirActionGroupingBehaviorEnum[ActionGroupingBehaviorNull])  {L1211}
+  else if (propName = 'selectionBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionSelectionBehaviorEnum[ActionSelectionBehaviorNull], CODES_TFhirActionSelectionBehaviorEnum[ActionSelectionBehaviorNull])  {L1211}
+  else if (propName = 'requiredBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionRequiredBehaviorEnum[ActionRequiredBehaviorNull], CODES_TFhirActionRequiredBehaviorEnum[ActionRequiredBehaviorNull])  {L1211}
+  else if (propName = 'precheckBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionPrecheckBehaviorEnum[ActionPrecheckBehaviorNull], CODES_TFhirActionPrecheckBehaviorEnum[ActionPrecheckBehaviorNull])  {L1211}
+  else if (propName = 'cardinalityBehavior') then result := TFhirEnum.create(SYSTEMS_TFhirActionCardinalityBehaviorEnum[ActionCardinalityBehaviorNull], CODES_TFhirActionCardinalityBehaviorEnum[ActionCardinalityBehaviorNull])  {L1211}
+  else if (propName = 'resource') then result := TFhirReference.create() {L1203}
+  else if (propName = 'action') then result := ActionList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirRequestGroupAction.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'prefix') then result := 'string'
+  else if (propName = 'title') then result := 'string'
+  else if (propName = 'description') then result := 'string'
+  else if (propName = 'textEquivalent') then result := 'string'
+  else if (propName = 'priority') then result := 'code'
+  else if (propName = 'code') then result := 'CodeableConcept'
+  else if (propName = 'documentation') then result := 'RelatedArtifact'
+  else if (propName = 'condition') then result := 'BackboneElement'
+  else if (propName = 'relatedAction') then result := 'BackboneElement'
+  else if (propName = 'timing[x]') then result := 'dateTime|Age|Period|Duration|Range|Timing'
+  else if (propName = 'participant') then result := 'Reference'
+  else if (propName = 'type') then result := 'CodeableConcept'
+  else if (propName = 'groupingBehavior') then result := 'code'
+  else if (propName = 'selectionBehavior') then result := 'code'
+  else if (propName = 'requiredBehavior') then result := 'code'
+  else if (propName = 'precheckBehavior') then result := 'code'
+  else if (propName = 'cardinalityBehavior') then result := 'code'
+  else if (propName = 'resource') then result := 'Reference'
+  else if (propName = 'action') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirRequestGroupAction.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'prefix') then PrefixElement := nil
+  else if (propName = 'title') then TitleElement := nil
+  else if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'textEquivalent') then TextEquivalentElement := nil
+  else if (propName = 'priority') then PriorityElement := nil
+  else if (propName = 'code') then deletePropertyValue('code', CodeList, value) {L1054}
+  else if (propName = 'documentation') then deletePropertyValue('documentation', DocumentationList, value) {L1054}
+  else if (propName = 'condition') then deletePropertyValue('condition', ConditionList, value) {L1054}
+  else if (propName = 'relatedAction') then deletePropertyValue('relatedAction', RelatedActionList, value) {L1054}
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then TimingElement := nil {L1189}
+  else if (propName = 'participant') then deletePropertyValue('participant', ParticipantList, value) {L1054}
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'groupingBehavior') then GroupingBehaviorElement := nil
+  else if (propName = 'selectionBehavior') then SelectionBehaviorElement := nil
+  else if (propName = 'requiredBehavior') then RequiredBehaviorElement := nil
+  else if (propName = 'precheckBehavior') then PrecheckBehaviorElement := nil
+  else if (propName = 'cardinalityBehavior') then CardinalityBehaviorElement := nil
+  else if (propName = 'resource') then ResourceElement := nil
+  else if (propName = 'action') then deletePropertyValue('action', ActionList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRequestGroupAction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'prefix') then PrefixElement := asString(new) {L1222}
+  else if (propName = 'title') then TitleElement := asString(new) {L1222}
+  else if (propName = 'description') then DescriptionElement := asString(new) {L1222}
+  else if (propName = 'textEquivalent') then TextEquivalentElement := asString(new) {L1222}
+  else if (propName = 'priority') then PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, new) {L1210}
+  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new) {L1055}
+  else if (propName = 'documentation') then replacePropertyValue('documentation', DocumentationList, existing, new) {L1055}
+  else if (propName = 'condition') then replacePropertyValue('condition', ConditionList, existing, new) {L1055}
+  else if (propName = 'relatedAction') then replacePropertyValue('relatedAction', RelatedActionList, existing, new) {L1055}
+  else if (isMatchingName(propName, 'timing', ['DateTime', 'Age', 'Period', 'Duration', 'Range', 'Timing'])) then TimingElement := new as TFhirDataType {L1190}
+  else if (propName = 'participant') then replacePropertyValue('participant', ParticipantList, existing, new) {L1055}
+  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'groupingBehavior') then GroupingBehaviorElement := asEnum(SYSTEMS_TFhirActionGroupingBehaviorEnum, CODES_TFhirActionGroupingBehaviorEnum, new) {L1210}
+  else if (propName = 'selectionBehavior') then SelectionBehaviorElement := asEnum(SYSTEMS_TFhirActionSelectionBehaviorEnum, CODES_TFhirActionSelectionBehaviorEnum, new) {L1210}
+  else if (propName = 'requiredBehavior') then RequiredBehaviorElement := asEnum(SYSTEMS_TFhirActionRequiredBehaviorEnum, CODES_TFhirActionRequiredBehaviorEnum, new) {L1210}
+  else if (propName = 'precheckBehavior') then PrecheckBehaviorElement := asEnum(SYSTEMS_TFhirActionPrecheckBehaviorEnum, CODES_TFhirActionPrecheckBehaviorEnum, new) {L1210}
+  else if (propName = 'cardinalityBehavior') then CardinalityBehaviorElement := asEnum(SYSTEMS_TFhirActionCardinalityBehaviorEnum, CODES_TFhirActionCardinalityBehaviorEnum, new) {L1210}
+  else if (propName = 'resource') then ResourceElement := new as TFhirReference {L1195}
+  else if (propName = 'action') then replacePropertyValue('action', ActionList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRequestGroupAction.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'code') then CodeList.move(source, destination) {L1050}
+  else if (propName = 'documentation') then DocumentationList.move(source, destination) {L1050}
+  else if (propName = 'condition') then ConditionList.move(source, destination) {L1050}
+  else if (propName = 'relatedAction') then RelatedActionList.move(source, destination) {L1050}
+  else if (propName = 'participant') then ParticipantList.move(source, destination) {L1050}
+  else if (propName = 'action') then ActionList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirRequestGroupAction.fhirType : string;
+begin
+  result := 'RequestGroup.action';
+end;
+
+function TFhirRequestGroupAction.Link : TFhirRequestGroupAction;
+begin
+  result := TFhirRequestGroupAction(inherited Link);
+end;
+
+function TFhirRequestGroupAction.Clone : TFhirRequestGroupAction;
+begin
+  result := TFhirRequestGroupAction(inherited Clone);
+end;
+
+function TFhirRequestGroupAction.equals(other : TObject) : boolean;
+var
+  o : TFhirRequestGroupAction;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirRequestGroupAction)) then
+    result := false
+  else
+  begin
+    o := TFhirRequestGroupAction(other);
+    result := compareDeep(prefixElement, o.prefixElement, true) and compareDeep(titleElement, o.titleElement, true) and
+      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(textEquivalentElement, o.textEquivalentElement, true) and
+      compareDeep(priorityElement, o.priorityElement, true) and compareDeep(codeList, o.codeList, true) and
+      compareDeep(documentationList, o.documentationList, true) and compareDeep(conditionList, o.conditionList, true) and
+      compareDeep(relatedActionList, o.relatedActionList, true) and compareDeep(timingElement, o.timingElement, true) and
+      compareDeep(participantList, o.participantList, true) and compareDeep(type_Element, o.type_Element, true) and
+      compareDeep(groupingBehaviorElement, o.groupingBehaviorElement, true) and compareDeep(selectionBehaviorElement, o.selectionBehaviorElement, true) and
+      compareDeep(requiredBehaviorElement, o.requiredBehaviorElement, true) and compareDeep(precheckBehaviorElement, o.precheckBehaviorElement, true) and
+      compareDeep(cardinalityBehaviorElement, o.cardinalityBehaviorElement, true) and
+      compareDeep(resourceElement, o.resourceElement, true) and compareDeep(actionList, o.actionList, true);
+  end;
+end;
+
+function TFhirRequestGroupAction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPrefix) and isEmptyProp(FTitle) and isEmptyProp(FDescription) and isEmptyProp(FTextEquivalent) and isEmptyProp(FPriority) and isEmptyProp(FcodeList) and isEmptyProp(FdocumentationList) and isEmptyProp(FconditionList) and isEmptyProp(FrelatedActionList) and isEmptyProp(FTiming) and isEmptyProp(FparticipantList) and isEmptyProp(FType_) and isEmptyProp(FGroupingBehavior) and isEmptyProp(FSelectionBehavior) and isEmptyProp(FRequiredBehavior) and isEmptyProp(FPrecheckBehavior) and isEmptyProp(FCardinalityBehavior) and isEmptyProp(FResource) and isEmptyProp(FactionList);
+end;
+
+procedure TFhirRequestGroupAction.SetPrefix(value : TFhirString);
+begin
+  FPrefix.free;
+  FPrefix := value; {L1134}
+end;
+
+function TFhirRequestGroupAction.GetPrefixST : String;
+begin
+  if FPrefix = nil then
+    result := ''
+  else
+    result := FPrefix.value;
+end;
+
+procedure TFhirRequestGroupAction.SetPrefixST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPrefix = nil then
+      FPrefix := TFhirString.create;
+    FPrefix.value := value
+  end
+  else if FPrefix <> nil then
+    FPrefix.value := '';
+end;
+
+procedure TFhirRequestGroupAction.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value; {L1134}
+end;
+
+function TFhirRequestGroupAction.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirRequestGroupAction.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirRequestGroupAction.SetDescription(value : TFhirString);
+begin
+  FDescription.free;
+  FDescription := value; {L1134}
+end;
+
+function TFhirRequestGroupAction.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirRequestGroupAction.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirString.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+procedure TFhirRequestGroupAction.SetTextEquivalent(value : TFhirString);
+begin
+  FTextEquivalent.free;
+  FTextEquivalent := value; {L1134}
+end;
+
+function TFhirRequestGroupAction.GetTextEquivalentST : String;
+begin
+  if FTextEquivalent = nil then
+    result := ''
+  else
+    result := FTextEquivalent.value;
+end;
+
+procedure TFhirRequestGroupAction.SetTextEquivalentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTextEquivalent = nil then
+      FTextEquivalent := TFhirString.create;
+    FTextEquivalent.value := value
+  end
+  else if FTextEquivalent <> nil then
+    FTextEquivalent.value := '';
+end;
+
+procedure TFhirRequestGroupAction.SetPriority(value : TFhirEnum);
+begin
+  FPriority.free;
+  FPriority := value;
+end;
+
+function TFhirRequestGroupAction.GetPriorityST : TFhirRequestPriorityEnum;
+begin
+  if FPriority = nil then
+    result := TFhirRequestPriorityEnum(0)
+  else
+    result := TFhirRequestPriorityEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestPriorityEnum, FPriority.value));
+end;
+
+procedure TFhirRequestGroupAction.SetPriorityST(value : TFhirRequestPriorityEnum);
+begin
+  if ord(value) = 0 then
+    PriorityElement := nil
+  else
+    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[value], CODES_TFhirRequestPriorityEnum[value]);
+end;
+
+function TFhirRequestGroupAction.GetCodeList : TFhirCodeableConceptList;
+begin
+  if FCodeList = nil then
+    FCodeList := TFhirCodeableConceptList.Create;
+  result := FCodeList;
+end;
+
+function TFhirRequestGroupAction.GetHasCodeList : boolean;
+begin
+  result := (FCodeList <> nil) and (FCodeList.count > 0);
+end;
+
+function TFhirRequestGroupAction.GetDocumentationList : TFhirRelatedArtifactList;
+begin
+  if FDocumentationList = nil then
+    FDocumentationList := TFhirRelatedArtifactList.Create;
+  result := FDocumentationList;
+end;
+
+function TFhirRequestGroupAction.GetHasDocumentationList : boolean;
+begin
+  result := (FDocumentationList <> nil) and (FDocumentationList.count > 0);
+end;
+
+function TFhirRequestGroupAction.GetConditionList : TFhirRequestGroupActionConditionList;
+begin
+  if FConditionList = nil then
+    FConditionList := TFhirRequestGroupActionConditionList.Create;
+  result := FConditionList;
+end;
+
+function TFhirRequestGroupAction.GetHasConditionList : boolean;
+begin
+  result := (FConditionList <> nil) and (FConditionList.count > 0);
+end;
+
+function TFhirRequestGroupAction.GetRelatedActionList : TFhirRequestGroupActionRelatedActionList;
+begin
+  if FRelatedActionList = nil then
+    FRelatedActionList := TFhirRequestGroupActionRelatedActionList.Create;
+  result := FRelatedActionList;
+end;
+
+function TFhirRequestGroupAction.GetHasRelatedActionList : boolean;
+begin
+  result := (FRelatedActionList <> nil) and (FRelatedActionList.count > 0);
+end;
+
+procedure TFhirRequestGroupAction.SetTiming(value : TFhirDataType);
+begin
+  FTiming.free;
+  FTiming := value; {L1134}
+end;
+
+function TFhirRequestGroupAction.GetParticipantList : TFhirReferenceList;
+begin
+  if FParticipantList = nil then
+    FParticipantList := TFhirReferenceList.Create;
+  result := FParticipantList;
+end;
+
+function TFhirRequestGroupAction.GetHasParticipantList : boolean;
+begin
+  result := (FParticipantList <> nil) and (FParticipantList.count > 0);
+end;
+
+procedure TFhirRequestGroupAction.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value; {L1134}
+end;
+
+procedure TFhirRequestGroupAction.SetGroupingBehavior(value : TFhirEnum);
+begin
+  FGroupingBehavior.free;
+  FGroupingBehavior := value;
+end;
+
+function TFhirRequestGroupAction.GetGroupingBehaviorST : TFhirActionGroupingBehaviorEnum;
+begin
+  if FGroupingBehavior = nil then
+    result := TFhirActionGroupingBehaviorEnum(0)
+  else
+    result := TFhirActionGroupingBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionGroupingBehaviorEnum, FGroupingBehavior.value));
+end;
+
+procedure TFhirRequestGroupAction.SetGroupingBehaviorST(value : TFhirActionGroupingBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    GroupingBehaviorElement := nil
+  else
+    GroupingBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionGroupingBehaviorEnum[value], CODES_TFhirActionGroupingBehaviorEnum[value]);
+end;
+
+procedure TFhirRequestGroupAction.SetSelectionBehavior(value : TFhirEnum);
+begin
+  FSelectionBehavior.free;
+  FSelectionBehavior := value;
+end;
+
+function TFhirRequestGroupAction.GetSelectionBehaviorST : TFhirActionSelectionBehaviorEnum;
+begin
+  if FSelectionBehavior = nil then
+    result := TFhirActionSelectionBehaviorEnum(0)
+  else
+    result := TFhirActionSelectionBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionSelectionBehaviorEnum, FSelectionBehavior.value));
+end;
+
+procedure TFhirRequestGroupAction.SetSelectionBehaviorST(value : TFhirActionSelectionBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    SelectionBehaviorElement := nil
+  else
+    SelectionBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionSelectionBehaviorEnum[value], CODES_TFhirActionSelectionBehaviorEnum[value]);
+end;
+
+procedure TFhirRequestGroupAction.SetRequiredBehavior(value : TFhirEnum);
+begin
+  FRequiredBehavior.free;
+  FRequiredBehavior := value;
+end;
+
+function TFhirRequestGroupAction.GetRequiredBehaviorST : TFhirActionRequiredBehaviorEnum;
+begin
+  if FRequiredBehavior = nil then
+    result := TFhirActionRequiredBehaviorEnum(0)
+  else
+    result := TFhirActionRequiredBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionRequiredBehaviorEnum, FRequiredBehavior.value));
+end;
+
+procedure TFhirRequestGroupAction.SetRequiredBehaviorST(value : TFhirActionRequiredBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    RequiredBehaviorElement := nil
+  else
+    RequiredBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionRequiredBehaviorEnum[value], CODES_TFhirActionRequiredBehaviorEnum[value]);
+end;
+
+procedure TFhirRequestGroupAction.SetPrecheckBehavior(value : TFhirEnum);
+begin
+  FPrecheckBehavior.free;
+  FPrecheckBehavior := value;
+end;
+
+function TFhirRequestGroupAction.GetPrecheckBehaviorST : TFhirActionPrecheckBehaviorEnum;
+begin
+  if FPrecheckBehavior = nil then
+    result := TFhirActionPrecheckBehaviorEnum(0)
+  else
+    result := TFhirActionPrecheckBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionPrecheckBehaviorEnum, FPrecheckBehavior.value));
+end;
+
+procedure TFhirRequestGroupAction.SetPrecheckBehaviorST(value : TFhirActionPrecheckBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    PrecheckBehaviorElement := nil
+  else
+    PrecheckBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionPrecheckBehaviorEnum[value], CODES_TFhirActionPrecheckBehaviorEnum[value]);
+end;
+
+procedure TFhirRequestGroupAction.SetCardinalityBehavior(value : TFhirEnum);
+begin
+  FCardinalityBehavior.free;
+  FCardinalityBehavior := value;
+end;
+
+function TFhirRequestGroupAction.GetCardinalityBehaviorST : TFhirActionCardinalityBehaviorEnum;
+begin
+  if FCardinalityBehavior = nil then
+    result := TFhirActionCardinalityBehaviorEnum(0)
+  else
+    result := TFhirActionCardinalityBehaviorEnum(StringArrayIndexOfSensitive(CODES_TFhirActionCardinalityBehaviorEnum, FCardinalityBehavior.value));
+end;
+
+procedure TFhirRequestGroupAction.SetCardinalityBehaviorST(value : TFhirActionCardinalityBehaviorEnum);
+begin
+  if ord(value) = 0 then
+    CardinalityBehaviorElement := nil
+  else
+    CardinalityBehaviorElement := TFhirEnum.create(SYSTEMS_TFhirActionCardinalityBehaviorEnum[value], CODES_TFhirActionCardinalityBehaviorEnum[value]);
+end;
+
+procedure TFhirRequestGroupAction.SetResource(value : TFhirReference);
+begin
+  FResource.free;
+  FResource := value; {L1134}
+end;
+
+function TFhirRequestGroupAction.GetActionList : TFhirRequestGroupActionList;
+begin
+  if FActionList = nil then
+    FActionList := TFhirRequestGroupActionList.Create;
+  result := FActionList;
+end;
+
+function TFhirRequestGroupAction.GetHasActionList : boolean;
+begin
+  result := (FActionList <> nil) and (FActionList.count > 0);
+end;
+
+{ TFhirRequestGroupActionListEnumerator }
+
+constructor TFhirRequestGroupActionListEnumerator.Create(list : TFhirRequestGroupActionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirRequestGroupActionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirRequestGroupActionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirRequestGroupActionListEnumerator.GetCurrent : TFhirRequestGroupAction;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirRequestGroupActionList }
+
+procedure TFhirRequestGroupActionList.AddItem(value: TFhirRequestGroupAction);
+begin
+  assert(value.ClassName = 'TFhirRequestGroupAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRequestGroupAction');
+  add(value);
+end;
+
+function TFhirRequestGroupActionList.Append: TFhirRequestGroupAction;
+begin
+  result := TFhirRequestGroupAction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupActionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirRequestGroupActionList.GetEnumerator : TFhirRequestGroupActionListEnumerator;
+begin
+  result := TFhirRequestGroupActionListEnumerator.Create(self.link);
+end;
+
+function TFhirRequestGroupActionList.Clone: TFhirRequestGroupActionList;
+begin
+  result := TFhirRequestGroupActionList(inherited Clone);
+end;
+
+function TFhirRequestGroupActionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirRequestGroupActionList.GetItemN(index: Integer): TFhirRequestGroupAction;
+begin
+  result := TFhirRequestGroupAction(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupActionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirRequestGroupAction;
+end;
+function TFhirRequestGroupActionList.IndexOf(value: TFhirRequestGroupAction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirRequestGroupActionList.Insert(index: Integer): TFhirRequestGroupAction;
+begin
+  result := TFhirRequestGroupAction.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupActionList.InsertItem(index: Integer; value: TFhirRequestGroupAction);
+begin
+  assert(value is TFhirRequestGroupAction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirRequestGroupActionList.Item(index: Integer): TFhirRequestGroupAction;
+begin
+  result := TFhirRequestGroupAction(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupActionList.Link: TFhirRequestGroupActionList;
+begin
+  result := TFhirRequestGroupActionList(inherited Link);
+end;
+
+procedure TFhirRequestGroupActionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirRequestGroupActionList.SetItemByIndex(index: Integer; value: TFhirRequestGroupAction);
+begin
+  assert(value is TFhirRequestGroupAction);
+  FhirRequestGroupActions[index] := value;
+end;
+
+procedure TFhirRequestGroupActionList.SetItemN(index: Integer; value: TFhirRequestGroupAction);
+begin
+  assert(value is TFhirRequestGroupAction);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirRequestGroupActionCondition }
+
+constructor TFhirRequestGroupActionCondition.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirRequestGroupActionCondition.Destroy;
+begin
+  FKind.free;
+  FExpression.free;
+  inherited;
+end;
+
+procedure TFhirRequestGroupActionCondition.Assign(oSource : TFslObject);
+begin
+  inherited;
+  kindElement := TFhirRequestGroupActionCondition(oSource).kindElement.Clone;
+  expression := TFhirRequestGroupActionCondition(oSource).expression.Clone;
+end;
+
+procedure TFhirRequestGroupActionCondition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'kind') Then
+     list.add(self.link, 'kind', FKind.Link);
+  if (child_name = 'expression') Then
+     list.add(self.link, 'expression', FExpression.Link);
+end;
+
+procedure TFhirRequestGroupActionCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirEnum, FKind.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'expression', 'Expression', false, TFhirExpression, FExpression.Link)); {L1172}
+end;
+
+function TFhirRequestGroupActionCondition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'kind') then
+  begin
+    KindElement := asEnum(SYSTEMS_TFhirActionConditionKindEnum, CODES_TFhirActionConditionKindEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'expression') then
+  begin
+    Expression := propValue as TFhirExpression {L1199};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirRequestGroupActionCondition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirRequestGroupActionCondition.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'kind') then result := TFhirEnum.create(SYSTEMS_TFhirActionConditionKindEnum[ActionConditionKindNull], CODES_TFhirActionConditionKindEnum[ActionConditionKindNull])  {L1211}
+  else if (propName = 'expression') then result := TFhirExpression.create() {L1203}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirRequestGroupActionCondition.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'kind') then result := 'code'
+  else if (propName = 'expression') then result := 'Expression'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirRequestGroupActionCondition.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'kind') then KindElement := nil
+  else if (propName = 'expression') then ExpressionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRequestGroupActionCondition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'kind') then KindElement := asEnum(SYSTEMS_TFhirActionConditionKindEnum, CODES_TFhirActionConditionKindEnum, new) {L1210}
+  else if (propName = 'expression') then ExpressionElement := new as TFhirExpression {L1195}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRequestGroupActionCondition.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirRequestGroupActionCondition.fhirType : string;
+begin
+  result := 'RequestGroup.action.condition';
+end;
+
+function TFhirRequestGroupActionCondition.Link : TFhirRequestGroupActionCondition;
+begin
+  result := TFhirRequestGroupActionCondition(inherited Link);
+end;
+
+function TFhirRequestGroupActionCondition.Clone : TFhirRequestGroupActionCondition;
+begin
+  result := TFhirRequestGroupActionCondition(inherited Clone);
+end;
+
+function TFhirRequestGroupActionCondition.equals(other : TObject) : boolean;
+var
+  o : TFhirRequestGroupActionCondition;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirRequestGroupActionCondition)) then
+    result := false
+  else
+  begin
+    o := TFhirRequestGroupActionCondition(other);
+    result := compareDeep(kindElement, o.kindElement, true) and compareDeep(expressionElement, o.expressionElement, true);
+  end;
+end;
+
+function TFhirRequestGroupActionCondition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FKind) and isEmptyProp(FExpression);
+end;
+
+procedure TFhirRequestGroupActionCondition.SetKind(value : TFhirEnum);
+begin
+  FKind.free;
+  FKind := value;
+end;
+
+function TFhirRequestGroupActionCondition.GetKindST : TFhirActionConditionKindEnum;
+begin
+  if FKind = nil then
+    result := TFhirActionConditionKindEnum(0)
+  else
+    result := TFhirActionConditionKindEnum(StringArrayIndexOfSensitive(CODES_TFhirActionConditionKindEnum, FKind.value));
+end;
+
+procedure TFhirRequestGroupActionCondition.SetKindST(value : TFhirActionConditionKindEnum);
+begin
+  if ord(value) = 0 then
+    KindElement := nil
+  else
+    KindElement := TFhirEnum.create(SYSTEMS_TFhirActionConditionKindEnum[value], CODES_TFhirActionConditionKindEnum[value]);
+end;
+
+procedure TFhirRequestGroupActionCondition.SetExpression(value : TFhirExpression);
+begin
+  FExpression.free;
+  FExpression := value; {L1134}
+end;
+
+{ TFhirRequestGroupActionConditionListEnumerator }
+
+constructor TFhirRequestGroupActionConditionListEnumerator.Create(list : TFhirRequestGroupActionConditionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirRequestGroupActionConditionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirRequestGroupActionConditionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirRequestGroupActionConditionListEnumerator.GetCurrent : TFhirRequestGroupActionCondition;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirRequestGroupActionConditionList }
+
+procedure TFhirRequestGroupActionConditionList.AddItem(value: TFhirRequestGroupActionCondition);
+begin
+  assert(value.ClassName = 'TFhirRequestGroupActionCondition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRequestGroupActionCondition');
+  add(value);
+end;
+
+function TFhirRequestGroupActionConditionList.Append: TFhirRequestGroupActionCondition;
+begin
+  result := TFhirRequestGroupActionCondition.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupActionConditionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirRequestGroupActionConditionList.GetEnumerator : TFhirRequestGroupActionConditionListEnumerator;
+begin
+  result := TFhirRequestGroupActionConditionListEnumerator.Create(self.link);
+end;
+
+function TFhirRequestGroupActionConditionList.Clone: TFhirRequestGroupActionConditionList;
+begin
+  result := TFhirRequestGroupActionConditionList(inherited Clone);
+end;
+
+function TFhirRequestGroupActionConditionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirRequestGroupActionConditionList.GetItemN(index: Integer): TFhirRequestGroupActionCondition;
+begin
+  result := TFhirRequestGroupActionCondition(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupActionConditionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirRequestGroupActionCondition;
+end;
+function TFhirRequestGroupActionConditionList.IndexOf(value: TFhirRequestGroupActionCondition): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirRequestGroupActionConditionList.Insert(index: Integer): TFhirRequestGroupActionCondition;
+begin
+  result := TFhirRequestGroupActionCondition.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupActionConditionList.InsertItem(index: Integer; value: TFhirRequestGroupActionCondition);
+begin
+  assert(value is TFhirRequestGroupActionCondition);
+  Inherited Insert(index, value);
+end;
+
+function TFhirRequestGroupActionConditionList.Item(index: Integer): TFhirRequestGroupActionCondition;
+begin
+  result := TFhirRequestGroupActionCondition(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupActionConditionList.Link: TFhirRequestGroupActionConditionList;
+begin
+  result := TFhirRequestGroupActionConditionList(inherited Link);
+end;
+
+procedure TFhirRequestGroupActionConditionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirRequestGroupActionConditionList.SetItemByIndex(index: Integer; value: TFhirRequestGroupActionCondition);
+begin
+  assert(value is TFhirRequestGroupActionCondition);
+  FhirRequestGroupActionConditions[index] := value;
+end;
+
+procedure TFhirRequestGroupActionConditionList.SetItemN(index: Integer; value: TFhirRequestGroupActionCondition);
+begin
+  assert(value is TFhirRequestGroupActionCondition);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirRequestGroupActionRelatedAction }
+
+constructor TFhirRequestGroupActionRelatedAction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirRequestGroupActionRelatedAction.Destroy;
+begin
+  FActionId.free;
+  FRelationship.free;
+  FOffset.free;
+  inherited;
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.Assign(oSource : TFslObject);
+begin
+  inherited;
+  actionIdElement := TFhirRequestGroupActionRelatedAction(oSource).actionIdElement.Clone;
+  relationshipElement := TFhirRequestGroupActionRelatedAction(oSource).relationshipElement.Clone;
+  offset := TFhirRequestGroupActionRelatedAction(oSource).offset.Clone;
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'actionId') Then
+     list.add(self.link, 'actionId', FActionId.Link);
+  if (child_name = 'relationship') Then
+     list.add(self.link, 'relationship', FRelationship.Link);
+  if (child_name = 'offset[x]') or (child_name = 'offset') Then
+     list.add(self.link, 'offset[x]', FOffset.Link);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'actionId', 'id', false, TFhirId, FActionId.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'relationship', 'code', false, TFhirEnum, FRelationship.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'offset[x]', 'Duration|Range', false, TFhirDataType, FOffset.Link)); {L1172}
+end;
+
+function TFhirRequestGroupActionRelatedAction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'actionId') then
+  begin
+    ActionIdElement := asId(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'relationship') then
+  begin
+    RelationshipElement := asEnum(SYSTEMS_TFhirActionRelationshipTypeEnum, CODES_TFhirActionRelationshipTypeEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then
+  begin
+    Offset := propValue as TFhirDataType {L1185};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirRequestGroupActionRelatedAction.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'actionId') then result := TFhirId.create() {L1223}
+  else if (propName = 'relationship') then result := TFhirEnum.create(SYSTEMS_TFhirActionRelationshipTypeEnum[ActionRelationshipTypeNull], CODES_TFhirActionRelationshipTypeEnum[ActionRelationshipTypeNull])  {L1211}
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then raise EFHIRException.create('Cannot make property Offset') {L1191}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirRequestGroupActionRelatedAction.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'actionId') then result := 'id'
+  else if (propName = 'relationship') then result := 'code'
+  else if (propName = 'offset[x]') then result := 'Duration|Range'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'actionId') then ActionIdElement := nil
+  else if (propName = 'relationship') then RelationshipElement := nil
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then OffsetElement := nil {L1189}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'actionId') then ActionIdElement := asId(new) {L1222}
+  else if (propName = 'relationship') then RelationshipElement := asEnum(SYSTEMS_TFhirActionRelationshipTypeEnum, CODES_TFhirActionRelationshipTypeEnum, new) {L1210}
+  else if (isMatchingName(propName, 'offset', ['Duration', 'Range'])) then OffsetElement := new as TFhirDataType {L1190}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirRequestGroupActionRelatedAction.fhirType : string;
+begin
+  result := 'RequestGroup.action.relatedAction';
+end;
+
+function TFhirRequestGroupActionRelatedAction.Link : TFhirRequestGroupActionRelatedAction;
+begin
+  result := TFhirRequestGroupActionRelatedAction(inherited Link);
+end;
+
+function TFhirRequestGroupActionRelatedAction.Clone : TFhirRequestGroupActionRelatedAction;
+begin
+  result := TFhirRequestGroupActionRelatedAction(inherited Clone);
+end;
+
+function TFhirRequestGroupActionRelatedAction.equals(other : TObject) : boolean;
+var
+  o : TFhirRequestGroupActionRelatedAction;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirRequestGroupActionRelatedAction)) then
+    result := false
+  else
+  begin
+    o := TFhirRequestGroupActionRelatedAction(other);
+    result := compareDeep(actionIdElement, o.actionIdElement, true) and compareDeep(relationshipElement, o.relationshipElement, true) and
+      compareDeep(offsetElement, o.offsetElement, true);
+  end;
+end;
+
+function TFhirRequestGroupActionRelatedAction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FActionId) and isEmptyProp(FRelationship) and isEmptyProp(FOffset);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.SetActionId(value : TFhirId);
+begin
+  FActionId.free;
+  FActionId := value; {L1134}
+end;
+
+function TFhirRequestGroupActionRelatedAction.GetActionIdST : String;
+begin
+  if FActionId = nil then
+    result := ''
+  else
+    result := FActionId.value;
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.SetActionIdST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FActionId = nil then
+      FActionId := TFhirId.create;
+    FActionId.value := value
+  end
+  else if FActionId <> nil then
+    FActionId.value := '';
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.SetRelationship(value : TFhirEnum);
+begin
+  FRelationship.free;
+  FRelationship := value;
+end;
+
+function TFhirRequestGroupActionRelatedAction.GetRelationshipST : TFhirActionRelationshipTypeEnum;
+begin
+  if FRelationship = nil then
+    result := TFhirActionRelationshipTypeEnum(0)
+  else
+    result := TFhirActionRelationshipTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirActionRelationshipTypeEnum, FRelationship.value));
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.SetRelationshipST(value : TFhirActionRelationshipTypeEnum);
+begin
+  if ord(value) = 0 then
+    RelationshipElement := nil
+  else
+    RelationshipElement := TFhirEnum.create(SYSTEMS_TFhirActionRelationshipTypeEnum[value], CODES_TFhirActionRelationshipTypeEnum[value]);
+end;
+
+procedure TFhirRequestGroupActionRelatedAction.SetOffset(value : TFhirDataType);
+begin
+  FOffset.free;
+  FOffset := value; {L1134}
+end;
+
+{ TFhirRequestGroupActionRelatedActionListEnumerator }
+
+constructor TFhirRequestGroupActionRelatedActionListEnumerator.Create(list : TFhirRequestGroupActionRelatedActionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirRequestGroupActionRelatedActionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirRequestGroupActionRelatedActionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirRequestGroupActionRelatedActionListEnumerator.GetCurrent : TFhirRequestGroupActionRelatedAction;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirRequestGroupActionRelatedActionList }
+
+procedure TFhirRequestGroupActionRelatedActionList.AddItem(value: TFhirRequestGroupActionRelatedAction);
+begin
+  assert(value.ClassName = 'TFhirRequestGroupActionRelatedAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRequestGroupActionRelatedAction');
+  add(value);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.Append: TFhirRequestGroupActionRelatedAction;
+begin
+  result := TFhirRequestGroupActionRelatedAction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupActionRelatedActionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirRequestGroupActionRelatedActionList.GetEnumerator : TFhirRequestGroupActionRelatedActionListEnumerator;
+begin
+  result := TFhirRequestGroupActionRelatedActionListEnumerator.Create(self.link);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.Clone: TFhirRequestGroupActionRelatedActionList;
+begin
+  result := TFhirRequestGroupActionRelatedActionList(inherited Clone);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirRequestGroupActionRelatedActionList.GetItemN(index: Integer): TFhirRequestGroupActionRelatedAction;
+begin
+  result := TFhirRequestGroupActionRelatedAction(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirRequestGroupActionRelatedAction;
+end;
+function TFhirRequestGroupActionRelatedActionList.IndexOf(value: TFhirRequestGroupActionRelatedAction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.Insert(index: Integer): TFhirRequestGroupActionRelatedAction;
+begin
+  result := TFhirRequestGroupActionRelatedAction.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupActionRelatedActionList.InsertItem(index: Integer; value: TFhirRequestGroupActionRelatedAction);
+begin
+  assert(value is TFhirRequestGroupActionRelatedAction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.Item(index: Integer): TFhirRequestGroupActionRelatedAction;
+begin
+  result := TFhirRequestGroupActionRelatedAction(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupActionRelatedActionList.Link: TFhirRequestGroupActionRelatedActionList;
+begin
+  result := TFhirRequestGroupActionRelatedActionList(inherited Link);
+end;
+
+procedure TFhirRequestGroupActionRelatedActionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirRequestGroupActionRelatedActionList.SetItemByIndex(index: Integer; value: TFhirRequestGroupActionRelatedAction);
+begin
+  assert(value is TFhirRequestGroupActionRelatedAction);
+  FhirRequestGroupActionRelatedActions[index] := value;
+end;
+
+procedure TFhirRequestGroupActionRelatedActionList.SetItemN(index: Integer; value: TFhirRequestGroupActionRelatedAction);
+begin
+  assert(value is TFhirRequestGroupActionRelatedAction);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirRequestGroup }
+
+constructor TFhirRequestGroup.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirRequestGroup.Destroy;
+begin
+  FIdentifierList.Free;
+  FInstantiatesCanonicalList.Free;
+  FInstantiatesUriList.Free;
+  FBasedOnList.Free;
+  FReplacesList.Free;
+  FGroupIdentifier.free;
+  FStatus.free;
+  FIntent.free;
+  FPriority.free;
+  FCode.free;
+  FSubject.free;
+  FEncounter.free;
+  FAuthoredOn.free;
+  FAuthor.free;
+  FReasonList.Free;
+  FNoteList.Free;
+  FActionList.Free;
+  inherited;
+end;
+
+procedure TFhirRequestGroup.Assign(oSource : TFslObject);
+begin
+  inherited;
+  if (TFhirRequestGroup(oSource).FIdentifierList = nil) then
+  begin
+    FIdentifierList.free;
+    FIdentifierList := nil;
+  end
+  else
+  begin
+    if FIdentifierList = nil then
+      FIdentifierList := TFhirIdentifierList.Create;
+    FIdentifierList.Assign(TFhirRequestGroup(oSource).FIdentifierList);
+  end;
+  if (TFhirRequestGroup(oSource).FInstantiatesCanonicalList = nil) then
+  begin
+    FInstantiatesCanonicalList.free;
+    FInstantiatesCanonicalList := nil;
+  end
+  else
+  begin
+    if FInstantiatesCanonicalList = nil then
+      FInstantiatesCanonicalList := TFhirCanonicalList.Create;
+    FInstantiatesCanonicalList.Assign(TFhirRequestGroup(oSource).FInstantiatesCanonicalList);
+  end;
+  if (TFhirRequestGroup(oSource).FInstantiatesUriList = nil) then
+  begin
+    FInstantiatesUriList.free;
+    FInstantiatesUriList := nil;
+  end
+  else
+  begin
+    if FInstantiatesUriList = nil then
+      FInstantiatesUriList := TFhirUriList.Create;
+    FInstantiatesUriList.Assign(TFhirRequestGroup(oSource).FInstantiatesUriList);
+  end;
+  if (TFhirRequestGroup(oSource).FBasedOnList = nil) then
+  begin
+    FBasedOnList.free;
+    FBasedOnList := nil;
+  end
+  else
+  begin
+    if FBasedOnList = nil then
+      FBasedOnList := TFhirReferenceList.Create;
+    FBasedOnList.Assign(TFhirRequestGroup(oSource).FBasedOnList);
+  end;
+  if (TFhirRequestGroup(oSource).FReplacesList = nil) then
+  begin
+    FReplacesList.free;
+    FReplacesList := nil;
+  end
+  else
+  begin
+    if FReplacesList = nil then
+      FReplacesList := TFhirReferenceList.Create;
+    FReplacesList.Assign(TFhirRequestGroup(oSource).FReplacesList);
+  end;
+  groupIdentifier := TFhirRequestGroup(oSource).groupIdentifier.Clone;
+  statusElement := TFhirRequestGroup(oSource).statusElement.Clone;
+  intentElement := TFhirRequestGroup(oSource).intentElement.Clone;
+  priorityElement := TFhirRequestGroup(oSource).priorityElement.Clone;
+  code := TFhirRequestGroup(oSource).code.Clone;
+  subject := TFhirRequestGroup(oSource).subject.Clone;
+  encounter := TFhirRequestGroup(oSource).encounter.Clone;
+  authoredOnElement := TFhirRequestGroup(oSource).authoredOnElement.Clone;
+  author := TFhirRequestGroup(oSource).author.Clone;
+  if (TFhirRequestGroup(oSource).FReasonList = nil) then
+  begin
+    FReasonList.free;
+    FReasonList := nil;
+  end
+  else
+  begin
+    if FReasonList = nil then
+      FReasonList := TFhirCodeableReferenceList.Create;
+    FReasonList.Assign(TFhirRequestGroup(oSource).FReasonList);
+  end;
+  if (TFhirRequestGroup(oSource).FNoteList = nil) then
+  begin
+    FNoteList.free;
+    FNoteList := nil;
+  end
+  else
+  begin
+    if FNoteList = nil then
+      FNoteList := TFhirAnnotationList.Create;
+    FNoteList.Assign(TFhirRequestGroup(oSource).FNoteList);
+  end;
+  if (TFhirRequestGroup(oSource).FActionList = nil) then
+  begin
+    FActionList.free;
+    FActionList := nil;
+  end
+  else
+  begin
+    if FActionList = nil then
+      FActionList := TFhirRequestGroupActionList.Create;
+    FActionList.Assign(TFhirRequestGroup(oSource).FActionList);
+  end;
+end;
+
+function TFhirRequestGroup.GetResourceType : TFhirResourceType;
+begin
+  result := frtRequestGroup;
+end;
+
+procedure TFhirRequestGroup.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+    list.addAll(self, 'identifier', FIdentifierList);
+  if (child_name = 'instantiatesCanonical') Then
+    list.addAll(self, 'instantiatesCanonical', FInstantiatesCanonicalList);
+  if (child_name = 'instantiatesUri') Then
+    list.addAll(self, 'instantiatesUri', FInstantiatesUriList);
+  if (child_name = 'basedOn') Then
+    list.addAll(self, 'basedOn', FBasedOnList);
+  if (child_name = 'replaces') Then
+    list.addAll(self, 'replaces', FReplacesList);
+  if (child_name = 'groupIdentifier') Then
+     list.add(self.link, 'groupIdentifier', FGroupIdentifier.Link);
+  if (child_name = 'status') Then
+     list.add(self.link, 'status', FStatus.Link);
+  if (child_name = 'intent') Then
+     list.add(self.link, 'intent', FIntent.Link);
+  if (child_name = 'priority') Then
+     list.add(self.link, 'priority', FPriority.Link);
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'subject') Then
+     list.add(self.link, 'subject', FSubject.Link);
+  if (child_name = 'encounter') Then
+     list.add(self.link, 'encounter', FEncounter.Link);
+  if (child_name = 'authoredOn') Then
+     list.add(self.link, 'authoredOn', FAuthoredOn.Link);
+  if (child_name = 'author') Then
+     list.add(self.link, 'author', FAuthor.Link);
+  if (child_name = 'reason') Then
+    list.addAll(self, 'reason', FReasonList);
+  if (child_name = 'note') Then
+    list.addAll(self, 'note', FNoteList);
+  if (child_name = 'action') Then
+    list.addAll(self, 'action', FActionList);
+end;
+
+procedure TFhirRequestGroup.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'instantiatesCanonical', 'canonical', true, TFhirCanonical, FInstantiatesCanonicalList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'instantiatesUri', 'uri', true, TFhirUri, FInstantiatesUriList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'replaces', 'Reference', true, TFhirReference, FReplacesList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'groupIdentifier', 'Identifier', false, TFhirIdentifier, FGroupIdentifier.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'intent', 'code', false, TFhirEnum, FIntent.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFhirEnum, FPriority.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference', false, TFhirReference, FEncounter.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'authoredOn', 'dateTime', false, TFhirDateTime, FAuthoredOn.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'author', 'Reference', false, TFhirReference, FAuthor.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableReference', true, TFhirCodeableReference, FReasonList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'action', 'BackboneElement', true, TFhirRequestGroupAction, FActionList.Link)) {L1039};
+end;
+
+function TFhirRequestGroup.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'identifier') then
+  begin
+    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'instantiatesCanonical') then
+  begin
+    InstantiatesCanonicalList.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'instantiatesUri') then
+  begin
+    InstantiatesUriList.add(asUri(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'basedOn') then
+  begin
+    BasedOnList.add(propValue as TFhirReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'replaces') then
+  begin
+    ReplacesList.add(propValue as TFhirReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'groupIdentifier') then
+  begin
+    GroupIdentifier := propValue as TFhirIdentifier {L1199};
+    result := propValue;
+  end
+  else if (propName = 'status') then
+  begin
+    StatusElement := asEnum(SYSTEMS_TFhirRequestStatusEnum, CODES_TFhirRequestStatusEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'intent') then
+  begin
+    IntentElement := asEnum(SYSTEMS_TFhirRequestIntentEnum, CODES_TFhirRequestIntentEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'priority') then
+  begin
+    PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, propValue) {L1209};
+    result := propValue;
+  end
+  else if (propName = 'code') then
+  begin
+    Code := propValue as TFhirCodeableConcept {L1199};
+    result := propValue;
+  end
+  else if (propName = 'subject') then
+  begin
+    Subject := propValue as TFhirReference {L1199};
+    result := propValue;
+  end
+  else if (propName = 'encounter') then
+  begin
+    Encounter := propValue as TFhirReference {L1199};
+    result := propValue;
+  end
+  else if (propName = 'authoredOn') then
+  begin
+    AuthoredOnElement := asDateTime(propValue) {L1221};
+    result := propValue;
+  end
+  else if (propName = 'author') then
+  begin
+    Author := propValue as TFhirReference {L1199};
+    result := propValue;
+  end
+  else if (propName = 'reason') then
+  begin
+    ReasonList.add(propValue as TFhirCodeableReference) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'note') then
+  begin
+    NoteList.add(propValue as TFhirAnnotation) {L1048};
+    result := propValue;
+  end
+  else if (propName = 'action') then
+  begin
+    ActionList.add(propValue as TFhirRequestGroupAction) {L1048};
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirRequestGroup.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
+  else if (propName = 'instantiatesCanonical') then InstantiatesCanonicalList.insertItem(index, asCanonical(propValue)) {L1045}
+  else if (propName = 'instantiatesUri') then InstantiatesUriList.insertItem(index, asUri(propValue)) {L1045}
+  else if (propName = 'basedOn') then BasedOnList.insertItem(index, propValue as TFhirReference) {L1049}
+  else if (propName = 'replaces') then ReplacesList.insertItem(index, propValue as TFhirReference) {L1049}
+  else if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableReference) {L1049}
+  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
+  else if (propName = 'action') then ActionList.insertItem(index, propValue as TFhirRequestGroupAction) {L1049}
+  else inherited;
+end;
+
+function TFhirRequestGroup.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
+  else if (propName = 'instantiatesCanonical') then result := InstantiatesCanonicalList.new() {L1053}
+  else if (propName = 'instantiatesUri') then result := InstantiatesUriList.new() {L1053}
+  else if (propName = 'basedOn') then result := BasedOnList.new() {L1053}
+  else if (propName = 'replaces') then result := ReplacesList.new() {L1053}
+  else if (propName = 'groupIdentifier') then result := TFhirIdentifier.create() {L1203}
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirRequestStatusEnum[RequestStatusNull], CODES_TFhirRequestStatusEnum[RequestStatusNull])  {L1211}
+  else if (propName = 'intent') then result := TFhirEnum.create(SYSTEMS_TFhirRequestIntentEnum[RequestIntentNull], CODES_TFhirRequestIntentEnum[RequestIntentNull])  {L1211}
+  else if (propName = 'priority') then result := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[RequestPriorityNull], CODES_TFhirRequestPriorityEnum[RequestPriorityNull])  {L1211}
+  else if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
+  else if (propName = 'subject') then result := TFhirReference.create() {L1203}
+  else if (propName = 'encounter') then result := TFhirReference.create() {L1203}
+  else if (propName = 'authoredOn') then result := TFhirDateTime.create() {L1223}
+  else if (propName = 'author') then result := TFhirReference.create() {L1203}
+  else if (propName = 'reason') then result := ReasonList.new() {L1053}
+  else if (propName = 'note') then result := NoteList.new() {L1053}
+  else if (propName = 'action') then result := ActionList.new() {L1053}
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirRequestGroup.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'identifier') then result := 'Identifier'
+  else if (propName = 'instantiatesCanonical') then result := 'canonical'
+  else if (propName = 'instantiatesUri') then result := 'uri'
+  else if (propName = 'basedOn') then result := 'Reference'
+  else if (propName = 'replaces') then result := 'Reference'
+  else if (propName = 'groupIdentifier') then result := 'Identifier'
+  else if (propName = 'status') then result := 'code'
+  else if (propName = 'intent') then result := 'code'
+  else if (propName = 'priority') then result := 'code'
+  else if (propName = 'code') then result := 'CodeableConcept'
+  else if (propName = 'subject') then result := 'Reference'
+  else if (propName = 'encounter') then result := 'Reference'
+  else if (propName = 'authoredOn') then result := 'dateTime'
+  else if (propName = 'author') then result := 'Reference'
+  else if (propName = 'reason') then result := 'CodeableReference'
+  else if (propName = 'note') then result := 'Annotation'
+  else if (propName = 'action') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirRequestGroup.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  else if (propName = 'instantiatesCanonical') then deletePropertyValue('instantiatesCanonical', InstantiatesCanonicalList, value) {L1054}
+  else if (propName = 'instantiatesUri') then deletePropertyValue('instantiatesUri', InstantiatesUriList, value) {L1054}
+  else if (propName = 'basedOn') then deletePropertyValue('basedOn', BasedOnList, value) {L1054}
+  else if (propName = 'replaces') then deletePropertyValue('replaces', ReplacesList, value) {L1054}
+  else if (propName = 'groupIdentifier') then GroupIdentifierElement := nil
+  else if (propName = 'status') then StatusElement := nil
+  else if (propName = 'intent') then IntentElement := nil
+  else if (propName = 'priority') then PriorityElement := nil
+  else if (propName = 'code') then CodeElement := nil
+  else if (propName = 'subject') then SubjectElement := nil
+  else if (propName = 'encounter') then EncounterElement := nil
+  else if (propName = 'authoredOn') then AuthoredOnElement := nil
+  else if (propName = 'author') then AuthorElement := nil
+  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value) {L1054}
+  else if (propName = 'note') then deletePropertyValue('note', NoteList, value) {L1054}
+  else if (propName = 'action') then deletePropertyValue('action', ActionList, value) {L1054}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRequestGroup.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
+  else if (propName = 'instantiatesCanonical') then replacePropertyValue('instantiatesCanonical', InstantiatesCanonicalList, existing, new) {L1055}
+  else if (propName = 'instantiatesUri') then replacePropertyValue('instantiatesUri', InstantiatesUriList, existing, new) {L1055}
+  else if (propName = 'basedOn') then replacePropertyValue('basedOn', BasedOnList, existing, new) {L1055}
+  else if (propName = 'replaces') then replacePropertyValue('replaces', ReplacesList, existing, new) {L1055}
+  else if (propName = 'groupIdentifier') then GroupIdentifierElement := new as TFhirIdentifier {L1195}
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirRequestStatusEnum, CODES_TFhirRequestStatusEnum, new) {L1210}
+  else if (propName = 'intent') then IntentElement := asEnum(SYSTEMS_TFhirRequestIntentEnum, CODES_TFhirRequestIntentEnum, new) {L1210}
+  else if (propName = 'priority') then PriorityElement := asEnum(SYSTEMS_TFhirRequestPriorityEnum, CODES_TFhirRequestPriorityEnum, new) {L1210}
+  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
+  else if (propName = 'subject') then SubjectElement := new as TFhirReference {L1195}
+  else if (propName = 'encounter') then EncounterElement := new as TFhirReference {L1195}
+  else if (propName = 'authoredOn') then AuthoredOnElement := asDateTime(new) {L1222}
+  else if (propName = 'author') then AuthorElement := new as TFhirReference {L1195}
+  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new) {L1055}
+  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new) {L1055}
+  else if (propName = 'action') then replacePropertyValue('action', ActionList, existing, new) {L1055}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRequestGroup.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
+  else if (propName = 'instantiatesCanonical') then InstantiatesCanonicalList.move(source, destination) {L1046}
+  else if (propName = 'instantiatesUri') then InstantiatesUriList.move(source, destination) {L1046}
+  else if (propName = 'basedOn') then BasedOnList.move(source, destination) {L1050}
+  else if (propName = 'replaces') then ReplacesList.move(source, destination) {L1050}
+  else if (propName = 'reason') then ReasonList.move(source, destination) {L1050}
+  else if (propName = 'note') then NoteList.move(source, destination) {L1050}
+  else if (propName = 'action') then ActionList.move(source, destination) {L1050}
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirRequestGroup.fhirType : string;
+begin
+  result := 'RequestGroup';
+end;
+
+function TFhirRequestGroup.Link : TFhirRequestGroup;
+begin
+  result := TFhirRequestGroup(inherited Link);
+end;
+
+function TFhirRequestGroup.Clone : TFhirRequestGroup;
+begin
+  result := TFhirRequestGroup(inherited Clone);
+end;
+
+function TFhirRequestGroup.equals(other : TObject) : boolean;
+var
+  o : TFhirRequestGroup;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirRequestGroup)) then
+    result := false
+  else
+  begin
+    o := TFhirRequestGroup(other);
+    result := compareDeep(identifierList, o.identifierList, true) and compareDeep(instantiatesCanonicalList, o.instantiatesCanonicalList, true) and
+      compareDeep(instantiatesUriList, o.instantiatesUriList, true) and compareDeep(basedOnList, o.basedOnList, true) and
+      compareDeep(replacesList, o.replacesList, true) and compareDeep(groupIdentifierElement, o.groupIdentifierElement, true) and
+      compareDeep(statusElement, o.statusElement, true) and compareDeep(intentElement, o.intentElement, true) and
+      compareDeep(priorityElement, o.priorityElement, true) and compareDeep(codeElement, o.codeElement, true) and
+      compareDeep(subjectElement, o.subjectElement, true) and compareDeep(encounterElement, o.encounterElement, true) and
+      compareDeep(authoredOnElement, o.authoredOnElement, true) and compareDeep(authorElement, o.authorElement, true) and
+      compareDeep(reasonList, o.reasonList, true) and compareDeep(noteList, o.noteList, true) and
+      compareDeep(actionList, o.actionList, true);
+  end;
+end;
+
+function TFhirRequestGroup.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FinstantiatesCanonicalList) and isEmptyProp(FinstantiatesUriList) and isEmptyProp(FbasedOnList) and isEmptyProp(FreplacesList) and isEmptyProp(FGroupIdentifier) and isEmptyProp(FStatus) and isEmptyProp(FIntent) and isEmptyProp(FPriority) and isEmptyProp(FCode) and isEmptyProp(FSubject) and isEmptyProp(FEncounter) and isEmptyProp(FAuthoredOn) and isEmptyProp(FAuthor) and isEmptyProp(FreasonList) and isEmptyProp(FnoteList) and isEmptyProp(FactionList);
+end;
+
+function TFhirRequestGroup.GetIdentifierList : TFhirIdentifierList;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  result := FIdentifierList;
+end;
+
+function TFhirRequestGroup.GetHasIdentifierList : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
+end;
+
+function TFhirRequestGroup.GetInstantiatesCanonicalList : TFhirCanonicalList;
+begin
+  if FInstantiatesCanonicalList = nil then
+    FInstantiatesCanonicalList := TFhirCanonicalList.Create;
+  result := FInstantiatesCanonicalList;
+end;
+
+function TFhirRequestGroup.GetHasInstantiatesCanonicalList : boolean;
+begin
+  result := (FInstantiatesCanonicalList <> nil) and (FInstantiatesCanonicalList.count > 0);
+end;
+
+function TFhirRequestGroup.GetInstantiatesUriList : TFhirUriList;
+begin
+  if FInstantiatesUriList = nil then
+    FInstantiatesUriList := TFhirUriList.Create;
+  result := FInstantiatesUriList;
+end;
+
+function TFhirRequestGroup.GetHasInstantiatesUriList : boolean;
+begin
+  result := (FInstantiatesUriList <> nil) and (FInstantiatesUriList.count > 0);
+end;
+
+function TFhirRequestGroup.GetBasedOnList : TFhirReferenceList;
+begin
+  if FBasedOnList = nil then
+    FBasedOnList := TFhirReferenceList.Create;
+  result := FBasedOnList;
+end;
+
+function TFhirRequestGroup.GetHasBasedOnList : boolean;
+begin
+  result := (FBasedOnList <> nil) and (FBasedOnList.count > 0);
+end;
+
+function TFhirRequestGroup.GetReplacesList : TFhirReferenceList;
+begin
+  if FReplacesList = nil then
+    FReplacesList := TFhirReferenceList.Create;
+  result := FReplacesList;
+end;
+
+function TFhirRequestGroup.GetHasReplacesList : boolean;
+begin
+  result := (FReplacesList <> nil) and (FReplacesList.count > 0);
+end;
+
+procedure TFhirRequestGroup.SetGroupIdentifier(value : TFhirIdentifier);
+begin
+  FGroupIdentifier.free;
+  FGroupIdentifier := value; {L1134}
+end;
+
+procedure TFhirRequestGroup.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+function TFhirRequestGroup.GetStatusST : TFhirRequestStatusEnum;
+begin
+  if FStatus = nil then
+    result := TFhirRequestStatusEnum(0)
+  else
+    result := TFhirRequestStatusEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestStatusEnum, FStatus.value));
+end;
+
+procedure TFhirRequestGroup.SetStatusST(value : TFhirRequestStatusEnum);
+begin
+  if ord(value) = 0 then
+    StatusElement := nil
+  else
+    StatusElement := TFhirEnum.create(SYSTEMS_TFhirRequestStatusEnum[value], CODES_TFhirRequestStatusEnum[value]);
+end;
+
+procedure TFhirRequestGroup.SetIntent(value : TFhirEnum);
+begin
+  FIntent.free;
+  FIntent := value;
+end;
+
+function TFhirRequestGroup.GetIntentST : TFhirRequestIntentEnum;
+begin
+  if FIntent = nil then
+    result := TFhirRequestIntentEnum(0)
+  else
+    result := TFhirRequestIntentEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestIntentEnum, FIntent.value));
+end;
+
+procedure TFhirRequestGroup.SetIntentST(value : TFhirRequestIntentEnum);
+begin
+  if ord(value) = 0 then
+    IntentElement := nil
+  else
+    IntentElement := TFhirEnum.create(SYSTEMS_TFhirRequestIntentEnum[value], CODES_TFhirRequestIntentEnum[value]);
+end;
+
+procedure TFhirRequestGroup.SetPriority(value : TFhirEnum);
+begin
+  FPriority.free;
+  FPriority := value;
+end;
+
+function TFhirRequestGroup.GetPriorityST : TFhirRequestPriorityEnum;
+begin
+  if FPriority = nil then
+    result := TFhirRequestPriorityEnum(0)
+  else
+    result := TFhirRequestPriorityEnum(StringArrayIndexOfSensitive(CODES_TFhirRequestPriorityEnum, FPriority.value));
+end;
+
+procedure TFhirRequestGroup.SetPriorityST(value : TFhirRequestPriorityEnum);
+begin
+  if ord(value) = 0 then
+    PriorityElement := nil
+  else
+    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirRequestPriorityEnum[value], CODES_TFhirRequestPriorityEnum[value]);
+end;
+
+procedure TFhirRequestGroup.SetCode(value : TFhirCodeableConcept);
+begin
+  FCode.free;
+  FCode := value; {L1134}
+end;
+
+procedure TFhirRequestGroup.SetSubject(value : TFhirReference);
+begin
+  FSubject.free;
+  FSubject := value; {L1134}
+end;
+
+procedure TFhirRequestGroup.SetEncounter(value : TFhirReference);
+begin
+  FEncounter.free;
+  FEncounter := value; {L1134}
+end;
+
+procedure TFhirRequestGroup.SetAuthoredOn(value : TFhirDateTime);
+begin
+  FAuthoredOn.free;
+  FAuthoredOn := value; {L1134}
+end;
+
+function TFhirRequestGroup.GetAuthoredOnST : TFslDateTime;
+begin
+  if FAuthoredOn = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FAuthoredOn.value;
+end;
+
+procedure TFhirRequestGroup.SetAuthoredOnST(value : TFslDateTime);
+begin
+  if FAuthoredOn = nil then
+    FAuthoredOn := TFhirDateTime.create;
+  FAuthoredOn.value := value
+end;
+
+procedure TFhirRequestGroup.SetAuthor(value : TFhirReference);
+begin
+  FAuthor.free;
+  FAuthor := value; {L1134}
+end;
+
+function TFhirRequestGroup.GetReasonList : TFhirCodeableReferenceList;
+begin
+  if FReasonList = nil then
+    FReasonList := TFhirCodeableReferenceList.Create;
+  result := FReasonList;
+end;
+
+function TFhirRequestGroup.GetHasReasonList : boolean;
+begin
+  result := (FReasonList <> nil) and (FReasonList.count > 0);
+end;
+
+function TFhirRequestGroup.GetNoteList : TFhirAnnotationList;
+begin
+  if FNoteList = nil then
+    FNoteList := TFhirAnnotationList.Create;
+  result := FNoteList;
+end;
+
+function TFhirRequestGroup.GetHasNoteList : boolean;
+begin
+  result := (FNoteList <> nil) and (FNoteList.count > 0);
+end;
+
+function TFhirRequestGroup.GetActionList : TFhirRequestGroupActionList;
+begin
+  if FActionList = nil then
+    FActionList := TFhirRequestGroupActionList.Create;
+  result := FActionList;
+end;
+
+function TFhirRequestGroup.GetHasActionList : boolean;
+begin
+  result := (FActionList <> nil) and (FActionList.count > 0);
+end;
+
+{ TFhirRequestGroupListEnumerator }
+
+constructor TFhirRequestGroupListEnumerator.Create(list : TFhirRequestGroupList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirRequestGroupListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirRequestGroupListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirRequestGroupListEnumerator.GetCurrent : TFhirRequestGroup;
+begin
+  Result := FList[FIndex];
+end;
+
+{ TFhirRequestGroupList }
+
+procedure TFhirRequestGroupList.AddItem(value: TFhirRequestGroup);
+begin
+  assert(value.ClassName = 'TFhirRequestGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRequestGroup');
+  add(value);
+end;
+
+function TFhirRequestGroupList.Append: TFhirRequestGroup;
+begin
+  result := TFhirRequestGroup.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirRequestGroupList.GetEnumerator : TFhirRequestGroupListEnumerator;
+begin
+  result := TFhirRequestGroupListEnumerator.Create(self.link);
+end;
+
+function TFhirRequestGroupList.Clone: TFhirRequestGroupList;
+begin
+  result := TFhirRequestGroupList(inherited Clone);
+end;
+
+function TFhirRequestGroupList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirRequestGroupList.GetItemN(index: Integer): TFhirRequestGroup;
+begin
+  result := TFhirRequestGroup(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirRequestGroup;
+end;
+function TFhirRequestGroupList.IndexOf(value: TFhirRequestGroup): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirRequestGroupList.Insert(index: Integer): TFhirRequestGroup;
+begin
+  result := TFhirRequestGroup.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirRequestGroupList.InsertItem(index: Integer; value: TFhirRequestGroup);
+begin
+  assert(value is TFhirRequestGroup);
+  Inherited Insert(index, value);
+end;
+
+function TFhirRequestGroupList.Item(index: Integer): TFhirRequestGroup;
+begin
+  result := TFhirRequestGroup(ObjectByIndex[index]);
+end;
+
+function TFhirRequestGroupList.Link: TFhirRequestGroupList;
+begin
+  result := TFhirRequestGroupList(inherited Link);
+end;
+
+procedure TFhirRequestGroupList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirRequestGroupList.SetItemByIndex(index: Integer; value: TFhirRequestGroup);
+begin
+  assert(value is TFhirRequestGroup);
+  FhirRequestGroups[index] := value;
+end;
+
+procedure TFhirRequestGroupList.SetItemN(index: Integer; value: TFhirRequestGroup);
+begin
+  assert(value is TFhirRequestGroup);
+  ObjectByIndex[index] := value;
+end;
+
+{$ENDIF FHIR_REQUESTGROUP}
 {$IFDEF FHIR_RESEARCHSTUDY}
 { TFhirResearchStudyArm }
 

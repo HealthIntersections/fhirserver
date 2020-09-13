@@ -812,6 +812,7 @@ function gen(obj : TFhirAddress) : String; overload;
 function gen(obj : TFhirContactPoint; hideType : boolean = false) : String; overload;
 function gen(obj : TFhirTiming) : String; overload;
 function gen(obj : TFhirUsageContext) : String; overload;
+function gen(extension : TFHIRExtension) : String; overload;
 
 function gen(t : TFhirType):String; overload;
 

@@ -1298,12 +1298,12 @@ type
   TFhirVerificationResultList = FHIR.R5.Resources.Other.TFhirVerificationResultList;
 {$ENDIF FHIR_VERIFICATIONRESULT}
 {$IFDEF FHIR_ACTIVITYDEFINITION}
-  TFhirActivityDefinitionParticipant = FHIR.R5.Resources.Canonical.TFhirActivityDefinitionParticipant;
-  TFhirActivityDefinitionParticipantList = FHIR.R5.Resources.Canonical.TFhirActivityDefinitionParticipantList;
-  TFhirActivityDefinitionDynamicValue = FHIR.R5.Resources.Canonical.TFhirActivityDefinitionDynamicValue;
-  TFhirActivityDefinitionDynamicValueList = FHIR.R5.Resources.Canonical.TFhirActivityDefinitionDynamicValueList;
-  TFhirActivityDefinition = FHIR.R5.Resources.Canonical.TFhirActivityDefinition;
-  TFhirActivityDefinitionList = FHIR.R5.Resources.Canonical.TFhirActivityDefinitionList;
+  TFhirActivityDefinitionParticipant = FHIR.R5.Resources.Other.TFhirActivityDefinitionParticipant;
+  TFhirActivityDefinitionParticipantList = FHIR.R5.Resources.Other.TFhirActivityDefinitionParticipantList;
+  TFhirActivityDefinitionDynamicValue = FHIR.R5.Resources.Other.TFhirActivityDefinitionDynamicValue;
+  TFhirActivityDefinitionDynamicValueList = FHIR.R5.Resources.Other.TFhirActivityDefinitionDynamicValueList;
+  TFhirActivityDefinition = FHIR.R5.Resources.Other.TFhirActivityDefinition;
+  TFhirActivityDefinitionList = FHIR.R5.Resources.Other.TFhirActivityDefinitionList;
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_CAPABILITYSTATEMENT}
   TFhirCapabilityStatementSoftware = FHIR.R5.Resources.Canonical.TFhirCapabilityStatementSoftware;
@@ -1518,22 +1518,22 @@ type
   TFhirOperationDefinitionList = FHIR.R5.Resources.Canonical.TFhirOperationDefinitionList;
 {$ENDIF FHIR_OPERATIONDEFINITION}
 {$IFDEF FHIR_PLANDEFINITION}
-  TFhirPlanDefinitionGoal = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionGoal;
-  TFhirPlanDefinitionGoalList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionGoalList;
-  TFhirPlanDefinitionGoalTarget = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionGoalTarget;
-  TFhirPlanDefinitionGoalTargetList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionGoalTargetList;
-  TFhirPlanDefinitionAction = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionAction;
-  TFhirPlanDefinitionActionList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionList;
-  TFhirPlanDefinitionActionCondition = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionCondition;
-  TFhirPlanDefinitionActionConditionList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionConditionList;
-  TFhirPlanDefinitionActionRelatedAction = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionRelatedAction;
-  TFhirPlanDefinitionActionRelatedActionList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionRelatedActionList;
-  TFhirPlanDefinitionActionParticipant = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionParticipant;
-  TFhirPlanDefinitionActionParticipantList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionParticipantList;
-  TFhirPlanDefinitionActionDynamicValue = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionDynamicValue;
-  TFhirPlanDefinitionActionDynamicValueList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionActionDynamicValueList;
-  TFhirPlanDefinition = FHIR.R5.Resources.Canonical.TFhirPlanDefinition;
-  TFhirPlanDefinitionList = FHIR.R5.Resources.Canonical.TFhirPlanDefinitionList;
+  TFhirPlanDefinitionGoal = FHIR.R5.Resources.Other.TFhirPlanDefinitionGoal;
+  TFhirPlanDefinitionGoalList = FHIR.R5.Resources.Other.TFhirPlanDefinitionGoalList;
+  TFhirPlanDefinitionGoalTarget = FHIR.R5.Resources.Other.TFhirPlanDefinitionGoalTarget;
+  TFhirPlanDefinitionGoalTargetList = FHIR.R5.Resources.Other.TFhirPlanDefinitionGoalTargetList;
+  TFhirPlanDefinitionAction = FHIR.R5.Resources.Other.TFhirPlanDefinitionAction;
+  TFhirPlanDefinitionActionList = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionList;
+  TFhirPlanDefinitionActionCondition = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionCondition;
+  TFhirPlanDefinitionActionConditionList = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionConditionList;
+  TFhirPlanDefinitionActionRelatedAction = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionRelatedAction;
+  TFhirPlanDefinitionActionRelatedActionList = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionRelatedActionList;
+  TFhirPlanDefinitionActionParticipant = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionParticipant;
+  TFhirPlanDefinitionActionParticipantList = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionParticipantList;
+  TFhirPlanDefinitionActionDynamicValue = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionDynamicValue;
+  TFhirPlanDefinitionActionDynamicValueList = FHIR.R5.Resources.Other.TFhirPlanDefinitionActionDynamicValueList;
+  TFhirPlanDefinition = FHIR.R5.Resources.Other.TFhirPlanDefinition;
+  TFhirPlanDefinitionList = FHIR.R5.Resources.Other.TFhirPlanDefinitionList;
 {$ENDIF FHIR_PLANDEFINITION}
 {$IFDEF FHIR_QUESTIONNAIRE}
   TFhirQuestionnaireItem = FHIR.R5.Resources.Canonical.TFhirQuestionnaireItem;
@@ -1548,14 +1548,14 @@ type
   TFhirQuestionnaireList = FHIR.R5.Resources.Canonical.TFhirQuestionnaireList;
 {$ENDIF FHIR_QUESTIONNAIRE}
 {$IFDEF FHIR_REQUESTGROUP}
-  TFhirRequestGroupAction = FHIR.R5.Resources.Canonical.TFhirRequestGroupAction;
-  TFhirRequestGroupActionList = FHIR.R5.Resources.Canonical.TFhirRequestGroupActionList;
-  TFhirRequestGroupActionCondition = FHIR.R5.Resources.Canonical.TFhirRequestGroupActionCondition;
-  TFhirRequestGroupActionConditionList = FHIR.R5.Resources.Canonical.TFhirRequestGroupActionConditionList;
-  TFhirRequestGroupActionRelatedAction = FHIR.R5.Resources.Canonical.TFhirRequestGroupActionRelatedAction;
-  TFhirRequestGroupActionRelatedActionList = FHIR.R5.Resources.Canonical.TFhirRequestGroupActionRelatedActionList;
-  TFhirRequestGroup = FHIR.R5.Resources.Canonical.TFhirRequestGroup;
-  TFhirRequestGroupList = FHIR.R5.Resources.Canonical.TFhirRequestGroupList;
+  TFhirRequestGroupAction = FHIR.R5.Resources.Other.TFhirRequestGroupAction;
+  TFhirRequestGroupActionList = FHIR.R5.Resources.Other.TFhirRequestGroupActionList;
+  TFhirRequestGroupActionCondition = FHIR.R5.Resources.Other.TFhirRequestGroupActionCondition;
+  TFhirRequestGroupActionConditionList = FHIR.R5.Resources.Other.TFhirRequestGroupActionConditionList;
+  TFhirRequestGroupActionRelatedAction = FHIR.R5.Resources.Other.TFhirRequestGroupActionRelatedAction;
+  TFhirRequestGroupActionRelatedActionList = FHIR.R5.Resources.Other.TFhirRequestGroupActionRelatedActionList;
+  TFhirRequestGroup = FHIR.R5.Resources.Other.TFhirRequestGroup;
+  TFhirRequestGroupList = FHIR.R5.Resources.Other.TFhirRequestGroupList;
 {$ENDIF FHIR_REQUESTGROUP}
 {$IFDEF FHIR_SEARCHPARAMETER}
   TFhirSearchParameterComponent = FHIR.R5.Resources.Canonical.TFhirSearchParameterComponent;

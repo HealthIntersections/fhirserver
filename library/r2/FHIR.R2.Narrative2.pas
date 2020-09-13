@@ -36,7 +36,8 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Profiles, FHIR.R2.Questionnaire;
+  FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Profiles, FHIR.R2.Questionnaire,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Other;
 
 type
 

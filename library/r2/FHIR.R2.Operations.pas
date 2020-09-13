@@ -39,7 +39,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Parsers,
-  FHIR.R2.Base, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.OpBase;
+  FHIR.R2.Base, FHIR.R2.Types, FHIR.R2.OpBase,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 Type
 

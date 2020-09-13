@@ -35,7 +35,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.Base.Common,
-  FHIR.R2.Parser, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Context, FHIR.R2.Common;
+  FHIR.R2.Parser, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Context, FHIR.R2.Common,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 Type
   TFhirClient2 = class (TFhirClientV)

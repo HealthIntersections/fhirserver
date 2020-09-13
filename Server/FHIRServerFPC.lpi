@@ -31,7 +31,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="348">
+    <Units Count="372">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1433,6 +1433,102 @@
         <Filename Value="..\library\support\IOUtils.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit347>
+      <Unit348>
+        <Filename Value="..\library\r2\FHIR.R2.Resources.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit348>
+      <Unit349>
+        <Filename Value="..\library\r2\FHIR.R2.Resources.Admin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit349>
+      <Unit350>
+        <Filename Value="..\library\r2\FHIR.R2.Resources.Canonical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit350>
+      <Unit351>
+        <Filename Value="..\library\r2\FHIR.R2.Resources.Clinical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit351>
+      <Unit352>
+        <Filename Value="..\library\r2\FHIR.R2.Resources.Other.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit352>
+      <Unit353>
+        <Filename Value="..\library\r3\FHIR.R3.Resources.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit353>
+      <Unit354>
+        <Filename Value="..\library\r3\FHIR.R3.Resources.Admin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit354>
+      <Unit355>
+        <Filename Value="..\library\r3\FHIR.R3.Resources.Canonical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit355>
+      <Unit356>
+        <Filename Value="..\library\r3\FHIR.R3.Resources.Clinical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit356>
+      <Unit357>
+        <Filename Value="..\library\r3\FHIR.R3.Resources.Other.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit357>
+      <Unit358>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit358>
+      <Unit359>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Admin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit359>
+      <Unit360>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Canonical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit360>
+      <Unit361>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit361>
+      <Unit362>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Financial.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit362>
+      <Unit363>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Medications.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit363>
+      <Unit364>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.Other.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit364>
+      <Unit365>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit365>
+      <Unit366>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Admin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit366>
+      <Unit367>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Canonical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit367>
+      <Unit368>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Clinical.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit368>
+      <Unit369>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Financial.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit369>
+      <Unit370>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Medications.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit370>
+      <Unit371>
+        <Filename Value="..\library\r5\FHIR.R5.Resources.Other.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit371>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1462,6 +1558,9 @@
       <Verbosity>
         <ShowTriedFiles Value="True"/>
       </Verbosity>
+      <CompilerMessages>
+        <IgnoredMessages idx5024="True"/>
+      </CompilerMessages>
     </Other>
   </CompilerOptions>
   <Debugging>

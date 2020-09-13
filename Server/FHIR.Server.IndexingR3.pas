@@ -1,9 +1,5 @@
 unit FHIR.Server.IndexingR3;
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-{$ENDIF}
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -32,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE Delphi}{$ENDIF}
+
 interface
 
 {
@@ -49,7 +47,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.PathEngine,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Resources.Base, FHIR.R3.Constants, FHIR.R3.IndexInfo, FHIR.R3.Utilities, FHIR.R3.PathEngine, FHIR.R3.Context,
+  FHIR.R3.Types, FHIR.R3.Resources.Base, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.IndexInfo, FHIR.R3.Utilities, FHIR.R3.PathEngine, FHIR.R3.Context,
   FHIR.Tools.Indexing,
   FHIR.Ucum.Services,
   FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Tags, FHIR.Server.Utilities, FHIR.Server.Constants;

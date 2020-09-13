@@ -36,7 +36,8 @@ uses
   SysUtils, Classes,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Lang,
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Xml, FHIR.R2.Json, FHIR.R2.Context;
+  FHIR.R2.Types, FHIR.R2.Xml, FHIR.R2.Json, FHIR.R2.Context,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 type
   TFHIRParsers2 = class

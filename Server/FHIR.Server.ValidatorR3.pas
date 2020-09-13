@@ -38,8 +38,8 @@ Uses
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Tx.Service,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client, FHIR.R3.Utilities,
-  FHIR.R3.PathNode, FHIR.R3.PathEngine, FHIR.R3.Resources.Base,
+  FHIR.R3.Types, FHIR.R3.Resources.Base, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles,
+  FHIR.R3.Client, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.PathEngine,
   FHIR.Tools.ValueSets,
   FHIR.Tx.Server;
 

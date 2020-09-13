@@ -35,8 +35,8 @@ interface
 uses
   SysUtils,
   FHIR.Support.Base, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.R2.Types, FHIR.R2.Resources;
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang, FHIR.R2.Types,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 type
   TFHIRCustomResourceInformation = class (TFslObject)

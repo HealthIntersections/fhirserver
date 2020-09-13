@@ -38,7 +38,8 @@ Uses
   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Tx.Service,
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client, FHIR.R2.Resources.Base,
+  FHIR.R2.Types, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other,
   FHIR.Tools.ValueSets,
   FHIR.Tx.Server;
 

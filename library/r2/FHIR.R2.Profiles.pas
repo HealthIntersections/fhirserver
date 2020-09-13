@@ -37,7 +37,8 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.OIDs,
-  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Utilities, FHIR.R2.Constants, FHIR.R2.Context, FHIR.R2.Resources.Base;
+  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Utilities, FHIR.R2.Constants, FHIR.R2.Context,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Other;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';

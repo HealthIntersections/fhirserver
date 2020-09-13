@@ -39,7 +39,8 @@ interface
 uses
   SysUtils, Classes, 
   FHIR.Support.Utilities, FHIR.Support.Stream, 
-  FHIR.Base.Objects, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Resources.Base;
+  FHIR.Base.Objects, FHIR.R2.Types,
+  FHIR.R2.Resources.Base, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Other;
 
 const
   currentFHIRVersionRelease = fhirVersionRelease2;
